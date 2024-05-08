@@ -24,9 +24,28 @@
 
 #include "config.h"
 #include "CSSPropertyParserConsumer+Integer.h"
+#include "CSSPropertyParserConsumer+IntegerDefinitions.h"
+
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+RawResolver.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
+
+template<typename IntType, IntegerValueRange integerRange>
+static std::optional<IntType> consumeIntegerTypeRaw(CSSParserTokenRange& range)
+{
+    if (auto result = RawResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, { }, { }))
+        return result->value;
+    return std::nullopt;
+}
+
+template<typename IntType, IntegerValueRange integerRange>
+static RefPtr<CSSPrimitiveValue> consumeIntegerType(CSSParserTokenRange& range)
+{
+    return CSSPrimitiveValueResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, { }, { });
+}
 
 std::optional<int> consumeIntegerRaw(CSSParserTokenRange& range)
 {

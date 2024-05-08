@@ -31,17 +31,22 @@
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Angle.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+List.h"
-#include "CSSPropertyParserConsumer+Meta.h"
-#include "CSSPropertyParserConsumer+None.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+MetaTransformer.h"
+#include "CSSPropertyParserConsumer+NoneDefinitions.h"
 #include "CSSPropertyParserConsumer+Number.h"
+#include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSPropertyParserConsumer+Percent.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserConsumer+RawResolver.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
+#include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
 #include "CSSPropertyParserConsumer+Time.h"
 #include "CSSPropertyParsing.h"
 
@@ -120,40 +125,69 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: Image Set Type
 
-struct ImageSetTypeCSSPrimitiveValueKnownTokenTypeFunctionConsumer {
+struct ImageSetTypeFunctionRaw {
+    String value;
+
+    bool operator==(const ImageSetTypeFunctionRaw&) const = default;
+};
+
+struct ImageSetTypeFunctionRawKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
 
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+    static std::optional<ImageSetTypeFunctionRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
     {
         ASSERT(range.peek().type() == FunctionToken);
         if (range.peek().functionId() != CSSValueType)
-            return nullptr;
+            return { };
 
         auto rangeCopy = range;
         auto typeArg = consumeFunction(rangeCopy);
-        RefPtr result = consumeString(typeArg);
+        auto result = consumeStringRaw(typeArg);
 
-        if (!result || !typeArg.atEnd())
-            return nullptr;
+        if (result.isNull() || !typeArg.atEnd())
+            return { };
 
         range = rangeCopy;
-        return result;
+        return {{ result.toString() }};
     }
 };
 
-// MARK: Image Set Resolution + Type
+template<> struct ConsumerDefinition<ImageSetTypeFunctionRaw> {
+    using type = brigand::list<ImageSetTypeFunctionRaw>;
 
-struct ImageSetResolutionOrTypeConsumer {
-    using Result = RefPtr<CSSPrimitiveValue>;
-
-    using FunctionToken = SameTokenMetaConsumer<
-        IdentityTransformer<Result>,
-        ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer,
-        ImageSetTypeCSSPrimitiveValueKnownTokenTypeFunctionConsumer
-    >;
-
-    using DimensionToken = ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer;
+    using FunctionToken = ImageSetTypeFunctionRawKnownTokenTypeFunctionConsumer;
 };
+
+// MARK: Image Set Resolution + Type Function
+
+static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSParserTokenRange& range, ValueRange valueRange)
+{
+    // [ <resolution> || type(<string>) ]
+    //
+    //   as part of
+    //
+    // <image-set()> = image-set( <image-set-option># )
+    // <image-set-option> = [ <image> | <string> ] [ <resolution> || type(<string>) ]?
+
+    const auto options = CSSPropertyParserOptions {
+        .valueRange = valueRange,
+        .unitless = UnitlessQuirk::Allow,
+        .unitlessZero = UnitlessZeroQuirk::Allow
+    };
+
+    auto result = MetaConsumer<ResolutionRaw, ImageSetTypeFunctionRaw>::consume(range, { }, options);
+    if (!result)
+        return { };
+
+    return WTF::switchOn(*result,
+        [&] (const ImageSetTypeFunctionRaw& typeFunction) -> RefPtr<CSSPrimitiveValue> {
+            return CSSPrimitiveValue::create(typeFunction.value);
+        },
+        [&] (const auto& resolution) -> RefPtr<CSSPrimitiveValue> {
+            return CSSPrimitiveValueResolverBase::resolve(resolution, { }, options);
+        }
+    );
+}
 
 static std::optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& range)
 {
@@ -168,7 +202,10 @@ static std::optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& ran
     switch (token.type()) {
     case FunctionToken: {
         // "[For calc()], the used value resulting from an expression must be clamped to the range allowed in the target context."
-        auto result = NumberRawKnownTokenTypeFunctionConsumer::consume(range, { }, ValueRange::All, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+        auto unresolvedCalc = NumberKnownTokenTypeFunctionConsumer::consume(range, { }, { });
+        if (!unresolvedCalc)
+            return std::nullopt;
+        auto result = RawResolver<NumberRaw>::resolve(*unresolvedCalc, { }, { });
         if (!result)
             return std::nullopt;
 #if !ENABLE(VARIATION_FONTS)
@@ -224,6 +261,13 @@ RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange& range, bool sh
     if (result && result->stringValue().startsWith("--"_s))
         return result;
     return nullptr;
+}
+
+StringView consumeStringRaw(CSSParserTokenRange& range)
+{
+    if (range.peek().type() != StringToken)
+        return { };
+    return range.consumeIncludingWhitespace().value();
 }
 
 RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange& range)
@@ -480,7 +524,7 @@ static RefPtr<CSSValue> consumeSingleAxisPosition(CSSParserTokenRange& range, CS
             return value1;
     }
 
-    auto value2 = consumeLengthOrPercent(range, parserMode, ValueRange::All, UnitlessQuirk::Forbid);
+    auto value2 = consumeLengthOrPercent(range, parserMode);
     if (value1 && value2)
         return CSSValuePair::create(value1.releaseNonNull(), value2.releaseNonNull());
 
@@ -499,9 +543,9 @@ static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientPointValue(CSSParserTo
             return CSSPrimitiveValue::create(50., CSSUnitType::CSS_PERCENTAGE);
         return nullptr;
     }
-    RefPtr<CSSPrimitiveValue> result = consumePercent(range, ValueRange::All);
+    RefPtr<CSSPrimitiveValue> result = consumePercent(range);
     if (!result)
-        result = consumeNumber(range, ValueRange::All);
+        result = consumeNumber(range);
     return result;
 }
 
@@ -538,10 +582,10 @@ static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGr
         position = (id == CSSValueFrom) ? 0 : 1;
     } else {
         ASSERT(id == CSSValueColorStop);
-        auto value = consumeNumberOrPercentRaw<NumberOrPercentDividedBy100Transformer>(args);
+        auto value = consumePercentOrNumberRaw(args);
         if (!value)
             return false;
-        position = *value;
+        position = transformRaw<PercentOrNumberDividedBy100Transformer>(*value);
 
         if (!consumeCommaIncludingWhitespace(args))
             return false;
@@ -706,7 +750,7 @@ static std::optional<CSSGradientColorStopList> consumeColorStopList(CSSParserTok
 
 static std::optional<CSSGradientColorStopList> consumeLengthColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, SupportsColorHints supportsColorHints)
 {
-    return consumeColorStopList(range, context, supportsColorHints, [&] { return consumeLengthOrPercent(range, context.mode, ValueRange::All); });
+    return consumeColorStopList(range, context, supportsColorHints, [&] { return consumeLengthOrPercent(range, context.mode); });
 }
 
 static std::optional<CSSGradientColorStopList> consumeAngularColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, SupportsColorHints supportsColorHints)
@@ -1259,10 +1303,11 @@ static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, const CSSPar
     if (!toImageValueOrNone || !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    auto percentage = consumeNumberOrPercentRaw<NumberOrPercentDividedBy100Transformer>(args);
-    if (!percentage)
+    auto value = consumePercentOrNumberRaw(args);
+    if (!value)
         return nullptr;
-    auto percentageValue = CSSPrimitiveValue::create(clampTo<double>(*percentage, 0, 1));
+    auto percentage = transformRaw<PercentOrNumberDividedBy100Transformer>(*value);
+    auto percentageValue = CSSPrimitiveValue::create(clampTo<double>(percentage, 0, 1));
     return CSSCrossfadeValue::create(fromImageValueOrNone.releaseNonNull(), toImageValueOrNone.releaseNonNull(), WTFMove(percentageValue), prefixed);
 }
 
@@ -1387,7 +1432,7 @@ static RefPtr<CSSImageSetOptionValue> consumeImageSetOption(CSSParserTokenRange&
 
     // Optional resolution and type in any order.
     for (size_t i = 0; i < 2 && !range.atEnd(); ++i) {
-        if (auto optionalArgument = consumeMetaConsumer<ImageSetResolutionOrTypeConsumer>(range, { }, ValueRange::NonNegative, { }, { }, { })) {
+        if (auto optionalArgument = consumeImageSetResolutionOrTypeFunction(range, ValueRange::NonNegative)) {
             if ((resolution && optionalArgument->isResolution()) || (type && optionalArgument->isString()))
                 return nullptr;
 
@@ -1611,10 +1656,10 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
             // If we've already parsed these lengths, the given value is invalid as there cannot be two lengths components in a single <shadow> value.
             return nullptr;
         }
-        horizontalOffset = consumeLength(range, context.mode, ValueRange::All);
+        horizontalOffset = consumeLength(range, context.mode);
         if (!horizontalOffset)
             return nullptr;
-        verticalOffset = consumeLength(range, context.mode, ValueRange::All);
+        verticalOffset = consumeLength(range, context.mode);
         if (!verticalOffset)
             return nullptr;
 
@@ -1627,7 +1672,7 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
         }
 
         if (blurRadius && allowSpread)
-            spreadDistance = consumeLength(range, context.mode, ValueRange::All);
+            spreadDistance = consumeLength(range, context.mode);
     }
 
     // In order for this to be a valid <shadow>, at least these lengths must be present.
@@ -3135,14 +3180,14 @@ static bool consumeTranslate3d(CSSParserTokenRange& args, CSSParserMode mode, CS
 {
     unsigned numberOfArguments = 2;
     do {
-        auto parsedValue = consumeLengthOrPercent(args, mode, ValueRange::All);
+        auto parsedValue = consumeLengthOrPercent(args, mode);
         if (!parsedValue)
             return false;
         arguments.append(parsedValue.releaseNonNull());
         if (!consumeCommaIncludingWhitespace(args))
             return false;
     } while (--numberOfArguments);
-    auto parsedValue = consumeLength(args, mode, ValueRange::All);
+    auto parsedValue = consumeLength(args, mode);
     if (!parsedValue)
         return false;
     arguments.append(parsedValue.releaseNonNull());
@@ -3152,7 +3197,7 @@ static bool consumeTranslate3d(CSSParserTokenRange& args, CSSParserMode mode, CS
 static bool consumeNumbers(CSSParserTokenRange& args, CSSValueListBuilder& arguments, unsigned numberOfArguments)
 {
     do {
-        auto parsedValue = consumeNumber(args, ValueRange::All);
+        auto parsedValue = consumeNumber(args);
         if (!parsedValue)
             return false;
         arguments.append(parsedValue.releaseNonNull());
@@ -3165,7 +3210,7 @@ static bool consumeNumbers(CSSParserTokenRange& args, CSSValueListBuilder& argum
 static bool consumeNumbersOrPercents(CSSParserTokenRange& args, CSSValueListBuilder& arguments, unsigned numberOfArguments)
 {
     auto parseNumberAndAppend = [&] {
-        auto parsedValue = consumeNumberOrPercent(args, ValueRange::All);
+        auto parsedValue = consumePercentDividedBy100OrNumber(args);
         if (!parsedValue)
             return false;
         arguments.append(parsedValue.releaseNonNull());
@@ -3229,12 +3274,12 @@ RefPtr<CSSValue> consumeTransformFunction(CSSParserTokenRange& range, const CSSP
     case CSSValueScaleY:
     case CSSValueScaleZ:
     case CSSValueScale:
-        parsedValue = consumeNumberOrPercent(args, ValueRange::All);
+        parsedValue = consumePercentDividedBy100OrNumber(args);
         if (!parsedValue)
             return nullptr;
         if (functionId == CSSValueScale && consumeCommaIncludingWhitespace(args)) {
             arguments.append(*parsedValue);
-            parsedValue = consumeNumberOrPercent(args, ValueRange::All);
+            parsedValue = consumePercentDividedBy100OrNumber(args);
             if (!parsedValue)
                 return nullptr;
         }
@@ -3246,12 +3291,12 @@ RefPtr<CSSValue> consumeTransformFunction(CSSParserTokenRange& range, const CSSP
     case CSSValueTranslateX:
     case CSSValueTranslateY:
     case CSSValueTranslate: {
-        RefPtr primitiveValue = consumeLengthOrPercent(args, context.mode, ValueRange::All);
+        RefPtr primitiveValue = consumeLengthOrPercent(args, context.mode);
         if (!primitiveValue)
             return nullptr;
         if (functionId == CSSValueTranslate && consumeCommaIncludingWhitespace(args)) {
             arguments.append(primitiveValue.releaseNonNull());
-            primitiveValue = consumeLengthOrPercent(args, context.mode, ValueRange::All);
+            primitiveValue = consumeLengthOrPercent(args, context.mode);
             if (!primitiveValue)
                 return nullptr;
             auto isZero = primitiveValue->isZero();
@@ -3262,7 +3307,7 @@ RefPtr<CSSValue> consumeTransformFunction(CSSParserTokenRange& range, const CSSP
         break;
     }
     case CSSValueTranslateZ:
-        parsedValue = consumeLength(args, context.mode, ValueRange::All);
+        parsedValue = consumeLength(args, context.mode);
         break;
     case CSSValueMatrix:
     case CSSValueMatrix3d:
@@ -3321,17 +3366,17 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, CSSParserMode mode
     // value is missing, it defaults to 0px. If three values are given, this specifies a 3d translation, equivalent to the
     // translate3d() function.
 
-    auto x = consumeLengthOrPercent(range, mode, ValueRange::All);
+    auto x = consumeLengthOrPercent(range, mode);
     if (!x)
         return CSSValueList::createSpaceSeparated();
 
     range.consumeWhitespace();
-    auto y = consumeLengthOrPercent(range, mode, ValueRange::All);
+    auto y = consumeLengthOrPercent(range, mode);
     if (!y)
         return CSSValueList::createSpaceSeparated(x.releaseNonNull());
 
     range.consumeWhitespace();
-    auto z = consumeLength(range, mode, ValueRange::All);
+    auto z = consumeLength(range, mode);
 
     // If we have a calc() or non-zero y value, we can directly add it to the list. We only
     // want to add a zero y value if a non-zero z value is specified.
@@ -3362,15 +3407,15 @@ RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, CSSParserMode)
     // If one or two values are given, this specifies a 2d scaling, equivalent to the scale() function.
     // If three values are given, this specifies a 3d scaling, equivalent to the scale3d() function.
 
-    auto x = consumeNumberOrPercent(range, ValueRange::All);
+    auto x = consumePercentDividedBy100OrNumber(range);
     if (!x)
         return CSSValueList::createSpaceSeparated(); // FIXME: This should return nullptr.
     range.consumeWhitespace();
-    auto y = consumeNumberOrPercent(range, ValueRange::All);
+    auto y = consumePercentDividedBy100OrNumber(range);
     RefPtr<CSSPrimitiveValue> z;
     if (y) {
         range.consumeWhitespace();
-        z = consumeNumberOrPercent(range, ValueRange::All);
+        z = consumePercentDividedBy100OrNumber(range);
     }
     if (z && z->doubleValue() != 1.0)
         return CSSValueList::createSpaceSeparated(x.releaseNonNull(), y.releaseNonNull(), z.releaseNonNull());
@@ -3402,7 +3447,7 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSSParserMode mode)
 
     while (!range.atEnd()) {
         // First, attempt to parse a number, which might be in a series of 3 specifying the rotation axis.
-        auto parsedValue = consumeNumber(range, ValueRange::All);
+        auto parsedValue = consumeNumber(range);
         if (parsedValue) {
             // If we've encountered an axis identifier, then this valus is invalid.
             if (axisIdentifier)
@@ -3862,10 +3907,10 @@ static RefPtr<CSSPolygonValue> consumeBasicShapePolygon(CSSParserTokenRange& arg
 
     CSSValueListBuilder points;
     do {
-        auto xLength = consumeLengthOrPercent(args, context.mode, ValueRange::All);
+        auto xLength = consumeLengthOrPercent(args, context.mode);
         if (!xLength)
             return nullptr;
-        auto yLength = consumeLengthOrPercent(args, context.mode, ValueRange::All);
+        auto yLength = consumeLengthOrPercent(args, context.mode);
         if (!yLength)
             return nullptr;
         points.append(xLength.releaseNonNull());
@@ -3977,14 +4022,14 @@ static RefPtr<CSSXywhValue> consumeBasicShapeXywh(CSSParserTokenRange& args, con
 {
     std::array<RefPtr<CSSValue>, 2> insets;
     for (auto& inset : insets) {
-        inset = consumeLengthOrPercent(args, context.mode, ValueRange::All);
+        inset = consumeLengthOrPercent(args, context.mode);
         if (!inset)
             return nullptr;
     }
 
     std::array<RefPtr<CSSValue>, 2> dimensions;
     for (auto& dimension : dimensions) {
-        dimension = consumeLengthOrPercent(args, context.mode, ValueRange::All);
+        dimension = consumeLengthOrPercent(args, context.mode);
         if (!dimension)
             return nullptr;
     }
@@ -3999,7 +4044,7 @@ static RefPtr<CSSInsetShapeValue> consumeBasicShapeInset(CSSParserTokenRange& ar
 {
     std::array<RefPtr<CSSValue>, 4> sides;
     for (unsigned i = 0; i < 4; ++i) {
-        sides[i] = consumeLengthOrPercent(args, context.mode, ValueRange::All);
+        sides[i] = consumeLengthOrPercent(args, context.mode);
         if (!sides[i])
             break;
     }
@@ -4420,7 +4465,7 @@ RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSParserConte
     if (range.atEnd())
         offset = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
     else {
-        offset = consumeLengthOrPercent(range, context.mode, ValueRange::All, UnitlessQuirk::Forbid);
+        offset = consumeLengthOrPercent(range, context.mode);
         if (!offset)
             return nullptr;
     }

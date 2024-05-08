@@ -24,54 +24,92 @@
 
 #include "config.h"
 #include "CSSPropertyParserConsumer+Time.h"
+#include "CSSPropertyParserConsumer+TimeDefinitions.h"
 
 #include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
-#include "CSSPropertyParserConsumer+Length.h"
-#include "CSSPropertyParserConsumer+Meta.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "Length.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-// MARK: Time (CSSPrimitiveValue - maintaining calc)
+std::optional<TimeRaw> validatedRange(TimeRaw value, CSSPropertyParserOptions options)
+{
+    if (options.valueRange == ValueRange::NonNegative && value.value < 0)
+        return std::nullopt;
+    return value;
+}
 
-RefPtr<CSSPrimitiveValue> TimeCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+std::optional<UnevaluatedCalc<TimeRaw>> TimeKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
-    CalcParser parser(range, CalculationCategory::Time, valueRange, symbolTable);
-    return parser.consumeValueIfCategory(CalculationCategory::Time);
+    auto rangeCopy = range;
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Time, symbolTable, options)) {
+        range = rangeCopy;
+        return {{ value.releaseNonNull() }};
+    }
+
+    return std::nullopt;
 }
 
-RefPtr<CSSPrimitiveValue> TimeCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+std::optional<TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == DimensionToken);
 
-    if (valueRange == ValueRange::NonNegative && range.peek().numericValue() < 0)
-        return nullptr;
+    auto& token = range.peek();
 
-    if (auto unit = range.peek().unitType(); unit == CSSUnitType::CSS_MS || unit == CSSUnitType::CSS_S)
-        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().numericValue(), unit);
+    auto unitType = token.unitType();
+    switch (unitType) {
+    case CSSUnitType::CSS_MS:
+    case CSSUnitType::CSS_S:
+        break;
 
-    return nullptr;
+    default:
+        return std::nullopt;
+    }
+
+    if (auto validatedValue = validatedRange(TimeRaw { unitType, token.numericValue() }, options)) {
+        range.consumeIncludingWhitespace();
+        return validatedValue;
+    }
+    return std::nullopt;
 }
 
-RefPtr<CSSPrimitiveValue> TimeCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk)
+std::optional<TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == NumberToken);
 
-    if (unitless == UnitlessQuirk::Allow && shouldAcceptUnitlessValue(range.peek().numericValue(), parserMode, unitless, UnitlessZeroQuirk::Allow)) {
-        if (valueRange == ValueRange::NonNegative && range.peek().numericValue() < 0)
-            return nullptr;
-        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().numericValue(), CSSUnitType::CSS_MS);
+    // FIXME: This check for the unitless quirk outside of shouldAcceptUnitlessValue differs
+    // from other callers like the length consumer, and disallows a parser mode to override
+    // whether the quirk is allowed or not.
+    if (options.unitless != UnitlessQuirk::Allow)
+        return std::nullopt;
+
+    auto numericValue = range.peek().numericValue();
+    if (!shouldAcceptUnitlessValue(numericValue, options))
+        return std::nullopt;
+
+    if (auto validatedValue = validatedRange(TimeRaw { CSSUnitType::CSS_MS, numericValue }, options)) {
+        range.consumeIncludingWhitespace();
+        return validatedValue;
     }
-    return nullptr;
+
+    return std::nullopt;
 }
+
+// MARK: - Consumer functions
 
 RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless)
 {
-    return consumeMetaConsumer<TimeConsumer>(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Forbid);
+    const auto options = CSSPropertyParserOptions {
+        .parserMode = parserMode,
+        .valueRange = valueRange,
+        .unitless = unitless
+    };
+    return CSSPrimitiveValueResolver<TimeRaw>::consumeAndResolve(range, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

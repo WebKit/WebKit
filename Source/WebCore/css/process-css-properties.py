@@ -3974,7 +3974,6 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParserConsumer+Integer.h",
                     "CSSPropertyParserConsumer+Length.h",
                     "CSSPropertyParserConsumer+List.h",
-                    "CSSPropertyParserConsumer+None.h",
                     "CSSPropertyParserConsumer+Number.h",
                     "CSSPropertyParserConsumer+Percent.h",
                     "CSSPropertyParserConsumer+Primitives.h",

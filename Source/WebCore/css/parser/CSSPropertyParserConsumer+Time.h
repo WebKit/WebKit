@@ -24,54 +24,20 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include <optional>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class CSSCalcSymbolTable;
 class CSSPrimitiveValue;
-class CSSParserTokenRange;
-
-enum CSSParserMode : uint8_t;
-
-enum class ValueRange : uint8_t;
 
 namespace CSSPropertyParserHelpers {
 
-// MARK: - Primitive value consumers for callers that know the token type.
-
-// MARK: Time (CSSPrimitiveValue - maintaining calc)
-
-struct TimeCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-struct TimeCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer {
-    static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-struct TimeCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-// MARK: - Consumer definitions.
-
-struct TimeConsumer {
-    using Result = RefPtr<CSSPrimitiveValue>;
-
-    using FunctionToken = TimeCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer;
-    using NumberToken = TimeCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer;
-    using DimensionToken = TimeCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer;
-};
-
 // MARK: - Consumer functions
 
-RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
+RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -32,13 +32,15 @@
 #include "CSSParserFastPaths.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
-#include "CSSPropertyParserConsumer+Angle.h"
+#include "CSSPropertyParserConsumer+AngleDefinitions.h"
 #include "CSSPropertyParserConsumer+Ident.h"
-#include "CSSPropertyParserConsumer+Meta.h"
-#include "CSSPropertyParserConsumer+None.h"
-#include "CSSPropertyParserConsumer+Number.h"
-#include "CSSPropertyParserConsumer+Percent.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+NoneDefinitions.h"
+#include "CSSPropertyParserConsumer+NumberDefinitions.h"
+#include "CSSPropertyParserConsumer+PercentDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserConsumer+RawResolver.h"
+#include "CSSPropertyParserConsumer+SymbolDefinitions.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSResolvedColorMix.h"
 #include "CSSTokenizer.h"
@@ -254,11 +256,28 @@ static GetColorType<Descriptor> normalizeRelativeComponents(CSSColorParseType<De
 
 // MARK: - Generic component consumption
 
-// Convenience that invokes a Consumer operator for the component at `Index`.
-template<typename Descriptor, unsigned Index, typename... Arguments>
-static std::optional<GetComponentResult<Descriptor, Index>> consumeComponent(Arguments&&... arguments)
+// Conveniences that invokes a Consumer operator for the component at `Index`.
+
+template<typename... Ts> using RawResolverWrapper = RawResolver<Ts...>;
+
+template<typename Descriptor, unsigned Index>
+static std::optional<GetComponentResult<Descriptor, Index>> consumeAbsoluteComponent(CSSParserTokenRange& range, ColorParserState& state)
 {
-    return ConsumerLookup<GetComponentResult<Descriptor, Index>>()(arguments...);
+    using TypeList = GetComponentResultTypeList<Descriptor, Index>;
+    using Resolver = brigand::wrap<TypeList, RawResolverWrapper>;
+
+    return Resolver::consumeAndResolve(range, { }, { .parserMode = state.mode });
+}
+
+template<typename Descriptor, unsigned Index>
+static std::optional<GetComponentResult<Descriptor, Index>> consumeRelativeComponent(CSSParserTokenRange& range, ColorParserState& state, const CSSCalcSymbolTable& symbolTable)
+{
+    // Append `SymbolRaw` to the TypeList to allow unadorned symbols from the symbol
+    // table to be consumed.
+    using TypeList = brigand::append<GetComponentResultTypeList<Descriptor, Index>, brigand::list<SymbolRaw>>;
+    using Resolver = brigand::wrap<TypeList, RawResolverWrapper>;
+
+    return Resolver::consumeAndResolve(range, symbolTable, { .parserMode = state.mode });
 }
 
 template<typename Descriptor>
@@ -273,7 +292,7 @@ static bool consumeAlphaDelimiter(CSSParserTokenRange& args)
 template<typename Descriptor>
 static std::optional<CSSColorParseType<Descriptor>> consumeAbsoluteComponents(CSSParserTokenRange& args, ColorParserState& state)
 {
-    auto c1 = consumeComponent<Descriptor, 0>(args, state.mode);
+    auto c1 = consumeAbsoluteComponent<Descriptor, 0>(args, state);
     if (!c1)
         return std::nullopt;
 
@@ -282,7 +301,7 @@ static std::optional<CSSColorParseType<Descriptor>> consumeAbsoluteComponents(CS
             return std::nullopt;
     }
 
-    auto c2 = consumeComponent<Descriptor, 1>(args, state.mode);
+    auto c2 = consumeAbsoluteComponent<Descriptor, 1>(args, state);
     if (!c2)
         return std::nullopt;
 
@@ -291,13 +310,13 @@ static std::optional<CSSColorParseType<Descriptor>> consumeAbsoluteComponents(CS
             return std::nullopt;
     }
 
-    auto c3 = consumeComponent<Descriptor, 2>(args, state.mode);
+    auto c3 = consumeAbsoluteComponent<Descriptor, 2>(args, state);
     if (!c3)
         return std::nullopt;
 
     std::optional<GetComponentResult<Descriptor, 3>> alpha;
     if (consumeAlphaDelimiter<Descriptor>(args)) {
-        alpha = consumeComponent<Descriptor, 3>(args, state.mode);
+        alpha = consumeAbsoluteComponent<Descriptor, 3>(args, state);
         if (!alpha)
             return std::nullopt;
     }
@@ -312,7 +331,7 @@ static std::optional<CSSColorParseType<Descriptor>> consumeAbsoluteComponents(CS
 template<typename Descriptor>
 static std::optional<CSSColorParseType<Descriptor>> consumeAbsoluteComponents(CSSParserTokenRange& args, ColorParserState& state, GetComponentResult<Descriptor, 0> c1)
 {
-    auto c2 = consumeComponent<Descriptor, 1>(args, state.mode);
+    auto c2 = consumeAbsoluteComponent<Descriptor, 1>(args, state);
     if (!c2)
         return std::nullopt;
 
@@ -321,13 +340,13 @@ static std::optional<CSSColorParseType<Descriptor>> consumeAbsoluteComponents(CS
             return std::nullopt;
     }
 
-    auto c3 = consumeComponent<Descriptor, 2>(args, state.mode);
+    auto c3 = consumeAbsoluteComponent<Descriptor, 2>(args, state);
     if (!c3)
         return std::nullopt;
 
     std::optional<GetComponentResult<Descriptor, 3>> alpha;
     if (consumeAlphaDelimiter<Descriptor>(args)) {
-        alpha = consumeComponent<Descriptor, 3>(args, state.mode);
+        alpha = consumeAbsoluteComponent<Descriptor, 3>(args, state);
         if (!alpha)
             return std::nullopt;
     }
@@ -350,19 +369,19 @@ static std::optional<CSSColorParseType<Descriptor>> consumeRelativeComponents(CS
         { std::get<3>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
     };
 
-    auto c1 = consumeComponent<Descriptor, 0>(args, state.mode, symbolTable);
+    auto c1 = consumeRelativeComponent<Descriptor, 0>(args, state, symbolTable);
     if (!c1)
         return std::nullopt;
-    auto c2 = consumeComponent<Descriptor, 1>(args, state.mode, symbolTable);
+    auto c2 = consumeRelativeComponent<Descriptor, 1>(args, state, symbolTable);
     if (!c2)
         return std::nullopt;
-    auto c3 = consumeComponent<Descriptor, 2>(args, state.mode, symbolTable);
+    auto c3 = consumeRelativeComponent<Descriptor, 2>(args, state, symbolTable);
     if (!c3)
         return std::nullopt;
 
     std::optional<GetComponentResult<Descriptor, 3>> alpha;
     if (consumeSlashIncludingWhitespace(args)) {
-        alpha = consumeComponent<Descriptor, 3>(args, state.mode, symbolTable);
+        alpha = consumeRelativeComponent<Descriptor, 3>(args, state, symbolTable);
         if (!alpha)
             return std::nullopt;
     }
@@ -489,7 +508,7 @@ static Color parseRGBFunctionParametersRaw(CSSParserTokenRange& range, ColorPars
 
     using Descriptor = RGBFunctionModernAbsolute;
 
-    auto red = consumeComponent<Descriptor, 0>(args, state.mode);
+    auto red = consumeAbsoluteComponent<Descriptor, 0>(args, state);
     if (!red)
         return { };
 
@@ -542,7 +561,7 @@ static Color parseHSLFunctionParametersRaw(CSSParserTokenRange& range, ColorPars
 
     using Descriptor = HSLFunctionModern;
 
-    auto hue = consumeComponent<Descriptor, 0>(args, state.mode);
+    auto hue = consumeAbsoluteComponent<Descriptor, 0>(args, state);
     if (!hue)
         return { };
 
@@ -851,7 +870,7 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
     RefPtr<CSSPrimitiveValue> color;
     RefPtr<CSSPrimitiveValue> percentage;
 
-    if (auto percent = consumePercent(args, ValueRange::All)) {
+    if (auto percent = consumePercent(args)) {
         if (!percent->isCalculated()) {
             auto value = percent->doubleValue();
             if (value < 0.0 || value > 100.0)
@@ -865,7 +884,7 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
         return std::nullopt;
 
     if (!percentage) {
-        if (auto percent = consumePercent(args, ValueRange::All)) {
+        if (auto percent = consumePercent(args)) {
             if (!percent->isCalculated()) {
                 auto value = percent->doubleValue();
                 if (value < 0.0 || value > 100.0)

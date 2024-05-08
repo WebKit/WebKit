@@ -24,40 +24,41 @@
 
 #include "config.h"
 #include "CSSPropertyParserConsumer+Length.h"
+#include "CSSPropertyParserConsumer+LengthDefinitions.h"
 
 #include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+RawResolver.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-// MARK: Length (raw)
-
-static std::optional<double> validatedLengthRaw(double value, ValueRange valueRange)
+std::optional<LengthRaw> validatedRange(LengthRaw value, CSSPropertyParserOptions options)
 {
-    if (valueRange == ValueRange::NonNegative && value < 0)
+    if (options.valueRange == ValueRange::NonNegative && value.value < 0)
         return std::nullopt;
-    if (std::isinf(value))
+    if (std::isinf(value.value))
         return std::nullopt;
     return value;
 }
 
-std::optional<LengthRaw> LengthRawKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+std::optional<UnevaluatedCalc<LengthRaw>> LengthKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Length, symbolTable, valueRange)) {
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Length, symbolTable, options)) {
         range = rangeCopy;
-
-        // FIXME: Should this validate the calc value as is done for the NumberRaw variant?
-        return { { value->primitiveType(), value->doubleValue() } };
+        return {{ value.releaseNonNull() }};
     }
     return std::nullopt;
 }
 
-std::optional<LengthRaw> LengthRawKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk, UnitlessZeroQuirk)
+std::optional<LengthRaw> LengthKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == DimensionToken);
 
@@ -66,7 +67,7 @@ std::optional<LengthRaw> LengthRawKnownTokenTypeDimensionConsumer::consume(CSSPa
     auto unitType = token.unitType();
     switch (unitType) {
     case CSSUnitType::CSS_QUIRKY_EM:
-        if (!isUASheetBehavior(parserMode))
+        if (!isUASheetBehavior(options.parserMode))
             return std::nullopt;
         FALLTHROUGH;
     case CSSUnitType::CSS_EM:
@@ -123,91 +124,88 @@ std::optional<LengthRaw> LengthRawKnownTokenTypeDimensionConsumer::consume(CSSPa
         return std::nullopt;
     }
 
-    if (auto validatedValue = validatedLengthRaw(token.numericValue(), valueRange)) {
+    if (auto validatedValue = validatedRange(LengthRaw { unitType, token.numericValue() }, options)) {
         range.consumeIncludingWhitespace();
-        return { { unitType, *validatedValue } };
+        return validatedValue;
     }
     return std::nullopt;
 }
 
-std::optional<LengthRaw> LengthRawKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
+std::optional<LengthRaw> LengthKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == NumberToken);
 
-    auto& token = range.peek();
+    auto numericValue = range.peek().numericValue();
 
-    if (!shouldAcceptUnitlessValue(token.numericValue(), parserMode, unitless, unitlessZero))
+    if (!shouldAcceptUnitlessValue(numericValue, options))
         return std::nullopt;
 
-    if (auto validatedValue = validatedLengthRaw(token.numericValue(), valueRange)) {
+    if (auto validatedValue = validatedRange(LengthRaw { CSSUnitType::CSS_PX, numericValue }, options)) {
         range.consumeIncludingWhitespace();
-        return { { CSSUnitType::CSS_PX, *validatedValue } };
+        return validatedValue;
     }
     return std::nullopt;
 }
 
-// MARK: Length (CSSPrimitiveValue - maintaining calc)
-
-RefPtr<CSSPrimitiveValue> LengthCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
-{
-    ASSERT(range.peek().type() == FunctionToken);
-
-    CalcParser parser(range, CalculationCategory::Length, valueRange, symbolTable);
-    return parser.consumeValueIfCategory(CalculationCategory::Length);
-}
-
-RefPtr<CSSPrimitiveValue> LengthCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
-{
-    ASSERT(range.peek().type() == DimensionToken);
-
-    if (auto lengthRaw = LengthRawKnownTokenTypeDimensionConsumer::consume(range, symbolTable, valueRange, parserMode, unitless, unitlessZero))
-        return CSSPrimitiveValue::create(lengthRaw->value, lengthRaw->type);
-    return nullptr;
-}
-
-RefPtr<CSSPrimitiveValue> LengthCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
-{
-    ASSERT(range.peek().type() == NumberToken);
-
-    if (auto lengthRaw = LengthRawKnownTokenTypeNumberConsumer::consume(range, symbolTable, valueRange, parserMode, unitless, unitlessZero))
-        return CSSPrimitiveValue::create(lengthRaw->value, lengthRaw->type);
-    return nullptr;
-}
 
 // MARK: - Consumer functions
 
 RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless)
 {
-    return consumeMetaConsumer<LengthConsumer>(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Allow);
+    const auto options = CSSPropertyParserOptions {
+        .parserMode = parserMode,
+        .valueRange = valueRange,
+        .unitless = unitless,
+        .unitlessZero = UnitlessZeroQuirk::Allow
+    };
+    return CSSPrimitiveValueResolver<LengthRaw>::consumeAndResolve(range, { }, options);
 }
 
 std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange& range, CSSParserMode parserMode)
 {
-    return consumeMetaConsumer<LengthOrPercentRawConsumer<RawIdentityTransformer<LengthOrPercentRaw>>>(range, { }, ValueRange::NonNegative, parserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+    const auto options = CSSPropertyParserOptions {
+        .parserMode = parserMode,
+        .valueRange = ValueRange::NonNegative
+    };
+    return RawResolver<LengthRaw, PercentRaw>::consumeAndResolve(range, { }, options);
 }
 
 // FIXME: This doesn't work with the current scheme due to the NegativePercentagePolicy parameter
-RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentagePolicy)
+RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentage)
 {
     auto& token = range.peek();
+
+    const auto options = CSSPropertyParserOptions {
+        .parserMode = parserMode,
+        .valueRange = valueRange,
+        .negativePercentage = negativePercentage,
+        .unitless = unitless,
+        .unitlessZero = unitlessZero
+    };
 
     switch (token.type()) {
     case FunctionToken: {
         // FIXME: Should this be using trying to generate the calc with both Length and Percent destination category types?
-        CalcParser parser(range, CalculationCategory::Length, valueRange, { }, negativePercentagePolicy);
-        if (auto calculation = parser.value(); calculation && canConsumeCalcValue(calculation->category(), parserMode))
+        CalcParser parser(range, CalculationCategory::Length, { }, options);
+        if (auto calculation = parser.value(); calculation && canConsumeCalcValue(calculation->category(), options))
             return parser.consumeValue();
         break;
     }
 
     case DimensionToken:
-        return LengthCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer::consume(range, { }, valueRange, parserMode, unitless, unitlessZero);
+        if (auto value = LengthKnownTokenTypeDimensionConsumer::consume(range, { }, options))
+            return CSSPrimitiveValueResolver<LengthRaw>::resolve(*value, { }, options);
+        break;
 
     case NumberToken:
-        return LengthCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer::consume(range, { }, valueRange, parserMode, unitless, unitlessZero);
+        if (auto value = LengthKnownTokenTypeNumberConsumer::consume(range, { }, options))
+            return CSSPrimitiveValueResolver<LengthRaw>::resolve(*value, { }, options);
+        break;
 
     case PercentageToken:
-        return PercentCSSPrimitiveValueWithCalcWithKnownTokenTypePercentConsumer::consume(range, { }, valueRange, parserMode, unitless, unitlessZero);
+        if (auto value = PercentKnownTokenTypePercentConsumer::consume(range, { }, options))
+            return CSSPrimitiveValueResolver<PercentRaw>::resolve(*value, { }, options);
+        break;
 
     default:
         break;

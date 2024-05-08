@@ -24,125 +24,106 @@
 
 #include "config.h"
 #include "CSSPropertyParserConsumer+Angle.h"
-#include "CSSPropertyParserConsumer+Length.h"
+#include "CSSPropertyParserConsumer+AngleDefinitions.h"
 
 #include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+RawResolver.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-// MARK: Angle (raw)
+std::optional<AngleRaw> validatedRange(AngleRaw value, CSSPropertyParserOptions options)
+{
+    if (options.valueRange == ValueRange::NonNegative && value.value < 0)
+        return std::nullopt;
+    return value;
+}
 
-std::optional<AngleRaw> AngleRawKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+std::optional<UnevaluatedCalc<AngleRaw>> AngleKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Angle, symbolTable, valueRange)) {
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Angle, symbolTable, options)) {
         range = rangeCopy;
-        return { { value->primitiveType(), value->doubleValue() } };
+        return {{ value.releaseNonNull() }};
     }
     return std::nullopt;
 }
 
-std::optional<AngleRaw> AngleRawKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+std::optional<AngleRaw> AngleKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == DimensionToken);
 
-    auto unitType = range.peek().unitType();
+    auto& token = range.peek();
+
+    auto unitType = token.unitType();
     switch (unitType) {
     case CSSUnitType::CSS_DEG:
     case CSSUnitType::CSS_RAD:
     case CSSUnitType::CSS_GRAD:
     case CSSUnitType::CSS_TURN:
-        return { { unitType, range.consumeIncludingWhitespace().numericValue() } };
-    default:
         break;
+    default:
+        return std::nullopt;
+    }
+
+    if (auto validatedValue = validatedRange(AngleRaw { unitType, token.numericValue() }, options)) {
+        range.consumeIncludingWhitespace();
+        return validatedValue;
     }
 
     return std::nullopt;
 }
 
-std::optional<AngleRaw> AngleRawKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
+std::optional<AngleRaw> AngleKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == NumberToken);
 
-    if (shouldAcceptUnitlessValue(range.peek().numericValue(), parserMode, unitless, unitlessZero))
-        return { { CSSUnitType::CSS_DEG, range.consumeIncludingWhitespace().numericValue() } };
-    return std::nullopt;
-}
+    auto numericValue = range.peek().numericValue();
+    if (!shouldAcceptUnitlessValue(numericValue, options))
+        return std::nullopt;
 
-// MARK: Angle (CSSPrimitiveValue - maintaining calc)
-
-RefPtr<CSSPrimitiveValue> AngleCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
-{
-    ASSERT(range.peek().type() == FunctionToken);
-
-    CalcParser parser(range, CalculationCategory::Angle, valueRange, symbolTable);
-    return parser.consumeValueIfCategory(CalculationCategory::Angle);
-}
-
-RefPtr<CSSPrimitiveValue> AngleCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
-{
-    ASSERT(range.peek().type() == DimensionToken);
-
-    if (auto angleRaw = AngleRawKnownTokenTypeDimensionConsumer::consume(range, symbolTable, valueRange, parserMode, unitless, unitlessZero))
-        return CSSPrimitiveValue::create(angleRaw->value, angleRaw->type);
-    return nullptr;
-}
-
-RefPtr<CSSPrimitiveValue> AngleCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
-{
-    ASSERT(range.peek().type() == NumberToken);
-
-    if (auto angleRaw = AngleRawKnownTokenTypeNumberConsumer::consume(range, symbolTable, valueRange, parserMode, unitless, unitlessZero))
-        return CSSPrimitiveValue::create(angleRaw->value, angleRaw->type);
-    return nullptr;
-}
-
-// MARK: Specialized combination consumers.
-
-std::optional<AngleOrNumberRaw> AngleOrNumberRawKnownTokenTypeIdentConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
-{
-    ASSERT(range.peek().type() == IdentToken);
-
-    if (auto variable = symbolTable.get(range.peek().id())) {
-        switch (variable->type) {
-        case CSSUnitType::CSS_DEG:
-        case CSSUnitType::CSS_RAD:
-        case CSSUnitType::CSS_GRAD:
-        case CSSUnitType::CSS_TURN:
-            range.consumeIncludingWhitespace();
-            return AngleRaw { variable->type, variable->value };
-
-        case CSSUnitType::CSS_NUMBER:
-            range.consumeIncludingWhitespace();
-            return NumberRaw { variable->value };
-
-        default:
-            break;
-        }
+    if (auto validatedValue = validatedRange(AngleRaw { CSSUnitType::CSS_DEG, numericValue }, options)) {
+        range.consumeIncludingWhitespace();
+        return validatedValue;
     }
 
     return std::nullopt;
 }
-
 
 // MARK: - Consumer functions
 
 std::optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
-    return consumeMetaConsumer<AngleRawConsumer<RawIdentityTransformer<AngleRaw>>>(range, { }, ValueRange::All, parserMode, unitless, unitlessZero);
+    const auto options = CSSPropertyParserOptions {
+        .parserMode = parserMode,
+        .unitless = unitless,
+        .unitlessZero = unitlessZero
+    };
+    return RawResolver<AngleRaw>::consumeAndResolve(range, { }, options);
 }
 
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
-    return consumeMetaConsumer<AngleConsumer>(range, { }, ValueRange::All, parserMode, unitless, unitlessZero);
+    const auto options = CSSPropertyParserOptions {
+        .parserMode = parserMode,
+        .unitless = unitless,
+        .unitlessZero = unitlessZero
+    };
+    return CSSPrimitiveValueResolver<AngleRaw>::consumeAndResolve(range, { }, options);
 }
 
 RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode)
 {
-    return consumeMetaConsumer<AngleOrPercentConsumer>(range, { }, ValueRange::All, parserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    const auto options = CSSPropertyParserOptions {
+        .parserMode = parserMode,
+        .unitlessZero = UnitlessZeroQuirk::Allow
+    };
+    return CSSPrimitiveValueResolver<AngleRaw, PercentRaw>::consumeAndResolve(range, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

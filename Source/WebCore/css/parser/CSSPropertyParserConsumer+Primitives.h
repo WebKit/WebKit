@@ -24,47 +24,44 @@
 
 #pragma once
 
-#include "CSSUnits.h"
-#include <variant>
+#include "CSSParserMode.h"
+#include "CSSPropertyParserConsumer+RawTypes.h"
+#include "Length.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class CSSParserTokenRange;
+class CSSCalcValue;
 
 namespace CSSPropertyParserHelpers {
 
-struct NoneRaw { };
+bool equal(const Ref<CSSCalcValue>&, const Ref<CSSCalcValue>&);
 
-struct NumberRaw {
-    double value;
+template<typename T> struct UnevaluatedCalc {
+    using RawType = T;
+    Ref<CSSCalcValue> calc;
+
+    inline bool operator==(const UnevaluatedCalc<T>& other)
+    {
+        return equal(calc, other.calc);
+    }
 };
-
-struct PercentRaw {
-    double value;
-};
-
-struct AngleRaw {
-    CSSUnitType type;
-    double value;
-};
-
-struct LengthRaw {
-    CSSUnitType type;
-    double value;
-};
-
-using LengthOrPercentRaw = std::variant<LengthRaw, PercentRaw>;
-using NumberOrPercentRaw = std::variant<NumberRaw, PercentRaw>;
-using NumberOrNoneRaw = std::variant<NumberRaw, NoneRaw>;
-using PercentOrNoneRaw = std::variant<PercentRaw, NoneRaw>;
-using NumberOrPercentOrNoneRaw = std::variant<NumberRaw, PercentRaw, NoneRaw>;
-using AngleOrNumberRaw = std::variant<AngleRaw, NumberRaw>;
-using AngleOrNumberOrNoneRaw = std::variant<AngleRaw, NumberRaw, NoneRaw>;
 
 enum class NegativePercentagePolicy : bool { Forbid, Allow };
 enum class UnitlessQuirk : bool { Allow, Forbid };
 enum class UnitlessZeroQuirk : bool { Allow, Forbid };
-enum class IntegerValueRange : uint8_t { All, Positive, NonNegative };
+
+struct CSSPropertyParserOptions {
+    CSSParserMode parserMode                    { HTMLStandardMode };
+    ValueRange valueRange                       { ValueRange::All };
+    NegativePercentagePolicy negativePercentage { NegativePercentagePolicy::Forbid };
+    UnitlessQuirk unitless                      { UnitlessQuirk::Forbid };
+    UnitlessZeroQuirk unitlessZero              { UnitlessZeroQuirk::Forbid };
+};
+
+// FIXME: Presentational HTML attributes shouldn't use the CSS parser for lengths.
+bool shouldAcceptUnitlessValue(double, CSSPropertyParserOptions);
 
 // MARK: - Comma
 // FIXME: Rename to `consumeComma`.

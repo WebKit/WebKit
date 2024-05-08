@@ -24,44 +24,16 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include <optional>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
 
-enum class ValueRange : uint8_t;
-
-enum CSSParserMode : uint8_t;
-
 namespace CSSPropertyParserHelpers {
-
-// MARK: - Primitive value consumers for callers that know the token type.
-
-// MARK: Resolution (CSSPrimitiveValue - maintaining calc)
-
-struct ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-struct ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer {
-    static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-// MARK: - Consumer definitions.
-
-struct ResolutionConsumer {
-    using Result = RefPtr<CSSPrimitiveValue>;
-
-    using FunctionToken = ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer;
-    using DimensionToken = ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer;
-};
 
 // MARK: - Consumer functions
 

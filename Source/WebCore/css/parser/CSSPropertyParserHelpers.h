@@ -64,6 +64,8 @@ RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
 
 RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLowercase = false);
 RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange&, bool shouldLowercase = false);
+
+StringView consumeStringRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
 
 StringView consumeURLRaw(CSSParserTokenRange&);

@@ -24,103 +24,65 @@
 
 #include "config.h"
 #include "CSSPropertyParserConsumer+Number.h"
+#include "CSSPropertyParserConsumer+NumberDefinitions.h"
 
 #include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+RawResolver.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-// MARK: Number (Raw)
-
-std::optional<NumberRaw> validatedNumberRaw(double value, ValueRange valueRange)
+std::optional<NumberRaw> validatedRange(NumberRaw value, CSSPropertyParserOptions options)
 {
-    if (valueRange == ValueRange::NonNegative && value < 0)
+    if (options.valueRange == ValueRange::NonNegative && value.value < 0)
         return std::nullopt;
-    return {{ value }};
+    return value;
 }
 
-std::optional<NumberRaw> NumberRawKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+std::optional<UnevaluatedCalc<NumberRaw>> NumberKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, symbolTable, valueRange)) {
-        if (auto validatedValue = validatedNumberRaw(value->doubleValue(), valueRange)) {
-            range = rangeCopy;
-            return validatedValue;
-        }
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, symbolTable, options)) {
+        range = rangeCopy;
+        return {{ value.releaseNonNull() }};
     }
 
     return std::nullopt;
 }
 
-std::optional<NumberRaw> NumberRawKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+std::optional<NumberRaw> NumberKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == NumberToken);
 
-    if (auto validatedValue = validatedNumberRaw(range.peek().numericValue(), valueRange)) {
+    if (auto validatedValue = validatedRange(NumberRaw { range.peek().numericValue() }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }
     return std::nullopt;
 }
 
-std::optional<NumberRaw> NumberRawKnownTokenTypeIdentConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
-{
-    ASSERT(range.peek().type() == IdentToken);
-
-    if (auto variable = symbolTable.get(range.peek().id())) {
-        switch (variable->type) {
-        case CSSUnitType::CSS_NUMBER:
-            if (auto validatedValue = validatedNumberRaw(variable->value, valueRange)) {
-                range.consumeIncludingWhitespace();
-                return validatedValue;
-            }
-            break;
-
-        default:
-            break;
-        }
-    }
-    return std::nullopt;
-}
-
-// MARK: Number (CSSPrimitiveValue - maintaining calc)
-
-RefPtr<CSSPrimitiveValue> NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
-{
-    ASSERT(range.peek().type() == FunctionToken);
-
-    CalcParser parser(range, CalculationCategory::Number, valueRange, symbolTable);
-    return parser.consumeValueIfCategory(CalculationCategory::Number);
-}
-
-RefPtr<CSSPrimitiveValue> NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
-{
-    ASSERT(range.peek().type() == NumberToken);
-
-    auto token = range.peek();
-
-    if (auto validatedValue = validatedNumberRaw(token.numericValue(), valueRange)) {
-        auto unitType = token.unitType();
-        range.consumeIncludingWhitespace();
-        return CSSPrimitiveValue::create(validatedValue->value, unitType);
-    }
-    return nullptr;
-}
-
 // MARK: - Consumer functions
 
 std::optional<NumberRaw> consumeNumberRaw(CSSParserTokenRange& range, ValueRange valueRange)
 {
-    return consumeMetaConsumer<NumberRawConsumer<RawIdentityTransformer<NumberRaw>>>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+    const auto options = CSSPropertyParserOptions {
+        .valueRange = valueRange
+    };
+    return RawResolver<NumberRaw>::consumeAndResolve(range, { }, options);
 }
 
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange valueRange)
 {
-    return consumeMetaConsumer<NumberConsumer>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+    const auto options = CSSPropertyParserOptions {
+        .valueRange = valueRange
+    };
+    return CSSPrimitiveValueResolver<NumberRaw>::consumeAndResolve(range, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

@@ -25,10 +25,29 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 
+#include "CSSCalcValue.h"
 #include "CSSParserTokenRange.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
+
+bool shouldAcceptUnitlessValue(double value, CSSPropertyParserOptions options)
+{
+    // FIXME: Presentational HTML attributes shouldn't use the CSS parser for lengths.
+
+    if (!value && options.unitlessZero == UnitlessZeroQuirk::Allow)
+        return true;
+
+    if (isUnitlessValueParsingEnabledForMode(options.parserMode))
+        return true;
+
+    return options.parserMode == HTMLQuirksMode && options.unitless == UnitlessQuirk::Allow;
+}
+
+bool equal(const Ref<CSSCalcValue>& a, const Ref<CSSCalcValue>& b)
+{
+    return a->equals(b.get());
+}
 
 bool consumeCommaIncludingWhitespace(CSSParserTokenRange& range)
 {

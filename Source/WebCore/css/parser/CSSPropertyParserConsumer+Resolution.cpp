@@ -24,45 +24,72 @@
 
 #include "config.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
+#include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
 
 #include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSParserMode.h"
-#include "CSSPropertyParserConsumer+Meta.h"
-
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "Length.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-// MARK: Resolution (CSSPrimitiveValue - maintaining calc)
+std::optional<ResolutionRaw> validatedRange(ResolutionRaw value, CSSPropertyParserOptions options)
+{
+    if (options.valueRange == ValueRange::NonNegative && value.value < 0)
+        return std::nullopt;
+    return value;
+}
 
-RefPtr<CSSPrimitiveValue> ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+std::optional<UnevaluatedCalc<ResolutionRaw>> ResolutionKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
-    CalcParser parser(range, CalculationCategory::Resolution, valueRange, symbolTable);
-    return parser.consumeValueIfCategory(CalculationCategory::Resolution);
+    auto rangeCopy = range;
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Resolution, symbolTable, options)) {
+        range = rangeCopy;
+        return {{ value.releaseNonNull() }};
+    }
+
+    return std::nullopt;
 }
 
-RefPtr<CSSPrimitiveValue> ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+std::optional<ResolutionRaw> ResolutionKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == DimensionToken);
 
-    if (auto unit = range.peek().unitType(); unit == CSSUnitType::CSS_DPPX || unit == CSSUnitType::CSS_X || unit == CSSUnitType::CSS_DPI || unit == CSSUnitType::CSS_DPCM) {
-        if (valueRange == ValueRange::NonNegative && range.peek().numericValue() < 0)
-            return nullptr;
-        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().numericValue(), unit);
+    auto& token = range.peek();
+
+    auto unitType = token.unitType();
+    switch (unitType) {
+    case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_X:
+    case CSSUnitType::CSS_DPI:
+    case CSSUnitType::CSS_DPCM:
+        break;
+
+    default:
+        return std::nullopt;
     }
 
-    return nullptr;
+    if (auto validatedValue = validatedRange(ResolutionRaw { unitType, token.numericValue() }, options)) {
+        range.consumeIncludingWhitespace();
+        return validatedValue;
+    }
+
+    return std::nullopt;
 }
 
 // MARK: - Consumer functions
 
 RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range)
 {
-    return consumeMetaConsumer<ResolutionConsumer>(range, { }, ValueRange::NonNegative, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+    const auto options = CSSPropertyParserOptions {
+        .valueRange = ValueRange::NonNegative
+    };
+    return CSSPrimitiveValueResolver<ResolutionRaw>::consumeAndResolve(range, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

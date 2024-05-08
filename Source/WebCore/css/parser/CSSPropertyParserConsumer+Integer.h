@@ -24,123 +24,17 @@
 
 #pragma once
 
-#include "CSSCalcParser.h"
-#include "CSSCalcSymbolTable.h"
-#include "CSSCalcValue.h"
-#include "CSSParserMode.h"
-#include "CSSParserToken.h"
-#include "CSSParserTokenRange.h"
-#include "CSSPrimitiveValue.h"
-#include "CSSPropertyParserConsumer+Meta.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CalculationCategory.h"
-#include "Length.h"
-#include <limits>
 #include <optional>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class CSSParserTokenRange;
+class CSSPrimitiveValue;
+
 namespace CSSPropertyParserHelpers {
 
-// MARK: - Primitive value consumers for callers that know the token type.
-
-// MARK: Integer (Raw)
-
-constexpr double computeMinimumValue(IntegerValueRange range)
-{
-    switch (range) {
-    case IntegerValueRange::All:
-        return -std::numeric_limits<double>::infinity();
-    case IntegerValueRange::NonNegative:
-        return 0.0;
-    case IntegerValueRange::Positive:
-        return 1.0;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-
-    return 0.0;
-}
-
-// MARK: Integer (Raw)
-
-template<typename IntType, IntegerValueRange integerRange>
-struct IntegerTypeRawKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<IntType> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
-    {
-        ASSERT(range.peek().type() == FunctionToken);
-
-        auto rangeCopy = range;
-        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, { }, ValueRange::All)) {
-            range = rangeCopy;
-            // https://drafts.csswg.org/css-values-4/#integers
-            // Rounding to the nearest integer requires rounding in the direction of +∞ when the fractional portion is exactly 0.5.
-            return clampTo<IntType>(std::floor(std::max(value->doubleValue(), computeMinimumValue(integerRange)) + 0.5));
-        }
-
-        return std::nullopt;
-    }
-};
-
-template<typename IntType, IntegerValueRange integerRange>
-struct IntegerTypeRawKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<IntType> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
-    {
-        ASSERT(range.peek().type() == NumberToken);
-
-        if (range.peek().numericValueType() == NumberValueType || range.peek().numericValue() < computeMinimumValue(integerRange))
-            return std::nullopt;
-        return clampTo<IntType>(range.consumeIncludingWhitespace().numericValue());
-    }
-};
-
-// MARK: Integer (CSSPrimitiveValue - maintaining calc)
-
-template<typename IntType, IntegerValueRange integerRange>
-struct IntegerTypeKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
-    {
-        ASSERT(range.peek().type() == FunctionToken);
-
-        if (auto integer = IntegerTypeRawKnownTokenTypeFunctionConsumer<IntType, integerRange>::consume(range, symbolTable, valueRange, parserMode, unitless, unitlessZero))
-            return CSSPrimitiveValue::createInteger(*integer);
-        return nullptr;
-    }
-};
-
-template<typename IntType, IntegerValueRange integerRange>
-struct IntegerTypeKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
-    {
-        ASSERT(range.peek().type() == NumberToken);
-
-        if (auto integer = IntegerTypeRawKnownTokenTypeNumberConsumer<IntType, integerRange>::consume(range, symbolTable, valueRange, parserMode, unitless, unitlessZero))
-            return CSSPrimitiveValue::createInteger(*integer);
-        return nullptr;
-    }
-};
-
-// MARK: - Consumer definitions.
-
-template<typename IntType, IntegerValueRange integerRange>
-struct IntegerTypeRawConsumer {
-    using Result = std::optional<IntType>;
-
-    using FunctionToken = IntegerTypeRawKnownTokenTypeFunctionConsumer<IntType, integerRange>;
-    using NumberToken = IntegerTypeRawKnownTokenTypeNumberConsumer<IntType, integerRange>;
-};
-
-template<typename IntType, IntegerValueRange integerRange>
-struct IntegerTypeConsumer {
-    using Result = RefPtr<CSSPrimitiveValue>;
-
-    using FunctionToken = IntegerTypeKnownTokenTypeFunctionConsumer<IntType, integerRange>;
-    using NumberToken = IntegerTypeKnownTokenTypeNumberConsumer<IntType, integerRange>;
-};
+enum class IntegerValueRange : uint8_t;
 
 std::optional<int> consumeIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&);
@@ -149,18 +43,6 @@ RefPtr<CSSPrimitiveValue> consumeNonNegativeInteger(CSSParserTokenRange&);
 std::optional<unsigned> consumePositiveIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, IntegerValueRange);
-
-template<typename IntType, IntegerValueRange integerRange>
-std::optional<IntType> consumeIntegerTypeRaw(CSSParserTokenRange& range)
-{
-    return consumeMetaConsumer<IntegerTypeRawConsumer<IntType, integerRange>>(range, { }, ValueRange::All, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
-}
-
-template<typename IntType, IntegerValueRange integerRange>
-RefPtr<CSSPrimitiveValue> consumeIntegerType(CSSParserTokenRange& range)
-{
-    return consumeMetaConsumer<IntegerTypeConsumer<IntType, integerRange>>(range, { }, ValueRange::All, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
-}
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
