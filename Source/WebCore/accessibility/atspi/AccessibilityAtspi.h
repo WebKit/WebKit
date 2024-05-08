@@ -38,7 +38,7 @@ typedef struct _GVariant GVariant;
 namespace WebCore {
 class AccessibilityObjectAtspi;
 class AccessibilityRootAtspi;
-enum class AccessibilityRole;
+enum class AccessibilityRole : uint8_t;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessibilityAtspi);
 class AccessibilityAtspi {

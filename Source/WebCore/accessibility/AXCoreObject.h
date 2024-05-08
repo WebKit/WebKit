@@ -116,8 +116,8 @@ enum class AXAncestorFlag : uint8_t {
     // Bit 7 is free.
 };
 
-enum class AccessibilityRole {
-    Application = 1,
+enum class AccessibilityRole : uint8_t {
+    Application,
     ApplicationAlert,
     ApplicationAlertDialog,
     ApplicationDialog,
