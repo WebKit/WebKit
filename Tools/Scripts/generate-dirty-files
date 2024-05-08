@@ -28,11 +28,13 @@ import json
 import sys
 
 CHECKER_MAP = {
+    'Member variable is a raw-pointer/reference to reference-countable type': 'NoUncountedMemberChecker',
+    "Reference-countable base class doesn't have virtual destructor": 'RefCntblBaseVirtualDtor',
     'Uncounted call argument for a raw pointer/reference parameter': 'UncountedCallArgsChecker',
     'Uncounted raw pointer or reference not provably backed by ref-counted variable': 'UncountedLocalVarsChecker'
 }
 
-PROJECTS = ['WebKit', 'WebCore']
+PROJECTS = ['WebCore', 'WebKit']
 
 
 def parser():
@@ -84,10 +86,7 @@ def parse_results_file(args, file_path):
 
 
 def find_project_results(args, project, file_list, results_data):
-    bug_counts = {
-        'Uncounted call argument for a raw pointer/reference parameter': 0,
-        'Uncounted raw pointer or reference not provably backed by ref-counted variable': 0
-    }
+    bug_counts = {}
 
     for result_file in file_list:
         if result_file:
@@ -96,6 +95,8 @@ def find_project_results(args, project, file_list, results_data):
                 continue
 
             # Create files listing issue hashes and file names.
+            if bug_type not in bug_counts:
+                bug_counts[bug_type] = 0
             bug_counts[bug_type] += 1
             issue_obj = {"hash": issue_hash, "bugtype": bug_type, "line": bug_line}
             list_of_issues = results_data.get(file_name, [])

@@ -26,8 +26,8 @@ import subprocess
 import argparse
 import sys
 
-CHECKERS = ['UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
-PROJECTS = ['WebKit', 'WebCore']
+CHECKERS = ['NoUncountedMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
+PROJECTS = ['WebCore', 'WebKit']
 
 
 def parser():
@@ -44,18 +44,24 @@ def parser():
         '--build-output',
         dest='build_output',
         help='output from new build',
-        required=True
     )
     parser.add_argument(
         '--scan-build-path',
         dest='scan_build',
         help='path to scan-build'
     )
-
     return parser.parse_args()
 
 
 def find_diff(file1, file2, mode):
+    # Create empty file if the corresponding one doesn't exist - this happens if a checker is added or removed
+    if not os.path.exists(f'{file1}-{mode}'):
+        f = open(f'{file1}-{mode}', 'a')
+        f.close()
+    if not os.path.exists(f'{file2}-{mode}'):
+        f = open(f'{file2}-{mode}', 'a')
+        f.close()
+
     # Find new regressions
     new_lines_list = []
     find_issues_cmd = f"/usr/bin/grep -F -v -f {file1}-{mode} {file2}-{mode}"
@@ -94,19 +100,18 @@ def compare_project_results(args, archive_path, new_path, project):
         new_issues_total.update(new_issues)
         new_files_total.update(new_files)
 
-        print(f'    Fixed {len(fixed_issues)} issue(s).')
-        print(f'    Fixed {len(fixed_files)} file(s).')
-        print(f'    {len(new_issues)} new issue(s).')
-        print(f'    {len(new_files)} new file(s) with issues.\n')
+        print(f'    Issues fixed: {len(fixed_issues)}')
+        print(f'    Files fixed: {len(fixed_files)}')
+        print(f'    New issues: {len(new_issues)}')
+        print(f'    New files with issues: {len(new_files)}\n')
 
-    if new_issues_total:
+    if new_issues_total and args.scan_build:
         create_filtered_results_dir(args, project, new_issues_total, 'StaticAnalyzerRegressions')
 
-    return new_issues_total
+    return new_issues_total, new_files_total
 
 
 def create_filtered_results_dir(args, project, issues, category='StaticAnalyzerRegressions'):
-    print(f'Creating {category} and linking results...')
     # Create symlinks to new issues only so that we can run scan-build to generate new index.html files
     path_to_reports = os.path.abspath(f'{args.build_output}/{category}/{project}/StaticAnalyzerReports')
     subprocess.run(['mkdir', '-p', path_to_reports])
@@ -123,16 +128,20 @@ def create_filtered_results_dir(args, project, issues, category='StaticAnalyzerR
 def main():
     args = parser()
     new_issues_total = set()
+    new_files_total = set()
 
     for project in PROJECTS:
         archive_path = os.path.abspath(f'{args.archived_dir}/{project}')
         new_path = os.path.abspath(f'{args.new_dir}/{project}')
         print(f'\n------ {project} ------\n')
-        new_issues = compare_project_results(args, archive_path, new_path, project)
+        new_issues, new_files = compare_project_results(args, archive_path, new_path, project)
         new_issues_total.update(new_issues)
+        new_files_total.update(new_files)
 
     if new_issues_total:
         print(f'\nTotal new issues: {len(new_issues_total)}')
+    if new_files_total:
+        print(f'Total new files: {len(new_files_total)}')
 
     return 0
 
