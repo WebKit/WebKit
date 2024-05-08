@@ -424,7 +424,7 @@ public:
 
     AXObjectCache* axObjectCache() const override;
 
-    static AccessibilityObject* anchorElementForNode(Node*);
+    static AccessibilityObject* anchorElementForNode(Node&);
     static AccessibilityObject* headingElementForNode(Node*);
     virtual Element* anchorElement() const { return nullptr; }
     virtual RefPtr<Element> popoverTargetElement() const { return nullptr; }

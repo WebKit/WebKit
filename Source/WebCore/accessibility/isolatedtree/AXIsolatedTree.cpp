@@ -393,7 +393,10 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
     double counter = 0;
     Vector<NodeChange> resolvedAppends;
     resolvedAppends.reserveInitialCapacity(m_unresolvedPendingAppends.size());
-    for (const auto& unresolvedAppend : m_unresolvedPendingAppends) {
+    // The process of resolving appends can add more IDs to m_unresolvedPendingAppends as we iterate over it, so
+    // iterate over an exchanged map instead. Any late-appended IDs will get picked up in the next cycle.
+    auto unresolvedPendingAppends = std::exchange(m_unresolvedPendingAppends, { });
+    for (const auto& unresolvedAppend : unresolvedPendingAppends) {
         if (m_replacingTree) {
             ++counter;
             if (MonotonicTime::now() - lastFeedbackTime > CreationFeedbackInterval) {
@@ -408,7 +411,6 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
         }
     }
     resolvedAppends.shrinkToFit();
-    m_unresolvedPendingAppends.clear();
 
     if (m_replacingTree)
         reportCreationProgress(*cache, 100);

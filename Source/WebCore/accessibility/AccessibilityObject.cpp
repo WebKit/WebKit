@@ -2150,22 +2150,16 @@ void AccessibilityObject::clearChildren()
     m_childrenInitialized = false;
 }
 
-AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
+AccessibilityObject* AccessibilityObject::anchorElementForNode(Node& node)
 {
-    RenderObject* obj = node->renderer();
-    if (!obj)
+    CheckedPtr renderer = node.renderer();
+    if (!renderer)
         return nullptr;
-    
-    RefPtr<AccessibilityObject> axObj = obj->document().axObjectCache()->getOrCreate(obj);
-    Element* anchor = axObj->anchorElement();
-    if (!anchor)
-        return nullptr;
-    
-    RenderObject* anchorRenderer = anchor->renderer();
-    if (!anchorRenderer)
-        return nullptr;
-    
-    return anchorRenderer->document().axObjectCache()->getOrCreate(anchorRenderer);
+
+    WeakPtr cache = renderer->document().axObjectCache();
+    RefPtr axObject = cache ? cache->getOrCreate(renderer.get()) : nullptr;
+    auto* anchor = axObject ? axObject->anchorElement() : nullptr;
+    return anchor ? cache->getOrCreate(anchor->renderer()) : nullptr;
 }
 
 AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
