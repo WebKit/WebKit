@@ -1588,7 +1588,7 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIfra
         view->setScrollPinningBehavior(webPage->scrollPinningBehavior());
 
     if (initializingIframe == InitializingIframe::No)
-        webPage->scheduleFullEditorStateUpdate();
+        webPage->clearEditorStateAfterPageTransition();
 
 #if USE(COORDINATED_GRAPHICS)
     if (shouldUseFixedLayout) {

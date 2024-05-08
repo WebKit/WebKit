@@ -7720,6 +7720,11 @@ void WebPage::sendEditorStateUpdate()
         scheduleFullEditorStateUpdate();
 }
 
+void WebPage::clearEditorStateAfterPageTransition()
+{
+    send(Messages::WebPageProxy::ClearEditorStateAfterPageTransition(m_lastEditorStateIdentifier.increment()));
+}
+
 void WebPage::scheduleFullEditorStateUpdate()
 {
     m_needsEditorStateVisualDataUpdate = true;
