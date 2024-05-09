@@ -29,15 +29,6 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
-#if OS(WINDOWS)
-#if !COMPILER(GCC_COMPATIBLE)
-extern "C" void _ReadWriteBarrier(void);
-#pragma intrinsic(_ReadWriteBarrier)
-#endif
-#include <windows.h>
-#include <intrin.h>
-#endif
-
 namespace WTF {
 
 ALWAYS_INLINE bool hasFence(std::memory_order order)
@@ -248,11 +239,7 @@ inline T atomicExchange(T* location, T newValue, std::memory_order order = std::
 // to do things like register allocation and code motion over pure operations.
 inline void compilerFence()
 {
-#if OS(WINDOWS) && !COMPILER(GCC_COMPATIBLE)
-    _ReadWriteBarrier();
-#else
     asm volatile("" ::: "memory");
-#endif
 }
 
 #if CPU(ARM_THUMB2) || CPU(ARM64)
@@ -285,9 +272,7 @@ inline void crossModifyingCodeFence() { arm_isb(); }
 
 inline void x86_ortop()
 {
-#if OS(WINDOWS)
-    MemoryBarrier();
-#elif CPU(X86_64)
+#if CPU(X86_64)
     // This has acqrel semantics and is much cheaper than mfence. For exampe, in the JSC GC, using
     // mfence as a store-load fence was a 9% slow-down on Octane/splay while using this was neutral.
     asm volatile("lock; orl $0, (%%rsp)" ::: "memory");
@@ -298,17 +283,12 @@ inline void x86_ortop()
 
 inline void x86_cpuid()
 {
-#if OS(WINDOWS)
-    int info[4];
-    __cpuid(info, 0);
-#else
     intptr_t a = 0, b, c, d;
     asm volatile(
         "cpuid"
         : "+a"(a), "=b"(b), "=c"(c), "=d"(d)
         :
         : "memory");
-#endif
 }
 
 inline void loadLoadFence() { compilerFence(); }
@@ -337,9 +317,7 @@ inline void dependentLoadLoadFence() { loadLoadFence(); }
 template<typename T>
 T opaque(T pointer)
 {
-#if !OS(WINDOWS)
     asm volatile("" : "+r"(pointer) ::);
-#endif
     return pointer;
 }
 

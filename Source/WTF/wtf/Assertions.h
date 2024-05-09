@@ -63,14 +63,6 @@
 #ifdef __cplusplus
 #include <cstdlib>
 #include <type_traits>
-
-#if OS(WINDOWS)
-#if !COMPILER(GCC_COMPATIBLE)
-extern "C" void _ReadWriteBarrier(void);
-#pragma intrinsic(_ReadWriteBarrier)
-#endif
-#include <intrin.h>
-#endif
 #endif
 
 /* ASSERT_ENABLED is defined in PlatformEnable.h. */
@@ -882,11 +874,7 @@ WTF_EXPORT_PRIVATE void disableForwardingVPrintfStdErrToOSLog();
 
 inline void compilerFenceForCrash()
 {
-#if OS(WINDOWS) && !COMPILER(GCC_COMPATIBLE)
-    _ReadWriteBarrier();
-#else
     asm volatile("" ::: "memory");
-#endif
 }
 
 #ifndef CRASH_WITH_INFO

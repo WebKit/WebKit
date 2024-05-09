@@ -2347,7 +2347,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFTLTrue, (JSGlobalObject*, CallFrame*))
 JSC_DEFINE_HOST_FUNCTION(functionCpuMfence, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
-#if CPU(X86_64) && !OS(WINDOWS)
+#if CPU(X86_64)
     asm volatile("mfence" ::: "memory");
 #endif
     return JSValue::encode(jsUndefined());
@@ -2356,7 +2356,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCpuMfence, (JSGlobalObject*, CallFrame*))
 JSC_DEFINE_HOST_FUNCTION(functionCpuRdtsc, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
-#if CPU(X86_64) && !OS(WINDOWS)
+#if CPU(X86_64)
     unsigned high;
     unsigned low;
     asm volatile ("rdtsc" : "=a"(low), "=d"(high));
@@ -2369,7 +2369,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCpuRdtsc, (JSGlobalObject*, CallFrame*))
 JSC_DEFINE_HOST_FUNCTION(functionCpuCpuid, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
-#if CPU(X86_64) && !OS(WINDOWS)
+#if CPU(X86_64)
     WTF::x86_cpuid();
 #endif
     return JSValue::encode(jsUndefined());
@@ -2378,7 +2378,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCpuCpuid, (JSGlobalObject*, CallFrame*))
 JSC_DEFINE_HOST_FUNCTION(functionCpuPause, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
-#if CPU(X86_64) && !OS(WINDOWS)
+#if CPU(X86_64)
     asm volatile ("pause" ::: "memory");
 #endif
     return JSValue::encode(jsUndefined());
@@ -2396,7 +2396,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCpuPause, (JSGlobalObject*, CallFrame*))
 JSC_DEFINE_HOST_FUNCTION(functionCpuClflush, (JSGlobalObject*, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
-#if CPU(X86_64) && !OS(WINDOWS)
+#if CPU(X86_64)
     if (!callFrame->argument(1).isUInt32())
         return JSValue::encode(jsBoolean(false));
 

@@ -58,6 +58,19 @@ asm (
 // The Win64 port will use a hack where we define currentStackPointer in
 // LowLevelInterpreter.asm.
 
+asm (
+    ".text" "\n"
+    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    SYMBOL_STRING(currentStackPointer) ":" "\n"
+
+    "movq %rsp, %rax" "\n"
+    "addq $40, %rax" "\n" // Account for return address and shadow stack
+    "ret" "\n"
+
+    ".section .drectve" "\n"
+    ".ascii \"-export:currentStackPointer\"" "\n"
+);
+
 #elif CPU(X86_64) && COMPILER(GCC_COMPATIBLE)
 asm (
     ".text" "\n"

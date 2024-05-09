@@ -54,15 +54,18 @@
 
 #if CPU(X86) && OS(WINDOWS)
 #define CALLING_CONVENTION_IS_STDCALL 1
+#else
+#define CALLING_CONVENTION_IS_STDCALL 0
+#endif
+
 #ifndef CDECL
-#if COMPILER(MSVC)
+#if !OS(WINDOWS)
+#define CDECL
+#elif COMPILER(MSVC)
 #define CDECL __cdecl
 #else
 #define CDECL __attribute__ ((__cdecl))
 #endif
-#endif
-#else
-#define CALLING_CONVENTION_IS_STDCALL 0
 #endif
 
 #if CPU(X86)
