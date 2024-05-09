@@ -69,8 +69,8 @@ $BUN_WEBKIT_VERSION = if ($env:BUN_WEBKIT_VERSION) { $env:BUN_WEBKIT_VERSION } e
 # static library, did not get any meaningful results.
 #
 # Note that Bun works fine when you use this dual library technique.
-$ICU_SOURCE_URL = "https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz"
-$ICU_SHARED_URL = "https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-Win64-MSVC2019.zip"
+$ICU_SOURCE_URL = "https://github.com/unicode-org/icu/releases/download/release-75-1/icu4c-75_1-src.tgz"
+$ICU_SHARED_URL = "https://github.com/unicode-org/icu/releases/download/release-75-1/icu4c-75_1-Win64-MSVC2019.zip"
 
 $ICU_STATIC_ROOT = Join-Path $WebKitBuild "icu"
 $ICU_STATIC_LIBRARY = Join-Path $ICU_STATIC_ROOT "lib"

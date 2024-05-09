@@ -35,7 +35,6 @@ RUN install_packages \
     ruby \
     unzip \
     bash tar gzip \
-    libicu-dev \
     clang-${LLVM_VERSION} \
     lld-${LLVM_VERSION} \
     libc++-${LLVM_VERSION}-dev \
@@ -54,22 +53,30 @@ RUN for f in /usr/lib/llvm-${LLVM_VERSION}/bin/*; do ln -sf "$f" /usr/bin; done 
     ln -sf llvm-ranlib /usr/bin/ranlib && \
     ln -sf ld.lld /usr/bin/ld
 
-
+# Debian repos may not have the latest ICU version, so we ensure build reliability by downloading
+# the exact version we need. Unfortunately, aarch64 is not pre-built so we have to build it from source.
+RUN mkdir /tmp/icu && \
+    cd /tmp/icu && \
+    wget https://github.com/unicode-org/icu/releases/download/release-75-1/icu4c-75_1-src.tgz -O icu.tgz && \
+    tar -xf icu.tgz --strip-components=1 && \
+    rm icu.tgz && \
+    cd source && \
+    ./runConfigureICU Linux/clang --enable-static --disable-shared --with-data-packaging=static --disable-samples --disable-debug --enable-release && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf /tmp/icu
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
 RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc
 
-RUN cp -r /usr/lib/$(uname -m)-linux-gnu/libicu* /output/lib
+RUN cp -r /usr/local/lib/libicu* /output/lib
 
 COPY . /webkit
 WORKDIR /webkit
 
-
-
 ENV CPU=${CPU}
 ENV MARCH_FLAG=${MARCH_FLAG}
 ENV LTO_FLAG=${LTO_FLAG}
-
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
     export CFLAGS="$CFLAGS -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer $LTO_FLAG" && \
@@ -111,9 +118,6 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     cp -r /usr/include/unicode /output/include/unicode && \
     echo "";
 
-
-
 FROM scratch as artifact
 
 COPY --from=base /output /
-
