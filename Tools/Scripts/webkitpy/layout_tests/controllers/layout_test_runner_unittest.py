@@ -327,6 +327,17 @@ class SharderTests(unittest.TestCase):
              ('.', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html']),
              ('.', ['dom/html/level2/html/HTMLAnchorElement06.html'])])
 
+    def test_large_shard(self):
+        shards = self.get_shards(
+            num_workers=2,
+            fully_parallel=False,
+            test_list=['fast/css/test-{}'.format(i) for i in range(255)],
+        )
+        self.assertEqual(len(shards), 3)
+        self.assertEqual(len(shards[0].test_inputs), 64)
+        self.assertEqual(len(shards[1].test_inputs), 64)
+        self.assertEqual(len(shards[2].test_inputs), 127)
+
 
 class ShardTests(unittest.TestCase):
     def test_pickle(self):

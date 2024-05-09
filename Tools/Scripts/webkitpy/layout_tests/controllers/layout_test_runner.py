@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import atexit
+import binascii
 import logging
 import threading
 import time
@@ -570,6 +571,21 @@ class TestShard(object):
 
 
 class Sharder(object):
+    MAX_SIZE = 128
+
+    @classmethod
+    def shards_for_directory(cls, directory, test_inputs, depth=0):
+        if len(test_inputs) == 0:
+            return []
+        if len(test_inputs) < cls.MAX_SIZE or depth > 31:
+            return [TestShard(directory, test_inputs)]
+        mask = 1 << depth
+        split_inputs = ([], [])
+        for test_input in test_inputs:
+            index = (binascii.crc32(test_input.test.test_path.encode('utf-8')) & mask) >> depth
+            split_inputs[index].append(test_input)
+        return cls.shards_for_directory(directory, split_inputs[0], depth + 1) + cls.shards_for_directory(directory, split_inputs[1], depth + 1)
+
     def __init__(self, test_split_fn):
         self._split = test_split_fn
 
@@ -619,8 +635,7 @@ class Sharder(object):
             tests_by_dir[directory].append(test_input)
 
         for directory, test_inputs in iteritems(tests_by_dir):
-            shard = TestShard(directory, test_inputs)
-            shards.append(shard)
+            shards += self.shards_for_directory(directory, test_inputs)
 
         # Sort the shards by directory name.
         shards.sort(key=lambda shard: shard.name)
