@@ -70,8 +70,8 @@ $BUN_WEBKIT_VERSION = if ($env:BUN_WEBKIT_VERSION) { $env:BUN_WEBKIT_VERSION } e
 #
 # Note that Bun works fine when you use this dual library technique.
 # TODO: update to 75.1. It seems that additional CFLAGS need to be passed here.
-$ICU_SOURCE_URL = "https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_2-src.tgz"
-$ICU_SHARED_URL = "https://github.com/unicode-org/icu/releases/download/release-73-1/icu4c-73_2-Win64-MSVC2019.zip"
+$ICU_SOURCE_URL = "https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz"
+$ICU_SHARED_URL = "https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-Win64-MSVC2019.zip"
 
 $ICU_STATIC_ROOT = Join-Path $WebKitBuild "icu"
 $ICU_STATIC_LIBRARY = Join-Path $ICU_STATIC_ROOT "lib"
