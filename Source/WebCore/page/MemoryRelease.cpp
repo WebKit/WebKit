@@ -160,6 +160,11 @@ void releaseMemory(Critical critical, Synchronous synchronous, MaintainBackForwa
 {
     TraceScope scope(MemoryPressureHandlerStart, MemoryPressureHandlerEnd, static_cast<uint64_t>(critical), static_cast<uint64_t>(synchronous));
 
+#if PLATFORM(IOS_FAMILY)
+    if (critical == Critical::No)
+        GCController::singleton().garbageCollectNowIfNotDoneRecently();
+#endif
+
     if (critical == Critical::Yes) {
         // Return unused pages back to the OS now as this will likely give us a little memory to work with.
         WTF::releaseFastMallocFreeMemory();
