@@ -2604,4 +2604,4 @@ imported/w3c/web-platform-tests/css/css-ruby/line-spacing.html [ Pass Failure ]
 
 webkit.org/b/273900 compositing/repaint/needs-no-display-volatile-repaint.html [ Skip ]
 
-webkit.org/b/273911 [ Debug ] fast/block/crash-when-style-and-renderer-invalidated-for-floating-object-element.html
+webkit.org/b/273911 [ Debug ] fast/block/crash-when-style-and-renderer-invalidated-for-floating-object-element.html [ Skip ]
