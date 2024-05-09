@@ -78,7 +78,6 @@ template<> ALWAYS_INLINE constexpr bool isLatin1(LChar)
 
 using CodeUnitMatchFunction = bool (*)(UChar);
 
-template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASCIICase(const CharacterTypeA*, std::span<const CharacterTypeB>);
 template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASCIICase(std::span<const CharacterTypeA>, std::span<const CharacterTypeB>);
 
 template<typename StringClassA, typename StringClassB> bool equalIgnoringASCIICaseCommon(const StringClassA&, const StringClassB&);
@@ -484,20 +483,20 @@ template<typename StringClass, unsigned length> bool equal(const StringClass& a,
     return equal(a.span16().data(), { codeUnits, length });
 }
 
-template<typename CharacterTypeA, typename CharacterTypeB>
-inline bool equalIgnoringASCIICase(const CharacterTypeA* a, std::span<const CharacterTypeB> b)
+template<typename CharacterTypeA, typename CharacterTypeB> inline bool equalIgnoringASCIICaseWithLength(std::span<const CharacterTypeA> a, std::span<const CharacterTypeB> b, size_t lengthToCheck)
 {
-    for (auto bCharacter : b) {
-        if (toASCIILower(*a) != toASCIILower(bCharacter))
+    ASSERT(a.size() >= lengthToCheck);
+    ASSERT(b.size() >= lengthToCheck);
+    for (size_t i = 0; i < lengthToCheck; ++i) {
+        if (toASCIILower(a[i]) != toASCIILower(b[i]))
             return false;
-        ++a;
     }
     return true;
 }
 
 template<typename CharacterTypeA, typename CharacterTypeB> inline bool equalIgnoringASCIICase(std::span<const CharacterTypeA> a, std::span<const CharacterTypeB> b)
 {
-    return a.size() == b.size() && equalIgnoringASCIICase(a.data(), b);
+    return a.size() == b.size() && equalIgnoringASCIICaseWithLength(a, b, a.size());
 }
 
 template<typename StringClassA, typename StringClassB>
@@ -508,27 +507,22 @@ bool equalIgnoringASCIICaseCommon(const StringClassA& a, const StringClassB& b)
 
     if (a.is8Bit()) {
         if (b.is8Bit())
-            return equalIgnoringASCIICase(a.span8().data(), b.span8());
-
-        return equalIgnoringASCIICase(a.span8().data(), b.span16());
+            return equalIgnoringASCIICaseWithLength(a.span8(), b.span8(), b.length());
+        return equalIgnoringASCIICaseWithLength(a.span8(), b.span16(), b.length());
     }
-
     if (b.is8Bit())
-        return equalIgnoringASCIICase(a.span16().data(), b.span8());
-
-    return equalIgnoringASCIICase(a.span16().data(), b.span16());
+        return equalIgnoringASCIICaseWithLength(a.span16(), b.span8(), b.length());
+    return equalIgnoringASCIICaseWithLength(a.span16(), b.span16(), b.length());
 }
 
 template<typename StringClassA> bool equalIgnoringASCIICaseCommon(const StringClassA& a, const char* b)
 {
-    auto bSpan = span(b);
+    auto bSpan = span8(b);
     if (a.length() != bSpan.size())
         return false;
-
     if (a.is8Bit())
-        return equalIgnoringASCIICase(a.span8().data(), bSpan);
-
-    return equalIgnoringASCIICase(a.span16().data(), bSpan);
+        return equalIgnoringASCIICaseWithLength(a.span8(), bSpan, bSpan.size());
+    return equalIgnoringASCIICaseWithLength(a.span16(), bSpan, bSpan.size());
 }
 
 template <typename SearchCharacterType, typename MatchCharacterType>
@@ -536,13 +530,13 @@ size_t findIgnoringASCIICase(std::span<const SearchCharacterType> source, std::s
 {
     ASSERT(source.size() >= matchCharacters.size());
 
-    const SearchCharacterType* startSearchedCharacters = source.data() + startOffset;
+    auto startSearchedCharacters = source.subspan(startOffset);
 
     // delta is the number of additional times to test; delta == 0 means test only once.
-    size_t delta = source.size() - matchCharacters.size();
+    size_t delta = startSearchedCharacters.size() - matchCharacters.size();
 
     for (size_t i = 0; i <= delta; ++i) {
-        if (equalIgnoringASCIICase(startSearchedCharacters + i, matchCharacters))
+        if (equalIgnoringASCIICaseWithLength(startSearchedCharacters.subspan(i), matchCharacters, matchCharacters.size()))
             return startOffset + i;
     }
     return notFound;
@@ -964,8 +958,7 @@ template<typename StringClass> inline bool startsWithLettersIgnoringASCIICaseCom
 
 inline bool equalIgnoringASCIICase(const char* a, const char* b)
 {
-    auto spanB = span(b);
-    return strlen(a) == spanB.size() && equalIgnoringASCIICase(a, spanB);
+    return equalIgnoringASCIICase(span8(a), span8(b));
 }
 
 inline bool equalLettersIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
@@ -980,7 +973,7 @@ inline bool equalLettersIgnoringASCIICase(const char* string, ASCIILiteral liter
 
 inline bool equalIgnoringASCIICase(const char* string, ASCIILiteral literal)
 {
-    return strlen(string) == literal.length() && equalIgnoringASCIICase(string, literal.span8());
+    return equalIgnoringASCIICase(span8(string), literal.span8());
 }
 
 inline bool equalIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
@@ -1356,6 +1349,7 @@ ALWAYS_INLINE bool charactersContain(std::span<const CharacterType> span)
 }
 
 using WTF::equalIgnoringASCIICase;
+using WTF::equalIgnoringASCIICaseWithLength;
 using WTF::equalLettersIgnoringASCIICase;
 using WTF::isLatin1;
 using WTF::span;

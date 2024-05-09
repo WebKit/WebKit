@@ -1250,13 +1250,13 @@ inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, 
 
     if (source.is8Bit()) {
         if (stringToFind.is8Bit())
-            return findIgnoringASCIICase(source.span8().first(searchLength), stringToFind.span8(), static_cast<size_t>(start));
-        return findIgnoringASCIICase(source.span8().first(searchLength), stringToFind.span16(), static_cast<size_t>(start));
+            return WTF::findIgnoringASCIICase(source.span8(), stringToFind.span8(), static_cast<size_t>(start));
+        return WTF::findIgnoringASCIICase(source.span8(), stringToFind.span16(), static_cast<size_t>(start));
     }
 
     if (stringToFind.is8Bit())
-        return findIgnoringASCIICase(source.span16().first(searchLength), stringToFind.span8(), static_cast<size_t>(start));
-    return findIgnoringASCIICase(source.span16().first(searchLength), stringToFind.span16(), static_cast<size_t>(start));
+        return WTF::findIgnoringASCIICase(source.span16(), stringToFind.span8(), static_cast<size_t>(start));
+    return WTF::findIgnoringASCIICase(source.span16(), stringToFind.span16(), static_cast<size_t>(start));
 }
 
 inline bool startsWith(StringView reference, StringView prefix)
@@ -1281,12 +1281,12 @@ inline bool startsWithIgnoringASCIICase(StringView reference, StringView prefix)
 
     if (reference.is8Bit()) {
         if (prefix.is8Bit())
-            return equalIgnoringASCIICase(reference.span8().data(), prefix.span8());
-        return equalIgnoringASCIICase(reference.span8().data(), prefix.span16());
+            return equalIgnoringASCIICaseWithLength(reference.span8(), prefix.span8(), prefix.length());
+        return equalIgnoringASCIICaseWithLength(reference.span8(), prefix.span16(), prefix.length());
     }
     if (prefix.is8Bit())
-        return equalIgnoringASCIICase(reference.span16().data(), prefix.span8());
-    return equalIgnoringASCIICase(reference.span16().data(), prefix.span16());
+        return equalIgnoringASCIICaseWithLength(reference.span16(), prefix.span8(), prefix.length());
+    return equalIgnoringASCIICaseWithLength(reference.span16(), prefix.span16(), prefix.length());
 }
 
 inline bool endsWith(StringView reference, StringView suffix)
@@ -1319,12 +1319,12 @@ inline bool endsWithIgnoringASCIICase(StringView reference, StringView suffix)
 
     if (reference.is8Bit()) {
         if (suffix.is8Bit())
-            return equalIgnoringASCIICase(reference.span8().data() + startOffset, suffix.span8());
-        return equalIgnoringASCIICase(reference.span8().data() + startOffset, suffix.span16());
+            return equalIgnoringASCIICaseWithLength(reference.span8().subspan(startOffset), suffix.span8(), suffix.length());
+        return equalIgnoringASCIICaseWithLength(reference.span8().subspan(startOffset), suffix.span16(), suffix.length());
     }
     if (suffix.is8Bit())
-        return equalIgnoringASCIICase(reference.span16().data() + startOffset, suffix.span8());
-    return equalIgnoringASCIICase(reference.span16().data() + startOffset, suffix.span16());
+        return equalIgnoringASCIICaseWithLength(reference.span16().subspan(startOffset), suffix.span8(), suffix.length());
+    return equalIgnoringASCIICaseWithLength(reference.span16().subspan(startOffset), suffix.span16(), suffix.length());
 }
 
 inline size_t String::find(StringView string) const
