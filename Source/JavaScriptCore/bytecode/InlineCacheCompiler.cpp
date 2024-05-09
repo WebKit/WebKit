@@ -4263,9 +4263,9 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
         std::sort(cases.begin(), cases.end(), [](auto& lhs, auto& rhs) {
             if (lhs->type() == rhs->type()) {
-                if (lhs->structure()->id() == rhs->structure()->id())
+                if (lhs->structure() == rhs->structure())
                     return bitwise_cast<uintptr_t>(lhs->uid()) < bitwise_cast<uintptr_t>(rhs->uid());
-                return lhs->structure()->id() < rhs->structure()->id();
+                return lhs->structure() < rhs->structure();
             }
             return lhs->type() < rhs->type();
         });
