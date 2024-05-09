@@ -32,7 +32,6 @@
 #import "CommandEncoder.h"
 #import "Device.h"
 #import "IsValidToUseWith.h"
-#import "MetalSPI.h"
 #import "Texture.h"
 #import "TextureView.h"
 #import <wtf/CheckedArithmetic.h>
@@ -71,9 +70,7 @@ void Queue::ensureBlitCommandEncoder()
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-    auto blitCommandBufferWithSharedEvent = commandBufferWithDescriptor(commandBufferDescriptor);
-    m_commandBuffer = blitCommandBufferWithSharedEvent.first;
-    m_commandBufferEvent = blitCommandBufferWithSharedEvent.second;
+    m_commandBuffer = commandBufferWithDescriptor(commandBufferDescriptor);
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
 }
 
@@ -106,7 +103,7 @@ void Queue::setEncoderForBuffer(id<MTLCommandBuffer> commandBuffer, id<MTLComman
         [m_openCommandEncoders setObject:commandEncoder forKey:commandBuffer];
 }
 
-std::pair<id<MTLCommandBuffer>, id<MTLSharedEvent>> Queue::commandBufferWithDescriptor(MTLCommandBufferDescriptor* descriptor)
+id<MTLCommandBuffer> Queue::commandBufferWithDescriptor(MTLCommandBufferDescriptor* descriptor)
 {
     constexpr auto maxCommandBufferCount = 64;
     if (m_createdNotCommittedBuffers.count >= maxCommandBufferCount) {
@@ -121,14 +118,8 @@ std::pair<id<MTLCommandBuffer>, id<MTLSharedEvent>> Queue::commandBufferWithDesc
     id<MTLCommandBuffer> buffer = [m_commandQueue commandBufferWithDescriptor:descriptor];
     if (buffer)
         [m_createdNotCommittedBuffers addObject:buffer];
-    auto devicePtr = m_device.get();
-    id<MTLSharedEvent> sharedEvent = nil;
-    if (devicePtr && [buffer respondsToSelector:@selector(encodeConditionalAbortEvent:)]) {
-        sharedEvent = [devicePtr->device() newSharedEvent];
-        [(id<MTLCommandBufferSPI>)buffer encodeConditionalAbortEvent:sharedEvent];
-    }
 
-    return std::make_pair(buffer, sharedEvent);
+    return buffer;
 }
 
 void Queue::makeInvalid()

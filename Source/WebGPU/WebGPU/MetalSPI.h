@@ -24,14 +24,10 @@
  */
 
 #if USE(INTERNAL_APPLE_SDK)
-#import <Metal/MTLCommandBuffer_Private.h>
 #import <Metal/MTLResource_Private.h>
 #else
 @protocol MTLResourceSPI <MTLResource>
 @optional
 - (kern_return_t)setOwnerWithIdentity:(mach_port_t)task_id_token;
-@end
-@protocol MTLCommandBufferSPI <MTLCommandBuffer>
-- (void)encodeConditionalAbortEvent:(id <MTLSharedEvent>)event;
 @end
 #endif

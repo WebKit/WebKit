@@ -42,9 +42,9 @@ class Device;
 class CommandBuffer : public WGPUCommandBufferImpl, public RefCounted<CommandBuffer>, public CanMakeWeakPtr<CommandBuffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer, id<MTLSharedEvent> event, Device& device)
+    static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer, Device& device)
     {
-        return adoptRef(*new CommandBuffer(commandBuffer, event, device));
+        return adoptRef(*new CommandBuffer(commandBuffer, device));
     }
     static Ref<CommandBuffer> createInvalid(Device& device)
     {
@@ -68,11 +68,10 @@ public:
     void waitForCompletion();
 
 private:
-    CommandBuffer(id<MTLCommandBuffer>, id<MTLSharedEvent>, Device&);
+    CommandBuffer(id<MTLCommandBuffer>, Device&);
     CommandBuffer(Device&);
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
-    id<MTLSharedEvent> m_abortEvent { nil };
     id<MTLCommandBuffer> m_cachedCommandBuffer { nil };
     int m_bufferMapCount { 0 };
 
