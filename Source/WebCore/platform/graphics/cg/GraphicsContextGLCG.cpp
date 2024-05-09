@@ -320,7 +320,7 @@ void convert16BitFormatToRGBA8(GraphicsContextGL::DataFormat srcFormat, const ui
 
 GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
-bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
+bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool preventUnpackColorSpaceConversion, bool ignoreNativeImageAlphaPremultiplication)
 {
     if (!m_image)
         return false;
@@ -328,8 +328,8 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     RefPtr<NativeImage> decodedImage;
     bool hasAlpha = !m_image->currentFrameKnownToBeOpaque();
 
-    if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
-        auto image = BitmapImage::create(nullptr, AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
+    if ((preventUnpackColorSpaceConversion || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
+        auto image = BitmapImage::create(nullptr, AlphaOption::NotPremultiplied, preventUnpackColorSpaceConversion ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
         image->setData(m_image->data(), true);
         decodedImage = image->primaryNativeImage();
     } else

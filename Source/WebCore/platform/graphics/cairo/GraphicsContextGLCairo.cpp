@@ -42,13 +42,13 @@ namespace WebCore {
 
 GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
-bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool)
+bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool preventUnpackColorSpaceConversion, bool)
 {
     if (!m_image)
         return false;
     // We need this to stay in scope because the native image is just a shallow copy of the data.
     AlphaOption alphaOption = premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied;
-    GammaAndColorProfileOption gammaAndColorProfileOption = ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied;
+    GammaAndColorProfileOption gammaAndColorProfileOption = preventUnpackColorSpaceConversion ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied;
     auto image = BitmapImage::create(nullptr, alphaOption, gammaAndColorProfileOption);
     m_alphaOp = AlphaOp::DoNothing;
 
