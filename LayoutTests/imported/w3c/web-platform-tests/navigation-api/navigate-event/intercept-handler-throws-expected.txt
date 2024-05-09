@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: TypeError: a message
+
+Harness Error (FAIL), message = TypeError: a message
 
 FAIL event.intercept() should abort if the handler throws assert_equals: expected "#1" but got ""
 

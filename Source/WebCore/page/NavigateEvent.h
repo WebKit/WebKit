@@ -99,7 +99,7 @@ public:
 
     void finish();
 
-    Vector<RefPtr<NavigationInterceptHandler>> handlers() { return m_handlers; };
+    Vector<Ref<NavigationInterceptHandler>>& handlers() { return m_handlers; };
 
 private:
     NavigateEvent(const AtomString& type, const Init&, AbortController*);
@@ -111,7 +111,7 @@ private:
     RefPtr<AbortSignal> m_signal;
     RefPtr<DOMFormData> m_formData;
     String m_downloadRequest;
-    Vector<RefPtr<NavigationInterceptHandler>> m_handlers;
+    Vector<Ref<NavigationInterceptHandler>> m_handlers;
     JSC::JSValue m_info;
     bool m_canIntercept { false };
     bool m_userInitiated { false };

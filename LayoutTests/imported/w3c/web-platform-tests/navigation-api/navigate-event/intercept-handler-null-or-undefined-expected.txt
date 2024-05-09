@@ -1,4 +1,4 @@
 
 PASS event.intercept() should throw if the handler is null
-FAIL event.intercept() should not throw if the handler is explicit undefined assert_equals: expected "#2" but got "#1"
+PASS event.intercept() should not throw if the handler is explicit undefined
 

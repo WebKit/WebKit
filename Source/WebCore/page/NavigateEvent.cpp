@@ -88,7 +88,7 @@ ExceptionOr<void> NavigateEvent::intercept(NavigationInterceptOptions&& options)
     ASSERT(!m_interceptionState || m_interceptionState == InterceptionState::Intercepted);
 
     if (options.handler)
-        m_handlers.append(WTFMove(options.handler));
+        m_handlers.append(options.handler.releaseNonNull());
 
     if (options.focusReset) {
         // FIXME: Print warning to console if it was already set.

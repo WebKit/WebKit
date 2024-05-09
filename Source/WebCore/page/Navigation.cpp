@@ -27,6 +27,8 @@
 #include "Navigation.h"
 
 #include "AbortController.h"
+#include "CallbackResult.h"
+#include "ErrorEvent.h"
 #include "EventNames.h"
 #include "Exception.h"
 #include "FrameLoadRequest.h"
@@ -561,7 +563,19 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
     }
 
     if (endResultIsSameDocument) {
-        // FIXME: Step 33: Wait on Handler promises
+        Vector<RefPtr<DOMPromise>> promiseList;
+        bool failure = false;
+
+        for (auto& handler : event->handlers()) {
+            auto callbackResult = handler->handleEvent();
+            if (callbackResult.type() == CallbackResultType::Success)
+                promiseList.append(callbackResult.releaseReturnValue());
+            else
+                failure = true;
+            // FIXME: We need to keep around the failure reason but the generated handleEvent() catches and consumes it.
+        }
+
+        // FIXME: Step 33.4: We need to wait for all promises.
 
         if (document->isFullyActive() && !abortController->signal().aborted()) {
             ASSERT(m_ongoingNavigateEvent == event.ptr());
@@ -569,19 +583,23 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
             event->finish();
 
-            // FIXME: 6. Fire an event named navigatesuccess at navigation.
-            // FIXME: 7. If navigation's transition is not null, then resolve navigation's transition's finished promise with undefined.
-            m_transition = nullptr;
+            if (!failure) {
+                dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
 
-            if (apiMethodTracker)
-                resolveFinishedPromise(*apiMethodTracker);
+                // FIXME: 7. If navigation's transition is not null, then resolve navigation's transition's finished promise with undefined.
+                m_transition = nullptr;
+
+                if (apiMethodTracker)
+                    resolveFinishedPromise(*apiMethodTracker);
+            } else {
+                // FIXME: Fill in error information.
+                dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, { }, 0, 0, { }));
+            }
         }
 
         // FIXME: and the following failure steps given reason rejectionReason:
         m_ongoingNavigateEvent = nullptr;
-    }
-
-    if (apiMethodTracker)
+    } else if (apiMethodTracker)
         cleanupAPIMethodTracker(*apiMethodTracker);
 
     // FIXME: Step 35 Clean up after running script
