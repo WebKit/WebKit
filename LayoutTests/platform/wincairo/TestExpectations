@@ -3192,9 +3192,19 @@ webkit.org/b/263926 fast/animation/request-animation-frame-throttling-detached-i
 
 webkit.org/b/261308 imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
 
-imported/w3c/web-platform-tests/wasm/serialization/module/nested-worker-success.any.worker.html [ Skip ] # Failure
-imported/w3c/web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any.html [ Skip ] # Failure
-imported/w3c/web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any.worker.html [ Skip ] # Failure
+# Needs JIT
+js/slow-stress [ Skip ]
+
+# Web Assembly is't supported yet
+imported/w3c/web-platform-tests/wasm [ Skip ]
+js/dom/webassembly-memory-normal-fail.html [ Skip ]
+js/dom/webassembly-memory-shared-basic.html [ Skip ]
+js/dom/webassembly-memory-shared-fail.html [ Skip ]
+storage/indexeddb/wasm-exceptions.html [ Skip ]
+wasm [ Skip ]
+webgl/2.0.y/conformance2/wasm [ Skip ]
+workers/wasm-long-compile.html [ Skip ]
+workers/wasm-mem-post-message.html [ Skip ]
 
 workers/wasm-hashset-many-2.html [ Skip ] # Timeout
 workers/wasm-hashset-many.html [ Skip ] # Timeout
