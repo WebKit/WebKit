@@ -2601,7 +2601,6 @@ imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-reload.html [ Ima
 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-in-shadow-root.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-in-shadow-root.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url-on-mixed-content-frame.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-085.html [ ImageOnlyFailure ]
 
 webkit.org/b/260888 [ Ventura+ ] media/track/track-user-stylesheet-override.html [ Crash ]
