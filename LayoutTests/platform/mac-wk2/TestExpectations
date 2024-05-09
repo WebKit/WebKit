@@ -1753,7 +1753,8 @@ webkit.org/b/263396 css3/color/text.html [ Skip ]
 
 # WebGPU
 
-http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Pass ]
+# skipped debug due to https://bugs.webkit.org/show_bug.cgi?id=273961
+[ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Pass ]
 # skipped debug due to https://bugs.webkit.org/show_bug.cgi?id=273716
 [ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map_ArrayBuffer.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/buffers/map_detach.html [ Pass ]
