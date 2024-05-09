@@ -2064,6 +2064,15 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(pr.base, 'main')
             self.assertEqual(pr.draft, False)
 
+    def test_title(self):
+        with self.webserver():
+            pr = remote.GitHub(self.remote).pull_requests.get(1)
+            self.assertEqual(pr.title, 'Example Change')
+            pr.generator.update(pr, title='New Title')
+
+            pr = remote.GitHub(self.remote).pull_requests.get(1)
+            self.assertEqual(pr.title, 'New Title')
+
     def test_reviewers(self):
         with self.webserver():
             pr = remote.GitHub(self.remote).pull_requests.get(1)
@@ -2359,6 +2368,15 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(pr.hash, '95507e3a1a4a919d1a156abbc279fdf6d24b13f5')
             self.assertEqual(pr.base, 'main')
             self.assertEqual(pr.draft, False)
+
+    def test_title(self):
+        with self.webserver():
+            pr = remote.BitBucket(self.remote).pull_requests.get(1)
+            self.assertEqual(pr.title, 'Example Change')
+            pr.generator.update(pr, title='New Title')
+
+            pr = remote.BitBucket(self.remote).pull_requests.get(1)
+            self.assertEqual(pr.title, 'New Title')
 
     def test_reviewers(self):
         with self.webserver():
