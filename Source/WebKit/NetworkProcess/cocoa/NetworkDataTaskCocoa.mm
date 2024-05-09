@@ -188,8 +188,7 @@ static void adjustNetworkServiceTypeIfNecessary(WebCore::ResourceRequestRequeste
     if (requester == WebCore::ResourceRequestRequester::Media) {
         if (mutableRequest.networkServiceType == NSURLNetworkServiceTypeDefault || mutableRequest.networkServiceType == NSURLNetworkServiceTypeBackground)
             mutableRequest.networkServiceType = NSURLNetworkServiceTypeVideo;
-    } else if (requester == WebCore::ResourceRequestRequester::Beacon)
-        mutableRequest.networkServiceType = NSURLNetworkServiceTypeBackground;
+    }
 }
 
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
