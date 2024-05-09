@@ -682,7 +682,10 @@ NamedNodeMap& Element::attributes() const
 
 bool Element::hasAttribute(const QualifiedName& name) const
 {
-    return hasAttributeNS(name.namespaceURI(), name.localName());
+    if (!elementData())
+        return false;
+    synchronizeAttribute(name);
+    return elementData()->findAttributeByName(name);
 }
 
 void Element::synchronizeAllAttributes() const
