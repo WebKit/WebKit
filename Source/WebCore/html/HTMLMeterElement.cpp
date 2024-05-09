@@ -91,7 +91,7 @@ void HTMLMeterElement::attributeChanged(const QualifiedName& name, const AtomStr
 
 double HTMLMeterElement::min() const
 {
-    return parseToDoubleForNumberType(attributeWithoutSynchronization(minAttr), 0);
+    return parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(minAttr), 0);
 }
 
 void HTMLMeterElement::setMin(double min)
@@ -101,7 +101,7 @@ void HTMLMeterElement::setMin(double min)
 
 double HTMLMeterElement::max() const
 {
-    return std::max(parseToDoubleForNumberType(attributeWithoutSynchronization(maxAttr), std::max(1.0, min())), min());
+    return std::max(parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(maxAttr), std::max(1.0, min())), min());
 }
 
 void HTMLMeterElement::setMax(double max)
@@ -111,7 +111,7 @@ void HTMLMeterElement::setMax(double max)
 
 double HTMLMeterElement::value() const
 {
-    double value = parseToDoubleForNumberType(attributeWithoutSynchronization(valueAttr), 0);
+    double value = parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(valueAttr), 0);
     return std::min(std::max(value, min()), max());
 }
 
@@ -122,7 +122,7 @@ void HTMLMeterElement::setValue(double value)
 
 double HTMLMeterElement::low() const
 {
-    double low = parseToDoubleForNumberType(attributeWithoutSynchronization(lowAttr), min());
+    double low = parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(lowAttr), min());
     return std::min(std::max(low, min()), max());
 }
 
@@ -133,7 +133,7 @@ void HTMLMeterElement::setLow(double low)
 
 double HTMLMeterElement::high() const
 {
-    double high = parseToDoubleForNumberType(attributeWithoutSynchronization(highAttr), max());
+    double high = parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(highAttr), max());
     return std::min(std::max(high, low()), max());
 }
 
@@ -144,7 +144,7 @@ void HTMLMeterElement::setHigh(double high)
 
 double HTMLMeterElement::optimum() const
 {
-    double optimum = parseToDoubleForNumberType(attributeWithoutSynchronization(optimumAttr), (max() + min()) / 2);
+    double optimum = parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(optimumAttr), (max() + min()) / 2);
     return std::min(std::max(optimum, min()), max());
 }
 

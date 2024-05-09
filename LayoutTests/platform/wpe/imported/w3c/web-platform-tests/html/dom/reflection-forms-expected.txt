@@ -7805,14 +7805,14 @@ PASS progress.max: setAttribute() to 4294967296
 PASS progress.max: setAttribute() to ""
 PASS progress.max: setAttribute() to "-"
 PASS progress.max: setAttribute() to "+"
-FAIL progress.max: setAttribute() to "\t7" assert_equals: IDL get expected 7 but got 1
+PASS progress.max: setAttribute() to "\t7"
 PASS progress.max: setAttribute() to "\v7"
-FAIL progress.max: setAttribute() to "\f7" assert_equals: IDL get expected 7 but got 1
-FAIL progress.max: setAttribute() to " 7" assert_equals: IDL get expected 7 but got 1
+PASS progress.max: setAttribute() to "\f7"
+PASS progress.max: setAttribute() to " 7"
 PASS progress.max: setAttribute() to " 7"
 PASS progress.max: setAttribute() to "﻿7"
-FAIL progress.max: setAttribute() to "\n7" assert_equals: IDL get expected 7 but got 1
-FAIL progress.max: setAttribute() to "\r7" assert_equals: IDL get expected 7 but got 1
+PASS progress.max: setAttribute() to "\n7"
+PASS progress.max: setAttribute() to "\r7"
 PASS progress.max: setAttribute() to " 7"
 PASS progress.max: setAttribute() to " 7"
 PASS progress.max: setAttribute() to " 7"
@@ -7835,12 +7835,12 @@ PASS progress.max: setAttribute() to "\n\v7"
 PASS progress.max: setAttribute() to "\f\v7"
 PASS progress.max: setAttribute() to "\r\v7"
 PASS progress.max: setAttribute() to " \v7"
-FAIL progress.max: setAttribute() to "7\v" assert_equals: IDL get expected 7 but got 1
+PASS progress.max: setAttribute() to "7\v"
 PASS progress.max: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS progress.max: setAttribute() to undefined
 PASS progress.max: setAttribute() to 1.5
-FAIL progress.max: setAttribute() to "5%" assert_equals: IDL get expected 5 but got 1
-FAIL progress.max: setAttribute() to "+100" assert_equals: IDL get expected 100 but got 1
+PASS progress.max: setAttribute() to "5%"
+PASS progress.max: setAttribute() to "+100"
 PASS progress.max: setAttribute() to ".5"
 PASS progress.max: setAttribute() to true
 PASS progress.max: setAttribute() to false

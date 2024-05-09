@@ -241,6 +241,34 @@ std::optional<double> parseValidHTMLFloatingPointNumber(StringView input)
     return parseValidHTMLFloatingPointNumberInternal(input.span16());
 }
 
+template <typename CharacterType>
+static double parseHTMLFloatingPointNumberValueInternal(std::span<const CharacterType> data, size_t length, double fallbackValue)
+{
+    auto position = data.data();
+    size_t leadingSpacesLength = 0;
+    while (leadingSpacesLength < length && isASCIIWhitespace(position[leadingSpacesLength]))
+        ++leadingSpacesLength;
+
+    position += leadingSpacesLength;
+    if (leadingSpacesLength == length || (*position != '+' && *position != '-' && *position != '.' && !isASCIIDigit(*position)))
+        return fallbackValue;
+
+    size_t parsedLength;
+    double number = parseDouble(std::span { position, length - leadingSpacesLength }, parsedLength);
+
+    // The following expression converts -0 to +0.
+    return number ? number : 0;
+}
+
+// https://html.spec.whatwg.org/#rules-for-parsing-floating-point-number-values
+double parseHTMLFloatingPointNumberValue(StringView input, double fallbackValue)
+{
+    if (LIKELY(input.is8Bit()))
+        return parseHTMLFloatingPointNumberValueInternal(input.span8(), input.length(), fallbackValue);
+
+    return parseHTMLFloatingPointNumberValueInternal(input.span16(), input.length(), fallbackValue);
+}
+
 static inline bool isHTMLSpaceOrDelimiter(UChar character)
 {
     return isASCIIWhitespace(character) || character == ',' || character == ';';
