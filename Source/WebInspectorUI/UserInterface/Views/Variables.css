@@ -261,14 +261,12 @@ body:is(.mac-platform.monterey, .mac-platform.big-sur) {
     --sorted-header-font-weight: 700;
 }
 
-body:is(.mac-platform):not(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
-    /* keep in sync with `WI.undockedTitleAreaHeight` */
-    --undocked-title-area-height: calc(22px / var(--zoom-factor));
+body:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
+    --undocked-title-area-height: calc(27px / var(--zoom-factor));
 }
 
-body:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
-    /* keep in sync with `WI.undockedTitleAreaHeight` */
-    --undocked-title-area-height: calc(27px / var(--zoom-factor));
+body:is(.mac-platform.catalina):not(.docked) {
+    --undocked-title-area-height: calc(22px / var(--zoom-factor));
 }
 
 @media (prefers-color-scheme: dark) {
