@@ -664,6 +664,7 @@ public:
     inline bool hasClass() const;
     inline bool hasName() const;
     inline const SpaceSplitString& classNames() const;
+    inline bool hasClassName(const AtomString& className) const;
 
     ScrollPosition savedLayerScrollPosition() const;
     void setSavedLayerScrollPosition(const ScrollPosition&);

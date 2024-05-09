@@ -229,7 +229,9 @@ bool Quirks::shouldTooltipPreventFromProceedingWithClick(const Element& element)
 
     if (!isDomain("covid.cdc.gov"_s))
         return false;
-    return element.hasClass() && element.classNames().contains("tooltip"_s);
+
+    static MainThreadNeverDestroyed<const AtomString> tooltipClass("tooltip"_s);
+    return element.hasClassName(tooltipClass.get());
 }
 
 // google.com https://bugs.webkit.org/show_bug.cgi?id=223700
@@ -941,7 +943,7 @@ bool Quirks::shouldBypassBackForwardCache() const
                 static MainThreadNeverDestroyed<const AtomString> signInId("signIn"_s);
                 static MainThreadNeverDestroyed<const AtomString> loadingClass("loading"_s);
                 RefPtr signinButton = document->getElementById(signInId.get());
-                return signinButton && signinButton->classNames().contains(loadingClass.get());
+                return signinButton && signinButton->hasClassName(loadingClass.get());
             }
         }
     }
@@ -954,7 +956,7 @@ bool Quirks::shouldBypassBackForwardCache() const
     static MainThreadNeverDestroyed<const AtomString> googleDocsOverlayDivClass("docs-homescreen-freeze-el-full"_s);
     auto* firstChildInBody = document->body() ? document->body()->firstChild() : nullptr;
     if (RefPtr div = dynamicDowncast<HTMLDivElement>(firstChildInBody)) {
-        if (div->hasClass() && div->classNames().contains(googleDocsOverlayDivClass))
+        if (div->hasClassName(googleDocsOverlayDivClass))
             return true;
     }
 
@@ -1120,14 +1122,14 @@ bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
 
 static bool elementHasClassInClosestAncestors(const Element& element, const AtomString& className, unsigned distance)
 {
-    if (element.hasClass() && element.classNames().contains(className))
+    if (element.hasClassName(className))
         return true;
 
     unsigned currentDistance = 0;
     RefPtr ancestor = dynamicDowncast<Element>(element.parentNode());
     while (ancestor && currentDistance < distance) {
         ++currentDistance;
-        if (ancestor->hasClass() && ancestor->classNames().contains(className))
+        if (ancestor->hasClassName(className))
             return true;
 
         ancestor = dynamicDowncast<Element>(ancestor->parentNode());

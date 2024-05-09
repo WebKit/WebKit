@@ -60,7 +60,7 @@ inline bool TextManipulationControllerExclusionRule::match(const Element& elemen
     }, [&element] (AttributeRule rule) {
         return equalIgnoringASCIICase(element.getAttribute(rule.name), rule.value);
     }, [&element] (ClassRule rule) {
-        return element.hasClass() && element.classNames().contains(rule.className);
+        return element.hasClassName(rule.className);
     });
 }
 

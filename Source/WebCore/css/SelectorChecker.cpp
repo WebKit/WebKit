@@ -712,7 +712,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         return tagMatches(element, selector);
 
     if (selector.match() == CSSSelector::Match::Class)
-        return element.hasClass() && element.classNames().contains(selector.value());
+        return element.hasClassName(selector.value());
 
     if (selector.match() == CSSSelector::Match::Id) {
         ASSERT(!selector.value().isNull());

@@ -160,6 +160,13 @@ inline const SpaceSplitString& Element::classNames() const
     return elementData()->classNames();
 }
 
+inline bool Element::hasClassName(const AtomString& className) const
+{
+    if (!elementData())
+        return false;
+    return elementData()->classNames().contains(className);
+}
+
 inline unsigned Element::attributeCount() const
 {
     ASSERT(elementData());
