@@ -64,6 +64,11 @@ directory Source/ThirdParty/gtest
 directory Source/ThirdParty/pdfjs
 # We need to include ThirdParty/pdfjs/web/locale/ca/viewer.ftl manually, because ca directories are excluded as port specific.
 file Source/ThirdParty/pdfjs/web/locale/ca/viewer.ftl
+file Source/ThirdParty/skia/CMakeLists.txt
+file Source/ThirdParty/skia/LICENSE
+directory Source/ThirdParty/skia/include
+directory Source/ThirdParty/skia/modules/skcms
+directory Source/ThirdParty/skia/src
 directory Source/ThirdParty/xdgmime
 
 exclude Source/WebKit/Resources
