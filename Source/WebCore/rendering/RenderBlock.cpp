@@ -3210,10 +3210,10 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
     // that can be used for any percentage computations.
     bool isOutOfFlowPositionedWithSpecifiedHeight = isOutOfFlowPositioned() && (!styleToUse.logicalHeight().isAuto() || (!styleToUse.logicalTop().isAuto() && !styleToUse.logicalBottom().isAuto()));
     
-    if (isFlexItem() && downcast<RenderFlexibleBox>(parent())->useChildOverridingLogicalHeightForPercentageResolution(*this))
-        availableHeight = overridingContentLogicalHeight();
+    if (auto usedChildOverridingLogicalHeightForPercentageResolutionForFlex = (isFlexItem() ? downcast<RenderFlexibleBox>(parent())->usedChildOverridingLogicalHeightForPercentageResolution(*this) : std::nullopt))
+        availableHeight = overridingContentLogicalHeight(*usedChildOverridingLogicalHeightForPercentageResolutionForFlex);
     else if (isGridItem() && hasOverridingLogicalHeight())
-        availableHeight = overridingContentLogicalHeight();
+        availableHeight = overridingContentLogicalHeight(overridingLogicalHeight());
     else if (styleToUse.logicalHeight().isFixed()) {
         LayoutUnit contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing((LayoutUnit)styleToUse.logicalHeight().value());
         availableHeight = std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), std::nullopt));

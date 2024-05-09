@@ -291,7 +291,7 @@ public:
     void clearOverridingLogicalWidth();
 
     inline LayoutUnit overridingContentLogicalWidth() const;
-    inline LayoutUnit overridingContentLogicalHeight() const;
+    inline LayoutUnit overridingContentLogicalHeight(LayoutUnit overridingLogicalHeight) const;
 
     std::optional<LayoutUnit> overridingContainingBlockContentWidth() const override;
     std::optional<LayoutUnit> overridingContainingBlockContentHeight() const override;

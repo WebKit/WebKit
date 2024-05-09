@@ -2370,7 +2370,7 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
 
     RenderBlock* cb = containingBlock();
     if (cb->hasOverridingLogicalHeight())
-        return cb->overridingContentLogicalHeight();
+        return cb->overridingContentLogicalHeight(cb->overridingLogicalHeight());
 
     const RenderStyle& containingBlockStyle = cb->style();
     Length logicalHeightLength = containingBlockStyle.logicalHeight();
@@ -3658,10 +3658,10 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
         std::optional<LayoutUnit> stretchedHeight;
         if (auto* block = dynamicDowncast<RenderBlock>(container)) {
             block->addPercentHeightDescendant(*const_cast<RenderBox*>(this));
-            if (block->isFlexItem() && downcast<RenderFlexibleBox>(block->parent())->useChildOverridingLogicalHeightForPercentageResolution(*block))
-                stretchedHeight = block->overridingContentLogicalHeight();
+            if (auto usedChildOverridingLogicalHeightForPercentageResolutionForFlex = (block->isFlexItem() ? downcast<RenderFlexibleBox>(block->parent())->usedChildOverridingLogicalHeightForPercentageResolution(*block) : std::nullopt))
+                stretchedHeight = block->overridingContentLogicalHeight(*usedChildOverridingLogicalHeightForPercentageResolutionForFlex);
             else if (block->isGridItem() && block->hasOverridingLogicalHeight() && !hasPerpendicularContainingBlock)
-                stretchedHeight = block->overridingContentLogicalHeight();
+                stretchedHeight = block->overridingContentLogicalHeight(block->overridingLogicalHeight());
         }
 
         // FIXME: This calculation is not patched for block-flow yet.
@@ -3727,8 +3727,8 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
         return logicalHeight() - borderAndPaddingLogicalHeight();
     }
 
-    if (isFlexItem() && downcast<RenderFlexibleBox>(*parent()).useChildOverridingLogicalHeightForPercentageResolution(*this))
-        return overridingContentLogicalHeight();
+    if (auto usedChildOverridingLogicalHeightForPercentageResolutionForFlex = (isFlexItem() ? downcast<RenderFlexibleBox>(*parent()).usedChildOverridingLogicalHeightForPercentageResolution(*this) : std::nullopt))
+        return overridingContentLogicalHeight(*usedChildOverridingLogicalHeightForPercentageResolutionForFlex);
 
     if (shouldComputeLogicalHeightFromAspectRatio()) {
         auto borderAndPaddingLogicalHeight = this->borderAndPaddingLogicalHeight();
