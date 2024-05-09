@@ -50,14 +50,14 @@ static inline float max4(float a, float b, float c, float d)
     return std::max(std::max(a, b), std::max(c, d));
 }
 
-inline float dot(const FloatSize& a, const FloatSize& b)
+inline double dot(const FloatSize& a, const FloatSize& b)
 {
-    return a.width() * b.width() + a.height() * b.height();
+    return static_cast<double>(a.width()) * b.width() + static_cast<double>(a.height()) * b.height();
 }
 
-inline float determinant(const FloatSize& a, const FloatSize& b)
+inline double determinant(const FloatSize& a, const FloatSize& b)
 {
-    return a.width() * b.height() - a.height() * b.width();
+    return static_cast<double>(a.width()) * b.height() - static_cast<double>(a.height()) * b.width();
 }
 
 inline bool isPointInTriangle(const FloatPoint& p, const FloatPoint& t1, const FloatPoint& t2, const FloatPoint& t3)
@@ -68,16 +68,16 @@ inline bool isPointInTriangle(const FloatPoint& p, const FloatPoint& t1, const F
     FloatSize v2 = p - t1;
     
     // Compute dot products
-    float dot00 = dot(v0, v0);
-    float dot01 = dot(v0, v1);
-    float dot02 = dot(v0, v2);
-    float dot11 = dot(v1, v1);
-    float dot12 = dot(v1, v2);
+    double dot00 = dot(v0, v0);
+    double dot01 = dot(v0, v1);
+    double dot02 = dot(v0, v2);
+    double dot11 = dot(v1, v1);
+    double dot12 = dot(v1, v2);
 
     // Compute barycentric coordinates
-    float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
-    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+    double invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+    double u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    double v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 
     // Check if point is in triangle
     return (u >= 0) && (v >= 0) && (u + v <= 1);
