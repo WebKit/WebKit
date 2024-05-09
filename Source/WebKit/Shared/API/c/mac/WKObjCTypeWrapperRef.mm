@@ -27,7 +27,10 @@
 #import "WKObjCTypeWrapperRef.h"
 
 #import "ObjCObjectGraph.h"
+#import "WKData.h"
+#import "WKNSData.h"
 #import "WKSharedAPICast.h"
+#import "WKType.h"
 
 WKTypeID WKObjCTypeWrapperGetTypeID()
 {
@@ -36,5 +39,7 @@ WKTypeID WKObjCTypeWrapperGetTypeID()
 
 id WKObjCTypeWrapperGetObject(WKObjCTypeWrapperRef wrapperRef)
 {
+    if (wrapperRef && WKGetTypeID(wrapperRef) == WKDataGetTypeID())
+        return WebKit::wrapper(WebKit::toImpl((WKDataRef)wrapperRef));
     return WebKit::toImpl(wrapperRef)->rootObject();
 }

@@ -28,8 +28,10 @@
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 TEST(WebKit, BundleParameters)
@@ -109,4 +111,13 @@ TEST(WebKit, BundleParameters)
 
         TestWebKitAPI::Util::run(&isDone);
     }
+}
+
+TEST(WebKit, LoadDataWithUserData)
+{
+    NSString * const testPlugInClassName = @"BundleParametersPlugIn";
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:testPlugInClassName]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView _loadData:NSData.data MIMEType:@"text/html" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"https://webkit.org/"] userData:NSData.data];
+    [webView _test_waitForDidFinishNavigation];
 }
