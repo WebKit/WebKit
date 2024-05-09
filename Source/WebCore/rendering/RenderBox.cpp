@@ -1404,10 +1404,11 @@ void RenderBox::clearOverridingContainingBlockContentLogicalHeight()
         gOverridingContainingBlockContentLogicalHeightMap->remove(*this);
 }
 
-Length RenderBox::overridingLogicalHeightLength() const
+std::optional<Length> RenderBox::overridingLogicalHeightLength() const
 {
-    ASSERT(hasOverridingLogicalHeightLength());
-    return gOverridingLogicalHeightLengthMap->get(*this);
+    if (!gOverridingLogicalHeightLengthMap)
+        return { };
+    return gOverridingLogicalHeightLengthMap->getOptional(*this);
 }
 
 void RenderBox::setOverridingLogicalHeightLength(const Length& height)
@@ -1415,11 +1416,6 @@ void RenderBox::setOverridingLogicalHeightLength(const Length& height)
     if (!gOverridingLogicalHeightLengthMap)
         gOverridingLogicalHeightLengthMap = new OverridingLengthMap();
     gOverridingLogicalHeightLengthMap->set(*this, height);
-}
-
-bool RenderBox::hasOverridingLogicalHeightLength() const
-{
-    return gOverridingLogicalHeightLengthMap && gOverridingLogicalHeightLengthMap->contains(*this);
 }
 
 void RenderBox::clearOverridingLogicalHeightLength()
@@ -3206,7 +3202,6 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
         bool stretching = parent()->style().boxAlign() == BoxAlignment::Stretch;
         bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inHorizontalBox || !stretching);
         bool checkMinMaxHeight = false;
-        const auto& logicalHeightInUse = hasOverridingLogicalHeightLength() ? overridingLogicalHeightLength() : style().logicalHeight();
 
         // The parent box is flexing us, so it has increased or decreased our height.  We have to
         // grab our cached flexible height.
@@ -3217,7 +3212,10 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
         else if (treatAsReplaced)
             h = Length(computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight(), LengthType::Fixed);
         else {
-            h = logicalHeightInUse;
+            if (auto overridingLogicalHeightLength = this->overridingLogicalHeightLength())
+                h = *overridingLogicalHeightLength;
+            else
+                h = style().logicalHeight();
             checkMinMaxHeight = true;
         }
 
@@ -3244,7 +3242,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
             } else {
                 if (intrinsicHeight)
                     *intrinsicHeight -= borderAndPaddingLogicalHeight();
-                heightResult = computeLogicalHeightUsing(MainOrPreferredSize, logicalHeightInUse, intrinsicHeight).value_or(computedValues.m_extent);
+                heightResult = computeLogicalHeightUsing(MainOrPreferredSize, h, intrinsicHeight).value_or(computedValues.m_extent);
             }
             heightResult = constrainLogicalHeightByMinMax(heightResult, intrinsicHeight);
         } else {
