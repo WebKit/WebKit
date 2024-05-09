@@ -423,15 +423,13 @@ body {
             --border-color-secondary: hsl(0, 0%, 24%);
         }
     }
-    
-    &:is(.mac-platform):not(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
-        /* keep in sync with `WI.undockedTitleAreaHeight` */
-        --undocked-title-area-height: calc(22px / var(--zoom-factor));
-    }
 
     &:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
-        /* keep in sync with `WI.undockedTitleAreaHeight` */
         --undocked-title-area-height: calc(27px / var(--zoom-factor));
+    }
+
+    &:is(.mac-platform.catalina):not(.docked) {
+        --undocked-title-area-height: calc(22px / var(--zoom-factor));
     }
 
     &.mac-platform {
