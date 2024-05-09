@@ -1530,7 +1530,7 @@ void NetworkDataTaskSoup::networkEvent(GSocketClientEvent event, GIOStream* stre
             GRefPtr<GSocketAddress> address = adoptGRef(g_socket_connection_get_remote_address(G_SOCKET_CONNECTION(stream), nullptr));
             if (G_IS_INET_SOCKET_ADDRESS(address.get())) {
                 GUniquePtr<char> ipAddress(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address.get()))));
-                additionalNetworkLoadMetricsForWebInspector().remoteAddress = makeString(ipAddress.get(), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address.get())));
+                additionalNetworkLoadMetricsForWebInspector().remoteAddress = makeString(span(ipAddress.get()), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address.get())));
             }
         }
         // Web Timing considers that connection time involves dns, proxy & TLS negotiation...
