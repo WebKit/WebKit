@@ -308,10 +308,9 @@ public:
     // (the size in the main direction) than the one specified by the item in order to compute the value of flex basis, i.e.,
     // the initial main size of the flex item before the free space is distributed.
     std::optional<Length> overridingLogicalHeightLength() const;
-    Length overridingLogicalWidthLength() const;
+    std::optional<Length> overridingLogicalWidthLength() const;
     void setOverridingLogicalHeightLength(const Length&);
     void setOverridingLogicalWidthLength(const Length&);
-    bool hasOverridingLogicalWidthLength() const;
     void clearOverridingLogicalHeightLength();
     void clearOverridingLogicalWidthLength();
 

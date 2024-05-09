@@ -1424,10 +1424,11 @@ void RenderBox::clearOverridingLogicalHeightLength()
         gOverridingLogicalHeightLengthMap->remove(*this);
 }
 
-Length RenderBox::overridingLogicalWidthLength() const
+std::optional<Length> RenderBox::overridingLogicalWidthLength() const
 {
-    ASSERT(hasOverridingLogicalWidthLength());
-    return gOverridingLogicalWidthLengthMap->get(*this);
+    if (!gOverridingLogicalWidthLengthMap)
+        return { };
+    return gOverridingLogicalWidthLengthMap->getOptional(*this);
 }
 
 void RenderBox::setOverridingLogicalWidthLength(const Length& height)
@@ -1435,11 +1436,6 @@ void RenderBox::setOverridingLogicalWidthLength(const Length& height)
     if (!gOverridingLogicalWidthLengthMap)
         gOverridingLogicalWidthLengthMap = new OverridingLengthMap();
     gOverridingLogicalWidthLengthMap->set(*this, height);
-}
-
-bool RenderBox::hasOverridingLogicalWidthLength() const
-{
-    return gOverridingLogicalWidthLengthMap && gOverridingLogicalWidthLengthMap->contains(*this);
 }
 
 void RenderBox::clearOverridingLogicalWidthLength()
@@ -2687,9 +2683,11 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
 
     const RenderStyle& styleToUse = style();
     Length logicalWidthLength;
-    if (hasOverridingLogicalWidthLength())
-        logicalWidthLength = overridingLogicalWidthLength();
-    else
+    auto hasOverridingLogicalWidthLength = false;
+    if (auto overridingLogicalWidthLength = this->overridingLogicalWidthLength()) {
+        logicalWidthLength = *overridingLogicalWidthLength;
+        hasOverridingLogicalWidthLength = true;
+    } else
         logicalWidthLength = treatAsReplaced ? Length(computeReplacedLogicalWidth(), LengthType::Fixed) : styleToUse.logicalWidth();
 
     RenderBlock& cb = *containingBlock();
@@ -2710,14 +2708,14 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
         containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
 
     // Width calculations
-    if (auto overridingLogicalWidth = (isGridItem() ? this->overridingLogicalWidth() : std::nullopt)) {
+    if (auto overridingLogicalWidth = (isGridItem() ? this->overridingLogicalWidth() : std::nullopt))
         computedValues.m_extent = *overridingLogicalWidth;
-    } else if (treatAsReplaced) {
+    else if (treatAsReplaced)
         computedValues.m_extent = logicalWidthLength.value() + borderAndPaddingLogicalWidth();
-    } else if (shouldComputeLogicalWidthFromAspectRatio() && style().logicalWidth().isAuto()) {
+    else if (shouldComputeLogicalWidthFromAspectRatio() && style().logicalWidth().isAuto())
         computedValues.m_extent = computeLogicalWidthFromAspectRatio(fragment);
-    } else {
-        LayoutUnit preferredWidth = computeLogicalWidthInFragmentUsing(MainOrPreferredSize, hasOverridingLogicalWidthLength() ? logicalWidthLength : styleToUse.logicalWidth(), containerWidthInInlineDirection, cb, fragment);
+    else {
+        auto preferredWidth = computeLogicalWidthInFragmentUsing(MainOrPreferredSize, hasOverridingLogicalWidthLength ? logicalWidthLength : styleToUse.logicalWidth(), containerWidthInInlineDirection, cb, fragment);
         computedValues.m_extent = constrainLogicalWidthInFragmentByMinMax(preferredWidth, containerWidthInInlineDirection, cb, fragment);
     }
 
