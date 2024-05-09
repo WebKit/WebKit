@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2018, 2019, 2021, 2024 Igalia S.L.
- * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
+ * Copyright (C) 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,19 +17,24 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
-#include "WPEQmlExtensionPlugin.h"
+#pragma once
 
-#include "WPEQtProfile.h"
-#include "WPEQtView.h"
-#include "WPEQtViewLoadRequest.h"
+#include <QString>
 
-void WPEQmlExtensionPlugin::registerTypes(const char* uri)
-{
-    // @uri org.wpewebkit.qtwpe
-    qmlRegisterType<WPEQtProfile>(uri, 1, 0, "WPEProfile");
-    qmlRegisterType<WPEQtView>(uri, 1, 0, "WPEView");
-    qmlRegisterUncreatableType<WPEQtViewLoadRequest>(uri, 1, 0, "WPEViewLoadRequest", QObject::tr("Cannot create separate instance of WPEQtViewLoadRequest"));
-}
+class WPEQtProfilePrivate {
+public:
+    WPEQtProfilePrivate() = default;
 
-#include "moc_WPEQmlExtensionPlugin.cpp"
+    WPEQtProfilePrivate(const QString& httpUserAgent, const QString& httpAcceptLanguage)
+        : m_httpUserAgent(httpUserAgent)
+        , m_httpAcceptLanguage(httpAcceptLanguage)
+    {
+    }
+
+    ~WPEQtProfilePrivate() = default;
+
+    QString m_httpUserAgent;
+    QString m_httpAcceptLanguage;
+};
+
+Q_DECLARE_METATYPE(WPEQtProfilePrivate)

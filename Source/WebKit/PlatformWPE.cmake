@@ -554,6 +554,7 @@ target_include_directories(WPEInjectedBundle SYSTEM PRIVATE
 if (ENABLE_WPE_QT_API)
     if (USE_QT6)
         list(APPEND WPE_QT_API_INSTALLED_HEADERS
+            ${WEBKIT_DIR}/UIProcess/API/wpe/qt6/WPEQtProfile.h
             ${WEBKIT_DIR}/UIProcess/API/wpe/qt6/WPEQtView.h
             ${WEBKIT_DIR}/UIProcess/API/wpe/qt6/WPEQtViewLoadRequest.h
         )
@@ -562,11 +563,12 @@ if (ENABLE_WPE_QT_API)
         #        SHARED here works on Linux and probably some other systems, but
         #        not on MacOS or Windows.
         add_library(qtwpe SHARED
-            UIProcess/API/wpe/qt6/WPEViewQtQuick.cpp
             UIProcess/API/wpe/qt6/WPEDisplayQtQuick.cpp
             UIProcess/API/wpe/qt6/WPEQmlExtensionPlugin.cpp
+            UIProcess/API/wpe/qt6/WPEQtProfile.cpp
             UIProcess/API/wpe/qt6/WPEQtView.cpp
             UIProcess/API/wpe/qt6/WPEQtViewLoadRequest.cpp
+            UIProcess/API/wpe/qt6/WPEViewQtQuick.cpp
         )
         set_target_properties(qtwpe PROPERTIES
             OUTPUT_NAME qtwpe
@@ -587,6 +589,7 @@ if (ENABLE_WPE_QT_API)
         )
         target_include_directories(qtwpe PRIVATE
             $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:WebCore,INCLUDE_DIRECTORIES>
             ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
             ${CMAKE_BINARY_DIR}
             ${GLIB_INCLUDE_DIRS}

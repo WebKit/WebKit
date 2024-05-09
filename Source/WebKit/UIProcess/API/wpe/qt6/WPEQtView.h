@@ -27,6 +27,7 @@
 #include <wpe/webkit.h>
 #include <wtf/glib/GRefPtr.h>
 
+class WPEQtProfile;
 class WPEQtViewLoadRequest;
 
 class Q_DECL_EXPORT WPEQtView : public QQuickItem {
@@ -38,6 +39,7 @@ class Q_DECL_EXPORT WPEQtView : public QQuickItem {
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(bool canGoBack READ canGoBack NOTIFY loadingChanged)
     Q_PROPERTY(bool canGoForward READ canGoForward NOTIFY loadingChanged)
+    Q_PROPERTY(WPEQtProfile* profile READ profile WRITE setProfile NOTIFY profileChanged FINAL)
     Q_ENUMS(LoadStatus)
 
 public:
@@ -64,6 +66,9 @@ public:
 
     WebKitWebView* webView() const;
 
+    WPEQtProfile* profile() const;
+    void setProfile(WPEQtProfile*);
+
 public Q_SLOTS:
     void goBack();
     void goForward();
@@ -78,6 +83,7 @@ Q_SIGNALS:
     void titleChanged();
     void loadingChanged(WPEQtViewLoadRequest* loadRequest);
     void loadProgressChanged();
+    void profileChanged();
 
 protected:
     bool errorOccured() const { return m_errorOccured; };
@@ -103,6 +109,8 @@ private Q_SLOTS:
     void configureWindow();
     void createWebView();
     void didUpdateScene();
+    void updateHttpUserAgent();
+    void updateHttpAcceptLanguage();
 
 private:
     QSGNode* updatePaintNode(QSGNode*, UpdatePaintNodeData*) final;
@@ -119,4 +127,5 @@ private:
     QUrl m_baseUrl;
     QSize m_size;
     bool m_errorOccured { false };
+    WPEQtProfile* m_profile { nullptr };
 };

@@ -21,9 +21,13 @@
 #include "config.h"
 #include "WPEQtView.h"
 
-#include "WPEViewQtQuick.h"
+#include "OverrideLanguages.h"
+#include "UserAgent.h"
+#include "WPEQtProfile.h"
+#include "WPEQtProfilePrivate.h"
 #include "WPEQtViewLoadRequest.h"
 #include "WPEQtViewLoadRequestPrivate.h"
+#include "WPEViewQtQuick.h"
 
 #include <QQuickWindow>
 #include <QSGSimpleTextureNode>
@@ -113,6 +117,11 @@ void WPEQtView::createWebView()
     g_signal_connect(m_webView.get(), "load-changed", G_CALLBACK(notifyLoadChangedCallback), this);
     g_signal_connect(m_webView.get(), "load-failed", G_CALLBACK(notifyLoadFailedCallback), this);
 
+    if (m_profile) {
+        updateHttpAcceptLanguage();
+        updateHttpUserAgent();
+    }
+
     if (!m_url.isEmpty())
         webkit_web_view_load_uri(m_webView.get(), m_url.toString().toUtf8().constData());
     else if (!m_html.isEmpty())
@@ -180,6 +189,33 @@ void WPEQtView::didUpdateScene()
 {
     auto* wpeView = webkit_web_view_get_wpe_view(m_webView.get());
     wpe_view_qtquick_did_update_scene(WPE_VIEW_QTQUICK(wpeView));
+}
+
+void WPEQtView::updateHttpAcceptLanguage()
+{
+    if (!m_webView)
+        return;
+
+    auto* wpeContext = webkit_web_view_get_context(m_webView.get());
+    if (!wpeContext)
+        return;
+
+    GRefPtr<GPtrArray> languages = adoptGRef(g_ptr_array_sized_new(1));
+    g_ptr_array_add(languages.get(), static_cast<gpointer>(m_profile->httpAcceptLanguage().toUtf8().data()));
+    g_ptr_array_add(languages.get(), nullptr);
+    webkit_web_context_set_preferred_languages(wpeContext, reinterpret_cast<const char* const*>(languages->pdata));
+}
+
+void WPEQtView::updateHttpUserAgent()
+{
+    if (!m_webView)
+        return;
+
+    auto* wpeSettings = webkit_web_view_get_settings(m_webView.get());
+    if (!wpeSettings)
+        return;
+
+    webkit_settings_set_user_agent(wpeSettings, m_profile->httpUserAgent().toUtf8().constData());
 }
 
 QSGNode* WPEQtView::updatePaintNode(QSGNode* node, UpdatePaintNodeData*)
@@ -547,6 +583,34 @@ void WPEQtView::touchEvent(QTouchEvent* event)
 WebKitWebView* WPEQtView::webView() const
 {
     return m_webView.get();
+}
+
+WPEQtProfile* WPEQtView::profile() const
+{
+    return m_profile;
+}
+
+void WPEQtView::setProfile(WPEQtProfile* profile)
+{
+    if (m_profile == profile)
+        return;
+
+    if (m_profile)
+        disconnect(m_profile);
+
+    // Do not delete m_profile, QML holds ownership.
+    m_profile = profile;
+
+    if (m_webView) {
+        updateHttpUserAgent();
+        updateHttpAcceptLanguage();
+    }
+
+    // Listen for dynamic changes of these properties, and take action.
+    connect(m_profile, &WPEQtProfile::httpUserAgentChanged, this, &WPEQtView::updateHttpUserAgent);
+    connect(m_profile, &WPEQtProfile::httpAcceptLanguageChanged, this, &WPEQtView::updateHttpAcceptLanguage);
+
+    Q_EMIT profileChanged();
 }
 
 #include "moc_WPEQtView.cpp"
