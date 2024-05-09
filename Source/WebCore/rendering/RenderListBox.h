@@ -73,7 +73,8 @@ public:
     unsigned size() const;
 
     bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override;
-    
+    FrameIdentifier rootFrameID() const final;
+
 private:
     bool isVisibleToHitTesting() const final;
 

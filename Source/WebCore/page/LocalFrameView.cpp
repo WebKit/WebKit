@@ -6194,6 +6194,11 @@ void LocalFrameView::scrollbarStyleDidChange()
     scrollbarsController().updateScrollbarStyle();
 }
 
+FrameIdentifier LocalFrameView::rootFrameID() const
+{
+    return m_frame->rootFrame().frameID();
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID

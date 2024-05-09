@@ -104,6 +104,7 @@ public:
     virtual void frameViewRootLayerDidChange(LocalFrameView&);
 
     virtual void frameViewWillBeDetached(LocalFrameView&) { }
+    virtual void rootFrameWasRemoved(FrameIdentifier) { }
 
     // Traverses the scrolling tree, setting layer positions to represent the current scrolled state.
     virtual void applyScrollingTreeLayerPositions() { }
@@ -136,9 +137,9 @@ public:
     virtual void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>) { }
 
     // Create an unparented node.
-    virtual ScrollingNodeID createNode(ScrollingNodeType, ScrollingNodeID newNodeID) { return newNodeID; }
+    virtual ScrollingNodeID createNode(FrameIdentifier, ScrollingNodeType, ScrollingNodeID newNodeID) { return newNodeID; }
     // Parent a node in the scrolling tree. This may return a new nodeID if the node type changed. parentID = 0 sets the root node.
-    virtual ScrollingNodeID insertNode(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/, size_t /*childIndex*/ = notFound) { return newNodeID; }
+    virtual ScrollingNodeID insertNode(FrameIdentifier, ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/, size_t /*childIndex*/ = notFound) { return newNodeID; }
     // Node will be unparented, but not destroyed. It's the client's responsibility to either re-parent or destroy this node.
     virtual void unparentNode(ScrollingNodeID) { }
     // Node will be destroyed, and its children left unparented.
@@ -146,7 +147,7 @@ public:
     // Node will be unparented, and it and its children destroyed.
     virtual void detachAndDestroySubtree(ScrollingNodeID) { }
     // Destroy the tree, including both parented and unparented nodes.
-    virtual void clearAllNodes() { }
+    virtual void clearAllNodes(FrameIdentifier) { }
 
     virtual ScrollingNodeID parentOfNode(ScrollingNodeID) const { return { }; }
     virtual Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const { return { }; }
@@ -183,7 +184,7 @@ public:
     virtual bool isScrollSnapInProgress(ScrollingNodeID) const { return false; }
     virtual void updateScrollSnapPropertiesWithFrameView(const LocalFrameView&) { }
     virtual void setScrollPinningBehavior(ScrollPinningBehavior) { }
-    virtual bool hasSubscrollers() const { return false; }
+    virtual bool hasSubscrollers(FrameIdentifier) const { return false; }
 
     // Generated a unique id for scrolling nodes.
     WEBCORE_EXPORT ScrollingNodeID uniqueScrollingNodeID();
@@ -229,7 +230,7 @@ protected:
     GraphicsLayer* headerLayerForFrameView(LocalFrameView&);
     GraphicsLayer* footerLayerForFrameView(LocalFrameView&);
 
-    virtual void willCommitTree() { }
+    virtual void willCommitTree(FrameIdentifier) { }
 
     WEBCORE_EXPORT Page* page() const;
     RefPtr<Page> protectedPage() const;

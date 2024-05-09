@@ -288,19 +288,6 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
                 m_remoteLayerTreeHost->detachRootLayer();
         }
 
-        // TODO: rdar://126001790 properly handle commits from a web process with multiple root frames.
-        // Currently we get commits for each frame if a web process has multiple root frames. This
-        // currently results in sending across the same scrolling tree multiple times, which can result
-        // in a cycle when a web process has a granparent and grandchild frame, with another process having
-        // the intermediate frame. For now only do scrolling tree commits for the first root frame we see
-        // from a process.
-        auto it = m_commitsForFrameID.find(layerTreeTransaction.processIdentifier());
-        if (it != m_commitsForFrameID.end()) {
-            if (it->value != scrollingTreeTransaction.rootFrameIdentifier())
-                return;
-        } else
-            m_commitsForFrameID.set(layerTreeTransaction.processIdentifier(), scrollingTreeTransaction.rootFrameIdentifier());
-
 #if ENABLE(ASYNC_SCROLLING)
 #if PLATFORM(IOS_FAMILY)
         if (!layerTreeTransaction.isMainFrameProcessTransaction()) {
