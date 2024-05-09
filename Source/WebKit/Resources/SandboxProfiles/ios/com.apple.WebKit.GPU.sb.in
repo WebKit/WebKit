@@ -988,3 +988,7 @@
         (extension-class "com.apple.mediaserverd.read")
         (apply subpath issue-extension-secondary-paths)))
 #endif
+
+#if __has_include(<WebKitAdditions/com.apple.WebKit.GPU.sb.in>)
+#include <WebKitAdditions/com.apple.WebKit.GPU.sb.in>
+#endif
