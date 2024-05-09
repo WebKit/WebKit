@@ -2381,3 +2381,5 @@ webkit.org/b/273905 svg/filters/filter-on-root-tile-boundary.html [ Pass ImageOn
 #rdar://127771298 (Mark more tests fixed on main, but still broken on. iOS for 7618-branch (273909))
 fast/images/async-image-intersect-different-size-for-drawing.html [ Failure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/not-floating-001.html [ Failure ]
+
+webkit.org/b/273911 [ Debug ] fast/block/crash-when-style-and-renderer-invalidated-for-floating-object-element.html
