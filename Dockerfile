@@ -55,21 +55,20 @@ RUN for f in /usr/lib/llvm-${LLVM_VERSION}/bin/*; do ln -sf "$f" /usr/bin; done 
 
 # Debian repos may not have the latest ICU version, so we ensure build reliability by downloading
 # the exact version we need. Unfortunately, aarch64 is not pre-built so we have to build it from source.
-RUN mkdir /tmp/icu && \
-    cd /tmp/icu && \
+RUN mkdir /icu && \
+    cd /icu && \
     wget https://github.com/unicode-org/icu/releases/download/release-75-1/icu4c-75_1-src.tgz -O icu.tgz && \
     tar -xf icu.tgz --strip-components=1 && \
     rm icu.tgz && \
     cd source && \
     ./runConfigureICU Linux/clang --enable-static --disable-shared --with-data-packaging=static --disable-samples --disable-debug --enable-release && \
     make -j$(nproc) && \
-    make install && \
-    rm -rf /tmp/icu
+    make install
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
 RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc
 
-RUN cp -r /usr/local/lib/libicu* /output/lib
+RUN cp -r /icu/source/lib/* /output/lib
 
 COPY . /webkit
 WORKDIR /webkit
@@ -99,6 +98,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_RANLIB=$(which llvm-ranlib) \
     -DCMAKE_C_FLAGS="$CFLAGS" \
     -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
+    -DICU_ROOT=/icu \
     -G Ninja \
     /webkit && \
     cd /webkitbuild && \
