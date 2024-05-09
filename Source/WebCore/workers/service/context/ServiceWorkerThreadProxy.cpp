@@ -329,7 +329,7 @@ void ServiceWorkerThreadProxy::fireMessageEvent(MessageWithMessagePorts&& messag
         protectedThis->thread().willPostTaskToFireMessageEvent();
     });
 
-    thread().runLoop().postTask([this, protectedThis = Ref { *this }, message = WTFMove(message), sourceData = WTFMove(sourceData)](auto&) mutable {
+    thread().runLoop().postTask([this, protectedThis = Ref { *this }, message = WTFMove(message), sourceData = crossThreadCopy(WTFMove(sourceData))](auto&) mutable {
         thread().queueTaskToPostMessage(WTFMove(message), WTFMove(sourceData));
     });
 }
