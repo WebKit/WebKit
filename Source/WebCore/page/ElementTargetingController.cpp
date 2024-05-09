@@ -825,6 +825,38 @@ std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNo
     return { WTFMove(potentialCandidates), WTFMove(foundElement) };
 }
 
+static Vector<Ref<Element>> filterRedundantNearbyTargets(HashSet<Ref<Element>>&& unfilteredNearbyTargets)
+{
+    HashMap<Ref<Element>, bool> shouldKeepCache;
+    Vector<Ref<Element>> filteredResults;
+
+    for (auto& originalTarget : unfilteredNearbyTargets) {
+        Vector<Ref<Element>> ancestorsOfTarget;
+        bool shouldKeep = true;
+        for (auto& ancestor : ancestorsOfType<Element>(originalTarget)) {
+            if (unfilteredNearbyTargets.contains(ancestor)) {
+                shouldKeep = false;
+                break;
+            }
+
+            if (auto entry = shouldKeepCache.find(ancestor); entry != shouldKeepCache.end()) {
+                shouldKeep = entry->value;
+                break;
+            }
+
+            ancestorsOfTarget.append(ancestor);
+        }
+
+        for (auto& ancestor : ancestorsOfTarget)
+            shouldKeepCache.add(ancestor, shouldKeep);
+
+        if (shouldKeep)
+            filteredResults.append(originalTarget);
+    }
+
+    return filteredResults;
+}
+
 Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Ref<Node>>&& nodes, RefPtr<Element>&& innerElement, bool canIncludeNearbyElements)
 {
     RefPtr page = m_page.get();
@@ -973,11 +1005,11 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
     if (additionalRegionForNearbyElements.isEmpty())
         return results;
 
-    auto nearbyTargets = [&] {
+    auto nearbyTargets = [&]() -> Vector<Ref<Element>> {
         HashSet<Ref<Element>> results;
         CheckedPtr bodyRenderer = bodyElement->renderer();
         if (!bodyRenderer)
-            return results;
+            return { };
 
         for (auto& renderer : descendantsOfType<RenderElement>(*bodyRenderer)) {
             if (!renderer.isOutOfFlowPositioned())
@@ -1018,7 +1050,8 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
 
             results.add(element.releaseNonNull());
         }
-        return results;
+
+        return filterRedundantNearbyTargets(WTFMove(results));
     }();
 
     for (auto& element : nearbyTargets) {
