@@ -452,6 +452,7 @@ void UnifiedPDFPlugin::ensureLayers()
         m_contentsLayer = createGraphicsLayer("PDF contents"_s, isFullMainFramePlugin() ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::TiledBacking);
         m_contentsLayer->setAnchorPoint({ });
         m_contentsLayer->setDrawsContent(true);
+        m_contentsLayer->setAcceleratesDrawing(canPaintSelectionIntoOwnedLayer());
         m_scrolledContentsLayer->addChild(*m_contentsLayer);
 
         // This is the call that enables async rendering.
@@ -469,8 +470,7 @@ void UnifiedPDFPlugin::ensureLayers()
         m_selectionLayer = createGraphicsLayer("PDF selections"_s, GraphicsLayer::Type::TiledBacking);
         m_selectionLayer->setAnchorPoint({ });
         m_selectionLayer->setDrawsContent(true);
-        if (canPaintSelectionIntoOwnedLayer())
-            m_selectionLayer->setAcceleratesDrawing(true);
+        m_selectionLayer->setAcceleratesDrawing(true);
         m_selectionLayer->setBlendMode(BlendMode::Multiply);
         m_scrolledContentsLayer->addChild(*m_selectionLayer);
     }
@@ -531,6 +531,7 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
             pageBackgroundLayer->setAnchorPoint({ });
             pageBackgroundLayer->setBackgroundColor(Color::white);
             pageBackgroundLayer->setDrawsContent(true);
+            pageBackgroundLayer->setAcceleratesDrawing(true);
             pageBackgroundLayer->setShouldUpdateRootRelativeScaleFactor(false);
             pageBackgroundLayer->setNeedsDisplay(); // We only need to paint this layer once.
 
@@ -778,11 +779,12 @@ std::optional<float> UnifiedPDFPlugin::customContentsScale(const GraphicsLayer* 
     return { };
 }
 
-bool UnifiedPDFPlugin::layerNeedsPlatformContext(const WebCore::GraphicsLayer*) const
+bool UnifiedPDFPlugin::layerNeedsPlatformContext(const WebCore::GraphicsLayer* layer) const
 {
     // We need a platform context if the plugin can not paint selections into its own layer,
     // since we would then have to vend a platform context that PDFKit can paint into.
-    return !canPaintSelectionIntoOwnedLayer();
+    // However, this constraint only applies for the contents layer. No other layer needs to be WP-backed.
+    return layer == m_contentsLayer.get() && !canPaintSelectionIntoOwnedLayer();
 }
 
 void UnifiedPDFPlugin::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
@@ -1563,6 +1565,7 @@ bool UnifiedPDFPlugin::updateOverflowControlsLayers(bool needsHorizontalScrollba
             layer->setAllowsBackingStoreDetaching(false);
             layer->setAllowsTiling(false);
             layer->setDrawsContent(true);
+            layer->setAcceleratesDrawing(true);
 
 #if ENABLE(SCROLLING_THREAD)
             layer->setScrollingNodeID(m_scrollingNodeID);
@@ -1616,6 +1619,7 @@ void UnifiedPDFPlugin::positionOverflowControlsLayers()
         layer->setPosition(cornerRect.location());
         layer->setSize(cornerRect.size());
         layer->setDrawsContent(!cornerRect.isEmpty());
+        layer->setAcceleratesDrawing(true);
     }
 }
 
