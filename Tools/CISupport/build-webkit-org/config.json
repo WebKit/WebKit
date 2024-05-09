@@ -103,6 +103,7 @@
                   { "name": "gtk-linux-bot-20", "platform": "gtk" },
                   { "name": "gtk-linux-bot-21", "platform": "gtk" },
                   { "name": "gtk-linux-bot-22", "platform": "gtk" },
+                  { "name": "gtk-linux-bot-23", "platform": "gtk" },
 
                   { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
                   { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
@@ -143,7 +144,8 @@
                   { "name": "wpe-linux-bot-32", "platform": "wpe" },
                   { "name": "wpe-linux-bot-33", "platform": "wpe" },
                   { "name": "wpe-linux-bot-34", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-35", "platform": "wpe" }
+                  { "name": "wpe-linux-bot-35", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-36", "platform": "wpe" }
                 ],
 
   "builders":   [
@@ -442,9 +444,16 @@
                     "workernames": ["gtk-linux-bot-21"]
                   },
                   {
+                    "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
+                    "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                    "additionalArguments": ["--no-bubblewrap-sandbox"],
+                    "workernames": ["gtk-linux-bot-17"]
+                  },
+                  {
                     "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                    "workernames": ["gtk-linux-bot-17"]
+                    "additionalArguments": ["--no-bubblewrap-sandbox"],
+                    "workernames": ["gtk-linux-bot-23"]
                   },
                   {
                     "name": "GTK-Linux-64-bit-Release-GTK4-Tests", "factory": "BuildAndTestAndArchiveAllButJSCFactory",
@@ -557,10 +566,16 @@
                     "workernames": ["wpe-linux-bot-6"]
                   },
                   {
-                    "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
+                    "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-bubblewrap-sandbox", "--cmakeargs=-DENABLE_WPE_QT_API=OFF"],
                     "workernames": ["wpe-linux-bot-8"]
+                  },
+                  {
+                    "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                    "additionalArguments": ["--no-bubblewrap-sandbox", "--cmakeargs=-DENABLE_WPE_QT_API=OFF"],
+                    "workernames": ["wpe-linux-bot-36"]
                   },
                   {
                     "name": "WPE-Linux-64-bit-Release-Non-Unified-Build", "factory": "BuildFactory",
@@ -842,7 +857,9 @@
                   },
                   { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "main_filter",
                     "branch": "main", "hour": 22, "minute": 0,
-                    "builderNames": ["GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204",
+                    "builderNames": ["GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004",
+                                     "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204",
+                                     "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004",
                                      "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204"]
                   }
                 ]

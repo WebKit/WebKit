@@ -1057,6 +1057,19 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
+        'GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'compile-webkit',
+            'generate-minibrowser-bundle'
+        ],
         'GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204': [
             'configure-build',
             'configuration',
@@ -1434,6 +1447,19 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'download-built-product',
             'extract-built-product',
             'webdriver-test'
+        ],
+        'WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'compile-webkit',
+            'generate-minibrowser-bundle'
         ],
         'WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204': [
             'configure-build',
