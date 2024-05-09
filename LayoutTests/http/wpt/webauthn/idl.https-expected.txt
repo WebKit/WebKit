@@ -1,5 +1,4 @@
 Description
-
 This test verifies that the implementations of the WebAuthN API match with its WebIDL definition.
 
 
