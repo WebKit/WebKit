@@ -214,8 +214,7 @@ public:
             SET_OR_CLEAR_OVERRIDING_SIZE(m_box, Width, size);
         }
         if (axis == Axis::Both || axis == Axis::Block) {
-            if (box.hasOverridingLogicalHeight())
-                m_overridingHeight = box.overridingLogicalHeight();
+            m_overridingHeight = box.overridingLogicalHeight();
             SET_OR_CLEAR_OVERRIDING_SIZE(m_box, Height, size);
         }
     }
@@ -1619,10 +1618,7 @@ std::optional<LayoutUnit> RenderFlexibleBox::usedChildOverridingCrossSizeForPerc
     ASSERT(mainAxisIsChildInlineAxis(child));
     if (alignmentForChild(child) != ItemPosition::Stretch)
         return { };
-
-    if (child.hasOverridingLogicalHeight())
-        return child.overridingLogicalHeight();
-    return { };
+    return child.overridingLogicalHeight();
 }
 
 // This method is only called whenever a descendant of a flex item wants to resolve a percentage in its
@@ -1636,11 +1632,8 @@ std::optional<LayoutUnit> RenderFlexibleBox::usedChildOverridingMainSizeForPerce
     ASSERT(!mainAxisIsChildInlineAxis(child));
 
     // The main size of a fully inflexible item with a definite flex basis is, by definition, definite.
-    if (child.style().flexGrow() == 0.0 && child.style().flexShrink() == 0.0 && childMainSizeIsDefinite(child, flexBasisForChild(child))) {
-        if (child.hasOverridingLogicalHeight())
-            return child.overridingLogicalHeight();
-        return { };
-    }
+    if (child.style().flexGrow() == 0.0 && child.style().flexShrink() == 0.0 && childMainSizeIsDefinite(child, flexBasisForChild(child)))
+        return child.overridingLogicalHeight();
 
     // This function implements section 9.8. Definite and Indefinite Sizes, case 2) of the flexbox spec.
     // If the flex container has a definite main size the flex item post-flexing main size is also treated
@@ -1648,9 +1641,7 @@ std::optional<LayoutUnit> RenderFlexibleBox::usedChildOverridingMainSizeForPerce
     if (!canComputePercentageFlexBasis(child, Length(0, LengthType::Percent), UpdatePercentageHeightDescendants::Yes))
         return { };
 
-    if (child.hasOverridingLogicalHeight())
-        return child.overridingLogicalHeight();
-    return { };
+    return child.overridingLogicalHeight();
 }
 
 std::optional<LayoutUnit> RenderFlexibleBox::usedChildOverridingLogicalHeightForPercentageResolution(const RenderBox& child)
@@ -2533,7 +2524,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox& child, LayoutUni
             // So, redo it here.
             childNeedsRelayout = true;
         }
-        if (childNeedsRelayout || !child.hasOverridingLogicalHeight())
+        if (childNeedsRelayout || !child.overridingLogicalHeight())
             child.setOverridingLogicalHeight(desiredLogicalHeight);
         if (childNeedsRelayout) {
             SetForScope resetChildLogicalHeight(m_shouldResetChildLogicalHeightBeforeLayout, true);

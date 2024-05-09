@@ -281,8 +281,7 @@ public:
     LayoutUnit maxPreferredLogicalWidth() const override;
 
     LayoutUnit overridingLogicalWidth() const;
-    LayoutUnit overridingLogicalHeight() const;
-    bool hasOverridingLogicalHeight() const;
+    std::optional<LayoutUnit> overridingLogicalHeight() const;
     bool hasOverridingLogicalWidth() const;
     void setOverridingLogicalHeight(LayoutUnit);
     void setOverridingLogicalWidth(LayoutUnit);

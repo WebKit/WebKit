@@ -526,8 +526,8 @@ void RenderTable::layout()
         if (logicalHeightLength.isIntrinsic() || (logicalHeightLength.isSpecified() && logicalHeightLength.isPositive()))
             computedLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalHeightLength);
 
-        if (hasOverridingLogicalHeight())
-            computedLogicalHeight = std::max(computedLogicalHeight, overridingLogicalHeight() - borderAndPaddingAfter - sumCaptionsLogicalHeight());
+        if (auto overridingLogicalHeight = this->overridingLogicalHeight())
+            computedLogicalHeight = std::max(computedLogicalHeight, *overridingLogicalHeight - borderAndPaddingAfter - sumCaptionsLogicalHeight());
 
         Length logicalMaxHeightLength = style().logicalMaxHeight();
         if (logicalMaxHeightLength.isFillAvailable() || (logicalMaxHeightLength.isSpecified() && !logicalMaxHeightLength.isNegative()
@@ -553,7 +553,12 @@ void RenderTable::layout()
             // Completely empty tables (with no sections or anything) should at least honor their
             // overriding or specified height in strict mode, but this value will not be cached.
             shouldCacheIntrinsicContentLogicalHeightForFlexItem = false;
-            setLogicalHeight(hasOverridingLogicalHeight() ? overridingLogicalHeight() - borderAndPaddingAfter : logicalHeight() + computedLogicalHeight);
+            auto tableLogicalHeight = [&] {
+                if (auto overridingLogicalHeight = this->overridingLogicalHeight())
+                    return *overridingLogicalHeight - borderAndPaddingAfter;
+                return logicalHeight() + computedLogicalHeight;
+            };
+            setLogicalHeight(tableLogicalHeight());
         }
 
         LayoutUnit sectionLogicalLeft = style().isLeftToRightDirection() ? borderStart() : borderEnd();

@@ -3196,52 +3196,57 @@ bool RenderBlock::hasDefiniteLogicalHeight() const
 
 std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComputation() const
 {
-    std::optional<LayoutUnit> availableHeight;
-    
     // For anonymous blocks that are skipped during percentage height calculation,
     // we consider them to have an indefinite height.
     if (skipContainingBlockForPercentHeightCalculation(*this, false))
-        return availableHeight;
-    
-    const auto& styleToUse = style();
-    
-    // A positioned element that specified both top/bottom or that specifies
-    // height should be treated as though it has a height explicitly specified
-    // that can be used for any percentage computations.
-    bool isOutOfFlowPositionedWithSpecifiedHeight = isOutOfFlowPositioned() && (!styleToUse.logicalHeight().isAuto() || (!styleToUse.logicalTop().isAuto() && !styleToUse.logicalBottom().isAuto()));
-    
-    if (auto usedChildOverridingLogicalHeightForPercentageResolutionForFlex = (isFlexItem() ? downcast<RenderFlexibleBox>(parent())->usedChildOverridingLogicalHeightForPercentageResolution(*this) : std::nullopt))
-        availableHeight = overridingContentLogicalHeight(*usedChildOverridingLogicalHeightForPercentageResolutionForFlex);
-    else if (isGridItem() && hasOverridingLogicalHeight())
-        availableHeight = overridingContentLogicalHeight(overridingLogicalHeight());
-    else if (styleToUse.logicalHeight().isFixed()) {
-        LayoutUnit contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing((LayoutUnit)styleToUse.logicalHeight().value());
-        availableHeight = std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), std::nullopt));
-    } else if (shouldComputeLogicalHeightFromAspectRatio()) {
-        // Only grid is expected to be in a state where it is calculating pref width and having unknown logical width.
-        if (isRenderGrid() && preferredLogicalWidthsDirty() && !style().logicalWidth().isSpecified())
-            return availableHeight;
-        availableHeight = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit(style().logicalAspectRatio()), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatioType(), isRenderReplaced());
-    } else if (isOutOfFlowPositionedWithSpecifiedHeight) {
-        // Don't allow this to affect the block' size() member variable, since this
-        // can get called while the block is still laying out its kids.
-        LogicalExtentComputedValues computedValues = computeLogicalHeight(logicalHeight(), 0_lu);
-        availableHeight = std::max(0_lu, computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight());
-    } else if (styleToUse.logicalHeight().isPercentOrCalculated()) {
-        std::optional<LayoutUnit> heightWithScrollbar = computePercentageLogicalHeight(styleToUse.logicalHeight());
-        if (heightWithScrollbar) {
-            LayoutUnit contentBoxHeightWithScrollbar = adjustContentBoxLogicalHeightForBoxSizing(heightWithScrollbar.value());
-            // We need to adjust for min/max height because this method does not
-            // handle the min/max of the current block, its caller does. So the
-            // return value from the recursive call will not have been adjusted
-            // yet.
-            LayoutUnit contentBoxHeight = constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - scrollbarLogicalHeight(), std::nullopt);
-            availableHeight = std::max(0_lu, contentBoxHeight);
+        return { };
+
+    auto availableHeight = [&]() -> std::optional<LayoutUnit> {
+        if (auto overridingLogicalHeightForFlex = (isFlexItem() ? downcast<RenderFlexibleBox>(parent())->usedChildOverridingLogicalHeightForPercentageResolution(*this) : std::nullopt))
+            return overridingContentLogicalHeight(*overridingLogicalHeightForFlex);
+
+        if (auto overridingLogicalHeightForGrid = (isGridItem() ? overridingLogicalHeight() : std::nullopt))
+            return overridingContentLogicalHeight(*overridingLogicalHeightForGrid);
+
+        auto& style = this->style();
+        if (style.logicalHeight().isFixed()) {
+            auto contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { style.logicalHeight().value() });
+            return std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), { }));
         }
-    } else if (isRenderView())
-        availableHeight = view().pageOrViewLogicalHeight();
-    
-    return availableHeight;
+
+        if (shouldComputeLogicalHeightFromAspectRatio()) {
+            // Only grid is expected to be in a state where it is calculating pref width and having unknown logical width.
+            if (isRenderGrid() && preferredLogicalWidthsDirty() && !style.logicalWidth().isSpecified())
+                return { };
+            return blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit { style.logicalAspectRatio() }, style.boxSizingForAspectRatio(), logicalWidth(), style.aspectRatioType(), isRenderReplaced());
+        }
+
+        // A positioned element that specified both top/bottom or that specifies
+        // height should be treated as though it has a height explicitly specified
+        // that can be used for any percentage computations.
+        auto isOutOfFlowPositionedWithSpecifiedHeight = isOutOfFlowPositioned() && (!style.logicalHeight().isAuto() || (!style.logicalTop().isAuto() && !style.logicalBottom().isAuto()));
+        if (isOutOfFlowPositionedWithSpecifiedHeight) {
+            // Don't allow this to affect the block' size() member variable, since this
+            // can get called while the block is still laying out its kids.
+            return std::max(0_lu, computeLogicalHeight(logicalHeight(), 0_lu).m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight());
+        }
+
+        if (style.logicalHeight().isPercentOrCalculated()) {
+            if (auto heightWithScrollbar = computePercentageLogicalHeight(style.logicalHeight())) {
+                auto contentBoxHeightWithScrollbar = adjustContentBoxLogicalHeightForBoxSizing(heightWithScrollbar.value());
+                // We need to adjust for min/max height because this method does not handle the min/max of the current block, its caller does.
+                // So the return value from the recursive call will not have been adjusted yet.
+                return std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - scrollbarLogicalHeight(), { }));
+            }
+            return { };
+        }
+
+        if (isRenderView())
+            return view().pageOrViewLogicalHeight();
+
+        return { };
+    };
+    return availableHeight();
 }
     
 void RenderBlock::layoutExcludedChildren(bool relayoutChildren)

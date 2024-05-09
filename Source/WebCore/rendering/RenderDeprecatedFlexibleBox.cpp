@@ -168,8 +168,8 @@ static LayoutUnit widthForChild(RenderBox* child)
 
 static LayoutUnit heightForChild(RenderBox* child)
 {
-    if (child->hasOverridingLogicalHeight())
-        return child->overridingLogicalHeight();
+    if (auto overridingLogicalHeight = child->overridingLogicalHeight())
+        return *overridingLogicalHeight;
     return child->logicalHeight();
 }
 
