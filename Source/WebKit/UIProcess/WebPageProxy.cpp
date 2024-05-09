@@ -3465,16 +3465,15 @@ void WebPageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, const
     protectedProcess()->recordUserGestureAuthorizationToken(webPageID(), event.authorizationToken());
     if (event.isActivationTriggeringEvent())
         internals().lastActivationTimestamp = MonotonicTime::now();
-
-    sendToProcessContainingFrame(frameID, Messages::WebPage::MouseEvent(frameID, event, WTFMove(sandboxExtensions)), [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
-        if (!m_pageClient)
+    sendToProcessContainingFrame(frameID, Messages::WebPage::MouseEvent(frameID, event, WTFMove(sandboxExtensions)), [protectedThis = Ref { *this }, weakProcess = WeakPtr { m_process }] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
+        if (!protectedThis->m_pageClient || protectedThis->m_process.ptr() != weakProcess)
             return;
         if (!eventType) {
-            mouseEventHandlingCompleted(eventType, handled);
+            protectedThis->mouseEventHandlingCompleted(eventType, handled);
             return;
         }
         // FIXME: If these sandbox extensions are important, find a way to get them to the iframe process.
-        handleMouseEventReply(*eventType, handled, remoteUserInputEventData, { });
+        protectedThis->handleMouseEventReply(*eventType, handled, remoteUserInputEventData, { });
     });
 }
 
@@ -3827,14 +3826,14 @@ void WebPageProxy::sendKeyEvent(const NativeWebKeyboardEvent& event)
     if (event.isActivationTriggeringEvent())
         internals().lastActivationTimestamp = MonotonicTime::now();
 
-    auto handleKeyEventReply = [this, protectedThis = Ref { *this }] (std::optional<WebEventType> eventType, bool handled) {
-        if (!m_pageClient)
+    auto handleKeyEventReply = [protectedThis = Ref { *this }, weakProcess = WeakPtr { m_process }] (std::optional<WebEventType> eventType, bool handled) {
+        if (!protectedThis->m_pageClient || protectedThis->m_process.ptr() != weakProcess)
             return;
         if (!eventType) {
-            keyEventHandlingCompleted(eventType, handled);
+            protectedThis->keyEventHandlingCompleted(eventType, handled);
             return;
         }
-        didReceiveEvent(*eventType, handled);
+        protectedThis->didReceiveEvent(*eventType, handled);
     };
 
     auto targetFrameID = m_focusedFrame ? m_focusedFrame->frameID() : m_mainFrame->frameID();
@@ -10005,6 +10004,8 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     m_pendingLearnOrIgnoreWordMessageCount = 0;
 
+    internals().mouseEventQueue.clear();
+    internals().keyEventQueue.clear();
     if (m_wheelEventCoalescer)
         m_wheelEventCoalescer->clear();
 
