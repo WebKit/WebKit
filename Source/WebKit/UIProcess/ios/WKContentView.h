@@ -59,10 +59,6 @@ enum class ViewStabilityFlag : uint8_t;
     WeakObjCPtr<WKWebView> _webView;
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-@property (nonatomic, readonly) WKBrowsingContextController *browsingContextController;
-ALLOW_DEPRECATED_DECLARATIONS_END
-
 @property (nonatomic, readonly) WebKit::WebPageProxy* page;
 @property (nonatomic, readonly) BOOL isFocusingElement;
 @property (nonatomic, getter=isShowingInspectorIndication) BOOL showingInspectorIndication;

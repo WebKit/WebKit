@@ -493,10 +493,6 @@ public:
 
     _WKRemoteObjectRegistry *remoteObjectRegistry();
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    WKBrowsingContextController *browsingContextController();
-ALLOW_DEPRECATED_DECLARATIONS_END
-
 #if ENABLE(DRAG_SUPPORT)
     void draggedImage(NSImage *, CGPoint endPoint, NSDragOperation);
     NSDragOperation draggingEntered(id <NSDraggingInfo>);

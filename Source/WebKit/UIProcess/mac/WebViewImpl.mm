@@ -3913,16 +3913,6 @@ _WKRemoteObjectRegistry *WebViewImpl::remoteObjectRegistry()
     return m_remoteObjectRegistry.get();
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-WKBrowsingContextController *WebViewImpl::browsingContextController()
-{
-    if (!m_browsingContextController)
-        m_browsingContextController = adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:toAPI(m_page.ptr())]);
-
-    return m_browsingContextController.get();
-}
-ALLOW_DEPRECATED_DECLARATIONS_END
-
 #if ENABLE(DRAG_SUPPORT)
 void WebViewImpl::draggedImage(NSImage *, CGPoint endPoint, NSDragOperation operation)
 {
