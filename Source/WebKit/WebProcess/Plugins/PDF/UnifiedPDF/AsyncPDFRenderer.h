@@ -130,11 +130,17 @@ private:
         {
             return tileRect == other.tileRect && pageCoverage == other.pageCoverage && contentsVersion == other.contentsVersion;
         }
+
+        bool equivalentForPaintingIgnoringContentVersion(const TileRenderInfo& other) const
+        {
+            return tileRect == other.tileRect && pageCoverage == other.pageCoverage;
+        }
     };
 
     TileRenderInfo renderInfoForTile(const TileForGrid& tileInfo, const WebCore::FloatRect& tileRect, const std::optional<WebCore::FloatRect>& clipRect = { }) const;
 
-    bool renderInfoIsValidForTile(const TileForGrid&, const TileRenderInfo&) const;
+    enum class CheckContentVersion : bool { No, Yes };
+    bool renderInfoIsValidForTile(const TileForGrid&, const TileRenderInfo&, CheckContentVersion = CheckContentVersion::Yes) const;
 
     // TiledBackingClient
     void willRepaintTile(WebCore::TileGridIndex, WebCore::TileIndex, const WebCore::FloatRect& tileRect, const WebCore::FloatRect& tileDirtyRect) final;
