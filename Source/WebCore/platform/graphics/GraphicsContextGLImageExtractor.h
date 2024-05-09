@@ -36,7 +36,7 @@ public:
     using DOMSource = GraphicsContextGL::DOMSource;
     using DataFormat = GraphicsContextGL::DataFormat;
     using AlphaOp = GraphicsContextGL::AlphaOp;
-    GraphicsContextGLImageExtractor(Image*, DOMSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication);
+    GraphicsContextGLImageExtractor(Image*, DOMSource, bool premultiplyAlpha, bool preventUnpackColorSpaceConversion, bool ignoreNativeImageAlphaPremultiplication);
 
     // Each platform must provide an implementation of this method to deallocate or release resources
     // associated with the image if needed.
@@ -54,7 +54,7 @@ private:
     // Each platform must provide an implementation of this method.
     // Extracts the image and keeps track of its status, such as width, height, Source Alignment, format and AlphaOp etc,
     // needs to lock the resources or relevant data if needed and returns true upon success
-    bool extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication);
+    bool extractImage(bool premultiplyAlpha, bool preventUnpackColorSpaceConversion, bool ignoreNativeImageAlphaPremultiplication);
 
 #if USE(CAIRO)
     RefPtr<cairo_surface_t> m_imageSurface;
