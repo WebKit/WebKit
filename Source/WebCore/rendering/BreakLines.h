@@ -59,6 +59,12 @@ static const UChar lineBreakTableFirstCharacter = '!';
 static const UChar lineBreakTableLastCharacter = 127;
 static const unsigned lineBreakTableColumnCount = (lineBreakTableLastCharacter - lineBreakTableFirstCharacter) / 8 + 1;
 WEBCORE_EXPORT extern const unsigned char lineBreakTable[][lineBreakTableColumnCount];
+inline bool lineBreakTableUnsafeLookup(UChar before, UChar after) // Must range check before calling.
+{
+    const unsigned beforeIndex = before - lineBreakTableFirstCharacter;
+    const unsigned nextIndex = after - lineBreakTableFirstCharacter;
+    return lineBreakTable[beforeIndex][nextIndex / 8] & (1 << (nextIndex % 8));
+}
 
 template<NoBreakSpaceBehavior nonBreakingSpaceBehavior>
 static inline bool isBreakableSpace(UChar character)
@@ -75,61 +81,60 @@ static inline bool isBreakableSpace(UChar character)
     }
 }
 
-inline bool shouldBreakAfter(UChar lastCharacter, UChar character, UChar nextCharacter)
-{
-    // Don't allow line breaking between '-' and a digit if the '-' may mean a minus sign in the context,
-    // while allow breaking in 'ABCD-1234' and '1234-5678' which may be in long URLs.
-    if (character == '-' && isASCIIDigit(nextCharacter))
-        return isASCIIAlphanumeric(lastCharacter);
-
-    // If both ch and nextCh are ASCII characters, use a lookup table for enhanced speed and for compatibility
-    // with other browsers (see comments for asciiLineBreakTable for details).
-    if (character >= lineBreakTableFirstCharacter && character <= lineBreakTableLastCharacter && nextCharacter >= lineBreakTableFirstCharacter && nextCharacter <= lineBreakTableLastCharacter) {
-        const unsigned char* tableRow = lineBreakTable[character - lineBreakTableFirstCharacter];
-        unsigned nextCharacterIndex = nextCharacter - lineBreakTableFirstCharacter;
-        return tableRow[nextCharacterIndex / 8] & (1 << (nextCharacterIndex % 8));
-    }
-    // Otherwise defer to the Unicode algorithm by returning false.
-    return false;
-}
-
-template<NoBreakSpaceBehavior nonBreakingSpaceBehavior>
-inline bool needsLineBreakIterator(UChar character)
-{
-    if (nonBreakingSpaceBehavior == NoBreakSpaceBehavior::Break)
-        return character > lineBreakTableLastCharacter;
-    return character > lineBreakTableLastCharacter && character != noBreakSpace;
-}
-
-// When in non-loose mode, we can use the ASCII shortcut table.
 template<typename CharacterType, LineBreakRules shortcutRules, NoBreakSpaceBehavior nonBreakingSpaceBehavior>
 inline size_t nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, std::span<const CharacterType> string, size_t startPosition)
 {
-    std::optional<unsigned> nextBreak;
-
-    CharacterType lastLastCharacter = startPosition > 1 ? string[startPosition - 2] : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().secondToLastCharacter());
-    CharacterType lastCharacter = startPosition > 0 ? string[startPosition - 1] : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().lastCharacter());
+    CharacterType beforeBefore = startPosition > 1 ? string[startPosition - 2]
+        : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().secondToLastCharacter());
+    CharacterType before = startPosition > 0 ? string[startPosition - 1]
+        : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().lastCharacter());
     auto priorContextLength = lineBreakIteratorFactory.priorContext().length();
-    for (size_t i = startPosition; i < string.size(); ++i) {
-        CharacterType character = string[i];
 
-        if (isBreakableSpace<nonBreakingSpaceBehavior>(character) || (shortcutRules == LineBreakRules::Normal && shouldBreakAfter(lastLastCharacter, lastCharacter, character)))
+    CharacterType after;
+    std::optional<unsigned> nextBreak;
+    for (size_t i = startPosition; i < string.size(); beforeBefore = before, before = after, ++i) {
+        after = string[i];
+
+        // Breakable spaces.
+        if (isBreakableSpace<nonBreakingSpaceBehavior>(after))
             return i;
 
-        if (shortcutRules == LineBreakRules::Special || needsLineBreakIterator<nonBreakingSpaceBehavior>(character) || needsLineBreakIterator<nonBreakingSpaceBehavior>(lastCharacter)) {
-            if (!nextBreak || nextBreak.value() < i) {
-                // Don't break if positioned at start of primary context and there is no prior context.
-                if (i || priorContextLength) {
-                    auto& breakIterator = lineBreakIteratorFactory.get();
-                    nextBreak = breakIterator.following(i - 1);
-                }
+        // ASCII rapid lookup.
+        if (shortcutRules == LineBreakRules::Normal) { // Not valid for 'loose' line-breaking.
+
+            // Don't allow line breaking between '-' and a digit if the '-' may mean a minus sign in the context,
+            // while allow breaking in 'ABCD-1234' and '1234-5678' which may be in long URLs.
+            if (before == '-' && isASCIIDigit(after)) {
+                if (isASCIIAlphanumeric(beforeBefore))
+                    return i;
+                continue;
             }
-            if (i == nextBreak && !isBreakableSpace<nonBreakingSpaceBehavior>(lastCharacter))
-                return i;
+
+            // If both characters are ASCII, use a lookup table for enhanced speed
+            // and for compatibility with other browsers (see comments on lineBreakTable for details).
+            if (before <= lineBreakTableLastCharacter && after <= lineBreakTableLastCharacter) {
+                if (before >= lineBreakTableFirstCharacter && after >= lineBreakTableFirstCharacter) {
+                    if (lineBreakTableUnsafeLookup(before, after))
+                        return i;
+                } // Else at least one is an ASCII control character; don't break.
+                continue;
+            }
         }
 
-        lastLastCharacter = lastCharacter;
-        lastCharacter = character;
+        // Non-ASCII rapid lookup.
+        if (nonBreakingSpaceBehavior == NoBreakSpaceBehavior::Normal && before == noBreakSpace && after == noBreakSpace)
+            continue;
+
+        // ICU lookup (slow).
+        if (!nextBreak || nextBreak.value() < i) {
+            // Don't break if positioned at start of primary context and there is no prior context.
+            if (i || priorContextLength) {
+                auto& breakIterator = lineBreakIteratorFactory.get();
+                nextBreak = breakIterator.following(i - 1);
+            }
+        }
+        if (i == nextBreak && !isBreakableSpace<nonBreakingSpaceBehavior>(before))
+            return i;
     }
 
     return string.size();
