@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,6 +74,8 @@ using namespace JSC;
         return kJSTypeString;
     if (jsValue.isSymbol())
         return kJSTypeSymbol;
+    if (jsValue.isBigInt())
+        return kJSTypeBigInt;
     ASSERT(jsValue.isObject());
     return kJSTypeObject;
 }
@@ -181,6 +183,21 @@ bool JSValueIsSymbol(JSContextRef ctx, JSValueRef value)
     return toJS(globalObject, value).isSymbol();
 #else
     return value && toJS(value).isSymbol();
+#endif
+}
+
+bool JSValueIsBigInt(JSContextRef ctx, JSValueRef value)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+#if !CPU(ADDRESS64)
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    return toJS(globalObject, value).isBigInt();
+#else
+    return value && toJS(value).isBigInt();
 #endif
 }
 
@@ -368,6 +385,295 @@ JSValueRef JSValueMakeSymbol(JSContextRef ctx, JSStringRef description)
     return toRef(globalObject, Symbol::createWithDescription(vm, description->string()));
 }
 
+JSValueRef JSBigIntCreateWithDouble(JSContextRef ctx, double value, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    if (!isInteger(value)) {
+        setException(ctx, exception, createRangeError(globalObject, "Not an integer"_s));
+        return nullptr;
+    }
+
+    JSValue result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, value);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    return toRef(globalObject, result);
+}
+
+JSValueRef JSBigIntCreateWithUInt64(JSContextRef ctx, uint64_t integer, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, integer);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    return toRef(globalObject, result);
+}
+
+JSValueRef JSBigIntCreateWithInt64(JSContextRef ctx, int64_t integer, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, integer);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    return toRef(globalObject, result);
+}
+
+JSValueRef JSBigIntCreateWithString(JSContextRef ctx, JSStringRef string, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue result = JSBigInt::parseInt(globalObject, string->string(), JSBigInt::ErrorParseMode::ThrowExceptions);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    return toRef(globalObject, result);
+}
+
+uint64_t JSValueToUInt64(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    JSValue numeric = toJS(globalObject, value).toNumeric(globalObject);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return 0;
+
+    if (numeric.isBigInt())
+        return JSBigInt::toBigUInt64(numeric);
+
+    ASSERT(numeric.isNumber());
+    return JSC::toUInt64(numeric.asNumber());
+}
+
+int64_t JSValueToInt64(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    JSValue numeric = toJS(globalObject, value).toNumeric(globalObject);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return 0;
+
+    if (numeric.isBigInt())
+        return JSBigInt::toBigInt64(numeric);
+
+    ASSERT(numeric.isNumber());
+    return JSC::toInt64(numeric.asNumber());
+}
+
+uint32_t JSValueToUInt32(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    JSValue numeric = toJS(globalObject, value).toNumeric(globalObject);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return 0;
+
+    if (numeric.isBigInt())
+        return static_cast<uint32_t>(JSBigInt::toBigUInt64(numeric));
+
+    ASSERT(numeric.isNumber());
+    return JSC::toUInt32(numeric.asNumber());
+}
+
+int32_t JSValueToInt32(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    JSValue numeric = toJS(globalObject, value).toNumeric(globalObject);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return 0;
+
+    if (numeric.isBigInt())
+        return static_cast<int32_t>(JSBigInt::toBigInt64(numeric));
+
+    ASSERT(numeric.isNumber());
+    return JSC::toInt32(numeric.asNumber());
+}
+
+ALWAYS_INLINE JSRelationCondition toJSRelationCondition(JSC::JSBigInt::ComparisonResult);
+JSRelationCondition toJSRelationCondition(JSC::JSBigInt::ComparisonResult result)
+{
+    switch (result) {
+    case JSC::JSBigInt::ComparisonResult::Equal:
+        return JSRelationCondition::kJSRelationConditionEqual;
+    case JSC::JSBigInt::ComparisonResult::Undefined:
+        return JSRelationCondition::kJSRelationConditionUndefined;
+    case JSC::JSBigInt::ComparisonResult::GreaterThan:
+        return JSRelationCondition::kJSRelationConditionGreaterThan;
+    case JSC::JSBigInt::ComparisonResult::LessThan:
+        return JSRelationCondition::kJSRelationConditionLessThan;
+    default:
+        ASSERT_NOT_REACHED();
+        return JSRelationCondition::kJSRelationConditionUndefined;
+    }
+}
+
+JSRelationCondition JSValueCompareUInt64(JSContextRef ctx, JSValueRef left, uint64_t right, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return kJSRelationConditionUndefined;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    JSValue leftNumeric = toJS(globalObject, left).toNumeric(globalObject);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return kJSRelationConditionUndefined;
+
+    if (leftNumeric.isBigInt())
+        return toJSRelationCondition(JSBigInt::compare(leftNumeric, right));
+    ASSERT(leftNumeric.isNumber());
+    return toJSRelationCondition(JSBigInt::compareToDouble(leftNumeric.asNumber(), right));
+}
+
+JSRelationCondition JSValueCompareInt64(JSContextRef ctx, JSValueRef left, int64_t right, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return kJSRelationConditionUndefined;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    JSValue leftNumeric = toJS(globalObject, left).toNumeric(globalObject);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return kJSRelationConditionUndefined;
+
+    if (leftNumeric.isBigInt())
+        return toJSRelationCondition(JSBigInt::compare(leftNumeric, right));
+    ASSERT(leftNumeric.isNumber());
+    return toJSRelationCondition(JSBigInt::compareToDouble(leftNumeric.asNumber(), right));
+}
+
+JSRelationCondition JSValueCompareDouble(JSContextRef ctx, JSValueRef left, double right, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return kJSRelationConditionUndefined;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    JSValue leftNumeric = toJS(globalObject, left).toNumeric(globalObject);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return kJSRelationConditionUndefined;
+
+    if (leftNumeric.isBigInt())
+        return toJSRelationCondition(JSBigInt::compareToDouble(leftNumeric, right));
+
+    ASSERT(leftNumeric.isNumber());
+    double leftDouble = leftNumeric.asNumber();
+    if (std::isnan(leftDouble) || std::isnan(right))
+        return kJSRelationConditionUndefined;
+    if (leftDouble == right)
+        return kJSRelationConditionEqual;
+    if (leftDouble < right)
+        return kJSRelationConditionLessThan;
+    return kJSRelationConditionGreaterThan;
+}
+
+JSRelationCondition JSValueCompare(JSContextRef ctx, JSValueRef left, JSValueRef right, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return kJSRelationConditionUndefined;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    JSValue leftValue = toJS(globalObject, left);
+    JSValue rightValue = toJS(globalObject, right);
+
+    bool isEqual = JSValue::equal(globalObject, leftValue, rightValue);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return kJSRelationConditionUndefined;
+    if (isEqual)
+        return kJSRelationConditionEqual;
+
+    bool isLessThan = jsLess<true>(globalObject, leftValue, rightValue);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return kJSRelationConditionUndefined;
+
+    bool isGreaterThan = jsLess<true>(globalObject, rightValue, leftValue);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return kJSRelationConditionUndefined;
+
+    ASSERT(!isLessThan || !isGreaterThan);
+
+    // This means either the left or right has a NaN result of toPrimitiveNumeric.
+    if (!isLessThan && !isGreaterThan)
+        return kJSRelationConditionUndefined;
+
+    if (isLessThan)
+        return kJSRelationConditionLessThan;
+    return kJSRelationConditionGreaterThan;
+}
+
 JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
 {
     if (!ctx) {
@@ -441,13 +747,15 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    JSValue jsValue = toJS(globalObject, value);
-
-    double number = jsValue.toNumber(globalObject);
+    JSValue numeric = toJS(globalObject, value).toNumeric(globalObject);
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
-        number = PNaN;
-    return number;
+        return PNaN;
+
+    if (numeric.isBigInt())
+        return JSBigInt::toNumber(numeric).asNumber();
+
+    ASSERT(numeric.isNumber());
+    return numeric.asNumber();
 }
 
 JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)

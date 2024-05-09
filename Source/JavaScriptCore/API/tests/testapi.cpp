@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -159,6 +159,7 @@ public:
     void classDefinitionWithJSSubclass();
     void proxyReturnedWithJSSubclassing();
     void testJSObjectSetOnGlobalObjectSubclassDefinition();
+    void testBigInt();
 
     int failed() const { return m_failed; }
 
@@ -169,6 +170,10 @@ private:
 
     template<typename JSFunctor, typename APIFunctor>
     void checkJSAndAPIMatch(const JSFunctor&, const APIFunctor&, const char* description);
+
+    void checkIsBigIntType(JSValueRef);
+
+    void checkThrownException(JSValueRef* exception, const ASCIILiteral& expectedMessage, const char* description);
 
     // Helper methods.
     using ScriptResult = Expected<JSValueRef, JSValueRef>;
@@ -327,6 +332,16 @@ static const char* isSymbolFunction = "(function isSymbol(symbol) { return typeo
 static const char* getSymbolDescription = "(function getSymbolDescription(symbol) { return symbol.description; })";
 static const char* getFunction = "(function get(object, key) { return object[key]; })";
 static const char* setFunction = "(function set(object, key, value) { object[key] = value; })";
+static const char* isBigIntFunction = "(function isBigInt(bigint) { return typeof(bigint) === 'bigint'; })";
+static const char* createBigIntFunction = "(function bigInt(x) { print(x); return BigInt(x); })";
+static const char* createNegBigIntFunction = "(function bigInt(x) { print(x); return -BigInt(x); })";
+
+void TestAPI::checkIsBigIntType(JSValueRef value)
+{
+    check(JSValueGetType(context, value) == kJSTypeBigInt, "value is a bigint (JSValueGetType)");
+    check(JSValueIsBigInt(context, value), "value is a bigint (JSValueIsBigInt)");
+    check(functionReturnsTrue(isBigIntFunction, value), "value is a bigint (isBigIntFunction)");
+}
 
 void TestAPI::basicSymbol()
 {
@@ -742,6 +757,452 @@ void TestAPI::testJSObjectSetOnGlobalObjectSubclassDefinition()
     JSObjectSetProperty(context, globalObject, propertyName, newObject, 0, nullptr);
 
     check(JSEvaluateScript(context, propertyName, globalObject, nullptr, 1, nullptr) == newObject, "Setting a property on a custom global object should set the property");
+}
+
+void TestAPI::checkThrownException(JSValueRef* exception, const ASCIILiteral& expectedMessage, const char* description)
+{
+    check(exception, description, " throws an exception");
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSC::JSValue exceptionValue = toJS(globalObject, *exception);
+    check(exceptionValue.toWTFString(globalObject) == expectedMessage, description, " has correct exception message");
+}
+
+void TestAPI::testBigInt()
+{
+    {
+        auto result = evaluateScript("BigInt(42);");
+        checkIsBigIntType(result.value());
+    }
+
+    {
+        double number = 42;
+        const char* description = "checking JSValueMakeBigIntFromNumber with 42";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, number));
+            }, [&] (JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithDouble(context, number, exception);
+                checkIsBigIntType(bigint);
+                double toNumberResult = JSValueToNumber(context, bigint, exception);
+                check(toNumberResult == number, description, ", toNumberResult equals to number"_s);
+                check(JSValueCompareDouble(context, bigint, number, exception) == kJSRelationConditionEqual, description, ", should kJSRelationConditionEqual to number"_s);
+                check(JSValueCompareDouble(context, bigint, number + 1, exception) == kJSRelationConditionLessThan, description, ", should kJSRelationConditionLessThan number + 1"_s);
+                check(JSValueCompareDouble(context, bigint, number - 1, exception) == kJSRelationConditionGreaterThan, description, ", should kJSRelationConditionGreaterThan number - 1"_s);
+                check(JSValueCompareDouble(context, bigint, JSC::pureNaN(), exception) == kJSRelationConditionUndefined, description, ", should equal to kJSRelationConditionUndefined"_s);
+                return bigint;
+            }, description);
+    }
+
+    {
+        double number = (1ULL << 32) + 1;
+        const char* description = "checking JSValueMakeBigIntFromNumber with 2 ^ 32 + 1";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, number));
+            }, [&] (JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithDouble(context, number, exception);
+                checkIsBigIntType(bigint);
+                double toNumberResult = JSValueToNumber(context, bigint, exception);
+                check(toNumberResult == number, description, ", toNumberResult equals to number"_s);
+                check(JSValueCompareDouble(context, bigint, number, exception) == kJSRelationConditionEqual, description, ", should kJSRelationConditionEqual to number"_s);
+                check(JSValueCompareDouble(context, bigint, number + 1, exception) == kJSRelationConditionLessThan, description, ", should kJSRelationConditionLessThan number + 1"_s);
+                check(JSValueCompareDouble(context, bigint, number - 1, exception) == kJSRelationConditionGreaterThan, description, ", should kJSRelationConditionGreaterThan number - 1"_s);
+                return bigint;
+            }, description);
+    }
+
+    {
+        double number = JSC::pureNaN();
+        const char* description = "checking JSValueMakeBigIntFromNumber with NaN";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, number));
+            }, [&] (JSValueRef* exception) {
+                JSBigIntCreateWithDouble(context, number, exception);
+                checkThrownException(exception, "RangeError: Not an integer"_s, description);
+                return nullptr;
+            }, description);
+    }
+
+    {
+        double number = 1.1;
+        const char* description = "checking JSValueMakeBigIntFromNumber with 1.1";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, number));
+            }, [&] (JSValueRef* exception) {
+                JSBigIntCreateWithDouble(context, number, exception);
+                checkThrownException(exception, "RangeError: Not an integer"_s, description);
+                return nullptr;
+            }, description);
+    }
+
+    {
+        double doubleMax = std::numeric_limits<double>::max();
+        const char* description = "checking JSValueMakeBigIntFromNumber with max";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, doubleMax));
+            }, [&] (JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithDouble(context, doubleMax, exception);
+                checkIsBigIntType(bigint);
+                double toNumberResult = JSValueToNumber(context, bigint, exception);
+                check(toNumberResult == doubleMax, description, ", toNumberResult equals to doubleMax"_s);
+
+                JSValueRef doubleMaxPlusOneBigInt = evaluateScript("BigInt(Number.MAX_VALUE) + 1n").value();
+                double toDoubleResult = JSValueToNumber(context, doubleMaxPlusOneBigInt, exception);
+                double toDoubleExpected = JSValueToNumber(context, evaluateScript("Number(BigInt(Number.MAX_VALUE) + 1n)").value(), exception);
+                check(toDoubleResult == toDoubleExpected, description, ", JSValueToNumber"_s);
+                check(JSValueCompareDouble(context, doubleMaxPlusOneBigInt, doubleMax, exception) == kJSRelationConditionGreaterThan, description, ", should kJSRelationConditionGreaterThan doubleMax"_s);
+                return bigint;
+            }, description);
+    }
+
+    {
+        double doubleLowest = std::numeric_limits<double>::lowest();
+        const char* description = "checking JSValueMakeBigIntFromNumber with lowest";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, doubleLowest));
+            }, [&] (JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithDouble(context, doubleLowest, exception);
+                checkIsBigIntType(bigint);
+                double toNumberResult = JSValueToNumber(context, bigint, exception);
+                check(toNumberResult == doubleLowest, description, ", toNumberResult equals to doubleLowest"_s);
+                return bigint;
+            }, description);
+    }
+
+    int64_t int64Max = std::numeric_limits<int64_t>::max();
+    int64_t int64Min = std::numeric_limits<int64_t>::min();
+    {
+
+        JSStringRef int64MaxStr = JSStringCreateWithUTF8CString("0x7fffffffffffffff");
+        JSStringRef int64MaxPlusOneStr = JSStringCreateWithUTF8CString("0x8000000000000000");
+        const char* description = "checking JSBigIntCreateWithInt64 with int64 max";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeString(context, int64MaxStr));
+            },
+            [&](JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithInt64(context, int64Max, exception);
+                checkIsBigIntType(bigint);
+                int64_t result = JSValueToInt64(context, bigint, exception);
+                check(result == int64Max, description, ", result equals to int64Max"_s);
+                check(JSValueCompareInt64(context, bigint, int64Max, exception) == kJSRelationConditionEqual, description, ", should kJSRelationConditionEqual to int64Max"_s);
+                check(JSValueCompareInt64(context, bigint, int64Max - 1, exception) == kJSRelationConditionGreaterThan, description, ", should kJSRelationConditionGreaterThan int64Max -1"_s);
+
+                JSValueRef int64MaxPlusOneBigInt = JSBigIntCreateWithString(context, int64MaxPlusOneStr, exception);
+                int64_t toInt64Result = JSValueToInt64(context, int64MaxPlusOneBigInt, exception);
+                check(toInt64Result == int64Min, description, ", JSValueToInt64"_s);
+                check(JSValueCompareInt64(context, int64MaxPlusOneBigInt, int64Max, exception) == kJSRelationConditionGreaterThan, description, ", should kJSRelationConditionGreaterThan uint64Max"_s);
+                return bigint;
+            },
+            description);
+
+        JSStringRelease(int64MaxStr);
+        JSStringRelease(int64MaxPlusOneStr);
+    }
+
+    {
+        JSStringRef int64MinStr = JSStringCreateWithUTF8CString("0x8000000000000000");
+        JSStringRef int64MinMinusOneStr = JSStringCreateWithUTF8CString("-9223372036854775809");
+        const char* description = "checking JSBigIntCreateWithInt64 with int64 min";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createNegBigIntFunction, JSValueMakeString(context, int64MinStr));
+            },
+            [&](JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithInt64(context, int64Min, exception);
+                checkIsBigIntType(bigint);
+                int64_t result = JSValueToInt64(context, bigint, exception);
+                check(result == int64Min, description, ", result equals to int64Min"_s);
+                check(JSValueCompareInt64(context, bigint, int64Min, exception) == kJSRelationConditionEqual, description, ", should kJSRelationConditionEqual to int64Min"_s);
+                check(JSValueCompareInt64(context, bigint, int64Min + 1, exception) == kJSRelationConditionLessThan, description, ", should kJSRelationConditionLessThan int64Min + 1"_s);
+
+                JSValueRef int64MinMinusOneBigInt = JSBigIntCreateWithString(context, int64MinMinusOneStr, exception);
+                int64_t toInt64Result = JSValueToInt64(context, int64MinMinusOneBigInt, exception);
+                check(toInt64Result == 0x7fffffffffffffff, description, ", JSValueToInt64"_s);
+                check(JSValueCompareInt64(context, int64MinMinusOneBigInt, int64Min, exception) == kJSRelationConditionLessThan, description, ", should kJSRelationConditionLessThan int64Min"_s);
+                return bigint;
+            },
+            description);
+
+        JSStringRelease(int64MinStr);
+        JSStringRelease(int64MinMinusOneStr);
+    }
+
+    {
+        const char* description = "checking JSValueToInt64 with Number(42.0)";
+        JSValueRef exceptionRef = nullptr;
+        JSValueRef* exception = &exceptionRef;
+        JSValueRef number = JSValueMakeNumber(context, 42.0);
+        int64_t result = JSValueToInt64(context, number, exception);
+        check(result == 42, description, " has correct result");
+    }
+
+    uint64_t uint64Max = std::numeric_limits<uint64_t>::max();
+    uint64_t uint64Min = std::numeric_limits<uint64_t>::min();
+    {
+        JSStringRef uint64MaxStr = JSStringCreateWithUTF8CString("0xffffffffffffffff");
+        JSStringRef uint64MaxPlusOneStr = JSStringCreateWithUTF8CString("0x10000000000000000");
+        const char* description = "checking JSBigIntCreateWithUInt64 with int64 max";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeString(context, uint64MaxStr));
+            },
+            [&](JSValueRef* exception) {
+                JSValueRef uint64MaxBigInt = JSBigIntCreateWithUInt64(context, uint64Max, exception);
+                checkIsBigIntType(uint64MaxBigInt);
+                uint64_t result = JSValueToUInt64(context, uint64MaxBigInt, exception);
+                check(result == uint64Max, description, ", result equals to uint64Max"_s);
+                check(JSValueCompareUInt64(context, uint64MaxBigInt, uint64Max, exception) == kJSRelationConditionEqual, description, ", should kJSRelationConditionEqual to uint64Max"_s);
+                check(JSValueCompareUInt64(context, uint64MaxBigInt, uint64Max - 1, exception) == kJSRelationConditionGreaterThan, description, ", should kJSRelationConditionGreaterThan uint64Max - 1"_s);
+
+                JSValueRef uint64MaxPlusOneBigInt = JSBigIntCreateWithString(context, uint64MaxPlusOneStr, exception);
+                uint64_t toUInt64Result = JSValueToUInt64(context, uint64MaxPlusOneBigInt, exception);
+                check(!toUInt64Result, description, ", JSValueToUInt64"_s);
+                check(JSValueCompareUInt64(context, uint64MaxPlusOneBigInt, uint64Max, exception) == kJSRelationConditionGreaterThan, description, ", should kJSRelationConditionGreaterThan uint64Max"_s);
+                return uint64MaxBigInt;
+            },
+            description);
+
+        JSStringRelease(uint64MaxStr);
+        JSStringRelease(uint64MaxPlusOneStr);
+    }
+
+    {
+        JSStringRef uint64MinStr = JSStringCreateWithUTF8CString("0x0");
+        JSStringRef uint64MinMinusOneStr = JSStringCreateWithUTF8CString("-1");
+        const char* description = "checking JSBigIntCreateWithUInt64 with int64 min";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeString(context, uint64MinStr));
+            },
+            [&](JSValueRef* exception) {
+                JSValueRef uint64MinBigInt = JSBigIntCreateWithUInt64(context, uint64Min, exception);
+                checkIsBigIntType(uint64MinBigInt);
+                uint64_t result = JSValueToUInt64(context, uint64MinBigInt, exception);
+                check(result == uint64Min, description, ", result equals to uint64Min"_s);
+                check(JSValueCompareUInt64(context, uint64MinBigInt, uint64Min, exception) == kJSRelationConditionEqual, description, ", should kJSRelationConditionEqual to uint64Min"_s);
+                check(JSValueCompareUInt64(context, uint64MinBigInt, uint64Min + 1, exception) == kJSRelationConditionLessThan, description, ", should kJSRelationConditionLessThan uint64Min + 1"_s);
+
+                JSValueRef uint64MinMinusOneBigInt = JSBigIntCreateWithString(context, uint64MinMinusOneStr, exception);
+                uint64_t toUInt64Result = JSValueToUInt64(context, uint64MinMinusOneBigInt, exception);
+                check(toUInt64Result == uint64Max, description, ", JSValueToUInt64"_s);
+                check(JSValueCompareUInt64(context, uint64MinMinusOneBigInt, uint64Min, exception) == kJSRelationConditionLessThan, description, ", should kJSRelationConditionLessThan uint64Min"_s);
+                return uint64MinBigInt;
+            },
+            description);
+
+        JSStringRelease(uint64MinStr);
+        JSStringRelease(uint64MinMinusOneStr);
+    }
+
+    {
+        JSValueRef exceptionRef = nullptr;
+        JSValueRef* exception = &exceptionRef;
+        JSValueRef jsUndefined = JSValueMakeUndefined(context);
+        JSValueRef jsNull = JSValueMakeNull(context);
+        JSValueRef jsTrue = JSValueMakeBoolean(context, true);
+        JSValueRef jsFalse = JSValueMakeBoolean(context, false);
+        JSValueRef jsZero = JSValueMakeNumber(context, 0);
+        JSValueRef jsOne = JSValueMakeNumber(context, 1);
+        JSValueRef jsOneThird = JSValueMakeNumber(context, 1.0 / 3.0);
+        JSObjectRef jsObject = JSObjectMake(context, nullptr, nullptr);
+        JSValueRef jsNaN = JSValueMakeNumber(context, std::numeric_limits<double>::quiet_NaN());
+
+        auto testToInt = [&](auto func, const char* description) {
+            check(!func(context, jsUndefined, exception), description, ", with jsUndefined should be 0"_s);
+            check(!func(context, jsNull, exception), description, ", with jsNull should be 0"_s);
+            check(func(context, jsTrue, exception), description, ", with jsTrue should be 1"_s);
+            check(!func(context, jsFalse, exception), description, ", with jsFalse should be 1"_s);
+            check(!func(context, jsZero, exception), description, ", with jsZero should be 0"_s);
+            check(func(context, jsOne, exception), description, ", with jsOne should be 0"_s);
+            check(!func(context, jsOneThird, exception), description, ", with jsOneThird should be 0"_s);
+            check(!func(context, jsObject, exception), description, ", with jsObject should be 0"_s);
+            check(!func(context, jsNaN, exception), description, ", with jsObject should be 0"_s);
+        };
+
+        testToInt(JSValueToUInt64, "checking JSValueToUInt64 with other types");
+        testToInt(JSValueToInt64, "checking JSValueToInt64 with other types");
+        testToInt(JSValueToUInt32, "checking JSValueToUInt32 with other types");
+        testToInt(JSValueToInt32, "checking JSValueToInt32 with other types");
+
+        auto testCompareWithZero = [&](auto compare, const char* description) {
+            unsigned right = 0;
+            check(kJSRelationConditionUndefined == compare(context, jsUndefined, right, exception), description, ", with jsUndefined should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionEqual == compare(context, jsNull, right, exception), description, ", with jsNull should be kJSRelationConditionEqual"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsTrue, right, exception), description, ", with jsTrue should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionEqual == compare(context, jsFalse, right, exception), description, ", with jsFalse should be kJSRelationConditionEqual"_s);
+            check(kJSRelationConditionEqual == compare(context, jsZero, right, exception), description, ", with jsZero should be kJSRelationConditionEqual"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsOne, right, exception), description, ", with jsOne should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsOneThird, right, exception), description, ", with jsOneThird should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsObject, right, exception), description, ", with jsObject should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsNaN, right, exception), description, ", with jsNaN should be kJSRelationConditionUndefined"_s);
+        };
+
+        auto testCompareWithNumberSafeMin = [&](auto compare, const char* description) {
+            int64_t right = -9007199254740991;
+            check(kJSRelationConditionUndefined == compare(context, jsUndefined, right, exception), description, ", with jsUndefined should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsNull, right, exception), description, ", with jsNull should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsTrue, right, exception), description, ", with jsTrue should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsFalse, right, exception), description, ", with jsFalse should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsZero, right, exception), description, ", with jsZero should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsOne, right, exception), description, ", with jsOne should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsOneThird, right, exception), description, ", with jsOneThird should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsObject, right, exception), description, ", with jsObject should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsNaN, right, exception), description, ", with jsNaN should be kJSRelationConditionUndefined"_s);
+        };
+
+        auto testCompareWithNumberSafeMax = [&](auto compare, const char* description) {
+            int64_t right = 9007199254740991;
+            check(kJSRelationConditionUndefined == compare(context, jsUndefined, right, exception), description, ", with jsUndefined should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsNull, right, exception), description, ", with jsNull should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsTrue, right, exception), description, ", with jsTrue should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsFalse, right, exception), description, ", with jsFalse should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsZero, right, exception), description, ", with jsZero should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsOne, right, exception), description, ", with jsOne should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsOneThird, right, exception), description, ", with jsOneThird should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsObject, right, exception), description, ", with jsObject should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsNaN, right, exception), description, ", with jsNaN should be kJSRelationConditionUndefined"_s);
+        };
+
+        auto testCompareWithDoubleLowest = [&](auto compare, const char* description) {
+            double right = std::numeric_limits<double>::lowest();
+            check(kJSRelationConditionUndefined == compare(context, jsUndefined, right, exception), description, ", with jsUndefined should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsNull, right, exception), description, ", with jsNull should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsTrue, right, exception), description, ", with jsTrue should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsFalse, right, exception), description, ", with jsFalse should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsZero, right, exception), description, ", with jsZero should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsOne, right, exception), description, ", with jsOne should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionGreaterThan == compare(context, jsOneThird, right, exception), description, ", with jsOneThird should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsObject, right, exception), description, ", with jsObject should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsNaN, right, exception), description, ", with jsNaN should be kJSRelationConditionUndefined"_s);
+        };
+
+        auto testCompareWithDoubleMax = [&](auto compare, const char* description) {
+            double right = std::numeric_limits<double>::max();
+            check(kJSRelationConditionUndefined == compare(context, jsUndefined, right, exception), description, ", with jsUndefined should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsNull, right, exception), description, ", with jsNull should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsTrue, right, exception), description, ", with jsTrue should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsFalse, right, exception), description, ", with jsFalse should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsZero, right, exception), description, ", with jsZero should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsOne, right, exception), description, ", with jsOne should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionLessThan == compare(context, jsOneThird, right, exception), description, ", with jsOneThird should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsObject, right, exception), description, ", with jsObject should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsNaN, right, exception), description, ", with jsNaN should be kJSRelationConditionUndefined"_s);
+        };
+
+        auto testCompareWithDoubleNaN = [&](auto compare, const char* description) {
+            double right = std::numeric_limits<double>::quiet_NaN();
+            check(kJSRelationConditionUndefined == compare(context, jsUndefined, right, exception), description, ", with jsUndefined should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsNull, right, exception), description, ", with jsNull should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsTrue, right, exception), description, ", with jsTrue should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsFalse, right, exception), description, ", with jsFalse should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsZero, right, exception), description, ", with jsZero should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsOne, right, exception), description, ", with jsOne should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsOneThird, right, exception), description, ", with jsOneThird should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsObject, right, exception), description, ", with jsObject should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == compare(context, jsNaN, right, exception), description, ", with jsNaN should be kJSRelationConditionUndefined"_s);
+        };
+
+        auto testJSValueCompare = [&](const char* description) {
+            check(kJSRelationConditionEqual == JSValueCompare(context, jsUndefined, jsNull, exception), description, ", with jsUndefined and jsNull should be kJSRelationConditionEqual"_s);
+            check(kJSRelationConditionGreaterThan == JSValueCompare(context, jsTrue, jsFalse, exception), description, ", with jsTrue and jsFalse should be kJSRelationConditionGreaterThan"_s);
+            check(kJSRelationConditionLessThan == JSValueCompare(context, jsZero, jsOne, exception), description, ", with jsZero and jsOne should be kJSRelationConditionLessThan"_s);
+            check(kJSRelationConditionUndefined == JSValueCompare(context, jsOneThird, jsObject, exception), description, ", with jsOneThird and jsObject should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == JSValueCompare(context, jsOneThird, jsNaN, exception), description, ", with jsOneThird and jsNaN should be kJSRelationConditionUndefined"_s);
+            check(kJSRelationConditionUndefined == JSValueCompare(context, jsNaN, jsOneThird, exception), description, ", with jsNaN and jsOneThird should be kJSRelationConditionUndefined"_s);
+        };
+
+        testCompareWithZero(JSValueCompareUInt64, "checking JSValueCompareUInt64 with other types and zero");
+        testCompareWithZero(JSValueCompareInt64, "checking JSValueCompareInt64 with other types and zero");
+        testCompareWithZero(JSValueCompareDouble, "checking JSValueCompareDouble with other types and zero");
+
+        testCompareWithNumberSafeMin(JSValueCompareInt64, "checking JSValueCompareInt64 with other types and Number.MIN_SAFE_INTEGER");
+        testCompareWithNumberSafeMin(JSValueCompareDouble, "checking JSValueCompareDouble with other types and Number.MIN_SAFE_INTEGER");
+
+        testCompareWithNumberSafeMax(JSValueCompareUInt64, "checking JSValueCompareUInt64 with other types and Number.MAX_SAFE_INTEGER");
+        testCompareWithNumberSafeMax(JSValueCompareInt64, "checking JSValueCompareInt64 with other types and Number.MAX_SAFE_INTEGER");
+        testCompareWithNumberSafeMax(JSValueCompareDouble, "checking JSValueCompareDouble with other types and Number.MAX_SAFE_INTEGER");
+
+        testCompareWithDoubleLowest(JSValueCompareDouble, "checking JSValueCompareDouble with other types and double lowest");
+        testCompareWithDoubleMax(JSValueCompareDouble, "checking JSValueCompareDouble with other types and double max");
+        testCompareWithDoubleNaN(JSValueCompareDouble, "checking JSValueCompareDouble with other types and double nan");
+
+        testJSValueCompare("checking JSValueCompare");
+    }
+
+    {
+        const char* description = "checking JSValueToUInt64 with Number(42.0)";
+        JSValueRef exceptionRef = nullptr;
+        JSValueRef* exception = &exceptionRef;
+        JSValueRef number = JSValueMakeNumber(context, 42.0);
+        uint64_t result = JSValueToUInt64(context, number, exception);
+        check(result == 42, description, " has correct result");
+    }
+
+    {
+        JSStringRef str = JSStringCreateWithUTF8CString("0x2a");
+        const char* description = "checking JSValueMakeBigIntFromString with 0x2a";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeString(context, str));
+            },
+            [&](JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithString(context, str, exception);
+                checkIsBigIntType(bigint);
+                return bigint;
+            },
+            description);
+
+        JSStringRelease(str);
+    }
+
+    {
+        JSStringRef str = JSStringCreateWithUTF8CString("0h2a");
+        const char* description = "checking JSValueMakeBigIntFromString with 0h2a";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeString(context, str));
+            },
+            [&](JSValueRef* exception) {
+                JSBigIntCreateWithString(context, str, exception);
+                checkThrownException(exception, "SyntaxError: Failed to parse String to BigInt"_s, description);
+                return nullptr;
+            },
+            description);
+
+        JSStringRelease(str);
+    }
+
+    {
+        const char* description = "checking JSValueToStringCopy with BigInt(0x2a)";
+        checkJSAndAPIMatch(
+            [&] {
+                return callFunction(createBigIntFunction, JSValueMakeNumber(context, 0x2a));
+            }, [&] (JSValueRef* exception) {
+                JSValueRef bigint = JSBigIntCreateWithUInt64(context, 0x2a, exception);
+                checkIsBigIntType(bigint);
+                JSStringRef string = JSValueToStringCopy(context, bigint, exception);
+                check(string->string() == "42"_s, description, " has correct string");
+                JSStringRelease(string);
+                return bigint;
+            }, description);
+    }
+
+    {
+        const char* description = "checking JSValueCompare";
+        JSValueRef exceptionRef = nullptr;
+        JSValueRef* exception = &exceptionRef;
+        JSValueRef bigInt42 = evaluateScript("BigInt(42)").value();
+        JSValueRef bigInt43 = evaluateScript("BigInt(43)").value();
+        check(JSValueCompare(context, bigInt42, bigInt43, exception) == kJSRelationConditionLessThan, description, ", should be kJSRelationConditionLessThan"_s);
+        check(JSValueCompare(context, bigInt43, bigInt42, exception) == kJSRelationConditionGreaterThan, description, ", should be kJSRelationConditionGreaterThan"_s);
+        check(JSValueCompare(context, bigInt42, bigInt42, exception) == kJSRelationConditionEqual, description, ", should be kJSRelationConditionLessThan"_s);
+        check(JSValueCompare(context, bigInt42, bigInt42, exception) == kJSRelationConditionEqual, description, ", should be kJSRelationConditionLessThan"_s);
+    }
 }
 
 void configureJSCForTesting()
