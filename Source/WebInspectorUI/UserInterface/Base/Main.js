@@ -2655,7 +2655,6 @@ WI.undockedTitleAreaHeight = function()
             return 27 / WI.getZoomFactor();
 
         case "catalina":
-        case "mojave":
             /* Keep in sync with `--undocked-title-area-height` CSS variable. */
             return 22 / WI.getZoomFactor();
         }
