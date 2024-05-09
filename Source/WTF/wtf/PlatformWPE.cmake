@@ -28,6 +28,26 @@ list(APPEND WTF_SOURCES
     unix/UniStdExtrasUnix.cpp
 )
 
+list(APPEND WTF_PUBLIC_HEADERS
+    glib/ChassisType.h
+    glib/GMutexLocker.h
+    glib/GRefPtr.h
+    glib/GSocketMonitor.h
+    glib/GThreadSafeWeakPtr.h
+    glib/GTypedefs.h
+    glib/GUniquePtr.h
+    glib/GWeakPtr.h
+    glib/RunLoopSourcePriority.h
+    glib/Sandbox.h
+    glib/SocketConnection.h
+    glib/WTFGType.h
+
+    linux/CurrentProcessMemoryStatus.h
+    linux/ProcessMemoryFootprint.h
+
+    unix/UnixFileDescriptor.h
+)
+
 list(APPEND WTF_LIBRARIES
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}

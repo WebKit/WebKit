@@ -19,6 +19,10 @@ list(APPEND WTF_SOURCES
     unix/MemoryPressureHandlerUnix.cpp
 )
 
+list(APPEND WTF_PUBLIC_HEADERS
+    unix/UnixFileDescriptor.h
+)
+
 list(APPEND WTF_LIBRARIES
     ${KERNEL_LIBRARY}
     Threads::Threads
