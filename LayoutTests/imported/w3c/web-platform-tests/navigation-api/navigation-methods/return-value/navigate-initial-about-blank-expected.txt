@@ -1,4 +1,4 @@
 
 
-FAIL navigate() in initial about:blank document assert_unreached: finished must not fulfill Reached unreachable code
+PASS navigate() in initial about:blank document
 

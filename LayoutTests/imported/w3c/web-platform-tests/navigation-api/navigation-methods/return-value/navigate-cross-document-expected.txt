@@ -1,4 +1,4 @@
 
 
-FAIL cross-document navigate() promises never settle assert_unreached: finished must not fulfill Reached unreachable code
+PASS cross-document navigate() promises never settle
 

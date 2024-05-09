@@ -176,8 +176,7 @@ NavigationAPIMethodTracker Navigation::maybeSetUpcomingNonTraversalTracker(Ref<D
 {
     auto apiMethodTracker = NavigationAPIMethodTracker(lastTrackerID++, WTFMove(committed), WTFMove(finished), WTFMove(info), WTFMove(serializedState));
 
-    // FIXME: Only mark handled, but not rejected as handled either.
-    apiMethodTracker.finishedPromise->resolve();
+    apiMethodTracker.finishedPromise->markAsHandled();
 
     ASSERT(!m_upcomingNonTraverseMethodTracker);
     if (!hasEntriesAndEventsDisabled())
@@ -192,8 +191,7 @@ NavigationAPIMethodTracker Navigation::addUpcomingTrarveseAPIMethodTracker(Ref<D
     auto apiMethodTracker = NavigationAPIMethodTracker(lastTrackerID++, WTFMove(committed), WTFMove(finished), WTFMove(info), nullptr);
     apiMethodTracker.key = key;
 
-    // FIXME: Only mark handled, but not rejected as handled either.
-    apiMethodTracker.finishedPromise->resolve();
+    apiMethodTracker.finishedPromise->markAsHandled();
 
     m_upcomingTraverseMethodTrackers.add(key, apiMethodTracker);
 
