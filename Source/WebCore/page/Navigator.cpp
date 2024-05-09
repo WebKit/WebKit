@@ -91,7 +91,7 @@ String Navigator::appVersion() const
 
 const String& Navigator::userAgent() const
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame || !frame->page())
         return m_userAgent;
     if (frame->settings().webAPIStatisticsEnabled())
@@ -103,7 +103,7 @@ const String& Navigator::userAgent() const
     
 String Navigator::platform() const
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame || !frame->page())
         return m_platform;
 
@@ -174,7 +174,7 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
         return;
     }
 
-    auto* window = this->window();
+    RefPtr window = this->window();
     if (!window || !window->consumeTransientActivation()) {
         promise->reject(ExceptionCode::NotAllowedError);
         return;
@@ -212,7 +212,7 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
         return;
     }
     
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame || !frame->page())
         return;
 
@@ -262,7 +262,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
     if (m_plugins)
         return;
 
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     bool needsEmptyNavigatorPluginsQuirk = frame && frame->document() && frame->document()->quirks().shouldNavigatorPluginsBeEmpty();
     if (!frame || !frame->page() || needsEmptyNavigatorPluginsQuirk) {
         if (needsEmptyNavigatorPluginsQuirk)
@@ -340,14 +340,14 @@ bool Navigator::cookieEnabled() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::CookieEnabled);
 
-    auto* page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return false;
 
     if (!page->settings().cookieEnabled())
         return false;
 
-    auto* document = frame->document();
+    RefPtr document = frame->document();
     if (!document)
         return false;
 
@@ -395,25 +395,25 @@ Document* Navigator::document()
 
 void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame) {
         promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
-    auto* page = frame->page();
+    RefPtr page = frame->page();
     if (!page) {
         promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
-    auto* document = frame->document();
+    RefPtr document = frame->document();
     if (document && !document->isFullyActive()) {
         promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 
-    page->badgeClient().setAppBadge(page, SecurityOriginData::fromFrame(frame), badge);
+    page->badgeClient().setAppBadge(page.get(), SecurityOriginData::fromFrame(frame.get()), badge);
     promise->resolve();
 }
 
@@ -424,19 +424,19 @@ void Navigator::clearAppBadge(Ref<DeferredPromise>&& promise)
 
 void Navigator::setClientBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame) {
         promise->reject();
         return;
     }
 
-    auto* page = frame->page();
+    RefPtr page = frame->page();
     if (!page) {
         promise->reject();
         return;
     }
 
-    page->badgeClient().setClientBadge(*page, SecurityOriginData::fromFrame(frame), badge);
+    page->badgeClient().setClientBadge(*page, SecurityOriginData::fromFrame(frame.get()), badge);
     promise->resolve();
 }
 
