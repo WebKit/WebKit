@@ -484,6 +484,11 @@ bool WebExtensionContext::isURLForThisExtension(const URL& url) const
     return url.isValid() && protocolHostAndPortAreEqual(baseURL(), url);
 }
 
+bool WebExtensionContext::isURLForAnyExtension(const URL& url)
+{
+    return url.isValid() && WebExtensionMatchPattern::extensionSchemes().contains(url.protocol().toString());
+}
+
 void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
 {
     ASSERT(!isLoaded());

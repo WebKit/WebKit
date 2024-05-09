@@ -143,6 +143,8 @@ public:
     static bool readLastBaseURLFromState(const String& filePath, URL& outLastBaseURL);
     static bool readDisplayNameFromState(const String& filePath, String& outDisplayName);
 
+    static bool isURLForAnyExtension(const URL&);
+
     static WebExtensionContext* get(WebExtensionContextIdentifier);
 
     explicit WebExtensionContext(Ref<WebExtension>&&);

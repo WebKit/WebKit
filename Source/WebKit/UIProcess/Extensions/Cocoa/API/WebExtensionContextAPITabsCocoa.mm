@@ -466,7 +466,7 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
         return;
     }
 
-    auto targetContentWorldType = isURLForThisExtension(tab->url()) ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
+    auto targetContentWorldType = isURLForAnyExtension(tab->url()) ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
 
     auto processes = tab->processes(WebExtensionEventListenerType::RuntimeOnMessage, targetContentWorldType);
     if (processes.isEmpty()) {
@@ -493,7 +493,7 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
     }
 
     constexpr auto sourceContentWorldType = WebExtensionContentWorldType::Main;
-    auto targetContentWorldType = isURLForThisExtension(tab->url()) ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
+    auto targetContentWorldType = isURLForAnyExtension(tab->url()) ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
 
     // Add 1 for the starting port here so disconnect will balance with a decrement.
     addPorts(sourceContentWorldType, targetContentWorldType, channelIdentifier, { senderParameters.pageProxyIdentifier });
