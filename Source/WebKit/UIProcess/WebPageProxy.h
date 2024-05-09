@@ -3535,6 +3535,8 @@ private:
 
     size_t m_suspendMediaPlaybackCounter { 0 };
 
+    size_t m_deferredMouseEvents { 0 };
+
     bool m_lastNavigationWasAppInitiated { true };
     bool m_isRunningModalJavaScriptDialog { false };
     bool m_isSuspended { false };

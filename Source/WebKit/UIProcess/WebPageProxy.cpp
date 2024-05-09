@@ -3510,6 +3510,8 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
 
     if (internals().mouseEventQueue.size() == 1) // Otherwise, called from DidReceiveEvent message handler.
         processNextQueuedMouseEvent();
+    else if (++m_deferredMouseEvents >= 20)
+        WEBPAGEPROXY_RELEASE_LOG(MouseHandling, "handleMouseEvent: skipped called processNextQueuedMouseEvent 20 times, possibly stuck?");
 }
 
 void WebPageProxy::dispatchMouseDidMoveOverElementAsynchronously(const NativeWebMouseEvent& event)
@@ -3529,6 +3531,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
         return;
 
     ASSERT(!internals().mouseEventQueue.isEmpty());
+    m_deferredMouseEvents = 0;
 
     const NativeWebMouseEvent& event = internals().mouseEventQueue.first();
 
