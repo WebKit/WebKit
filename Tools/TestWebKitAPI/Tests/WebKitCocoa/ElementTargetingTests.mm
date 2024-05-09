@@ -480,4 +480,25 @@ TEST(ElementTargeting, RequestTargetedElementsBySearchableText)
     EXPECT_TRUE([targetFromSearchText isSameElement:targetFromHitTest.get()]);
 }
 
+TEST(ElementTargeting, AdjustVisibilityAfterRecreatingElement)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-7"];
+
+    RetainPtr firstTarget = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
+    [webView adjustVisibilityForTargets:@[ firstTarget.get() ]];
+
+    __block bool didAdjustment = false;
+    [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
+        didAdjustment = true;
+    }];
+
+    [webView objectByEvaluatingJavaScript:@"recreateContainer()"];
+
+    Util::run(&didAdjustment);
+}
+
 } // namespace TestWebKitAPI

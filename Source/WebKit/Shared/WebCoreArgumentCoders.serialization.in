@@ -885,6 +885,12 @@ struct WebCore::ShareData {
 enum class WebCore::ShareDataOriginator : bool
 
 header: <WebCore/ElementTargetingTypes.h>
+[CustomHeader] struct WebCore::TargetedElementAdjustment {
+    std::pair<WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier> identifiers
+    Vector<HashSet<String>> selectors
+};
+
+header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedElementRequest {
     std::variant<WebCore::FloatPoint, String> data
     bool canIncludeNearbyElements

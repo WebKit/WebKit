@@ -37,6 +37,14 @@
 
 namespace WebCore {
 
+using TargetedElementSelectors = Vector<HashSet<String>>;
+using TargetedElementIdentifiers = std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>;
+
+struct TargetedElementAdjustment {
+    TargetedElementIdentifiers identifiers;
+    TargetedElementSelectors selectors;
+};
+
 struct TargetedElementRequest {
     std::variant<FloatPoint, String> data;
     bool canIncludeNearbyElements { true };

@@ -54,19 +54,21 @@ public:
 
     WEBCORE_EXPORT Vector<TargetedElementInfo> findTargets(TargetedElementRequest&&);
 
-    WEBCORE_EXPORT bool adjustVisibility(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>&);
+    WEBCORE_EXPORT bool adjustVisibility(Vector<TargetedElementAdjustment>&&);
     void adjustVisibilityInRepeatedlyTargetedRegions(Document&);
 
     void reset();
 
     WEBCORE_EXPORT uint64_t numberOfVisibilityAdjustmentRects() const;
-    WEBCORE_EXPORT bool resetVisibilityAdjustments(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>&);
+    WEBCORE_EXPORT bool resetVisibilityAdjustments(const Vector<TargetedElementIdentifiers>&);
 
 private:
     void cleanUpAdjustmentClientRects();
+
     void applyVisibilityAdjustmentFromSelectors(Document&);
 
     void dispatchVisibilityAdjustmentStateDidChange();
+    void selectorBasedVisibilityAdjustmentTimerFired();
 
     std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(FloatPoint location, bool shouldIgnorePointerEventsNone);
     std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(const String& searchText);
@@ -77,11 +79,14 @@ private:
     DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;
     HashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;
     ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
-    std::optional<Vector<Vector<HashSet<String>>>> m_remainingVisibilityAdjustmentSelectors;
+    Timer m_selectorBasedVisibilityAdjustmentTimer;
+    Vector<std::pair<ElementIdentifier, TargetedElementSelectors>> m_visibilityAdjustmentSelectors;
     Region m_adjustmentClientRegion;
     Region m_repeatedAdjustmentClientRegion;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_adjustedElements;
     FloatSize m_viewportSizeForVisibilityAdjustment;
+    unsigned m_additionalAdjustmentCount { 0 };
+    bool m_didCollectInitialAdjustments { false };
 };
 
 } // namespace WebCore

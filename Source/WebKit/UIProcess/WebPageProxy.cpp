@@ -14075,19 +14075,14 @@ void WebPageProxy::documentURLForConsoleLog(WebCore::FrameIdentifier frameID, Co
     completionHandler({ });
 }
 
-static inline Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>> extractIdentifiers(const Vector<Ref<API::TargetedElementInfo>>& elements)
-{
-    return elements.map([](auto& info) -> std::pair<ElementIdentifier, ScriptExecutionContextIdentifier> {
-        return { info->elementIdentifier(), info->documentIdentifier() };
-    });
-}
-
 void WebPageProxy::resetVisibilityAdjustmentsForTargetedElements(const Vector<Ref<API::TargetedElementInfo>>& elements, CompletionHandler<void(bool)>&& completion)
 {
     if (!hasRunningProcess())
         return completion(false);
 
-    sendWithAsyncReply(Messages::WebPage::ResetVisibilityAdjustmentsForTargetedElements(extractIdentifiers(elements)), WTFMove(completion));
+    sendWithAsyncReply(Messages::WebPage::ResetVisibilityAdjustmentsForTargetedElements(elements.map([](auto& info) -> TargetedElementIdentifiers {
+        return { info->elementIdentifier(), info->documentIdentifier() };
+    })), WTFMove(completion));
 }
 
 void WebPageProxy::adjustVisibilityForTargetedElements(const Vector<Ref<API::TargetedElementInfo>>& elements, CompletionHandler<void(bool)>&& completion)
@@ -14095,7 +14090,17 @@ void WebPageProxy::adjustVisibilityForTargetedElements(const Vector<Ref<API::Tar
     if (!hasRunningProcess())
         return completion(false);
 
-    sendWithAsyncReply(Messages::WebPage::AdjustVisibilityForTargetedElements(extractIdentifiers(elements)), WTFMove(completion));
+    sendWithAsyncReply(Messages::WebPage::AdjustVisibilityForTargetedElements(elements.map([](auto& info) -> TargetedElementAdjustment {
+        return {
+            { info->elementIdentifier(), info->documentIdentifier() },
+            info->selectors().map([](auto& selectors) {
+                HashSet<String> result;
+                result.reserveInitialCapacity(selectors.size());
+                result.add(selectors.begin(), selectors.end());
+                return result;
+            })
+        };
+    })), WTFMove(completion));
 }
 
 void WebPageProxy::numberOfVisibilityAdjustmentRects(CompletionHandler<void(uint64_t)>&& completion)

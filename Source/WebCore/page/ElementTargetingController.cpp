@@ -67,9 +67,13 @@ namespace WebCore {
 static constexpr auto maximumNumberOfClasses = 5;
 static constexpr auto marginForTrackingAdjustmentRects = 5;
 static constexpr auto minimumDistanceToConsiderEdgesEquidistant = 2;
+static constexpr auto minimumWidthForNearbyTarget = 2;
+static constexpr auto minimumHeightForNearbyTarget = 2;
 static constexpr auto minimumLengthForSearchableText = 25;
 static constexpr auto maximumLengthForSearchableText = 100;
-static constexpr auto selectorBasedVisibilityAdjustmentTimeLimit = 30_s;
+static constexpr auto selectorBasedVisibilityAdjustmentThrottlingTimeLimit = 10_s;
+static constexpr auto selectorBasedVisibilityAdjustmentInterval = 1_s;
+static constexpr auto maximumNumberOfAdditionalAdjustments = 20;
 static constexpr auto adjustmentClientRectCleanUpDelay = 15_s;
 static constexpr auto minimumAreaRatioForElementToCoverViewport = 0.95;
 static constexpr auto minimumAreaForInterpolation = 200000;
@@ -111,6 +115,7 @@ using ElementSelectorCache = HashMap<Ref<Element>, std::optional<String>>;
 ElementTargetingController::ElementTargetingController(Page& page)
     : m_page { page }
     , m_recentAdjustmentClientRectsCleanUpTimer { *this, &ElementTargetingController::cleanUpAdjustmentClientRects, adjustmentClientRectCleanUpDelay }
+    , m_selectorBasedVisibilityAdjustmentTimer { *this, &ElementTargetingController::selectorBasedVisibilityAdjustmentTimerFired }
 {
 }
 
@@ -969,10 +974,10 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
         return results;
 
     auto nearbyTargets = [&] {
-        HashSet<Ref<Element>> targets;
+        HashSet<Ref<Element>> results;
         CheckedPtr bodyRenderer = bodyElement->renderer();
         if (!bodyRenderer)
-            return targets;
+            return results;
 
         for (auto& renderer : descendantsOfType<RenderElement>(*bodyRenderer)) {
             if (!renderer.isOutOfFlowPositioned())
@@ -982,7 +987,14 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
             if (!element)
                 continue;
 
-            if (targets.contains(*element))
+            bool elementIsAlreadyTargeted = targets.containsIf([&element](auto& target) {
+                return target->containsIncludingShadowDOM(element.get());
+            });
+
+            if (elementIsAlreadyTargeted)
+                continue;
+
+            if (results.contains(*element))
                 continue;
 
             if (nodes.containsIf([&](auto& node) { return node.ptr() == element; }))
@@ -992,15 +1004,21 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
                 continue;
 
             auto boundingBox = element->boundingBoxInRootViewCoordinates();
+            if (boundingBox.width() <= minimumWidthForNearbyTarget)
+                continue;
+
+            if (boundingBox.height() <= minimumHeightForNearbyTarget)
+                continue;
+
             if (!additionalRegionForNearbyElements.contains(boundingBox))
                 continue;
 
             if (computeViewportAreaRatio(boundingBox) > nearbyTargetAreaRatio)
                 continue;
 
-            targets.add(element.releaseNonNull());
+            results.add(element.releaseNonNull());
         }
-        return targets;
+        return results;
     }();
 
     for (auto& element : nearbyTargets) {
@@ -1048,7 +1066,7 @@ static inline VisibilityAdjustmentResult adjustVisibilityIfNeeded(Element& eleme
     return { adjustedElement.ptr(), adjustment == VisibilityAdjustment::Subtree };
 }
 
-bool ElementTargetingController::adjustVisibility(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>& identifiers)
+bool ElementTargetingController::adjustVisibility(Vector<TargetedElementAdjustment>&& adjustments)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -1068,7 +1086,8 @@ bool ElementTargetingController::adjustVisibility(const Vector<std::pair<Element
         return false;
 
     Region newAdjustmentRegion;
-    for (auto [elementID, documentID] : identifiers) {
+    for (auto& [identifiers, selectors] : adjustments) {
+        auto [elementID, documentID] = identifiers;
         if (auto rect = m_recentAdjustmentClientRects.get(elementID); !rect.isEmpty())
             newAdjustmentRegion.unite(rect);
     }
@@ -1077,10 +1096,21 @@ bool ElementTargetingController::adjustVisibility(const Vector<std::pair<Element
     m_adjustmentClientRegion.unite(newAdjustmentRegion);
 
     Vector<Ref<Element>> elements;
-    elements.reserveInitialCapacity(identifiers.size());
-    for (auto [elementID, documentID] : identifiers) {
-        if (RefPtr element = Element::fromIdentifier(elementID); element && element->document().identifier() == documentID)
-            elements.append(element.releaseNonNull());
+    elements.reserveInitialCapacity(adjustments.size());
+    for (auto& [identifiers, selectors] : adjustments) {
+        auto [elementID, documentID] = identifiers;
+        RefPtr element = Element::fromIdentifier(elementID);
+        if (!element)
+            continue;
+
+        if (element->document().identifier() != documentID)
+            continue;
+
+        elements.append(element.releaseNonNull());
+        if (m_additionalAdjustmentCount < maximumNumberOfAdditionalAdjustments) {
+            m_visibilityAdjustmentSelectors.append({ elementID, WTFMove(selectors) });
+            m_additionalAdjustmentCount++;
+        }
     }
 
     bool changed = false;
@@ -1176,7 +1206,20 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
         adjustRegionAfterViewportSizeChange(m_repeatedAdjustmentClientRegion, previousViewportSize, m_viewportSizeForVisibilityAdjustment);
     }
 
-    applyVisibilityAdjustmentFromSelectors(document);
+    if (RefPtr loader = document.loader(); loader && !m_didCollectInitialAdjustments) {
+        m_visibilityAdjustmentSelectors.appendVector(loader->visibilityAdjustmentSelectors().map([](auto& selectors) -> std::pair<ElementIdentifier, TargetedElementSelectors> {
+            return { { }, selectors };
+        }));
+        m_startTimeForSelectorBasedVisibilityAdjustment = ApproximateTime::now();
+        m_didCollectInitialAdjustments = true;
+    }
+
+    if (!m_visibilityAdjustmentSelectors.isEmpty()) {
+        if (ApproximateTime::now() - m_startTimeForSelectorBasedVisibilityAdjustment <= selectorBasedVisibilityAdjustmentThrottlingTimeLimit)
+            applyVisibilityAdjustmentFromSelectors(document);
+        else if (!m_selectorBasedVisibilityAdjustmentTimer.isActive())
+            m_selectorBasedVisibilityAdjustmentTimer.startOneShot(selectorBasedVisibilityAdjustmentInterval);
+    }
 
     if (m_repeatedAdjustmentClientRegion.isEmpty())
         return;
@@ -1225,26 +1268,11 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
 
 void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document& document)
 {
+    if (m_visibilityAdjustmentSelectors.isEmpty())
+        return;
+
     RefPtr page = m_page.get();
     if (!page)
-        return;
-
-    RefPtr loader = document.loader();
-    if (!loader)
-        return;
-
-    auto currentTime = ApproximateTime::now();
-    if (!m_remainingVisibilityAdjustmentSelectors) {
-        m_remainingVisibilityAdjustmentSelectors = loader->visibilityAdjustmentSelectors();
-        m_startTimeForSelectorBasedVisibilityAdjustment = currentTime;
-    }
-
-    if (currentTime - m_startTimeForSelectorBasedVisibilityAdjustment >= selectorBasedVisibilityAdjustmentTimeLimit) {
-        m_remainingVisibilityAdjustmentSelectors->clear();
-        return;
-    }
-
-    if (m_remainingVisibilityAdjustmentSelectors->isEmpty())
         return;
 
     auto resolveSelectorToQuery = [](const String& selectorIncludingPseudo) -> std::pair<String, VisibilityAdjustment> {
@@ -1269,11 +1297,10 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
     auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
     Region adjustmentRegion;
     Vector<String> matchingSelectors;
-    for (auto& selectorsForElementIncludingShadowHosts : *m_remainingVisibilityAdjustmentSelectors) {
+    for (auto& [identifier, selectorsForElementIncludingShadowHosts] : m_visibilityAdjustmentSelectors) {
         if (selectorsForElementIncludingShadowHosts.isEmpty())
             continue;
 
-        bool foundLastTarget = false;
         Ref<ContainerNode> containerToQuery = document;
         size_t indexOfSelectorToQuery = 0;
         for (auto& selectorsToQuery : selectorsForElementIncludingShadowHosts) {
@@ -1321,8 +1348,9 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
 
                         if (auto clientRect = inflatedClientRectForAdjustmentRegionTracking(*element, viewportArea))
                             adjustmentRegion.unite(*clientRect);
+
+                        matchingSelectors.append(selectorIncludingPseudo);
                     }
-                    matchingSelectors.append(selectorIncludingPseudo);
                 }
 
                 currentTarget = WTFMove(element);
@@ -1336,7 +1364,6 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
 
             if (isLastTarget) {
                 // We resolved the final targeted element.
-                foundLastTarget = true;
                 break;
             }
 
@@ -1347,17 +1374,10 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
             // Continue the search underneath the next shadow root.
             containerToQuery = nextShadowRoot.releaseNonNull();
         }
-
-        if (foundLastTarget)
-            selectorsForElementIncludingShadowHosts.clear();
     }
 
     if (!adjustmentRegion.isEmpty())
         m_adjustmentClientRegion.unite(adjustmentRegion);
-
-    m_remainingVisibilityAdjustmentSelectors->removeAllMatching([](auto& selectors) {
-        return selectors.isEmpty();
-    });
 
     if (matchingSelectors.isEmpty())
         return;
@@ -1372,13 +1392,16 @@ void ElementTargetingController::reset()
     m_repeatedAdjustmentClientRegion = { };
     m_viewportSizeForVisibilityAdjustment = { };
     m_adjustedElements = { };
-    m_remainingVisibilityAdjustmentSelectors = { };
+    m_visibilityAdjustmentSelectors = { };
+    m_didCollectInitialAdjustments = false;
+    m_additionalAdjustmentCount = 0;
+    m_selectorBasedVisibilityAdjustmentTimer.stop();
     m_startTimeForSelectorBasedVisibilityAdjustment = { };
     m_recentAdjustmentClientRectsCleanUpTimer.stop();
     cleanUpAdjustmentClientRects();
 }
 
-bool ElementTargetingController::resetVisibilityAdjustments(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>& identifiers)
+bool ElementTargetingController::resetVisibilityAdjustments(const Vector<TargetedElementIdentifiers>& identifiers)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -1418,6 +1441,17 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<std::pa
             elementsToReset.append(element.releaseNonNull());
         }
     }
+
+    if (RefPtr loader = document->loader(); loader && !identifiers.isEmpty()) {
+        m_visibilityAdjustmentSelectors = loader->visibilityAdjustmentSelectors().map([](auto& selectors) -> std::pair<ElementIdentifier, TargetedElementSelectors> {
+            return { { }, selectors };
+        });
+    } else {
+        // There are no initial adjustments after resetting.
+        m_visibilityAdjustmentSelectors = { };
+    }
+    m_additionalAdjustmentCount = 0;
+    m_didCollectInitialAdjustments = true;
 
     if (elementsToReset.isEmpty())
         return false;
@@ -1521,6 +1555,23 @@ void ElementTargetingController::dispatchVisibilityAdjustmentStateDidChange()
     page->forEachDocument([](auto& document) {
         document.visibilityAdjustmentStateDidChange();
     });
+}
+
+void ElementTargetingController::selectorBasedVisibilityAdjustmentTimerFired()
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!mainFrame)
+        return;
+
+    RefPtr document = mainFrame->document();
+    if (!document)
+        return;
+
+    applyVisibilityAdjustmentFromSelectors(*document);
 }
 
 } // namespace WebCore

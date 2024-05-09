@@ -59,7 +59,7 @@ public:
 
     HashMap<String, Vector<String>> activeContentRuleListActionPatterns;
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
-    Vector<Vector<HashSet<String>>> visibilityAdjustmentSelectors;
+    Vector<WebCore::TargetedElementSelectors> visibilityAdjustmentSelectors;
     String customUserAgent;
     String customUserAgentAsSiteSpecificQuirks;
     String customNavigatorPlatform;

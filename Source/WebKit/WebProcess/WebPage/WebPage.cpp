@@ -9576,14 +9576,13 @@ void WebPage::remoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier frame
     completionHandler(popupInfo);
 }
 
-
-void WebPage::adjustVisibilityForTargetedElements(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>& identifiers, CompletionHandler<void(bool)>&& completion)
+void WebPage::adjustVisibilityForTargetedElements(Vector<TargetedElementAdjustment>&& adjustments, CompletionHandler<void(bool)>&& completion)
 {
     RefPtr page = corePage();
-    completion(page && page->checkedElementTargetingController()->adjustVisibility(identifiers));
+    completion(page && page->checkedElementTargetingController()->adjustVisibility(WTFMove(adjustments)));
 }
 
-void WebPage::resetVisibilityAdjustmentsForTargetedElements(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>& identifiers, CompletionHandler<void(bool)>&& completion)
+void WebPage::resetVisibilityAdjustmentsForTargetedElements(const Vector<TargetedElementIdentifiers>& identifiers, CompletionHandler<void(bool)>&& completion)
 {
     RefPtr page = corePage();
     completion(page && page->checkedElementTargetingController()->resetVisibilityAdjustments(identifiers));
