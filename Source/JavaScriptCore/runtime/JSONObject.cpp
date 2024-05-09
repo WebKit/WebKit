@@ -1066,41 +1066,41 @@ void FastStringifier<CharType>::append(JSValue value)
             constexpr size_t stride = 16 / sizeof(CharType);
             if (span.size() >= stride) {
                 using UnsignedType = std::make_unsigned_t<CharType>;
-                using BulkType = decltype(WTF::loadBulk(static_cast<const UnsignedType*>(nullptr)));
-                const auto quoteMask = WTF::splatBulk(static_cast<UnsignedType>('"'));
-                const auto escapeMask = WTF::splatBulk(static_cast<UnsignedType>('\\'));
-                const auto controlMask = WTF::splatBulk(static_cast<UnsignedType>(' '));
+                using BulkType = decltype(SIMD::load(static_cast<const UnsignedType*>(nullptr)));
+                const auto quoteMask = SIMD::splat(static_cast<UnsignedType>('"'));
+                const auto escapeMask = SIMD::splat(static_cast<UnsignedType>('\\'));
+                const auto controlMask = SIMD::splat(static_cast<UnsignedType>(' '));
                 const auto* ptr = span.data();
                 const auto* end = ptr + span.size();
                 auto* cursorEnd = cursor + span.size();
                 BulkType accumulated { };
                 for (; ptr + (stride - 1) < end; ptr += stride, cursor += stride) {
-                    auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(ptr));
-                    WTF::storeBulk(input, bitwise_cast<UnsignedType*>(cursor));
-                    auto quotes = WTF::equalBulk(input, quoteMask);
-                    auto escapes = WTF::equalBulk(input, escapeMask);
-                    auto controls = WTF::lessThanBulk(input, controlMask);
-                    accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)));
+                    auto input = SIMD::load(bitwise_cast<const UnsignedType*>(ptr));
+                    SIMD::store(input, bitwise_cast<UnsignedType*>(cursor));
+                    auto quotes = SIMD::equal(input, quoteMask);
+                    auto escapes = SIMD::equal(input, escapeMask);
+                    auto controls = SIMD::lessThan(input, controlMask);
+                    accumulated = SIMD::merge(accumulated, SIMD::merge(quotes, SIMD::merge(escapes, controls)));
                     if constexpr (sizeof(CharType) != 1) {
-                        const auto surrogateMask = WTF::splatBulk(static_cast<UnsignedType>(0xf800));
-                        const auto surrogateCheckMask = WTF::splatBulk(static_cast<UnsignedType>(0xd800));
-                        accumulated = WTF::mergeBulk(accumulated, WTF::equalBulk(simde_vandq_u16(input, surrogateMask), surrogateCheckMask));
+                        const auto surrogateMask = SIMD::splat(static_cast<UnsignedType>(0xf800));
+                        const auto surrogateCheckMask = SIMD::splat(static_cast<UnsignedType>(0xd800));
+                        accumulated = SIMD::merge(accumulated, SIMD::equal(simde_vandq_u16(input, surrogateMask), surrogateCheckMask));
                     }
                 }
                 if (ptr < end) {
-                    auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(end - stride));
-                    WTF::storeBulk(input, bitwise_cast<UnsignedType*>(cursorEnd - stride));
-                    auto quotes = WTF::equalBulk(input, quoteMask);
-                    auto escapes = WTF::equalBulk(input, escapeMask);
-                    auto controls = WTF::lessThanBulk(input, controlMask);
-                    accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)));
+                    auto input = SIMD::load(bitwise_cast<const UnsignedType*>(end - stride));
+                    SIMD::store(input, bitwise_cast<UnsignedType*>(cursorEnd - stride));
+                    auto quotes = SIMD::equal(input, quoteMask);
+                    auto escapes = SIMD::equal(input, escapeMask);
+                    auto controls = SIMD::lessThan(input, controlMask);
+                    accumulated = SIMD::merge(accumulated, SIMD::merge(quotes, SIMD::merge(escapes, controls)));
                     if constexpr (sizeof(CharType) != 1) {
-                        const auto surrogateMask = WTF::splatBulk(static_cast<UnsignedType>(0xf800));
-                        const auto surrogateCheckMask = WTF::splatBulk(static_cast<UnsignedType>(0xd800));
-                        accumulated = WTF::mergeBulk(accumulated, WTF::equalBulk(simde_vandq_u16(input, surrogateMask), surrogateCheckMask));
+                        const auto surrogateMask = SIMD::splat(static_cast<UnsignedType>(0xf800));
+                        const auto surrogateCheckMask = SIMD::splat(static_cast<UnsignedType>(0xd800));
+                        accumulated = SIMD::merge(accumulated, SIMD::equal(simde_vandq_u16(input, surrogateMask), surrogateCheckMask));
                     }
                 }
-                return WTF::isNonZeroBulk(accumulated);
+                return SIMD::isNonZero(accumulated);
             }
 #endif
             for (auto character : span) {
@@ -1120,32 +1120,32 @@ void FastStringifier<CharType>::append(JSValue value)
             constexpr size_t stride = 16 / sizeof(LChar);
             if (span.size() >= stride) {
                 using UnsignedType = std::make_unsigned_t<LChar>;
-                using BulkType = decltype(WTF::loadBulk(static_cast<const UnsignedType*>(nullptr)));
-                const auto quoteMask = WTF::splatBulk(static_cast<UnsignedType>('"'));
-                const auto escapeMask = WTF::splatBulk(static_cast<UnsignedType>('\\'));
-                const auto controlMask = WTF::splatBulk(static_cast<UnsignedType>(' '));
-                const auto zeros = WTF::splatBulk(static_cast<UnsignedType>(0));
+                using BulkType = decltype(SIMD::load(static_cast<const UnsignedType*>(nullptr)));
+                const auto quoteMask = SIMD::splat(static_cast<UnsignedType>('"'));
+                const auto escapeMask = SIMD::splat(static_cast<UnsignedType>('\\'));
+                const auto controlMask = SIMD::splat(static_cast<UnsignedType>(' '));
+                const auto zeros = SIMD::splat(static_cast<UnsignedType>(0));
                 const auto* ptr = span.data();
                 const auto* end = ptr + span.size();
                 auto* cursorEnd = cursor + span.size();
                 BulkType accumulated { };
                 for (; ptr + (stride - 1) < end; ptr += stride, cursor += stride) {
-                    auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(ptr));
+                    auto input = SIMD::load(bitwise_cast<const UnsignedType*>(ptr));
                     simde_vst2q_u8(bitwise_cast<UnsignedType*>(cursor), (simde_uint8x16x2_t { input, zeros }));
-                    auto quotes = WTF::equalBulk(input, quoteMask);
-                    auto escapes = WTF::equalBulk(input, escapeMask);
-                    auto controls = WTF::lessThanBulk(input, controlMask);
-                    accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)));
+                    auto quotes = SIMD::equal(input, quoteMask);
+                    auto escapes = SIMD::equal(input, escapeMask);
+                    auto controls = SIMD::lessThan(input, controlMask);
+                    accumulated = SIMD::merge(accumulated, SIMD::merge(quotes, SIMD::merge(escapes, controls)));
                 }
                 if (ptr < end) {
-                    auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(end - stride));
+                    auto input = SIMD::load(bitwise_cast<const UnsignedType*>(end - stride));
                     simde_vst2q_u8(bitwise_cast<UnsignedType*>(cursorEnd - stride), (simde_uint8x16x2_t { input, zeros }));
-                    auto quotes = WTF::equalBulk(input, quoteMask);
-                    auto escapes = WTF::equalBulk(input, escapeMask);
-                    auto controls = WTF::lessThanBulk(input, controlMask);
-                    accumulated = WTF::mergeBulk(accumulated, WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls)));
+                    auto quotes = SIMD::equal(input, quoteMask);
+                    auto escapes = SIMD::equal(input, escapeMask);
+                    auto controls = SIMD::lessThan(input, controlMask);
+                    accumulated = SIMD::merge(accumulated, SIMD::merge(quotes, SIMD::merge(escapes, controls)));
                 }
-                return WTF::isNonZeroBulk(accumulated);
+                return SIMD::isNonZero(accumulated);
             }
 #endif
             for (auto character : span) {

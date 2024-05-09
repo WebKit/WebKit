@@ -31,8 +31,8 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NotFound.h>
+#include <wtf/SIMDHelpers.h>
 #include <wtf/UnalignedAccess.h>
-#include <wtf/simde/simde.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/ASCIILiteral.h>
 
@@ -1203,112 +1203,6 @@ inline void copyElements(LChar* __restrict destination, const UChar* __restrict 
     copyElements(bitwise_cast<uint8_t*>(destination), bitwise_cast<const uint16_t*>(source), length);
 }
 
-#if CPU(ARM64) || CPU(X86_64)
-
-constexpr simde_uint8x16_t splatBulk(uint8_t code)
-{
-    return simde_uint8x16_t { code, code, code, code, code, code, code, code, code, code, code, code, code, code, code, code };
-}
-
-constexpr simde_uint16x8_t splatBulk(uint16_t code)
-{
-    return simde_uint16x8_t { code, code, code, code, code, code, code, code };
-}
-
-ALWAYS_INLINE simde_uint8x16_t loadBulk(const uint8_t* ptr)
-{
-    return simde_vld1q_u8(ptr);
-}
-
-ALWAYS_INLINE simde_uint16x8_t loadBulk(const uint16_t* ptr)
-{
-    return simde_vld1q_u16(ptr);
-}
-
-ALWAYS_INLINE void storeBulk(simde_uint8x16_t value, uint8_t* ptr)
-{
-    return simde_vst1q_u8(ptr, value);
-}
-
-ALWAYS_INLINE void storeBulk(simde_uint16x8_t value, uint16_t* ptr)
-{
-    return simde_vst1q_u16(ptr, value);
-}
-
-ALWAYS_INLINE simde_uint8x16_t mergeBulk(simde_uint8x16_t accumulated, simde_uint8x16_t input)
-{
-    return simde_vorrq_u8(accumulated, input);
-}
-
-ALWAYS_INLINE simde_uint16x8_t mergeBulk(simde_uint16x8_t accumulated, simde_uint16x8_t input)
-{
-    return simde_vorrq_u16(accumulated, input);
-}
-
-ALWAYS_INLINE bool isNonZeroBulk(simde_uint8x16_t accumulated)
-{
-    return simde_vmaxvq_u8(accumulated);
-}
-
-ALWAYS_INLINE bool isNonZeroBulk(simde_uint16x8_t accumulated)
-{
-    return simde_vmaxvq_u16(accumulated);
-}
-
-ALWAYS_INLINE uint8_t findFirstNonZeroIndexBulk(simde_uint8x16_t value)
-{
-    constexpr simde_uint8x16_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-    return simde_vminvq_u8(simde_vornq_u8(indexMask, value));
-}
-
-ALWAYS_INLINE uint8_t findFirstNonZeroIndexBulk(simde_uint16x8_t value)
-{
-    constexpr simde_uint16x8_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7 };
-    return simde_vminvq_u16(simde_vornq_u16(indexMask, value));
-}
-
-template<LChar character, LChar... characters>
-ALWAYS_INLINE simde_uint8x16_t equalBulk(simde_uint8x16_t input)
-{
-    auto result = simde_vceqq_u8(input, simde_vmovq_n_u8(character));
-    if constexpr (!sizeof...(characters))
-        return result;
-    else
-        return mergeBulk(result, equalBulk<characters...>(input));
-}
-
-template<UChar character, UChar... characters>
-ALWAYS_INLINE simde_uint16x8_t equalBulk(simde_uint16x8_t input)
-{
-    auto result = simde_vceqq_u16(input, simde_vmovq_n_u16(character));
-    if constexpr (!sizeof...(characters))
-        return result;
-    else
-        return mergeBulk(result, equalBulk<characters...>(input));
-}
-
-ALWAYS_INLINE simde_uint8x16_t equalBulk(simde_uint8x16_t lhs, simde_uint8x16_t rhs)
-{
-    return simde_vceqq_u8(lhs, rhs);
-}
-
-ALWAYS_INLINE simde_uint16x8_t equalBulk(simde_uint16x8_t lhs, simde_uint16x8_t rhs)
-{
-    return simde_vceqq_u16(lhs, rhs);
-}
-
-ALWAYS_INLINE simde_uint8x16_t lessThanBulk(simde_uint8x16_t lhs, simde_uint8x16_t rhs)
-{
-    return simde_vcltq_u8(lhs, rhs);
-}
-
-ALWAYS_INLINE simde_uint16x8_t lessThanBulk(simde_uint16x8_t lhs, simde_uint16x8_t rhs)
-{
-    return simde_vcltq_u16(lhs, rhs);
-}
-
-#endif
-
 template<typename CharacterType, CharacterType... characters>
 ALWAYS_INLINE bool compareEach(CharacterType input)
 {
@@ -1325,17 +1219,17 @@ ALWAYS_INLINE bool charactersContain(std::span<const CharacterType> span)
 #if CPU(ARM64) || CPU(X86_64)
     constexpr size_t stride = 16 / sizeof(CharacterType);
     using UnsignedType = std::make_unsigned_t<CharacterType>;
-    using BulkType = decltype(loadBulk(static_cast<const UnsignedType*>(nullptr)));
+    using BulkType = decltype(SIMD::load(static_cast<const UnsignedType*>(nullptr)));
     if (length >= stride) {
         size_t index = 0;
         BulkType accumulated { };
         for (; index + (stride - 1) < length; index += stride)
-            accumulated = mergeBulk(accumulated, equalBulk<characters...>(loadBulk(bitwise_cast<const UnsignedType*>(data + index))));
+            accumulated = SIMD::merge(accumulated, SIMD::equal<characters...>(SIMD::load(bitwise_cast<const UnsignedType*>(data + index))));
 
         if (index < length)
-            accumulated = mergeBulk(accumulated, equalBulk<characters...>(loadBulk(bitwise_cast<const UnsignedType*>(data + length - stride))));
+            accumulated = SIMD::merge(accumulated, SIMD::equal<characters...>(SIMD::load(bitwise_cast<const UnsignedType*>(data + length - stride))));
 
-        return isNonZeroBulk(accumulated);
+        return SIMD::isNonZero(accumulated);
     }
 #endif
 
