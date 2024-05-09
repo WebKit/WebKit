@@ -1271,11 +1271,6 @@ LayoutUnit RenderBox::maxPreferredLogicalWidth() const
     return m_maxPreferredLogicalWidth;
 }
 
-bool RenderBox::hasOverridingLogicalWidth() const
-{
-    return gOverridingLogicalWidthMap && gOverridingLogicalWidthMap->contains(*this);
-}
-
 void RenderBox::setOverridingLogicalHeight(LayoutUnit height)
 {
     if (!gOverridingLogicalHeightMap)
@@ -1308,10 +1303,11 @@ void RenderBox::clearOverridingContentSize()
     clearOverridingLogicalWidth();
 }
 
-LayoutUnit RenderBox::overridingLogicalWidth() const
+std::optional<LayoutUnit> RenderBox::overridingLogicalWidth() const
 {
-    ASSERT(hasOverridingLogicalWidth());
-    return gOverridingLogicalWidthMap->get(*this);
+    if (!gOverridingLogicalWidthMap)
+        return { };
+    return gOverridingLogicalWidthMap->getOptional(*this);
 }
 
 std::optional<LayoutUnit> RenderBox::overridingLogicalHeight() const
@@ -2679,8 +2675,8 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
     // width.  Use the width from the style context.
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
-    if (hasOverridingLogicalWidth() && parent()->isFlexibleBoxIncludingDeprecated()) {
-        computedValues.m_extent = overridingLogicalWidth();
+    if (auto overridingLogicalWidth = (parent()->isFlexibleBoxIncludingDeprecated() ? this->overridingLogicalWidth() : std::nullopt)) {
+        computedValues.m_extent = *overridingLogicalWidth;
         return;
     }
 
@@ -2718,8 +2714,8 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
         containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
 
     // Width calculations
-    if (isGridItem() && hasOverridingLogicalWidth()) {
-        computedValues.m_extent = overridingLogicalWidth();
+    if (auto overridingLogicalWidth = (isGridItem() ? this->overridingLogicalWidth() : std::nullopt)) {
+        computedValues.m_extent = *overridingLogicalWidth;
     } else if (treatAsReplaced) {
         computedValues.m_extent = logicalWidthLength.value() + borderAndPaddingLogicalWidth();
     } else if (shouldComputeLogicalWidthFromAspectRatio() && style().logicalWidth().isAuto()) {

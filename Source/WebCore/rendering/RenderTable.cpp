@@ -272,8 +272,8 @@ void RenderTable::updateLogicalWidth()
     LayoutUnit containerWidthInInlineDirection = hasPerpendicularContainingBlock ? perpendicularContainingBlockLogicalHeight() : availableLogicalWidth;
 
     Length styleLogicalWidth = style().logicalWidth();
-    if (hasOverridingLogicalWidth())
-        setLogicalWidth(overridingLogicalWidth());
+    if (auto overridingLogicalWidth = this->overridingLogicalWidth())
+        setLogicalWidth(*overridingLogicalWidth);
     else if ((styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive()) || styleLogicalWidth.isIntrinsic())
         setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
     else {
@@ -894,9 +894,9 @@ void RenderTable::computePreferredLogicalWidths()
     for (unsigned i = 0; i < m_captions.size(); i++)
         m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, m_captions[i]->minPreferredLogicalWidth());
 
-    if (hasOverridingLogicalWidth()) {
-        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, overridingLogicalWidth());
-        m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, overridingLogicalWidth());
+    if (auto overridingLogicalWidth = this->overridingLogicalWidth()) {
+        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, *overridingLogicalWidth);
+        m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, *overridingLogicalWidth);
     }
 
     auto& styleToUse = style();

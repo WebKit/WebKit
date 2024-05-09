@@ -282,7 +282,7 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
 void AutoTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
 {
     if (auto tableLogicalWidth = m_table->style().logicalWidth(); tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive()) {
-        minWidth = std::max(minWidth, m_table->hasOverridingLogicalWidth() ? m_table->overridingLogicalWidth() : LayoutUnit(tableLogicalWidth.value()));
+        minWidth = std::max(minWidth, m_table->overridingLogicalWidth().value_or(LayoutUnit { tableLogicalWidth.value() }));
         maxWidth = minWidth;
     }
 }

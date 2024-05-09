@@ -161,8 +161,8 @@ static bool childDoesNotAffectWidthOrFlexing(RenderObject* child)
 
 static LayoutUnit widthForChild(RenderBox* child)
 {
-    if (child->hasOverridingLogicalWidth())
-        return child->overridingLogicalWidth();
+    if (auto overridingLogicalWidth = child->overridingLogicalWidth())
+        return *overridingLogicalWidth;
     return child->logicalWidth();
 }
 

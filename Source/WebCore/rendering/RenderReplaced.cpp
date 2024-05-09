@@ -675,8 +675,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit
     bool hasIntrinsicWidth = constrainedSize.width() > 0 || shouldApplySizeOrInlineSizeContainment();
 
     // See computeReplacedLogicalHeight() for a similar check for heights.
-    if (!intrinsicRatio.isEmpty() && (isFlexItem() || isGridItem()) && hasOverridingLogicalWidth() && hasIntrinsicSize(contentRenderer, hasIntrinsicWidth, hasIntrinsicHeight))
-        return computeReplacedLogicalHeightRespectingMinMaxHeight(overridingContentLogicalWidth() * intrinsicRatio.transposedSize().aspectRatioDouble());
+    if (auto overridinglogicalWidth = (!intrinsicRatio.isEmpty() && (isFlexItem() || isGridItem()) && hasIntrinsicSize(contentRenderer, hasIntrinsicWidth, hasIntrinsicHeight) ? overridingLogicalWidth() : std::nullopt))
+        return computeReplacedLogicalHeightRespectingMinMaxHeight(overridingContentLogicalWidth(*overridinglogicalWidth) * intrinsicRatio.transposedSize().aspectRatioDouble());
 
     // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic height, then that intrinsic height is the used value of 'height'.
     if (widthIsAuto && hasIntrinsicHeight)

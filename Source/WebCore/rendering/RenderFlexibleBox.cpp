@@ -209,8 +209,7 @@ public:
     {
         ASSERT(!size || (axis != Axis::Both));
         if (axis == Axis::Both || axis == Axis::Inline) {
-            if (box.hasOverridingLogicalWidth())
-                m_overridingWidth = box.overridingLogicalWidth();
+            m_overridingWidth = box.overridingLogicalWidth();
             SET_OR_CLEAR_OVERRIDING_SIZE(m_box, Width, size);
         }
         if (axis == Axis::Both || axis == Axis::Block) {

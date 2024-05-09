@@ -280,16 +280,15 @@ public:
     LayoutUnit minPreferredLogicalWidth() const override;
     LayoutUnit maxPreferredLogicalWidth() const override;
 
-    LayoutUnit overridingLogicalWidth() const;
+    std::optional<LayoutUnit> overridingLogicalWidth() const;
     std::optional<LayoutUnit> overridingLogicalHeight() const;
-    bool hasOverridingLogicalWidth() const;
     void setOverridingLogicalHeight(LayoutUnit);
     void setOverridingLogicalWidth(LayoutUnit);
     void clearOverridingContentSize();
     void clearOverridingLogicalHeight();
     void clearOverridingLogicalWidth();
 
-    inline LayoutUnit overridingContentLogicalWidth() const;
+    inline LayoutUnit overridingContentLogicalWidth(LayoutUnit overridingLogicalWidth) const;
     inline LayoutUnit overridingContentLogicalHeight(LayoutUnit overridingLogicalHeight) const;
 
     std::optional<LayoutUnit> overridingContainingBlockContentWidth() const override;
