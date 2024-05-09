@@ -66,9 +66,10 @@ RUN mkdir /icu && \
     make install
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
-RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc
+RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc /output/include/unicode
 
 RUN cp -r /icu/source/lib/* /output/lib
+RUN cp -r /icu/source/i18n/unicode/* /icu/source/common/unicode/* /output/include/unicode
 
 COPY . /webkit
 WORKDIR /webkit
@@ -114,8 +115,6 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     mkdir -p /output/Source/JavaScriptCore && \
     cp -r /webkit/Source/JavaScriptCore/Scripts /output/Source/JavaScriptCore && \
     cp /webkit/Source/JavaScriptCore/create_hash_table /output/Source/JavaScriptCore && \
-    rm -rf /output/include/unicode && \
-    cp -r /usr/include/unicode /output/include/unicode && \
     echo "";
 
 FROM scratch as artifact
