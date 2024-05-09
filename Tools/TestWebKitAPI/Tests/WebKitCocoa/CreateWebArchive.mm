@@ -77,6 +77,24 @@ TEST(WebArchive, CreateCustomScheme)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     static bool done = false;
+    [webView createWebArchiveDataWithCompletionHandler:^(NSData *result, NSError *error) {
+        EXPECT_NULL(error);
+        NSDictionary *expectedDictionary = @{
+            @"WebMainResource" : @{
+                @"WebResourceData" : [@"<html><head></head><body></body></html>" dataUsingEncoding:NSUTF8StringEncoding],
+                @"WebResourceFrameName" : @"",
+                @"WebResourceMIMEType" : @"text/html",
+                @"WebResourceTextEncodingName" : @"UTF-8",
+                @"WebResourceURL" : @""
+            }
+        };
+        NSDictionary* actualDictionary = [NSPropertyListSerialization propertyListWithData:result options:0 format:nullptr error:nullptr];
+        EXPECT_TRUE([expectedDictionary isEqualToDictionary:actualDictionary]);
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
     [webView performAfterReceivingMessage:@"done" action:[&] { done = true; }];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
 

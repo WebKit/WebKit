@@ -1845,8 +1845,11 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 - (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
     THROW_IF_SUSPENDED;
-    _page->getWebArchiveOfFrame(_page->mainFrame(), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
-        completionHandler(wrapper(data), nil);
+    _page->getWebArchiveOfFrame(nullptr, [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
+        if (data)
+            completionHandler(wrapper(data), nil);
+        else
+            completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
     });
 }
 

@@ -4536,22 +4536,22 @@ void WebPage::getWebArchiveOfFrameWithFileName(WebCore::FrameIdentifier frameID,
     completionHandler(result);
 }
 
-void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
+void WebPage::getWebArchiveOfFrame(std::optional<FrameIdentifier> frameID, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
-    if (RefPtr frame = WebProcess::singleton().webFrame(frameID))
+    RefPtr<WebFrame> frame;
+    if (frameID)
+        frame = WebProcess::singleton().webFrame(*frameID);
+    else
+        frame = m_mainFrame.ptr();
+    if (frame)
         data = frame->webArchiveData(nullptr, nullptr);
+    callback(IPC::SharedBufferReference(SharedBuffer::create(data.get())));
 #else
     UNUSED_PARAM(frameID);
+    callback({ });
 #endif
-
-    IPC::SharedBufferReference dataBuffer;
-#if PLATFORM(COCOA)
-    if (data)
-        dataBuffer = IPC::SharedBufferReference(SharedBuffer::create(data.get()));
-#endif
-    callback(dataBuffer);
 }
 
 void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)

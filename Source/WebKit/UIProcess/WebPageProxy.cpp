@@ -5776,9 +5776,8 @@ void WebPageProxy::getResourceDataFromFrame(WebFrameProxy& frame, API::URL* reso
 
 void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, CompletionHandler<void(API::Data*)>&& callback)
 {
-    if (!frame)
-        return callback(nullptr);
-    sendWithAsyncReply(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID()), toAPIDataCallback(WTFMove(callback)));
+    launchInitialProcessIfNecessary();
+    sendWithAsyncReply(Messages::WebPage::GetWebArchiveOfFrame(frame ? std::optional(frame->frameID()) : std::nullopt), toAPIDataCallback(WTFMove(callback)));
 }
 
 void WebPageProxy::getAccessibilityTreeData(CompletionHandler<void(API::Data*)>&& callback)
