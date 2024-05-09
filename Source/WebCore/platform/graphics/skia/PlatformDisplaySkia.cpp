@@ -65,6 +65,9 @@ GLContext* PlatformDisplay::skiaGLContext()
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [this] {
+        // The PlayStation OpenGL implementation does not dispatch to the context bound to
+        //  the current thread so Skia cannot use OpenGL with coordinated graphics
+#if !(PLATFORM(PLAYSTATION) && USE(COORDINATED_GRAPHICS))
         const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
         if (enableCPURendering && strcmp(enableCPURendering, "0"))
             return;
@@ -78,6 +81,7 @@ GLContext* PlatformDisplay::skiaGLContext()
             m_skiaGLContext = WTFMove(skiaGLContext);
             m_skiaGrContext = WTFMove(skiaGrContext);
         }
+#endif
     });
     return m_skiaGLContext.get();
 }

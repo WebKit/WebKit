@@ -41,24 +41,30 @@
 #include <cairo.h>
 #endif
 
+#if USE(SKIA)
+#include <skia/core/SkCanvas.h>
+#endif
+
 #if USE(GRAPHICS_LAYER_WC)
 #include "DrawingAreaProxyWC.h"
 #endif
 
-#if USE(CAIRO)
-static void drawPageBackground(cairo_t* ctx, const std::optional<WebCore::Color>& backgroundColor, const WebCore::IntRect& rect)
+static void drawPageBackground(WebKit::PlatformPaintContextPtr ctx, const std::optional<WebCore::Color>& backgroundColor, const WebCore::IntRect& rect)
 {
     if (!backgroundColor || backgroundColor.value().isVisible())
         return;
 
+#if USE(CAIRO)
     auto [r, g, b, a] = backgroundColor.value().toColorTypeLossy<WebCore::SRGBA<uint8_t>>().resolved();
 
     cairo_set_source_rgba(ctx, r, g, b, a);
     cairo_rectangle(ctx, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_operator(ctx, CAIRO_OPERATOR_OVER);
     cairo_fill(ctx);
-}
+#elif USE(SKIA)
+    ctx->clear(SkColor(backgroundColor.value()));
 #endif
+}
 
 void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
 {
@@ -166,19 +172,23 @@ void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
 
 void WKPagePaint(WKPageRef pageRef, unsigned char* surfaceData, WKSize wkSurfaceSize, WKRect wkPaintRect)
 {
-#if USE(CAIRO)
     auto surfaceSize = WebKit::toIntSize(wkSurfaceSize);
     auto paintRect = WebKit::toIntRect(wkPaintRect);
     if (!surfaceData || surfaceSize.isEmpty())
         return;
 
+#if USE(CAIRO)
     const cairo_format_t format = CAIRO_FORMAT_ARGB32;
     cairo_surface_t* surface = cairo_image_surface_create_for_data(surfaceData, format, surfaceSize.width(), surfaceSize.height(), cairo_format_stride_for_width(format, surfaceSize.width()));
     if (cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS)
         return;
 
     cairo_t* ctx = cairo_create(surface);
-
+#elif USE(SKIA)
+    auto info = SkImageInfo::MakeN32Premul(surfaceSize.width(), surfaceSize.height(), SkColorSpace::MakeSRGB());
+    auto surface = SkSurfaces::WrapPixels(info, surfaceData, info.minRowBytes(), nullptr);
+    auto ctx = surface->getCanvas();
+#endif
     auto page = WebKit::toImpl(pageRef);
     auto& backgroundColor = page->backgroundColor();
     page->endPrinting();
@@ -197,9 +207,8 @@ void WKPagePaint(WKPageRef pageRef, unsigned char* surfaceData, WKSize wkSurface
     } else
         drawPageBackground(ctx, backgroundColor, paintRect);
 
+#if USE(CAIRO)
     cairo_destroy(ctx);
     cairo_surface_destroy(surface);
-#else
-    // FIXME
 #endif
 }

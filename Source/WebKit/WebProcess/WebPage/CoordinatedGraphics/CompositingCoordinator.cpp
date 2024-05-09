@@ -42,6 +42,7 @@
 #include <WebCore/NicosiaContentLayer.h>
 #include <WebCore/NicosiaImageBacking.h>
 #include <WebCore/Page.h>
+#include <WebCore/PlatformDisplay.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/SetForScope.h>

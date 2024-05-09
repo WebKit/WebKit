@@ -45,7 +45,9 @@
 #include <skia/core/SkPoint3.h>
 #include <skia/core/SkRRect.h>
 #include <skia/core/SkRegion.h>
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkSurface.h>
+IGNORE_CLANG_WARNINGS_END
 #include <skia/core/SkTileMode.h>
 #include <skia/effects/SkImageFilters.h>
 #include <wtf/MathExtras.h>
