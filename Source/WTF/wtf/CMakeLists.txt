@@ -247,6 +247,7 @@ set(WTF_PUBLIC_HEADERS
     RobinHoodHashTable.h
     RunLoop.h
     SHA1.h
+    SIMDHelpers.h
     SafeStrerror.h
     SaturatedArithmetic.h
     SchedulePair.h
