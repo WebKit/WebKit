@@ -44,6 +44,7 @@ list(APPEND WTF_PUBLIC_HEADERS
 
     linux/CurrentProcessMemoryStatus.h
     linux/ProcessMemoryFootprint.h
+    linux/RealTimeThreads.h
 
     unix/UnixFileDescriptor.h
 )
