@@ -364,7 +364,7 @@ void ServiceWorkerThreadProxy::didSaveScriptsToDisk(ScriptBuffer&& script, HashM
 {
     ASSERT(!isMainThread());
 
-    thread().runLoop().postTask([script = WTFMove(script), importedScripts = WTFMove(importedScripts)](auto& context) mutable {
+    thread().runLoop().postTask([script = crossThreadCopy(WTFMove(script)), importedScripts = crossThreadCopy(WTFMove(importedScripts))](auto& context) mutable {
         downcast<ServiceWorkerGlobalScope>(context).didSaveScriptsToDisk(WTFMove(script), WTFMove(importedScripts));
     });
 }
