@@ -1,4 +1,20 @@
 ================
+WebKitGTK 2.45.1
+================
+
+What's new in WebKitGTK 2.45.1?
+
+  - Use skia instead of cairo for rendering.
+  - Sync WebGL content with fences when available.
+  - Implement printing using the Print portal.
+  - Disable the gst-libav aac decoder.
+  - Fix text scaling.
+  - Consider keycode when activating application accelerators.
+  - Support AXActiveElement and AXSelectedChildren for comboboxes, lists and listboxes.
+  - Avoid notifying an empty cursor rectangle to input methods.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.43.4
 ================
 
