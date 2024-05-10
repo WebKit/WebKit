@@ -183,19 +183,34 @@ void ViewTransition::callUpdateCallback()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
+        m_updateCallbackTimeout = nullptr;
         switch (callbackPromise->status()) {
         case DOMPromise::Status::Fulfilled:
             m_updateCallbackDone.second->resolve();
+            activateViewTransition();
             break;
         case DOMPromise::Status::Rejected:
             m_updateCallbackDone.second->rejectWithCallback([&] (auto&) {
                 return callbackPromise->result();
             }, RejectAsHandled::No);
+            if (m_phase == ViewTransitionPhase::Done)
+                return;
+            m_ready.second->markAsHandled();
+            skipViewTransition(callbackPromise->result());
             break;
-        default:
+        case DOMPromise::Status::Pending:
             ASSERT_NOT_REACHED();
             break;
         }
+    });
+
+    m_updateCallbackTimeout = protectedDocument()->checkedEventLoop()->scheduleTask(4_s, TaskSource::DOMManipulation, [this, weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        if (m_phase == ViewTransitionPhase::Done)
+            return;
+        skipViewTransition(Exception { ExceptionCode::TimeoutError, "View transition update callback timed out."_s });
     });
 }
 
@@ -224,34 +239,6 @@ void ViewTransition::setupViewTransition()
             return;
 
         callUpdateCallback();
-        m_updateCallbackDone.first->whenSettled([this, weakThis = WeakPtr { *this }] {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-            m_updateCallbackTimeout = nullptr;
-            switch (m_updateCallbackDone.first->status()) {
-            case DOMPromise::Status::Fulfilled:
-                activateViewTransition();
-                break;
-            case DOMPromise::Status::Rejected:
-                if (m_phase == ViewTransitionPhase::Done)
-                    return;
-                skipViewTransition(m_updateCallbackDone.first->result());
-                break;
-            case DOMPromise::Status::Pending:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        });
-
-        m_updateCallbackTimeout = protectedDocument()->checkedEventLoop()->scheduleTask(4_s, TaskSource::DOMManipulation, [this, weakThis = WeakPtr { *this }] {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-            if (m_phase == ViewTransitionPhase::Done)
-                return;
-            skipViewTransition(Exception { ExceptionCode::TimeoutError, "View transition update callback timed out."_s });
-        });
     });
 }
 

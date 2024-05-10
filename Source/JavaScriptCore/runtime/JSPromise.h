@@ -84,6 +84,7 @@ public:
     JS_EXPORT_PRIVATE void rejectAsHandled(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void reject(JSGlobalObject*, Exception*);
     JS_EXPORT_PRIVATE void rejectAsHandled(JSGlobalObject*, Exception*);
+    JS_EXPORT_PRIVATE void markAsHandled(JSGlobalObject*);
     JS_EXPORT_PRIVATE void performPromiseThen(JSGlobalObject*, JSFunction*, JSFunction*, JSValue);
 
     JS_EXPORT_PRIVATE JSPromise* rejectWithCaughtException(JSGlobalObject*, ThrowScope&);

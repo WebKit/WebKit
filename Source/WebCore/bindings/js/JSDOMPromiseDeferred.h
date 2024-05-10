@@ -202,6 +202,11 @@ public:
     void whenSettled(Function<void()>&&);
     bool needsAbort() const { return m_needsAbort; }
 
+    void markAsHandled() const
+    {
+        deferred()->markAsHandled(globalObject());
+    }
+
 private:
     DeferredPromise(JSDOMGlobalObject& globalObject, JSC::JSPromise& deferred, Mode mode)
         : DOMGuarded<JSC::JSPromise>(globalObject, deferred)
