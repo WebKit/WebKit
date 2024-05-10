@@ -131,9 +131,7 @@ void BBQPlan::work(CompilationEffort effort)
     CompilationContext context;
     Vector<UnlinkedWasmToWasmCall> unlinkedWasmToWasmCalls;
     std::unique_ptr<TierUpCount> tierUp;
-#if !CPU(ARM) // We don't want to attempt tier up to OMG on ARM just yet. Not initialising this counter achieves just that.
     tierUp = makeUnique<TierUpCount>();
-#endif
     size_t functionIndexSpace = m_functionIndex + m_moduleInformation->importFunctionCount();
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();

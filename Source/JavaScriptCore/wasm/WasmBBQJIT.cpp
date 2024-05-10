@@ -2904,7 +2904,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addRefFunc(uint32_t index, Value& resul
 
 void BBQJIT::emitEntryTierUpCheck()
 {
-    if (!m_tierUp)
+    if (!m_tierUp || !Options::useOMGJIT() || !Options::useBBQTierUpChecks())
         return;
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
@@ -3251,12 +3251,11 @@ StackMap BBQJIT::makeStackMap(const ControlData& data, Stack& enclosingStack)
     return stackMap;
 }
 
-void BBQJIT::emitLoopTierUpCheck(const ControlData& data, Stack& enclosingStack, unsigned loopIndex)
+void BBQJIT::emitLoopTierUpCheckAndOSREntryData(const ControlData& data, Stack& enclosingStack, unsigned loopIndex)
 {
     if (!m_tierUp)
         return;
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
     ASSERT(m_tierUp->osrEntryTriggers().size() == loopIndex);
     m_tierUp->osrEntryTriggers().append(TierUpCount::TriggerReason::DontTrigger);
 
@@ -3264,6 +3263,12 @@ void BBQJIT::emitLoopTierUpCheck(const ControlData& data, Stack& enclosingStack,
     m_tierUp->outerLoops().append(outerLoops);
     m_outerLoops.append(loopIndex);
 
+    OSREntryData& osrEntryData = m_tierUp->addOSREntryData(m_functionIndex, loopIndex, makeStackMap(data, enclosingStack));
+
+    if (!Options::useOMGJIT() || !Options::useBBQTierUpChecks())
+        return;
+
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     static_assert(GPRInfo::nonPreservedNonArgumentGPR0 == wasmScratchGPR);
     m_jit.move(TrustedImmPtr(bitwise_cast<uintptr_t>(&m_tierUp->m_counter)), wasmScratchGPR);
 
@@ -3275,7 +3280,6 @@ void BBQJIT::emitLoopTierUpCheck(const ControlData& data, Stack& enclosingStack,
     Jump tierUp = m_jit.branchAdd32(ResultCondition::PositiveOrZero, TrustedImm32(TierUpCount::loopIncrement()), CCallHelpers::Address(wasmScratchGPR));
     MacroAssembler::Label tierUpResume = m_jit.label();
 
-    OSREntryData& osrEntryData = m_tierUp->addOSREntryData(m_functionIndex, loopIndex, makeStackMap(data, enclosingStack));
     OSREntryData* osrEntryDataPtr = &osrEntryData;
 
     addLatePath([forceOSREntry, tierUp, tierUpResume, osrEntryDataPtr](BBQJIT& generator, CCallHelpers& jit) {
@@ -3288,9 +3292,7 @@ void BBQJIT::emitLoopTierUpCheck(const ControlData& data, Stack& enclosingStack,
         jit.farJump(GPRInfo::nonPreservedNonArgumentGPR0, WasmEntryPtrTag);
     });
 #else
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(enclosingStack);
-    UNUSED_PARAM(loopIndex);
+    UNUSED_PARAM(osrEntryData);
     RELEASE_ASSERT_NOT_REACHED();
 #endif
 }
@@ -3309,7 +3311,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addLoop(BlockSignature signature, Stack
     RELEASE_ASSERT(m_compilation->bbqLoopEntrypoints.size() == loopIndex);
     m_compilation->bbqLoopEntrypoints.append(result.loopLabel());
 
-    emitLoopTierUpCheck(result, enclosingStack, loopIndex);
+    emitLoopTierUpCheckAndOSREntryData(result, enclosingStack, loopIndex);
     return { };
 }
 
@@ -3776,11 +3778,11 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addEndToUnreachable(ControlEntry& entry
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::endTopLevel(BlockSignature, const Stack&)
 {
-    int frameSize = m_frameSize + m_maxCalleeStackSize;
+    int frameSize = stackCheckSize();
     CCallHelpers& jit = m_jit;
-    m_jit.addLinkTask([frameSize, labels = WTFMove(m_frameSizeLabels), &jit, this](LinkBuffer& linkBuffer) {
+    m_jit.addLinkTask([frameSize, labels = WTFMove(m_frameSizeLabels), &jit](LinkBuffer& linkBuffer) {
         for (auto label : labels)
-            jit.repatchPointer(linkBuffer.locationOf<NoPtrTag>(label), bitwise_cast<void*>(static_cast<uintptr_t>(alignedFrameSize(frameSize))));
+            jit.repatchPointer(linkBuffer.locationOf<NoPtrTag>(label), bitwise_cast<void*>(static_cast<uintptr_t>(frameSize)));
     });
 
     LOG_DEDENT();

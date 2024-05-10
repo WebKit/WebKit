@@ -702,7 +702,7 @@ public:
     using Stack = FunctionParser<BBQJIT>::Stack;
     using ControlStack = FunctionParser<BBQJIT>::ControlStack;
 
-    unsigned stackCheckSize() const { return WTF::roundUpToMultipleOf(stackAlignmentBytes(), m_maxCalleeStackSize + m_frameSize); }
+    unsigned stackCheckSize() const { return alignedFrameSize(m_maxCalleeStackSize + m_frameSize); }
 
 private:
     unsigned m_loggingIndent = 0;
@@ -1693,7 +1693,7 @@ public:
 
     StackMap makeStackMap(const ControlData& data, Stack& enclosingStack);
 
-    void emitLoopTierUpCheck(const ControlData& data, Stack& enclosingStack, unsigned loopIndex);
+    void emitLoopTierUpCheckAndOSREntryData(const ControlData& data, Stack& enclosingStack, unsigned loopIndex);
 
     PartialResult WARN_UNUSED_RETURN addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack, uint32_t loopIndex);
 
@@ -1743,7 +1743,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry& entry, Stack& stack, bool unreachable = true);
 
-    int alignedFrameSize(int frameSize);
+    int alignedFrameSize(int frameSize) const;
 
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&);
 

@@ -3104,7 +3104,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addBranchCast(ControlData& data, Expres
     return { };
 }
 
-int BBQJIT::alignedFrameSize(int frameSize)
+int BBQJIT::alignedFrameSize(int frameSize) const
 {
     return WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize);
 }

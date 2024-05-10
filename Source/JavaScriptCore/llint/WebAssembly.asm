@@ -214,7 +214,7 @@ end
 end
 
 macro checkSwitchToJITForLoop()
-    if WEBASSEMBLY_OMGJIT
+    if WEBASSEMBLY_BBQJIT or WEBASSEMBLY_OMGJIT
     checkSwitchToJIT(
         1,
         macro()

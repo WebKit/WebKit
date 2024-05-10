@@ -3028,7 +3028,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addBranchCast(ControlData& data, Expres
     return { };
 }
 
-int BBQJIT::alignedFrameSize(int frameSize)
+int BBQJIT::alignedFrameSize(int frameSize) const
 {
     // On armv7 account for misalignment due to of saved {FP, PC}
     constexpr int misalignment = 4 + 4;
