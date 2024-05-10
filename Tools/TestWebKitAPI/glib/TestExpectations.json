@@ -306,13 +306,6 @@
         }
 
     },
-    "TestNetworkProcessMemoryPressure": {
-        "subtests": {
-            "/webkit/WebKitWebsiteData/memory-pressure": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/263016"}}
-            }
-        }
-    },
     "TestWebKitNetworkSession": {
         "subtests": {
             "/webkit/WebKitNetworkSession/proxy": {

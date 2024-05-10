@@ -67,6 +67,7 @@ static const unsigned maxCgroupPath = 4096; // PATH_MAX = 4096 from (Linux) incl
 #define MEMINFO_TOKEN_BUFFER_SIZE 50
 #define STRINGIFY_EXPANDED(val) #val
 #define STRINGIFY(val) STRINGIFY_EXPANDED(val)
+#define VALUE_BUFFER_SIZE 128
 #define ZONEINFO_TOKEN_BUFFER_SIZE 128
 
 // The lowWatermark is the sum of the low watermarks across all zones as the
@@ -438,8 +439,18 @@ size_t CGroupMemoryController::getCgroupFileValue(FILE *file)
     if (!file || fseek(file, 0, SEEK_SET))
         return notSet;
 
-    size_t value;
-    return (fscanf(file, "%zu", &value) == 1) ? value : notSet;
+    char rawValue[VALUE_BUFFER_SIZE + 1];
+    if (fscanf(file, "%" STRINGIFY(VALUE_BUFFER_SIZE) "[^\n]", rawValue) < 1)
+        return notSet;
+
+    errno = 0;
+    char* endptr;
+    long value = strtol(rawValue, &endptr, 10);
+
+    if (errno == ERANGE || value < 0 || *endptr != '\0')
+        return notSet;
+
+    return static_cast<size_t>(value);
 }
 
 size_t CGroupMemoryController::getMemoryTotalWithCgroup()
