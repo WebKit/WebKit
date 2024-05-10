@@ -26,8 +26,10 @@
 #pragma once
 
 #include "CSSPropertyParserConsumer+RawTypes.h"
+#include "CSSValueKeywords.h"
 #include "Color.h"
 #include "ColorTypes.h"
+#include <variant>
 #include <wtf/Brigand.h>
 
 namespace WebCore {

@@ -940,7 +940,6 @@ css/SelectorChecker.cpp
 css/SelectorFilter.cpp
 css/ShorthandSerializer.cpp
 css/StyleAttributeMutationScope.cpp
-css/StyleColor.cpp
 css/StyleMedia.cpp
 css/StyleProperties.cpp
 css/StylePropertyShorthand.cpp
@@ -963,6 +962,10 @@ css/color/CSSResolvedColorMix.cpp
 css/color/CSSUnresolvedColor.cpp
 css/color/CSSUnresolvedColorMix.cpp
 css/color/CSSUnresolvedLightDark.cpp
+css/color/StyleAbsoluteColor.cpp
+css/color/StyleColor.cpp
+css/color/StyleColorMix.cpp
+css/color/StyleCurrentColor.cpp
 css/parser/CSSAtRuleID.cpp
 css/parser/CSSCalcParser.cpp
 css/parser/CSSCustomPropertySyntax.cpp
