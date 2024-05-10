@@ -43,14 +43,14 @@
 @interface WKLinearMediaPlayerDelegate : NSObject <WKSLinearMediaPlayerDelegate>
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithModel:(WebKit::PlaybackSessionModel&)model;
+- (instancetype)initWithModel:(WebCore::PlaybackSessionModel&)model;
 @end
 
 @implementation WKLinearMediaPlayerDelegate {
-    WeakPtr<WebKit::PlaybackSessionModel> _model;
+    WeakPtr<WebCore::PlaybackSessionModel> _model;
 }
 
-- (instancetype)initWithModel:(WebKit::PlaybackSessionModel&)model
+- (instancetype)initWithModel:(WebCore::PlaybackSessionModel&)model
 {
     self = [super init];
     if (!self)
@@ -208,7 +208,7 @@
 
 namespace WebKit {
 
-Ref<PlaybackSessionInterfaceLMK> PlaybackSessionInterfaceLMK::create(PlaybackSessionModel& model)
+Ref<PlaybackSessionInterfaceLMK> PlaybackSessionInterfaceLMK::create(WebCore::PlaybackSessionModel& model)
 {
     Ref interface = adoptRef(*new PlaybackSessionInterfaceLMK(model));
     interface->initialize();
@@ -225,7 +225,7 @@ static WebCore::NowPlayingMetadataObserver nowPlayingMetadataObserver(PlaybackSe
     };
 }
 
-PlaybackSessionInterfaceLMK::PlaybackSessionInterfaceLMK(PlaybackSessionModel& model)
+PlaybackSessionInterfaceLMK::PlaybackSessionInterfaceLMK(WebCore::PlaybackSessionModel& model)
     : PlaybackSessionInterfaceIOS { model }
     , m_player { adoptNS([allocWKSLinearMediaPlayerInstance() init]) }
     , m_playerDelegate { adoptNS([[WKLinearMediaPlayerDelegate alloc] initWithModel:model]) }
@@ -258,14 +258,14 @@ void PlaybackSessionInterfaceLMK::currentTimeChanged(double currentTime, double)
     [m_player setRemainingTime:std::max([m_player duration] - currentTime, 0.0)];
 }
 
-void PlaybackSessionInterfaceLMK::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double)
+void PlaybackSessionInterfaceLMK::rateChanged(OptionSet<WebCore::PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double)
 {
     [m_player setSelectedPlaybackRate:playbackRate];
-    if (!playbackState.contains(PlaybackSessionModel::PlaybackState::Stalled))
-        [m_player setPlaybackRate:playbackState.contains(PlaybackSessionModel::PlaybackState::Playing) ? playbackRate : 0];
+    if (!playbackState.contains(WebCore::PlaybackSessionModel::PlaybackState::Stalled))
+        [m_player setPlaybackRate:playbackState.contains(WebCore::PlaybackSessionModel::PlaybackState::Playing) ? playbackRate : 0];
 }
 
-void PlaybackSessionInterfaceLMK::seekableRangesChanged(const TimeRanges& timeRanges, double, double)
+void PlaybackSessionInterfaceLMK::seekableRangesChanged(const WebCore::TimeRanges& timeRanges, double, double)
 {
     RetainPtr seekableRanges = adoptNS([[NSMutableArray alloc] initWithCapacity:timeRanges.length()]);
     for (unsigned i = 0; i < timeRanges.length(); ++i) {
@@ -284,7 +284,7 @@ void PlaybackSessionInterfaceLMK::canPlayFastReverseChanged(bool canPlayFastReve
     [m_player setCanScanBackward:canPlayFastReverse];
 }
 
-void PlaybackSessionInterfaceLMK::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+void PlaybackSessionInterfaceLMK::audioMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     RetainPtr audioTracks = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
     for (auto& option : options) {
@@ -296,7 +296,7 @@ void PlaybackSessionInterfaceLMK::audioMediaSelectionOptionsChanged(const Vector
     audioMediaSelectionIndexChanged(selectedIndex);
 }
 
-void PlaybackSessionInterfaceLMK::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+void PlaybackSessionInterfaceLMK::legibleMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     RetainPtr legibleTracks = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
     for (auto& option : options) {
