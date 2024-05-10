@@ -1271,8 +1271,7 @@ TEST(WebAuthenticationPanel, MultipleAccounts)
 // which are required to run local authenticator tests.
 #if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAError)
+TEST(WebAuthenticationPanel, LAError)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-error" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1288,8 +1287,7 @@ TEST(WebAuthenticationPanel, DISABLED_LAError)
     Util::run(&webAuthenticationPanelUpdateLAError);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LADuplicateCredential)
+TEST(WebAuthenticationPanel, LADuplicateCredential)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-duplicate-credential" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1307,8 +1305,7 @@ TEST(WebAuthenticationPanel, DISABLED_LADuplicateCredential)
     cleanUpKeychain(emptyString());
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LADuplicateCredentialWithConsent)
+TEST(WebAuthenticationPanel, LADuplicateCredentialWithConsent)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-duplicate-credential" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1329,8 +1326,7 @@ TEST(WebAuthenticationPanel, DISABLED_LADuplicateCredentialWithConsent)
     cleanUpKeychain(emptyString());
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LANoCredential)
+TEST(WebAuthenticationPanel, LANoCredential)
 {
     reset();
     // In case this wasn't cleaned up by another test.
@@ -1349,8 +1345,7 @@ TEST(WebAuthenticationPanel, DISABLED_LANoCredential)
     Util::run(&webAuthenticationPanelUpdateLANoCredential);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAMakeCredentialAllowLocalAuthenticator)
+TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1371,8 +1366,7 @@ TEST(WebAuthenticationPanel, DISABLED_LAMakeCredentialAllowLocalAuthenticator)
 
 #if PLATFORM(MAC)
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAGetAssertion)
+TEST(WebAuthenticationPanel, LAGetAssertion)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1391,8 +1385,7 @@ TEST(WebAuthenticationPanel, DISABLED_LAGetAssertion)
     cleanUpKeychain(emptyString());
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionMultipleCredentialStore)
+TEST(WebAuthenticationPanel, LAGetAssertionMultipleCredentialStore)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1419,8 +1412,7 @@ TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionMultipleCredentialStore)
     cleanUpKeychain(emptyString());
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionNoMockNoUserGesture)
+TEST(WebAuthenticationPanel, LAGetAssertionNoMockNoUserGesture)
 {
     reset();
     webAuthenticationPanelRequestNoGesture = false;
@@ -1441,8 +1433,7 @@ TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionNoMockNoUserGesture)
 #endif
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionMultipleOrder)
+TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1731,8 +1722,7 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
 // For macOS, only internal builds can sign keychain entitlemnets
 // which are required to run local authenticator tests.
 #if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLA)
+TEST(WebAuthenticationPanel, MakeCredentialLA)
 {
     reset();
 
@@ -1769,8 +1759,7 @@ TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLA)
     Util::run(&webAuthenticationPanelRan);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLAClientDataHashMediation)
+TEST(WebAuthenticationPanel, MakeCredentialLAClientDataHashMediation)
 {
     reset();
 
@@ -1808,8 +1797,7 @@ TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLAClientDataHashMediation)
     Util::run(&webAuthenticationPanelRan);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLAAttestationFalback)
+TEST(WebAuthenticationPanel, MakeCredentialLAAttestationFalback)
 {
     reset();
 
@@ -1942,8 +1930,7 @@ TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
 // For macOS, only internal builds can sign keychain entitlemnets
 // which are required to run local authenticator tests.
 #if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_GetAssertionLA)
+TEST(WebAuthenticationPanel, GetAssertionLA)
 {
     reset();
     auto beforeTime = adoptNS([[NSDate alloc] init]);
@@ -2006,8 +1993,7 @@ TEST(WebAuthenticationPanel, DISABLED_GetAssertionLA)
     Util::run(&webAuthenticationPanelRan);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_GetAssertionLAClientDataHashMediation)
+TEST(WebAuthenticationPanel, GetAssertionLAClientDataHashMediation)
 {
     reset();
 
@@ -2057,8 +2043,7 @@ TEST(WebAuthenticationPanel, DISABLED_GetAssertionLAClientDataHashMediation)
     Util::run(&webAuthenticationPanelRan);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_GetAssertionNullUserHandle)
+TEST(WebAuthenticationPanel, GetAssertionNullUserHandle)
 {
     reset();
 
