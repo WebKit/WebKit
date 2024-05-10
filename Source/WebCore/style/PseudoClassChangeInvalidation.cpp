@@ -41,9 +41,9 @@ Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelecto
         keys.append(makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Id, element.idForStyleResolution()));
 
     if (element.hasClass()) {
-        auto classCount = element.classNames().size();
-        for (size_t i = 0; i < classCount; ++i)
-            keys.append(makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Class, element.classNames()[i]));
+        keys.appendContainerWithMapping(element.classNames(), [&](auto& className) {
+            return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Class, className);
+        });
     }
 
     keys.append(makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Tag, element.localNameLowercase()));

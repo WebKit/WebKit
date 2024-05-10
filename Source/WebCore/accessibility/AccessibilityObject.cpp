@@ -4069,15 +4069,11 @@ Vector<Ref<Element>> AccessibilityObject::elementsFromAttribute(const QualifiedN
         return { };
     }
 
-    Vector<Ref<Element>> elements;
     auto& treeScope = element->treeScope();
-    SpaceSplitString spaceSplitString(idsString, SpaceSplitString::ShouldFoldCase::No);
-    size_t length = spaceSplitString.size();
-    for (size_t i = 0; i < length; ++i) {
-        if (RefPtr element = treeScope.getElementById(spaceSplitString[i]))
-            elements.append(element.releaseNonNull());
-    }
-    return elements;
+    SpaceSplitString ids(idsString, SpaceSplitString::ShouldFoldCase::No);
+    return WTF::compactMap(ids, [&](auto& id) {
+        return treeScope.getElementById(id);
+    });
 }
 
 #if PLATFORM(COCOA)

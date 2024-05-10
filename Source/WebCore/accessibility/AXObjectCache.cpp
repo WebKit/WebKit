@@ -5118,8 +5118,8 @@ bool AXObjectCache::addRelation(Element& origin, const QualifiedName& attribute)
     }
 
     SpaceSplitString ids(value, SpaceSplitString::ShouldFoldCase::No);
-    for (size_t i = 0; i < ids.size(); ++i) {
-        RefPtr target = origin.treeScope().getElementById(ids[i]);
+    for (auto& id : ids) {
+        RefPtr target = origin.treeScope().getElementById(id);
         if (!target || target == &origin)
             continue;
 

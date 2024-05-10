@@ -1199,14 +1199,15 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchRecursively(checkingContext, subcontext, ignoredDynamicPseudo).match == Match::SelectorMatches;
         }
         case CSSSelector::PseudoElement::Part: {
-            auto translatePartNameToRuleScope = [&](AtomString partName) {
-                Vector<AtomString, 1> mappedNames { partName };
-
-                if (checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Element)
-                    return mappedNames;
+            auto appendTranslatedPartNameToRuleScope = [&](auto& translatedPartNames, AtomString partName) {
+                if (checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Element) {
+                    translatedPartNames.append(partName);
+                    return;
+                }
 
                 auto* ruleScopeHost = Style::hostForScopeOrdinal(*context.element, checkingContext.styleScopeOrdinal);
 
+                Vector<AtomString, 1> mappedNames { partName };
                 for (auto* shadowRoot = element.containingShadowRoot(); shadowRoot; shadowRoot = shadowRoot->host()->containingShadowRoot()) {
                     // Apply mappings up to the scope the rules are coming from.
                     if (shadowRoot->host() == ruleScopeHost)
@@ -1220,12 +1221,12 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                     if (mappedNames.isEmpty())
                         break;
                 }
-                return mappedNames;
+                translatedPartNames.appendVector(mappedNames);
             };
 
             Vector<AtomString, 4> translatedPartNames;
-            for (unsigned i = 0; i < element.partNames().size(); ++i)
-                translatedPartNames.appendVector(translatePartNameToRuleScope(element.partNames()[i]));
+            for (auto& partName : element.partNames())
+                appendTranslatedPartNameToRuleScope(translatedPartNames, partName);
 
             for (auto& part : *selector.argumentList()) {
                 if (!translatedPartNames.contains(part))

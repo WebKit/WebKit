@@ -374,8 +374,8 @@ void HTMLAnchorElement::sendPings(const URL& destinationURL)
         return;
 
     SpaceSplitString pingURLs(pingValue, SpaceSplitString::ShouldFoldCase::No);
-    for (unsigned i = 0; i < pingURLs.size(); i++)
-        PingLoader::sendPing(*document().frame(), document().completeURL(pingURLs[i]), destinationURL);
+    for (auto& pingURL : pingURLs)
+        PingLoader::sendPing(*document().frame(), document().completeURL(pingURL), destinationURL);
 }
 
 #if USE(SYSTEM_PREVIEW)

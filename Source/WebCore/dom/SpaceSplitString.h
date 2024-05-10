@@ -31,6 +31,11 @@ class SpaceSplitStringData {
 public:
     static RefPtr<SpaceSplitStringData> create(const AtomString&);
 
+    auto begin() const { return tokenArrayStart(); }
+    auto end() const { return tokenArrayStart() + size(); }
+    auto begin() { return tokenArrayStart(); }
+    auto end() { return tokenArrayStart() + size(); }
+
     bool contains(const AtomString& string)
     {
         const AtomString* data = tokenArrayStart();
@@ -90,6 +95,7 @@ private:
     static void destroy(SpaceSplitStringData*);
 
     AtomString* tokenArrayStart() { return reinterpret_cast<AtomString*>(this + 1); }
+    const AtomString* tokenArrayStart() const { return reinterpret_cast<const AtomString*>(this + 1); }
 
     AtomString m_keyString;
     unsigned m_refCount;
@@ -117,6 +123,11 @@ public:
         ASSERT_WITH_SECURITY_IMPLICATION(m_data);
         return (*m_data)[i];
     }
+
+    auto begin() const { return m_data ? m_data->begin() : nullptr; }
+    auto end() const { return m_data ? m_data->end() : nullptr; }
+    auto begin() { return m_data ? m_data->begin() : nullptr; }
+    auto end() { return m_data ? m_data->end() : nullptr; }
 
     static bool spaceSplitStringContainsValue(StringView spaceSplitString, StringView value, ShouldFoldCase);
 

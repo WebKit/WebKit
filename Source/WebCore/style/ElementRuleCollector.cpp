@@ -209,8 +209,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     if (!id.isNull())
         collectMatchingRulesForList(matchRequest.ruleSet.idRules(id), matchRequest);
     if (element.hasClass()) {
-        for (size_t i = 0; i < element.classNames().size(); ++i)
-            collectMatchingRulesForList(matchRequest.ruleSet.classRules(element.classNames()[i]), matchRequest);
+        for (auto& className : element.classNames())
+            collectMatchingRulesForList(matchRequest.ruleSet.classRules(className), matchRequest);
     }
     if (element.hasAttributesWithoutUpdate() && matchRequest.ruleSet.hasAttributeRules()) {
         Vector<const RuleSet::RuleDataVector*, 4> ruleVectors;

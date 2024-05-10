@@ -2269,12 +2269,9 @@ std::optional<Vector<Ref<Element>>> Element::getElementsArrayAttribute(const Qua
         return std::nullopt;
 
     SpaceSplitString ids(getAttribute(attr), SpaceSplitString::ShouldFoldCase::No);
-    Vector<Ref<Element>> elements;
-    for (unsigned i = 0; i < ids.size(); ++i) {
-        if (RefPtr element = treeScope().getElementById(ids[i]))
-            elements.append(element.releaseNonNull());
-    }
-    return elements;
+    return WTF::compactMap(ids, [&](auto& id) {
+        return treeScope().getElementById(id);
+    });
 }
 
 void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<Ref<Element>>>&& elements)

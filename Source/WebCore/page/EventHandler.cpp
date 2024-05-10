@@ -2509,12 +2509,12 @@ static bool findDropZone(Node& target, DataTransfer& dataTransfer)
         SpaceSplitString keywords(element->attributeWithoutSynchronization(webkitdropzoneAttr), SpaceSplitString::ShouldFoldCase::Yes);
         bool matched = false;
         std::optional<DragOperation> dragOperation;
-        for (unsigned i = 0, size = keywords.size(); i < size; ++i) {
-            if (auto operationFromKeyword = convertDropZoneOperationToDragOperation(keywords[i])) {
+        for (auto& keyword : keywords) {
+            if (auto operationFromKeyword = convertDropZoneOperationToDragOperation(keyword)) {
                 if (!dragOperation)
                     dragOperation = operationFromKeyword;
             } else
-                matched = matched || hasDropZoneType(dataTransfer, keywords[i].string());
+                matched = matched || hasDropZoneType(dataTransfer, keyword.string());
             if (matched && dragOperation)
                 break;
         }
