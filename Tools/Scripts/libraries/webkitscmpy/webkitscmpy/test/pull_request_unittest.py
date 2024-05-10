@@ -2139,8 +2139,23 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
 
             pr.review(comment='Looks good!', approve=True)
+
+            pr = repo.pull_requests.get(1)
             self.assertEqual(pr.comments[-1].content, 'Looks good!')
             self.assertEqual(len(pr.approvers), 2)
+
+    def test_review_reject(self):
+        with self.webserver():
+            repo = remote.GitHub(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(pr.approvers, [Contributor('Eager Reviewer', ['ereviewer@webkit.org'])])
+            self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
+
+            pr.review(comment='Needs work.', approve=False)
+
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(pr.comments[-1].content, 'Needs work.')
+            self.assertEqual(len(pr.blockers), 2)
 
     def test_status(self):
         with self.webserver():
