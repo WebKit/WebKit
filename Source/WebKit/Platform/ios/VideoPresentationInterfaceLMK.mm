@@ -42,12 +42,12 @@ VideoPresentationInterfaceLMK::~VideoPresentationInterfaceLMK()
 {
 }
 
-Ref<VideoPresentationInterfaceLMK> VideoPresentationInterfaceLMK::create(PlaybackSessionInterfaceIOS& playbackSessionInterface)
+Ref<VideoPresentationInterfaceLMK> VideoPresentationInterfaceLMK::create(WebCore::PlaybackSessionInterfaceIOS& playbackSessionInterface)
 {
     return adoptRef(*new VideoPresentationInterfaceLMK(playbackSessionInterface));
 }
 
-VideoPresentationInterfaceLMK::VideoPresentationInterfaceLMK(PlaybackSessionInterfaceIOS& playbackSessionInterface)
+VideoPresentationInterfaceLMK::VideoPresentationInterfaceLMK(WebCore::PlaybackSessionInterfaceIOS& playbackSessionInterface)
     : VideoPresentationInterfaceIOS { playbackSessionInterface }
 {
 }
@@ -57,7 +57,7 @@ WKSLinearMediaPlayer *VideoPresentationInterfaceLMK::linearMediaPlayer() const
     return playbackSessionInterface().linearMediaPlayer();
 }
 
-void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
+void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, UIView* parentView, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
     linearMediaPlayer().contentDimensions = videoDimensions;
     VideoPresentationInterfaceIOS::setupFullscreen(videoView, initialRect, videoDimensions, parentView, mode, allowsPictureInPicturePlayback, standby, blocksReturnToFullscreenFromPictureInPicture);
@@ -101,7 +101,7 @@ UIViewController *VideoPresentationInterfaceLMK::playerViewController() const
     return m_playerViewController.get();
 }
 
-void VideoPresentationInterfaceLMK::setContentDimensions(const FloatSize& contentDimensions)
+void VideoPresentationInterfaceLMK::setContentDimensions(const WebCore::FloatSize& contentDimensions)
 {
     linearMediaPlayer().contentDimensions = contentDimensions;
 }
@@ -111,7 +111,7 @@ void VideoPresentationInterfaceLMK::setShowsPlaybackControls(bool showsPlaybackC
     linearMediaPlayer().showsPlaybackControls = showsPlaybackControls;
 }
 
-void VideoPresentationInterfaceLMK::setupCaptionsLayer(CALayer *, const FloatSize& initialSize)
+void VideoPresentationInterfaceLMK::setupCaptionsLayer(CALayer *, const WebCore::FloatSize& initialSize)
 {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
