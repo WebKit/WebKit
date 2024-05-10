@@ -2807,8 +2807,11 @@ void LocalFrameView::setViewportConstrainedObjectsNeedLayout()
 
 void LocalFrameView::didChangeScrollOffset()
 {
-    if (auto* page = m_frame->page())
+    if (auto* page = m_frame->page()) {
         page->pageOverlayController().didScrollFrame(m_frame.get());
+        InspectorInstrumentation::didScroll(*page);
+    }
+
     m_frame->loader().client().didChangeScrollOffset();
 }
 
