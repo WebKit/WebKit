@@ -98,17 +98,18 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-    id<MTLCommandBuffer> commandBuffer = getQueue().commandBufferWithDescriptor(commandBufferDescriptor);
-    if (!commandBuffer)
+    auto commandBufferWithEvent = getQueue().commandBufferWithDescriptor(commandBufferDescriptor);
+    if (!commandBufferWithEvent.first)
         return CommandEncoder::createInvalid(*this);
 
-    commandBuffer.label = fromAPI(descriptor.label);
+    commandBufferWithEvent.first.label = fromAPI(descriptor.label);
 
-    return CommandEncoder::create(commandBuffer, *this);
+    return CommandEncoder::create(commandBufferWithEvent.first, commandBufferWithEvent.second, *this);
 }
 
-CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& device)
+CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, id<MTLSharedEvent> event, Device& device)
     : m_commandBuffer(commandBuffer)
+    , m_abortCommandBuffer(event)
     , m_device(device)
 {
 }
@@ -1198,8 +1199,12 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
 
 void CommandEncoder::makeInvalid(NSString* errorString)
 {
+    if (!m_commandBuffer || m_commandBuffer.status >= MTLCommandBufferStatusCommitted)
+        return;
+
     endEncoding(m_existingCommandEncoder);
     m_blitCommandEncoder = nil;
+    [m_abortCommandBuffer setSignaledValue:1];
     m_device->getQueue().commitMTLCommandBuffer(m_commandBuffer);
 
     m_commandBuffer = nil;
@@ -1743,7 +1748,8 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
 
     commandBuffer.label = fromAPI(descriptor.label);
 
-    auto result = CommandBuffer::create(commandBuffer, m_device);
+    auto result = CommandBuffer::create(commandBuffer, m_abortCommandBuffer, m_device);
+    m_abortCommandBuffer = nil;
     m_cachedCommandBuffer = result;
     m_cachedCommandBuffer->setBufferMapCount(m_bufferMapCount);
     if (m_makeSubmitInvalid)
