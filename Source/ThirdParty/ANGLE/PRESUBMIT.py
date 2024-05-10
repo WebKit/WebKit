@@ -12,7 +12,6 @@ import os
 import re
 import shutil
 import subprocess
-import sys
 import tempfile
 import textwrap
 import pathlib
@@ -343,7 +342,7 @@ def _CheckTabsInSourceFiles(input_api, output_api):
         return input_api.FilterSourceFile(
             f,
             files_to_check=(r'.+%s' % _IMPLEMENTATION_AND_HEADER_EXTENSIONS,),
-            files_to_skip=[f for f in input_api.DEFAULT_FILES_TO_SKIP if not "third_party" in f])
+            files_to_skip=[f for f in input_api.DEFAULT_FILES_TO_SKIP if "third_party" not in f])
 
     files_with_tabs = []
     for f in input_api.AffectedSourceFiles(implementation_and_headers_including_third_party):

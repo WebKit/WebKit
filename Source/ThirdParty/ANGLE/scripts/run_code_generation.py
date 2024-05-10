@@ -163,7 +163,7 @@ def any_hash_dirty(name, filenames, new_hashes, old_hashes):
             found_dirty_hash = True
         else:
             new_hashes[fname] = md5(fname)
-            if (not fname in old_hashes) or (old_hashes[fname] != new_hashes[fname]):
+            if (fname not in old_hashes) or (old_hashes[fname] != new_hashes[fname]):
                 print('Hash for "{}" dirty for {} generator.'.format(fname, name))
                 found_dirty_hash = True
     return found_dirty_hash

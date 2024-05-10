@@ -26,7 +26,6 @@
 
 
 import logging
-import string
 from string import Template
 from operator import methodcaller
 
@@ -39,7 +38,7 @@ except ImportError:
     from cpp_generator import CppGenerator
     from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
     from generator import Generator, ucfirst
-    from models import AliasedType, ArrayType, EnumType, ObjectType
+    from models import AliasedType, EnumType, ObjectType
 
 log = logging.getLogger('global')
 

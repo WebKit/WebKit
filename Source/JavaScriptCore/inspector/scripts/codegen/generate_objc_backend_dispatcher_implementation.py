@@ -26,8 +26,6 @@
 
 
 import logging
-import string
-import re
 from string import Template
 
 try:
@@ -39,8 +37,8 @@ try:
 except ImportError:
     from cpp_generator import CppGenerator
     from generator import Generator
-    from models import PrimitiveType, EnumType, AliasedType, Frameworks
-    from objc_generator import ObjCTypeCategory, ObjCGenerator, join_type_and_name
+    from models import EnumType, AliasedType
+    from objc_generator import ObjCGenerator, join_type_and_name
     from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')

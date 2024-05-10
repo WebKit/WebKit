@@ -15,7 +15,10 @@
 #    - /Applications/Google\ Chrome\ Canary.app on macOS
 #
 
-import glob, sys, os, shutil
+import glob
+import sys
+import os
+import shutil
 
 # Set of search paths.
 script_dir = os.path.dirname(sys.argv[0])

@@ -165,7 +165,6 @@ includes_cl = """#include "libGLESv2/proc_table_cl.h"
 """
 
 sys.path.append('../src/libANGLE/renderer')
-import angle_format
 
 
 def _get_annotations(versions):

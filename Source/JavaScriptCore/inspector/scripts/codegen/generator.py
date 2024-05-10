@@ -34,7 +34,7 @@ try:
     from .models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 except ImportError:
     from generator_templates import GeneratorTemplates as Templates
-    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
+    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType
 
 log = logging.getLogger('global')
 

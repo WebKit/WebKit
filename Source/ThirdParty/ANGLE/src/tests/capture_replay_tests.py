@@ -23,12 +23,9 @@ Script testing capture_replay with angle_end2end_tests
 
 import argparse
 import difflib
-import distutils.util
-import fnmatch
 import getpass
 import json
 import logging
-import math
 import multiprocessing
 import os
 import queue

@@ -26,7 +26,7 @@ import re
 import sys
 
 from webkit import parser
-from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, MessageReceiver, Message
+from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE
 
 _license_header = """/*
  * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
@@ -537,7 +537,7 @@ def conditions_for_header(header):
         '<WebCore/PlaybackTargetClientContextIdentifier.h>': ["ENABLE(WIRELESS_PLAYBACK_TARGET)"],
         '<WebCore/VideoFrameCV.h>': ["PLATFORM(COCOA)", ],
     }
-    if not header in conditions:
+    if header not in conditions:
         return None
     return conditions[header]
 
@@ -589,7 +589,7 @@ def forward_declarations_and_headers(receiver):
     header_includes = []
     for header in sorted(headers):
         conditions = conditions_for_header(header)
-        if conditions and not None in conditions:
+        if conditions and None not in conditions:
             header_include = '#if %s\n' % ' || '.join(sorted(set(conditions)))
             header_include += '#include %s\n' % header
             header_include += '#endif\n'
@@ -1189,10 +1189,10 @@ def headers_for_type(type):
 def collect_header_conditions_for_receiver(receiver, header_conditions):
     type_conditions = {}
     for parameter in receiver.iterparameters():
-        if not parameter.type in type_conditions:
+        if parameter.type not in type_conditions:
             type_conditions[parameter.type] = []
 
-        if not parameter.condition in type_conditions[parameter.type]:
+        if parameter.condition not in type_conditions[parameter.type]:
             type_conditions[parameter.type].append(parameter.condition)
 
     for parameter in receiver.iterparameters():
@@ -1236,7 +1236,7 @@ def generate_header_includes_from_conditions(header_conditions):
     result = []
     # FIXME(https://bugs.webkit.org/show_bug.cgi?id=241854): NOLINT due to order not as WebKit expects.
     for header in sorted(header_conditions):
-        if header_conditions[header] and not None in header_conditions[header]:
+        if header_conditions[header] and None not in header_conditions[header]:
             result.append('#if %s\n' % ' || '.join(sorted(set(header_conditions[header]))))
             result += ['#include %s // NOLINT\n' % header]
             result.append('#endif\n')

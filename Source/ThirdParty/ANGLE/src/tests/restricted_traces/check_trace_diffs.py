@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 
 import json
-import os
 from pathlib import Path
 
 path1Traces = Path("C:/src/angle/src/tests/restricted_traces")

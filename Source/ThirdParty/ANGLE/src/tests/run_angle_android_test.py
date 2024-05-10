@@ -11,9 +11,6 @@
 #       --verbose --fixed-test-time-with-warmup=10)
 
 import argparse
-import logging
-import os
-import pathlib
 import sys
 
 import angle_android_test_runner

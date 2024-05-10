@@ -27,8 +27,6 @@
 
 import json
 import logging
-import string
-from string import Template
 
 try:
     from .generator import Generator, ucfirst
@@ -36,7 +34,6 @@ try:
     from .models import EnumType
 except ImportError:
     from generator import Generator, ucfirst
-    from generator_templates import GeneratorTemplates as Templates
     from models import EnumType
 
 log = logging.getLogger('global')

@@ -44,7 +44,6 @@
 
 import argparse
 import json
-import hashlib
 import logging
 import os
 import re

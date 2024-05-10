@@ -10,7 +10,7 @@
 #  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 #
 
-import json, sys
+import sys
 
 sys.path.append('../..')
 import angle_format

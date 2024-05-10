@@ -26,7 +26,6 @@
 # cd Source/WebKit/Scripts && python3 -m unittest discover -p '*_unittest.py'
 
 import os
-import re
 import sys
 import unittest
 

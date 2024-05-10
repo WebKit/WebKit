@@ -8,11 +8,7 @@
 #   Generates integration code for the restricted trace tests.
 
 import getpass
-import glob
-import fnmatch
-import re
 import json
-import os
 import sys
 
 CIPD_TRACE_PREFIX = 'angle/traces'

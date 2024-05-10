@@ -29,9 +29,6 @@
 
 import os
 import re
-import sys
-import string
-from string import Template
 import optparse
 import logging
 import subprocess
@@ -49,7 +46,7 @@ try:
 
 # When copying generator files to JavaScriptCore's private headers on Mac,
 # the codegen/ module directory is flattened. So, import directly.
-except ImportError as e:
+except ImportError:
     #log.error(e) # Uncomment this to debug early import errors.
     import models
     from models import *
@@ -284,8 +281,8 @@ if __name__ == '__main__':
     if arg_options.debug:
         log.setLevel(logging.DEBUG)
 
-    generate_backend = arg_options.backend;
-    generate_frontend = arg_options.frontend;
+    generate_backend = arg_options.backend
+    generate_frontend = arg_options.frontend
     # Default to generating both the frontend and backend if neither is specified.
     if not generate_backend and not generate_frontend:
         generate_backend = True

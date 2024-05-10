@@ -7,7 +7,6 @@
 #   Code generation for Metal backend's default shaders.
 #   NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
-import json
 import os
 import subprocess
 import sys

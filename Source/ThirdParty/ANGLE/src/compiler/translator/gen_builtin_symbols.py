@@ -22,7 +22,6 @@ if len(sys.argv) < 2:
 from collections import OrderedDict
 import argparse
 import copy
-import hashlib
 import json
 import re
 import os
@@ -1648,7 +1647,7 @@ def process_single_function(shader_type, group_name, function_props, symbols, va
 
     template_name_declaration = 'constexpr const ImmutableString {name_with_suffix}("{name}");'
     name_declaration = template_name_declaration.format(**template_args)
-    if not name_declaration in symbols.name_declarations:
+    if name_declaration not in symbols.name_declarations:
         symbols.name_declarations.add(name_declaration)
 
     essl_ext = '{essl_extension}'.format(**template_args)

@@ -7,7 +7,9 @@
 #   Code generation for the packed enums.
 #   NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
-import json, os, sys
+import json
+import os
+import sys
 from collections import namedtuple
 from collections import OrderedDict
 

@@ -26,12 +26,10 @@
 
 
 import logging
-import re
-import string
 from string import Template
 
 from builtins_generator import BuiltinsGenerator, WK_lcfirst
-from builtins_model import Framework, Frameworks
+from builtins_model import Frameworks
 from builtins_templates import BuiltinsGeneratorTemplates as Templates
 
 log = logging.getLogger('global')

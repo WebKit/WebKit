@@ -8,7 +8,8 @@
 #   Generates dynamic loaders for various binding interfaces.
 #   NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
-import sys, os, pprint, json
+import sys
+import os
 import registry_xml
 
 

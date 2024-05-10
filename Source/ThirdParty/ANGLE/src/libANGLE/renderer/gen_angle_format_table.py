@@ -9,11 +9,7 @@
 #
 
 import angle_format
-import json
-import math
 import os
-import pprint
-import re
 import sys
 
 template_autogen_h = """// GENERATED FILE - DO NOT EDIT.
@@ -98,7 +94,7 @@ def ceil_int(value, mod):
 
 
 def is_depth_stencil(angle_format):
-    if not 'channels' in angle_format or not angle_format['channels']:
+    if 'channels' not in angle_format or not angle_format['channels']:
         return False
     return 'd' in angle_format['channels'] or 's' in angle_format['channels']
 

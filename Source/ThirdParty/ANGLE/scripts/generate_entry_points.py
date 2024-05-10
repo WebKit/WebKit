@@ -8,7 +8,9 @@
 #   Generates the OpenGL bindings and entry point layers for ANGLE.
 #   NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
-import sys, os, pprint, json
+import sys
+import os
+import json
 import fnmatch
 import registry_xml
 from registry_xml import apis, script_relative, strip_api_prefix, api_enums
@@ -2698,7 +2700,7 @@ def is_id_type(t):
 
 
 def is_id_pointer_type(t):
-    return t.endswith("IDConstPointer") or t.endswith("IDPointer") and not 'ANDROID' in t
+    return t.endswith("IDConstPointer") or t.endswith("IDPointer") and 'ANDROID' not in t
 
 
 def get_gl_param_type_type(param_type):

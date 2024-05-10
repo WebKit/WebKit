@@ -49,7 +49,6 @@ except ImportError:
     pass
 
 path_util.AddTracingToPath()
-from tracing.value import histogram
 from tracing.value import histogram_set
 from tracing.value.diagnostics import generic_set
 from tracing.value.diagnostics import reserved_infos

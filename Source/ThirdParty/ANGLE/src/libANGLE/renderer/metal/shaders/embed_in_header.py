@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 
 import os
-import subprocess
 import sys
 import argparse
 

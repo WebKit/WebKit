@@ -245,7 +245,7 @@ EventNames::EventNames()''')
                 writeln(f'#if {conditional}')
             writeln(f'        {name}Event,')
             if conditional:
-                writeln(f'#endif')
+                writeln('#endif')
         writeln('''    } };
 }
 

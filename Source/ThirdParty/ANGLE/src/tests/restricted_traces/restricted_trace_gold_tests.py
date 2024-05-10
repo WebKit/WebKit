@@ -16,7 +16,6 @@ import logging
 import os
 import pathlib
 import platform
-import re
 import shutil
 import sys
 import tempfile
@@ -34,7 +33,6 @@ from skia_gold import angle_skia_gold_properties
 from skia_gold import angle_skia_gold_session_manager
 
 angle_path_util.AddDepsDirToPath('testing/scripts')
-import common
 
 
 DEFAULT_TEST_SUITE = angle_test_util.ANGLE_TRACE_TEST_SUITE
@@ -134,7 +132,7 @@ def to_non_empty_string_or_none(val):
 
 
 def to_non_empty_string_or_none_dict(d, key):
-    return 'None' if not key in d else to_non_empty_string_or_none(d[key])
+    return 'None' if key not in d else to_non_empty_string_or_none(d[key])
 
 
 def get_skia_gold_keys(args, env):
@@ -160,7 +158,7 @@ def get_skia_gold_keys(args, env):
         os_name = to_non_empty_string_or_none(platform.system())
         os_version = to_non_empty_string_or_none(platform.version())
 
-    if len(json_data.get('gpus', [])) == 0 or not 'activeGPUIndex' in json_data:
+    if len(json_data.get('gpus', [])) == 0 or 'activeGPUIndex' not in json_data:
         raise Exception('Error getting system info.')
 
     active_gpu = json_data['gpus'][json_data['activeGPUIndex']]

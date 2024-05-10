@@ -1,5 +1,4 @@
 import os
-import re
 import sys
 
 
@@ -38,7 +37,7 @@ def GenerateTests(outFile, testNames):
 
     for test in testNames:
         testSuite = GetSuiteName(test)
-        if not testSuite in testSuites:
+        if testSuite not in testSuites:
             outFile.write("DEFINE_CONFORMANCE_TEST_CLASS(" + testSuite + ");\n\n")
             testSuites.append(testSuite)
 

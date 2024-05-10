@@ -32,7 +32,6 @@ import copy
 import optparse
 import os
 import re
-import struct
 from functools import cmp_to_key
 from hasher import stringHash
 

@@ -26,19 +26,18 @@
 
 
 import logging
-import string
 from string import Template
 
 try:
     from .cpp_generator import CppGenerator
     from .cpp_generator_templates import CppGeneratorTemplates as CppTemplates
-    from .generator import Generator, ucfirst
-    from .models import ObjectType, ArrayType, AliasedType, EnumType
+    from .generator import Generator
+    from .models import AliasedType, EnumType
 except:
     from cpp_generator import CppGenerator
     from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
-    from generator import Generator, ucfirst
-    from models import ObjectType, ArrayType, AliasedType, EnumType
+    from generator import Generator
+    from models import AliasedType, EnumType
 
 log = logging.getLogger('global')
 

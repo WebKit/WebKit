@@ -163,7 +163,7 @@ def get_bool_type(uniform_type):
 
 
 def get_sampler_format(uniform_type):
-    if not "_SAMPLER_" in uniform_type:
+    if "_SAMPLER_" not in uniform_type:
         return "SamplerFormat::InvalidEnum"
     elif "_SHADOW" in uniform_type:
         return "SamplerFormat::Shadow"

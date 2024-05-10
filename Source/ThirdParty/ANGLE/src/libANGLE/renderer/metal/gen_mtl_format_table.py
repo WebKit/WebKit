@@ -14,11 +14,7 @@
 # for MTLPixelFormatR8Unorm_sRGB, MTLPixelFormatR8G8Unorm_sRGB,
 # and packed 16 bit formats when building for a Simulator target.
 
-import json
-import math
 import os
-import pprint
-import re
 import sys
 
 sys.path.append('..')

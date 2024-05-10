@@ -12,12 +12,10 @@ import os
 import pathlib
 import posixpath
 import random
-import re
 import subprocess
 import sys
 import tarfile
 import tempfile
-import threading
 import time
 
 import angle_path_util

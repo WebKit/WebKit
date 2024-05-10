@@ -6,7 +6,8 @@
 # Simple helper for use in 'gn' files to check if a file exists.
 
 
-import os, shutil, sys
+import os
+import sys
 
 
 def main():

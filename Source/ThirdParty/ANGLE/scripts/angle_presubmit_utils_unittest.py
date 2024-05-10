@@ -9,7 +9,6 @@ angle_presubmit_utils_unittest.py: Top-level unittest script for ANGLE presubmit
 import importlib.machinery
 import os
 import pathlib
-import sys
 import tempfile
 import unittest
 from angle_presubmit_utils import *

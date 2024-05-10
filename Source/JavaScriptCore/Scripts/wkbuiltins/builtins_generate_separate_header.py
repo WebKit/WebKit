@@ -26,8 +26,6 @@
 
 
 import logging
-import re
-import string
 from string import Template
 
 from builtins_generator import BuiltinsGenerator

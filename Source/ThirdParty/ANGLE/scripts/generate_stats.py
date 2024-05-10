@@ -332,7 +332,7 @@ def get_step_info(build_name, step_name):
             intVal = int(line_columns[2])
             if intVal is not None:
                 isInt = True
-        except Exception as error:
+        except Exception:
             isInt = False
 
         if isInt:
@@ -566,7 +566,7 @@ def update_headers(service, spreadsheet_id, headers, info):
     sheet_names = []
     for bot_name in info:
         for step_name in info[bot_name]['step_names']:
-            if not step_name in info[bot_name]:
+            if step_name not in info[bot_name]:
                 LOGGER.error("Missing info for step name: '" + step_name + "'")
             sheet_name = format_sheet_name(bot_name, step_name)
             headers_stale = False

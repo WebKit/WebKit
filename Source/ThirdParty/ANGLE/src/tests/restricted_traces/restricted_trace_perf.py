@@ -34,14 +34,11 @@ Of the 5 runs, the high and low for each data point will be dropped, average of 
 '''
 
 import argparse
-import copy
 import csv
-import fcntl
 import fnmatch
 import json
 import logging
 import os
-import re
 import statistics
 import subprocess
 import sys
@@ -50,7 +47,6 @@ import time
 
 from collections import defaultdict, namedtuple
 from datetime import datetime
-from psutil import process_iter
 
 DEFAULT_TEST_DIR = '.'
 DEFAULT_TEST_JSON = 'restricted_traces.json'

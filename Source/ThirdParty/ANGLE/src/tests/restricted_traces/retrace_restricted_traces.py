@@ -25,13 +25,11 @@ import time
 from gen_restricted_traces import read_json as read_json, write_json as write_json
 from pathlib import Path
 
-from gen_restricted_traces import read_json as read_json
 
 SCRIPT_DIR = str(pathlib.Path(__file__).resolve().parent)
 PY_UTILS = str(pathlib.Path(SCRIPT_DIR) / '..' / 'py_utils')
 if PY_UTILS not in sys.path:
     os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
-import android_helper
 import angle_test_util
 
 DEFAULT_TEST_SUITE = angle_test_util.ANGLE_TRACE_TEST_SUITE
@@ -405,7 +403,7 @@ def get_min_reqs(args, traces):
 
             try:
                 run_test_suite(args, trace_binary, trace, max_steps, additional_args, env)
-            except subprocess.CalledProcessError as error:
+            except subprocess.CalledProcessError:
                 return False
             return True
 
@@ -440,7 +438,7 @@ def get_min_reqs(args, traces):
                 save_trace_json(trace, json_data)
                 try:
                     run_test_suite(args, trace_binary, trace, max_steps, default_args, env)
-                except subprocess.CalledProcessError as error:
+                except subprocess.CalledProcessError:
                     continue
                 break
 

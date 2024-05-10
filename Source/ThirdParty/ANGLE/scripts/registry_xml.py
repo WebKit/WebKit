@@ -15,7 +15,6 @@ import os
 import sys
 import xml.etree.ElementTree as etree
 
-from enum import Enum
 
 khronos_xml_inputs = [
     '../third_party/EGL-Registry/src/api/egl.xml',
@@ -568,7 +567,7 @@ class RegistryXML:
 
         for extension in self.root.findall("extensions/extension"):
             extension_name = extension.attrib['name']
-            if not extension_name in supported_extensions:
+            if extension_name not in supported_extensions:
                 continue
 
             ext_annotations[extension_name] = self._ClassifySupport(extension)

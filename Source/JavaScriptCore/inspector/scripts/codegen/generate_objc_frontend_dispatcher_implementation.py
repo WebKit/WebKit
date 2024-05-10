@@ -26,7 +26,6 @@
 
 
 import logging
-import string
 from string import Template
 
 try:

@@ -8,9 +8,7 @@
 #  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 #
 
-import json
 import math
-import pprint
 import os
 import sys
 

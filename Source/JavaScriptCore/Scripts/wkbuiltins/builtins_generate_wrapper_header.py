@@ -96,7 +96,7 @@ class BuiltinsWrapperHeaderGenerator(BuiltinsGenerator):
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), member_init))
         lines.append("    {")
         for object in self.model().objects:
-            if not 'internal' in object.annotations:
+            if 'internal' not in object.annotations:
                 continue
             internal_export_names = "        %s.exportNames();" % self.member_name(object)
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), internal_export_names))

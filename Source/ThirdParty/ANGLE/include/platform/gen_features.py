@@ -8,7 +8,6 @@
 #  Code generation for ANGLE features.
 #  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
-from collections import namedtuple
 import json
 import os
 import re

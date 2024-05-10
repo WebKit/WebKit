@@ -7,9 +7,6 @@
 #  Code generation for vk format map. See vk_format_map.json for data source.
 #  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
-import json
-import math
-import pprint
 import os
 import re
 import sys
@@ -124,7 +121,7 @@ def verify_vk_map_keys(angle_to_gl, vk_json_data):
     no_error = True
     for table in ["map", "fallbacks"]:
         for angle_format in vk_json_data[table].keys():
-            if not angle_format in angle_to_gl.keys():
+            if angle_format not in angle_to_gl.keys():
                 print("Invalid format " + angle_format + " in vk_format_map.json in " + table)
                 no_error = False
 

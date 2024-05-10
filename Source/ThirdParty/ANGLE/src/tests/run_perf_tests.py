@@ -10,8 +10,6 @@
 import argparse
 import contextlib
 import glob
-import importlib
-import io
 import json
 import logging
 import tempfile
@@ -36,7 +34,6 @@ angle_path_util.AddDepsDirToPath('testing/scripts')
 import common
 
 angle_path_util.AddDepsDirToPath('third_party/catapult/tracing')
-from tracing.value import histogram
 from tracing.value import histogram_set
 from tracing.value import merge_histograms
 

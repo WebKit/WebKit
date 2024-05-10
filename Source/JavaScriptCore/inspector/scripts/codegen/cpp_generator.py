@@ -25,15 +25,13 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import os.path
-import re
 
 try:
     from .generator import ucfirst, Generator
     from .models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 except ImportError:
     from generator import ucfirst, Generator
-    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
+    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType
 
 log = logging.getLogger('global')
 

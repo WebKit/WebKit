@@ -7,7 +7,6 @@ import datetime
 import fnmatch
 import json
 import importlib
-import io
 import logging
 import os
 import signal

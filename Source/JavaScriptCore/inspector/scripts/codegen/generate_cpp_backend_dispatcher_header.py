@@ -26,8 +26,6 @@
 
 
 import logging
-import re
-import string
 from string import Template
 
 try:
@@ -39,7 +37,6 @@ except ImportError:
     from cpp_generator import CppGenerator
     from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
     from generator import Generator, ucfirst
-    from models import EnumType
 
 log = logging.getLogger('global')
 

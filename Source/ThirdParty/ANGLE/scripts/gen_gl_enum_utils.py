@@ -260,7 +260,7 @@ def main(header_output_path, source_output_path):
                         gl_enum_groups[enum_group][enum_name] = enum_value
 
     for empty_group in empty_enum_groups:
-        assert not empty_group in gles_enum_groups or not empty_group in gl_enum_groups, 'Remove %s from the empty groups list, it has enums now.' % empty_group
+        assert empty_group not in gles_enum_groups or empty_group not in gl_enum_groups, 'Remove %s from the empty groups list, it has enums now.' % empty_group
         if empty_group not in gles_enum_groups:
             gles_enum_groups[empty_group] = dict()
         if empty_group not in gl_enum_groups:
