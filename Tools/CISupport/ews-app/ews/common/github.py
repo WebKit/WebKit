@@ -206,7 +206,7 @@ class GitHubEWS(GitHub):
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
     STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'wincairo'],  # FIXME: generate this list dynamically to have merge queue show up on top
-                          ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', ''],
+                          ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', 'wincairo-tests'],
                           ['webkitperl', 'ios-wk2', 'api-mac', 'api-wpe', ''],
                           ['webkitpy', 'ios-wk2-wpt', 'mac-wk1', 'wpe-cairo', ''],
                           ['jsc', 'api-ios', 'mac-wk2', 'gtk', ''],
