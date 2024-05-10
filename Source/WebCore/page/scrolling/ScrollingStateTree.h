@@ -70,6 +70,7 @@ public:
     bool hasChangedProperties() const { return m_hasChangedProperties; }
 
     bool hasNewRootStateNode() const { return m_hasNewRootStateNode; }
+    void setHasNewRootStateNode(bool hasNewRoot) { m_hasNewRootStateNode = hasNewRoot; }
 
     unsigned nodeCount() const { return m_stateNodeMap.size(); }
     unsigned scrollingNodeCount() const { return m_scrollingNodeCount; }
@@ -92,7 +93,7 @@ public:
         --m_scrollingNodeCount;
     }
 
-    WEBCORE_EXPORT String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const;
+    String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const;
     FrameIdentifier rootFrameIdentifier() const { return m_rootFrameIdentifier; }
     void setRootFrameIdentifier(FrameIdentifier frameID) { m_rootFrameIdentifier = frameID; }
 

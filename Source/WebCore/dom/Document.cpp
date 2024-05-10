@@ -6716,7 +6716,7 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
             if (page && m_frame->isMainFrame()) {
                 frameView->resetScrollbarsAndClearContentsSize();
                 if (RefPtr scrollingCoordinator = page->scrollingCoordinator())
-                    scrollingCoordinator->clearAllNodes(m_frame->rootFrame().frameID());
+                    scrollingCoordinator->clearAllNodes();
             }
         }
 

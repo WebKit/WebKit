@@ -255,7 +255,7 @@ public:
     WEBCORE_EXPORT virtual void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, int) { };
 
     void addScrollingNodeToHostedSubtreeMap(WebCore::LayerHostingContextIdentifier, Ref<ScrollingTreeFrameHostingNode>);
-    void removeNode(ScrollingNodeID, ScrollingTreeFrameHostingNode* = nullptr);
+    void removeNode(ScrollingNodeID);
     void removeFrameHostingNode(LayerHostingContextIdentifier);
 
     WEBCORE_EXPORT std::optional<FrameIdentifier> frameIDForScrollingNodeID(ScrollingNodeID);

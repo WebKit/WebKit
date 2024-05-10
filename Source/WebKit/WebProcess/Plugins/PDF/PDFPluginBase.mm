@@ -1235,11 +1235,6 @@ void PDFPluginBase::registerPDFTest(RefPtr<WebCore::VoidCallback>&& callback)
         m_pdfTestCallback = WTFMove(callback);
 }
 
-FrameIdentifier PDFPluginBase::rootFrameID() const
-{
-    return m_view->frame()->rootFrame().frameID();
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(PDF_PLUGIN)

@@ -435,7 +435,6 @@ public:
     virtual void updateScrollAnchoringElement() { }
     virtual void updateScrollPositionForScrollAnchoringController() { }
     virtual void invalidateScrollAnchoringElement() { }
-    virtual FrameIdentifier rootFrameID() const { return { }; }
 
     WEBCORE_EXPORT void setScrollbarsController(std::unique_ptr<ScrollbarsController>&&);
 

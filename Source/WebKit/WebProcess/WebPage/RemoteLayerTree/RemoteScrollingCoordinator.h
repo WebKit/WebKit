@@ -48,7 +48,7 @@ public:
         return adoptRef(*new RemoteScrollingCoordinator(page));
     }
 
-    RemoteScrollingCoordinatorTransaction buildTransaction(WebCore::FrameIdentifier);
+    RemoteScrollingCoordinatorTransaction buildTransaction();
 
     void scrollingStateInUIProcessChanged(const RemoteScrollingUIState&);
 

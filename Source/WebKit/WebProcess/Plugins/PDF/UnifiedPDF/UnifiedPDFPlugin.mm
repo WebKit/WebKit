@@ -684,7 +684,7 @@ void UnifiedPDFPlugin::createScrollingNodeIfNecessary()
         return;
 
     m_scrollingNodeID = scrollingCoordinator->uniqueScrollingNodeID();
-    scrollingCoordinator->createNode(m_frame->coreLocalFrame()->rootFrame().frameID(), ScrollingNodeType::PluginScrolling, m_scrollingNodeID);
+    scrollingCoordinator->createNode(ScrollingNodeType::PluginScrolling, m_scrollingNodeID);
 
 #if ENABLE(SCROLLING_THREAD)
     m_scrollContainerLayer->setScrollingNodeID(m_scrollingNodeID);

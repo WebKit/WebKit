@@ -1214,9 +1214,4 @@ bool RenderListBox::isVisibleToHitTesting() const
     return visibleToHitTesting();
 }
 
-FrameIdentifier RenderListBox::rootFrameID() const
-{
-    return view().frameView().frame().rootFrame().frameID();
-}
-
 } // namespace WebCore

@@ -853,7 +853,6 @@
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
 		EB2C86D9267B275D0052CB9A /* CPUTimePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB2C86D8267B275C0052CB9A /* CPUTimePOSIX.cpp */; };
 		EB61EDC72409CCC1001EFE36 /* SystemTracingCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB61EDC62409CCC0001EFE36 /* SystemTracingCocoa.cpp */; };
-		FA0C387B2BEAD56B00583842 /* SmallMap.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0C387A2BEAD56B00583842 /* SmallMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE032AD22463E43B0012D7C7 /* WTFConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE032AD02463E43B0012D7C7 /* WTFConfig.cpp */; };
 		FE03831C2ABC04F700A576A2 /* TZoneMallocInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE03831A2ABC04F700A576A2 /* TZoneMallocInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE03831D2ABC04F700A576A2 /* TZoneMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = FE03831B2ABC04F700A576A2 /* TZoneMalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1819,7 +1818,6 @@
 		EF7D6CD59D8642A8A0DA86AD /* StackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackTrace.h; sourceTree = "<group>"; };
 		F6D67D3226F90142006E0349 /* Int128.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int128.h; sourceTree = "<group>"; };
 		F72BBDB107FA424886178B9E /* SymbolImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolImpl.cpp; sourceTree = "<group>"; };
-		FA0C387A2BEAD56B00583842 /* SmallMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmallMap.h; sourceTree = "<group>"; };
 		FE032AD02463E43B0012D7C7 /* WTFConfig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFConfig.cpp; sourceTree = "<group>"; };
 		FE032AD12463E43B0012D7C7 /* WTFConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFConfig.h; sourceTree = "<group>"; };
 		FE03831A2ABC04F700A576A2 /* TZoneMallocInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TZoneMallocInlines.h; sourceTree = "<group>"; };
@@ -2384,7 +2382,6 @@
 				A748744F17A0BDAE00FA04CB /* SixCharacterHash.cpp */,
 				A748745017A0BDAE00FA04CB /* SixCharacterHash.h */,
 				A8A4730C151A825B004123FF /* SizeLimits.cpp */,
-				FA0C387A2BEAD56B00583842 /* SmallMap.h */,
 				0FA6F39220CC73A200A03DCD /* SmallSet.cpp */,
 				7936D6A91C99F8AE000D1AED /* SmallSet.h */,
 				A30D412D1F0DE13F00B71954 /* SoftLinking.h */,
@@ -3430,7 +3427,6 @@
 				DD3DC89627A4BF8E007E5B61 /* SinglyLinkedList.h in Headers */,
 				DD3DC99427A4BF8E007E5B61 /* SinglyLinkedListWithTail.h in Headers */,
 				DD3DC92F27A4BF8E007E5B61 /* SixCharacterHash.h in Headers */,
-				FA0C387B2BEAD56B00583842 /* SmallMap.h in Headers */,
 				DD3DC8DE27A4BF8E007E5B61 /* SmallSet.h in Headers */,
 				DDF3076727C086CD006A526F /* SoftLinking.h in Headers */,
 				DD3DC8D727A4BF8E007E5B61 /* SoftLinking.h in Headers */,

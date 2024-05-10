@@ -265,7 +265,6 @@ set(WTF_PUBLIC_HEADERS
     SinglyLinkedList.h
     SinglyLinkedListWithTail.h
     SixCharacterHash.h
-    SmallMap.h
     SmallSet.h
     SoftLinking.h
     SortedArrayMap.h

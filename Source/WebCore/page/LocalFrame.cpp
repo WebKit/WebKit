@@ -233,11 +233,8 @@ LocalFrame::~LocalFrame()
         localMainFrame->selfOnlyDeref();
 
     if (isRootFrame()) {
-        if (RefPtr page = this->page()) {
+        if (RefPtr page = this->page())
             page->removeRootFrame(*this);
-            if (auto* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->rootFrameWasRemoved(frameID());
-        }
     }
 }
 
