@@ -3,7 +3,7 @@ ARG WEBKIT_RELEASE_TYPE=Release
 ARG CPU=native
 ARG LTO_FLAG="-flto='full'"
 ARG LLVM_VERSION="16"
-ARG DEFAULT_CFLAGS="-mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -ffunction-sections -fdata-sections -fPIC"
+ARG DEFAULT_CFLAGS="-mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -ffunction-sections -fdata-sections"
 
 FROM bitnami/minideb:bullseye as base
 
