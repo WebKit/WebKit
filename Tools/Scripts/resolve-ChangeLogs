@@ -275,13 +275,8 @@ sub findUnmergedChangeLogs()
         if ($isSVN) {
             my $matches;
             my $file;
-            if (isSVNVersion16OrNewer()) {
-                $matches = /^([C]).{6} (.+?)[\r\n]*$/;
-                $file = $2;
-            } else {
-                $matches = /^([C]).{5} (.+?)[\r\n]*$/;
-                $file = $2;
-            }
+            $matches = /^([C]).{6} (.+?)[\r\n]*$/;
+            $file = $2;
             if ($matches) {
                 $file = findChangeLog(normalizePath($file));
                 push @results, $file if $file;

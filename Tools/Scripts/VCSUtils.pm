@@ -73,7 +73,6 @@ BEGIN {
         &isGitDirectory
         &isSVN
         &isSVNDirectory
-        &isSVNVersion16OrNewer
         &listOfChangedFilesBetweenRevisions
         &makeFilePathRelative
         &mergeChangeLogs
@@ -338,12 +337,6 @@ sub svnVersion()
         chomp($svnVersion = `svn --version --quiet`);
     }
     return $svnVersion;
-}
-
-sub isSVNVersion16OrNewer()
-{
-    my $version = svnVersion();
-    return "v$version" ge v1.6;
 }
 
 sub chdirReturningRelativePath($)

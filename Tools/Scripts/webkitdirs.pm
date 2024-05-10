@@ -172,7 +172,6 @@ BEGIN {
        &runMacWebKitApp
        &runMiniBrowser
        &runSafari
-       &runSvnUpdateAndResolveChangeLogs
        &runWebKitTestRunner
        &safariPath
        &sdkDirectory
@@ -3477,30 +3476,6 @@ sub formatBuildTime($)
         return sprintf("%dh:%02dm:%02ds", $buildHours, $buildMins, $buildSecs);
     }
     return sprintf("%02dm:%02ds", $buildMins, $buildSecs);
-}
-
-sub runSvnUpdateAndResolveChangeLogs(@)
-{
-    my @svnOptions = @_;
-    my $openCommand = "svn update " . join(" ", @svnOptions);
-    open my $update, "$openCommand |" or die "cannot execute command $openCommand";
-    my @conflictedChangeLogs;
-    while (my $line = <$update>) {
-        print $line;
-        $line =~ m/^C\s+(.+?)[\r\n]*$/;
-        if ($1) {
-          my $filename = normalizePath($1);
-          push @conflictedChangeLogs, $filename if basename($filename) eq "ChangeLog";
-        }
-    }
-    close $update or die;
-
-    if (@conflictedChangeLogs) {
-        print "Attempting to merge conflicted ChangeLogs.\n";
-        my $resolveChangeLogsPath = File::Spec->catfile(sourceDir(), "Tools", "Scripts", "resolve-ChangeLogs");
-        (system($resolveChangeLogsPath, "--no-warnings", @conflictedChangeLogs) == 0)
-            or die "Could not open resolve-ChangeLogs script: $!.\n";
-    }
 }
 
 sub runGitUpdate()

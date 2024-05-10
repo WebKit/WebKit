@@ -2304,17 +2304,10 @@ sub generateFileList(\%$$$\%)
 
         if (isSVN()) {
             my $matches;
-            if (isSVNVersion16OrNewer()) {
-                $matches = /^([ ACDMR])([ CM]).{5} (.+?)[\r\n]*$/;
-                $status = $1;
-                $propertyStatus = $2;
-                $file = $3;
-            } else {
-                $matches = /^([ ACDMR])([ CM]).{4} (.+?)[\r\n]*$/;
-                $status = $1;
-                $propertyStatus = $2;
-                $file = $3;
-            }
+            $matches = /^([ ACDMR])([ CM]).{5} (.+?)[\r\n]*$/;
+            $status = $1;
+            $propertyStatus = $2;
+            $file = $3;
             if ($matches) {
                 $file = normalizePath($file);
                 $original = findOriginalFileFromSvn($file) if substr($_, 3, 1) eq "+";
