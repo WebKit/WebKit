@@ -54,16 +54,16 @@ class PDFDataDetectorItem;
 class UnifiedPDFPlugin;
 class WebMouseEvent;
 
-class PDFDataDetectorOverlayController final : private PageOverlayClient, WebCore::DataDetectorHighlightClient {
+class PDFDataDetectorOverlayController final : private WebCore::PageOverlayClient, WebCore::DataDetectorHighlightClient {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PDFDataDetectorOverlayController);
 public:
     explicit PDFDataDetectorOverlayController(UnifiedPDFPlugin&);
-    virtual ~PDFDataDetectorOverlayController() = default;
+    virtual ~PDFDataDetectorOverlayController();
     void teardown();
 
     bool handleMouseEvent(const WebMouseEvent&, PDFDocumentLayout::PageIndex);
-    RefPtr<PageOverlay> protectedOverlay() const { return m_overlay; }
+    RefPtr<WebCore::PageOverlay> protectedOverlay() const { return m_overlay; }
 
     enum class ShouldUpdatePlatformHighlightData : bool { No, Yes };
     enum class ActiveHighlightChanged : bool { No, Yes };
@@ -71,8 +71,8 @@ public:
 
 private:
     // PageOverlayClient
-    void willMoveToPage(WebCore::PageOverlay&, Page*) final;
-    void didMoveToPage(WebCore::PageOverlay&, Page*) final { }
+    void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) final;
+    void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) final { }
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect&) final { }
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) final { return false; }
     void didScrollFrame(WebCore::PageOverlay&, WebCore::LocalFrame&) final { }

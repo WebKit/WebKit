@@ -38,8 +38,6 @@ class PlaybackSessionInterfaceIOS;
 
 namespace WebKit {
 
-using namespace WebCore;
-
 class VideoPresentationInterfaceLMK final : public VideoPresentationInterfaceIOS {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceLMK);

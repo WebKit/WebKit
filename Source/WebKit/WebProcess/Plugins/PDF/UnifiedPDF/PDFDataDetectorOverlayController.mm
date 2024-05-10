@@ -62,6 +62,8 @@ PDFDataDetectorOverlayController::PDFDataDetectorOverlayController(UnifiedPDFPlu
 {
 }
 
+PDFDataDetectorOverlayController::~PDFDataDetectorOverlayController() = default;
+
 RefPtr<UnifiedPDFPlugin> PDFDataDetectorOverlayController::protectedPlugin() const
 {
     return m_plugin.get();
