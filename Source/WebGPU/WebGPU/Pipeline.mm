@@ -191,7 +191,7 @@ bool validateBindGroup(BindGroup& bindGroup)
 
             auto bufferSize = bufferBinding->minBindingSize;
             if (bufferSize && buffer->get()) {
-                if (!buffer->get()->isDestroyed() && buffer->get()->buffer().length < bufferSize)
+                if (buffer->get()->buffer().length < bufferSize)
                     return false;
             }
         }

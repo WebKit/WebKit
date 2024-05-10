@@ -1066,7 +1066,7 @@ void CSSCalcOperationNode::buildCSSText(const CSSCalcExpressionNode& node, Strin
     
     bool outputCalc = shouldOutputEnclosingCalc(node);
     if (outputCalc)
-        builder.append("calc(");
+        builder.append("calc("_s);
 
     buildCSSTextRecursive(node, builder, GroupingParens::Omit);
 

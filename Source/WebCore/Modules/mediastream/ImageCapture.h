@@ -48,6 +48,10 @@ public:
 
     ~ImageCapture();
 
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     void takePhoto(PhotoSettings&&, DOMPromiseDeferred<IDLInterface<Blob>>&&);
     void getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&&);
     void getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettings>>&&);

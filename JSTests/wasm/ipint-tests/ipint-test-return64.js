@@ -16,4 +16,4 @@ async function test() {
     assert.eq(test(), 8n)
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

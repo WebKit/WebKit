@@ -33,4 +33,4 @@ async function test() {
     assert.eq(decodeString(memory.buffer), "doing it for doing it for the bit since 2003");
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

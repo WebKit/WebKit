@@ -355,7 +355,7 @@ bool NetworkResourceLoader::shouldSendResourceLoadMessages() const
         return true;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    if (m_parameters.pageHasExtensionController)
+    if (m_parameters.pageHasLoadedWebExtensions)
         return true;
 #endif
 
@@ -649,10 +649,10 @@ bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xF
     case XFrameOptionsDisposition::SameOrigin: {
         auto origin = SecurityOrigin::create(url);
         auto topFrameOrigin = m_parameters.frameAncestorOrigins.last();
-        if (!topFrameOrigin || !origin->isSameSchemeHostPort(*topFrameOrigin))
+        if (!origin->isSameSchemeHostPort(topFrameOrigin))
             return true;
         for (auto& ancestorOrigin : m_parameters.frameAncestorOrigins) {
-            if (!ancestorOrigin || !origin->isSameSchemeHostPort(*ancestorOrigin))
+            if (!origin->isSameSchemeHostPort(ancestorOrigin))
                 return true;
         }
         return false;
@@ -926,6 +926,8 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
             });
             return completionHandler(PolicyAction::Ignore);
         }
+        if (m_networkLoad && m_networkLoadChecker->timingAllowFailedFlag())
+            m_networkLoad->setTimingAllowFailedFlag();
     }
 
     initializeReportingEndpoints(m_response);
@@ -1000,7 +1002,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
 void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage)
 {
-    auto browsingContextGroupSwitchDecision = toBrowsingContextGroupSwitchDecision(m_currentCoopEnforcementResult);
+    auto browsingContextGroupSwitchDecision = m_connection->usesSingleWebProcess()? BrowsingContextGroupSwitchDecision::StayInGroup: toBrowsingContextGroupSwitchDecision(m_currentCoopEnforcementResult);
     if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup) {
         send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
         return;
@@ -1056,6 +1058,8 @@ void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuff
 
 void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
 {
+    ASSERT(!m_networkLoadChecker || networkLoadMetrics.failsTAOCheck == m_networkLoadChecker->timingAllowFailedFlag());
+
     LOADER_RELEASE_LOG("didFinishLoading: (numBytesReceived=%zd, hasCacheEntryForValidation=%d)", m_numBytesReceived, !!m_cacheEntryForValidation);
 
     if (shouldCaptureExtraNetworkLoadMetrics())
@@ -1247,6 +1251,9 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
                 this->didFailLoading(result.error());
                 return completionHandler({ });
             }
+
+            if (m_networkLoad && m_networkLoadChecker && m_networkLoadChecker->timingAllowFailedFlag())
+                m_networkLoad->setTimingAllowFailedFlag();
 
             LOADER_RELEASE_LOG("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection is done");
             if (m_parameters.options.redirect == FetchOptions::Redirect::Manual) {

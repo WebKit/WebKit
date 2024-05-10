@@ -39,9 +39,11 @@
 
 namespace JSC {
 
+#if OS(DARWIN)
 namespace JSCBytecodeCacheVersionInternal {
 static constexpr bool verbose = false;
 }
+#endif
 
 uint32_t computeJSCBytecodeCacheVersion()
 {
@@ -65,7 +67,6 @@ uint32_t computeJSCBytecodeCacheVersion()
     });
     return cacheVersion.get();
 #else
-    UNUSED_VARIABLE(JSCBytecodeCacheVersionInternal::verbose);
     static constexpr uint32_t precomputedCacheVersion = SuperFastHash::computeHash(__TIMESTAMP__);
     return precomputedCacheVersion;
 #endif

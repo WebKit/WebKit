@@ -320,24 +320,24 @@ void RemoteInspectorSocketEndpoint::sendIfEnabled(ConnectionID id)
     }
 }
 
-void RemoteInspectorSocketEndpoint::send(ConnectionID id, const uint8_t* data, size_t size)
+void RemoteInspectorSocketEndpoint::send(ConnectionID id, std::span<const uint8_t> data)
 {
     Locker locker { m_connectionsLock };
     if (const auto& connection = m_clients.get(id)) {
         size_t offset = 0;
         if (connection->sendBuffer.isEmpty()) {
             // Try to call send() directly if buffer is empty.
-            if (auto writeSize = Socket::write(connection->socket, data, std::min(size, Socket::BufferSize)))
+            if (auto writeSize = Socket::write(connection->socket, data.data(), std::min(data.size(), Socket::BufferSize)))
                 offset = *writeSize;
             // @TODO need to handle closed socket case?
         }
 
         // Check all data is sent.
-        if (offset == size)
+        if (offset == data.size())
             return;
 
         // Copy remaining data to send later.
-        connection->sendBuffer.appendRange(data + offset, data + size);
+        connection->sendBuffer.appendRange(data.data() + offset, data.data() + data.size());
         Socket::markWaitingWritable(connection->poll);
 
         wakeupWorkerThread();

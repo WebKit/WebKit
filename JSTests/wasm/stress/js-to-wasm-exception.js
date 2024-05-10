@@ -51,4 +51,4 @@ async function test() {
         assert.instanceof(jsToWasm(instance.exports.foo, 1, 2, 3), Error);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

@@ -101,6 +101,4 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Author Year
-Stephen Hawking 1988
-Carl Sagan 1980
-
+Stephen Hawking 1988 Carl Sagan 1980

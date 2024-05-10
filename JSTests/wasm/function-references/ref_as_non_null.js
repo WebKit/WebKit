@@ -42,4 +42,4 @@ async function ref_as_non_null() {
   )
 }
 
-assert.asyncTest(ref_as_non_null());
+await assert.asyncTest(ref_as_non_null());

@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUCompareFunction {
+] enum GPUCompareFunction {
     "never",
     "less",
     "equal",

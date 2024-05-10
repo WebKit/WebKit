@@ -60,8 +60,9 @@ public:
     void generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData);
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     WebKitMediaKeySession(Document&, WebKitMediaKeys&, const String& keySystem);

@@ -428,6 +428,10 @@ set(WTF_PUBLIC_HEADERS
     persistence/PersistentDecoder.h
     persistence/PersistentEncoder.h
 
+    simde/simde.h
+    simde/arm/neon.h
+    simde/arm/sve.h
+
     spi/cf/CFBundleSPI.h
     spi/cf/CFStringSPI.h
 
@@ -525,6 +529,7 @@ set(WTF_PUBLIC_HEADERS
     win/PathWalker.h
     win/SoftLinking.h
     win/Win32Handle.h
+    text/win/WCharStringExtras.h
 )
 
 set(WTF_SOURCES

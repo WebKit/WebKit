@@ -25,8 +25,9 @@
 
 messages -> RemoteBuffer NotRefCounted Stream {
     void GetMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size) -> (std::optional<Vector<uint8_t>> data) Synchronous
-    void MapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size) -> (std::optional<Vector<uint8_t>> data)
-    void Unmap(Vector<uint8_t> data)
+    void MapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size) -> (bool success)
+    void Copy(Vector<uint8_t> data, size_t offset)
+    void Unmap()
     void Destroy()
     void Destruct()
     void SetLabel(String label)

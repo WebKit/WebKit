@@ -79,8 +79,10 @@ public:
     using CanMakeWeakPtr<SourceBuffer>::weakPtrFactory;
     using CanMakeWeakPtr<SourceBuffer>::WeakValueType;
     using CanMakeWeakPtr<SourceBuffer>::WeakPtrImplType;
-    using RefCounted::ref;
-    using RefCounted::deref;
+
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     static bool enabledForContext(ScriptExecutionContext&);
 

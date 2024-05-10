@@ -44,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-interrupted.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-invalid-url.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-opaque-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-pagehide.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-preventDefault.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-push-initial-about-blank.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-push-javascript-url.html
@@ -51,10 +52,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-detached-unserializablestate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-invalidurl-beforeunload.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-invalidurl-detached.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-invalidurl-unload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-invalidurl-pagehide.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-invalidurl-unserializablestate.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-unload-unserializablestate.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-unload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-pagehide-unserializablestate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-unserializable-state.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-already-detached.html
@@ -64,11 +64,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-initial-about-blank.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-intercept-rejected.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-pagehide.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-preventDefault.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-beforeunload-unserializablestate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-detached-unserializablestate.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-unload-unserializablestate.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-unload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-pagehide-unserializablestate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-unserializable-state.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-already-detached.html

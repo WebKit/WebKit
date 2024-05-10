@@ -53,7 +53,7 @@ shouldThrow(() => {
 
 shouldThrow(() => {
     new DataView(buffer, 256);
-}, "RangeError: Length out of range of buffer");
+}, "RangeError: byteOffset exceeds source ArrayBuffer byteLength");
 
 shouldThrow(() => {
     new DataView(buffer, -1);

@@ -226,11 +226,19 @@ static bool isGuardContainer(const Element& element)
     return hasTransparentContainerStyle(renderer.style());
 }
 
-static FloatRect absoluteBoundingRect(const RenderObject& renderer)
+static FloatSize boundingSize(const RenderObject& renderer, const std::optional<AffineTransform>& transform)
 {
-    Vector<FloatQuad> quads;
-    renderer.absoluteQuads(quads);
-    return unitedBoundingBoxes(quads);
+    Vector<LayoutRect> rects;
+    renderer.boundingRects(rects, LayoutPoint());
+
+    if (!rects.size())
+        return FloatSize();
+
+    FloatSize size = unionRect(rects).size();
+    if (transform)
+        size.scale(transform->xScale(), transform->yScale());
+
+    return size;
 }
 
 static bool cachedImageIsPhoto(const CachedImage& cachedImage)
@@ -254,11 +262,11 @@ static RefPtr<Image> findIconImage(const RenderObject& renderer)
         if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
             return nullptr;
 
-        auto* image = renderImage->cachedImage()->image();
+        auto* image = renderImage->cachedImage()->imageForRenderer(renderImage);
         if (!image)
             return nullptr;
 
-        if (image->isSVGImage()
+        if (image->isSVGImageForContainer()
             || (image->isBitmapImage() && image->nativeImage() && image->nativeImage()->hasAlpha()))
             return image;
     }
@@ -288,7 +296,7 @@ static String interactionRegionTextContentForNode(Node& node)
 }
 #endif
 
-std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject& regionRenderer, const FloatRect& bounds)
+std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject& regionRenderer, const FloatRect& bounds, const FloatSize& clipOffset, const std::optional<AffineTransform>& transform)
 {
     if (bounds.isEmpty())
         return std::nullopt;
@@ -427,11 +435,16 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (!isOriginalMatch && !matchedElementIsGuardContainer && !isPhoto && !isInlineNonBlock && !renderer.style().isDisplayTableOrTablePart())
         return std::nullopt;
 
+    // FIXME: Consider allowing rotation / skew - rdar://127499446.
+    bool hasRotationOrShear = false;
+    if (transform)
+        hasRotationOrShear = transform->isRotateOrShear();
+
     RefPtr<Image> iconImage;
     std::optional<std::pair<Ref<SVGSVGElement>, Ref<SVGGraphicsElement>>> svgClipElements;
-    if (!needsContentHint)
+    if (!hasRotationOrShear && !needsContentHint)
         iconImage = findIconImage(regionRenderer);
-    if (!iconImage)
+    if (!hasRotationOrShear && !iconImage)
         svgClipElements = findSVGClipElements(regionRenderer);
 
     auto rect = bounds;
@@ -440,38 +453,41 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     std::optional<Path> clipPath = std::nullopt;
     RefPtr styleClipPath = regionRenderer.style().clipPath();
 
-    if (styleClipPath && styleClipPath->type() == PathOperation::OperationType::Shape && originalElement) {
-        auto boundingRect = absoluteBoundingRect(regionRenderer);
-        clipPath = styleClipPath->getPath(TransformOperationData(FloatRect(FloatPoint(), boundingRect.size())));
+    if (!hasRotationOrShear && styleClipPath && styleClipPath->type() == PathOperation::OperationType::Shape && originalElement) {
+        auto size = boundingSize(regionRenderer, transform);
+        auto path = styleClipPath->getPath(TransformOperationData(FloatRect(FloatPoint(), size)));
+
+        if (path && !clipOffset.isZero())
+            path->translate(clipOffset);
+
+        clipPath = path;
     } else if (iconImage && originalElement) {
-        LayoutRect imageRect(rect);
+        auto size = boundingSize(regionRenderer, transform);
+        LayoutRect imageRect(FloatPoint(), size);
         Ref shape = Shape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode::HorizontalTb, 0);
         Shape::DisplayPaths paths;
         shape->buildDisplayPaths(paths);
         auto path = paths.shape;
-        auto boundingRect = absoluteBoundingRect(regionRenderer);
-        path.translate(FloatSize(-boundingRect.x(), -boundingRect.y()));
+
+        if (!clipOffset.isZero())
+            path.translate(clipOffset);
+
         clipPath = path;
     } else if (svgClipElements) {
         auto& [svgSVGElement, shapeElement] = *svgClipElements;
         auto path = shapeElement->toClipPath();
 
-        auto shapeBoundingBox = shapeElement->getBBox(SVGLocatable::DisallowStyleUpdate);
-        path.translate(FloatSize(-shapeBoundingBox.x(), -shapeBoundingBox.y()));
-
         FloatSize size = svgSVGElement->currentViewportSizeExcludingZoom();
         auto viewBoxTransform = svgSVGElement->viewBoxToViewTransform(size.width(), size.height());
-        shapeBoundingBox = viewBoxTransform.mapRect(shapeBoundingBox);
-        path.transform(AffineTransform::makeScale(FloatSize(viewBoxTransform.xScale(), viewBoxTransform.yScale())));
 
-        // Position to respect clipping. `rect` is already clipped but the Path is complete.
-        auto clipDeltaX = rect.width() - shapeBoundingBox.width();
-        auto clipDeltaY = rect.height() - shapeBoundingBox.height();
-        if (shapeBoundingBox.x() >= 0)
-            clipDeltaX = 0;
-        if (shapeBoundingBox.y() >= 0)
-            clipDeltaY = 0;
-        path.translate(FloatSize(clipDeltaX, clipDeltaY));
+        auto shapeBoundingBox = shapeElement->getBBox(SVGLocatable::DisallowStyleUpdate);
+        path.transform(viewBoxTransform);
+        shapeBoundingBox = viewBoxTransform.mapRect(shapeBoundingBox);
+
+        path.translate(FloatSize(-shapeBoundingBox.x(), -shapeBoundingBox.y()));
+
+        if (!clipOffset.isZero())
+            path.translate(clipOffset);
 
         clipPath = path;
     } else if (const auto& renderBox = dynamicDowncast<RenderBox>(regionRenderer)) {

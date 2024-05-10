@@ -60,7 +60,7 @@ void Coder<CString>::encodeForPersistence(Encoder& encoder, const CString& strin
 
     uint32_t length = string.length();
     encoder << length;
-    encoder.encodeFixedLengthData({ string.dataAsUInt8Ptr(), length });
+    encoder.encodeFixedLengthData(string.span());
 }
 
 std::optional<CString> Coder<CString>::decodeForPersistence(Decoder& decoder)

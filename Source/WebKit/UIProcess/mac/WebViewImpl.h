@@ -746,6 +746,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void removeTextIndicatorStyleForID(WTF::UUID);
 #endif
 
+#if HAVE(INLINE_PREDICTIONS)
+    bool allowsInlinePredictions() const;
+#endif
+
 private:
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);
@@ -818,7 +822,6 @@ private:
     void handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates);
 
 #if HAVE(INLINE_PREDICTIONS)
-    bool allowsInlinePredictions() const;
     void showInlinePredictionsForCandidates(NSArray<NSTextCheckingResult *> *);
     void showInlinePredictionsForCandidate(NSTextCheckingResult *, NSRange, NSRange);
 #endif

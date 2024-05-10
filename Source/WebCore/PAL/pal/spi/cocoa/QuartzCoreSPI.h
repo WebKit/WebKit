@@ -159,6 +159,14 @@ typedef struct _CARenderContext CARenderContext;
 @property (getter=isSeparated) BOOL separated;
 #endif
 @property BOOL toneMapToStandardDynamicRange;
+#if HAVE(SPATIAL_TRACKING_LABEL)
+typedef NS_ENUM(unsigned, CASeparatedState) {
+    kCALayerSeparatedStateNone = 0,
+    kCALayerSeparatedStateTracked,
+    kCALayerSeparatedStateSeparated,
+};
+@property CASeparatedState separatedState;
+#endif
 @end
 
 @interface CABackdropLayer : CALayer
@@ -218,6 +226,21 @@ typedef enum {
 @property (weak) CALayer *sourceLayer;
 @property BOOL matchesPosition;
 @property BOOL matchesTransform;
+@end
+
+@interface CARemoteEffect: NSObject <NSCopying, NSSecureCoding>
+@end
+
+@interface CARemoteEffectGroup : CARemoteEffect
++ (instancetype)groupWithEffects:(NSArray<CARemoteEffect *> *)effects;
+@property (copy) NSString *groupName;
+@property (getter=isMatched) BOOL matched;
+@property (getter=isSource) BOOL source;
+@property (copy, nonatomic) NSDictionary *userInfo;
+@end
+
+@interface CALayer (RemoteEffects)
+@property (copy) NSArray<CARemoteEffect *> *remoteEffects;
 @end
 
 #if HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)

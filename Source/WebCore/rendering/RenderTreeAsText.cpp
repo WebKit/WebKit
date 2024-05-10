@@ -162,16 +162,16 @@ String quoteAndEscapeNonPrintables(StringView s)
     for (unsigned i = 0; i != s.length(); ++i) {
         UChar c = s[i];
         if (c == '\\') {
-            result.append("\\\\");
+            result.append("\\\\"_s);
         } else if (c == '"') {
-            result.append("\\\"");
+            result.append("\\\""_s);
         } else if (c == '\n' || c == noBreakSpace)
             result.append(' ');
         else {
             if (c >= 0x20 && c < 0x7F)
                 result.append(c);
             else
-                result.append("\\x{", hex(c), '}');
+                result.append("\\x{"_s, hex(c), '}');
         }
     }
     result.append('"');
@@ -796,19 +796,19 @@ static String nodePosition(Node* node)
     for (Node* n = node; n; n = parent) {
         parent = n->parentOrShadowHostNode();
         if (n != node)
-            result.append(" of ");
+            result.append(" of "_s);
         if (parent) {
             if (body && n == body) {
                 // We don't care what offset body may be in the document.
-                result.append("body");
+                result.append("body"_s);
                 break;
             }
             if (n->isShadowRoot())
                 result.append('{', getTagName(n), '}');
             else
-                result.append("child ", n->computeNodeIndex(), " {", getTagName(n), '}');
+                result.append("child "_s, n->computeNodeIndex(), " {"_s, getTagName(n), '}');
         } else
-            result.append("document");
+            result.append("document"_s);
     }
 
     return result.toString();

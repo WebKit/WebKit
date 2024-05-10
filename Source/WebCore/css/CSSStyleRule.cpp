@@ -159,7 +159,7 @@ String CSSStyleRule::cssText() const
 void CSSStyleRule::cssTextForRules(StringBuilder& rules) const
 {
     for (unsigned index = 0; index < length(); index++)
-        rules.append("\n  ", item(index)->cssText());
+        rules.append("\n  "_s, item(index)->cssText());
 }
 
 String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
@@ -181,37 +181,36 @@ String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& r
 void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     for (unsigned index = 0; index < length(); index++)
-        rules.append("\n  ", item(index)->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet));
+        rules.append("\n  "_s, item(index)->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet));
 }
 
 String CSSStyleRule::cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const
 {
     StringBuilder builder;
-    builder.append(selectorText());
-    builder.append(" {");
+    builder.append(selectorText(), " {"_s);
 
     if (declarations.isEmpty() && rules.isEmpty()) {
-        builder.append(" }");
+        builder.append(" }"_s);
         return builder.toString();
     }
 
     if (rules.isEmpty()) {
         builder.append(' ');
         builder.append(declarations);
-        builder.append(" }");
+        builder.append(" }"_s);
         return builder.toString();
     }
 
     if (declarations.isEmpty()) {
         builder.append(rules);
-        builder.append("\n}");
+        builder.append("\n}"_s);
         return builder.toString();
     }
 
-    builder.append("\n  ");
+    builder.append("\n  "_s);
     builder.append(declarations);
     builder.append(rules);
-    builder.append("\n}");
+    builder.append("\n}"_s);
     return builder.toString();
 }
 

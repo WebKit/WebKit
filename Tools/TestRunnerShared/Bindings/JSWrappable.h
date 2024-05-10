@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 typedef struct OpaqueJSClass* JSClassRef;
 
 namespace WTR {
 
-class JSWrappable : public RefCounted<JSWrappable> {
+class JSWrappable : public ThreadSafeRefCounted<JSWrappable> {
 public:
     virtual ~JSWrappable() { }
     virtual JSClassRef wrapperClass() = 0;

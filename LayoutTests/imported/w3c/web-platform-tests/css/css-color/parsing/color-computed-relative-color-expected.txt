@@ -132,22 +132,13 @@ PASS Property color value 'hsl(from rebeccapurple calc((h / 360) * 360deg) calc(
 PASS Property color value 'hsl(from hsl(from rebeccapurple h s l / calc(alpha + 0.5)) h s l / calc(alpha - 0.5))'
 PASS Property color value 'hsl(from hsl(from rebeccapurple h s l / calc(alpha - 1.5)) h s l / calc(alpha + 0.5))'
 PASS Property color value 'hsl(from rebeccapurple none none none)'
-FAIL Property color value 'hsl(from rebeccapurple none none none / none)' Colors do not match.
-Actual:   color(srgb 0 0 0 / 0)
-Expected: color(srgb 0 0 0 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS Property color value 'hsl(from rebeccapurple none none none / none)'
 PASS Property color value 'hsl(from rebeccapurple h s none)'
 PASS Property color value 'hsl(from rebeccapurple h s none / alpha)'
-FAIL Property color value 'hsl(from rebeccapurple h s l / none)' Colors do not match.
-Actual:   color(srgb 0.4 0.2 0.6 / 0)
-Expected: color(srgb 0.4 0.2 0.6 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS Property color value 'hsl(from rebeccapurple h s l / none)'
 PASS Property color value 'hsl(from rebeccapurple none s l / alpha)'
 PASS Property color value 'hsl(from hsl(120deg 20% 50% / .5) h s none / alpha)'
-FAIL Property color value 'hsl(from hsl(120deg 20% 50% / .5) h s l / none)' Colors do not match.
-Actual:   color(srgb 0.4 0.6 0.4 / 0)
-Expected: color(srgb 0.4 0.6 0.4 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS Property color value 'hsl(from hsl(120deg 20% 50% / .5) h s l / none)'
 PASS Property color value 'hsl(from hsl(120deg 20% 50% / .5) none s l / alpha)'
 PASS Property color value 'hsl(from hsl(none none none) h s l)'
 PASS Property color value 'hsl(from hsl(none none none / none) h s l / alpha)'
@@ -200,22 +191,13 @@ PASS Property color value 'hwb(from rebeccapurple calc((h / 360) * 360deg) calc(
 PASS Property color value 'hwb(from hwb(from rebeccapurple h w b / calc(alpha + 0.5)) h w b / calc(alpha - 0.5))'
 PASS Property color value 'hwb(from hwb(from rebeccapurple h w b / calc(alpha - 1.5)) h w b / calc(alpha + 0.5))'
 PASS Property color value 'hwb(from rebeccapurple none none none)'
-FAIL Property color value 'hwb(from rebeccapurple none none none / none)' Colors do not match.
-Actual:   color(srgb 1 0 0 / 0)
-Expected: color(srgb 1 0 0 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS Property color value 'hwb(from rebeccapurple none none none / none)'
 PASS Property color value 'hwb(from rebeccapurple h w none)'
 PASS Property color value 'hwb(from rebeccapurple h w none / alpha)'
-FAIL Property color value 'hwb(from rebeccapurple h w b / none)' Colors do not match.
-Actual:   color(srgb 0.4 0.2 0.6 / 0)
-Expected: color(srgb 0.4 0.2 0.6 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS Property color value 'hwb(from rebeccapurple h w b / none)'
 PASS Property color value 'hwb(from rebeccapurple none w b / alpha)'
 PASS Property color value 'hwb(from hwb(120deg 20% 50% / .5) h w none / alpha)'
-FAIL Property color value 'hwb(from hwb(120deg 20% 50% / .5) h w b / none)' Colors do not match.
-Actual:   color(srgb 0.2 0.5 0.2 / 0)
-Expected: color(srgb 0.2 0.5 0.2 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS Property color value 'hwb(from hwb(120deg 20% 50% / .5) h w b / none)'
 PASS Property color value 'hwb(from hwb(120deg 20% 50% / .5) none w b / alpha)'
 PASS Property color value 'hwb(from hwb(none none none) h w b)'
 PASS Property color value 'hwb(from hwb(none none none / none) h w b / alpha)'

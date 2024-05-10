@@ -70,7 +70,12 @@ iframe:fullscreen {
 }
 
 *|*:not(:root):-internal-in-window-fullscreen {
-    padding: 5% 0%;
+    margin: auto !important;
+    width: auto !important;
+    height: 80vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 20px !important;
 }
 
 *|*:not(:root):-internal-in-window-fullscreen::backdrop {

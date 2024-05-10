@@ -274,10 +274,10 @@ static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const 
     directory.append(parentDirectory);
     switch (processType) {
     case WebCore::AuxiliaryProcessType::WebContent:
-        directory.append("/com.apple.WebKit.WebContent.Sandbox");
+        directory.append("/com.apple.WebKit.WebContent.Sandbox"_s);
         break;
     case WebCore::AuxiliaryProcessType::Network:
-        directory.append("/com.apple.WebKit.Networking.Sandbox");
+        directory.append("/com.apple.WebKit.Networking.Sandbox"_s);
         break;
     case WebCore::AuxiliaryProcessType::Plugin:
         WTFLogAlways("sandboxDirectory: Unexpected Plugin process initialization.");
@@ -285,14 +285,14 @@ static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const 
         break;
 #if ENABLE(GPU_PROCESS)
     case WebCore::AuxiliaryProcessType::GPU:
-        directory.append("/com.apple.WebKit.GPU.Sandbox");
+        directory.append("/com.apple.WebKit.GPU.Sandbox"_s);
         break;
 #endif
     }
 
 #if !USE(APPLE_INTERNAL_SDK)
     // Add .OpenSource suffix so that open source builds don't try to access a data vault used by system Safari.
-    directory.append(".OpenSource");
+    directory.append(".OpenSource"_s);
 #endif
 
     return directory.toString();
@@ -300,7 +300,7 @@ static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const 
 
 static String sandboxFilePath(const String& directoryPath)
 {
-    return makeString(directoryPath, "/CompiledSandbox");
+    return makeString(directoryPath, "/CompiledSandbox"_s);
 }
 
 static bool ensureSandboxCacheDirectory(const SandboxInfo& info)

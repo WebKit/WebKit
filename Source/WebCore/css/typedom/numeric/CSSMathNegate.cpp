@@ -57,7 +57,7 @@ void CSSMathNegate::serialize(StringBuilder& builder, OptionSet<SerializationArg
 {
     // https://drafts.css-houdini.org/css-typed-om/#calc-serialization
     if (!arguments.contains(SerializationArguments::WithoutParentheses))
-        builder.append(arguments.contains(SerializationArguments::Nested) ? "(" : "calc(");
+        builder.append(arguments.contains(SerializationArguments::Nested) ? "("_s : "calc("_s);
     builder.append('-');
     m_value->serialize(builder, arguments);
     if (!arguments.contains(SerializationArguments::WithoutParentheses))

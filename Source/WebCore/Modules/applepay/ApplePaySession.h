@@ -64,6 +64,10 @@ public:
     static ExceptionOr<Ref<ApplePaySession>> create(Document&, unsigned version, ApplePayPaymentRequest&&);
     virtual ~ApplePaySession();
 
+    // ActiveDOMObject.
+    void ref() const final { PaymentSession::ref(); }
+    void deref() const final { PaymentSession::deref(); }
+
     static constexpr auto STATUS_SUCCESS = ApplePayPaymentAuthorizationResult::Success;
     static constexpr auto STATUS_FAILURE = ApplePayPaymentAuthorizationResult::Failure;
     static constexpr auto STATUS_INVALID_BILLING_POSTAL_ADDRESS = ApplePayPaymentAuthorizationResult::InvalidBillingPostalAddress;
@@ -96,9 +100,6 @@ public:
     ExceptionOr<void> completePayment(unsigned short status);
 
     const ApplePaySessionPaymentRequest& paymentRequest() const { return m_paymentRequest; }
-
-    using PaymentSession::ref;
-    using PaymentSession::deref;
 
 private:
     ApplePaySession(Document&, unsigned version, ApplePaySessionPaymentRequest&&);

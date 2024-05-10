@@ -98,9 +98,6 @@ class TestParser(object):
                 assert reference_type in ("==", "!=")
                 reference_type = "match" if reference_type == "==" else "mismatch"
 
-                if (ref_file == self.filename):
-                    return {'referencefile': self.filename}
-
                 if ref_contents is not None:
                     ref_doc = Parser(ref_contents)
                 elif self.filesystem.exists(ref_file):
@@ -122,8 +119,6 @@ class TestParser(object):
             test_info = {'test': self.filename, 'crashtest': True}
         elif test_type == "testharness":
             test_info = {'test': self.filename, 'jstest': True}
-        elif test_type == "support" and wpt_sourcefile.name_is_reference:
-            test_info = {'referencefile': self.filename}
         elif self.options['all'] is True:
             test_info = {'test': self.filename}
 

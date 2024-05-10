@@ -55,6 +55,8 @@ void nw_parameters_set_traffic_class(nw_parameters_t, uint32_t traffic_class);
 
 nw_interface_t nw_path_copy_interface(nw_path_t);
 
+bool nw_settings_get_unified_http_enabled(void);
+
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)

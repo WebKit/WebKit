@@ -1348,4 +1348,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setPDFDisplayModeForTesting(Element element, DOMString mode);
 
     readonly attribute DOMString defaultSpatialTrackingLabel;
+
+    boolean isEffectivelyMuted(HTMLMediaElement element);
 };

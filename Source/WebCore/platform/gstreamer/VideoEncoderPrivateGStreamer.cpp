@@ -215,7 +215,6 @@ struct _WebKitVideoEncoderPrivate {
     unsigned bitrate;
     BitrateMode bitrateMode;
     LatencyMode latencyMode;
-    String codecString;
     RefPtr<WebKitVideoEncoderBitRateAllocation> bitRateAllocation;
 };
 
@@ -224,8 +223,7 @@ WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitVideoEncoder, webkit_video_encoder, GST_TYPE_
     GST_DEBUG_CATEGORY_INIT(video_encoder_debug, "webkitvideoencoderprivate", 0, "WebKit Video Encoder Private"))
 
 enum {
-    PROP_FORMAT = 1,
-    PROP_ENCODER,
+    PROP_ENCODER = 1,
     PROP_BITRATE,
     PROP_KEYFRAME_INTERVAL,
     PROP_BITRATE_MODE,
@@ -239,13 +237,6 @@ static void videoEncoderGetProperty(GObject* object, guint propertyId, GValue* v
     auto* priv = self->priv;
 
     switch (propertyId) {
-    case PROP_FORMAT:
-        if (priv->encoderId != None) {
-            auto encoder = Encoders::definition(priv->encoderId);
-            g_value_set_boxed(value, encoder->caps.get());
-        } else
-            g_value_set_boxed(value, nullptr);
-        break;
     case PROP_ENCODER:
         g_value_set_object(value, priv->encoder.get());
         break;
@@ -281,7 +272,7 @@ static void videoEncoderSetBitrate(WebKitVideoEncoder* self, guint bitrate)
     }
 }
 
-static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId, GRefPtr<GstCaps>&& encodedCaps, const String& codecString)
+static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId, GRefPtr<GstCaps>&& inputCaps, GRefPtr<GstCaps>&& encodedCaps)
 {
     ASSERT(encoderId != EncoderId::None);
 
@@ -401,7 +392,8 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
         }
     }
 
-    priv->codecString = codecString.isolatedCopy();
+    g_object_set(self->priv->inputCapsFilter.get(), "caps", inputCaps.get(), nullptr);
+
     encoderDefinition->setupEncoder(self);
 
     encoderDefinition->setBitrateMode(priv->encoder.get(), priv->bitrateMode);
@@ -487,20 +479,45 @@ EncoderId videoEncoderFindForFormat(WebKitVideoEncoder* self, const GRefPtr<GstC
     return candidates[0].first;
 }
 
-bool videoEncoderSupportsFormat(WebKitVideoEncoder* self, const GRefPtr<GstCaps>& caps)
+EncoderId videoEncoderFindForCodec(WebKitVideoEncoder* self, const String& codecName)
 {
-    return videoEncoderFindForFormat(self, caps) != None;
+    const char* gstCodec = nullptr;
+    if (codecName == "vp8"_s || codecName == "vp08"_s)
+        gstCodec = "vp8";
+    else if (codecName.startsWith("vp9"_s) || codecName.startsWith("vp09"_s))
+        gstCodec = "vp9";
+    else if (codecName.startsWith("avc1"_s))
+        gstCodec = "h264";
+    else if (codecName.startsWith("hvc1"_s) || codecName.startsWith("hev1"_s))
+        gstCodec = "h265";
+    else if (codecName.startsWith("av01"_s))
+        gstCodec = "av1";
+
+    if (!gstCodec)
+        return None;
+
+    auto name = makeString("video/x-"_s, gstCodec);
+    auto caps = adoptGRef(gst_caps_new_empty_simple(name.ascii().data()));
+    return videoEncoderFindForFormat(self, caps);
 }
 
-bool videoEncoderSetFormat(WebKitVideoEncoder* self, GRefPtr<GstCaps>&& caps, const String& codecString)
+bool videoEncoderSupportsCodec(WebKitVideoEncoder* self, const String& codecName)
 {
-    auto encoderId = videoEncoderFindForFormat(self, caps);
+    return videoEncoderFindForCodec(self, codecName) != None;
+}
+
+bool videoEncoderSetCodec(WebKitVideoEncoder* self, const String& codecName, std::optional<IntSize> size, std::optional<double> frameRate)
+{
+    auto encoderId = videoEncoderFindForCodec(self, codecName);
     if (encoderId == None) {
-        GST_ERROR_OBJECT(self, "No encoder found for format %" GST_PTR_FORMAT, caps.get());
+        GST_ERROR_OBJECT(self, "No encoder found for codec %s", codecName.ascii().data());
         return false;
     }
 
-    return videoEncoderSetEncoder(self, encoderId, WTFMove(caps), codecString);
+    auto [inputCaps, outputCaps] = GStreamerCodecUtilities::capsFromCodecString(codecName, size, frameRate);
+    GST_DEBUG_OBJECT(self, "Input caps: %" GST_PTR_FORMAT, inputCaps.get());
+    GST_DEBUG_OBJECT(self, "Output caps: %" GST_PTR_FORMAT, outputCaps.get());
+    return videoEncoderSetEncoder(self, encoderId, WTFMove(inputCaps), WTFMove(outputCaps));
 }
 
 void videoEncoderSetBitRateAllocation(WebKitVideoEncoder* self, RefPtr<WebKitVideoEncoderBitRateAllocation>&& allocation)
@@ -520,11 +537,6 @@ static void videoEncoderSetProperty(GObject* object, guint propertyId, const GVa
     auto* priv = self->priv;
 
     switch (propertyId) {
-    case PROP_FORMAT: {
-        auto caps = adoptGRef(gst_caps_copy(gst_value_get_caps(value)));
-        videoEncoderSetFormat(self, WTFMove(caps));
-        break;
-    }
     case PROP_BITRATE:
         videoEncoderSetBitrate(self, g_value_get_uint(value));
         break;
@@ -672,58 +684,6 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
         [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->encoder.get(), "key-int-max", 15, "threads", NUMBER_OF_THREADS, "b-adapt", FALSE, "vbv-buf-capacity", 120, nullptr);
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
-
-            const auto* structure = gst_caps_get_structure(self->priv->encodedCaps.get(), 0);
-            auto inputCaps = adoptGRef(gst_caps_new_any());
-            if (const char* profileString = gst_structure_get_string(structure, "profile")) {
-                const char* pixelFormat = nullptr;
-                auto pad = adoptGRef(gst_element_get_static_pad(self->priv->encoder.get(), "sink"));
-                auto allowedCaps = adoptGRef(gst_pad_query_caps(pad.get(), nullptr));
-                const auto* structure = gst_caps_get_structure(allowedCaps.get(), 0);
-                const auto* formatValue = gst_structure_get_value(structure, "format");
-                unsigned size = gst_value_list_get_size(formatValue);
-                bool supports10BitsLittleEndian = false;
-                bool supports10BitsBigEndian = false;
-
-                for (unsigned i = 0; i < size; i++) {
-                    auto* value = gst_value_list_get_value(formatValue, i);
-                    const char* format = g_value_get_string(value);
-                    if (g_str_has_suffix(format, "_10LE")) {
-                        supports10BitsLittleEndian = true;
-                        break;
-                    }
-                    if (g_str_has_suffix(format, "_10BE")) {
-                        supports10BitsBigEndian = true;
-                        break;
-                    }
-                }
-
-                if (g_str_has_prefix(profileString, "high-4:4:4")) {
-                    if (supports10BitsLittleEndian)
-                        pixelFormat = "Y444_10LE";
-                    else if (supports10BitsBigEndian)
-                        pixelFormat = "Y444_10BE";
-                    else
-                        pixelFormat = "Y444";
-                } else if (g_str_has_prefix(profileString, "high-4:2:2")) {
-                    if (supports10BitsLittleEndian)
-                        pixelFormat = "I422_10LE";
-                    else if (supports10BitsBigEndian)
-                        pixelFormat = "I422_10BE";
-                    else
-                        pixelFormat = "Y42B";
-                } else if (g_str_has_prefix(profileString, "high-10")) {
-                    if (supports10BitsLittleEndian)
-                        pixelFormat = "Y420_10LE";
-                    else if (supports10BitsBigEndian)
-                        pixelFormat = "Y420_10BE";
-                } else
-                    pixelFormat = "I420";
-                if (pixelFormat)
-                    inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, pixelFormat, nullptr));
-            }
-            g_object_set(self->priv->inputCapsFilter.get(), "caps", inputCaps.get(), nullptr);
-            g_object_set(self->priv->outputCapsFilter.get(), "caps", self->priv->encodedCaps.get(), nullptr);
         }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement* encoder, BitrateMode mode) {
             switch (mode) {
             case CONSTANT_BITRATE_MODE:
@@ -760,36 +720,6 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
     auto setVpxEncoderInputFormat = [](auto* self) {
         g_object_set(self->priv->encoder.get(), "buffer-initial-size", 100, "buffer-optimal-size", 120, "buffer-size" , 150, "max-intra-bitrate", 250, nullptr);
         gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "error-resilient", "default");
-        auto inputCaps = adoptGRef(gst_caps_new_any());
-
-        const auto* structure = gst_caps_get_structure(self->priv->encodedCaps.get(), 0);
-        if (gst_structure_has_name(structure, "video/x-vp8"))
-            inputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
-        else if (!self->priv->codecString.isEmpty()) {
-            int width, height, framerateNumerator, framerateDenominator;
-            gst_structure_get(structure, "width", G_TYPE_INT, &width, "height", G_TYPE_INT, &height, "framerate", GST_TYPE_FRACTION, &framerateNumerator, &framerateDenominator, nullptr);
-            auto [vpxInputCaps, outputCaps] = GStreamerCodecUtilities::capsFromCodecString(self->priv->codecString, width, height, framerateNumerator, framerateDenominator);
-            inputCaps = WTFMove(vpxInputCaps);
-            self->priv->encodedCaps = WTFMove(outputCaps);
-        }
-        if (gst_caps_is_any(inputCaps.get())) {
-            if (const char* profileString = gst_structure_get_string(structure, "profile")) {
-                auto profile = StringView::fromLatin1(profileString);
-                auto profileId = parseInteger<int>(profile, 10);
-                if (profileId) {
-                    const char* format = "I420";
-                    if (*profileId == 3)
-                        format = "I422_10LE";
-                    else if (*profileId == 2)
-                        format = "I420_10LE";
-                    else if (*profileId == 1)
-                        format = "Y444";
-                    inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, format, nullptr));
-                }
-            }
-        }
-        GST_DEBUG_OBJECT(self, "VPX encoder expecting input with caps %" GST_PTR_FORMAT, inputCaps.get());
-        g_object_set(self->priv->inputCapsFilter.get(), "caps", inputCaps.get(), nullptr);
     };
 
     Encoders::registerEncoder(Vp8, "vp8enc", nullptr, "video/x-vp8", nullptr,
@@ -1024,86 +954,6 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
         "video/x-h265,alignment=au,stream-format=byte-stream",
         [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->encoder.get(), "key-int-max", 15, nullptr);
-
-            const auto* structure = gst_caps_get_structure(self->priv->encodedCaps.get(), 0);
-            auto inputCaps = adoptGRef(gst_caps_new_any());
-            if (const char* profileString = gst_structure_get_string(structure, "profile")) {
-                const char* pixelFormat = nullptr;
-                auto pad = adoptGRef(gst_element_get_static_pad(self->priv->encoder.get(), "sink"));
-                auto allowedCaps = adoptGRef(gst_pad_query_caps(pad.get(), nullptr));
-                const auto* structure = gst_caps_get_structure(allowedCaps.get(), 0);
-                const auto* formatValue = gst_structure_get_value(structure, "format");
-                unsigned size = gst_value_list_get_size(formatValue);
-                bool supports10BitsLittleEndian = false;
-                bool supports10BitsBigEndian = false;
-                bool supports12BitsLittleEndian = false;
-                bool supports12BitsBigEndian = false;
-
-                for (unsigned i = 0; i < size; i++) {
-                    auto* value = gst_value_list_get_value(formatValue, i);
-                    const char* format = g_value_get_string(value);
-                    if (g_str_has_suffix(format, "_10LE"))
-                        supports10BitsLittleEndian = true;
-                    if (g_str_has_suffix(format, "_10BE"))
-                        supports10BitsBigEndian = true;
-                    if (g_str_has_suffix(format, "_12LE"))
-                        supports12BitsLittleEndian = true;
-                    if (g_str_has_suffix(format, "_12BE"))
-                        supports12BitsBigEndian = true;
-                }
-
-                StringView profile { std::span { profileString, strlen(profileString) } };
-                auto is12Bits = profile.findIgnoringASCIICase("-12"_s) != notFound;
-                auto is10Bits = profile.findIgnoringASCIICase("-10"_s) != notFound;
-                auto isY444 = profile.findIgnoringASCIICase("-444"_s) != notFound;
-                auto isY422 = profile.findIgnoringASCIICase("-422"_s) != notFound;
-
-                if (is12Bits) {
-                    if (isY444) {
-                        if (supports12BitsLittleEndian)
-                            pixelFormat = "Y444_12LE";
-                        else if (supports12BitsBigEndian)
-                            pixelFormat = "Y444_12BE";
-                        else
-                            pixelFormat = "Y444";
-                    } else if (isY422) {
-                        if (supports12BitsLittleEndian)
-                            pixelFormat = "I422_12LE";
-                        else if (supports12BitsBigEndian)
-                            pixelFormat = "I422_12BE";
-                        else
-                            pixelFormat = "Y42B";
-                    }
-                } else if (is10Bits) {
-                    if (isY444) {
-                        if (supports10BitsLittleEndian)
-                            pixelFormat = "Y444_10LE";
-                        else if (supports10BitsBigEndian)
-                            pixelFormat = "Y444_10BE";
-                        else
-                            pixelFormat = "Y444";
-                    } else if (isY422) {
-                        if (supports10BitsLittleEndian)
-                            pixelFormat = "Y422_10LE";
-                        else if (supports10BitsBigEndian)
-                            pixelFormat = "Y422_10BE";
-                        else
-                            pixelFormat = "Y42B";
-                    } else if (profile == "high-10"_s) {
-                        if (supports10BitsLittleEndian)
-                            pixelFormat = "Y420_10LE";
-                        else if (supports10BitsBigEndian)
-                            pixelFormat = "Y420_10BE";
-                    }
-                } else
-                    pixelFormat = "I420";
-
-                GST_DEBUG("Setting pixel format %s for profile %s", pixelFormat, profileString);
-                if (pixelFormat)
-                    inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, pixelFormat, nullptr));
-            }
-            g_object_set(self->priv->inputCapsFilter.get(), "caps", inputCaps.get(), nullptr);
-            g_object_set(self->priv->outputCapsFilter.get(), "caps", self->priv->encodedCaps.get(), nullptr);
         }, "bitrate", [](GObject* object, const char* propertyName, int bitrate) {
             if (UNLIKELY(!bitrate))
                 return;
@@ -1137,8 +987,6 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
 
     auto srcPadTemplateCaps = createSrcPadTemplateCaps();
     gst_element_class_add_pad_template(elementClass, gst_pad_template_new("src", GST_PAD_SRC, GST_PAD_ALWAYS, srcPadTemplateCaps.get()));
-
-    g_object_class_install_property(objectClass, PROP_FORMAT, g_param_spec_boxed("format", nullptr, nullptr, GST_TYPE_CAPS, WEBKIT_PARAM_READWRITE));
 
     g_object_class_install_property(objectClass, PROP_ENCODER, g_param_spec_object("encoder", nullptr, nullptr, GST_TYPE_ELEMENT, WEBKIT_PARAM_READABLE));
 

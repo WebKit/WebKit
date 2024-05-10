@@ -474,13 +474,13 @@ String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Mo
 
     switch (weekday) {
     case Weekday::Narrow:
-        skeletonBuilder.append("EEEEE");
+        skeletonBuilder.append("EEEEE"_s);
         break;
     case Weekday::Short:
-        skeletonBuilder.append("EEE");
+        skeletonBuilder.append("EEE"_s);
         break;
     case Weekday::Long:
-        skeletonBuilder.append("EEEE");
+        skeletonBuilder.append("EEEE"_s);
         break;
     case Weekday::None:
         break;
@@ -488,13 +488,13 @@ String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Mo
 
     switch (era) {
     case Era::Narrow:
-        skeletonBuilder.append("GGGGG");
+        skeletonBuilder.append("GGGGG"_s);
         break;
     case Era::Short:
-        skeletonBuilder.append("GGG");
+        skeletonBuilder.append("GGG"_s);
         break;
     case Era::Long:
-        skeletonBuilder.append("GGGG");
+        skeletonBuilder.append("GGGG"_s);
         break;
     case Era::None:
         break;
@@ -502,7 +502,7 @@ String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Mo
 
     switch (year) {
     case Year::TwoDigit:
-        skeletonBuilder.append("yy");
+        skeletonBuilder.append("yy"_s);
         break;
     case Year::Numeric:
         skeletonBuilder.append('y');
@@ -513,19 +513,19 @@ String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Mo
 
     switch (month) {
     case Month::TwoDigit:
-        skeletonBuilder.append("MM");
+        skeletonBuilder.append("MM"_s);
         break;
     case Month::Numeric:
         skeletonBuilder.append('M');
         break;
     case Month::Narrow:
-        skeletonBuilder.append("MMMMM");
+        skeletonBuilder.append("MMMMM"_s);
         break;
     case Month::Short:
-        skeletonBuilder.append("MMM");
+        skeletonBuilder.append("MMM"_s);
         break;
     case Month::Long:
-        skeletonBuilder.append("MMMM");
+        skeletonBuilder.append("MMMM"_s);
         break;
     case Month::None:
         break;
@@ -533,7 +533,7 @@ String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Mo
 
     switch (day) {
     case Day::TwoDigit:
-        skeletonBuilder.append("dd");
+        skeletonBuilder.append("dd"_s);
         break;
     case Day::Numeric:
         skeletonBuilder.append('d');
@@ -593,13 +593,13 @@ String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Mo
     // https://unicode-org.atlassian.net/browse/ICU-20731
     switch (dayPeriod) {
     case DayPeriod::Narrow:
-        skeletonBuilder.append("BBBBB");
+        skeletonBuilder.append("BBBBB"_s);
         break;
     case DayPeriod::Short:
         skeletonBuilder.append('B');
         break;
     case DayPeriod::Long:
-        skeletonBuilder.append("BBBB");
+        skeletonBuilder.append("BBBB"_s);
         break;
     case DayPeriod::None:
         break;
@@ -607,7 +607,7 @@ String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Mo
 
     switch (minute) {
     case Minute::TwoDigit:
-        skeletonBuilder.append("mm");
+        skeletonBuilder.append("mm"_s);
         break;
     case Minute::Numeric:
         skeletonBuilder.append('m');
@@ -618,7 +618,7 @@ String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Mo
 
     switch (second) {
     case Second::TwoDigit:
-        skeletonBuilder.append("ss");
+        skeletonBuilder.append("ss"_s);
         break;
     case Second::Numeric:
         skeletonBuilder.append('s');
@@ -635,19 +635,19 @@ String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Mo
         skeletonBuilder.append('z');
         break;
     case TimeZoneName::Long:
-        skeletonBuilder.append("zzzz");
+        skeletonBuilder.append("zzzz"_s);
         break;
     case TimeZoneName::ShortOffset:
         skeletonBuilder.append('O');
         break;
     case TimeZoneName::LongOffset:
-        skeletonBuilder.append("OOOO");
+        skeletonBuilder.append("OOOO"_s);
         break;
     case TimeZoneName::ShortGeneric:
         skeletonBuilder.append('v');
         break;
     case TimeZoneName::LongGeneric:
-        skeletonBuilder.append("vvvv");
+        skeletonBuilder.append("vvvv"_s);
         break;
     case TimeZoneName::None:
         break;
@@ -743,7 +743,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             int64_t minutes = minutesValue.value();
             int64_t absMinutes = std::abs(minutes);
             tz = makeString(minutes < 0 ? '-' : '+', pad('0', 2, absMinutes / 60), ':', pad('0', 2, absMinutes % 60));
-            timeZoneForICU = makeString("GMT", minutes < 0 ? '-' : '+', pad('0', 2, absMinutes / 60), pad('0', 2, absMinutes % 60));
+            timeZoneForICU = makeString("GMT"_s, minutes < 0 ? '-' : '+', pad('0', 2, absMinutes / 60), pad('0', 2, absMinutes % 60));
         } else {
             tz = canonicalizeTimeZoneName(originalTz);
             if (tz.isNull()) {
@@ -1429,9 +1429,9 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     // While the pattern is including right HourCycle patterns, UDateIntervalFormat does not follow.
     // We need to enforce HourCycle by setting "hc" extension if it is specified.
     StringBuilder localeBuilder;
-    localeBuilder.append(m_dataLocale, "-u-ca-", m_calendar, "-nu-", m_numberingSystem);
+    localeBuilder.append(m_dataLocale, "-u-ca-"_s, m_calendar, "-nu-"_s, m_numberingSystem);
     if (m_hourCycle != HourCycle::None)
-        localeBuilder.append("-hc-", hourCycleString(m_hourCycle));
+        localeBuilder.append("-hc-"_s, hourCycleString(m_hourCycle));
     CString dataLocaleWithExtensions = localeBuilder.toString().utf8();
 
     UErrorCode status = U_ZERO_ERROR;

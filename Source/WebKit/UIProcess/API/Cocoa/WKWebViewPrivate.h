@@ -352,6 +352,7 @@ for this property.
 
 @property (nonatomic, weak, setter=_setInputDelegate:) id <_WKInputDelegate> _inputDelegate WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
+@property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneImageDocument) BOOL _displayingStandaloneImageDocument;
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneMediaDocument) BOOL _displayingStandaloneMediaDocument;
 
@@ -562,7 +563,7 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 #if !TARGET_OS_TV && !TARGET_OS_WATCH && __has_include(<UIKit/_UITextSearching.h>)
 @interface WKWebView (WKPrivateIOS) <_UITextSearching, UITextSearching, UIFindInteractionDelegate>
-#elif TARGET_OS_IOS && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
+#elif TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 @interface WKWebView (WKPrivateIOS) <UITextSearching, UIFindInteractionDelegate>
 #else
 @interface WKWebView (WKPrivateIOS)
@@ -573,7 +574,7 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 @property (nonatomic, copy, setter=_setEphemeralUIEventAttribution:) UIEventAttribution *_ephemeralUIEventAttribution WK_API_AVAILABLE(ios(16.0));
 - (void)_setEphemeralUIEventAttribution:(UIEventAttribution *)attribution forApplicationWithBundleID:(NSString *)bundleID WK_API_AVAILABLE(ios(16.0));
 
-#if TARGET_OS_IOS && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
+#if TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 @property (nonatomic, readonly) _UIFindInteraction *_findInteraction WK_API_AVAILABLE(ios(16.0));
 @property (nonatomic, readwrite, setter=_setFindInteractionEnabled:) BOOL _findInteractionEnabled WK_API_AVAILABLE(ios(16.0));
 
@@ -615,7 +616,6 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 @property (nonatomic, setter=_setAllowsViewportShrinkToFit:) BOOL _allowsViewportShrinkToFit;
 
 // FIXME: Remove these three properties once we expose WKWebViewContentProvider as API.
-@property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF;
 @property (nonatomic, readonly) NSData *_dataForDisplayedPDF;
 // FIXME: This can be removed once WKNavigation's response property is implemented.
 @property (nonatomic, readonly) NSString *_suggestedFilenameForDisplayedPDF;

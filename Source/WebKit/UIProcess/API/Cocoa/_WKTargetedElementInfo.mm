@@ -158,4 +158,9 @@
     return _info->isInShadowTree();
 }
 
+- (BOOL)hasAudibleMedia
+{
+    return _info->hasAudibleMedia();
+}
+
 @end

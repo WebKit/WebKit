@@ -80,7 +80,8 @@ Frame::~Frame()
 
 #if ASSERT_ENABLED
     auto it = allFrames().find(m_frameID);
-    ASSERT(it != allFrames().end());
+    if (it == allFrames().end())
+        return;
     if (it->value.ptr() == this)
         allFrames().remove(it);
     else
@@ -195,6 +196,15 @@ bool Frame::hasOpenedFrames() const
 CheckedRef<HistoryController> Frame::checkedHistory() const
 {
     return m_history.get();
+}
+
+void Frame::setOwnerElement(HTMLFrameOwnerElement* element)
+{
+    m_ownerElement = element;
+    if (element) {
+        element->clearContentFrame();
+        element->setContentFrame(*this);
+    }
 }
 
 } // namespace WebCore

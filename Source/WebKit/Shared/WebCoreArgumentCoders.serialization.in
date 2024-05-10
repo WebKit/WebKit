@@ -906,6 +906,7 @@ header: <WebCore/ElementTargetingTypes.h>
     bool isNearbyTarget
     bool isPseudoElement
     bool isInShadowTree
+    bool hasAudibleMedia
 };
 
 header: <WebCore/RenderStyleConstants.h>
@@ -1139,10 +1140,15 @@ struct WebCore::ApplePayShippingMethod {
 #endif
 }
 
+[Nested] enum class WebCore::ApplePayError::Domain : uint8_t {
+    Disbursement
+};
+
 [RefCounted] class WebCore::ApplePayError {
     WebCore::ApplePayErrorCode code()
     std::optional<WebCore::ApplePayErrorContactField> contactField()
     String message()
+    std::optional<WebCore::ApplePayError::Domain> domain();
 }
 
 enum class WebCore::ApplePayLogoStyle : bool
@@ -1231,6 +1237,10 @@ enum class WebCore::ApplePayErrorCode : uint8_t {
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     CouponCodeInvalid,
     CouponCodeExpired,
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    UnsupportedCard,
+    RecipientContactInvalid,
 #endif
 };
 #endif // ENABLE(APPLE_PAY)
@@ -2464,15 +2474,6 @@ enum class WebCore::PixelFormat : uint8_t {
     BGRA8,
     RGB10,
     RGB10A8,
-};
-
-enum class WebCore::PixelFormatValidated : uint8_t {
-    BGRX8,
-    BGRA8,
-#if HAVE(IOSURFACE_RGB10)
-    RGB10,
-    RGB10A8,
-#endif
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PixelBufferFormat {
@@ -4564,7 +4565,7 @@ header: <WebCore/ImageBuffer.h>
     WebCore::FloatSize logicalSize;
     float resolutionScale;
     WebCore::DestinationColorSpace colorSpace
-    WebCore::PixelFormatValidated pixelFormatValidated;
+    WebCore::PixelFormat pixelFormat;
     WebCore::RenderingPurpose purpose;
 };
 

@@ -73,7 +73,11 @@ TEST(SelectionTests, SelectWordForReplacementWithDictationAlternative)
     EXPECT_WK_STREQ("foo bar", [webView selectedText]);
 }
 
-@interface SelectionChangeListener : NSObject <UITextInputDelegate>
+@interface SelectionChangeListener : NSObject<
+#if USE(BROWSERENGINEKIT)
+    BETextInputDelegate,
+#endif
+    UITextInputDelegate>
 @property (nonatomic) dispatch_block_t selectionWillChangeHandler;
 @property (nonatomic) dispatch_block_t selectionDidChangeHandler;
 @end
@@ -123,6 +127,43 @@ TEST(SelectionTests, SelectWordForReplacementWithDictationAlternative)
 {
 }
 
+#if USE(BROWSERENGINEKIT)
+
+#pragma mark - BETextInputDelegate
+
+- (void)selectionWillChangeForTextInput:(id<BETextInput>)textInput
+{
+    if (_selectionWillChangeHandler)
+        _selectionWillChangeHandler();
+}
+
+- (void)selectionDidChangeForTextInput:(id<BETextInput>)textInput
+{
+    if (_selectionDidChangeHandler)
+        _selectionDidChangeHandler();
+}
+
+// Empty stubs for delegate protocol conformance.
+
+- (BOOL)shouldDeferEventHandlingToSystemForTextInput:(id<BETextInput>)textInput context:(BEKeyEntryContext *)keyEventContext
+{
+    return NO;
+}
+
+- (void)textInput:(id<BETextInput>)textInput setCandidateSuggestions:(NSArray<BETextSuggestion *> *)suggestions
+{
+}
+
+- (void)textInput:(id<BETextInput>)textInput deferReplaceTextActionToSystem:(id)sender
+{
+}
+
+- (void)invalidateTextEntryContextForTextInput:(id<BETextInput>)textInput
+{
+}
+
+#endif // USE(BROWSERENGINEKIT)
+
 @end
 
 TEST(SelectionTests, SelectedTextAfterSelectingWordForReplacement)
@@ -133,6 +174,10 @@ TEST(SelectionTests, SelectedTextAfterSelectingWordForReplacement)
 
     auto contentView = [webView textInputContentView];
     [contentView setInputDelegate:listener.get()];
+
+#if USE(BROWSERENGINEKIT)
+    [webView asyncTextInput].asyncInputDelegate = listener.get();
+#endif
 
     __block bool selectionWillChange = false;
     [listener setSelectionWillChangeHandler:^{

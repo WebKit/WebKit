@@ -50,7 +50,7 @@ TEST(WebKit, LoadAndDecodeImage)
     };
 
     HTTPServer server {
-        { "/terminate"_s, { HTTPResponse::TerminateConnection::Yes } },
+        { "/terminate"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse } },
         { "/test_png"_s, { pngData() } },
         { "/test_gif"_s, { gifData() } },
         { "/not_image"_s, { "this is not an image"_s } }

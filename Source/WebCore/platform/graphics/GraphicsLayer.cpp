@@ -955,6 +955,9 @@ void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOpti
     if (!m_backfaceVisibility)
         ts << indent << "(backfaceVisibility "_s << (m_backfaceVisibility ? "visible"_s : "hidden"_s) << ")\n"_s;
 
+    if (m_isBackdropRoot)
+        ts << indent << "(backdropRoot "_s << m_isBackdropRoot << ")\n"_s;
+
     if (options & LayerTreeAsTextOptions::Debug)
         ts << indent << "(primary-layer-id "_s << primaryLayerID() << ")\n"_s;
 

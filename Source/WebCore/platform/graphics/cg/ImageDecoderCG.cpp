@@ -273,7 +273,7 @@ size_t ImageDecoderCG::bytesDecodedToDetermineProperties() const
     // behavior is unchanged.
     return 13088;
 }
-    
+
 String ImageDecoderCG::filenameExtension() const
 {
     return WebCore::preferredExtensionForImageType(uti());
@@ -555,9 +555,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CGImageSetCachingFlags(image.get(), kCGImageCachingTemporary);
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // PLATFORM(IOS_FAMILY)
-    
-    String uti = this->uti();
-    if (uti.isEmpty() || uti != "public.xbitmap-image"_s)
+
+    if (!m_isXBitmapImage)
         return image;
     
     // If it is an xbm image, mask out all the white areas to render them transparent.
@@ -660,6 +659,7 @@ void ImageDecoderCG::setData(const FragmentedSharedBuffer& data, bool allDataRec
     CGImageSourceUpdateData(m_nativeDecoder.get(), contiguousData->createCFData().get(), allDataReceived);
     
     m_uti = decodeUTI(contiguousData.get());
+    m_isXBitmapImage = m_uti == "public.xbitmap-image"_s;
 }
 
 bool ImageDecoderCG::canDecodeType(const String& mimeType)

@@ -336,7 +336,7 @@ public:
     void setLayoutBox(Layout::Box&);
     void clearLayoutBox();
 
-    RenderTheme& theme() const;
+    WEBCORE_EXPORT RenderTheme& theme() const;
 
     virtual ASCIILiteral renderName() const = 0;
 
@@ -392,7 +392,7 @@ public:
     RenderFragmentedFlow* enclosingFragmentedFlow() const;
 
     WEBCORE_EXPORT bool useDarkAppearance() const;
-    OptionSet<StyleColorOptions> styleColorOptions() const;
+    WEBCORE_EXPORT OptionSet<StyleColorOptions> styleColorOptions() const;
 
 #if ASSERT_ENABLED
     void setHasAXObject(bool flag) { m_hasAXObject = flag; }

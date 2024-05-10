@@ -80,9 +80,7 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
 
     auto manifestString = TextResourceDecoder::create(cacheManifestMIMEType, "UTF-8")->decodeAndFlush(data);
 
-    return readCharactersForParsing(manifestString, [&](auto buffer) -> std::optional<ApplicationCacheManifest> {
-        using CharacterType = typename decltype(buffer)::CharacterType;
-    
+    return readCharactersForParsing(manifestString, [&]<typename CharacterType> (StringParsingBuffer<CharacterType> buffer) -> std::optional<ApplicationCacheManifest> {
         ApplicationCacheManifest manifest;
         auto mode = ApplicationCacheParserMode::Explicit;
 

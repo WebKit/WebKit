@@ -37,10 +37,10 @@ String CSSLinearTimingFunctionValue::customCSSText() const
         return "linear"_s;
 
     StringBuilder builder;
-    builder.append("linear(");
+    builder.append("linear("_s);
     for (size_t i = 0; i < m_points.size(); ++i) {
         if (i)
-            builder.append(", ");
+            builder.append(", "_s);
 
         const auto& point = m_points[i];
         builder.append(FormattedNumber::fixedPrecision(point.value), ' ', FormattedNumber::fixedPrecision(point.progress * 100.0), '%');

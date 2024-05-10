@@ -45,14 +45,14 @@ inline LayoutUnit RenderBoxModelObject::borderLogicalWidth() const { return bord
 inline LayoutUnit RenderBoxModelObject::borderRight() const { return LayoutUnit(style().borderRightWidth()); }
 inline LayoutUnit RenderBoxModelObject::borderStart() const { return LayoutUnit(style().borderStartWidth()); }
 inline LayoutUnit RenderBoxModelObject::borderTop() const { return LayoutUnit(style().borderTopWidth()); }
-inline LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const { return computedCSSPadding(style().paddingAfter()); }
-inline LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const { return computedCSSPadding(style().paddingBefore()); }
-inline LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const { return computedCSSPadding(style().paddingBottom()); }
-inline LayoutUnit RenderBoxModelObject::computedCSSPaddingEnd() const { return computedCSSPadding(style().paddingEnd()); }
-inline LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const { return computedCSSPadding(style().paddingLeft()); }
-inline LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const { return computedCSSPadding(style().paddingRight()); }
-inline LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const { return computedCSSPadding(style().paddingStart()); }
-inline LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const { return computedCSSPadding(style().paddingTop()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingAfter()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingBefore()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingBottom()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSPaddingEnd() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingEnd()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingLeft()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingRight()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingStart()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingTop()); }
 inline bool RenderBoxModelObject::hasInlineDirectionBordersOrPadding() const { return borderStart() || borderEnd() || paddingStart() || paddingEnd(); }
 inline bool RenderBoxModelObject::hasInlineDirectionBordersPaddingOrMargin() const { return hasInlineDirectionBordersOrPadding() || marginStart() || marginEnd(); }
 inline LayoutUnit RenderBoxModelObject::horizontalBorderAndPaddingExtent() const { return borderLeft() + borderRight() + paddingLeft() + paddingRight(); }
@@ -88,12 +88,12 @@ inline RectEdges<LayoutUnit> RenderBoxModelObject::borderWidths() const
     };
 }
 
-inline LayoutUnit RenderBoxModelObject::computedCSSPadding(const Length& padding) const
+inline LayoutUnit RenderBoxModelObject::resolveLengthPercentageUsingContainerLogicalWidth(const Length& value) const
 {
     LayoutUnit containerWidth;
-    if (padding.isPercentOrCalculated())
+    if (value.isPercentOrCalculated())
         containerWidth = containingBlockLogicalWidthForContent();
-    return minimumValueForLength(padding, containerWidth);
+    return minimumValueForLength(value, containerWidth);
 }
 
 } // namespace WebCore

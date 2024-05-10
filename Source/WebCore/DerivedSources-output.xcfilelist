@@ -1283,6 +1283,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUQueryType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUQueryType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUQueue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUQueue.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUQueueDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUQueueDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderBundle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderBundle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURenderBundleDescriptor.cpp

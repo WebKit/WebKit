@@ -141,18 +141,18 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
 
 void StyleRuleBase::operator delete(StyleRuleBase* rule, std::destroying_delete_t)
 {
-    rule->visitDerived([](auto& rule) {
+    rule->visitDerived([]<typename RuleType> (RuleType& rule) {
         std::destroy_at(&rule);
-        std::decay_t<decltype(rule)>::freeAfterDestruction(&rule);
+        RuleType::freeAfterDestruction(&rule);
     });
 }
 
 Ref<StyleRuleBase> StyleRuleBase::copy() const
 {
-    return visitDerived([](auto& rule) -> Ref<StyleRuleBase> {
+    return visitDerived([]<typename RuleType> (RuleType& rule) -> Ref<StyleRuleBase> {
         // Check at compile time for a mistake where this function would call itself, leading to infinite recursion.
         // We can do this with the types of pointers to member functions because they includes the type of the class.
-        static_assert(!std::is_same_v<decltype(&std::decay_t<decltype(rule)>::copy), decltype(&StyleRuleBase::copy)>);
+        static_assert(!std::is_same_v<decltype(&RuleType::copy), decltype(&StyleRuleBase::copy)>);
         return rule.copy();
     });
 }

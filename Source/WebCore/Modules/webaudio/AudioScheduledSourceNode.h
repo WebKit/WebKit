@@ -36,6 +36,10 @@ namespace WebCore {
 class AudioScheduledSourceNode : public AudioNode, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(AudioScheduledSourceNode);
 public:
+    // ActiveDOMObject.
+    void ref() const final { AudioNode::ref(); }
+    void deref() const final { AudioNode::deref(); }
+
     // These are the possible states an AudioScheduledSourceNode can be in:
     //
     // UNSCHEDULED_STATE - Initial playback state. Created, but not yet scheduled.
@@ -77,7 +81,9 @@ protected:
     // Called when we have no more sound to play or the noteOff() time has been reached.
     virtual void finish();
 
+    // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
+
     void eventListenersDidChange() final;
 
     bool requiresTailProcessing() const final { return false; }

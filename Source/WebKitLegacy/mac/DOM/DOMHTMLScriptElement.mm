@@ -49,7 +49,7 @@
 - (void)setText:(NSString *)newText
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setText(newText);
+    IMPL->setText(String(newText));
 }
 
 - (NSString *)htmlFor

@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul role="menu">
+    <li role="presentation"><a id="menuitem" role="menuitem" href="#foo-bar">Foo bar</a></li>
+    <li id="menuitemcheckbox" role="menuitemcheckbox" tabindex="-1" aria-checked="false">Checkbox</li>
+    <li id="menuitemradio" role="menuitemradio" tabindex="-1" aria-checked="false">Radio</li>
+</ul>
+
+<script>
+var output = "This test ensures the menu item trait is returned correctly.\n\n";
+
+if (window.accessibilityController) {
+    output += expect("accessibilityController.accessibleElementById('menuitem').hasMenuItemTrait", "true");
+    output += expect("accessibilityController.accessibleElementById('menuitemcheckbox').hasMenuItemTrait", "true");
+    output += expect("accessibilityController.accessibleElementById('menuitemradio').hasMenuItemTrait", "true");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

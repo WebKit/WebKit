@@ -177,9 +177,7 @@ double Color::luminance() const
 
 bool Color::anyComponentIsNone() const
 {
-    return callOnUnderlyingType([&] (const auto& underlyingColor) {
-        using ColorType = std::decay_t<decltype(underlyingColor)>;
-
+    return callOnUnderlyingType([&]<typename ColorType> (const ColorType& underlyingColor) {
         if constexpr (std::is_same_v<ColorType, SRGBA<uint8_t>>)
             return false;
         else
@@ -202,9 +200,7 @@ Color Color::colorWithAlpha(float alpha) const
 
 Color Color::invertedColorWithAlpha(float alpha) const
 {
-    return callOnUnderlyingType([&] (const auto& underlyingColor) -> Color {
-        using ColorType = std::decay_t<decltype(underlyingColor)>;
-
+    return callOnUnderlyingType([&]<typename ColorType> (const ColorType& underlyingColor) -> Color {
         // FIXME: Determine if there is a meaningful understanding of inversion that works
         // better for non-invertible color types like Lab or consider removing this in favor
         // of alternatives.

@@ -98,8 +98,8 @@ public:
     ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> matchingFacesExcludingPreinstalledFonts(const String& font, const String& text);
 
     // CSSFontFaceClient needs to be able to be held in a RefPtr.
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
     // FIXME: Should this be implemented?
     void updateStyleIfNeeded(CSSFontFace&) final { }
 

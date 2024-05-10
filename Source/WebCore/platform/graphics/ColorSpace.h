@@ -82,55 +82,60 @@ template<typename T> struct ColorSpaceMapping<XYZA<T, WhitePoint::D65>> { static
 
 template<typename ColorType> constexpr ColorSpace ColorSpaceFor = ColorSpaceMapping<CanonicalColorType<ColorType>>::colorSpace;
 
-
-template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T, 4>& components, ColorSpace colorSpace, Functor&& functor)
+template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(ColorSpace colorSpace, Functor&& functor)
 {
     switch (colorSpace) {
     case ColorSpace::A98RGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<A98RGB<T>>(components));
+        return functor.template operator()<A98RGB<T>>();
     case ColorSpace::DisplayP3:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
+        return functor.template operator()<DisplayP3<T>>();
     case ColorSpace::ExtendedA98RGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedA98RGB<T>>(components));
+        return functor.template operator()<ExtendedA98RGB<T>>();
     case ColorSpace::ExtendedDisplayP3:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedDisplayP3<T>>(components));
+        return functor.template operator()<ExtendedDisplayP3<T>>();
     case ColorSpace::ExtendedLinearSRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedLinearSRGBA<T>>(components));
+        return functor.template operator()<ExtendedLinearSRGBA<T>>();
     case ColorSpace::ExtendedProPhotoRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedProPhotoRGB<T>>(components));
+        return functor.template operator()<ExtendedProPhotoRGB<T>>();
     case ColorSpace::ExtendedRec2020:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedRec2020<T>>(components));
+        return functor.template operator()<ExtendedRec2020<T>>();
     case ColorSpace::ExtendedSRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedSRGBA<T>>(components));
+        return functor.template operator()<ExtendedSRGBA<T>>();
     case ColorSpace::HSL:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<HSLA<T>>(components));
+        return functor.template operator()<HSLA<T>>();
     case ColorSpace::HWB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<HWBA<T>>(components));
+        return functor.template operator()<HWBA<T>>();
     case ColorSpace::LCH:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<LCHA<T>>(components));
+        return functor.template operator()<LCHA<T>>();
     case ColorSpace::Lab:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
+        return functor.template operator()<Lab<T>>();
     case ColorSpace::LinearSRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
+        return functor.template operator()<LinearSRGBA<T>>();
     case ColorSpace::OKLCH:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<OKLCHA<T>>(components));
+        return functor.template operator()<OKLCHA<T>>();
     case ColorSpace::OKLab:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<OKLab<T>>(components));
+        return functor.template operator()<OKLab<T>>();
     case ColorSpace::ProPhotoRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ProPhotoRGB<T>>(components));
+        return functor.template operator()<ProPhotoRGB<T>>();
     case ColorSpace::Rec2020:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<Rec2020<T>>(components));
+        return functor.template operator()<Rec2020<T>>();
     case ColorSpace::SRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
+        return functor.template operator()<SRGBA<T>>();
     case ColorSpace::XYZ_D50:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<XYZA<T, WhitePoint::D50>>(components));
+        return functor.template operator()<XYZA<T, WhitePoint::D50>>();
     case ColorSpace::XYZ_D65:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<XYZA<T, WhitePoint::D65>>(components));
+        return functor.template operator()<XYZA<T, WhitePoint::D65>>();
     }
 
     ASSERT_NOT_REACHED();
-    return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
+    return functor.template operator()<SRGBA<T>>();
 }
 
+template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T, 4>& components, ColorSpace colorSpace, Functor&& functor)
+{
+    return callWithColorType<T>(colorSpace, [&]<typename ColorType>() {
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ColorType>(components));
+    });
+}
 
 } // namespace WebCore

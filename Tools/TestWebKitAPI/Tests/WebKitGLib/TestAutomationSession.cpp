@@ -88,9 +88,9 @@ public:
     {
         static long sequenceID = 0;
         StringBuilder messageBuilder;
-        messageBuilder.append("{\"id\":", ++sequenceID, ",\"method\":\"Automation.", command, '"');
+        messageBuilder.append("{\"id\":"_s, ++sequenceID, ",\"method\":\"Automation."_s, command, '"');
         if (!parameters.isNull())
-            messageBuilder.append(",\"params\":", parameters);
+            messageBuilder.append(",\"params\":"_s, parameters);
         messageBuilder.append('}');
         m_connection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8().data()));
     }

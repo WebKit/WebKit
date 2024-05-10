@@ -68,6 +68,11 @@ unsigned NullImageBufferBackend::bytesPerRow() const
     return 0;
 }
 
+bool NullImageBufferBackend::canMapBackingStore() const
+{
+    return false;
+}
+
 String NullImageBufferBackend::debugDescription() const
 {
     TextStream stream;

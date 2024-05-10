@@ -211,8 +211,8 @@ public:
     virtual void fontStateChanged(CSSFontFace&, CSSFontFace::Status /*oldState*/, CSSFontFace::Status /*newState*/) { }
     virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* /*oldFamilies*/ = nullptr) { }
     virtual void updateStyleIfNeeded(CSSFontFace&) { }
-    virtual void ref() = 0;
-    virtual void deref() = 0;
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 };
 
 }

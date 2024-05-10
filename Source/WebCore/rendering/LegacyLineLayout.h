@@ -47,7 +47,6 @@ struct BidiStatus;
 struct WordMeasurement;
 
 template <class Run> class BidiRunList;
-typedef Vector<WordMeasurement, 64> WordMeasurements;
 
 class LegacyLineLayout {
     WTF_MAKE_FAST_ALLOCATED;

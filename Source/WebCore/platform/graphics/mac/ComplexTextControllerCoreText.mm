@@ -133,16 +133,24 @@ static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* c
     return reinterpret_cast<const UniChar*>(info->cp.data() + stringIndex);
 }
 
-template<bool isLTR>
+enum class CoreTextTypesetterEmbeddingLevel : short { LTR = 0, RTL = 1 };
+
+NEVER_INLINE static RetainPtr<CFDictionaryRef> buildCoreTextTypesetterEmbeddingLevelDictionary(CoreTextTypesetterEmbeddingLevel embeddingLevel)
+{
+    auto embeddingLevelValue = enumToUnderlyingType(embeddingLevel);
+    static_assert(std::is_same_v<short, decltype(embeddingLevelValue)>);
+    const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
+    const void* optionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &embeddingLevelValue) };
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, optionKeys, optionValues, std::size(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+}
+
+template<CoreTextTypesetterEmbeddingLevel embeddingLevel>
 static CFDictionaryRef typesetterOptions()
 {
     static LazyNeverDestroyed<RetainPtr<CFDictionaryRef>> options;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        short embeddingLevelValue = isLTR ? 0 : 1;
-        const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
-        const void* optionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &embeddingLevelValue) };
-        options.construct(adoptCF(CFDictionaryCreate(kCFAllocatorDefault, optionKeys, optionValues, std::size(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks)));
+        options.construct(buildCoreTextTypesetterEmbeddingLevelDictionary(embeddingLevel));
     });
     return options.get().get();
 }
@@ -188,7 +196,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         ProviderInfo info { cp, stringAttributes.get() };
         // FIXME: Some SDKs complain that the second parameter below cannot be null.
         IGNORE_NULL_CHECK_WARNINGS_BEGIN
-        auto typesetter = adoptCF(CTTypesetterCreateWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? typesetterOptions<true>() : typesetterOptions<false>()));
+        auto typesetter = adoptCF(CTTypesetterCreateWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? typesetterOptions<CoreTextTypesetterEmbeddingLevel::LTR>() : typesetterOptions<CoreTextTypesetterEmbeddingLevel::RTL>()));
         IGNORE_NULL_CHECK_WARNINGS_END
 
         if (!typesetter)

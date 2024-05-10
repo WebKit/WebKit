@@ -214,7 +214,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
         NSURL *sourceURL = [jsScript sourceURL];
         String oldModuleKey { [sourceURL absoluteString] };
         if (UNLIKELY(Identifier::fromString(vm, oldModuleKey) != moduleKey))
-            return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: ", oldModuleKey, " and now: ", moduleKey.string()));
+            return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: "_s, oldModuleKey, " and now: "_s, moduleKey.string()));
 
         strongPromise.get()->resolve(globalObject, source);
         return encodedJSUndefined();

@@ -409,7 +409,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData, const Vector<Ref<
     if (ruleData.containsUncommonAttributeSelector())
         uncommonAttributeRules.append({ ruleData });
 
-    auto addToMap = [&](auto& map, auto& entries, auto hostAffectingNames) {
+    auto addToMap = [&]<typename HostAffectingNames>(auto& map, auto& entries, HostAffectingNames hostAffectingNames) {
         for (auto& entry : entries) {
             auto& [selector, matchElement, isNegation] = entry;
             auto& name = selector->value();
@@ -420,7 +420,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData, const Vector<Ref<
 
             setUsesMatchElement(matchElement);
 
-            if constexpr (!std::is_same_v<std::nullptr_t, decltype(hostAffectingNames)>) {
+            if constexpr (!std::is_same_v<std::nullptr_t, HostAffectingNames>) {
                 if (matchElement == MatchElement::Host)
                     hostAffectingNames->add(name);
             }

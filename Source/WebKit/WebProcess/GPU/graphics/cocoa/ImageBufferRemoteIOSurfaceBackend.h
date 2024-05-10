@@ -51,8 +51,8 @@ public:
     }
 
     static constexpr bool isOriginAtBottomLeftCorner = true;
-    static constexpr bool canMapBackingStore = false;
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
+    bool canMapBackingStore() const final;
 
     WebCore::GraphicsContext& context() final;
     std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const final;

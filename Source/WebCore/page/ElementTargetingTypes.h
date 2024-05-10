@@ -57,6 +57,7 @@ struct TargetedElementInfo {
     bool isNearbyTarget { true };
     bool isPseudoElement { false };
     bool isInShadowTree { false };
+    bool hasAudibleMedia { false };
 };
 
 } // namespace WebCore

@@ -269,7 +269,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 {
     if (initFrame->isDetached())
         return Exception { ExceptionCode::InvalidStateError,  "VideoFrame is detached"_s };
-    return initializeFrameFromOtherFrame(context, WTFMove(initFrame), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::No);
+    return initializeFrameFromOtherFrame(context, WTFMove(initFrame), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
 }
 
 static std::optional<Exception> validateI420Sizes(const WebCodecsVideoFrame::BufferInit& init)

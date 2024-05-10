@@ -3930,17 +3930,6 @@ static bool isLockdownModeWarningNeeded()
     return _allowsViewportShrinkToFit;
 }
 
-- (BOOL)_isDisplayingPDF
-{
-    for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes()) {
-        Class providerClass = [[self _contentProviderRegistry] providerForMIMEType:@(type.characters())];
-        if ([_customContentView isKindOfClass:providerClass])
-            return YES;
-    }
-
-    return NO;
-}
-
 - (NSData *)_dataForDisplayedPDF
 {
     if (![self _isDisplayingPDF])

@@ -2186,13 +2186,13 @@ void ResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<v
     std::sort(domains.begin(), domains.end(), WTF::codePointCompareLessThan);
 
     StringBuilder result;
-    result.append("Resource load statistics:\n\n");
+    result.append("Resource load statistics:\n\n"_s);
     for (auto& domain : domains)
         resourceToString(result, domain);
 
     auto thirdPartyData = aggregatedThirdPartyData();
     if (!thirdPartyData.isEmpty()) {
-        result.append("\nITP Data:\n");
+        result.append("\nITP Data:\n"_s);
         for (auto thirdParty : thirdPartyData)
             result.append(thirdParty.toString(), '\n');
     }
@@ -3007,12 +3007,12 @@ bool ResourceLoadStatisticsStore::isCorrectSubStatisticsCount(const RegistrableD
 
 static void appendBoolean(StringBuilder& builder, ASCIILiteral label, bool flag)
 {
-    builder.append("    ", label, ": ", flag ? "Yes" : "No");
+    builder.append("    "_s, label, ": "_s, flag ? "Yes"_s : "No"_s);
 }
 
 static void appendNextEntry(StringBuilder& builder, const String& entry)
 {
-    builder.append("        ", entry, '\n');
+    builder.append("        "_s, entry, '\n');
 }
 
 String ResourceLoadStatisticsStore::getDomainStringFromDomainID(unsigned domainID) const
@@ -3073,7 +3073,7 @@ void ResourceLoadStatisticsStore::appendSubStatisticList(StringBuilder& builder,
     if (data->step() != SQLITE_ROW)
         return;
 
-    builder.append("    ", tableName, ":\n");
+    builder.append("    "_s, tableName, ":\n"_s);
 
     auto result = getDomainStringFromDomainID(data->columnInt(0));
     appendNextEntry(builder, result);
@@ -3099,16 +3099,16 @@ void ResourceLoadStatisticsStore::resourceToString(StringBuilder& builder, const
         return;
     }
 
-    builder.append("Registrable domain: ", domain, '\n');
+    builder.append("Registrable domain: "_s, domain, '\n');
 
     // User interaction
     appendBoolean(builder, "hadUserInteraction"_s, m_getResourceDataByDomainNameStatement->columnInt(HadUserInteractionIndex));
     builder.append('\n');
-    builder.append("    mostRecentUserInteraction: ");
+    builder.append("    mostRecentUserInteraction: "_s);
     if (hasHadRecentUserInteraction(Seconds(m_getResourceDataByDomainNameStatement->columnDouble(MostRecentUserInteractionTimeIndex)), nowTime(m_timeAdvanceForTesting)))
-        builder.append("within 24 hours");
+        builder.append("within 24 hours"_s);
     else
-        builder.append("-1");
+        builder.append("-1"_s);
     builder.append('\n');
     appendBoolean(builder, "grandfathered"_s, m_getResourceDataByDomainNameStatement->columnInt(GrandfatheredIndex));
     builder.append('\n');
@@ -3124,7 +3124,7 @@ void ResourceLoadStatisticsStore::resourceToString(StringBuilder& builder, const
     appendSubStatisticList(builder, "TopFrameLoadedThirdPartyScripts"_s, domain);
 
     auto dataRemovalFrequencyValue = m_getResourceDataByDomainNameStatement->columnInt(IsScheduledForAllButCookieDataRemovalIndex);
-    builder.append("    DataRemovalFrequency: ", dataRemovalFrequencyToString(toDataRemovalFrequency(dataRemovalFrequencyValue)), '\n');
+    builder.append("    DataRemovalFrequency: "_s, dataRemovalFrequencyToString(toDataRemovalFrequency(dataRemovalFrequencyValue)), '\n');
 
     // Subframe stats
     appendSubStatisticList(builder, "SubframeUnderTopFrameDomains"_s, domain);
@@ -3139,7 +3139,7 @@ void ResourceLoadStatisticsStore::resourceToString(StringBuilder& builder, const
     builder.append('\n');
     appendBoolean(builder, "isVeryPrevalentResource"_s, m_getResourceDataByDomainNameStatement->columnInt(IsVeryPrevalentIndex));
     builder.append('\n');
-    builder.append("    dataRecordsRemoved: ", m_getResourceDataByDomainNameStatement->columnInt(DataRecordsRemovedIndex));
+    builder.append("    dataRecordsRemoved: "_s, m_getResourceDataByDomainNameStatement->columnInt(DataRecordsRemovedIndex));
     builder.append('\n');
 }
 

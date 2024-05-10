@@ -39,8 +39,7 @@ namespace WebKit {
 using namespace WebCore;
 
 WebRemoteFrameClient::WebRemoteFrameClient(Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& frameInvalidator)
-    : WebFrameLoaderClient(WTFMove(frame))
-    , m_frameInvalidator(WTFMove(frameInvalidator))
+    : WebFrameLoaderClient(WTFMove(frame), WTFMove(frameInvalidator))
 {
 }
 

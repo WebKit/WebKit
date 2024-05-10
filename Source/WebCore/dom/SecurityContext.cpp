@@ -166,7 +166,7 @@ SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, String& inva
             flags &= ~SandboxStorageAccessByUserActivation;
         else {
             if (numberOfTokenErrors)
-                tokenErrors.append(", '");
+                tokenErrors.append(", '"_s);
             else
                 tokenErrors.append('\'');
             tokenErrors.append(sandboxToken, '\'');
@@ -178,9 +178,9 @@ SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, String& inva
 
     if (numberOfTokenErrors) {
         if (numberOfTokenErrors > 1)
-            tokenErrors.append(" are invalid sandbox flags.");
+            tokenErrors.append(" are invalid sandbox flags."_s);
         else
-            tokenErrors.append(" is an invalid sandbox flag.");
+            tokenErrors.append(" is an invalid sandbox flag."_s);
         invalidTokensErrorMessage = tokenErrors.toString();
     }
 

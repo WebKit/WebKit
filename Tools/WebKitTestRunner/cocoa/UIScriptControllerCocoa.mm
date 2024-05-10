@@ -379,4 +379,12 @@ void UIScriptControllerCocoa::adjustVisibilityForFrontmostTarget(int x, int y, J
     }];
 }
 
+void UIScriptControllerCocoa::resetVisibilityAdjustments(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    [webView() _resetVisibilityAdjustmentsForTargetedElements:nil completionHandler:[callbackID, this](BOOL success) {
+        m_context->asyncTaskComplete(callbackID, { JSValueMakeBoolean(m_context->jsContext(), success) });
+    }];
+}
+
 } // namespace WTR

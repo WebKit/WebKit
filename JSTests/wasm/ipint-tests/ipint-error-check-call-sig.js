@@ -31,4 +31,4 @@ async function test() {
     assert.throws(() => {call(5)}, WebAssembly.RuntimeError, "call_indirect to a signature that does not match (evaluating 'call(5)')");
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

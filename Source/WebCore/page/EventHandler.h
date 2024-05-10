@@ -227,6 +227,8 @@ public:
     void defaultWheelEventHandler(Node*, WheelEvent&);
     void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, OptionSet<EventHandling>);
 
+    WEBCORE_EXPORT void setLastKnownMousePosition(IntPoint position, IntPoint globalPosition);
+
     bool handlePasteGlobalSelection(const PlatformMouseEvent&);
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
@@ -587,8 +589,6 @@ private:
 #if ENABLE(FULLSCREEN_API)
     bool isKeyEventAllowedInFullScreen(const PlatformKeyboardEvent&) const;
 #endif
-
-    void setLastKnownMousePosition(const PlatformMouseEvent&);
 
 #if ENABLE(CURSOR_VISIBILITY)
     void startAutoHideCursorTimer();

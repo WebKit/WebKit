@@ -23,4 +23,4 @@ async function test() {
     print("Result", x)
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

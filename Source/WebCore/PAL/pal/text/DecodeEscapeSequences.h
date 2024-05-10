@@ -146,8 +146,7 @@ String decodeEscapeSequences(StringView string, const TextEncoding& encoding)
         if (decoded.isEmpty())
             continue;
 
-        result.append(string.substring(decodedPosition, encodedRunPosition - decodedPosition));
-        result.append(decoded);
+        result.append(string.substring(decodedPosition, encodedRunPosition - decodedPosition), decoded);
         decodedPosition = encodedRunEnd;
     }
     result.append(string.substring(decodedPosition, length - decodedPosition));

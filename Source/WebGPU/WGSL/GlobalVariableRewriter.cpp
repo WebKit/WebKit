@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WGSL {
 
@@ -225,7 +226,7 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
             lengthType.m_inferredType = m_shaderModule.types().u32Type();
 
             for (auto& length : it->value) {
-                auto lengthName = makeString("__", length, "_ArrayLength");
+                auto lengthName = makeString("__"_s, length, "_ArrayLength"_s);
                 m_shaderModule.append(callee.target->parameters(), m_shaderModule.astBuilder().construct<AST::Parameter>(
                     SourceSpan::empty(),
                     AST::Identifier::make(lengthName),
@@ -272,7 +273,7 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
                     auto result = m_lengthParameters.add(caller, ListHashSet<String> { });
                     result.iterator->value.add(identifier);
 
-                    auto lengthName = makeString("__", identifier, "_ArrayLength");
+                    auto lengthName = makeString("__"_s, identifier, "_ArrayLength"_s);
                     auto& length = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
                         SourceSpan::empty(),
                         AST::Identifier::make(lengthName)
@@ -526,7 +527,7 @@ Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
                 auto result = m_lengthParameters.add(m_currentFunction, ListHashSet<String> { });
                 result.iterator->value.add(identifier);
             }
-            auto lengthName = makeString("__", identifier, "_ArrayLength");
+            auto lengthName = makeString("__"_s, identifier, "_ArrayLength"_s);
             auto& length = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
                 SourceSpan::empty(),
                 AST::Identifier::make(lengthName)
@@ -642,7 +643,7 @@ std::optional<Error> RewriteGlobalVariables::collectGlobals()
             unsigned bufferIndex = *globalVar->group();
             auto buffersCountForStage = buffersForStage(m_shaderModule.configuration(), m_stage);
             if (bufferIndex >= buffersCountForStage)
-                return Error(makeString("global has buffer index ", String::number(bufferIndex), " which exceeds the max allowed buffer index ", String::number(buffersCountForStage), " for this stage"), SourceSpan::empty());
+                return Error(makeString("global has buffer index "_s, bufferIndex, " which exceeds the max allowed buffer index "_s, buffersCountForStage, " for this stage"_s), SourceSpan::empty());
 
             resource = { *globalVar->group(), *globalVar->binding() };
         }
@@ -669,7 +670,7 @@ std::optional<Error> RewriteGlobalVariables::collectGlobals()
 
     if (!bufferLengths.isEmpty()) {
         for (const auto& [variable, group] : bufferLengths) {
-            auto name = AST::Identifier::make(makeString("__", variable->name(), "_ArrayLength"));
+            auto name = AST::Identifier::make(makeString("__"_s, variable->name(), "_ArrayLength"_s));
             auto& lengthVariable = m_shaderModule.astBuilder().construct<AST::Variable>(
                 SourceSpan::empty(),
                 AST::VariableFlavor::Var,
@@ -828,7 +829,7 @@ const Type* RewriteGlobalVariables::packStructType(const Types::Struct* structTy
     ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
     m_shaderModule.replace(&structType->structure.role(), AST::StructureRole::UserDefinedResource);
 
-    String packedStructName = makeString("__", structType->structure.name(), "_Packed");
+    String packedStructName = makeString("__"_s, structType->structure.name(), "_Packed"_s);
 
     auto& packedStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
         SourceSpan::empty(),
@@ -1225,7 +1226,7 @@ auto RewriteGlobalVariables::determineUsedGlobals() -> Result<UsedGlobals>
 
         // FIXME: this check needs to occur during WGSL::staticCheck
         if (!bindingResult.isNewEntry)
-            return makeUnexpected(Error(makeString("entry point '", m_entryPointInformation->originalName, "' uses variables '", bindingResult.iterator->value->declaration->originalName(), "' and '", variable.originalName(), "', both which use the same resource binding: @group(", String::number(group), ") @binding(", String::number(binding), ")"), SourceSpan::empty()));
+            return makeUnexpected(Error(makeString("entry point '"_s, m_entryPointInformation->originalName, "' uses variables '"_s, bindingResult.iterator->value->declaration->originalName(), "' and '"_s, variable.originalName(), "', both which use the same resource binding: @group("_s, group, ") @binding("_s, binding, ')'), SourceSpan::empty()));
     }
     return usedGlobals;
 }
@@ -1656,7 +1657,7 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& l
                 referenceType.m_inferredType = m_shaderModule.types().referenceType(AddressSpace::Storage, m_shaderModule.types().u32Type(), AccessMode::Read);
                 entries.append({
                     entry.binding,
-                    &createArgumentBufferEntry(*argumentBufferIndex, SourceSpan::empty(), makeString("__ArgumentBufferPlaceholder_", String::number(entry.binding)), referenceType)
+                    &createArgumentBufferEntry(*argumentBufferIndex, SourceSpan::empty(), makeString("__ArgumentBufferPlaceholder_"_s, entry.binding), referenceType)
                 });
             }
 
@@ -1673,7 +1674,7 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& l
             } else {
                 entries.append({
                     binding,
-                    &createArgumentBufferEntry(binding, SourceSpan::empty(), makeString("__ArgumentBufferPlaceholder_", String::number(binding)), bufferLengthType())
+                    &createArgumentBufferEntry(binding, SourceSpan::empty(), makeString("__ArgumentBufferPlaceholder_"_s, String::number(binding)), bufferLengthType())
                 });
             }
         }
@@ -1759,7 +1760,7 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
             String fieldName = name;
             auto* storeType = global->declaration->storeType();
             if (isPrimitive(storeType, Types::Primitive::TextureExternal)) {
-                fieldName = makeString("__", name);
+                fieldName = makeString("__"_s, name);
                 m_shaderModule.setUsesExternalTextures();
             }
             auto& access = m_shaderModule.astBuilder().construct<AST::FieldAccessExpression>(
@@ -1961,7 +1962,7 @@ void RewriteGlobalVariables::storeInitialValue(AST::Expression& target, AST::Sta
     auto* type = target.inferredType();
     if (auto* arrayType = std::get_if<Types::Array>(type)) {
         RELEASE_ASSERT(!arrayType->isRuntimeSized());
-        String indexVariableName = makeString("__i", String::number(arrayDepth));
+        String indexVariableName = makeString("__i"_s, arrayDepth);
 
         auto& indexVariable = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
             SourceSpan::empty(),
@@ -2142,17 +2143,17 @@ void RewriteGlobalVariables::insertBeforeCurrentStatement(AST::Statement& statem
 
 AST::Identifier RewriteGlobalVariables::argumentBufferParameterName(unsigned group)
 {
-    return AST::Identifier::make(makeString("__ArgumentBuffer_", String::number(group)));
+    return AST::Identifier::make(makeString("__ArgumentBuffer_"_s, group));
 }
 
 AST::Identifier RewriteGlobalVariables::argumentBufferStructName(unsigned group)
 {
-    return AST::Identifier::make(makeString("__ArgumentBufferT_", String::number(group)));
+    return AST::Identifier::make(makeString("__ArgumentBufferT_"_s, group));
 }
 
 AST::Identifier RewriteGlobalVariables::dynamicOffsetVariableName()
 {
-    return AST::Identifier::make(makeString("__DynamicOffsets"));
+    return AST::Identifier::make("__DynamicOffsets"_str);
 }
 
 std::optional<Error> rewriteGlobalVariables(ShaderModule& shaderModule, const HashMap<String, PipelineLayout*>& pipelineLayouts, HashMap<String, Reflection::EntryPointInformation>& entryPointInformations)

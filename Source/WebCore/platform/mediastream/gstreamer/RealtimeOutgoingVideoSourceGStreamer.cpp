@@ -22,12 +22,15 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
+#include "AV1Utilities.h"
 #include "GStreamerCommon.h"
 #include "GStreamerRegistryScanner.h"
+#include "HEVCUtilities.h"
 #include "MediaStreamTrack.h"
+#include "VP9Utilities.h"
 #include "VideoEncoderPrivateGStreamer.h"
-
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_video_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_outgoing_video_debug
@@ -121,36 +124,48 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         return false;
     }
 
-    GRefPtr<GstCaps> encoderCaps;
+    auto codec = emptyString();
     if (encoding == "vp8"_s) {
         if (gstObjectHasProperty(m_payloader.get(), "picture-id-mode"))
             gst_util_set_object_arg(G_OBJECT(m_payloader.get()), "picture-id-mode", "15-bit");
 
-        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
+        codec = "vp8"_s;
     } else if (encoding == "vp9"_s) {
         if (gstObjectHasProperty(m_payloader.get(), "picture-id-mode"))
             gst_util_set_object_arg(G_OBJECT(m_payloader.get()), "picture-id-mode", "15-bit");
 
-        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
+        VPCodecConfigurationRecord record;
+        record.codecName = "vp09"_s;
         if (const char* vp9Profile = gst_structure_get_string(structure.get(), "vp9-profile-id"))
-            gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, vp9Profile, nullptr);
+            if (auto profile = parseInteger<uint8_t>(StringView::fromLatin1(vp9Profile)))
+                record.profile = *profile;
+        codec = createVPCodecParametersString(record);
     } else if (encoding == "h264"_s) {
-        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
         gst_util_set_object_arg(G_OBJECT(m_payloader.get()), "aggregate-mode", "zero-latency");
         g_object_set(m_payloader.get(), "config-interval", -1, nullptr);
 
         const char* profile = gst_structure_get_string(structure.get(), "profile");
         if (!profile)
             profile = "baseline";
-        gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile, nullptr);
+
+        AVCParameters parameters;
+        if (g_str_equal(profile, "baseline"))
+            parameters.profileIDC = 66;
+        else if (g_str_equal(profile, "constrained-baseline")) {
+            parameters.profileIDC = 66;
+            parameters.constraintsFlags |= 0x40 << 6;
+        } else if (g_str_equal(profile, "main"))
+            parameters.profileIDC = 77;
+
+        codec = createAVCCodecParametersString(parameters);
     } else if (encoding == "h265"_s) {
-        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h265"));
         gst_util_set_object_arg(G_OBJECT(m_payloader.get()), "aggregate-mode", "zero-latency");
         g_object_set(m_payloader.get(), "config-interval", -1, nullptr);
         // FIXME: profile tier level?
-    } else if (encoding == "av1"_s) {
-        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-av1"));
-    } else {
+        codec = createHEVCCodecParametersString({ });
+    } else if (encoding == "av1"_s)
+        codec = createAV1CodecParametersString({ });
+    else {
         GST_ERROR_OBJECT(m_bin.get(), "Unsupported outgoing video encoding: %s", encodingName);
         return false;
     }
@@ -158,7 +173,7 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     // Align MTU with libwebrtc implementation, also helping to reduce packet fragmentation.
     g_object_set(m_payloader.get(), "auto-header-extension", TRUE, "mtu", 1200, nullptr);
 
-    if (!videoEncoderSetFormat(WEBKIT_VIDEO_ENCODER(m_encoder.get()), WTFMove(encoderCaps))) {
+    if (!videoEncoderSetCodec(WEBKIT_VIDEO_ENCODER(m_encoder.get()), WTFMove(codec))) {
         GST_ERROR_OBJECT(m_bin.get(), "Unable to set encoder format");
         return false;
     }

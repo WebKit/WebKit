@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "APIObject.h"
 #include <WebCore/ElementTargetingTypes.h>
 
 namespace WebKit {

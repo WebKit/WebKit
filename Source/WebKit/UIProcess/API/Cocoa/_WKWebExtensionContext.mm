@@ -641,7 +641,7 @@ static inline NSArray *toAPI(const WebKit::WebExtensionContext::WindowVector& wi
 
 - (NSArray<id<_WKWebExtensionWindow>> *)openWindows
 {
-    return toAPI(_webExtensionContext->openWindows());
+    return toAPI(_webExtensionContext->openWindows(WebKit::WebExtensionContext::IgnoreExtensionAccess::Yes));
 }
 
 - (id<_WKWebExtensionWindow>)focusedWindow
@@ -666,7 +666,7 @@ static inline NSSet *toAPI(const WebKit::WebExtensionContext::TabVector& tabs)
 
 - (NSSet<id<_WKWebExtensionTab>> *)openTabs
 {
-    return toAPI(_webExtensionContext->openTabs());
+    return toAPI(_webExtensionContext->openTabs(WebKit::WebExtensionContext::IgnoreExtensionAccess::Yes));
 }
 
 static inline Ref<WebKit::WebExtensionWindow> toImpl(id<_WKWebExtensionWindow> window, WebKit::WebExtensionContext& context)

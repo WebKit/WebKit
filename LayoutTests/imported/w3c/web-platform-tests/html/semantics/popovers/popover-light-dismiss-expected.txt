@@ -1,4 +1,4 @@
-Popover 1 Popover 1 Outside all popovers  Next control after popover1  Popover 3 - button 3   Popover 6  Popover8 invoker (no action)  Open convoluted popover  Example 2  Open popover 29  Popover 30 Open popover 30 Non-invoker
+Popover 1 Popover 1 Outside all popovers  Next control after popover1  Popover 3 - button 3  Popover8 invoker (no action)  Open convoluted popover  Example 2  Open popover 29  Popover 30 Open popover 30 Non-invoker
 
 PASS Clicking outside a popover will dismiss the popover
 PASS Canceling pointer events should not keep clicks from light dismissing popovers
@@ -16,7 +16,6 @@ PASS Clicking on popovertarget element, even if it wasn't used for activation, s
 PASS Dragging from an open popover outside an open popover should leave the popover open
 PASS A popover inside an invoking element doesn't participate in that invoker's ancestor chain
 PASS An invoking element that was not used to invoke the popover is not part of the ancestor chain
-PASS Scrolling within a popover should not close the popover
 PASS Clicking inside a shadow DOM popover does not close that popover
 PASS Clicking outside a shadow DOM popover should close that popover
 PASS Moving focus back to the invoker element should not dismiss the popover

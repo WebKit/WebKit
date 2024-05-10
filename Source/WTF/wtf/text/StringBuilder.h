@@ -60,10 +60,10 @@ public:
     void append(const String&);
     void append(StringView);
     void append(ASCIILiteral);
+    void append(const char*) = delete; // Pass ASCIILiteral or span instead.
     void append(UChar);
     void append(LChar);
     void append(char character) { append(static_cast<LChar>(character)); }
-    void append(const char*);
 
     // FIXME: Add a StringTypeAdapter so we can append one string builder to another with variadic append.
     void append(const StringBuilder&);
@@ -224,11 +224,6 @@ inline void StringBuilder::append(ASCIILiteral string)
 inline void StringBuilder::appendSubstring(const String& string, unsigned offset, unsigned length)
 {
     append(StringView { string }.substring(offset, length));
-}
-
-inline void StringBuilder::append(const char* characters)
-{
-    append(StringView::fromLatin1(characters));
 }
 
 inline String StringBuilder::toString()

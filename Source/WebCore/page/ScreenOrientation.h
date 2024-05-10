@@ -56,8 +56,9 @@ public:
     Type type() const;
     uint16_t angle() const;
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     ScreenOrientation(Document*);
@@ -80,7 +81,7 @@ private:
     void derefEventTarget() final { RefCounted::deref(); }
     void eventListenersDidChange() final;
 
-    // ActiveDOMObject
+    // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;

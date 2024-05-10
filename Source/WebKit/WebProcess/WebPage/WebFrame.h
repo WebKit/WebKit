@@ -88,6 +88,7 @@ class WebPage;
 class WebRemoteFrameClient;
 struct FrameInfoData;
 struct FrameTreeNodeData;
+struct ProvisionalFrameCreationParameters;
 struct WebsitePoliciesData;
 
 // Simple listener class used by plug-ins to know when frames finish or fail loading.
@@ -121,8 +122,11 @@ public:
     WebCore::RemoteFrame* coreRemoteFrame() const;
     WebCore::Frame* coreFrame() const;
 
-    void transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier>);
-    void transitionToRemote(std::optional<WebCore::LayerHostingContextIdentifier>);
+    void createProvisionalFrame(ProvisionalFrameCreationParameters&&);
+    void commitProvisionalFrame();
+    void provisionalLoadFailed();
+    void loadDidCommitInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);
+    WebCore::LocalFrame* provisionalFrame() { return m_provisionalFrame.get(); }
 
     FrameInfoData info() const;
     FrameTreeNodeData frameTreeData() const;
@@ -259,6 +263,7 @@ private:
 
     WeakPtr<WebCore::Frame> m_coreFrame;
     WeakPtr<WebPage> m_page;
+    RefPtr<WebCore::LocalFrame> m_provisionalFrame;
 
     struct PolicyCheck {
         ForNavigationAction forNavigationAction { ForNavigationAction::No };

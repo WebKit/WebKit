@@ -426,27 +426,57 @@ RefPtr<Element> HTMLFormControlElement::invokeTargetElement() const
     return getElementAttribute(invoketargetAttr);
 }
 
+constexpr ASCIILiteral togglePopoverLiteral = "togglepopover"_s;
+constexpr ASCIILiteral showPopoverLiteral = "showpopover"_s;
+constexpr ASCIILiteral hidePopoverLiteral = "hidepopover"_s;
+InvokeAction HTMLFormControlElement::invokeAction() const
+{
+    auto action = attributeWithoutSynchronization(HTMLNames::invokeactionAttr);
+    if (action.isNull() || action.isEmpty())
+        return InvokeAction::Auto;
+
+    if (equalLettersIgnoringASCIICase(action, togglePopoverLiteral))
+        return InvokeAction::TogglePopover;
+
+    if (equalLettersIgnoringASCIICase(action, showPopoverLiteral))
+        return InvokeAction::ShowPopover;
+
+    if (equalLettersIgnoringASCIICase(action, hidePopoverLiteral))
+        return InvokeAction::HidePopover;
+
+    if (action.contains('-'))
+        return InvokeAction::Custom;
+
+    return InvokeAction::Invalid;
+}
+
 void HTMLFormControlElement::handleInvokeAction()
 {
     RefPtr invokee = invokeTargetElement();
     if (!invokee)
         return;
 
-    auto action = attributeWithoutSynchronization(HTMLNames::invokeactionAttr);
-    if (action.isNull())
-        action = emptyAtom();
+    auto actionRaw = attributeWithoutSynchronization(HTMLNames::invokeactionAttr);
+    auto action = invokeAction();
+
+    if (action == InvokeAction::Invalid)
+        return;
+
+    if (action != InvokeAction::Custom && !invokee->isValidInvokeAction(action))
+        return;
 
     InvokeEvent::Init init;
     init.bubbles = false;
     init.cancelable = true;
     init.composed = true;
     init.invoker = this;
-    init.action = action;
+    init.action = actionRaw.isNull() ? emptyAtom() : actionRaw;
+
     Ref<InvokeEvent> event = InvokeEvent::create(eventNames().invokeEvent, init,
         InvokeEvent::IsTrusted::Yes);
     invokee->dispatchEvent(event);
 
-    if (!event->defaultPrevented())
+    if (!event->defaultPrevented() && action != InvokeAction::Custom)
         invokee->handleInvokeInternal(*this, action);
 }
 

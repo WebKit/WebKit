@@ -2686,7 +2686,7 @@ void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, void* context, WKPageGetCon
 void WKPageForceRepaint(WKPageRef pageRef, void* context, WKPageForceRepaintFunction callback)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->forceRepaint([context, callback]() {
+    toImpl(pageRef)->updateRenderingWithForcedRepaint([context, callback]() {
         callback(nullptr, context);
     });
 }

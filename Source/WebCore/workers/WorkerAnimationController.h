@@ -48,12 +48,14 @@ public:
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(int);
 
-    using ThreadSafeRefCounted::ref;
-    using ThreadSafeRefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
 private:
     WorkerAnimationController(WorkerGlobalScope&);
 
+    // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
     void stop() final;
     void suspend(ReasonForSuspension) final;

@@ -174,12 +174,12 @@ String notAFunctionSourceAppender(const String& originalMessage, StringView sour
     if (!base)
         return defaultApproximateSourceError(originalMessage, sourceText);
     StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
-    builder.append(base, " is not a function. (In '", sourceText, "', '", base, "' is ");
+    builder.append(base, " is not a function. (In '"_s, sourceText, "', '"_s, base, "' is "_s);
     if (type == TypeSymbol)
-        builder.append("a Symbol");
+        builder.append("a Symbol"_s);
     else {
         if (type == TypeObject)
-            builder.append("an instance of ");
+            builder.append("an instance of "_s);
         builder.append(displayValue);
     }
     builder.append(')');
@@ -331,12 +331,12 @@ JSObject* createErrorForDuplicateGlobalVariableDeclaration(JSGlobalObject* globa
 
 JSObject* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
 {
-    return createTypeError(globalObject, makeString("Can't declare global function '", ident.string(), "': property must be either configurable or both writable and enumerable"));
+    return createTypeError(globalObject, makeString("Can't declare global function '"_s, ident.string(), "': property must be either configurable or both writable and enumerable"_s));
 }
 
 JSObject* createErrorForInvalidGlobalVarDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
 {
-    return createTypeError(globalObject, makeString("Can't declare global variable '", ident.string(), "': global object must be extensible"));
+    return createTypeError(globalObject, makeString("Can't declare global variable '"_s, ident.string(), "': global object must be extensible"_s));
 }
 
 JSObject* createTDZError(JSGlobalObject* globalObject)

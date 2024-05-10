@@ -46,22 +46,8 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
     auto type = descriptor.type;
 
     switch (type) {
-    case WGPUQueryType_Timestamp: {
-        if (!hasFeature(WGPUFeatureName_TimestampQuery))
-            return QuerySet::createInvalid(*this);
-
-        ASSERT(baseCapabilities().timestampCounterSet);
-        MTLCounterSampleBufferDescriptor *descriptor = [MTLCounterSampleBufferDescriptor new];
-        descriptor.counterSet = baseCapabilities().timestampCounterSet;
-        descriptor.label = fromAPI(label);
-        descriptor.storageMode = MTLStorageModePrivate;
-        descriptor.sampleCount = count;
-        NSError *error;
-        auto timestampBuffer = [m_device newCounterSampleBufferWithDescriptor:descriptor error:&error];
-        if (error)
-            WTFLogAlways("GPUDevice.createQuerySet failed: newCounterSampleBufferWithDescriptor: descriptor.counterSet %@, count %d, error %@", descriptor.counterSet, descriptor.sampleCount, error);
-        return timestampBuffer ? QuerySet::create(timestampBuffer, count, type, *this) : QuerySet::createInvalid(*this);
-    }
+    case WGPUQueryType_Timestamp:
+        return QuerySet::createInvalid(*this);
     case WGPUQueryType_Occlusion: {
         auto buffer = safeCreateBuffer(sizeof(uint64_t) * count, MTLStorageModePrivate);
         buffer.label = fromAPI(label);
@@ -88,8 +74,6 @@ QuerySet::QuerySet(id<MTLCounterSampleBuffer> buffer, uint32_t count, WGPUQueryT
     , m_type(type)
 {
     RELEASE_ASSERT(m_type != WGPUQueryType_Force32);
-    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary)
-        m_overrideLocations = Vector<std::optional<OverrideLocation>>(m_count);
 }
 
 QuerySet::QuerySet(Device& device)
@@ -116,7 +100,6 @@ void QuerySet::destroy()
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueryset-destroy
     m_visibilityBuffer = nil;
     m_timestampBuffer = nil;
-    m_overrideLocations.clear();
     if (m_cachedCommandEncoder)
         m_cachedCommandEncoder.get()->makeSubmitInvalid();
     m_cachedCommandEncoder = nullptr;
@@ -128,46 +111,8 @@ void QuerySet::setLabel(String&& label)
     // MTLCounterSampleBuffer's label property is read-only.
 }
 
-void QuerySet::setOverrideLocation(QuerySet& otherQuerySet, uint32_t beginningOfPassIndex, uint32_t endOfPassIndex)
+void QuerySet::setOverrideLocation(QuerySet&, uint32_t, uint32_t)
 {
-    ASSERT(m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
-    ASSERT(m_overrideLocations.size() == m_count);
-
-    m_overrideLocations[beginningOfPassIndex] = { { otherQuerySet, endOfPassIndex } };
-}
-
-void QuerySet::encodeResolveCommands(id<MTLBlitCommandEncoder> commandEncoder, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset) const
-{
-    if (!queryCount)
-        return;
-
-    auto encode = [&](id<MTLCounterSampleBuffer> counterSampleBuffer, uint32_t indexIntoDestinationBuffer) {
-        constexpr auto countersToResolve = 2;
-        RELEASE_ASSERT(counterSampleBuffer.sampleCount >= countersToResolve);
-        [commandEncoder resolveCounters:counterSampleBuffer inRange:NSMakeRange(0, countersToResolve) destinationBuffer:destination.buffer() destinationOffset:destinationOffset + sizeof(MTLCounterResultTimestamp) * indexIntoDestinationBuffer];
-    };
-
-    struct State {
-        const QuerySet* querySet;
-        uint32_t index;
-    };
-
-    auto getState = [&](uint32_t queryIndex) -> std::optional<State> {
-        std::optional<State> result;
-        if (const auto& overrideLocation = m_overrideLocations[queryIndex]) {
-            RELEASE_ASSERT(overrideLocation->otherIndex == queryIndex + 1);
-            result = { overrideLocation->other.ptr(), queryIndex };
-        }
-        return result;
-    };
-
-    for (uint32_t i = firstQuery; i < firstQuery + queryCount; ++i) {
-        auto state = getState(i);
-        if (!state)
-            continue;
-
-        encode(state->querySet->counterSampleBuffer(), state->index);
-    }
 }
 
 void QuerySet::setCommandEncoder(CommandEncoder& commandEncoder) const

@@ -60,7 +60,7 @@ public:
     bool contains(const IntRect&) const;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    void uniteInteractionRegions(RenderObject&, const FloatRect&);
+    void uniteInteractionRegions(RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
     bool shouldConsolidateInteractionRegion(RenderObject&, const IntRect&, const ElementIdentifier&);
     void removeSuperfluousInteractionRegions();
     void shrinkWrapInteractionRegions();

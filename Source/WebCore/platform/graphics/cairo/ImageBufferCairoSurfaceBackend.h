@@ -43,8 +43,8 @@ public:
     RefPtr<NativeImage> copyNativeImage() override;
     RefPtr<NativeImage> createNativeImageReference() override;
 
+    bool canMapBackingStore() const final;
     RefPtr<cairo_surface_t> createCairoSurface() override;
-
     void getPixelBuffer(const IntRect&, PixelBuffer&) override;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 

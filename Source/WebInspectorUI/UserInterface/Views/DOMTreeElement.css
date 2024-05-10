@@ -55,6 +55,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-with
 .event-badge-popover-content > .details-section.event-listeners {
     max-height: calc(100vh - var(--tab-bar-height) - var(--console-prompt-min-height));
     overflow: auto;
+    will-change: z-index; /* Workaround for <rdar://125601926> - Content renders on top of the scroll bar */
 }
 
 .event-badge-popover-content > .details-section.event-listeners .details-section {

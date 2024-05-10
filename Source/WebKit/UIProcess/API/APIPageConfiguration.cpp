@@ -364,6 +364,7 @@ NetworkProcessPreferencesForWebProcess PageConfiguration::preferencesForNetworkP
 
     return {
         preferences->webTransportEnabled(),
+        processPool().usesSingleWebProcess(),
     };
 }
 

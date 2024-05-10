@@ -80,6 +80,10 @@
 #include <WebCore/QuickLook.h>
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#include "WebExtensionControllerProxy.h"
+#endif
+
 #define WEBLOADERSTRATEGY_RELEASE_LOG_BASIC(fmt, ...) RELEASE_LOG(Network, "%p - WebLoaderStrategy::" fmt, this, ##__VA_ARGS__)
 #define WEBLOADERSTRATEGY_RELEASE_LOG_ERROR_BASIC(fmt, ...) RELEASE_LOG_ERROR(Network, "%p - WebLoaderStrategy::" fmt, this, ##__VA_ARGS__)
 
@@ -340,8 +344,10 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
         page->logMediaDiagnosticMessage(parameters.request.httpBody());
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-        if (auto* webPage = WebPage::fromCorePage(*page))
-            parameters.pageHasExtensionController = webPage->webExtensionControllerProxy();
+        if (RefPtr webPage = WebPage::fromCorePage(*page)) {
+            if (RefPtr extensionControllerProxy = webPage->webExtensionControllerProxy())
+                parameters.pageHasLoadedWebExtensions = extensionControllerProxy->hasLoadedContexts();
+        }
 #endif
     }
 
@@ -514,12 +520,10 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.shouldEnableCrossOriginResourcePolicy = !loadParameters.isMainFrameNavigation;
 
     if (resourceLoader.options().mode == FetchOptions::Mode::Navigate) {
-        Vector<RefPtr<SecurityOrigin>> frameAncestorOrigins;
+        Vector<Ref<SecurityOrigin>> frameAncestorOrigins;
         for (auto* frame = resourceLoader.frame()->tree().parent(); frame; frame = frame->tree().parent()) {
-            if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
-                frameAncestorOrigins.append(&localFrame->document()->securityOrigin());
-            else
-                frameAncestorOrigins.append(nullptr);
+            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+            frameAncestorOrigins.append(localFrame ? localFrame->document()->securityOrigin() : SecurityOrigin::opaqueOrigin());
         }
         loadParameters.frameAncestorOrigins = WTFMove(frameAncestorOrigins);
     }

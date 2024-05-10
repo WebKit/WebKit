@@ -98,17 +98,18 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-    id<MTLCommandBuffer> commandBuffer = getQueue().commandBufferWithDescriptor(commandBufferDescriptor);
-    if (!commandBuffer)
+    auto commandBufferWithEvent = getQueue().commandBufferWithDescriptor(commandBufferDescriptor);
+    if (!commandBufferWithEvent.first)
         return CommandEncoder::createInvalid(*this);
 
-    commandBuffer.label = fromAPI(descriptor.label);
+    commandBufferWithEvent.first.label = fromAPI(descriptor.label);
 
-    return CommandEncoder::create(commandBuffer, *this);
+    return CommandEncoder::create(commandBufferWithEvent.first, commandBufferWithEvent.second, *this);
 }
 
-CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& device)
+CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, id<MTLSharedEvent> event, Device& device)
     : m_commandBuffer(commandBuffer)
+    , m_abortCommandBuffer(event)
     , m_device(device)
 {
 }
@@ -131,24 +132,14 @@ id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
         return nil;
     }
 
-    if (m_blitCommandEncoder && m_pendingTimestampWrites.isEmpty()) {
+    if (m_blitCommandEncoder) {
         if (encoderIsCurrent(m_blitCommandEncoder))
             return m_blitCommandEncoder;
 
         finalizeBlitCommandEncoder();
     }
 
-    auto pendingTimestampWrites = std::exchange(m_pendingTimestampWrites, { });
-    if (m_blitCommandEncoder && !pendingTimestampWrites.isEmpty())
-        finalizeBlitCommandEncoder();
-
     MTLBlitPassDescriptor *descriptor = [MTLBlitPassDescriptor new];
-    ASSERT(pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
-    for (size_t i = 0; i < pendingTimestampWrites.size(); ++i) {
-        const auto& pendingTimestampWrite = pendingTimestampWrites[i];
-        descriptor.sampleBufferAttachments[i].sampleBuffer = pendingTimestampWrite.querySet->counterSampleBuffer();
-        descriptor.sampleBufferAttachments[i].startOfEncoderSampleIndex = i;
-    }
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoderWithDescriptor:descriptor];
     setExistingEncoder(m_blitCommandEncoder);
 
@@ -163,12 +154,6 @@ void CommandEncoder::finalizeBlitCommandEncoder()
     endEncoding(m_blitCommandEncoder);
     m_blitCommandEncoder = nil;
     setExistingEncoder(nil);
-
-    if (!m_pendingTimestampWrites.isEmpty()) {
-        ASSERT(m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
-        ensureBlitCommandEncoder();
-        finalizeBlitCommandEncoder();
-    }
 }
 
 static auto timestampWriteIndex(auto writeIndex)
@@ -225,38 +210,6 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDe
 
     MTLComputePassDescriptor* computePassDescriptor = [MTLComputePassDescriptor new];
     computePassDescriptor.dispatchType = MTLDispatchTypeSerial;
-
-    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary
-        && descriptor.timestampWrites) {
-        // rdar://91371495 is about how we can't just naively transform descriptor.timestampWrites into computePassDescriptor.sampleBufferAttachments.
-        // Instead, we can resolve all the information to a dummy counter sample buffer, and then internally remember that the data
-        // is in a different place than where it's supposed to be. Later, when we resolve the data, we can resolve it from our dummy
-        // buffer instead of from where it's supposed to be.
-        //
-        // When rdar://91371495 is fixed, we can delete this indirection, and put the data directly where it's supposed to go.
-
-        MTLCounterSampleBufferDescriptor *counterSampleBufferDescriptor = [MTLCounterSampleBufferDescriptor new];
-        counterSampleBufferDescriptor.counterSet = m_device->baseCapabilities().timestampCounterSet;
-        counterSampleBufferDescriptor.label = @"Dummy compute pass timestamp counter sample buffer";
-        counterSampleBufferDescriptor.storageMode = MTLStorageModePrivate;
-        counterSampleBufferDescriptor.sampleCount = 2;
-        auto counterSampleBuffer = [m_device->device() newCounterSampleBufferWithDescriptor:counterSampleBufferDescriptor error:nil];
-        // FIXME: We should probably do something sensible if the counter sample buffer failed to be created.
-        auto dummyQuerySet = QuerySet::create(counterSampleBuffer, 2, WGPUQueryType_Timestamp, m_device);
-
-        const auto startIndex = 0;
-        const auto endIndex = 1;
-
-        computePassDescriptor.sampleBufferAttachments[0].sampleBuffer = counterSampleBuffer;
-        computePassDescriptor.sampleBufferAttachments[0].startOfEncoderSampleIndex = startIndex;
-        computePassDescriptor.sampleBufferAttachments[0].endOfEncoderSampleIndex = endIndex;
-
-        auto& timestampWrite = *descriptor.timestampWrites;
-        auto& querySet = fromAPI(timestampWrite.querySet);
-        querySet.setCommandEncoder(*this);
-        if (querySet.isValid())
-            querySet.setOverrideLocation(dummyQuerySet, timestampWriteIndex(timestampWrite.beginningOfPassWriteIndex), timestampWriteIndex(timestampWrite.endOfPassWriteIndex));
-    }
 
     id<MTLComputeCommandEncoder> computeCommandEncoder = [m_commandBuffer computeCommandEncoderWithDescriptor:computePassDescriptor];
     setExistingEncoder(computeCommandEncoder);
@@ -526,18 +479,19 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         if (attachment.depthSlice) {
             if (textureDimension != WGPUTextureViewDimension_3D)
                 return RenderPassEncoder::createInvalid(*this, m_device, @"depthSlice specified on 2D texture");
-            depthSliceOrArrayLayer = *attachment.depthSlice;
+            depthSliceOrArrayLayer = textureIsDestroyed ? 0 : *attachment.depthSlice;
             if (depthSliceOrArrayLayer >= texture.depthOrArrayLayers())
                 return RenderPassEncoder::createInvalid(*this, m_device, @"depthSlice is greater than texture's depth or array layers");
 
         } else {
             if (textureDimension == WGPUTextureViewDimension_3D)
                 return RenderPassEncoder::createInvalid(*this, m_device, @"textureDimension is 3D and no depth slice is specified");
-            depthSliceOrArrayLayer = texture.baseArrayLayer();
+            depthSliceOrArrayLayer = textureIsDestroyed ? 0 : texture.baseArrayLayer();
         }
 
         auto* bridgedTexture = (__bridge void*)texture.parentTexture();
-        uint64_t depthAndMipLevel = depthSliceOrArrayLayer | (static_cast<uint64_t>(texture.baseMipLevel()) << 32);
+        auto baseMipLevel = textureIsDestroyed ? 0 : texture.baseMipLevel();
+        uint64_t depthAndMipLevel = depthSliceOrArrayLayer | (static_cast<uint64_t>(baseMipLevel) << 32);
         if (auto it = depthSlices.find(bridgedTexture); it != depthSlices.end()) {
             auto addResult = it->value.add(depthAndMipLevel);
             if (!addResult.isNewEntry)
@@ -633,8 +587,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
         if (zeroColorTargets) {
             mtlDescriptor.defaultRasterSampleCount = textureView.sampleCount();
-            mtlDescriptor.renderTargetWidth = textureView.width();
-            mtlDescriptor.renderTargetHeight = textureView.height();
+            mtlDescriptor.renderTargetWidth = metalDepthStencilTexture.width;
+            mtlDescriptor.renderTargetHeight = metalDepthStencilTexture.height;
         }
     }
 
@@ -679,42 +633,6 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         mtlDescriptor.visibilityResultBuffer = occlusionQuery.visibilityBuffer();
         visibilityResultBuffer = mtlDescriptor.visibilityResultBuffer;
         visibilityResultBufferSize = occlusionQuery.isDestroyed() ? NSUIntegerMax : occlusionQuery.visibilityBuffer().length;
-    }
-
-    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary
-        && descriptor.timestampWrites) {
-        // rdar://91371495 is about how we can't just naively transform descriptor.timestampWrites into computePassDescriptor.sampleBufferAttachments.
-        // Instead, we can resolve all the information to a dummy counter sample buffer, and then internally remember that the data
-        // is in a different place than where it's supposed to be. Later, when we resolve the data, we can resolve it from our dummy
-        // buffer instead of from where it's supposed to be.
-        //
-        // When rdar://91371495 is fixed, we can delete this indirection, and put the data directly where it's supposed to go.
-
-        MTLCounterSampleBufferDescriptor *counterSampleBufferDescriptor = [MTLCounterSampleBufferDescriptor new];
-        counterSampleBufferDescriptor.counterSet = m_device->baseCapabilities().timestampCounterSet;
-        counterSampleBufferDescriptor.label = @"Dummy render pass timestamp counter sample buffer";
-        counterSampleBufferDescriptor.storageMode = MTLStorageModePrivate;
-        counterSampleBufferDescriptor.sampleCount = 4;
-        auto counterSampleBuffer = [m_device->device() newCounterSampleBufferWithDescriptor:counterSampleBufferDescriptor error:nil];
-        // FIXME: We should probably do something sensible if the counter sample buffer failed to be created.
-        auto dummyQuerySet = QuerySet::create(counterSampleBuffer, 4, WGPUQueryType_Timestamp, m_device);
-
-        const auto startVertexIndex = 0;
-        const auto endVertexIndex = 1;
-        const auto startFragmentIndex = 2;
-        const auto endFragmentIndex = 3;
-
-        mtlDescriptor.sampleBufferAttachments[0].sampleBuffer = counterSampleBuffer;
-        mtlDescriptor.sampleBufferAttachments[0].startOfVertexSampleIndex = startVertexIndex;
-        mtlDescriptor.sampleBufferAttachments[0].endOfVertexSampleIndex = endVertexIndex;
-        mtlDescriptor.sampleBufferAttachments[0].startOfFragmentSampleIndex = startFragmentIndex;
-        mtlDescriptor.sampleBufferAttachments[0].endOfFragmentSampleIndex = endFragmentIndex;
-
-        auto& timestampWrite = *descriptor.timestampWrites;
-        auto& querySet = fromAPI(timestampWrite.querySet);
-        querySet.setCommandEncoder(*this);
-        if (querySet.isValid())
-            querySet.setOverrideLocation(dummyQuerySet, timestampWriteIndex(timestampWrite.beginningOfPassWriteIndex), timestampWriteIndex(timestampWrite.endOfPassWriteIndex));
     }
 
     if (attachmentsToClear.count || depthStencilAttachmentToClear) {
@@ -1283,6 +1201,7 @@ void CommandEncoder::makeInvalid(NSString* errorString)
 {
     endEncoding(m_existingCommandEncoder);
     m_blitCommandEncoder = nil;
+    [m_abortCommandBuffer setSignaledValue:1];
     m_device->getQueue().commitMTLCommandBuffer(m_commandBuffer);
 
     m_commandBuffer = nil;
@@ -1296,6 +1215,20 @@ void CommandEncoder::makeSubmitInvalid(NSString* errorString)
     m_makeSubmitInvalid = true;
     if (m_cachedCommandBuffer)
         m_cachedCommandBuffer->makeInvalid(errorString ?: m_lastErrorString);
+}
+
+static bool hasValidDimensions(WGPUTextureDimension dimension, NSUInteger width, NSUInteger height, NSUInteger depth)
+{
+    switch (dimension) {
+    case WGPUTextureDimension_1D:
+        return !!width;
+    case WGPUTextureDimension_2D:
+        return width && height;
+    case WGPUTextureDimension_3D:
+        return width && height && depth;
+    default:
+        return true;
+    }
 }
 
 void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize)
@@ -1412,6 +1345,9 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
             clearTextureIfNeeded(source, sourceSlice);
     }
 
+    if (!hasValidDimensions(sourceTexture.dimension(), widthForMetal, heightForMetal, depthForMetal))
+        return;
+
     if (destinationBuffer.length < Texture::bytesPerRow(aspectSpecificFormat, widthForMetal, sourceTexture.sampleCount()))
         return;
 
@@ -1420,9 +1356,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
-        if (!widthForMetal)
-            return;
-
         auto sourceOrigin = MTLOriginMake(source.origin.x, 0, 0);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
@@ -1447,9 +1380,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
         // "When you copy to a 2D texture, depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
-        if (!widthForMetal || !heightForMetal)
-            return;
-
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, 0);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
@@ -1470,9 +1400,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     }
     case WGPUTextureDimension_3D: {
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, depthForMetal);
-        if (!widthForMetal || !heightForMetal || !depthForMetal)
-            return;
-
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, source.origin.z);
         auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset);
             [m_blitCommandEncoder
@@ -1818,7 +1745,8 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
 
     commandBuffer.label = fromAPI(descriptor.label);
 
-    auto result = CommandBuffer::create(commandBuffer, m_device);
+    auto result = CommandBuffer::create(commandBuffer, m_abortCommandBuffer, m_device);
+    m_abortCommandBuffer = nil;
     m_cachedCommandBuffer = result;
     m_cachedCommandBuffer->setBufferMapCount(m_bufferMapCount);
     if (m_makeSubmitInvalid)
@@ -1935,7 +1863,6 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
         break;
     }
     case WGPUQueryType_Timestamp: {
-        querySet.encodeResolveCommands(m_blitCommandEncoder, firstQuery, queryCount, destination, destinationOffset);
         break;
     }
     default:
@@ -1960,15 +1887,6 @@ void CommandEncoder::writeTimestamp(QuerySet& querySet, uint32_t queryIndex)
     }
 
     querySet.setCommandEncoder(*this);
-    switch (m_device->baseCapabilities().counterSamplingAPI) {
-    case HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary:
-        m_pendingTimestampWrites.append({ querySet, queryIndex });
-        break;
-    case HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary:
-        ensureBlitCommandEncoder();
-        [m_blitCommandEncoder sampleCountersInBuffer:querySet.counterSampleBuffer() atSampleIndex:queryIndex withBarrier:NO];
-        break;
-    }
 }
 
 void CommandEncoder::setLabel(String&& label)

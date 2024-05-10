@@ -43,7 +43,6 @@
 #import "PlatformFontInfo.h"
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
-#import "StringUtilities.h"
 #import "TextChecker.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKQuickLookPreviewController.h"
@@ -156,7 +155,7 @@ void WebPageProxy::getIsSpeaking(CompletionHandler<void(bool)>&& completionHandl
 void WebPageProxy::speak(const String& string)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    [NSApp speakString:nsStringFromWebCoreString(string)];
+    [NSApp speakString:string];
 }
 
 void WebPageProxy::stopSpeaking()

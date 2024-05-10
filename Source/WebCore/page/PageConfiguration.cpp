@@ -81,7 +81,7 @@ PageConfiguration::PageConfiguration(
     Ref<BackForwardClient>&& backForwardClient,
     Ref<CookieJar>&& cookieJar,
     UniqueRef<ProgressTrackerClient>&& progressTrackerClient,
-    std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& clientForMainFrame,
+    ClientCreatorForMainFrame&& clientCreatorForMainFrame,
     FrameIdentifier mainFrameIdentifier,
     RefPtr<Frame>&& mainFrameOpener,
     UniqueRef<SpeechRecognitionProvider>&& speechRecognitionProvider,
@@ -115,7 +115,7 @@ PageConfiguration::PageConfiguration(
     , progressTrackerClient(WTFMove(progressTrackerClient))
     , backForwardClient(WTFMove(backForwardClient))
     , cookieJar(WTFMove(cookieJar))
-    , clientForMainFrame(WTFMove(clientForMainFrame))
+    , clientCreatorForMainFrame(WTFMove(clientCreatorForMainFrame))
     , mainFrameIdentifier(WTFMove(mainFrameIdentifier))
     , mainFrameOpener(WTFMove(mainFrameOpener))
     , cacheStorageProvider(WTFMove(cacheStorageProvider))

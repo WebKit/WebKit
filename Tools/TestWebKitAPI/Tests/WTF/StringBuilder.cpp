@@ -66,11 +66,11 @@ TEST(StringBuilderTest, Append)
     StringBuilder builder;
     builder.append(String("0123456789"_s));
     expectBuilderContent("0123456789"_s, builder);
-    builder.append("abcd");
+    builder.append("abcd"_s);
     expectBuilderContent("0123456789abcd"_s, builder);
     builder.append(std::span { reinterpret_cast<const LChar*>("efgh"), 3 });
     expectBuilderContent("0123456789abcdefg"_s, builder);
-    builder.append("");
+    builder.append(""_s);
     expectBuilderContent("0123456789abcdefg"_s, builder);
     builder.append('#');
     expectBuilderContent("0123456789abcdefg#"_s, builder);
@@ -80,18 +80,18 @@ TEST(StringBuilderTest, Append)
     builder.append(""_span);
     expectBuilderContent("0123456789abcdefg#"_s, builder);
     builder1.append(builder.span<LChar>());
-    builder1.append("XYZ");
+    builder1.append("XYZ"_s);
     builder.append(builder1.span<LChar>());
     expectBuilderContent("0123456789abcdefg#0123456789abcdefg#XYZ"_s, builder);
 
     StringBuilder builder2;
     builder2.reserveCapacity(100);
-    builder2.append("xyz");
+    builder2.append("xyz"_s);
     const LChar* characters = builder2.characters8();
-    builder2.append("0123456789");
+    builder2.append("0123456789"_s);
     EXPECT_EQ(characters, builder2.characters8());
     builder2.toStringPreserveCapacity(); // Test after reifyString with buffer preserved.
-    builder2.append("abcd");
+    builder2.append("abcd"_s);
     EXPECT_EQ(characters, builder2.characters8());
 
     // Test appending char32_t characters to StringBuilder.
@@ -140,11 +140,11 @@ TEST(StringBuilderTest, VariadicAppend)
         StringBuilder builder;
         builder.append(String("0123456789"_s));
         expectBuilderContent("0123456789"_s, builder);
-        builder.append("abcd");
+        builder.append("abcd"_s);
         expectBuilderContent("0123456789abcd"_s, builder);
         builder.append('e');
         expectBuilderContent("0123456789abcde"_s, builder);
-        builder.append("");
+        builder.append(""_s);
         expectBuilderContent("0123456789abcde"_s, builder);
     }
 
@@ -191,20 +191,20 @@ TEST(StringBuilderTest, VariadicAppend)
 TEST(StringBuilderTest, ToString)
 {
     StringBuilder builder;
-    builder.append("0123456789");
+    builder.append("0123456789"_s);
     String string = builder.toString();
     EXPECT_EQ(String("0123456789"_s), string);
     EXPECT_EQ(string.impl(), builder.toString().impl());
 
     // Changing the StringBuilder should not affect the original result of toString().
-    builder.append("abcdefghijklmnopqrstuvwxyz");
+    builder.append("abcdefghijklmnopqrstuvwxyz"_s);
     EXPECT_EQ(String("0123456789"_s), string);
 
     // Changing the StringBuilder should not affect the original result of toString() in case the capacity is not changed.
     builder.reserveCapacity(200);
     string = builder.toString();
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"_s), string);
-    builder.append("ABC");
+    builder.append("ABC"_s);
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"_s), string);
 
     // Changing the original result of toString() should not affect the content of the StringBuilder.
@@ -217,14 +217,14 @@ TEST(StringBuilderTest, ToString)
     // Resizing the StringBuilder should not affect the original result of toString().
     string1 = builder.toString();
     builder.shrink(10);
-    builder.append("###");
+    builder.append("###"_s);
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
 }
 
 TEST(StringBuilderTest, ToStringPreserveCapacity)
 {
     StringBuilder builder;
-    builder.append("0123456789");
+    builder.append("0123456789"_s);
     unsigned capacity = builder.capacity();
     String string = builder.toStringPreserveCapacity();
     EXPECT_EQ(capacity, builder.capacity());
@@ -233,7 +233,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     EXPECT_EQ(string.span8().data(), builder.characters8());
 
     // Changing the StringBuilder should not affect the original result of toStringPreserveCapacity().
-    builder.append("abcdefghijklmnopqrstuvwxyz");
+    builder.append("abcdefghijklmnopqrstuvwxyz"_s);
     EXPECT_EQ(String("0123456789"_s), string);
 
     // Changing the StringBuilder should not affect the original result of toStringPreserveCapacity() in case the capacity is not changed.
@@ -243,7 +243,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     EXPECT_EQ(capacity, builder.capacity());
     EXPECT_EQ(string.span8().data(), builder.characters8());
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"_s), string);
-    builder.append("ABC");
+    builder.append("ABC"_s);
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"_s), string);
 
     // Changing the original result of toStringPreserveCapacity() should not affect the content of the StringBuilder.
@@ -262,14 +262,14 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     EXPECT_EQ(capacity, builder.capacity());
     EXPECT_EQ(string.span8().data(), builder.characters8());
     builder.shrink(10);
-    builder.append("###");
+    builder.append("###"_s);
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
 }
 
 TEST(StringBuilderTest, Clear)
 {
     StringBuilder builder;
-    builder.append("0123456789");
+    builder.append("0123456789"_s);
     builder.clear();
     expectEmpty(builder);
 }
@@ -277,7 +277,7 @@ TEST(StringBuilderTest, Clear)
 TEST(StringBuilderTest, Array)
 {
     StringBuilder builder;
-    builder.append("0123456789");
+    builder.append("0123456789"_s);
     EXPECT_EQ('0', static_cast<char>(builder[0]));
     EXPECT_EQ('9', static_cast<char>(builder[9]));
     builder.toString(); // Test after reifyString().
@@ -288,7 +288,7 @@ TEST(StringBuilderTest, Array)
 TEST(StringBuilderTest, Resize)
 {
     StringBuilder builder;
-    builder.append("0123456789");
+    builder.append("0123456789"_s);
     builder.shrink(10);
     EXPECT_EQ(10U, builder.length());
     expectBuilderContent("0123456789"_s, builder);
@@ -314,15 +314,15 @@ TEST(StringBuilderTest, Equal)
     EXPECT_TRUE(String() == builder1);
     EXPECT_TRUE(builder1 != String("abc"_s));
 
-    builder1.append("123");
+    builder1.append("123"_s);
     builder1.reserveCapacity(32);
-    builder2.append("123");
+    builder2.append("123"_s);
     builder1.reserveCapacity(64);
     EXPECT_TRUE(builder1 == builder2);
     EXPECT_TRUE(builder1 == String("123"_s));
     EXPECT_TRUE(String("123"_s) == builder1);
 
-    builder2.append("456");
+    builder2.append("456"_s);
     EXPECT_TRUE(builder1 != builder2);
     EXPECT_TRUE(builder2 != builder1);
     EXPECT_TRUE(String("123"_s) != builder2);
@@ -351,7 +351,7 @@ TEST(StringBuilderTest, ShouldShrinkToFit)
 TEST(StringBuilderTest, ToAtomString)
 {
     StringBuilder builder;
-    builder.append("123");
+    builder.append("123"_s);
     AtomString atomString = builder.toAtomString();
     EXPECT_EQ(String("123"_s), atomString);
 
@@ -415,7 +415,7 @@ TEST(StringBuilderTest, ToAtomStringOnEmpty)
     }
     { // Cleared StringBuilder.
         StringBuilder builder;
-        builder.append("WebKit");
+        builder.append("WebKit"_s);
         builder.clear();
         AtomString atomString = builder.toAtomString();
         EXPECT_EQ(emptyAtom(), atomString);

@@ -34,6 +34,8 @@ ANGLE_OTHER_LDFLAGS_watchos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
 ANGLE_OTHER_LDFLAGS_watchsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
 ANGLE_OTHER_LDFLAGS_appletvos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
 ANGLE_OTHER_LDFLAGS_appletvsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
+ANGLE_OTHER_LDFLAGS_xros = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_xrsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
 ANGLE_OTHER_LDFLAGS_maccatalyst = -framework IOKit -lz;
 ANGLE_OTHER_LDFLAGS_macosx = -framework IOKit -lz;
 

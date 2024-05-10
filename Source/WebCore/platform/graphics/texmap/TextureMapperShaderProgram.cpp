@@ -533,7 +533,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
 {
 #define SET_APPLIER_FROM_OPTIONS(Applier) \
     optionsApplierBuilder.append(\
-        (options & TextureMapperShaderProgram::Applier) ? ENABLE_APPLIER(Applier) : DISABLE_APPLIER(Applier))
+        (options & TextureMapperShaderProgram::Applier) ? span(ENABLE_APPLIER(Applier)) : span(DISABLE_APPLIER(Applier)))
 
     unsigned glVersion = GLContext::current()->version();
 
@@ -571,10 +571,10 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     vertexShaderBuilder.append(optionsApplierBuilder.toString());
 
     // Append the appropriate input/output variable definitions.
-    vertexShaderBuilder.append(vertexTemplateLT320Vars);
+    vertexShaderBuilder.append(span(vertexTemplateLT320Vars));
 
     // Append the common code.
-    vertexShaderBuilder.append(vertexTemplateCommon);
+    vertexShaderBuilder.append(span(vertexTemplateCommon));
 
     StringBuilder fragmentShaderBuilder;
 
@@ -582,18 +582,18 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     fragmentShaderBuilder.append(optionsApplierBuilder.toString());
 
     if (glVersion >= 300)
-        fragmentShaderBuilder.append(GLSL_DIRECTIVE(define GaussianKernelHalfSize u_gaussianKernelHalfSize));
+        fragmentShaderBuilder.append(span(GLSL_DIRECTIVE(define GaussianKernelHalfSize u_gaussianKernelHalfSize)));
     else
-        fragmentShaderBuilder.append(GLSL_DIRECTIVE(define GaussianKernelHalfSize GAUSSIAN_KERNEL_MAX_HALF_SIZE));
+        fragmentShaderBuilder.append(span(GLSL_DIRECTIVE(define GaussianKernelHalfSize GAUSSIAN_KERNEL_MAX_HALF_SIZE)));
 
     // Append the common header.
-    fragmentShaderBuilder.append(fragmentTemplateHeaderCommon);
+    fragmentShaderBuilder.append(span(fragmentTemplateHeaderCommon));
 
     // Append the appropriate input/output variable definitions.
-    fragmentShaderBuilder.append(fragmentTemplateLT320Vars);
+    fragmentShaderBuilder.append(span(fragmentTemplateLT320Vars));
 
     // Append the common code.
-    fragmentShaderBuilder.append(fragmentTemplateCommon);
+    fragmentShaderBuilder.append(span(fragmentTemplateCommon));
 
     return adoptRef(*new TextureMapperShaderProgram(vertexShaderBuilder.toString(), fragmentShaderBuilder.toString()));
 }

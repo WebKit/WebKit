@@ -66,12 +66,12 @@ String GamepadData::loggingString() const
     builder.append(m_axisValues.size(), " axes, ", m_buttonValues.size(), " buttons\n");
 
     for (size_t i = 0; i < m_axisValues.size(); ++i)
-        builder.append(" Axis ", i, ": ", m_axisValues[i]);
+        builder.append(" Axis "_s, i, ": "_s, m_axisValues[i]);
 
     builder.append('\n');
 
     for (size_t i = 0; i < m_buttonValues.size(); ++i)
-        builder.append(" Button ", i, ": ", FormattedNumber::fixedPrecision(m_buttonValues[i]));
+        builder.append(" Button "_s, i, ": "_s, FormattedNumber::fixedPrecision(m_buttonValues[i]));
 
     return builder.toString();
 }

@@ -77,12 +77,12 @@ CanvasRenderingContext::~CanvasRenderingContext()
     instances().remove(this);
 }
 
-void CanvasRenderingContext::ref()
+void CanvasRenderingContext::ref() const
 {
     m_canvas.refCanvasBase();
 }
 
-void CanvasRenderingContext::deref()
+void CanvasRenderingContext::deref() const
 {
     m_canvas.derefCanvasBase();
 }

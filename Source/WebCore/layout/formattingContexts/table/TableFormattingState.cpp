@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TableFormattingState.h"
 
+#include "RenderObject.h"
 #include "TableFormattingContext.h"
 #include <wtf/IsoMallocInlines.h>
 

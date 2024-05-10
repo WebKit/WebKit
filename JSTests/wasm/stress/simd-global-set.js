@@ -28,4 +28,4 @@ async function test() {
     test();
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

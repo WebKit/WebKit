@@ -115,6 +115,10 @@ static NSString * const nameKey = @"name";
 static NSString * const allFramesKey = @"allFrames";
 static NSString * const codeKey = @"code";
 static NSString * const fileKey = @"file";
+static NSString * const cssOriginKey = @"cssOrigin";
+
+static NSString * const authorValue = @"author";
+static NSString * const userValue = @"user";
 
 static NSString * const emptyURLValue = @"";
 static NSString * const emptyTitleValue = @"";
@@ -525,6 +529,17 @@ bool WebExtensionAPITabs::parseScriptOptions(NSDictionary *options, WebExtension
 
     if (!boolForKey(options, allFramesKey, false))
         parameters.frameIDs = { WebExtensionFrameConstants::MainFrameIdentifier };
+
+    if (NSString *origin = options[cssOriginKey]) {
+        if ([origin isEqualToString:userValue])
+            parameters.styleLevel = WebCore::UserStyleLevel::User;
+        else if ([origin isEqualToString:authorValue])
+            parameters.styleLevel = WebCore::UserStyleLevel::Author;
+        else {
+            *outExceptionString = toErrorString(nil, cssOriginKey, @"it must specify either 'author' or 'user'");
+            return false;
+        }
+    }
 
     return true;
 }

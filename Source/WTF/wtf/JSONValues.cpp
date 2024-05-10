@@ -656,13 +656,13 @@ void Value::writeJSONImpl(StringBuilder& output) const
 {
     switch (m_type) {
     case Type::Null:
-        output.append("null");
+        output.append("null"_s);
         break;
     case Type::Boolean:
         if (m_value.boolean)
-            output.append("true");
+            output.append("true"_s);
         else
-            output.append("false");
+            output.append("false"_s);
         break;
     case Type::String:
         output.appendQuotedJSONString(m_value.string);
@@ -670,7 +670,7 @@ void Value::writeJSONImpl(StringBuilder& output) const
     case Type::Double:
     case Type::Integer: {
         if (!std::isfinite(m_value.number))
-            output.append("null");
+            output.append("null"_s);
         else
             output.append(m_value.number);
         break;

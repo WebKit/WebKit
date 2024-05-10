@@ -16,4 +16,4 @@ async function test() {
     assert.throws(() => {test(4294967296)}, WebAssembly.RuntimeError, "Out of bounds Trunc operation (evaluating 'test(4294967296)')");
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

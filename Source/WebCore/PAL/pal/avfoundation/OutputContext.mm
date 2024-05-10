@@ -82,7 +82,7 @@ String OutputContext::deviceName()
         builder.append(iterator->name());
 
         if (++iterator != devices.end())
-            builder.append(" + ");
+            builder.append(" + "_s);
     }
 
     return builder.toString();

@@ -232,6 +232,7 @@ void ThreadedCompositor::renderLayerTree()
     WebCore::IntPoint scrollPosition;
     float scaleFactor;
     bool needsResize;
+    uint32_t compositionRequestID;
 
     Vector<RefPtr<Nicosia::Scene>> states;
 
@@ -241,6 +242,7 @@ void ThreadedCompositor::renderLayerTree()
         scrollPosition = m_attributes.scrollPosition;
         scaleFactor = m_attributes.scaleFactor;
         needsResize = m_attributes.needsResize;
+        compositionRequestID = m_attributes.compositionRequestID;
 
         states = WTFMove(m_attributes.states);
 
@@ -278,7 +280,7 @@ void ThreadedCompositor::renderLayerTree()
     m_context->swapBuffers();
 
     if (m_scene->isActive())
-        m_client.didRenderFrame();
+        m_client.didRenderFrame(compositionRequestID);
 }
 
 void ThreadedCompositor::sceneUpdateFinished()
@@ -310,10 +312,12 @@ void ThreadedCompositor::sceneUpdateFinished()
     m_compositingRunLoop->updateCompleted(stateLocker);
 }
 
-void ThreadedCompositor::updateSceneState(const RefPtr<Nicosia::Scene>& state)
+void ThreadedCompositor::updateSceneState(const RefPtr<Nicosia::Scene>& state, uint32_t compositionRequestID)
 {
     Locker locker { m_attributes.lock };
-    m_attributes.states.append(state);
+    if (state)
+        m_attributes.states.append(state);
+    m_attributes.compositionRequestID = compositionRequestID;
     m_compositingRunLoop->scheduleUpdate();
 }
 

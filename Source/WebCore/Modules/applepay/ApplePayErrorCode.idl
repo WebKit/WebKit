@@ -35,4 +35,8 @@
     , "couponCodeInvalid"
     , "couponCodeExpired"
 #endif
+#if defined(ENABLE_APPLE_PAY_DISBURSEMENTS) && ENABLE_APPLE_PAY_DISBURSEMENTS
+    , "unsupportedCard"
+    , "recipientContactInvalid"
+#endif
 };

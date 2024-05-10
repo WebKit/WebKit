@@ -59,6 +59,10 @@ public:
     static Ref<Geolocation> create(Navigator&);
     WEBCORE_EXPORT ~Geolocation();
 
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     WEBCORE_EXPORT void resetAllGeolocationPermission();
     Document* document() const { return downcast<Document>(scriptExecutionContext()); }
 
@@ -83,7 +87,7 @@ private:
 
     GeolocationPosition* lastPosition();
 
-    // ActiveDOMObject
+    // ActiveDOMObject.
     void stop() override;
     void suspend(ReasonForSuspension) override;
     void resume() override;

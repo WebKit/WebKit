@@ -80,6 +80,10 @@ public:
     static Ref<MediaSession> create(Navigator&);
     ~MediaSession();
 
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     MediaMetadata* metadata() const { return m_metadata.get(); };
     void setMetadata(RefPtr<MediaMetadata>&&);
     void metadataUpdated();
@@ -147,7 +151,7 @@ private:
     void notifyActionHandlerObservers();
     void notifyReadyStateObservers();
 
-    // ActiveDOMObject
+    // ActiveDOMObject.
     void suspend(ReasonForSuspension) final;
     void stop() final;
     bool virtualHasPendingActivity() const final;

@@ -196,10 +196,10 @@ static bool appendColorInterpolationMethod(StringBuilder& builder, CSSGradientCo
             }
             return false;
         },
-        [&] (const auto& method) {
-            builder.append(needsLeadingSpace ? " " : "", "in ", serializationForCSS(method.interpolationColorSpace));
-            if constexpr (hasHueInterpolationMethod<decltype(method)>)
-                serializationForCSS(builder, method.hueInterpolationMethod);
+        [&]<typename MethodColorSpace> (const MethodColorSpace& methodColorSpace) {
+            builder.append(needsLeadingSpace ? " " : "", "in ", serializationForCSS(methodColorSpace.interpolationColorSpace));
+            if constexpr (hasHueInterpolationMethod<MethodColorSpace>)
+                serializationForCSS(builder, methodColorSpace.hueInterpolationMethod);
             return true;
         }
     );
@@ -210,11 +210,11 @@ static void appendGradientStops(StringBuilder& builder, const Vector<CSSGradient
     for (auto& stop : stops) {
         double position = stop.position->doubleValue(CSSUnitType::CSS_NUMBER);
         if (!position)
-            builder.append(", from(", stop.color->cssText(), ')');
+            builder.append(", from("_s, stop.color->cssText(), ')');
         else if (position == 1)
-            builder.append(", to(", stop.color->cssText(), ')');
+            builder.append(", to("_s, stop.color->cssText(), ')');
         else
-            builder.append(", color-stop(", position, ", ", stop.color->cssText(), ')');
+            builder.append(", color-stop("_s, position, ", "_s, stop.color->cssText(), ')');
     }
 }
 
@@ -266,7 +266,7 @@ String CSSLinearGradientValue::customCSSText() const
 {
     StringBuilder result;
 
-    result.append(m_repeating == CSSGradientRepeat::Repeating ? "repeating-linear-gradient(" : "linear-gradient(");
+    result.append(m_repeating == CSSGradientRepeat::Repeating ? "repeating-linear-gradient("_s : "linear-gradient("_s);
     bool wroteSomething = false;
 
     WTF::switchOn(m_data.gradientLine,
@@ -279,18 +279,18 @@ String CSSLinearGradientValue::customCSSText() const
             wroteSomething = true;
         },
         [&] (Horizontal horizontal) {
-            result.append("to ", WebCore::cssText(horizontal));
+            result.append("to "_s, WebCore::cssText(horizontal));
             wroteSomething = true;
         },
         [&] (Vertical vertical) {
             if (vertical == Vertical::Bottom)
                 return;
     
-            result.append("to ", WebCore::cssText(vertical));
+            result.append("to "_s, WebCore::cssText(vertical));
             wroteSomething = true;
         },
         [&] (const std::pair<Horizontal, Vertical>& pair) {
-            result.append("to ", WebCore::cssText(pair.first), ' ', WebCore::cssText(pair.second));
+            result.append("to "_s, WebCore::cssText(pair.first), ' ', WebCore::cssText(pair.second));
             wroteSomething = true;
         }
     );
@@ -300,7 +300,7 @@ String CSSLinearGradientValue::customCSSText() const
 
     for (auto& stop : m_stops) {
         if (wroteSomething)
-            result.append(", ");
+            result.append(", "_s);
         wroteSomething = true;
         writeColorStop(result, stop);
     }
@@ -350,11 +350,11 @@ String CSSPrefixedLinearGradientValue::customCSSText() const
 {
     StringBuilder result;
 
-    result.append(m_repeating == CSSGradientRepeat::Repeating ? "-webkit-repeating-linear-gradient(" : "-webkit-linear-gradient(");
+    result.append(m_repeating == CSSGradientRepeat::Repeating ? "-webkit-repeating-linear-gradient("_s : "-webkit-linear-gradient("_s);
 
     WTF::switchOn(m_data.gradientLine,
         [&] (std::monostate) {
-            result.append("top");
+            result.append("top"_s);
         },
         [&] (const Angle& angle) {
             result.append(angle.value->cssText());
@@ -371,7 +371,7 @@ String CSSPrefixedLinearGradientValue::customCSSText() const
     );
 
     for (auto& stop : m_stops) {
-        result.append(", ");
+        result.append(", "_s);
         writeColorStop(result, stop);
     }
 
@@ -397,7 +397,7 @@ bool CSSPrefixedLinearGradientValue::equals(const CSSPrefixedLinearGradientValue
 String CSSDeprecatedLinearGradientValue::customCSSText() const
 {
     StringBuilder result;
-    result.append("-webkit-gradient(linear, ", m_data.firstX->cssText(), ' ', m_data.firstY->cssText(), ", ", m_data.secondX->cssText(), ' ', m_data.secondY->cssText());
+    result.append("-webkit-gradient(linear, "_s, m_data.firstX->cssText(), ' ', m_data.firstY->cssText(), ", ", m_data.secondX->cssText(), ' ', m_data.secondY->cssText());
     appendGradientStops(result, m_stops);
     result.append(')');
     return result.toString();
@@ -452,7 +452,7 @@ String CSSRadialGradientValue::customCSSText() const
 {
     StringBuilder result;
 
-    result.append(m_repeating == CSSGradientRepeat::Repeating ? "repeating-radial-gradient(" : "radial-gradient(");
+    result.append(m_repeating == CSSGradientRepeat::Repeating ? "repeating-radial-gradient("_s : "radial-gradient("_s);
 
     bool wroteSomething = false;
 
@@ -460,7 +460,7 @@ String CSSRadialGradientValue::customCSSText() const
         if (!isCenterPosition(position)) {
             if (wroteSomething)
                 result.append(' ');
-            result.append("at ");
+            result.append("at "_s);
             appendSpaceSeparatedOptionalCSSPtrText(result, position.first.ptr(), position.second.ptr());
             wroteSomething = true;
         }
@@ -476,7 +476,7 @@ String CSSRadialGradientValue::customCSSText() const
         [&] (std::monostate) { },
         [&] (const Shape& data) {
             if (data.shape != ShapeKeyword::Ellipse) {
-                result.append("circle");
+                result.append("circle"_s);
                 wroteSomething = true;
             }
             appendOptionalPosition(data.position);
@@ -503,9 +503,9 @@ String CSSRadialGradientValue::customCSSText() const
         },
         [&] (const CircleOfExtent& data) {
             if (data.extent != ExtentKeyword::FarthestCorner)
-                result.append("circle ", WebCore::cssText(data.extent));
+                result.append("circle "_s, WebCore::cssText(data.extent));
             else
-                result.append("circle");
+                result.append("circle"_s);
             wroteSomething = true;
             appendOptionalPosition(data.position);
         },
@@ -535,12 +535,12 @@ String CSSRadialGradientValue::customCSSText() const
         wroteSomething = true;
 
     if (wroteSomething)
-        result.append(", ");
+        result.append(", "_s);
 
     bool wroteFirstStop = false;
     for (auto& stop : m_stops) {
         if (wroteFirstStop)
-            result.append(", ");
+            result.append(", "_s);
         wroteFirstStop = true;
         writeColorStop(result, stop);
     }
@@ -620,31 +620,31 @@ String CSSPrefixedRadialGradientValue::customCSSText() const
 {
     StringBuilder result;
 
-    result.append(m_repeating == CSSGradientRepeat::Repeating ? "-webkit-repeating-radial-gradient(" : "-webkit-radial-gradient(");
+    result.append(m_repeating == CSSGradientRepeat::Repeating ? "-webkit-repeating-radial-gradient("_s : "-webkit-radial-gradient("_s);
 
     if (m_data.position)
         result.append(m_data.position->first->cssText(), ' ', m_data.position->second->cssText());
     else
-        result.append("center");
+        result.append("center"_s);
 
     WTF::switchOn(m_data.gradientBox,
         [&] (std::monostate) { },
         [&] (const ShapeKeyword& shape) {
-            result.append(", ", WebCore::cssText(shape), " cover");
+            result.append(", "_s, WebCore::cssText(shape), " cover"_s);
         },
         [&] (const ExtentKeyword& extent) {
-            result.append(", ellipse ", WebCore::cssText(extent));
+            result.append(", ellipse "_s, WebCore::cssText(extent));
         },
         [&] (const ShapeAndExtent& shapeAndExtent) {
-            result.append(", ", WebCore::cssText(shapeAndExtent.shape), ' ', WebCore::cssText(shapeAndExtent.extent));
+            result.append(", "_s, WebCore::cssText(shapeAndExtent.shape), ' ', WebCore::cssText(shapeAndExtent.extent));
         },
         [&] (const MeasuredSize& measuredSize) {
-            result.append(", ", measuredSize.size.first->cssText(), ' ', measuredSize.size.second->cssText());
+            result.append(", "_s, measuredSize.size.first->cssText(), ' ', measuredSize.size.second->cssText());
         }
     );
 
     for (auto& stop : m_stops) {
-        result.append(", ");
+        result.append(", "_s);
         writeColorStop(result, stop);
     }
 
@@ -673,9 +673,9 @@ String CSSDeprecatedRadialGradientValue::customCSSText() const
 {
     StringBuilder result;
 
-    result.append("-webkit-gradient(radial, ",
-        m_data.firstX->cssText(), ' ', m_data.firstY->cssText(), ", ", m_data.firstRadius->cssText(), ", ",
-        m_data.secondX->cssText(), ' ', m_data.secondY->cssText(), ", ", m_data.secondRadius->cssText());
+    result.append("-webkit-gradient(radial, "_s,
+        m_data.firstX->cssText(), ' ', m_data.firstY->cssText(), ", "_s, m_data.firstRadius->cssText(), ", "_s,
+        m_data.secondX->cssText(), ' ', m_data.secondY->cssText(), ", "_s, m_data.secondRadius->cssText());
 
     appendGradientStops(result, m_stops);
 
@@ -707,19 +707,19 @@ String CSSConicGradientValue::customCSSText() const
 {
     StringBuilder result;
 
-    result.append(m_repeating == CSSGradientRepeat::Repeating ? "repeating-conic-gradient(" : "conic-gradient(");
+    result.append(m_repeating == CSSGradientRepeat::Repeating ? "repeating-conic-gradient("_s : "conic-gradient("_s);
 
     bool wroteSomething = false;
 
     if (m_data.angle.value && m_data.angle.value->computeDegrees()) {
-        result.append("from ", m_data.angle.value->cssText());
+        result.append("from "_s, m_data.angle.value->cssText());
         wroteSomething = true;
     }
 
     if (m_data.position && !isCenterPosition(*m_data.position)) {
         if (wroteSomething)
             result.append(' ');
-        result.append("at ", m_data.position->first->cssText(), ' ', m_data.position->second->cssText());
+        result.append("at "_s, m_data.position->first->cssText(), ' ', m_data.position->second->cssText());
         wroteSomething = true;
     }
 
@@ -727,12 +727,12 @@ String CSSConicGradientValue::customCSSText() const
         wroteSomething = true;
 
     if (wroteSomething)
-        result.append(", ");
+        result.append(", "_s);
 
     bool wroteFirstStop = false;
     for (auto& stop : m_stops) {
         if (wroteFirstStop)
-            result.append(", ");
+            result.append(", "_s);
         wroteFirstStop = true;
         writeColorStop(result, stop);
     }

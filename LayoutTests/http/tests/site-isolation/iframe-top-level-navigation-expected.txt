@@ -1,0 +1,10 @@
+Verifies top-level navigation initiated by iframe can complete
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Main frame is navigated to new url: http://localhost:8000/site-isolation/iframe-top-level-navigation.html#complete
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

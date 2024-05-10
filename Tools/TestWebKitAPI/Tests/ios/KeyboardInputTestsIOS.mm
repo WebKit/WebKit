@@ -925,8 +925,19 @@ TEST(KeyboardInputTests, DoNotCrashWhenFocusingSelectWithoutViewSnapshot)
     [webView waitForNextPresentationUpdate];
 }
 
+static BOOL overrideHardwareKeyboardAttached(id, SEL)
+{
+    return NO;
+}
+
 TEST(KeyboardInputTests, EditableWebViewRequiresKeyboardWhenFirstResponder)
 {
+    InstanceMethodSwizzler swizzler {
+        UIKeyboardImpl.class,
+        @selector(hardwareKeyboardAttached),
+        reinterpret_cast<IMP>(overrideHardwareKeyboardAttached)
+    };
+
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto delegate = adoptNS([TestInputDelegate new]);
     [webView _setInputDelegate:delegate.get()];

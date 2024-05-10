@@ -32,6 +32,7 @@
 #import "CommandEncoder.h"
 #import "Device.h"
 #import "IsValidToUseWith.h"
+#import "MetalSPI.h"
 #import "Texture.h"
 #import "TextureView.h"
 #import <wtf/CheckedArithmetic.h>
@@ -70,7 +71,9 @@ void Queue::ensureBlitCommandEncoder()
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-    m_commandBuffer = commandBufferWithDescriptor(commandBufferDescriptor);
+    auto blitCommandBufferWithSharedEvent = commandBufferWithDescriptor(commandBufferDescriptor);
+    m_commandBuffer = blitCommandBufferWithSharedEvent.first;
+    m_commandBufferEvent = blitCommandBufferWithSharedEvent.second;
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
 }
 
@@ -103,7 +106,7 @@ void Queue::setEncoderForBuffer(id<MTLCommandBuffer> commandBuffer, id<MTLComman
         [m_openCommandEncoders setObject:commandEncoder forKey:commandBuffer];
 }
 
-id<MTLCommandBuffer> Queue::commandBufferWithDescriptor(MTLCommandBufferDescriptor* descriptor)
+std::pair<id<MTLCommandBuffer>, id<MTLSharedEvent>> Queue::commandBufferWithDescriptor(MTLCommandBufferDescriptor* descriptor)
 {
     constexpr auto maxCommandBufferCount = 64;
     if (m_createdNotCommittedBuffers.count >= maxCommandBufferCount) {
@@ -118,8 +121,14 @@ id<MTLCommandBuffer> Queue::commandBufferWithDescriptor(MTLCommandBufferDescript
     id<MTLCommandBuffer> buffer = [m_commandQueue commandBufferWithDescriptor:descriptor];
     if (buffer)
         [m_createdNotCommittedBuffers addObject:buffer];
+    auto devicePtr = m_device.get();
+    id<MTLSharedEvent> sharedEvent = nil;
+    if (devicePtr && [buffer respondsToSelector:@selector(encodeConditionalAbortEvent:)]) {
+        sharedEvent = [devicePtr->device() newSharedEvent];
+        [(id<MTLCommandBufferSPI>)buffer encodeConditionalAbortEvent:sharedEvent];
+    }
 
-    return buffer;
+    return std::make_pair(buffer, sharedEvent);
 }
 
 void Queue::makeInvalid()
@@ -187,8 +196,9 @@ void Queue::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
 NSString* Queue::errorValidatingSubmit(const Vector<std::reference_wrapper<CommandBuffer>>& commands) const
 {
     for (auto command : commands) {
-        if (!isValidToUseWith(command.get(), *this) || command.get().bufferMapCount())
-            return command.get().lastError() ?: @"Validation failure.";
+        auto& commandBuffer = command.get();
+        if (!isValidToUseWith(commandBuffer, *this) || commandBuffer.bufferMapCount() || commandBuffer.commandBuffer().status >= MTLCommandBufferStatusCommitted)
+            return commandBuffer.lastError() ?: @"Validation failure.";
     }
 
     // FIXME: "Every GPUQuerySet referenced in a command in any element of commandBuffers is in the available state."
@@ -671,6 +681,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
                     auto region = MTLRegionMake1D(destination.origin.x, widthForMetal);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
                         auto sourceOffset = static_cast<NSUInteger>(dataLayoutOffset + layer * bytesPerImage);
+                        if (sourceOffset % blockSize)
+                            continue;
                         NSUInteger destinationSlice = destination.origin.z + layer;
                         [mtlTexture
                             replaceRegion:region
@@ -689,6 +701,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
                     auto region = MTLRegionMake2D(destination.origin.x, destination.origin.y, widthForMetal, heightForMetal);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
                         auto sourceOffset = static_cast<NSUInteger>(dataLayoutOffset + layer * bytesPerImage);
+                        if (sourceOffset % blockSize)
+                            continue;
                         NSUInteger destinationSlice = destination.origin.z + layer;
                         [mtlTexture
                             replaceRegion:region
@@ -706,6 +720,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
 
                     auto region = MTLRegionMake3D(destination.origin.x, destination.origin.y, destination.origin.z, widthForMetal, heightForMetal, depthForMetal);
                     auto sourceOffset = static_cast<NSUInteger>(dataLayoutOffset);
+                    if (sourceOffset % blockSize)
+                        break;
                     [mtlTexture
                         replaceRegion:region
                         mipmapLevel:destination.mipLevel
@@ -754,6 +770,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
             NSUInteger destinationSlice = destination.origin.z + layer;
             if (sourceOffset + widthForMetal * blockSize > temporaryBuffer.length)
                 continue;
+            if (sourceOffset % blockSize)
+                continue;
 
             [m_blitCommandEncoder
                 copyFromBuffer:temporaryBuffer
@@ -780,6 +798,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
             NSUInteger sourceOffset = layer * bytesPerImage;
             NSUInteger destinationSlice = destination.origin.z + layer;
+            if (sourceOffset % blockSize)
+                continue;
             [m_blitCommandEncoder
                 copyFromBuffer:temporaryBuffer
                 sourceOffset:sourceOffset
@@ -800,10 +820,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         if (!widthForMetal || !heightForMetal || !depthForMetal)
             return;
 
-        NSUInteger sourceOffset = 0;
         [m_blitCommandEncoder
             copyFromBuffer:temporaryBuffer
-            sourceOffset:sourceOffset
+            sourceOffset:0
             sourceBytesPerRow:bytesPerRow
             sourceBytesPerImage:bytesPerImage
             sourceSize:sourceSize

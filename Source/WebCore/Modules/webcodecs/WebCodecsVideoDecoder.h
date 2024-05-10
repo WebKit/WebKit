@@ -69,18 +69,19 @@ public:
 
     static void isConfigSupported(ScriptExecutionContext&, WebCodecsVideoDecoderConfig&&, Ref<DeferredPromise>&&);
 
-    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref;
-    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref;
+    // ActiveDOMObject.
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
 private:
     WebCodecsVideoDecoder(ScriptExecutionContext&, Init&&);
 
-    // ActiveDOMObject API.
+    // ActiveDOMObject.
     void stop() final;
     void suspend(ReasonForSuspension) final;
     bool virtualHasPendingActivity() const final;
 
-    // EventTarget
+    // EventTarget.
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebCodecsVideoDecoder; }

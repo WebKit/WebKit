@@ -44,4 +44,4 @@ async function test() {
     assert.eq(test(5), 31)
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

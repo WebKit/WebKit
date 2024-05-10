@@ -246,28 +246,52 @@ if(condition)
     doIt();
 ```
 
-[](#spacing-function-paren) Do not place spaces between a function and its parentheses, or between a parenthesis and its content.
+[](#spacing-function-paren-prior) Do not place spaces between the name, angle brackets and parentheses of a function declaration or invocation.
 
 ###### Right:
 
 ```cpp
-f(a, b);
+f();
+void g() { ... }
+h<int>();
 ```
 
 ###### Wrong:
 
 ```cpp
-f (a, b);
-f( a, b );
+f ();
+void g () { ... }
+h <int> ();
 ```
 
-[](#spacing-lambda-paren) Do not place spaces between square brackets and parentheses of a lambda function but do place a space before braces.
+[](#spacing-function-paren-inside) Do not place spaces between the parenthesis and its parameters, or angle brackets and its parameters of a function declaration or invocation.
+
+###### Right:
+
+```cpp
+f(a, b);
+void g(int a) { ... }
+h<int>();
+```
+
+###### Wrong:
+
+```cpp
+f( a, b );
+void g( int a ) { ... }
+h< int >();
+```
+
+
+[](#spacing-lambda-paren) Do not place spaces between square brackets, angle brackets and parentheses of a lambda function but do place a space before braces.
 
 ###### Right:
 
 ```cpp
 [](int x) { return x; }
 [this] { return m_member; }
+[=]<typename T> { return T(); }
+[&]<typename X>(X parameter) { return parameter; }
 ```
 
 ###### Wrong:
@@ -275,7 +299,24 @@ f( a, b );
 ```cpp
 [] (int x) { return x; }
 [this]{ return m_member; }
+[=] <typename T> { return T(); }
+[&]<typename X> (X parameter) { return parameter; }
 ```
+
+[](#spacing-template) Do not place spaces between the identifier `template` and its angle brackets.
+
+###### Right:
+
+```cpp
+template<typename T> T foo();
+template<typename U> struct Bar { };
+```
+
+###### Wrong:
+
+```cpp
+template <typename T> T foo();
+template <typename U> struct Bar { };
 
 [](#spacing-braced-init) When initializing an object, place a space before the leading brace as well as between the braces and their content.
 
@@ -1304,6 +1345,30 @@ using namespace other;
 namespace WebCore {
 
 } // namespace WebCore
+```
+
+### Lambdas
+
+[](#lamda-template-args) Prefer lambdas with explicit template argument lists when the explicit type of a parameter is required in the body.
+
+###### Right:
+
+```cpp
+[]<typename T>(T arg) { 
+    if constexpr (T::isGood)
+        go();
+}
+
+```
+
+###### Wrong:
+
+```cpp
+[](auto arg) {
+    using T = std::decay_t<decltype(arg)>;
+    if constexpr (T::isGood)
+        go();
+}
 ```
 
 ### Types

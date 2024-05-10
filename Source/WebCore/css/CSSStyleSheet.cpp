@@ -502,7 +502,7 @@ String CSSStyleSheet::cssTextWithReplacementURLs(const HashMap<String, String>& 
 
         auto ruleText = rule->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet);
         if (!result.isEmpty() && !ruleText.isEmpty())
-            result.append(" ");
+            result.append(' ');
 
         result.append(ruleText);
     }

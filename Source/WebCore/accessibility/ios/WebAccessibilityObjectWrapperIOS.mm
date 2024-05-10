@@ -281,29 +281,25 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (uint64_t)_axLinkTrait { return (1 << 0); }
 - (uint64_t)_axVisitedTrait { return (1 << 1); }
 - (uint64_t)_axHeaderTrait { return (1 << 2); }
-- (uint64_t)_axContainedByListTrait { return (1 << 3); }
-- (uint64_t)_axContainedByTableTrait { return (1 << 4); }
-- (uint64_t)_axContainedByLandmarkTrait { return (1 << 5); }
-- (uint64_t)_axWebContentTrait { return (1 << 6); }
-- (uint64_t)_axSecureTextFieldTrait { return (1 << 7); }
-- (uint64_t)_axTextEntryTrait { return (1 << 8); }
-- (uint64_t)_axHasTextCursorTrait { return (1 << 9); }
-- (uint64_t)_axTextOperationsAvailableTrait { return (1 << 10); }
-- (uint64_t)_axImageTrait { return (1 << 11); }
-- (uint64_t)_axTabButtonTrait { return (1 << 12); }
-- (uint64_t)_axButtonTrait { return (1 << 13); }
-- (uint64_t)_axToggleTrait { return (1 << 14); }
-- (uint64_t)_axPopupButtonTrait { return (1 << 15); }
-- (uint64_t)_axStaticTextTrait { return (1 << 16); }
-- (uint64_t)_axAdjustableTrait { return (1 << 17); }
-- (uint64_t)_axMenuItemTrait { return (1 << 18); }
-- (uint64_t)_axSelectedTrait { return (1 << 19); }
-- (uint64_t)_axNotEnabledTrait { return (1 << 20); }
-- (uint64_t)_axRadioButtonTrait { return (1 << 21); }
-- (uint64_t)_axContainedByFieldsetTrait { return (1 << 22); }
-- (uint64_t)_axSearchFieldTrait { return (1 << 23); }
-- (uint64_t)_axTextAreaTrait { return (1 << 24); }
-- (uint64_t)_axUpdatesFrequentlyTrait { return (1 << 25); }
+- (uint64_t)_axWebContentTrait { return (1 << 3); }
+- (uint64_t)_axSecureTextFieldTrait { return (1 << 4); }
+- (uint64_t)_axTextEntryTrait { return (1 << 5); }
+- (uint64_t)_axHasTextCursorTrait { return (1 << 6); }
+- (uint64_t)_axTextOperationsAvailableTrait { return (1 << 7); }
+- (uint64_t)_axImageTrait { return (1 << 8); }
+- (uint64_t)_axTabBarTrait { return (1 << 9); }
+- (uint64_t)_axButtonTrait { return (1 << 10); }
+- (uint64_t)_axToggleTrait { return (1 << 11); }
+- (uint64_t)_axPopupButtonTrait { return (1 << 12); }
+- (uint64_t)_axStaticTextTrait { return (1 << 13); }
+- (uint64_t)_axAdjustableTrait { return (1 << 14); }
+- (uint64_t)_axMenuItemTrait { return (1 << 15); }
+- (uint64_t)_axSelectedTrait { return (1 << 16); }
+- (uint64_t)_axNotEnabledTrait { return (1 << 17); }
+- (uint64_t)_axRadioButtonTrait { return (1 << 18); }
+- (uint64_t)_axSearchFieldTrait { return (1 << 19); }
+- (uint64_t)_axTextAreaTrait { return (1 << 20); }
+- (uint64_t)_axUpdatesFrequentlyTrait { return (1 << 21); }
 
 - (NSString *)accessibilityDOMIdentifier
 {
@@ -601,23 +597,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return roleValue == AccessibilityRole::ApplicationDialog || roleValue == AccessibilityRole::ApplicationAlertDialog;
 }
 
-- (BOOL)_accessibilityIsLandmarkRole:(AccessibilityRole)role
-{
-    switch (role) {
-    case AccessibilityRole::LandmarkBanner:
-    case AccessibilityRole::LandmarkComplementary:
-    case AccessibilityRole::LandmarkContentInfo:
-    case AccessibilityRole::LandmarkDocRegion:
-    case AccessibilityRole::LandmarkMain:
-    case AccessibilityRole::LandmarkNavigation:
-    case AccessibilityRole::LandmarkRegion:
-    case AccessibilityRole::LandmarkSearch:
-        return YES;
-    default:
-        return NO;
-    }    
-}
-
 static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descendant, const AccessibilityRoleSet& roles)
 {
     auto* ancestor = Accessibility::findAncestor(descendant, false, [&roles] (const auto& object) {
@@ -729,14 +708,8 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
             traits |= [self _axButtonTrait];
             break;
         default:
-            if ([self _accessibilityIsLandmarkRole:parentRole])
-                traits |= [self _axContainedByLandmarkTrait];
             break;
         }
-
-        // If this object has fieldset parent, we should add containedByFieldsetTrait to it.
-        if (parent->isFieldset())
-            traits |= [self _axContainedByFieldsetTrait];
     }
 
     return traits;
@@ -850,8 +823,8 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Image:
         traits |= [self _axImageTrait];
         break;
-    case AccessibilityRole::Tab:
-        traits |= [self _axTabButtonTrait];
+    case AccessibilityRole::TabList:
+        traits |= [self _axTabBarTrait];
         break;
     case AccessibilityRole::Button:
         traits |= [self _axButtonTrait];

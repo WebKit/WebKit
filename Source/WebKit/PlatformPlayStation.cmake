@@ -81,6 +81,7 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/libwpe/WebPasteboardProxyLibWPE.cpp
 
+    UIProcess/playstation/DisplayLinkPlayStation.cpp
     UIProcess/playstation/PageClientImpl.cpp
     UIProcess/playstation/PlayStationWebView.cpp
     UIProcess/playstation/WebPageProxyPlayStation.cpp

@@ -105,7 +105,7 @@ static RefPtr<MediaPlayerPrivateGStreamerMSE> webKitMediaSrcPlayer(WebKitMediaSr
 #define webkit_media_src_parent_class parent_class
 
 struct WebKitMediaSrcPadPrivate {
-    RefPtr<Stream> stream;
+    ThreadSafeWeakPtr<Stream> stream;
 };
 
 struct WebKitMediaSrcPad {
@@ -154,7 +154,7 @@ WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitMediaSrc, webkit_media_src, GST_TYPE_ELEMENT,
     G_IMPLEMENT_INTERFACE(GST_TYPE_URI_HANDLER, webKitMediaSrcUriHandlerInit);
     GST_DEBUG_CATEGORY_INIT(webkit_media_src_debug, "webkitmediasrc", 0, "WebKit MSE source element"));
 
-struct Stream : public ThreadSafeRefCounted<Stream> {
+struct Stream : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Stream> {
     Stream(WebKitMediaSrc* source, GRefPtr<GstPad>&& pad, Ref<MediaSourceTrackGStreamer>&& track, GRefPtr<GstStream>&& streamInfo)
         : source(source)
         , pad(WTFMove(pad))
@@ -322,6 +322,11 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
 #ifndef GST_DISABLE_GST_DEBUG
         GST_DEBUG_OBJECT(source, "Adding stream with trackId '%s' of type %s with caps %" GST_PTR_FORMAT, track->stringId().string().utf8().data(), streamTypeToString(track->type()), track->initialCaps().get());
 #endif // GST_DISABLE_GST_DEBUG
+        if (source->priv->streams.contains(track->stringId())) {
+            GST_ERROR_OBJECT(source, "stream with trackId '%s' already exists", track->stringId().string().utf8().data());
+            ASSERT_NOT_REACHED();
+            continue;
+        }
 
         GRefPtr<WebKitMediaSrcPad> pad = WEBKIT_MEDIA_SRC_PAD(g_object_new(webkit_media_src_pad_get_type(), "name", makeString("src_", track->stringId()).utf8().data(), "direction", GST_PAD_SRC, NULL));
         gst_pad_set_activatemode_function(GST_PAD(pad.get()), webKitMediaSrcActivateMode);
@@ -329,7 +334,7 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
         ASSERT(track->initialCaps());
         auto stream = adoptRef(new Stream(source, GRefPtr<GstPad>(GST_PAD(pad.get())), *track,
             adoptGRef(gst_stream_new(track->stringId().string().utf8().data(), track->initialCaps().get(), gstStreamType(track->type()), GST_STREAM_FLAG_SELECT))));
-        pad->priv->stream = stream;
+        pad->priv->stream = ThreadSafeWeakPtr { *stream.get() };
 
         gst_stream_collection_add_stream(source->priv->collection.get(), GRefPtr<GstStream>(stream->streamInfo.get()).leakRef());
         source->priv->streams.set(track->stringId(), WTFMove(stream));
@@ -394,8 +399,11 @@ static gboolean webKitMediaSrcActivateMode(GstPad* pad, GstObject* source, GstPa
     if (active)
         gst_pad_start_task(pad, webKitMediaSrcLoop, pad, nullptr);
     else {
+        RefPtr<Stream> stream(WEBKIT_MEDIA_SRC_PAD(pad)->priv->stream.get());
+        if (!stream)
+            return false;
+
         // Unblock the streaming thread.
-        RefPtr<Stream>& stream = WEBKIT_MEDIA_SRC_PAD(pad)->priv->stream;
         {
             DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
             streamingMembers->isFlushing = true;
@@ -416,7 +424,10 @@ static gboolean webKitMediaSrcActivateMode(GstPad* pad, GstObject* source, GstPa
 
 static void webKitMediaSrcPadLinked(GstPad* pad, GstPad*, void*)
 {
-    RefPtr<Stream>& stream = WEBKIT_MEDIA_SRC_PAD(pad)->priv->stream;
+    RefPtr<Stream> stream(WEBKIT_MEDIA_SRC_PAD(pad)->priv->stream.get());
+    if (!stream)
+        return;
+
     DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
     streamingMembers->padLinkedOrFlushedCondition.notifyOne();
 }
@@ -443,7 +454,9 @@ static void webKitMediaSrcWaitForPadLinkedOrFlush(GstPad* pad, DataMutexLocker<S
 static void webKitMediaSrcLoop(void* userData)
 {
     GstPad* pad = GST_PAD(userData);
-    RefPtr<Stream>& stream = WEBKIT_MEDIA_SRC_PAD(pad)->priv->stream;
+    RefPtr<Stream> stream(WEBKIT_MEDIA_SRC_PAD(pad)->priv->stream.get());
+    if (!stream)
+        return;
 
     DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
     if (streamingMembers->isFlushing) {

@@ -757,6 +757,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     RetainPtr<WKFullScreenParentWindowState> _parentWindowState;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     RetainPtr<WKSPreviewWindowController> _previewWindowController;
+    bool _isImageElement;
 #endif // QUICKLOOK_FULLSCREEN
 #endif
 
@@ -865,6 +866,9 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #if PLATFORM(VISION)
     _lastKnownParentWindow = [webView window];
     _parentWindowState = adoptNS([[WKFullScreenParentWindowState alloc] initWithWindow:_lastKnownParentWindow.get()]);
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    _isImageElement = manager->isImageElement();
+#endif // QUICKLOOK_FULLSCREEN
 #endif
     _fullScreenState = WebKit::WaitingToEnterFullScreen;
     _blocksReturnToFullscreenFromPictureInPicture = manager->blocksReturnToFullscreenFromPictureInPicture();
@@ -977,7 +981,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         if (auto* manager = self._manager)
             manager->setAnimatingFullScreen(true);
 
-        page->forceRepaint([protectedSelf = retainPtr(self), self, logIdentifier = logIdentifier] {
+        page->updateRenderingWithForcedRepaint([protectedSelf = retainPtr(self), self, logIdentifier = logIdentifier] {
             if (_exitRequested) {
                 _exitRequested = NO;
                 OBJC_ERROR_LOG(logIdentifier, "repaint completed, but exit requested");
@@ -1312,7 +1316,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
     auto* page = [self._webView _page].get();
     if (page && page->isViewFocused())
-        page->forceRepaint(WTFMove(completionHandler));
+        page->updateRenderingWithForcedRepaint(WTFMove(completionHandler));
     else
         completionHandler();
 
@@ -1713,6 +1717,11 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 - (void)_configureSpatialFullScreenTransition
 {
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    if (_isImageElement)
+        return;
+#endif // QUICKLOOK_FULLSCREEN
+
     CGRect originalWindowBounds = [_lastKnownParentWindow bounds];
     CGRect fullscreenWindowBounds = [_window bounds];
 
@@ -1789,9 +1798,25 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     WKFullScreenParentWindowState *originalState = _parentWindowState.get();
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-    bool isImageElement = self._manager && self._manager->isImageElement();
-#else
-    bool isImageElement = false;
+    auto* manager = self._manager;
+    if (manager && _isImageElement) {
+        if (enter) {
+            // The fullscreen window won't be displayed.
+            [inWindow setHidden:YES];
+
+            manager->prepareQuickLookImageURL([strongSelf = retainPtr(self), self, outWindow = retainPtr(outWindow), completionHandler = WTFMove(completionHandler)] (URL&& url) mutable {
+                UIWindowScene *scene = [outWindow windowScene];
+                _previewWindowController = adoptNS([WebKit::allocWKSPreviewWindowControllerInstance() initWithURL:url sceneID:scene._sceneIdentifier]);
+                [_previewWindowController setDelegate:self];
+                [_previewWindowController presentWindow];
+                completionHandler();
+            });
+        } else {
+            [_fullscreenViewController dismissViewControllerAnimated:NO completion:nil];
+            completionHandler();
+        }
+        return;
+    }
 #endif
 
     inWindow.transform3D = CATransform3DTranslate(originalState.transform3D, 0, 0, kIncomingWindowZOffset);
@@ -1832,8 +1857,8 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         } completion:nil];
     }
 
-    auto completion = makeBlockPtr([controller = retainPtr(controller), inWindow = retainPtr(inWindow), originalState = retainPtr(originalState), enter, isImageElement, completionHandler = WTFMove(completionHandler)] (BOOL finished) mutable {
-        WebKit::resizeScene([inWindow windowScene], [inWindow bounds].size, [controller, inWindow, originalState, enter, isImageElement, completionHandler = WTFMove(completionHandler)]() mutable {
+    auto completion = makeBlockPtr([controller = retainPtr(controller), inWindow = retainPtr(inWindow), originalState = retainPtr(originalState), enter, completionHandler = WTFMove(completionHandler)] (BOOL finished) mutable {
+        WebKit::resizeScene([inWindow windowScene], [inWindow bounds].size, [controller, inWindow, originalState, enter, completionHandler = WTFMove(completionHandler)]() mutable {
             Class inWindowClass = enter ? [UIWindow class] : [originalState windowClass];
             object_setClass(inWindow.get(), inWindowClass);
 
@@ -1858,36 +1883,17 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
                 [controller->_fullscreenViewController dismissViewControllerAnimated:NO completion:nil];
             }
 
-            if (enter && isImageElement)
-                scene.mrui_placement.preferredChromeOptions = RSSSceneChromeOptionsNone;
-            else
-                scene.mrui_placement.preferredChromeOptions = [originalState sceneChromeOptions];
+            scene.mrui_placement.preferredChromeOptions = [originalState sceneChromeOptions];
 
             completionHandler();
         });
     });
 
-    CGFloat inWindowAlpha = 1;
-#if ENABLE(QUICKLOOK_FULLSCREEN)
-    auto* manager = self._manager;
-    if (manager && manager->isImageElement()) {
-        if (enter) {
-            inWindowAlpha = 0;
-            manager->prepareQuickLookImageURL([strongSelf = retainPtr(self), self, inWindow = retainPtr(inWindow)] (URL&& url) mutable {
-                UIWindowScene *scene = [inWindow windowScene];
-                _previewWindowController = adoptNS([WebKit::allocWKSPreviewWindowControllerInstance() initWithURL:url sceneID:scene._sceneIdentifier]);
-                [_previewWindowController setDelegate:self];
-                [_previewWindowController presentWindow];
-            });
-        }
-    }
-#endif
-
     [UIView animateWithDuration:kIncomingWindowFadeDuration delay:kIncomingWindowFadeDelay options:UIViewAnimationOptionCurveEaseInOut animations:^{
         if (!enter)
             [self _setOrnamentsHidden:NO];
 
-        inWindow.alpha = inWindowAlpha;
+        inWindow.alpha = 1;
     } completion:completion.get()];
 }
 
@@ -1908,19 +1914,26 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 - (void)showUI
 {
 #if PLATFORM(VISION)
-    UIWindowScene *scene = [_window windowScene];
+
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-    if (self._manager && self._manager->isImageElement())
-        scene.mrui_placement.preferredChromeOptions = RSSSceneChromeOptionsNone;
-    else
+    if (_isImageElement)
+        return;
 #endif // QUICKLOOK_FULLSCREEN
-        scene.mrui_placement.preferredChromeOptions = [_parentWindowState sceneChromeOptions];
+
+    UIWindowScene *scene = [_window windowScene];
+    scene.mrui_placement.preferredChromeOptions = [_parentWindowState sceneChromeOptions];
 #endif
 }
 
 - (void)hideUI
 {
 #if PLATFORM(VISION)
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    if (_isImageElement)
+        return;
+#endif // QUICKLOOK_FULLSCREEN
+
     UIWindowScene *scene = [_window windowScene];
     scene.mrui_placement.preferredChromeOptions = RSSSceneChromeOptionsNone;
 #endif

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-does-not-fire-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-redirect.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defaultPrevented-navigation-preempted.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defaultPrevented-window-stop-after-dispatch.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/event-constructor.html
@@ -59,6 +60,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-back-after-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-back-after-pushState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-back-bfcache.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-back-cross-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-back-noop.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-go-0.html

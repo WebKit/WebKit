@@ -558,9 +558,9 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
     auto makeData = [&] (auto colorInterpolationMethod, auto& stops) {
         auto convertColorToColorInterpolationSpace = [&] (const Color& color, auto colorInterpolationMethod) -> ColorComponents<float, 4> {
             return WTF::switchOn(colorInterpolationMethod.colorSpace,
-                [&] (auto& colorSpace) -> ColorComponents<float, 4> {
-                    using ColorType = typename std::remove_reference_t<decltype(colorSpace)>::ColorType;
-                    return asColorComponents(color.template toColorTypeLossy<ColorType>().unresolved());
+                [&]<typename MethodColorSpace>(const MethodColorSpace&) -> ColorComponents<float, 4> {
+                    using ColorType = typename MethodColorSpace::ColorType;
+                    return asColorComponents(color.template toColorTypeLossyCarryingForwardMissing<ColorType>().unresolved());
                 }
             );
         };
@@ -611,14 +611,12 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
     auto makeFunction = [&] (auto colorInterpolationMethod, auto& data) {
         auto makeEvaluateCallback = [&] (auto colorInterpolationMethod) -> CGFunctionEvaluateCallback {
             return WTF::switchOn(colorInterpolationMethod.colorSpace,
-                [&] (auto& colorSpace) -> CGFunctionEvaluateCallback {
-                    using InterpolationMethodColorSpace = typename std::remove_reference_t<decltype(colorSpace)>;
-                    
+                [&]<typename MethodColorSpace> (const MethodColorSpace&) -> CGFunctionEvaluateCallback {
                     switch (colorInterpolationMethod.alphaPremultiplication) {
                     case AlphaPremultiplication::Unpremultiplied:
-                        return &Shading::shadingFunction<InterpolationMethodColorSpace, AlphaPremultiplication::Unpremultiplied>;
+                        return &Shading::shadingFunction<MethodColorSpace, AlphaPremultiplication::Unpremultiplied>;
                     case AlphaPremultiplication::Premultiplied:
-                        return &Shading::shadingFunction<InterpolationMethodColorSpace, AlphaPremultiplication::Premultiplied>;
+                        return &Shading::shadingFunction<MethodColorSpace, AlphaPremultiplication::Premultiplied>;
                     }
                 }
             );

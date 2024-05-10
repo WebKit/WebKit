@@ -1,0 +1,18 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices
+reexported-libraries:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        libraries: [/System/Library/PrivateFrameworks/AssertionServices.framework/AssertionServices]
+exports:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        objc-classes: [BKSMousePointerService]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/AssertionServices.framework/AssertionServices
+current-version: 874.100.27
+exports: []
+...

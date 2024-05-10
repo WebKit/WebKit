@@ -99,11 +99,13 @@ platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp @no-unify
 platform/gstreamer/GStreamerCodecUtilities.cpp
 platform/gstreamer/GStreamerElementHarness.cpp
 platform/gstreamer/GStreamerHolePunchQuirkBcmNexus.cpp
+platform/gstreamer/GStreamerHolePunchQuirkRialto.cpp
 platform/gstreamer/GStreamerHolePunchQuirkWesteros.cpp
 platform/gstreamer/GStreamerQuirkAmLogic.cpp
 platform/gstreamer/GStreamerQuirkBcmNexus.cpp
 platform/gstreamer/GStreamerQuirkBroadcom.cpp
 platform/gstreamer/GStreamerQuirkRealtek.cpp
+platform/gstreamer/GStreamerQuirkRialto.cpp
 platform/gstreamer/GStreamerQuirkWesteros.cpp
 platform/gstreamer/GStreamerQuirks.cpp
 platform/gstreamer/PlatformSpeechSynthesizerGStreamer.cpp

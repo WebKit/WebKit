@@ -1827,11 +1827,12 @@ void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(St
     for (auto& origin : getAllOrigins()) {
         auto fetchedTypes = originStorageManager(origin).fetchDataTypesInList(targetTypes, false);
         if (!fetchedTypes.isEmpty()) {
-            StringBuilder originBuilder;
-            originBuilder.append("\n{ \"origin\" : { \"topOrigin\" : \"", origin.topOrigin.toString(), "\", \"clientOrigin\": \"", origin.clientOrigin.toString(), "\" }, \"caches\" : ");
-            originBuilder.append(originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).representationString());
-            originBuilder.append('}');
-            originStrings.append(originBuilder.toString());
+            originStrings.append(makeString("\n{ \"origin\" : { \"topOrigin\" : \""_s,
+                origin.topOrigin.toString(), "\", \"clientOrigin\": \""_s,
+                origin.clientOrigin.toString(), "\" }, \"caches\" : "_s,
+                originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).representationString(),
+                '}'
+            ));
         }
         removeOriginStorageManagerIfPossible(origin);
     }

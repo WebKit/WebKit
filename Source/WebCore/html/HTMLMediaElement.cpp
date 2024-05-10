@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2014-2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -131,6 +131,7 @@
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
 #include "VideoTrackPrivate.h"
+#include "VisibilityAdjustment.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <limits>
@@ -963,6 +964,8 @@ void HTMLMediaElement::didFinishInsertingNode()
     if (m_inActiveDocument && m_networkState == NETWORK_EMPTY && !attributeWithoutSynchronization(srcAttr).isEmpty())
         prepareForLoad();
 
+    visibilityAdjustmentStateDidChange();
+
     if (!m_explicitlyMuted) {
         m_explicitlyMuted = true;
         m_muted = hasAttributeWithoutSynchronization(mutedAttr);
@@ -1048,6 +1051,8 @@ void HTMLMediaElement::removedFromAncestor(RemovalType removalType, ContainerNod
         m_mediaSession->clientCharacteristicsChanged(false);
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+
+    visibilityAdjustmentStateDidChange();
 }
 
 void HTMLMediaElement::willAttachRenderers()
@@ -5212,8 +5217,19 @@ bool HTMLMediaElement::setupAndCallJS(const JSSetupFunction& task)
     auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     auto* lexicalGlobalObject = globalObject;
-    return task(*globalObject, *lexicalGlobalObject, scriptController, world);
+
+    auto reportExceptionAndReturnFalse = [&] () -> bool {
+        auto* exception = scope.exception();
+        scope.clearException();
+        reportException(globalObject, exception);
+        return false;
+    };
+
+    auto result = task(*globalObject, *lexicalGlobalObject, scriptController, world);
+    RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+    return result;
 }
 
 void HTMLMediaElement::updateCaptionContainer()
@@ -5226,17 +5242,10 @@ void HTMLMediaElement::updateCaptionContainer()
 
     setupAndCallJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
         auto& vm = globalObject.vm();
-        auto scope = DECLARE_CATCH_SCOPE(vm);
-
-        auto reportExceptionAndReturnFalse = [&] () -> bool {
-            auto* exception = scope.exception();
-            scope.clearException();
-            reportException(&globalObject, exception);
-            return false;
-        };
+        auto scope = DECLARE_THROW_SCOPE(vm);
 
         auto controllerValue = controllerJSValue(lexicalGlobalObject, globalObject, *this);
-        RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+        RETURN_IF_EXCEPTION(scope, false);
 
         auto* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(controllerValue);
         if (!controllerObject)
@@ -5249,7 +5258,7 @@ void HTMLMediaElement::updateCaptionContainer()
         // Return value:
         //     None
         auto methodValue = controllerObject->get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "updateCaptionContainer"_s));
-        RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+        RETURN_IF_EXCEPTION(scope, false);
 
         auto* methodObject = JSC::jsDynamicCast<JSC::JSObject*>(methodValue);
         if (!methodObject)
@@ -5262,7 +5271,7 @@ void HTMLMediaElement::updateCaptionContainer()
         JSC::MarkedArgumentBuffer noArguments;
         ASSERT(!noArguments.hasOverflowed());
         JSC::call(&lexicalGlobalObject, methodObject, callData, controllerObject, noArguments);
-        RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+        RETURN_IF_EXCEPTION(scope, false);
 
         m_haveSetUpCaptionContainer = true;
 
@@ -5273,6 +5282,9 @@ void HTMLMediaElement::updateCaptionContainer()
 void HTMLMediaElement::layoutSizeChanged()
 {
     auto task = [this] {
+        if (isContextStopped())
+            return;
+
         if (RefPtr root = userAgentShadowRoot())
             root->dispatchEvent(Event::create(eventNames().resizeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
@@ -8348,20 +8360,13 @@ bool HTMLMediaElement::ensureMediaControls()
     if (oldControlsState == ControlsState::None) {
         controlsReady = setupAndCallJS([this, mediaControlsScripts = WTFMove(mediaControlsScripts)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController& scriptController, DOMWrapperWorld& world) {
             auto& vm = globalObject.vm();
-            auto scope = DECLARE_CATCH_SCOPE(vm);
-
-            auto reportExceptionAndReturnFalse = [&] {
-                auto* exception = scope.exception();
-                scope.clearException();
-                reportException(&globalObject, exception);
-                return false;
-            };
+            auto scope = DECLARE_THROW_SCOPE(vm);
 
             for (auto& mediaControlsScript : mediaControlsScripts) {
                 if (mediaControlsScript.isEmpty())
                     continue;
                 scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, JSC::SourceTaintedOrigin::Untainted), world);
-                RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+                RETURN_IF_EXCEPTION(scope, false);
             }
 
             // The media controls script must provide a method with the following details.
@@ -8390,13 +8395,13 @@ bool HTMLMediaElement::ensureMediaControls()
             ASSERT(!argList.hasOverflowed());
 
             auto* function = functionValue.toObject(&lexicalGlobalObject);
-            RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+            RETURN_IF_EXCEPTION(scope, false);
             auto callData = JSC::getCallData(function);
             if (callData.type == JSC::CallData::Type::None)
                 return false;
 
             auto controllerValue = JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
-            RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+            RETURN_IF_EXCEPTION(scope, false);
 
             auto* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(controllerValue);
             if (!controllerObject)
@@ -8404,7 +8409,7 @@ bool HTMLMediaElement::ensureMediaControls()
 
             // Connect the Media, MediaControllerHost, and Controller so the GC knows about their relationship
             auto* mediaJSWrapperObject = mediaJSWrapper.toObject(&lexicalGlobalObject);
-            RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+            RETURN_IF_EXCEPTION(scope, false);
             auto controlsHost = JSC::Identifier::fromString(vm, "controlsHost"_s);
 
             ASSERT(!mediaJSWrapperObject->hasProperty(&lexicalGlobalObject, controlsHost));
@@ -8424,10 +8429,10 @@ bool HTMLMediaElement::ensureMediaControls()
             if (m_mediaControlsDependOnPageScaleFactor)
                 updatePageScaleFactorJSProperty();
 
-            RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+            RETURN_IF_EXCEPTION(scope, false);
 
             updateUsesLTRUserInterfaceLayoutDirectionJSProperty();
-            RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+            RETURN_IF_EXCEPTION(scope, false);
 
             return true;
         });
@@ -9006,6 +9011,25 @@ void HTMLMediaElement::setAutoplayEventPlaybackState(AutoplayEventPlaybackState 
     }
 }
 
+void HTMLMediaElement::visibilityAdjustmentStateDidChange()
+{
+    auto currentValue = isInVisibilityAdjustmentSubtree();
+    if (m_cachedIsInVisibilityAdjustmentSubtree == currentValue)
+        return;
+
+    bool wasMuted = effectiveMuted();
+    m_cachedIsInVisibilityAdjustmentSubtree = currentValue;
+    bool muted = effectiveMuted();
+    if (wasMuted == muted)
+        return;
+
+    RefPtr player = m_player;
+    if (!player)
+        return;
+
+    player->setMuted(muted);
+}
+
 void HTMLMediaElement::pageMutedStateDidChange()
 {
     if (RefPtr page = document().page()) {
@@ -9028,7 +9052,19 @@ double HTMLMediaElement::effectiveVolume() const
 
 bool HTMLMediaElement::effectiveMuted() const
 {
-    return muted() || (m_mediaController && m_mediaController->muted()) || (document().page() && document().page()->isAudioMuted());
+    if (muted())
+        return true;
+
+    if (m_mediaController && m_mediaController->muted())
+        return true;
+
+    if (RefPtr page = document().page(); page && page->isAudioMuted())
+        return true;
+
+    if (m_cachedIsInVisibilityAdjustmentSubtree)
+        return true;
+
+    return false;
 }
 
 bool HTMLMediaElement::doesHaveAttribute(const AtomString& attribute, AtomString* value) const

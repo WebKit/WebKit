@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/cookies/resources/cookie.py?set=%22test0%5Cu0000name%3D0%22.
 
 PASS Cookie with %x0 in name is rejected (DOM).
 PASS Cookie with %x1 in name is rejected (DOM).
@@ -32,7 +33,7 @@ PASS Cookie with %x1d in name is rejected (DOM).
 PASS Cookie with %x1e in name is rejected (DOM).
 PASS Cookie with %x1f in name is rejected (DOM).
 PASS Cookie with %x7f in name is rejected (DOM).
-FAIL Cookie with %x0 in name is rejected or modified (HTTP). assert_equals: The cookie was set as expected. expected "test0 name=0" but got ""
+PASS Cookie with %x0 in name is rejected or modified (HTTP).
 PASS Cookie with %x1 in name is rejected (HTTP).
 PASS Cookie with %x2 in name is rejected (HTTP).
 PASS Cookie with %x3 in name is rejected (HTTP).

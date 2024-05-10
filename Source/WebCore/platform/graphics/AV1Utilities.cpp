@@ -210,7 +210,7 @@ String createAV1CodecParametersString(const AV1CodecConfigurationRecord& configu
     // fields.
 
     StringBuilder builder;
-    builder.append("av01");
+    builder.append("av01"_s);
 
     auto appendOneDigit = [&](uint8_t number) {
         builder.append(static_cast<LChar>('0' + number % 10));

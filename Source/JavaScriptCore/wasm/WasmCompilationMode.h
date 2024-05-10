@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace JSC { namespace Wasm {
 
 enum class CompilationMode : uint8_t {
@@ -40,7 +42,7 @@ enum class CompilationMode : uint8_t {
     WasmToJSMode,
 };
 
-const char* makeString(CompilationMode);
+ASCIILiteral makeString(CompilationMode);
 
 constexpr inline bool isOSREntry(CompilationMode compilationMode)
 {

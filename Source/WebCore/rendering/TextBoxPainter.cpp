@@ -329,12 +329,15 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
 
             bool shouldPaintDraggedContent = !(m_paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection));
             if (shouldPaintDraggedContent) {
-                auto markedTextsForDraggedContent = MarkedText::collectForDraggedContent(m_renderer, m_selectableRange);
+                auto markedTextsForDraggedContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarker::Type::DraggedContent, m_renderer, m_selectableRange);
                 if (!markedTextsForDraggedContent.isEmpty()) {
                     shouldPaintSelectionForeground = false;
-                    markedTexts.appendVector(markedTextsForDraggedContent);
+                    markedTexts.appendVector(WTFMove(markedTextsForDraggedContent));
                 }
             }
+            auto markedTextsForTransparentContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarker::Type::TransparentContent, m_renderer, m_selectableRange);
+            if (!markedTextsForTransparentContent.isEmpty())
+                markedTexts.appendVector(WTFMove(markedTextsForTransparentContent));
         }
     }
     // The selection marked text acts as a placeholder when computing the marked texts for the gaps...
@@ -515,8 +518,9 @@ void TextBoxPainter<TextBoxPath>::paintForeground(const StyledMarkedText& marked
     if (auto* debugShadow = debugTextShadow())
         textPainter.setShadow(debugShadow);
 
-    GraphicsContextStateSaver stateSaver(context, markedText.style.textStyles.strokeWidth > 0 || markedText.type == MarkedText::Type::DraggedContent);
-    if (markedText.type == MarkedText::Type::DraggedContent)
+    bool isTransparentMarkedText = markedText.type == MarkedText::Type::DraggedContent || markedText.type == MarkedText::Type::TransparentContent;
+    GraphicsContextStateSaver stateSaver(context, markedText.style.textStyles.strokeWidth > 0 || isTransparentMarkedText);
+    if (isTransparentMarkedText)
         context.setAlpha(markedText.style.alpha);
     updateGraphicsContext(context, markedText.style.textStyles);
 
@@ -539,10 +543,10 @@ TextDecorationPainter TextBoxPainter<TextBoxPath>::createDecorationPainter(const
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own decoration.
     GraphicsContextStateSaver stateSaver { context, false };
-    bool isDraggedContent = markedText.type == MarkedText::Type::DraggedContent;
-    if (isDraggedContent || !clipOutRect.isEmpty()) {
+    bool isTransparentContent = markedText.type == MarkedText::Type::DraggedContent || markedText.type == MarkedText::Type::TransparentContent;
+    if (isTransparentContent || !clipOutRect.isEmpty()) {
         stateSaver.save();
-        if (isDraggedContent)
+        if (isTransparentContent)
             context.setAlpha(markedText.style.alpha);
         if (!clipOutRect.isEmpty())
             context.clipOut(clipOutRect);

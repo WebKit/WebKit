@@ -96,7 +96,12 @@ void BackForwardController::goBackOrForward(int distance)
     if (!historyItem)
         return;
 
-    protectedPage()->goToItem(*historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
+    Ref page { protectedPage() };
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    page->goToItem(*localMainFrame, *historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
 }
 
 bool BackForwardController::goBack()
@@ -105,7 +110,12 @@ bool BackForwardController::goBack()
     if (!historyItem)
         return false;
 
-    protectedPage()->goToItem(*historyItem, FrameLoadType::Back, ShouldTreatAsContinuingLoad::No);
+    Ref page { protectedPage() };
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return false;
+
+    page->goToItem(*localMainFrame, *historyItem, FrameLoadType::Back, ShouldTreatAsContinuingLoad::No);
     return true;
 }
 
@@ -115,7 +125,12 @@ bool BackForwardController::goForward()
     if (!historyItem)
         return false;
 
-    protectedPage()->goToItem(*historyItem, FrameLoadType::Forward, ShouldTreatAsContinuingLoad::No);
+    Ref page { protectedPage() };
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return false;
+
+    page->goToItem(*localMainFrame, *historyItem, FrameLoadType::Forward, ShouldTreatAsContinuingLoad::No);
     return true;
 }
 

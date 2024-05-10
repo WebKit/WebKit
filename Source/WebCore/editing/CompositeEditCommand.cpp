@@ -618,10 +618,6 @@ void CompositeEditCommand::insertNodeAt(Ref<Node>&& insertChild, const Position&
 
 void CompositeEditCommand::appendNode(Ref<Node>&& node, Ref<ContainerNode>&& parent)
 {
-    // When cloneParagraphUnderNewElement() clones the fallback content of an OBJECT element,
-    // the ASSERT below may fire since the return value of canHaveChildrenForEditing is not reliable
-    // until the render object of the OBJECT is created. Hence we ignore this check for OBJECTs.
-    ASSERT(canHaveChildrenForEditing(parent) || parent->hasTagName(objectTag));
     applyCommandToComposite(AppendNodeCommand::create(WTFMove(parent), WTFMove(node), editingAction()));
 }
 

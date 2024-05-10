@@ -27,6 +27,7 @@
 
 #include "JSCConfig.h"
 #include "MarkedBlock.h"
+#include <compare>
 #include <wtf/HashTraits.h>
 #include <wtf/StdIntExtras.h>
 
@@ -85,7 +86,7 @@ public:
     static StructureID encode(const Structure*);
 
     explicit operator bool() const { return !!m_bits; }
-    friend bool operator==(const StructureID&, const StructureID&) = default;
+    friend auto operator<=>(const StructureID&, const StructureID&) = default;
     constexpr uint32_t bits() const { return m_bits; }
 
     StructureID(WTF::HashTableDeletedValueType) : m_bits(nukedStructureIDBit) { }

@@ -31,7 +31,6 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <pal/SessionID.h>
-#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -41,7 +40,7 @@ struct WebsitePoliciesData;
     
 class WebLocalFrameLoaderClient final : public WebCore::LocalFrameLoaderClient, public WebFrameLoaderClient {
 public:
-    explicit WebLocalFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
+    explicit WebLocalFrameLoaderClient(WebCore::LocalFrame&, Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
     ~WebLocalFrameLoaderClient();
 
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
@@ -63,8 +62,6 @@ public:
     Vector<WebCore::RegistrableDomain> loadedSubresourceDomains() const final;
 
     WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const final;
-
-    ScopeExit<Function<void()>> takeFrameInvalidator() { return WTFMove(m_frameInvalidator); }
 
 private:
     bool hasHTMLView() const final;
@@ -284,8 +281,6 @@ private:
     void didAccessWindowProxyPropertyViaOpener(WebCore::SecurityOriginData&&, WebCore::WindowProxyProperty) final;
 #endif
 
-    ScopeExit<Function<void()>> m_frameInvalidator;
-
 #if ENABLE(PDF_PLUGIN)
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView { false };
@@ -296,6 +291,7 @@ private:
     bool m_frameCameFromBackForwardCache { false };
     bool m_useIconLoadingClient { false };
     std::optional<FrameSpecificStorageAccessIdentifier> m_frameSpecificStorageAccessIdentifier;
+    WeakRef<WebCore::LocalFrame> m_localFrame;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections() const final;

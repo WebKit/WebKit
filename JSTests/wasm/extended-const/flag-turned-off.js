@@ -37,4 +37,4 @@ async function testConstExprErrorPaths() {
   )
 }
 
-assert.asyncTest(testConstExprErrorPaths());
+await assert.asyncTest(testConstExprErrorPaths());

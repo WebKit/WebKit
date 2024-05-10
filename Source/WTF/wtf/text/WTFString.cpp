@@ -463,7 +463,7 @@ void String::convertTo16Bit()
 }
 
 template<bool replaceInvalidSequences>
-String fromUTF8Impl(std::span<const LChar> string)
+String fromUTF8Impl(std::span<const char8_t> string)
 {
     RELEASE_ASSERT(string.size() <= String::MaxLength);
 
@@ -471,13 +471,13 @@ String fromUTF8Impl(std::span<const LChar> string)
         return emptyString();
 
     if (charactersAreAllASCII(string))
-        return StringImpl::create(string);
+        return StringImpl::create(spanReinterpretCast<const LChar>(string));
 
     Vector<UChar, 1024> buffer(string.size());
  
     auto result = replaceInvalidSequences
-        ? Unicode::convertReplacingInvalidSequences(spanReinterpretCast<const char8_t>(string), buffer.mutableSpan())
-        : Unicode::convert(spanReinterpretCast<const char8_t>(string), buffer.mutableSpan());
+        ? Unicode::convertReplacingInvalidSequences(string, buffer.mutableSpan())
+        : Unicode::convert(string, buffer.mutableSpan());
     if (result.code != Unicode::ConversionResultCode::Success)
         return { };
 
@@ -485,34 +485,27 @@ String fromUTF8Impl(std::span<const LChar> string)
     return StringImpl::create(result.buffer);
 }
 
-String String::fromUTF8(std::span<const LChar> string)
+String String::fromUTF8(std::span<const char8_t> string)
 {
     if (!string.data())
         return { };
     return fromUTF8Impl<false>(string);
 }
 
-String String::fromUTF8ReplacingInvalidSequences(std::span<const LChar> characters)
+String String::fromUTF8ReplacingInvalidSequences(std::span<const char8_t> characters)
 {
     if (!characters.data())
         return { };
     return fromUTF8Impl<true>(characters);
 }
 
-String String::fromUTF8(const LChar* string)
-{
-    if (!string)
-        return { };
-    return fromUTF8Impl<false>({ string, strlen(reinterpret_cast<const char*>(string)) });
-}
-
-String String::fromUTF8WithLatin1Fallback(std::span<const LChar> string)
+String String::fromUTF8WithLatin1Fallback(std::span<const char8_t> string)
 {
     String utf8 = fromUTF8(string);
     if (!utf8) {
         // Do this assertion before chopping the size_t down to unsigned.
         RELEASE_ASSERT(string.size() <= String::MaxLength);
-        return string;
+        return spanReinterpretCast<const LChar>(string);
     }
     return utf8;
 }
@@ -622,9 +615,7 @@ Vector<char> asciiDebug(StringImpl* impl)
                 buffer.append(ch);
             buffer.append(ch);
         } else {
-            buffer.append('\\');
-            buffer.append('u');
-            buffer.append(hex(ch, 4));
+            buffer.append('\\', 'u', hex(ch, 4));
         }
     }
     CString narrowString = buffer.toString().ascii();

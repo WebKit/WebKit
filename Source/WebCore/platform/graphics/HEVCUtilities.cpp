@@ -445,7 +445,7 @@ String createDoViCodecParametersString(const DoViParameters& parameters)
 {
     // The format of the DoVi codec string is specified in "Dolby Vision Profiles and Levels Version 1.3.2"
     StringBuilder builder;
-    builder.append("dvh1.");
+    builder.append("dvh1."_s);
     if (parameters.bitstreamProfileID < 10)
         builder.append('0');
     builder.append(parameters.bitstreamProfileID);

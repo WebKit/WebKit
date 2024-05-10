@@ -22,4 +22,4 @@ async function test() {
     assert.eq(size(), 2);
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

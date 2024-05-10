@@ -462,7 +462,7 @@ String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
         return emptyString();
 
     StringBuilder builder;
-    builder.append("font-family: \"", name.get(), '"');
+    builder.append("font-family: \""_s, name.get(), '"');
     if (RetainPtr cascadeList = adoptCF(static_cast<CFArrayRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontCascadeListAttribute)))) {
         for (CFIndex i = 0; i < CFArrayGetCount(cascadeList.get()); i++) {
             auto fontCascade = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(cascadeList.get(), i));
@@ -471,10 +471,10 @@ String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
             RetainPtr fontCascadeName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontCascade, kCTFontNameAttribute)));
             if (!fontCascadeName)
                 continue;
-            builder.append(", \"", fontCascadeName.get(), '"');
+            builder.append(", \""_s, fontCascadeName.get(), '"');
         }
     }
-    builder.append(behavior == kMACaptionAppearanceBehaviorUseValue ? " !important;" : ";");
+    builder.append(behavior == kMACaptionAppearanceBehaviorUseValue ? " !important;"_s : ";"_s);
     return builder.toString();
 }
 

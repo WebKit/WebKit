@@ -38,7 +38,6 @@
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
 #import "RemoteLayerTreeNode.h"
-#import "StringUtilities.h"
 #import "UndoOrRedo.h"
 #import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
@@ -892,7 +891,7 @@ void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigatio
 
 void PageClientImpl::handleControlledElementIDResponse(const String& identifier)
 {
-    [webView() _handleControlledElementIDResponse:nsStringFromWebCoreString(identifier)];
+    [webView() _handleControlledElementIDResponse:identifier];
 }
 
 void PageClientImpl::didChangeBackgroundColor()

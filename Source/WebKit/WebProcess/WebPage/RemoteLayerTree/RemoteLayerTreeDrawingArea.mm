@@ -210,12 +210,6 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore& pr
     DebugPageOverlays::settingsChanged(page);
 }
 
-void RemoteLayerTreeDrawingArea::forceRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
-{
-    page.forceRepaintWithoutCallback();
-    completionHandler();
-}
-
 void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 {
     Ref { m_webPage.get() }->setDeviceScaleFactor(deviceScaleFactor);
@@ -241,13 +235,19 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
     }
 }
 
-void RemoteLayerTreeDrawingArea::forceRepaint()
+void RemoteLayerTreeDrawingArea::updateRenderingWithForcedRepaint()
 {
     if (m_isRenderingSuspended)
         return;
 
     m_webPage->corePage()->forceRepaintAllFrames();
     updateRendering();
+}
+
+void RemoteLayerTreeDrawingArea::updateRenderingWithForcedRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
+{
+    updateRenderingWithForcedRepaint();
+    completionHandler();
 }
 
 void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)

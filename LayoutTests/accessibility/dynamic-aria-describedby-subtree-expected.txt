@@ -1,0 +1,11 @@
+This test ensures that we update an element's description when it's described-by changes subtree dynamically.
+
+PASS: accessibilityController.accessibleElementById('button').customContent === 'description: Always'
+PASS: accessibilityController.accessibleElementById('button').customContent === 'description: Sometimes Always'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Sometimes
+Always
+Press

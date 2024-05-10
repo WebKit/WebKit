@@ -48,6 +48,10 @@ public:
     static Ref<MediaKeySystemAccess> create(Document&, const String& keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
     ~MediaKeySystemAccess();
 
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     const String& keySystem() const { return m_keySystem; }
     const MediaKeySystemConfiguration& getConfiguration() const { return *m_configuration; }
     void createMediaKeys(Document&, Ref<DeferredPromise>&&);

@@ -4108,7 +4108,7 @@ static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, RunJava
                     if (exceptionDetails.columnNumber > 0)
                         builder.append(':', exceptionDetails.columnNumber);
                 }
-                builder.append(": ");
+                builder.append(": "_s);
             }
             builder.append(exceptionDetails.message);
             g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,
@@ -5598,7 +5598,7 @@ void webkitWebViewForceRepaintForTesting(WebKitWebView* webView, ForceRepaintCal
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView).forceRepaint([callback, userData]() {
+    getPage(webView).updateRenderingWithForcedRepaint([callback, userData]() {
         callback(userData);
     });
 }

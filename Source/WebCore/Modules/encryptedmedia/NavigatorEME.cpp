@@ -50,10 +50,10 @@ struct LogArgument<Vector<T>> {
     static String toString(const Vector<T>& value)
     {
         StringBuilder builder;
-        builder.append("[");
+        builder.append('[');
         for (auto item : value)
             builder.append(LogArgument<T>::toString(item));
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 };

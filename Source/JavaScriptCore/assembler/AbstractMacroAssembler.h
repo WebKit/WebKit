@@ -775,10 +775,10 @@ public:
     // All jumps in the set will be linked to the same destination.
     class JumpList {
     public:
-        typedef Vector<Jump, 2> JumpVector;
-        
-        JumpList() { }
-        
+        using JumpVector = Vector<Jump, 2>;
+
+        JumpList() = default;
+
         JumpList(Jump jump)
         {
             if (jump.isSet())
@@ -825,7 +825,12 @@ public:
         {
             m_jumps.clear();
         }
-        
+
+        void shrink(size_t size)
+        {
+            m_jumps.shrink(size);
+        }
+
         const JumpVector& jumps() const { return m_jumps; }
 
     private:

@@ -401,7 +401,7 @@ String IndexValueStore::loggingString() const
 {
     StringBuilder builder;
     for (auto& key : m_orderedKeys)
-        builder.append("Key: ", key.loggingString(), "  Entry has ", m_records.get(key)->getCount(), " entries");
+        builder.append("Key: "_s, key.loggingString(), "  Entry has "_s, m_records.get(key)->getCount(), " entries"_s);
     return builder.toString();
 }
 #endif

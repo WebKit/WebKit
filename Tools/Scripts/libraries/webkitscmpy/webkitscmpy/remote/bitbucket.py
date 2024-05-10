@@ -23,8 +23,9 @@
 import re
 import sys
 
+from collections import defaultdict
 from datetime import datetime
-from webkitcorepy import decorators, string_utils, CallByNeed
+from webkitcorepy import decorators, string_utils, CallByNeed, Environment
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
 
@@ -256,10 +257,24 @@ class BitBucket(Scm):
             pull_request._approvers = got._approvers if got else []
             return pull_request
 
-        def comment(self, pull_request, content, parent=None):
+        def comment(self, pull_request, content, parent=None, on_file=None):
+            if parent and on_file:
+                sys.stderr.write('Cannot reply to a comment on a specific file\n')
+                return None
+
             data = dict(text=content)
             if parent:
                 data['parent'] = dict(id=parent)
+            elif on_file:
+                data['anchor'] = dict(
+                    diffType='EFFECTIVE',
+                    path=on_file['path'],
+                )
+                if on_file.get('line'):
+                    data['anchor']['line'] = on_file['line']
+                    if on_file.get('type'):
+                        data['anchor']['lineType'] = on_file['type']
+                    data['anchor']['fileType'] = on_file.get('fileType', 'TO')
 
             response = requests.post(
                 'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}/comments'.format(
@@ -299,6 +314,8 @@ class BitBucket(Scm):
 
         def comments(self, pull_request):
             for action in reversed(self.repository.request('pull-requests/{}/activities'.format(pull_request.number)) or []):
+                if action.get('commentAnchor'):
+                    continue
                 comment = action.get('comment', {})
                 user = comment.get('author', {})
                 if not comment or not user or not comment.get('text'):
@@ -322,40 +339,171 @@ class BitBucket(Scm):
                         content=comment.get('text'),
                     )
 
+        @classmethod
+        def _position_converters(cls, json_diff):
+            absolute_to_relative = dict(
+                source=defaultdict(lambda: defaultdict(lambda: None)),
+                destination=defaultdict(lambda: defaultdict(lambda: None))
+            )
+            relative_to_absolute = defaultdict(lambda: defaultdict(list))
+
+            for diff in json_diff.get('diffs', []):
+                destination = diff.get('destination', {}).get('toString')
+                source = diff.get('source', {}).get('toString')
+
+                count = -1
+                for hunk in diff.get('hunks', []):
+                    count += 1
+                    for segment in hunk.get('segments', []):
+                        for line in segment.get('lines', []):
+                            count += 1
+                            source_pos = line.get('source')
+                            dest_pos = line.get('destination')
+                            if segment.get('type') == 'REMOVED':
+                                dest_pos = None
+                            if segment.get('type') == 'ADDED':
+                                source_pos = None
+
+                            if dest_pos:
+                                absolute_to_relative['destination'][source][dest_pos] = count
+                            if source_pos:
+                                absolute_to_relative['source'][source][source_pos] = count
+
+                            if dest_pos:
+                                relative_to_absolute[source][count] = {'to': dest_pos}
+                            elif source_pos:
+                                relative_to_absolute[source][count] = {'from': source_pos}
+                            if segment.get('type'):
+                                relative_to_absolute[source][count]['type'] = segment['type']
+
+            return absolute_to_relative, relative_to_absolute
+
+        def _diff_comments(self, pull_request, json_diff, ids=False):
+            if not json_diff:
+                return None
+
+            relative_pos_mapping, _ = self._position_converters(json_diff)
+            comment_lines = defaultdict(lambda: defaultdict(list))
+            for action in self.repository.request('pull-requests/{}/activities'.format(pull_request.number)) or []:
+                comment = action.get('comment', {})
+                user = comment.get('author', {})
+                comment_id = comment.get('id')
+
+                anchor = action.get('commentAnchor')
+                if not comment or not anchor or not comment_id or not user:
+                    continue
+
+                path = anchor.get('path')
+                if not path:
+                    continue
+
+                if anchor.get('lineType') == 'REMOVED':
+                    position = relative_pos_mapping['source'][path].get(anchor.get('line'))
+                else:
+                    position = relative_pos_mapping['destination'][path].get(anchor.get('line'))
+                if not position and anchor.get('line'):
+                    continue
+
+                comments = [dict(
+                    text=comment.get('text', ''),
+                    user=user,
+                    id=comment_id,
+                    depth=0,
+                )] + self._children_for_comment(comment)
+
+                for comment in comments:
+                    if ids:
+                        comment_lines[path][position].append(comment['id'])
+                    else:
+                        author = self.repository.contributors.create(
+                            comment['user']['displayName'], comment['user']['emailAddress'],
+                            bitbucket=comment['user'].get('name', None),
+                        )
+                        whitespace = ' ' * 4 * comment['depth']
+                        body = '\n{}'.format(whitespace).join(comment.get('text', '').rstrip().splitlines())
+                        if author:
+                            body = '{}{}: {}'.format(whitespace, author, body)
+                        comment_lines[path][position].append(body)
+
+            return comment_lines
+
         def review(self, pull_request, comment=None, approve=None, diff_comments=None):
+            if not comment and approve is None and not diff_comments:
+                raise self.repository.Exception('No review comment or approval provided')
+
             failed = False
             if comment and not self.comment(pull_request, comment):
                 failed = True
+
+            if diff_comments:
+                diff_json = self.repository.request('pull-requests/{}/diff?contextLines={}'.format(pull_request.number, self.repository.DIFF_CONTEXT))
+                if diff_json:
+                    existing_comments = self._diff_comments(pull_request, diff_json, ids=True)
+                    _, absolute_pos_mapping = self._position_converters(diff_json)
+
+                    for file, line_comments in diff_comments.items():
+                        for relative_position, comments in line_comments.items():
+                            body = '\n'.join(comments)
+                            responding_to = (existing_comments.get(file) or {}).get(relative_position, None)
+                            absolute_position = (absolute_pos_mapping.get(file) or {}).get(relative_position, None)
+                            if not absolute_position:
+                                responding_to = (existing_comments.get(file) or {}).get(None, [])
+
+                            if responding_to:
+                                # FIXME: We should allow replies to specific comments
+                                failed = not self.comment(pull_request, body, parent=responding_to[-1])
+                            elif absolute_position:
+                                for candidate in ['to', 'from']:
+                                    if candidate not in absolute_position:
+                                        continue
+                                    failed = not self.comment(pull_request, body, on_file=dict(
+                                        path=file,
+                                        line=absolute_position[candidate],
+                                        fileType=candidate.upper(),
+                                        type=absolute_position.get('type'),
+                                    ))
+                                    break
+                                else:
+
+                                    failed = True
+                            else:
+                                failed = not self.comment(pull_request, body, on_file=dict(path=file))
+
+                else:
+                    sys.stderr.write('Failed to fetch metadata require to make inline comments\n')
+                    failed = True
 
             user_slug = self.repository.whoami()
             if not user_slug:
                 sys.stderr.write('Failed to determine Bitbucket username for current session\n')
                 return None
-            response = requests.put(
-                'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}/participants/{userSlug}'.format(
-                    domain=self.repository.domain,
-                    project=self.repository.project,
-                    name=self.repository.name,
-                    id=pull_request.number,
-                    userSlug=user_slug,
-                ), json=dict(
-                    user=dict(name=user_slug),
-                    approved=bool(approve),
-                    status={
-                        True: 'APPROVED',
-                        False: 'NEEDS_WORK',
-                    }.get(approve, 'UNAPPROVED'),
-                ),
-            )
-            if response.status_code // 100 != 2:
-                sys.stderr.write("Failed to {} '{}'\n".format(
-                    'approve' if approve else 'reject',
-                    pull_request,
-                ))
-                return None
 
-            pull_request._approvers = None
-            pull_request._blockers = None
+            if approve is not None:
+                response = requests.put(
+                    'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}/participants/{userSlug}'.format(
+                        domain=self.repository.domain,
+                        project=self.repository.project,
+                        name=self.repository.name,
+                        id=pull_request.number,
+                        userSlug=user_slug,
+                    ), json=dict(
+                        user=dict(name=user_slug),
+                        approved=bool(approve),
+                        status={
+                            True: 'APPROVED',
+                            False: 'NEEDS_WORK',
+                        }.get(approve, 'UNAPPROVED'),
+                    ),
+                )
+                if response.status_code // 100 != 2:
+                    sys.stderr.write("Failed to {} '{}'\n".format(
+                        'approve' if approve else 'reject',
+                        pull_request,
+                    ))
+                    failed = True
+                else:
+                    pull_request._approvers = None
+                    pull_request._blockers = None
 
             return None if failed else pull_request
 
@@ -380,6 +528,23 @@ class BitBucket(Scm):
                     ).get(status.get('state'), 'error'),
                     description=status.get('description'),
                 )
+
+        def diff(self, pull_request, comments=False, diff_comments=None):
+            response = self.repository.request('pull-requests/{}/diff?contextLines={}'.format(pull_request.number, self.repository.DIFF_CONTEXT))
+            if not response:
+                sys.stderr.write('Failed to retrieve diff of {} with status code\n'.format(pull_request))
+                return
+
+            def generator(repository=self.repository, json_diff=response):
+                for line in self.repository.json_to_diff(response).splitlines():
+                    yield line
+
+            comment_lines = defaultdict(lambda: defaultdict(list))
+            if comments:
+                comment_lines = self._diff_comments(pull_request, response)
+
+            for line in self.repository.insert_diff_comments(generator, comments=comment_lines):
+                yield line
 
 
     @classmethod
@@ -434,7 +599,10 @@ class BitBucket(Scm):
         return response.text.rstrip()
 
     def credentials(self, required=True, validate=False, save_in_keyring=None):
-        return None, None
+        name = self.domain.replace('.', '_')
+        username = Environment.instance().get('{}_USERNAME'.format(name.upper()))
+        password = Environment.instance().get('{}_PASSWORD'.format(name.upper()))
+        return username, password
 
     @property
     def is_git(self):

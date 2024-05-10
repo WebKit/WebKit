@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUCompilationMessageType {
+] enum GPUCompilationMessageType {
     "error",
     "warning",
     "info"

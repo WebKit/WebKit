@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUErrorFilter {
+] enum GPUErrorFilter {
     "out-of-memory",
     "validation",
     "internal"

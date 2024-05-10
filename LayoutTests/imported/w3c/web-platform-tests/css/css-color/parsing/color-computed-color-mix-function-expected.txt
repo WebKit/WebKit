@@ -65,10 +65,7 @@ PASS Property color value 'color-mix(in hsl, hsl(120deg 20% 40%), hsl(30deg 20% 
 PASS Property color value 'color-mix(in hsl, hsl(none 20% 40%), hsl(30deg none 80%))'
 PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40%))'
 PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / 0.5))'
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / none))' Colors do not match.
-Actual:   color(srgb 0.56 0.56 0.24 / 0)
-Expected: color(srgb 0.56 0.56 0.24 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / none))'
 PASS Property color value 'color-mix(in hsl, hsl(30deg 40% 80% / 25%) 0%, hsl(90deg none none / none))'
 PASS Property color value 'color-mix(in hsl, hsl(30deg 40% 80% / 25%) 0%, hsl(none 50% none / none))'
 PASS Property color value 'color-mix(in hsl, hsl(30deg 40% 80% / 25%) 0%, hsl(none none 50% / none))'
@@ -137,10 +134,7 @@ PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 
 PASS Property color value 'color-mix(in hwb, hwb(none 10% 20%), hwb(30deg none 40%))'
 PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / 0.5))'
-FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / none))' Colors do not match.
-Actual:   color(srgb 0.575 0.7 0.2 / 0)
-Expected: color(srgb 0.575 0.7 0.2 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / none))'
 PASS Property color value 'color-mix(in hwb, hwb(30deg 30% 40% / 25%) 0%, hwb(90deg none none / none))'
 PASS Property color value 'color-mix(in hwb, hwb(30deg 30% 40% / 25%) 0%, hwb(none 50% none / none))'
 PASS Property color value 'color-mix(in hwb, hwb(30deg 30% 40% / 25%) 0%, hwb(none none 50% / none))'

@@ -1,0 +1,3 @@
+
+PASS Accelerated animations are no longer accelerated when forward-filling, even if other animations in the stack are running accelerated.
+

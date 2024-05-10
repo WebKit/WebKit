@@ -2369,7 +2369,6 @@ platform/graphics/PixelBuffer.cpp
 platform/graphics/PixelBufferConversion.cpp
 platform/graphics/PixelBufferFormat.cpp
 platform/graphics/PixelFormat.cpp
-platform/graphics/PixelFormatValidated.cpp
 platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/PositionedGlyphs.cpp
 platform/graphics/Region.cpp
@@ -3688,6 +3687,7 @@ JSGPUQuerySet.cpp
 JSGPUQuerySetDescriptor.cpp
 JSGPUQueryType.cpp
 JSGPUQueue.cpp
+JSGPUQueueDescriptor.cpp
 JSGPURenderBundle.cpp
 JSGPURenderBundleDescriptor.cpp
 JSGPURenderBundleEncoder.cpp

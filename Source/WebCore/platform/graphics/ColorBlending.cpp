@@ -99,9 +99,7 @@ Color blendWithWhite(const Color& color)
 
 static bool requiresLegacyInterpolationRules(const Color& color)
 {
-    return color.callOnUnderlyingType([&] (const auto& underlyingColor) {
-        using ColorType = std::decay_t<decltype(underlyingColor)>;
-
+    return color.callOnUnderlyingType([&]<typename ColorType> (const ColorType&) {
         if constexpr (std::is_same_v<ColorType, SRGBA<uint8_t>>)
             return true;
         else if constexpr (std::is_same_v<ColorType, SRGBA<float>>)
@@ -126,8 +124,8 @@ Color blend(const Color& from, const Color& to, const BlendingContext& context)
     if (requiresLegacyInterpolationRules(from) && requiresLegacyInterpolationRules(to)) {
         using InterpolationColorSpace = ColorInterpolationMethod::SRGB;
 
-        auto fromComponents = from.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
-        auto toComponents = to.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
+        auto fromComponents = from.toColorTypeLossyCarryingForwardMissing<typename InterpolationColorSpace::ColorType>();
+        auto toComponents = to.toColorTypeLossyCarryingForwardMissing<typename InterpolationColorSpace::ColorType>();
 
         switch (context.compositeOperation) {
         case CompositeOperation::Replace: {
@@ -142,8 +140,8 @@ Color blend(const Color& from, const Color& to, const BlendingContext& context)
     } else {
         using InterpolationColorSpace = ColorInterpolationMethod::OKLab;
 
-        auto fromComponents = from.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
-        auto toComponents = to.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
+        auto fromComponents = from.toColorTypeLossyCarryingForwardMissing<typename InterpolationColorSpace::ColorType>();
+        auto toComponents = to.toColorTypeLossyCarryingForwardMissing<typename InterpolationColorSpace::ColorType>();
 
         switch (context.compositeOperation) {
         case CompositeOperation::Replace:

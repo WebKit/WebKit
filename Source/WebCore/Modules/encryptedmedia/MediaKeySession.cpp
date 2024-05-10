@@ -719,8 +719,8 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
         if (!statusCount.value)
             continue;
         if (!statusString.isEmpty())
-            statusString.append(", ");
-        statusString.append(makeString(convertEnumerationToString(statusCount.key), ": ", statusCount.value));
+            statusString.append(", "_s);
+        statusString.append(convertEnumerationToString(statusCount.key), ": "_s, statusCount.value);
     }
     ALWAYS_LOG(LOGIDENTIFIER, "statuses: {", statusString.toString(), "}");
 #endif

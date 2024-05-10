@@ -21,13 +21,12 @@ Email: <input type="text"><br>
 
 <script>
 
-    description("This tests that elements in a fieldset are having the correct traits.");
+    description("This tests that elements in a fieldset behave as expected.");
 
     if (window.accessibilityController) {
 
         var inputname = accessibilityController.accessibleElementById("inputname");
         var fieldset = accessibilityController.accessibleElementById("fieldset");
-        shouldBeTrue("inputname.hasContainedByFieldsetTrait");
         shouldBeTrue("fieldset.isEqual(inputname.fieldsetAncestorElement())");
     }
 

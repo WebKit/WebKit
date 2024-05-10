@@ -94,7 +94,7 @@ bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode
 
     for (unsigned index = 0; index < jitCode.m_unlinkedStubInfos.size(); ++index) {
         const UnlinkedStructureStubInfo& unlinkedStubInfo = jitCode.m_unlinkedStubInfos[index];
-        stubInfo(index).initializeFromDFGUnlinkedStructureStubInfo(unlinkedStubInfo);
+        stubInfo(index).initializeFromDFGUnlinkedStructureStubInfo(codeBlock, unlinkedStubInfo);
     }
 
     unsigned indexOfWatchpoints = 0;

@@ -48,7 +48,7 @@ struct TemplateTypes {
 
     static void appendNameTo(StringBuilder& builder)
     {
-        builder.append(toString(TT), ", ");
+        builder.append(toString(TT), ", "_s);
         TemplateTypes<TTs...>::appendNameTo(builder);
     }
 };
@@ -100,12 +100,11 @@ struct TemplateTypes<TT> {
 #define CONSUME_TYPE_NAMED(name, type) \
     auto name##Expected = consumeType(TokenType::type); \
     if (!name##Expected) { \
-        StringBuilder builder; \
-        builder.append("Expected a "); \
-        builder.append(toString(TokenType::type)); \
-        builder.append(", but got a "); \
-        builder.append(toString(name##Expected.error())); \
-        FAIL(builder.toString()); \
+        auto error = makeString("Expected a "_s, \
+            toString(TokenType::type), \
+            ", but got a "_s, \
+            toString(name##Expected.error())); \
+        FAIL(WTFMove(error)); \
     } \
     auto& name = *name##Expected;
 
@@ -113,12 +112,11 @@ struct TemplateTypes<TT> {
     do { \
         auto expectedToken = consumeType(TokenType::type); \
         if (!expectedToken) { \
-            StringBuilder builder; \
-            builder.append("Expected a "); \
-            builder.append(toString(TokenType::type)); \
-            builder.append(", but got a "); \
-            builder.append(toString(expectedToken.error())); \
-            FAIL(builder.toString()); \
+            auto error = makeString("Expected a "_s, \
+                toString(TokenType::type), \
+                ", but got a "_s, \
+                toString(expectedToken.error())); \
+            FAIL(WTFMove(error)); \
         } \
     } while (false)
 
@@ -126,10 +124,9 @@ struct TemplateTypes<TT> {
     auto name##Expected = consumeTypes<__VA_ARGS__>(); \
     if (!name##Expected) { \
         StringBuilder builder; \
-        builder.append("Expected one of ["); \
+        builder.append("Expected one of ["_s); \
         TemplateTypes<__VA_ARGS__>::appendNameTo(builder); \
-        builder.append("], but got a "); \
-        builder.append(toString(name##Expected.error())); \
+        builder.append("], but got a "_s, toString(name##Expected.error())); \
         FAIL(builder.toString()); \
     } \
     auto& name = *name##Expected;
@@ -828,7 +825,7 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
         PARSE(member, StructureMember);
         auto result = seenMembers.add(member.get().name());
         if (!result.isNewEntry)
-            FAIL(makeString("duplicate member '", member.get().name(), "' in struct '", name, "'"));
+            FAIL(makeString("duplicate member '"_s, member.get().name(), "' in struct '"_s, name, '\''));
         members.append(member);
         if (current().type == TokenType::Comma)
             consume();
@@ -837,7 +834,7 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
     }
 
     if (members.isEmpty())
-        FAIL(makeString("structures must have at least one member"));
+        FAIL("structures must have at least one member"_str);
 
     CONSUME_TYPE(BraceRight);
 

@@ -1183,16 +1183,13 @@ AtomString Internals::imageLastDecodingOptions(HTMLImageElement& element)
 
     auto options = bitmapImage->currentFrameDecodingOptions();
     StringBuilder builder;
-    builder.append("{ decodingMode : ");
-    builder.append(options.decodingMode() == DecodingMode::Asynchronous ? "Asynchronous" : "Synchronous");
+    builder.append("{ decodingMode : "_s,
+        options.decodingMode() == DecodingMode::Asynchronous ? "Asynchronous"_s : "Synchronous"_s);
     if (auto sizeForDrawing = options.sizeForDrawing()) {
-        builder.append(", sizeForDrawing : { ");
-        builder.append(sizeForDrawing->width());
-        builder.append(", ");
-        builder.append(sizeForDrawing->height());
-        builder.append(" }");
+        builder.append(", sizeForDrawing : { "_s, sizeForDrawing->width(),
+            ", "_s, sizeForDrawing->height(), " }"_s);
     }
-    builder.append(" }");
+    builder.append(" }"_s);
     return builder.toAtomString();
 }
 
@@ -2042,9 +2039,9 @@ ExceptionOr<String> Internals::dumpMarkerRects(const String& markerTypeString)
 
     // FIXME: Using fixed precision here for width because of test results that contain numbers with specific precision. Would be nice to update the test results and move to default formatting.
     StringBuilder rectString;
-    rectString.append("marker rects: ");
+    rectString.append("marker rects: "_s);
     for (const auto& rect : rects)
-        rectString.append('(', rect.x(), ", ", rect.y(), ", ", FormattedNumber::fixedPrecision(rect.width()), ", ", rect.height(), ") ");
+        rectString.append('(', rect.x(), ", "_s, rect.y(), ", "_s, FormattedNumber::fixedPrecision(rect.width()), ", "_s, rect.height(), ") "_s);
     return rectString.toString();
 }
 
@@ -4770,21 +4767,21 @@ ExceptionOr<String> Internals::mediaSessionRestrictions(const String& mediaTypeS
 
     StringBuilder builder;
     if (restrictions & PlatformMediaSessionManager::ConcurrentPlaybackNotPermitted)
-        builder.append("concurrentplaybacknotpermitted");
+        builder.append("concurrentplaybacknotpermitted"_s);
     if (restrictions & PlatformMediaSessionManager::BackgroundProcessPlaybackRestricted) {
         if (!builder.isEmpty())
             builder.append(',');
-        builder.append("backgroundprocessplaybackrestricted");
+        builder.append("backgroundprocessplaybackrestricted"_s);
     }
     if (restrictions & PlatformMediaSessionManager::BackgroundTabPlaybackRestricted) {
         if (!builder.isEmpty())
             builder.append(',');
-        builder.append("backgroundtabplaybackrestricted");
+        builder.append("backgroundtabplaybackrestricted"_s);
     }
     if (restrictions & PlatformMediaSessionManager::InterruptedPlaybackNotPermitted) {
         if (!builder.isEmpty())
             builder.append(',');
-        builder.append("interruptedplaybacknotpermitted");
+        builder.append("interruptedplaybacknotpermitted"_s);
     }
     return builder.toString();
 }
@@ -5192,68 +5189,68 @@ String Internals::pageMediaState()
     auto state = document->page()->mediaState();
     StringBuilder string;
     if (state.containsAny(MediaProducerMediaState::IsPlayingAudio))
-        string.append("IsPlayingAudio,");
+        string.append("IsPlayingAudio,"_s);
     if (state.containsAny(MediaProducerMediaState::IsPlayingVideo))
-        string.append("IsPlayingVideo,");
+        string.append("IsPlayingVideo,"_s);
     if (state.containsAny(MediaProducerMediaState::IsPlayingToExternalDevice))
-        string.append("IsPlayingToExternalDevice,");
+        string.append("IsPlayingToExternalDevice,"_s);
     if (state.containsAny(MediaProducerMediaState::RequiresPlaybackTargetMonitoring))
-        string.append("RequiresPlaybackTargetMonitoring,");
+        string.append("RequiresPlaybackTargetMonitoring,"_s);
     if (state.containsAny(MediaProducerMediaState::ExternalDeviceAutoPlayCandidate))
-        string.append("ExternalDeviceAutoPlayCandidate,");
+        string.append("ExternalDeviceAutoPlayCandidate,"_s);
     if (state.containsAny(MediaProducerMediaState::DidPlayToEnd))
-        string.append("DidPlayToEnd,");
+        string.append("DidPlayToEnd,"_s);
     if (state.containsAny(MediaProducerMediaState::IsSourceElementPlaying))
-        string.append("IsSourceElementPlaying,");
+        string.append("IsSourceElementPlaying,"_s);
 
     if (state.containsAny(MediaProducerMediaState::IsNextTrackControlEnabled))
-        string.append("IsNextTrackControlEnabled,");
+        string.append("IsNextTrackControlEnabled,"_s);
     if (state.containsAny(MediaProducerMediaState::IsPreviousTrackControlEnabled))
-        string.append("IsPreviousTrackControlEnabled,");
+        string.append("IsPreviousTrackControlEnabled,"_s);
 
     if (state.containsAny(MediaProducerMediaState::HasPlaybackTargetAvailabilityListener))
-        string.append("HasPlaybackTargetAvailabilityListener,");
+        string.append("HasPlaybackTargetAvailabilityListener,"_s);
     if (state.containsAny(MediaProducerMediaState::HasAudioOrVideo))
-        string.append("HasAudioOrVideo,");
+        string.append("HasAudioOrVideo,"_s);
 
     if (state.containsAny(MediaProducerMediaState::HasActiveAudioCaptureDevice))
-        string.append("HasActiveAudioCaptureDevice,");
+        string.append("HasActiveAudioCaptureDevice,"_s);
     if (state.containsAny(MediaProducerMediaState::HasMutedAudioCaptureDevice))
-        string.append("HasMutedAudioCaptureDevice,");
+        string.append("HasMutedAudioCaptureDevice,"_s);
     if (state.containsAny(MediaProducerMediaState::HasInterruptedAudioCaptureDevice))
-        string.append("HasInterruptedAudioCaptureDevice,");
+        string.append("HasInterruptedAudioCaptureDevice,"_s);
 
     if (state.containsAny(MediaProducerMediaState::HasActiveVideoCaptureDevice))
-        string.append("HasActiveVideoCaptureDevice,");
+        string.append("HasActiveVideoCaptureDevice,"_s);
     if (state.containsAny(MediaProducerMediaState::HasMutedVideoCaptureDevice))
-        string.append("HasMutedVideoCaptureDevice,");
+        string.append("HasMutedVideoCaptureDevice,"_s);
     if (state.containsAny(MediaProducerMediaState::HasInterruptedVideoCaptureDevice))
-        string.append("HasInterruptedVideoCaptureDevice,");
+        string.append("HasInterruptedVideoCaptureDevice,"_s);
 
     if (state.containsAny(MediaProducerMediaState::HasUserInteractedWithMediaElement))
-        string.append("HasUserInteractedWithMediaElement,");
+        string.append("HasUserInteractedWithMediaElement,"_s);
 
     if (state.containsAny(MediaProducerMediaState::HasActiveScreenCaptureDevice))
-        string.append("HasActiveScreenCaptureDevice,");
+        string.append("HasActiveScreenCaptureDevice,"_s);
     if (state.containsAny(MediaProducerMediaState::HasMutedScreenCaptureDevice))
-        string.append("HasMutedScreenCaptureDevice,");
+        string.append("HasMutedScreenCaptureDevice,"_s);
 
     if (state.containsAny(MediaProducerMediaState::HasActiveWindowCaptureDevice))
-        string.append("HasActiveWindowCaptureDevice,");
+        string.append("HasActiveWindowCaptureDevice,"_s);
     if (state.containsAny(MediaProducerMediaState::HasMutedWindowCaptureDevice))
-        string.append("HasMutedWindowCaptureDevice,");
+        string.append("HasMutedWindowCaptureDevice,"_s);
     if (state.containsAny(MediaProducerMediaState::HasInterruptedWindowCaptureDevice))
-        string.append("HasInterruptedWindowCaptureDevice,");
+        string.append("HasInterruptedWindowCaptureDevice,"_s);
 
     if (state.containsAny(MediaProducerMediaState::HasActiveSystemAudioCaptureDevice))
-        string.append("HasActiveSystemAudioCaptureDevice,");
+        string.append("HasActiveSystemAudioCaptureDevice,"_s);
     if (state.containsAny(MediaProducerMediaState::HasMutedSystemAudioCaptureDevice))
-        string.append("HasMutedSystemAudioCaptureDevice,");
+        string.append("HasMutedSystemAudioCaptureDevice,"_s);
     if (state.containsAny(MediaProducerMediaState::HasInterruptedSystemAudioCaptureDevice))
-        string.append("HasInterruptedSystemAudioCaptureDevice,");
+        string.append("HasInterruptedSystemAudioCaptureDevice,"_s);
 
     if (string.isEmpty())
-        string.append("IsNotPlaying");
+        string.append("IsNotPlaying"_s);
     else
         string.shrink(string.length() - 1);
 
@@ -5345,18 +5342,18 @@ static void appendOffsets(StringBuilder& builder, const Vector<SnapOffset<Layout
 {
     bool justStarting = true;
 
-    builder.append("{ ");
+    builder.append("{ "_s);
     for (auto& coordinate : snapOffsets) {
         if (!justStarting)
-            builder.append(", ");
+            builder.append(", "_s);
         else
             justStarting = false;
         builder.append(coordinate.offset.toUnsigned());
         if (coordinate.stop == ScrollSnapStop::Always)
-            builder.append(" (always)");
+            builder.append(" (always)"_s);
 
     }
-    builder.append(" }");
+    builder.append(" }"_s);
 }
 
 void Internals::setPlatformMomentumScrollingPredictionEnabled(bool enabled)
@@ -5377,14 +5374,14 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
     auto* offsetInfo = scrollableArea->snapOffsetsInfo();
     StringBuilder result;
     if (offsetInfo && !offsetInfo->horizontalSnapOffsets.isEmpty()) {
-        result.append("horizontal = ");
+        result.append("horizontal = "_s);
         appendOffsets(result, offsetInfo->horizontalSnapOffsets);
     }
 
     if (offsetInfo && !offsetInfo->verticalSnapOffsets.isEmpty()) {
         if (result.length())
-            result.append(", ");
-        result.append("vertical = ");
+            result.append(", "_s);
+        result.append("vertical = "_s);
         appendOffsets(result, offsetInfo->verticalSnapOffsets);
     }
 
@@ -7220,16 +7217,14 @@ String Internals::dumpStyleResolvers()
             return currentIdentifier++;
         }).iterator->value;
 
-        result.append("(", name, " ");
-        result.append("(identifier=", identifier, ") ");
-        result.append("(author rule count=", resolver.ruleSets().authorStyle().ruleCount(), ")");
-        result.append(")\n");
+        result.append('(', name, ' ', "(identifier="_s, identifier, ") (author rule count="_s,
+            resolver.ruleSets().authorStyle().ruleCount(), "))\n"_s);
     };
 
-    dumpResolver("document resolver", document->styleScope().resolver());
+    dumpResolver("document resolver"_s, document->styleScope().resolver());
 
     for (auto& shadowRoot : document->inDocumentShadowRoots()) {
-        auto* name = shadowRoot.mode() == ShadowRootMode::UserAgent ? "shadow root resolver (user agent)" : "shadow root resolver (author)";
+        auto name = shadowRoot.mode() == ShadowRootMode::UserAgent ? "shadow root resolver (user agent)"_s : "shadow root resolver (author)"_s;
         dumpResolver(name, const_cast<ShadowRoot&>(shadowRoot).styleScope().resolver());
     }
 
@@ -7440,6 +7435,11 @@ const String& Internals::defaultSpatialTrackingLabel() const
         return page->defaultSpatialTrackingLabel();
 #endif
     return nullString();
+}
+
+bool Internals::isEffectivelyMuted(const HTMLMediaElement& element)
+{
+    return element.effectiveMuted();
 }
 
 } // namespace WebCore

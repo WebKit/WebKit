@@ -36,11 +36,13 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementInlines.h"
+#include "ElementRareData.h"
 #include "ElementTargetingTypes.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "HTMLBodyElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -565,6 +567,24 @@ static String searchableTextForTarget(Element& target)
     return emptyString();
 }
 
+static bool hasAudibleMedia(const Element& element)
+{
+    if (RefPtr media = dynamicDowncast<HTMLMediaElement>(element))
+        return media->isAudible();
+
+    for (auto& media : descendantsOfType<HTMLMediaElement>(element)) {
+        if (media.isAudible())
+            return true;
+    }
+
+    for (auto& documentElement : collectDocumentElementsFromChildFrames(element)) {
+        if (hasAudibleMedia(documentElement))
+            return true;
+    }
+
+    return false;
+}
+
 enum class IsNearbyTarget : bool { No, Yes };
 static TargetedElementInfo targetedElementInfo(Element& element, IsNearbyTarget isNearbyTarget, ElementSelectorCache& cache)
 {
@@ -583,12 +603,13 @@ static TargetedElementInfo targetedElementInfo(Element& element, IsNearbyTarget 
         .isNearbyTarget = isNearbyTarget == IsNearbyTarget::Yes,
         .isPseudoElement = element.isPseudoElement(),
         .isInShadowTree = element.isInShadowTree(),
+        .hasAudibleMedia = hasAudibleMedia(element)
     };
 }
 
-static inline HTMLElement* findOnlyMainElement(HTMLBodyElement& bodyElement)
+static const HTMLElement* findOnlyMainElement(const HTMLBodyElement& bodyElement)
 {
-    RefPtr<HTMLElement> onlyMainElement;
+    RefPtr<const HTMLElement> onlyMainElement;
     for (auto& descendant : descendantsOfType<HTMLElement>(bodyElement)) {
         if (!descendant.hasTagName(HTMLNames::mainTag))
             continue;
@@ -603,7 +624,7 @@ static inline HTMLElement* findOnlyMainElement(HTMLBodyElement& bodyElement)
     return onlyMainElement.get();
 }
 
-static bool isNavigationalElement(Element& element)
+static bool isNavigationalElement(const Element& element)
 {
     if (element.hasTagName(HTMLNames::navTag))
         return true;
@@ -612,7 +633,7 @@ static bool isNavigationalElement(Element& element)
     return AccessibilityObject::ariaRoleToWebCoreRole(roleValue) == AccessibilityRole::LandmarkNavigation;
 }
 
-static bool containsNavigationalElement(Element& element)
+static bool containsNavigationalElement(const Element& element)
 {
     if (isNavigationalElement(element))
         return true;
@@ -1080,6 +1101,10 @@ bool ElementTargetingController::adjustVisibility(const Vector<std::pair<Element
             adjustedElement->invalidateStyle();
         m_adjustedElements.add(element);
     }
+
+    if (changed)
+        dispatchVisibilityAdjustmentStateDidChange();
+
     return changed;
 }
 
@@ -1180,6 +1205,9 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
         elementsToAdjust.append(element.releaseNonNull());
     }
 
+    if (elementsToAdjust.isEmpty())
+        return;
+
     for (auto& element : elementsToAdjust) {
         auto [adjustedElement, invalidateSubtree] = adjustVisibilityIfNeeded(element);
         if (!adjustedElement)
@@ -1191,6 +1219,8 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
             adjustedElement->invalidateStyle();
         m_adjustedElements.add(element);
     }
+
+    dispatchVisibilityAdjustmentStateDidChange();
 }
 
 void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document& document)
@@ -1329,8 +1359,11 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
         return selectors.isEmpty();
     });
 
-    if (!matchingSelectors.isEmpty())
-        page->chrome().client().didAdjustVisibilityWithSelectors(WTFMove(matchingSelectors));
+    if (matchingSelectors.isEmpty())
+        return;
+
+    dispatchVisibilityAdjustmentStateDidChange();
+    page->chrome().client().didAdjustVisibilityWithSelectors(WTFMove(matchingSelectors));
 }
 
 void ElementTargetingController::reset()
@@ -1418,6 +1451,9 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<std::pa
         }
     }
 
+    if (changed)
+        dispatchVisibilityAdjustmentStateDidChange();
+
     return changed;
 }
 
@@ -1474,6 +1510,17 @@ uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects() const
 void ElementTargetingController::cleanUpAdjustmentClientRects()
 {
     m_recentAdjustmentClientRects = { };
+}
+
+void ElementTargetingController::dispatchVisibilityAdjustmentStateDidChange()
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    page->forEachDocument([](auto& document) {
+        document.visibilityAdjustmentStateDidChange();
+    });
 }
 
 } // namespace WebCore

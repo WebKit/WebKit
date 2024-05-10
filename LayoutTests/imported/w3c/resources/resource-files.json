@@ -4431,6 +4431,7 @@
         "web-platform-tests/css/css-view-transitions/multiline-span-with-overflowing-text-and-box-decorations-ref.html",
         "web-platform-tests/css/css-view-transitions/named-element-with-fix-pos-child-ref.html",
         "web-platform-tests/css/css-view-transitions/new-and-old-sizes-match-ref.html",
+        "web-platform-tests/css/css-view-transitions/new-content-ancestor-clipped-ref.html",
         "web-platform-tests/css/css-view-transitions/new-content-captures-clip-path-ref.html",
         "web-platform-tests/css/css-view-transitions/new-content-captures-different-size-ref.html",
         "web-platform-tests/css/css-view-transitions/new-content-captures-opacity-ref.html",

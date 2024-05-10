@@ -45,7 +45,7 @@ bool eliminateDeadCodeImpl(Procedure& proc)
 {
     bool changed = false;
     GraphNodeWorklist<Value*, IndexSet<Value*>> worklist;
-    Vector<UpsilonValue*, 64> upsilons;
+    Vector<UpsilonValue*, 128> upsilons;
     for (BasicBlock* block : proc) {
         for (Value* value : *block) {
             Effects effects;

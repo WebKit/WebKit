@@ -90,8 +90,8 @@ public:
     virtual void sendEnterAcceleratedCompositingModeIfNeeded() { }
 
     // FIXME: These should be pure virtual.
-    virtual void forceRepaint() { }
-    virtual void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) = 0;
+    virtual void updateRenderingWithForcedRepaint() { }
+    virtual void updateRenderingWithForcedRepaintAsync(WebPage&, CompletionHandler<void()>&&) = 0;
     virtual void setLayerTreeStateIsFrozen(bool) { }
     virtual bool layerTreeStateIsFrozen() const { return false; }
 

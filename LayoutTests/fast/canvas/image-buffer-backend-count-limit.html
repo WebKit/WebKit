@@ -1,0 +1,64 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Test creates many 2D contexts and checks when they are not created accelerated anymore")
+
+function pixelsEqual(a, b) {
+    for (let i = 0; i < 4; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+    return true;
+}
+
+var transparentBlack = [0, 0, 0, 0];
+var lime = [0, 255, 0, 255];
+var imageData;
+var context;
+function runTest() {
+    if (typeof CanvasRenderingContext2D.prototype.getEffectiveRenderingModeForTesting === "undefined") {
+        testFailed("Need effective rendering mode API");
+        return;
+    }
+    let canvases = [];
+    for (let i = 0; i < 15000; ++i) {
+        let canvas = document.createElement('canvas');
+        canvases.push(canvas)
+        canvas.height = 100;
+        canvas.width = 100;
+        context = canvas.getContext("2d");
+        if (!context) {
+            testFailed(`Context ${i} not created`);
+            return;
+        }
+        context.fillStyle = "lime";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        imageData = context.getImageData(0, 0, 1, 1);
+        if (!imageData) {
+            testFailed("Context failed to allocate imageData");
+            return;
+        } else if (pixelsEqual(imageData.data, transparentBlack)) {
+            testFailed("Context was lost");
+            return;
+        } else if (!pixelsEqual(imageData.data, lime)) {
+            shouldBe("imageData.data", "lime");
+            return;
+        }
+        let renderingMode = context.getEffectiveRenderingModeForTesting();
+        if (renderingMode != "Accelerated") {
+            testPassed(`Effective rendering mode switches to ${renderingMode} at instance: ${i}`);
+            canvases.length = 0;
+            delete context;
+            delete canvas;
+            gc();
+            return;
+        }
+    }
+    testFailed(`All ${i} contexts accelerated. Currently unexpected`);
+}
+runTest();
+</script>
+</body>
+</html>

@@ -2029,6 +2029,7 @@
 (allow darwin-notification-post
     (notification-name
 #if ENABLE(NOTIFY_BLOCKING)
+        "com.apple.CFPreferences._domainsChangedExternally"
         "com.apple.WebKit.LibraryPathDiagnostics"
         "com.apple.WebKit.deleteAllCode"
         "com.apple.WebKit.dumpGCHeap"
@@ -2044,6 +2045,7 @@
         "com.apple.WebKit.showMemoryCache"
         "com.apple.WebKit.showPaintOrderTree"
         "com.apple.WebKit.showRenderTree"
+        "com.apple.accessibility.cache.enhance.text.legibility"
         "com.apple.language.changed"
         "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"
         "com.apple.powerlog.state_changed"
@@ -2056,6 +2058,7 @@
         "org.WebKit.memoryWarning"
         "org.WebKit.memoryWarning.begin"
         "org.WebKit.memoryWarning.end"
+        "com.apple.webinspectord.available"
 #endif
         "com.apple.accessibility.AirPodsSpatialAudioLockToDeviceChanged"
         "com.apple.webinspectord.availability_check"))

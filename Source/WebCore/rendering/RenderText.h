@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "DocumentMarker.h"
 #include "RenderElement.h"
 #include "RenderTextLineBoxes.h"
 #include "Text.h"
@@ -183,7 +184,7 @@ public:
     
     bool containsOnlyCSSWhitespace(unsigned from, unsigned length) const;
 
-    Vector<std::pair<unsigned, unsigned>> draggedContentRangesBetweenOffsets(unsigned startOffset, unsigned endOffset) const;
+    Vector<std::pair<unsigned, unsigned>> contentRangesBetweenOffsetsForType(const DocumentMarker::Type, unsigned startOffset, unsigned endOffset) const;
 
     RenderInline* inlineWrapperForDisplayContents();
     void setInlineWrapperForDisplayContents(RenderInline*);

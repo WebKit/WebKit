@@ -626,11 +626,9 @@ static String percentEncodeCharacters(const StringType& input, bool(*shouldEncod
             StringBuilder builder;
             for (unsigned j = 0; j < span.size(); j++) {
                 auto c = span[j];
-                if (shouldEncode(c)) {
-                    builder.append('%');
-                    builder.append(upperNibbleToASCIIHexDigit(c));
-                    builder.append(lowerNibbleToASCIIHexDigit(c));
-                } else
+                if (shouldEncode(c))
+                    builder.append('%', upperNibbleToASCIIHexDigit(c), lowerNibbleToASCIIHexDigit(c));
+                else
                     builder.append(c);
             }
             return builder.toString();
@@ -1421,7 +1419,7 @@ Vector<String> removeQueryParameters(URL& url, Function<bool(const String&)>&& s
             continue;
         }
 
-        queryWithoutRemovalKeys.append(queryWithoutRemovalKeys.isEmpty() ? "" : "&", bytes);
+        queryWithoutRemovalKeys.append(queryWithoutRemovalKeys.isEmpty() ? ""_s : "&"_s, bytes);
     }
 
     if (!removedParameters.isEmpty())

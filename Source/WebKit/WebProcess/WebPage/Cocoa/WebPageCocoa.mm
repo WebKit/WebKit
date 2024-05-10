@@ -193,7 +193,7 @@ bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) con
     if (!pluginEnabled)
         return false;
 
-    return MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType) || (contentType.isEmpty() && (path.endsWithIgnoringASCIICase(".pdf"_s) || path.endsWithIgnoringASCIICase(".ps"_s)));
+    return MIMETypeRegistry::isPDFMIMEType(contentType) || (contentType.isEmpty() && path.endsWithIgnoringASCIICase(".pdf"_s));
 }
 #endif
 
@@ -311,13 +311,19 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+std::optional<WebCore::SimpleRange> WebPage::getRangeforUUID(const WTF::UUID& uuid)
+{
+    auto range = m_unifiedTextReplacementController->contextRangeForSessionWithUUID(uuid);
+    if (range)
+        return range;
+
+    RefPtr liveRange = m_textIndicatorStyleEnablementRanges.get(uuid);
+    return WebCore::makeSimpleRange(liveRange);
+}
+
 void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
-    auto sessionRange = m_unifiedTextReplacementController->contextRangeForSessionWithUUID(uuid);
-    if (!sessionRange) {
-        if (RefPtr liveRange = m_textIndicatorStyleEnablementRanges.get(uuid))
-            sessionRange = WebCore::makeSimpleRange(liveRange);
-    }
+    auto sessionRange = getRangeforUUID(uuid);
 
     if (!sessionRange) {
         completionHandler(std::nullopt);
@@ -341,7 +347,31 @@ void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<voi
 
 void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool visible, CompletionHandler<void()>&& completionHandler)
 {
-    // FIXME: Turn on/off the visibility.
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        completionHandler();
+        return;
+    }
+
+    RefPtr document = frame->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        completionHandler();
+        return;
+    }
+
+    auto sessionRange = getRangeforUUID(uuid);
+
+    if (!sessionRange) {
+        completionHandler();
+        return;
+    }
+
+    if (visible)
+        document->markers().removeMarkers(*sessionRange, { DocumentMarker::Type::TransparentContent });
+    else
+        document->markers().addMarker(*sessionRange, DocumentMarker::Type::TransparentContent);
 
     completionHandler();
 }
@@ -753,8 +783,16 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
         }
 
         postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
+        postLayoutData.canEnableWritingSuggestions = [&] {
+            if (!selection.canEnableWritingSuggestions())
+                return false;
 
-        postLayoutData.canEnableWritingSuggestions = selection.canEnableWritingSuggestions();
+            if (!m_lastNodeBeforeWritingSuggestions)
+                return true;
+
+            RefPtr currentNode = frame.editor().nodeBeforeWritingSuggestions();
+            return !currentNode || m_lastNodeBeforeWritingSuggestions == currentNode.get();
+        }();
     }
 
     if (RefPtr editableRootOrFormControl = enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement()) {

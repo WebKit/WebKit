@@ -57,6 +57,10 @@ public:
     static ExceptionOr<Ref<AudioWorkletNode>> create(JSC::JSGlobalObject&, BaseAudioContext&, String&& name, AudioWorkletNodeOptions&&);
     ~AudioWorkletNode();
 
+    // ActiveDOMObject.
+    void ref() const final { AudioNode::ref(); }
+    void deref() const final { AudioNode::deref(); }
+
     AudioParamMap& parameters() { return m_parameters.get(); }
     MessagePort& port() { return m_port.get(); }
 

@@ -59,16 +59,16 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(Worker);
 
 static Lock allWorkersLock;
-static HashMap<ScriptExecutionContextIdentifier, WeakRef<Worker, WeakPtrImplWithEventTargetData>>& allWorkers() WTF_REQUIRES_LOCK(allWorkersLock)
+static HashSet<ScriptExecutionContextIdentifier>& allWorkerContexts() WTF_REQUIRES_LOCK(allWorkersLock)
 {
-    static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, WeakRef<Worker, WeakPtrImplWithEventTargetData>>> map;
+    static NeverDestroyed<HashSet<ScriptExecutionContextIdentifier>> map;
     return map;
 }
 
 void Worker::networkStateChanged(bool isOnline)
 {
     Locker locker { allWorkersLock };
-    for (auto& contextIdentifier : allWorkers().keys()) {
+    for (auto& contextIdentifier : allWorkerContexts()) {
         ScriptExecutionContext::postTaskTo(contextIdentifier, [isOnline](auto& context) {
             auto& globalScope = downcast<WorkerGlobalScope>(context);
             globalScope.setIsOnline(isOnline);
@@ -92,7 +92,7 @@ Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, 
     }
 
     Locker locker { allWorkersLock };
-    auto addResult = allWorkers().add(m_clientIdentifier, *this);
+    auto addResult = allWorkerContexts().add(m_clientIdentifier);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
@@ -128,7 +128,7 @@ Worker::~Worker()
 {
     {
         Locker locker { allWorkersLock };
-        allWorkers().remove(m_clientIdentifier);
+        allWorkerContexts().remove(m_clientIdentifier);
     }
     m_contextProxy.workerObjectDestroyed();
 }
@@ -271,7 +271,7 @@ void Worker::postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>
 void Worker::forEachWorker(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
 {
     Locker locker { allWorkersLock };
-    for (auto& contextIdentifier : allWorkers().keys())
+    for (auto& contextIdentifier : allWorkerContexts())
         ScriptExecutionContext::postTaskTo(contextIdentifier, callback());
 }
 

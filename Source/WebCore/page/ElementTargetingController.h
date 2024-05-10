@@ -28,13 +28,12 @@
 #include "ElementIdentifier.h"
 #include "ElementTargetingTypes.h"
 #include "EventTarget.h"
-#include "IntRect.h"
+#include "IntRectHash.h"
 #include "Region.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "Timer.h"
 #include <wtf/ApproximateTime.h>
 #include <wtf/CheckedPtr.h>
-#include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
@@ -66,6 +65,8 @@ public:
 private:
     void cleanUpAdjustmentClientRects();
     void applyVisibilityAdjustmentFromSelectors(Document&);
+
+    void dispatchVisibilityAdjustmentStateDidChange();
 
     std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(FloatPoint location, bool shouldIgnorePointerEventsNone);
     std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(const String& searchText);

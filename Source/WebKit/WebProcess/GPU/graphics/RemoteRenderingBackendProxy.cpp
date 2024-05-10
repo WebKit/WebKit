@@ -160,7 +160,14 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
 
 void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
 {
-    send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.logicalSize(), imageBuffer.renderingMode(), imageBuffer.renderingPurpose(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormatValidated(), imageBuffer.renderingResourceIdentifier()));
+    send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.logicalSize(), imageBuffer.renderingMode(), imageBuffer.renderingPurpose(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()));
+}
+
+bool RemoteRenderingBackendProxy::canMapRemoteImageBufferBackendBackingStore()
+{
+    // When DOM rendering happens in WebContent process, we need to paint 2D contexts
+    // into the tiles. In this case ImageBuffers should be created as mappable.
+    return !WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM);
 }
 
 RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options)
@@ -171,10 +178,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
 
 #if HAVE(IOSURFACE)
     if (options.contains(ImageBufferOptions::Accelerated)) {
-        // Unless DOM rendering is always enabled when any GPU process rendering is enabled,
-        // we need to create ImageBuffers for e.g. Canvas that are actually mapped into the
-        // Web Content process, so they can be painted into the tiles.
-        if (!WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM))
+        if (canMapRemoteImageBufferBackendBackingStore())
             imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableMappedIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheckForTesting);
         else
             imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this, avoidBackendSizeCheckForTesting);
@@ -194,7 +198,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
 std::unique_ptr<RemoteDisplayListRecorderProxy> RemoteRenderingBackendProxy::createDisplayListRecorder(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options)
 {
     ASSERT(WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
-    ImageBufferParameters parameters { size, resolutionScale, colorSpace, convertPixelFormatToPixelFormatValidated(pixelFormat), purpose };
+    ImageBufferParameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
     auto renderingMode = RenderingMode::Unaccelerated;
     auto transform = ImageBufferBackend::calculateBaseTransform(ImageBuffer::backendParameters(parameters), ImageBufferShareableBitmapBackend::isOriginAtBottomLeftCorner);
 

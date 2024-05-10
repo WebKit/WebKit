@@ -80,7 +80,7 @@ private:
     Ref<WebGPU::Buffer> m_backing;
     struct ArrayBufferWithOffset {
         RefPtr<JSC::ArrayBuffer> buffer;
-        uint8_t* source;
+        size_t offset { 0 };
     };
     Vector<ArrayBufferWithOffset> m_arrayBuffers;
     size_t m_bufferSize { 0 };

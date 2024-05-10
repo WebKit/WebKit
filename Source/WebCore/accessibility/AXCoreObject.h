@@ -639,7 +639,7 @@ struct AccessibilitySearchCriteria {
     { }
 };
 
-enum class AccessibilityObjectInclusion {
+enum class AccessibilityObjectInclusion : uint8_t {
     IncludeObject,
     IgnoreObject,
     DefaultBehavior,

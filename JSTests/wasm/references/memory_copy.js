@@ -16,4 +16,4 @@ async function test() {
   assert.eq(instance.exports.run(), 119 /* 'w' ascii code */);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

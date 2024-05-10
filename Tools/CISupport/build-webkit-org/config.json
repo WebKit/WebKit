@@ -18,6 +18,8 @@
                   { "name": "bot184", "platform": "mac-sonoma" },
                   { "name": "bot303", "platform": "mac-sonoma" },
                   
+                  { "name": "bot105", "platform": "mac-ventura" },
+                  { "name": "bot111", "platform": "mac-ventura" },
                   { "name": "bot183", "platform": "mac-ventura" },
                   { "name": "bot211", "platform": "mac-ventura" },
                   { "name": "bot212", "platform": "mac-ventura" },
@@ -32,23 +34,21 @@
                   { "name": "bot257", "platform": "mac-ventura" },
                   { "name": "bot258", "platform": "mac-ventura" },
                   { "name": "bot260", "platform": "mac-ventura" },
+                  { "name": "bot603", "platform": "mac-ventura" },
+                  { "name": "bot632", "platform": "mac-ventura" },
 
-                  { "name": "bot105", "platform": "mac-monterey" },
-                  { "name": "bot111", "platform": "mac-monterey" },
-                  { "name": "bot135", "platform": "mac-monterey" },
-                  { "name": "bot138", "platform": "mac-monterey" },
-                  { "name": "bot139", "platform": "mac-monterey" },
-                  { "name": "bot141", "platform": "mac-monterey" },
-                  { "name": "bot185", "platform": "mac-monterey" },
-                  { "name": "bot187", "platform": "mac-monterey" },
-                  { "name": "bot198", "platform": "mac-monterey" },
-                  { "name": "bot279", "platform": "mac-monterey" },
-                  { "name": "bot603", "platform": "mac-monterey" },
-                  { "name": "bot632", "platform": "mac-monterey" },
-                  { "name": "bot1021", "platform": "mac-monterey" },
-                  { "name": "bot1023", "platform": "mac-monterey" },
-                  { "name": "bot1025", "platform": "mac-monterey" },
-                  { "name": "bot1026", "platform": "mac-monterey" },
+                  { "name": "bot135", "platform": "*" },
+                  { "name": "bot138", "platform": "*" },
+                  { "name": "bot139", "platform": "*" },
+                  { "name": "bot141", "platform": "*" },
+                  { "name": "bot185", "platform": "*" },
+                  { "name": "bot187", "platform": "*" },
+                  { "name": "bot198", "platform": "*" },
+                  { "name": "bot279", "platform": "*" },
+                  { "name": "bot1021", "platform": "*" },
+                  { "name": "bot1023", "platform": "*" },
+                  { "name": "bot1025", "platform": "*" },
+                  { "name": "bot1026", "platform": "*" },
 
                   { "name": "bot304", "platform": "ios-17" },
                   { "name": "bot305", "platform": "ios-simulator-17" },
@@ -229,8 +229,9 @@
                   { "name": "Apple-Ventura-Release-Build", "factory": "BuildFactory",
                   "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "triggers": [
-                      "ventura-release-tests-wk1", "ventura-release-tests-wk2",
-                      "ventura-release-applesilicon-tests-wk1", "ventura-release-applesilicon-tests-wk2"
+                      "ventura-release-tests-test262", "ventura-release-tests-wk1", "ventura-release-tests-wk2",
+                      "ventura-release-applesilicon-tests-wk1", "ventura-release-applesilicon-tests-wk2", 
+                      "ventura-applesilicon-release-tests-jsc"
                   ],
                   "workernames": ["bot245", "bot246"]
                   },
@@ -254,11 +255,20 @@
                   "additionalArguments": ["--no-retry-failures"],
                   "workernames": ["bot211"]
                   },
+                  { "name": "Apple-Ventura-Release-Test262-Tests", "factory": "Test262Factory",
+                    "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "workernames": ["bot632"]
+                  },
+                  { "name": "Apple-Ventura-AppleSilicon-Release-JSC-Tests", "factory": "TestJSCFactory",
+                    "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "workernames": ["bot111"]
+                  },
                   { "name": "Apple-Ventura-Debug-Build", "factory": "BuildFactory",
                   "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "triggers": [
-                      "ventura-debug-tests-wk1", "ventura-debug-tests-wk2", "ventura-debug-applesilicon-tests-wk1",
-                      "ventura-debug-applesilicon-tests-wk2"
+                      "ventura-debug-tests-test262", "ventura-debug-tests-wk1", "ventura-debug-tests-wk2", 
+                      "ventura-debug-applesilicon-tests-wk1", "ventura-debug-applesilicon-tests-wk2", 
+                      "ventura-applesilicon-debug-tests-jsc"
                   ],
                   "workernames": ["bot249", "bot254"]
                   },
@@ -282,78 +292,13 @@
                   "additionalArguments": ["--no-retry-failures"],
                   "workernames": ["bot258"]
                   },
-                  { "name": "Apple-Monterey-Release-Build", "factory": "BuildFactory",
-                    "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "triggers": [
-                        "monterey-release-tests-test262", "monterey-release-tests-wk1", "monterey-release-tests-wk2",
-                        "monterey-release-applesilicon-tests-wk1", "monterey-release-applesilicon-tests-wk2", "monterey-applesilicon-release-tests-jsc"
-                        
-                    ],
-                    "workernames": ["bot185", "bot187"]
-                  },
-                  { "name": "Apple-Monterey-Release-Test262-Tests", "factory": "Test262Factory",
-                    "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "workernames": ["bot632"]
-                  },
-                  { "name": "Apple-Monterey-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                    "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
-                    "workernames": ["bot1021"]
-                  },
-                  { "name": "Apple-Monterey-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
-                    "workernames": ["bot135"]
-                  },
-                  { "name": "Apple-Monterey-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                    "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
-                    "workernames": ["bot138"]
-                  },
-                  { "name": "Apple-Monterey-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
-                    "workernames": ["bot1023"]
-                  },
-                  { "name": "Apple-Monterey-Debug-Build", "factory": "BuildFactory",
-                    "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "triggers": [
-                        "monterey-debug-tests-test262", "monterey-debug-tests-wk1", "monterey-debug-tests-wk2", "monterey-debug-applesilicon-tests-wk1",
-                        "monterey-debug-applesilicon-tests-wk2", "monterey-applesilicon-debug-tests-jsc"
-                    ],
-                    "workernames": ["bot198", "bot279"]
-                  },
-                  { "name": "Apple-Monterey-Debug-Test262-Tests", "factory": "Test262Factory",
-                    "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                  { "name": "Apple-Ventura-Debug-Test262-Tests", "factory": "Test262Factory",
+                    "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "workernames": ["bot603"]
                   },
-                  { "name": "Apple-Monterey-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                    "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
-                    "workernames": ["bot1025"]
-                  },
-                  { "name": "Apple-Monterey-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
-                    "workernames": ["bot1026"]
-                  },
-                  { "name": "Apple-Monterey-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                    "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
-                    "workernames": ["bot139"]
-                  },
-                  { "name": "Apple-Monterey-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
-                    "workernames": ["bot141"]
-                  },
-                  { "name": "Apple-Monterey-AppleSilicon-Debug-JSC-Tests", "factory": "TestJSCFactory",
-                    "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                  { "name": "Apple-Ventura-AppleSilicon-Debug-JSC-Tests", "factory": "TestJSCFactory",
+                    "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "workernames": ["bot105"]
-                  },
-                  { "name": "Apple-Monterey-AppleSilicon-Release-JSC-Tests", "factory": "TestJSCFactory",
-                    "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "workernames": ["bot111"]
                   },
                   {
                     "name": "Apple-iOS-17-Release-Build", "factory": "BuildFactory",
@@ -783,45 +728,18 @@
                   },
                   { "type": "Triggerable", "name": "ventura-debug-applesilicon-tests-wk2",
                   "builderNames": ["Apple-Ventura-Debug-AppleSilicon-WK2-Tests"]
+                  },                  
+                  { "type": "Triggerable", "name": "ventura-debug-tests-test262",
+                    "builderNames": ["Apple-Ventura-Debug-Test262-Tests"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "mac-monterey", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-Monterey-Release-Build", "Apple-Monterey-Debug-Build"]
+                  { "type": "Triggerable", "name": "ventura-release-tests-test262",
+                    "builderNames": ["Apple-Ventura-Release-Test262-Tests"]
                   },
-                  { "type": "Triggerable", "name": "monterey-release-tests-wk1",
-                    "builderNames": ["Apple-Monterey-Release-WK1-Tests"]
+                  { "type": "Triggerable", "name": "ventura-applesilicon-debug-tests-jsc",
+                    "builderNames": ["Apple-Ventura-AppleSilicon-Debug-JSC-Tests"]
                   },
-                  { "type": "Triggerable", "name": "monterey-release-tests-wk2",
-                    "builderNames": ["Apple-Monterey-Release-WK2-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-release-applesilicon-tests-wk1",
-                    "builderNames": ["Apple-Monterey-Release-AppleSilicon-WK1-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-release-applesilicon-tests-wk2",
-                    "builderNames": ["Apple-Monterey-Release-AppleSilicon-WK2-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-debug-tests-wk1",
-                    "builderNames": ["Apple-Monterey-Debug-WK1-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-debug-tests-wk2",
-                    "builderNames": ["Apple-Monterey-Debug-WK2-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-debug-applesilicon-tests-wk1",
-                    "builderNames": ["Apple-Monterey-Debug-AppleSilicon-WK1-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-debug-applesilicon-tests-wk2",
-                    "builderNames": ["Apple-Monterey-Debug-AppleSilicon-WK2-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-debug-tests-test262",
-                    "builderNames": ["Apple-Monterey-Debug-Test262-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-release-tests-test262",
-                    "builderNames": ["Apple-Monterey-Release-Test262-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-applesilicon-debug-tests-jsc",
-                    "builderNames": ["Apple-Monterey-AppleSilicon-Debug-JSC-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-applesilicon-release-tests-jsc",
-                    "builderNames": ["Apple-Monterey-AppleSilicon-Release-JSC-Tests"]
+                  { "type": "Triggerable", "name": "ventura-applesilicon-release-tests-jsc",
+                    "builderNames": ["Apple-Ventura-AppleSilicon-Release-JSC-Tests"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "ios-17", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-iOS-17-Release-Build"]

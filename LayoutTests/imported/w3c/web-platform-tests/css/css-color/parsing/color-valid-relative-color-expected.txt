@@ -179,19 +179,16 @@ PASS e.style['color'] = "hsl(from rgb(20%, 40%, 60%, 80%) h alpha alpha / alpha)
 PASS e.style['color'] = "hsl(from rebeccapurple calc(h) calc(s) calc(l))" should set the property value
 PASS e.style['color'] = "hsl(from rgb(20%, 40%, 60%, 80%) calc(h) calc(s) calc(l) / calc(alpha))" should set the property value
 PASS e.style['color'] = "hsl(from rebeccapurple none none none)" should set the property value
-PASS e.style['color'] = "hsl(from rebeccapurple none none none / none)" should set the property value
+FAIL e.style['color'] = "hsl(from rebeccapurple none none none / none)" should set the property value Colors do not match.
+Actual:   color(srgb 0 0 0 / none)
+Expected: color(srgb 0 0 0 / 0).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
 PASS e.style['color'] = "hsl(from rebeccapurple h s none)" should set the property value
 PASS e.style['color'] = "hsl(from rebeccapurple h s none / alpha)" should set the property value
-FAIL e.style['color'] = "hsl(from rebeccapurple h s l / none)" should set the property value Colors do not match.
-Actual:   color(srgb 0.4 0.2 0.6 / 0)
-Expected: color(srgb 0.4 0.2 0.6 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS e.style['color'] = "hsl(from rebeccapurple h s l / none)" should set the property value
 PASS e.style['color'] = "hsl(from rebeccapurple none s l / alpha)" should set the property value
 PASS e.style['color'] = "hsl(from hsl(120deg 20% 50% / .5) h s none / alpha)" should set the property value
-FAIL e.style['color'] = "hsl(from hsl(120deg 20% 50% / .5) h s l / none)" should set the property value Colors do not match.
-Actual:   color(srgb 0.4 0.6 0.4 / 0)
-Expected: color(srgb 0.4 0.6 0.4 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS e.style['color'] = "hsl(from hsl(120deg 20% 50% / .5) h s l / none)" should set the property value
 PASS e.style['color'] = "hsl(from hsl(120deg 20% 50% / .5) none s l / alpha)" should set the property value
 PASS e.style['color'] = "hsl(from hsl(none none none) h s l)" should set the property value
 PASS e.style['color'] = "hsl(from hsl(none none none / none) h s l / alpha)" should set the property value
@@ -240,19 +237,16 @@ PASS e.style['color'] = "hsla(from rgb(20%, 40%, 60%, 80%) h alpha alpha / alpha
 PASS e.style['color'] = "hsla(from rebeccapurple calc(h) calc(s) calc(l))" should set the property value
 PASS e.style['color'] = "hsla(from rgb(20%, 40%, 60%, 80%) calc(h) calc(s) calc(l) / calc(alpha))" should set the property value
 PASS e.style['color'] = "hsla(from rebeccapurple none none none)" should set the property value
-PASS e.style['color'] = "hsla(from rebeccapurple none none none / none)" should set the property value
+FAIL e.style['color'] = "hsla(from rebeccapurple none none none / none)" should set the property value Colors do not match.
+Actual:   color(srgb 0 0 0 / none)
+Expected: color(srgb 0 0 0 / 0).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
 PASS e.style['color'] = "hsla(from rebeccapurple h s none)" should set the property value
 PASS e.style['color'] = "hsla(from rebeccapurple h s none / alpha)" should set the property value
-FAIL e.style['color'] = "hsla(from rebeccapurple h s l / none)" should set the property value Colors do not match.
-Actual:   color(srgb 0.4 0.2 0.6 / 0)
-Expected: color(srgb 0.4 0.2 0.6 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS e.style['color'] = "hsla(from rebeccapurple h s l / none)" should set the property value
 PASS e.style['color'] = "hsla(from rebeccapurple none s l / alpha)" should set the property value
 PASS e.style['color'] = "hsla(from hsl(120deg 20% 50% / .5) h s none / alpha)" should set the property value
-FAIL e.style['color'] = "hsla(from hsl(120deg 20% 50% / .5) h s l / none)" should set the property value Colors do not match.
-Actual:   color(srgb 0.4 0.6 0.4 / 0)
-Expected: color(srgb 0.4 0.6 0.4 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS e.style['color'] = "hsla(from hsl(120deg 20% 50% / .5) h s l / none)" should set the property value
 PASS e.style['color'] = "hsla(from hsl(120deg 20% 50% / .5) none s l / alpha)" should set the property value
 PASS e.style['color'] = "hsla(from hsl(none none none) h s l)" should set the property value
 PASS e.style['color'] = "hsla(from hsl(none none none / none) h s l / alpha)" should set the property value
@@ -301,22 +295,13 @@ PASS e.style['color'] = "hwb(from rgb(20%, 40%, 60%, 80%) h alpha alpha / alpha)
 PASS e.style['color'] = "hwb(from rebeccapurple calc(h) calc(w) calc(b))" should set the property value
 PASS e.style['color'] = "hwb(from rgb(20%, 40%, 60%, 80%) calc(h) calc(w) calc(b) / calc(alpha))" should set the property value
 PASS e.style['color'] = "hwb(from rebeccapurple none none none)" should set the property value
-FAIL e.style['color'] = "hwb(from rebeccapurple none none none / none)" should set the property value Colors do not match.
-Actual:   color(srgb 1 0 0 / 0)
-Expected: color(srgb 1 0 0 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS e.style['color'] = "hwb(from rebeccapurple none none none / none)" should set the property value
 PASS e.style['color'] = "hwb(from rebeccapurple h w none)" should set the property value
 PASS e.style['color'] = "hwb(from rebeccapurple h w none / alpha)" should set the property value
-FAIL e.style['color'] = "hwb(from rebeccapurple h w b / none)" should set the property value Colors do not match.
-Actual:   color(srgb 0.4 0.2 0.6 / 0)
-Expected: color(srgb 0.4 0.2 0.6 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS e.style['color'] = "hwb(from rebeccapurple h w b / none)" should set the property value
 PASS e.style['color'] = "hwb(from rebeccapurple none w b / alpha)" should set the property value
 PASS e.style['color'] = "hwb(from hwb(120deg 20% 50% / .5) h w none / alpha)" should set the property value
-FAIL e.style['color'] = "hwb(from hwb(120deg 20% 50% / .5) h w b / none)" should set the property value Colors do not match.
-Actual:   color(srgb 0.2 0.5 0.2 / 0)
-Expected: color(srgb 0.2 0.5 0.2 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+PASS e.style['color'] = "hwb(from hwb(120deg 20% 50% / .5) h w b / none)" should set the property value
 PASS e.style['color'] = "hwb(from hwb(120deg 20% 50% / .5) none w b / alpha)" should set the property value
 PASS e.style['color'] = "hwb(from hwb(none none none) h w b)" should set the property value
 PASS e.style['color'] = "hwb(from hwb(none none none / none) h w b / alpha)" should set the property value

@@ -55,7 +55,6 @@
 #include "LibWebRTCCodecs.h"
 #include "LibWebRTCProvider.h"
 #include "LoadParameters.h"
-#include "LocalFrameCreationParameters.h"
 #include "Logging.h"
 #include "MediaKeySystemPermissionRequestManager.h"
 #include "MediaRecorderProvider.h"
@@ -67,6 +66,7 @@
 #include "PluginView.h"
 #include "PolicyDecision.h"
 #include "PrintInfo.h"
+#include "ProvisionalFrameCreationParameters.h"
 #include "RemoteNativeImageBackendProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteScrollingCoordinator.h"
@@ -506,14 +506,18 @@ static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(
     });
 }
 
-static std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>> clientForMainFrame(Ref<WebFrame>&& mainFrame, auto frameType)
+static PageConfiguration::ClientCreatorForMainFrame clientCreatorForMainFrame(Ref<WebFrame>&& mainFrame, auto frameType)
 {
     auto invalidator = mainFrame->makeInvalidator();
     switch (frameType) {
     case Frame::FrameType::Local:
-        return UniqueRef<LocalFrameLoaderClient>(makeUniqueRef<WebLocalFrameLoaderClient>(WTFMove(mainFrame), WTFMove(invalidator)));
+        return CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)> { [mainFrame = WTFMove(mainFrame), invalidator = WTFMove(invalidator)] (auto& localFrame) mutable {
+            return makeUniqueRef<WebLocalFrameLoaderClient>(localFrame, WTFMove(mainFrame), WTFMove(invalidator));
+        } };
     case Frame::FrameType::Remote:
-        return UniqueRef<RemoteFrameClient>(makeUniqueRef<WebRemoteFrameClient>(WTFMove(mainFrame), WTFMove(invalidator)));
+        return CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)> { [mainFrame = WTFMove(mainFrame), invalidator = WTFMove(invalidator)] (auto&) mutable {
+            return makeUniqueRef<WebRemoteFrameClient>(WTFMove(mainFrame), WTFMove(invalidator));
+        } };
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -679,7 +683,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebBackForwardListProxy::create(*this),
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
-        clientForMainFrame(m_mainFrame.copyRef(), frameType),
+        clientCreatorForMainFrame(m_mainFrame.copyRef(), frameType),
         m_mainFrame->frameID(),
         frameFromIdentifier(parameters.openerFrameIdentifier),
         makeUniqueRef<WebSpeechRecognitionProvider>(pageID),
@@ -1207,7 +1211,7 @@ void WebPage::resumeAllMediaBuffering()
 
 static void addRootFramesToNewDrawingArea(WebFrame& frame, DrawingArea& drawingArea)
 {
-    if (frame.isRootFrame())
+    if (frame.isRootFrame() || (frame.provisionalFrame() && frame.provisionalFrame()->isRootFrame()))
         drawingArea.addRootFrame(frame.frameID());
     if (!frame.coreFrame())
         return;
@@ -1995,24 +1999,22 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 }
 #endif
 
-void WebPage::transitionFrameToLocal(LocalFrameCreationParameters&& creationParameters, FrameIdentifier frameIdentifier)
-{
-    RefPtr frame = WebProcess::singleton().webFrame(frameIdentifier);
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    ASSERT(frame->page() == this);
-    frame->transitionToLocal(creationParameters.layerHostingContextIdentifier);
-}
-
-void WebPage::transitionFrameToRemote(WebCore::FrameIdentifier frameID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
+void WebPage::createProvisionalFrame(ProvisionalFrameCreationParameters&& parameters, WebCore::FrameIdentifier frameID)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
     ASSERT(frame->page() == this);
-    frame->transitionToRemote(layerHostingContextIdentifier);
+    frame->createProvisionalFrame(WTFMove(parameters));
+}
+
+void WebPage::loadDidCommitInAnotherProcess(WebCore::FrameIdentifier frameID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
+{
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+    ASSERT(frame->page() == this);
+    frame->loadDidCommitInAnotherProcess(layerHostingContextIdentifier);
 }
 
 void WebPage::loadRequest(LoadParameters&& loadParameters)
@@ -2020,7 +2022,12 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     WEBPAGE_RELEASE_LOG(Loading, "loadRequest: navigationID=%" PRIu64 ", shouldTreatAsContinuingLoad=%u, lastNavigationWasAppInitiated=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, loadParameters.navigationID, static_cast<unsigned>(loadParameters.shouldTreatAsContinuingLoad), loadParameters.request.isAppInitiated(), valueOrDefault(loadParameters.existingNetworkResourceLoadIdentifierToResume).toUInt64());
 
     RefPtr frame = loadParameters.frameIdentifier ? WebProcess::singleton().webFrame(*loadParameters.frameIdentifier) : m_mainFrame.ptr();
-    if (!frame || is<RemoteFrame>(frame->coreFrame())) {
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    RefPtr localFrame = frame->coreLocalFrame() ? frame->coreLocalFrame() : frame->provisionalFrame();
+    if (!localFrame) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -2050,10 +2057,8 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     platformDidReceiveLoadParameters(loadParameters);
 
     // Initate the load in WebCore.
-    ASSERT(frame);
-    ASSERT(frame->coreLocalFrame());
-    ASSERT(frame->coreLocalFrame()->document());
-    FrameLoadRequest frameLoadRequest { *frame->coreLocalFrame(), loadParameters.request };
+    ASSERT(localFrame->document());
+    FrameLoadRequest frameLoadRequest { *localFrame, loadParameters.request };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(loadParameters.shouldOpenExternalURLsPolicy);
     frameLoadRequest.setShouldTreatAsContinuingLoad(loadParameters.shouldTreatAsContinuingLoad);
     frameLoadRequest.setLockHistory(loadParameters.lockHistory);
@@ -2068,8 +2073,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
             localMainFrame->loader().forceSandboxFlags(loadParameters.effectiveSandboxFlags);
     }
 
-    if (frame->coreLocalFrame())
-        frame->coreLocalFrame()->loader().load(WTFMove(frameLoadRequest));
+    localFrame->loader().load(WTFMove(frameLoadRequest));
 
     ASSERT(!m_pendingNavigationID);
     ASSERT(!m_pendingWebsitePolicies);
@@ -2101,12 +2105,18 @@ void WebPage::loadDataImpl(uint64_t navigationID, ShouldTreatAsContinuingLoad sh
     // to all the client to set up any needed state.
     m_loaderClient->willLoadDataRequest(*this, request, substituteData.content(), substituteData.mimeType(), substituteData.textEncoding(), substituteData.failingURL(), WebProcess::singleton().transformHandlesToObjects(userData.object()).get());
 
+    RefPtr localFrame = m_mainFrame->coreLocalFrame() ? m_mainFrame->coreLocalFrame() : m_mainFrame->provisionalFrame();
+    if (!localFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     // Initate the load in WebCore.
-    FrameLoadRequest frameLoadRequest(*m_mainFrame->coreLocalFrame(), request, substituteData);
+    FrameLoadRequest frameLoadRequest(*localFrame, request, substituteData);
     frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     frameLoadRequest.setShouldTreatAsContinuingLoad(shouldTreatAsContinuingLoad);
     frameLoadRequest.setIsRequestFromClientOrUserInput();
-    m_mainFrame->coreLocalFrame()->loader().load(WTFMove(frameLoadRequest));
+    localFrame->loader().load(WTFMove(frameLoadRequest));
 }
 
 void WebPage::loadData(LoadParameters&& loadParameters)
@@ -2255,7 +2265,10 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
     m_pendingNavigationID = parameters.navigationID;
     m_pendingWebsitePolicies = WTFMove(parameters.websitePolicies);
 
-    m_page->goToItem(*item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad);
+    RefPtr localMainFrame = m_mainFrame->coreLocalFrame() ? m_mainFrame->coreLocalFrame() : m_mainFrame->provisionalFrame();
+    if (!localMainFrame)
+        return;
+    m_page->goToItem(*localMainFrame, *item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad);
 }
 
 // GoToBackForwardItemWaitingForProcessLaunch should never be sent to the WebProcess. It must always be converted to a GoToBackForwardItem message.
@@ -2460,7 +2473,7 @@ void WebPage::setPageZoomFactor(double zoomFactor)
 static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem, StringBuilder& stringBuilder, const String& directoryName)
 {
     if (isCurrentItem)
-        stringBuilder.append("curr->  ");
+        stringBuilder.append("curr->  "_s);
     else {
         for (size_t i = 0; i < indent; ++i)
             stringBuilder.append(' ');
@@ -2473,16 +2486,16 @@ static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem
             start = 0;
         else
             start += directoryName.length();
-        stringBuilder.append("(file test):", StringView { url.string() }.substring(start));
+        stringBuilder.append("(file test):"_s, StringView { url.string() }.substring(start));
     } else
         stringBuilder.append(url.string());
 
     auto& target = item.target();
     if (target.length())
-        stringBuilder.append(" (in frame \"", target, "\")");
+        stringBuilder.append(" (in frame \""_s, target, "\")"_s);
 
     if (item.isTargetItem())
-        stringBuilder.append("  **nav target**");
+        stringBuilder.append("  **nav target**"_s);
 
     stringBuilder.append('\n');
 
@@ -3555,6 +3568,15 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
     completionHandler(mouseEvent.type(), handled, std::nullopt);
 }
 
+void WebPage::setLastKnownMousePosition(WebCore::FrameIdentifier frameID, IntPoint eventPoint, IntPoint globalPoint)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame || !frame->coreLocalFrame() || !frame->coreLocalFrame()->view())
+        return;
+
+    frame->coreLocalFrame()->eventHandler().setLastKnownMousePosition(eventPoint, globalPoint);
+}
+
 void WebPage::flushDeferredDidReceiveMouseEvent()
 {
     if (auto info = std::exchange(m_deferredMouseEventCompletionHandler, std::nullopt))
@@ -4543,28 +4565,32 @@ void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optiona
         auto stream = adoptCF(CFWriteStreamCreateWithAllocatedBuffers(0, 0));
         CFWriteStreamOpen(stream.get());
 
-        CFWriteStreamWrite(stream.get(), treeData->liveTree.utf8().dataAsUInt8Ptr(), treeData->liveTree.utf8().length());
-        CFWriteStreamWrite(stream.get(), treeData->isolatedTree.utf8().dataAsUInt8Ptr(), treeData->isolatedTree.utf8().length());
+        auto writeTreeToStream = [&stream](auto& tree) {
+            auto utf8 = tree.utf8();
+            auto utf8Span = utf8.span();
+            CFWriteStreamWrite(stream.get(), utf8Span.data(), utf8Span.size());
+        };
+        writeTreeToStream(treeData->liveTree);
+        writeTreeToStream(treeData->isolatedTree);
 
         data = adoptCF(static_cast<CFDataRef>(CFWriteStreamCopyProperty(stream.get(), kCFStreamPropertyDataWritten)));
         CFWriteStreamClose(stream.get());
-    }
 
-    if (data)
         dataBuffer = IPC::SharedBufferReference(SharedBuffer::create(data.get()));
+    }
 #endif
 
     callback(dataBuffer);
 }
 
-void WebPage::forceRepaintWithoutCallback()
+void WebPage::updateRenderingWithForcedRepaintWithoutCallback()
 {
-    m_drawingArea->forceRepaint();
+    m_drawingArea->updateRenderingWithForcedRepaint();
 }
 
-void WebPage::forceRepaint(CompletionHandler<void()>&& completionHandler)
+void WebPage::updateRenderingWithForcedRepaint(CompletionHandler<void()>&& completionHandler)
 {
-    m_drawingArea->forceRepaintAsync(*this, WTFMove(completionHandler));
+    m_drawingArea->updateRenderingWithForcedRepaintAsync(*this, WTFMove(completionHandler));
 }
 
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)
@@ -4588,6 +4614,9 @@ void WebPage::adjustSettingsForLockdownMode(Settings& settings, const WebPrefere
     Settings::disableGlobalUnstableFeaturesForModernWebKit();
 
     settings.setWebGLEnabled(false);
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    settings.setWebGPUEnabled(false);
+#endif
 #if ENABLE(GAMEPAD)
     settings.setGamepadsEnabled(false);
 #endif
@@ -7524,6 +7553,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
             scalePage(1, IntPoint());
     }
 
+    // This timer can race with loading and clobber the scroll position saved on the current history item.
+    m_pageScrolledHysteresis.cancel();
+
     m_didUpdateRenderingAfterCommittingLoad = false;
 
 #if PLATFORM(IOS_FAMILY)
@@ -7586,6 +7618,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #endif
 
     themeColorChanged();
+
+    m_lastNodeBeforeWritingSuggestions = { };
 
     WebProcess::singleton().updateActivePages(m_processDisplayName);
 
@@ -7901,14 +7935,14 @@ void WebPage::getSamplingProfilerOutput(CompletionHandler<void(const String&)>&&
 #endif
 }
 
-void WebPage::didChangeScrollOffsetForFrame(LocalFrame* frame)
+void WebPage::didChangeScrollOffsetForFrame(LocalFrame& frame)
 {
-    if (!frame->isMainFrame())
+    if (!frame.isMainFrame())
         return;
 
     // If this is called when tearing down a FrameView, the WebCore::Frame's
     // current FrameView will be null.
-    if (!frame->view())
+    if (!frame.view())
         return;
 
     updateMainFrameScrollOffsetPinning();
@@ -8089,8 +8123,11 @@ void WebPage::didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier
 
 void WebPage::setUseIconLoadingClient(bool useIconLoadingClient)
 {
-    if (RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame()))
-        static_cast<WebLocalFrameLoaderClient&>(localMainFrame->loader().client()).setUseIconLoadingClient(useIconLoadingClient);
+    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+    if (auto* client = toWebLocalFrameLoaderClient(localMainFrame->loader().client()))
+        client->setUseIconLoadingClient(useIconLoadingClient);
 }
 
 WebURLSchemeHandlerProxy* WebPage::urlSchemeHandlerForScheme(StringView scheme)
@@ -9595,6 +9632,15 @@ void WebPage::frameNameWasChangedInAnotherProcess(FrameIdentifier frameID, const
         return;
     if (RefPtr coreFrame = webFrame->coreFrame())
         coreFrame->tree().setSpecifiedName(AtomString(frameName));
+}
+
+void WebPage::updateLastNodeBeforeWritingSuggestions(const KeyboardEvent& event)
+{
+    if (event.type() != eventNames().keydownEvent)
+        return;
+
+    if (RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame())
+        m_lastNodeBeforeWritingSuggestions = frame->editor().nodeBeforeWritingSuggestions();
 }
 
 } // namespace WebKit

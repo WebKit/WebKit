@@ -106,6 +106,16 @@ void ServiceWorkerContainer::derefEventTarget()
     m_navigator.deref();
 }
 
+void ServiceWorkerContainer::ref() const
+{
+    m_navigator.ref();
+}
+
+void ServiceWorkerContainer::deref() const
+{
+    m_navigator.deref();
+}
+
 auto ServiceWorkerContainer::ready() -> ReadyPromise&
 {
     if (!m_readyPromise) {

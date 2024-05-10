@@ -500,12 +500,6 @@ static Vector<uint8_t> encodeRecord(const NetworkCache::Key& key, const Vector<u
     result.append(metaData);
     result.appendVector(headerData);
 
-    StringBuilder sb;
-    for (auto& data : bodyData) {
-        sb.append(data);
-        sb.append(",");
-    }
-    
     if (isBodyInline)
         result.appendVector(bodyData);
 

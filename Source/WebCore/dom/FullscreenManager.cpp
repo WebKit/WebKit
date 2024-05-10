@@ -478,26 +478,6 @@ bool FullscreenManager::isFullscreenEnabled() const
     return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Fullscreen, protectedDocument());
 }
 
-static void markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution)
-{
-    auto* renderBox = dynamicDowncast<RenderBox>(renderer);
-    if (!renderBox || !renderBox->parent() || !containingBlockBeforeStyleResolution)
-        return;
-    auto* newContainingBlock = renderBox->containingBlock();
-    ASSERT(newContainingBlock);
-    if (containingBlockBeforeStyleResolution == newContainingBlock)
-        return;
-
-    // Let's carry out the same set of tasks we would normally do when containing block changes for out-of-flow content in RenderBox::styleWillChange.
-    ASSERT(renderBox->isFixedPositioned());
-
-    RenderBlock::removePositionedObject(*renderBox);
-    // This is to make sure we insert the box to the correct containing block list during static position computation.
-    renderBox->parent()->setChildNeedsLayout();
-    newContainingBlock->setChildNeedsLayout();
-    renderBox->setNeedsLayout();
-}
-
 bool FullscreenManager::willEnterFullscreen(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     if (backForwardCacheState() != Document::NotInBackForwardCache) {
@@ -560,7 +540,7 @@ bool FullscreenManager::willEnterFullscreen(Element& element, HTMLMediaElementEn
             ancestor->removeFromTopLayer();
         ancestor->addToTopLayer();
 
-        markRendererDirtyAfterTopLayerChange(ancestor->checkedRenderer().get(), containingBlockBeforeStyleResolution.get());
+        RenderElement::markRendererDirtyAfterTopLayerChange(ancestor->checkedRenderer().get(), containingBlockBeforeStyleResolution.get());
     }
 
     for (auto ancestor : ancestorsInTreeOrder)

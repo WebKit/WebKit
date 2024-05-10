@@ -1,12 +1,11 @@
 Personalia:
 Name:
 Email:
-This tests that elements in a fieldset are having the correct traits.
+This tests that elements in a fieldset behave as expected.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS inputname.hasContainedByFieldsetTrait is true
 PASS fieldset.isEqual(inputname.fieldsetAncestorElement()) is true
 PASS successfullyParsed is true
 

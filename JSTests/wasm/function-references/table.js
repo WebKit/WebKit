@@ -31,4 +31,4 @@ async function testTypedFuncrefTable() {
   }
 }
 
-assert.asyncTest(testTypedFuncrefTable());
+await assert.asyncTest(testTypedFuncrefTable());

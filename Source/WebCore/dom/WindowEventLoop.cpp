@@ -67,8 +67,6 @@ static String agentClusterKeyOrNullIfUnique(const SecurityOrigin& origin)
     return key;
 }
 
-static constexpr auto IdleCallbackDurationExpectation = 4_ms;
-
 Ref<WindowEventLoop> WindowEventLoop::eventLoopForSecurityOrigin(const SecurityOrigin& origin)
 {
     auto key = agentClusterKeyOrNullIfUnique(origin);

@@ -191,6 +191,7 @@ public:
 
     bool needsGetElementsByNameQuirk() const;
     bool needsRelaxedCorsMixedContentCheckQuirk() const;
+    bool needsLaxSameSiteCookieQuirk() const;
 
 private:
     bool needsQuirks() const;
@@ -264,6 +265,7 @@ private:
     mutable std::optional<bool> m_shouldDisableElementFullscreen;
     mutable std::optional<bool> m_shouldIgnorePlaysInlineRequirementQuirk;
     mutable std::optional<bool> m_needsRelaxedCorsMixedContentCheckQuirk;
+    mutable std::optional<bool> m_needsLaxSameSiteCookieQuirk;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
 };

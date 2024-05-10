@@ -365,52 +365,11 @@ OKLab<float> ColorConversion<OKLab<float>, OKLCHA<float>>::convert(const OKLCHA<
 
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace)
 {
-    return callWithColorType(inputColorComponents, inputColorSpace, [outputColorSpace] (const auto& inputColor) {
-        switch (outputColorSpace) {
-        case ColorSpace::A98RGB:
-            return asColorComponents(convertColor<A98RGB<float>>(inputColor).resolved());
-        case ColorSpace::DisplayP3:
-            return asColorComponents(convertColor<DisplayP3<float>>(inputColor).resolved());
-        case ColorSpace::ExtendedA98RGB:
-            return asColorComponents(convertColor<ExtendedA98RGB<float>>(inputColor).resolved());
-        case ColorSpace::ExtendedDisplayP3:
-            return asColorComponents(convertColor<ExtendedDisplayP3<float>>(inputColor).resolved());
-        case ColorSpace::ExtendedLinearSRGB:
-            return asColorComponents(convertColor<ExtendedLinearSRGBA<float>>(inputColor).resolved());
-        case ColorSpace::ExtendedProPhotoRGB:
-            return asColorComponents(convertColor<ExtendedProPhotoRGB<float>>(inputColor).resolved());
-        case ColorSpace::ExtendedRec2020:
-            return asColorComponents(convertColor<ExtendedRec2020<float>>(inputColor).resolved());
-        case ColorSpace::ExtendedSRGB:
-            return asColorComponents(convertColor<ExtendedSRGBA<float>>(inputColor).resolved());
-        case ColorSpace::HSL:
-            return asColorComponents(convertColor<HSLA<float>>(inputColor).resolved());
-        case ColorSpace::HWB:
-            return asColorComponents(convertColor<HWBA<float>>(inputColor).resolved());
-        case ColorSpace::LCH:
-            return asColorComponents(convertColor<LCHA<float>>(inputColor).resolved());
-        case ColorSpace::Lab:
-            return asColorComponents(convertColor<Lab<float>>(inputColor).resolved());
-        case ColorSpace::LinearSRGB:
-            return asColorComponents(convertColor<LinearSRGBA<float>>(inputColor).resolved());
-        case ColorSpace::OKLCH:
-            return asColorComponents(convertColor<OKLCHA<float>>(inputColor).resolved());
-        case ColorSpace::OKLab:
-            return asColorComponents(convertColor<OKLab<float>>(inputColor).resolved());
-        case ColorSpace::ProPhotoRGB:
-            return asColorComponents(convertColor<ProPhotoRGB<float>>(inputColor).resolved());
-        case ColorSpace::Rec2020:
-            return asColorComponents(convertColor<Rec2020<float>>(inputColor).resolved());
-        case ColorSpace::SRGB:
-            return asColorComponents(convertColor<SRGBA<float>>(inputColor).resolved());
-        case ColorSpace::XYZ_D50:
-            return asColorComponents(convertColor<XYZA<float, WhitePoint::D50>>(inputColor).resolved());
-        case ColorSpace::XYZ_D65:
-            return asColorComponents(convertColor<XYZA<float, WhitePoint::D65>>(inputColor).resolved());
-        }
-
-        ASSERT_NOT_REACHED();
-        return asColorComponents(convertColor<SRGBA<float>>(inputColor).resolved());
+    return callWithColorType<float>(inputColorSpace, [&]<typename InputColorType>() {
+        auto inputColor = makeFromComponents<InputColorType>(inputColorComponents);
+        return callWithColorType<float>(outputColorSpace, [&]<typename OutputColorType>() {
+            return asColorComponents(convertColor<OutputColorType>(inputColor).resolved());
+        });
     });
 }
 

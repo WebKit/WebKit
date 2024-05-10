@@ -1,11 +1,3 @@
-# Crashes
-#
-# This test crashes when run repeatedly.
-accessibility/mac/resolved-text-editing.html [ Crash Pass ]
-
-# Fails due to children() for an owned objects' parent still containing that object.
-accessibility/element-reflection-ariaowns.html [ Timeout ]
-
 # Text failures
 #
 # Potentially caused by: https://github.com/WebKit/WebKit/commit/2517a540e6f5a2037c6843102f3a9cb753f2f9f0

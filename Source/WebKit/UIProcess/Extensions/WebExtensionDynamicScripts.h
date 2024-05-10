@@ -109,7 +109,7 @@ SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParamet
 Vector<RetainPtr<_WKFrameTreeNode>> getFrames(_WKFrameTreeNode *, std::optional<Vector<WebExtensionFrameIdentifier>>);
 
 void executeScript(std::optional<SourcePairs>, WKWebView *, API::ContentWorld&, WebExtensionTab*, const WebExtensionScriptInjectionParameters&, WebExtensionContext&, CompletionHandler<void(InjectionResults&&)>&&);
-void injectStyleSheets(SourcePairs, WKWebView *, API::ContentWorld&, WebCore::UserContentInjectedFrames, WebExtensionContext&);
+void injectStyleSheets(SourcePairs, WKWebView *, API::ContentWorld&, WebCore::UserStyleLevel, WebCore::UserContentInjectedFrames, WebExtensionContext&);
 void removeStyleSheets(SourcePairs, WKWebView *, WebCore::UserContentInjectedFrames, WebExtensionContext&);
 
 WebExtensionScriptInjectionResultParameters toInjectionResultParameters(id resultOfExecution, WKFrameInfo *, NSString *errorMessage);

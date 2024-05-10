@@ -30,18 +30,18 @@
 
 namespace JSC {
 
-const char* GCLogging::levelAsString(Level level)
+ASCIILiteral GCLogging::levelAsString(Level level)
 {
     switch (level) {
     case None:
-        return "None";
+        return "None"_s;
     case Basic:
-        return "Basic";
+        return "Basic"_s;
     case Verbose:
-        return "Verbose";
+        return "Verbose"_s;
     default:
         RELEASE_ASSERT_NOT_REACHED();
-        return "";
+        return ""_s;
     }
 }
 

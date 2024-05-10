@@ -83,6 +83,7 @@ public:
 
     WEBCORE_EXPORT void detachFromPage();
 
+    WEBCORE_EXPORT void setOwnerElement(HTMLFrameOwnerElement*);
     inline HTMLFrameOwnerElement* ownerElement() const; // Defined in HTMLFrameOwnerElement.h.
     inline RefPtr<HTMLFrameOwnerElement> protectedOwnerElement() const; // Defined in HTMLFrameOwnerElement.h.
 

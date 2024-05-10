@@ -330,7 +330,7 @@ private:
     Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
     Vector<PDFContextMenuItem> displayModeContextMenuItems() const;
     Vector<PDFContextMenuItem> scaleContextMenuItems() const;
-    Vector<PDFContextMenuItem> navigationContextMenuItems() const;
+    Vector<PDFContextMenuItem> navigationContextMenuItemsForPageAtIndex(PDFDocumentLayout::PageIndex) const;
     ContextMenuItemTag toContextMenuItemTag(int tagValue) const;
     void performContextMenuAction(ContextMenuItemTag, const WebCore::IntPoint& contextMenuEventRootViewPoint);
 
@@ -405,7 +405,7 @@ private:
     void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
     float pageScaleFactor() const override;
-    bool layerNeedsPlatformContext(const WebCore::GraphicsLayer*) const override { return true; }
+    bool layerNeedsPlatformContext(const WebCore::GraphicsLayer*) const override;
     void tiledBackingUsageChanged(const WebCore::GraphicsLayer*, bool /*usingTiledBacking*/) override;
     std::optional<float> customContentsScale(const WebCore::GraphicsLayer*) const override;
 
@@ -415,6 +415,10 @@ private:
     enum class PaintingBehavior : bool { All, PageContentsOnly };
     enum class AllowsAsyncRendering : bool { No, Yes };
     void paintPDFContent(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, PaintingBehavior = PaintingBehavior::All, AllowsAsyncRendering = AllowsAsyncRendering::No);
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    void paintPDFSelection(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
+#endif
+    bool canPaintSelectionIntoOwnedLayer() const;
 
     void ensureLayers();
     void updatePageBackgroundLayers();
@@ -543,6 +547,9 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_scrolledContentsLayer;
     RefPtr<WebCore::GraphicsLayer> m_pageBackgroundsContainerLayer;
     RefPtr<WebCore::GraphicsLayer> m_contentsLayer;
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    RefPtr<WebCore::GraphicsLayer> m_selectionLayer;
+#endif
 
     RefPtr<WebCore::GraphicsLayer> m_overflowControlsContainer;
     RefPtr<WebCore::GraphicsLayer> m_layerForHorizontalScrollbar;

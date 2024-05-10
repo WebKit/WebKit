@@ -115,15 +115,13 @@ static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective*
     return true;
 }
 
-static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective* directive, const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins)
+static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective* directive, const Vector<Ref<SecurityOrigin>>& ancestorOrigins)
 {
     if (!directive)
         return true;
     bool didReceiveRedirectResponse = false;
     for (auto& origin : ancestorOrigins) {
-        if (!origin)
-            continue;
-        URL originURL = urlFromOrigin(*origin);
+        URL originURL = urlFromOrigin(origin);
         if (!originURL.isValid() || !directive->allows(originURL, didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
             return false;
     }
@@ -352,7 +350,7 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return m_frameAncestors.get();
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestorOrigins(const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestorOrigins(const Vector<Ref<SecurityOrigin>>& ancestorOrigins) const
 {
     if (checkFrameAncestors(m_frameAncestors.get(), ancestorOrigins))
         return nullptr;

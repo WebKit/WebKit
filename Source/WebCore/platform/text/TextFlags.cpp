@@ -74,7 +74,7 @@ WTF::TextStream& operator<<(TextStream& ts, Kerning kerning)
     return ts;
 }
 
-WTF::TextStream& operator<<(TextStream& ts, FontVariantAlternates alternates)
+WTF::TextStream& operator<<(TextStream& ts, const FontVariantAlternates& alternates)
 {
     if (alternates.isNormal())
         ts << "normal";

@@ -398,12 +398,16 @@ void HTTPServer::respondToRequests(Connection connection, Ref<RequestData> reque
         ASSERT_WITH_MESSAGE(requestData->requestMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8().data());
 
         auto response = requestData->requestMap.get(path);
-        if (response.terminateConnection == HTTPResponse::TerminateConnection::Yes)
+        switch (response.behavior) {
+        case HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse:
             return connection.terminate();
-
-        connection.send(response.serialize(), [connection, requestData] {
-            respondToRequests(connection, requestData);
-        });
+        case HTTPResponse::Behavior::SendResponseNormally:
+            return connection.send(response.serialize(), [connection, requestData] {
+                respondToRequests(connection, requestData);
+            });
+        case HTTPResponse::Behavior::NeverSendResponse:
+            return respondToRequests(connection, requestData);
+        }
     });
 }
 
@@ -588,12 +592,12 @@ Vector<uint8_t> HTTPResponse::bodyFromString(const String& string)
 Vector<uint8_t> HTTPResponse::serialize(IncludeContentLength includeContentLength) const
 {
     StringBuilder responseBuilder;
-    responseBuilder.append("HTTP/1.1 ", statusCode, ' ', statusText(statusCode), "\r\n");
+    responseBuilder.append("HTTP/1.1 "_s, statusCode, ' ', statusText(statusCode), "\r\n"_s);
     if (includeContentLength == IncludeContentLength::Yes)
-        responseBuilder.append("Content-Length: ", body.size(), "\r\n");
+        responseBuilder.append("Content-Length: "_s, body.size(), "\r\n"_s);
     for (auto& pair : headerFields)
-        responseBuilder.append(pair.key, ": ", pair.value, "\r\n");
-    responseBuilder.append("\r\n");
+        responseBuilder.append(pair.key, ": "_s, pair.value, "\r\n"_s);
+    responseBuilder.append("\r\n"_s);
     
     Vector<uint8_t> bytesToSend;
     appendUTF8ToVector(bytesToSend, responseBuilder.toString());

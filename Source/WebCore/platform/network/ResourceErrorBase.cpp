@@ -99,4 +99,9 @@ ResourceError internalError(const URL& url)
     return ResourceError("WebKitErrorDomain"_s, 300, url, WEB_UI_STRING("WebKit encountered an internal error", "WebKitErrorInternal description"));
 }
 
+ResourceError badResponseHeadersError(const URL& url)
+{
+    return { errorDomainWebKitInternal, 0, url, "Response contained invalid HTTP headers"_s, ResourceError::Type::General };
+}
+
 } // namespace WebCore

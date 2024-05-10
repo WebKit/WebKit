@@ -304,7 +304,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     const char* tempFileName = [cachePathString stringByAppendingString:@".tmp"].UTF8String;
     int fd = open(cacheFileName, O_CREAT | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0600);
     if (fd == -1) {
-        error = makeString("Could not open or lock the bytecode cache file. It's likely another VM or process is already using it. Error: ", safeStrerror(errno).data());
+        error = makeString("Could not open or lock the bytecode cache file. It's likely another VM or process is already using it. Error: "_s, safeStrerror(errno).span());
         return NO;
     }
 
@@ -314,7 +314,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     int tempFD = open(tempFileName, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0600);
     if (tempFD == -1) {
-        error = makeString("Could not open or lock the bytecode cache temp file. Error: ", safeStrerror(errno).data());
+        error = makeString("Could not open or lock the bytecode cache temp file. Error: "_s, safeStrerror(errno).span());
         return NO;
     }
 
@@ -337,7 +337,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (cacheError.isValid()) {
         m_cachedBytecode = JSC::CachedBytecode::create();
         FileSystem::truncateFile(fd, 0);
-        error = makeString("Unable to generate bytecode for this JSScript because: ", cacheError.message());
+        error = makeString("Unable to generate bytecode for this JSScript because: "_s, cacheError.message());
         return NO;
     }
 

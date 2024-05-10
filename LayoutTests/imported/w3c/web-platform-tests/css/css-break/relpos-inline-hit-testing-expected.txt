@@ -1,0 +1,28 @@
+
+
+
+line1
+line2
+line3
+line4
+
+FAIL line1 assert_equals: expected Element node <span id="target">
+    line1<br>
+    line2<br>
+    line3<... but got Element node <html><head><link rel="author" title="Morten Stenshorne" ...
+FAIL line2 assert_equals: expected Element node <span id="target">
+    line1<br>
+    line2<br>
+    line3<... but got Element node <html><head><link rel="author" title="Morten Stenshorne" ...
+FAIL line3 assert_equals: expected Element node <span id="target">
+    line1<br>
+    line2<br>
+    line3<... but got Element node <html><head><link rel="author" title="Morten Stenshorne" ...
+FAIL line4 assert_equals: expected Element node <span id="target">
+    line1<br>
+    line2<br>
+    line3<... but got Element node <html><head><link rel="author" title="Morten Stenshorne" ...
+PASS Above line1
+PASS Below line4
+PASS line1 before offsetting
+

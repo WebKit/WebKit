@@ -174,10 +174,10 @@ inline void add(Hasher& hasher, const ColorInterpolationMethod& colorInterpolati
 {
     add(hasher, colorInterpolationMethod.alphaPremultiplication);
     WTF::switchOn(colorInterpolationMethod.colorSpace,
-        [&] (auto& type) {
-            add(hasher, type.interpolationColorSpace);
-            if constexpr (std::remove_reference_t<decltype(type)>::ColorType::Model::coordinateSystem == ColorSpaceCoordinateSystem::CylindricalPolar) {
-                add(hasher, type.hueInterpolationMethod);
+        [&]<typename MethodColorSpace> (const MethodColorSpace& mothodColorSpace) {
+            add(hasher, mothodColorSpace.interpolationColorSpace);
+            if constexpr (MethodColorSpace::ColorType::Model::coordinateSystem == ColorSpaceCoordinateSystem::CylindricalPolar) {
+                add(hasher, mothodColorSpace.hueInterpolationMethod);
             }
         }
     );

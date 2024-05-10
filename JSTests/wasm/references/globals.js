@@ -43,4 +43,4 @@ async function testGlobalConstructorForFuncref() {
 }
 
 testGlobalConstructorForExternref();
-assert.asyncTest(testGlobalConstructorForFuncref());
+await assert.asyncTest(testGlobalConstructorForFuncref());

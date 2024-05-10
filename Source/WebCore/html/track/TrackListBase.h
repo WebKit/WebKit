@@ -65,10 +65,12 @@ public:
     virtual void remove(TrackID, bool scheduleEvent = true);
     virtual RefPtr<TrackBase> find(TrackID) const;
 
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const override = 0;
-    using RefCounted<TrackListBase>::ref;
-    using RefCounted<TrackListBase>::deref;
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     void didMoveToNewDocument(Document&);

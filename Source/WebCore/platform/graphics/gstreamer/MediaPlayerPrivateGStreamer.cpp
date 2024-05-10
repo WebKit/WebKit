@@ -1347,7 +1347,7 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
     // If audio is being controlled by an another pipeline, creating sink here may interfere with
     // audio playback. Instead, check if an audio sink was setup in handleMessage and use it.
     if (quirksManager.isEnabled())
-        return nullptr;
+        return quirksManager.createAudioSink();
 
     RefPtr player = m_player.get();
     if (!player)
@@ -4220,8 +4220,14 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
             g_value_unset(&value);
         }
 
-        uint64_t maxLateness = 100 * GST_MSECOND;
-        g_object_set(sink, "max-lateness", maxLateness, nullptr);
+        if (gstObjectHasProperty(sink, "max-lateness")) {
+            uint64_t maxLateness = 100 * GST_MSECOND;
+            g_object_set(sink, "max-lateness", maxLateness, nullptr);
+        } else {
+            GST_WARNING_OBJECT(pipeline(), "video sink does not have max-lateness property. This could result in A/V "
+                "desynchronization if it does not discard buffers that are arriving late (for example quality changes "
+                "decoding something again that has already been played)");
+        }
     });
 
     RefPtr player = m_player.get();

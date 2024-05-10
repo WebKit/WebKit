@@ -86,7 +86,7 @@ private:
     std::optional<uint32_t> m_bitRates[MaxSpatialLayers][MaxTemporalLayers];
 };
 
-bool videoEncoderSupportsFormat(WebKitVideoEncoder*, const GRefPtr<GstCaps>&);
-bool videoEncoderSetFormat(WebKitVideoEncoder*, GRefPtr<GstCaps>&&, const String& = emptyString());
+bool videoEncoderSupportsCodec(WebKitVideoEncoder*, const String&);
+bool videoEncoderSetCodec(WebKitVideoEncoder*, const String&, std::optional<WebCore::IntSize> = std::nullopt, std::optional<double> frameRate = std::nullopt);
 void videoEncoderSetBitRateAllocation(WebKitVideoEncoder*, RefPtr<WebKitVideoEncoderBitRateAllocation>&&);
 void teardownVideoEncoderSingleton();

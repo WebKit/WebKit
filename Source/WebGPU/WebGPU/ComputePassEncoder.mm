@@ -48,20 +48,12 @@ if (!m_computeCommandEncoder || !m_parentEncoder->isValid() || !m_parentEncoder-
     return; \
 }
 
-ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, CommandEncoder& parentEncoder, Device& device)
+ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor&, CommandEncoder& parentEncoder, Device& device)
     : m_computeCommandEncoder(computeCommandEncoder)
     , m_device(device)
     , m_parentEncoder(parentEncoder)
 {
     m_parentEncoder->lock(true);
-
-    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
-        if (descriptor.timestampWrites) {
-            const auto& timestampWrite = *descriptor.timestampWrites;
-            [m_computeCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.beginningOfPassWriteIndex withBarrier:NO];
-            m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.endOfPassWriteIndex });
-        }
-    }
 }
 
 ComputePassEncoder::ComputePassEncoder(CommandEncoder& parentEncoder, Device& device, NSString* errorString)
@@ -329,10 +321,6 @@ void ComputePassEncoder::endPass()
         return;
     }
 
-    ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
-    for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
-        [m_computeCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
-    m_pendingTimestampWrites.clear();
     m_parentEncoder->endEncoding(m_computeCommandEncoder);
     m_computeCommandEncoder = nil;
     m_parentEncoder->lock(false);
@@ -443,7 +431,7 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
 
     Vector<const BindableResources*> resourceList;
     for (const auto& resource : group.resources()) {
-        if (resource.renderStages == BindGroup::MTLRenderStageCompute)
+        if (resource.renderStages == BindGroup::MTLRenderStageCompute && resource.mtlResources.size())
             [m_computeCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
 
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());

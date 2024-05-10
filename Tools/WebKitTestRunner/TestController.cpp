@@ -1359,15 +1359,15 @@ void TestController::findAndDumpWorldLeaks()
             auto documentURL = it.value.abandonedDocumentURL;
             if (documentURL.isEmpty())
                 documentURL = "(no url)"_s;
-            builder.append("TEST: ");
+            builder.append("TEST: "_s);
             builder.append(it.value.testURL);
             builder.append('\n');
-            builder.append("ABANDONED DOCUMENT: ");
+            builder.append("ABANDONED DOCUMENT: "_s);
             builder.append(documentURL);
             builder.append('\n');
         }
     } else
-        builder.append("no abandoned documents\n");
+        builder.append("no abandoned documents\n"_s);
 
     dumpResponse(builder.toString());
 }
@@ -2703,9 +2703,9 @@ WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef
 
     if (m_shouldLogDownloadCallbacks) {
         StringBuilder builder;
-        builder.append("Downloading URL with suggested filename \"");
+        builder.append("Downloading URL with suggested filename \""_s);
         builder.append(suggestedFilename);
-        builder.append("\"\n");
+        builder.append("\"\n"_s);
         m_currentInvocation->outputText(builder.toString());
     }
 
@@ -3240,12 +3240,12 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
         auto urlScheme = adoptWK(WKURLCopyScheme(url.get()));
 
         StringBuilder stringBuilder;
-        stringBuilder.append("Policy delegate: attempt to load ");
+        stringBuilder.append("Policy delegate: attempt to load "_s);
         if (isLocalFileScheme(urlScheme.get()))
             stringBuilder.append(toWTFString(adoptWK(WKURLCopyLastPathComponent(url.get())).get()));
         else
             stringBuilder.append(toWTFString(adoptWK(WKURLCopyString(url.get())).get()));
-        stringBuilder.append(" with navigation type \'", navigationTypeToString(WKNavigationActionGetNavigationType(navigationAction)), '\'');
+        stringBuilder.append(" with navigation type \'"_s, navigationTypeToString(WKNavigationActionGetNavigationType(navigationAction)), '\'');
         stringBuilder.append('\n');
         m_currentInvocation->outputText(stringBuilder.toString());
         if (!m_skipPolicyDelegateNotifyDone)

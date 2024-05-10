@@ -59,6 +59,8 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ScreenCaptur
 
 namespace WebCore {
 
+class ImageTransferSessionVT;
+
 class ScreenCaptureKitCaptureSource final
     : public DisplayCaptureSourceCocoa::Capturer
     , public ScreenCaptureSessionSourceObserver {
@@ -76,6 +78,8 @@ public:
     using Content = std::variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
     void streamDidOutputVideoSampleBuffer(RetainPtr<CMSampleBufferRef>);
     void sessionFailedWithError(RetainPtr<NSError>&&, const String&);
+    void outputVideoEffectDidStartForStream() { m_isVideoEffectEnabled = true; }
+    void outputVideoEffectDidStopForStream() { m_isVideoEffectEnabled = false; }
 
 private:
 
@@ -119,12 +123,14 @@ private:
     CaptureDevice m_captureDevice;
     uint32_t m_deviceID { 0 };
     mutable std::optional<IntSize> m_intrinsicSize;
+    std::unique_ptr<ImageTransferSessionVT> m_transferSession;
 
     FloatSize m_contentSize;
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
     float m_frameRate { 0 };
     bool m_isRunning { false };
+    bool m_isVideoEffectEnabled { false };
 };
 
 } // namespace WebCore

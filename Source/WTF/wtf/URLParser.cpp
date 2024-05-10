@@ -1109,7 +1109,7 @@ URLParser::URLParser(String&& input, const URL& base, const URLTextEncoding* non
 #if ASSERT_ENABLED
     if (!m_didSeeSyntaxViolation) {
         // Force a syntax violation at the beginning to make sure we get the same result.
-        URLParser parser(makeString(" ", m_inputString), base, nonUTF8QueryEncoding);
+        URLParser parser(makeString(' ', m_inputString), base, nonUTF8QueryEncoding);
         URL parsed = parser.result();
         if (parsed.isValid())
             ASSERT(allValuesEqual(parser.result(), m_url));

@@ -101,7 +101,7 @@ bool isSmallLayerBacking(const ImageBufferParameters& parameters)
     auto checkedArea = ImageBuffer::calculateBackendSize(parameters.logicalSize, parameters.resolutionScale).area<RecordOverflow>();
     return (parameters.purpose == RenderingPurpose::LayerBacking || parameters.purpose == RenderingPurpose::BitmapOnlyLayerBacking)
         && !checkedArea.hasOverflowed() && checkedArea <= maxSmallLayerBackingArea
-        && (parameters.pixelFormatValidated == PixelFormatValidated::BGRA8 || parameters.pixelFormatValidated == PixelFormatValidated::BGRX8);
+        && (parameters.pixelFormat == PixelFormat::BGRA8 || parameters.pixelFormat == PixelFormat::BGRX8);
 }
 
 Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, Ref<IPC::StreamServerConnection>&& streamConnection)
@@ -208,6 +208,9 @@ void RemoteRenderingBackend::didFailCreateImageBuffer(RenderingResourceIdentifie
 
 void RemoteRenderingBackend::didCreateImageBuffer(Ref<ImageBuffer> imageBuffer)
 {
+    if (imageBuffer->renderingMode() == RenderingMode::Accelerated)
+        m_sharedResourceCache->didAddAcceleratedImageBuffer();
+
     auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier();
     auto* sharing = imageBuffer->toBackendSharing();
     auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
@@ -257,7 +260,7 @@ static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalS
 
 #if HAVE(IOSURFACE)
     if (renderingMode == RenderingMode::Accelerated) {
-        if (isSmallLayerBacking({ logicalSize, resolutionScale, colorSpace, convertPixelFormatToPixelFormatValidated(pixelFormat), purpose }))
+        if (isSmallLayerBacking({ logicalSize, resolutionScale, colorSpace, pixelFormat, purpose }))
             imageBuffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBitmapBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
         if (!imageBuffer)
             imageBuffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
@@ -284,6 +287,8 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
 #endif
 
     RefPtr<ImageBuffer> imageBuffer;
+    if (renderingMode == RenderingMode::Accelerated)
+        renderingMode = m_sharedResourceCache->adjustAcceleratedImageBufferRenderingMode(purpose);
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (m_gpuConnectionToWebProcess->isDynamicContentScalingEnabled() && (purpose == RenderingPurpose::LayerBacking || purpose == RenderingPurpose::DOM))
@@ -297,10 +302,10 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
 }
 
 
-void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormatValidated pixelFormatValidated, RenderingResourceIdentifier imageBufferIdentifier)
+void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier imageBufferIdentifier)
 {
     assertIsCurrent(workQueue());
-    RefPtr<ImageBuffer> imageBuffer = allocateImageBuffer(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, convertPixelFormatValidatedToPixelFormat(pixelFormatValidated), { }, imageBufferIdentifier);
+    RefPtr<ImageBuffer> imageBuffer = allocateImageBuffer(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, { }, imageBufferIdentifier);
 
     if (imageBuffer)
         didCreateImageBuffer(imageBuffer.releaseNonNull());
@@ -314,8 +319,8 @@ void RemoteRenderingBackend::releaseImageBuffer(RenderingResourceIdentifier rend
 {
     assertIsCurrent(workQueue());
     m_remoteDisplayLists.take(renderingResourceIdentifier);
-    bool success = m_remoteImageBuffers.take(renderingResourceIdentifier).get();
-    MESSAGE_CHECK(success, "Resource is being released before being cached."_s);
+    auto imageBuffer = takeImageBuffer(renderingResourceIdentifier);
+    MESSAGE_CHECK(imageBuffer, "Resource is being released before being cached."_s);
 }
 
 void RemoteRenderingBackend::createRemoteImageBufferSet(RemoteImageBufferSetIdentifier bufferSetIdentifier, WebCore::RenderingResourceIdentifier displayListIdentifier)
@@ -599,7 +604,10 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::takeImageBuffer(RenderingResourceIde
     RefPtr remoteImageBuffer = remoteImageBufferReceiveQueue.get();
     remoteImageBufferReceiveQueue.reset();
     ASSERT(remoteImageBuffer->hasOneRef());
-    return remoteImageBuffer->imageBuffer();
+    Ref imageBuffer = remoteImageBuffer->imageBuffer();
+    if (imageBuffer->renderingMode() == RenderingMode::Accelerated)
+        m_sharedResourceCache->didTakeAcceleratedImageBuffer();
+    return imageBuffer;
 }
 
 void RemoteRenderingBackend::terminateWebProcess(ASCIILiteral message)

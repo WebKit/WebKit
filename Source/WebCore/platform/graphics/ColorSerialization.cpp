@@ -378,8 +378,12 @@ String serializationForRenderTreeAsText(const ExtendedSRGBA<float>& color, bool)
 
 String serializationForCSS(const HSLA<float>& color, bool useColorFunctionSerialization)
 {
+    // FIXME: The spec is not completely clear on whether missing components should be
+    // carried forward here, but it seems like people are leaning toward thinking they
+    // should be. See https://github.com/w3c/csswg-drafts/issues/10254.
+
     if (useColorFunctionSerialization)
-        return serializationForCSS(convertColor<ExtendedSRGBA<float>>(color), true);
+        return serializationForCSS(convertColorCarryingForwardMissing<ExtendedSRGBA<float>>(color), true);
 
     return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false);
 }
@@ -398,8 +402,12 @@ String serializationForRenderTreeAsText(const HSLA<float>& color, bool useColorF
 
 String serializationForCSS(const HWBA<float>& color, bool useColorFunctionSerialization)
 {
+    // FIXME: The spec is not completely clear on whether missing components should be
+    // carried forward here, but it seems like people are leaning toward thinking they
+    // should be. See https://github.com/w3c/csswg-drafts/issues/10254.
+
     if (useColorFunctionSerialization)
-        return serializationForCSS(convertColor<ExtendedSRGBA<float>>(color), true);
+        return serializationForCSS(convertColorCarryingForwardMissing<ExtendedSRGBA<float>>(color), true);
 
     return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false);
 }

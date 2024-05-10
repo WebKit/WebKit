@@ -323,6 +323,12 @@ void NetworkLoad::setH2PingCallback(const URL& url, CompletionHandler<void(Expec
         completionHandler(makeUnexpected(internalError(url)));
 }
 
+void NetworkLoad::setTimingAllowFailedFlag()
+{
+    if (m_task)
+        m_task->setTimingAllowFailedFlag();
+}
+
 String NetworkLoad::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
 {
     if (m_task)

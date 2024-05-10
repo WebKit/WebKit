@@ -136,4 +136,4 @@ async function test() {
     assert.eq(shr_u(5, 1), 2)
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

@@ -311,7 +311,7 @@ void PresentationContextIOSurface::present()
     if (Texture* texturePtr = textureRefPtr.get(); texturePtr && m_computePipelineState) {
         MTLCommandBufferDescriptor *descriptor = [MTLCommandBufferDescriptor new];
         descriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-        id<MTLCommandBuffer> commandBuffer = m_device->getQueue().commandBufferWithDescriptor(descriptor);
+        id<MTLCommandBuffer> commandBuffer = m_device->getQueue().commandBufferWithDescriptor(descriptor).first;
         MTLComputePassDescriptor* computeDescriptor = [MTLComputePassDescriptor new];
         computeDescriptor.dispatchType = MTLDispatchTypeSerial;
 

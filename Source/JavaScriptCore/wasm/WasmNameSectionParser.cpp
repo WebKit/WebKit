@@ -35,15 +35,15 @@ namespace JSC { namespace Wasm {
 auto NameSectionParser::parse() -> Result
 {
     Ref<NameSection> nameSection = NameSection::create();
-    WASM_PARSER_FAIL_IF(!nameSection->functionNames.tryReserveCapacity(m_info.functionIndexSpaceSize()), "can't allocate enough memory for function names");
+    WASM_PARSER_FAIL_IF(!nameSection->functionNames.tryReserveCapacity(m_info.functionIndexSpaceSize()), "can't allocate enough memory for function names"_s);
     nameSection->functionNames.resize(m_info.functionIndexSpaceSize());
 
     for (size_t payloadNumber = 0; m_offset < source().size(); ++payloadNumber) {
         uint8_t nameType;
         uint32_t payloadLength;
-        WASM_PARSER_FAIL_IF(!parseUInt7(nameType), "can't get name type for payload ", payloadNumber);
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(payloadLength), "can't get payload length for payload ", payloadNumber);
-        WASM_PARSER_FAIL_IF(payloadLength > source().size() - m_offset, "payload length is too big for payload ", payloadNumber);
+        WASM_PARSER_FAIL_IF(!parseUInt7(nameType), "can't get name type for payload "_s, payloadNumber);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(payloadLength), "can't get payload length for payload "_s, payloadNumber);
+        WASM_PARSER_FAIL_IF(payloadLength > source().size() - m_offset, "payload length is too big for payload "_s, payloadNumber);
         const auto payloadStart = m_offset;
 
         if (!isValidNameType(nameType)) {
@@ -56,22 +56,22 @@ auto NameSectionParser::parse() -> Result
         case NameType::Module: {
             uint32_t nameLen;
             Name nameString;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get module's name length for payload ", payloadNumber);
-            WASM_PARSER_FAIL_IF(!consumeUTF8String(nameString, nameLen), "can't get module's name of length ", nameLen, " for payload ", payloadNumber);
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get module's name length for payload "_s, payloadNumber);
+            WASM_PARSER_FAIL_IF(!consumeUTF8String(nameString, nameLen), "can't get module's name of length "_s, nameLen, " for payload "_s, payloadNumber);
             nameSection->moduleName = WTFMove(nameString);
             break;
         }
         case NameType::Function: {
             uint32_t count;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get function count for payload ", payloadNumber);
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get function count for payload "_s, payloadNumber);
             for (uint32_t function = 0; function < count; ++function) {
                 uint32_t index;
                 uint32_t nameLen;
                 Name nameString;
-                WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get function ", function, " index for payload ", payloadNumber);
-                WASM_PARSER_FAIL_IF(m_info.functionIndexSpaceSize() <= index, "function ", function, " index ", index, " is larger than function index space ", m_info.functionIndexSpaceSize(), " for payload ", payloadNumber);
-                WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get functions ", function, "'s name length for payload ", payloadNumber);
-                WASM_PARSER_FAIL_IF(!consumeUTF8String(nameString, nameLen), "can't get function ", function, "'s name of length ", nameLen, " for payload ", payloadNumber);
+                WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get function "_s, function, " index for payload "_s, payloadNumber);
+                WASM_PARSER_FAIL_IF(m_info.functionIndexSpaceSize() <= index, "function "_s, function, " index "_s, index, " is larger than function index space "_s, m_info.functionIndexSpaceSize(), " for payload "_s, payloadNumber);
+                WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get functions "_s, function, "'s name length for payload "_s, payloadNumber);
+                WASM_PARSER_FAIL_IF(!consumeUTF8String(nameString, nameLen), "can't get function "_s, function, "'s name of length "_s, nameLen, " for payload "_s, payloadNumber);
                 nameSection->functionNames[index] = WTFMove(nameString);
             }
             break;
@@ -79,25 +79,25 @@ auto NameSectionParser::parse() -> Result
         case NameType::Local: {
             // Ignore local names for now, we don't do anything with them but we still need to parse them in order to properly ignore them.
             uint32_t functionCount;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(functionCount), "can't get function count for local name payload ", payloadNumber);
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(functionCount), "can't get function count for local name payload "_s, payloadNumber);
             for (uint32_t function = 0; function < functionCount; ++function) {
                 uint32_t functionIndex;
                 uint32_t count;
-                WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't get local's function index for payload ", payloadNumber);
-                WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get local count for payload ", payloadNumber);
+                WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't get local's function index for payload "_s, payloadNumber);
+                WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get local count for payload "_s, payloadNumber);
                 for (uint32_t local = 0; local < count; ++local) {
                     uint32_t index;
                     uint32_t nameLen;
                     Name nameString;
-                    WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get local ", local, " index for payload ", payloadNumber);
-                    WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get local ", local, "'s name length for payload ", payloadNumber);
-                    WASM_PARSER_FAIL_IF(!consumeUTF8String(nameString, nameLen), "can't get local ", local, "'s name of length ", nameLen, " for payload ", payloadNumber);
+                    WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get local "_s, local, " index for payload "_s, payloadNumber);
+                    WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get local "_s, local, "'s name length for payload "_s, payloadNumber);
+                    WASM_PARSER_FAIL_IF(!consumeUTF8String(nameString, nameLen), "can't get local "_s, local, "'s name of length "_s, nameLen, " for payload "_s, payloadNumber);
                 }
             }
             break;
         }
         }
-        WASM_PARSER_FAIL_IF(payloadStart + payloadLength != m_offset, "payload for name section is not correct size, expected ", payloadLength, " got ", m_offset - payloadStart);
+        WASM_PARSER_FAIL_IF(payloadStart + payloadLength != m_offset, "payload for name section is not correct size, expected "_s, payloadLength, " got "_s, m_offset - payloadStart);
     }
     return nameSection;
 }

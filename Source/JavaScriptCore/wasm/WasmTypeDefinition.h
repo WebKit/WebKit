@@ -472,7 +472,7 @@ private:
 
 };
 
-inline const char* makeString(const StorageType& storageType)
+inline ASCIILiteral makeString(const StorageType& storageType)
 {
     return(storageType.is<Type>() ? makeString(storageType.as<Type>().kind) :
         makeString(storageType.as<PackedType>()));

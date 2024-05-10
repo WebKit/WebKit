@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutInitialContainingBlock.h"
 
+#include "RenderObject.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 

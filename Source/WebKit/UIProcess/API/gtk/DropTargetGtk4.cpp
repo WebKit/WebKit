@@ -165,7 +165,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                 // Convert files transferred by the File Transfer portal into URIs
                 for (auto& fileUri : fileUris) {
                     if (!m_uriListBuilder.isEmpty())
-                        m_uriListBuilder.append("\r\n");
+                        m_uriListBuilder.append("\r\n"_s);
                     m_uriListBuilder.append(fileUri);
                 }
 
@@ -226,7 +226,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                         }
 
                         if (!m_uriListBuilder.isEmpty())
-                            m_uriListBuilder.append("\r\n");
+                            m_uriListBuilder.append("\r\n"_s);
                         m_uriListBuilder.append(line);
                     }
                 }

@@ -73,6 +73,8 @@ public:
     void makeGCAware(VM&, bool isCodeImmutable);
 
     JSCell* owner() const { return m_owner; }
+
+    bool removeDeadOwners(VM&);
     
 protected:
     void observeZeroRefCountImpl();
@@ -92,6 +94,7 @@ class PolymorphicAccessJITStubRoutine : public GCAwareJITStubRoutine {
 public:
     using Base = GCAwareJITStubRoutine;
     friend class JITStubRoutine;
+    friend class GCAwareJITStubRoutine;
 
     PolymorphicAccessJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner);
     ~PolymorphicAccessJITStubRoutine();
@@ -106,14 +109,36 @@ public:
         return m_hash;
     }
 
-    static unsigned computeHash(const FixedVector<RefPtr<AccessCase>>&);
+    static unsigned computeHash(std::span<const RefPtr<AccessCase>>);
 
     void addedToSharedJITStubSet();
+
 
     const WatchpointsOnStructureStubInfo* watchpoints() const { return m_watchpoints.get(); }
     void setWatchpoints(std::unique_ptr<WatchpointsOnStructureStubInfo>&&);
     WatchpointSet& watchpointSet() { return *m_watchpointSet.get(); }
     void invalidate();
+
+    bool isStillValid() const
+    {
+        if (!m_watchpointSet)
+            return false;
+        if (!m_watchpointSet->isStillValid())
+            return false;
+        return !m_ownerIsDead;
+    }
+
+    void addOwner(CodeBlock* codeBlock)
+    {
+        if (m_isInSharedJITStubSet)
+            m_owners.add(codeBlock);
+    }
+
+    void removeOwner(CodeBlock* codeBlock)
+    {
+        if (m_isInSharedJITStubSet)
+            m_owners.remove(codeBlock);
+    }
 
 protected:
     void observeZeroRefCountImpl();
@@ -122,8 +147,8 @@ private:
     VM& m_vm;
     FixedVector<RefPtr<AccessCase>> m_cases;
     FixedVector<StructureID> m_weakStructures;
-    FixedVector<Identifier> m_identifiers;
     RefPtr<WatchpointSet> m_watchpointSet;
+    HashCountedSet<CodeBlock*> m_owners;
     std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
 };
 

@@ -1,0 +1,39 @@
+
+PASS mfrac
+PASS RTL mfrac
+PASS mfrac without bar
+PASS RTL mfrac without bar
+PASS munder
+PASS RTL munder
+PASS mover
+PASS RTL mover
+PASS munderover
+PASS RTL munderover
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+X
+

@@ -58,10 +58,9 @@ public:
     void removePage(WebPageProxy&);
     void forEachRemotePage(const WebPageProxy&, Function<void(RemotePageProxy&)>&&);
 
-    RemotePageProxy* remotePageInProcess(const WebPageProxy&, const WebCore::RegistrableDomain&);
     RemotePageProxy* remotePageInProcess(const WebPageProxy&, const WebProcessProxy&);
 
-    std::unique_ptr<RemotePageProxy> takeRemotePageInProcessForProvisionalPage(const WebPageProxy&, const WebCore::RegistrableDomain&);
+    std::unique_ptr<RemotePageProxy> takeRemotePageInProcessForProvisionalPage(const WebPageProxy&, const WebProcessProxy&);
     void transitionPageToRemotePage(WebPageProxy&, const WebCore::RegistrableDomain& openerDomain);
     void transitionProvisionalPageToRemotePage(ProvisionalPageProxy&, const WebCore::RegistrableDomain& provisionalNavigationFailureDomain);
 

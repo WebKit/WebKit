@@ -46,6 +46,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly, getter=isNearbyTarget) BOOL nearbyTarget;
 @property (nonatomic, readonly, getter=isPseudoElement) BOOL pseudoElement;
 @property (nonatomic, readonly, getter=isInShadowTree) BOOL inShadowTree;
+@property (nonatomic, readonly) BOOL hasAudibleMedia;
 
 @property (nonatomic, readonly, copy) NSArray<NSString *> *selectors;
 @property (nonatomic, readonly, copy) NSArray<NSArray<NSString *> *> *selectorsIncludingShadowHosts;

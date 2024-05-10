@@ -42,8 +42,11 @@ class FileSystemDirectoryReader final : public ScriptWrappable, public ActiveDOM
     WTF_MAKE_ISO_ALLOCATED(FileSystemDirectoryReader);
 public:
     static Ref<FileSystemDirectoryReader> create(ScriptExecutionContext&, FileSystemDirectoryEntry&);
-
     ~FileSystemDirectoryReader();
+
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void readEntries(ScriptExecutionContext&, Ref<FileSystemEntriesCallback>&&, RefPtr<ErrorCallback>&&);
 

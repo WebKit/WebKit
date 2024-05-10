@@ -71,7 +71,20 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, RenderObject
     auto layerBounds = transformAndClipIfNeeded(rect, [](auto affineTransform, auto rect) {
         return affineTransform.mapRect(rect);
     });
-    uniteInteractionRegions(renderer, layerBounds);
+
+    // Same transform as `transformAndClipIfNeeded`.
+    std::optional<AffineTransform> transform;
+    if (!m_transformStack.isEmpty()) {
+        transform = m_transformStack.last();
+        rect = transform->mapRect(rect);
+    }
+
+    // The paths we generate to match shapes are complete and relative to the bounds.
+    // But the layerBounds we pass are already clipped.
+    // Keep track of the offset so we can adjust the paths location if needed.
+    auto clipOffset = rect.location() - layerBounds.location();
+
+    uniteInteractionRegions(renderer, layerBounds, clipOffset, transform);
 #else
     UNUSED_PARAM(renderer);
 #endif
@@ -116,12 +129,12 @@ static std::optional<FloatRect> guardRectForRegionBounds(const InteractionRegion
     return std::nullopt;
 }
 
-void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const FloatRect& layerBounds)
+void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const FloatRect& layerBounds, const FloatSize& clipOffset, const std::optional<AffineTransform>& transform)
 {
     if (!renderer.page().shouldBuildInteractionRegions())
         return;
 
-    if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, layerBounds)) {
+    if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, layerBounds, clipOffset, transform)) {
         auto rectForTracking = enclosingIntRect(interactionRegion->rectInLayerCoordinates);
         
         if (interactionRegion->type == InteractionRegion::Type::Occlusion) {

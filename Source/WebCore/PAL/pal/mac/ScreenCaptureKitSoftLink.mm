@@ -47,5 +47,10 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, SCStreamFrameIn
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, SCStreamFrameInfoScaleFactor, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, SCStreamFrameInfoContentScale, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, SCStreamFrameInfoContentRect, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, SCStreamFrameInfoBoundingRect, NSString *, PAL_EXPORT)
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, SCStreamFrameInfoPresenterOverlayContentRect, NSString *, PAL_EXPORT)
+#endif
 
 #endif // PLATFORM(MAC)

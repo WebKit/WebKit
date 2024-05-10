@@ -28,7 +28,7 @@
 
 namespace v8 {
 
-double ParseDateTimeString(const char* str, size_t size, bool& local);
+double ParseDateTimeString(const unsigned char* str, size_t size, bool& local);
 double TimeClip(double time);
 
 } // namespace v8

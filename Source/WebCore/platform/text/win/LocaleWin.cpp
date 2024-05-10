@@ -321,11 +321,8 @@ String LocaleWin::shortTimeFormat()
     // Vista or older Windows doesn't support LOCALE_SSHORTTIME.
     if (format.isEmpty()) {
         format = getLocaleInfoString(LOCALE_STIMEFORMAT);
-        StringBuilder builder;
-        builder.append(getLocaleInfoString(LOCALE_STIME));
-        builder.append("ss");
-        size_t pos = format.reverseFind(builder.toString());
-        if (pos != notFound)
+        auto locale = makeString(getLocaleInfoString(LOCALE_STIME), "ss"_s);
+        if (format.reverseFind(builder) != notFound)
             format = makeStringByRemoving(format, pos, builder.length());
     }
     m_timeFormatWithoutSeconds = convertWindowsDateTimeFormat(format);
@@ -334,25 +331,15 @@ String LocaleWin::shortTimeFormat()
 
 String LocaleWin::dateTimeFormatWithSeconds()
 {
-    if (!m_dateTimeFormatWithSeconds.isNull())
-        return m_dateTimeFormatWithSeconds;
-    StringBuilder builder;
-    builder.append(dateFormat());
-    builder.append(' ');
-    builder.append(timeFormat());
-    m_dateTimeFormatWithSeconds = builder.toString();
+    if (m_dateTimeFormatWithSeconds.isNull())
+        m_dateTimeFormatWithSeconds = makeString(dateFormat(), ' ', timeFormat());
     return m_dateTimeFormatWithSeconds;
 }
 
 String LocaleWin::dateTimeFormatWithoutSeconds()
 {
-    if (!m_dateTimeFormatWithoutSeconds.isNull())
-        return m_dateTimeFormatWithoutSeconds;
-    StringBuilder builder;
-    builder.append(dateFormat());
-    builder.append(' ');
-    builder.append(shortTimeFormat());
-    m_dateTimeFormatWithoutSeconds = builder.toString();
+    if (m_dateTimeFormatWithoutSeconds.isNull())
+        m_dateTimeFormatWithoutSeconds = makeString(dateFormat(), ' ', shortTimeFormat());
     return m_dateTimeFormatWithoutSeconds;
 }
 

@@ -213,4 +213,4 @@ async function testLocalInit() {
   );
 }
 
-assert.asyncTest(testLocalInit());
+await assert.asyncTest(testLocalInit());

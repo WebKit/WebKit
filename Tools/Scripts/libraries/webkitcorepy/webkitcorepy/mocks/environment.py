@@ -30,6 +30,7 @@ class Environment(ContextStack):
 
     def __init__(self, **kwargs):
         super(Environment, self).__init__(cls=Environment)
+        self.environ = kwargs
 
         from mock import patch
         from webkitcorepy.credentials import _cache

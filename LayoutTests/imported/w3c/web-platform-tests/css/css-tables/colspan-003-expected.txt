@@ -1,0 +1,17 @@
+There should be five squares.
+
+
+FAIL td 1 assert_equals:
+<td colspan="10" style="background:blue;" data-expected-width="75" data-expected-height="75">
+      <div style="width:50px; height:75px;"></div>
+    </td>
+width expected 75 but got 100
+FAIL td 2 assert_equals:
+<td colspan="10" style="background:green;" data-expected-width="75" data-expected-height="75">
+      <div style="width:50px; height:75px;"></div>
+    </td>
+width expected 75 but got 50
+PASS td 3
+PASS td 4
+PASS td 5
+

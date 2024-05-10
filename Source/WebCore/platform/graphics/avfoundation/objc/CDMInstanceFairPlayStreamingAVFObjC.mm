@@ -199,10 +199,10 @@ struct LogArgument<WebCore::CDMInstanceFairPlayStreamingAVFObjC::Keys> {
     static String toString(const WebCore::CDMInstanceFairPlayStreamingAVFObjC::Keys& keys)
     {
         StringBuilder builder;
-        builder.append("[");
+        builder.append('[');
         for (auto key : keys)
             builder.append(key->toHexString());
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 };

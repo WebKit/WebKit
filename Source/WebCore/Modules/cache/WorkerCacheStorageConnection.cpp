@@ -151,8 +151,8 @@ void WorkerCacheStorageConnection::retrieveRecords(DOMCacheIdentifier cacheIdent
     m_retrieveRecordsPendingRequests.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, options = WTFMove(options).isolatedCopy()]() mutable {
-        mainThreadConnection->retrieveRecords(cacheIdentifier, WTFMove(options), [workerThread = WTFMove(workerThread), requestIdentifier](auto&& result) mutable {
-            workerThread->runLoop().postTaskForMode([result = isolatedCopyCrossThreadRecordsOrError(std::forward<decltype(result)>(result)), requestIdentifier] (auto& scope) mutable {
+        mainThreadConnection->retrieveRecords(cacheIdentifier, WTFMove(options), [workerThread = WTFMove(workerThread), requestIdentifier]<typename Result> (Result&& result) mutable {
+            workerThread->runLoop().postTaskForMode([result = isolatedCopyCrossThreadRecordsOrError(std::forward<Result>(result)), requestIdentifier] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).cacheStorageConnection().retrieveRecordsCompleted(requestIdentifier, WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         });

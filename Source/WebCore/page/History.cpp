@@ -72,10 +72,10 @@ static Exception documentNotFullyActive()
 
 ExceptionOr<unsigned> History::length() const
 {
-    auto* frame = this->frame();
-    if (!isDocumentFullyActive(frame))
+    RefPtr frame = this->frame();
+    if (!isDocumentFullyActive(frame.get()))
         return documentNotFullyActive();
-    auto* page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return 0;
     return page->backForward().count();
@@ -83,8 +83,8 @@ ExceptionOr<unsigned> History::length() const
 
 ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const
 {
-    auto* frame = this->frame();
-    if (!isDocumentFullyActive(frame))
+    RefPtr frame = this->frame();
+    if (!isDocumentFullyActive(frame.get()))
         return documentNotFullyActive();
 
     auto* historyItem = frame->history().currentItem();
@@ -96,12 +96,11 @@ ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const
 
 ExceptionOr<void> History::setScrollRestoration(ScrollRestoration scrollRestoration)
 {
-    auto* frame = this->frame();
-    if (!isDocumentFullyActive(frame))
+    RefPtr frame = this->frame();
+    if (!isDocumentFullyActive(frame.get()))
         return documentNotFullyActive();
 
-    auto* historyItem = frame->history().currentItem();
-    if (historyItem)
+    if (RefPtr historyItem = frame->history().currentItem())
         historyItem->setShouldRestoreScrollPosition(scrollRestoration == ScrollRestoration::Auto);
 
     return { };
@@ -109,8 +108,8 @@ ExceptionOr<void> History::setScrollRestoration(ScrollRestoration scrollRestorat
 
 ExceptionOr<SerializedScriptValue*> History::state()
 {
-    auto* frame = this->frame();
-    if (!isDocumentFullyActive(frame))
+    RefPtr frame = this->frame();
+    if (!isDocumentFullyActive(frame.get()))
         return documentNotFullyActive();
     m_lastStateObjectRequested = stateInternal();
     return m_lastStateObjectRequested.get();
@@ -166,10 +165,10 @@ ExceptionOr<void> History::forward(Document& document)
 
 ExceptionOr<void> History::go(int distance)
 {
-    auto* frame = this->frame();
-    LOG(History, "History %p go(%d) frame %p (main frame %d)", this, distance, frame, frame ? frame->isMainFrame() : false);
+    RefPtr frame = this->frame();
+    LOG(History, "History %p go(%d) frame %p (main frame %d)", this, distance, frame.get(), frame ? frame->isMainFrame() : false);
 
-    if (!isDocumentFullyActive(frame))
+    if (!isDocumentFullyActive(frame.get()))
         return documentNotFullyActive();
 
     frame->navigationScheduler().scheduleHistoryNavigation(distance);
@@ -178,15 +177,15 @@ ExceptionOr<void> History::go(int distance)
 
 ExceptionOr<void> History::go(Document& document, int distance)
 {
-    auto* frame = this->frame();
-    LOG(History, "History %p go(%d) in document %p frame %p (main frame %d)", this, distance, &document, frame, frame ? frame->isMainFrame() : false);
+    RefPtr frame = this->frame();
+    LOG(History, "History %p go(%d) in document %p frame %p (main frame %d)", this, distance, &document, frame.get(), frame ? frame->isMainFrame() : false);
 
-    if (!isDocumentFullyActive(frame))
+    if (!isDocumentFullyActive(frame.get()))
         return documentNotFullyActive();
 
     ASSERT(isMainThread());
 
-    if (!document.canNavigate(frame))
+    if (!document.canNavigate(frame.get()))
         return { };
 
     frame->navigationScheduler().scheduleHistoryNavigation(distance);
@@ -198,7 +197,7 @@ URL History::urlForState(const String& urlString)
     auto* frame = this->frame();
     if (urlString.isNull())
         return frame->document()->url();
-    return frame->document()->completeURL(urlString);
+    return frame->protectedDocument()->completeURL(urlString);
 }
 
 uint32_t History::totalStateObjectPayloadLimit() const

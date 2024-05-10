@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -364,19 +365,19 @@ unsigned TextUtil::findNextBreakablePosition(CachedLineBreakIteratorFactory& lin
 
     if (keepAllWordsForCJK) {
         if (breakNBSP)
-            return nextBreakablePositionKeepingAllWords(lineBreakIteratorFactory, startPosition);
-        return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIteratorFactory, startPosition);
+            return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::KeepAll, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
+        return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::KeepAll, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
     }
 
     if (lineBreakIteratorFactory.mode() == TextBreakIterator::LineMode::Behavior::Default) {
         if (breakNBSP)
-            return WebCore::nextBreakablePosition(lineBreakIteratorFactory, startPosition);
-        return nextBreakablePositionIgnoringNBSP(lineBreakIteratorFactory, startPosition);
+            return nextBreakablePosition<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
+        return nextBreakablePosition<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
     }
 
     if (breakNBSP)
-        return nextBreakablePositionWithoutShortcut(lineBreakIteratorFactory, startPosition);
-    return nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIteratorFactory, startPosition);
+        return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
+    return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
 }
 
 bool TextUtil::shouldPreserveSpacesAndTabs(const Box& layoutBox)
@@ -437,9 +438,29 @@ TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(WordBreak wordBreak
     return TextBreakIterator::ContentAnalysis::Mechanical;
 }
 
+// True if the character may need the Bidi reordering. If false, the
+// `Bidi_Class` of `ch` isn't `R`, `AL`, nor Bidi controls.
+// https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5B%5B%3Abc%3DR%3A%5D%5B%3Abc%3DAL%3A%5D%5D&g=bc
+// https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=[:Bidi_C:]
+static ALWAYS_INLINE bool mayBeBidiRTL(char32_t ch)
+{
+    if (ch < 0x0590)
+        return false;
+    // General Punctuation such as curly quotes.
+    if (ch >= 0x2010 && ch <= 0x2029)
+        return false;
+    // CJK etc., up to Surrogate Pairs.
+    if (ch >= 0x206A && ch <= 0xD7FF)
+        return false;
+    // Common in CJK.
+    if (ch >= 0xFF00 && ch <= 0xFFFF)
+        return false;
+    return true;
+}
+
 bool TextUtil::isStrongDirectionalityCharacter(char32_t character)
 {
-    if (isLatin1(character))
+    if (!mayBeBidiRTL(character))
         return false;
 
     auto bidiCategory = u_charDirection(character);
@@ -452,9 +473,17 @@ bool TextUtil::isStrongDirectionalityCharacter(char32_t character)
         || bidiCategory == U_POP_DIRECTIONAL_FORMAT;
 }
 
+template<typename CharacterType> ALWAYS_INLINE constexpr bool isNotBidiRTL(CharacterType character)
+{
+    return !mayBeBidiRTL(character);
+}
+
 bool TextUtil::containsStrongDirectionalityText(StringView text)
 {
     if (text.is8Bit())
+        return false;
+
+    if (text.containsOnly<isNotBidiRTL>())
         return false;
 
     for (char32_t character : text.codePoints()) {

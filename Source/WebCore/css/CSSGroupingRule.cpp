@@ -119,9 +119,9 @@ ExceptionOr<void> CSSGroupingRule::deleteRule(unsigned index)
 
 void CSSGroupingRule::appendCSSTextForItemsInternal(StringBuilder& builder, StringBuilder& rules) const
 {
-    builder.append(" {");
+    builder.append(" {"_s);
     if (rules.isEmpty()) {
-        builder.append("\n}");
+        builder.append("\n}"_s);
         return;
     }
 
@@ -140,7 +140,7 @@ void CSSGroupingRule::cssTextForRules(StringBuilder& rules) const
     auto& childRules = m_groupRule->childRules();
     for (unsigned index = 0; index < childRules.size(); index++) {
         auto wrappedRule = item(index);
-        rules.append("\n  ", wrappedRule->cssText());
+        rules.append("\n  "_s, wrappedRule->cssText());
     }
 }
 
@@ -156,7 +156,7 @@ void CSSGroupingRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, c
     auto& childRules = m_groupRule->childRules();
     for (unsigned index = 0; index < childRules.size(); index++) {
         auto wrappedRule = item(index);
-        rules.append("\n  ", wrappedRule->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet));
+        rules.append("\n  "_s, wrappedRule->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet));
     }
 }
 

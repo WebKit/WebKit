@@ -66,7 +66,7 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
         builder.append(WTF::weekdayName[(t.weekDay() + 6) % 7]);
 
         if (asUTCVariant) {
-            builder.append(", ");
+            builder.append(", "_s);
             appendNumber<2>(builder, t.monthDay());
             builder.append(' ', WTF::monthName[t.month()]);
         } else {
@@ -86,7 +86,7 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
         appendNumber<2>(builder, t.minute());
         builder.append(':');
         appendNumber<2>(builder, t.second());
-        builder.append(" GMT");
+        builder.append(" GMT"_s);
 
         if (!asUTCVariant) {
             int offset = std::abs(t.utcOffsetInMinute());
@@ -95,7 +95,7 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
             appendNumber<2>(builder, offset % 60);
             String timeZoneName = dateCache.timeZoneDisplayName(t.isDST());
             if (!timeZoneName.isEmpty())
-                builder.append(" (", timeZoneName, ')');
+                builder.append(" ("_s, timeZoneName, ')');
         }
     }
 

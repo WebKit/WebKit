@@ -34,13 +34,14 @@ FRAMEWORK_SEARCH_PATHS_cocoatouch = $(inherited);
 PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/Cocoa $(SRCROOT)/../../Source/WebKit/Shared/cf $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(inherited);
 
 WK_APPSERVERSUPPORT_LDFLAGS[sdk=iphone*] = -framework AppServerSupport
+WK_APPSERVERSUPPORT_LDFLAGS[sdk=xr*] = -framework AppServerSupport
 
 WK_AUTHKIT_LDFLAGS = $(WK_AUTHKIT_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_AUTHKIT_LDFLAGS_iphoneos = $(WK_AUTHKIT_LDFLAGS$(WK_IOS_13));
-WK_AUTHKIT_LDFLAGS_iphonesimulator = $(WK_AUTHKIT_LDFLAGS$(WK_IOS_13));
-WK_AUTHKIT_LDFLAGS_IOS_SINCE_13 = -framework AuthKit;
-WK_AUTHKIT_LDFLAGS_macosx = $(WK_AUTHKIT_LDFLAGS$(WK_MACOS_1015));
-WK_AUTHKIT_LDFLAGS_MACOS_SINCE_1015 = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_iphoneos = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_iphonesimulator = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_xros = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_xrsimulator = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_macosx = -framework AuthKit;
 
 WK_BROWSERENGINEKIT_LDFLAGS =
 WK_BROWSERENGINEKIT_LDFLAGS[sdk=iphone*] = -framework BrowserEngineKit
@@ -61,25 +62,22 @@ WK_HID_LDFLAGS_macosx = $(WK_HID_LDFLAGS$(WK_MACOS_1015));
 WK_HID_LDFLAGS_MACOS_SINCE_1015 = -framework HID;
 
 WK_VISIONKITCORE_LDFLAGS = $(WK_VISIONKITCORE_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_VISIONKITCORE_LDFLAGS_iphoneos = $(WK_VISIONKITCORE_LDFLAGS$(WK_IOS_15));
-WK_VISIONKITCORE_LDFLAGS_iphonesimulator = $(WK_VISIONKITCORE_LDFLAGS$(WK_IOS_15));
-WK_VISIONKITCORE_LDFLAGS_IOS_SINCE_15 = -framework VisionKitCore;
+WK_VISIONKITCORE_LDFLAGS_iphoneos = -framework VisionKitCore;
+WK_VISIONKITCORE_LDFLAGS_iphonesimulator = -framework VisionKitCore;
+WK_VISIONKITCORE_LDFLAGS_xros = -framework VisionKitCore;
+WK_VISIONKITCORE_LDFLAGS_xrsimulator = -framework VisionKitCore;
 
-WK_OPENGL_LDFLAGS = $(WK_OPENGL_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_OPENGL_LDFLAGS_iphoneos = -framework OpenGLES;
-WK_OPENGL_LDFLAGS_maccatalyst = -framework OpenGL;
-WK_OPENGL_LDFLAGS_iphonesimulator = -framework OpenGLES;
-WK_OPENGL_LDFLAGS_watchos = $(WK_OPENGL_LDFLAGS_iphoneos);
-WK_OPENGL_LDFLAGS_watchsimulator = $(WK_OPENGL_LDFLAGS_iphonesimulator);
-WK_OPENGL_LDFLAGS_appletvos = $(WK_OPENGL_LDFLAGS_iphoneos);
-WK_OPENGL_LDFLAGS_appletvsimulator = $(WK_OPENGL_LDFLAGS_iphonesimulator);
-WK_OPENGL_LDFLAGS_macosx = -framework OpenGL;
+WK_OPENGL_LDFLAGS = $(WK_OPENGL_LDFLAGS_$(WK_COCOA_TOUCH));
+WK_OPENGL_LDFLAGS_ = -framework OpenGL;
+WK_OPENGL_LDFLAGS_cocoatouch = -framework OpenGLES;
 
 WK_PDFKIT_LDFLAGS = $(WK_PDFKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_PDFKIT_LDFLAGS_macosx = -framework PDFKit;
 WK_PDFKIT_LDFLAGS_maccatalyst = -framework PDFKit;
 WK_PDFKIT_LDFLAGS_iphoneos = -framework PDFKit;
 WK_PDFKIT_LDFLAGS_iphonesimulator = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_xros = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_xrsimulator = -framework PDFKit;
 
 WK_SYSTEM_LDFLAGS = $(WK_SYSTEM_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_SYSTEM_LDFLAGS_macosx = -framework System;
@@ -105,7 +103,7 @@ WK_IMAGEIO_LDFLAGS_MACOS_SINCE_1300 = -framework ImageIO;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
-OTHER_LDFLAGS = $(inherited) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebCore -framework WebKit -lWebCoreTestSupport -framework Metal -framework IOSurface $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) -framework Network -framework UniformTypeIdentifiers -framework CoreFoundation -framework CoreServices $(WK_BROWSERENGINEKIT_LDFLAGS) $(WK_HID_LDFLAGS) $(WK_IMAGEIO_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_SYSTEM_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_VISIONKITCORE_LDFLAGS) $(WK_WEBCORE_LDFLAGS) $(WK_REVEAL_LDFLAGS) $(OTHER_LDFLAGS_DELAY_INIT) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
+OTHER_LDFLAGS = $(inherited) -lgtest -lxml2 -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebCore -framework WebKit -lWebCoreTestSupport -framework Metal -framework IOSurface $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) -framework Network -framework UniformTypeIdentifiers -framework CoreFoundation -framework CoreServices $(WK_BROWSERENGINEKIT_LDFLAGS) $(WK_HID_LDFLAGS) $(WK_IMAGEIO_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_SYSTEM_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_VISIONKITCORE_LDFLAGS) $(WK_WEBCORE_LDFLAGS) $(WK_REVEAL_LDFLAGS) $(OTHER_LDFLAGS_DELAY_INIT) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
 
 OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*] = -Wl,-delay_framework,CoreTelephony;
 OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*17.*] = ;

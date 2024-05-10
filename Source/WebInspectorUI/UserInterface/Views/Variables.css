@@ -424,7 +424,7 @@ body {
         }
     }
     
-    &:not(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
+    &:is(.mac-platform):not(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
         /* keep in sync with `WI.undockedTitleAreaHeight` */
         --undocked-title-area-height: calc(22px / var(--zoom-factor));
     }

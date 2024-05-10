@@ -31,7 +31,6 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RemoteFrameClient.h>
 #include <WebCore/SecurityOriginData.h>
-#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -40,7 +39,6 @@ public:
     explicit WebRemoteFrameClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&& frameInvalidator);
     ~WebRemoteFrameClient();
 
-    ScopeExit<Function<void()>> takeFrameInvalidator() { return WTFMove(m_frameInvalidator); }
     void applyWebsitePolicies(WebsitePoliciesData&&) final;
 
 private:
@@ -59,7 +57,6 @@ private:
     void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) final;
     void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
 
-    ScopeExit<Function<void()>> m_frameInvalidator;
 };
 
 }

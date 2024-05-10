@@ -37,6 +37,10 @@ enum class ColorSpace : uint8_t;
 // Conversion function for typed colors.
 template<typename Output, typename Input> Output convertColor(const Input& color);
 
+// Conversion function for typed colors that carries forward missing component values
+// from analogous components in the input type.
+template<typename Output, typename Input> Output convertColorCarryingForwardMissing(const Input& color);
+
 // Conversion functions for raw color components with associated color spaces.
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace);
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace);
@@ -56,9 +60,74 @@ ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColor
 
 template<typename Output, typename Input, typename = void> struct ColorConversion;
 
-template<typename Output, typename Input> inline Output convertColor(const Input& color)
+template<typename Output, typename Input> Output convertColor(const Input& color)
 {
     return ColorConversion<CanonicalColorType<Output>, CanonicalColorType<Input>>::convert(color);
+}
+
+// MARK: Specialized converters
+
+// Looks for a an analogous component in `Output` of `Input[IndexInInput]`.
+// For example, take the following:
+//
+//   auto result = analogousComponentIndex<LCHA<float>, HSLA<float>, 0>;
+//
+// This returns "2", because the input component specified (the hue in HSLA)
+// is analogous to component "2" in the output (the hue in LCHA).
+//
+// If there is no analogous component, `std::nullopt` is returned.
+template<typename Output, typename Input, unsigned IndexInInput>
+constexpr std::optional<unsigned> analogousComponentIndex()
+{
+    if constexpr (IndexInInput == 3)
+        return 3; // Special case alpha, it always should carry forward.
+    else {
+        constexpr auto inputCategory = Input::Model::componentInfo[IndexInInput].category;
+        if constexpr (!inputCategory)
+            return std::nullopt;
+        else if constexpr (*inputCategory == Output::Model::componentInfo[0].category)
+            return 0;
+        else if constexpr (*inputCategory == Output::Model::componentInfo[1].category)
+            return 1;
+        else if constexpr (*inputCategory == Output::Model::componentInfo[2].category)
+            return 2;
+        else
+            return std::nullopt;
+    }
+}
+
+// Utility to update appropriate component in `output` if an analogous component
+// in `input` is missing (which is encoded as NaN in color types).
+template<typename Output, typename Input, unsigned IndexInInput>
+constexpr void tryToCarryForwardComponentIfMissing(const ColorComponents<float, 4>& input, ColorComponents<float, 4>& output)
+{
+    constexpr auto analogousComponentIndexInOutput = analogousComponentIndex<Output, Input, IndexInInput>();
+    if constexpr (analogousComponentIndexInOutput) {
+        if (std::isnan(input[IndexInInput]))
+            output[*analogousComponentIndexInOutput] = std::numeric_limits<float>::quiet_NaN();
+    }
+}
+
+// Performs color space conversion followed by carrying forward missing components
+// from `Input` for analogous components in `Output` as described by CSS Color 4
+// § 12. Color Interpolation, https://drafts.csswg.org/css-color-4/#interpolation.
+template<typename Output, typename Input> Output convertColorCarryingForwardMissing(const Input& color)
+{
+    if constexpr (std::is_same_v<Input, Output>)
+        return convertColor<Output>(color);
+    else if constexpr (std::is_same_v<typename Input::ComponentType, uint8_t> || std::is_same_v<typename Output::ComponentType, uint8_t>)
+        return convertColor<Output>(color);
+    else {
+        auto input = asColorComponents(color.unresolved());
+        auto output = asColorComponents(convertColor<Output>(color).unresolved());
+
+        tryToCarryForwardComponentIfMissing<Output, Input, 0>(input, output);
+        tryToCarryForwardComponentIfMissing<Output, Input, 1>(input, output);
+        tryToCarryForwardComponentIfMissing<Output, Input, 2>(input, output);
+        tryToCarryForwardComponentIfMissing<Output, Input, 3>(input, output);
+
+        return makeFromComponents<Output>(output);
+    }
 }
 
 // MARK: White Point.
@@ -190,7 +259,7 @@ template<typename ColorType> struct ColorConversion<ColorType, ColorType> {
 
 // MARK: DeltaE color difference algorithms.
 
-template<typename ColorType1, typename ColorType2> inline constexpr float computeDeltaEOK(ColorType1 color1, ColorType2 color2)
+template<typename ColorType1, typename ColorType2> constexpr float computeDeltaEOK(ColorType1 color1, ColorType2 color2)
 {
     // https://drafts.csswg.org/css-color/#color-difference-OK
 
@@ -344,7 +413,7 @@ public:
     }
 
 private:
-    static inline constexpr Output handleToFloatConversion(const Input& color)
+    static constexpr Output handleToFloatConversion(const Input& color)
     {
         static_assert(IsRGBBoundedType<Input>, "Only bounded ([0..1]) RGB color types support conversion to/from bytes.");
 
@@ -355,7 +424,7 @@ private:
             return convertColor<Output>(convertColor<InputWithReplacement>(color));
     }
 
-    static inline constexpr Output handleToByteConversion(const Input& color)
+    static constexpr Output handleToByteConversion(const Input& color)
     {
         static_assert(IsRGBBoundedType<Output>, "Only bounded ([0..1]) RGB color types support conversion to/from bytes.");
 
@@ -366,29 +435,29 @@ private:
             return convertColor<Output>(convertColor<OutputWithReplacement>(color));
     }
 
-    template<typename ColorType> static inline constexpr auto toLinearEncoded(const ColorType& color) -> typename ColorType::LinearCounterpart
+    template<typename ColorType> static constexpr auto toLinearEncoded(const ColorType& color) -> typename ColorType::LinearCounterpart
     {
         auto [c1, c2, c3, alpha] = color.resolved();
         return { ColorType::TransferFunction::toLinear(c1), ColorType::TransferFunction::toLinear(c2), ColorType::TransferFunction::toLinear(c3), alpha };
     }
 
-    template<typename ColorType> static inline constexpr auto toGammaEncoded(const ColorType& color) -> typename ColorType::GammaEncodedCounterpart
+    template<typename ColorType> static constexpr auto toGammaEncoded(const ColorType& color) -> typename ColorType::GammaEncodedCounterpart
     {
         auto [c1, c2, c3, alpha] = color.resolved();
         return { ColorType::TransferFunction::toGammaEncoded(c1), ColorType::TransferFunction::toGammaEncoded(c2), ColorType::TransferFunction::toGammaEncoded(c3), alpha };
     }
 
-    template<typename ColorType> static inline constexpr auto toExtended(const ColorType& color) -> typename ColorType::ExtendedCounterpart
+    template<typename ColorType> static constexpr auto toExtended(const ColorType& color) -> typename ColorType::ExtendedCounterpart
     {
         return makeFromComponents<typename ColorType::ExtendedCounterpart>(asColorComponents(color.resolved()));
     }
 
-    template<typename ColorType> static inline constexpr auto toBounded(const ColorType& color) -> typename ColorType::BoundedCounterpart
+    template<typename ColorType> static constexpr auto toBounded(const ColorType& color) -> typename ColorType::BoundedCounterpart
     {
         return ClipGamutMapping::mapToBoundedGamut(color);
     }
 
-    static inline constexpr Output handleRGBFamilyConversion(const Input& color)
+    static constexpr Output handleRGBFamilyConversion(const Input& color)
     {
         static_assert(IsSameRGBTypeFamily<Output, Input>);
 
@@ -430,7 +499,7 @@ private:
         return boundsConversion(gammaConversion(color));
     }
 
-    static inline constexpr Output handleMatrixConversion(const Input& color)
+    static constexpr Output handleMatrixConversion(const Input& color)
     {
         static_assert((IsRGBLinearEncodedType<Input> && IsRGBExtendedType<Input>) || IsXYZA<Input>);
         static_assert((IsRGBLinearEncodedType<Output> && IsRGBExtendedType<Output>) || IsXYZA<Output>);

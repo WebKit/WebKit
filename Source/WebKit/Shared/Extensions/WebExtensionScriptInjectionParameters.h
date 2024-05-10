@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "APIData.h"
+#include <WebCore/UserStyleSheetTypes.h>
 #include <wtf/Forward.h>
 
 namespace WebKit {
@@ -44,6 +45,7 @@ struct WebExtensionScriptInjectionParameters {
     std::optional<String> function;
 
     WebExtensionContentWorldType world { WebExtensionContentWorldType::ContentScript };
+    WebCore::UserStyleLevel styleLevel { WebCore::UserStyleLevel::Author };
 };
 
 } // namespace WebKit

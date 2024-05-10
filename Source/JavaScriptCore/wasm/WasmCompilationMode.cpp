@@ -31,32 +31,32 @@
 
 namespace JSC { namespace Wasm {
 
-const char* makeString(CompilationMode mode)
+ASCIILiteral makeString(CompilationMode mode)
 {
     switch (mode) {
     case CompilationMode::IPIntMode:
-        return "IPInt";
+        return "IPInt"_s;
     case CompilationMode::LLIntMode:
-        return "LLInt";
+        return "LLInt"_s;
     case CompilationMode::BBQMode:
-        return "BBQ";
+        return "BBQ"_s;
     case CompilationMode::BBQForOSREntryMode:
-        return "BBQForOSREntry";
+        return "BBQForOSREntry"_s;
     case CompilationMode::OMGMode:
-        return "OMG";
+        return "OMG"_s;
     case CompilationMode::OMGForOSREntryMode:
-        return "OMGForOSREntry";
+        return "OMGForOSREntry"_s;
     case CompilationMode::JSEntrypointJITMode:
-        return "JSEntrypoint";
+        return "JSEntrypoint"_s;
     case CompilationMode::JSEntrypointInterpreterMode:
-        return "JSEntrypointInterpreter";
+        return "JSEntrypointInterpreter"_s;
     case CompilationMode::JSToWasmICMode:
-        return "JSToWasmIC";
+        return "JSToWasmIC"_s;
     case CompilationMode::WasmToJSMode:
-        return "WasmToJS";
+        return "WasmToJS"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return "";
+    return ""_s;
 }
 
 } } // namespace JSC::Wasm

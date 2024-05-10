@@ -2923,7 +2923,7 @@ void RenderStyle::setFontItalic(std::optional<FontSelectionValue> value)
     fontCascade().update(selector);
 }
 
-void RenderStyle::setFontPalette(FontPalette value)
+void RenderStyle::setFontPalette(const FontPalette& value)
 {
     auto selector = fontCascade().fontSelector();
     auto description = fontDescription();

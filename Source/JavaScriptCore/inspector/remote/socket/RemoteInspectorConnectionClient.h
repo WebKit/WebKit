@@ -45,7 +45,7 @@ public:
 
     std::optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort);
     std::optional<ConnectionID> createClient(PlatformSocketType);
-    void send(ConnectionID, const uint8_t* data, size_t);
+    void send(ConnectionID, std::span<const uint8_t>);
 
     void didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&&) final;
 

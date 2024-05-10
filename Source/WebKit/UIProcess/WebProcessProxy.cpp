@@ -488,6 +488,7 @@ void WebProcessProxy::initializePreferencesForNetworkProcess(const WebPreference
     ASSERT(!m_preferencesForNetworkProcess);
     m_preferencesForNetworkProcess = NetworkProcessPreferencesForWebProcess {
         preferences.getBoolValueForKey(WebPreferencesKey::webTransportEnabledKey()),
+        processPool().usesSingleWebProcess(),
     };
 }
 

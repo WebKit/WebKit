@@ -1987,26 +1987,25 @@ bool WebExtensionContext::isValidTab(const WebExtensionTab& tab)
     return tab.isValid() && tab.extensionContext() == this && m_tabMap.get(tab.identifier()) == &tab;
 }
 
-WebExtensionContext::WindowVector WebExtensionContext::openWindows() const
+WebExtensionContext::WindowVector WebExtensionContext::openWindows(IgnoreExtensionAccess ignoreExtensionAccess) const
 {
-    return WTF::map(m_windowOrderVector, [&](auto& identifier) -> Ref<WebExtensionWindow> {
+    return WTF::compactMap(m_windowOrderVector, [&](auto& identifier) -> std::optional<Ref<WebExtensionWindow>> {
         RefPtr window = m_windowMap.get(identifier);
         ASSERT(window && window->isOpen());
+
+        if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !window->extensionHasAccess())
+            return std::nullopt;
         return *window;
     });
 }
 
-WebExtensionContext::TabVector WebExtensionContext::openTabs() const
+WebExtensionContext::TabVector WebExtensionContext::openTabs(IgnoreExtensionAccess ignoreExtensionAccess) const
 {
-    TabVector result;
-    result.reserveInitialCapacity(m_tabMap.size());
-
-    for (Ref tab : m_tabMap.values()) {
-        if (tab->isOpen())
-            result.append(WTFMove(tab));
-    }
-
-    return result;
+    return WTF::compactMap(m_tabMap, [&](auto& entry) -> std::optional<Ref<WebExtensionTab>> {
+        if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !entry.value->extensionHasAccess())
+            return std::nullopt;
+        return entry.value;
+    });
 }
 
 RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow(IgnoreExtensionAccess ignoreExtensionAccess) const
@@ -3526,14 +3525,20 @@ URL WebExtensionContext::inspectorBackgroundPageURL() const
 
 WebExtensionContext::InspectorTabVector WebExtensionContext::openInspectors(Function<bool(WebExtensionTab&, WebInspectorUIProxy&)>&& predicate) const
 {
+    ASSERT(isLoaded());
+
+    if (!extension().hasInspectorBackgroundPage())
+        return { };
+
     InspectorTabVector result;
 
     for (Ref tab : openTabs()) {
-        if (!tab->extensionHasAccess())
-            continue;
-
         for (WKWebView *webView in tab->webViews()) {
-            Ref inspector = *webView._inspector->_inspector;
+            auto *webInspector = webView._inspector;
+            if (!webInspector)
+                continue;
+
+            Ref inspector = *webInspector->_inspector;
             if (inspector->isVisible() && (!predicate || predicate(tab, inspector)))
                 result.append({ inspector, tab.ptr() });
         }
@@ -3544,14 +3549,24 @@ WebExtensionContext::InspectorTabVector WebExtensionContext::openInspectors(Func
 
 WebExtensionContext::InspectorTabVector WebExtensionContext::loadedInspectors() const
 {
+    ASSERT(isLoaded());
+
+    if (!extension().hasInspectorBackgroundPage())
+        return { };
+
     InspectorTabVector result;
+
     for (auto entry : m_inspectorBackgroundPageMap)
         result.append({ entry.key, getTab(std::get<WebExtensionTabIdentifier>(entry.value)) });
+
     return result;
 }
 
 RefPtr<API::InspectorExtension> WebExtensionContext::inspectorExtension(WebPageProxyIdentifier webPageProxyIdentifier) const
 {
+    ASSERT(isLoaded());
+    ASSERT(extension().hasInspectorBackgroundPage());
+
     RefPtr<WebInspectorUIProxy> foundInspector;
 
     for (auto entry : m_inspectorBackgroundPageMap) {
@@ -3575,6 +3590,9 @@ RefPtr<API::InspectorExtension> WebExtensionContext::inspectorExtension(WebPageP
 
 RefPtr<WebInspectorUIProxy> WebExtensionContext::inspector(const API::InspectorExtension& inspectorExtension) const
 {
+    ASSERT(isLoaded());
+    ASSERT(extension().hasInspectorBackgroundPage());
+
     for (auto entry : m_inspectorExtensionMap) {
         if (entry.value.ptr() == &inspectorExtension)
             return &entry.key;
@@ -3585,10 +3603,10 @@ RefPtr<WebInspectorUIProxy> WebExtensionContext::inspector(const API::InspectorE
 
 HashSet<Ref<WebProcessProxy>> WebExtensionContext::processes(const API::InspectorExtension& inspectorExtension) const
 {
-    HashSet<Ref<WebProcessProxy>> result;
+    ASSERT(isLoaded());
+    ASSERT(extension().hasInspectorBackgroundPage());
 
-    if (!isLoaded())
-        return result;
+    HashSet<Ref<WebProcessProxy>> result;
 
     RefPtr inspectorProxy = inspector(inspectorExtension);
     if (!inspectorProxy)
@@ -3606,6 +3624,11 @@ HashSet<Ref<WebProcessProxy>> WebExtensionContext::processes(const API::Inspecto
 
 bool WebExtensionContext::isInspectorBackgroundPage(WKWebView *webView) const
 {
+    ASSERT(isLoaded());
+
+    if (!extension().hasInspectorBackgroundPage())
+        return false;
+
     for (auto entry : m_inspectorBackgroundPageMap) {
         if (webView == std::get<RetainPtr<WKWebView>>(entry.value))
             return true;
@@ -3616,13 +3639,7 @@ bool WebExtensionContext::isInspectorBackgroundPage(WKWebView *webView) const
 
 bool WebExtensionContext::isDevToolsMessageAllowed()
 {
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    if (!isLoaded())
-        return false;
-    return extension().hasInspectorBackgroundPage();
-#else
-    return false;
-#endif
+    return isLoaded() && extension().hasInspectorBackgroundPage();
 }
 
 void WebExtensionContext::loadInspectorBackgroundPagesDuringLoad()
@@ -3998,6 +4015,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         auto injectionTime = toImpl(injectedContentData.injectionTime);
         auto waitForNotification = WebCore::WaitForNotificationBeforeInjecting::No;
         Ref executionWorld = toContentWorld(injectedContentData.contentWorldType);
+        auto styleLevel = injectedContentData.styleLevel;
 
         auto scriptID = injectedContentData.identifier;
         bool isRegisteredScript = !scriptID.isEmpty();
@@ -4028,7 +4046,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             if (!styleSheetString)
                 continue;
 
-            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, WebCore::UserStyleLevel::User, std::nullopt }, executionWorld);
+            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, styleLevel, std::nullopt }, executionWorld);
             originInjectedStyleSheets.append(userStyleSheet);
 
             for (auto& userContentController : userContentControllers)

@@ -61,4 +61,4 @@ async function test() {
 }
 noInline(test)
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

@@ -2902,7 +2902,7 @@ void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& 
         paintFlags.add(PaintLayerFlag::TemporaryClipRects);
     }
 
-    if (viewportConstrainedNotCompositedReason() == NotCompositedForBoundsOutOfView) {
+    if (viewportConstrainedNotCompositedReason() == NotCompositedForBoundsOutOfView && !(paintingInfo.paintBehavior & PaintBehavior::Snapshotting)) {
         // Don't paint out-of-view viewport constrained layers (when doing prepainting) because they will never be visible
         // unless their position or viewport size is changed.
         ASSERT(renderer().isFixedPositioned());
@@ -3514,8 +3514,12 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
 #endif
 
     for (auto* childLayer : layerIterator) {
-        if (paintFlags.contains(PaintLayerFlag::PaintingSkipDescendantViewTransition) && childLayer->renderer().capturedInViewTransition() && !childLayer->renderer().isDocumentElementRenderer())
-            continue;
+        if (paintFlags.contains(PaintLayerFlag::PaintingSkipDescendantViewTransition)) {
+            if (childLayer->renderer().capturedInViewTransition() && !childLayer->renderer().isDocumentElementRenderer())
+                continue;
+            if (childLayer->renderer().isViewTransitionPseudo())
+                continue;
+        }
         childLayer->paintLayer(context, paintingInfo, paintFlags);
     }
 }

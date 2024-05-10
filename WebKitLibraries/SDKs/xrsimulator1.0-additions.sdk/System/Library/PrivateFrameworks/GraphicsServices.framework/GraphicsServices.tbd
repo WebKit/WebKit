@@ -1,0 +1,11 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices
+current-version: 14
+exports:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        symbols: [_GSCurrentEventTimestamp, _GSEventGetHardwareKeyboardCountry, _GSEventGetHardwareKeyboardType, _GSEventSetHardwareKeyboardAttachedWithCountryCodeAndType,
+                _GSEventIsHardwareKeyboardAttached, _GSEventSetHardwareKeyboardAttached, _GSInitialize, _GSKeyboardGetModifierState, 
+                _GSSystemRootDirectory, _kGSEventHardwareKeyboardAvailabilityChangedNotification]
+...

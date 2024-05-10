@@ -271,16 +271,22 @@ LengthType Length::typeFromIndex(const IPCData& data)
 Length::Length(IPCData&& data)
     : m_type(typeFromIndex(data))
 {
-    WTF::switchOn(data, [&] (auto data) {
-        WTF::switchOn(data.value, [&] (float value) {
-            m_isFloat = true;
-            m_floatValue = value;
-        }, [&] (int value) {
-            m_isFloat = false;
-            m_intValue = value;
-        });
-        m_hasQuirk = data.hasQuirk;
-    }, [] (auto emptyData) requires std::is_empty_v<decltype(emptyData)> { });
+    WTF::switchOn(data,
+        [&] (auto data) {
+            WTF::switchOn(data.value,
+                [&] (float value) {
+                    m_isFloat = true;
+                    m_floatValue = value;
+                },
+                [&] (int value) {
+                    m_isFloat = false;
+                    m_intValue = value;
+                }
+            );
+            m_hasQuirk = data.hasQuirk;
+        },
+        []<typename EmptyData> (EmptyData) requires std::is_empty_v<EmptyData> { }
+    );
 }
 
 auto Length::ipcData() const -> IPCData

@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUPrimitiveTopology {
+] enum GPUPrimitiveTopology {
     "point-list",
     "line-list",
     "line-strip",

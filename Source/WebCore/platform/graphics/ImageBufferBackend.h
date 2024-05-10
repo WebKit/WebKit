@@ -101,7 +101,6 @@ public:
 
     struct Info {
         RenderingMode renderingMode;
-        bool canMapBackingStore;
         AffineTransform baseTransform;
         size_t memoryCost;
         size_t externalMemoryCost;
@@ -150,9 +149,9 @@ public:
     static constexpr bool isOriginAtBottomLeftCorner = false;
     virtual bool originAtBottomLeftCorner() const { return isOriginAtBottomLeftCorner; }
 
-    static constexpr bool canMapBackingStore = true;
     static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
 
+    virtual bool canMapBackingStore() const = 0;
     virtual void ensureNativeImagesHaveCopiedBackingStore() { }
 
     virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }

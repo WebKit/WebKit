@@ -126,8 +126,8 @@ void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines(VM& vm)
     while (srcIndex < m_routines.size()) {
         Routine routine = m_routines[srcIndex++];
         auto* stub = routine.routine;
-        if (!stub->m_ownerIsDead && stub->owner())
-            stub->m_ownerIsDead = !vm.heap.isMarked(stub->owner());
+        if (!stub->m_ownerIsDead)
+            stub->m_ownerIsDead = stub->removeDeadOwners(vm);
 
         // If the stub is running right now, we should keep it alive regardless of whether owner CodeBlock gets dead.
         // It is OK since we already marked all the related cells.

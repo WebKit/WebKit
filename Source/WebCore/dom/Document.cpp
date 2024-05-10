@@ -5253,6 +5253,12 @@ void Document::updateIsPlayingMedia()
 #endif
 }
 
+void Document::visibilityAdjustmentStateDidChange()
+{
+    for (auto& audioProducer : m_audioProducers)
+        audioProducer.visibilityAdjustmentStateDidChange();
+}
+
 void Document::pageMutedStateDidChange()
 {
     for (auto& audioProducer : m_audioProducers)
@@ -10500,6 +10506,13 @@ void Document::updateContentRelevancyForScrollIfNeeded(const Element& scrollAnch
 ViewTransition* Document::activeViewTransition() const
 {
     return m_activeViewTransition.get();
+}
+
+bool Document::activeViewTransitionCapturedDocumentElement() const
+{
+    if (m_activeViewTransition)
+        return m_activeViewTransition->documentElementIsCaptured();
+    return false;
 }
 
 void Document::setActiveViewTransition(RefPtr<ViewTransition>&& viewTransition)

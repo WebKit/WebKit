@@ -89,6 +89,10 @@ struct Format : public FormatBase
     // Need conversion between source format and this format?
     bool needConversion(angle::FormatID srcFormatId) const;
 
+    // Are the formats view compatible without requiring
+    // MTLTextureUsagePixelFormatView?
+    bool isViewCompatible(const Format &srcFormat) const;
+
     MTLPixelFormat metalFormat = MTLPixelFormatInvalid;
 
     LoadFunctionMap textureLoadFunctions       = nullptr;

@@ -23,6 +23,7 @@
 import os
 import json
 import time
+import sys
 
 from webkitcorepy import mocks
 from webkitscmpy import Commit, remote as scmremote
@@ -33,7 +34,7 @@ class BitBucket(mocks.Requests):
 
     def __init__(
         self, remote='bitbucket.example.com/projects/WEBKIT/repos/webkit', datafile=None,
-        default_branch='main', git_svn=False, statuses=None,
+        default_branch='main', git_svn=False, statuses=None, environment=None,
     ):
         if not scmremote.BitBucket.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid BitBucket remote'.format(remote))
@@ -44,6 +45,13 @@ class BitBucket(mocks.Requests):
         self.current_id = 1
 
         super(BitBucket, self).__init__(self.remote.split('/')[0])
+
+        prefix = self.hosts[0].replace('.', '_').upper()
+        self._environment = environment or mocks.Environment(**{
+            '{}_USERNAME'.format(prefix): 'username',
+            '{}_PASSWORD'.format(prefix): 'password',
+        })
+        self._username = self._environment.environ.get('{}_USERNAME'.format(prefix), 'timcommitter')
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
             self.commits = json.load(file)
@@ -67,6 +75,15 @@ class BitBucket(mocks.Requests):
         self.tags = {}
         self.pull_requests = []
         self.statuses = statuses or {}
+
+    def __enter__(self):
+        self._environment.__enter__()
+        return super(BitBucket, self).__enter__()
+
+    def __exit__(self, *args, **kwargs):
+        result = super(BitBucket, self).__exit__(*args, **kwargs)
+        self._environment.__exit__(*args, **kwargs)
+        return result
 
     def resolve_all_commits(self, branch):
         all_commits = self.commits[branch][:]
@@ -198,7 +215,7 @@ class BitBucket(mocks.Requests):
 
         stripped_url = url.split('://')[-1]
         if stripped_url == '{}/plugins/servlet/applinks/whoami'.format(self.hosts[0]):
-            return mocks.Response.fromText('timcommitter')
+            return mocks.Response.fromText(self._username)
 
         if stripped_url == '{}/rest/api/1.0/{}/branches/default'.format(self.hosts[0], self.project):
             return self._branches_default(url)
@@ -225,6 +242,7 @@ class BitBucket(mocks.Requests):
                 return mocks.Response.create404(url)
 
             if stripped_url.split('?')[0].endswith('diff'):
+                message_lines = commit.message.splitlines()
                 return mocks.Response.fromJson(dict(
                     fromHash=None,
                     toHash=commit.hash,
@@ -240,7 +258,11 @@ class BitBucket(mocks.Requests):
                             destinationSpan=0,
                             segments=[dict(
                                 type='ADDED',
-                                lines=[dict(line=line) for line in commit.message.splitlines()],
+                                lines=[dict(
+                                    line=message_lines[cnt],
+                                    source=1,
+                                    destination=cnt + 1,
+                                ) for cnt in range(len(message_lines))],
                             )],
                         )],
                     )],
@@ -279,7 +301,7 @@ class BitBucket(mocks.Requests):
                 at = (params or {}).get('at', None)
                 if at and candidate.get('fromRef', {}).get('id') != at:
                     continue
-                prs.append({key: value for key, value in candidate.items() if key != 'activities'})
+                prs.append({key: value for key, value in candidate.items() if key not in ('commit', 'activities')})
 
             return mocks.Response.fromJson(dict(
                 size=len(prs),
@@ -302,7 +324,7 @@ class BitBucket(mocks.Requests):
 
         # Update or access pull-request
         if stripped_url.startswith(pr_base):
-            split_url = stripped_url.split('/')
+            split_url = stripped_url.split('?')[0].split('/')
             number = int(split_url[9])
             existing = None
             for i in range(len(self.pull_requests)):
@@ -335,13 +357,43 @@ class BitBucket(mocks.Requests):
                 self.pull_requests[existing]['fromRef']['latestCommit'] = json['fromRef']['latestCommit']
                 self.pull_requests[existing]['toRef']['displayId'] = '/'.join(json['toRef']['id'].split('/')[-2:])
             if len(split_url) < 11:
-                return mocks.Response.fromJson({key: value for key, value in self.pull_requests[existing].items() if key != 'activities'})
+                return mocks.Response.fromJson({key: value for key, value in self.pull_requests[existing].items() if key not in ('commit', 'activities')})
 
             if method == 'GET' and split_url[-1] == 'activities':
                 return mocks.Response.fromJson(dict(
                     size=len(self.pull_requests[existing].get('activities', [])),
                     isLastPage=True,
                     values=self.pull_requests[existing].get('activities', []),
+                ))
+            if method == 'GET' and split_url[-1] == 'diff':
+                commit = self.pull_requests[existing].get('commit', None)
+                if not commit:
+                    return mocks.Response.create404(url)
+
+                message_lines = commit.message.splitlines()
+                return mocks.Response.fromJson(dict(
+                    fromHash=None,
+                    toHash=self.pull_requests[existing]['fromRef']['latestCommit'],
+                    contextLines=3,
+                    whitespace='SHOW',
+                    diffs=[dict(
+                        source=dict(toString='ChangeLog'),
+                        destination=dict(toString='ChangeLog'),
+                        hunks=[dict(
+                            sourceLine=1,
+                            sourceSpan=0,
+                            destinationLine=1,
+                            destinationSpan=0,
+                            segments=[dict(
+                                type='ADDED',
+                                lines=[dict(
+                                    line=message_lines[cnt],
+                                    source=1,
+                                    destination=cnt + 1,
+                                ) for cnt in range(len(message_lines))],
+                            )],
+                        )],
+                    )],
                 ))
             if method == 'POST' and split_url[-1] == 'comments':
                 comment = dict(
@@ -362,7 +414,10 @@ class BitBucket(mocks.Requests):
                     else:
                         return mocks.Response.create404(url)
                 else:
-                    self.pull_requests[existing]['activities'].append(dict(comment=comment))
+                    self.pull_requests[existing]['activities'].append(dict(
+                        comment=comment,
+                        commentAnchor=json.get('anchor'),
+                    ))
                 self.current_id += 1
                 return mocks.Response.fromJson({})
             if method == 'POST' and split_url[-1] == 'decline':

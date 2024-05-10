@@ -106,7 +106,7 @@ JSC_DEFINE_HOST_FUNCTION(callTemporalTimeZone, (JSGlobalObject* globalObject, Ca
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "TimeZone"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "TimeZone"_s));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalTimeZoneConstructorFuncFrom, (JSGlobalObject* globalObject, CallFrame* callFrame))

@@ -41,6 +41,7 @@
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
 #include "RenderInline.h"
+#include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
@@ -696,6 +697,48 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
     invalidateRebuildRootIfNeeded(text);
 }
 
+static void repaintBeforeTearDown(const Element& root, auto composedTreeDescendantsIterator)
+{
+    auto* destroyRootRenderer = root.renderer();
+    if (destroyRootRenderer && destroyRootRenderer->renderTreeBeingDestroyed())
+        return;
+
+    auto repaint = [&](auto& renderer) {
+        if (renderer.isBody()) {
+            renderer.view().repaintRootContents();
+            return;
+        }
+        // When repaint is propagated to our layer, we have to force it here on destroy as this layer will no be around to issue it _affter_ layout.
+        auto* rendererLayerObject = dynamicDowncast<RenderLayerModelObject>(renderer);
+        if (!rendererLayerObject || !rendererLayerObject->layer() || !rendererLayerObject->layer()->needsFullRepaint()) {
+            renderer.repaint();
+            return;
+        }
+        renderer.repaint(RenderObject::ForceRepaint::Yes);
+    };
+
+    if (destroyRootRenderer)
+        repaint(*destroyRootRenderer);
+
+    for (auto it = composedTreeDescendantsIterator.begin(), end = composedTreeDescendantsIterator.end(); it != end; ++it) {
+        auto* element = dynamicDowncast<Element>(*it);
+        if (!element || !element->renderer())
+            continue;
+        auto& renderer = *element->renderer();
+        auto shouldRepaint = [&] {
+            if (!renderer.everHadLayout())
+                return false;
+            if (renderer.isOutOfFlowPositioned())
+                return true;
+            if (renderer.isFloating() || renderer.isPositioned())
+                return !destroyRootRenderer || !destroyRootRenderer->hasNonVisibleOverflow();
+            return false;
+        };
+        if (shouldRepaint())
+            renderer.repaint();
+    }
+}
+
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType, RenderTreeBuilder& builder)
 {
     Vector<Element*, 30> teardownStack;
@@ -763,11 +806,12 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     push(root);
 
     auto descendants = composedTreeDescendants(root);
+    repaintBeforeTearDown(root, descendants);
     for (auto it = descendants.begin(), end = descendants.end(); it != end; ++it) {
         pop(it.depth());
 
         if (auto* text = dynamicDowncast<Text>(*it)) {
-            tearDownTextRenderer(*text, &root, builder);
+            tearDownTextRenderer(*text, &root, builder, NeedsRepaint::No);
             continue;
         }
 
@@ -779,11 +823,13 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     tearDownLeftoverPaginationRenderersIfNeeded(root, builder);
 }
 
-void RenderTreeUpdater::tearDownTextRenderer(Text& text, const ContainerNode* root, RenderTreeBuilder& builder)
+void RenderTreeUpdater::tearDownTextRenderer(Text& text, const ContainerNode* root, RenderTreeBuilder& builder, NeedsRepaint needsRepaint)
 {
     auto* renderer = text.renderer();
     if (!renderer)
         return;
+    if (needsRepaint == NeedsRepaint::Yes)
+        renderer->repaint();
     builder.destroyAndCleanUpAnonymousWrappers(*renderer, root ? root->renderer() : nullptr);
     text.setRenderer(nullptr);
 }
@@ -806,7 +852,7 @@ void RenderTreeUpdater::tearDownLeftoverChildrenOfComposedTree(Element& element,
         if (!child->renderer())
             continue;
         if (auto* text = dynamicDowncast<Text>(*child)) {
-            tearDownTextRenderer(*text, &element, builder);
+            tearDownTextRenderer(*text, &element, builder, NeedsRepaint::No);
             continue;
         }
         if (auto* element = dynamicDowncast<Element>(*child))

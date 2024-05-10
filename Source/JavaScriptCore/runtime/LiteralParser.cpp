@@ -867,8 +867,43 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserT
             while (m_ptr < m_end && isSafeStringCharacterForIdentifier<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
                 ++m_ptr;
         } else {
-            while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
-                ++m_ptr;
+            ([&]() ALWAYS_INLINE_LAMBDA {
+#if CPU(ARM64) || CPU(X86_64)
+                constexpr size_t stride = 16 / sizeof(CharType);
+                using UnsignedType = std::make_unsigned_t<CharType>;
+                if (static_cast<size_t>(m_end - m_ptr) >= stride) {
+                    constexpr auto quoteMask = WTF::splatBulk(static_cast<UnsignedType>('"'));
+                    constexpr auto escapeMask = WTF::splatBulk(static_cast<UnsignedType>('\\'));
+                    constexpr auto controlMask = WTF::splatBulk(static_cast<UnsignedType>(' '));
+                    for (; m_ptr + (stride - 1) < m_end; m_ptr += stride) {
+                        auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(m_ptr));
+                        auto quotes = WTF::equalBulk(input, quoteMask);
+                        auto escapes = WTF::equalBulk(input, escapeMask);
+                        auto controls = WTF::lessThanBulk(input, controlMask);
+                        auto mask = WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls));
+                        if (WTF::isNonZeroBulk(mask)) {
+                            m_ptr += WTF::findFirstNonZeroIndexBulk(mask);
+                            return;
+                        }
+                    }
+                    if (m_ptr < m_end) {
+                        auto input = WTF::loadBulk(bitwise_cast<const UnsignedType*>(m_end - stride));
+                        auto quotes = WTF::equalBulk(input, quoteMask);
+                        auto escapes = WTF::equalBulk(input, escapeMask);
+                        auto controls = WTF::lessThanBulk(input, controlMask);
+                        auto mask = WTF::mergeBulk(quotes, WTF::mergeBulk(escapes, controls));
+                        if (WTF::isNonZeroBulk(mask)) {
+                            m_ptr = m_end - stride + WTF::findFirstNonZeroIndexBulk(mask);
+                            return;
+                        }
+                        m_ptr = m_end;
+                    }
+                    return;
+                }
+#endif
+                while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
+                    ++m_ptr;
+            }());
         }
     } else {
         while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Sloppy>(*m_ptr, terminator))

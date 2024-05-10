@@ -53,8 +53,6 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-static constexpr size_t smallTreeThreshold = 8;
-
 static std::unique_ptr<RenderStyle> firstLineStyleFor(const RenderObject& renderer)
 {
     auto& firstLineStyle = renderer.firstLineStyle();

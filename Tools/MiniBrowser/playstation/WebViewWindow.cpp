@@ -87,13 +87,14 @@ WebViewWindow::WebViewWindow(WKPageConfigurationRef configuration, Client&& wind
     m_preferences = WKPreferencesCreateCopy(m_context->preferences());
     WKPageConfigurationSetPreferences(configuration, m_preferences.get());
 
-    WKPreferencesSetAcceleratedCompositingEnabled(m_preferences.get(), false);
     WKPreferencesSetFullScreenEnabled(m_preferences.get(), true);
 
 #if defined(USE_WPE_BACKEND_PLAYSTATION) && USE_WPE_BACKEND_PLAYSTATION
+    WKPreferencesSetAcceleratedCompositingEnabled(m_preferences.get(), true);
     m_window = std::make_unique<WPEToolingBackends::HeadlessViewBackend>(1920, 1080);
     m_view = WKViewCreateWPE(m_window->backend(), configuration);
 #else
+    WKPreferencesSetAcceleratedCompositingEnabled(m_preferences.get(), false);
     m_view = WKViewCreate(configuration);
 #endif
     m_context->addWindow(this);

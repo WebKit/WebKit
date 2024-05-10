@@ -269,7 +269,7 @@ static std::optional<FailedCheck> reorder(AST::Declaration::List& list)
             // variables with the same name), while the type checker will also identify
             // redeclarations of different types (e.g. a variable and a struct with the
             // same name)
-            return FailedCheck { Vector<Error> { Error(makeString("redeclaration of '", node.name(), "'"), node.span()) }, { } };
+            return FailedCheck { Vector<Error> { Error(makeString("redeclaration of '"_s, node.name(), '\''), node.span()) }, { } };
         }
         graphNodeList.append(graphNode);
     }
@@ -328,11 +328,11 @@ static std::optional<FailedCheck> reorder(AST::Declaration::List& list)
             break;
         }
     }
-    error.append("encountered a dependency cycle: ", cycleNode->astNode().name());
+    error.append("encountered a dependency cycle: "_s, cycleNode->astNode().name());
     do {
         ASSERT(!node->outgoingEdges().isEmpty());
         node = &node->outgoingEdges().first().target();
-        error.append(" -> ", node->astNode().name());
+        error.append(" -> "_s, node->astNode().name());
     } while (node != cycleNode);
     return FailedCheck { Vector<Error> { Error(error.toString(), cycleNode->astNode().span()) }, { } };
 }

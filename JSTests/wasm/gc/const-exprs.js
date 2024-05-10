@@ -345,7 +345,7 @@ async function testElementConstExprs() {
   }
 }
 
-assert.asyncTest(testGCConstExprs());
-assert.asyncTest(testInvalidConstExprs());
-assert.asyncTest(testConstExprGlobalOrdering())
-assert.asyncTest(testElementConstExprs());
+await assert.asyncTest(testGCConstExprs());
+await assert.asyncTest(testInvalidConstExprs());
+await assert.asyncTest(testConstExprGlobalOrdering())
+await assert.asyncTest(testElementConstExprs());

@@ -108,8 +108,9 @@ public:
 
     void rollbackForVersionChangeAbort();
 
-    void ref();
-    void deref();
+    // ActiveDOMObject.
+    void ref() const final;
+    void deref() const final;
 
     template<typename Visitor> void visitReferencedIndexes(Visitor&) const;
     void renameReferencedIndex(IDBIndex&, const String& newName);

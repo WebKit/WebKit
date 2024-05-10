@@ -116,12 +116,12 @@ void AudioDestinationNode::renderQuantum(AudioBus* destinationBus, size_t number
         workletGlobalScope->handlePostRenderTasks(m_currentSampleFrame);
 }
 
-void AudioDestinationNode::ref()
+void AudioDestinationNode::ref() const
 {
     context().ref();
 }
 
-void AudioDestinationNode::deref()
+void AudioDestinationNode::deref() const
 {
     context().deref();
 }

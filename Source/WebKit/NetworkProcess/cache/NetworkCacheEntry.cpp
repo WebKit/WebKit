@@ -231,34 +231,34 @@ void Entry::setNeedsValidation(bool value)
 
 void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
 {
-    json.append("{\n"
-        "\"hash\": ");
+    json.append("{\n"_s
+        "\"hash\": "_s);
     json.appendQuotedJSONString(m_key.hashAsString());
-    json.append(",\n"
-        "\"bodySize\": ", info.bodySize, ",\n"
-        "\"worth\": ", info.worth, ",\n"
-        "\"partition\": ");
+    json.append(",\n"_s
+        "\"bodySize\": "_s, info.bodySize, ",\n"_s
+        "\"worth\": "_s, info.worth, ",\n"_s
+        "\"partition\": "_s);
     json.appendQuotedJSONString(m_key.partition());
-    json.append(",\n"
-        "\"timestamp\": ", m_timeStamp.secondsSinceEpoch().milliseconds(), ",\n"
-        "\"URL\": ");
+    json.append(",\n"_s
+        "\"timestamp\": "_s, m_timeStamp.secondsSinceEpoch().milliseconds(), ",\n"_s
+        "\"URL\": "_s);
     json.appendQuotedJSONString(m_response.url().string());
-    json.append(",\n"
-        "\"bodyHash\": ");
+    json.append(",\n"_s
+        "\"bodyHash\": "_s);
     json.appendQuotedJSONString(info.bodyHash);
-    json.append(",\n"
-        "\"bodyShareCount\": ", info.bodyShareCount, ",\n"
-        "\"headers\": {\n");
+    json.append(",\n"_s
+        "\"bodyShareCount\": "_s, info.bodyShareCount, ",\n"_s
+        "\"headers\": {\n"_s);
     bool firstHeader = true;
     for (auto& header : m_response.httpHeaderFields()) {
-        json.append(std::exchange(firstHeader, false) ? "" : ",\n", "    ");
+        json.append(std::exchange(firstHeader, false) ? ""_s : ",\n"_s, "    "_s);
         json.appendQuotedJSONString(header.key);
-        json.append(": ");
+        json.append(": "_s);
         json.appendQuotedJSONString(header.value);
     }
-    json.append("\n"
-        "}\n"
-        "}");
+    json.append("\n"_s
+        "}\n"_s
+        "}"_s);
 }
 
 }

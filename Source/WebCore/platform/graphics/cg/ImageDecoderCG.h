@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ImageDecoder.h"
+#include <atomic>
 
 #if USE(CG)
 
@@ -83,6 +84,7 @@ private:
 #endif
     
     bool m_isAllDataReceived { false };
+    std::atomic<bool> m_isXBitmapImage { false };
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
     String m_uti;
     RetainPtr<CGImageSourceRef> m_nativeDecoder;

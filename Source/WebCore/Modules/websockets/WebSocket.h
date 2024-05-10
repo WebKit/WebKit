@@ -94,8 +94,9 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit WebSocket(ScriptExecutionContext&);
@@ -103,6 +104,8 @@ private:
     void dispatchErrorEventIfNeeded();
 
     void contextDestroyed() final;
+
+    // ActiveDOMObject.
     void suspend(ReasonForSuspension) final;
     void resume() final;
     void stop() final;

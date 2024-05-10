@@ -1,0 +1,13 @@
+<style>
+#container {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+}
+</style>
+<div id=container><div>PASS<div>if this is not<div>visible</div></div>
+<script>
+document.body.offsetHeight;
+container.style.webkitLineClamp = "1";
+</script>

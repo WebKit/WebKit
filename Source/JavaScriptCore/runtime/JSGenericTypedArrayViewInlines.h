@@ -579,7 +579,7 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
     if (std::optional<uint32_t> index = parseIndex(propertyName)) {
-        auto throwTypeErrorIfNeeded = [&] (const char* errorMessage) -> bool {
+        auto throwTypeErrorIfNeeded = [&] (ASCIILiteral errorMessage) -> bool {
             if (shouldThrow)
                 throwTypeError(globalObject, scope, makeString(errorMessage, *index));
             return false;
@@ -589,19 +589,19 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
             return typeError(globalObject, scope, shouldThrow, typedArrayBufferHasBeenDetachedErrorMessage);
 
         if (!thisObject->inBounds(index.value()))
-            return throwTypeErrorIfNeeded("Attempting to store out-of-bounds property on a typed array at index: ");
+            return throwTypeErrorIfNeeded("Attempting to store out-of-bounds property on a typed array at index: "_s);
 
         if (descriptor.isAccessorDescriptor())
-            return throwTypeErrorIfNeeded("Attempting to store accessor property on a typed array at index: ");
+            return throwTypeErrorIfNeeded("Attempting to store accessor property on a typed array at index: "_s);
 
         if (descriptor.configurablePresent() && !descriptor.configurable())
-            return throwTypeErrorIfNeeded("Attempting to store non-configurable property on a typed array at index: ");
+            return throwTypeErrorIfNeeded("Attempting to store non-configurable property on a typed array at index: "_s);
 
         if (descriptor.enumerablePresent() && !descriptor.enumerable())
-            return throwTypeErrorIfNeeded("Attempting to store non-enumerable property on a typed array at index: ");
+            return throwTypeErrorIfNeeded("Attempting to store non-enumerable property on a typed array at index: "_s);
 
         if (descriptor.writablePresent() && !descriptor.writable())
-            return throwTypeErrorIfNeeded("Attempting to store non-writable property on a typed array at index: ");
+            return throwTypeErrorIfNeeded("Attempting to store non-writable property on a typed array at index: "_s);
 
         scope.release();
         if (descriptor.value())

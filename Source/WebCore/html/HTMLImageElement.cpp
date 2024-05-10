@@ -675,7 +675,7 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
         StringBuilder result;
         for (const auto& candidate : imageCandidates) {
             if (&candidate != &imageCandidates[0])
-                result.append(", ");
+                result.append(", "_s);
             result.append(resolveURLStringIfNeeded(candidate.string.toString(), resolveURLs, base));
             if (candidate.density != UninitializedDescriptor)
                 result.append(' ', candidate.density, 'x');

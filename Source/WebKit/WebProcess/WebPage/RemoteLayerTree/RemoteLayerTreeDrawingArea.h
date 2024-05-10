@@ -104,8 +104,8 @@ private:
     void setLayerTreeStateIsFrozen(bool) final;
     bool layerTreeStateIsFrozen() const final { return m_isRenderingSuspended; }
 
-    void forceRepaint() final;
-    void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) final;
+    void updateRenderingWithForcedRepaint() final;
+    void updateRenderingWithForcedRepaintAsync(WebPage&, CompletionHandler<void()>&&) final;
 
     void setViewExposedRect(std::optional<WebCore::FloatRect>) final;
     std::optional<WebCore::FloatRect> viewExposedRect() const final { return m_viewExposedRect; }

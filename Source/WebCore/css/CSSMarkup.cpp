@@ -141,7 +141,7 @@ String serializeString(const String& string)
 String serializeURL(const String& string)
 {
     StringBuilder builder;
-    builder.append("url(");
+    builder.append("url("_s);
     serializeString(string, builder);
     builder.append(')');
     return builder.toString();

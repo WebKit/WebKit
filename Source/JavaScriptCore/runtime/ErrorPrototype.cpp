@@ -124,7 +124,7 @@ JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, 
         return JSValue::encode(name.isString() ? name : jsString(vm, WTFMove(nameString)));
 
     // 10. Return the result of concatenating name, ":", a single space character, and msg.
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, nameString, ": ", messageString)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, nameString, ": "_s, messageString)));
 }
 
 } // namespace JSC

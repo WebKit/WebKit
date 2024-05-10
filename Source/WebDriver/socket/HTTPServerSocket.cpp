@@ -107,28 +107,27 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
 void HTTPRequestHandler::sendResponse(HTTPRequestHandler::Response&& response)
 {
     auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
-    auto packet = packHTTPMessage(WTFMove(response));
-    endpoint.send(m_client.value(), packet.utf8().data(), packet.length());
+    endpoint.send(m_client.value(), packHTTPMessage(WTFMove(response)).utf8().span());
     reset();
 }
 
 String HTTPRequestHandler::packHTTPMessage(HTTPRequestHandler::Response&& response) const
 {
     StringBuilder builder;
-    const char* EOL = "\r\n";
+    auto EOL = "\r\n"_s;
 
-    builder.append("HTTP/1.0 ", response.statusCode, ' ', response.statusCode == 200 ? "OK" : "ERROR", EOL);
+    builder.append("HTTP/1.0 "_s, response.statusCode, ' ', response.statusCode == 200 ? "OK"_s : "ERROR"_s, EOL);
 
     if (!response.data.isNull()) {
-        builder.append("Content-Type: ", response.contentType, EOL,
-            "Content-Length: ", response.data.length(), EOL,
-            "Cache-Control: no-cache", EOL);
+        builder.append("Content-Type: "_s, response.contentType, EOL,
+            "Content-Length: "_s, response.data.length(), EOL,
+            "Cache-Control: no-cache"_s, EOL);
     }
 
     builder.append(EOL);
 
     if (!response.data.isNull())
-        builder.append(response.data.data());
+        builder.append(response.data.span());
 
     return builder.toString();
 }
