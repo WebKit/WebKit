@@ -3,6 +3,7 @@ ARG WEBKIT_RELEASE_TYPE=Release
 ARG CPU=native
 ARG LTO_FLAG="-flto='full'"
 ARG LLVM_VERSION="16"
+ARG DEFAULT_CFLAGS="-mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -ffunction-sections -fdata-sections -fPIC"
 
 FROM bitnami/minideb:bullseye as base
 
@@ -11,6 +12,7 @@ ARG WEBKIT_RELEASE_TYPE
 ARG CPU
 ARG LTO_FLAG
 ARG LLVM_VERSION
+ARG DEFAULT_CFLAGS
 
 RUN install_packages ca-certificates curl wget lsb-release software-properties-common gnupg gnupg1 gnupg2
 
@@ -61,7 +63,7 @@ RUN mkdir /icu && \
     tar -xf icu.tgz --strip-components=1 && \
     rm icu.tgz && \
     cd source && \
-    ./runConfigureICU Linux/clang --enable-static --disable-shared --with-data-packaging=static --disable-samples --disable-debug --enable-release && \
+    CFLAGS="${DEFAULT_CFLAGS} $CFLAGS" CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS" ./runConfigureICU Linux/clang --enable-static --disable-shared --with-data-packaging=static --disable-samples --disable-debug --enable-release && \
     make -j$(nproc) && \
     make install
 
@@ -79,8 +81,8 @@ ENV MARCH_FLAG=${MARCH_FLAG}
 ENV LTO_FLAG=${LTO_FLAG}
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="$CFLAGS -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer $LTO_FLAG" && \
-    export CXXFLAGS="$CXXFLAGS -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer $LTO_FLAG" && \
+    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG" && \
+    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG" && \
     cd /webkitbuild && \
     cmake \
     -DPORT="JSCOnly" \
