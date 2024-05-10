@@ -2584,10 +2584,51 @@ TEST(SiteIsolation, NavigateIframeToProvisionalNavigationFailure)
     // FIXME: Add tests navigating the iframe to each redirect_to_*_terminate.
 }
 
+TEST(SiteIsolation, CancelProvisionalLoad)
+{
+    HTTPServer server({
+        { "/main"_s, {
+            "<iframe id='testiframe' src='https://example.com/respond_quickly'></iframe>"
+            "<iframe src='https://example.com/respond_quickly'></iframe>"_s
+        } },
+        { "/respond_quickly"_s, { "hi"_s } },
+        { "/never_respond"_s, { HTTPResponse::Behavior::NeverSendResponse } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://webkit.org"_s,
+            { { RemoteFrame }, { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://example.com"_s }, { "https://example.com"_s } }
+        },
+    });
+
+    [webView evaluateJavaScript:
+        @"let i = document.getElementById('testiframe');"
+        "i.addEventListener('load', () => { alert('iframe loaded') });"
+        "i.src = 'https://webkit.org/never_respond';"
+        "setTimeout(()=>{ i.src = 'https://example.com/respond_quickly' }, Math.random() * 500)"
+        completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe loaded");
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://webkit.org"_s,
+            { { RemoteFrame }, { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://example.com"_s }, { "https://example.com"_s } }
+        },
+    });
+
+    // FIXME: Add tests for other combinations of provisional loads starting in the process the frame is already in,
+    // a new process we've never seen before, and the main frame process then starting another provisional load in
+    // those processes. Also, test these cases for provisional loads that respond after a short delay to give a chance
+    // that the load commits during the time another provisional navigation starts.
+}
+
 // FIXME: If a provisional load happens in a RemoteFrame with frame children, does anything clear out those
 // child frames when the load commits? Probably not. Needs a test.
-
-// FIXME: If we cancel a provisional load before it commits, we need another message to destroy this provisional frame.
 
 // FIXME: Add a test that verifies that provisional frames are not accessible via DOMWindow.frames.
 

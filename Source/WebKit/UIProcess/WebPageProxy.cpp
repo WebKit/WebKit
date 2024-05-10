@@ -4647,7 +4647,21 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         loadParameters.lockBackForwardList = LockBackForwardList::Yes;
 
         auto webPageID = webPageIDInProcess(newProcess);
-        frame.prepareForProvisionalNavigationInProcess(newProcess, navigation, m_browsingContextGroup, [loadParameters = WTFMove(loadParameters), newProcess = newProcess.copyRef(), webPageID, preventProcessShutdownScope = newProcess->shutdownPreventingScope()] () mutable {
+        frame.prepareForProvisionalLoadInProcess(newProcess, navigation, m_browsingContextGroup, [
+            this,
+            protectedThis = Ref { *this },
+            frame = Ref { frame },
+            loadParameters = WTFMove(loadParameters),
+            newProcess = newProcess.copyRef(),
+            webPageID,
+            preventProcessShutdownScope = newProcess->shutdownPreventingScope(),
+            navigation = Ref { navigation },
+            previousProvisionalLoadProcess = Ref { frame.provisionalLoadProcess() }
+        ] () mutable {
+            if (frame->frameLoadState().state() == FrameLoadState::State::Provisional && !navigation->currentRequestIsCrossSiteRedirect()) {
+                sendToWebPageInProcess(previousProvisionalLoadProcess, Messages::WebPage::DestroyProvisionalFrame(frame->frameID()));
+                frame->didFailProvisionalLoad();
+            }
             newProcess->send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), webPageID);
         });
         return;
@@ -5994,6 +6008,12 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     MESSAGE_CHECK(process, frame);
     MESSAGE_CHECK_URL(process, url);
     MESSAGE_CHECK_URL(process, unreachableURL);
+
+    // If a provisional load has since been started in another process, ignore this message.
+    if (frame->provisionalLoadProcess().coreProcessIdentifier() != process->coreProcessIdentifier()) {
+        ASSERT(m_preferences->siteIsolationEnabled());
+        return;
+    }
 
     // If the page starts a new main frame provisional load, then cancel any pending one in a provisional process.
     if (frame->isMainFrame() && m_provisionalPage && m_provisionalPage->mainFrame() != frame) {

@@ -425,7 +425,7 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
         setLayerHostingContextIdentifier(*parameters.layerHostingContextIdentifier);
 }
 
-void WebFrame::provisionalLoadFailed()
+void WebFrame::destroyProvisionalFrame()
 {
     if (RefPtr frame = std::exchange(m_provisionalFrame, nullptr)) {
         if (auto* client = toWebLocalFrameLoaderClient(frame->loader().client()))

@@ -684,7 +684,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
     if (LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFailLoad(m_frame.ptr(), error.isCancellation());
 
-    m_frame->provisionalLoadFailed();
+    m_frame->destroyProvisionalFrame();
 }
 
 void WebLocalFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)

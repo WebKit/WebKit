@@ -127,6 +127,17 @@ std::unique_ptr<ProvisionalFrameProxy> WebFrameProxy::takeProvisionalFrame()
     return std::exchange(m_provisionalFrame, nullptr);
 }
 
+WebProcessProxy& WebFrameProxy::provisionalLoadProcess()
+{
+    if (m_provisionalFrame)
+        return m_provisionalFrame->process();
+    if (isMainFrame()) {
+        if (WeakPtr provisionalPage = m_page ? m_page->provisionalPageProxy() : nullptr)
+            return provisionalPage->process();
+    }
+    return process();
+}
+
 void WebFrameProxy::webProcessWillShutDown()
 {
     for (auto& childFrame : std::exchange(m_childFrames, { }))
@@ -412,7 +423,7 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const St
     m_childFrames.add(WTFMove(child));
 }
 
-void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& process, const API::Navigation& navigation, BrowsingContextGroup& group, CompletionHandler<void()>&& completionHandler)
+void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process, const API::Navigation& navigation, BrowsingContextGroup& group, CompletionHandler<void()>&& completionHandler)
 {
     if (isMainFrame())
         return completionHandler();
