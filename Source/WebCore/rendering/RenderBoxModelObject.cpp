@@ -288,8 +288,10 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
     if (thisBox && thisBox->isFlexItem() && downcast<RenderFlexibleBox>(*parent()).usedChildOverridingLogicalHeightForPercentageResolution(*thisBox))
         return false;
     
-    if (thisBox && thisBox->isGridItem() && thisBox->hasOverridingContainingBlockContentLogicalHeight())
-        return thisBox->overridingContainingBlockContentLogicalHeight() == std::nullopt;
+    if (thisBox && thisBox->isGridItem()) {
+        if (auto overridingContainingBlockContentLogicalHeight = thisBox->overridingContainingBlockContentLogicalHeight())
+            return !*overridingContainingBlockContentLogicalHeight;
+    }
     
     if (logicalHeightLength.isAuto() && !isOutOfFlowPositionedWithImplicitHeight(*this))
         return true;
@@ -298,8 +300,10 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
     // except when in quirks mode. Flexboxes follow strict behavior even in quirks mode, though.
     if (!cb || (document().inQuirksMode() && !cb->isFlexibleBoxIncludingDeprecated()))
         return false;
-    if (thisBox && thisBox->hasOverridingContainingBlockContentLogicalHeight())
-        return thisBox->overridingContainingBlockContentLogicalHeight() == std::nullopt;
+    if (thisBox) {
+        if (auto overridingContainingBlockContentLogicalHeight = thisBox->overridingContainingBlockContentLogicalHeight())
+            return !*overridingContainingBlockContentLogicalHeight;
+    }
     return !cb->hasDefiniteLogicalHeight();
 }
 
@@ -405,7 +409,9 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
             auto* renderBox = dynamicDowncast<RenderBox>(*this);
             if (!renderBox)
                 return containingBlock.availableWidth();
-            return renderBox->hasOverridingContainingBlockContentWidth() ? renderBox->overridingContainingBlockContentWidth().value_or(0_lu) : containingBlock.availableWidth();
+            if (auto overridingContainingBlockContentWidth = renderBox->overridingContainingBlockContentWidth(containingBlock.style().writingMode()))
+                return overridingContainingBlockContentWidth->value_or(0_lu);
+            return containingBlock.availableWidth();
         };
         if (!left.isAuto()) {
             if (!right.isAuto() && !containingBlock.style().isLeftToRightDirection())
@@ -429,13 +435,17 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     if (top.isAuto() && bottom.isAuto())
         return offset;
 
-    auto hasOverridingContainingBlockContentHeight = [&] {
+    auto overridingContainingBlockContentHeight = [&]() -> std::optional<LayoutUnit> {
         auto* renderBox = dynamicDowncast<RenderBox>(*this);
-        return renderBox && renderBox->hasOverridingContainingBlockContentHeight();
+        if (!renderBox)
+            return { };
+        if (auto overridingContainingBlockContentHeight = renderBox->overridingContainingBlockContentHeight(containingBlock.style().writingMode()))
+            return *overridingContainingBlockContentHeight;
+        return { };
     }();
-    auto containingBlockHasDefiniteHeight = !containingBlock.hasAutoHeightOrContainingBlockWithAutoHeight() || containingBlock.stretchesToViewport() || hasOverridingContainingBlockContentHeight;
+    auto containingBlockHasDefiniteHeight = !containingBlock.hasAutoHeightOrContainingBlockWithAutoHeight() || containingBlock.stretchesToViewport() || overridingContainingBlockContentHeight;
     auto containingBlockContentHeight = [&] {
-        return hasOverridingContainingBlockContentHeight ? downcast<RenderBox>(*this).overridingContainingBlockContentHeight().value_or(0_lu) : containingBlock.availableHeight();
+        return overridingContainingBlockContentHeight ? overridingContainingBlockContentHeight.value_or(0_lu) : containingBlock.availableHeight();
     };
     if (!top.isAuto() && (!top.isPercentOrCalculated() || containingBlockHasDefiniteHeight)) {
         // FIXME: The computation of the available height is repeated later for "bottom".
