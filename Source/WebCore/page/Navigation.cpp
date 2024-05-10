@@ -233,10 +233,7 @@ Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromi
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-navigate
 Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    if (!frame())
-        return createErrorResult(WTFMove(committed), WTFMove(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
-
-    auto newURL = frame()->document()->completeURL(url);
+    auto newURL = window()->document()->completeURL(url);
     const URL& currentURL = scriptExecutionContext()->url();
 
     if (!newURL.isValid())
