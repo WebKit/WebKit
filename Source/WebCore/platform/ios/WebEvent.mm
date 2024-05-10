@@ -60,6 +60,9 @@ using WebCore::windowsKeyCodeForCharCode;
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     RetainPtr<WebSEKeyEntry> _originalKeyEntry;
 #endif
+#if ASSERT_ENABLED
+    BOOL _shouldAssertWhenAccessingCharactersForKey;
+#endif
 }
 
 @synthesize type = _type;
@@ -395,15 +398,15 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 
 - (NSString *)characters
 {
-    ASSERT(_type == WebEventKeyDown || _type == WebEventKeyUp);
-    ASSERT(!(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged));
+    ASSERT_IMPLIES(_shouldAssertWhenAccessingCharactersForKey, _type == WebEventKeyDown || _type == WebEventKeyUp);
+    ASSERT_IMPLIES(_shouldAssertWhenAccessingCharactersForKey, !(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged));
     return retainPtr(_characters).autorelease();
 }
 
 - (NSString *)charactersIgnoringModifiers
 {
-    ASSERT(_type == WebEventKeyDown || _type == WebEventKeyUp);
-    ASSERT(!(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged));
+    ASSERT_IMPLIES(_shouldAssertWhenAccessingCharactersForKey, _type == WebEventKeyDown || _type == WebEventKeyUp);
+    ASSERT_IMPLIES(_shouldAssertWhenAccessingCharactersForKey, !(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged));
     return retainPtr(_charactersIgnoringModifiers).autorelease();
 }
 
@@ -591,6 +594,9 @@ static inline bool isChangingKeyModifiers(WebSEKeyEntry *event)
     _tabKey = NO; // FIXME: Populate this field appropriately.
     _keyRepeating = event.keyRepeating;
     _originalKeyEntry = event;
+#if ASSERT_ENABLED
+    _shouldAssertWhenAccessingCharactersForKey = YES;
+#endif
 
     return self;
 }
