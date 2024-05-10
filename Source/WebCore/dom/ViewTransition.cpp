@@ -495,6 +495,9 @@ void ViewTransition::setupTransitionPseudoElements()
 
     if (RefPtr documentElement = document()->documentElement())
         documentElement->invalidateStyleInternal();
+
+    // Ensure style & render tree are up-to-date.
+    protectedDocument()->updateStyleIfNeeded();
 }
 
 // https://drafts.csswg.org/css-view-transitions/#activate-view-transition
