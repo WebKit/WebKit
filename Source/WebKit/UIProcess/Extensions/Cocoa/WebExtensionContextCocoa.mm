@@ -2624,6 +2624,33 @@ void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTrigg
     fireCommandEventIfNeeded(command, activeTab.get());
 }
 
+#if TARGET_OS_IPHONE
+WebExtensionCommand* WebExtensionContext::commandMatchingKeyCommand(UIKeyCommand *keyCommand)
+{
+    ASSERT(keyCommand);
+    for (auto& command : commands()) {
+        if (command->matchesKeyCommand(keyCommand))
+            return command.ptr();
+    }
+
+    return nullptr;
+}
+
+bool WebExtensionContext::performCommand(UIKeyCommand *keyCommand)
+{
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return false;
+
+    if (RefPtr result = commandMatchingKeyCommand(keyCommand)) {
+        performCommand(*result, UserTriggered::Yes);
+        return true;
+    }
+
+    return false;
+}
+#endif
+
 #if USE(APPKIT)
 WebExtensionCommand* WebExtensionContext::command(NSEvent *event)
 {

@@ -435,6 +435,10 @@ public:
     WebExtensionCommand* command(const String& identifier);
     void performCommand(WebExtensionCommand&, UserTriggered = UserTriggered::No);
 
+#if TARGET_OS_IPHONE
+    WebExtensionCommand* commandMatchingKeyCommand(UIKeyCommand *);
+    bool performCommand(UIKeyCommand *);
+#endif
 #if USE(APPKIT)
     WebExtensionCommand* command(NSEvent *);
     bool performCommand(NSEvent *);

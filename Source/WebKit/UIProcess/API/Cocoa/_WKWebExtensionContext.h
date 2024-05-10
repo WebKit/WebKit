@@ -39,6 +39,7 @@
 
 #if TARGET_OS_IPHONE
 @class UIMenuElement;
+@class UIKeyCommand;
 #else
 @class NSEvent;
 @class NSMenuItem;
@@ -570,6 +571,17 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @discussion This method performs the given command as if it was triggered by a user gesture within the context of the focused window and active tab.
  */
 - (void)performCommand:(_WKWebExtensionCommand *)command;
+
+#if TARGET_OS_IPHONE
+/*!
+ @abstract Performs the command associated with the given UIKeyCommand.
+ @discussion This method checks for a command corresponding to the provided UIKeyCommand and performs it, if available. The app should use this method to perform
+ any extension commands at an appropriate time in the app's responder object that handles the performWebExtensionCommandForKeyCommand: action.
+ @param event The UIKeyCommand received by the first responder.
+ @result Returns `YES` if a command corresponding to the UIKeyCommand was found and performed, `NO` otherwise.
+ */
+- (BOOL)performCommandForKeyCommand:(UIKeyCommand *)keyCommand;
+#endif
 
 #if TARGET_OS_OSX
 /*!
