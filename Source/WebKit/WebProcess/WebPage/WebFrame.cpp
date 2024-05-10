@@ -456,6 +456,7 @@ void WebFrame::commitProvisionalFrame()
 
     RefPtr parent = remoteFrame->tree().parent();
     RefPtr ownerElement = remoteFrame->ownerElement();
+    auto* ownerRenderer = remoteFrame->ownerRenderer();
 
     if (parent)
         parent->tree().removeChild(*remoteFrame);
@@ -465,6 +466,10 @@ void WebFrame::commitProvisionalFrame()
     m_coreFrame = localFrame.get();
     remoteFrame->setView(nullptr);
     localFrame->tree().setSpecifiedName(remoteFrame->tree().specifiedName());
+
+    if (ownerRenderer)
+        ownerRenderer->setWidget(localFrame->view());
+
     localFrame->setOwnerElement(ownerElement.get());
     if (remoteFrame->isMainFrame())
         corePage->setMainFrame(*localFrame);
