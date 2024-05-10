@@ -222,10 +222,12 @@ ALWAYS_INLINE bool followedByNonLatinCharacter(std::span<const LChar>, size_t)
 template<typename CharacterType1, typename CharacterType2>
 UCollationResult compareASCIIWithUCADUCETLevel3(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2)
 {
+    auto* data1 = characters1.data();
+    auto* data2 = characters2.data();
     ASSERT(characters1.size() == characters2.size());
     for (size_t position = 0; position < characters1.size(); ++position) {
-        auto lhs = characters1[position];
-        auto rhs = characters2[position];
+        auto lhs = data1[position];
+        auto rhs = data2[position];
         uint8_t leftWeight = ducetLevel3Weights[lhs];
         uint8_t rightWeight = ducetLevel3Weights[rhs];
         if (leftWeight == rightWeight)
@@ -235,7 +237,6 @@ UCollationResult compareASCIIWithUCADUCETLevel3(std::span<const CharacterType1> 
     return UCOL_EQUAL;
 }
 
-// FIXME: This should take is std::spans.
 template<typename CharacterType1, typename CharacterType2>
 inline std::optional<UCollationResult> compareASCIIWithUCADUCET(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2)
 {
@@ -244,10 +245,12 @@ inline std::optional<UCollationResult> compareASCIIWithUCADUCET(std::span<const 
             return UCOL_EQUAL;
     }
 
+    auto* data1 = characters1.data();
+    auto* data2 = characters2.data();
     size_t commonLength = std::min(characters1.size(), characters2.size());
     for (unsigned position = 0; position < commonLength; ++position) {
-        auto lhs = characters1[position];
-        auto rhs = characters2[position];
+        auto lhs = data1[position];
+        auto rhs = data2[position];
 
         if (!canUseASCIIUCADUCETComparison(lhs) || !canUseASCIIUCADUCETComparison(rhs))
             return std::nullopt;
@@ -269,13 +272,13 @@ inline std::optional<UCollationResult> compareASCIIWithUCADUCET(std::span<const 
 
     // If the next character is valid, then we do not need to look into the rest of characters.
     if (characters1.size() > characters2.size()) {
-        auto lhs = characters1[characters2.size()];
+        auto lhs = data1[characters2.size()];
         if (!canUseASCIIUCADUCETComparison(lhs))
             return std::nullopt;
         return UCOL_GREATER;
     }
 
-    auto rhs = characters2[characters1.size()];
+    auto rhs = data2[characters1.size()];
     if (!canUseASCIIUCADUCETComparison(rhs))
         return std::nullopt;
     return UCOL_LESS;
