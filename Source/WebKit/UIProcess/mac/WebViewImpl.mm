@@ -2789,8 +2789,7 @@ void WebViewImpl::selectionDidChange()
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    // FIXME: (rdar://123767495) Remove the `isEditable() && m_page->editorState().selectionIsRange` restriction when possible.
-    if (m_page->editorState().hasPostLayoutData() && isEditable() && m_page->editorState().selectionIsRange) {
+    if (m_page->editorState().hasPostLayoutData() && wantsCompleteUnifiedTextReplacementBehavior() && m_page->editorState().selectionIsRange) {
         auto selectionRect = m_page->editorState().postLayoutData->selectionBoundingRect;
         scheduleShowSwapCharactersViewForSelectionRectOfView(selectionRect, m_view.getAutoreleased());
     }
@@ -4557,7 +4556,12 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
         completionHandler();
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+bool WebViewImpl::wantsCompleteUnifiedTextReplacementBehavior() const
+{
+    return isEditable() || unifiedTextReplacementBehavior() == WebUnifiedTextReplacementBehavior::Complete;
+}
+
 void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, WKTextIndicatorStyleType styleType)
 {
     if (!m_page->preferences().textIndicatorStylingEnabled())
@@ -6371,11 +6375,18 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+WebUnifiedTextReplacementBehavior WebViewImpl::unifiedTextReplacementBehavior() const
+{
+    return m_page->configuration().unifiedTextReplacementBehavior();
+}
+#endif
+
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
 
 bool WebViewImpl::canHandleSwapCharacters() const
 {
-    return webViewCanHandleSwapCharacters();
+    return webViewCanHandleSwapCharacters() && unifiedTextReplacementBehavior() != WebUnifiedTextReplacementBehavior::None;
 }
 
 void WebViewImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootView)
@@ -6597,44 +6608,6 @@ void WebViewImpl::uninstallImageAnalysisOverlayView()
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void WebViewImpl::willBeginTextReplacementSession(const WTF::UUID& uuid, WebUnifiedTextReplacementType type, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
-{
-    protectedPage()->willBeginTextReplacementSession(uuid, type, WTFMove(completionHandler));
-}
-
-void WebViewImpl::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebUnifiedTextReplacementContextData>& contexts)
-{
-    protectedPage()->didBeginTextReplacementSession(uuid, contexts);
-}
-
-void WebViewImpl::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
-{
-    protectedPage()->textReplacementSessionDidReceiveReplacements(uuid, replacements, context, finished);
-}
-
-void WebViewImpl::textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID& uuid, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
-{
-    protectedPage()->textReplacementSessionDidUpdateStateForReplacement(uuid, state, replacement, context);
-}
-
-void WebViewImpl::didEndTextReplacementSession(const WTF::UUID& uuid, bool accepted)
-{
-    protectedPage()->didEndTextReplacementSession(uuid, accepted);
-}
-
-void WebViewImpl::textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID& uuid, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context)
-{
-    protectedPage()->textReplacementSessionDidReceiveTextWithReplacementRange(uuid, attributedText, range, context);
-}
-
-void WebViewImpl::textReplacementSessionDidReceiveEditAction(const WTF::UUID& uuid, WebKit::WebTextReplacementData::EditAction action)
-{
-    protectedPage()->textReplacementSessionDidReceiveEditAction(uuid, action);
-}
-
-#endif
 
 Ref<WebPageProxy> WebViewImpl::protectedPage() const
 {

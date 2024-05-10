@@ -181,6 +181,10 @@ struct WebHitTestResultData;
 enum class ContinueUnsafeLoad : bool;
 enum class UndoOrRedo : bool;
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+enum class WebUnifiedTextReplacementBehavior : uint8_t;
+#endif
+
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
 typedef HashMap<String, ValidationVector> ValidationMap;
@@ -695,6 +699,10 @@ public:
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    WebUnifiedTextReplacementBehavior unifiedTextReplacementBehavior() const;
+#endif
+
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
     bool canHandleSwapCharacters() const;
     void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView);
@@ -722,22 +730,8 @@ public:
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    void willBeginTextReplacementSession(const WTF::UUID&, WebUnifiedTextReplacementType, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&&);
+    bool wantsCompleteUnifiedTextReplacementBehavior() const;
 
-    void didBeginTextReplacementSession(const WTF::UUID&, const Vector<WebUnifiedTextReplacementContextData>&);
-
-    void textReplacementSessionDidReceiveReplacements(const WTF::UUID&, const Vector<WebTextReplacementData>&, const WebUnifiedTextReplacementContextData&, bool finished);
-
-    void textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID&, WebTextReplacementDataState, const WebTextReplacementData&, const WebUnifiedTextReplacementContextData&);
-
-    void didEndTextReplacementSession(const WTF::UUID&, bool accepted);
-
-    void textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebUnifiedTextReplacementContextData&);
-
-    void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebTextReplacementDataEditAction);
-#endif
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
     void addTextIndicatorStyleForID(WTF::UUID, WKTextIndicatorStyleType);
     void removeTextIndicatorStyleForID(WTF::UUID);
 #endif

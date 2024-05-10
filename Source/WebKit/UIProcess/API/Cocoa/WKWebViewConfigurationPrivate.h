@@ -48,6 +48,13 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
     _WKContentSecurityPolicyModeForExtensionManifestV3
 } WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
+typedef NS_ENUM(NSUInteger, _WKUnifiedTextReplacementBehavior) {
+    _WKUnifiedTextReplacementBehaviorNone = 0,
+    _WKUnifiedTextReplacementBehaviorDefault,
+    _WKUnifiedTextReplacementBehaviorLimited,
+    _WKUnifiedTextReplacementBehaviorComplete
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @class WKWebView;
 @class _WKApplicationManifest;
 @class _WKVisitedLinkStore;
@@ -172,6 +179,9 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 @property (nonatomic, setter=_setScrollToTextFragmentIndicatorEnabled:) BOOL _scrollToTextFragmentIndicatorEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nonatomic, setter=_setScrollToTextFragmentMarkingEnabled:) BOOL _scrollToTextFragmentMarkingEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+@property (nonatomic, setter=_setUnifiedTextReplacementBehavior:) _WKUnifiedTextReplacementBehavior _unifiedTextReplacementBehavior WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #if TARGET_OS_IPHONE

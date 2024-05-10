@@ -127,6 +127,60 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return _pageConfiguration->allowsInlinePredictions();
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+static _WKUnifiedTextReplacementBehavior convertToPlatformBehavior(WebKit::WebUnifiedTextReplacementBehavior behavior)
+{
+    switch (behavior) {
+    case WebKit::WebUnifiedTextReplacementBehavior::None:
+        return _WKUnifiedTextReplacementBehaviorNone;
+
+    case WebKit::WebUnifiedTextReplacementBehavior::Default:
+        return _WKUnifiedTextReplacementBehaviorDefault;
+
+    case WebKit::WebUnifiedTextReplacementBehavior::Limited:
+        return _WKUnifiedTextReplacementBehaviorLimited;
+
+    case WebKit::WebUnifiedTextReplacementBehavior::Complete:
+        return _WKUnifiedTextReplacementBehaviorComplete;
+    }
+}
+
+static WebKit::WebUnifiedTextReplacementBehavior convertToWebBehavior(_WKUnifiedTextReplacementBehavior behavior)
+{
+    switch (behavior) {
+    case _WKUnifiedTextReplacementBehaviorNone:
+        return WebKit::WebUnifiedTextReplacementBehavior::None;
+
+    case _WKUnifiedTextReplacementBehaviorDefault:
+        return WebKit::WebUnifiedTextReplacementBehavior::Default;
+
+    case _WKUnifiedTextReplacementBehaviorLimited:
+        return WebKit::WebUnifiedTextReplacementBehavior::Limited;
+
+    case _WKUnifiedTextReplacementBehaviorComplete:
+        return WebKit::WebUnifiedTextReplacementBehavior::Complete;
+    }
+}
+
+#endif
+
+- (void)_setUnifiedTextReplacementBehavior:(_WKUnifiedTextReplacementBehavior)behavior
+{
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    _pageConfiguration->setUnifiedTextReplacementBehavior(convertToWebBehavior(behavior));
+#endif
+}
+
+- (_WKUnifiedTextReplacementBehavior)_unifiedTextReplacementBehavior
+{
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    return convertToPlatformBehavior(_pageConfiguration->unifiedTextReplacementBehavior());
+#else
+    return _WKUnifiedTextReplacementBehaviorNone;
+#endif
+}
+
 #if PLATFORM(IOS_FAMILY)
 - (void)setAllowsInlineMediaPlayback:(BOOL)allows
 {
