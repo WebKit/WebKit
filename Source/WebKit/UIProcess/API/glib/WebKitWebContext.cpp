@@ -22,7 +22,6 @@
 
 #include "APIAutomationClient.h"
 #include "APIInjectedBundleClient.h"
-#include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIString.h"
 #include "LegacyGlobalSettings.h"
@@ -44,7 +43,6 @@
 #include "WebKitSecurityOriginPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitURISchemeRequestPrivate.h"
-#include "WebKitUserContentManagerPrivate.h"
 #include "WebKitUserMessagePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
@@ -2021,35 +2019,8 @@ WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext* context)
     return *context->priv->processPool;
 }
 
-void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitUserContentManager* userContentManager, WebKitWebView* relatedView, WebKitWebsitePolicies* defaultWebsitePolicies)
+void webkitWebContextWebViewCreated(WebKitWebContext* context, WebKitWebView* webView)
 {
-    auto pageConfiguration = API::PageConfiguration::create();
-    pageConfiguration->setProcessPool(context->priv->processPool.get());
-    pageConfiguration->setPreferences(webkitSettingsGetPreferences(webkit_web_view_get_settings(webView)));
-    pageConfiguration->setRelatedPage(relatedView ? &webkitWebViewGetPage(relatedView) : nullptr);
-    pageConfiguration->setUserContentController(userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr);
-    pageConfiguration->setControlledByAutomation(webkit_web_view_is_controlled_by_automation(webView));
-
-    WebKitWebExtensionMode webExtensionMode = webkit_web_view_get_web_extension_mode(webView);
-    const char* defaultContentSecurityPolicy = webkit_web_view_get_default_content_security_policy(webView);
-
-    if (webExtensionMode == WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3)
-        pageConfiguration->setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension::ManifestV3);
-    else if (webExtensionMode == WEBKIT_WEB_EXTENSION_MODE_MANIFESTV2)
-        pageConfiguration->setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension::ManifestV2);
-
-    if (defaultContentSecurityPolicy)
-        pageConfiguration->setOverrideContentSecurityPolicy(String::fromUTF8(defaultContentSecurityPolicy));
-
-    WebKitWebsiteDataManager* manager = webkitWebViewGetWebsiteDataManager(webView);
-#if !ENABLE(2022_GLIB_API)
-    if (!manager)
-        manager = context->priv->websiteDataManager.get();
-#endif
-    pageConfiguration->setWebsiteDataStore(&webkitWebsiteDataManagerGetDataStore(manager));
-    pageConfiguration->setDefaultWebsitePolicies(webkitWebsitePoliciesGetWebsitePolicies(defaultWebsitePolicies));
-    webkitWebViewCreatePage(webView, WTFMove(pageConfiguration));
-
     auto& page = webkitWebViewGetPage(webView);
     for (auto& it : context->priv->uriSchemeHandlers) {
         Ref<WebURLSchemeHandler> handler(*it.value);

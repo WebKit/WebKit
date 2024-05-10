@@ -25,6 +25,7 @@
 #include "APIContentWorld.h"
 #include "APIData.h"
 #include "APINavigation.h"
+#include "APIPageConfiguration.h"
 #include "APISerializedScriptValue.h"
 #include "ImageOptions.h"
 #include "NotificationService.h"
@@ -57,6 +58,7 @@
 #include "WebKitUIClient.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
+#include "WebKitUserContentManagerPrivate.h"
 #include "WebKitUserMessagePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebResourceLoadManager.h"
@@ -780,6 +782,55 @@ static void webkitWebViewWatchForChangesInFavicon(WebKitWebView* webView)
 }
 #endif
 
+static Ref<API::PageConfiguration> webkitWebViewCreatePageConfiguration(WebKitWebView* webView)
+{
+    auto* priv = webView->priv;
+    auto pageConfiguration = API::PageConfiguration::create();
+    pageConfiguration->setProcessPool(&webkitWebContextGetProcessPool(priv->context.get()));
+    pageConfiguration->setPreferences(webkitSettingsGetPreferences(priv->settings.get()));
+    pageConfiguration->setRelatedPage(priv->relatedView ? &webkitWebViewGetPage(priv->relatedView) : nullptr);
+    pageConfiguration->setUserContentController(priv->userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(priv->userContentManager.get()) : nullptr);
+    pageConfiguration->setControlledByAutomation(priv->isControlledByAutomation);
+
+    switch (priv->webExtensionMode) {
+    case WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3:
+        pageConfiguration->setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension::ManifestV3);
+        break;
+    case WEBKIT_WEB_EXTENSION_MODE_MANIFESTV2:
+        pageConfiguration->setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension::ManifestV2);
+        break;
+    case WEBKIT_WEB_EXTENSION_MODE_NONE:
+        break;
+    }
+
+    if (!priv->defaultContentSecurityPolicy.isNull())
+        pageConfiguration->setOverrideContentSecurityPolicy(String::fromUTF8(priv->defaultContentSecurityPolicy.data()));
+
+#if ENABLE(2022_GLIB_API)
+    auto* manager = webkit_network_session_get_website_data_manager(priv->networkSession.get());
+#else
+    auto* manager = priv->websiteDataManager ? priv->websiteDataManager.get() : webkit_web_context_get_website_data_manager(priv->context.get());
+#endif
+    pageConfiguration->setWebsiteDataStore(&webkitWebsiteDataManagerGetDataStore(manager));
+
+    pageConfiguration->setDefaultWebsitePolicies(webkitWebsitePoliciesGetWebsitePolicies(priv->websitePolicies.get()));
+
+    return pageConfiguration;
+}
+
+static void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration)
+{
+#if PLATFORM(GTK)
+    webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(configuration));
+#elif PLATFORM(WPE)
+#if ENABLE(WPE_PLATFORM)
+    webView->priv->view.reset(WKWPE::View::create(webView->priv->backend ? webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()) : nullptr, webkit_web_view_get_display(webView), configuration.get()));
+#else
+    webView->priv->view.reset(WKWPE::View::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get()));
+#endif
+#endif
+}
+
 static void webkitWebViewConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed(object);
@@ -855,7 +906,8 @@ static void webkitWebViewConstructed(GObject* object)
     if (!priv->websitePolicies)
         priv->websitePolicies = adoptGRef(webkit_website_policies_new());
 
-    webkitWebContextCreatePageForWebView(priv->context.get(), webView, priv->userContentManager.get(), priv->relatedView, priv->websitePolicies.get());
+    webkitWebViewCreatePage(webView, webkitWebViewCreatePageConfiguration(webView));
+    webkitWebContextWebViewCreated(priv->context.get(), webView);
 
     priv->loadObserver = makeUnique<PageLoadStateObserver>(webView);
     getPage(webView).pageLoadState().addObserver(*priv->loadObserver);
@@ -2442,19 +2494,6 @@ static void webkitWebViewCompleteAuthenticationRequest(WebKitWebView* webView)
 
     webkit_authentication_request_cancel(priv->authenticationRequest.get());
     priv->authenticationRequest = nullptr;
-}
-
-void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration)
-{
-#if PLATFORM(GTK)
-    webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(configuration));
-#elif PLATFORM(WPE)
-#if ENABLE(WPE_PLATFORM)
-    webView->priv->view.reset(WKWPE::View::create(webView->priv->backend ? webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()) : nullptr, webkit_web_view_get_display(webView), configuration.get()));
-#else
-    webView->priv->view.reset(WKWPE::View::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get()));
-#endif
-#endif
 }
 
 WebPageProxy& webkitWebViewGetPage(WebKitWebView* webView)

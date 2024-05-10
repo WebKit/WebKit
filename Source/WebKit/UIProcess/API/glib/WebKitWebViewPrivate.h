@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "APIPageConfiguration.h"
 #include "EditingRange.h"
 #include "RendererBufferFormat.h"
 #include "UserMessage.h"
@@ -48,7 +47,6 @@ namespace WebKit {
 class WebKitWebResourceLoadManager;
 }
 
-void webkitWebViewCreatePage(WebKitWebView*, Ref<API::PageConfiguration>&&);
 WebKit::WebPageProxy& webkitWebViewGetPage(WebKitWebView*);
 void webkitWebViewWillStartLoad(WebKitWebView*);
 void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent);
