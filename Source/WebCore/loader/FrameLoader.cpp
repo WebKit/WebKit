@@ -1507,6 +1507,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     // The search for a target frame is done earlier in the case of form submission.
     RefPtr effectiveTargetFrame = findFrameForNavigation(effectiveFrameName);
     if (is<RemoteFrame>(effectiveTargetFrame)) {
+        updateRequestAndAddExtraFields(*effectiveTargetFrame, frameLoadRequest.resourceRequest(), IsMainResource::Yes, newLoadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, WillOpenInNewWindow::No, frameLoadRequest.protectedRequester().ptr());
         effectiveTargetFrame->changeLocation(WTFMove(frameLoadRequest));
         return;
     }
@@ -3191,47 +3192,53 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
 
 void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppInitiatedValue shouldUpdate, IsServiceWorkerNavigationLoad isServiceWorkerNavigationLoad, WillOpenInNewWindow willOpenInNewWindow, Document* initiator)
 {
+    updateRequestAndAddExtraFields(m_frame.get(), request, mainResource, loadType, shouldUpdate, isServiceWorkerNavigationLoad, willOpenInNewWindow, initiator);
+}
+
+void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppInitiatedValue shouldUpdate, IsServiceWorkerNavigationLoad isServiceWorkerNavigationLoad, WillOpenInNewWindow willOpenInNewWindow, Document* initiator)
+{
     ASSERT(isServiceWorkerNavigationLoad == IsServiceWorkerNavigationLoad::No || mainResource != IsMainResource::Yes);
 
     // If the request came from a previous process due to process-swap-on-navigation then we should not modify the request.
     if (m_currentLoadContinuingState == LoadContinuingState::ContinuingWithRequest)
         return;
 
+    auto* localFrame = dynamicDowncast<LocalFrame>(targetFrame);
+    RefPtr document = localFrame ? localFrame->document() : nullptr;
     // Don't set the cookie policy URL if it's already been set.
     // But make sure to set it on all requests regardless of protocol, as it has significance beyond the cookie policy (<rdar://problem/6616664>).
     bool isMainResource = mainResource == IsMainResource::Yes;
-    bool isMainFrameMainResource = isMainResource && (m_frame->isMainFrame() || willOpenInNewWindow == WillOpenInNewWindow::Yes);
+    bool isMainFrameMainResource = isMainResource && (targetFrame.isMainFrame() || willOpenInNewWindow == WillOpenInNewWindow::Yes);
     if (request.firstPartyForCookies().isEmpty()) {
         if (isMainFrameMainResource)
             request.setFirstPartyForCookies(request.url());
-        else if (RefPtr document = m_frame->document())
+        else if (document)
             request.setFirstPartyForCookies(document->firstPartyForCookies());
     }
 
+    RefPtr page = targetFrame.page();
     if (request.isSameSiteUnspecified()) {
-        if (!initiator) {
-            initiator = m_frame->document();
+        if (!initiator && document) {
+            initiator = document.get();
             if (isMainResource) {
-                RefPtr ownerFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
+                RefPtr ownerFrame = dynamicDowncast<LocalFrame>(localFrame->tree().parent());
                 if (!ownerFrame && m_stateMachine.isDisplayingInitialEmptyDocument()) {
-                    if (RefPtr localOpener = dynamicDowncast<LocalFrame>(m_frame->opener()))
+                    if (RefPtr localOpener = dynamicDowncast<LocalFrame>(localFrame->opener()))
                         ownerFrame = WTFMove(localOpener);
                 }
                 if (ownerFrame)
                     initiator = ownerFrame->document();
-                ASSERT(ownerFrame || m_frame->isMainFrame());
+                ASSERT(ownerFrame || localFrame->isMainFrame());
             }
         }
-        addSameSiteInfoToRequestIfNeeded(request, initiator, protectedFrame()->protectedPage().get());
+        addSameSiteInfoToRequestIfNeeded(request, initiator, page.get());
     }
 
     // In case of service worker navigation load, we inherit isTopSite from the FetchEvent request directly.
     if (isServiceWorkerNavigationLoad == IsServiceWorkerNavigationLoad::No)
         request.setIsTopSite(isMainFrameMainResource);
 
-    RefPtr page = frame().page();
     bool hasSpecificCachePolicy = request.cachePolicy() != ResourceRequestCachePolicy::UseProtocolCachePolicy;
-
     if (page && page->isResourceCachingDisabledByWebInspector()) {
         request.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
         loadType = FrameLoadType::ReloadFromOrigin;
@@ -3262,21 +3269,19 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
     if (isMainResource)
         request.setHTTPHeaderField(HTTPHeaderName::Accept, CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type::MainResource));
 
-    if (RefPtr document = m_frame->document(); document && frame().settings().privateTokenUsageByThirdPartyEnabled() && !frame().loader().client().isRemoteWorkerFrameLoaderClient())
+    if (document && localFrame->settings().privateTokenUsageByThirdPartyEnabled() && !localFrame->loader().client().isRemoteWorkerFrameLoaderClient())
         request.setIsPrivateTokenUsageByThirdPartyAllowed(isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::PrivateToken, *document, LogPermissionsPolicyFailure::No));
 
     // Only set fallback array if it's still empty (later attempts may be incorrect, see bug 117818).
-    if (request.responseContentDispositionEncodingFallbackArray().isEmpty()) {
+    if (document && request.responseContentDispositionEncodingFallbackArray().isEmpty()) {
         // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.
-        request.setResponseContentDispositionEncodingFallbackArray("UTF-8"_s, m_frame->document()->encoding(), m_frame->settings().defaultTextEncodingName());
+        request.setResponseContentDispositionEncodingFallbackArray("UTF-8"_s, document->encoding(), localFrame->settings().defaultTextEncodingName());
     }
 
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame());
-    if (!localFrame)
-        return;
-
-    if (shouldUpdate == ShouldUpdateAppInitiatedValue::Yes && localFrame->loader().documentLoader())
-        request.setIsAppInitiated(localFrame->loader().documentLoader()->lastNavigationWasAppInitiated());
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(targetFrame.mainFrame())) {
+        if (shouldUpdate == ShouldUpdateAppInitiatedValue::Yes && localMainFrame->loader().documentLoader())
+            request.setIsAppInitiated(localMainFrame->loader().documentLoader()->lastNavigationWasAppInitiated());
+    }
 
     if (page && isMainResource) {
         auto [filteredURL, didFilter] = page->chrome().client().applyLinkDecorationFilteringWithResult(request.url(), LinkDecorationFilteringTrigger::Navigation);
