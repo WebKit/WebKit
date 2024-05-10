@@ -435,7 +435,7 @@ inline bool BreakingContext::handleText()
 
         std::optional<unsigned> nextBreakablePosition = m_current.nextBreakablePosition();
         auto mayBreakHere = !(m_currentWhitespaceCollapse == WhiteSpaceCollapse::Preserve && m_currentTextWrap == TextWrapMode::NoWrap);
-        bool betweenWords = c == newlineCharacter || (mayBreakHere && !m_atStart && isBreakable(m_renderTextInfo.lineBreakIteratorFactory, m_current.offset(), nextBreakablePosition, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere));
+        bool betweenWords = c == newlineCharacter || (mayBreakHere && !m_atStart && BreakLines::isBreakable(m_renderTextInfo.lineBreakIteratorFactory, m_current.offset(), nextBreakablePosition, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere));
         m_current.setNextBreakablePosition(nextBreakablePosition);
         
         if (canHangStopOrCommaAtLineEnd && renderer.isHangableStopOrComma(c) && m_width.fitsOnLine()) {

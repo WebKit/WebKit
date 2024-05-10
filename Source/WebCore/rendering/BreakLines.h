@@ -29,45 +29,65 @@
 
 namespace WebCore {
 
-enum class NoBreakSpaceBehavior {
-    Normal,
-    Break,
+class BreakLines {
+public:
+    enum class NoBreakSpaceBehavior {
+        Normal,
+        Break,
+    };
+    enum class WordBreakBehavior {
+        Normal,
+        BreakAll,
+        KeepAll,
+    };
+    enum class LineBreakRules {
+        Normal, // Fast path available when using default line-breaking rules within ASCII.
+        Special, // Uses ICU to handle special line-breaking rules.
+    };
+
+    template<LineBreakRules rules, WordBreakBehavior words, NoBreakSpaceBehavior spaces>
+    static inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory&, size_t startPosition);
+    static inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory& iterator, size_t startPosition)
+    {
+        return nextBreakablePosition<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(iterator, startPosition);
+    }
+    static inline bool isBreakable(CachedLineBreakIteratorFactory&, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords, bool breakAnywhere);
+
+private:
+
+    // Helper functions.
+    template<NoBreakSpaceBehavior nonBreakingSpaceBehavior>
+    static inline bool isBreakableSpace(UChar character);
+
+    // Iterator implementations.
+    template<typename CharacterType, LineBreakRules shortcutRules, NoBreakSpaceBehavior nonBreakingSpaceBehavior>
+    static inline size_t nextBreakablePosition(CachedLineBreakIteratorFactory&, std::span<const CharacterType> string, size_t startPosition);
+    template<typename CharacterType, NoBreakSpaceBehavior nonBreakingSpaceBehavior>
+    static inline size_t nextBreakableSpace(std::span<const CharacterType> string, size_t startPosition);
+    static inline unsigned nextCharacter(CachedLineBreakIteratorFactory&, unsigned startPosition);
+
+    class LineBreakTable {
+    public:
+        static constexpr UChar firstCharacter = '!';
+        static constexpr UChar lastCharacter = 127;
+        static inline bool unsafeLookup(UChar before, UChar after) // Must range check before calling.
+        {
+            const unsigned beforeIndex = before - firstCharacter;
+            const unsigned afterIndex = after - firstCharacter;
+            return breakTable[beforeIndex][afterIndex / 8] & (1 << (afterIndex % 8));
+        }
+    private:
+        static constexpr unsigned rowCount = lastCharacter - firstCharacter + 1;
+        static constexpr unsigned columnCount = (lastCharacter - firstCharacter) / 8 + 1;
+        WEBCORE_EXPORT static const unsigned char breakTable[rowCount][columnCount];
+    };
+
+    static const LineBreakTable lineBreakTable;
 };
 
-enum class WordBreakBehavior {
-    Normal,
-    BreakAll,
-    KeepAll,
-};
 
-enum class LineBreakRules {
-    Normal, // Fast path available when using default line-breaking rules within ASCII.
-    Special, // Uses ICU to handle special line-breaking rules.
-};
-
-template<LineBreakRules rules, WordBreakBehavior words, NoBreakSpaceBehavior spaces>
-inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory&, size_t startPosition);
-inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory& iterator, size_t startPosition)
-{
-    return nextBreakablePosition<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(iterator, startPosition);
-}
-inline bool isBreakable(CachedLineBreakIteratorFactory&, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords, bool breakAnywhere);
-
-// Private Use Below
-
-static const UChar lineBreakTableFirstCharacter = '!';
-static const UChar lineBreakTableLastCharacter = 127;
-static const unsigned lineBreakTableColumnCount = (lineBreakTableLastCharacter - lineBreakTableFirstCharacter) / 8 + 1;
-WEBCORE_EXPORT extern const unsigned char lineBreakTable[][lineBreakTableColumnCount];
-inline bool lineBreakTableUnsafeLookup(UChar before, UChar after) // Must range check before calling.
-{
-    const unsigned beforeIndex = before - lineBreakTableFirstCharacter;
-    const unsigned nextIndex = after - lineBreakTableFirstCharacter;
-    return lineBreakTable[beforeIndex][nextIndex / 8] & (1 << (nextIndex % 8));
-}
-
-template<NoBreakSpaceBehavior nonBreakingSpaceBehavior>
-static inline bool isBreakableSpace(UChar character)
+template<BreakLines::NoBreakSpaceBehavior nonBreakingSpaceBehavior>
+inline bool BreakLines::isBreakableSpace(UChar character)
 {
     switch (character) {
     case ' ':
@@ -81,8 +101,8 @@ static inline bool isBreakableSpace(UChar character)
     }
 }
 
-template<typename CharacterType, LineBreakRules shortcutRules, NoBreakSpaceBehavior nonBreakingSpaceBehavior>
-inline size_t nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, std::span<const CharacterType> string, size_t startPosition)
+template<typename CharacterType, BreakLines::LineBreakRules shortcutRules, BreakLines::NoBreakSpaceBehavior nonBreakingSpaceBehavior>
+inline size_t BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, std::span<const CharacterType> string, size_t startPosition)
 {
     CharacterType beforeBefore = startPosition > 1 ? string[startPosition - 2]
         : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().secondToLastCharacter());
@@ -112,9 +132,9 @@ inline size_t nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIte
 
             // If both characters are ASCII, use a lookup table for enhanced speed
             // and for compatibility with other browsers (see comments on lineBreakTable for details).
-            if (before <= lineBreakTableLastCharacter && after <= lineBreakTableLastCharacter) {
-                if (before >= lineBreakTableFirstCharacter && after >= lineBreakTableFirstCharacter) {
-                    if (lineBreakTableUnsafeLookup(before, after))
+            if (before <= lineBreakTable.lastCharacter && after <= lineBreakTable.lastCharacter) {
+                if (before >= lineBreakTable.firstCharacter && after >= lineBreakTable.firstCharacter) {
+                    if (lineBreakTable.unsafeLookup(before, after))
                         return i;
                 } // Else at least one is an ASCII control character; don't break.
                 continue;
@@ -140,8 +160,8 @@ inline size_t nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIte
     return string.size();
 }
 
-template<typename CharacterType, NoBreakSpaceBehavior nonBreakingSpaceBehavior>
-inline size_t nextBreakableSpace(std::span<const CharacterType> string, size_t startPosition)
+template<typename CharacterType, BreakLines::NoBreakSpaceBehavior nonBreakingSpaceBehavior>
+inline size_t BreakLines::nextBreakableSpace(std::span<const CharacterType> string, size_t startPosition)
 {
     // FIXME: Use ICU instead.
     for (size_t i = startPosition; i < string.size(); ++i) {
@@ -156,7 +176,7 @@ inline size_t nextBreakableSpace(std::span<const CharacterType> string, size_t s
     return string.size();
 }
 
-inline unsigned nextCharacter(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
+inline unsigned BreakLines::nextCharacter(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
     auto stringView = lineBreakIteratorFactory.stringView();
     ASSERT(startPosition <= stringView.length());
@@ -167,8 +187,8 @@ inline unsigned nextCharacter(CachedLineBreakIteratorFactory& lineBreakIteratorF
     return next.value_or(stringView.length());
 }
 
-template<LineBreakRules rules, WordBreakBehavior words, NoBreakSpaceBehavior spaces>
-inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, size_t startPosition)
+template<BreakLines::LineBreakRules rules, BreakLines::WordBreakBehavior words, BreakLines::NoBreakSpaceBehavior spaces>
+inline unsigned BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, size_t startPosition)
 {
     auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit()) {
@@ -182,7 +202,7 @@ inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakI
 }
 
 
-inline bool isBreakable(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords, bool breakAnywhere)
+inline bool BreakLines::isBreakable(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords, bool breakAnywhere)
 {
     if (nextBreakable && nextBreakable.value() >= startPosition)
         return startPosition == nextBreakable;
