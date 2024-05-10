@@ -378,8 +378,6 @@ void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool
 
 void WebPage::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
-    // FIXME: move the start of the range to be after the element with the ID listed.
-
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame) {
         ASSERT_NOT_REACHED();
@@ -403,6 +401,12 @@ void WebPage::enableTextIndicatorStyleAfterElementWithID(const String& elementID
     if (!simpleRange) {
         ASSERT_NOT_REACHED();
         return;
+    }
+
+    if (RefPtr element = document->getElementById(elementID)) {
+        auto elementRange = makeRangeSelectingNodeContents(*element);
+        if (!elementRange.collapsed())
+            simpleRange->start = elementRange.end;
     }
 
     m_textIndicatorStyleEnablementRanges.add(uuid, createLiveRange(*simpleRange));
