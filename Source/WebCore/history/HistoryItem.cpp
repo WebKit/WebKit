@@ -71,6 +71,7 @@ HistoryItem::HistoryItem(const HistoryItem& item)
     , m_originalURLString(item.m_originalURLString)
     , m_referrer(item.m_referrer)
     , m_target(item.m_target)
+    , m_frameID(item.m_frameID)
     , m_scrollPosition(item.m_scrollPosition)
     , m_pageScaleFactor(item.m_pageScaleFactor)
     , m_children(item.m_children.map([](auto& child) { return child->copy(); }))
@@ -102,6 +103,7 @@ void HistoryItem::reset()
     m_originalURLString = String();
     m_referrer = String();
     m_target = nullAtom();
+    m_frameID = std::nullopt;
 
     m_lastVisitWasFailure = false;
     m_isTargetItem = false;
@@ -287,7 +289,7 @@ void HistoryItem::setNavigationAPIStateObject(RefPtr<SerializedScriptValue>&& ob
 
 void HistoryItem::addChildItem(Ref<HistoryItem>&& child)
 {
-    ASSERT(!childItemWithTarget(child->target()));
+    ASSERT(!child->frameID() || !childItemWithFrameID(*child->frameID()));
     m_children.append(WTFMove(child));
 }
 
@@ -310,6 +312,15 @@ HistoryItem* HistoryItem::childItemWithTarget(const AtomString& target)
     unsigned size = m_children.size();
     for (unsigned i = 0; i < size; ++i) {
         if (m_children[i]->target() == target)
+            return m_children[i].ptr();
+    }
+    return nullptr;
+}
+
+HistoryItem* HistoryItem::childItemWithFrameID(FrameIdentifier frameID)
+{
+    for (unsigned i = 0; i < m_children.size(); ++i) {
+        if (m_children[i]->frameID() == frameID)
             return m_children[i].ptr();
     }
     return nullptr;

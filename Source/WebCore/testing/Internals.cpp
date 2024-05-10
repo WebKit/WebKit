@@ -1631,10 +1631,10 @@ ExceptionOr<Vector<AtomString>> Internals::formControlStateOfPreviousHistoryItem
     HistoryItem* mainItem = frame()->history().previousItem();
     if (!mainItem)
         return Exception { ExceptionCode::InvalidAccessError };
-    auto uniqueName = frame()->tree().uniqueName();
-    if (mainItem->target() != uniqueName && !mainItem->childItemWithTarget(uniqueName))
+    auto frameID = frame()->frameID();
+    if (mainItem->frameID() != frameID && !mainItem->childItemWithFrameID(frameID))
         return Exception { ExceptionCode::InvalidAccessError };
-    return Vector<AtomString> { mainItem->target() == uniqueName ? mainItem->documentState() : mainItem->childItemWithTarget(uniqueName)->documentState() };
+    return Vector<AtomString> { mainItem->frameID() == frameID ? mainItem->documentState() : mainItem->childItemWithFrameID(frameID)->documentState() };
 }
 
 ExceptionOr<void> Internals::setFormControlStateOfPreviousHistoryItem(const Vector<AtomString>& state)
@@ -1642,10 +1642,10 @@ ExceptionOr<void> Internals::setFormControlStateOfPreviousHistoryItem(const Vect
     HistoryItem* mainItem = frame()->history().previousItem();
     if (!mainItem)
         return Exception { ExceptionCode::InvalidAccessError };
-    auto uniqueName = frame()->tree().uniqueName();
-    if (mainItem->target() == uniqueName)
+    auto frameID = frame()->frameID();
+    if (mainItem->frameID() == frameID)
         mainItem->setDocumentState(state);
-    else if (HistoryItem* subItem = mainItem->childItemWithTarget(uniqueName))
+    else if (HistoryItem* subItem = mainItem->childItemWithFrameID(frameID))
         subItem->setDocumentState(state);
     else
         return Exception { ExceptionCode::InvalidAccessError };

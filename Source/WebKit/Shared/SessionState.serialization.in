@@ -42,6 +42,7 @@ header: "SessionState.h"
     String originalURLString;
     String referrer;
     AtomString target;
+    std::optional<WebCore::FrameIdentifier> frameID;
 
     std::optional<Vector<uint8_t>> stateObjectData;
 

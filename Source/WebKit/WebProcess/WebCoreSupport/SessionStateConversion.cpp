@@ -72,6 +72,7 @@ static FrameState toFrameState(const HistoryItem& historyItem)
     frameState.originalURLString = historyItem.originalURLString();
     frameState.referrer = historyItem.referrer();
     frameState.target = historyItem.target();
+    frameState.frameID = historyItem.frameID();
 
     frameState.setDocumentState(historyItem.documentState());
     if (RefPtr<SerializedScriptValue> stateObject = historyItem.stateObject())
@@ -141,6 +142,7 @@ static void applyFrameState(WebCore::HistoryItemClient& client, HistoryItem& his
     historyItem.setOriginalURLString(frameState.originalURLString);
     historyItem.setReferrer(frameState.referrer);
     historyItem.setTarget(frameState.target);
+    historyItem.setFrameID(frameState.frameID);
 
     historyItem.setDocumentState(frameState.documentState());
 

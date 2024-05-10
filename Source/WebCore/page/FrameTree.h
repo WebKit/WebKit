@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "FrameIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -72,7 +73,7 @@ public:
 
     Frame* child(unsigned index) const;
     Frame* childBySpecifiedName(const AtomString& name) const;
-    Frame* childByUniqueName(const AtomString& name) const;
+    Frame* childByFrameID(FrameIdentifier) const;
     WEBCORE_EXPORT Frame* findByUniqueName(const AtomString&, Frame& activeFrame) const;
     WEBCORE_EXPORT Frame* findBySpecifiedName(const AtomString&, Frame& activeFrame) const;
     WEBCORE_EXPORT unsigned childCount() const;

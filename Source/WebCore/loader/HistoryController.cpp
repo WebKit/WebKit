@@ -715,6 +715,7 @@ void HistoryController::initializeItem(HistoryItem& item)
     
     item.setURL(url);
     item.setTarget(frame->tree().uniqueName());
+    item.setFrameID(frame->frameID());
     item.setOriginalURLString(originalURL.string());
 
     if (!unreachableURL.isEmpty() || documentLoader->response().httpStatusCode() >= 400)
@@ -779,13 +780,15 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem& item, HistoryIt
     m_provisionalItem = &item;
 
     for (Ref childItem : item.children()) {
-        auto& childFrameName = childItem->target();
+        auto frameID = childItem->frameID();
+        if (!frameID)
+            continue;
 
-        RefPtr fromChildItem = fromItem->childItemWithTarget(childFrameName);
+        RefPtr fromChildItem = fromItem->childItemWithFrameID(*frameID);
         if (!fromChildItem)
             continue;
 
-        if (RefPtr childFrame = dynamicDowncast<LocalFrame>(m_frame->tree().childByUniqueName(childFrameName)))
+        if (RefPtr childFrame = m_frame->tree().childByFrameID(*frameID))
             childFrame->checkedHistory()->recursiveSetProvisionalItem(childItem, fromChildItem.get());
     }
 }
@@ -802,13 +805,15 @@ void HistoryController::recursiveGoToItem(HistoryItem& item, HistoryItem* fromIt
 
     // Just iterate over the rest, looking for frames to navigate.
     for (Ref childItem : item.children()) {
-        auto& childFrameName = childItem->target();
+        auto frameID = childItem->frameID();
+        if (!frameID)
+            continue;
 
-        RefPtr fromChildItem = fromItem->childItemWithTarget(childFrameName);
+        RefPtr fromChildItem = fromItem->childItemWithFrameID(*frameID);
         if (!fromChildItem)
             continue;
 
-        if (RefPtr childFrame = dynamicDowncast<LocalFrame>(m_frame->tree().childByUniqueName(childFrameName)))
+        if (RefPtr childFrame = m_frame->tree().childByFrameID(*frameID))
             childFrame->checkedHistory()->recursiveGoToItem(childItem, fromChildItem.get(), type, shouldTreatAsContinuingLoad);
     }
 }

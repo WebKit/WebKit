@@ -29,12 +29,14 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import <WebKit/WKBackForwardListItemPrivate.h>
 #import <WebKit/WKBackForwardListPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKSessionState.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
@@ -807,4 +809,51 @@ TEST(WKBackForwardList, BackNavigationHijacking)
     TestWebKitAPI::Util::spinRunLoop(10);
 
     EXPECT_STREQ([webView URL].absoluteString.UTF8String, url1.absoluteString.UTF8String);
+}
+
+TEST(WKBackForwardList, BackForwardListRemoveAndAddSubframes)
+{
+    auto indexHTML = "<iframe id='1' src='/frame1'></iframe>"
+        "<iframe id='2' src='/frame2'></iframe>"_s;
+    TestWebKitAPI::HTTPServer server({
+        { "/index"_s, { indexHTML } },
+        { "/frame1"_s, { ""_s } },
+        { "/frame2"_s, { "<script> alert('frame2'); </script>"_s } },
+        { "/frame3"_s, { "<script> alert('frame3'); </script>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Https);
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto navigationDelegate = adoptNS([WKBackForwardNavigationDelegate new]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    webView.get().UIDelegate = uiDelegate.get();
+
+    [webView loadRequest:server.request("/index"_s)];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "frame2");
+
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        [webView evaluateJavaScript:@"location.href = '/frame3'" inFrame:mainFrame.childFrames[1].info inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    }];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "frame3");
+
+    auto removeAndAddFrame = @"let frame = document.getElementById('1');"
+        "frame.parentNode.removeChild(frame);"
+        "let newFrame = document.createElement('iframe');"
+        "newFrame.src = '/frame1';"
+        "document.body.appendChild(newFrame);";
+    __block bool done = false;
+    [webView evaluateJavaScript:removeAndAddFrame completionHandler:^(id, NSError *) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView goBack];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "frame2");
+
+    __block auto expectedFrameURL = server.request("/frame2"_s).URL.absoluteString.UTF8String;
+    [webView evaluateJavaScript:@"document.getElementById('2').contentWindow.location.href" completionHandler:^(id result, NSError *) {
+        EXPECT_WK_STREQ(expectedFrameURL, [result UTF8String]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
