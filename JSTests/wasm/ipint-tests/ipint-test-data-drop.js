@@ -36,4 +36,4 @@ async function test() {
     assert.throws(() => {init(0, 0, 5)}, WebAssembly.RuntimeError, "Out of bounds memory access (evaluating 'init(0, 0, 5)')");
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

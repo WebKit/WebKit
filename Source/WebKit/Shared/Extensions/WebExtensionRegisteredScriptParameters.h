@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include <WebCore/UserStyleSheetTypes.h>
 #include <wtf/Forward.h>
 
 namespace WebKit {
@@ -46,6 +47,7 @@ struct WebExtensionRegisteredScriptParameters {
     std::optional<bool> persistent;
 
     std::optional<WebExtensionContentWorldType> world;
+    std::optional<WebCore::UserStyleLevel> styleLevel;
 };
 
 } // namespace WebKit

@@ -74,7 +74,7 @@ test23:
 	AXRole: AXImage
 test24:
 	Expected role: group
-	AXRole: AXGroup
+	AXRole: AXSection
 test25:
 	Expected role: group
 	AXRole: AXGroup
@@ -83,7 +83,7 @@ test26:
 	AXRole: AXImage
 test27:
 	Expected role: group
-	AXRole: AXGroup
+	AXRole: AXSection
 test28:
 	Expected role: img
 	AXRole: AXImage

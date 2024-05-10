@@ -98,6 +98,10 @@ if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES platform/graphics/angle/PlatformDisplayANGLE.cpp)
 endif ()
 
+if (USE_SKIA)
+    list(APPEND WebCore_SOURCES platform/graphics/egl/GLFence.cpp)
+endif ()
+
 # Find the extras needed to copy for EGL besides the libraries
 set(EGL_EXTRAS)
 foreach (EGL_EXTRA_NAME ${EGL_EXTRA_NAMES})

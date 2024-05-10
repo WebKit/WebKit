@@ -192,7 +192,7 @@ void DrawingAreaWC::scroll(const IntRect& scrollRect, const IntSize& scrollDelta
     triggerRenderingUpdate();
 }
 
-void DrawingAreaWC::forceRepaintAsync(WebPage&, CompletionHandler<void()>&& completionHandler)
+void DrawingAreaWC::updateRenderingWithForcedRepaintAsync(WebPage&, CompletionHandler<void()>&& completionHandler)
 {
     m_forceRepaintCompletionHandler = WTFMove(completionHandler);
     m_isForceRepaintCompletionHandlerDeferred = m_waitDidUpdate;

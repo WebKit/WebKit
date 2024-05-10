@@ -67,6 +67,7 @@ private:
     void resume() override;
     void invalidateAndCancel() override;
     NetworkDataTask::State state() const override;
+    void setTimingAllowFailedFlag() final;
 
     Ref<WebCore::CurlRequest> createCurlRequest(WebCore::ResourceRequest&&, RequestStatus = RequestStatus::NewRequest);
     void curlDidSendData(WebCore::CurlRequest&, unsigned long long, unsigned long long) override;

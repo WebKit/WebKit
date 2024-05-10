@@ -221,6 +221,7 @@ contents = wasm.header + """
 
 #include <cstdint>
 #include <wtf/PrintStream.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 
@@ -331,25 +332,25 @@ inline bool isValidPackedType(Int i)
 }
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, ...) case TypeKind::name: return #name;
-inline const char* makeString(TypeKind kind)
+#define CREATE_CASE(name, ...) case TypeKind::name: return #name ## _s;
+inline ASCIILiteral makeString(TypeKind kind)
 {
     switch (kind) {
     FOR_EACH_WASM_TYPE(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, ...) case PackedType::name: return #name;
-inline const char* makeString(PackedType packedType)
+#define CREATE_CASE(name, ...) case PackedType::name: return #name ## _s;
+inline ASCIILiteral makeString(PackedType packedType)
 {
     switch (packedType) {
     FOR_EACH_WASM_PACKED_TYPE(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 #undef CREATE_CASE
 
@@ -501,19 +502,19 @@ inline uint32_t memoryLog2Alignment(ExtAtomicOpType op)
     return 0;
 }
 
-#define CREATE_CASE(name, ...) case name: return #name;
-inline const char* makeString(OpType op)
+#define CREATE_CASE(name, ...) case name: return #name ## _s;
+inline ASCIILiteral makeString(OpType op)
 {
     switch (op) {
     FOR_EACH_WASM_OP(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, ...) case ExtAtomicOpType::name: return #name;
-inline const char* makeString(ExtAtomicOpType op)
+#define CREATE_CASE(name, ...) case ExtAtomicOpType::name: return #name ## _s;
+inline ASCIILiteral makeString(ExtAtomicOpType op)
 {
     switch (op) {
     FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(CREATE_CASE)
@@ -522,7 +523,7 @@ inline const char* makeString(ExtAtomicOpType op)
     FOR_EACH_WASM_EXT_ATOMIC_OTHER_OP(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 #undef CREATE_CASE
 

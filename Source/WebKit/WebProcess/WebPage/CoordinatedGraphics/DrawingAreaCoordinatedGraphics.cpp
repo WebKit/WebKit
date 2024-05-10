@@ -151,7 +151,7 @@ void DrawingAreaCoordinatedGraphics::scroll(const IntRect& scrollRect, const Int
     m_scrollOffset += scrollDelta;
 }
 
-void DrawingAreaCoordinatedGraphics::forceRepaint()
+void DrawingAreaCoordinatedGraphics::updateRenderingWithForcedRepaint()
 {
     if (m_inUpdateGeometry)
         return;
@@ -175,10 +175,10 @@ void DrawingAreaCoordinatedGraphics::forceRepaint()
         m_layerTreeHost->forceRepaint();
 }
 
-void DrawingAreaCoordinatedGraphics::forceRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
+void DrawingAreaCoordinatedGraphics::updateRenderingWithForcedRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
 {
     if (m_layerTreeStateIsFrozen) {
-        page.forceRepaintWithoutCallback();
+        page.updateRenderingWithForcedRepaintWithoutCallback();
         return completionHandler();
     }
 

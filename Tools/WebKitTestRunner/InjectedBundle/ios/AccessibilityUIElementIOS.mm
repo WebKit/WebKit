@@ -94,8 +94,9 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)accessibilityARIALiveRegionStatus;
 - (NSString *)accessibilityARIARelevantStatus;
 - (NSString *)accessibilityInvalidStatus;
-- (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (UIAccessibilityTraits)_axTextEntryTrait;
+- (UIAccessibilityTraits)_axTabBarTrait;
+- (UIAccessibilityTraits)_axMenuItemTrait;
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
 - (NSString *)accessibilityExpandedTextValue;
@@ -867,16 +868,22 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::identifier()
     return concatenateAttributeAndValue(@"AXIdentifier", [m_element accessibilityIdentifier]);
 }
 
-bool AccessibilityUIElement::hasContainedByFieldsetTrait()
-{
-    UIAccessibilityTraits traits = [m_element accessibilityTraits];
-    return (traits & [m_element _axContainedByFieldsetTrait]) == [m_element _axContainedByFieldsetTrait];
-}
-
 bool AccessibilityUIElement::hasTextEntryTrait()
 {
     UIAccessibilityTraits traits = [m_element accessibilityTraits];
     return (traits & [m_element _axTextEntryTrait]) == [m_element _axTextEntryTrait];
+}
+
+bool AccessibilityUIElement::hasTabBarTrait()
+{
+    UIAccessibilityTraits traits = [m_element accessibilityTraits];
+    return (traits & [m_element _axTabBarTrait]) == [m_element _axTabBarTrait];
+}
+
+bool AccessibilityUIElement::hasMenuItemTrait()
+{
+    UIAccessibilityTraits traits = [m_element accessibilityTraits];
+    return (traits & [m_element _axMenuItemTrait]) == [m_element _axMenuItemTrait];
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorElement()

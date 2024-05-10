@@ -135,12 +135,15 @@ void FileReaderLoader::cleanup()
     }
 }
 
-void FileReaderLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
+bool FileReaderLoader::processResponse(const ResourceResponse& response)
 {
     if (response.httpStatusCode() != httpStatus200OK) {
         failed(httpStatusCodeToErrorCode(response.httpStatusCode()));
-        return;
+        return false;
     }
+
+    if (m_readType == ReadType::ReadAsBinaryChunks)
+        return true;
 
     long long length = response.expectedContentLength();
 
@@ -155,7 +158,7 @@ void FileReaderLoader::didReceiveResponse(ResourceLoaderIdentifier, const Resour
     // FIXME: Support reading more than the current size limit of ArrayBuffer.
     if (length > std::numeric_limits<unsigned>::max()) {
         failed(ExceptionCode::NotReadableError);
-        return;
+        return false;
     }
 
     ASSERT(!m_rawData);
@@ -163,10 +166,17 @@ void FileReaderLoader::didReceiveResponse(ResourceLoaderIdentifier, const Resour
 
     if (!m_rawData) {
         failed(ExceptionCode::NotReadableError);
-        return;
+        return false;
     }
 
     m_totalBytes = static_cast<unsigned>(length);
+    return true;
+}
+
+void FileReaderLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
+{
+    if (!processResponse(response))
+        return;
 
     if (m_client)
         m_client->didStartLoading();

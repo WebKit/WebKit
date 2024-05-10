@@ -157,6 +157,8 @@ public:
     const NetworkSession* networkSession() const;
     NetworkSession* networkSession();
 
+    virtual void setTimingAllowFailedFlag() { }
+
 protected:
     NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation);
 

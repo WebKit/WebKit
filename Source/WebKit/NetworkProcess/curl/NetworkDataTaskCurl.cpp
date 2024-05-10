@@ -593,16 +593,15 @@ void NetworkDataTaskCurl::updateNetworkLoadMetrics(WebCore::NetworkLoadMetrics& 
     if (!m_startTime)
         m_startTime = networkLoadMetrics.fetchStart;
 
-    if (!m_failsTAOCheck) {
-        RefPtr<SecurityOrigin> origin = isTopLevelNavigation() ? SecurityOrigin::create(firstRequest().url()) : m_sourceOrigin;
-        if (origin)
-            m_failsTAOCheck = !passesTimingAllowOriginCheck(m_response, *origin);
-    }
-
     networkLoadMetrics.redirectStart = m_startTime;
     networkLoadMetrics.redirectCount = m_redirectCount;
     networkLoadMetrics.failsTAOCheck = m_failsTAOCheck;
     networkLoadMetrics.hasCrossOriginRedirect = m_hasCrossOriginRedirect;
+}
+
+void NetworkDataTaskCurl::setTimingAllowFailedFlag()
+{
+    m_failsTAOCheck = true;
 }
 
 void NetworkDataTaskCurl::setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)

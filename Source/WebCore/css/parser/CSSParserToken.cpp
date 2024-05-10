@@ -623,12 +623,12 @@ void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nex
 
         CSSParserTokenType nextType = nextToken->type();
         if (tokensNeedingComment.buffer[nextType]) {
-            builder.append("/**/");
+            builder.append("/**/"_s);
             return;
         }
 
         if (nextType == DelimiterToken && ((delimitersNeedingComment == nextToken->delimiter()) || ... || false)) {
-            builder.append("/**/");
+            builder.append("/**/"_s);
             return;
         }
     };
@@ -653,14 +653,14 @@ void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nex
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
     case UrlToken:
-        builder.append("url(");
+        builder.append("url("_s);
         serializeIdentifier(value().toString(), builder);
         builder.append(')');
         break;
     case DelimiterToken:
         switch (delimiter()) {
         case '\\':
-            builder.append("\\\n");
+            builder.append("\\\n"_s);
             break;
 
         case '#':
@@ -722,34 +722,34 @@ void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nex
         break;
 
     case IncludeMatchToken:
-        builder.append("~=");
+        builder.append("~="_s);
         break;
     case DashMatchToken:
-        builder.append("|=");
+        builder.append("|="_s);
         break;
     case PrefixMatchToken:
-        builder.append("^=");
+        builder.append("^="_s);
         break;
     case SuffixMatchToken:
-        builder.append("$=");
+        builder.append("$="_s);
         break;
     case SubstringMatchToken:
-        builder.append("*=");
+        builder.append("*="_s);
         break;
     case ColumnToken:
-        builder.append("||");
+        builder.append("||"_s);
         break;
     case CDOToken:
-        builder.append("<!--");
+        builder.append("<!--"_s);
         break;
     case CDCToken:
-        builder.append("-->");
+        builder.append("-->"_s);
         break;
     case BadStringToken:
-        builder.append("'\n");
+        builder.append("'\n"_s);
         break;
     case BadUrlToken:
-        builder.append("url(()");
+        builder.append("url(()"_s);
         break;
     case WhitespaceToken: {
         auto count = mode == SerializationMode::CustomProperty ? m_whitespaceCount : 1;

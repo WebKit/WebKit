@@ -102,8 +102,7 @@ std::optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata
 
     std::optional<Vector<EncodedResourceCryptographicDigest>> result;
     
-    readCharactersForParsing(integrityMetadata, [&result] (auto buffer) {
-        using CharacterType = typename decltype(buffer)::CharacterType;
+    readCharactersForParsing(integrityMetadata, [&result]<typename CharacterType> (StringParsingBuffer<CharacterType> buffer) {
         splitOnSpaces(buffer, IntegrityMetadataParser<CharacterType> { result });
     });
 

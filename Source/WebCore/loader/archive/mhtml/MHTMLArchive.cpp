@@ -67,7 +67,7 @@ static String generateRandomBoundary()
     std::array<uint8_t, randomValuesLength> randomValues;
     cryptographicallyRandomValues(randomValues);
     StringBuilder stringBuilder;
-    stringBuilder.append("----=_NextPart_000_");
+    stringBuilder.append("----=_NextPart_000_"_s);
     for (size_t i = 0; i < randomValues.size(); ++i) {
         if (i == 2)
             stringBuilder.append('_');
@@ -144,27 +144,19 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
     String dateString = makeRFC2822DateString(now.weekDay(), now.monthDay(), now.month(), now.year(), now.hour(), now.minute(), now.second(), now.utcOffsetInMinute());
 
     StringBuilder stringBuilder;
-    stringBuilder.append("From: <Saved by WebKit>\r\n");
+    stringBuilder.append("From: <Saved by WebKit>\r\n"_s);
     auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
     if (localMainFrame) {
-        stringBuilder.append("Subject: ");
+        stringBuilder.append("Subject: "_s);
         // We replace non ASCII characters with '?' characters to match IE's behavior.
         stringBuilder.append(replaceNonPrintableCharacters(localMainFrame->document()->title()));
     }
-    stringBuilder.append("\r\nDate: ");
-    stringBuilder.append(dateString);
-    stringBuilder.append("\r\nMIME-Version: 1.0\r\n");
-    stringBuilder.append("Content-Type: multipart/related;\r\n");
-    if (localMainFrame) {
-        stringBuilder.append("\ttype=\"");
-        stringBuilder.append(localMainFrame->document()->suggestedMIMEType());
-    }
-    stringBuilder.append("\";\r\n");
-    stringBuilder.append("\tboundary=\"");
-    stringBuilder.append(boundary);
-    stringBuilder.append("\"\r\n\r\n");
+    stringBuilder.append("\r\nDate: "_s, dateString,
+        "\r\nMIME-Version: 1.0\r\nContent-Type: multipart/related;\r\n"_s);
+    if (localMainFrame)
+        stringBuilder.append("\ttype=\""_s, localMainFrame->document()->suggestedMIMEType());
+    stringBuilder.append("\";\r\n\tboundary=\""_s, boundary, "\"\r\n\r\n"_s);
 
-    // We use utf8() below instead of ascii() as ascii() replaces CRLFs with ?? (we still only have put ASCII characters in it).
     ASSERT(stringBuilder.toString().containsOnlyASCII());
     CString asciiString = stringBuilder.toString().utf8();
     SharedBufferBuilder mhtmlData;

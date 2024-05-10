@@ -35,9 +35,9 @@
 #include "FrameTreeCreationParameters.h"
 #include "FrameTreeNodeData.h"
 #include "LoadedWebArchive.h"
-#include "LocalFrameCreationParameters.h"
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
+#include "ProvisionalFrameCreationParameters.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
@@ -243,7 +243,7 @@ bool WebFrameProxy::isDisplayingMarkupDocument() const
 
 bool WebFrameProxy::isDisplayingPDFDocument() const
 {
-    return MIMETypeRegistry::isPDFOrPostScriptMIMEType(m_MIMEType);
+    return MIMETypeRegistry::isPDFMIMEType(m_MIMEType);
 }
 
 void WebFrameProxy::didStartProvisionalLoad(const URL& url)
@@ -437,19 +437,15 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
         page->websiteDataStore().protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, [aggregator] { });
     }
 
-    if (this->process().processID() != process.processID()) {
-        LocalFrameCreationParameters localFrameCreationParameters {
-            m_provisionalFrame->layerHostingContextIdentifier()
-        };
-        process.send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, frameID()), page()->webPageIDInProcessForDomain(navigationDomain));
-    }
+    if (this->process().processID() != process.processID())
+        process.send(Messages::WebPage::CreateProvisionalFrame({ m_provisionalFrame->layerHostingContextIdentifier() }, frameID()), page()->webPageIDInProcess(process));
 }
 
 void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent hasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
-        protectedProcess()->send(Messages::WebPage::TransitionFrameToRemote(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
+        protectedProcess()->send(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
         m_frameProcess = std::exchange(m_provisionalFrame, nullptr)->takeFrameProcess();
     }
     protectedPage()->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);

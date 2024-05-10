@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+
+function makeOffscreenCanvas(width, height, timestamp) {
+  let canvas = new OffscreenCanvas(width, height);
+  let ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(50, 100, 150, 255)';
+  ctx.fillRect(0, 0, width, height);
+  return new VideoFrame(canvas, { timestamp, duration : 10 });
+}
+
+promise_test(async t => {
+    const frame1 = makeOffscreenCanvas(10, 10, 10);
+    t.add_cleanup(() => frame1.close());
+
+    const frame2 = new VideoFrame(frame1, { timestamp: 100 });
+    t.add_cleanup(() => frame2.close());
+
+    const frame3 = new VideoFrame(frame1);
+    t.add_cleanup(() => frame3.close());
+
+    assert_equals(frame1.timestamp, 10);
+    assert_equals(frame2.timestamp, 100);
+    assert_equals(frame3.timestamp, 10);
+}, "VideoFrame timestamp should remain consistent when serialized");
+</script>
+</body>
+</html>

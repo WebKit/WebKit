@@ -160,13 +160,6 @@ void BrowsingContextGroup::forEachRemotePage(const WebPageProxy& page, Function<
     }
 }
 
-RemotePageProxy* BrowsingContextGroup::remotePageInProcess(const WebPageProxy& page, const WebCore::RegistrableDomain& domain)
-{
-    if (auto frameProcess = m_processMap.get(domain))
-        return remotePageInProcess(page, frameProcess->process());
-    return nullptr;
-}
-
 RemotePageProxy* BrowsingContextGroup::remotePageInProcess(const WebPageProxy& page, const WebProcessProxy& process)
 {
     auto it = m_remotePages.find(page);
@@ -179,12 +172,12 @@ RemotePageProxy* BrowsingContextGroup::remotePageInProcess(const WebPageProxy& p
     return nullptr;
 }
 
-std::unique_ptr<RemotePageProxy> BrowsingContextGroup::takeRemotePageInProcessForProvisionalPage(const WebPageProxy& page, const WebCore::RegistrableDomain& domain)
+std::unique_ptr<RemotePageProxy> BrowsingContextGroup::takeRemotePageInProcessForProvisionalPage(const WebPageProxy& page, const WebProcessProxy& process)
 {
     auto it = m_remotePages.find(page);
     if (it == m_remotePages.end())
         return nullptr;
-    auto* remotePage = remotePageInProcess(page, domain);
+    auto* remotePage = remotePageInProcess(page, process);
     if (!remotePage)
         return nullptr;
     return it->value.take(remotePage);

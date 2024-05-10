@@ -98,10 +98,6 @@ class BaseAudioContext
 public:
     virtual ~BaseAudioContext();
 
-    // Reconcile ref/deref which are defined both in ThreadSafeRefCounted and EventTarget.
-    using ThreadSafeRefCounted::ref;
-    using ThreadSafeRefCounted::deref;
-
     // This is used for lifetime testing.
     WEBCORE_EXPORT static bool isContextAlive(uint64_t contextID);
     uint64_t contextID() const { return m_contextID; }
@@ -150,6 +146,10 @@ public:
     ExceptionOr<Ref<IIRFilterNode>> createIIRFilter(ScriptExecutionContext&, Vector<double>&& feedforward, Vector<double>&& feedback);
     ExceptionOr<Ref<AudioBuffer>> createBuffer(unsigned numberOfChannels, unsigned length, float sampleRate);
 
+    // ActiveDOMObject.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
     // Called at the start of each render quantum.
     void handlePreRenderTasks(const AudioIOPosition& outputPosition);
 
@@ -161,6 +161,10 @@ public:
     // We schedule deletion of all marked nodes at the end of each realtime render quantum.
     void markForDeletion(AudioNode&);
     void deleteMarkedNodes();
+    // In some cases, a node marked for deletion may get ref'd. We need to make sure we no
+    // longer mark the node for deletion or it may get deleted while someone is holding a
+    // Ref / RefPtr to it.
+    void unmarkForDeletion(AudioNode&);
 
     void addTailProcessingNode(AudioNode&);
     void removeTailProcessingNode(AudioNode&);
@@ -183,7 +187,7 @@ public:
     // Returns true only after the audio thread has been started and then shutdown.
     bool isAudioThreadFinished() const { return m_isAudioThreadFinished; }
 
-    RecursiveLock& graphLock() { return m_graphLock; }
+    RecursiveLock& graphLock() const { return m_graphLock; }
 
     // Returns true if this thread owns the context's lock.
     bool isGraphOwner() const { return m_graphLock.isOwner(); }
@@ -262,7 +266,7 @@ private:
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
-    // ActiveDOMObject API.
+    // ActiveDOMObject.
     void stop() override;
 
     // When the context goes away, there might still be some sources which haven't finished playing.
@@ -347,7 +351,7 @@ private:
 
     std::atomic<Thread*> m_audioThread;
 
-    RecursiveLock m_graphLock;
+    mutable RecursiveLock m_graphLock;
 
     std::unique_ptr<AsyncAudioDecoder> m_audioDecoder;
 

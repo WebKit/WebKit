@@ -631,7 +631,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/JavaScriptCore.serialization.in \
 	Shared/LayerTreeContext.serialization.in \
 	Shared/LoadParameters.serialization.in \
-	Shared/LocalFrameCreationParameters.serialization.in \
 	Shared/MediaPlaybackState.serialization.in \
 	Shared/Model.serialization.in \
 	Shared/ModelProcessConnectionParameters.serialization.in \
@@ -644,6 +643,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/PolicyDecision.serialization.in \
 	Shared/PrintInfo.serialization.in \
 	Shared/ProcessQualified.serialization.in \
+	Shared/ProvisionalFrameCreationParameters.serialization.in \
 	Shared/PushMessageForTesting.serialization.in \
 	Shared/RTCNetwork.serialization.in \
 	Shared/RTCPacketOptions.serialization.in \

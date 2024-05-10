@@ -165,6 +165,7 @@ private:
     unsigned m_length;
 };
 
+// FIXME: Port call sites to use ASCIILiteral or std::span and remove.
 template<> class StringTypeAdapter<const char*, void> : public StringTypeAdapter<const LChar*, void> {
 public:
     StringTypeAdapter(const char* characters)
@@ -173,6 +174,7 @@ public:
     }
 };
 
+// FIXME: Port call sites to use ASCIILiteral or std::span and remove.
 template<> class StringTypeAdapter<char*, void> : public StringTypeAdapter<const char*, void> {
 public:
     StringTypeAdapter(const char* characters)
@@ -181,10 +183,10 @@ public:
     }
 };
 
-template<> class StringTypeAdapter<ASCIILiteral, void> : public StringTypeAdapter<const char*, void> {
+template<> class StringTypeAdapter<ASCIILiteral, void> : public StringTypeAdapter<const LChar*, void> {
 public:
     StringTypeAdapter(ASCIILiteral characters)
-        : StringTypeAdapter<const char*, void> { characters }
+        : StringTypeAdapter<const LChar*, void> { characters.characters8() }
     {
     }
 };

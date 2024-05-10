@@ -169,7 +169,7 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(WebCore::Frame&, Gra
     setRootCompositingLayer(rootLayer);
 }
 
-void TiledCoreAnimationDrawingArea::forceRepaint()
+void TiledCoreAnimationDrawingArea::updateRenderingWithForcedRepaint()
 {
     if (m_layerTreeStateIsFrozen)
         return;
@@ -180,17 +180,17 @@ void TiledCoreAnimationDrawingArea::forceRepaint()
     [CATransaction synchronize];
 }
 
-void TiledCoreAnimationDrawingArea::forceRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
+void TiledCoreAnimationDrawingArea::updateRenderingWithForcedRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
 {
     if (m_layerTreeStateIsFrozen) {
-        page.forceRepaintWithoutCallback();
+        updateRenderingWithForcedRepaint();
         return completionHandler();
     }
 
     dispatchAfterEnsuringUpdatedScrollPosition([this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
         if (!weakThis)
             return completionHandler();
-        m_webPage->drawingArea()->forceRepaint();
+        m_webPage->drawingArea()->updateRenderingWithForcedRepaint();
         completionHandler();
     });
 }

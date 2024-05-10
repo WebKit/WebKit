@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+div.container {
+    width: 320px;
+    height: 240px;
+    border: 1px solid gray;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <iframe></iframe>
+    </div>
+    <div>This test requires WebKitTestRunner</div>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async event => {
+    const frame = document.querySelector("iframe");
+    await new Promise(resolve => {
+        frame.addEventListener("load", resolve, { once: true });
+        frame.srcdoc = `
+            <head>
+                <style>
+                    video {
+                        width: 160px;
+                        height: 120px;
+                    }
+                </style>
+            </head>
+            <body>
+                <video src="../../media/content/audio-describes-video.mp4" loop autoplay />
+                <script>
+                    function cloneVideo() {
+                        const originalVideo = document.querySelector("video");
+                        const clonedVideo = document.createElement("video");
+                        clonedVideo.src = originalVideo.src;
+                        clonedVideo.autoplay = true;
+                        clonedVideo.loop = true;
+                        document.body.appendChild(clonedVideo);
+                        return [originalVideo, clonedVideo];
+                    }
+                </` + `script>
+            </body>`;
+    });
+
+    await UIHelper.adjustVisibilityForFrontmostTarget(100, 100);
+
+    [originalVideo, clonedVideo] = frame.contentWindow.cloneVideo();
+
+    shouldBeFalse("originalVideo.muted");
+    shouldBe("originalVideo.volume", "1");
+    shouldBeTrue("internals.isEffectivelyMuted(originalVideo)");
+
+    shouldBeFalse("clonedVideo.muted");
+    shouldBe("clonedVideo.volume", "1");
+    shouldBeTrue("internals.isEffectivelyMuted(clonedVideo)");
+
+    await UIHelper.resetVisibilityAdjustments();
+
+    debug("After reset:");
+    shouldBeFalse("internals.isEffectivelyMuted(originalVideo)");
+    shouldBeFalse("internals.isEffectivelyMuted(clonedVideo)");
+    finishJSTest();
+});
+</script>
+</html>

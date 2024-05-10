@@ -26,4 +26,4 @@ async function test() {
         throw new Error("Expected 100000, but got: " + result);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

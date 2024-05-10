@@ -78,7 +78,7 @@ static const String platformVersionForUAString()
 static String buildUserAgentString(const UserAgentQuirks& quirks)
 {
     StringBuilder uaString;
-    uaString.append("Mozilla/5.0 (");
+    uaString.append("Mozilla/5.0 ("_s);
 
     if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform))
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsMacintoshPlatform));
@@ -95,7 +95,7 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
         return uaString.toString();
     }
 
-    uaString.append(") AppleWebKit/605.1.15 (KHTML, like Gecko) ");
+    uaString.append(") AppleWebKit/605.1.15 (KHTML, like Gecko) "_s);
 
     // Note that Chrome UAs advertise *both* Chrome/X and Safari/X, but it does
     // not advertise Version/X.
@@ -104,11 +104,11 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
     } else
-        uaString.append("Version/17.0 ");
+        uaString.append("Version/17.0 "_s);
 
     if (chassisType() == WTF::ChassisType::Mobile)
-        uaString.append("Mobile ");
-    uaString.append("Safari/605.1.15");
+        uaString.append("Mobile "_s);
+    uaString.append("Safari/605.1.15"_s);
 
     return uaString.toString();
 }

@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /usr/lib/xr/libRuntimeSupport.dylib
+current-version: 26.100.4
+exports:
+-       targets: [arm64-xros, arm64e-xros]
+        symbols: [__RSCurrentProcessUsesNewPointsPerMeter]
+...

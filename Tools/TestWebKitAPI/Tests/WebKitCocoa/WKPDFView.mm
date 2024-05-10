@@ -36,6 +36,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
@@ -187,6 +188,22 @@ TEST(WKPDFView, BackgroundColor)
 
     [webView synchronouslyGoBack];
     EXPECT_TRUE(CGColorEqualToColor([webView scrollView].backgroundColor.CGColor, redColor.get()));
+}
+
+#endif
+
+#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(VISION)
+
+TEST(WKWebView, IsDisplayingPDF)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([WKWebViewConfiguration new]).get()]);
+    [webView loadData:pdfData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_TRUE([webView _isDisplayingPDF]);
+
+    [webView loadHTMLString:@"<meta name='viewport' content='width=device-width'><h1>hello world</h1>" baseURL:[NSURL URLWithString:@"https://www.apple.com/1"]];
+    [webView _test_waitForDidFinishNavigationWithoutPresentationUpdate];
+    EXPECT_FALSE([webView _isDisplayingPDF]);
 }
 
 #endif

@@ -199,6 +199,11 @@ void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer,
         ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock->surfaceBaseAddress());
 }
 
+bool ImageBufferIOSurfaceBackend::canMapBackingStore() const
+{
+    return true;
+}
+
 IOSurface* ImageBufferIOSurfaceBackend::surface()
 {
     prepareForExternalWrite(); // This is conservative. At the time of writing this is not used.

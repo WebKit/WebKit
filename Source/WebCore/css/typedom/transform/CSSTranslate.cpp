@@ -121,12 +121,12 @@ CSSTranslate::CSSTranslate(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue
 void CSSTranslate::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-csstranslate
-    builder.append(is2D() ? "translate(" : "translate3d(");
+    builder.append(is2D() ? "translate("_s : "translate3d("_s);
     m_x->serialize(builder);
-    builder.append(", ");
+    builder.append(", "_s);
     m_y->serialize(builder);
     if (!is2D()) {
-        builder.append(", ");
+        builder.append(", "_s);
         m_z->serialize(builder);
     }
     builder.append(')');

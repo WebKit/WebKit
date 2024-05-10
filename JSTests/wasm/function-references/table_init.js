@@ -152,5 +152,5 @@ async function testTableInitRuntime() {
   }
 }
 
-assert.asyncTest(testTableInitParsing());
-assert.asyncTest(testTableInitRuntime());
+await assert.asyncTest(testTableInitParsing());
+await assert.asyncTest(testTableInitRuntime());

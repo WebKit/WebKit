@@ -2046,16 +2046,13 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
             if (flexOverlay.config.showOrderNumbers) {
                 StringBuilder orderNumbers;
 
-                if (auto index = renderChildrenInDOMOrder.find(renderChild); index != notFound) {
-                    orderNumbers.append("Item #");
-                    orderNumbers.append(index + 1);
-                }
+                if (auto index = renderChildrenInDOMOrder.find(renderChild); index != notFound)
+                    orderNumbers.append("Item #"_s, index + 1);
 
                 if (auto order = renderChild->style().order(); order || hasCustomOrder) {
                     if (!orderNumbers.isEmpty())
                         orderNumbers.append('\n');
-                    orderNumbers.append("order: ");
-                    orderNumbers.append(order);
+                    orderNumbers.append("order: "_s, order);
                 }
 
                 if (!orderNumbers.isEmpty())

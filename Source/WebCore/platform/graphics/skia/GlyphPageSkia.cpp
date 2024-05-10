@@ -41,7 +41,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     if (!skiaHarfBuzzFont)
         return false;
 
-    StringView stringView(std::span { buffer, bufferLength });
+    StringView stringView(std::span(buffer, bufferLength));
     auto codePoints = stringView.codePoints();
     auto codePointsIterator = codePoints.begin();
 

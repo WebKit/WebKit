@@ -129,8 +129,9 @@ public:
 
     const ResourceResponse& resourceResponse() const { return m_response; }
 
-    using RefCounted<XMLHttpRequest>::ref;
-    using RefCounted<XMLHttpRequest>::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     size_t memoryCost() const;
 

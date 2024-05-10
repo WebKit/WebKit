@@ -56,4 +56,4 @@ async function test() {
     assert.eq(testAlwaysFalse(), 4n);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

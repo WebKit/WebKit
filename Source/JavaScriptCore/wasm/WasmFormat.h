@@ -471,17 +471,17 @@ static_assert(static_cast<int>(ExternalKind::Memory)   == 2, "Wasm needs Memory 
 static_assert(static_cast<int>(ExternalKind::Global)   == 3, "Wasm needs Global to have the value 3");
 static_assert(static_cast<int>(ExternalKind::Exception)   == 4, "Wasm needs Exception to have the value 4");
 
-inline const char* makeString(ExternalKind kind)
+inline ASCIILiteral makeString(ExternalKind kind)
 {
     switch (kind) {
-    case ExternalKind::Function: return "function";
-    case ExternalKind::Table: return "table";
-    case ExternalKind::Memory: return "memory";
-    case ExternalKind::Global: return "global";
-    case ExternalKind::Exception: return "tag";
+    case ExternalKind::Function: return "function"_s;
+    case ExternalKind::Table: return "table"_s;
+    case ExternalKind::Memory: return "memory"_s;
+    case ExternalKind::Global: return "global"_s;
+    case ExternalKind::Exception: return "tag"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return "?";
+    return "?"_s;
 }
 
 struct Import {

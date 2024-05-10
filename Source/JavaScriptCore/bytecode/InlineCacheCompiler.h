@@ -191,6 +191,9 @@ public:
 
     static Ref<InlineCacheHandler> createNonHandlerSlowPath(CodePtr<JITStubRoutinePtrTag>);
 
+    void addOwner(CodeBlock*);
+    void removeOwner(CodeBlock*);
+
 private:
     InlineCacheHandler() = default;
     InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&);
@@ -344,8 +347,6 @@ private:
     ScratchRegisterAllocator::PreservedState m_preservedReusedRegisterState;
     GPRReg m_scratchGPR { InvalidGPRReg };
     FPRReg m_scratchFPR { InvalidFPRReg };
-    Vector<StructureID> m_weakStructures;
-    Vector<ObjectPropertyCondition> m_conditions;
     Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     ScalarRegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
     ScalarRegisterSet m_liveRegistersForCall;
@@ -356,6 +357,8 @@ private:
     bool m_calculatedCallSiteIndex : 1 { false };
     bool m_doesJSCalls : 1 { false };
     bool m_doesCalls : 1 { false };
+    Vector<StructureID, 4> m_weakStructures;
+    Vector<ObjectPropertyCondition, 64> m_conditions;
 };
 
 } // namespace JSC

@@ -161,6 +161,26 @@ bool Format::needConversion(angle::FormatID srcFormatId) const
     return srcFormatId != actualFormatId;
 }
 
+bool Format::isViewCompatible(const Format &srcFormat) const
+{
+    if (srcFormat.metalFormat == metalFormat)
+        return true;
+
+    // The pixel layout is considered different if the number of components differs,
+    if (srcFormat.caps.channels != caps.channels)
+        return false;
+
+    // ... or if their size or order is different from the components in the original pixel format.
+    if (srcFormat.caps.pixelBytes != caps.pixelBytes)
+        return false;
+
+    // This is overly conservative but reject compressed formats
+    if (srcFormat.caps.compressed || caps.compressed)
+        return false;
+
+    return true;
+}
+
 bool Format::isPVRTC() const
 {
     switch (metalFormat)

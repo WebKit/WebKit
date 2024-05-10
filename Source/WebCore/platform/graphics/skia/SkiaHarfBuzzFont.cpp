@@ -107,9 +107,18 @@ static HbUniquePtr<hb_face_t> createHarfBuzzFace(SkTypeface& typeface)
         }
     }
 
-    // FIXME: use hb_face_create_for_tables as fallback.
-    notImplemented();
-    return nullptr;
+    return HbUniquePtr<hb_face_t>(hb_face_create_for_tables([](hb_face_t*, hb_tag_t tag, void* userData) -> hb_blob_t* {
+        SkTypeface& typeface = *reinterpret_cast<SkTypeface*>(userData);
+        auto tableData = typeface.copyTableData(tag);
+        if (!tableData)
+            return nullptr;
+
+        const auto* data = reinterpret_cast<const char*>(tableData->data());
+        auto dataSize = tableData->size();
+        return hb_blob_create(data, dataSize, HB_MEMORY_MODE_WRITABLE, tableData.release(), [](void* data) {
+            sk_sp<SkData> tableData(reinterpret_cast<SkData*>(data));
+        });
+    }, &typeface, nullptr));
 }
 
 SkiaHarfBuzzFont::SkiaHarfBuzzFont(SkTypeface& typeface)

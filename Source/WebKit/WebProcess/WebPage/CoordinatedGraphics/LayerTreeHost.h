@@ -140,7 +140,7 @@ private:
     void resize(const WebCore::IntSize&) override;
     void willRenderFrame() override;
     void clearIfNeeded() override;
-    void didRenderFrame() override;
+    void didRenderFrame(uint32_t) override;
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
 
 #if !HAVE(DISPLAY_LINK)
@@ -189,6 +189,9 @@ private:
     double m_transientZoomScale { 1 };
     WebCore::FloatPoint m_transientZoomOrigin;
 #endif
+
+    uint32_t m_compositionRequestID { 0 };
+    uint32_t m_compositionResponseID { 0 };
 };
 
 #if !USE(COORDINATED_GRAPHICS)

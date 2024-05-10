@@ -71,8 +71,10 @@ public:
     using CDMInstanceSessionClient::weakPtrFactory;
     using CDMInstanceSessionClient::WeakValueType;
     using CDMInstanceSessionClient::WeakPtrImplType;
-    using RefCounted<MediaKeySession>::ref;
-    using RefCounted<MediaKeySession>::deref;
+
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     bool isClosed() const { return m_closed; }
 

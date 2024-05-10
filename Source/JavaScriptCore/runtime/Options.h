@@ -142,11 +142,11 @@ private:
         DontDumpDefaults,
         DumpDefaults
     };
-    static void dumpAllOptions(DumpLevel, const char* title = nullptr);
-    static void dumpAllOptions(StringBuilder&, DumpLevel, const char* title,
-        const char* separator, const char* optionHeader, const char* optionFooter, DumpDefaultsOption);
+    static void dumpAllOptions(DumpLevel, ASCIILiteral title = { });
+    static void dumpAllOptions(StringBuilder&, DumpLevel, ASCIILiteral title,
+        ASCIILiteral separator, ASCIILiteral optionHeader, ASCIILiteral optionFooter, DumpDefaultsOption);
     static void dumpOption(StringBuilder&, DumpLevel, ID,
-        const char* optionHeader, const char* optionFooter, DumpDefaultsOption);
+        ASCIILiteral optionHeader, ASCIILiteral optionFooter, DumpDefaultsOption);
 
     static bool setOptionWithoutAlias(const char* arg, bool verify = true);
     static bool setAliasedOption(const char* arg, bool verify = true);

@@ -24,4 +24,4 @@ async function test() {
     assert.throws(() => {call(5)}, WebAssembly.RuntimeError, "call_indirect to a null table entry (evaluating 'call(5)')");
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

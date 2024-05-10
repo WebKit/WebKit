@@ -210,10 +210,11 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         // If we generated some code then we don't want to attempt to repatch in the future until we
         // gather enough cases.
         bufferingCountdown = Options::repatchBufferingCountdown();
-        m_handler = result.handler();
-        m_codePtr = m_handler->callTarget();
         return result;
     })();
+    if (result.generatedSomeCode())
+        rewireStubAsJumpInAccess(codeBlock, *result.handler());
+
     vm.writeBarrier(codeBlock);
     return result;
 }
@@ -530,7 +531,7 @@ static CodePtr<OperationPtrTag> slowOperationFromUnlinkedStructureStubInfo(const
     return { };
 }
 
-void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(VM& vm, const BaselineUnlinkedStructureStubInfo& unlinkedStubInfo)
+void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(VM& vm, CodeBlock* codeBlock, const BaselineUnlinkedStructureStubInfo& unlinkedStubInfo)
 {
     ASSERT(!isCompilationThread());
     accessType = unlinkedStubInfo.accessType;
@@ -539,11 +540,9 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(VM& vm, const Ba
     callSiteIndex = CallSiteIndex(BytecodeIndex(unlinkedStubInfo.bytecodeIndex.offset()));
     codeOrigin = CodeOrigin(unlinkedStubInfo.bytecodeIndex);
     if (Options::useHandlerIC()) {
-        m_handler = InlineCacheCompiler::generateSlowPathHandler(vm, accessType);
-        m_codePtr = m_handler->callTarget();
+        replaceHandler(codeBlock, InlineCacheCompiler::generateSlowPathHandler(vm, accessType));
     } else {
-        m_handler = InlineCacheHandler::createNonHandlerSlowPath(unlinkedStubInfo.slowPathStartLocation);
-        m_codePtr = m_handler->callTarget();
+        replaceHandler(codeBlock, InlineCacheHandler::createNonHandlerSlowPath(unlinkedStubInfo.slowPathStartLocation));
         slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
     }
     propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
@@ -735,7 +734,7 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(VM& vm, const Ba
 }
 
 #if ENABLE(DFG_JIT)
-void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(const DFG::UnlinkedStructureStubInfo& unlinkedStubInfo)
+void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(CodeBlock* codeBlock, const DFG::UnlinkedStructureStubInfo& unlinkedStubInfo)
 {
     ASSERT(!isCompilationThread());
     accessType = unlinkedStubInfo.accessType;
@@ -743,8 +742,7 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(const DFG::Un
     m_identifier = unlinkedStubInfo.m_identifier;
     callSiteIndex = unlinkedStubInfo.callSiteIndex;
     codeOrigin = unlinkedStubInfo.codeOrigin;
-    m_handler = InlineCacheHandler::createNonHandlerSlowPath(unlinkedStubInfo.slowPathStartLocation);
-    m_codePtr = m_handler->callTarget();
+    replaceHandler(codeBlock, InlineCacheHandler::createNonHandlerSlowPath(unlinkedStubInfo.slowPathStartLocation));
     slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
 
     propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
@@ -771,6 +769,40 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(const DFG::Un
 }
 #endif
 
+void StructureStubInfo::replaceHandler(CodeBlock* codeBlock, Ref<InlineCacheHandler>&& handler)
+{
+    if (JITCode::isBaselineCode(codeBlock->jitType()) && Options::useHandlerIC()) {
+        if (m_handler)
+            m_handler->removeOwner(codeBlock);
+        m_handler = WTFMove(handler);
+        m_handler->addOwner(codeBlock);
+    } else
+        m_handler = WTFMove(handler);
+
+    m_codePtr = m_handler->callTarget();
+}
+
+void StructureStubInfo::rewireStubAsJumpInAccess(CodeBlock* codeBlock, InlineCacheHandler& handler)
+{
+    replaceHandler(codeBlock, Ref { handler });
+    if (codeBlock->useDataIC()) {
+        m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
+        return;
+    }
+
+    CCallHelpers::replaceWithJump(startLocation.retagged<JSInternalPtrTag>(), CodeLocationLabel { handler.callTarget() });
+}
+
+void StructureStubInfo::resetStubAsJumpInAccess(CodeBlock* codeBlock)
+{
+    if (JITCode::isBaselineCode(codeBlock->jitType()) && Options::useHandlerIC()) {
+        auto handler = InlineCacheCompiler::generateSlowPathHandler(codeBlock->vm(), accessType);
+        rewireStubAsJumpInAccess(codeBlock, handler.get());
+        return;
+    }
+    auto handler = InlineCacheHandler::createNonHandlerSlowPath(slowPathStartLocation);
+    rewireStubAsJumpInAccess(codeBlock, handler.get());
+}
 
 #if ASSERT_ENABLED
 void StructureStubInfo::checkConsistency()

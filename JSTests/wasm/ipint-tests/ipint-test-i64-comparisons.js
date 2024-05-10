@@ -98,4 +98,4 @@ async function test() {
     assert.eq(ge_u(2n, 1n), 1)
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

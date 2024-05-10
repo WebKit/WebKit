@@ -452,6 +452,9 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     if (recomputeLogicalWidthAndColumnWidth())
         relayoutChildren = true;
 
+    if (auto* layoutState = view().frameView().layoutContext().layoutState(); layoutState && layoutState->lineClamp())
+        relayoutChildren = true;
+
     rebuildFloatingObjectSetFromIntrudingFloats();
 
     LayoutUnit previousHeight = logicalHeight();

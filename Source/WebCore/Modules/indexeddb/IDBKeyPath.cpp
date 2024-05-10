@@ -216,13 +216,10 @@ String loggingString(const IDBKeyPath& path)
             return "< >"_str;
 
         StringBuilder builder;
-        builder.append("< ");
-        for (size_t i = 0; i < strings.size() - 1; ++i) {
-            builder.append(strings[i]);
-            builder.append(", ");
-        }
-        builder.append(strings.last());
-        builder.append(" >");
+        builder.append("< "_s);
+        for (size_t i = 0; i < strings.size() - 1; ++i)
+            builder.append(strings[i], ", "_s);
+        builder.append(strings.last(), " >"_s);
 
         return builder.toString();
     });

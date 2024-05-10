@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUVertexStepMode {
+] enum GPUVertexStepMode {
     "vertex",
     "instance"
 };

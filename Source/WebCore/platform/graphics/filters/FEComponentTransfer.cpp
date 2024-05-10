@@ -218,4 +218,79 @@ TextStream& FEComponentTransfer::externalRepresentation(TextStream& ts, FilterRe
     return ts;
 }
 
+FEComponentTransfer::LookupTable FEComponentTransfer::computeLookupTable(const ComponentTransferFunction& function)
+{
+    LookupTable values;
+    for (unsigned i = 0; i < values.size(); ++i)
+        values[i] = i;
+
+    using TransferType = Function<void(const ComponentTransferFunction&)>;
+    TransferType callEffect[] = {
+        // FECOMPONENTTRANSFER_TYPE_UNKNOWN
+        [&](const ComponentTransferFunction&)
+        {
+        },
+        // FECOMPONENTTRANSFER_TYPE_IDENTITY
+        [&](const ComponentTransferFunction&)
+        {
+        },
+        // FECOMPONENTTRANSFER_TYPE_TABLE
+        [&](const ComponentTransferFunction& transferFunction)
+        {
+            const Vector<float>& tableValues = transferFunction.tableValues;
+            unsigned n = tableValues.size();
+            if (n < 1)
+                return;
+            for (unsigned i = 0; i < values.size(); ++i) {
+                double c = i / 255.0;
+                unsigned k = static_cast<unsigned>(c * (n - 1));
+                double v1 = tableValues[k];
+                double v2 = tableValues[std::min((k + 1), (n - 1))];
+                double val = 255.0 * (v1 + (c * (n - 1) - k) * (v2 - v1));
+                val = std::max(0.0, std::min(255.0, val));
+                values[i] = static_cast<uint8_t>(val);
+            }
+        },
+        // FECOMPONENTTRANSFER_TYPE_DISCRETE
+        [&](const ComponentTransferFunction& transferFunction)
+        {
+            const Vector<float>& tableValues = transferFunction.tableValues;
+            unsigned n = tableValues.size();
+            if (n < 1)
+                return;
+            for (unsigned i = 0; i < values.size(); ++i) {
+                unsigned k = static_cast<unsigned>((i * n) / 255.0);
+                k = std::min(k, n - 1);
+                double val = 255 * tableValues[k];
+                val = std::max(0.0, std::min(255.0, val));
+                values[i] = static_cast<uint8_t>(val);
+            }
+        },
+        // FECOMPONENTTRANSFER_TYPE_LINEAR
+        [&](const ComponentTransferFunction& transferFunction)
+        {
+            for (unsigned i = 0; i < values.size(); ++i) {
+                double val = transferFunction.slope * i + 255 * transferFunction.intercept;
+                val = std::max(0.0, std::min(255.0, val));
+                values[i] = static_cast<uint8_t>(val);
+            }
+        },
+        // FECOMPONENTTRANSFER_TYPE_GAMMA
+        [&](const ComponentTransferFunction& transferFunction)
+        {
+            for (unsigned i = 0; i < values.size(); ++i) {
+                double exponent = transferFunction.exponent; // RCVT doesn't like passing a double and a float to pow, so promote this to double
+                double val = 255.0 * (transferFunction.amplitude * pow((i / 255.0), exponent) + transferFunction.offset);
+                val = std::max(0.0, std::min(255.0, val));
+                values[i] = static_cast<uint8_t>(val);
+            }
+        }
+    };
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(function.type) < std::size(callEffect));
+    callEffect[static_cast<size_t>(function.type)](function);
+
+    return values;
+}
+
 } // namespace WebCore

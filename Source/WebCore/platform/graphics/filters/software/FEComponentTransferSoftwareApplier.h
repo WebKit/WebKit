@@ -40,16 +40,6 @@ public:
 private:
     bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const final;
 
-    using LookupTable = std::array<uint8_t, 256>;
-
-    static void computeIdentityTable(LookupTable&, const ComponentTransferFunction&);
-    static void computeTabularTable(LookupTable&, const ComponentTransferFunction&);
-    static void computeDiscreteTable(LookupTable&, const ComponentTransferFunction&);
-    static void computeLinearTable(LookupTable&, const ComponentTransferFunction&);
-    static void computeGammaTable(LookupTable&, const ComponentTransferFunction&);
-
-    static LookupTable computeLookupTable(const ComponentTransferFunction&);
-
     void applyPlatform(PixelBuffer&) const;
 };
 

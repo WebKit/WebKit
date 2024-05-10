@@ -75,10 +75,10 @@ class CanvasBase {
 public:
     virtual ~CanvasBase();
 
-    virtual void refCanvasBase() = 0;
-    virtual void derefCanvasBase() = 0;
-    void ref() { refCanvasBase(); }
-    void deref() { derefCanvasBase(); }
+    virtual void refCanvasBase() const = 0;
+    virtual void derefCanvasBase() const = 0;
+    void ref() const { refCanvasBase(); }
+    void deref() const { derefCanvasBase(); }
 
     virtual bool isHTMLCanvasElement() const { return false; }
     virtual bool isOffscreenCanvas() const { return false; }

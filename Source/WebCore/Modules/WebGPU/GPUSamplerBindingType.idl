@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUSamplerBindingType {
+] enum GPUSamplerBindingType {
     "filtering",
     "non-filtering",
     "comparison"

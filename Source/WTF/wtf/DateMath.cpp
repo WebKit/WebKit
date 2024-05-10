@@ -453,17 +453,6 @@ static int findMonth(std::span<const LChar> monthStr)
     return -1;
 }
 
-// FIXME: Port call sites to the overload taking in a span and remove.
-static bool parseInt(const char* string, char** stopPosition, int base, int* result)
-{
-    long longResult = strtol(string, stopPosition, base);
-    // Avoid the use of errno as it is not available on Windows CE
-    if (string == *stopPosition || longResult <= std::numeric_limits<int>::min() || longResult >= std::numeric_limits<int>::max())
-        return false;
-    *result = longResult;
-    return true;
-}
-
 static bool parseInt(std::span<const LChar>& string, int base, int* result)
 {
     char* stopPosition;
@@ -473,16 +462,6 @@ static bool parseInt(std::span<const LChar>& string, int base, int* result)
         return false;
     string = string.subspan(reinterpret_cast<const LChar*>(stopPosition) - string.data());
     *result = longResult;
-    return true;
-}
-
-// FIXME: Port call sites to the overload taking in a span and remove.
-static bool parseLong(const char* string, char** stopPosition, int base, long* result)
-{
-    *result = strtol(string, stopPosition, base);
-    // Avoid the use of errno as it is not available on Windows CE
-    if (string == *stopPosition || *result == std::numeric_limits<long>::min() || *result == std::numeric_limits<long>::max())
-        return false;
     return true;
 }
 
@@ -500,162 +479,172 @@ static bool parseLong(std::span<const LChar>& string, int base, long* result)
 // Parses a date with the format YYYY[-MM[-DD]].
 // Year parsing is lenient, allows any number of digits, and +/-.
 // Returns 0 if a parse error occurs, else returns the end of the parsed portion of the string.
-static char* parseES5DatePortion(const char* currentPosition, int& year, long& month, long& day)
+static bool parseES5DatePortion(std::span<const LChar>& currentPosition, int& year, long& month, long& day)
 {
-    char* postParsePosition;
-
     // This is a bit more lenient on the year string than ES5 specifies:
     // instead of restricting to 4 digits (or 6 digits with mandatory +/-),
     // it accepts any integer value. Consider this an implementation fallback.
-    bool hasNegativeYear = *currentPosition == '-';
-    if (!parseInt(currentPosition, &postParsePosition, 10, &year))
-        return nullptr;
+    bool hasNegativeYear = !currentPosition.empty() && currentPosition.front() == '-';
+    if (!parseInt(currentPosition, 10, &year))
+        return false;
     if (!year && hasNegativeYear)
-        return nullptr;
+        return false;
 
     // Check for presence of -MM portion.
-    if (*postParsePosition != '-')
-        return postParsePosition;
-    currentPosition = postParsePosition + 1;
+    if (currentPosition.empty() || currentPosition.front() != '-')
+        return true;
+    currentPosition = currentPosition.subspan(1);
     
-    if (!isASCIIDigit(*currentPosition))
-        return nullptr;
-    if (!parseLong(currentPosition, &postParsePosition, 10, &month))
-        return nullptr;
-    if ((postParsePosition - currentPosition) != 2)
-        return nullptr;
+    if (currentPosition.empty() || !isASCIIDigit(currentPosition.front()))
+        return false;
+    auto postParsePosition = currentPosition;
+    if (!parseLong(postParsePosition, 10, &month))
+        return false;
+    if ((postParsePosition.data() - currentPosition.data()) != 2)
+        return false;
+    currentPosition = postParsePosition;
 
     // Check for presence of -DD portion.
-    if (*postParsePosition != '-')
-        return postParsePosition;
-    currentPosition = postParsePosition + 1;
+    if (currentPosition.empty() || currentPosition.front() != '-')
+        return true;
+    currentPosition = currentPosition.subspan(1);
     
-    if (!isASCIIDigit(*currentPosition))
-        return nullptr;
-    if (!parseLong(currentPosition, &postParsePosition, 10, &day))
-        return nullptr;
-    if ((postParsePosition - currentPosition) != 2)
-        return nullptr;
-    return postParsePosition;
+    if (currentPosition.empty() || !isASCIIDigit(currentPosition.front()))
+        return false;
+    postParsePosition = currentPosition;
+    if (!parseLong(postParsePosition, 10, &day))
+        return false;
+    if ((postParsePosition.data() - currentPosition.data()) != 2)
+        return false;
+    currentPosition = postParsePosition;
+    return true;
 }
 
 // Parses a time with the format HH:mm[:ss[.sss]][Z|(+|-)(00:00|0000|00)].
 // Fractional seconds parsing is lenient, allows any number of digits.
 // Returns 0 if a parse error occurs, else returns the end of the parsed portion of the string.
-static char* parseES5TimePortion(char* currentPosition, long& hours, long& minutes, long& seconds, double& milliseconds, bool& isLocalTime, long& timeZoneSeconds)
+static bool parseES5TimePortion(std::span<const LChar>& currentPosition, long& hours, long& minutes, long& seconds, double& milliseconds, bool& isLocalTime, long& timeZoneSeconds)
 {
     isLocalTime = false;
 
-    char* postParsePosition;
-    if (!isASCIIDigit(*currentPosition))
-        return nullptr;
-    if (!parseLong(currentPosition, &postParsePosition, 10, &hours))
-        return nullptr;
-    if (*postParsePosition != ':' || (postParsePosition - currentPosition) != 2)
-        return nullptr;
-    currentPosition = postParsePosition + 1;
+    if (currentPosition.empty() || !isASCIIDigit(currentPosition.front()))
+        return false;
+
+    auto postParsePosition = currentPosition;
+    if (!parseLong(postParsePosition, 10, &hours))
+        return false;
+    if (postParsePosition.empty() || postParsePosition.front() != ':' || (postParsePosition.data() - currentPosition.data()) != 2)
+        return false;
+    currentPosition = postParsePosition.subspan(1);
     
-    if (!isASCIIDigit(*currentPosition))
-        return nullptr;
-    if (!parseLong(currentPosition, &postParsePosition, 10, &minutes))
-        return nullptr;
-    if ((postParsePosition - currentPosition) != 2)
-        return nullptr;
+    if (currentPosition.empty() || !isASCIIDigit(currentPosition.front()))
+        return false;
+    postParsePosition = currentPosition;
+    if (!parseLong(postParsePosition, 10, &minutes))
+        return false;
+    if ((postParsePosition.data() - currentPosition.data()) != 2)
+        return false;
     currentPosition = postParsePosition;
 
     // Seconds are optional.
-    if (*currentPosition == ':') {
-        ++currentPosition;
+    if (!currentPosition.empty() && currentPosition.front() == ':') {
+        currentPosition = currentPosition.subspan(1);
     
-        if (!isASCIIDigit(*currentPosition))
-            return nullptr;
-        if (!parseLong(currentPosition, &postParsePosition, 10, &seconds))
-            return nullptr;
-        if ((postParsePosition - currentPosition) != 2)
-            return nullptr;
-        if (*postParsePosition == '.') {
-            currentPosition = postParsePosition + 1;
+        if (currentPosition.empty() || !isASCIIDigit(currentPosition.front()))
+            return false;
+        postParsePosition = currentPosition;
+        if (!parseLong(postParsePosition, 10, &seconds))
+            return false;
+        if ((postParsePosition.data() - currentPosition.data()) != 2)
+            return false;
+        if (!postParsePosition.empty() && postParsePosition.front() == '.') {
+            currentPosition = postParsePosition.subspan(1);
             
             // In ECMA-262-5 it's a bit unclear if '.' can be present without milliseconds, but
             // a reasonable interpretation guided by the given examples and RFC 3339 says "no".
             // We check the next character to avoid reading +/- timezone hours after an invalid decimal.
-            if (!isASCIIDigit(*currentPosition))
-                return nullptr;
+            if (currentPosition.empty() || !isASCIIDigit(currentPosition.front()))
+                return false;
             
             // We are more lenient than ES5 by accepting more or less than 3 fraction digits.
             long fracSeconds;
-            if (!parseLong(currentPosition, &postParsePosition, 10, &fracSeconds))
-                return nullptr;
+            postParsePosition = currentPosition;
+            if (!parseLong(postParsePosition, 10, &fracSeconds))
+                return false;
             
-            long numFracDigits = postParsePosition - currentPosition;
+            long numFracDigits = postParsePosition.data() - currentPosition.data();
             milliseconds = fracSeconds * pow(10.0, static_cast<double>(-numFracDigits + 3));
         }
         currentPosition = postParsePosition;
     }
 
-    if (*currentPosition == 'Z')
-        return currentPosition + 1;
+    if (!currentPosition.empty() && currentPosition.front() == 'Z') {
+        currentPosition = currentPosition.subspan(1);
+        return true;
+    }
 
     // Parse (+|-)(00:00|0000|00).
     bool tzNegative;
-    if (*currentPosition == '-')
+    if (!currentPosition.empty() && currentPosition.front() == '-')
         tzNegative = true;
-    else if (*currentPosition == '+')
+    else if (!currentPosition.empty() && currentPosition.front() == '+')
         tzNegative = false;
     else {
         isLocalTime = true;
-        return currentPosition;
+        return true;
     }
-    ++currentPosition;
+    currentPosition = currentPosition.subspan(1);
     
     long tzHours = 0;
     long tzHoursAbs = 0;
     long tzMinutes = 0;
     
-    if (!isASCIIDigit(*currentPosition))
-        return nullptr;
-    if (!parseLong(currentPosition, &postParsePosition, 10, &tzHours))
-        return nullptr;
-    if (*postParsePosition != ':') {
-        if ((postParsePosition - currentPosition) == 2) {
+    if (currentPosition.empty() || !isASCIIDigit(currentPosition.front()))
+        return false;
+    postParsePosition = currentPosition;
+    if (!parseLong(postParsePosition, 10, &tzHours))
+        return false;
+    if (postParsePosition.empty() || postParsePosition.front() != ':') {
+        if ((postParsePosition.data() - currentPosition.data()) == 2) {
             // "00" case.
             tzHoursAbs = labs(tzHours);
-        } else if ((postParsePosition - currentPosition) == 4) {
+        } else if ((postParsePosition.data() - currentPosition.data()) == 4) {
             // "0000" case.
             tzHoursAbs = labs(tzHours);
             tzMinutes = tzHoursAbs % 100;
             tzHoursAbs = tzHoursAbs / 100;
         } else
-            return nullptr;
+            return false;
     } else {
         // "00:00" case.
-        if ((postParsePosition - currentPosition) != 2)
-            return nullptr;
+        if ((postParsePosition.data() - currentPosition.data()) != 2)
+            return false;
         tzHoursAbs = labs(tzHours);
-        currentPosition = postParsePosition + 1; // Skip ":".
+        currentPosition = postParsePosition.subspan(1); // Skip ":".
     
-        if (!isASCIIDigit(*currentPosition))
-            return nullptr;
-        if (!parseLong(currentPosition, &postParsePosition, 10, &tzMinutes))
-            return nullptr;
-        if ((postParsePosition - currentPosition) != 2)
-            return nullptr;
+        if (currentPosition.empty() || !isASCIIDigit(currentPosition.front()))
+            return false;
+        postParsePosition = currentPosition;
+        if (!parseLong(postParsePosition, 10, &tzMinutes))
+            return false;
+        if ((postParsePosition.data() - currentPosition.data()) != 2)
+            return false;
     }
     currentPosition = postParsePosition;
     
     if (tzHoursAbs > 24)
-        return nullptr;
+        return false;
     if (tzMinutes < 0 || tzMinutes > 59)
-        return nullptr;
+        return false;
     
     timeZoneSeconds = 60 * (tzMinutes + (60 * tzHoursAbs));
     if (tzNegative)
         timeZoneSeconds = -timeZoneSeconds;
 
-    return currentPosition;
+    return true;
 }
 
-double parseES5DateFromNullTerminatedCharacters(const char* dateString, bool& isLocalTime)
+double parseES5Date(std::span<const LChar> dateString, bool& isLocalTime)
 {
     isLocalTime = false;
 
@@ -676,19 +665,18 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString, bool& is
     long timeZoneSeconds = 0;
 
     // Parse the date YYYY[-MM[-DD]]
-    char* currentPosition = parseES5DatePortion(dateString, year, month, day);
-    if (!currentPosition)
+    if (!parseES5DatePortion(dateString, year, month, day))
         return std::numeric_limits<double>::quiet_NaN();
     // Look for a time portion.
     // Note: As of ES2016, when a UTC offset is missing, date-time forms are local time while date-only forms are UTC.
-    if (*currentPosition == 'T' || *currentPosition == 't' || *currentPosition == ' ') {
+    if (!dateString.empty() && (dateString.front() == 'T' || dateString.front() == 't' || dateString.front() == ' ')) {
+        dateString = dateString.subspan(1);
         // Parse the time HH:mm[:ss[.sss]][Z|(+|-)(00:00|0000|00)]
-        currentPosition = parseES5TimePortion(currentPosition + 1, hours, minutes, seconds, milliseconds, isLocalTime, timeZoneSeconds);
-        if (!currentPosition)
+        if (!parseES5TimePortion(dateString, hours, minutes, seconds, milliseconds, isLocalTime, timeZoneSeconds))
             return std::numeric_limits<double>::quiet_NaN();
     }
     // Check that we have parsed all characters in the string.
-    if (*currentPosition)
+    if (!dateString.empty())
         return std::numeric_limits<double>::quiet_NaN();
 
     // A few of these checks could be done inline above, but since many of them are interrelated
@@ -1036,7 +1024,7 @@ double parseDate(std::span<const LChar> dateString)
 String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset)
 {
     StringBuilder stringBuilder;
-    stringBuilder.append(weekdayName[dayOfWeek], ", ", day, ' ', monthName[month], ' ', year, ' ');
+    stringBuilder.append(weekdayName[dayOfWeek], ", "_s, day, ' ', monthName[month], ' ', year, ' ');
 
     appendTwoDigitNumber(stringBuilder, hours);
     stringBuilder.append(':');

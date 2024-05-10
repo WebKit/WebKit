@@ -69,4 +69,4 @@ async function test() {
     if (verbose) print("Success")
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

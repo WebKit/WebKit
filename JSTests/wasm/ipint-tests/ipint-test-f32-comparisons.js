@@ -59,4 +59,4 @@ async function test() {
     assert.eq(ge(1.05, 2.05), 0)
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

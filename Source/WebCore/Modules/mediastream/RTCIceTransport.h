@@ -59,8 +59,9 @@ public:
     const RTCIceTransportBackend& backend() const { return m_backend.get(); }
     RefPtr<RTCPeerConnection> connection() const { return m_connection.get(); }
 
-    using RefCounted<RTCIceTransport>::ref;
-    using RefCounted<RTCIceTransport>::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     struct CandidatePair {
         RefPtr<RTCIceCandidate> local;
@@ -77,7 +78,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    // ActiveDOMObject
+    // ActiveDOMObject.
     void stop() final;
     bool virtualHasPendingActivity() const final;
 

@@ -68,7 +68,7 @@ private:
 void LazyLoadImageObserver::observe(Element& element)
 {
     auto& observer = element.document().lazyLoadImageObserver();
-    auto* intersectionObserver = observer.intersectionObserver(element.document());
+    auto* intersectionObserver = observer.intersectionObserver(element.protectedDocument());
     if (!intersectionObserver)
         return;
     intersectionObserver->observe(element);

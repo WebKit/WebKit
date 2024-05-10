@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUBlendOperation {
+] enum GPUBlendOperation {
     "add",
     "subtract",
     "reverse-subtract",

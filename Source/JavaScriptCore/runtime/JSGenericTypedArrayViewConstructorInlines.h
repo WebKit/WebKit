@@ -260,6 +260,19 @@ ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* 
     size_t offset = 0;
     std::optional<size_t> length;
     if (auto* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(firstValue)) {
+        if (argCount > 1) {
+            offset = callFrame->uncheckedArgument(1).toTypedArrayIndex(globalObject, "byteOffset"_s);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            if constexpr (ViewClass::TypedArrayStorageType == TypeDataView) {
+                RefPtr<ArrayBuffer> buffer = arrayBuffer->impl();
+                if (UNLIKELY(offset > buffer->byteLength())) {
+                    throwRangeError(globalObject, scope, "byteOffset exceeds source ArrayBuffer byteLength"_s);
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
+            }
+        }
+
         if (arrayBuffer->isResizableOrGrowableShared()) {
             structure = JSC_GET_DERIVED_STRUCTURE(vm, resizableOrGrowableSharedTypedArrayStructureWithTypedArrayType<ViewClass::TypedArrayStorageType>, newTarget, callFrame->jsCallee());
             RETURN_IF_EXCEPTION(scope, { });
@@ -268,17 +281,12 @@ ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* 
             RETURN_IF_EXCEPTION(scope, { });
         }
 
-        if (argCount > 1) {
-            offset = callFrame->uncheckedArgument(1).toTypedArrayIndex(globalObject, "byteOffset"_s);
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-            if (argCount > 2) {
-                // If the length value is present but undefined, treat it as missing.
-                JSValue lengthValue = callFrame->uncheckedArgument(2);
-                if (!lengthValue.isUndefined()) {
-                    length = lengthValue.toTypedArrayIndex(globalObject, ViewClass::TypedArrayStorageType == TypeDataView ? "byteLength"_s : "length"_s);
-                    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-                }
+        if (argCount > 2) {
+            // If the length value is present but undefined, treat it as missing.
+            JSValue lengthValue = callFrame->uncheckedArgument(2);
+            if (!lengthValue.isUndefined()) {
+                length = lengthValue.toTypedArrayIndex(globalObject, ViewClass::TypedArrayStorageType == TypeDataView ? "byteLength"_s : "length"_s);
+                RETURN_IF_EXCEPTION(scope, encodedJSValue());
             }
         }
     } else {

@@ -554,7 +554,7 @@ public:
     inline FontSelectionValue fontWeight() const;
     inline FontSelectionValue fontStretch() const;
     inline std::optional<FontSelectionValue> fontItalic() const;
-    inline FontPalette fontPalette() const;
+    inline const FontPalette& fontPalette() const;
     inline FontSizeAdjust fontSizeAdjust() const;
 
     inline const Length& textIndent() const;
@@ -1247,7 +1247,7 @@ public:
     void setFontWeight(FontSelectionValue);
     void setFontStretch(FontSelectionValue);
     void setFontItalic(std::optional<FontSelectionValue>);
-    void setFontPalette(FontPalette);
+    void setFontPalette(const FontPalette&);
 
     void setColor(const Color&);
     inline void setTextIndent(Length&&);

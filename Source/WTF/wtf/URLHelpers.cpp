@@ -884,7 +884,7 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
 
 String userVisibleURL(const CString& url)
 {
-    auto* before = url.dataAsUInt8Ptr();
+    auto before = url.span();
     int length = url.length();
 
     if (!length)
@@ -900,7 +900,7 @@ String userVisibleURL(const CString& url)
 
     char* q = after.data();
     {
-        const unsigned char* p = before;
+        auto p = before;
         for (int i = 0; i < length; i++) {
             unsigned char c = p[i];
             // unescape escape sequences that indicate bytes greater than 0x7f

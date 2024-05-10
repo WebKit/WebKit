@@ -245,4 +245,4 @@ async function test() {
   assert.throws(foldableDivsMinByMinusOne64, WebAssembly.RuntimeError, "Integer overflow");
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

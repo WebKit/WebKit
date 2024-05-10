@@ -28,8 +28,14 @@
 #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 
 #import <UIKit/UIKit.h>
-#import <wtf/Platform.h>
-#import <wtf/spi/darwin/XPCSPI.h>
+
+#if __has_include(<xpc/xpc.h>)
+#import <xpc/xpc.h>
+#else
+// Avoid importing <wtf/spi/darwin/XPCSPI.h> since this header needs to be parsed as a module, and
+// XPCSPI.h has some non-modular includes.
+OS_OBJECT_DECL(xpc_object);
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

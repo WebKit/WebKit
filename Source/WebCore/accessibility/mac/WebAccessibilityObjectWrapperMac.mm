@@ -214,10 +214,6 @@ static id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>&, NSS
 #define NSAccessibilityPathAttribute @"AXPath"
 #endif
 
-#ifndef NSAccessibilityIsMultiSelectableAttribute
-#define NSAccessibilityIsMultiSelectableAttribute @"AXIsMultiSelectable"
-#endif
-
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
 #define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
 
@@ -2186,25 +2182,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:@"_AXAssociatedPluginParent"])
         return [self _associatedPluginParentWith:backingObject];
 
-    // this is used only by DumpRenderTree for testing
-    if ([attributeName isEqualToString:@"AXClickPoint"])
-        return [NSValue valueWithPoint:backingObject->clickPoint()];
-
-    // This is used by DRT to verify CSS3 speech works.
+    // This used to be a testing-only attribute, but unfortunately some ATs do actually request it.
     if ([attributeName isEqualToString:@"AXDRTSpeechAttribute"])
         return [self baseAccessibilitySpeechHint];
-
-    if ([attributeName isEqualToString:@"AXAutocompleteValue"])
-        return backingObject->autoCompleteValue();
 
     if ([attributeName isEqualToString:NSAccessibilityPopupValueAttribute])
         return backingObject->popupValue();
 
     if ([attributeName isEqualToString:NSAccessibilityKeyShortcutsAttribute])
         return backingObject->keyShortcuts();
-
-    if ([attributeName isEqualToString:@"AXARIAPressedIsPresent"])
-        return [NSNumber numberWithBool:backingObject->pressedIsPresent()];
 
     if ([attributeName isEqualToString:AXHasDocumentRoleAncestorAttribute])
         return [NSNumber numberWithBool:backingObject->hasDocumentRoleAncestor()];
@@ -2217,9 +2203,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attributeName isEqualToString:@"AXIsInDescriptionListTerm"])
         return [NSNumber numberWithBool:backingObject->isInDescriptionListTerm()];
-
-    if ([attributeName isEqualToString:@"AXIsInCell"])
-        return [NSNumber numberWithBool:backingObject->isInCell()];
 
     if ([attributeName isEqualToString:@"AXDetailsElements"])
         return makeNSArray(backingObject->detailedByObjects());
@@ -2241,10 +2224,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return makeNSArray(backingObject->errorMessageObjects());
     }
 
-    // Multi-selectable
-    if ([attributeName isEqualToString:NSAccessibilityIsMultiSelectableAttribute])
-        return [NSNumber numberWithBool:backingObject->isMultiSelectable()];
-
     if ([attributeName isEqualToString:NSAccessibilityFocusableAncestorAttribute]) {
         AXCoreObject* object = backingObject->focusableAncestor();
         return object ? object->wrapper() : nil;
@@ -2259,12 +2238,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         AXCoreObject* object = backingObject->highestEditableAncestor();
         return object ? object->wrapper() : nil;
     }
-
-    if ([attributeName isEqualToString:@"AXIsOnScreen"])
-        return [NSNumber numberWithBool:backingObject->isOnScreen()];
-
-    if ([attributeName isEqualToString:@"AXIsIndeterminate"])
-        return [NSNumber numberWithBool: backingObject->isIndeterminate()];
 
     if ([attributeName isEqualToString:NSAccessibilityTextInputMarkedRangeAttribute]) {
         auto range = backingObject->textInputMarkedTextMarkerRange();
@@ -2331,6 +2304,27 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
 
     if ([attributeName isEqualToString:@"AXOwners"])
         return makeNSArray(backingObject->owners());
+
+    if ([attributeName isEqualToString:@"AXIsInCell"])
+        return [NSNumber numberWithBool:backingObject->isInCell()];
+
+    if ([attributeName isEqualToString:@"AXARIAPressedIsPresent"])
+        return [NSNumber numberWithBool:backingObject->pressedIsPresent()];
+
+    if ([attributeName isEqualToString:@"AXAutocompleteValue"])
+        return backingObject->autoCompleteValue();
+
+    if ([attributeName isEqualToString:@"AXClickPoint"])
+        return [NSValue valueWithPoint:backingObject->clickPoint()];
+
+    if ([attributeName isEqualToString:@"AXIsIndeterminate"])
+        return [NSNumber numberWithBool:backingObject->isIndeterminate()];
+
+    if ([attributeName isEqualToString:@"AXIsMultiSelectable"])
+        return [NSNumber numberWithBool:backingObject->isMultiSelectable()];
+
+    if ([attributeName isEqualToString:@"AXIsOnScreen"])
+        return [NSNumber numberWithBool:backingObject->isOnScreen()];
 
     return nil;
 }

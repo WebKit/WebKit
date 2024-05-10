@@ -80,6 +80,10 @@ for tbd_fd in OPTS.input:
             if write_back:
                 new_exports.append(export_list)
         tbd.exports = new_exports
+        if hasattr(tbd, 'allowable-clients'):
+            # Stub TBDs in WebKit aren't part of a real SDK, no need to care
+            # about who links against them.
+            delattr(tbd, 'allowable-clients')
         updated_tbds.append(tbd)
 
     output_dir, output_basename = os.path.split(tbd_fd.name)

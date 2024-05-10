@@ -58,7 +58,7 @@ public:
 
     bool isValid() const;
 
-    id<MTLTexture> texture() const { return m_texture; }
+    id<MTLTexture> texture() const;
     id<MTLTexture> parentTexture() const;
     const WGPUTextureViewDescriptor& descriptor() const { return m_descriptor; }
     const std::optional<WGPUExtent3D>& renderExtent() const { return m_renderExtent; }

@@ -865,7 +865,7 @@ String ShorthandSerializer::serializeBorderRadius() const
     };
     serializeRadii(horizontalRadii);
     if (serializeBoth) {
-        result.append(" / ");
+        result.append(" / "_s);
         serializeRadii(verticalRadii);
     }
     return result.toString();
@@ -1193,7 +1193,7 @@ String ShorthandSerializer::serializeGridTemplate() const
         }
     }
     if (!isLonghandValueNone(columnsIndex))
-        result.append(" / ", serializeLonghandValue(columnsIndex));
+        result.append(" / "_s, serializeLonghandValue(columnsIndex));
     return result.toString();
 }
 

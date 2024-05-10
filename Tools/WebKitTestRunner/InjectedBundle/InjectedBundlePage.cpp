@@ -207,7 +207,7 @@ static inline void dumpResourceURL(uint64_t identifier, StringBuilder& stringBui
     if (assignedUrlsCache().contains(identifier))
         stringBuilder.append(assignedUrlsCache().get(identifier));
     else
-        stringBuilder.append("<unknown>");
+        stringBuilder.append("<unknown>"_s);
 }
 
 static HashMap<WKBundlePageRef, InjectedBundlePage*>& bundlePageMap()
@@ -441,9 +441,9 @@ static inline void dumpErrorDescriptionSuitableForTestResult(WKErrorRef error, S
     if (errorDomain == "WebKitPolicyError"_s)
         errorDomain = "WebKitErrorDomain"_s;
 
-    stringBuilder.append("<NSError domain ", errorDomain, ", code ", errorCode);
+    stringBuilder.append("<NSError domain "_s, errorDomain, ", code "_s, errorCode);
     if (auto url = adoptWK(WKErrorCopyFailingURL(error)))
-        stringBuilder.append(", failing URL \"", adoptWK(WKURLCopyString(url.get())).get(), '"');
+        stringBuilder.append(", failing URL \""_s, adoptWK(WKURLCopyString(url.get())).get(), '"');
     stringBuilder.append('>');
 }
 
@@ -666,8 +666,8 @@ static void dumpFrameScrollPosition(WKBundleFrameRef frame, StringBuilder& strin
     if (std::abs(x) <= 0.00000001 && std::abs(y) <= 0.00000001)
         return;
     if (shouldIncludeFrameName)
-        stringBuilder.append("frame '", adoptWK(WKBundleFrameCopyName(frame)).get(), "' ");
-    stringBuilder.append("scrolled to ", x, ',', y, '\n');
+        stringBuilder.append("frame '"_s, adoptWK(WKBundleFrameCopyName(frame)).get(), "' "_s);
+    stringBuilder.append("scrolled to "_s, x, ',', y, '\n');
 }
 
 static void dumpDescendantFrameScrollPositions(WKBundleFrameRef frame, StringBuilder& stringBuilder)
@@ -816,9 +816,9 @@ void InjectedBundlePage::didReceiveTitleForFrame(WKStringRef title, WKBundleFram
 
     StringBuilder stringBuilder;
     if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
-        stringBuilder.append(string(frame), " - didReceiveTitle: ", title, '\n');
+        stringBuilder.append(string(frame), " - didReceiveTitle: "_s, title, '\n');
     if (injectedBundle.testRunner()->shouldDumpTitleChanges())
-        stringBuilder.append("TITLE CHANGED: '", title, "'\n");
+        stringBuilder.append("TITLE CHANGED: '"_s, title, "'\n"_s);
     injectedBundle.outputText(stringBuilder.toString());
 }
 
@@ -953,8 +953,8 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
         && injectedBundle.testRunner()->shouldDumpResourceLoadCallbacks()) {
         StringBuilder stringBuilder;
         dumpResourceURL(identifier, stringBuilder);
-        stringBuilder.append(" - willSendRequest ", string(request),
-            " redirectResponse ", string(response, injectedBundle.testRunner()->shouldDumpAllHTTPRedirectedResponseHeaders()), '\n');
+        stringBuilder.append(" - willSendRequest "_s, string(request),
+            " redirectResponse "_s, string(response, injectedBundle.testRunner()->shouldDumpAllHTTPRedirectedResponseHeaders()), '\n');
         injectedBundle.outputText(stringBuilder.toString());
     }
 
@@ -1023,7 +1023,7 @@ void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef page, WKB
     if (injectedBundle.testRunner()->shouldDumpResourceLoadCallbacks()) {
         StringBuilder stringBuilder;
         dumpResourceURL(identifier, stringBuilder);
-        stringBuilder.append(" - didReceiveResponse ", string(response), '\n');
+        stringBuilder.append(" - didReceiveResponse "_s, string(response), '\n');
         injectedBundle.outputText(stringBuilder.toString());
     }
 
@@ -1040,7 +1040,7 @@ void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef page, WKB
 
     String platformMimeType = platformResponseMimeType(response);
     if (!platformMimeType.isEmpty() && platformMimeType != toWTFString(mimeTypeString)) {
-        stringBuilder.append(" but platform response has ", platformMimeType);
+        stringBuilder.append(" but platform response has "_s, platformMimeType);
     }
 
     stringBuilder.append('\n');
@@ -1063,7 +1063,7 @@ void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef, WKBundleFrame
 
     StringBuilder stringBuilder;
     dumpResourceURL(identifier, stringBuilder);
-    stringBuilder.append(" - didFinishLoading\n");
+    stringBuilder.append(" - didFinishLoading\n"_s);
     injectedBundle.outputText(stringBuilder.toString());
 }
 
@@ -1078,7 +1078,7 @@ void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef, WKBundleFrameRe
 
     StringBuilder stringBuilder;
     dumpResourceURL(identifier, stringBuilder);
-    stringBuilder.append(" - didFailLoadingWithError: ");
+    stringBuilder.append(" - didFailLoadingWithError: "_s);
 
     dumpErrorDescriptionSuitableForTestResult(error, stringBuilder);
     stringBuilder.append('\n');

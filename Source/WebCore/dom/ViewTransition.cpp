@@ -290,6 +290,8 @@ static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalF
 {
     ASSERT(renderer.hasLayer());
     CheckedRef layerRenderer = renderer;
+    if (layerRenderer->isDocumentElementRenderer())
+        layerRenderer = layerRenderer->view();
 
     IntRect paintRect = snappedIntRect(snapshotRect);
 
@@ -755,6 +757,23 @@ void ViewTransition::stop()
 
     if (document()->activeViewTransition() == this)
         clearViewTransition();
+}
+
+bool ViewTransition::documentElementIsCaptured() const
+{
+    RefPtr doc = document();
+    if (!doc)
+        return false;
+
+    RefPtr documentElement = doc->documentElement();
+    if (!documentElement)
+        return false;
+
+    CheckedPtr renderer = documentElement->renderer();
+    if (!renderer)
+        return false;
+
+    return renderer->capturedInViewTransition();
 }
 
 }

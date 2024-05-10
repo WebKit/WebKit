@@ -460,13 +460,12 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
     m_networkLoadMetrics.responseStart = MonotonicTime::now();
 #endif
 
-    if (!m_networkLoadMetrics.failsTAOCheck) {
-        RefPtr<SecurityOrigin> origin = isTopLevelNavigation() ? SecurityOrigin::create(firstRequest().url()) : m_sourceOrigin;
-        if (origin)
-            m_networkLoadMetrics.failsTAOCheck = !passesTimingAllowOriginCheck(m_response, *origin);
-    }
-
     dispatchDidReceiveResponse();
+}
+
+void NetworkDataTaskSoup::setTimingAllowFailedFlag()
+{
+    m_networkLoadMetrics.failsTAOCheck = true;
 }
 
 void NetworkDataTaskSoup::dispatchDidReceiveResponse()

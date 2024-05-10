@@ -90,7 +90,7 @@ JSC_DEFINE_HOST_FUNCTION(constructProxyObject, (JSGlobalObject* globalObject, Ca
 JSC_DEFINE_HOST_FUNCTION(callProxy, (JSGlobalObject* globalObject, CallFrame*))
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "Proxy"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "Proxy"_s));
 }
 
 } // namespace JSC

@@ -32,9 +32,9 @@ namespace WebKit {
 String ITPThirdPartyData::toString() const
 {
     StringBuilder stringBuilder;
-    stringBuilder.append("Third Party Registrable Domain: ", thirdPartyDomain.string(), "\n    {");
+    stringBuilder.append("Third Party Registrable Domain: "_s, thirdPartyDomain.string(), "\n    {"_s);
     for (auto firstParty : underFirstParties)
-        stringBuilder.append("{ ", firstParty.toString(), " },");
+        stringBuilder.append("{ "_s, firstParty.toString(), " },"_s);
     stringBuilder.append('}');
     return stringBuilder.toString();
 }

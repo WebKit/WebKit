@@ -117,6 +117,11 @@ unsigned ImageBufferCGBitmapBackend::bytesPerRow() const
     return calculateBytesPerRow(m_parameters.backendSize);
 }
 
+bool ImageBufferCGBitmapBackend::canMapBackingStore() const
+{
+    return true;
+}
+
 RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage()
 {
     return NativeImage::create(adoptCF(CGBitmapContextCreateImage(context().platformContext())));

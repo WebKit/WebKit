@@ -65,10 +65,6 @@
 #include <wtf/Atomics.h>
 #include <wtf/URL.h>
 
-#if PLATFORM(MAC)
-#include "StringUtilities.h"
-#endif
-
 #if PLATFORM(GTK)
 #include <WebCore/SelectionData.h>
 #endif

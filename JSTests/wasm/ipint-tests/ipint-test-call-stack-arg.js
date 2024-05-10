@@ -30,4 +30,4 @@ async function test() {
     assert.eq(test(), 9)
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

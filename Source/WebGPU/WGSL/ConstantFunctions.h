@@ -32,6 +32,7 @@
 #include <numbers>
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WGSL {
 
@@ -700,7 +701,7 @@ CONSTANT_FUNCTION(BitwiseShiftLeft)
     const auto& shift = [&]<typename T>(T left, uint32_t right) -> ConstantResult {
         constexpr auto bitSize = sizeof(T) * 8;
         if (right >= bitSize)
-            return makeUnexpected(makeString("shift left value must be less than the bit width of the shifted value, which is ", String::number(bitSize)));
+            return makeUnexpected(makeString("shift left value must be less than the bit width of the shifted value, which is "_s, bitSize));
 
         if constexpr (std::is_unsigned_v<T>) {
             uint64_t mask = -1ull << (bitSize - right);
@@ -737,7 +738,7 @@ CONSTANT_FUNCTION(BitwiseShiftRight)
     const auto& shift = [&]<typename T>(T left, uint32_t right) -> ConstantResult {
         constexpr auto bitSize = sizeof(T) * 8;
         if (right >= bitSize)
-            return makeUnexpected(makeString("shift right value must be less than the bit width of the shifted value, which is ", String::number(bitSize)));
+            return makeUnexpected(makeString("shift right value must be less than the bit width of the shifted value, which is "_s, bitSize));
         return { left >> right };
     };
 
@@ -767,7 +768,7 @@ CONSTANT_FUNCTION(I32)
             auto result = convertInteger<int32_t>(*abstractInt);
             if (result)
                 return { *result };
-            return makeUnexpected(makeString("value ", String::number(*abstractInt), " cannot be represented as 'i32'"));
+            return makeUnexpected(makeString("value "_s, *abstractInt, " cannot be represented as 'i32'"_s));
         }
     }
 
@@ -781,7 +782,7 @@ CONSTANT_FUNCTION(U32)
             auto result = convertInteger<uint32_t>(*abstractInt);
             if (result)
                 return { *result };
-            return makeUnexpected(makeString("value ", String::number(*abstractInt), " cannot be represented as 'u32'"));
+            return makeUnexpected(makeString("value "_s, *abstractInt, " cannot be represented as 'u32'"_s));
         }
     }
 
@@ -1246,7 +1247,7 @@ CONSTANT_FUNCTION(Ldexp)
             if (abstractE2 + bias <= 0)
                 return { static_cast<double>(0) };
             if (abstractE2 > bias + 1)
-                return makeUnexpected(makeString("e2 must be less than or equal to ", String::number(bias + 1)));
+                return makeUnexpected(makeString("e2 must be less than or equal to "_s, bias + 1));
             return { std::ldexp(*abstractE1, abstractE2) };
         }
 
@@ -1256,7 +1257,7 @@ CONSTANT_FUNCTION(Ldexp)
             if (i32E2 + bias <= 0)
                 return { static_cast<float>(0) };
             if (i32E2 > bias + 1)
-                return makeUnexpected(makeString("e2 must be less than or equal to ", String::number(bias + 1)));
+                return makeUnexpected(makeString("e2 must be less than or equal to "_s, bias + 1));
             return { std::ldexp(*f32E1, i32E2) };
         }
         if (auto* f16E1 = std::get_if<half>(&e1)) {
@@ -1264,7 +1265,7 @@ CONSTANT_FUNCTION(Ldexp)
             if (i32E2 + bias <= 0)
                 return { static_cast<half>(0) };
             if (i32E2 > bias + 1)
-                return makeUnexpected(makeString("e2 must be less than or equal to ", String::number(bias + 1)));
+                return makeUnexpected(makeString("e2 must be less than or equal to "_s, bias + 1));
             return { static_cast<half>(std::ldexp(*f16E1, i32E2)) };
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -1336,7 +1337,7 @@ UNARY_OPERATION(QuantizeToF16, F32, [&](float arg) -> ConstantResult {
     UNUSED_PARAM(resultType);
     auto converted = convertFloat<half>(arg);
     if (!converted)
-        return makeUnexpected(makeString("value ", String::number(arg), " cannot be represented as 'f16'"));
+        return makeUnexpected(makeString("value "_s, String::number(arg), " cannot be represented as 'f16'"_s));
     return { { static_cast<float>(*converted) } };
 });
 
@@ -1564,7 +1565,7 @@ CONSTANT_FUNCTION(Pack2x16float)
         auto e = std::get<float>(vector.elements[i]);
         auto converted = convertFloat<half>(e);
         if (!converted)
-            return makeUnexpected(makeString("value ", String::number(e), " cannot be represented as 'f16'"));
+            return makeUnexpected(makeString("value "_s, e, " cannot be represented as 'f16'"_s));
         packed[i] = *converted;
     }
     return { { bitwise_cast<uint32_t>(packed) } };
@@ -1669,12 +1670,12 @@ CONSTANT_FUNCTION(Bitcast)
         else if (auto* abstractInt = std::get_if<int64_t>(&argument)) {
             auto i32 = convertInteger<int32_t>(*abstractInt);
             if (!i32)
-                return { makeString("value ", String::number(*abstractInt), " cannot be represented as 'i32'") };
+                return { makeString("value "_s, String::number(*abstractInt), " cannot be represented as 'i32'"_s) };
             value = bitwise_cast<uint32_t>(*i32);
         } else if (auto* abstractFloat = std::get_if<double>(&argument)) {
             auto f32 = convertFloat<float>(*abstractFloat);
             if (!f32)
-                return { makeString("value ", String::number(*abstractFloat), " cannot be represented as 'f32'") };
+                return { makeString("value "_s, String::number(*abstractFloat), " cannot be represented as 'f32'"_s) };
             value = bitwise_cast<uint32_t>(*f32);
         } else {
             RELEASE_ASSERT_NOT_REACHED();
@@ -1734,20 +1735,20 @@ CONSTANT_FUNCTION(Bitcast)
         if (primitive.kind == Types::Primitive::U32) {
             auto result = convertInteger<uint32_t>(*abstractInt);
             if (!result.has_value())
-                return makeUnexpected(makeString("value ", String::number(*abstractInt), " cannot be represented as 'u32'"));
+                return makeUnexpected(makeString("value "_s, *abstractInt, " cannot be represented as 'u32'"_s));
             return { *result };
         }
 
         auto result = convertInteger<int32_t>(*abstractInt);
         if (!result.has_value())
-            return makeUnexpected(makeString("value ", String::number(*abstractInt), " cannot be represented as 'i32'"));
+            return makeUnexpected(makeString("value "_s, *abstractInt, " cannot be represented as 'i32'"_s));
         return { convertValue<BitwiseCast>(resultType, *result) };
     }
 
     if (auto* abstractFloat = std::get_if<double>(&argument)) {
         auto result = convertFloat<float>(*abstractFloat);
         if (!result.has_value())
-            return makeUnexpected(makeString("value ", String::number(*abstractFloat), " cannot be represented as 'f32'"));
+            return makeUnexpected(makeString("value "_s, *abstractFloat, " cannot be represented as 'f32'"_s));
         return { convertValue<BitwiseCast>(resultType, *result) };
     }
 

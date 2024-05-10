@@ -174,4 +174,44 @@ TEST(HysteresisActivity, ActiveInCallback)
     EXPECT_EQ(*callbackData.state, PAL::HysteresisState::Stopped);
 }
 
+TEST(HysteresisActivity, Cancelation)
+{
+    struct CallbackData {
+        std::optional<PAL::HysteresisState> state;
+        PAL::HysteresisActivity* activity;
+    } callbackData;
+
+    PAL::HysteresisActivity activity([&callbackData](PAL::HysteresisState) {
+        callbackData.state = callbackData.activity->state();
+        if (endTestInCallback)
+            hysteresisTestDone = true;
+    }, hysteresisDuration);
+
+    callbackData.activity = &activity;
+
+    hysteresisTestDone = false;
+    endTestInCallback = false;
+
+    activity.start();
+    EXPECT_TRUE(callbackData.state);
+    EXPECT_EQ(*callbackData.state, PAL::HysteresisState::Started);
+
+    activity.cancel();
+    EXPECT_TRUE(callbackData.state);
+    // The callback does not get called.
+    EXPECT_EQ(*callbackData.state, PAL::HysteresisState::Started);
+
+    activity.impulse();
+    EXPECT_TRUE(callbackData.state);
+    EXPECT_EQ(*callbackData.state, PAL::HysteresisState::Started);
+
+    activity.cancel();
+    EXPECT_TRUE(callbackData.state);
+    // The callback does not get called.
+    EXPECT_EQ(*callbackData.state, PAL::HysteresisState::Started);
+
+    TestWebKitAPI::Util::runFor(2 * hysteresisDuration);
+    EXPECT_FALSE(hysteresisTestDone);
+}
+
 } // namespace TestWebKitAPI

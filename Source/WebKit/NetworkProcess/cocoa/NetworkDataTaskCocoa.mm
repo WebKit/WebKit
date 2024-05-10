@@ -680,19 +680,9 @@ void NetworkDataTaskCocoa::setEmulatedConditions(const std::optional<int64_t>& b
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-void NetworkDataTaskCocoa::checkTAO(const WebCore::ResourceResponse& response)
+void NetworkDataTaskCocoa::setTimingAllowFailedFlag()
 {
-    if (networkLoadMetrics().failsTAOCheck)
-        return;
-
-    RefPtr<WebCore::SecurityOrigin> origin;
-    if (isTopLevelNavigation())
-        origin = WebCore::SecurityOrigin::create(firstRequest().url());
-    else
-        origin = m_sourceOrigin;
-
-    if (origin)
-        networkLoadMetrics().failsTAOCheck = !passesTimingAllowOriginCheck(response, *origin);
+    networkLoadMetrics().failsTAOCheck = true;
 }
 
 NSURLSessionTask* NetworkDataTaskCocoa::task() const

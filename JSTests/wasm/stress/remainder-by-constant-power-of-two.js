@@ -374,4 +374,4 @@ async function test() {
     assert.eq(testI64RemS_8796093022208(-562949953421313n), -1n);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

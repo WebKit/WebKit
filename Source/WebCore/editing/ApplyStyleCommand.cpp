@@ -1442,6 +1442,8 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
                 fontContainer = fontElement;
             if (is<HTMLSpanElement>(*container) || (!is<HTMLSpanElement>(styleContainer) && container->hasChildNodes()))
                 styleContainer = container;
+            if (!canHaveChildrenForEditing(*startNode))
+                break;
         }
         auto* startNodeFirstChild = startNode->firstChild();
         if (!startNodeFirstChild)

@@ -674,7 +674,7 @@ void Cache::dumpContentsToFile()
 
         StringBuilder json;
         entry->asJSON(json, info);
-        json.append(",\n");
+        json.append(",\n"_s);
         auto writeData = json.toString().utf8();
         writeToFile(fd, writeData.data(), writeData.length());
     });

@@ -124,7 +124,7 @@ static unsigned validateAtomicAccess(JSGlobalObject* globalObject, VM& vm, JSArr
     if (LIKELY(accessIndexValue.isUInt32()))
         accessIndex = accessIndexValue.asUInt32();
     else {
-        accessIndex = accessIndexValue.toIndex(globalObject, "accessIndex");
+        accessIndex = accessIndexValue.toIndex(globalObject, "accessIndex"_s);
         RETURN_IF_EXCEPTION(scope, 0);
     }
 

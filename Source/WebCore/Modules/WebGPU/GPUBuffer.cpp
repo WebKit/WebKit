@@ -32,12 +32,7 @@
 
 namespace WebCore {
 
-GPUBuffer::~GPUBuffer()
-{
-    m_bufferSize = 0;
-    m_backing->destroy();
-    m_arrayBuffers.clear();
-}
+GPUBuffer::~GPUBuffer() = default;
 
 GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, GPUDevice& device)
     : m_backing(WTFMove(backing))
@@ -97,10 +92,10 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
     });
 }
 
-static auto makeArrayBuffer(auto source, auto byteLength, auto& cachedArrayBuffers, auto& device, auto& buffer)
+static auto makeArrayBuffer(auto source, size_t offset, auto byteLength, auto& cachedArrayBuffers, auto& device, auto& buffer)
 {
     auto arrayBuffer = ArrayBuffer::create(source, byteLength);
-    cachedArrayBuffers.append({ arrayBuffer.ptr(), reinterpret_cast<uint8_t*>(source) });
+    cachedArrayBuffers.append({ arrayBuffer.ptr(), offset });
     cachedArrayBuffers.last().buffer->pin();
     if (device)
         device->addBufferToUnmap(buffer);
@@ -171,16 +166,23 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSi
         m_mappedRanges.compact();
     }
 
-    auto mappedRange = m_backing->getMappedRange(offset, size);
-    if (!mappedRange.source) {
-        m_arrayBuffers.clear();
-        if (m_mappedAtCreation || !size)
-            return makeArrayBuffer(static_cast<size_t>(0U), 1, m_arrayBuffers, m_device, *this);
+    RefPtr<JSC::ArrayBuffer> result;
+    m_backing->getMappedRange(offset, size, [&] (auto mappedRange) {
+        if (!mappedRange.source) {
+            m_arrayBuffers.clear();
+            if (m_mappedAtCreation || !size)
+                result = makeArrayBuffer(static_cast<size_t>(0U), 0, 1, m_arrayBuffers, m_device, *this);
 
+            return;
+        }
+
+        result = makeArrayBuffer(mappedRange.source, offset, size, m_arrayBuffers, m_device, *this);
+    });
+
+    if (!result)
         return Exception { ExceptionCode::OperationError, "getMappedRange failed"_s };
-    }
 
-    return makeArrayBuffer(mappedRange.source, size, m_arrayBuffers, m_device, *this);
+    return result.releaseNonNull();
 }
 
 void GPUBuffer::unmap(ScriptExecutionContext& scriptExecutionContext)
@@ -207,15 +209,15 @@ void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
     for (auto& arrayBufferAndOffset : m_arrayBuffers) {
         auto& arrayBuffer = arrayBufferAndOffset.buffer;
         if (arrayBuffer && arrayBuffer->data() && arrayBuffer->byteLength()) {
-            memcpy(arrayBufferAndOffset.source, arrayBuffer->data(), arrayBuffer->byteLength());
+            m_backing->copy(arrayBuffer->toVector(), arrayBufferAndOffset.offset);
             JSC::ArrayBufferContents emptyBuffer;
             arrayBuffer->unpin();
             arrayBuffer->transferTo(scriptExecutionContext.vm(), emptyBuffer);
         }
     }
 
-    m_arrayBuffers.clear();
     m_backing->unmap();
+    m_arrayBuffers.clear();
 }
 
 void GPUBuffer::destroy(ScriptExecutionContext& scriptExecutionContext)

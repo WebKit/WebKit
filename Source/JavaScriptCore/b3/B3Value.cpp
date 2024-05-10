@@ -842,7 +842,9 @@ Effects Value::effects() const
         result.terminal = true;
         break;
     }
-    if (traps()) {
+    // We check hasTraps() first because most Kinds don't trap and we just switched on the
+    // Kind above. So in most cases the compiler won't bother loading the traps() bit.
+    if (kind().hasTraps() && traps()) {
         result.exitsSideways = true;
         result.reads = HeapRange::top();
     }

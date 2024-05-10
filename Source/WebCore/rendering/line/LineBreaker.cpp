@@ -43,7 +43,7 @@ void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& 
     resolver.commitExplicitEmbedding();
 }
 
-LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, WordMeasurements& wordMeasurements)
+LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo)
 {
     ASSERT(resolver.position().root() == &m_block);
 
@@ -63,7 +63,7 @@ LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, Li
         if (context.currentObject()->isRenderInline()) {
             context.handleEmptyInline();
         } else if (context.currentObject()->isRenderText()) {
-            if (context.handleText(wordMeasurements)) {
+            if (context.handleText()) {
                 // We've hit a hard text line break. Our line break iterator is updated, so early return.
                 return context.lineBreak();
             }

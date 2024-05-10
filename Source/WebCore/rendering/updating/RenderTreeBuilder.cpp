@@ -962,20 +962,6 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
     // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
     // that a positioned child got yanked). We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
-    bool shouldRepaint = isInternalMove == RenderTreeBuilder::IsInternalMove::No && !is<RenderMultiColumnSet>(child.previousSibling());
-    if (shouldRepaint) {
-        auto shouldForceRepaint = [&] {
-            // When repaint is propagated to our layer, we have to force it in case of detach (as this layer may not be around to issue it _affter_ layout).
-            auto* childWithLayer = dynamicDowncast<RenderLayerModelObject>(child);
-            if (!childWithLayer || !childWithLayer->hasLayer())
-                return false;
-            return childWithLayer->layer()->needsFullRepaint();
-        };
-        if (child.isBody())
-            parent.view().repaintRootContents();
-        else
-            child.repaint(shouldForceRepaint() ? RenderObject::ForceRepaint::Yes : RenderObject::ForceRepaint::No);
-    }
     child.setNeedsLayoutAndPrefWidthsRecalc();
 
     // If we have a line box wrapper, delete it.

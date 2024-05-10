@@ -56,8 +56,8 @@ public:
     Vector<Ref<CSSFontFace>, 1>& constituentFaces() { return m_fontFaces; }
 
     // CSSFontFaceClient needs to be able to be held in a RefPtr.
-    void ref() final { RefCounted<CSSSegmentedFontFace>::ref(); }
-    void deref() final { RefCounted<CSSSegmentedFontFace>::deref(); }
+    void ref() const final { RefCounted<CSSSegmentedFontFace>::ref(); }
+    void deref() const final { RefCounted<CSSSegmentedFontFace>::deref(); }
 
 private:
     CSSSegmentedFontFace();

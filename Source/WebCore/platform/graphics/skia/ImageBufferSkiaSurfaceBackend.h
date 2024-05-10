@@ -49,6 +49,7 @@ protected:
 
     GraphicsContext& context() final { return m_context; }
     unsigned bytesPerRow() const final;
+    bool canMapBackingStore() const final;
 
     sk_sp<SkSurface> m_surface;
     GraphicsContextSkia m_context;

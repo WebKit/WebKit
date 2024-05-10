@@ -49,6 +49,9 @@ public:
     static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&, uint64_t capacity);
     ~FileSystemSyncAccessHandle();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     ExceptionOr<void> truncate(unsigned long long size);
     ExceptionOr<unsigned long long> getSize();
     ExceptionOr<void> flush();
@@ -64,7 +67,7 @@ private:
     void closeInternal(ShouldNotifyBackend);
     bool requestSpaceForWrite(uint64_t writeOffset, uint64_t writeLength);
 
-    // ActiveDOMObject
+    // ActiveDOMObject.
     void stop() final;
 
     Ref<FileSystemFileHandle> m_source;

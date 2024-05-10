@@ -95,36 +95,36 @@ String TypeSet::dumpTypes() const
     StringBuilder seen;
 
     if (m_seenTypes & TypeFunction)
-        seen.append("Function ");
+        seen.append("Function "_s);
     if (m_seenTypes & TypeUndefined)
-        seen.append("Undefined ");
+        seen.append("Undefined "_s);
     if (m_seenTypes & TypeNull)
-        seen.append("Null ");
+        seen.append("Null "_s);
     if (m_seenTypes & TypeBoolean)
-        seen.append("Boolean ");
+        seen.append("Boolean "_s);
     if (m_seenTypes & TypeAnyInt)
-        seen.append("AnyInt ");
+        seen.append("AnyInt "_s);
     if (m_seenTypes & TypeNumber)
-        seen.append("Number ");
+        seen.append("Number "_s);
     if (m_seenTypes & TypeString)
-        seen.append("String ");
+        seen.append("String "_s);
     if (m_seenTypes & TypeObject)
-        seen.append("Object ");
+        seen.append("Object "_s);
     if (m_seenTypes & TypeSymbol)
-        seen.append("Symbol ");
+        seen.append("Symbol "_s);
 
     for (const auto& shape : m_structureHistory)
         seen.append(shape->m_constructorName, ' ');
 
     if (m_structureHistory.size()) 
-        seen.append("\nStructures:[ ");
+        seen.append("\nStructures:[ "_s);
     for (const auto& shape : m_structureHistory)
         seen.append(shape->stringRepresentation(), ' ');
     if (m_structureHistory.size())
         seen.append(']');
 
     if (m_structureHistory.size())
-        seen.append("\nLeast Common Ancestor: ", leastCommonAncestor());
+        seen.append("\nLeast Common Ancestor: "_s, leastCommonAncestor());
 
     return seen.toString();
 }
@@ -252,57 +252,57 @@ String TypeSet::toJSONString() const
     StringBuilder json;
     json.append('{');
 
-    json.append("\"displayTypeName\":");
+    json.append("\"displayTypeName\":"_s);
     json.appendQuotedJSONString(displayName());
     json.append(',');
 
-    json.append("\"primitiveTypeNames\":[");
+    json.append("\"primitiveTypeNames\":["_s);
     bool hasAnItem = false;
     if (m_seenTypes & TypeUndefined) {
         hasAnItem = true;
-        json.append("\"Undefined\"");
+        json.append("\"Undefined\""_s);
     }
     if (m_seenTypes & TypeNull) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.append("\"Null\"");
+        json.append("\"Null\""_s);
     }
     if (m_seenTypes & TypeBoolean) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.append("\"Boolean\"");
+        json.append("\"Boolean\""_s);
     }
     if (m_seenTypes & TypeAnyInt) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.append("\"Integer\"");
+        json.append("\"Integer\""_s);
     }
     if (m_seenTypes & TypeNumber) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.append("\"Number\"");
+        json.append("\"Number\""_s);
     }
     if (m_seenTypes & TypeString) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.append("\"String\"");
+        json.append("\"String\""_s);
     }
     if (m_seenTypes & TypeSymbol) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;
-        json.append("\"Symbol\"");
+        json.append("\"Symbol\""_s);
     }
     json.append(']');
 
     json.append(',');
 
-    json.append("\"structures\":[");
+    json.append("\"structures\":["_s);
     hasAnItem = false;
     for (size_t i = 0; i < m_structureHistory.size(); i++) {
         if (hasAnItem)
@@ -353,7 +353,7 @@ String StructureShape::propertyHash()
     }
 
     if (m_proto)
-        builder.append(":__proto__", m_proto->propertyHash());
+        builder.append(":__proto__"_s, m_proto->propertyHash());
 
     m_propertyHash = makeUnique<String>(builder.toString());
     return *m_propertyHash;
@@ -401,9 +401,9 @@ String StructureShape::stringRepresentation()
     representation.append('{');
     while (curShape) {
         for (auto& field : curShape->m_fields)
-            representation.append(StringView { field.get() }, ", ");
+            representation.append(StringView { field.get() }, ", "_s);
         if (curShape->m_proto)
-            representation.append("__proto__ [", curShape->m_proto->m_constructorName, "], ");
+            representation.append("__proto__ ["_s, curShape->m_proto->m_constructorName, "], "_s);
         curShape = curShape->m_proto;
     }
 
@@ -426,18 +426,18 @@ String StructureShape::toJSONString() const
     StringBuilder json;
     json.append('{');
 
-    json.append("\"constructorName\":");
+    json.append("\"constructorName\":"_s);
     json.appendQuotedJSONString(m_constructorName);
     json.append(',');
 
-    json.append("\"isInDictionaryMode\":");
+    json.append("\"isInDictionaryMode\":"_s);
     if (m_isInDictionaryMode)
-        json.append("true");
+        json.append("true"_s);
     else
-        json.append("false");
+        json.append("false"_s);
     json.append(',');
 
-    json.append("\"fields\":[");
+    json.append("\"fields\":["_s);
     bool hasAnItem = false;
     for (auto& field : m_fields) {
         if (hasAnItem)
@@ -447,9 +447,9 @@ String StructureShape::toJSONString() const
         String fieldName(field.get());
         json.appendQuotedJSONString(fieldName);
     }
-    json.append("],");
+    json.append("],"_s);
 
-    json.append("\"optionalFields\":[");
+    json.append("\"optionalFields\":["_s);
     hasAnItem = false;
     for (auto& field : m_optionalFields) {
         if (hasAnItem)
@@ -462,11 +462,11 @@ String StructureShape::toJSONString() const
     json.append(']');
     json.append(',');
 
-    json.append("\"proto\":");
+    json.append("\"proto\":"_s);
     if (m_proto)
         json.append(m_proto->toJSONString());
     else
-        json.append("null");
+        json.append("null"_s);
 
     json.append('}');
 

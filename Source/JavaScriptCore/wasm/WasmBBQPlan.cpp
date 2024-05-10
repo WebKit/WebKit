@@ -74,11 +74,11 @@ FunctionAllowlist& BBQPlan::ensureGlobalBBQAllowlist()
 bool BBQPlan::prepareImpl()
 {
     const auto& functions = m_moduleInformation->functions;
-    if (!tryReserveCapacity(m_wasmInternalFunctions, functions.size(), " WebAssembly functions")
-        || !tryReserveCapacity(m_wasmInternalFunctionLinkBuffers, functions.size(), " compilation contexts")
-        || !tryReserveCapacity(m_compilationContexts, functions.size(), " compilation contexts")
-        || !tryReserveCapacity(m_callees, functions.size(), " BBQ callees")
-        || !tryReserveCapacity(m_allLoopEntrypoints, functions.size(), " loop entrypoints"))
+    if (!tryReserveCapacity(m_wasmInternalFunctions, functions.size(), " WebAssembly functions"_s)
+        || !tryReserveCapacity(m_wasmInternalFunctionLinkBuffers, functions.size(), " compilation contexts"_s)
+        || !tryReserveCapacity(m_compilationContexts, functions.size(), " compilation contexts"_s)
+        || !tryReserveCapacity(m_callees, functions.size(), " BBQ callees"_s)
+        || !tryReserveCapacity(m_allLoopEntrypoints, functions.size(), " loop entrypoints"_s))
         return false;
 
     m_wasmInternalFunctions.resize(functions.size());

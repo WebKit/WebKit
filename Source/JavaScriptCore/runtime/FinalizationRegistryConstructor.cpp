@@ -57,7 +57,7 @@ JSC_DEFINE_HOST_FUNCTION(callFinalizationRegistry, (JSGlobalObject* globalObject
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "FinalizationRegistry"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "FinalizationRegistry"_s));
 }
 
 JSC_DEFINE_HOST_FUNCTION(constructFinalizationRegistry, (JSGlobalObject* globalObject, CallFrame* callFrame))

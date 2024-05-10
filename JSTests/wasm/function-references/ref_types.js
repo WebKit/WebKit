@@ -364,15 +364,15 @@ async function testRefTypesInTables() {
   assert.eq(wasmTableExternref.get(0), console.log);
 }
 
-assert.asyncTest(testRefTypeLocal());
-assert.asyncTest(testNonNullRefTypeLocal());
-assert.asyncTest(testRefTypeInSignature());
-assert.asyncTest(testRefTypeParamCheck());
-assert.asyncTest(testRefGlobalCheck());
-assert.asyncTest(testExternFuncrefNonNullCheck());
-assert.asyncTest(testExternrefCompatibility());
-assert.asyncTest(testNonNullExternrefIncompatible());
-assert.asyncTest(testFuncrefCompatibility());
-assert.asyncTest(testNonNullFuncrefIncompatible());
-assert.asyncTest(testWasmJSGlobals());
-assert.asyncTest(testRefTypesInTables());
+await assert.asyncTest(testRefTypeLocal());
+await assert.asyncTest(testNonNullRefTypeLocal());
+await assert.asyncTest(testRefTypeInSignature());
+await assert.asyncTest(testRefTypeParamCheck());
+await assert.asyncTest(testRefGlobalCheck());
+await assert.asyncTest(testExternFuncrefNonNullCheck());
+await assert.asyncTest(testExternrefCompatibility());
+await assert.asyncTest(testNonNullExternrefIncompatible());
+await assert.asyncTest(testFuncrefCompatibility());
+await assert.asyncTest(testNonNullFuncrefIncompatible());
+await assert.asyncTest(testWasmJSGlobals());
+await assert.asyncTest(testRefTypesInTables());

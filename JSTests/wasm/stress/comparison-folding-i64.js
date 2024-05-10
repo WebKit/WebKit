@@ -174,4 +174,4 @@ async function test() {
     assert.eq(testEqzFalse(), 0);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

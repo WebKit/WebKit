@@ -29,10 +29,41 @@
 #include "WebCoreArgumentCoders.h"
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace IPC {
+
+void ArgumentCoder<GRefPtr<GByteArray>>::encode(Encoder& encoder, const GRefPtr<GByteArray>& array)
+{
+    if (!array) {
+        encoder << false;
+        return;
+    }
+
+    encoder << true;
+    encoder << std::span(array->data, array->len);
+}
+
+std::optional<GRefPtr<GByteArray>> ArgumentCoder<GRefPtr<GByteArray>>::decode(Decoder& decoder)
+{
+    auto isEngaged = decoder.decode<bool>();
+    if (!UNLIKELY(isEngaged))
+        return std::nullopt;
+
+    if (!(*isEngaged))
+        return GRefPtr<GByteArray>();
+
+    auto data = decoder.decode<std::span<const uint8_t>>();
+    if (UNLIKELY(!data))
+        return std::nullopt;
+
+    GRefPtr<GByteArray> array = adoptGRef(g_byte_array_sized_new(data->size()));
+    g_byte_array_append(array.get(), data->data(), data->size());
+
+    return array;
+}
 
 void ArgumentCoder<GRefPtr<GVariant>>::encode(Encoder& encoder, const GRefPtr<GVariant>& variant)
 {
@@ -69,62 +100,51 @@ std::optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decode
 void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, const GRefPtr<GTlsCertificate>& certificate)
 {
     if (!certificate) {
-        encoder << 0;
+        encoder << Vector<std::span<const uint8_t>> { };
         return;
     }
 
-    Vector<GRefPtr<GByteArray>> certificatesDataList;
+    Vector<GRefPtr<GByteArray>> certificatesData;
     for (auto* nextCertificate = certificate.get(); nextCertificate; nextCertificate = g_tls_certificate_get_issuer(nextCertificate)) {
         GRefPtr<GByteArray> certificateData;
         g_object_get(nextCertificate, "certificate", &certificateData.outPtr(), nullptr);
 
         if (!certificateData) {
-            certificatesDataList.clear();
+            certificatesData.clear();
             break;
         }
-
-        certificatesDataList.append(WTFMove(certificateData));
+        certificatesData.insert(0, WTFMove(certificateData));
     }
 
-    encoder << static_cast<uint32_t>(certificatesDataList.size());
-    if (certificatesDataList.isEmpty())
+    if (certificatesData.isEmpty())
         return;
+
+    encoder << certificatesData;
 
 #if GLIB_CHECK_VERSION(2, 69, 0)
     GRefPtr<GByteArray> privateKey;
     GUniqueOutPtr<char> privateKeyPKCS11Uri;
     g_object_get(certificate.get(), "private-key", &privateKey.outPtr(), "private-key-pkcs11-uri", &privateKeyPKCS11Uri.outPtr(), nullptr);
-    encoder << std::span(privateKey ? privateKey->data : nullptr, privateKey ? privateKey->len : 0);
+    encoder << privateKey;
     encoder << CString(privateKeyPKCS11Uri.get());
 #endif
-
-    // Encode starting from the root certificate.
-    while (!certificatesDataList.isEmpty()) {
-        auto certificateData = certificatesDataList.takeLast();
-        encoder << std::span(certificateData->data, certificateData->len);
-    }
 }
 
 std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode(Decoder& decoder)
 {
-    std::optional<uint32_t> chainLength;
-    decoder >> chainLength;
-    if (UNLIKELY(!chainLength))
+    auto certificatesData = decoder.decode<WTF::Vector<GRefPtr<GByteArray>>>();
+
+    if (UNLIKELY(!certificatesData))
         return std::nullopt;
 
-    if (!*chainLength)
+    if (!certificatesData->size())
         return GRefPtr<GTlsCertificate>();
 
 #if GLIB_CHECK_VERSION(2, 69, 0)
-    std::optional<std::span<const uint8_t>> privateKeyData;
-    decoder >> privateKeyData;
-    if (UNLIKELY(!privateKeyData))
+    std::optional<GRefPtr<GByteArray>> privateKey;
+    decoder >> privateKey;
+    if (UNLIKELY(!privateKey))
         return std::nullopt;
-    GRefPtr<GByteArray> privateKey;
-    if (privateKeyData->size()) {
-        privateKey = adoptGRef(g_byte_array_sized_new(privateKeyData->size()));
-        g_byte_array_append(privateKey.get(), privateKeyData->data(), privateKeyData->size());
-    }
 
     std::optional<CString> privateKeyPKCS11Uri;
     decoder >> privateKeyPKCS11Uri;
@@ -135,22 +155,14 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
     GType certificateType = g_tls_backend_get_certificate_type(g_tls_backend_get_default());
     GRefPtr<GTlsCertificate> certificate;
     GTlsCertificate* issuer = nullptr;
-    for (uint32_t i = 0; i < *chainLength; i++) {
-        std::optional<std::span<const uint8_t>> certificateDataReference;
-        decoder >> certificateDataReference;
-        if (UNLIKELY(!certificateDataReference))
-            return std::nullopt;
-
-        GRefPtr<GByteArray> certificateData = adoptGRef(g_byte_array_sized_new(certificateDataReference->size()));
-        g_byte_array_append(certificateData.get(), certificateDataReference->data(), certificateDataReference->size());
-
+    for (uint32_t i = 0; auto& certificateData : *certificatesData) {
         certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(
             certificateType, nullptr, nullptr,
             "certificate", certificateData.get(),
             "issuer", issuer,
 #if GLIB_CHECK_VERSION(2, 69, 0)
-            "private-key", i == *chainLength - 1 ? privateKey.get() : nullptr,
-            "private-key-pkcs11-uri", i == *chainLength - 1 ? privateKeyPKCS11Uri->data() : nullptr,
+            "private-key", i == certificatesData->size() - 1 ? privateKey->get() : nullptr,
+            "private-key-pkcs11-uri", i == certificatesData->size() - 1 ? privateKeyPKCS11Uri->data() : nullptr,
 #endif
             nullptr)));
         issuer = certificate.get();

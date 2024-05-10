@@ -351,7 +351,7 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
 
 static void appendBoolean(StringBuilder& builder, ASCIILiteral label, bool flag)
 {
-    builder.append("    ", label, ": ", flag ? "Yes" : "No");
+    builder.append("    "_s, label, ": "_s, flag ? "Yes"_s : "No"_s);
 }
 
 static void appendHashSet(StringBuilder& builder, const String& label, const HashSet<RegistrableDomain>& hashSet)
@@ -359,9 +359,9 @@ static void appendHashSet(StringBuilder& builder, const String& label, const Has
     if (hashSet.isEmpty())
         return;
 
-    builder.append("    ", label, ":\n");
+    builder.append("    "_s, label, ":\n"_s);
     for (auto& entry : hashSet)
-        builder.append("        ", entry.string(), '\n');
+        builder.append("        "_s, entry.string(), '\n');
 }
 
 #if ENABLE(WEB_API_STATISTICS)
@@ -370,9 +370,9 @@ static void appendHashSet(StringBuilder& builder, const String& label, const Has
     if (hashSet.isEmpty())
         return;
 
-    builder.append("    ", label, ":\n");
+    builder.append("    "_s, label, ":\n"_s);
     for (auto& entry : hashSet)
-        builder.append("        ", entry, '\n');
+        builder.append("        "_s, entry, '\n');
 }
 
 static ASCIILiteral navigatorAPIEnumToString(NavigatorAPIsAccessed navigatorEnum)
@@ -419,18 +419,18 @@ static void appendNavigatorAPIOptionSet(StringBuilder& builder, const OptionSet<
 {
     if (optionSet.isEmpty())
         return;
-    builder.append("    navigatorFunctionsAccessed:\n");
+    builder.append("    navigatorFunctionsAccessed:\n"_s);
     for (auto navigatorAPI : optionSet)
-        builder.append("        ", navigatorAPIEnumToString(navigatorAPI), '\n');
+        builder.append("        "_s, navigatorAPIEnumToString(navigatorAPI), '\n');
 }
 
 static void appendScreenAPIOptionSet(StringBuilder& builder, const OptionSet<ScreenAPIsAccessed>& optionSet)
 {
     if (optionSet.isEmpty())
         return;
-    builder.append("    screenFunctionsAccessed:\n");
+    builder.append("    screenFunctionsAccessed:\n"_s);
     for (auto screenAPI : optionSet) {
-        builder.append("        ", screenAPIEnumToString(screenAPI), '\n');
+        builder.append("        "_s, screenAPIEnumToString(screenAPI), '\n');
     }
 }
 #endif
@@ -443,13 +443,11 @@ static bool hasHadRecentUserInteraction(Seconds interactionTimeSeconds)
 String ResourceLoadStatistics::toString() const
 {
     StringBuilder builder;
-    builder.append("Registrable domain: ", registrableDomain.string(), '\n');
+    builder.append("Registrable domain: "_s, registrableDomain.string(), '\n');
 
     // User interaction
     appendBoolean(builder, "hadUserInteraction"_s, hadUserInteraction);
-    builder.append('\n');
-    builder.append("    mostRecentUserInteraction: "_s, hasHadRecentUserInteraction(mostRecentUserInteractionTime.secondsSinceEpoch()) ? "within 24 hours" : "-1");
-    builder.append('\n');
+    builder.append("\n    mostRecentUserInteraction: "_s, hasHadRecentUserInteraction(mostRecentUserInteractionTime.secondsSinceEpoch()) ? "within 24 hours\n"_s : "-1\n"_s);
     appendBoolean(builder, "grandfathered"_s, grandfathered);
     builder.append('\n');
 
@@ -476,9 +474,7 @@ String ResourceLoadStatistics::toString() const
     appendBoolean(builder, "isPrevalentResource"_s, isPrevalentResource);
     builder.append('\n');
     appendBoolean(builder, "isVeryPrevalentResource"_s, isVeryPrevalentResource);
-    builder.append('\n');
-    builder.append("    dataRecordsRemoved: ", dataRecordsRemoved);
-    builder.append('\n');
+    builder.append("\n    dataRecordsRemoved: "_s, dataRecordsRemoved, '\n');
 
 #if ENABLE(WEB_API_STATISTICS)
     appendHashSet(builder, "fontsFailedToLoad"_s, fontsFailedToLoad);
@@ -488,8 +484,7 @@ String ResourceLoadStatistics::toString() const
     appendScreenAPIOptionSet(builder, screenFunctionsAccessed);
     appendHashSet(builder, "canvasTextWritten"_s, canvasActivityRecord.textWritten);
     appendBoolean(builder, "canvasReadData"_s, canvasActivityRecord.wasDataRead);
-    builder.append('\n');
-    builder.append('\n');
+    builder.append("\n\n"_s);
 #endif
 
     return builder.toString();

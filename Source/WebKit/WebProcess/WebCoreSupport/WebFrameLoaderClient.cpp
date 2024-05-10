@@ -57,8 +57,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame)
+WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& frameInvalidator)
     : m_frame(WTFMove(frame))
+    , m_frameInvalidator(WTFMove(frameInvalidator))
 {
 }
 

@@ -152,7 +152,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (value != kCFBooleanTrue)
                     continue;
 
-                tagStart.append("<b>");
+                tagStart.append("<b>"_s);
                 tagEnd = "</b>" + tagEnd;
                 continue;
             }
@@ -161,7 +161,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (value != kCFBooleanTrue)
                     continue;
 
-                tagStart.append("<i>");
+                tagStart.append("<i>"_s);
                 tagEnd = "</i>" + tagEnd;
                 continue;
             }
@@ -170,7 +170,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (value != kCFBooleanTrue)
                     continue;
 
-                tagStart.append("<u>");
+                tagStart.append("<u>"_s);
                 tagEnd = "</u>" + tagEnd;
                 continue;
             }

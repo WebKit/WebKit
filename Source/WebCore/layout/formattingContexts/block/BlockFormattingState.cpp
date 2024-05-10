@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BlockFormattingState.h"
 
+#include "RenderObject.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

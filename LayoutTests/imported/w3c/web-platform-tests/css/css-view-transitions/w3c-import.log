@@ -156,7 +156,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/get-computed-style-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/group-animation-for-root-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element-from-point-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element-from-point.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element.html
@@ -253,6 +252,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-and-old-sizes-match-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-and-old-sizes-match-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-and-old-sizes-match.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-ancestor-clipped-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-ancestor-clipped-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-ancestor-clipped.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-clip-path-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-clip-path-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-clip-path.html
@@ -430,10 +432,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-multiple-wildcard-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-multiple-wildcard.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-multiple.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildard-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildard.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildcard-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildcard-no-star-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildcard-no-star.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildcard.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-ident-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-ident.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-partial-expected.html

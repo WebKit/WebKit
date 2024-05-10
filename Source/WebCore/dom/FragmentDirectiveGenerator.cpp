@@ -112,12 +112,7 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
         String startText = percentEncodeFragmentDirectiveSpecialCharacters(nextWordsFromPosition(3, visibleStartPosition));
         String endText = percentEncodeFragmentDirectiveSpecialCharacters(previousWordsFromPosition(3, visibleEndPosition));
 
-        StringBuilder textDirectiveBuilder;
-        textDirectiveBuilder.append(textDirectivePrefix);
-        textDirectiveBuilder.append(startText);
-        textDirectiveBuilder.append(",");
-        textDirectiveBuilder.append(endText);
-        url.setFragmentIdentifier(StringView(textDirectiveBuilder));
+        url.setFragmentIdentifier(makeString(textDirectivePrefix, startText, ',', endText));
     }
     if (textFromRange.length() < maxCharacters && textFromRange.length() > minCharacter) {
         StringBuilder textDirectiveBuilder;
@@ -129,14 +124,10 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
         String prefix = percentEncodeFragmentDirectiveSpecialCharacters(previousWordsFromPosition(3, visibleStartPosition));
         String suffix = percentEncodeFragmentDirectiveSpecialCharacters(nextWordsFromPosition(3, visibleEndPosition));
 
-        StringBuilder textDirectiveBuilder;
-        textDirectiveBuilder.append(textDirectivePrefix);
-        textDirectiveBuilder.append(percentEncodeFragmentDirectiveSpecialCharacters(prefix));
-        textDirectiveBuilder.append("-,");
-        textDirectiveBuilder.append(percentEncodeFragmentDirectiveSpecialCharacters(textFromRange));
-        textDirectiveBuilder.append(",-");
-        textDirectiveBuilder.append(percentEncodeFragmentDirectiveSpecialCharacters(suffix));
-        url.setFragmentIdentifier(StringView(textDirectiveBuilder));
+        url.setFragmentIdentifier(makeString(textDirectivePrefix,
+            percentEncodeFragmentDirectiveSpecialCharacters(prefix), "-,"_s,
+            percentEncodeFragmentDirectiveSpecialCharacters(textFromRange), ",-"_s,
+            percentEncodeFragmentDirectiveSpecialCharacters(suffix)));
     }
 
     m_urlWithFragment = url;

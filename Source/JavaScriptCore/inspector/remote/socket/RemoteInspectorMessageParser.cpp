@@ -46,16 +46,15 @@ MessageParser::MessageParser(Function<void(Vector<uint8_t>&&)>&& listener)
 {
 }
 
-Vector<uint8_t> MessageParser::createMessage(const uint8_t* data, size_t size)
+Vector<uint8_t> MessageParser::createMessage(std::span<const uint8_t> data)
 {
-    if (!data || !size || size > UINT_MAX)
+    if (data.empty() || data.size() > std::numeric_limits<uint32_t>::max())
         return Vector<uint8_t>();
 
-    auto messageBuffer = Vector<uint8_t>(size + sizeof(uint32_t));
-    uint32_t uintSize = static_cast<uint32_t>(size);
-    uint32_t nboSize = htonl(uintSize);
+    auto messageBuffer = Vector<uint8_t>(data.size() + sizeof(uint32_t));
+    uint32_t nboSize = htonl(static_cast<uint32_t>(data.size()));
     memcpy(&messageBuffer[0], &nboSize, sizeof(uint32_t));
-    memcpy(&messageBuffer[sizeof(uint32_t)], data, uintSize);
+    memcpy(&messageBuffer[sizeof(uint32_t)], data.data(), data.size());
     return messageBuffer;
 }
 

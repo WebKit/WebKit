@@ -1,0 +1,10 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /usr/lib/swift/libswiftXPC.dylib
+current-version: 36.100.8
+swift-abi-version: 7
+exports:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        symbols: [__swift_FORCE_LOAD_$_swiftXPC]
+...

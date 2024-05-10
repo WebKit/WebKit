@@ -65,8 +65,9 @@ public:
     static Ref<WebXRSystem> create(Navigator&);
     ~WebXRSystem();
 
-    using RefCounted<WebXRSystem>::ref;
-    using RefCounted<WebXRSystem>::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void isSessionSupported(XRSessionMode, IsSessionSupportedPromise&&);
     void requestSession(Document&, XRSessionMode, const XRSessionInit&, RequestSessionPromise&&);

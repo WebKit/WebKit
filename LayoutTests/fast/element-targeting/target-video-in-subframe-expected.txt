@@ -1,0 +1,14 @@
+PASS originalVideo.muted is false
+PASS originalVideo.volume is 1
+PASS internals.isEffectivelyMuted(originalVideo) is true
+PASS clonedVideo.muted is false
+PASS clonedVideo.volume is 1
+PASS internals.isEffectivelyMuted(clonedVideo) is true
+After reset:
+PASS internals.isEffectivelyMuted(originalVideo) is false
+PASS internals.isEffectivelyMuted(clonedVideo) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+This test requires WebKitTestRunner

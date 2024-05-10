@@ -243,7 +243,7 @@ inline String Term::toString() const
                 if (isASCIIPrintable(c) && !isUnicodeCompatibleASCIIWhitespace(c))
                     builder.append(c);
                 else
-                    builder.append("\\u", c);
+                    builder.append("\\u"_s, c);
             }
         }
         builder.append(']');

@@ -88,7 +88,7 @@ ExceptionOr<void> CSSSkewX::setAx(Ref<CSSNumericValue> ax)
 void CSSSkewX::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskewx
-    builder.append("skewX(");
+    builder.append("skewX("_s);
     m_ax->serialize(builder);
     builder.append(')');
 }

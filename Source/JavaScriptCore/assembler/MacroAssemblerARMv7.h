@@ -2804,16 +2804,20 @@ public:
         return Call(m_assembler.b(), Call::LinkableNearTail);
     }
 
-    // FIXME: why is this the same than nearCall() in ARM64? is it right?
     ALWAYS_INLINE Call threadSafePatchableNearCall()
     {
         invalidateAllTempRegisters();
-        moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
-        return Call(m_assembler.blx(dataTempRegister), Call::LinkableNear);
+        padBeforePatch();
+        m_assembler.alignWithNop(sizeof(int));
+        m_assembler.bl();
+        return Call(m_assembler.labelIgnoringWatchpoints(), Call::LinkableNear);
     }
 
     ALWAYS_INLINE Call threadSafePatchableNearTailCall()
     {
+        invalidateAllTempRegisters();
+        padBeforePatch();
+        m_assembler.alignWithNop(sizeof(int));
         return Call(m_assembler.b(), Call::LinkableNearTail);
     }
 

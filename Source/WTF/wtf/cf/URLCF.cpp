@@ -65,7 +65,8 @@ RetainPtr<CFURLRef> URL::createCFURL() const
         result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, characters.data(), characters.size(), kCFStringEncodingUTF8, nullptr, true));
     } else {
         CString utf8 = m_string.utf8();
-        result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, utf8.dataAsUInt8Ptr(), utf8.length(), kCFStringEncodingUTF8, nullptr, true));
+        auto utf8Span = utf8.span();
+        result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, utf8Span.data(), utf8Span.size(), kCFStringEncodingUTF8, nullptr, true));
     }
 
     if (protocolIsInHTTPFamily() && !isSameOrigin(result.get(), *this))

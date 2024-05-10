@@ -762,12 +762,12 @@ void IDBObjectStore::renameReferencedIndex(IDBIndex& index, const String& newNam
     m_referencedIndexes.set(newName, m_referencedIndexes.take(index.info().name()));
 }
 
-void IDBObjectStore::ref()
+void IDBObjectStore::ref() const
 {
     m_transaction.ref();
 }
 
-void IDBObjectStore::deref()
+void IDBObjectStore::deref() const
 {
     m_transaction.deref();
 }

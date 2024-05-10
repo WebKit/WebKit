@@ -69,10 +69,10 @@ void CSSMathMin::serialize(StringBuilder& builder, OptionSet<SerializationArgume
 {
     // https://drafts.css-houdini.org/css-typed-om/#calc-serialization
     if (!arguments.contains(SerializationArguments::WithoutParentheses))
-        builder.append("min(");
+        builder.append("min("_s);
     m_values->forEach([&](auto& numericValue, bool first) {
         if (!first)
-            builder.append(", ");
+            builder.append(", "_s);
         numericValue.serialize(builder, { SerializationArguments::Nested, SerializationArguments::WithoutParentheses });
     });
     if (!arguments.contains(SerializationArguments::WithoutParentheses))

@@ -36,17 +36,17 @@ auto BranchHintsSectionParser::parse() -> PartialResult
 {
     uint32_t functionCount;
     int64_t previousFunctionIndex = -1;
-    WASM_PARSER_FAIL_IF(!parseVarUInt32(functionCount), "can't get function count");
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(functionCount), "can't get function count"_s);
 
     for (uint32_t i = 0; i < functionCount; ++i) {
         uint32_t functionIndex;
         uint32_t hintCount;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't get function index for function ", i);
-        WASM_PARSER_FAIL_IF(static_cast<int64_t>(functionIndex) < previousFunctionIndex, "invalid function index ", functionIndex, " for function ", i);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't get function index for function "_s, i);
+        WASM_PARSER_FAIL_IF(static_cast<int64_t>(functionIndex) < previousFunctionIndex, "invalid function index "_s, functionIndex, " for function "_s, i);
 
         previousFunctionIndex = functionIndex;
 
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(hintCount), "can't get number of hints for function ", i);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(hintCount), "can't get number of hints for function "_s, i);
 
         if (!hintCount)
             continue;
@@ -55,18 +55,18 @@ auto BranchHintsSectionParser::parse() -> PartialResult
         BranchHintMap branchHintsForFunction;
         for (uint32_t j = 0; j < hintCount; ++j) {
             uint32_t branchOffset;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(branchOffset), "can't get branch offset for hint ", j);
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(branchOffset), "can't get branch offset for hint "_s, j);
             WASM_PARSER_FAIL_IF(static_cast<int64_t>(branchOffset) < previousBranchOffset
-                || !m_info->branchHints.isValidKey(branchOffset), "invalid branch offset ", branchOffset, " for hint ", j);
+                || !m_info->branchHints.isValidKey(branchOffset), "invalid branch offset "_s, branchOffset, " for hint "_s, j);
 
             previousBranchOffset = branchOffset;
 
             uint32_t payloadSize;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(payloadSize), "can't get payload size for hint ", j);
-            WASM_PARSER_FAIL_IF(payloadSize != 0x1, "invalid payload size for hint ", j);
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(payloadSize), "can't get payload size for hint "_s, j);
+            WASM_PARSER_FAIL_IF(payloadSize != 0x1, "invalid payload size for hint "_s, j);
 
             uint8_t parsedBranchHint;
-            WASM_PARSER_FAIL_IF(!parseVarUInt1(parsedBranchHint), "can't get or invalid branch hint value for hint ", j);
+            WASM_PARSER_FAIL_IF(!parseVarUInt1(parsedBranchHint), "can't get or invalid branch hint value for hint "_s, j);
 
             BranchHint branchHint = static_cast<BranchHint>(parsedBranchHint);
             ASSERT(isValidBranchHint(branchHint));

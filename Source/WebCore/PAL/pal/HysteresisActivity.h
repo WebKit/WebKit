@@ -66,6 +66,13 @@ public:
         m_timer.startOneShot(m_hysteresisSeconds);
     }
 
+    void cancel()
+    {
+        m_active = false;
+        if (m_timer.isActive())
+            m_timer.stop();
+    }
+
     void impulse()
     {
         if (m_active)

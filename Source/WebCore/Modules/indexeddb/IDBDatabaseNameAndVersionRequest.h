@@ -53,8 +53,9 @@ public:
 
     const IDBResourceIdentifier& resourceIdentifier() const;
 
-    using ThreadSafeRefCounted<IDBDatabaseNameAndVersionRequest>::ref;
-    using ThreadSafeRefCounted<IDBDatabaseNameAndVersionRequest>::deref;
+    // ActiveDOMObject.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
     void complete(std::optional<Vector<IDBDatabaseNameAndVersion>>&&);
 

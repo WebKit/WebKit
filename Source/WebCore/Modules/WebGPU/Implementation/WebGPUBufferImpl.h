@@ -59,8 +59,10 @@ private:
     WGPUBuffer backing() const { return m_backing.get(); }
 
     void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64> sizeForMap, CompletionHandler<void(bool)>&&) final;
-    MappedRange getMappedRange(Size64 offset, std::optional<Size64>) final;
+    void getMappedRange(Size64 offset, std::optional<Size64>, Function<void(MappedRange)>&&) final;
+    MappedRange getBufferContents() final;
     void unmap() final;
+    void copy(Vector<uint8_t>&&, size_t) final;
 
     void destroy() final;
 

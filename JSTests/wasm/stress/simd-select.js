@@ -48,4 +48,4 @@ async function test() {
     assert.eq(test_upper(42, 43), 2);
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

@@ -76,13 +76,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(GPUDevice);
 
-GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing)
+GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel)
     : ActiveDOMObject { scriptExecutionContext }
     , m_lostPromise(makeUniqueRef<LostPromise>())
     , m_backing(WTFMove(backing))
     , m_queue(GPUQueue::create(Ref { m_backing->queue() }))
     , m_autoPipelineLayout(createAutoPipelineLayout())
 {
+    m_queue->setLabel(WTFMove(queueLabel));
 }
 
 GPUDevice::~GPUDevice() = default;

@@ -1,0 +1,34 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/CoreRE.framework/CoreRE
+current-version: 334.24
+exports:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        symbols: [_REAABBExtents, _REAnimationComponentGetComponentType, _REAnimationComponentPlay, _REAnimationHandoffDefaultDescEx,
+                _REAnimationLibraryComponentGetAnimationLibraryAsset, _REAnimationLibraryComponentGetComponentType, _REAnimationLibraryDefinitionCreateFromAnimationLibraryAsset,
+                _REAnimationLibraryDefinitionGetEntryAsset, _REAnimationLibraryDefinitionGetEntryCount, _REAnimationSceneAssetGetRootTimeline,
+                _REAssetGetType, _REAssetHandleAssetType, _RECALayerClientComponentGetCALayer, _RECALayerClientComponentSetShouldSyncToRemotes,
+                _RECALayerGetCALayerClientComponent, _RECALayerServiceCreateRootComponent, _RECGCommandsCacheCreate, _RECGCommandsContextCopyEncodedDataWithOptions,
+                _RECGCommandsContextCreate, _RECGContextDrawCGCommandsEncodedData, _REClippingPrimitiveComponentClipToBox,
+                _REClippingPrimitiveComponentGetComponentType, _REClippingPrimitiveComponentSetShouldClipChildren, _REClippingPrimitiveComponentSetShouldClipSelf,
+                _REComponentClassGetName, _REComponentGetClass, _REComponentGetEntity, _REECSManagerAddEngineSystem, _REECSManagerAddScene,
+                _REEngineConfigurationCreateDefault, _REEngineConfigurationGetServicesToCreate, _REEngineConfigurationSetCALayerServiceType,
+                _REEngineConfigurationSetClockMode, _REEngineConfigurationSetEngineQueue, _REEngineConfigurationSetRenderFlags,
+                _REEngineConfigurationSetServicesToCreate, _REEngineConfigurationSetServicesToUpdate, _REEngineCreate, _REEngineGetServiceLocator,
+                _REEngineGetShared, _REEngineInitWithConfiguration, _REEngineSetShared, _REEngineStart, _REEntityComputeMeshBounds,
+                _REEntityCreate, _REEntityGetChild, _REEntityGetChildCount, _REEntityGetComponentByClass, _REEntityGetName,
+                _REEntityGetOrAddComponentByClass, _REEntityRemoveComponentByClass, _REEntitySetName, _REEntitySetParent,
+                _REEntitySubtreeAddNetworkComponentRecursive, _REHierarchicalFadeComponentGetComponentType, _REHierarchicalFadeComponentSetOpacity,
+                _REMakeSRTFromMatrix, _REMeshComponentGetComponentType, _RENetworkMarkComponentDirty, _RENetworkMarkEntityMetadataDirty,
+                _RERelease, _RERetain, _RESRTMatrix, _RESceneAddEntity, _REServiceLocatorGetAssetManager, _REServiceLocatorGetCALayerService,
+                _REServiceLocatorGetECSService, _RETimelineDefinitionCreateChildTimelineRef, _RETimelineDefinitionCreateClipSourceRef,
+                _RETimelineDefinitionCreateFromTimeline, _RETimelineDefinitionCreateTimelineAsset, _RETimelineDefinitionCreateTimelineClip,
+                _RETimelineDefinitionGetChildrenTimelineCount, _RETimelineDefinitionGetClipDelay, _RETimelineDefinitionGetClipDuration,
+                _RETimelineDefinitionGetClipEnd, _RETimelineDefinitionGetClipLoopBehavior, _RETimelineDefinitionGetClipOffset,
+                _RETimelineDefinitionGetClipSpeed, _RETimelineDefinitionGetClipStart, _RETimelineDefinitionGetEndTime, _RETimelineDefinitionGetFrameInterval,
+                _RETimelineDefinitionGetName, _RETimelineDefinitionGetStartTime, _RETimelineDefinitionGetTargetPath, _RETimelineDefinitionGetTimelineType,
+                _RETimelineDefinitionGetValueCount, _RETimelineDefinitionSetClipDuration, _RETimelineDefinitionSetClipLoopBehavior,
+                _RETransformComponentGetComponentType, _RETransformComponentGetLocalSRT, _RETransformComponentSetLocalSRT,
+                __REStartup, _kInvalidAnimationToken]
+...

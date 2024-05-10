@@ -111,10 +111,34 @@ struct ConditionalFront<List, false> {
     using type = void;
 };
 
+template<class F, class...Ts> F forEachArgs(F f)
+{
+    return (void)std::initializer_list<int> {
+        (
+            (void)f.template operator()<Ts>(),
+            0
+        )...
+    }, f;
+}
+
+template<template<class...> class List, typename... Elements, typename Functor>
+Functor forEachImpl(List<Elements...>&&, Functor f)
+{
+    return forEachArgs<Functor, Elements...>(f);
+}
+
+}
+
+/// Version of `brigand::for_each` that utilizes template lambdas to avoid the need to pass a dummy parameter.
+template<typename List, typename Functor> Functor forEach(Functor f)
+{
+    return Detail::forEachImpl(List { }, f);
 }
 
 template<typename List, bool condition>
 using ConditionalFront = typename Detail::ConditionalFront<List, condition>::type;
+
+
 
 template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLUnion<T...>> {
     using Type = IDLUnion<T...>;
@@ -193,11 +217,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         //         (FIXME: Add support for object and step 4.2)
         if (brigand::any<TypeList, IsIDLInterface<brigand::_1>>::value) {
             std::optional<ReturnType> returnValue;
-            brigand::for_each<InterfaceTypeList>([&](auto&& type) {
+            forEach<InterfaceTypeList>([&]<typename Type>() {
                 if (returnValue)
                     return;
                 
-                using Type = typename std::remove_cvref_t<decltype(type)>::type;
                 using ImplementationType = typename Type::ImplementationType;
                 using RawType = typename Type::RawType;
 
@@ -266,11 +289,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         constexpr bool hasTypedArrayType = brigand::any<TypeList, IsIDLTypedArray<brigand::_1>>::value;
         if (hasTypedArrayType) {
             std::optional<ReturnType> returnValue;
-            brigand::for_each<TypedArrayTypeList>([&](auto&& type) {
+            forEach<TypedArrayTypeList>([&]<typename Type>() {
                 if (returnValue)
                     return;
 
-                using Type = typename std::remove_cvref_t<decltype(type)>::type;
                 using ImplementationType = typename Type::ImplementationType;
                 using WrapperType = typename Converter<Type>::WrapperType;
 
@@ -393,8 +415,7 @@ template<typename... T> struct JSConverter<IDLUnion<T...>> {
         auto index = variant.index();
 
         std::optional<JSC::JSValue> returnValue;
-        brigand::for_each<Sequence>([&](auto&& type) {
-            using I = typename std::remove_cvref_t<decltype(type)>::type;
+        forEach<Sequence>([&]<typename I>() {
             if (I::value == index) {
                 ASSERT(!returnValue);
                 returnValue = toJS<brigand::at<TypeList, I>>(lexicalGlobalObject, globalObject, std::get<I::value>(variant));

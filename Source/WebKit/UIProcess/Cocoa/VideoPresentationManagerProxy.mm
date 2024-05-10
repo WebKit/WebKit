@@ -819,8 +819,9 @@ RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackS
         auto initialFrame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
         auto playerView = adoptNS([allocWebAVPlayerLayerViewInstance() initWithFrame:initialFrame]);
 
-        RetainPtr playerLayer { (WebAVPlayerLayer *)[playerView layer] };
+        model->setVideoDimensions(nativeSize);
 
+        RetainPtr playerLayer { (WebAVPlayerLayer *)[playerView layer] };
         [playerLayer setVideoDimensions:nativeSize];
         [playerLayer setPresentationModel:model.get()];
         [playerLayer setVideoSublayer:[view layer]];

@@ -4,11 +4,21 @@
     <meta name="viewport" content="width=1600">
     <style>
         body { margin: 0; }
-        #test {
+        #test, .transformed-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 1rem;
             font-family: -apple-system;
+        }
+        .transformed-container {
+            position: absolute;
+            width: 400px;
+            height; 100px;
+            transform: translate(50px, 200px) scale(0.75);
+        }
+        .with-layer {
+            transform: translate(400px, 200px) scale(1.25);
+            will-change: transform;
         }
         section {
             display: flex;
@@ -17,6 +27,7 @@
             background: rgba(0, 0, 0, 0.7);
             min-height: 100px;
             text-align: center;
+            overflow: hidden;
         }
         a {
             width: 100%;
@@ -24,6 +35,15 @@
         }
         a > svg {
             display: block;
+        }
+        .transformed {
+            transform: scale(1.5) translate(25%, 25%);
+        }
+        .transformed.top-left {
+            transform: scale(1.5) translate(-25%, -25%);
+        }
+        .transformed.rotated {
+            transform: rotate(-90deg);
         }
     </style>
 </head>
@@ -66,6 +86,55 @@
     <section>
         <img src="../css3/blending/resources/ducky.png" alt="ducky" style="width:80%;cursor:pointer;" />
     </section>
+    <section>
+        <a href="#" class="transformed">
+            <img src="../accessibility/resources/apple-logo.svg" alt="apple logo" style="width:40%;" />
+        </a>
+    </section>
+    <section>
+        <a href="#" class="transformed">
+            <img src="../css3/blending/resources/ducky.png" alt="ducky" style="width:80%;" />
+        </a>
+    </section>
+    <section>
+        <a href="#" class="transformed top-left">
+            <img src="../css3/blending/resources/ducky.png" alt="ducky" style="width:80%;" />
+        </a>
+    </section>
+    <section>
+        <a href="#" class="transformed top-left">
+            <img src="../accessibility/resources/apple-logo.svg" alt="apple logo" style="width:40%;" />
+        </a>
+    </section>
+    <div class="transformed-container">
+        <section>
+            <a href="#" class="transformed">
+                <img src="../accessibility/resources/apple-logo.svg" alt="apple logo" style="width:40%;" />
+            </a>
+        </section>
+        <section>
+            <a href="#" class="transformed top-left">
+                <img src="../css3/blending/resources/ducky.png" alt="ducky" style="width:80%;" />
+            </a>
+        </section>
+    </div>
+    <div class="transformed-container with-layer">
+        <section>
+            <a href="#" class="transformed top-left">
+                <img src="../accessibility/resources/apple-logo.svg" alt="apple logo" style="width:40%;" />
+            </a>
+        </section>
+        <section>
+            <a href="#" class="transformed">
+                <img src="../css3/blending/resources/ducky.png" alt="ducky" style="width:80%;" />
+            </a>
+        </section>
+        <section>
+            <a href="#" class="transformed rotated">
+                <img src="../accessibility/resources/apple-logo.svg" alt="apple logo" style="width:40%;" />
+            </a>
+        </section>
+    </div>
 </div>
 <pre id="results"></pre>
 <script>

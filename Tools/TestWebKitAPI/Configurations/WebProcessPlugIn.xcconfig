@@ -29,10 +29,12 @@ PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
 EXECUTABLE_SUFFIX = .bundle;
 WRAPPER_EXTENSION = wkbundle;
 WK_WEBCORE_LDFLAGS = $(WK_WEBCORE_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_WEBCORE_LDFLAGS_iphoneos = -framework WebCore
-WK_WEBCORE_LDFLAGS_iphonesimulator = -framework WebCore
-WK_WEBCORE_LDFLAGS_watchos = -framework WebCore
-WK_WEBCORE_LDFLAGS_watchsimulator = -framework WebCore
+WK_WEBCORE_LDFLAGS_iphoneos = -framework WebCore;
+WK_WEBCORE_LDFLAGS_iphonesimulator = -framework WebCore;
+WK_WEBCORE_LDFLAGS_watchos = -framework WebCore;
+WK_WEBCORE_LDFLAGS_watchsimulator = -framework WebCore;
+WK_WEBCORE_LDFLAGS_xros = -framework WebCore;
+WK_WEBCORE_LDFLAGS_xrsimulator = -framework WebCore;
 
 OTHER_LDFLAGS = $(inherited) -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_WEBCORE_LDFLAGS);
 LD_RUNPATH_SEARCH_PATHS[sdk=macosx*] = "@loader_path/../../..";

@@ -1468,6 +1468,8 @@ public:
 
     const String& defaultSpatialTrackingLabel() const;
 
+    bool isEffectivelyMuted(const HTMLMediaElement&);
+
 private:
     explicit Internals(Document&);
 

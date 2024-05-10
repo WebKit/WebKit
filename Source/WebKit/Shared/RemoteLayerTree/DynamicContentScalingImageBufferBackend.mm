@@ -144,6 +144,11 @@ void DynamicContentScalingImageBufferBackend::releaseGraphicsContext()
     m_context = nullptr;
 }
 
+bool DynamicContentScalingImageBufferBackend::canMapBackingStore() const
+{
+    return false;
+}
+
 RefPtr<WebCore::NativeImage> DynamicContentScalingImageBufferBackend::copyNativeImage()
 {
     ASSERT_NOT_REACHED();

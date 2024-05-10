@@ -38,7 +38,7 @@ struct JSOpcodeTraits {
     static constexpr OpcodeID wide16 = op_wide16;
     static constexpr OpcodeID wide32 = op_wide32;
     static constexpr const unsigned* opcodeLengths = ::JSC::opcodeLengths;
-    static constexpr const char* const* opcodeNames = ::JSC::opcodeNames;
+    static constexpr const ASCIILiteral* opcodeNames = ::JSC::opcodeNames;
     static constexpr auto checkpointCountTable = bytecodeCheckpointCountTable;
     static constexpr OpcodeSize maxOpcodeIDWidth = maxJSOpcodeIDWidth;
 };

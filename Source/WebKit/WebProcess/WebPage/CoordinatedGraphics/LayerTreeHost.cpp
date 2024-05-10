@@ -273,6 +273,7 @@ GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory()
 void LayerTreeHost::contentsSizeChanged(const IntSize& newSize)
 {
     m_viewportController.didChangeContentsSize(newSize);
+    didChangeViewport();
 }
 
 void LayerTreeHost::didChangeViewportAttributes(ViewportAttributes&& attr)
@@ -355,7 +356,7 @@ void LayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
 void LayerTreeHost::commitSceneState(const RefPtr<Nicosia::Scene>& state)
 {
     m_isWaitingForRenderer = true;
-    m_compositor->updateSceneState(state);
+    m_compositor->updateSceneState(state, ++m_compositionRequestID);
 }
 
 void LayerTreeHost::updateScene()
@@ -408,10 +409,11 @@ void LayerTreeHost::clearIfNeeded()
     m_surface->clearIfNeeded();
 }
 
-void LayerTreeHost::didRenderFrame()
+void LayerTreeHost::didRenderFrame(uint32_t compositionResponseID)
 {
     m_surface->didRenderFrame();
 #if HAVE(DISPLAY_LINK)
+    m_compositionResponseID = compositionResponseID;
     if (!m_didRenderFrameTimer.isActive())
         m_didRenderFrameTimer.startOneShot(0_s);
 #endif
@@ -424,7 +426,8 @@ void LayerTreeHost::didRenderFrame()
 #if HAVE(DISPLAY_LINK)
 void LayerTreeHost::didRenderFrameTimerFired()
 {
-    renderNextFrame(false);
+    if (!m_isWaitingForRenderer || (m_isWaitingForRenderer && m_compositionRequestID == m_compositionResponseID))
+        renderNextFrame(false);
 }
 #endif
 

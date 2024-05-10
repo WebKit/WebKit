@@ -27,6 +27,17 @@
 
 namespace WebCore {
 
+GST_DEBUG_CATEGORY(webkit_libwebrtc_video_frame_debug);
+#define GST_CAT_DEFAULT webkit_libwebrtc_video_frame_debug
+
+static void ensureDebugCategoryIsRegistered()
+{
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_libwebrtc_video_frame_debug, "webkitlibwebrtcvideoframe", 0, "WebKit LibWebRTC Video Frame");
+    });
+}
+
 GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::VideoFrame& frame)
 {
     RELEASE_ASSERT(frame.video_frame_buffer()->type() != webrtc::VideoFrameBuffer::Type::kNative);
@@ -56,10 +67,15 @@ GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::Vid
     return sample;
 }
 
-std::unique_ptr<webrtc::VideoFrame> convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>&& sample, webrtc::VideoRotation rotation, int64_t timestamp, int64_t renderTimeMs)
+webrtc::VideoFrame convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>&& sample, uint32_t rtpTimestamp)
 {
-    auto frameBuffer(GStreamerVideoFrameLibWebRTC::create(WTFMove(sample)));
-    return std::unique_ptr<webrtc::VideoFrame>(new webrtc::VideoFrame(WTFMove(frameBuffer), timestamp, renderTimeMs, rotation));
+    webrtc::VideoFrame::Builder builder;
+    auto buffer = gst_sample_get_buffer(sample.get());
+    auto pts = GST_BUFFER_PTS(buffer);
+    return builder.set_video_frame_buffer(GStreamerVideoFrameLibWebRTC::create(WTFMove(sample)))
+        .set_timestamp_rtp(rtpTimestamp)
+        .set_timestamp_us(pts)
+        .build();
 }
 
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> GStreamerVideoFrameLibWebRTC::create(GRefPtr<GstSample>&& sample)
@@ -74,6 +90,7 @@ rtc::scoped_refptr<webrtc::VideoFrameBuffer> GStreamerVideoFrameLibWebRTC::creat
 
 rtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC::ToI420()
 {
+    ensureDebugCategoryIsRegistered();
     GstMappedFrame inFrame(m_sample, GST_MAP_READ);
     if (!inFrame) {
         GST_WARNING("Could not map input frame");
@@ -111,4 +128,6 @@ rtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC::To
 
 }
 
-#endif // USE(LIBWEBRTC)
+#undef GST_CAT_DEFAULT
+
+#endif // USE(LIBWEBRTC) && USE(GSTREAMER)

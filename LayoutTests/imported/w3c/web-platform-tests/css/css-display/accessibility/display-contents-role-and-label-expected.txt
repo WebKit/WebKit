@@ -4,12 +4,10 @@ Verifies accessibility behavior of the contents keyword for the CSS display prop
 
 Accname
 
-hidden label visible to all users label x x x x
- label x label label label
+hidden label visible to all users label x x x x label x label label label
 Accessibility roles
 
-x x x
- x
+x x x x
 x	x
 x	x
 x	x
@@ -20,20 +18,7 @@ x
 
 x
 x
-x
- x x
- x
- x x x x x x x x x
- x
- x
- x
- x
- x
- x
- x
- x x x
- x
- x
+x x x x x x x x x x x x x x x x x x x x x x x x x
 y
 x
 y

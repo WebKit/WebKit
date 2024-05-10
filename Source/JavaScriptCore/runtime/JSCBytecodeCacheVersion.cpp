@@ -39,9 +39,11 @@
 
 namespace JSC {
 
+#if OS(DARWIN)
 namespace JSCBytecodeCacheVersionInternal {
 static constexpr bool verbose = false;
 }
+#endif
 
 uint32_t computeJSCBytecodeCacheVersion()
 {

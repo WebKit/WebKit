@@ -682,9 +682,8 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
         auto& originalWorld = domGlobalObject->world();
 
         while (!document->isTopDocument()) {
-            auto candidateDocument = document->parentDocument();
-
-            if (!candidateDocument->securityOrigin().isSameOriginDomain(originalOrigin))
+            auto* candidateDocument = document->parentDocument();
+            if (!candidateDocument || !candidateDocument->securityOrigin().isSameOriginDomain(originalOrigin))
                 break;
 
             document = candidateDocument;

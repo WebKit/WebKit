@@ -30,7 +30,6 @@
 #import "APIDictionary.h"
 #import "APINumber.h"
 #import "APIString.h"
-#import "StringUtilities.h"
 #import "WKAPICast.h"
 #import "WKPluginInformation.h"
 #import "WKSharedAPICast.h"

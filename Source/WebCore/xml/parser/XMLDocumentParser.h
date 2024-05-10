@@ -193,6 +193,7 @@ xmlDocPtr xmlDocPtrForString(CachedResourceLoader&, const String& source, const 
 #endif
 
 xmlParserInputPtr externalEntityLoader(const char* url, const char* id, xmlParserCtxtPtr);
+void initializeXMLParser();
 
 std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader&, const String&);
 

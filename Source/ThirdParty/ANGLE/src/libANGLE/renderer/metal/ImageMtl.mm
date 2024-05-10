@@ -86,7 +86,9 @@ egl::Error TextureImageSiblingMtl::ValidateClientBuffer(const DisplayMtl *displa
         return egl::EglBadAttribute() << "Unrecognized format";
     }
 
-    if (format.metalFormat != texture.pixelFormat)
+    angle::FormatID srcAngleFormatId = mtl::Format::MetalToAngleFormatID(texture.pixelFormat);
+    const mtl::Format &srcFormat = display->getPixelFormat(srcAngleFormatId);
+    if (!format.isViewCompatible(srcFormat))
     {
         return egl::EglBadAttribute() << "Incompatible format";
     }
@@ -120,17 +122,20 @@ angle::Result TextureImageSiblingMtl::initImpl(DisplayMtl *displayMtl)
 {
     mNativeTexture = mtl::Texture::MakeFromMetal((__bridge id<MTLTexture>)(mBuffer));
 
-    if (mNativeTexture->textureType() == MTLTextureType2DArray)
+    angle::FormatID angleFormatId = intendedFormatForMTLTexture(mNativeTexture->get(), mAttribs);
+    mFormat                       = displayMtl->getPixelFormat(angleFormatId);
+
+    if (mNativeTexture->textureType() == MTLTextureType2DArray ||
+        mNativeTexture->pixelFormat() != mFormat.metalFormat)
     {
         mtl::TextureRef baseTexture = std::move(mNativeTexture);
         unsigned textureArraySlice =
             static_cast<unsigned>(mAttribs.getAsInt(EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 0));
         mNativeTexture =
-            baseTexture->createSliceMipView(textureArraySlice, mtl::kZeroNativeMipLevel);
+        baseTexture->createSliceMipViewWithCompatibleFormat(textureArraySlice,
+                                                            mtl::kZeroNativeMipLevel,
+                                                            mFormat.metalFormat);
     }
-
-    angle::FormatID angleFormatId = intendedFormatForMTLTexture(mNativeTexture->get(), mAttribs);
-    mFormat                       = displayMtl->getPixelFormat(angleFormatId);
 
     if (mNativeTexture)
     {

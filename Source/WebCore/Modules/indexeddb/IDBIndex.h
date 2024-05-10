@@ -81,8 +81,9 @@ public:
     void markAsDeleted();
     bool isDeleted() const { return m_deleted; }
 
-    void ref();
-    void deref();
+    // ActiveDOMObject.
+    void ref() const final;
+    void deref() const final;
 
     WebCoreOpaqueRoot opaqueRoot();
 

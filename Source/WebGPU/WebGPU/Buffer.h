@@ -91,6 +91,7 @@ public:
     bool isDestroyed() const;
     void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
     uint32_t maxIndex(MTLIndexType) const;
+    uint8_t* getBufferContents();
 
 private:
     Buffer(id<MTLBuffer>, uint64_t initialSize, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);

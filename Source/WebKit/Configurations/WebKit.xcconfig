@@ -70,12 +70,16 @@ WK_APPLE_PUSH_SERVICE_LDFLAGS = $(WK_APPLE_PUSH_SERVICE_LDFLAGS_$(WK_PLATFORM_NA
 WK_APPLE_PUSH_SERVICE_LDFLAGS_iphoneos = $(WK_APPLE_PUSH_SERVICE_LDFLAGS$(WK_IOS_16));
 WK_APPLE_PUSH_SERVICE_LDFLAGS_iphonesimulator = $(WK_APPLE_PUSH_SERVICE_LDFLAGS$(WK_IOS_16));
 WK_APPLE_PUSH_SERVICE_LDFLAGS_IOS_SINCE_16 = -framework ApplePushService;
+WK_APPLE_PUSH_SERVICE_LDFLAGS_xros = -framework ApplePushService;
+WK_APPLE_PUSH_SERVICE_LDFLAGS_xrsimulator = -framework ApplePushService;
 WK_APPLE_PUSH_SERVICE_LDFLAGS_macosx = $(WK_APPLE_PUSH_SERVICE_LDFLAGS$(WK_MACOS_1300));
 WK_APPLE_PUSH_SERVICE_LDFLAGS_MACOS_SINCE_1300 = -framework ApplePushService;
 
 WK_BACKBOARD_SERVICES_LDFLAGS = $(WK_BACKBOARD_SERVICES_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_BACKBOARD_SERVICES_LDFLAGS_iphoneos = -framework BackBoardServices;
 WK_BACKBOARD_SERVICES_LDFLAGS_iphonesimulator = -framework BackBoardServices;
+WK_BACKBOARD_SERVICES_LDFLAGS_xros = -framework BackBoardServices;
+WK_BACKBOARD_SERVICES_LDFLAGS_xrsimulator = -framework BackBoardServices;
 
 WK_RUNNINGBOARD_SERVICES_LDFLAGS = -framework RunningBoardServices;
 
@@ -85,6 +89,8 @@ WK_CARBON_LDFLAGS_macosx = -framework Carbon;
 WK_CONTACTS_LDFLAGS = $(WK_CONTACTS_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_CONTACTS_LDFLAGS_iphoneos = -framework Contacts;
 WK_CONTACTS_LDFLAGS_iphonesimulator = -framework Contacts;
+WK_CONTACTS_LDFLAGS_xros = -framework Contacts;
+WK_CONTACTS_LDFLAGS_xrsimulator = -framework Contacts;
 
 WK_CORE_PREDICTION_LDFLAGS = $(WK_CORE_PREDICTION_LDFLAGS_$(WK_HAVE_CORE_PREDICTION));
 WK_CORE_PREDICTION_LDFLAGS_YES = $(WK_MACOS_WEAK_FRAMEWORK) CorePrediction;
@@ -113,9 +119,9 @@ WK_LIBSANDBOX_LDFLAGS_macosx = -lsandbox;
 
 WK_PDFKIT_LDFLAGS = $(WK_PDFKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_PDFKIT_LDFLAGS_iphoneos = -framework PDFKit;
-WK_PDFKIT_LDFLAGS_iphoneos[sdk=iphone*11.*] = ;
 WK_PDFKIT_LDFLAGS_iphonesimulator = $(WK_PDFKIT_LDFLAGS_iphoneos);
-WK_PDFKIT_LDFLAGS_iphonesimulator[sdk=iphone*11.*] = ;
+WK_PDFKIT_LDFLAGS_xros = $(WK_PDFKIT_LDFLAGS_iphoneos);
+WK_PDFKIT_LDFLAGS_xrsimulator = $(WK_PDFKIT_LDFLAGS_iphoneos);
 WK_PDFKIT_LDFLAGS_maccatalyst = $(WK_PDFKIT_LDFLAGS_maccatalyst$(WK_MACOS_1100));
 WK_PDFKIT_LDFLAGS_maccatalyst_MACOS_SINCE_1100 = $(WK_PDFKIT_LDFLAGS_iphoneos);
 
@@ -124,11 +130,11 @@ WK_PROTOTYPE_TOOLS_LDFLAGS_cocoatouch = -framework PrototypeTools;
 
 WK_SAFE_BROWSING_LDFLAGS = $(WK_SAFE_BROWSING_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_SAFE_BROWSING_LDFLAGS_iphoneos = -framework SafariSafeBrowsing;
-WK_SAFE_BROWSING_LDFLAGS_iphoneos[sdk=iphone*10.*] = ;
 WK_SAFE_BROWSING_LDFLAGS_iphonesimulator = -framework SafariSafeBrowsing;
-WK_SAFE_BROWSING_LDFLAGS_iphonesimulator[sdk=iphone*10.*] = ;
 WK_SAFE_BROWSING_LDFLAGS_watchos = -framework SafariSafeBrowsing;
 WK_SAFE_BROWSING_LDFLAGS_watchsimulator = -framework SafariSafeBrowsing;
+WK_SAFE_BROWSING_LDFLAGS_xros = -framework SafariSafeBrowsing;
+WK_SAFE_BROWSING_LDFLAGS_xrsimulator = -framework SafariSafeBrowsing;
 WK_SAFE_BROWSING_LDFLAGS_maccatalyst = -framework SafariSafeBrowsing;
 WK_SAFE_BROWSING_LDFLAGS_macosx = -weak_framework SafariSafeBrowsing;
 
@@ -156,11 +162,14 @@ WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS_watchos = -framework UniformTypeIdentifiers;
 WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS_watchsimulator = -framework UniformTypeIdentifiers;
 WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS_appletvos = -framework UniformTypeIdentifiers;
 WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS_appletvsimulator = -framework UniformTypeIdentifiers;
+WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS_xros = -framework UniformTypeIdentifiers;
+WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS_xrsimulator = -framework UniformTypeIdentifiers;
 
 WK_APP_STORE_DAEMON_LDFLAGS = $(WK_APP_STORE_DAEMON_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_APP_STORE_DAEMON_LDFLAGS_iphoneos = $(WK_APP_STORE_DAEMON_LDFLAGS$(WK_IOS_16));
-WK_APP_STORE_DAEMON_LDFLAGS_iphonesimulator = $(WK_APP_STORE_DAEMON_LDFLAGS$(WK_IOS_16));
-WK_APP_STORE_DAEMON_LDFLAGS_IOS_SINCE_16 = -framework AppStoreDaemon;
+WK_APP_STORE_DAEMON_LDFLAGS_iphoneos = -framework AppStoreDaemon;
+WK_APP_STORE_DAEMON_LDFLAGS_iphonesimulator = -framework AppStoreDaemon;
+WK_APP_STORE_DAEMON_LDFLAGS_xros = -framework AppStoreDaemon;
+WK_APP_STORE_DAEMON_LDFLAGS_xrsimulator = -framework AppStoreDaemon;
 
 WK_URL_FORMATTING_LDFLAGS = $(WK_URL_FORMATTING_LDFLAGS_$(WK_HAVE_URL_FORMATTING));
 WK_URL_FORMATTING_LDFLAGS_YES = -framework URLFormatting;
@@ -169,28 +178,34 @@ WK_WEBINSPECTORUI_LDFLAGS = $(WK_WEBINSPECTORUI_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_WEBINSPECTORUI_LDFLAGS_macosx = -weak_framework WebInspectorUI;
 
 WK_AUTHKIT_LDFLAGS = $(WK_AUTHKIT_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_AUTHKIT_LDFLAGS_iphoneos = $(WK_AUTHKIT_LDFLAGS$(WK_IOS_13));
-WK_AUTHKIT_LDFLAGS_iphonesimulator = $(WK_AUTHKIT_LDFLAGS$(WK_IOS_13));
-WK_AUTHKIT_LDFLAGS_IOS_SINCE_13 = -framework AuthKit;
-WK_AUTHKIT_LDFLAGS_macosx = $(WK_AUTHKIT_LDFLAGS$(WK_MACOS_1015));
-WK_AUTHKIT_LDFLAGS_MACOS_SINCE_1015 = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_iphoneos = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_iphonesimulator = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_xros = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_xrsimulator = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_macosx = -framework AuthKit;
 
 WK_LIBNETWORKEXTENSION_LDFLAGS = $(WK_LIBNETWORKEXTENSION_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_LIBNETWORKEXTENSION_LDFLAGS_iphoneos = -lnetworkextension;
 WK_LIBNETWORKEXTENSION_LDFLAGS_iphonesimulator = -lnetworkextension;
 WK_LIBNETWORKEXTENSION_LDFLAGS_watchos = -lnetworkextension;
 WK_LIBNETWORKEXTENSION_LDFLAGS_watchsimulator = -lnetworkextension;
+WK_LIBNETWORKEXTENSION_LDFLAGS_xros = -lnetworkextension;
+WK_LIBNETWORKEXTENSION_LDFLAGS_xrsimulator = -lnetworkextension;
 WK_LIBNETWORKEXTENSION_LDFLAGS_maccatalyst = -lnetworkextension;
 WK_LIBNETWORKEXTENSION_LDFLAGS_macosx = -weak_library $(SDKROOT)/usr/lib/libnetworkextension.tbd;
 WK_LIBNETWORKEXTENSION_LDFLAGS_tvos = ;
 
 WK_INSTALL_COORDINATION_LDFLAGS = $(WK_INSTALL_COORDINATION_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_INSTALL_COORDINATION_LDFLAGS_iphoneos = -framework InstallCoordination;
-WK_INSTALL_COORDINATION_LDFLAGS_iphonesimulator = $(WK_INSTALL_COORDINATION_LDFLAGS_iphoneos)
+WK_INSTALL_COORDINATION_LDFLAGS_iphonesimulator = $(WK_INSTALL_COORDINATION_LDFLAGS_iphoneos);
+WK_INSTALL_COORDINATION_LDFLAGS_xros = $(WK_INSTALL_COORDINATION_LDFLAGS_iphoneos);
+WK_INSTALL_COORDINATION_LDFLAGS_xrsimulator = $(WK_INSTALL_COORDINATION_LDFLAGS_iphoneos);
 
 WK_FRONTBOARDSERVICES_LDFLAGS = $(WK_FRONTBOARDSERVICES_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_FRONTBOARDSERVICES_LDFLAGS_iphoneos = -framework FrontBoardServices;
-WK_FRONTBOARDSERVICES_LDFLAGS_iphonesimulator = $(WK_FRONTBOARDSERVICES_LDFLAGS_iphoneos)
+WK_FRONTBOARDSERVICES_LDFLAGS_iphonesimulator = $(WK_FRONTBOARDSERVICES_LDFLAGS_iphoneos);
+WK_FRONTBOARDSERVICES_LDFLAGS_xros = $(WK_FRONTBOARDSERVICES_LDFLAGS_iphoneos);
+WK_FRONTBOARDSERVICES_LDFLAGS_xrsimulator = $(WK_FRONTBOARDSERVICES_LDFLAGS_iphoneos);
 
 WK_POWERLOG_LDFLAGS = $(WK_POWERLOG_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_POWERLOG_LDFLAGS_macosx = -weak_framework PowerLog;
@@ -203,11 +218,14 @@ WK_NETWORK_EXTENSION_LDFLAGS_iphoneos = -framework NetworkExtension;
 WK_NETWORK_EXTENSION_LDFLAGS_iphonesimulator = -framework NetworkExtension;
 WK_NETWORK_EXTENSION_LDFLAGS_watchos = -framework NetworkExtension;
 WK_NETWORK_EXTENSION_LDFLAGS_watchsimulator = -framework NetworkExtension;
+WK_NETWORK_EXTENSION_LDFLAGS_xros = -framework NetworkExtension;
+WK_NETWORK_EXTENSION_LDFLAGS_xrsimulator = -framework NetworkExtension;
 WK_NETWORK_EXTENSION_LDFLAGS_maccatalyst = -framework NetworkExtension;
 WK_NETWORK_EXTENSION_LDFLAGS_macosx = -weak_framework NetworkExtension;
 
 WK_APPSERVERSUPPORT_LDFLAGS[sdk=macosx*] = -framework AppServerSupport
 WK_APPSERVERSUPPORT_LDFLAGS[sdk=iphone*] = -framework AppServerSupport
+WK_APPSERVERSUPPORT_LDFLAGS[sdk=xr*] = -framework AppServerSupport;
 
 WK_BROWSERENGINEKIT_LDFLAGS =
 WK_BROWSERENGINEKIT_LDFLAGS[sdk=iphone*] = -framework BrowserEngineKit

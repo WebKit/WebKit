@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SVGProperty.h"
+#include "SVGPropertyTraits.h"
 
 namespace WebCore {
 

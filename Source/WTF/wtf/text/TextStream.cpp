@@ -107,7 +107,7 @@ TextStream& TextStream::operator<<(double d)
 
 TextStream& TextStream::operator<<(const char* string)
 {
-    m_text.append(string);
+    m_text.append(span(string));
     return *this;
 }
 

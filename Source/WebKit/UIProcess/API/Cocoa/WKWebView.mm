@@ -3946,6 +3946,21 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
         _page->setFormClient(nullptr);
 }
 
+- (BOOL)_isDisplayingPDF
+{
+#if PLATFORM(MAC)
+    if (RefPtr mainFrame = _page->mainFrame())
+        return mainFrame->isDisplayingPDFDocument();
+#else
+    for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes()) {
+        Class providerClass = [[self _contentProviderRegistry] providerForMIMEType:@(type.characters())];
+        if ([_customContentView isKindOfClass:providerClass])
+            return YES;
+    }
+#endif
+    return NO;
+}
+
 - (BOOL)_isDisplayingStandaloneImageDocument
 {
     if (auto* mainFrame = _page->mainFrame())

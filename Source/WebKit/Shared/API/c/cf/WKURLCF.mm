@@ -63,6 +63,7 @@ CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)
     // We first create a CString and then create the CFURL from it. This will ensure that the CFURL is stored in 
     // UTF-8 which uses less memory and is what WebKit clients might expect.
 
-    CString buffer = string.utf8();
-    return CFURLCreateAbsoluteURLWithBytes(nullptr, buffer.dataAsUInt8Ptr(), buffer.length(), kCFStringEncodingUTF8, nullptr, true);
+    auto buffer = string.utf8();
+    auto bufferSpan = buffer.span();
+    return CFURLCreateAbsoluteURLWithBytes(nullptr, bufferSpan.data(), bufferSpan.size(), kCFStringEncodingUTF8, nullptr, true);
 }

@@ -60,10 +60,16 @@ template<> struct NonASCIIMask<4, UChar> {
 template<> struct NonASCIIMask<4, LChar> {
     static inline uint32_t value() { return 0x80808080U; }
 };
+template<> struct NonASCIIMask<4, char8_t> {
+    static inline uint32_t value() { return 0x80808080U; }
+};
 template<> struct NonASCIIMask<8, UChar> {
     static inline uint64_t value() { return 0xFF80FF80FF80FF80ULL; }
 };
 template<> struct NonASCIIMask<8, LChar> {
+    static inline uint64_t value() { return 0x8080808080808080ULL; }
+};
+template<> struct NonASCIIMask<8, char8_t> {
     static inline uint64_t value() { return 0x8080808080808080ULL; }
 };
 

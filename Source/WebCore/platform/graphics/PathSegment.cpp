@@ -74,8 +74,8 @@ bool PathSegment::canApplyElements() const
 
 bool PathSegment::applyElements(const PathElementApplier& applier) const
 {
-    return WTF::switchOn(m_data, [&](auto& data) -> bool {
-        if constexpr (std::decay_t<decltype(data)>::canApplyElements) {
+    return WTF::switchOn(m_data, [&]<typename DataType>(DataType& data) -> bool {
+        if constexpr (DataType::canApplyElements) {
             data.applyElements(applier);
             return true;
         }
@@ -92,8 +92,8 @@ bool PathSegment::canTransform() const
 
 bool PathSegment::transform(const AffineTransform& transform)
 {
-    return WTF::switchOn(m_data, [&](auto& data) {
-        if constexpr (std::decay_t<decltype(data)>::canTransform) {
+    return WTF::switchOn(m_data, [&]<typename DataType>(DataType& data) {
+        if constexpr (DataType::canTransform) {
             data.transform(transform);
             return true;
         }

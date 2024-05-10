@@ -56,6 +56,9 @@ public:
     using FontSelector::WeakValueType;
     using FontSelector::WeakPtrImplType;
 
+    using FontSelector::ref;
+    using FontSelector::deref;
+
     static Ref<CSSFontSelector> create(ScriptExecutionContext&);
     virtual ~CSSFontSelector();
 
@@ -96,8 +99,8 @@ public:
     void updateStyleIfNeeded();
 
     // CSSFontFaceClient needs to be able to be held in a RefPtr.
-    void ref() final { FontSelector::ref(); }
-    void deref() final { FontSelector::deref(); }
+    void ref() const final { FontSelector::ref(); }
+    void deref() const final { FontSelector::deref(); }
 
 private:
     explicit CSSFontSelector(ScriptExecutionContext&);

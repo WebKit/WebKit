@@ -469,15 +469,15 @@ String CSSCounterStyleDescriptors::rangesCSSText() const
     StringBuilder builder;
     for (size_t i = 0; i < m_ranges.size(); ++i) {
         if (i)
-            builder.append(", ");
+            builder.append(", "_s);
         auto& range = m_ranges[i];
         if (range.first == std::numeric_limits<int>::min())
-            builder.append("infinite");
+            builder.append("infinite"_s);
         else
             builder.append(range.first);
-        builder.append(" ");
+        builder.append(" "_s);
         if (range.second== std::numeric_limits<int>::max())
-            builder.append("infinite");
+            builder.append("infinite"_s);
         else
             builder.append(range.second);
     }
@@ -510,7 +510,7 @@ String CSSCounterStyleDescriptors::symbolsCSSText() const
     StringBuilder builder;
     for (size_t i = 0; i < m_symbols.size(); ++i) {
         if (i)
-            builder.append(" ");
+            builder.append(' ');
         builder.append(m_symbols[i].cssText());
     }
     return builder.toString();
@@ -523,10 +523,8 @@ String CSSCounterStyleDescriptors::additiveSymbolsCSSText() const
     StringBuilder builder;
     for (size_t i = 0; i < m_additiveSymbols.size(); ++i) {
         if (i)
-            builder.append(", ");
-        builder.append(m_additiveSymbols[i].second);
-        builder.append(" ");
-        builder.append(m_additiveSymbols[i].first.cssText());
+            builder.append(", "_s);
+        builder.append(m_additiveSymbols[i].second, ' ', m_additiveSymbols[i].first.cssText());
     }
     return builder.toString();
 }

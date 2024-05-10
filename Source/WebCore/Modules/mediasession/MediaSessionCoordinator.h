@@ -68,8 +68,10 @@ public:
     using MediaSessionCoordinatorClient::weakPtrFactory;
     using MediaSessionCoordinatorClient::WeakValueType;
     using MediaSessionCoordinatorClient::WeakPtrImplType;
-    using RefCounted::ref;
-    using RefCounted::deref;
+
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     struct PlaySessionCommand {
         std::optional<double> atTime;
@@ -87,7 +89,7 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void eventListenersDidChange() final;
 
-    // ActiveDOMObject
+    // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
 
     // MediaSessionObserver

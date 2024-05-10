@@ -158,7 +158,7 @@ void IDBDatabaseInfo::deleteObjectStore(uint64_t objectStoreIdentifier)
 String IDBDatabaseInfo::loggingString() const
 {
     StringBuilder builder;
-    builder.append("Database:", m_name, " version ", m_version, '\n');
+    builder.append("Database:"_s, m_name, " version "_s, m_version, '\n');
     for (auto& objectStore : m_objectStoreMap.values())
         builder.append(objectStore.loggingString(1), '\n');
     return builder.toString();

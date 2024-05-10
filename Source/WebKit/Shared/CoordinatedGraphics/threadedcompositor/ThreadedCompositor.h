@@ -57,7 +57,7 @@ public:
         virtual void resize(const WebCore::IntSize&) = 0;
         virtual void willRenderFrame() = 0;
         virtual void clearIfNeeded() = 0;
-        virtual void didRenderFrame() = 0;
+        virtual void didRenderFrame(uint32_t) = 0;
         virtual void displayDidRefresh(WebCore::PlatformDisplayID) = 0;
     };
 
@@ -71,7 +71,7 @@ public:
     void setScrollPosition(const WebCore::IntPoint&, float scale);
     void setViewportSize(const WebCore::IntSize&, float scale);
 
-    void updateSceneState(const RefPtr<Nicosia::Scene>&);
+    void updateSceneState(const RefPtr<Nicosia::Scene>&, uint32_t);
     void updateScene();
     void updateSceneWithoutRendering();
 
@@ -128,6 +128,7 @@ private:
         Vector<RefPtr<Nicosia::Scene>> states;
 
         bool clientRendersNextFrame { false };
+        uint32_t compositionRequestID { 0 };
     } m_attributes;
 
 #if !HAVE(DISPLAY_LINK)

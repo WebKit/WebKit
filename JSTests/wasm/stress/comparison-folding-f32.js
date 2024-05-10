@@ -101,4 +101,4 @@ async function test() {
     assert.eq(testGeFalse(), 0);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

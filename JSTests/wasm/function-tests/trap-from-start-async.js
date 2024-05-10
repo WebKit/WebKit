@@ -80,4 +80,4 @@ async function StartTrapsAsync() {
     assert.eq(value, 0);
 }
 
-assert.asyncTest(StartTrapsAsync());
+await assert.asyncTest(StartTrapsAsync());

@@ -29,4 +29,4 @@ async function test() {
         throw new Error();
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

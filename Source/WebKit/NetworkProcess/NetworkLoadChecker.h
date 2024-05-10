@@ -116,6 +116,8 @@ public:
 
     const WebCore::FetchOptions& options() const { return m_options; }
 
+    bool timingAllowFailedFlag() const { return m_timingAllowFailedFlag; }
+
 private:
     WebCore::ContentSecurityPolicy* contentSecurityPolicy();
     const WebCore::OriginAccessPatterns& originAccessPatterns() const;
@@ -148,6 +150,8 @@ private:
 #endif
 
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const { return m_parentOrigin; }
+
+    bool checkTAO(const WebCore::ResourceResponse&);
 
     WebCore::FetchOptions m_options;
     WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy;
@@ -188,6 +192,8 @@ private:
     LoadType m_requestLoadType;
     RefPtr<NetworkSchemeRegistry> m_schemeRegistry;
     WeakPtr<NetworkResourceLoader> m_networkResourceLoader;
+
+    bool m_timingAllowFailedFlag { false };
 };
 
 }

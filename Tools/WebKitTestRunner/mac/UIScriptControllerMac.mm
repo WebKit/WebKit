@@ -458,6 +458,9 @@ void UIScriptControllerMac::setWebViewAllowsMagnification(bool allowsMagnificati
 void UIScriptControllerMac::setInlinePrediction(JSStringRef jsText, unsigned startIndex)
 {
 #if HAVE(INLINE_PREDICTIONS)
+    if (!webView()._allowsInlinePredictions)
+        return;
+
     auto fullText = jsText->string();
     RetainPtr markedText = adoptNS([[NSMutableAttributedString alloc] initWithString:fullText.left(startIndex)]);
     [markedText appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:fullText.substring(startIndex) attributes:@{

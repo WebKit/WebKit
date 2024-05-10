@@ -1,37 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <div contenteditable id=div></div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+let output = "This tests that we can retrieve resolved editing styles from the editable text area.\n\n";
 
-    description("This tests that we can retrieve resolved editing styles from the editable text area.");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
-        var div = document.getElementById("div");
-        div.focus();
+    var div = document.getElementById("div");
+    div.focus();
 
-        textInputController.insertText("a");
-        document.execCommand("italic", false)
-        document.execCommand("FontSize", false, 6)
+    textInputController.insertText("a");
+    document.execCommand("italic", false)
+    document.execCommand("FontSize", false, 6)
 
-        var axDiv = accessibilityController.accessibleElementById("div");
-        axDiv.attributeValueAsync("AXResolvedEditingStyles", function(value) {
-            debug(value);
-            finishJSTest();
-        });
-    }
+    var axDiv = accessibilityController.accessibleElementById("div");
+    axDiv.attributeValueAsync("AXResolvedEditingStyles", function(value) {
+        output += value;
 
+        debug(output);
+        finishJSTest();
+    });
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

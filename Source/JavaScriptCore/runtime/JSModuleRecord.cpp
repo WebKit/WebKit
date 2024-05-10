@@ -159,7 +159,7 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
             RELEASE_ASSERT(vm.exceptionForInspection(), vm.traps().maybeNeedHandling(), vm.exceptionForInspection(), importedModule);
             RELEASE_ASSERT(vm.traps().maybeNeedHandling(), vm.traps().maybeNeedHandling(), vm.exceptionForInspection(), importedModule);
             if (!vm.exceptionForInspection() || !vm.traps().maybeNeedHandling()) {
-                throwSyntaxError(globalObject, scope, makeString("Importing module '", String(importEntry.moduleRequest.impl()), "' is not found."));
+                throwSyntaxError(globalObject, scope, makeString("Importing module '"_s, String(importEntry.moduleRequest.impl()), "' is not found."_s));
                 return;
             }
         }

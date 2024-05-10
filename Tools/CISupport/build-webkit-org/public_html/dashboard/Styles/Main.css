@@ -221,10 +221,6 @@ table.queue-grid tr.platform.watchos-10 img.logo {
     content: url(../Images/WatchOS10.png);
 }
 
-table.queue-grid tr.platform.macos-monterey img.logo {
-    content: url(../Images/Monterey.png);
-}
-
 table.queue-grid tr.platform.macos-sonoma img.logo {
     content: url(../Images/Sonoma.png);
 }

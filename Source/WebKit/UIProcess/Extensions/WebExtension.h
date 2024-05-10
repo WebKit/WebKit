@@ -31,6 +31,7 @@
 #include "CocoaImage.h"
 #include "WebExtensionContentWorldType.h"
 #include "WebExtensionMatchPattern.h"
+#include <WebCore/UserStyleSheetTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
@@ -158,6 +159,7 @@ public:
         bool matchesAboutBlank { false };
         bool injectsIntoAllFrames { false };
         WebExtensionContentWorldType contentWorldType { WebExtensionContentWorldType::ContentScript };
+        WebCore::UserStyleLevel styleLevel { WebCore::UserStyleLevel::Author };
 
         RetainPtr<NSArray> scriptPaths;
         RetainPtr<NSArray> styleSheetPaths;

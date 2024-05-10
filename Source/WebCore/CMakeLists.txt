@@ -1822,6 +1822,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUQuerySetDescriptor.idl
     Modules/WebGPU/GPUQueryType.idl
     Modules/WebGPU/GPUQueue.idl
+    Modules/WebGPU/GPUQueueDescriptor.idl
     Modules/WebGPU/GPURenderBundle.idl
     Modules/WebGPU/GPURenderBundleDescriptor.idl
     Modules/WebGPU/GPURenderBundleEncoder.idl

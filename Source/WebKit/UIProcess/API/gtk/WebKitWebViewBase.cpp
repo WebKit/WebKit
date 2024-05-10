@@ -1314,7 +1314,7 @@ void webkitWebViewBaseProcessAcceleratorsForKeyPressEvent(WebKitWebViewBase* web
     if (gdk_key_event_is_modifier(event))
         return;
 
-    GUniquePtr<char> accelerator(gtk_accelerator_name(gdk_key_event_get_keyval(event), gdk_event_get_modifier_state(event)));
+    GUniquePtr<char> accelerator(gtk_accelerator_name_with_keycode(gtk_widget_get_display(GTK_WIDGET(webViewBase)), gdk_key_event_get_keyval(event), gdk_key_event_get_keycode(event), gdk_event_get_modifier_state(event)));
     GUniquePtr<char*> actions(gtk_application_get_actions_for_accel(GTK_APPLICATION(app), accelerator.get()));
     for (int i = 0; actions.get()[i]; ++i) {
         const char* detailedAction = actions.get()[i];

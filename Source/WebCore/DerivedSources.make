@@ -149,6 +149,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUQuerySetDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUQueryType.idl \
     $(WebCore)/Modules/WebGPU/GPUQueue.idl \
+    $(WebCore)/Modules/WebGPU/GPUQueueDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPURenderBundle.idl \
     $(WebCore)/Modules/WebGPU/GPURenderBundleDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPURenderBundleEncoder.idl \

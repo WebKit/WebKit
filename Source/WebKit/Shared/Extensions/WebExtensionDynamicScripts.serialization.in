@@ -36,6 +36,7 @@ struct WebKit::WebExtensionScriptInjectionParameters {
     std::optional<String> function;
 
     WebKit::WebExtensionContentWorldType world;
+    WebCore::UserStyleLevel styleLevel;
 }
 
 struct WebKit::WebExtensionScriptInjectionResultParameters {
@@ -59,6 +60,7 @@ struct WebKit::WebExtensionRegisteredScriptParameters {
     std::optional<bool> persistent;
 
     std::optional<WebKit::WebExtensionContentWorldType> world;
+    std::optional<WebCore::UserStyleLevel> styleLevel;
 }
 
 [Nested] enum class WebKit::WebExtension::InjectionTime : uint8_t {

@@ -696,6 +696,9 @@ bool VisibleSelection::isInPasswordField() const
 
 bool VisibleSelection::canEnableWritingSuggestions() const
 {
+    if (RefPtr formControl = enclosingTextFormControl(start()))
+        return formControl->isWritingSuggestionsEnabled();
+
     RefPtr containerNode = start().containerNode();
     if (!containerNode)
         return false;

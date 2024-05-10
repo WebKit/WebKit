@@ -1864,4 +1864,22 @@ bool Quirks::needsRelaxedCorsMixedContentCheckQuirk() const
     return *m_needsRelaxedCorsMixedContentCheckQuirk;
 }
 
+// rdar://127398734
+bool Quirks::needsLaxSameSiteCookieQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (m_needsLaxSameSiteCookieQuirk)
+        return *m_needsLaxSameSiteCookieQuirk;
+
+    m_needsLaxSameSiteCookieQuirk = false;
+
+    auto url = m_document->url();
+    if (url.protocolIs("https"_s) && url.host() == "www.bing.com"_s)
+        m_needsLaxSameSiteCookieQuirk = true;
+
+    return *m_needsLaxSameSiteCookieQuirk;
+}
+
 }

@@ -111,7 +111,7 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorFuncAsUintN, (JSGlobalObject* globalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto numberOfBits = callFrame->argument(0).toIndex(globalObject, "number of bits");
+    auto numberOfBits = callFrame->argument(0).toIndex(globalObject, "number of bits"_s);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSValue bigInt = callFrame->argument(1).toBigInt(globalObject);
@@ -131,7 +131,7 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorFuncAsIntN, (JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto numberOfBits = callFrame->argument(0).toIndex(globalObject, "number of bits");
+    auto numberOfBits = callFrame->argument(0).toIndex(globalObject, "number of bits"_s);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSValue bigInt = callFrame->argument(1).toBigInt(globalObject);

@@ -44,49 +44,40 @@ String humanReadableStringFromCodecString(const String& codecString)
             builder.append(WEB_UI_STRING_KEY("VP8", "VP8 (Codec String)", "Codec Strings"));
         else if (parameters->codecName == "vp09"_s)
             builder.append(WEB_UI_STRING_KEY("VP9", "VP9 (Codec String)", "Codec Strings"));
-        builder.append(" (");
+        builder.append(" ("_s);
 
         uint8_t levelMajor = parameters->level / 10;
         uint8_t levelMinor = parameters->level % 10;
         auto levelString = levelMinor ? WEB_UI_FORMAT_STRING("%d.%d", "Codec Level (Codec Strings)", levelMajor, levelMinor) : String::number(levelMajor);
-        builder.append(WEB_UI_FORMAT_STRING("Profile %d, Level %s", "VP8/9 Codec Level & Profile (Codec Strings)", parameters->profile, levelString.utf8().data()));
-        builder.append(")");
+        builder.append(WEB_UI_FORMAT_STRING("Profile %d, Level %s", "VP8/9 Codec Level & Profile (Codec Strings)", parameters->profile, levelString.utf8().data()), ')');
 
         return builder.toString();
     }
 
     if (auto parameters = parseAVCCodecParameters(codecString)) {
         StringBuilder builder;
-        builder.append(WEB_UI_STRING_KEY("AVC", "AVC (Codec String)", "Codec Strings"));
-        builder.append(" (");
+        builder.append(WEB_UI_STRING_KEY("AVC", "AVC (Codec String)", "Codec Strings"), " ("_s);
         switch (parameters->profileIDC) {
         case 66:
-            builder.append(WEB_UI_STRING_KEY("Baseline Profile", "Baseline Profile (AVC Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("Baseline Profile", "Baseline Profile (AVC Codec Profile)", "Codec Strings"), ", "_s);
             break;
         case 77:
-            builder.append(WEB_UI_STRING_KEY("Main Profile", "Main Profile (AVC Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("Main Profile", "Main Profile (AVC Codec Profile)", "Codec Strings"), ", "_s);
             break;
         case 88:
-            builder.append(WEB_UI_STRING_KEY("Extended Profile", "Extended Profile (AVC Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("Extended Profile", "Extended Profile (AVC Codec Profile)", "Codec Strings"), ", "_s);
             break;
         case 100:
-            builder.append(WEB_UI_STRING_KEY("High Profile", "High Profile (AVC Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("High Profile", "High Profile (AVC Codec Profile)", "Codec Strings"), ", "_s);
             break;
         case 110:
-            builder.append(WEB_UI_STRING_KEY("High 10 Profile", "High 10 Profile (AVC Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("High 10 Profile", "High 10 Profile (AVC Codec Profile)", "Codec Strings"), ", "_s);
             break;
         case 122:
-            builder.append(WEB_UI_STRING_KEY("High 422 Profile", "High 422 Profile (AVC Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("High 422 Profile", "High 422 Profile (AVC Codec Profile)", "Codec Strings"), ", "_s);
             break;
         case 244:
-            builder.append(WEB_UI_STRING_KEY("High 444 Predictive Profile", "High 444 Predictive Profile (AVC Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("High 444 Predictive Profile", "High 444 Predictive Profile (AVC Codec Profile)", "Codec Strings"), ", "_s);
             break;
         }
         if (parameters->levelIDC == 11)
@@ -97,48 +88,41 @@ String humanReadableStringFromCodecString(const String& codecString)
             auto levelString = levelMinor ? WEB_UI_FORMAT_STRING("Level %d.%d", "Level %d.%d (AVC Codec Level)", levelMajor, levelMinor) : WEB_UI_FORMAT_STRING("Level %d", "Level %d (AVC Codec Level)", levelMajor);
             builder.append(levelString);
         }
-        builder.append(")");
+        builder.append(')');
         return builder.toString();
     }
 
     if (auto parameters = parseHEVCCodecParameters(codecString)) {
         StringBuilder builder;
-        builder.append(WEB_UI_STRING_KEY("HEVC", "HEVC (Codec String)", "Codec Strings"));
-        builder.append(" (");
+        builder.append(WEB_UI_STRING_KEY("HEVC", "HEVC (Codec String)", "Codec Strings"), " ("_s);
         switch (parameters->generalProfileIDC) {
         case 1:
-            builder.append(WEB_UI_STRING_KEY("Main Profile", "Main Profile (HEVC Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("Main Profile", "Main Profile (HEVC Codec Profile)", "Codec Strings"), ", "_s);
             break;
         case 2:
-            builder.append(WEB_UI_STRING_KEY("Main 10 Profile", "Main 10 Profile (HEVC Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("Main 10 Profile", "Main 10 Profile (HEVC Codec Profile)", "Codec Strings"), ", "_s);
             break;
         }
         if (parameters->generalTierFlag)
             builder.append(WEB_UI_STRING_KEY("High Tier", "High Tier (HEVC Codec Tier", "Codec Strings"));
         else
             builder.append(WEB_UI_STRING_KEY("Main Tier", "Main Tier (HEVC Codec Tier", "Codec Strings"));
-        builder.append(")");
+        builder.append(')');
         return builder.toString();
     }
 
     if (auto parameters = parseAV1CodecParameters(codecString)) {
         StringBuilder builder;
-        builder.append(WEB_UI_STRING_KEY("AV1", "AV1 (Codec String)", "Codec Strings"));
-        builder.append(" (");
+        builder.append(WEB_UI_STRING_KEY("AV1", "AV1 (Codec String)", "Codec Strings"), " ("_s);
         switch (parameters->profile) {
         case AV1ConfigurationProfile::Main:
-            builder.append(WEB_UI_STRING_KEY("Main Profile, ", "Main Profile (AV1 Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("Main Profile, ", "Main Profile (AV1 Codec Profile)", "Codec Strings"), ", "_s);
             break;
         case AV1ConfigurationProfile::High:
-            builder.append(WEB_UI_STRING_KEY("High Profile, ", "High Profile (AV1 Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("High Profile, ", "High Profile (AV1 Codec Profile)", "Codec Strings"), ", "_s);
             break;
         case AV1ConfigurationProfile::Professional:
-            builder.append(WEB_UI_STRING_KEY("Professional Profile, ", "Professional Profile (AV1 Codec Profile)", "Codec Strings"));
-            builder.append(", ");
+            builder.append(WEB_UI_STRING_KEY("Professional Profile, ", "Professional Profile (AV1 Codec Profile)", "Codec Strings"), ", "_s);
             break;
         };
 
@@ -216,7 +200,7 @@ String humanReadableStringFromCodecString(const String& codecString)
             builder.append(WEB_UI_STRING_KEY("Level 7.3", "Level 7.3 (AV1 Codec Level)", "Codec Strings"));
             break;
         }
-        builder.append(")");
+        builder.append(')');
         return builder.toString();
     }
 

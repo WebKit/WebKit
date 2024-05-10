@@ -2084,6 +2084,11 @@ bool RenderElement::requiresRenderingConsolidationForViewTransition() const
     return hasViewTransitionName() || capturedInViewTransition();
 }
 
+bool RenderElement::isViewTransitionRoot() const
+{
+    return style().pseudoElementType() == PseudoId::ViewTransition;
+}
+
 bool RenderElement::checkForRepaintDuringLayout() const
 {
     return everHadLayout() && !hasSelfPaintingLayer() && !document().view()->layoutContext().needsFullRepaint();
@@ -2456,6 +2461,27 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
 
     ASSERT_NOT_REACHED();
     return { };
+}
+
+void RenderElement::markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution)
+{
+    auto* renderBox = dynamicDowncast<RenderBox>(renderer);
+    if (!renderBox || !renderBox->parent() || !containingBlockBeforeStyleResolution)
+        return;
+    auto* newContainingBlock = renderBox->containingBlock();
+    ASSERT(newContainingBlock);
+    if (containingBlockBeforeStyleResolution == newContainingBlock)
+        return;
+
+    // Let's carry out the same set of tasks we would normally do when containing block changes for out-of-flow content in RenderBox::styleWillChange.
+    if (!renderBox->isOutOfFlowPositioned())
+        return;
+
+    RenderBlock::removePositionedObject(*renderBox);
+    // This is to make sure we insert the box to the correct containing block list during static position computation.
+    renderBox->parent()->setChildNeedsLayout();
+    newContainingBlock->setChildNeedsLayout();
+    renderBox->setNeedsLayout();
 }
 
 bool RenderElement::isSkippedContentRoot() const

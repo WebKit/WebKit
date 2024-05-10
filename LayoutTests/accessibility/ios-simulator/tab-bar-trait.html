@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="tablist" role="tablist">
+    <button id="tab-1" role="tab" aria-selected="true" aria-controls="panel-1">Tab one</button>
+    <button id="tab-2" role="tab" aria-selected="false" aria-controls="panel-2">Tab two</button>
+</div>
+<div id="panel-1" role="tabpanel" tabindex="0" aria-labelledby="tab-1">First content</div>
+<div id="panel-2" role="tabpanel" tabindex="0" aria-labelledby="tab-2" hidden>Second content</div>
+
+<script>
+var output = "This test ensures the tab bar trait is returned correctly.\n\n";
+
+if (window.accessibilityController) {
+    output += expect("accessibilityController.accessibleElementById('tablist').hasTabBarTrait", "true");
+    output += expect("accessibilityController.accessibleElementById('tab-1').hasTabBarTrait", "false");
+    output += expect("accessibilityController.accessibleElementById('panel-1').hasTabBarTrait", "false");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

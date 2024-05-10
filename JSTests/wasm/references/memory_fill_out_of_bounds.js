@@ -17,4 +17,4 @@ async function test() {
   assert.throws(() => { instance.exports.fill_oob() }, WebAssembly.RuntimeError, "Out of bounds memory access");
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

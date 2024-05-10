@@ -70,6 +70,9 @@ NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkRe
     , m_schemeRegistry(schemeRegistry)
     , m_networkResourceLoader(networkResourceLoader)
 {
+    if (m_requestLoadType == LoadType::MainFrame)
+        m_origin = m_topOrigin;
+
     m_isSameOriginRequest = isSameOrigin(m_url, m_origin.get());
     switch (options.credentials) {
     case FetchOptions::Credentials::Include:
@@ -204,6 +207,18 @@ static std::optional<ResourceError> performCORPCheck(const CrossOriginEmbedderPo
 
 ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& request, ResourceResponse& response)
 {
+    if (response.containsInvalidHTTPHeaders())
+        return badResponseHeadersError(request.url());
+
+    auto scope = makeScopeExit([&] {
+        if (!checkTAO(response)) {
+            if (auto metrics = response.takeNetworkLoadMetrics()) {
+                metrics->failsTAOCheck = true;
+                response.setDeprecatedNetworkLoadMetrics(WTFMove(metrics));
+            }
+        }
+    });
+
     if (m_redirectCount)
         response.setRedirected(true);
 
@@ -235,8 +250,10 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
     // If we have a 304, the cached response is in WebProcess so we let WebProcess do the CORS check on the cached response.
-    if (response.httpStatusCode() == httpStatus304NotModified)
+    if (response.httpStatusCode() == httpStatus304NotModified) {
+        response.setTainting(ResourceResponse::Tainting::Cors);
         return { };
+    }
 
     auto result = passesAccessControlCheck(response, m_storedCredentialsPolicy, *origin(), m_networkResourceLoader.get());
     if (!result)
@@ -244,6 +261,30 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
 
     response.setTainting(ResourceResponse::Tainting::Cors);
     return { };
+}
+
+// https://fetch.spec.whatwg.org/#concept-tao-check
+bool NetworkLoadChecker::checkTAO(const ResourceResponse& response)
+{
+    if (m_timingAllowFailedFlag)
+        return false;
+
+    if (m_origin) {
+        const auto& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
+        for (auto originWithSpace : StringView(timingAllowOriginString).split(',')) {
+            auto origin = originWithSpace.trim(isASCIIWhitespaceWithoutFF<UChar>);
+            if (origin == "*"_s || origin == m_origin->toString())
+                return true;
+        }
+    }
+
+    if (m_options.mode == FetchOptions::Mode::Navigate && !m_isSameOriginRequest) {
+        m_timingAllowFailedFlag = true;
+        return false;
+    }
+
+    m_timingAllowFailedFlag = response.tainting() != ResourceResponse::Tainting::Basic;
+    return !m_timingAllowFailedFlag;
 }
 
 auto NetworkLoadChecker::accessControlErrorForValidationHandler(String&& message) -> RequestOrRedirectionTripletOrError

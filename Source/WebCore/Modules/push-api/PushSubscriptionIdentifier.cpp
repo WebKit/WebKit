@@ -55,12 +55,12 @@ String PushSubscriptionSetIdentifier::debugDescription() const
         1 + bundleIdentifier.length() +
         (!pushPartition.isEmpty() ? 6 + pushPartition.length() : 0) +
         (dataStoreIdentifier ? 12 : 0) + 1);
-    builder.append("["_s, bundleIdentifier);
+    builder.append('[', bundleIdentifier);
     if (!pushPartition.isEmpty())
         builder.append(" part:"_s, pushPartition);
     if (dataStoreIdentifier)
         builder.append(" ds:"_s, dataStoreIdentifier->toString(), 0, 8);
-    builder.append("]"_s);
+    builder.append(']');
     return builder.toString();
 }
 

@@ -109,6 +109,7 @@
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"
+#include "RemoteFrame.h"
 #include "ReportingScope.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
@@ -1504,7 +1505,13 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     bool isFormSubmission = formState;
 
     // The search for a target frame is done earlier in the case of form submission.
-    RefPtr targetFrame = isFormSubmission ? nullptr : dynamicDowncast<LocalFrame>(findFrameForNavigation(effectiveFrameName));
+    RefPtr effectiveTargetFrame = findFrameForNavigation(effectiveFrameName);
+    if (is<RemoteFrame>(effectiveTargetFrame)) {
+        effectiveTargetFrame->changeLocation(WTFMove(frameLoadRequest));
+        return;
+    }
+
+    RefPtr targetFrame = isFormSubmission ? nullptr : dynamicDowncast<LocalFrame>(effectiveTargetFrame);
     if (targetFrame && targetFrame != frame.ptr()) {
         frameLoadRequest.setFrameName(selfTargetFrameName());
         targetFrame->checkedLoader()->loadURL(WTFMove(frameLoadRequest), referrer, newLoadType, event, WTFMove(formState), WTFMove(privateClickMeasurement), completionHandlerCaller.release());
@@ -3346,6 +3353,10 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
     if (auto frame = initiator->frame())
         isFullBrowser = frame->loader().client().isParentProcessAFullWebBrowser();
     if (initiator->url().protocolIsFile() && !isFullBrowser && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LaxCookieSameSiteAttribute)) {
+        request.setIsSameSite(true);
+        return;
+    }
+    if (initiator->quirks().needsLaxSameSiteCookieQuirk()) {
         request.setIsSameSite(true);
         return;
     }

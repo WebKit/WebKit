@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUStoreOp {
+] enum GPUStoreOp {
     "store",
     "discard"
 };

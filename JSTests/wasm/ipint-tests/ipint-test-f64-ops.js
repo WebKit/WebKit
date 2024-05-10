@@ -150,4 +150,4 @@ async function test() {
     assertClose(copysign(-2.56, -1.28), -2.56)
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

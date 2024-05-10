@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/anchor-download-intercept-reject.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/anchor-download-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/anchor-download.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/back-cross-document-event-order.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/back-same-document-intercept-reject.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/back-same-document-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/back-same-document.html

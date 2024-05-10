@@ -9,6 +9,4 @@ PASS: accessibilityController.accessibleElementById('list').role.includes('List'
 PASS successfullyParsed is true
 
 TEST COMPLETE
-One
- Two
-
+One Two

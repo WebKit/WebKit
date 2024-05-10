@@ -184,7 +184,7 @@ static String dmabufRendererWithSupportedBuffers()
         buffers.append("Hardware"_s);
     if (mode.contains(DMABufRendererBufferMode::SharedMemory)) {
         if (mode.contains(DMABufRendererBufferMode::Hardware))
-            buffers.append(", ");
+            buffers.append(", "_s);
         buffers.append("Shared Memory"_s);
     }
 
@@ -325,7 +325,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             for (GLint i = 0; i < numExtensions; ++i) {
                 if (i)
                     extensionsBuilder.append(' ');
-                extensionsBuilder.append(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+                extensionsBuilder.append(span(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i))));
             }
             addTableRow(jsonObject, "GL_EXTENSIONS"_s, extensionsBuilder.toString());
             break;

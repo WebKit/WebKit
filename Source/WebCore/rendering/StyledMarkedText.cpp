@@ -108,6 +108,9 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     case MarkedText::Type::DraggedContent:
         style.alpha = 0.25;
         break;
+    case MarkedText::Type::TransparentContent:
+        style.alpha = 0.0;
+        break;
     case MarkedText::Type::Selection: {
         style.textStyles = computeTextSelectionPaintStyle(style.textStyles, renderer, lineStyle, paintInfo, style.textShadow);
 

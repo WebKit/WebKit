@@ -177,14 +177,17 @@ class BenchmarkRunner(object):
                         results.append(run_result)
                     else:
                         raise Exception('Plan does not contain entry_point or test_files')
-
-                finally:
+                except Exception as error:
+                    raise error
+                else:
                     self._browser_driver.restore_env()
                 if self._pgo_profile_output_dir:
                     shutil.copytree(self._pgo_profile_output_dir, self._diagnose_dir, dirs_exist_ok=True)
 
                 _log.info('End the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
-        finally:
+        except Exception as error:
+            raise error
+        else:
             self._browser_driver.restore_env_after_all_testing()
 
         results = self._wrap(results)

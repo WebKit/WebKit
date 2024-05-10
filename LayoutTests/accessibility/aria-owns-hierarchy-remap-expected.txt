@@ -15,7 +15,7 @@ PASS: ax.accessibleElementById('item1').parentElement().isEqual(ax.accessibleEle
 PASS: ax.accessibleElementById('realitem1').parentElement().isEqual(ax.accessibleElementById('list2')) === true
 PASS: ax.accessibleElementById('item2').parentElement().isEqual(ax.accessibleElementById('list2')) === true
 PASS: ax.accessibleElementById('list2').childrenCount === 3
-PASS: ax.accessibleElementById('list3').childrenCount === 1
+PASS: ax.accessibleElementById('list3').childrenCount === 0
 PASS: ax.accessibleElementById('list1').childrenCount === 3
 PASS: ax.accessibleElementById('list1').childAtIndex(1).isEqual(ax.accessibleElementById('item5')) === true
 

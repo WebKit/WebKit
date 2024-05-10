@@ -72,6 +72,13 @@ NS_ASSUME_NONNULL_END
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if PLATFORM(VISION)
+@interface ARQuickLookPreviewItem : NSObject
+@property (nonatomic, strong, nullable) NSURL *canonicalWebPageURL;
+- (instancetype)initWithFileAtURL:(NSURL *)url;
+@end
+#endif
+
 @protocol ARQuickLookWebKitItemDelegate
 @end
 
@@ -131,7 +138,7 @@ typedef void (^ASVSetIsPlayingReplyBlock) (BOOL isPlaying, NSError * _Nullable e
 @interface ASVLaunchPreview : NSObject
 + (void)beginPreviewApplicationWithURLs:(NSArray *)urls is3DContent:(BOOL)is3DContent websiteURL:(NSURL *)websiteURL completion:(void (^)(NSError *))handler;
 + (void)launchPreviewApplicationWithURLs:(NSArray *)urls completion:(void (^)(NSError *))handler;
-+ (void)cancelPreviewApplicationWithURLs:(NSArray *)urls error:(NSError *)error completion:(void (^)(NSError *))handler;
++ (void)cancelPreviewApplicationWithURLs:(NSArray *)urls error:(NSError * _Nullable)error completion:(void (^)(NSError *))handler;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -38,6 +38,65 @@ constexpr CGFloat blackColorComponents[4] = { 0, 0, 0, 1 };
 constexpr CGFloat whiteColorComponents[4] = { 1, 1, 1, 1 };
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
+
+#if USE(BROWSERENGINEKIT)
+
+@interface WKTestScrollViewScrollUpdate : NSObject
+
+- (instancetype)initWithScrollEvent:(UIScrollEvent *)scrollEvent phase:(BEScrollViewScrollUpdatePhase)phase;
+- (CGPoint)locationInView:(UIView *)view;
+- (CGPoint)translationInView:(UIView *)view;
+
+@property (nonatomic, readonly) NSTimeInterval timestamp;
+@property (nonatomic, readonly) BEScrollViewScrollUpdatePhase phase;
+
+@end
+
+@implementation WKTestScrollViewScrollUpdate {
+    RetainPtr<UIScrollEvent> _scrollEvent;
+    BEScrollViewScrollUpdatePhase _phase;
+}
+
+- (UIScrollEvent *)_scrollEvent
+{
+    return _scrollEvent.get();
+}
+
+- (instancetype)initWithScrollEvent:(UIScrollEvent *)scrollEvent phase:(BEScrollViewScrollUpdatePhase)phase
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _scrollEvent = scrollEvent;
+    _phase = phase;
+    return self;
+}
+
+- (BEScrollViewScrollUpdatePhase)phase
+{
+    return _phase;
+}
+
+- (NSTimeInterval)timestamp
+{
+    return [_scrollEvent timestamp];
+}
+
+- (CGPoint)locationInView:(UIView *)view
+{
+    return [_scrollEvent locationInView:view];
+}
+
+- (CGPoint)translationInView:(UIView *)view
+{
+    CGVector adjustedAcceleratedDelta = [_scrollEvent _adjustedAcceleratedDeltaInView:view];
+    return CGPointMake(adjustedAcceleratedDelta.dx, adjustedAcceleratedDelta.dy);
+}
+
+@end
+
+#endif // USE(BROWSERENGINEKIT)
+
 @interface WKUIScrollEvent : UIScrollEvent
 
 - (instancetype)initWithPhase:(UIScrollPhase)phase location:(CGPoint)location delta:(CGVector)delta;
@@ -80,14 +139,6 @@ constexpr CGFloat whiteColorComponents[4] = { 1, 1, 1, 1 };
 
 @end
 
-#if USE(BROWSERENGINEKIT)
-
-@interface WKBEScrollViewScrollUpdate (Internal)
-- (instancetype)initWithScrollEvent:(UIScrollEvent *)scrollEvent phase:(WKBEScrollViewScrollUpdatePhase)phase;
-@end
-
-#endif
-
 inline static UIScrollPhase legacyScrollPhase(WKBEScrollViewScrollUpdatePhase phase)
 {
 #if USE(BROWSERENGINEKIT)
@@ -112,7 +163,7 @@ inline static RetainPtr<WKBEScrollViewScrollUpdate> createScrollUpdate(WKBEScrol
 {
     auto event = adoptNS([[WKUIScrollEvent alloc] initWithPhase:legacyScrollPhase(phase) location:location delta:delta]);
 #if USE(BROWSERENGINEKIT)
-    return adoptNS([[WKBEScrollViewScrollUpdate alloc] initWithScrollEvent:event.get() phase:phase]);
+    return adoptNS(static_cast<BEScrollViewScrollUpdate *>([[WKTestScrollViewScrollUpdate alloc] initWithScrollEvent:event.get() phase:phase]));
 #else
     return event;
 #endif

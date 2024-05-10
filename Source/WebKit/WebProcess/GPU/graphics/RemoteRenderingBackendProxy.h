@@ -44,7 +44,6 @@
 #include "StreamClientConnection.h"
 #include "ThreadSafeObjectHeap.h"
 #include "WorkQueueMessageReceiver.h"
-#include <WebCore/PixelFormatValidated.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/SharedMemory.h>
 #include <WebCore/Timer.h>
@@ -93,6 +92,8 @@ public:
     static std::unique_ptr<RemoteRenderingBackendProxy> create(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
     ~RemoteRenderingBackendProxy();
+
+    static bool canMapRemoteImageBufferBackendBackingStore();
 
     const RemoteRenderingBackendCreationParameters& parameters() const { return m_parameters; }
 

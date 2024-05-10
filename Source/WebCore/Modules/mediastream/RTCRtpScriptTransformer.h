@@ -61,6 +61,10 @@ public:
     static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, MessageWithMessagePorts&&);
     ~RTCRtpScriptTransformer();
 
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     ReadableStream& readable();
     ExceptionOr<Ref<WritableStream>> writable();
     JSC::JSValue options(JSC::JSGlobalObject&);
@@ -77,7 +81,7 @@ public:
 private:
     RTCRtpScriptTransformer(ScriptExecutionContext&, Ref<SerializedScriptValue>&&, Vector<Ref<MessagePort>>&&, Ref<ReadableStream>&&, Ref<SimpleReadableStreamSource>&&);
 
-    // ActiveDOMObject
+    // ActiveDOMObject.
     void stop() final { stopPendingActivity(); }
 
     void stopPendingActivity() { auto pendingActivity = WTFMove(m_pendingActivity); }

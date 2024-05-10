@@ -464,8 +464,8 @@ async function testInvalidConstExprs() {
   );
 }
 
-assert.asyncTest(testConstExprFastPaths());
-assert.asyncTest(testExtendedConstGlobal());
-assert.asyncTest(testExtendedConstElement());
-assert.asyncTest(testExtendedConstData());
-assert.asyncTest(testInvalidConstExprs());
+await assert.asyncTest(testConstExprFastPaths());
+await assert.asyncTest(testExtendedConstGlobal());
+await assert.asyncTest(testExtendedConstElement());
+await assert.asyncTest(testExtendedConstData());
+await assert.asyncTest(testInvalidConstExprs());

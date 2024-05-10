@@ -13,4 +13,4 @@ async function test() {
     await assert.throwsAsync(instantiate(wat, {}, { exceptions: true }), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 20: 0th Exception type cannot have a non-void return type 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')")
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUTextureSampleType {
+] enum GPUTextureSampleType {
     "float",
     "unfilterable-float",
     "depth",

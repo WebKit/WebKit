@@ -1822,7 +1822,7 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
 
     m_mousePressed = true;
     m_capturesDragging = true;
-    setLastKnownMousePosition(platformMouseEvent);
+    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition());
     m_mouseDownTimestamp = platformMouseEvent.timestamp();
 #if ENABLE(DRAG_SUPPORT)
     m_mouseDownMayStartDrag = false;
@@ -1964,7 +1964,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     // We get this instead of a second mouse-up 
     m_mousePressed = false;
-    setLastKnownMousePosition(platformMouseEvent);
+    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition());
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Release, HitTestRequest::Type::DisallowUserAgentShadowContent };
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(hitType, platformMouseEvent);
@@ -2114,7 +2114,7 @@ HandleUserInputEventResult EventHandler::handleMouseMoveEvent(const PlatformMous
     }
 #endif
 
-    setLastKnownMousePosition(platformMouseEvent);
+    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition());
 
     if (m_hoverTimer.isActive())
         m_hoverTimer.stop();
@@ -2280,7 +2280,7 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
 #endif
 
     m_mousePressed = false;
-    setLastKnownMousePosition(platformMouseEvent);
+    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition());
 
     if (m_svgPan) {
         m_svgPan = false;
@@ -2354,7 +2354,7 @@ bool EventHandler::handleMouseForceEvent(const PlatformMouseEvent& event)
     }
 #endif
 
-    setLastKnownMousePosition(event);
+    setLastKnownMousePosition(event.position(), event.globalPosition());
 
     OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::DisallowUserAgentShadowContent };
 
@@ -3138,6 +3138,7 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
     auto allowsScrollingState = SetForScope(m_currentWheelEventAllowsScrolling, processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling));
     
     setFrameWasScrolledByUser();
+    setLastKnownMousePosition(event.position(), event.globalPosition());
 
     if (m_frame->isMainFrame()) {
         RefPtr page = m_frame->page();
@@ -5142,10 +5143,10 @@ HandleUserInputEventResult EventHandler::dispatchSyntheticTouchEventIfEnabled(co
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
-void EventHandler::setLastKnownMousePosition(const PlatformMouseEvent& event)
+void EventHandler::setLastKnownMousePosition(IntPoint position, IntPoint globalPosition)
 {
-    m_lastKnownMousePosition = event.position();
-    m_lastKnownMouseGlobalPosition = event.globalPosition();
+    m_lastKnownMousePosition = position;
+    m_lastKnownMouseGlobalPosition = globalPosition;
 }
 
 void EventHandler::setImmediateActionStage(ImmediateActionStage stage)

@@ -32,4 +32,4 @@ async function test() {
   assert.eq(instance.exports.get(5 * sizeOfUint32InBytes), 73);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

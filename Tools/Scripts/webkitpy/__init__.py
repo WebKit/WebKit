@@ -34,6 +34,12 @@ import sys
 # We always want the real system version
 os.environ['SYSTEM_VERSION_COMPAT'] = '0'
 
+# Only allow Python 2 if it's explicitly enable
+if sys.version_info <= (3,) and os.environ.get('WEBKITPY_ALLOW_PYTHON_2', '') not in ('1', 'TRUE'):
+    sys.stderr.write('Python 2 is deprecated in webkitpy\n')
+    sys.exit(1)
+
+
 libraries = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))), 'libraries')
 webkitcorepy_path = os.path.join(libraries, 'webkitcorepy')
 if webkitcorepy_path not in sys.path:

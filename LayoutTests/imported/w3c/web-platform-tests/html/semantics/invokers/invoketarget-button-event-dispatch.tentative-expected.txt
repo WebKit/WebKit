@@ -17,16 +17,16 @@ PASS setting custom invokeAction property to --- (must include dash) sets event 
 PASS setting custom invokeaction attribute to --- (must include dash) sets event action
 PASS setting custom invokeAction property to show-picker (must include dash) sets event action
 PASS setting custom invokeaction attribute to show-picker (must include dash) sets event action
-FAIL setting custom invokeAction property to foo (no dash) did not dispatch an event assert_equals: event should not have fired expected null but got object "[object InvokeEvent]"
-FAIL setting custom invokeaction attribute to foo (no dash) did not dispatch an event assert_equals: event should not have fired expected null but got object "[object InvokeEvent]"
-FAIL setting custom invokeAction property to foobar (no dash) did not dispatch an event assert_equals: event should not have fired expected null but got object "[object InvokeEvent]"
-FAIL setting custom invokeaction attribute to foobar (no dash) did not dispatch an event assert_equals: event should not have fired expected null but got object "[object InvokeEvent]"
-FAIL setting custom invokeAction property to foo bar (no dash) did not dispatch an event assert_equals: event should not have fired expected null but got object "[object InvokeEvent]"
-FAIL setting custom invokeaction attribute to foo bar (no dash) did not dispatch an event assert_equals: event should not have fired expected null but got object "[object InvokeEvent]"
-FAIL setting custom invokeAction property to em—dash (no dash) did not dispatch an event assert_equals: event should not have fired expected null but got object "[object InvokeEvent]"
-FAIL setting custom invokeaction attribute to em—dash (no dash) did not dispatch an event assert_equals: event should not have fired expected null but got object "[object InvokeEvent]"
-FAIL setting custom invokeAction property to hidedocument (no dash) did not dispatch an event assert_equals: event should not have fired expected null but got object "[object InvokeEvent]"
-FAIL setting custom invokeaction attribute to hidedocument (no dash) did not dispatch an event assert_equals: event should not have fired expected null but got object "[object InvokeEvent]"
+PASS setting custom invokeAction property to foo (no dash) did not dispatch an event
+PASS setting custom invokeaction attribute to foo (no dash) did not dispatch an event
+PASS setting custom invokeAction property to foobar (no dash) did not dispatch an event
+PASS setting custom invokeaction attribute to foobar (no dash) did not dispatch an event
+PASS setting custom invokeAction property to foo bar (no dash) did not dispatch an event
+PASS setting custom invokeaction attribute to foo bar (no dash) did not dispatch an event
+PASS setting custom invokeAction property to em—dash (no dash) did not dispatch an event
+PASS setting custom invokeaction attribute to em—dash (no dash) did not dispatch an event
+PASS setting custom invokeAction property to hidedocument (no dash) did not dispatch an event
+PASS setting custom invokeaction attribute to hidedocument (no dash) did not dispatch an event
 PASS event does not dispatch if click:preventDefault is called
 PASS event does not dispatch if invoker is disabled
 PASS event dispatches if invokee is non-HTML Element

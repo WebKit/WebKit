@@ -27,6 +27,7 @@
 
 #include "ExtendableEvent.h"
 #include "ExtendableEventInit.h"
+#include "JSValueInWrappedObject.h"
 #include "MessagePort.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerClient.h"
@@ -56,26 +57,28 @@ public:
         Vector<Ref<MessagePort>> ports;
     };
 
-    static Ref<ExtendableMessageEvent> create(JSC::JSGlobalObject& state, const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
-    {
-        return adoptRef(*new ExtendableMessageEvent(state, type, initializer, isTrusted));
-    }
+    struct ExtendableMessageEventWithStrongData {
+        Ref<ExtendableMessageEvent> event;
+        JSC::Strong<JSC::JSObject> strongWrapper; // Keep the wrapper alive until the event is fired, since it is what keeps `data` alive.
+    };
 
-    static Ref<ExtendableMessageEvent> create(Vector<Ref<MessagePort>>&&, RefPtr<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, std::optional<ExtendableMessageEventSource>&& source = std::nullopt);
+    static ExtendableMessageEventWithStrongData create(JSC::JSGlobalObject&, const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
+    static ExtendableMessageEventWithStrongData create(JSC::JSGlobalObject&, Vector<Ref<MessagePort>>&&, Ref<SerializedScriptValue>&&, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&);
 
     ~ExtendableMessageEvent();
 
-    SerializedScriptValue* data() const { return m_data.get(); }
+    JSValueInWrappedObject& data() { return m_data; }
+
     const String& origin() const { return m_origin; }
     const String& lastEventId() const { return m_lastEventId; }
     const std::optional<ExtendableMessageEventSource>& source() const { return m_source; }
     const Vector<Ref<MessagePort>>& ports() const { return m_ports; }
 
 private:
-    ExtendableMessageEvent(JSC::JSGlobalObject&, const AtomString&, const Init&, IsTrusted);
-    ExtendableMessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<Ref<MessagePort>>&&);
+    ExtendableMessageEvent(const AtomString&, const Init&, IsTrusted);
+    ExtendableMessageEvent(const AtomString&, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<Ref<MessagePort>>&&);
 
-    RefPtr<SerializedScriptValue> m_data;
+    JSValueInWrappedObject m_data;
     String m_origin;
     String m_lastEventId;
     std::optional<ExtendableMessageEventSource> m_source;

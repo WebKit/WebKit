@@ -40,6 +40,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "PluginView.h"
+#include "ProvisionalFrameCreationParameters.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebChromeClient.h"
@@ -137,7 +138,9 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     auto frameID = WebCore::FrameIdentifier::generate();
     auto frame = create(page, frameID);
     ASSERT(page.corePage());
-    auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebLocalFrameLoaderClient>(frame.get(), frame->makeInvalidator()), frameID, ownerElement);
+    auto coreFrame = LocalFrame::createSubframe(*page.corePage(), [frame] (auto& localFrame) {
+        return makeUniqueRef<WebLocalFrameLoaderClient>(localFrame, frame.get(), frame->makeInvalidator());
+    }, frameID, ownerElement);
     frame->m_coreFrame = coreFrame.get();
 
     page.send(Messages::WebPageProxy::DidCreateSubframe(parent.frameID(), coreFrame->frameID(), frameName));
@@ -152,10 +155,11 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
 Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, const String& frameName)
 {
     auto frame = create(page, frameID);
-    auto client = makeUniqueRef<WebRemoteFrameClient>(frame.copyRef(), frame->makeInvalidator());
     RELEASE_ASSERT(page.corePage());
     RELEASE_ASSERT(parent.coreFrame());
-    auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), WTFMove(client), frameID, *parent.coreFrame());
+    auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), [frame] (auto&) {
+        return makeUniqueRef<WebRemoteFrameClient>(frame.copyRef(), frame->makeInvalidator());
+    }, frameID, *parent.coreFrame());
     frame->m_coreFrame = coreFrame.get();
     coreFrame->tree().setSpecifiedName(AtomString(frameName));
     return frame;
@@ -175,7 +179,7 @@ WebFrame::WebFrame(WebPage& page, WebCore::FrameIdentifier frameID)
 WebLocalFrameLoaderClient* WebFrame::localFrameLoaderClient() const
 {
     if (auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get()))
-        return static_cast<WebLocalFrameLoaderClient*>(&localFrame->loader().client());
+        return toWebLocalFrameLoaderClient(localFrame->loader().client());
     return nullptr;
 }
 WebRemoteFrameClient* WebFrame::remoteFrameClient() const
@@ -188,7 +192,7 @@ WebRemoteFrameClient* WebFrame::remoteFrameClient() const
 WebFrameLoaderClient* WebFrame::frameLoaderClient() const
 {
     if (auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get()))
-        return static_cast<WebLocalFrameLoaderClient*>(&localFrame->loader().client());
+        return toWebLocalFrameLoaderClient(localFrame->loader().client());
     if (auto* remoteFrame = dynamicDowncast<RemoteFrame>(m_coreFrame.get()))
         return static_cast<WebRemoteFrameClient*>(&remoteFrame->client());
     return nullptr;
@@ -316,7 +320,7 @@ void WebFrame::invalidate()
 {
     ASSERT(!WebProcess::singleton().webFrame(m_frameID) || WebProcess::singleton().webFrame(m_frameID) == this);
     WebProcess::singleton().removeWebFrame(frameID(), m_page ? std::optional<WebPageProxyIdentifier>(m_page->webPageProxyIdentifier()) : std::nullopt);
-    m_coreFrame = 0;
+    m_coreFrame = nullptr;
 }
 
 ScopeExit<Function<void()>> WebFrame::makeInvalidator()
@@ -337,7 +341,7 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunc
     return policyListenerID;
 }
 
-void WebFrame::transitionToRemote(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
+void WebFrame::loadDidCommitInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
     RefPtr localFrame = coreLocalFrame();
     if (!localFrame) {
@@ -368,10 +372,12 @@ void WebFrame::transitionToRemote(std::optional<WebCore::LayerHostingContextIden
         parent->tree().removeChild(*localFrame);
     if (ownerElement)
         localFrame->disconnectOwnerElement();
-    auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
+    auto clientCreator = [protectedThis = Ref { *this }, invalidator = WTFMove(invalidator)] (auto&) mutable {
+        return makeUniqueRef<WebRemoteFrameClient>(WTFMove(protectedThis), WTFMove(invalidator));
+    };
     auto newFrame = ownerElement
-        ? WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier)
-        : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, localFrame->opener());
+        ? WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(clientCreator), m_frameID, *ownerElement, layerHostingContextIdentifier)
+        : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(clientCreator), m_frameID, *parent) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(clientCreator), m_frameID, localFrame->opener());
     if (!parent)
         corePage->setMainFrame(newFrame.copyRef());
     newFrame->takeWindowProxyFrom(*localFrame);
@@ -388,6 +394,88 @@ void WebFrame::transitionToRemote(std::optional<WebCore::LayerHostingContextIden
 
     if (corePage->focusController().focusedFrame() == localFrame.get())
         corePage->focusController().setFocusedFrame(newFrame.ptr(), FocusController::BroadcastFocusedFrame::No);
+
+    if (ownerElement)
+        ownerElement->scheduleInvalidateStyleAndLayerComposition();
+}
+
+void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& parameters)
+{
+    RefPtr remoteFrame = coreRemoteFrame();
+    if (!remoteFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto* corePage = remoteFrame->page();
+    if (!corePage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr parent = remoteFrame->tree().parent();
+    auto clientCreator = [this, protectedThis = Ref { *this }] (auto& localFrame) mutable {
+        return makeUniqueRef<WebLocalFrameLoaderClient>(localFrame, WTFMove(protectedThis), makeInvalidator());
+    };
+    auto localFrame = parent ? LocalFrame::createProvisionalSubframe(*corePage, WTFMove(clientCreator), m_frameID, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(clientCreator), m_frameID, remoteFrame->opener());
+    m_provisionalFrame = localFrame.ptr();
+    localFrame->init();
+
+    if (parameters.layerHostingContextIdentifier)
+        setLayerHostingContextIdentifier(*parameters.layerHostingContextIdentifier);
+}
+
+void WebFrame::provisionalLoadFailed()
+{
+    if (RefPtr frame = std::exchange(m_provisionalFrame, nullptr)) {
+        if (auto* client = toWebLocalFrameLoaderClient(frame->loader().client()))
+            client->takeFrameInvalidator().release();
+        if (RefPtr parent = frame->tree().parent())
+            parent->tree().removeChild(*frame);
+        frame->setView(nullptr);
+    }
+}
+
+void WebFrame::commitProvisionalFrame()
+{
+    RefPtr localFrame = std::exchange(m_provisionalFrame, nullptr);
+    if (!localFrame)
+        return;
+
+    RefPtr remoteFrame = coreRemoteFrame();
+    if (!remoteFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto* corePage = remoteFrame->page();
+    if (!corePage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr parent = remoteFrame->tree().parent();
+    RefPtr ownerElement = remoteFrame->ownerElement();
+
+    if (parent)
+        parent->tree().removeChild(*remoteFrame);
+    remoteFrame->disconnectOwnerElement();
+    static_cast<WebRemoteFrameClient&>(remoteFrame->client()).takeFrameInvalidator().release();
+
+    m_coreFrame = localFrame.get();
+    remoteFrame->setView(nullptr);
+    localFrame->tree().setSpecifiedName(remoteFrame->tree().specifiedName());
+    localFrame->setOwnerElement(ownerElement.get());
+    if (remoteFrame->isMainFrame())
+        corePage->setMainFrame(*localFrame);
+    localFrame->takeWindowProxyFrom(*remoteFrame);
+
+    localFrame->setOpener(remoteFrame->opener());
+    for (auto& frame : remoteFrame->openedFrames())
+        frame->setOpener(localFrame.get());
+
+    if (corePage->focusController().focusedFrame() == remoteFrame.get())
+        corePage->focusController().setFocusedFrame(localFrame.get(), FocusController::BroadcastFocusedFrame::No);
 
     if (ownerElement)
         ownerElement->scheduleInvalidateStyleAndLayerComposition();
@@ -416,51 +504,6 @@ void WebFrame::removeFromTree()
     if (RefPtr parent = coreFrame->tree().parent())
         parent->tree().removeChild(*coreFrame);
     coreFrame->disconnectView();
-}
-
-void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
-{
-    RefPtr remoteFrame = coreRemoteFrame();
-    if (!remoteFrame) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto* corePage = remoteFrame->page();
-    if (!corePage) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr parent = remoteFrame->tree().parent();
-    RefPtr ownerElement = remoteFrame->ownerElement();
-
-    if (parent)
-        parent->tree().removeChild(*remoteFrame);
-    remoteFrame->disconnectOwnerElement();
-    auto invalidator = static_cast<WebRemoteFrameClient&>(remoteFrame->client()).takeFrameInvalidator();
-
-    auto client = makeUniqueRef<WebLocalFrameLoaderClient>(*this, WTFMove(invalidator));
-    auto localFrame = parent ? LocalFrame::createSubframeHostedInAnotherProcess(*corePage, WTFMove(client), m_frameID, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, remoteFrame->opener());
-    m_coreFrame = localFrame.ptr();
-    remoteFrame->setView(nullptr);
-    localFrame->init();
-    localFrame->tree().setSpecifiedName(remoteFrame->tree().specifiedName());
-    if (localFrame->isMainFrame())
-        corePage->setMainFrame(localFrame);
-    localFrame->takeWindowProxyFrom(*remoteFrame);
-
-    localFrame->setOpener(remoteFrame->opener());
-    for (auto& frame : remoteFrame->openedFrames())
-        frame->setOpener(localFrame.ptr());
-
-    if (corePage->focusController().focusedFrame() == remoteFrame.get())
-        corePage->focusController().setFocusedFrame(localFrame.ptr(), FocusController::BroadcastFocusedFrame::No);
-    if (layerHostingContextIdentifier)
-        setLayerHostingContextIdentifier(*layerHostingContextIdentifier);
-
-    if (ownerElement)
-        ownerElement->scheduleInvalidateStyleAndLayerComposition();
 }
 
 void WebFrame::didFinishLoadInAnotherProcess()

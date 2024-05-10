@@ -123,9 +123,13 @@ class MacPort(DarwinPort):
 
         expectations = []
         for version in versions_to_fallback:
-            version_name = version_name_map.to_name(version, platform=self.port_name)
-            if version_name:
-                standardized_version_name = version_name.lower().replace(' ', '')
+            if version == MacPort.CURRENT_VERSION:
+                version_name = None
+            else:
+                version_name = version_name_map.to_name(version, platform=self.port_name)
+                if version_name:
+                    standardized_version_name = version_name.lower().replace(' ', '')
+
             apple_name = None
             if apple_additions():
                 apple_name = version_name_map.to_name(version, platform=self.port_name, table=INTERNAL_TABLE)

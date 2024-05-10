@@ -524,6 +524,98 @@ TEST(WKWebExtensionController, ContentScriptLoading)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionController, CSSUserOrigin)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='color: red'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"css": @[ @"style.css" ],
+            @"js": @[ @"content.js" ],
+            @"css_origin": @"user"
+        } ]
+    };
+
+    auto *styleSheet = @"body { color: green !important }";
+
+    auto *contentScript = Util::constructScript(@[
+        @"let computedColor = window.getComputedStyle(document.body).color",
+        @"browser.test.assertEq(computedColor, 'rgb(0, 128, 0)', 'Color should be green')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto resources = @{
+        @"style.css": styleSheet,
+        @"content.js": contentScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionController, CSSAuthorOrigin)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<style> body { color: red } </style>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"css": @[ @"style.css" ],
+            @"js": @[ @"content.js" ],
+            @"css_origin": @"author"
+        } ]
+    };
+
+    auto *styleSheet = @"body { color: green !important }";
+
+    auto *contentScript = Util::constructScript(@[
+        @"let computedColor = getComputedStyle(document.body).color",
+        @"browser.test.assertEq(computedColor, 'rgb(0, 128, 0)', 'Color should be green')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto resources = @{
+        @"style.css": styleSheet,
+        @"content.js": contentScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
 TEST(WKWebExtensionController, ContentSecurityPolicyV2BlockingImageLoad)
 {
     TestWebKitAPI::HTTPServer server({

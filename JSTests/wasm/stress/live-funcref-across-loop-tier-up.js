@@ -30,4 +30,4 @@ async function test() {
         bar();
 }
 
-assert.asyncTest(test())
+await assert.asyncTest(test())

@@ -424,6 +424,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initAuxiliarySession;
 @property (readonly) NSString* routingContextUID;
 @property (readonly) BOOL eligibleForBTSmartRoutingConsideration;
+@property (readonly) NSString* spatialTrackingLabel;
 - (BOOL)setEligibleForBTSmartRoutingConsideration:(BOOL)inValue error:(NSError **)outError;
 - (BOOL)setHostProcessAttribution:(NSArray<NSString *>*)inHostProcessInfo error:(NSError **)outError SPI_AVAILABLE(ios(15.0), watchos(8.0), tvos(15.0)) API_UNAVAILABLE(macCatalyst, macos);
 - (BOOL)setAuditTokensForProcessAssertion:(NSArray<NSData *>*)inAuditTokens error:(NSError **)outError;
@@ -443,6 +444,7 @@ typedef NS_ENUM(NSInteger, AVPlayerResourceConservationLevel) {
 };
 
 @property (nonatomic) AVPlayerResourceConservationLevel resourceConservationLevelWhilePaused;
+@property (nonatomic, retain, null_unspecified, getter=_STSLabel, setter=_setSTSLabel:) NSString *STSLabel;
 
 @end
 #endif

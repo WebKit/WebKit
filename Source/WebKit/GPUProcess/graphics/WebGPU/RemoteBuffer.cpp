@@ -32,6 +32,8 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 
+#include <wtf/CheckedArithmetic.h>
+
 namespace WebKit {
 
 RemoteBuffer::RemoteBuffer(WebCore::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, bool mappedAtCreation, WebGPUIdentifier identifier)
@@ -52,47 +54,58 @@ void RemoteBuffer::stopListeningForIPC()
     m_streamConnection->stopReceivingMessages(Messages::RemoteBuffer::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
+void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(bool)>&& callback)
 {
     m_isMapped = true;
     m_mapModeFlags = mapModeFlags;
 
     m_backing->mapAsync(mapModeFlags, offset, size, [protectedThis = Ref<RemoteBuffer>(*this), callback = WTFMove(callback)] (bool success) mutable {
         if (!success) {
-            callback(std::nullopt);
+            callback(false);
             return;
         }
 
-        auto mappedRange = protectedThis->m_backing->getMappedRange(0, std::nullopt);
-        protectedThis->m_mappedRange = mappedRange;
-        callback(Vector(std::span { static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength }));
+        callback(true);
     });
 }
 
 void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {
-    auto mappedRange = m_backing->getMappedRange(offset, size);
-    m_mappedRange = mappedRange;
-    m_isMapped = true;
+    m_backing->getMappedRange(offset, size, [&] (auto mappedRange) {
+        m_isMapped = true;
 
-    callback(Vector(std::span { static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength }));
+        callback(Vector(std::span { static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength }));
+    });
 }
 
-void RemoteBuffer::unmap(Vector<uint8_t>&& data)
+void RemoteBuffer::unmap()
 {
-    if (m_isMapped && m_mappedRange && m_mappedRange->byteLength >= data.size() && m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
-        memcpy(m_mappedRange->source, data.data(), data.size());
-
     if (m_isMapped)
         m_backing->unmap();
     m_isMapped = false;
-    m_mappedRange = std::nullopt;
     m_mapModeFlags = { };
+}
+
+void RemoteBuffer::copy(Vector<uint8_t>&& data, size_t offset)
+{
+    if (!m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
+        return;
+
+    auto [buffer, bufferLength] = m_backing->getBufferContents();
+    if (!buffer || !bufferLength)
+        return;
+
+    auto dataSize = data.size();
+    auto endOffset = checkedSum<size_t>(offset, dataSize);
+    if (endOffset.hasOverflowed() || endOffset.value() > bufferLength)
+        return;
+
+    memcpy(buffer + offset, data.data(), data.size());
 }
 
 void RemoteBuffer::destroy()
 {
-    unmap(Vector<uint8_t>());
+    unmap();
     m_backing->destroy();
 }
 

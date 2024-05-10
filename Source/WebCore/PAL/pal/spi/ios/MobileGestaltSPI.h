@@ -56,13 +56,14 @@ static const CFStringRef kMGQWAPICapability CFSTR("wapi");
 static const CFStringRef kMGQMainDisplayRotation CFSTR("MainDisplayRotation");
 
 typedef enum {
-    MGDeviceClassInvalid = -1,
-    MGDeviceClassiPhone  = 1,
-    MGDeviceClassiPod    = 2,
-    MGDeviceClassiPad    = 3,
-    MGDeviceClassAppleTV = 4,
-    MGDeviceClassWatch   = 6,
-    MGDeviceClassMac     = 9,
+    MGDeviceClassInvalid       = -1,
+    MGDeviceClassiPhone        = 1,
+    MGDeviceClassiPod          = 2,
+    MGDeviceClassiPad          = 3,
+    MGDeviceClassAppleTV       = 4,
+    MGDeviceClassWatch         = 6,
+    MGDeviceClassMac           = 9,
+    MGDeviceClassRealityDevice = 11,
 } MGDeviceClass;
 
 typedef enum {

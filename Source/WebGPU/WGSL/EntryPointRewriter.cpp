@@ -86,8 +86,8 @@ EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Fu
 
 void EntryPointRewriter::rewrite()
 {
-    m_structTypeName = makeString("__", m_function.name(), "_inT");
-    m_structParameterName = makeString("__", m_function.name(), "_in");
+    m_structTypeName = makeString("__"_s, m_function.name(), "_inT"_s);
+    m_structParameterName = makeString("__"_s, m_function.name(), "_in"_s);
 
     collectParameters();
     checkReturnType();
@@ -131,9 +131,9 @@ void EntryPointRewriter::checkReturnType()
         return;
 
     if (auto* structType = std::get_if<Types::Struct>(namedTypeName->inferredType())) {
-        const auto& duplicateStruct = [&] (AST::StructureRole role, const char* suffix) {
+        const auto& duplicateStruct = [&] (AST::StructureRole role, ASCIILiteral suffix) {
             ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
-            String returnStructName = makeString("__", structType->structure.name(), "_", suffix);
+            String returnStructName = makeString("__"_s, structType->structure.name(), '_', suffix);
             auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
                 SourceSpan::empty(),
                 AST::Identifier::make(returnStructName),
@@ -151,18 +151,18 @@ void EntryPointRewriter::checkReturnType()
         };
 
         if (m_stage == ShaderStage::Fragment) {
-            duplicateStruct(AST::StructureRole::FragmentOutput, "FragmentOutput");
+            duplicateStruct(AST::StructureRole::FragmentOutput, "FragmentOutput"_s);
             return;
         }
 
-        duplicateStruct(AST::StructureRole::VertexOutput, "VertexOutput");
+        duplicateStruct(AST::StructureRole::VertexOutput, "VertexOutput"_s);
         return;
     }
 
     if (m_stage != ShaderStage::Fragment || !m_function.returnTypeBuiltin().has_value())
         return;
 
-    String returnStructName = makeString("__", m_function.name(), "_FragmentOutput");
+    String returnStructName = makeString("__"_s, m_function.name(), "_FragmentOutput"_s);
     auto& fieldType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
         SourceSpan::empty(),
         AST::Identifier::make(namedTypeName->identifier())
@@ -310,7 +310,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
             // ${path}.${data.name} = __builtin${builtinID}
             // Note that we don't use ${data.name} on the right-hand side because it's the name of a
             // struct field, and it might not be unique.
-            auto builtinName = makeString("__builtin", String::number(m_builtinID++));
+            auto builtinName = makeString("__builtin"_s, String::number(m_builtinID++));
             materialize(path, data, IsBuiltin::Yes, &builtinName);
             m_builtins.append({
                 {

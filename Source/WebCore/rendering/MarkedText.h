@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DocumentMarker.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
@@ -63,6 +64,7 @@ struct MarkedText : public CanMakeCheckedPtr<MarkedText> {
 #endif
         Selection,
         DraggedContent,
+        TransparentContent,
     };
 
     enum class PaintPhase {
@@ -88,7 +90,7 @@ struct MarkedText : public CanMakeCheckedPtr<MarkedText> {
 
     static Vector<MarkedText> collectForDocumentMarkers(const RenderText&, const TextBoxSelectableRange&, PaintPhase);
     static Vector<MarkedText> collectForHighlights(const RenderText&, const TextBoxSelectableRange&, PaintPhase);
-    static Vector<MarkedText> collectForDraggedContent(const RenderText&, const TextBoxSelectableRange&);
+    static Vector<MarkedText> collectForDraggedAndTransparentContent(const DocumentMarker::Type, const RenderText& renderer, const TextBoxSelectableRange&);
 
     unsigned startOffset { 0 };
     unsigned endOffset { 0 };

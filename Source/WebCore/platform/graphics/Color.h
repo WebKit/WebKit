@@ -126,6 +126,10 @@ public:
     // or precision of ColorType is smaller than the current underlying type.
     template<typename ColorType> ColorType toColorTypeLossy() const;
 
+    // This acts just like toColorTypeLossy(), but will carry forward missing components
+    // from the underlying type into any analogous components in ColorType.
+    template<typename ColorType> ColorType toColorTypeLossyCarryingForwardMissing() const;
+
     ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(ColorSpace) const;
     ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(const DestinationColorSpace&) const;
 
@@ -425,6 +429,13 @@ template<typename ColorType> ColorType Color::toColorTypeLossy() const
 {
     return callOnUnderlyingType([] (const auto& underlyingColor) {
         return convertColor<ColorType>(underlyingColor);
+    });
+}
+
+template<typename ColorType> ColorType Color::toColorTypeLossyCarryingForwardMissing() const
+{
+    return callOnUnderlyingType([] (const auto& underlyingColor) {
+        return convertColorCarryingForwardMissing<ColorType>(underlyingColor);
     });
 }
 

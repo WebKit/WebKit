@@ -145,11 +145,14 @@ void ServiceWorkerThread::queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Clie
 
 static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessagePorts&& message, ExtendableMessageEventSource&& source, const URL& sourceURL)
 {
+    auto* globalObject = scope.globalObject();
+    if (!globalObject)
+        return;
+
     auto ports = MessagePort::entanglePorts(scope, WTFMove(message.transferredPorts));
-    // FIXME: Add support for messageerror event when message deserialization fails.
-    auto messageEvent = ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message.message), SecurityOriginData::fromURL(sourceURL).toString(), { }, source);
-    scope.dispatchEvent(messageEvent);
-    scope.updateExtendedEventsSet(messageEvent.ptr());
+    auto messageEvent = ExtendableMessageEvent::create(*globalObject, WTFMove(ports), message.message.releaseNonNull(), SecurityOriginData::fromURL(sourceURL).toString(), { }, source);
+    scope.dispatchEvent(messageEvent.event);
+    scope.updateExtendedEventsSet(messageEvent.event.ptr());
 }
 
 void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)

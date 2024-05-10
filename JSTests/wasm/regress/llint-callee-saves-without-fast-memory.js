@@ -39,4 +39,4 @@ async function test() {
     instance.exports.main();
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

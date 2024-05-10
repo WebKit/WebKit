@@ -197,7 +197,7 @@ static String formSignature(const HTMLFormElement& form)
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     unsigned count = 0;
-    builder.append(" [");
+    builder.append(" ["_s);
     for (const auto& element : descendantsOfType<Element>(form)) {
         if (!shouldBeUsedForFormSignature(element) || element.hasAttributeWithoutSynchronization(HTMLNames::formAttr))
             continue;

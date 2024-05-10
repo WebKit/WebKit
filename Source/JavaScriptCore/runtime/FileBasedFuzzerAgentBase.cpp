@@ -38,15 +38,9 @@ FileBasedFuzzerAgentBase::FileBasedFuzzerAgentBase(VM&)
 
 String FileBasedFuzzerAgentBase::createLookupKey(const String& sourceFilename, OpcodeID opcodeId, int startLocation, int endLocation)
 {
-    StringBuilder lookupKey;
-    lookupKey.append(sourceFilename);
-    lookupKey.append("|");
-    lookupKey.append(opcodeNames[opcodeAliasForLookupKey(opcodeId)]);
-    lookupKey.append("|");
-    lookupKey.append(startLocation);
-    lookupKey.append("|");
-    lookupKey.append(endLocation);
-    return lookupKey.toString();
+    return makeString(sourceFilename, '|',
+        opcodeNames[opcodeAliasForLookupKey(opcodeId)],
+        '|', startLocation, '|', endLocation);
 }
 
 OpcodeID FileBasedFuzzerAgentBase::opcodeAliasForLookupKey(const OpcodeID& opcodeId)

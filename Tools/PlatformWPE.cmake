@@ -63,7 +63,7 @@ if (ENABLE_COG)
         SOURCE_DIR "${CMAKE_SOURCE_DIR}/Tools/wpe/cog"
         BUILD_IN_SOURCE FALSE
         CONFIGURE_COMMAND
-            meson setup <BINARY_DIR> <SOURCE_DIR>
+            meson setup --reconfigure <BINARY_DIR> <SOURCE_DIR>
             --buildtype ${COG_MESON_BUILDTYPE}
             --pkg-config-path ${WPE_COG_PKG_CONFIG_PATH}
             -Dwpe_api=${WPE_API_VERSION}

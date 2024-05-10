@@ -55,13 +55,13 @@ String CSSLayerStatementRule::cssText() const
 {
     StringBuilder result;
 
-    result.append("@layer ");
+    result.append("@layer "_s);
 
     auto nameList = this->nameList();
     for (auto& name : nameList) {
         result.append(name);
         if (&name != &nameList.last())
-            result.append(", ");
+            result.append(", "_s);
     }
     result.append(';');
 

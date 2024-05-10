@@ -43,6 +43,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/FileSystem.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
@@ -220,11 +221,32 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 
 std::optional<bool> WebsiteDataStore::useNetworkLoader()
 {
-#if HAVE(NETWORK_LOADER)
-    return optionalExperimentalFeatureEnabled(WebPreferencesKey::cFNetworkNetworkLoaderEnabledKey(), std::nullopt);
-#else
+#if !HAVE(NETWORK_LOADER)
     return false;
+#else
+
+    [[maybe_unused]] const auto isSafari =
+#if PLATFORM(MAC)
+        MacApplication::isSafari();
+#elif PLATFORM(IOS_FAMILY)
+        WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
+#else
+        false;
 #endif
+
+    if (auto isEnabled = optionalExperimentalFeatureEnabled(WebPreferencesKey::cFNetworkNetworkLoaderEnabledKey(), std::nullopt))
+        return isEnabled;
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UseCFNetworkNetworkLoader))
+        return std::nullopt;
+#if defined(NW_SETTINGS_HAS_UNIFIED_HTTP)
+    if (isRunningTest(WebCore::applicationBundleIdentifier()))
+        return true;
+    if (nw_settings_get_unified_http_enabled())
+        return isSafari;
+#endif
+    return std::nullopt;
+
+#endif // NETWORK_LOADER
 }
 
 void WebsiteDataStore::platformInitialize()

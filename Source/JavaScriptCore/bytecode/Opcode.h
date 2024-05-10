@@ -38,6 +38,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 
@@ -195,7 +196,7 @@ typedef void* Opcode;
 typedef OpcodeID Opcode;
 #endif
 
-extern const char* const opcodeNames[];
+extern ASCIILiteral const opcodeNames[];
 extern const char* const wasmOpcodeNames[];
 
 #if ENABLE(OPCODE_STATS)

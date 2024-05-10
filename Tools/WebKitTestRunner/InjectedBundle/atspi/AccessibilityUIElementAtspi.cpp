@@ -272,25 +272,25 @@ static String attributesOfElement(AccessibilityUIElement& element)
 
     builder.append(element.role()->string(), '\n');
 
-    builder.append("AXParent: ");
+    builder.append("AXParent: "_s);
     if (auto parent = element.parentElement()) {
         builder.append(parent->role()->string().substring(8));
         auto parentName = parent->title()->string().substring(9);
         if (!parentName.isEmpty())
-            builder.append(": ", parentName);
+            builder.append(": "_s, parentName);
     } else
-        builder.append("(null)");
+        builder.append("(null)"_s);
     builder.append('\n');
 
-    builder.append("AXChildren: ", element.childrenCount(), '\n');
+    builder.append("AXChildren: "_s, element.childrenCount(), '\n');
 
-    builder.append("AXPosition:  { ", FormattedNumber::fixedPrecision(element.x(), 6, TrailingZerosPolicy::Keep));
-    builder.append(", ", FormattedNumber::fixedPrecision(element.y(), 6, TrailingZerosPolicy::Keep));
-    builder.append(" }\n");
+    builder.append("AXPosition:  { "_s, FormattedNumber::fixedPrecision(element.x(), 6, TrailingZerosPolicy::Keep));
+    builder.append(", "_s, FormattedNumber::fixedPrecision(element.y(), 6, TrailingZerosPolicy::Keep));
+    builder.append(" }\n"_s);
 
-    builder.append("AXSize: { ", FormattedNumber::fixedPrecision(element.width(), 6, TrailingZerosPolicy::Keep));
-    builder.append(", ", FormattedNumber::fixedPrecision(element.height(), 6, TrailingZerosPolicy::Keep));
-    builder.append(" }\n");
+    builder.append("AXSize: { "_s, FormattedNumber::fixedPrecision(element.width(), 6, TrailingZerosPolicy::Keep));
+    builder.append(", "_s, FormattedNumber::fixedPrecision(element.height(), 6, TrailingZerosPolicy::Keep));
+    builder.append(" }\n"_s);
 
     String title = element.title()->string();
     if (!title.isEmpty()) {
@@ -306,22 +306,22 @@ static String attributesOfElement(AccessibilityUIElement& element)
     if (!value.isEmpty())
         builder.append(value, '\n');
 
-    builder.append("AXFocusable: ", element.isFocusable(), '\n');
-    builder.append("AXFocused: ", element.isFocused(), '\n');
-    builder.append("AXSelectable: ", element.isSelectable(), '\n');
-    builder.append("AXSelected: ", element.isSelected(), '\n');
-    builder.append("AXMultiSelectable: ", element.isMultiSelectable(), '\n');
-    builder.append("AXEnabled: ", element.isEnabled(), '\n');
-    builder.append("AXExpanded: ", element.isExpanded(), '\n');
-    builder.append("AXRequired: ", element.isRequired(), '\n');
-    builder.append("AXChecked: ", element.isChecked(), '\n');
+    builder.append("AXFocusable: "_s, element.isFocusable(), '\n');
+    builder.append("AXFocused: "_s, element.isFocused(), '\n');
+    builder.append("AXSelectable: "_s, element.isSelectable(), '\n');
+    builder.append("AXSelected: "_s, element.isSelected(), '\n');
+    builder.append("AXMultiSelectable: "_s, element.isMultiSelectable(), '\n');
+    builder.append("AXEnabled: "_s, element.isEnabled(), '\n');
+    builder.append("AXExpanded: "_s, element.isExpanded(), '\n');
+    builder.append("AXRequired: "_s, element.isRequired(), '\n');
+    builder.append("AXChecked: "_s, element.isChecked(), '\n');
 
     String url = element.url()->string();
     if (!url.isEmpty())
         builder.append(url, '\n');
 
     // We append the platform attributes as a single line at the end.
-    builder.append("AXPlatformAttributes: ");
+    builder.append("AXPlatformAttributes: "_s);
     auto attributes = element.platformUIElement()->attributes();
     auto keys = copyToVector(attributes.keys());
     std::sort(keys.begin(), keys.end(), WTF::codePointCompareLessThan);
@@ -332,7 +332,7 @@ static String attributesOfElement(AccessibilityUIElement& element)
             continue;
 
         if (!isFirst)
-            builder.append(", ");
+            builder.append(", "_s);
         isFirst = false;
         builder.append(key, ':', attributes.get(key));
     }
@@ -983,7 +983,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
         return JSStringCreateWithCharacters(nullptr, 0);
 
     StringBuilder builder;
-    builder.append("AXHelp: ");
+    builder.append("AXHelp: "_s);
 
     bool isFirst = true;
     for (const auto& target : targets) {
@@ -1254,13 +1254,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsign
 
     auto buildAttributes = [&](const WebCore::AccessibilityObjectAtspi::TextAttributes& attributes) {
         for (const auto& it : attributes.attributes) {
-            builder.append("\n\t\t");
+            builder.append("\n\t\t"_s);
             builder.append(it.key, ':', it.value);
         }
     };
 
     m_element->updateBackingStore();
-    builder.append("\n\tDefault text attributes:");
+    builder.append("\n\tDefault text attributes:"_s);
     buildAttributes(m_element->textAttributes());
 
     int endOffset = 0;
@@ -1268,7 +1268,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsign
         auto attributes = m_element->textAttributes(i);
         auto rangeStart = std::max<int>(location, attributes.startOffset);
         auto rangeEnd = std::min<int>(limit, attributes.endOffset);
-        builder.append("\n\tRange attributes for '", makeStringByReplacingAll(makeStringByReplacingAll(text.substring(rangeStart, rangeEnd - rangeStart), '\n', "<\\n>"_s), objectReplacementCharacter, "<obj>"_s), "':");
+        builder.append("\n\tRange attributes for '"_s, makeStringByReplacingAll(makeStringByReplacingAll(text.substring(rangeStart, rangeEnd - rangeStart), '\n', "<\\n>"_s), objectReplacementCharacter, "<obj>"_s), "':"_s);
         buildAttributes(attributes);
         endOffset = attributes.endOffset;
     }

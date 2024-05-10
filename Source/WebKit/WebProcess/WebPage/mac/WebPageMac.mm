@@ -324,6 +324,8 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     if (handleKeyEventByRelinquishingFocusToChrome(event))
         return true;
 
+    updateLastNodeBeforeWritingSuggestions(event);
+
     bool eventWasHandled = false;
 
     // Are there commands that could just cause text insertion if executed via Editor?

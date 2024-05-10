@@ -63,7 +63,8 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
         except Exception as error:
             self._browser_driver.diagnose_test_failure(self._diagnose_dir, error)
             raise error
-        finally:
+        else:
             self._browser_driver.close_browsers()
+        finally:
             self._http_server_driver.kill_server()
         return json.loads(result)

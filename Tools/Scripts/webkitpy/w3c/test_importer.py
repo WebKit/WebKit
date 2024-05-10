@@ -384,10 +384,6 @@ class TestImporter(object):
                 if 'slow' in test_info:
                     self._slow_tests.append(fullpath)
 
-                if 'referencefile' in test_info.keys():
-                    # Skip it since, the corresponding reference test should have a link to this file
-                    continue
-
                 if 'match_reference' in test_info.keys() or 'mismatch_reference' in test_info.keys():
                     reftests += 1
                     total_tests += 1

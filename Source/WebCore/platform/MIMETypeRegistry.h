@@ -104,7 +104,6 @@ public:
     // Check to see if a MIME type is one of the common PDF/PS types.
     WEBCORE_EXPORT static bool isPDFMIMEType(const String& mimeType);
     static bool isPostScriptMIMEType(const String& mimeType);
-    WEBCORE_EXPORT static bool isPDFOrPostScriptMIMEType(const String& mimeType);
 
     WEBCORE_EXPORT static bool isUSDMIMEType(const String& mimeType);
 

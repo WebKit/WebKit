@@ -79,7 +79,7 @@ static CString buildAcceptLanguages(const Vector<String>& languages)
             continue;
 
         if (i)
-            builder.append(",");
+            builder.append(',');
 
         builder.append(languages[i]);
 
@@ -87,7 +87,7 @@ static CString buildAcceptLanguages(const Vector<String>& languages)
         if (quality > 0 && quality < 100) {
             char buffer[8];
             g_ascii_formatd(buffer, 8, "%.2f", quality / 100.0);
-            builder.append(";q=", buffer);
+            builder.append(";q="_s, buffer);
         }
     }
 

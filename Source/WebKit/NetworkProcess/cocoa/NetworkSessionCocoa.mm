@@ -630,7 +630,6 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
             ASSERT_NOT_REACHED();
 
         WebCore::ResourceResponse resourceResponse(response);
-        networkDataTask->checkTAO(resourceResponse);
 
         networkDataTask->willPerformHTTPRedirection(WTFMove(resourceResponse), request, [session = networkDataTask->networkSession(), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, shouldIgnoreHSTS](auto&& request) {
 #if !LOG_DISABLED
@@ -1095,8 +1094,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // Lazy initialization is not helpful in the WebKit2 case because we always end up initializing
         // all the fields when sending the response to the WebContent process over IPC.
         resourceResponse.disableLazyInitialization();
-
-        networkDataTask->checkTAO(resourceResponse);
 
         resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData(taskMetrics, networkDataTask->networkLoadMetrics()));
 
@@ -2097,17 +2094,16 @@ void NetworkSessionCocoa::donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&
     if (!m_privateClickMeasurementDebugModeEnabled)
         return;
 
-    StringBuilder debugString;
-    debugString.append("Submitting potential install attribution for AdamId: ");
-    debugString.append(makeString(*pcm.adamID()));
-    debugString.append(", adNetworkRegistrableDomain: ");
-    debugString.append(pcm.destinationSite().registrableDomain.string());
-    debugString.append(", impressionId: ");
-    debugString.append(pcm.ephemeralSourceNonce()->nonce);
-    debugString.append(", sourceWebRegistrableDomain: ");
-    debugString.append(pcm.sourceSite().registrableDomain.string());
-    debugString.append(", version: 3");
-    networkProcess().broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Debug, debugString.toString());
+    auto debugString = makeString("Submitting potential install attribution for AdamId: "_s,
+        *pcm.adamID(),
+        ", adNetworkRegistrableDomain: "_s,
+        pcm.destinationSite().registrableDomain.string(),
+        ", impressionId: "_s,
+        pcm.ephemeralSourceNonce()->nonce,
+        ", sourceWebRegistrableDomain: "_s,
+        pcm.sourceSite().registrableDomain.string(),
+        ", version: 3"_s);
+    networkProcess().broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Debug, debugString);
 }
 
 void NetworkSessionCocoa::deleteAlternativeServicesForHostNames(const Vector<String>& hosts)

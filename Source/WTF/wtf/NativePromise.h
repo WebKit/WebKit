@@ -1582,7 +1582,7 @@ template<typename ResolveValueT, typename RejectValueT, unsigned options>
 struct LogArgument<NativePromise<ResolveValueT, RejectValueT, options>> {
     static String toString(const NativePromise<ResolveValueT, RejectValueT, options>& p)
     {
-        return makeString("NativePromise", LogArgument<const void*>::toString(&p), '<', LogArgument<Logger::LogSiteIdentifier>::toString(p.logSiteIdentifier()), '>');
+        return makeString("NativePromise"_s, LogArgument<const void*>::toString(&p), '<', LogArgument<Logger::LogSiteIdentifier>::toString(p.logSiteIdentifier()), '>');
     }
 };
 
@@ -1590,7 +1590,7 @@ template<>
 struct LogArgument<GenericPromise> {
     static String toString(const GenericPromise& p)
     {
-        return makeString("GenericPromise", LogArgument<const void*>::toString(&p), '<', LogArgument<Logger::LogSiteIdentifier>::toString(p.logSiteIdentifier()), '>');
+        return makeString("GenericPromise"_s, LogArgument<const void*>::toString(&p), '<', LogArgument<Logger::LogSiteIdentifier>::toString(p.logSiteIdentifier()), '>');
     }
 };
 

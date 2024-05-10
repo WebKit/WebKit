@@ -30,4 +30,4 @@ async function test() {
         assert.eq(instance.exports.test(), 42);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUQueryType {
+] enum GPUQueryType {
     "occlusion",
     "timestamp"
 };

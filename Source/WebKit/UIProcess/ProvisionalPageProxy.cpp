@@ -35,11 +35,11 @@
 #include "GoToBackForwardItemParameters.h"
 #include "HandleMessage.h"
 #include "LoadedWebArchive.h"
-#include "LocalFrameCreationParameters.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NavigationActionData.h"
 #include "PageClient.h"
+#include "ProvisionalFrameCreationParameters.h"
 #include "RemotePageProxy.h"
 #include "SuspendedPageProxy.h"
 #include "URLSchemeTaskParameters.h"
@@ -217,15 +217,12 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
         RegistrableDomain navigationDomain(m_request.url());
         if (m_page->openerFrame())
             mainFrameIdentifier = m_page->mainFrame()->frameID();
-        if (auto existingRemotePageProxy = m_browsingContextGroup->takeRemotePageInProcessForProvisionalPage(page(), navigationDomain)) {
+        if (auto existingRemotePageProxy = m_browsingContextGroup->takeRemotePageInProcessForProvisionalPage(page(), protectedProcess)) {
             m_webPageID = existingRemotePageProxy->pageID();
             m_mainFrame = existingRemotePageProxy->page()->mainFrame();
             m_messageReceiverRegistration.stopReceivingMessages();
             m_messageReceiverRegistration.transferMessageReceivingFrom(existingRemotePageProxy->messageReceiverRegistration(), *this);
-            LocalFrameCreationParameters localFrameCreationParameters {
-                std::nullopt
-            };
-            protectedProcess->send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, m_page->mainFrame()->frameID()), m_webPageID);
+            send(Messages::WebPage::CreateProvisionalFrame({ }, m_mainFrame->frameID()));
             m_needsCookieAccessAddedInNetworkProcess = true;
             registerWithInspectorController = false; // FIXME: <rdar://121240770> This is a hack. There seems to be a bug in our interaction with WebPageInspectorController.
         }
@@ -386,7 +383,6 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameI
     // When site isolation is enabled, we use the same WebFrameProxy so we don't need this duplicate call.
     // didFailProvisionalLoadForFrameShared will call didFailProvisionalLoad on the same main frame.
     if (m_page->preferences().siteIsolationEnabled()) {
-        send(Messages::WebPage::TransitionFrameToRemote(m_page->mainFrame()->frameID(), std::nullopt));
         m_browsingContextGroup->transitionProvisionalPageToRemotePage(*this, RegistrableDomain(request.url()));
         m_shouldClosePage = false;
     } else if (auto* pageMainFrame = m_page->mainFrame())
@@ -411,7 +407,7 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
             RegistrableDomain openerDomain(openerFrame->url());
             RegistrableDomain openedDomain(request.url());
             if (openerDomain != openedDomain) {
-                page->send(Messages::WebPage::TransitionFrameToRemote(page->mainFrame()->frameID(), std::nullopt));
+                page->send(Messages::WebPage::LoadDidCommitInAnotherProcess(page->mainFrame()->frameID(), std::nullopt));
                 m_browsingContextGroup->transitionPageToRemotePage(page, openerDomain);
             }
         }

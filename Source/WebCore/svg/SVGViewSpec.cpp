@@ -73,9 +73,7 @@ template<typename CharacterType> static constexpr CharacterType viewTargetSpec[]
 
 bool SVGViewSpec::parseViewSpec(StringView string)
 {
-    return readCharactersForParsing(string, [&](auto buffer) -> bool {
-        using CharacterType = typename decltype(buffer)::CharacterType;
-
+    return readCharactersForParsing(string, [&]<typename CharacterType> (StringParsingBuffer<CharacterType> buffer) -> bool {
         if (buffer.atEnd() || !m_contextElement)
             return false;
 

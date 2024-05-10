@@ -1,0 +1,13 @@
+$(SDK_DIR_macosx)/usr/include/readline
+$(SDK_DIR_macosx)/usr/include/libxslt
+$(SDK_DIR_macosx)/usr/include/mach/mach.h
+$(SDK_DIR_macosx)/usr/include/mach/mach_error.h
+$(SDK_DIR_macosx)/usr/include/mach/mach_types.defs
+$(SDK_DIR_macosx)/usr/include/mach/machine/machine_types.defs
+$(SDK_DIR_macosx)/usr/include/mach/std_types.defs
+$(SDK_DIR_macosx)/usr/include/mach/task.h
+$(SDK_DIR_macosx)/usr/include/objc/Protocol.h
+$(SDK_DIR_macosx)/usr/include/objc/objc-class.h
+$(SDK_DIR_macosx)/usr/include/objc/objc-runtime.h
+$(SDK_DIR_macosx)/usr/include/readline/history.h
+$(SDK_DIR_macosx)/usr/include/readline/readline.h

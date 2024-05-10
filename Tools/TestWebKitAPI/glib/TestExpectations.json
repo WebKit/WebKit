@@ -50,6 +50,18 @@
             },
             "/webkit/WebKitAccessibility/text/state-changed": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/256557"}}
+            },
+            "/webkit/WebKitAccessibility/selection/menulist": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/accessible/event-listener": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/selection/listbox": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/value/basic": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
             }
         }
     },

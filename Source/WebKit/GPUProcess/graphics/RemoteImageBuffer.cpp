@@ -120,8 +120,6 @@ void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveR
         auto backendSize = m_imageBuffer->backendSize();
         auto logicalSize = m_imageBuffer->logicalSize();
         auto resultSize = preserveResolution == WebCore::PreserveResolution::Yes ? backendSize : m_imageBuffer->truncatedLogicalSize();
-        if (resultSize.isEmpty())
-            return std::nullopt;
         auto bitmap = WebCore::ShareableBitmap::create({ resultSize, m_imageBuffer->colorSpace() });
         if (!bitmap)
             return std::nullopt;

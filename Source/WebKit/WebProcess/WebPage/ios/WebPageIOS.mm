@@ -605,6 +605,8 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     if (handleKeyEventByRelinquishingFocusToChrome(event))
         return true;
 
+    updateLastNodeBeforeWritingSuggestions(event);
+
     // FIXME: Interpret the event immediately upon receiving it in UI process, without sending to WebProcess first.
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(ShouldPerformLayout::Yes), platformEvent->type() == PlatformKeyboardEvent::Type::Char), m_identifier);
     auto [eventWasHandled] = sendResult.takeReplyOr(false);
@@ -4133,12 +4135,14 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         return ViewportConfiguration::webpageParameters();
     };
 
-    if (!frame) {
+    RefPtr localFrame = frame->coreLocalFrame() ? frame->coreLocalFrame() : frame->provisionalFrame();
+    ASSERT(localFrame);
+    if (!frame || !localFrame) {
         m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
         return;
     }
 
-    RefPtr document = frame->coreLocalFrame()->document();
+    RefPtr document = localFrame->document();
 
     auto updateViewportConfigurationForMobileDocType = [this, document] {
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());

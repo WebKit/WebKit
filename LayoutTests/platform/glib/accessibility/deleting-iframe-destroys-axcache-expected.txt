@@ -15,10 +15,10 @@ AXRole: AXScrollArea
     AXRole: AXWebArea
         AXRole: AXParagraph AXValue: Before
         AXRole: AXSection AXValue: <obj>
-            AXRole: AXGroup
+            AXRole: AXGroup AXValue:
                 AXRole: AXScrollArea
                     AXRole: AXWebArea
-                        AXRole: AXGroup AXValue: <obj>
+                        AXRole: AXSection AXValue: <obj>
                             AXRole: AXButton
         AXRole: AXParagraph AXValue: After
         AXRole: AXParagraph AXValue: End of test

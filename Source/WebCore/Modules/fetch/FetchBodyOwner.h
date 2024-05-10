@@ -77,6 +77,10 @@ public:
 
     String contentType() const { return m_headers->fastGet(HTTPHeaderName::ContentType); }
 
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
 protected:
     FetchBodyOwner(ScriptExecutionContext*, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
 
@@ -92,7 +96,7 @@ protected:
     void setBody(FetchBody&& body) { m_body = WTFMove(body); }
     ExceptionOr<void> createReadableStream(JSC::JSGlobalObject&);
 
-    // ActiveDOMObject API
+    // ActiveDOMObject.
     void stop() override;
 
     void setDisturbed() { m_isDisturbed = true; }

@@ -1,0 +1,10 @@
+Test creates many 2D contexts and checks when they are not created accelerated anymore
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Effective rendering mode switches to Unaccelerated at instance: 1000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -216,7 +216,7 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     priv->source = makeGStreamerElement("appsrc", "webaudioSrc");
 
     // Configure the appsrc for minimal latency.
-    g_object_set(priv->source.get(), "block", TRUE, "blocksize", priv->bufferSize, "format", GST_FORMAT_TIME, nullptr);
+    g_object_set(priv->source.get(), "block", TRUE, "blocksize", priv->bufferSize, "format", GST_FORMAT_TIME, "is-live", TRUE, nullptr);
 
     gst_bin_add(GST_BIN(src), priv->source.get());
     // appsrc's src pad is the only visible pad of our element.
@@ -314,6 +314,9 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
         priv->dispatchCondition.notifyOne();
     });
 
+    if (GST_STATE(element.get()) < GST_STATE_PAUSED)
+        return;
+
     if (!priv->destination)
         return;
 
@@ -323,14 +326,12 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
 
     GstClockTime timestamp = gst_util_uint64_scale(priv->numberOfSamples, GST_SECOND, priv->sampleRate);
     priv->numberOfSamples += priv->framesToPull;
-    GstClockTime duration = gst_util_uint64_scale(priv->numberOfSamples, GST_SECOND, priv->sampleRate) - timestamp;
+    GstClockTime duration = gst_util_uint64_scale(priv->framesToPull, GST_SECOND, priv->sampleRate);
 
     AudioIOPosition outputTimestamp;
-    if (auto clock = adoptGRef(gst_element_get_clock(element.get()))) {
-        auto clockTime = gst_clock_get_time(clock.get());
-        outputTimestamp.position = Seconds::fromNanoseconds(timestamp);
-        outputTimestamp.timestamp = MonotonicTime::fromRawSeconds(static_cast<double>((g_get_monotonic_time() + GST_TIME_AS_USECONDS(clockTime)) / 1000000.0));
-    }
+    outputTimestamp.position = Seconds::fromNanoseconds(timestamp);
+    auto now = static_cast<double>((g_get_monotonic_time() + GST_TIME_AS_USECONDS(timestamp)) / 1000000.0);
+    outputTimestamp.timestamp = MonotonicTime::fromRawSeconds(now);
 
     // FIXME: Add support for local/live audio input.
     if (priv->bus)
@@ -341,11 +342,13 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
         priv->hasRenderedAudibleFrame = true;
     }
 
-    GST_BUFFER_TIMESTAMP(buffer.get()) = outputTimestamp.position.nanoseconds();
+    GST_BUFFER_TIMESTAMP(buffer.get()) = timestamp;
     GST_BUFFER_DURATION(buffer.get()) = duration;
 
-    if (priv->bus->isSilent())
+    if (priv->bus->isSilent()) {
         GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_GAP);
+        GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_DROPPABLE);
+    }
 
     // Leak the buffer ref, because gst_app_src_push_buffer steals it.
     GstFlowReturn ret = gst_app_src_push_buffer(GST_APP_SRC(priv->source.get()), buffer.leakRef());
@@ -412,6 +415,10 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
         gst_buffer_pool_set_config(priv->pool.get(), config);
         if (!gst_buffer_pool_set_active(priv->pool.get(), TRUE))
             return GST_STATE_CHANGE_FAILURE;
+        webKitWebAudioSrcRenderIteration(src);
+        break;
+    }
+    case GST_STATE_CHANGE_PAUSED_TO_PLAYING: {
         if (!gst_task_start(priv->task.get()))
             return GST_STATE_CHANGE_FAILURE;
         break;

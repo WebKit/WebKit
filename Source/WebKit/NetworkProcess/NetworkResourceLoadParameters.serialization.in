@@ -80,7 +80,7 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
     
     bool shouldEnableCrossOriginResourcePolicy;
     
-    Vector<RefPtr<WebCore::SecurityOrigin>> frameAncestorOrigins;
+    Vector<Ref<WebCore::SecurityOrigin>> frameAncestorOrigins;
     bool pageHasResourceLoadClient;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
     bool crossOriginAccessControlCheckEnabled;
@@ -108,7 +108,7 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    bool pageHasExtensionController;
+    bool pageHasLoadedWebExtensions;
 #endif
 
     bool linkPreconnectEarlyHintsEnabled;

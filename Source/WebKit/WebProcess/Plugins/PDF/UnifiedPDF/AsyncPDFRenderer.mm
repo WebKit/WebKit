@@ -460,6 +460,9 @@ void AsyncPDFRenderer::paintPDFPageIntoBuffer(RetainPtr<PDFDocument>&& pdfDocume
     context.translate(destinationRect.minXMaxYCorner());
     context.scale({ 1, -1 });
 
+    CGContextSetShouldSubpixelQuantizeFonts(context.platformContext(), false);
+    CGContextSetAllowsFontSubpixelPositioning(context.platformContext(), true);
+
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintPDFPageIntoBuffer - painting page " << pageIndex);
     [pdfPage drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
 }
@@ -585,7 +588,7 @@ void AsyncPDFRenderer::paintPagePreview(GraphicsContext& context, const FloatRec
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintPagePreview for page " << pageIndex  << " - buffer " << imageBuffer);
 
     if (imageBuffer)
-        context.drawImageBuffer(*imageBuffer, pageBoundsInPaintingCoordinates);
+        context.drawImageBuffer(*imageBuffer, pageBoundsInPaintingCoordinates, pageBoundsInPaintingCoordinates);
 }
 
 void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, const FloatRect& paintingRect)

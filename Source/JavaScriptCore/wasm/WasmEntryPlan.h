@@ -103,7 +103,7 @@ protected:
     virtual void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) = 0;
 
     template<typename T>
-    bool tryReserveCapacity(Vector<T>& vector, size_t size, const char* what)
+    bool tryReserveCapacity(Vector<T>& vector, size_t size, ASCIILiteral what)
     {
         if (UNLIKELY(!vector.tryReserveCapacity(size))) {
             Locker locker { m_lock };

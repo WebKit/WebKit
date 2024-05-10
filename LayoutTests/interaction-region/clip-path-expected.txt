@@ -16,7 +16,13 @@
         (interaction (269.50,0) width=253 height=278)
         (clipPath move to (126.66,0), add line to (253.33,139.09), add line to (126.66,278.19), add line to (0,139.09), close subpath),
         (interaction (538.50,14) width=253.50 height=250)
-        (clipPath move to (126.67,0), add line to (253.34,125), add line to (126.67,250), add line to (0,125), close subpath)])
+        (clipPath move to (126.67,0), add line to (253.34,125), add line to (126.67,250), add line to (0,125), close subpath),
+        (interaction (888,0) width=174 height=278)
+        (clipPath move to (126.66,0), add line to (253.33,139.09), add line to (126.66,278.19), add line to (0,139.09), close subpath),
+        (interaction (1077,0) width=173.50 height=278)
+        (clipPath move to (47.16,0), add line to (173.83,139.09), add line to (47.16,278.19), add line to (-79.50,139.09), close subpath),
+        (interaction (1346,0) width=254 height=278),
+        (interaction (0,294) width=254 height=253.50)])
       )
     )
   )

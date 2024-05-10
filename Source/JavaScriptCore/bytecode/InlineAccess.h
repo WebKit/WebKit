@@ -106,9 +106,6 @@ public:
     static bool generateSelfInAccess(CodeBlock*, StructureStubInfo&, Structure*);
     static bool generateStringLength(CodeBlock*, StructureStubInfo&);
 
-    static void rewireStubAsJumpInAccess(CodeBlock*, StructureStubInfo&, InlineCacheHandler&);
-    static void resetStubAsJumpInAccess(CodeBlock*, StructureStubInfo&);
-
     // This is helpful when determining the size of an IC on
     // various platforms. When adding a new type of IC, implement
     // its placeholder code here, and log the size. That way we

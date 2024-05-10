@@ -132,7 +132,7 @@ public:
     static bool isStencilOnlyFormat(MTLPixelFormat);
     bool shouldStopCaptureAfterSubmit();
     id<MTLBuffer> placeholderBuffer() const;
-    id<MTLTexture> placeholderTexture() const;
+    id<MTLTexture> placeholderTexture(WGPUTextureFormat) const;
     bool isDestroyed() const;
     NSString *errorValidatingTextureCreation(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats);
 
@@ -187,6 +187,7 @@ private:
 
     id<MTLBuffer> m_placeholderBuffer { nil };
     id<MTLTexture> m_placeholderTexture { nil };
+    id<MTLTexture> m_placeholderDepthStencilTexture { nil };
 
     const Ref<Adapter> m_adapter;
 #if HAVE(COREVIDEO_METAL_SUPPORT)

@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="tooltip" role="tooltip">
+  <div id="initially-hidden" style="display:none">Sometimes</div>Always
+</div>
+<button id="button" aria-describedby="tooltip">Press</button>
+
+<script>
+var output = "This test ensures that we update an element's description when it's described-by changes subtree dynamically.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('button').customContent", "'description: Always'");
+    document.getElementById("initially-hidden").style.display = "block";
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('button').customContent", "'description: Sometimes Always'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

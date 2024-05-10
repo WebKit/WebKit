@@ -12,15 +12,16 @@ button
 End of test
 AXRole: AXWebArea
     AXRole: AXParagraph AXValue: Paragraph
-    AXRole: AXGroup AXValue: <obj>
+    AXRole: AXSection AXValue: <obj>
         AXRole: AXButton
-    AXRole: AXGroup AXValue: <obj>
-        AXRole: AXGroup
+    AXRole: AXSection AXValue: <obj>
+        AXRole: AXGroup AXValue:
             AXRole: AXScrollArea
                 AXRole: AXWebArea
-    AXRole: AXGroup AXValue: <obj>
+    AXRole: AXSection AXValue: <obj>
         AXRole: AXTextField AXValue: text area
-    AXRole: AXSection AXValue: Div<\n><obj>
+    AXRole: AXSection AXValue: Div
+    AXRole: AXSection AXValue: <obj>
         AXRole: AXButton
     AXRole: AXHeading AXValue: Heading<\n><obj><\n><obj>
         AXRole: AXButton

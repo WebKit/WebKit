@@ -30,6 +30,7 @@
 #include "config.h"
 #include "FontCascadeDescription.h"
 
+#include "Font.h"
 #include <wtf/text/StringHash.h>
 
 #if USE(CORE_TEXT)

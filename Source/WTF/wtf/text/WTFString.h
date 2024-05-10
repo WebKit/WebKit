@@ -268,15 +268,17 @@ public:
     WTF_EXPORT_PRIVATE void convertTo16Bit();
 
     // String::fromUTF8 will return a null string if the input data contains invalid UTF-8 sequences.
-    WTF_EXPORT_PRIVATE static String fromUTF8(std::span<const LChar>);
-    WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*);
-    static String fromUTF8(std::span<const char> characters) { return fromUTF8(std::span { reinterpret_cast<const LChar*>(characters.data()), characters.size() }); }
-    static String fromUTF8(const char* string) { return fromUTF8(reinterpret_cast<const LChar*>(string)); }
-    static String fromUTF8ReplacingInvalidSequences(std::span<const LChar>);
+    WTF_EXPORT_PRIVATE static String fromUTF8(std::span<const char8_t>);
+    static String fromUTF8(std::span<const LChar> characters) { return fromUTF8({ reinterpret_cast<const char8_t*>(characters.data()), characters.size() }); }
+    static String fromUTF8(std::span<const char> characters) { return fromUTF8({ reinterpret_cast<const char8_t*>(characters.data()), characters.size() }); }
+    static String fromUTF8(const char* string) { return fromUTF8(WTF::span8(string)); }
+    static String fromUTF8ReplacingInvalidSequences(std::span<const char8_t>);
+    static String fromUTF8ReplacingInvalidSequences(std::span<const LChar> characters) { return fromUTF8ReplacingInvalidSequences({ reinterpret_cast<const char8_t*>(characters.data()), characters.size() }); }
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
-    WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(std::span<const LChar>);
-    static String fromUTF8WithLatin1Fallback(std::span<const char> characters) { return fromUTF8WithLatin1Fallback({ reinterpret_cast<const LChar*>(characters.data()), characters.size() }); }
+    WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(std::span<const char8_t>);
+    static String fromUTF8WithLatin1Fallback(std::span<const LChar> characters) { return fromUTF8WithLatin1Fallback({ reinterpret_cast<const char8_t*>(characters.data()), characters.size() }); }
+    static String fromUTF8WithLatin1Fallback(std::span<const char> characters) { return fromUTF8WithLatin1Fallback({ reinterpret_cast<const char8_t*>(characters.data()), characters.size() }); }
 
     WTF_EXPORT_PRIVATE static String fromCodePoint(char32_t codePoint);
 

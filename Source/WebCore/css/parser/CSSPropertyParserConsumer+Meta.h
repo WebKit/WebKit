@@ -241,5 +241,14 @@ struct SameTokenMetaConsumer {
     }
 };
 
+// MARK: - Generic Consumer Lookup
+
+// To allow users to find the appropriate consumer for a raw result type
+// each consumer should create a specializations of the ConsumerLookup
+// struct for their corresponding raw type and should implement at least
+// `operator()(CSSParserTokenRange& args)` to forward to their consume()
+// function.
+template<typename> struct ConsumerLookup;
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

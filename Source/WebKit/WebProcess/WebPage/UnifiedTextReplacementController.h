@@ -88,6 +88,9 @@ private:
     void textReplacementSessionPerformEditActionForPlainText(WebCore::Document&, const WTF::UUID&, WebTextReplacementData::EditAction);
     void textReplacementSessionPerformEditActionForRichText(WebCore::Document&, const WTF::UUID&, WebTextReplacementData::EditAction);
 
+    template<WebUnifiedTextReplacementType Type>
+    void didEndTextReplacementSession(const WTF::UUID&, bool accepted);
+
     RefPtr<WebCore::Document> document() const;
 
     WeakPtr<WebPage> m_webPage;

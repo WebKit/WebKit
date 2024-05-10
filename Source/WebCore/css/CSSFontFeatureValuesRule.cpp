@@ -39,7 +39,7 @@ CSSFontFeatureValuesRule::CSSFontFeatureValuesRule(StyleRuleFontFeatureValues& f
 String CSSFontFeatureValuesRule::cssText() const
 {
     StringBuilder builder;
-    builder.append("@font-feature-values ");
+    builder.append("@font-feature-values "_s);
     auto joinFontFamiliesWithSeparator = [&builder] (const auto& elements, ASCIILiteral separator) {
         bool first = true;
         for (auto element : elements) {
@@ -50,20 +50,20 @@ String CSSFontFeatureValuesRule::cssText() const
         }
     };
     joinFontFamiliesWithSeparator(m_fontFeatureValuesRule->fontFamilies(), ", "_s);
-    builder.append(" { ");
+    builder.append(" { "_s);
     const auto& value = m_fontFeatureValuesRule->value();
     
     auto addVariant = [&builder] (const String& variantName, const auto& tags) {
         if (!tags.isEmpty()) {
-            builder.append("@", variantName, " { ");
+            builder.append('@', variantName, " { "_s);
             for (auto tag : tags) {
                 serializeIdentifier(tag.key, builder);
                 builder.append(':');
                 for (auto integer : tag.value)
                     builder.append(' ', integer);
-                builder.append("; ");
+                builder.append("; "_s);
             }
-            builder.append("} ");
+            builder.append("} "_s);
         }
     };
     

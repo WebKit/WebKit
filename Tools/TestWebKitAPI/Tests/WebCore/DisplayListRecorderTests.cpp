@@ -32,7 +32,6 @@
 #include <WebCore/DisplayListDrawingContext.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
-#include <WebCore/PixelFormatValidated.h>
 #include <wtf/MathExtras.h>
 #if PLATFORM(COCOA)
 #include <WebCore/GraphicsContextCG.h>
@@ -72,10 +71,10 @@ static WebCore::Path createTestPath()
 static Ref<WebCore::ImageBuffer> createTestImageBuffer()
 {
     auto colorSpace = WebCore::DestinationColorSpace::SRGB();
-    auto pixelFormatValidated = WebCore::PixelFormatValidated::BGRA8;
+    auto pixelFormat = WebCore::PixelFormat::BGRA8;
     WebCore::FloatSize logicalSize { 3, 7 };
     float scale = 1;
-    auto result = WebCore::ImageBuffer::create(logicalSize, WebCore::RenderingPurpose::Unspecified, scale, colorSpace, convertPixelFormatValidatedToPixelFormat(pixelFormatValidated));
+    auto result = WebCore::ImageBuffer::create(logicalSize, WebCore::RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
     RELEASE_ASSERT(result);
     return result.releaseNonNull();
 }

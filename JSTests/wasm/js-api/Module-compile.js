@@ -57,4 +57,4 @@ async function testPromiseAPI() {
     }
 }
 
-assert.asyncTest(testPromiseAPI());
+await assert.asyncTest(testPromiseAPI());

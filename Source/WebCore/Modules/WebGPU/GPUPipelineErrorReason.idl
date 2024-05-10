@@ -27,8 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled
-]
-enum GPUPipelineErrorReason {
+] enum GPUPipelineErrorReason {
     "validation",
     "internal"
 };

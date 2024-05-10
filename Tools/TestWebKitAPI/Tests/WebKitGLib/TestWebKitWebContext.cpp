@@ -210,7 +210,7 @@ String generateHTMLContent(unsigned contentLength)
     unsigned baseLength = baseString.length();
 
     StringBuilder builder;
-    builder.append("<html><body>");
+    builder.append("<html><body>"_s);
 
     if (contentLength <= baseLength)
         builder.appendSubstring(baseString, 0, contentLength);
@@ -226,7 +226,7 @@ String generateHTMLContent(unsigned contentLength)
             currentLength = builder.length() - 12;
         }
     }
-    builder.append("</body></html>");
+    builder.append("</body></html>"_s);
 
     return builder.toString();
 }

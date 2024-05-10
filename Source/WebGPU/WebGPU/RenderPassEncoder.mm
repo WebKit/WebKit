@@ -80,14 +80,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 
     m_parentEncoder->lock(true);
 
-    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
-        if (descriptor.timestampWrites) {
-            const auto& timestampWrite = *descriptor.timestampWrites;
-            [m_renderCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.beginningOfPassWriteIndex withBarrier:NO];
-            m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.endOfPassWriteIndex });
-        }
-    }
-
     m_attachmentsToClear = [NSMutableDictionary dictionary];
     m_allColorAttachments = [NSMutableDictionary dictionary];
     for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
@@ -96,8 +88,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
             continue;
 
         auto& texture = fromAPI(attachment.view);
-        m_renderTargetWidth = texture.width();
-        m_renderTargetHeight = texture.height();
         texture.setPreviouslyCleared();
         addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
 
@@ -110,6 +100,8 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 
         texture.setCommandEncoder(parentEncoder);
         id<MTLTexture> textureToClear = texture.texture();
+        m_renderTargetWidth = textureToClear.width;
+        m_renderTargetHeight = textureToClear.height;
         if (!textureToClear)
             continue;
         TextureAndClearColor *textureWithClearColor = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
@@ -129,12 +121,12 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         auto& textureView = fromAPI(attachment->view);
         textureView.setPreviouslyCleared();
         textureView.setCommandEncoder(parentEncoder);
+        id<MTLTexture> depthTexture = textureView.isDestroyed() ? nil : textureView.texture();
         if (textureView.width() && !m_renderTargetWidth) {
-            m_renderTargetWidth = textureView.width();
-            m_renderTargetHeight = textureView.height();
+            m_renderTargetWidth = depthTexture.width;
+            m_renderTargetHeight = depthTexture.height;
         }
 
-        id<MTLTexture> depthTexture = textureView.texture();
         m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : quantizedDepthValue(attachment->depthClearValue, textureView.format());
         if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
             m_clearDepthAttachment = depthTexture && attachment->depthStoreOp == WGPUStoreOp_Discard && attachment->depthLoadOp == WGPULoadOp_Load;
@@ -544,12 +536,12 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
         return;
 
     auto firstIndexOffsetInBytes = firstIndex * indexSizeInBytes;
-    id<MTLBuffer> indexBuffer = m_indexBuffer->buffer();
     if (NSString* error = errorValidatingDrawIndexed()) {
         makeInvalid(error);
         return;
     }
 
+    id<MTLBuffer> indexBuffer = m_indexBuffer.get() ? m_indexBuffer->buffer() : nil;
     if (firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize) {
         makeInvalid(@"Values to drawIndexed are invalid");
         return;
@@ -641,11 +633,6 @@ void RenderPassEncoder::endPass()
         return;
     }
 
-    ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
-    for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
-        [m_renderCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
-    m_pendingTimestampWrites.clear();
-
     auto endEncoder = ^{
         m_parentEncoder->endEncoding(m_renderCommandEncoder);
     };
@@ -725,7 +712,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
             ASSERT(icb.resources);
 
             for (const auto& resource : *icb.resources) {
-                if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
+                if ((resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment)) && resource.mtlResources.size())
                     [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 
                 ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
@@ -849,7 +836,7 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
         m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(std::span { dynamicOffsets, dynamicOffsetCount }));
 
     for (const auto& resource : group.resources()) {
-        if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
+        if ((resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment)) && resource.mtlResources.size())
             [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
@@ -901,24 +888,26 @@ void RenderPassEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat for
     addResourceToActiveResources(&buffer, buffer.buffer(), BindGroupEntryUsage::Input);
 }
 
+NSString* RenderPassEncoder::errorValidatingPipeline(const RenderPipeline& pipeline) const
+{
+    if (!isValidToUseWith(pipeline, *this))
+        return @"setPipeline: invalid RenderPipeline";
+
+    if (!pipeline.validateDepthStencilState(m_depthReadOnly, m_stencilReadOnly))
+        return @"setPipeline: invalid depth stencil state";
+
+    if (!colorDepthStencilTargetsMatch(pipeline))
+        return @"setPipeline: color and depth targets from pass do not match pipeline";
+
+    return nil;
+}
+
 void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
 {
     RETURN_IF_FINISHED();
 
-    // FIXME: validation according to
-    // https://gpuweb.github.io/gpuweb/#dom-gpurendercommandsmixin-setpipeline.
-    if (!isValidToUseWith(pipeline, *this)) {
-        makeInvalid(@"setPipeline: invalid RenderPipeline");
-        return;
-    }
-
-    if (!pipeline.validateDepthStencilState(m_depthReadOnly, m_stencilReadOnly)) {
-        makeInvalid(@"setPipeline: invalid depth stencil state");
-        return;
-    }
-
-    if (!colorDepthStencilTargetsMatch(pipeline)) {
-        makeInvalid(@"setPipeline: color and depth targets from pass do not match pipeline");
+    if (NSString *error = errorValidatingPipeline(pipeline)) {
+        makeInvalid(error);
         return;
     }
 

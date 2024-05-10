@@ -152,7 +152,7 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
     if (client.targets().isEmpty())
         html.append("<p>No targets found</p>"_s);
     else {
-        html.append("<table>");
+        html.append("<table>"_s);
         for (auto& connectionID : client.targets().keys()) {
             for (auto& target : client.targets().get(connectionID)) {
                 html.append(makeString(
@@ -163,7 +163,7 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
                 ));
             }
         }
-        html.append("</table>");
+        html.append("</table>"_s);
     }
     m_targetListsHtml = html.toString();
     if (m_pageLoaded)
@@ -223,8 +223,8 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
             "let targetDiv = document.getElementById('targetlist');"
             "targetDiv.innerHTML = str;"
         "}"
-        "</script>");
-    htmlBuilder.append("</html>");
+        "</script>"_s);
+    htmlBuilder.append("</html>"_s);
 
     auto html = htmlBuilder.toString().utf8();
     auto data = SharedBuffer::create(html.span());

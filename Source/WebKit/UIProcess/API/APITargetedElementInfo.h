@@ -61,6 +61,7 @@ public:
     bool isNearbyTarget() const { return m_info.isNearbyTarget; }
     bool isPseudoElement() const { return m_info.isPseudoElement; }
     bool isInShadowTree() const { return m_info.isInShadowTree; }
+    bool hasAudibleMedia() const { return m_info.hasAudibleMedia; }
 
     void childFrames(CompletionHandler<void(Vector<Ref<FrameTreeNode>>&&)>&&) const;
 

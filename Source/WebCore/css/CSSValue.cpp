@@ -306,8 +306,7 @@ void CSSValue::collectComputedStyleDependencies(ComputedStyleDependencies& depen
 bool CSSValue::equals(const CSSValue& other) const
 {
     if (classType() == other.classType()) {
-        return visitDerived([&](auto& typedThis) {
-            using ValueType = std::remove_reference_t<decltype(typedThis)>;
+        return visitDerived([&]<typename ValueType> (ValueType& typedThis) {
             static_assert(!std::is_same_v<decltype(&ValueType::equals), decltype(&CSSValue::equals)>);
             return typedThis.equals(uncheckedDowncast<ValueType>(other));
         });
@@ -366,9 +365,9 @@ ASCIILiteral CSSValue::separatorCSSText(ValueSeparator separator)
 
 void CSSValue::operator delete(CSSValue* value, std::destroying_delete_t)
 {
-    value->visitDerived([](auto& value) {
+    value->visitDerived([]<typename ValueType> (ValueType& value) {
         std::destroy_at(&value);
-        std::decay_t<decltype(value)>::freeAfterDestruction(&value);
+        ValueType::freeAfterDestruction(&value);
     });
 }
 

@@ -52,8 +52,9 @@ public:
     Type type() const;
     State state() const;
 
-    using RefCounted<DOMAudioSession>::ref;
-    using RefCounted<DOMAudioSession>::deref;
+    // ActiveDOMObject.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit DOMAudioSession(ScriptExecutionContext*);

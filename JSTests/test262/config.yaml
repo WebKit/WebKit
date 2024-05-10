@@ -884,14 +884,5 @@ skip:
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-wrong-type.js
 
-    # Symbols as WeakMap keys proposal breaks existing tests https://github.com/tc39/proposal-symbols-as-weakmap-keys
-    - test/built-ins/WeakMap/prototype/set/key-not-object-throw.js
-    - test/built-ins/WeakSet/symbol-disallowed-as-weakset-key.js
-    - test/built-ins/WeakSet/prototype/add/value-not-object-throw.js
-    - test/built-ins/WeakRef/target-not-object-throws.js
-    - test/built-ins/FinalizationRegistry/prototype/unregister/unregisterToken-not-object-throws.js
-    - test/built-ins/FinalizationRegistry/prototype/register/target-not-object-throws.js
-    - test/built-ins/FinalizationRegistry/prototype/register/unregisterToken-not-object-or-undefined-throws.js
-
     # Skip while https://bugs.webkit.org/show_bug.cgi?id=249330 is being investigated
     - test/built-ins/RegExp/named-groups/lookbehind.js

@@ -3212,7 +3212,7 @@ void Texture::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-destroy
     if (!m_canvasBacking)
-        m_texture = m_device->placeholderTexture();
+        m_texture = m_device->placeholderTexture(format());
     m_destroyed = true;
     for (auto& view : m_textureViews) {
         if (view.get())
@@ -3680,6 +3680,9 @@ bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uin
 
 bool Texture::previouslyCleared(uint32_t mipLevel, uint32_t slice) const
 {
+    if (isDestroyed())
+        return true;
+
     if (auto it = m_clearedToZero.find(mipLevel); it != m_clearedToZero.end())
         return it->value.contains(slice);
 

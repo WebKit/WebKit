@@ -93,8 +93,8 @@ template<typename InterpolationMethod> static Color mixColorComponentsUsingColor
 
     // 1. Both colors are converted to the specified <color-space>. If the specified color space has a smaller gamut than
     //    the one in which the color to be adjusted is specified, gamut mapping will occur.
-    auto convertedColor1 = color1.template toColorTypeLossy<ColorType>();
-    auto convertedColor2 = color2.template toColorTypeLossy<ColorType>();
+    auto convertedColor1 = color1.template toColorTypeLossyCarryingForwardMissing<ColorType>();
+    auto convertedColor2 = color2.template toColorTypeLossyCarryingForwardMissing<ColorType>();
 
     // 2. Colors are then interpolated in the specified color space, as described in CSS Color 4 § 13 Interpolation. [...]
     auto mixedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(interpolationMethod, convertedColor1, mixPercentages.p1 / 100.0, convertedColor2, mixPercentages.p2 / 100.0).unresolved();
@@ -114,9 +114,9 @@ Color mix(const CSSResolvedColorMix& colorMix)
         return { };
 
     return WTF::switchOn(colorMix.colorInterpolationMethod.colorSpace,
-        [&] (auto colorSpace) {
-            return mixColorComponentsUsingColorInterpolationMethod<decltype(colorSpace)>(
-                colorSpace,
+        [&] (const auto& methodColorSpace) {
+            return mixColorComponentsUsingColorInterpolationMethod(
+                methodColorSpace,
                 *mixPercentages,
                 colorMix.mixComponents1.color,
                 colorMix.mixComponents2.color

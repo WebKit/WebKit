@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    summary.addEventListener("DOMNodeRemoved", () => {
+        hr.appendChild(div);
+        div.appendChild(summary);
+        d.focus();
+        document.execCommand("selectAll", false);
+        document.execCommand("subscript", false);
+    }, {once: true});
+    try {
+        summary.remove();
+    } catch(e) { }
+    document.execCommand("indent", false);
+    document.execCommand("removeFormat", false);
+    document.body.innerHTML = '<p>This test passes if WebKit does not crash.</p>PASS';
+}
+
+</script>
+<body onload="runTest()">
+<summary id="summary">abc</summary>
+<div id="div">def<div>x</div></div>
+<details id="d" open="true" contenteditable><hr id="hr"><hr></details>
+</body>
+</html>

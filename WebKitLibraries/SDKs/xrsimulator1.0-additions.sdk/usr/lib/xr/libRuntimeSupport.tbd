@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /usr/lib/xr/libRuntimeSupport.dylib
+current-version: 26.100.4
+exports:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        symbols: [__RSCurrentProcessUsesNewPointsPerMeter]
+...

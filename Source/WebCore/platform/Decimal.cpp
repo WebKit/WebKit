@@ -846,7 +846,7 @@ String Decimal::toString() const
             return builder.toString();
         }
 
-        builder.append("0.");
+        builder.append("0."_s);
         for (int i = adjustedExponent + 1; i < 0; ++i)
             builder.append('0');
 

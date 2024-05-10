@@ -47,6 +47,10 @@ class SecurityOriginData;
 
 class DatabaseContext final : public ThreadSafeRefCounted<DatabaseContext>, private ActiveDOMObject {
 public:
+    // ActiveDOMObject.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
     virtual ~DatabaseContext();
 
     DatabaseThread* existingDatabaseThread() const { return m_databaseThread.get(); }
@@ -72,6 +76,8 @@ private:
     void stopDatabases() { stopDatabases(nullptr); }
 
     void contextDestroyed() override;
+
+    // ActiveDOMObject.
     void stop() override;
 
     RefPtr<DatabaseThread> m_databaseThread;

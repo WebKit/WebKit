@@ -48,11 +48,6 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Animals
-Birds
- Cats
-Siamese
- Tabby
-Vegetables
-Carrots
- Broccoli
-
+Birds Cats
+Siamese Tabby Vegetables
+Carrots Broccoli
