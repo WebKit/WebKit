@@ -192,7 +192,7 @@ def main():
 
         es3_combo_cases += template_format_case.format(format=format, type_cases=this_type_cases)
 
-    with open('format_map_autogen.cpp', 'wt') as out_file:
+    with open('format_map_autogen.cpp', 'w') as out_file:
         output_cpp = template_cpp.format(
             script_name=os.path.basename(sys.argv[0]),
             data_source_name=input_script,

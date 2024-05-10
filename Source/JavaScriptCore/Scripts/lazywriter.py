@@ -45,7 +45,7 @@ class LazyFileWriter:
             if self.force_output:
                 raise
 
-            read_file = open(self._filepath, "r")
+            read_file = open(self._filepath)
             old_text = read_file.read()
             read_file.close()
             text_changed = old_text != self._output

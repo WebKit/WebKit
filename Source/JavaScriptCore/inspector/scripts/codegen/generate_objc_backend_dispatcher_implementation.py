@@ -103,7 +103,7 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
                 parameter_name = 'opt_' + parameter_name
             parameter_name = 'in_' + parameter_name
 
-            parameters.append('%s %s' % (CppGenerator.cpp_type_for_command_parameter(parameter_type, parameter.is_optional), parameter_name))
+            parameters.append('{} {}'.format(CppGenerator.cpp_type_for_command_parameter(parameter_type, parameter.is_optional), parameter_name))
 
         command_args = {
             'domainName': domain.domain_name,
@@ -118,7 +118,7 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
         return self.wrap_with_guard_for_condition(command.condition, Template(ObjCTemplates.BackendDispatcherHeaderDomainHandlerImplementation).substitute(None, **command_args))
 
     def _generate_responds_to_selector_for_command(self, domain, command):
-        return '[m_delegate respondsToSelector:@selector(%sWithErrorCallback:successCallback:%s)]' % (command.command_name, ''.join(map(lambda parameter: '%s:' % parameter.parameter_name, command.call_parameters)))
+        return '[m_delegate respondsToSelector:@selector({}WithErrorCallback:successCallback:{})]'.format(command.command_name, ''.join(map(lambda parameter: '%s:' % parameter.parameter_name, command.call_parameters)))
 
     def _generate_success_block_for_command(self, domain, command):
         lines = []
@@ -144,10 +144,10 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
                 if parameter.is_optional:
                     out_param_name = 'opt_' + out_param_name
                 out_param_name = 'out_' + out_param_name
-                lines.append('        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(%s, @"%s");' % (out_param_name, parameter.parameter_name))
+                lines.append('        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER({}, @"{}");'.format(out_param_name, parameter.parameter_name))
                 objc_array_class = self.objc_class_for_array_type(parameter.type)
                 if objc_array_class and objc_array_class.startswith(self.objc_prefix()):
-                    lines.append('        THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(%s, [%s class]);' % (out_param_name, objc_array_class))
+                    lines.append('        THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY({}, [{} class]);'.format(out_param_name, objc_array_class))
 
             optional_pointer_parameters = [parameter for parameter in command.return_parameters if parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type)]
             for parameter in optional_pointer_parameters:
@@ -155,10 +155,10 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
                 if parameter.is_optional:
                     out_param_name = 'opt_' + out_param_name
                 out_param_name = 'out_' + out_param_name
-                lines.append('        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(%s, @"%s");' % (out_param_name, parameter.parameter_name))
+                lines.append('        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER({}, @"{}");'.format(out_param_name, parameter.parameter_name))
                 objc_array_class = self.objc_class_for_array_type(parameter.type)
                 if objc_array_class and objc_array_class.startswith(self.objc_prefix()):
-                    lines.append('        THROW_EXCEPTION_FOR_BAD_TYPE_IN_OPTIONAL_ARRAY(%s, [%s class]);' % (out_param_name, objc_array_class))
+                    lines.append('        THROW_EXCEPTION_FOR_BAD_TYPE_IN_OPTIONAL_ARRAY({}, [{} class]);'.format(out_param_name, objc_array_class))
 
             for parameter in command.return_parameters:
                 out_param_name = parameter.parameter_name
@@ -169,10 +169,10 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
                 var_expression = '*%s' % out_param_name if parameter.is_optional else out_param_name
                 export_expression = self.objc_protocol_export_expression_for_variable(parameter.type, var_expression)
                 if not parameter.is_optional:
-                    lines.append('        protocol_jsonMessage->%s("%s"_s, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
+                    lines.append('        protocol_jsonMessage->{}("{}"_s, {});'.format(keyed_set_method, parameter.parameter_name, export_expression))
                 else:
                     lines.append('        if (!!%s)' % out_param_name)
-                    lines.append('            protocol_jsonMessage->%s("%s"_s, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
+                    lines.append('            protocol_jsonMessage->{}("{}"_s, {});'.format(keyed_set_method, parameter.parameter_name, export_expression))
         lines.append('        backendDispatcher()->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);')
 
         lines.append('    };')
@@ -214,18 +214,18 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
             param_expression = in_param_expression(in_param_name, parameter)
             import_expression = self.objc_protocol_import_expression_for_parameter(param_expression, domain, command.command_name, parameter)
             if not parameter.is_optional:
-                lines.append('    %s = %s;' % (join_type_and_name(objc_type, objc_in_param_name), import_expression))
+                lines.append('    {} = {};'.format(join_type_and_name(objc_type, objc_in_param_name), import_expression))
 
                 if isinstance(parameter.type, EnumType):
                     lines.append('    if (!%s) {' % objc_in_param_name)
-                    lines.append('        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter \'%s\' of method \'%s.%s\' cannot be processed"_s);' % (parameter.parameter_name, domain.domain_name, command.command_name))
+                    lines.append('        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter \'{}\' of method \'{}.{}\' cannot be processed"_s);'.format(parameter.parameter_name, domain.domain_name, command.command_name))
                     lines.append('        return;')
                     lines.append('    }')
 
             else:
                 lines.append('    %s;' % join_type_and_name(objc_type, objc_in_param_name))
                 lines.append('    if (!!%s)' % in_param_name)
-                lines.append('        %s = %s;' % (objc_in_param_name, import_expression))
+                lines.append('        {} = {};'.format(objc_in_param_name, import_expression))
         return '\n'.join(lines)
 
     def _generate_invocation_for_command(self, domain, command):
@@ -242,11 +242,11 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
                 if isinstance(parameter.type, EnumType):
                     objc_in_param_expression = '%s.value()' % objc_in_param_expression
 
-                pairs.append('%s:%s' % (parameter.parameter_name, objc_in_param_expression))
+                pairs.append('{}:{}'.format(parameter.parameter_name, objc_in_param_expression))
             else:
                 if isinstance(parameter.type, EnumType):
                     objc_in_param_expression = '%s.value()' % objc_in_param_expression
 
-                optional_expression = '(!!%s ? &%s : nil)' % (in_param_name, objc_in_param_expression)
-                pairs.append('%s:%s' % (parameter.parameter_name, optional_expression))
-        return '    [m_delegate %s%s];' % (command.command_name, ' '.join(pairs))
+                optional_expression = '(!!{} ? &{} : nil)'.format(in_param_name, objc_in_param_expression)
+                pairs.append('{}:{}'.format(parameter.parameter_name, optional_expression))
+        return '    [m_delegate {}{}];'.format(command.command_name, ' '.join(pairs))

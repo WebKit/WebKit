@@ -5,7 +5,7 @@ import sys
 
 def ReadFileAsLines(filename):
     """Reads a file, removing blank lines and lines that start with #"""
-    file = open(filename, "r")
+    file = open(filename)
     raw_lines = file.readlines()
     file.close()
     lines = []

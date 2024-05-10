@@ -424,7 +424,7 @@ def main():
 
     parsed_values = []
     for values_file_path in args.values:
-        with open(values_file_path, "r") as values_file:
+        with open(values_file_path) as values_file:
             parsed_values += values_for_values_file(parsing_context, values_file)
 
     if args.verbose:

@@ -25,7 +25,6 @@
 # cd Source/WebKit/Scripts && python3 -m webkit.messages_unittest
 # cd Source/WebKit/Scripts && python3 -m unittest discover -p '*_unittest.py'
 
-from __future__ import print_function
 import os
 import re
 import sys
@@ -66,7 +65,7 @@ def receiver_implementation_file_name(receiver_name):
 
 
 def parse_receiver(receiver_name):
-    with open(os.path.join(tests_directory, '{}.messages.in'.format(receiver_name))) as in_file:
+    with open(os.path.join(tests_directory, f'{receiver_name}.messages.in')) as in_file:
         return parser.parse(in_file)
     assert(False)
 
@@ -83,7 +82,7 @@ class GeneratedFileContentsTest(unittest.TestCase):
                     out_file.write(actual_file_contents)
                 return
 
-            with open(os.path.join(tests_directory, expected_file_name), mode='r') as in_file:
+            with open(os.path.join(tests_directory, expected_file_name)) as in_file:
                 expected_file_contents = in_file.read()
             actual_line_list = actual_file_contents.splitlines(False)
             expected_line_list = expected_file_contents.splitlines(False)
@@ -99,9 +98,9 @@ class GeneratedFileContentsTest(unittest.TestCase):
     def test_receiver(self):
         for receiver_name, receiver in zip(_test_receiver_names, self.test_receivers):
             header_contents = messages.generate_messages_header(receiver)
-            self.assertGeneratedFileContentsEqual(header_contents, os.path.join(tests_directory, '{}Messages.h'.format(receiver_name)))
+            self.assertGeneratedFileContentsEqual(header_contents, os.path.join(tests_directory, f'{receiver_name}Messages.h'))
             implementation_contents = messages.generate_message_handler(receiver)
-            self.assertGeneratedFileContentsEqual(implementation_contents, os.path.join(tests_directory, '{}MessageReceiver.cpp'.format(receiver_name)))
+            self.assertGeneratedFileContentsEqual(implementation_contents, os.path.join(tests_directory, f'{receiver_name}MessageReceiver.cpp'))
 
     def test_message_names(self):
         header_contents = messages.generate_message_names_header(self.receivers)
@@ -110,7 +109,7 @@ class GeneratedFileContentsTest(unittest.TestCase):
         self.assertGeneratedFileContentsEqual(implementation_contents, os.path.join(tests_directory, 'MessageNames.cpp'))
 
     def test_message_argument_description(self):
-        receiver_header_files = ['{}Messages.h'.format(receiver.name) for receiver in self.receivers]
+        receiver_header_files = [f'{receiver.name}Messages.h' for receiver in self.receivers]
         implementation_contents = messages.generate_message_argument_description_implementation(self.receivers, receiver_header_files)
         self.assertGeneratedFileContentsEqual(implementation_contents, os.path.join(tests_directory, 'MessageArgumentDescriptions.cpp'))
 

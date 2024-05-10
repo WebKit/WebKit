@@ -44,7 +44,7 @@ def main(argv):
     outputFileName = argv[2]
     importsDir = os.path.dirname(inputFileName)
 
-    inputFile = open(inputFileName, 'r')
+    inputFile = open(inputFileName)
     inputContent = inputFile.read()
     inputFile.close()
 
@@ -52,11 +52,11 @@ def main(argv):
         importFileName = match.group(1)
         fullPath = os.path.join(importsDir, importFileName)
         if not os.access(fullPath, os.F_OK):
-            raise Exception('File %s referenced in %s not found' % (importFileName, inputFileName))
-        importFile = open(fullPath, 'r')
+            raise Exception('File {} referenced in {} not found'.format(importFileName, inputFileName))
+        importFile = open(fullPath)
         importContent = minifier(importFile.read())
         importFile.close()
-        return '%s%s%s' % (prefix, importContent, postfix)
+        return '{}{}{}'.format(prefix, importContent, postfix)
 
     def inlineStylesheet(match):
         return inline(match, cssmin.cssminify, "<style>", "</style>")

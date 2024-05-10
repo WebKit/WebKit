@@ -71,7 +71,7 @@ class BuiltinsCombinedImplementationGenerator(BuiltinsGenerator):
         for ch in combinedCode:
             combinedCharacters.append(str(ord(ch)))
 
-        sections.append("const char s_%sCombinedCode[] = { %s };" % (args['namespace'], (", ".join(combinedCharacters))));
+        sections.append("const char s_{}CombinedCode[] = {{ {} }};".format(args['namespace'], (", ".join(combinedCharacters))));
         sections.append("const unsigned s_%sCombinedCodeLength = %d;" % (args['namespace'], len(combinedCharacters)));
 
         for data in function_data:

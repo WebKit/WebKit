@@ -32,7 +32,7 @@ ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE = "AllowedWhenWaiting
 SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 STREAM_ATTRIBUTE = "Stream"
 
-class MessageReceiver(object):
+class MessageReceiver:
     def __init__(self, name, superclass, attributes, messages, condition, namespace):
         self.name = name
         self.superclass = superclass
@@ -50,7 +50,7 @@ class MessageReceiver(object):
         return attribute in self.attributes
 
 
-class Message(object):
+class Message:
     def __init__(self, name, parameters, reply_parameters, attributes, condition, runtime_enablement=None):
         self.name = name
         self.parameters = parameters
@@ -63,7 +63,7 @@ class Message(object):
         return attribute in self.attributes
 
 
-class Parameter(object):
+class Parameter:
     def __init__(self, kind, type, name, attributes=None, condition=None):
         self.kind = kind
         self.type = type
@@ -105,7 +105,7 @@ def check_global_model_inputs(receivers):
             for i in range(1, len(messages)):
                 mi = messages[i]
                 if any(m0.has_attribute(a) != mi.has_attribute(a) for a in matching_attributes):
-                    errors.append('Receiver %s message %s attribute mismatch: %s (%s) != %s (%s))' % (receiver.name, message.name,
+                    errors.append('Receiver {} message {} attribute mismatch: {} ({}) != {} ({}))'.format(receiver.name, message.name,
                                   m0.attributes, m0.condition, mi.attributes, mi.condition))
     return errors
 
@@ -115,7 +115,7 @@ def generate_global_model(receivers):
     for receiver in receivers:
         for message in receiver.messages:
             if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-                async_reply_messages.append(Message(name='%s_%sReply' % (receiver.name, message.name), parameters=message.reply_parameters, reply_parameters=[], attributes=None, condition=message.condition))
+                async_reply_messages.append(Message(name='{}_{}Reply'.format(receiver.name, message.name), parameters=message.reply_parameters, reply_parameters=[], attributes=None, condition=message.condition))
     async_reply_receiver = MessageReceiver(name='AsyncReply', superclass='None', attributes=[BUILTIN_ATTRIBUTE], messages=async_reply_messages, condition=None, namespace='WebKit')
 
     return [ipc_receiver, async_reply_receiver] + receivers

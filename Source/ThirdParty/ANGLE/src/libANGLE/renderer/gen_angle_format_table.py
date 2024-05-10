@@ -434,7 +434,7 @@ def main():
         angle_format_info_cases=angle_format_cases,
         angle_format_switch=switch_data,
         data_source_name=data_source_name)
-    with open('Format_table_autogen.cpp', 'wt') as out_file:
+    with open('Format_table_autogen.cpp', 'w') as out_file:
         out_file.write(output_cpp)
         out_file.close()
 
@@ -445,7 +445,7 @@ def main():
         angle_format_enum=enum_data,
         data_source_name=data_source_name,
         num_angle_formats=num_angle_formats)
-    with open('FormatID_autogen.h', 'wt') as out_file:
+    with open('FormatID_autogen.h', 'w') as out_file:
         out_file.write(output_h)
         out_file.close()
 

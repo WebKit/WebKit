@@ -8,7 +8,6 @@
 #   Perf result merging and upload. Adapted from the Chromium script:
 #   https://chromium.googlesource.com/chromium/src/+/main/tools/perf/process_perf_results.py
 
-from __future__ import print_function
 
 import argparse
 import collections
@@ -158,7 +157,7 @@ def _handle_perf_json_test_results(benchmark_directory_map, test_results_list):
                         # We don't need to upload reference build data to the
                         # flakiness dashboard since we don't monitor the ref build
                         test_results_list.append(json_results)
-            except IOError as e:
+            except OSError as e:
                 # TODO(crbug.com/936602): Figure out how to surface these errors. Should
                 # we have a non-zero exit code if we error out?
                 logging.error('Failed to obtain test results for %s: %s', benchmark_name, e)
@@ -239,7 +238,7 @@ def _scan_output_dir(task_output_dir):
     # the lists were written to.
     for directory in benchmark_directory_list:
         benchmark_name = _get_benchmark_name(directory)
-        logging.debug('Found benchmark %s directory %s' % (benchmark_name, directory))
+        logging.debug('Found benchmark {} directory {}'.format(benchmark_name, directory))
         if benchmark_name in benchmark_directory_map.keys():
             benchmark_directory_map[benchmark_name].append(directory)
         else:
@@ -272,7 +271,7 @@ def _upload_to_skia_perf(benchmark_directory_map, benchmark_enabled_map, build_p
 
     skia_perf_dir = tempfile.mkdtemp('skia_perf')
     try:
-        local_file = os.path.join(skia_perf_dir, '%s.%s.json' % (buildername, time.time()))
+        local_file = os.path.join(skia_perf_dir, '{}.{}.json'.format(buildername, time.time()))
         with open(local_file, 'w') as f:
             json.dump(skia_data, f, indent=2)
         gs_dir = 'gs://angle-perf-skia/angle_perftests/%s/' % (
@@ -419,7 +418,7 @@ def _merge_perf_results(benchmark_name, results_filename, directories, build_pro
         try:
             with open(filename) as pf:
                 collected_results.append(json.load(pf))
-        except IOError as e:
+        except OSError as e:
             # TODO(crbug.com/936602): Figure out how to surface these errors. Should
             # we have a non-zero exit code if we error out?
             logging.error('Failed to obtain perf results from %s: %s', directory, e)
@@ -513,7 +512,7 @@ def _load_shard_id_from_test_results(directory):
                 for _, measurement_result in benchmark_results.items():
                     shard_id = measurement_result['shard']
                     break
-    except IOError as e:
+    except OSError as e:
         logging.error('Failed to open test_results.json from %s: %s', test_json_path, e)
     except KeyError as e:
         logging.error('Failed to locate results in test_results.json: %s', e)
@@ -533,9 +532,9 @@ def _find_device_id_by_shard_id(benchmarks_shard_map_file, shard_id):
 def _update_perf_json_with_summary_on_device_id(directory, device_id):
     perf_json_path = os.path.join(directory, 'perf_results.json')
     try:
-        with open(perf_json_path, 'r') as f:
+        with open(perf_json_path) as f:
             perf_json = json.load(f)
-    except IOError as e:
+    except OSError as e:
         logging.error('Failed to open perf_results.json from %s: %s', perf_json_path, e)
     summary_key_guid = str(uuid.uuid4())
     summary_key_generic_set = {
@@ -557,7 +556,7 @@ def _update_perf_json_with_summary_on_device_id(directory, device_id):
     try:
         with open(perf_json_path, 'w') as f:
             json.dump(perf_json, f)
-    except IOError as e:
+    except OSError as e:
         logging.error('Failed to writing perf_results.json to %s: %s', perf_json_path, e)
     logging.info('Finished adding device id %s in perf result.', device_id)
 

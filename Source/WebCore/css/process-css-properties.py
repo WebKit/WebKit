@@ -156,7 +156,7 @@ class Schema:
         self.apply_conversions(parsing_context, key_path, dictionary, label=label)
 
 
-class Name(object):
+class Name:
     special_case_name_to_id = {
         "url": "URL",
     }
@@ -1352,7 +1352,7 @@ class PropertiesAndDescriptors:
     @property
     def settings_flags(self):
         if not self._settings_flags:
-            self._settings_flags = sorted(list(set([property.codegen_properties.settings_flag for property in self.all_properties_and_descriptors if property.codegen_properties.settings_flag])))
+            self._settings_flags = sorted(list({property.codegen_properties.settings_flag for property in self.all_properties_and_descriptors if property.codegen_properties.settings_flag}))
         return self._settings_flags
 
 
@@ -2744,12 +2744,12 @@ class GenerateCSSPropertyNames:
         to.newline()
 
     def _generate_css_property_settings_constructor(self, *, to):
-        first_settings_initializer, *remaining_settings_initializers = [f"{flag} {{ settings.{flag}() }}" for flag in self.properties_and_descriptors.settings_flags]
+        first_settings_initializer, *remaining_settings_initializers = (f"{flag} {{ settings.{flag}() }}" for flag in self.properties_and_descriptors.settings_flags)
 
         to.write(f"CSSPropertySettings::CSSPropertySettings(const Settings& settings)")
         with to.indent():
             to.write(f": {first_settings_initializer}")
-            to.write_lines((f", {initializer}" for initializer in remaining_settings_initializers))
+            to.write_lines(f", {initializer}" for initializer in remaining_settings_initializers)
 
         to.write(f"{{")
         to.write(f"}}")
@@ -2763,7 +2763,7 @@ class GenerateCSSPropertyNames:
         with to.indent():
             to.write(f"return {first}")
             with to.indent():
-                to.write_lines((f"&& {expression}" for expression in middle))
+                to.write_lines(f"&& {expression}" for expression in middle)
                 to.write(f"&& {last};")
 
         to.write(f"}}")
@@ -2777,7 +2777,7 @@ class GenerateCSSPropertyNames:
         with to.indent():
             to.write(f"uint64_t bits = {first}")
             with to.indent():
-                to.write_lines((f"| {expression}" for expression in middle))
+                to.write_lines(f"| {expression}" for expression in middle)
                 to.write(f"| {last};")
 
             to.write(f"add(hasher, bits);")
@@ -4226,7 +4226,7 @@ class FunctionSignature:
 
 # The `TermGenerator` classes help generate parser functions by providing
 # generation of parsing text for a term or set of terms.
-class TermGenerator(object):
+class TermGenerator:
     def make(term, keyword_fast_path_generator=None):
         if isinstance(term, MatchOneTerm):
             return TermGeneratorMatchOneTerm(term, keyword_fast_path_generator)
@@ -4682,7 +4682,7 @@ class KeywordFastPathGenerator:
 #   def generate_definition(self, *, to):
 #   var is_exported
 #
-class SharedGrammarRuleConsumer(object):
+class SharedGrammarRuleConsumer:
     @staticmethod
     def make(shared_grammar_rule):
         if not shared_grammar_rule.exported:
@@ -4799,7 +4799,7 @@ class GeneratedSharedGrammarRuleConsumer(SharedGrammarRuleConsumer):
 #   var is_exported
 #   var keyword_fast_path_generator
 
-class PropertyConsumer(object):
+class PropertyConsumer:
     @staticmethod
     def make(property):
         if property.codegen_properties.longhands or property.codegen_properties.skip_parser:
@@ -6145,7 +6145,7 @@ def main():
     parser.add_argument('--check-unused-grammars-values', action='store_true')
     args = parser.parse_args()
 
-    with open(args.properties, "r", encoding="utf-8") as properties_file:
+    with open(args.properties, encoding="utf-8") as properties_file:
         properties_json = json.load(properties_file)
 
     parsing_context = ParsingContext(properties_json, defines_string=args.defines, parsing_for_codegen=True, check_unused_grammars_values=args.check_unused_grammars_values, verbose=args.verbose)

@@ -107,13 +107,13 @@ class ObjCConfigurationImplementationGenerator(ObjCGenerator):
         for domain in domains:
             domain_lines = []
             if self.should_generate_commands_for_domain(domain):
-                objc_class_name = '%s%sDomainHandler' % (self.objc_prefix(), domain.domain_name)
+                objc_class_name = '{}{}DomainHandler'.format(self.objc_prefix(), domain.domain_name)
                 ivar_name = '_%sHandler' % ObjCGenerator.variable_name_prefix_for_domain(domain)
-                domain_lines.append('    RetainPtr<id<%s>> %s;' % (objc_class_name, ivar_name))
+                domain_lines.append('    RetainPtr<id<{}>> {};'.format(objc_class_name, ivar_name))
             if self.should_generate_events_for_domain(domain):
-                objc_class_name = '%s%sDomainEventDispatcher' % (self.objc_prefix(), domain.domain_name)
+                objc_class_name = '{}{}DomainEventDispatcher'.format(self.objc_prefix(), domain.domain_name)
                 ivar_name = '_%sEventDispatcher' % ObjCGenerator.variable_name_prefix_for_domain(domain)
-                domain_lines.append('    RetainPtr<%s> %s;' % (objc_class_name, ivar_name))
+                domain_lines.append('    RetainPtr<{}> {};'.format(objc_class_name, ivar_name))
             if len(domain_lines):
                 lines.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))
         return lines

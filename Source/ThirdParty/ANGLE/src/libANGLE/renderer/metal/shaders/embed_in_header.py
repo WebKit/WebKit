@@ -25,7 +25,7 @@ def embed_in_header(source_file, variable_name, dest_header_file):
     with open(source_file, 'rb') as f:
         source_data = f.read()
 
-    with open(dest_header_file, 'wt') as out_file:
+    with open(dest_header_file, 'w') as out_file:
         out_file.write(boilerplate_code)
         out_file.write('\n')
         out_file.write('// C++ string version of default shaders mtllib.\n\n')

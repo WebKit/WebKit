@@ -35,7 +35,7 @@ def main():
 
 
 def readJSON(path):
-    with open(path, 'r') as f:
+    with open(path) as f:
         return json.load(f)
 
 

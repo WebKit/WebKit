@@ -2204,28 +2204,28 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
             'ESSL_' if essl_only else ''
     }
 
-    with open(immutablestring_cpp_filename, 'wt') as outfile_cpp:
+    with open(immutablestring_cpp_filename, 'w') as outfile_cpp:
         output_cpp = template_immutablestring_cpp.format(**output_strings)
         outfile_cpp.write(output_cpp)
 
-    with open(immutablestringtest_cpp_filename, 'wt') as outfile_cpp:
+    with open(immutablestringtest_cpp_filename, 'w') as outfile_cpp:
         output_cpp = template_immutablestringtest_cpp.format(**output_strings)
         outfile_cpp.write(output_cpp)
 
-    with open(builtin_header_filename, 'wt') as outfile_header:
+    with open(builtin_header_filename, 'w') as outfile_header:
         output_header = template_builtin_header.format(**output_strings)
         outfile_header.write(output_header)
 
-    with open(symboltable_cpp_filename, 'wt') as outfile_cpp:
+    with open(symboltable_cpp_filename, 'w') as outfile_cpp:
         output_cpp = template_symboltable_cpp.format(**output_strings)
         outfile_cpp.write(output_cpp)
 
     if not essl_only:
-        with open(operator_header_filename, 'wt') as outfile_header:
+        with open(operator_header_filename, 'w') as outfile_header:
             output_header = template_operator_header.format(**output_strings)
             outfile_header.write(output_header)
 
-        with open(symboltable_header_filename, 'wt') as outfile_h:
+        with open(symboltable_header_filename, 'w') as outfile_h:
             output_h = template_symboltable_header.format(**output_strings)
             outfile_h.write(output_h)
 

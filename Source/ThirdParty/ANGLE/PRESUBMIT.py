@@ -381,7 +381,7 @@ def _CheckNonAsciiInSourceFiles(input_api, output_api):
     for f in input_api.AffectedSourceFiles(implementation_and_headers):
         for (num, line) in f.ChangedContents():
             if not is_ascii(line):
-                files_with_non_ascii.append("%s: %s" % (f, line))
+                files_with_non_ascii.append("{}: {}".format(f, line))
                 break
 
     if files_with_non_ascii:

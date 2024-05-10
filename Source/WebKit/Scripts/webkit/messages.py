@@ -78,7 +78,7 @@ def receiver_enumerator_order_key(receiver_name):
     return 0
 
 
-class MessageEnumerator(object):
+class MessageEnumerator:
 
     def __init__(self, receiver, messages):
         self.receiver = receiver
@@ -89,7 +89,7 @@ class MessageEnumerator(object):
             return self.messages[0].name
         if self.receiver.name == 'AsyncReply':
             return self.messages[0].name
-        return '%s_%s' % (self.receiver.name, self.messages[0].name)
+        return '{}_{}'.format(self.receiver.name, self.messages[0].name)
 
     def condition(self):
         conditions = [message.condition for message in self.messages]
@@ -132,7 +132,7 @@ def messages_header_filename(receiver):
 def surround_in_condition(string, condition):
     if not condition:
         return string
-    return '#if %s\n%s#endif\n' % (condition, string)
+    return '#if {}\n{}#endif\n'.format(condition, string)
 
 
 def types_that_must_be_moved():
@@ -234,7 +234,7 @@ def message_to_struct_declaration(receiver, message):
     result.append('public:\n')
     result.append('    using Arguments = std::tuple<%s>;\n' % ', '.join([parameter.type for parameter in message.parameters]))
     result.append('\n')
-    result.append('    static IPC::MessageName name() { return IPC::MessageName::%s_%s; }\n' % (receiver.name, message.name))
+    result.append('    static IPC::MessageName name() {{ return IPC::MessageName::{}_{}; }}\n'.format(receiver.name, message.name))
     result.append('    static constexpr bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters is not None and message.has_attribute(SYNCHRONOUS_ATTRIBUTE)])
     result.append('    static constexpr bool canDispatchOutOfOrder = %s;\n' % ('false', 'true')[message.has_attribute(CAN_DISPATCH_OUT_OF_ORDER_ATTRIBUTE)])
     result.append('    static constexpr bool replyCanDispatchOutOfOrder = %s;\n' % ('false', 'true')[message.reply_parameters is not None and message.has_attribute(REPLY_CAN_DISPATCH_OUT_OF_ORDER_ATTRIBUTE)])
@@ -243,14 +243,14 @@ def message_to_struct_declaration(receiver, message):
         if message.reply_parameters is not None:
             result.append('    static constexpr bool isReplyStreamEncodable = %s;\n' % ('true', 'false')[message.has_attribute(NOT_STREAM_ENCODABLE_REPLY_ATTRIBUTE)])
             if message.has_attribute(STREAM_BATCHED_ATTRIBUTE):
-                sys.stderr.write("Error: %s::%s has a reply but is marked as batched. Messages with replies are intended to be sent without latency.\n" % (receiver.name, message.name))
+                sys.stderr.write("Error: {}::{} has a reply but is marked as batched. Messages with replies are intended to be sent without latency.\n".format(receiver.name, message.name))
                 sys.exit(1)
         result.append('    static constexpr bool isStreamBatched = %s;\n' % ('false', 'true')[message.has_attribute(STREAM_BATCHED_ATTRIBUTE)])
 
     result.append('\n')
     if message.reply_parameters != None:
         if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-            result.append('    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::%s_%sReply; }\n' % (receiver.name, message.name))
+            result.append('    static IPC::MessageName asyncMessageReplyName() {{ return IPC::MessageName::{}_{}Reply; }}\n'.format(receiver.name, message.name))
         if message.has_attribute(MAINTHREADCALLBACK_ATTRIBUTE):
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;\n')
         else:
@@ -265,7 +265,7 @@ def message_to_struct_declaration(receiver, message):
                 result.append('    using Promise = WTF::NativePromise<std::tuple<%s>, IPC::Error>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
 
     if len(function_parameters):
-        result.append('    %s%s(%s)' % (len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
+        result.append('    {}{}({})'.format(len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
         result.append('\n        : m_arguments(%s)\n' % ', '.join(arguments_constructor_parameters))
         result.append('    {\n')
         result.append('    }\n\n')
@@ -283,11 +283,11 @@ def message_to_struct_declaration(receiver, message):
 def forward_declaration(namespace, kind_and_type):
     kind, type = kind_and_type
 
-    qualified_name = '%s::%s' % (namespace, type)
+    qualified_name = '{}::{}'.format(namespace, type)
     if kind == 'struct':
         return 'struct %s' % type
     elif kind.startswith('enum:'):
-        return 'enum class %s : %s' % (type, kind[5:])
+        return 'enum class {} : {}'.format(type, kind[5:])
     else:
         return 'class %s' % type
 
@@ -545,13 +545,13 @@ def conditions_for_header(header):
 def forward_declarations_and_headers(receiver):
     types_by_namespace = collections.defaultdict(set)
 
-    headers = set([
+    headers = {
         '"ArgumentCoders.h"',
         '"Connection.h"',
         '"MessageNames.h"',
         '<wtf/Forward.h>',
         '<wtf/ThreadSafeRefCounted.h>',
-    ])
+    }
 
     non_template_wtf_types = frozenset([
         'MachSendRight',
@@ -638,8 +638,8 @@ def generate_messages_header(receiver):
 
 def handler_function(receiver, message):
     if message.name.find('URL') == 0:
-        return '%s::%s' % (receiver.name, 'url' + message.name[3:])
-    return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
+        return '{}::{}'.format(receiver.name, 'url' + message.name[3:])
+    return '{}::{}'.format(receiver.name, message.name[0].lower() + message.name[1:])
 
 
 def async_message_statement(receiver, message):
@@ -664,10 +664,10 @@ def async_message_statement(receiver, message):
 
     result = []
     if message.runtime_enablement:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, message.runtime_enablement))
+        result.append('    if (decoder.messageName() == Messages::{}::{}::name() && {})\n'.format(receiver.name, message.name, message.runtime_enablement))
     else:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
-    result.append('        return IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
+        result.append('    if (decoder.messageName() == Messages::{}::{}::name())\n'.format(receiver.name, message.name))
+    result.append('        return IPC::{}<Messages::{}::{}>({}{});\n'.format(dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
     return result
 
 
@@ -686,10 +686,10 @@ def sync_message_statement(receiver, message):
 
     result = []
     if message.runtime_enablement:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, message.runtime_enablement))
+        result.append('    if (decoder.messageName() == Messages::{}::{}::name() && {})\n'.format(receiver.name, message.name, message.runtime_enablement))
     else:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
-    result.append('        return IPC::%s<Messages::%s::%s>(connection, decoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, handler_function(receiver, message)))
+        result.append('    if (decoder.messageName() == Messages::{}::{}::name())\n'.format(receiver.name, message.name))
+    result.append('        return IPC::{}<Messages::{}::{}>(connection, decoder{}, this, &{});\n'.format(dispatch_function, receiver.name, message.name, maybe_reply_encoder, handler_function(receiver, message)))
     return result
 
 
@@ -1316,9 +1316,9 @@ def generate_message_handler(receiver):
     else:
         receive_variant = receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''
         if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
-            result.append('void %s::didReceive%sMessageWithReplyHandler(IPC::Decoder& decoder, Function<void(UniqueRef<IPC::Encoder>&&)>&& replyHandler)\n' % (receiver.name, receive_variant))
+            result.append('void {}::didReceive{}MessageWithReplyHandler(IPC::Decoder& decoder, Function<void(UniqueRef<IPC::Encoder>&&)>&& replyHandler)\n'.format(receiver.name, receive_variant))
         else:
-            result.append('void %s::didReceive%sMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (receiver.name, receive_variant))
+            result.append('void {}::didReceive{}Message(IPC::Connection& connection, IPC::Decoder& decoder)\n'.format(receiver.name, receive_variant))
         result.append('{\n')
         if not (receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE) or receiver.has_attribute(STREAM_ATTRIBUTE)):
             result.append('    Ref protectedThis { *this };\n')
@@ -1327,7 +1327,7 @@ def generate_message_handler(receiver):
             result.append('    if (dispatchMessage(connection, decoder))\n')
             result.append('        return;\n')
         if (receiver.superclass):
-            result.append('    %s::didReceive%sMessage(connection, decoder);\n' % (receiver.superclass, receive_variant))
+            result.append('    {}::didReceive{}Message(connection, decoder);\n'.format(receiver.superclass, receive_variant))
         else:
             if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
                 result.append('    UNUSED_PARAM(connection);\n')
@@ -1342,7 +1342,7 @@ def generate_message_handler(receiver):
 
     if not receiver.has_attribute(STREAM_ATTRIBUTE) and (sync_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE)):
         result.append('\n')
-        result.append('bool %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
+        result.append('bool {}::didReceiveSync{}Message(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)\n'.format(receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
         result.append('{\n')
         if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
             result.append('    Ref protectedThis { *this };\n')
@@ -1375,15 +1375,15 @@ def generate_message_handler(receiver):
         if condition:
             result.append('#if %s\n' % condition)
         for message in messages:
-            result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::%s_%s>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n' % (receiver.name, message.name))
+            result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::{}_{}>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n'.format(receiver.name, message.name))
             result.append('{\n')
-            result.append('    return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, 'Arguments'))
+            result.append('    return jsValueForDecodedArguments<Messages::{}::{}::{}>(globalObject, decoder);\n'.format(receiver.name, message.name, 'Arguments'))
             result.append('}\n')
             has_reply = message.reply_parameters is not None
             if has_reply:
-                result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::%s_%s>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n' % (receiver.name, message.name))
+                result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::{}_{}>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n'.format(receiver.name, message.name))
                 result.append('{\n')
-                result.append('    return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, 'ReplyArguments'))
+                result.append('    return jsValueForDecodedArguments<Messages::{}::{}::{}>(globalObject, decoder);\n'.format(receiver.name, message.name, 'ReplyArguments'))
                 result.append('}\n')
         if condition:
             result.append('#endif\n')
@@ -1452,7 +1452,7 @@ def generate_message_names_header(receivers):
     fnames = [('ReceiverName', 'receiverName'), ('ASCIILiteral', 'description')]
     fnames += [('bool', fname) for fname, _ in sorted(attributes_to_generate_validators.items())]
     for returnType, fname in fnames:
-        result.append('inline %s %s(MessageName messageName)\n' % (returnType, fname))
+        result.append('inline {} {}(MessageName messageName)\n'.format(returnType, fname))
         result.append('{\n')
         result.append('    messageName = std::min(messageName, MessageName::Last);\n')
         result.append('    return Detail::messageDescriptions[static_cast<size_t>(messageName)].%s;\n' % fname)
@@ -1501,7 +1501,7 @@ def generate_message_names_implementation(receivers):
         if condition:
             result.append('#if %s\n' % condition)
         for enumerator in enumerators:
-            result.append('    { "%s"_s, ReceiverName::%s' % (enumerator, enumerator.receiver.name))
+            result.append('    {{ "{}"_s, ReceiverName::{}'.format(enumerator, enumerator.receiver.name))
             for attr_list in sorted(attributes_to_generate_validators.values()):
                 value = "true" if set(attr_list).intersection(set(enumerator.messages[0].attributes).union(set(enumerator.receiver.attributes))) else "false"
                 result.append(', %s' % value)
@@ -1534,8 +1534,8 @@ def generate_js_value_conversion_function(result, receivers, function_name, deco
                 if message.condition:
                     result.append('#if %s\n' % message.condition)
             previous_message_condition = message.condition
-            result.append('    case MessageName::%s_%s:\n' % (receiver.name, message.name))
-            result.append('        return %s<MessageName::%s_%s>(globalObject, decoder);\n' % (decoder_function_name, receiver.name, message.name))
+            result.append('    case MessageName::{}_{}:\n'.format(receiver.name, message.name))
+            result.append('        return {}<MessageName::{}_{}>(globalObject, decoder);\n'.format(decoder_function_name, receiver.name, message.name))
         if previous_message_condition:
             result.append('#endif\n')
         if receiver.condition:
@@ -1570,7 +1570,7 @@ def generate_js_argument_descriptions(receivers, function_name, arguments_from_m
                 if message.condition:
                     result.append('#if %s\n' % message.condition)
             previous_message_condition = message.condition
-            result.append('    case MessageName::%s_%s:\n' % (receiver.name, message.name))
+            result.append('    case MessageName::{}_{}:\n'.format(receiver.name, message.name))
 
             if not len(argument_list):
                 result.append('        return Vector<ArgumentDescription> { };\n')
@@ -1587,7 +1587,7 @@ def generate_js_argument_descriptions(receivers, function_name, arguments_from_m
                 if argument_type.startswith('std::optional<') and argument_type.endswith('>'):
                     argument_type = argument_type[14:-1]
                     is_optional = True
-                result.append('            { "%s"_s, "%s"_s, %s, %s },\n' % (argument.name, argument_type, enum_type or 'ASCIILiteral()', 'true' if is_optional else 'false'))
+                result.append('            {{ "{}"_s, "{}"_s, {}, {} }},\n'.format(argument.name, argument_type, enum_type or 'ASCIILiteral()', 'true' if is_optional else 'false'))
             result.append('        };\n')
         if previous_message_condition:
             result.append('#endif\n')

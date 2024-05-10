@@ -124,14 +124,14 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             parameter_name = parameter.parameter_name
             if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
-            parameters.append("%s %s" % (CppGenerator.cpp_type_for_command_parameter(parameter.type, parameter.is_optional), parameter_name))
+            parameters.append("{} {}".format(CppGenerator.cpp_type_for_command_parameter(parameter.type, parameter.is_optional), parameter_name))
 
         returns = []
         for parameter in command.return_parameters:
             parameter_name = parameter.parameter_name
             if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
-            returns.append('%s /* %s */' % (CppGenerator.cpp_type_for_command_return_declaration(parameter.type, parameter.is_optional), parameter_name))
+            returns.append('{} /* {} */'.format(CppGenerator.cpp_type_for_command_return_declaration(parameter.type, parameter.is_optional), parameter_name))
 
         command_args = {
             'commandName': command.command_name,
@@ -154,7 +154,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             parameter_name = parameter.parameter_name
             if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
-            parameters.append("%s %s" % (CppGenerator.cpp_type_for_command_parameter(parameter.type, parameter.is_optional), parameter_name))
+            parameters.append("{} {}".format(CppGenerator.cpp_type_for_command_parameter(parameter.type, parameter.is_optional), parameter_name))
         parameters.append("Ref<%s>&&" % callbackName)
 
         returns = []
@@ -162,7 +162,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             parameter_name = parameter.parameter_name
             if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
-            returns.append("%s %s" % (CppGenerator.cpp_type_for_command_return_argument(parameter.type, parameter.is_optional), parameter_name))
+            returns.append("{} {}".format(CppGenerator.cpp_type_for_command_return_argument(parameter.type, parameter.is_optional), parameter_name))
 
         class_components = ['class']
         export_macro = self.model().framework.setting('export_macro', None)

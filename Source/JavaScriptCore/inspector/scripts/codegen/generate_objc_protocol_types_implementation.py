@@ -137,21 +137,21 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
             member_name = member.member_name
 
             if not member.is_optional:
-                lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"%s"], @"%s");' % (member_name, member_name))
+                lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"{}"], @"{}");'.format(member_name, member_name))
 
             objc_type = self.objc_type_for_member(declaration, member)
             var_name = ObjCGenerator.identifier_to_objc_identifier(member_name)
             conversion_expression = self.payload_to_objc_expression_for_member(declaration, member)
             if isinstance(member.type, EnumType):
                 if not member.is_optional:
-                    lines.append('    auto %s = %s;' % (var_name, conversion_expression))
-                    lines.append('    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(%s, @"%s");' % (var_name, member_name))
-                    lines.append('    self.%s = *%s;' % (var_name, var_name))
+                    lines.append('    auto {} = {};'.format(var_name, conversion_expression))
+                    lines.append('    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE({}, @"{}");'.format(var_name, member_name))
+                    lines.append('    self.{} = *{};'.format(var_name, var_name))
                 else:
-                    lines.append('    if (auto %s = %s)' % (var_name, conversion_expression))
-                    lines.append('        self.%s = *%s;' % (var_name, var_name))
+                    lines.append('    if (auto {} = {})'.format(var_name, conversion_expression))
+                    lines.append('        self.{} = *{};'.format(var_name, var_name))
             else:
-                lines.append('    self.%s = %s;' % (var_name, conversion_expression))
+                lines.append('    self.{} = {};'.format(var_name, conversion_expression))
 
             lines.append('')
 
@@ -164,7 +164,7 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
         for member in required_members:
             objc_type = self.objc_type_for_member(declaration, member)
             var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
-            pairs.append('%s:(%s)%s' % (var_name, objc_type, var_name))
+            pairs.append('{}:({}){}'.format(var_name, objc_type, var_name))
         pairs[0] = ucfirst(pairs[0])
         lines = []
         lines.append('- (instancetype)initWith%s' % ' '.join(pairs))
@@ -177,15 +177,15 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
         if required_pointer_members:
             for member in required_pointer_members:
                 var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
-                lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(%s, @"%s");' % (var_name, var_name))
+                lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY({}, @"{}");'.format(var_name, var_name))
                 objc_array_class = self.objc_class_for_array_type(member.type)
                 if objc_array_class and objc_array_class.startswith(self.objc_prefix()):
-                    lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
+                    lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY({}, [{} class]);'.format(var_name, objc_array_class))
             lines.append('')
 
         for member in required_members:
             var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
-            lines.append('    self.%s = %s;' % (var_name, var_name))
+            lines.append('    self.{} = {};'.format(var_name, var_name))
 
         lines.append('')
         lines.append('    return self;')
@@ -198,12 +198,12 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
         setter_method = ObjCGenerator.objc_setter_method_for_member(declaration, member)
         conversion_expression = self.objc_to_protocol_expression_for_member(declaration, member, var_name)
         lines = []
-        lines.append('- (void)set%s:(%s)%s' % (ucfirst(var_name), objc_type, var_name))
+        lines.append('- (void)set{}:({}){}'.format(ucfirst(var_name), objc_type, var_name))
         lines.append('{')
         objc_array_class = self.objc_class_for_array_type(member.type)
         if objc_array_class and objc_array_class.startswith(self.objc_prefix()):
-            lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
-        lines.append('    [super %s:%s forKey:@"%s"];' % (setter_method, conversion_expression, member.member_name))
+            lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY({}, [{} class]);'.format(var_name, objc_array_class))
+        lines.append('    [super {}:{} forKey:@"{}"];'.format(setter_method, conversion_expression, member.member_name))
         lines.append('}')
         return '\n'.join(lines)
 
@@ -211,18 +211,18 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
         objc_type = self.objc_type_for_member(declaration, member)
         var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
         getter_method = ObjCGenerator.objc_getter_method_for_member(declaration, member)
-        basic_expression = '[super %s:@"%s"]' % (getter_method, member.member_name)
+        basic_expression = '[super {}:@"{}"]'.format(getter_method, member.member_name)
         category = ObjCTypeCategory.category_for_type(member.type)
         if category is ObjCTypeCategory.Object:
             lines = []
-            lines.append('- (%s)%s' % (objc_type, var_name))
+            lines.append('- ({}){}'.format(objc_type, var_name))
             lines.append('{')
             lines.append(self.protocol_to_objc_code_block_for_object_member(declaration, member, basic_expression))
             lines.append('}')
         else:
             conversion_expression = self.protocol_to_objc_expression_for_member(declaration, member, basic_expression)
             lines = []
-            lines.append('- (%s)%s' % (objc_type, var_name))
+            lines.append('- ({}){}'.format(objc_type, var_name))
             lines.append('{')
             lines.append('    return %s;' % conversion_expression)
             lines.append('}')

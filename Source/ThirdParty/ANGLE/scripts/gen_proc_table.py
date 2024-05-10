@@ -196,7 +196,7 @@ def main():
         name_prefix = "GL_ES_VERSION_"
         if annotation[0] == '1':
             name_prefix = "GL_VERSION_ES_CM_"
-        feature_name = "{}{}".format(name_prefix, annotation)
+        feature_name = f"{name_prefix}{annotation}"
         glesxml.AddCommands(feature_name, annotation)
 
     glesxml.AddExtensionCommands(registry_xml.supported_extensions, ['gles2', 'gles1'])
@@ -216,7 +216,7 @@ def main():
 
     for annotation in _get_annotations(registry_xml.EGL_VERSIONS):
         name_prefix = "EGL_VERSION_"
-        feature_name = "{}{}".format(name_prefix, annotation)
+        feature_name = f"{name_prefix}{annotation}"
         eglxml.AddCommands(feature_name, annotation)
 
     eglxml.AddExtensionCommands(registry_xml.supported_egl_extensions, ['gles2', 'gles1'])
@@ -230,10 +230,10 @@ def main():
     glxml = registry_xml.RegistryXML('gl.xml')
     for annotation in _get_annotations(registry_xml.DESKTOP_GL_VERSIONS):
         name_prefix = "GL_VERSION_"
-        feature_name = "{}{}".format(name_prefix, annotation)
+        feature_name = f"{name_prefix}{annotation}"
         glxml.AddCommands(feature_name, annotation)
 
-    gl_data = set([cmd for cmd in glxml.all_cmd_names.get_all_commands()])
+    gl_data = {cmd for cmd in glxml.all_cmd_names.get_all_commands()}
 
     all_gl_data = list(set(gles_data).union(gl_data))
     all_functions = {}
@@ -249,9 +249,9 @@ def main():
     gl_only_data = gl_data.difference(gles_data)
     for func, angle_func in sorted(all_functions.items()):
         if func in gl_only_data:
-            proc_data.append('    DESKTOP_ONLY("%s", %s)' % (func, angle_func))
+            proc_data.append('    DESKTOP_ONLY("{}", {})'.format(func, angle_func))
         else:
-            proc_data.append('    {"%s", P(%s)},' % (func, angle_func))
+            proc_data.append('    {{"{}", P({})}},'.format(func, angle_func))
 
     with open(out_file_name_gles, 'w') as out_file:
         output_cpp = template_cpp.format(
@@ -267,13 +267,13 @@ def main():
         out_file.close()
 
     def WriteWindowingProcTable(api_name, out_file_name, includes, cast):
-        xml_file_name = '{}.xml'.format(api_name)
+        xml_file_name = f'{api_name}.xml'
         xml = registry_xml.RegistryXML(xml_file_name)
         annotations = _get_annotations(
-            getattr(registry_xml, '{}_VERSIONS'.format(api_name.upper())))
+            getattr(registry_xml, f'{api_name.upper()}_VERSIONS'))
         for annotation in annotations:
-            name_prefix = "{}_VERSION_".format(api_name.upper())
-            feature_name = "{}{}".format(name_prefix, annotation)
+            name_prefix = f"{api_name.upper()}_VERSION_"
+            feature_name = f"{name_prefix}{annotation}"
             xml.AddCommands(feature_name, annotation)
 
         commands = [
@@ -284,16 +284,16 @@ def main():
 
         # Start with all of the GLES + Desktop entry points, filtering out the EGL ones
         proc_data = [
-            '    {"%s", P(%s)},' % (func, angle_func)
+            '    {{"{}", P({})}},'.format(func, angle_func)
             for func, angle_func in sorted(all_functions.items())
             if not func.startswith('egl')
         ]
-        proc_data.extend(['    {"%s", P(%s)},' % (cmd, cmd) for cmd in sorted(commands)])
+        proc_data.extend(['    {{"{}", P({})}},'.format(cmd, cmd) for cmd in sorted(commands)])
 
         with open(out_file_name, 'w') as out_file:
             output_cpp = template_cpp.format(
                 script_name=os.path.basename(sys.argv[0]),
-                data_source_name="gl.xml, gl_angle_ext.xml, {}".format(xml_file_name),
+                data_source_name=f"gl.xml, gl_angle_ext.xml, {xml_file_name}",
                 includes=includes,
                 cast=cast,
                 namespace=api_name,
@@ -314,7 +314,7 @@ def main():
     for major_version, minor_version in registry_xml.CL_VERSIONS:
         name_prefix = "CL_VERSION_"
         annotation = "%d_%d" % (major_version, minor_version)
-        feature_name = "%s%s" % (name_prefix, annotation)
+        feature_name = "{}{}".format(name_prefix, annotation)
         clxml.AddCommands(feature_name, annotation)
         symbol_version = "OPENCL_%d.%d" % (major_version, minor_version)
         symbol_maps += ["\n%s {\n    global:" % symbol_version]
@@ -327,7 +327,7 @@ def main():
 
     clxml.AddExtensionCommands(registry_xml.supported_cl_extensions, ['cl'])
     cl_commands = clxml.all_cmd_names.get_all_commands()
-    proc_data = ['{"%s", P(::cl::%s)}' % (cmd, cmd) for cmd in cl_commands]
+    proc_data = ['{{"{}", P(::cl::{})}}'.format(cmd, cmd) for cmd in cl_commands]
 
     with open(out_file_name_cl, 'w') as out_file:
         output_cpp = template_map_cpp.format(

@@ -136,8 +136,8 @@ def _popen(*args, **kwargs):
 # Forked from testing/test_env.py to add ability to suppress logging with log=False
 def run_command_with_output(argv, stdoutfile, env=None, cwd=None, log=True):
     assert stdoutfile
-    with io.open(stdoutfile, 'wb') as writer, \
-          io.open(stdoutfile, 'rb') as reader:
+    with open(stdoutfile, 'wb') as writer, \
+          open(stdoutfile, 'rb') as reader:
         process = _popen(argv, env=env, cwd=cwd, stdout=writer, stderr=subprocess.STDOUT)
         with forward_signals([process]):
             while process.poll() is None:

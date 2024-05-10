@@ -296,7 +296,7 @@ gles1_extensions = [
 def check_sorted(name, l):
     unidiff = difflib.unified_diff(l, sorted(l, key=str.casefold), 'unsorted', 'sorted')
     diff_lines = list(unidiff)
-    assert not diff_lines, '\n\nPlease sort "%s":\n%s' % (name, '\n'.join(diff_lines))
+    assert not diff_lines, '\n\nPlease sort "{}":\n{}'.format(name, '\n'.join(diff_lines))
 
 
 angle_extensions = angle_requestable_extensions + angle_es_only_extensions + angle_toggleable_extensions
@@ -555,7 +555,7 @@ class RegistryXML:
         elif 'cl' in supported:
             return 'clext'
         else:
-            assert False, 'Cannot classify support for %s: %s' % (extension.attrib['name'],
+            assert False, 'Cannot classify support for {}: {}'.format(extension.attrib['name'],
                                                                   supported)
             return 'unknown'
 
@@ -614,7 +614,7 @@ class RegistryXML:
             stripped = strip_api_prefix(cmd)
             prefix = override_prefix or cmd[:(len(cmd) - len(stripped))]
             cmd_names.append(
-                ('%s%s' % (prefix.upper(), stripped), '%s%s' % (prefix.lower(), stripped)))
+                ('{}{}'.format(prefix.upper(), stripped), '{}{}'.format(prefix.lower(), stripped)))
         return cmd_names
 
 
@@ -653,7 +653,7 @@ def GetEGL():
     for major_version, minor_version in EGL_VERSIONS:
         version = "%d_%d" % (major_version, minor_version)
         name_prefix = "EGL_VERSION_"
-        feature_name = "%s%s" % (name_prefix, version)
+        feature_name = "{}{}".format(name_prefix, version)
         egl.AddCommands(feature_name, version)
     egl.AddExtensionCommands(supported_egl_extensions, ['egl'])
     return egl
@@ -662,11 +662,11 @@ def GetEGL():
 def GetGLES():
     gles = RegistryXML('gl.xml', 'gl_angle_ext.xml')
     for major_version, minor_version in GLES_VERSIONS:
-        version = "{}_{}".format(major_version, minor_version)
+        version = f"{major_version}_{minor_version}"
         name_prefix = "GL_ES_VERSION_"
         if major_version == 1:
             name_prefix = "GL_VERSION_ES_CM_"
-        feature_name = "{}{}".format(name_prefix, version)
+        feature_name = f"{name_prefix}{version}"
         gles.AddCommands(feature_name, version)
     gles.AddExtensionCommands(supported_extensions, ['gles2', 'gles1'])
     return gles

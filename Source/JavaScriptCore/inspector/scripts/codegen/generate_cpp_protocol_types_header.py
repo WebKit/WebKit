@@ -169,7 +169,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             typedef_lines = []
             if len(declaration.description) > 0:
                 typedef_lines.append('/* %s */' % declaration.description)
-            typedef_lines.append('using %s = %s;' % (declaration.type_name, primitive_name))
+            typedef_lines.append('using {} = {};'.format(declaration.type_name, primitive_name))
             sections.append(self.wrap_with_guard_for_condition(declaration.condition, '\n'.join(typedef_lines)))
 
         for declaration in array_declarations:
@@ -177,7 +177,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             typedef_lines = []
             if len(declaration.description) > 0:
                 typedef_lines.append('/* %s */' % declaration.description)
-            typedef_lines.append('using %s = JSON::ArrayOf<%s>;' % (declaration.type_name, element_type))
+            typedef_lines.append('using {} = JSON::ArrayOf<{}>;'.format(declaration.type_name, element_type))
             sections.append(self.wrap_with_guard_for_condition(declaration.condition, '\n'.join(typedef_lines)))
 
         lines = []
@@ -243,16 +243,16 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         base_class = 'JSON::Object'
         if not Generator.type_has_open_fields(type_declaration.type):
             base_class = base_class + 'Base'
-        lines.append('class %s final : public %s {' % (object_name, base_class))
+        lines.append('class {} final : public {} {{'.format(object_name, base_class))
         lines.append('public:')
         for enum_member in enum_members:
-            lines.append('    // Named after property name \'%s\' while generating %s.' % (enum_member.member_name, object_name))
+            lines.append('    // Named after property name \'{}\' while generating {}.'.format(enum_member.member_name, object_name))
             lines.append(self._generate_struct_for_anonymous_enum_member(enum_member))
             lines.append('')
         lines.append(self._generate_builder_state_enum(type_declaration))
 
         constructor_example = []
-        constructor_example.append('     * Ref<%s> result = %s::create()' % (object_name, object_name))
+        constructor_example.append('     * Ref<{}> result = {}::create()'.format(object_name, object_name))
         for member in required_members:
             constructor_example.append('     *     .set%s(...)' % ucfirst(member.member_name))
         constructor_example.append('     *     .release()')
@@ -275,7 +275,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             open_members = Generator.open_fields(type_declaration)
             for type_member in open_members:
                 export_macro = self.model().framework.setting('export_macro', None)
-                lines.append('    %s static const ASCIILiteral %sKey;' % (export_macro, type_member.member_name))
+                lines.append('    {} static const ASCIILiteral {}Key;'.format(export_macro, type_member.member_name))
 
         lines.append('};')
         return self.wrap_with_guard_for_condition(type_declaration.condition, '\n'.join(lines))
@@ -302,7 +302,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         enum_name = ucfirst(enum_name)
         lines.append('enum class %s {' % enum_name)
         for enum_value in enum_type.enum_values():
-            lines.append('    %s = %s,' % (Generator.stylized_name_for_enum_value(enum_value), self.encoding_for_enum_value(enum_value)))
+            lines.append('    {} = {},'.format(Generator.stylized_name_for_enum_value(enum_value), self.encoding_for_enum_value(enum_value)))
         lines.append('}; // enum class %s' % enum_name)
         return lines  # The caller may want to adjust indentation, so don't join these lines.
 
@@ -330,7 +330,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
 
         member_value = member_name
         if type_member.type.is_enum():
-            member_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), member_value)
+            member_value = 'Protocol::{}::getEnumConstantValue({})'.format(self.helpers_namespace(), member_value)
         elif CppGenerator.should_move_argument(type_member.type, False):
             member_value = 'WTFMove(%s)' % member_value
 
@@ -358,7 +358,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
 
         member_value = member_name
         if type_member.type.is_enum():
-            member_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), member_value)
+            member_value = 'Protocol::{}::getEnumConstantValue({})'.format(self.helpers_namespace(), member_value)
         elif CppGenerator.should_move_argument(type_member.type, False):
             member_value = 'WTFMove(%s)' % member_value
 
@@ -393,7 +393,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
 
                 for type_member in type_declaration.type_members:
                     if isinstance(type_member.type, EnumType):
-                        type_arguments.append((self.wrap_with_guard_for_condition(type_declaration.condition, CppGenerator.cpp_type_for_enum(type_member.type, '%s::%s' % (type_declaration.type_name, ucfirst(type_member.member_name)))), False))
+                        type_arguments.append((self.wrap_with_guard_for_condition(type_declaration.condition, CppGenerator.cpp_type_for_enum(type_member.type, '{}::{}'.format(type_declaration.type_name, ucfirst(type_member.member_name)))), False))
 
         struct_keywords = ['struct']
         function_keywords = ['static void']
@@ -404,7 +404,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
 
         lines = []
         for argument in type_arguments:
-            lines.append('template<> %s BindingTraits<%s> {' % (' '.join(struct_keywords), argument[0]))
+            lines.append('template<> {} BindingTraits<{}> {{'.format(' '.join(struct_keywords), argument[0]))
             if argument[1]:
                 lines.append('static Ref<%s> runtimeCast(Ref<JSON::Value>&& value);' % argument[0])
             lines.append('%s assertValueHasExpectedType(JSON::Value*);' % ' '.join(function_keywords))
@@ -446,13 +446,13 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             domain_lines.append("// Enums in the '%s' Domain" % domain.domain_name)
             for enum_type in enum_types:
                 cpp_protocol_type = CppGenerator.cpp_type_for_enum(enum_type, enum_type.raw_name())
-                domain_lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, 'template<>\n%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type)))
+                domain_lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, 'template<>\n{} parseEnumValueFromString<{}>(const String&);'.format(return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type)))
 
             for object_type in object_types:
                 object_lines = []
                 for enum_member in filter(type_member_is_anonymous_enum_type, object_type.members):
-                    cpp_protocol_type = CppGenerator.cpp_type_for_enum(enum_member.type, '%s::%s' % (object_type.raw_name(), ucfirst(enum_member.member_name)))
-                    object_lines.append('template<>\n%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type))
+                    cpp_protocol_type = CppGenerator.cpp_type_for_enum(enum_member.type, '{}::{}'.format(object_type.raw_name(), ucfirst(enum_member.member_name)))
+                    object_lines.append('template<>\n{} parseEnumValueFromString<{}>(const String&);'.format(return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type))
                 if len(object_lines):
                     domain_lines.append(self.wrap_with_guard_for_condition(object_type.declaration().condition, '\n'.join(object_lines)))
 
@@ -492,7 +492,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             for enum_type in enum_types:
                 enum_lines = []
                 enum_lines.append('template<>')
-                enum_lines.append('struct DefaultHash<Inspector::Protocol::%s::%s> : IntHash<Inspector::Protocol::%s::%s> { };' % (domain.domain_name, enum_type.raw_name(), domain.domain_name, enum_type.raw_name()))
+                enum_lines.append('struct DefaultHash<Inspector::Protocol::{}::{}> : IntHash<Inspector::Protocol::{}::{}> {{ }};'.format(domain.domain_name, enum_type.raw_name(), domain.domain_name, enum_type.raw_name()))
                 domain_lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, '\n'.join(enum_lines)))
 
             lines.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))

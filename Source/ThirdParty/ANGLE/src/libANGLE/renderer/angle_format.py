@@ -21,7 +21,7 @@ def reject_duplicate_keys(pairs):
     found_keys = {}
     for key, value in pairs:
         if key in found_keys:
-            raise ValueError("duplicate key: %r" % (key,))
+            raise ValueError("duplicate key: {!r}".format(key))
         else:
             found_keys[key] = value
     return found_keys
@@ -100,7 +100,7 @@ def get_component_type(format_id):
 def get_channel_tokens(format_id):
     if 'EXTERNAL' in format_id:
         return ['R8', 'G8', 'B8', 'A8']
-    r = re.compile(r'([' + kChannels + '][\d]+)')
+    r = re.compile(r'([' + kChannels + r'][\d]+)')
     return list(filter(r.match, r.split(format_id)))
 
 
@@ -156,7 +156,7 @@ def gl_format_channels(internal_format):
     if internal_format.find('INT_10_10_10_2_OES') == 0:
         return 'rgba'
 
-    channels_pattern = re.compile('GL_(COMPRESSED_)?(SIGNED_)?(ETC\d_)?([A-Z]+)')
+    channels_pattern = re.compile(r'GL_(COMPRESSED_)?(SIGNED_)?(ETC\d_)?([A-Z]+)')
     match = re.search(channels_pattern, internal_format)
     channels_string = match.group(4)
 
@@ -275,9 +275,9 @@ def get_vertex_copy_function(src_format, dst_format):
         is_signed = 'true' if 'SINT' in src_format or 'SNORM' in src_format or 'SSCALED' in src_format else 'false'
         is_normal = 'true' if 'NORM' in src_format else 'false'
         if 'A2' in src_format:
-            return 'CopyW2XYZ10ToXYZWFloatVertexData<%s, %s, true>' % (is_signed, is_normal)
+            return 'CopyW2XYZ10ToXYZWFloatVertexData<{}, {}, true>'.format(is_signed, is_normal)
         else:
-            return 'CopyXYZ10ToXYZWFloatVertexData<%s, %s, true>' % (is_signed, is_normal)
+            return 'CopyXYZ10ToXYZWFloatVertexData<{}, {}, true>'.format(is_signed, is_normal)
 
     if 'FIXED' in src_format:
         assert 'FLOAT' in dst_format, (

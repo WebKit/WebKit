@@ -149,7 +149,7 @@ class StreamPath(collections.namedtuple('_StreamPath', ('prefix', 'name'))):
     """
         parts = path.split('/+/', 1)
         if len(parts) != 2:
-            raise ValueError('Not a full stream path: [%s]' % (path,))
+            raise ValueError('Not a full stream path: [{}]'.format(path))
         return cls.make(*parts)
 
     def validate(self):
@@ -157,7 +157,7 @@ class StreamPath(collections.namedtuple('_StreamPath', ('prefix', 'name'))):
         try:
             validate_stream_name(self.prefix)
         except ValueError as e:
-            raise ValueError('Invalid prefix component [%s]: %s' % (
+            raise ValueError('Invalid prefix component [{}]: {}'.format(
                 self.prefix,
                 e,
             ))
@@ -165,13 +165,13 @@ class StreamPath(collections.namedtuple('_StreamPath', ('prefix', 'name'))):
         try:
             validate_stream_name(self.name)
         except ValueError as e:
-            raise ValueError('Invalid name component [%s]: %s' % (
+            raise ValueError('Invalid name component [{}]: {}'.format(
                 self.name,
                 e,
             ))
 
     def __str__(self):
-        return '%s/+/%s' % (self.prefix, self.name)
+        return '{}/+/{}'.format(self.prefix, self.name)
 
 
 def get_logdog_viewer_url(host, project, *stream_paths):
@@ -188,7 +188,7 @@ def get_logdog_viewer_url(host, project, *stream_paths):
         host,  # netloc
         'v/',  # path
         '',  # params
-        '&'.join(('s=%s' % (urllib.parse.quote('%s/%s' % (project, path), ''))
-                  for path in stream_paths)),  # query
+        '&'.join('s=%s' % (urllib.parse.quote('{}/{}'.format(project, path), ''))
+                  for path in stream_paths),  # query
         '',  # fragment
     ))

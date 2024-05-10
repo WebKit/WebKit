@@ -95,7 +95,7 @@ def RunAndroidTestSuite(args, extra_args):
         return 0
 
     if args.suite == 'angle_trace_tests':
-        traces = set(android_helper.GetTraceFromTestName(test) for test in tests)
+        traces = {android_helper.GetTraceFromTestName(test) for test in tests}
         android_helper.PrepareRestrictedTraces(traces)
 
         if args.prepare_only:

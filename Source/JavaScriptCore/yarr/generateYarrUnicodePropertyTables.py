@@ -103,8 +103,8 @@ def openOrExit(path, mode):
             return open(path, mode, encoding="UTF-8")
         else:
             return open(path, mode)
-    except IOError as e:
-        print("I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror))
+    except OSError as e:
+        print(f"I/O error opening {path}, ({e.errno}): {e.strerror}")
         exit(1)
 
 
@@ -123,7 +123,7 @@ def verifyUCDFilesExist():
     for file in RequiredUCDFiles:
         fullPath = os.path.join(UCDDirectoryPath, file)
         if not os.path.exists(fullPath):
-            print("Couldn't find UCD file {0} at {1}".format(file, fullPath))
+            print(f"Couldn't find UCD file {file} at {fullPath}")
             missingFileCount = missingFileCount + 1
     if missingFileCount:
         exit(1)
@@ -162,7 +162,7 @@ class Aliases:
                 aliases.append(otherAlias.strip())
 
             if fullName in self.globalNameToAliases:
-                print("Error, already an alias for {}".format(fullName))
+                print(f"Error, already an alias for {fullName}")
             else:
                 self.globalNameToAliases[fullName] = aliases
 
@@ -195,7 +195,7 @@ class Aliases:
                 aliases.append(otherAlias.strip())
 
             if fullName in mapToModify:
-                print("Error, already an {} alias for {}".format(propertyType, fullName))
+                print(f"Error, already an {propertyType} alias for {fullName}")
             else:
                 mapToModify[fullName] = aliases
                 if reverseMapToModify != None:
@@ -258,7 +258,7 @@ class PropertyData:
         return self.index
 
     def getCreateFuncName(self):
-        return "createCharacterClass{}".format(self.index)
+        return f"createCharacterClass{self.index}"
 
     def addMatch(self, codePoint):
         if codePoint <= MaxBMP:
@@ -568,16 +568,16 @@ class PropertyData:
             if codePoint <= '\xff':
                 output += codePoint
             else:
-                output += "\\x{:x}".format(ord(codePoint))
-        file.write("{{ std::span {{ const_cast<char32_t*>(U\"{}\"), {} }}}}".format(output, len(utf32String)))
+                output += f"\\x{ord(codePoint):x}"
+        file.write(f"{{ std::span {{ const_cast<char32_t*>(U\"{output}\"), {len(utf32String)} }}}}")
 
     def dump(self, file, commaAfter):
-        file.write("static std::unique_ptr<CharacterClass> {}()\n{{\n".format(self.getCreateFuncName()))
-        file.write("    // Name = {},".format(self.name))
+        file.write(f"static std::unique_ptr<CharacterClass> {self.getCreateFuncName()}()\n{{\n")
+        file.write(f"    // Name = {self.name},")
         if self.hasStrings:
-            file.write(" number of strings: {}".format(len(self.matchStrings)))
+            file.write(f" number of strings: {len(self.matchStrings)}")
         if self.codePointCount:
-            file.write(" number of codePoints: {}".format(self.codePointCount))
+            file.write(f" number of codePoints: {self.codePointCount}")
         file.write("\n")
         file.write("    auto characterClass = makeUnique<CharacterClass>(\n")
         if self.hasStrings:
@@ -585,16 +585,16 @@ class PropertyData:
             self.dumpMatchData(file, 1, self.matchStrings, self.convertStringToCppFormat)
             file.write("),\n")
         file.write("        std::initializer_list<char32_t>(")
-        self.dumpMatchData(file, 8, self.matches, lambda file, match: (file.write("{0:0=#4x}".format(match))))
+        self.dumpMatchData(file, 8, self.matches, lambda file, match: (file.write(f"{match:0=#4x}")))
         file.write("),\n")
         file.write("        std::initializer_list<CharacterRange>(")
-        self.dumpMatchData(file, 4, self.ranges, lambda file, range: (file.write("{{{0:0=#4x}, {1:0=#4x}}}".format(range[0], range[1]))))
+        self.dumpMatchData(file, 4, self.ranges, lambda file, range: (file.write(f"{{{range[0]:0=#4x}, {range[1]:0=#4x}}}")))
         file.write("),\n")
         file.write("        std::initializer_list<char32_t>(")
-        self.dumpMatchData(file, 8, self.unicodeMatches, lambda file, match: (file.write("{0:0=#6x}".format(match))))
+        self.dumpMatchData(file, 8, self.unicodeMatches, lambda file, match: (file.write(f"{match:0=#6x}")))
         file.write("),\n")
         file.write("        std::initializer_list<CharacterRange>(")
-        self.dumpMatchData(file, 4, self.unicodeRanges, lambda file, range: (file.write("{{{0:0=#6x}, {1:0=#6x}}}".format(range[0], range[1]))))
+        self.dumpMatchData(file, 4, self.unicodeRanges, lambda file, range: (file.write(f"{{{range[0]:0=#6x}, {range[1]:0=#6x}}}")))
         file.write("),\n")
 
         file.write("        CharacterClassWidths::{}".format(("Unknown", "HasBMPChars", "HasNonBMPChars", "HasBothBMPAndNonBMP")[int(self.hasNonBMPCharacters) * 2 + int(self.hasBMPCharacters)]))
@@ -609,10 +609,10 @@ class PropertyData:
             propertyData.dump(file, propertyData != cls.allPropertyData[-1])
 
         file.write("using CreateCharacterClass = std::unique_ptr<CharacterClass> (*)();\n")
-        file.write("static CreateCharacterClass createCharacterClassFunctions[{}] = {{\n   ".format(len(cls.allPropertyData)))
+        file.write(f"static CreateCharacterClass createCharacterClassFunctions[{len(cls.allPropertyData)}] = {{\n   ")
         functionsOnThisLine = 0
         for propertyData in cls.allPropertyData:
-            file.write(" {},".format(propertyData.getCreateFuncName()))
+            file.write(f" {propertyData.getCreateFuncName()},")
             functionsOnThisLine = functionsOnThisLine + 1
             if functionsOnThisLine == 4:
                 file.write("\n   ")
@@ -654,7 +654,7 @@ class PropertyData:
                 hashTable[hash] = (len(valueTable), None)
                 valueTable.append((key, keyValue[1]))
 
-            hashTableString += "static const struct HashIndex {}TableIndex[{}] = {{\n".format(tablePrefix, len(hashTable))
+            hashTableString += f"static const struct HashIndex {tablePrefix}TableIndex[{len(hashTable)}] = {{\n"
 
             for tableIndex in hashTable:
                 value = -1
@@ -664,24 +664,24 @@ class PropertyData:
                     if tableIndex[1] is not None:
                         next = tableIndex[1]
 
-                hashTableString += "    {{ {}, {} }},\n".format(value, next)
+                hashTableString += f"    {{ {value}, {next} }},\n"
 
             hashTableString += "};\n\n"
 
-            hashTableString += "static const struct HashValue {}TableValue[{}] = {{\n".format(tablePrefix, len(valueTable))
+            hashTableString += f"static const struct HashValue {tablePrefix}TableValue[{len(valueTable)}] = {{\n"
             for value in valueTable:
-                hashTableString += "    {{ \"{}\", {} }},\n".format(value[0], value[1])
+                hashTableString += f"    {{ \"{value[0]}\", {value[1]} }},\n"
             hashTableString += "};\n\n"
 
-            hashTableString += "static const struct HashTable {}HashTable = \n".format(tablePrefix)
-            hashTableString += "    {{ {}, {}, {}TableValue, {}TableIndex }};\n\n".format(len(valueTable), hashMask, tablePrefix, tablePrefix)
+            hashTableString += f"static const struct HashTable {tablePrefix}HashTable = \n"
+            hashTableString += f"    {{ {len(valueTable)}, {hashMask}, {tablePrefix}TableValue, {tablePrefix}TableIndex }};\n\n"
             return hashTableString
 
         hashTableForMacOS = createAndDumpHashTableHelper(propertyDict, tablePrefix, True)
         hashTableForIOS = createAndDumpHashTableHelper(propertyDict, tablePrefix, False)
         hashTableToWrite = hashTableForMacOS
         if hashTableForMacOS != hashTableForIOS:
-            hashTableToWrite = "#if PLATFORM(MAC)\n{}#else\n{}#endif\n".format(hashTableForMacOS, hashTableForIOS)
+            hashTableToWrite = f"#if PLATFORM(MAC)\n{hashTableForMacOS}#else\n{hashTableForIOS}#endif\n"
         file.write(hashTableToWrite)
 
     @classmethod
@@ -704,14 +704,14 @@ class PropertyData:
 
         file.write("static bool unicodeCharacterClassMayContainStrings(unsigned unicodeClassId)\n")
         file.write("{\n")
-        file.write("    if (unicodeClassId >= {})\n".format(len(cls.allPropertyData)))
+        file.write(f"    if (unicodeClassId >= {len(cls.allPropertyData)})\n")
         file.write("        return false;\n")
         file.write("\n")
         for range in hasStringRanges:
             if range[0] == range[1]:
-                file.write("    if (unicodeClassId == {})\n".format(range[0]))
+                file.write(f"    if (unicodeClassId == {range[0]})\n")
             else:
-                file.write("    if (unicodeClassId >= {} && unicodeClassId <= {})\n".format(range[0], range[1]))
+                file.write(f"    if (unicodeClassId >= {range[0]} && unicodeClassId <= {range[1]})\n")
             file.write("        return true;\n")
             file.write("\n")
         file.write("    return false;\n")

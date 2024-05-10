@@ -30,7 +30,7 @@ PRESUBMIT = loader.load_module()
 class CommitMessageFormattingCheckTest(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(CommitMessageFormattingCheckTest, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.output_api = OutputAPI_mock()
 
     def run_check_commit_message_formatting(self, commit_msg):
@@ -344,7 +344,7 @@ Change-Id: I443c36aaa8956c20da1abddf7aea613659e2cd5b"""
 class GClientFileExistenceCheck(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(GClientFileExistenceCheck, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.output_api = OutputAPI_mock()
 
     def run_gclient_presubmit(self, cwd, search_limit):
@@ -378,7 +378,7 @@ class GClientFileExistenceCheck(unittest.TestCase):
 class CheckShaderVersionInShaderLangHeaderTest(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(CheckShaderVersionInShaderLangHeaderTest, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.output_api = OutputAPI_mock()
 
     def run_shader_version_check_presubmit(self, commit_msg, diffs):

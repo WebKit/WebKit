@@ -1665,7 +1665,7 @@ def format_entry_point_decl(api, cmd_name, proto, params):
     return TEMPLATE_ENTRY_POINT_DECL.format(
         angle_export=entry_point_export(api),
         export_def=get_api_entry_def(api),
-        name="%s%s" % (entry_point_prefix(api), stripped),
+        name="{}{}".format(entry_point_prefix(api), stripped),
         return_type=proto[:-len(cmd_name)].strip(),
         params=", ".join(params),
         comma_if_needed=comma_if_needed)
@@ -1767,11 +1767,11 @@ def param_print_argument(api, command_node, param):
 
     if type_only == "GLbitfield":
         group_name = find_gl_enum_group_in_command(command_node, name_only)
-        return "GLbitfieldToString(%s::%s, %s).c_str()" % (api_enums[api], group_name, name_only)
+        return "GLbitfieldToString({}::{}, {}).c_str()".format(api_enums[api], group_name, name_only)
 
     if type_only == "GLenum":
         group_name = find_gl_enum_group_in_command(command_node, name_only)
-        return "GLenumToString(%s::%s, %s)" % (api_enums[api], group_name, name_only)
+        return "GLenumToString({}::{}, {})".format(api_enums[api], group_name, name_only)
 
     return name_only
 
@@ -2040,7 +2040,7 @@ def format_capture_method(api, command, cmd_name, proto, params, all_param_types
         # With EGL capture, we don't currently support capturing specific pointer params.
         if pointer_count > 0 and api != apis.EGL:
             params = params_just_name
-            capture_name = "Capture%s_%s" % (strip_api_prefix(cmd_name), param_name)
+            capture_name = "Capture{}_{}".format(strip_api_prefix(cmd_name), param_name)
             capture = TEMPLATE_PARAMETER_CAPTURE_POINTER.format(
                 name=param_name,
                 type=capture_param_type,
@@ -2478,7 +2478,7 @@ def write_file(annotation, comment, template, entry_points, suffix, includes, li
         includes=includes,
         entry_points=entry_points)
 
-    path = path_to(lib, "entry_points_{}_autogen.{}".format(annotation.lower(), suffix))
+    path = path_to(lib, f"entry_points_{annotation.lower()}_autogen.{suffix}")
 
     with open(path, "w") as out:
         out.write(content)
@@ -2495,7 +2495,7 @@ def write_export_files(entry_points, includes, source, lib_name, lib_description
         entry_points=entry_points,
     )
 
-    path = path_to(lib_name if not lib_dir else lib_dir, "{}_autogen.cpp".format(lib_name))
+    path = path_to(lib_name if not lib_dir else lib_dir, f"{lib_name}_autogen.cpp")
 
     with open(path, "w") as out:
         out.write(content)
@@ -2505,11 +2505,11 @@ def write_export_files(entry_points, includes, source, lib_name, lib_description
 def write_context_api_decls(decls, api):
     for (major, minor), version_decls in sorted(decls['core'].items()):
         if minor == "X":
-            annotation = '{}_{}'.format(api, major)
+            annotation = f'{api}_{major}'
             version = str(major)
         else:
-            annotation = '{}_{}_{}'.format(api, major, minor)
-            version = '{}_{}'.format(major, minor)
+            annotation = f'{api}_{major}_{minor}'
+            version = f'{major}_{minor}'
         content = CONTEXT_HEADER.format(
             annotation_lower=annotation.lower(),
             annotation_upper=annotation.upper(),
@@ -2605,7 +2605,7 @@ def write_capture_header(api, annotation, comment, protos, capture_pointer_funcs
         combined_protos += ["\n// Parameter Captures\n"] + capture_pointer_funcs
     content = TEMPLATE_CAPTURE_HEADER.format(
         script_name=os.path.basename(sys.argv[0]),
-        data_source_name="%s.xml and %s_angle_ext.xml" % (ns, ns),
+        data_source_name="{}.xml and {}_angle_ext.xml".format(ns, ns),
         annotation_lower=annotation.lower(),
         annotation_upper=annotation.upper(),
         comment=comment,
@@ -2623,7 +2623,7 @@ def write_capture_source(api, annotation_with_dash, annotation_no_dash, comment,
     ns = 'egl' if api == apis.EGL else 'gl'
     content = TEMPLATE_CAPTURE_SOURCE.format(
         script_name=os.path.basename(sys.argv[0]),
-        data_source_name="%s.xml and %s_angle_ext.xml" % (ns, ns),
+        data_source_name="{}.xml and {}_angle_ext.xml".format(ns, ns),
         annotation_with_dash=annotation_with_dash,
         annotation_no_dash=annotation_no_dash,
         comment=comment,
@@ -2717,7 +2717,7 @@ def get_param_type_union_name(param_type):
 
 
 def format_param_type_union_type(param_type):
-    return "%s %s;" % (get_param_type_type(param_type), get_param_type_union_name(param_type))
+    return "{} {};".format(get_param_type_type(param_type), get_param_type_union_name(param_type))
 
 
 def format_get_param_val_specialization(param_type):
@@ -2895,7 +2895,7 @@ def format_replay_params(api, command_name, param_text_list, packed_enums, resou
                 if packed_type == 'Sync':
                     param_access = 'gSyncMap2[captures[%d].value.GLuintVal]' % i
                 elif packed_type in resource_id_types:
-                    param_access = 'g%sMap[%s]' % (packed_type, param_access)
+                    param_access = 'g{}Map[{}]'.format(packed_type, param_access)
                 elif packed_type == 'UniformLocation':
                     param_access = 'gUniformLocations[gCurrentProgram][%s]' % param_access
                 elif packed_type == 'egl::Image':
@@ -2987,10 +2987,10 @@ def get_egl_exports():
     capser = lambda fn: "EGL_" + fn[3:]
 
     for major, minor in registry_xml.EGL_VERSIONS:
-        annotation = "{}_{}".format(major, minor)
+        annotation = f"{major}_{minor}"
         name_prefix = "EGL_VERSION_"
 
-        feature_name = "{}{}".format(name_prefix, annotation)
+        feature_name = f"{name_prefix}{annotation}"
 
         egl.AddCommands(feature_name, annotation)
 
@@ -3043,16 +3043,16 @@ def get_egl_entry_point_labeled_object(ep_to_object, cmd_stripped, params, packe
     found_param = find_param(params, category, packed_enums)
     if category == "Context" and not found_param:
         return "GetContextIfValid(thread->getDisplay(), thread->getContext())"
-    assert found_param, "Did not find %s for %s: %s" % (category, cmd_stripped, str(params))
+    assert found_param, "Did not find {} for {}: {}".format(category, cmd_stripped, str(params))
     if category == "Device":
         return "GetDeviceIfValid(%s)" % found_param
     if category == "LabeledObject":
         object_type_param = find_param(params, "ObjectType", packed_enums)
-        return "GetLabeledObjectIfValid(thread, %s, %s, %s)" % (display_param, object_type_param,
+        return "GetLabeledObjectIfValid(thread, {}, {}, {})".format(display_param, object_type_param,
                                                                 found_param)
 
     # We then handle the general case which handles the rest of the type categories.
-    return "Get%sIfValid(%s, %s)" % (category, display_param, found_param)
+    return "Get{}IfValid({}, {})".format(category, display_param, found_param)
 
 
 def get_context_lock(api, cmd_name):
@@ -3174,7 +3174,7 @@ def write_stubs_header(api, annotation, title, data_source, out_file, all_comman
 
         internal_params = get_internal_params(api, cmd_name, params, cmd_packed_egl_enums,
                                               packed_param_types)
-        stubs.append("%s %s(%s);" % (return_type, strip_api_prefix(cmd_name), internal_params))
+        stubs.append("{} {}({});".format(return_type, strip_api_prefix(cmd_name), internal_params))
 
     args = {
         "annotation_lower": annotation.lower(),
@@ -3324,15 +3324,15 @@ def main():
     # First run through the main GLES entry points.  Since ES2+ is the primary use
     # case, we go through those first and then add ES1-only APIs at the end.
     for major_version, minor_version in registry_xml.GLES_VERSIONS:
-        version = "{}_{}".format(major_version, minor_version)
-        annotation = "GLES_{}".format(version)
+        version = f"{major_version}_{minor_version}"
+        annotation = f"GLES_{version}"
         name_prefix = "GL_ES_VERSION_"
 
         if major_version == 1:
             name_prefix = "GL_VERSION_ES_CM_"
 
         comment = version.replace("_", ".")
-        feature_name = "{}{}".format(name_prefix, version)
+        feature_name = f"{name_prefix}{version}"
 
         xml.AddCommands(feature_name, version)
 
@@ -3358,7 +3358,7 @@ def main():
         header_includes = TEMPLATE_HEADER_INCLUDES.format(
             major=major_if_not_one, minor=minor_if_not_zero)
 
-        version_annotation = "%s%s" % (major_version, minor_if_not_zero)
+        version_annotation = "{}{}".format(major_version, minor_if_not_zero)
         source_includes = TEMPLATE_SOURCES_INCLUDES.format(
             header_version=annotation.lower(), validation_header_version="ES" + version_annotation)
 
@@ -3372,7 +3372,7 @@ def main():
                                                        xml.all_commands, version_commands, [],
                                                        GLEntryPoints.get_packed_enums())
 
-        validation_annotation = "ES%s%s" % (major_version, minor_if_not_zero)
+        validation_annotation = "ES{}{}".format(major_version, minor_if_not_zero)
         write_gl_validation_header(validation_annotation, "ES %s" % comment, eps.validation_protos,
                                    "gl.xml and gl_angle_ext.xml")
 
@@ -3411,7 +3411,7 @@ def main():
         eps = GLEntryPoints(apis.GLES, xml, ext_cmd_names)
 
         # Write the extension name as a comment before the first EP.
-        comment = "\n// {}".format(extension_name)
+        comment = f"\n// {extension_name}"
         libgles_ep_exports.append("\n    ; %s" % extension_name)
 
         extension_defs += [comment] + eps.defs
@@ -3419,7 +3419,7 @@ def main():
 
         # Avoid writing out entry points defined by a prior extension.
         for dupe in xml.ext_dupes[extension_name]:
-            msg = "// {} is already defined.\n".format(strip_api_prefix(dupe))
+            msg = f"// {strip_api_prefix(dupe)} is already defined.\n"
             extension_defs.append(msg)
 
         ext_validation_protos += [comment] + eps.validation_protos
@@ -3470,7 +3470,7 @@ def main():
     glxml = registry_xml.RegistryXML('gl.xml')
 
     for major_version in sorted(
-            set([major for (major, minor) in registry_xml.DESKTOP_GL_VERSIONS])):
+            {major for (major, minor) in registry_xml.DESKTOP_GL_VERSIONS}):
         is_major = lambda ver: ver[0] == major_version
 
         ver_decls = ["extern \"C\" {"]
@@ -3481,12 +3481,12 @@ def main():
         capture_defs = []
 
         for _, minor_version in filter(is_major, registry_xml.DESKTOP_GL_VERSIONS):
-            version = "{}_{}".format(major_version, minor_version)
-            annotation = "GL_{}".format(version)
+            version = f"{major_version}_{minor_version}"
+            annotation = f"GL_{version}"
             name_prefix = "GL_VERSION_"
 
             comment = version.replace("_", ".")
-            feature_name = "{}{}".format(name_prefix, version)
+            feature_name = f"{name_prefix}{version}"
 
             glxml.AddCommands(feature_name, version)
 
@@ -3559,12 +3559,12 @@ def main():
     libglx_ep_defs = []
     glx_commands = []
     for major_version, minor_version in registry_xml.GLX_VERSIONS:
-        version = "{}_{}".format(major_version, minor_version)
-        annotation = "GLX_{}".format(version)
+        version = f"{major_version}_{minor_version}"
+        annotation = f"GLX_{version}"
         name_prefix = "GLX_VERSION_"
 
         comment = version.replace("_", ".")
-        feature_name = "{}{}".format(name_prefix, version)
+        feature_name = f"{name_prefix}{version}"
 
         glxxml.AddCommands(feature_name, version)
         glx_version_commands = glxxml.commands[version]
@@ -3591,7 +3591,7 @@ def main():
         name_prefix = "CL_VERSION_"
 
         comment = version.replace("_", ".")
-        feature_name = "%s%s" % (name_prefix, version)
+        feature_name = "{}{}".format(name_prefix, version)
 
         clxml.AddCommands(feature_name, version)
 
@@ -3670,7 +3670,7 @@ def main():
         name_prefix = "EGL_VERSION_"
 
         comment = version.replace("_", ".")
-        feature_name = "%s%s" % (name_prefix, version)
+        feature_name = "{}{}".format(name_prefix, version)
 
         eglxml.AddCommands(feature_name, version)
 
@@ -3761,7 +3761,7 @@ def main():
     name_prefix = "WGL_VERSION_"
     version = "1_0"
     comment = version.replace("_", ".")
-    feature_name = "{}{}".format(name_prefix, version)
+    feature_name = f"{name_prefix}{version}"
     wglxml.AddCommands(feature_name, version)
     wgl_commands = wglxml.commands[version]
 
@@ -3772,7 +3772,7 @@ def main():
 
     # Formatting for outputting to def file
     wgl_commands = [cmd if cmd.startswith('wgl') else 'wgl' + cmd for cmd in wgl_commands]
-    wgl_commands = ['\n    ; WGL 1.0'] + ['    {}'.format(cmd) for cmd in wgl_commands]
+    wgl_commands = ['\n    ; WGL 1.0'] + [f'    {cmd}' for cmd in wgl_commands]
 
     extension_decls.append("} // extern \"C\"")
     extension_defs.append("} // extern \"C\"")

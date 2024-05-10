@@ -97,7 +97,7 @@ class JSBackendCommandsGenerator(Generator):
                 enum_args = {
                     'domainName': domain.domain_name,
                     'enumName': declaration.type_name,
-                    'enumMap': ", ".join(['%s: "%s"' % (Generator.stylized_name_for_enum_value(enum_value), enum_value) for enum_value in declaration.type.enum_values()])
+                    'enumMap': ", ".join(['{}: "{}"'.format(Generator.stylized_name_for_enum_value(enum_value), enum_value) for enum_value in declaration.type.enum_values()])
                 }
                 lines.append(self.wrap_with_guard_for_condition(declaration.condition, 'InspectorBackend.registerEnum("%(domainName)s.%(enumName)s", {%(enumMap)s});' % enum_args))
 
@@ -107,8 +107,8 @@ class JSBackendCommandsGenerator(Generator):
             for _member in filter(is_anonymous_enum_member, declaration.type_members):
                 enum_args = {
                     'domainName': domain.domain_name,
-                    'enumName': '%s%s' % (declaration.type_name, ucfirst(_member.member_name)),
-                    'enumMap': ", ".join(['%s: "%s"' % (Generator.stylized_name_for_enum_value(enum_value), enum_value) for enum_value in _member.type.enum_values()])
+                    'enumName': '{}{}'.format(declaration.type_name, ucfirst(_member.member_name)),
+                    'enumMap': ", ".join(['{}: "{}"'.format(Generator.stylized_name_for_enum_value(enum_value), enum_value) for enum_value in _member.type.enum_values()])
                 }
                 lines.append('InspectorBackend.registerEnum("%(domainName)s.%(enumName)s", {%(enumMap)s});' % enum_args)
 
@@ -139,8 +139,8 @@ class JSBackendCommandsGenerator(Generator):
             for param in filter(is_anonymous_enum_param, event.event_parameters):
                 enum_args = {
                     'domainName': domain.domain_name,
-                    'enumName': '%s%s' % (ucfirst(event.event_name), ucfirst(param.parameter_name)),
-                    'enumMap': ", ".join(['%s: "%s"' % (Generator.stylized_name_for_enum_value(enum_value), enum_value) for enum_value in param.type.enum_values()]),
+                    'enumName': '{}{}'.format(ucfirst(event.event_name), ucfirst(param.parameter_name)),
+                    'enumMap': ", ".join(['{}: "{}"'.format(Generator.stylized_name_for_enum_value(enum_value), enum_value) for enum_value in param.type.enum_values()]),
                 }
                 event_lines.append('InspectorBackend.registerEnum("%(domainName)s.%(enumName)s", {%(enumMap)s});' % enum_args)
 

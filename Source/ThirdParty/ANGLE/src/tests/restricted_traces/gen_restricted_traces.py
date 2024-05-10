@@ -44,7 +44,7 @@ def reject_duplicate_keys(pairs):
     found_keys = {}
     for key, value in pairs:
         if key in found_keys:
-            raise ValueError("duplicate key: %r" % (key,))
+            raise ValueError("duplicate key: {!r}".format(key))
         else:
             found_keys[key] = value
     return found_keys
@@ -77,7 +77,7 @@ def update_deps(trace_pairs):
         lines = f.readlines()
 
     def slice_to_replace(lines, start_tag, end_tag):
-        start, end = [i for i, s in enumerate(lines) if start_tag in s or end_tag in s]
+        start, end = (i for i, s in enumerate(lines) if start_tag in s or end_tag in s)
         return slice(start + 1, end)
 
     # Replace lines between DEPS_START and DEPS_END with new code

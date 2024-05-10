@@ -281,7 +281,7 @@ def main():
         for index, uniform_type in enumerate(all_uniform_types)
     ])
 
-    with open('uniform_type_info_autogen.cpp', 'wt') as out_file:
+    with open('uniform_type_info_autogen.cpp', 'w') as out_file:
         output_cpp = template_cpp.format(
             script_name=os.path.basename(sys.argv[0]),
             total_count=len(all_uniform_types),

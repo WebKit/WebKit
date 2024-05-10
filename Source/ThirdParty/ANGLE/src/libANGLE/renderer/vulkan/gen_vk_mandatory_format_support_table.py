@@ -136,7 +136,7 @@ def main():
         out_file_name=out_file_name,
         input_file_name=input_file_name)
 
-    with open(out_file_name, 'wt') as out_file:
+    with open(out_file_name, 'w') as out_file:
         out_file.write(output_cpp)
         out_file.close()
     return 0

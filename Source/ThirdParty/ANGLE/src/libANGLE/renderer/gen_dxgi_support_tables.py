@@ -332,7 +332,7 @@ def main():
             table_data_11_0=table_data['11_0'],
             table_data_11_1=table_data['11_1'])
 
-        with open('dxgi_support_table_autogen.cpp', 'wt') as out_file:
+        with open('dxgi_support_table_autogen.cpp', 'w') as out_file:
             out_file.write(out_data)
             out_file.close()
     return 0

@@ -64,7 +64,7 @@ def reject_duplicate_keys(pairs):
     found_keys = {}
     for key, value in pairs:
         if key in found_keys:
-            raise ValueError("duplicate key: %r" % (key,))
+            raise ValueError("duplicate key: {!r}".format(key))
         else:
             found_keys[key] = value
     return found_keys
@@ -141,7 +141,7 @@ def main():
         data_source_name=input_script,
         emulated_functions="".join(emulated_functions))
 
-    with open(hlsl_fname, 'wt') as f:
+    with open(hlsl_fname, 'w') as f:
         f.write(hlsl_gen)
         f.close()
 

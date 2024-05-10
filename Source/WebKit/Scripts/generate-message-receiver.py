@@ -22,7 +22,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import with_statement
 import sys
 
 import webkit.messages
@@ -47,11 +46,11 @@ def main(argv):
 
         receiver_name = parameter.rsplit('/', 1).pop()
 
-        with open('%s/%s.messages.in' % (base_dir, parameter)) as source_file:
+        with open('{}/{}.messages.in'.format(base_dir, parameter)) as source_file:
             receiver = webkit.parser.parse(source_file)
         receivers.append(receiver)
         if receiver_name != receiver.name:
-            sys.stderr.write("Error: %s defined in file %s/%s.messages.in instead of %s.messages.in\n" % (receiver.name, base_dir, parameter, receiver.name))
+            sys.stderr.write("Error: {} defined in file {}/{}.messages.in instead of {}.messages.in\n".format(receiver.name, base_dir, parameter, receiver.name))
             sys.exit(1)
 
     errors = webkit.model.check_global_model_inputs(receivers)

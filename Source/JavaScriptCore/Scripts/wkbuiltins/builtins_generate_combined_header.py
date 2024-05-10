@@ -155,7 +155,7 @@ extern const JSC::InlineAttribute s_%(codeName)sInlineAttribute;""" % function_a
 
         lines = []
         lines.append("#define %(macroPrefix)s_FOREACH_BUILTIN_FUNCTION_NAME(macro) \\" % args)
-        unique_names = list(set([function.function_name for function in self.model().all_functions()]))
+        unique_names = list({function.function_name for function in self.model().all_functions()})
         unique_names.sort()
         for function_name in unique_names:
             function_args = {

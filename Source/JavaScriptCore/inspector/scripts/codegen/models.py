@@ -154,7 +154,7 @@ class TypeReference:
 
         all_primitive_types = ["integer", "number", "string", "boolean", "enum", "object", "array", "any"]
         if type_kind is not None and type_kind not in all_primitive_types:
-            raise ParseException("Type reference '%s' is not a primitive type. Allowed values: %s" % (type_kind, ', '.join(all_primitive_types)))
+            raise ParseException("Type reference '{}' is not a primitive type. Allowed values: {}".format(type_kind, ', '.join(all_primitive_types)))
 
         if type_kind == "array" and array_items is None:
             raise ParseException("Type reference with type 'array' must have key 'items' to define array element type.")
@@ -221,7 +221,7 @@ class AliasedType(Type):
 
     def __repr__(self):
         if self.aliased_type is not None:
-            return 'AliasedType[%s -> %r]' % (self.qualified_name(), self.aliased_type)
+            return 'AliasedType[{} -> {!r}]'.format(self.qualified_name(), self.aliased_type)
         else:
             return 'AliasedType[%s -> (unresolved)]' % self.qualified_name()
 
@@ -239,7 +239,7 @@ class AliasedType(Type):
             return
 
         self.aliased_type = protocol.lookup_type_reference(self._aliased_type_ref, self.type_domain())
-        log.debug("< Resolved type reference for aliased type in %s: %s" % (self.qualified_name(), self.aliased_type.qualified_name()))
+        log.debug("< Resolved type reference for aliased type in {}: {}".format(self.qualified_name(), self.aliased_type.qualified_name()))
 
 
 class EnumType(Type):
@@ -253,7 +253,7 @@ class EnumType(Type):
         self.is_anonymous = is_anonymous
 
     def __repr__(self):
-        return 'EnumType[primitive_type=%s; enum_values=%s]' % (self.qualified_name(), ', '.join(map(str, self.enum_values())))
+        return 'EnumType[primitive_type={}; enum_values={}]'.format(self.qualified_name(), ', '.join(map(str, self.enum_values())))
 
     def is_enum(self):
         return True
@@ -275,7 +275,7 @@ class EnumType(Type):
             return
 
         self.primitive_type = protocol.lookup_type_reference(self._primitive_type_ref, Domains.GLOBAL)
-        log.debug("< Resolved type reference for enum type in %s: %s" % (self.qualified_name(), self.primitive_type.qualified_name()))
+        log.debug("< Resolved type reference for enum type in {}: {}".format(self.qualified_name(), self.primitive_type.qualified_name()))
         log.debug("<< enum values: %s" % self.enum_values())
 
 
@@ -307,7 +307,7 @@ class ArrayType(Type):
             return
 
         self.element_type = protocol.lookup_type_reference(self._element_type_ref, self.type_domain())
-        log.debug("< Resolved type reference for element type in %s: %s" % (self.qualified_name(), self.element_type.qualified_name()))
+        log.debug("< Resolved type reference for element type in {}: {}".format(self.qualified_name(), self.element_type.qualified_name()))
 
 
 class ObjectType(Type):
@@ -333,7 +333,7 @@ class ObjectType(Type):
 def check_for_required_properties(props, obj, what):
     for prop in props:
         if prop not in obj:
-            raise ParseException("When parsing %s, required property missing: %s" % (what, prop))
+            raise ParseException("When parsing {}, required property missing: {}".format(what, prop))
 
 
 class Protocol:
@@ -381,7 +381,7 @@ class Protocol:
 
             for debuggable_types in json['debuggableTypes']:
                 if debuggable_types not in _ALLOWED_DEBUGGABLE_TYPE_STRINGS:
-                    raise ParseException('Malformed domain specification: debuggableTypes for domain %s is an unsupported string. Was: "%s", Allowed values: %s' % (json['domain'], json['debuggableTypes'], ', '.join(_ALLOWED_DEBUGGABLE_TYPE_STRINGS)))
+                    raise ParseException('Malformed domain specification: debuggableTypes for domain {} is an unsupported string. Was: "{}", Allowed values: {}'.format(json['domain'], json['debuggableTypes'], ', '.join(_ALLOWED_DEBUGGABLE_TYPE_STRINGS)))
 
             debuggable_types = json.get('debuggableTypes')
 
@@ -391,12 +391,12 @@ class Protocol:
 
             for target_types in json['targetTypes']:
                 if target_types not in _ALLOWED_TARGET_TYPE_STRINGS:
-                    raise ParseException('Malformed domain specification: targetTypes for domain %s is an unsupported string. Was: "%s", Allowed values: %s' % (json['domain'], json['targetTypes'], ', '.join(_ALLOWED_TARGET_TYPE_STRINGS)))
+                    raise ParseException('Malformed domain specification: targetTypes for domain {} is an unsupported string. Was: "{}", Allowed values: {}'.format(json['domain'], json['targetTypes'], ', '.join(_ALLOWED_TARGET_TYPE_STRINGS)))
 
             target_types = json.get('targetTypes')
 
             if debuggable_types and not validate_target_types(debuggable_types, target_types):
-                raise ParseException('Malformed domain specification: domain %s has an item in targetTypes "%s" that is not supported by any value in debuggableTypes "%s".' % (json['domain'], target_types, debuggable_types))
+                raise ParseException('Malformed domain specification: domain {} has an item in targetTypes "{}" that is not supported by any value in debuggableTypes "{}".'.format(json['domain'], target_types, debuggable_types))
 
         if 'version' in json:
             if not isinstance(json['version'], int):
@@ -460,14 +460,14 @@ class Protocol:
 
             for target_type in target_types:
                 if target_type not in _ALLOWED_TARGET_TYPE_STRINGS:
-                    raise ParseException('Malformed domain specification: targetTypes list for command %s is an unsupported string. Was: "%s", Allowed values: %s' % (json['name'], json['targetTypes'], ', '.join(_ALLOWED_TARGET_TYPE_STRINGS)))
+                    raise ParseException('Malformed domain specification: targetTypes list for command {} is an unsupported string. Was: "{}", Allowed values: {}'.format(json['name'], json['targetTypes'], ', '.join(_ALLOWED_TARGET_TYPE_STRINGS)))
 
             duplicate_types = find_duplicates(target_types)
             if len(duplicate_types) > 0:
                 raise ParseException("Malformed domain specification: targetTypes list for command %s has duplicate items" % json['name'])
 
             if debuggable_types and not validate_target_types(debuggable_types, target_types):
-                raise ParseException('Malformed domain specification: command %s has an item in targetTypes "%s" that is not supported by any value in debuggableTypes "%s".' % (json['name'], target_types, debuggable_types))
+                raise ParseException('Malformed domain specification: command {} has an item in targetTypes "{}" that is not supported by any value in debuggableTypes "{}".'.format(json['name'], target_types, debuggable_types))
 
         if 'parameters' in json:
             if not isinstance(json['parameters'], list):
@@ -503,14 +503,14 @@ class Protocol:
 
             for target_type in target_types:
                 if target_type not in _ALLOWED_TARGET_TYPE_STRINGS:
-                    raise ParseException('Malformed domain specification: targetTypes for event %s is an unsupported string. Was: "%s", Allowed values: %s' % (json['name'], json['targetTypes'], ', '.join(_ALLOWED_TARGET_TYPE_STRINGS)))
+                    raise ParseException('Malformed domain specification: targetTypes for event {} is an unsupported string. Was: "{}", Allowed values: {}'.format(json['name'], json['targetTypes'], ', '.join(_ALLOWED_TARGET_TYPE_STRINGS)))
 
             duplicate_types = find_duplicates(target_types)
             if len(duplicate_types) > 0:
                 raise ParseException("Malformed domain specification: targetTypes list for event %s has duplicate items" % json['name'])
 
             if debuggable_types and not validate_target_types(debuggable_types, target_types):
-                raise ParseException('Malformed domain specification: event %s has an item in targetTypes "%s" that is not supported by any value in debuggableTypes "%s".' % (json['name'], target_types, debuggable_types))
+                raise ParseException('Malformed domain specification: event {} has an item in targetTypes "{}" that is not supported by any value in debuggableTypes "{}".'.format(json['name'], target_types, debuggable_types))
 
         if 'parameters' in json:
             if not isinstance(json['parameters'], list):
@@ -531,7 +531,7 @@ class Protocol:
         return Parameter(json['name'], type_ref, json.get('optional', False), json.get('description', ""))
 
     def resolve_types(self):
-        qualified_declared_type_names = set(['boolean', 'string', 'integer', 'number', 'enum', 'array', 'object', 'any'])
+        qualified_declared_type_names = {'boolean', 'string', 'integer', 'number', 'enum', 'array', 'object', 'any'}
 
         self.types_by_name['string'] = PrimitiveType('string')
         for _primitive_type in ['boolean', 'integer', 'number']:
@@ -566,7 +566,7 @@ class Protocol:
                 else:
                     type_instance = AliasedType(declaration, domain, declaration.type_ref)
 
-                log.debug("< Created fresh type %r for declaration %s" % (type_instance, qualified_type_name))
+                log.debug("< Created fresh type {!r} for declaration {}".format(type_instance, qualified_type_name))
                 self.types_by_name[qualified_type_name] = type_instance
 
         # Resolve all type references recursively.
@@ -581,7 +581,7 @@ class Protocol:
             found_type.resolve_type_references(self)
             return found_type
 
-        raise TypecheckException("Lookup failed for type declaration: %s (referenced from domain: %s)" % (declaration.type_name, domain.domain_name))
+        raise TypecheckException("Lookup failed for type declaration: {} (referenced from domain: {})".format(declaration.type_name, domain.domain_name))
 
     def lookup_type_reference(self, type_ref, domain):
         # If reference is to an anonymous array type, create a fresh instance.
@@ -615,7 +615,7 @@ class Protocol:
             log.debug("< Lookup succeeded for primitive or qualified type: %s" % found_type.qualified_name())
             return found_type
 
-        raise TypecheckException("Lookup failed for type reference: %s (referenced from domain: %s)" % (type_ref.referenced_name(), domain.domain_name))
+        raise TypecheckException("Lookup failed for type reference: {} (referenced from domain: {})".format(type_ref.referenced_name(), domain.domain_name))
 
 
 class Domain:

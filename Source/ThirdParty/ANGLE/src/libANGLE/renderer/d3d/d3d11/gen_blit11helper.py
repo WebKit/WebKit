@@ -276,7 +276,7 @@ def get_shader_filenames():
                 continue
             if len(blitshader) == 3:
                 filenames.append(
-                    ("    \"d3d11/shaders/compiled/{0}\",").format(blitshader[2].replace(
+                    ("    \"d3d11/shaders/compiled/{}\",").format(blitshader[2].replace(
                         "*", dimension.lower())))
 
     return filenames

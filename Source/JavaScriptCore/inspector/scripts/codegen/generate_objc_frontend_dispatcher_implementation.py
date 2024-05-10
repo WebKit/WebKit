@@ -77,7 +77,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
             return ''
 
         lines = []
-        objc_name = '%s%sDomainEventDispatcher' % (self.objc_prefix(), domain.domain_name)
+        objc_name = '{}{}DomainEventDispatcher'.format(self.objc_prefix(), domain.domain_name)
         lines.append('@implementation %s' % objc_name)
         lines.append('{')
         lines.append('    AugmentableInspectorController* _controller;')
@@ -109,24 +109,24 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         required_pointer_parameters = [parameter for parameter in event.event_parameters if not parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type)]
         for parameter in required_pointer_parameters:
             var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
-            lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(%s, @"%s");' % (var_name, var_name))
+            lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER({}, @"{}");'.format(var_name, var_name))
             objc_array_class = self.objc_class_for_array_type(parameter.type)
             if objc_array_class and objc_array_class.startswith(self.objc_prefix()):
-                lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
+                lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY({}, [{} class]);'.format(var_name, objc_array_class))
 
         optional_pointer_parameters = [parameter for parameter in event.event_parameters if parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type)]
         for parameter in optional_pointer_parameters:
             var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
-            lines.append('    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(%s, @"%s");' % (var_name, var_name))
+            lines.append('    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER({}, @"{}");'.format(var_name, var_name))
             objc_array_class = self.objc_class_for_array_type(parameter.type)
             if objc_array_class and objc_array_class.startswith(self.objc_prefix()):
-                lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_OPTIONAL_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
+                lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_OPTIONAL_ARRAY({}, [{} class]);'.format(var_name, objc_array_class))
 
         if required_pointer_parameters or optional_pointer_parameters:
             lines.append('')
 
         lines.append('    auto protocol_jsonMessage = JSON::Object::create();')
-        lines.append('    protocol_jsonMessage->setString("method"_s, "%s.%s"_s);' % (domain.domain_name, event.event_name))
+        lines.append('    protocol_jsonMessage->setString("method"_s, "{}.{}"_s);'.format(domain.domain_name, event.event_name))
         if event.event_parameters:
             lines.extend(self._generate_event_out_parameters(domain, event))
         lines.append('    router.sendEvent(protocol_jsonMessage->toJSONString());')
@@ -139,9 +139,9 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         pairs = []
         for parameter in event.event_parameters:
             param_name = parameter.parameter_name
-            pairs.append('%s:(%s)%s' % (param_name, self.objc_type_for_param(domain, event.event_name, parameter), param_name))
+            pairs.append('{}:({}){}'.format(param_name, self.objc_type_for_param(domain, event.event_name, parameter), param_name))
         pairs[0] = ucfirst(pairs[0])
-        return '- (void)%sWith%s' % (event.event_name, ' '.join(pairs))
+        return '- (void){}With{}'.format(event.event_name, ' '.join(pairs))
 
     def _generate_event_out_parameters(self, domain, event):
         lines = []
@@ -152,9 +152,9 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
             safe_var_name = '(*%s)' % var_name if parameter.is_optional else var_name
             export_expression = self.objc_protocol_export_expression_for_variable(parameter.type, safe_var_name)
             if not parameter.is_optional:
-                lines.append('    protocol_paramsObject->%s("%s"_s, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
+                lines.append('    protocol_paramsObject->{}("{}"_s, {});'.format(keyed_set_method, parameter.parameter_name, export_expression))
             else:
                 lines.append('    if (%s)' % (parameter.parameter_name))
-                lines.append('        protocol_paramsObject->%s("%s"_s, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
+                lines.append('        protocol_paramsObject->{}("{}"_s, {});'.format(keyed_set_method, parameter.parameter_name, export_expression))
         lines.append('    protocol_jsonMessage->setObject("params"_s, WTFMove(protocol_paramsObject));')
         return lines

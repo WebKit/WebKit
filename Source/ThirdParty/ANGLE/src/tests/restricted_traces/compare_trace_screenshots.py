@@ -116,8 +116,8 @@ def versus_native(args):
             logging.debug("Running " + command)
             diff = subprocess.run(command, shell=True, capture_output=True)
             for line in diff.stderr.splitlines():
-                if "unable to open image".encode('UTF-8') in line:
-                    results.append("NA".encode('UTF-8'))
+                if b"unable to open image" in line:
+                    results.append(b"NA")
                 else:
                     results.append(diff.stderr)
             logging.debug(" for " + trace + " " + str(fuzz) + "%")
@@ -159,8 +159,8 @@ def versus_upgrade(args):
                                                             after_image) + " " + diff_file
         diff = subprocess.run(command, shell=True, capture_output=True)
         for line in diff.stderr.splitlines():
-            if "unable to open image".encode('UTF-8') in line:
-                results.append("NA".encode('UTF-8'))
+            if b"unable to open image" in line:
+                results.append(b"NA")
             else:
                 # If the last element of the diff isn't zero, there was a pixel diff
                 if line.split()[-1] != b'(0)':

@@ -179,7 +179,7 @@ class BuiltinFunction:
         return BuiltinFunction(function_name, function_source, parameters, is_async, is_constructor, is_link_time_constant, is_naked_constructor, is_always_inline, intrinsic, visibility, overridden_name)
 
     def __str__(self):
-        interface = "%s(%s)" % (self.function_name, ', '.join(self.parameters))
+        interface = "{}({})".format(self.function_name, ', '.join(self.parameters))
         if self.is_constructor:
             interface = interface + " [Constructor]"
 
@@ -238,7 +238,7 @@ class BuiltinsCollection:
             years = set(copyrightYearRegExp.findall(line))
             ownerIndex = ownerStartRegExp.search(line).start()
             owner = line[ownerIndex:]
-            log.debug("Found years: %s and owner: %s" % (years, owner))
+            log.debug("Found years: {} and owner: {}".format(years, owner))
             if owner not in owner_to_years:
                 owner_to_years[owner] = set()
 
@@ -249,7 +249,7 @@ class BuiltinsCollection:
         for owner, years in list(owner_to_years.items()):
             sorted_years = list(years)
             sorted_years.sort()
-            result.append("%s %s" % (', '.join(sorted_years), owner))
+            result.append("{} {}".format(', '.join(sorted_years), owner))
 
         return result
 
@@ -298,7 +298,7 @@ class BuiltinsCollection:
 
         for match in keyValueAnnotationCommentRegExp.finditer(text):
             (key, value) = match.group(1, 2)
-            log.debug("Found annotation: '%s' => '%s'" % (key, value))
+            log.debug("Found annotation: '{}' => '{}'".format(key, value))
             if key in annotations:
                 raise ParseException("Duplicate annotation found: %s" % key)
 

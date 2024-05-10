@@ -79,7 +79,7 @@ def run_flex(basename):
             ret, num_to_read );
         yyg->yy_n_chars = static_cast<int>(ret);"""
 
-    with open(output_source, 'r') as flex_output:
+    with open(output_source) as flex_output:
         output = flex_output.read()
 
         # If flex's output changes such that this line no longer exists, the patch needs to be

@@ -161,7 +161,7 @@ class Trie:
                 base = "code"
                 if baseIndex > 0:
                     base = "code + %d" % baseIndex
-                comparison = ("compareCharacters(%s, " % (base,)) + ", ".join(test) + ")"
+                comparison = ("compareCharacters({}, ".format(base)) + ", ".join(test) + ")"
             if itemCount == 0:
                 print(str + "if (" + comparison + ") {")
             else:

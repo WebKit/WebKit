@@ -26,7 +26,7 @@ import angle_path_util
 ANGLE_TRACE_TEST_SUITE = 'angle_trace_tests'
 
 
-class _Global(object):
+class _Global:
     initialized = False
     is_android = False
     current_suite = None
@@ -39,7 +39,7 @@ def _ApkPath(suite_name):
     return os.path.join('%s_apk' % suite_name, '%s-debug.apk' % suite_name)
 
 
-@functools.lru_cache()
+@functools.lru_cache
 def _FindAapt():
     build_tools = (
         pathlib.Path(angle_path_util.ANGLE_ROOT_DIR) / 'third_party' / 'android_sdk' / 'public' /
@@ -52,7 +52,7 @@ def _FindAapt():
 
 
 def _RemovePrefix(str, prefix):
-    assert str.startswith(prefix), 'Expected prefix %s, got: %s' % (prefix, str)
+    assert str.startswith(prefix), 'Expected prefix {}, got: {}'.format(prefix, str)
     return str[len(prefix):]
 
 
@@ -113,7 +113,7 @@ def _Run(cmd):
     return output
 
 
-@functools.lru_cache()
+@functools.lru_cache
 def _FindAdb():
     platform_tools = (
         pathlib.Path(angle_path_util.ANGLE_ROOT_DIR) / 'third_party' / 'android_sdk' / 'public' /
@@ -249,7 +249,7 @@ def _CompareHashes(local_path, device_path):
 
     if _Global.use_run_as and device_path.startswith('/data'):
         # Use run-as for files that reside on /data, which aren't accessible without root
-        cmd = "run-as com.android.angle.test sh -c '{cmd}'".format(cmd=cmd)
+        cmd = f"run-as com.android.angle.test sh -c '{cmd}'"
 
     device_hash = _AdbShell(cmd).decode().strip()
     if not device_hash:
@@ -278,7 +278,7 @@ def _PrepareTestSuite(suite_name):
     if _CheckSameApkInstalled(apk_path):
         logging.info('Skipping APK install because host and device hashes match')
     else:
-        logging.info('Installing apk path=%s size=%s' % (apk_path, os.path.getsize(apk_path)))
+        logging.info('Installing apk path={} size={}'.format(apk_path, os.path.getsize(apk_path)))
         _AdbRun(['install', '-r', '-d', apk_path])
 
     permissions = [
@@ -351,7 +351,7 @@ def PrepareRestrictedTraces(traces):
 
         if _Global.use_run_as:
             tmp_path = posixpath.join(app_tmp_path, lib_name)
-            logging.debug('_PushToAppDir: Pushing %s to %s' % (local_path, tmp_path))
+            logging.debug('_PushToAppDir: Pushing {} to {}'.format(local_path, tmp_path))
             try:
                 _AdbRun(['push', local_path, tmp_path])
                 _AdbShell('run-as com.android.angle.test cp ' + tmp_path + ' ./angle_traces/')
@@ -436,7 +436,7 @@ def _SetCaptureProps(env, device_out_dir):
         # out_dir is special because the corresponding env var is a host path not a device path
         'setprop debug.angle.capture.out_dir ' + (device_out_dir or empty_value),
     ] + [
-        'setprop %s %s' % (v, env.get(k, empty_value)) for k, v in sorted(capture_var_map.items())
+        'setprop {} {}'.format(v, env.get(k, empty_value)) for k, v in sorted(capture_var_map.items())
     ]
 
     _AdbShell('\n'.join(shell_cmds))

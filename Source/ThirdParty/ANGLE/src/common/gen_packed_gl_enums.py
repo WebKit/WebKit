@@ -140,7 +140,7 @@ def write_header(enums, path_prefix, file_name, data_source_name, includes, name
         namespace=namespace,
         api_enum_name=api_enum_name)
 
-    with (open(path_prefix + file_name, 'wt')) as f:
+    with (open(path_prefix + file_name, 'w')) as f:
         f.write(header)
 
 
@@ -235,7 +235,7 @@ def write_cpp(enums, path_prefix, file_name, data_source_name, namespace, api_en
         namespace=namespace,
         api_enum_name=api_enum_name)
 
-    with (open(path_prefix + file_name, 'wt')) as f:
+    with (open(path_prefix + file_name, 'w')) as f:
         f.write(cpp)
 
 

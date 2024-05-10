@@ -84,7 +84,7 @@ default_case_with_return_template = """\
 
 
 def winext(name, ext):
-    return ("%s.%s" % (name, ext)) if sys.platform == "win32" else name
+    return ("{}.{}".format(name, ext)) if sys.platform == "win32" else name
 
 class SubProcess():
 
@@ -209,7 +209,7 @@ class ChildProcessesManager():
             gn_args.append(('angle_assert_always_on', 'true'))
         if self._args.asan:
             gn_args.append(('is_asan', 'true'))
-        args_str = ' '.join(['%s=%s' % (k, v) for (k, v) in gn_args])
+        args_str = ' '.join(['{}={}'.format(k, v) for (k, v) in gn_args])
         cmd = [self._gn_path, 'gen', '--args=%s' % args_str, build_dir]
         self._logger.info(' '.join(cmd))
         return self.RunSubprocess(cmd, pipe_stdout=pipe_stdout)
@@ -381,7 +381,7 @@ class Test():
 
 
 def _FormatEnv(env):
-    return ' '.join(['%s=%s' % (k, v) for (k, v) in env.items()])
+    return ' '.join(['{}={}'.format(k, v) for (k, v) in env.items()])
 
 
 class TestBatch():
@@ -411,10 +411,10 @@ class TestBatch():
         }
 
         if args.mec > 0:
-            extra_env['ANGLE_CAPTURE_FRAME_START'] = '{}'.format(args.mec)
-            extra_env['ANGLE_CAPTURE_FRAME_END'] = '{}'.format(args.mec + 1)
+            extra_env['ANGLE_CAPTURE_FRAME_START'] = f'{args.mec}'
+            extra_env['ANGLE_CAPTURE_FRAME_END'] = f'{args.mec + 1}'
         else:
-            extra_env['ANGLE_CAPTURE_FRAME_END'] = '{}'.format(self.CAPTURE_FRAME_END)
+            extra_env['ANGLE_CAPTURE_FRAME_END'] = f'{self.CAPTURE_FRAME_END}'
 
         if args.expose_nonconformant_features:
             extra_env[
@@ -433,7 +433,7 @@ class TestBatch():
             '--angle-per-test-capture-label',
             '--results-file=' + results_file,
         ]
-        self.logger.info('%s %s' % (_FormatEnv(extra_env), ' '.join(cmd)))
+        self.logger.info('{} {}'.format(_FormatEnv(extra_env), ' '.join(cmd)))
 
         returncode, output = child_processes_manager.RunSubprocess(
             cmd, env, timeout=SUBPROCESS_TIMEOUT)
@@ -515,7 +515,7 @@ class TestBatch():
         env = {**os.environ.copy(), **extra_env}
 
         run_cmd = GetRunCommand(self.args, replay_exe_path)
-        self.logger.info('%s %s' % (_FormatEnv(extra_env), ' '.join(run_cmd)))
+        self.logger.info('{} {}'.format(_FormatEnv(extra_env), ' '.join(run_cmd)))
 
         for test in tests:
             self.UnlinkContextStateJsonFilesIfPresent(replay_build_dir, test.GetLabel())
@@ -569,7 +569,7 @@ class TestBatch():
         while True:
             capture_file = "{}/{}_ContextCaptured{}.json".format(replay_build_dir, test_name,
                                                                  frame)
-            replay_file = "{}/{}_ContextReplayed{}.json".format(replay_build_dir, test_name, frame)
+            replay_file = f"{replay_build_dir}/{test_name}_ContextReplayed{frame}.json"
             if os.path.exists(capture_file):
                 os.unlink(capture_file)
             if os.path.exists(replay_file):
@@ -585,11 +585,11 @@ class TestBatch():
         while True:
             capture_file = "{}/{}_ContextCaptured{}.json".format(replay_build_dir, test_name,
                                                                  frame)
-            replay_file = "{}/{}_ContextReplayed{}.json".format(replay_build_dir, test_name, frame)
+            replay_file = f"{replay_build_dir}/{test_name}_ContextReplayed{frame}.json"
             if os.path.exists(capture_file) and os.path.exists(replay_file):
                 found = True
-                captured_context = open(capture_file, "r").readlines()
-                replayed_context = open(replay_file, "r").readlines()
+                captured_context = open(capture_file).readlines()
+                replayed_context = open(replay_file).readlines()
                 for line in difflib.unified_diff(
                         captured_context, replayed_context, fromfile=capture_file,
                         tofile=replay_file):
@@ -664,7 +664,7 @@ class TestExpectation():
         expected_results_filename = "capture_replay_expectations.txt"
         expected_results_path = os.path.join(REPLAY_SAMPLE_FOLDER, expected_results_filename)
         self._asan = args.asan
-        with open(expected_results_path, "rt") as f:
+        with open(expected_results_path) as f:
             for line in f:
                 l = line.strip()
                 if l != "" and not l.startswith("#"):
@@ -806,7 +806,7 @@ def RunTests(args, worker_id, job_queue, result_list, message_queue, logger, nin
             child_processes_manager.KillAll()
             break
         except Exception as e:
-            logger.error('RunTestsException: %s\n%s' % (repr(e), traceback.format_exc()))
+            logger.error('RunTestsException: {}\n{}'.format(repr(e), traceback.format_exc()))
             child_processes_manager.KillAll()
             pass
     message_queue.put(child_processes_manager.runtimes)
@@ -1002,7 +1002,7 @@ def main(args):
             for real_result, test_list in test_batch_result.items():
                 for test in test_list:
                     if test_expectation.IsFlaky(test):
-                        flaky_results.append('{} ({})'.format(test, real_result))
+                        flaky_results.append(f'{test} ({real_result})')
                         continue
 
                     expected_result = test_expectation_for_list.get(test, GroupedResult.Passed)
@@ -1016,12 +1016,12 @@ def main(args):
         logger.info('Elapsed time: %.2lf seconds' % (end_time - start_time))
         logger.info('')
         logger.info('Runtimes by process:\n%s' %
-                    '\n'.join('%s: %.2lf seconds' % (k, v) for (k, v) in summed_runtimes.items()))
+                    '\n'.join('{}: {:.2f} seconds'.format(k, v) for (k, v) in summed_runtimes.items()))
 
         if len(flaky_results):
             logger.info("Test(s) marked as flaky (not considered a failure):")
             for line in flaky_results:
-                logger.info("    {}".format(line))
+                logger.info(f"    {line}")
             logger.info("")
 
         retval = EXIT_SUCCESS
@@ -1039,9 +1039,9 @@ def main(args):
             logger.info('')
             for result, count in unexpected_count.items():
                 if count > 0 and result != GroupedResult.Skipped:
-                    logger.info("Unexpected '{}' ({}):".format(result, count))
+                    logger.info(f"Unexpected '{result}' ({count}):")
                     for test_result in unexpected_test_results[result]:
-                        logger.info('     {}'.format(test_result))
+                        logger.info(f'     {test_result}')
                     logger.info('')
 
         logger.info('')

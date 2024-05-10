@@ -209,7 +209,7 @@ def get_trace_key_frame(trace):
     if 'KeyFrames' in trace_info['TraceMetadata']:
         # KeyFrames is an array, but we only use the first value for now
         keyframe = str(trace_info['TraceMetadata']['KeyFrames'][0])
-        logging.info('trace %s is using a keyframe of %s' % (trace, keyframe))
+        logging.info('trace {} is using a keyframe of {}'.format(trace, keyframe))
 
     return keyframe
 
@@ -339,7 +339,7 @@ def _get_batches(traces, batch_size):
 
 
 def _get_gtest_filter_for_batch(args, batch):
-    expanded = ['%s%s' % (DEFAULT_TEST_PREFIX, trace) for trace in batch]
+    expanded = ['{}{}'.format(DEFAULT_TEST_PREFIX, trace) for trace in batch]
     return '--gtest_filter=%s' % ':'.join(expanded)
 
 

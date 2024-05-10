@@ -322,7 +322,7 @@ def has_all_includes(target_name: str, descs: dict) -> bool:
                 #print('  acceptable_sources:')
                 #for x in sorted(acceptable_sources):
                 #    print('   ', x)
-                print('Warning in {}: {}: Included file must be listed in the GN target or its public dependency: {}'.format(target_name, cur_file, include), file=sys.stderr)
+                print(f'Warning in {target_name}: {cur_file}: Included file must be listed in the GN target or its public dependency: {include}', file=sys.stderr)
                 ret = False
             #print('Looks valid:', m.group())
             continue

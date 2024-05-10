@@ -31,8 +31,8 @@ import re
 
 class Wasm:
     def __init__(self, scriptName, jsonPath):
-        wasmFile = open(jsonPath, "r")
-        wasm = json.load(open(jsonPath, "r"))
+        wasmFile = open(jsonPath)
+        wasm = json.load(open(jsonPath))
         wasmFile.close()
         for pre in wasm["preamble"]:
             if pre["name"] == "version":

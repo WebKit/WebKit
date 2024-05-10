@@ -321,7 +321,7 @@ def get_step_info(build_name, step_name):
 
         found_stat = True
         line_columns = line.split(INFO_TAG, 1)[1].split(':')
-        if len(line_columns) is not 3:
+        if len(line_columns) != 3:
             LOGGER.warning("Line improperly formatted: '" + line + "'\n")
             continue
         key = line_columns[1].strip()

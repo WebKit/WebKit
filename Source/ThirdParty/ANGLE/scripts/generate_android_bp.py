@@ -88,9 +88,9 @@ def write_blueprint_key_value(output, name, value, indent=1):
         output.append(tabs(indent) + '},')
         return
     if isinstance(value, bool):
-        output.append(tabs(indent) + '%s: %s,' % (name, 'true' if value else 'false'))
+        output.append(tabs(indent) + '{}: {},'.format(name, 'true' if value else 'false'))
         return
-    output.append(tabs(indent) + '%s: "%s",' % (name, value))
+    output.append(tabs(indent) + '{}: "{}",'.format(name, value))
 
 
 def write_blueprint(output, target_type, values):
@@ -611,7 +611,7 @@ def main():
 
     infos = {}
     for abi in ABI_TARGETS:
-        with open(args['gn_json_' + gn_abi(abi)], 'r') as f:
+        with open(args['gn_json_' + gn_abi(abi)]) as f:
             infos[abi] = json.load(f)
 
     build_info = BuildInfo(infos)

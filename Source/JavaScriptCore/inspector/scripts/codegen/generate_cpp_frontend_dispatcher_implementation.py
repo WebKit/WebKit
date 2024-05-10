@@ -103,7 +103,7 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
             if _type.is_enum():
                 if parameter.is_optional:
                     parameter_value = '*' + parameter_value
-                parameter_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), parameter_value)
+                parameter_value = 'Protocol::{}::getEnumConstantValue({})'.format(self.helpers_namespace(), parameter_value)
             elif CppGenerator.should_release_argument(_type, parameter.is_optional):
                 parameter_value = parameter_value + '.releaseNonNull()'
             elif CppGenerator.should_dereference_argument(_type, parameter.is_optional):
@@ -124,7 +124,7 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
             else:
                 parameter_assignments.append('    protocol_paramsObject->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % parameter_args)
 
-            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_event_parameter(_type, parameter.is_optional), parameter_name))
+            formal_parameters.append('{} {}'.format(CppGenerator.cpp_type_for_event_parameter(_type, parameter.is_optional), parameter_name))
 
         event_args = {
             'domainName': domain.domain_name,

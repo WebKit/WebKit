@@ -191,7 +191,7 @@ def dump_string_to_value_mapping(enums_and_values):
         else:
             return "0xFFFFFFFF"
 
-    return '\n'.join('{"%s", %s},' % (k, f(v)) for k, v in sorted(enums_and_values))
+    return '\n'.join('{{"{}", {}}},'.format(k, f(v)) for k, v in sorted(enums_and_values))
 
 
 def main(header_output_path, source_output_path):
