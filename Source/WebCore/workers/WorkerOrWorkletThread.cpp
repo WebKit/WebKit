@@ -63,7 +63,7 @@ static UniqueRef<WorkerRunLoop> constructRunLoop(WorkerThreadMode workerThreadMo
 }
 
 WorkerOrWorkletThread::WorkerOrWorkletThread(const String& inspectorIdentifier, WorkerThreadMode workerThreadMode)
-    : m_inspectorIdentifier(inspectorIdentifier)
+    : m_inspectorIdentifier(crossThreadCopy(inspectorIdentifier)) // inspectorIdentifier is accessed from the main thread.
     , m_runLoop(constructRunLoop(workerThreadMode))
 {
     workerOrWorkletThreads().add(*this);
