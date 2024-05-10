@@ -957,6 +957,8 @@ css/calc/CSSCalcInvertNode.cpp
 css/calc/CSSCalcNegateNode.cpp
 css/calc/CSSCalcOperationNode.cpp
 css/calc/CSSCalcPrimitiveValueNode.cpp
+css/calc/CSSCalcSymbolNode.cpp
+css/calc/CSSCalcSymbolsAllowed.cpp
 css/calc/CSSCalcSymbolTable.cpp
 css/calc/CSSCalcValue.cpp
 css/color/CSSResolvedColorMix.cpp
@@ -986,9 +988,11 @@ css/parser/CSSPropertyParserConsumer+Number.cpp
 css/parser/CSSPropertyParserConsumer+Percent.cpp
 css/parser/CSSPropertyParserConsumer+Primitives.cpp
 css/parser/CSSPropertyParserConsumer+RawResolver.cpp
+css/parser/CSSPropertyParserConsumer+RawTypes.cpp
 css/parser/CSSPropertyParserConsumer+Resolution.cpp
 css/parser/CSSPropertyParserConsumer+Symbol.cpp
 css/parser/CSSPropertyParserConsumer+Time.cpp
+css/parser/CSSPropertyParserConsumer+UnevaluatedCalc.cpp
 css/parser/CSSPropertyParserHelpers.cpp
 css/parser/CSSPropertyParserWorkerSafe.cpp
 css/parser/CSSSelectorParser.cpp

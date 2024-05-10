@@ -25,11 +25,14 @@
 #pragma once
 
 #include "CSSCalcParser.h"
+#include "CSSCalcSymbolsAllowed.h"
 #include "CSSCalcValue.h"
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserConsumer+RawTypes.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "CalculationCategory.h"
 #include "Length.h"
 #include <limits>
@@ -51,12 +54,12 @@ struct IntegerKnownTokenTypeFunctionConsumer {
     using RawType = IntegerRaw<IntType, integerRange>;
 
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<RawType>> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
+    static std::optional<UnevaluatedCalc<RawType>> consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
     {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, symbolTable, options)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, WTFMove(symbolsAllowed), options)) {
             range = rangeCopy;
             return {{ value.releaseNonNull() }};
         }
@@ -69,7 +72,7 @@ struct IntegerKnownTokenTypeNumberConsumer {
     using RawType = IntegerRaw<IntType, integerRange>;
 
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<RawType> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    static std::optional<RawType> consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
     {
         ASSERT(range.peek().type() == NumberToken);
 

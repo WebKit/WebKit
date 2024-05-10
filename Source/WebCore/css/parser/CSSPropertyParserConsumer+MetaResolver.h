@@ -52,9 +52,9 @@ struct MetaResolver : Base {
         });
     }
 
-    static ResultType consumeAndResolve(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
+    static ResultType consumeAndResolve(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
     {
-        auto result = MetaConsumer<Ts...>::consume(range, symbolTable, options);
+        auto result = MetaConsumer<Ts...>::consume(range, WTFMove(symbolsAllowed), options);
         if (!result)
             return { };
         return resolve(WTFMove(*result), symbolTable, options);

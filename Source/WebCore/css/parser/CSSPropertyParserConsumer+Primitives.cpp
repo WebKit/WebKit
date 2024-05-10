@@ -25,7 +25,6 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 
-#include "CSSCalcValue.h"
 #include "CSSParserTokenRange.h"
 
 namespace WebCore {
@@ -42,11 +41,6 @@ bool shouldAcceptUnitlessValue(double value, CSSPropertyParserOptions options)
         return true;
 
     return options.parserMode == HTMLQuirksMode && options.unitless == UnitlessQuirk::Allow;
-}
-
-bool equal(const Ref<CSSCalcValue>& a, const Ref<CSSCalcValue>& b)
-{
-    return a->equals(b.get());
 }
 
 bool consumeCommaIncludingWhitespace(CSSParserTokenRange& range)

@@ -48,6 +48,7 @@
 #include "CSSPropertyParserConsumer+Resolution.h"
 #include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
 #include "CSSPropertyParserConsumer+Time.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "CSSPropertyParsing.h"
 
 #include "CSSBackgroundRepeatValue.h"
@@ -90,7 +91,6 @@
 #include "CSSRayValue.h"
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
-#include "CSSResolvedColorMix.h"
 #include "CSSScrollValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSTimingFunctionValue.h"
@@ -134,7 +134,7 @@ struct ImageSetTypeFunctionRaw {
 struct ImageSetTypeFunctionRawKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
 
-    static std::optional<ImageSetTypeFunctionRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    static std::optional<ImageSetTypeFunctionRaw> consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
     {
         ASSERT(range.peek().type() == FunctionToken);
         if (range.peek().functionId() != CSSValueType)
@@ -202,10 +202,10 @@ static std::optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& ran
     switch (token.type()) {
     case FunctionToken: {
         // "[For calc()], the used value resulting from an expression must be clamped to the range allowed in the target context."
-        auto unresolvedCalc = NumberKnownTokenTypeFunctionConsumer::consume(range, { }, { });
-        if (!unresolvedCalc)
+        auto unevaluatedCalc = NumberKnownTokenTypeFunctionConsumer::consume(range, { }, { });
+        if (!unevaluatedCalc)
             return std::nullopt;
-        auto result = RawResolver<NumberRaw>::resolve(*unresolvedCalc, { }, { });
+        auto result = RawResolver<NumberRaw>::resolve(*unevaluatedCalc, { }, { });
         if (!result)
             return std::nullopt;
 #if !ENABLE(VARIATION_FONTS)

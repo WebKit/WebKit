@@ -50,4 +50,4 @@ bool CSSCalcSymbolTable::contains(CSSValueID valueID) const
     return m_table.contains(valueID);
 }
 
-}
+} // namespace WebCore

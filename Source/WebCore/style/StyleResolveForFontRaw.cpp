@@ -203,8 +203,8 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
         default:
             return 0.f;
         }
-    }, [&] (const CSSPropertyParserHelpers::LengthOrPercentRaw& lengthOrPercent) {
-        return WTF::switchOn(lengthOrPercent, [&] (const CSSPropertyParserHelpers::LengthRaw& length) {
+    }, [&] (const LengthOrPercentRaw& lengthOrPercent) {
+        return WTF::switchOn(lengthOrPercent, [&] (const LengthRaw& length) {
             auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
             fontCascade.update(context.cssFontSelector());
             // FIXME: Passing null for the RenderView parameter means that vw and vh units will evaluate to
@@ -215,7 +215,7 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
             // FIXME: How should root font units work in OffscreenCanvas?
             auto* document = dynamicDowncast<Document>(context);
             return static_cast<float>(CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(length.type, length.value, CSSPropertyFontSize, &fontCascade, document ? document->renderView() : nullptr));
-        }, [&] (const CSSPropertyParserHelpers::PercentRaw& percentage) {
+        }, [&] (const PercentRaw& percentage) {
             return static_cast<float>((parentSize * percentage.value) / 100.0);
         });
     });

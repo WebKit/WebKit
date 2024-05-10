@@ -27,12 +27,13 @@
 #include "CSSParserToken.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include <optional>
 #include <wtf/Brigand.h>
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
+class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
 namespace CSSPropertyParserHelpers {
@@ -41,17 +42,17 @@ std::optional<AngleRaw> validatedRange(AngleRaw, CSSPropertyParserOptions);
 
 struct AngleKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<AngleRaw>> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<UnevaluatedCalc<AngleRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct AngleKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<AngleRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<AngleRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct AngleKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<AngleRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<AngleRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<AngleRaw> {

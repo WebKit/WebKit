@@ -30,7 +30,6 @@
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
 class CSSParserTokenRange;
 class CSSPrimitiveValue;
 

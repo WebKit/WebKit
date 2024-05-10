@@ -51,8 +51,9 @@ private:
 
     std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData&) const final;
 
+    bool isResolvable() const final;
     bool isZero() const final { return m_child->isZero(); }
-    double doubleValue(CSSUnitType) const final;
+    double doubleValue(CSSUnitType, const CSSCalcSymbolTable&) const final;
     double computeLengthPx(const CSSToLengthConversionData&) const final;
     Type type() const final { return Type::CssCalcInvert; }
     CSSUnitType primitiveType() const final { return m_child->primitiveType(); }

@@ -31,10 +31,20 @@
 
 namespace WebCore {
 
+bool CSSCalcNegateNode::isResolvable() const
+{
+    return protectedChild()->isResolvable();
+}
+
 std::unique_ptr<CalcExpressionNode> CSSCalcNegateNode::createCalcExpression(const CSSToLengthConversionData& conversionData) const
 {
     auto childNode = protectedChild()->createCalcExpression(conversionData);
     return makeUnique<CalcExpressionNegation>(WTFMove(childNode));
+}
+
+double CSSCalcNegateNode::doubleValue(CSSUnitType unitType, const CSSCalcSymbolTable& symbolTable) const
+{
+    return -m_child->doubleValue(unitType, symbolTable);
 }
 
 void CSSCalcNegateNode::dump(TextStream& ts) const

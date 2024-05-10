@@ -27,12 +27,13 @@
 #include "CSSParserToken.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include <optional>
 #include <wtf/Brigand.h>
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
+class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
 namespace CSSPropertyParserHelpers {
@@ -41,17 +42,17 @@ std::optional<TimeRaw> validatedRange(TimeRaw, CSSPropertyParserOptions);
 
 struct TimeKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<TimeRaw>> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<UnevaluatedCalc<TimeRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct TimeKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<TimeRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<TimeRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct TimeKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<TimeRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<TimeRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<TimeRaw> {

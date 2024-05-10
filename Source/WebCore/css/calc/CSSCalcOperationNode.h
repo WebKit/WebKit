@@ -114,17 +114,14 @@ private:
 
     Type type() const final { return CssCalcOperation; }
 
-    bool isZero() const final
-    {
-        return !doubleValue(primitiveType());
-    }
-
+    bool isResolvable() const final;
+    bool isZero() const final;
     bool equals(const CSSCalcExpressionNode&) const final;
 
     std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData&) const final;
 
     CSSUnitType primitiveType() const final;
-    double doubleValue(CSSUnitType) const final;
+    double doubleValue(CSSUnitType, const CSSCalcSymbolTable&) const final;
     double computeLengthPx(const CSSToLengthConversionData&) const final;
 
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const final;

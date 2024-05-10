@@ -31,15 +31,20 @@
 
 namespace WebCore {
 
+bool CSSCalcInvertNode::isResolvable() const
+{
+    return protectedChild()->isResolvable();
+}
+
 std::unique_ptr<CalcExpressionNode> CSSCalcInvertNode::createCalcExpression(const CSSToLengthConversionData& conversionData) const
 {
     auto childNode = protectedChild()->createCalcExpression(conversionData);
     return makeUnique<CalcExpressionInversion>(WTFMove(childNode));
 }
 
-double CSSCalcInvertNode::doubleValue(CSSUnitType unitType) const
+double CSSCalcInvertNode::doubleValue(CSSUnitType unitType, const CSSCalcSymbolTable& symbolTable) const
 {
-    auto childValue = protectedChild()->doubleValue(unitType);
+    auto childValue = protectedChild()->doubleValue(unitType, symbolTable);
     if (!childValue)
         return std::numeric_limits<double>::infinity();
     return 1.0 / childValue;

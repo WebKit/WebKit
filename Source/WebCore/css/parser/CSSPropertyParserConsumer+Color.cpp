@@ -26,12 +26,14 @@
 #include "CSSPropertyParserConsumer+Color.h"
 
 #include "CSSCalcSymbolTable.h"
+#include "CSSCalcSymbolsAllowed.h"
 #include "CSSColorDescriptors.h"
 #include "CSSParser.h"
 #include "CSSParserContext.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
@@ -268,18 +270,18 @@ static std::optional<GetComponentResult<Descriptor, Index>> consumeAbsoluteCompo
     using TypeList = GetComponentResultTypeList<Descriptor, Index>;
     using Resolver = brigand::wrap<TypeList, RawResolverWrapper>;
 
-    return Resolver::consumeAndResolve(range, { }, { .parserMode = state.mode });
+    return Resolver::consumeAndResolve(range, { }, { }, { .parserMode = state.mode });
 }
 
 template<typename Descriptor, unsigned Index>
-static std::optional<GetComponentResult<Descriptor, Index>> consumeRelativeComponent(CSSParserTokenRange& range, ColorParserState& state, const CSSCalcSymbolTable& symbolTable)
+static std::optional<GetComponentResult<Descriptor, Index>> consumeRelativeComponent(CSSParserTokenRange& range, ColorParserState& state, CSSCalcSymbolsAllowed symbolsAllowed, const CSSCalcSymbolTable& symbolTable)
 {
     // Append `SymbolRaw` to the TypeList to allow unadorned symbols from the symbol
     // table to be consumed.
     using TypeList = brigand::append<GetComponentResultTypeList<Descriptor, Index>, brigand::list<SymbolRaw>>;
     using Resolver = brigand::wrap<TypeList, RawResolverWrapper>;
 
-    return Resolver::consumeAndResolve(range, symbolTable, { .parserMode = state.mode });
+    return Resolver::consumeAndResolve(range, WTFMove(symbolsAllowed), symbolTable, { .parserMode = state.mode });
 }
 
 template<typename Descriptor>
@@ -364,6 +366,17 @@ static std::optional<CSSColorParseType<Descriptor>> consumeRelativeComponents(CS
 {
     auto originComponents = asColorComponents(originAsColorType.resolved());
 
+    // FIXME: Using both CSSCalcSymbolsAllowed and CSSCalcSymbolTable is temporary while
+    // the remaining infrastructure for late resolved symbols is added, at which point,
+    // the symbol table will be moved to the explicit resolution step.
+
+    const CSSCalcSymbolsAllowed symbolsAllowed {
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER },
+        { std::get<1>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER },
+        { std::get<2>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER },
+        { std::get<3>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER }
+    };
+
     const CSSCalcSymbolTable symbolTable {
         { std::get<0>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[0] * std::get<0>(Descriptor::components).symbolMultiplier },
         { std::get<1>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[1] * std::get<1>(Descriptor::components).symbolMultiplier },
@@ -371,19 +384,19 @@ static std::optional<CSSColorParseType<Descriptor>> consumeRelativeComponents(CS
         { std::get<3>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
     };
 
-    auto c1 = consumeRelativeComponent<Descriptor, 0>(args, state, symbolTable);
+    auto c1 = consumeRelativeComponent<Descriptor, 0>(args, state, symbolsAllowed, symbolTable);
     if (!c1)
         return std::nullopt;
-    auto c2 = consumeRelativeComponent<Descriptor, 1>(args, state, symbolTable);
+    auto c2 = consumeRelativeComponent<Descriptor, 1>(args, state, symbolsAllowed, symbolTable);
     if (!c2)
         return std::nullopt;
-    auto c3 = consumeRelativeComponent<Descriptor, 2>(args, state, symbolTable);
+    auto c3 = consumeRelativeComponent<Descriptor, 2>(args, state, symbolsAllowed, symbolTable);
     if (!c3)
         return std::nullopt;
 
     std::optional<GetComponentResult<Descriptor, 3>> alpha;
     if (consumeSlashIncludingWhitespace(args)) {
-        alpha = consumeRelativeComponent<Descriptor, 3>(args, state, symbolTable);
+        alpha = consumeRelativeComponent<Descriptor, 3>(args, state, symbolsAllowed, symbolTable);
         if (!alpha)
             return std::nullopt;
     }

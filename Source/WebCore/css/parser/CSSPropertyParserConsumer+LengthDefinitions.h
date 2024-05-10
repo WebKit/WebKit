@@ -27,16 +27,14 @@
 #include "CSSParserToken.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include <optional>
 #include <wtf/Brigand.h>
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
+class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
-
-enum CSSParserMode : uint8_t;
-enum class ValueRange : uint8_t;
 
 namespace CSSPropertyParserHelpers {
 
@@ -44,17 +42,17 @@ std::optional<LengthRaw> validatedRange(LengthRaw, CSSPropertyParserOptions);
 
 struct LengthKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<LengthRaw>> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<UnevaluatedCalc<LengthRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct LengthKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<LengthRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<LengthRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct LengthKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<LengthRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<LengthRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<LengthRaw> {

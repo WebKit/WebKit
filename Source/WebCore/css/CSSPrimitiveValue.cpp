@@ -21,6 +21,7 @@
 #include "config.h"
 #include "CSSPrimitiveValue.h"
 
+#include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSHelper.h"
 #include "CSSMarkup.h"
@@ -1084,13 +1085,13 @@ double CSSPrimitiveValue::doubleValue(CSSUnitType unitType) const
 
 double CSSPrimitiveValue::doubleValue() const
 {
-    return isCalculated() ? m_value.calc->doubleValue() : m_value.number;
+    return isCalculated() ? m_value.calc->doubleValue({ }) : m_value.number;
 }
 
 double CSSPrimitiveValue::doubleValueDividingBy100IfPercentage() const
 {
     if (isCalculated())
-        return m_value.calc->primitiveType() == CSSUnitType::CSS_PERCENTAGE ? m_value.calc->doubleValue() / 100.0 : m_value.calc->doubleValue();
+        return m_value.calc->primitiveType() == CSSUnitType::CSS_PERCENTAGE ? m_value.calc->doubleValue({ }) / 100.0 : m_value.calc->doubleValue({ });
     if (isPercentage())
         return m_value.number / 100.0;
     return m_value.number;

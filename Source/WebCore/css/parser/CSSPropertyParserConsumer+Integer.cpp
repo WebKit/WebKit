@@ -37,7 +37,7 @@ namespace CSSPropertyParserHelpers {
 template<typename IntType, IntegerValueRange integerRange>
 static std::optional<IntType> consumeIntegerTypeRaw(CSSParserTokenRange& range)
 {
-    if (auto result = RawResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, { }, { }))
+    if (auto result = RawResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, { }, { }, { }))
         return result->value;
     return std::nullopt;
 }
@@ -45,7 +45,7 @@ static std::optional<IntType> consumeIntegerTypeRaw(CSSParserTokenRange& range)
 template<typename IntType, IntegerValueRange integerRange>
 static RefPtr<CSSPrimitiveValue> consumeIntegerType(CSSParserTokenRange& range)
 {
-    return CSSPrimitiveValueResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, { }, { });
+    return CSSPrimitiveValueResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, { }, { }, { });
 }
 
 std::optional<int> consumeIntegerRaw(CSSParserTokenRange& range)

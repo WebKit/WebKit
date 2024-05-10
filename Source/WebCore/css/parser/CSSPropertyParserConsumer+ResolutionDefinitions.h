@@ -27,12 +27,13 @@
 #include "CSSParserToken.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include <optional>
 #include <wtf/Brigand.h>
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
+class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
 namespace CSSPropertyParserHelpers {
@@ -41,12 +42,12 @@ std::optional<ResolutionRaw> validatedRange(ResolutionRaw, CSSPropertyParserOpti
 
 struct ResolutionKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<ResolutionRaw>> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<UnevaluatedCalc<ResolutionRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct ResolutionKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<ResolutionRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<ResolutionRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<ResolutionRaw> {

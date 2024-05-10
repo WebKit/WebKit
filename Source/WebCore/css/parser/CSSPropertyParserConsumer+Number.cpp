@@ -28,6 +28,7 @@
 
 #include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
+#include "CSSCalcSymbolsAllowed.h"
 #include "CSSCalcValue.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
@@ -43,12 +44,12 @@ std::optional<NumberRaw> validatedRange(NumberRaw value, CSSPropertyParserOption
     return value;
 }
 
-std::optional<UnevaluatedCalc<NumberRaw>> NumberKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
+std::optional<UnevaluatedCalc<NumberRaw>> NumberKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, symbolTable, options)) {
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, WTFMove(symbolsAllowed), options)) {
         range = rangeCopy;
         return {{ value.releaseNonNull() }};
     }
@@ -56,7 +57,7 @@ std::optional<UnevaluatedCalc<NumberRaw>> NumberKnownTokenTypeFunctionConsumer::
     return std::nullopt;
 }
 
-std::optional<NumberRaw> NumberKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
+std::optional<NumberRaw> NumberKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == NumberToken);
 
@@ -74,7 +75,7 @@ std::optional<NumberRaw> consumeNumberRaw(CSSParserTokenRange& range, ValueRange
     const auto options = CSSPropertyParserOptions {
         .valueRange = valueRange
     };
-    return RawResolver<NumberRaw>::consumeAndResolve(range, { }, options);
+    return RawResolver<NumberRaw>::consumeAndResolve(range, { }, { }, options);
 }
 
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange valueRange)
@@ -82,7 +83,7 @@ RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange v
     const auto options = CSSPropertyParserOptions {
         .valueRange = valueRange
     };
-    return CSSPrimitiveValueResolver<NumberRaw>::consumeAndResolve(range, { }, options);
+    return CSSPrimitiveValueResolver<NumberRaw>::consumeAndResolve(range, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

@@ -878,7 +878,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/StyleSheetContents.h
     css/StyleSheetList.h
 
+    css/calc/CSSCalcSymbolsAllowed.h
     css/calc/CSSCalcValue.h
+
+    css/color/CSSColorDescriptors.h
 
     css/parser/CSSParser.h
     css/parser/CSSParserContext.h
@@ -886,6 +889,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/parser/CSSParserMode.h
     css/parser/CSSParserToken.h
     css/parser/CSSParserTokenRange.h
+    css/parser/CSSPropertyParserConsumer+Primitives.h
+    css/parser/CSSPropertyParserConsumer+RawTypes.h
+    css/parser/CSSPropertyParserConsumer+UnevaluatedCalc.h
     css/parser/CSSSelectorParser.h
     css/parser/CSSSelectorParserContext.h
     css/parser/MutableCSSSelector.h

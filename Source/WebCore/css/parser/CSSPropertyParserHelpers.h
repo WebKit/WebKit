@@ -108,8 +108,8 @@ struct FontStyleRaw {
     std::optional<AngleRaw> angle;
 };
 using FontWeightRaw = std::variant<CSSValueID, double>;
-using FontSizeRaw = std::variant<CSSValueID, CSSPropertyParserHelpers::LengthOrPercentRaw>;
-using LineHeightRaw = std::variant<CSSValueID, double, CSSPropertyParserHelpers::LengthOrPercentRaw>;
+using FontSizeRaw = std::variant<CSSValueID, LengthOrPercentRaw>;
+using LineHeightRaw = std::variant<CSSValueID, double, LengthOrPercentRaw>;
 using FontFamilyRaw = std::variant<CSSValueID, AtomString>;
 
 struct FontRaw {

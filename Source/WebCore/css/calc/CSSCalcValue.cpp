@@ -348,9 +348,9 @@ inline double CSSCalcValue::clampToPermittedRange(double value) const
     return m_shouldClampToNonNegative && value < 0 ? 0 : value;
 }
 
-double CSSCalcValue::doubleValue() const
+double CSSCalcValue::doubleValue(const CSSCalcSymbolTable& symbolTable) const
 {
-    return clampToPermittedRange(protectedExpressionNode()->doubleValue(primitiveType()));
+    return clampToPermittedRange(protectedExpressionNode()->doubleValue(primitiveType(), symbolTable));
 }
 
 double CSSCalcValue::computeLengthPx(const CSSToLengthConversionData& conversionData) const
@@ -409,9 +409,9 @@ Ref<CSSCalcExpressionNode> CSSCalcValue::protectedExpressionNode() const
     return m_expression;
 }
 
-RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTokenRange& tokens, CalculationCategory destinationCategory, ValueRange range, const CSSCalcSymbolTable& symbolTable, bool allowsNegativePercentage)
+RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTokenRange& tokens, CalculationCategory destinationCategory, ValueRange range, CSSCalcSymbolsAllowed symbolsAllowed, bool allowsNegativePercentage)
 {
-    CSSCalcExpressionNodeParser parser(destinationCategory, symbolTable);
+    CSSCalcExpressionNodeParser parser(destinationCategory, WTFMove(symbolsAllowed));
     auto expression = parser.parseCalc(tokens, function, allowsNegativePercentage);
     if (!expression)
         return nullptr;

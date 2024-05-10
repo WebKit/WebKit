@@ -28,6 +28,7 @@
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+MetaResolver.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -59,14 +60,14 @@ struct CSSPrimitiveValueResolverBase {
     }
 
     template<typename IntType, IntegerValueRange integerRange>
-    static RefPtr<CSSPrimitiveValue> resolve(UnevaluatedCalc<IntegerRaw<IntType, integerRange>> calc, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    static RefPtr<CSSPrimitiveValue> resolve(UnevaluatedCalc<IntegerRaw<IntType, integerRange>> calc, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)
     {
         // FIXME: This should not be eagerly resolving the calc. Instead, callers
         // should resolve and round at style resolution.
 
         // https://drafts.csswg.org/css-values-4/#integers
         // Rounding to the nearest integer requires rounding in the direction of +∞ when the fractional portion is exactly 0.5.
-        auto value = clampTo<IntType>(std::floor(std::max(calc.calc->doubleValue(), computeMinimumValue(integerRange)) + 0.5));
+        auto value = clampTo<IntType>(std::floor(std::max(calc.calc->doubleValue(symbolTable), computeMinimumValue(integerRange)) + 0.5));
         return CSSPrimitiveValue::createInteger(value);
     }
 };

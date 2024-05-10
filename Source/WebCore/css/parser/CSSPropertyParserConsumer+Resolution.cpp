@@ -28,6 +28,7 @@
 
 #include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
+#include "CSSCalcSymbolsAllowed.h"
 #include "CSSParserMode.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
@@ -43,12 +44,12 @@ std::optional<ResolutionRaw> validatedRange(ResolutionRaw value, CSSPropertyPars
     return value;
 }
 
-std::optional<UnevaluatedCalc<ResolutionRaw>> ResolutionKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
+std::optional<UnevaluatedCalc<ResolutionRaw>> ResolutionKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Resolution, symbolTable, options)) {
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Resolution, WTFMove(symbolsAllowed), options)) {
         range = rangeCopy;
         return {{ value.releaseNonNull() }};
     }
@@ -56,7 +57,7 @@ std::optional<UnevaluatedCalc<ResolutionRaw>> ResolutionKnownTokenTypeFunctionCo
     return std::nullopt;
 }
 
-std::optional<ResolutionRaw> ResolutionKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
+std::optional<ResolutionRaw> ResolutionKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == DimensionToken);
 
@@ -89,7 +90,7 @@ RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range)
     const auto options = CSSPropertyParserOptions {
         .valueRange = ValueRange::NonNegative
     };
-    return CSSPrimitiveValueResolver<ResolutionRaw>::consumeAndResolve(range, { }, options);
+    return CSSPrimitiveValueResolver<ResolutionRaw>::consumeAndResolve(range, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

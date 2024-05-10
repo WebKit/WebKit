@@ -30,6 +30,7 @@
 #include "CSSCalcInvertNode.h"
 #include "CSSCalcNegateNode.h"
 #include "CSSCalcPrimitiveValueNode.h"
+#include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSUnits.h"
@@ -658,20 +659,23 @@ void CSSCalcOperationNode::combineChildren()
     m_isRoot = IsRoot::No;
     
     if (m_children.size() < 2) {
+        if (!m_children[0]->isResolvable())
+            return;
+
         if (isTrigNode() || isExpNode() || isSqrtNode()) {
-            double resolvedValue = doubleValue(m_children[0]->primitiveType());
+            double resolvedValue = doubleValue(m_children[0]->primitiveType(), { });
             Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue));
             m_children.clear();
             m_children.append(WTFMove(newChild));
         }
         if (isInverseTrigNode()) {
-            double resolvedValue = doubleValue(m_children[0]->primitiveType());
+            double resolvedValue = doubleValue(m_children[0]->primitiveType(), { });
             Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_DEG));
             m_children.clear();
             m_children.append(WTFMove(newChild));
         }
         if ((isAbsOrSignNode() || isHypotNode()) && canCombineAllChildren()) {
-            double resolvedValue = doubleValue(m_children[0]->primitiveType());
+            double resolvedValue = doubleValue(m_children[0]->primitiveType(), { });
             auto combinedUnitType = isSignNode() ? CSSUnitType::CSS_NUMBER : m_children[0]->primitiveType();
             Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, combinedUnitType));
             m_children.clear();
@@ -724,7 +728,7 @@ void CSSCalcOperationNode::combineChildren()
                 lastNonNumberNode = child.ptr();
                 continue;
             }
-            multiplier *= downcast<CSSCalcPrimitiveValueNode>(child.get()).doubleValue(CSSUnitType::CSS_NUMBER);
+            multiplier *= downcast<CSSCalcPrimitiveValueNode>(child.get()).doubleValue(CSSUnitType::CSS_NUMBER, { });
             ++numberNodeCount;
         }
         
@@ -796,7 +800,7 @@ void CSSCalcOperationNode::combineChildren()
         if (category != CalculationCategory::Other)
             combinedUnitType = canonicalUnitTypeForCalculationCategory(category);
 
-        double resolvedValue = doubleValue(combinedUnitType);
+        double resolvedValue = doubleValue(combinedUnitType, { });
         Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, combinedUnitType));
 
         m_children.clear();
@@ -804,21 +808,21 @@ void CSSCalcOperationNode::combineChildren()
     }
 
     if (calcOperator() == CalcOperator::Pow) {
-        auto resolvedValue = doubleValue(m_children[0]->primitiveType());
+        auto resolvedValue = doubleValue(m_children[0]->primitiveType(), { });
         Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue));
         m_children.clear();
         m_children.append(WTFMove(newChild));
     }
 
     if (calcOperator() == CalcOperator::Atan2) {
-        double resolvedValue = doubleValue(m_children[0]->primitiveType());
+        double resolvedValue = doubleValue(m_children[0]->primitiveType(), { });
         Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_DEG));
         m_children.clear();
         m_children.append(WTFMove(newChild));
     }
     if ((isSteppedNode() || isRoundOperation()) && canCombineAllChildren()) {
         auto combinedUnitType = m_children[0]->primitiveType();
-        double resolvedValue = doubleValue(combinedUnitType);
+        double resolvedValue = doubleValue(combinedUnitType, { });
         Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, combinedUnitType));
         m_children.clear();
         m_children.append(WTFMove(newChild));
@@ -960,6 +964,18 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
     return WTFMove(rootNode);
 }
 
+bool CSSCalcOperationNode::isResolvable() const
+{
+    return std::all_of(m_children.begin(), m_children.end(), [](const auto& child) {
+        return child->isResolvable();
+    });
+}
+
+bool CSSCalcOperationNode::isZero() const
+{
+    return !doubleValue(primitiveType(), { });
+}
+
 CSSUnitType CSSCalcOperationNode::primitiveType() const
 {
     auto unitCategory = category();
@@ -970,12 +986,48 @@ CSSUnitType CSSCalcOperationNode::primitiveType() const
         if (m_children.isEmpty())
             return CSSUnitType::CSS_UNKNOWN;
 
+        if (m_children.size() == 1)
+            return m_children[0]->primitiveType();
+
         if (m_children.size() == 2) {
             if (m_children[0]->category() == CalculationCategory::Number)
                 return m_children[1]->primitiveType();
             if (m_children[1]->category() == CalculationCategory::Number)
                 return m_children[0]->primitiveType();
         }
+
+        if (m_children[0]->category() == CalculationCategory::Number) {
+            unsigned i = 1;
+
+            CSSUnitType firstType = m_children[0]->primitiveType();
+            CSSUnitType secondType = CSSUnitType::CSS_UNKNOWN;
+
+            for (; i < m_children.size(); ++i) {
+                secondType = m_children[i]->primitiveType();
+                if (firstType != secondType)
+                    break;
+            }
+
+            if (i == m_children.size()) {
+                ASSERT(firstType == secondType);
+                return firstType;
+            }
+
+            CSSUnitType thirdType = CSSUnitType::CSS_UNKNOWN;
+            for (; i < m_children.size(); ++i) {
+                thirdType = m_children[i]->primitiveType();
+                if (secondType != thirdType)
+                    break;
+            }
+
+            if (i == m_children.size()) {
+                ASSERT(secondType == thirdType);
+                return secondType;
+            }
+
+            return CSSUnitType::CSS_UNKNOWN;
+        }
+
         CSSUnitType firstType = m_children[0]->primitiveType();
         for (auto& child : m_children) {
             if (firstType != child->primitiveType())
@@ -1025,7 +1077,7 @@ std::unique_ptr<CalcExpressionNode> CSSCalcOperationNode::createCalcExpression(c
     return makeUnique<CalcExpressionOperation>(WTFMove(nodes), m_operator, destinationCategory);
 }
 
-double CSSCalcOperationNode::doubleValue(CSSUnitType unitType) const
+double CSSCalcOperationNode::doubleValue(CSSUnitType unitType, const CSSCalcSymbolTable& symbolTable) const
 {
     bool allowNumbers = calcOperator() == CalcOperator::Multiply;
 
@@ -1039,7 +1091,7 @@ double CSSCalcOperationNode::doubleValue(CSSUnitType unitType) const
             childType = CSSUnitType::CSS_NUMBER;
         if (isAtan2Node() || isAbsOrSignNode())
             childType = child->primitiveType();
-        return child->doubleValue(childType);
+        return child->doubleValue(childType, symbolTable);
     }));
 }
 
@@ -1150,7 +1202,7 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
                         builder.append(" - "_s);
                         // Serialize the negation of child.
                         auto unitType = primitiveValueNode->value().primitiveType();
-                        builder.append(0 - primitiveValueNode->value().doubleValue(), CSSPrimitiveValue::unitTypeString(unitType));
+                        builder.append(0 - primitiveValueNode->doubleValue(unitType, { }), CSSPrimitiveValue::unitTypeString(unitType));
                         continue;
                     }
                 }

@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSCalcSymbolsAllowed.h"
 #include "CSSCalcValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
@@ -41,7 +42,7 @@ namespace CSSPropertyParserHelpers {
 
 class CalcParser {
 public:
-    explicit CalcParser(CSSParserTokenRange&, CalculationCategory, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    explicit CalcParser(CSSParserTokenRange&, CalculationCategory, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 
     const CSSCalcValue* value() const { return m_value.get(); }
 
@@ -55,7 +56,7 @@ private:
 };
 
 bool canConsumeCalcValue(CalculationCategory, CSSPropertyParserOptions);
-RefPtr<CSSCalcValue> consumeCalcRawWithKnownTokenTypeFunction(CSSParserTokenRange&, CalculationCategory, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+RefPtr<CSSCalcValue> consumeCalcRawWithKnownTokenTypeFunction(CSSParserTokenRange&, CalculationCategory, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 
 }
 }

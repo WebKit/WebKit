@@ -27,6 +27,7 @@
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+MetaResolver.h"
 #include "CSSPropertyParserConsumer+RawTypes.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include <optional>
 
 namespace WebCore {
@@ -61,11 +62,11 @@ struct RawResolverBase {
     static std::optional<TimeRaw> resolve(UnevaluatedCalc<TimeRaw>, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
 
     template<typename IntType, IntegerValueRange integerRange>
-    static std::optional<IntegerRaw<IntType, integerRange>> resolve(UnevaluatedCalc<IntegerRaw<IntType, integerRange>> calc, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    static std::optional<IntegerRaw<IntType, integerRange>> resolve(UnevaluatedCalc<IntegerRaw<IntType, integerRange>> calc, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)
     {
         // https://drafts.csswg.org/css-values-4/#integers
         // Rounding to the nearest integer requires rounding in the direction of +∞ when the fractional portion is exactly 0.5.
-        return {{ clampTo<IntType>(std::floor(std::max(calc.calc->doubleValue(), computeMinimumValue(integerRange)) + 0.5)) }};
+        return {{ clampTo<IntType>(std::floor(std::max(calc.calc->doubleValue(symbolTable), computeMinimumValue(integerRange)) + 0.5)) }};
     }
 };
 

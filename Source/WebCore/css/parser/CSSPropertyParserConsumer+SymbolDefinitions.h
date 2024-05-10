@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
+class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
 namespace CSSPropertyParserHelpers {
@@ -41,7 +41,7 @@ std::optional<SymbolRaw> validatedRange(SymbolRaw, CSSPropertyParserOptions);
 
 struct SymbolKnownTokenTypeIdentConsumer {
     static constexpr CSSParserTokenType tokenType = IdentToken;
-    static std::optional<SymbolRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static std::optional<SymbolRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<SymbolRaw> {

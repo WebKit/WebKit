@@ -24,14 +24,18 @@
 
 #pragma once
 
-#include "CSSUnits.h"
 #include <variant>
 
 namespace WebCore {
 
+namespace CSSPropertyParserHelpers {
+enum class IntegerValueRange : uint8_t { All, Positive, NonNegative };
+}
+
+enum class CSSUnitType : uint8_t;
 enum CSSValueID : uint16_t;
 
-namespace CSSPropertyParserHelpers {
+class CSSCalcSymbolTable;
 
 struct NoneRaw {
     bool operator==(const NoneRaw&) const = default;
@@ -83,16 +87,20 @@ struct SymbolRaw {
     bool operator==(const SymbolRaw&) const = default;
 };
 
-enum class IntegerValueRange : uint8_t { All, Positive, NonNegative };
+// Replaces the symbol with a value from the symbol table. This is only relevant
+// for SymbolRaw, so a catchall overload that implements the identity function is
+// provided to allow generic replacement.
+NumberRaw replaceSymbol(SymbolRaw, const CSSCalcSymbolTable&);
+template<typename T> T replaceSymbol(T value, const CSSCalcSymbolTable&) { return value; }
 
-constexpr double computeMinimumValue(IntegerValueRange range)
+consteval double computeMinimumValue(CSSPropertyParserHelpers::IntegerValueRange range)
 {
     switch (range) {
-    case IntegerValueRange::All:
+    case CSSPropertyParserHelpers::IntegerValueRange::All:
         return -std::numeric_limits<double>::infinity();
-    case IntegerValueRange::NonNegative:
+    case CSSPropertyParserHelpers::IntegerValueRange::NonNegative:
         return 0.0;
-    case IntegerValueRange::Positive:
+    case CSSPropertyParserHelpers::IntegerValueRange::Positive:
         return 1.0;
     }
 
@@ -101,7 +109,7 @@ constexpr double computeMinimumValue(IntegerValueRange range)
     return 0.0;
 }
 
-template<typename IntType, IntegerValueRange Range>
+template<typename IntType, CSSPropertyParserHelpers::IntegerValueRange Range>
 struct IntegerRaw {
     IntType value;
 
@@ -116,5 +124,4 @@ using PercentOrNumberOrNoneRaw = std::variant<PercentRaw, NumberRaw, NoneRaw>;
 using AngleOrNumberRaw = std::variant<AngleRaw, NumberRaw>;
 using AngleOrNumberOrNoneRaw = std::variant<AngleRaw, NumberRaw, NoneRaw>;
 
-} // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -35,6 +35,7 @@
 #include "CSSPropertyParserConsumer+PercentDefinitions.h"
 #include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
 #include "CSSPropertyParserConsumer+TimeDefinitions.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -76,42 +77,37 @@ std::optional<NoneRaw> RawResolverBase::resolve(NoneRaw value, const CSSCalcSymb
 
 std::optional<NumberRaw> RawResolverBase::resolve(SymbolRaw value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)
 {
-    if (auto variable = symbolTable.get(value.value))
-        return NumberRaw { variable->value };
-
-    // We should only get here if the symbol was previously looked up in the symbol table.
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
+    return replaceSymbol(value, symbolTable);
 }
 
-std::optional<AngleRaw> RawResolverBase::resolve(UnevaluatedCalc<AngleRaw> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
+std::optional<AngleRaw> RawResolverBase::resolve(UnevaluatedCalc<AngleRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(AngleRaw { value.calc->primitiveType(), value.calc->doubleValue() }, options);
+    return validatedRange(evaluateCalc(value, symbolTable), options);
 }
 
-std::optional<LengthRaw> RawResolverBase::resolve(UnevaluatedCalc<LengthRaw> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
+std::optional<LengthRaw> RawResolverBase::resolve(UnevaluatedCalc<LengthRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(LengthRaw { value.calc->primitiveType(), value.calc->doubleValue() }, options);
+    return validatedRange(evaluateCalc(value, symbolTable), options);
 }
 
-std::optional<NumberRaw> RawResolverBase::resolve(UnevaluatedCalc<NumberRaw> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
+std::optional<NumberRaw> RawResolverBase::resolve(UnevaluatedCalc<NumberRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(NumberRaw { value.calc->doubleValue() }, options);
+    return validatedRange(evaluateCalc(value, symbolTable), options);
 }
 
-std::optional<PercentRaw> RawResolverBase::resolve(UnevaluatedCalc<PercentRaw> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
+std::optional<PercentRaw> RawResolverBase::resolve(UnevaluatedCalc<PercentRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(PercentRaw { value.calc->doubleValue() }, options);
+    return validatedRange(evaluateCalc(value, symbolTable), options);
 }
 
-std::optional<ResolutionRaw> RawResolverBase::resolve(UnevaluatedCalc<ResolutionRaw> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
+std::optional<ResolutionRaw> RawResolverBase::resolve(UnevaluatedCalc<ResolutionRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(ResolutionRaw { value.calc->primitiveType(), value.calc->doubleValue() }, options);
+    return validatedRange(evaluateCalc(value, symbolTable), options);
 }
 
-std::optional<TimeRaw> RawResolverBase::resolve(UnevaluatedCalc<TimeRaw> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
+std::optional<TimeRaw> RawResolverBase::resolve(UnevaluatedCalc<TimeRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(TimeRaw { value.calc->primitiveType(), value.calc->doubleValue() }, options);
+    return validatedRange(evaluateCalc(value, symbolTable), options);
 }
 
 } // namespace CSSPropertyParserHelpers

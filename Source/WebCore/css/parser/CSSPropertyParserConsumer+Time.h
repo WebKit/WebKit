@@ -30,7 +30,6 @@
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
 class CSSPrimitiveValue;
 
 namespace CSSPropertyParserHelpers {

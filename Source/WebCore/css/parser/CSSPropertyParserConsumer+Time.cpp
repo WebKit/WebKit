@@ -28,6 +28,7 @@
 
 #include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
+#include "CSSCalcSymbolsAllowed.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "Length.h"
@@ -42,12 +43,12 @@ std::optional<TimeRaw> validatedRange(TimeRaw value, CSSPropertyParserOptions op
     return value;
 }
 
-std::optional<UnevaluatedCalc<TimeRaw>> TimeKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
+std::optional<UnevaluatedCalc<TimeRaw>> TimeKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Time, symbolTable, options)) {
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Time, WTFMove(symbolsAllowed), options)) {
         range = rangeCopy;
         return {{ value.releaseNonNull() }};
     }
@@ -55,7 +56,7 @@ std::optional<UnevaluatedCalc<TimeRaw>> TimeKnownTokenTypeFunctionConsumer::cons
     return std::nullopt;
 }
 
-std::optional<TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
+std::optional<TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == DimensionToken);
 
@@ -78,7 +79,7 @@ std::optional<TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTok
     return std::nullopt;
 }
 
-std::optional<TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, CSSPropertyParserOptions options)
+std::optional<TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == NumberToken);
 
@@ -109,7 +110,7 @@ RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode 
         .valueRange = valueRange,
         .unitless = unitless
     };
-    return CSSPrimitiveValueResolver<TimeRaw>::consumeAndResolve(range, { }, options);
+    return CSSPrimitiveValueResolver<TimeRaw>::consumeAndResolve(range, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers
