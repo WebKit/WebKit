@@ -402,8 +402,10 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, Prope
 {
     if (m_propertyType == TypeValue)
         return JSValue::decode(m_data.value);
-    if (m_propertyType == TypeGetter)
+    if (m_propertyType == TypeGetter) {
+        RELEASE_ASSERT(m_attributes & PropertyAttribute::Accessor);
         return functionGetter(globalObject);
+    }
     return customGetter(getVM(globalObject), propertyName);
 }
 
@@ -412,8 +414,10 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, uint6
     VM& vm = getVM(globalObject);
     if (m_propertyType == TypeValue)
         return JSValue::decode(m_data.value);
-    if (m_propertyType == TypeGetter)
+    if (m_propertyType == TypeGetter) {
+        RELEASE_ASSERT(m_attributes & PropertyAttribute::Accessor);
         return functionGetter(globalObject);
+    }
     return customGetter(getVM(globalObject), Identifier::from(vm, propertyName));
 }
 

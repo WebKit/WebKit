@@ -755,6 +755,8 @@ bool ordinarySetWithOwnDescriptor(JSGlobalObject* globalObject, JSObject* object
     if (!setter.isObject())
         return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 
+    RELEASE_ASSERT(ownDescriptor.attributes() & PropertyAttribute::Accessor);
+
     // 9.1.9.1-8 Perform ? Call(setter, Receiver, << V >>).
     JSObject* setterObject = asObject(setter);
     MarkedArgumentBuffer args;
