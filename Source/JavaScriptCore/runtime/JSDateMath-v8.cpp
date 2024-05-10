@@ -104,7 +104,7 @@ public:
     // If parsing fails, return false (content of output array is not defined).
     // template<typename Char>
     // static bool Parse(Isolate* isolate, base::Vector<Char> str, double* output);
-    static bool Parse(void* isolate, const char* str, size_t size, double* output);
+    static bool Parse(void* isolate, const unsigned char* str, size_t size, double* output);
 
 private:
     // Range testing
@@ -124,7 +124,7 @@ private:
     // template<typename Char>
     class InputReader {
     public:
-        explicit InputReader(const char* s, size_t size)
+        explicit InputReader(const unsigned char* s, size_t size)
             : index_(0)
             , buffer_({ s, size })
         {
@@ -202,7 +202,7 @@ private:
 
     private:
         int index_;
-        WTF::Vector<char> buffer_;
+        WTF::Vector<unsigned char> buffer_;
         uint32_t ch_;
     };
 
@@ -685,7 +685,7 @@ int DateParser::ReadMilliseconds(DateToken token)
 
 // https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/date/dateparser-inl.h#L16
 // template<typename Char>
-bool DateParser::Parse(void*, const char* str, size_t size, double* out)
+bool DateParser::Parse(void*, const unsigned char* str, size_t size, double* out)
 {
     InputReader in(str, size);
     DateStringTokenizer scanner(&in);
@@ -1143,7 +1143,7 @@ double MakeDate(double day, double time)
 }
 
 // https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/builtins/builtins-date.cc#L30
-double ParseDateTimeString(const char* str, size_t size, bool& local)
+double ParseDateTimeString(const unsigned char* str, size_t size, bool& local)
 {
     double out[v8::DateParser::OUTPUT_SIZE];
 

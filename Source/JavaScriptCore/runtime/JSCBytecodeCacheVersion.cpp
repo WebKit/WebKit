@@ -67,7 +67,6 @@ uint32_t computeJSCBytecodeCacheVersion()
     });
     return cacheVersion.get();
 #else
-    UNUSED_VARIABLE(JSCBytecodeCacheVersionInternal::verbose);
     static constexpr uint32_t precomputedCacheVersion = SuperFastHash::computeHash(__TIMESTAMP__);
     return precomputedCacheVersion;
 #endif

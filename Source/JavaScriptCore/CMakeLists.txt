@@ -1086,6 +1086,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSCustomSetterFunction.h
     runtime/JSDataView.h
     runtime/JSDateMath.h
+    runtime/JSDateMath-v8.h
     runtime/JSDestructibleObject.h
     runtime/JSDestructibleObjectHeapCellType.h
     runtime/JSExportMacros.h

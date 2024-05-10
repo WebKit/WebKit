@@ -529,6 +529,7 @@ set(WTF_PUBLIC_HEADERS
     win/PathWalker.h
     win/SoftLinking.h
     win/Win32Handle.h
+    text/win/WCharStringExtras.h
 )
 
 set(WTF_SOURCES
