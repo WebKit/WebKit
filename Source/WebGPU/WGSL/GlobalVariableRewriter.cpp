@@ -61,6 +61,7 @@ public:
     void visit(AST::CompoundStatement&) override;
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::VariableStatement&) override;
+    void visit(AST::PhonyAssignmentStatement&) override;
 
     void visit(AST::Expression&) override;
 
@@ -365,6 +366,11 @@ void RewriteGlobalVariables::visit(AST::VariableStatement& statement)
         pack(static_cast<Packing>(Packing::Unpacked | Packing::Vec3), *initializer);
 }
 
+void RewriteGlobalVariables::visit(AST::PhonyAssignmentStatement& statement)
+{
+    pack(Packing::Either, statement.rhs());
+}
+
 void RewriteGlobalVariables::visit(AST::Expression& expression)
 {
     pack(Packing::Unpacked, expression);
@@ -489,6 +495,8 @@ Packing RewriteGlobalVariables::getPacking(AST::IndexAccessExpression& expressio
     auto* baseType = expression.base().inferredType();
     if (auto* referenceType = std::get_if<Types::Reference>(baseType))
         baseType = referenceType->element;
+    if (auto* pointerType = std::get_if<Types::Pointer>(baseType))
+        baseType = pointerType->element;
     if (std::holds_alternative<Types::Vector>(*baseType))
         return Packing::Unpacked;
     ASSERT(std::holds_alternative<Types::Array>(*baseType));
@@ -505,8 +513,9 @@ Packing RewriteGlobalVariables::getPacking(AST::BinaryExpression& expression)
 
 Packing RewriteGlobalVariables::getPacking(AST::UnaryExpression& expression)
 {
-    pack(Packing::Unpacked, expression.expression());
-    return Packing::Unpacked;
+    if (expression.operation() == AST::UnaryOperation::AddressOf || expression.operation() == AST::UnaryOperation::Dereference)
+        return pack(Packing::Either, expression.expression());
+    return pack(Packing::Unpacked, expression.expression());
 }
 
 Packing RewriteGlobalVariables::getPacking(AST::IdentityExpression& expression)
