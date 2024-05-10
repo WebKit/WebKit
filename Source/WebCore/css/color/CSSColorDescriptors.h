@@ -28,8 +28,10 @@
 #include "CSSPropertyParserConsumer+RawTypes.h"
 #include "Color.h"
 #include "ColorTypes.h"
+#include <wtf/Brigand.h>
 
 namespace WebCore {
+namespace CSSPropertyParserHelpers {
 
 enum class CSSColorFunctionSyntax { Legacy, Modern };
 
@@ -349,4 +351,5 @@ struct ColorXYZFunction {
     );
 };
 
+} // namespace CSSPropertyParserHelpers
 } // namespace WebCore

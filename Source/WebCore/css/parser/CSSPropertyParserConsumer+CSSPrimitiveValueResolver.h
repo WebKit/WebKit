@@ -27,6 +27,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+MetaResolver.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

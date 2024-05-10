@@ -24,9 +24,10 @@
 
 #include "config.h"
 #include "CSSPropertyParserConsumer+Integer.h"
-#include "CSSPropertyParserConsumer+IntegerDefinitions.h"
 
+#include "CSSCalcSymbolTable.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
+#include "CSSPropertyParserConsumer+IntegerDefinitions.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+RawResolver.h"
 

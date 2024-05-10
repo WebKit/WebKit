@@ -41,6 +41,7 @@
 #include "SharedBuffer.h"
 #include "TransformSource.h"
 #include "XMLDocumentParser.h"
+#include "XMLDocumentParserScope.h"
 #include "XSLTExtensions.h"
 #include "XSLTUnicodeSort.h"
 #include "markup.h"

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 
+#include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"

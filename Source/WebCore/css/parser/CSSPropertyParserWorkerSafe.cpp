@@ -44,6 +44,7 @@
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+List.h"
+#include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Percent.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSToLengthConversionData.h"

@@ -27,6 +27,7 @@
 #include "CSSPropertyParserConsumer+PercentDefinitions.h"
 
 #include "CSSCalcParser.h"
+#include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"

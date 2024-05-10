@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RenderBlock.h"
 #include "RenderElement.h"
 #include "ScopedEventQueue.h"
 #include "TypedElementDescendantIteratorInlines.h"

@@ -30,6 +30,7 @@
 #include "FontRenderOptions.h"
 #include "GLContext.h"
 #include "PlatformDisplay.h"
+#include <skia/core/SkColorSpace.h>
 #include <skia/gpu/GrBackendSurface.h>
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>

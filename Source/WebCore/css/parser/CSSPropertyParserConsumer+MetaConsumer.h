@@ -24,9 +24,11 @@
 
 #pragma once
 
+#include "CSSCalcValue.h"
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+RawTypes.h"
 #include <optional>
 #include <type_traits>
