@@ -32,105 +32,36 @@
 #include "config.h"
 #include "StyleColor.h"
 
+#include "CSSColorMixSerialization.h"
+#include "CSSResolvedColorMix.h"
 #include "CSSUnresolvedColor.h"
+#include "ColorNormalization.h"
+#include "ColorSerialization.h"
 #include "HashTools.h"
 #include "RenderTheme.h"
-#include "StyleColorMix.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-StyleColor::StyleColor(StyleColor::ColorKind&& color)
-    : m_color { WTFMove(color) }
-{
-}
-
-StyleColor::StyleColor()
-    : m_color { StyleCurrentColor { } }
-{
-}
-
-StyleColor::StyleColor(Color color)
-    : m_color { StyleAbsoluteColor { WTFMove(color) } }
-{
-}
-
-StyleColor::StyleColor(SRGBA<uint8_t> color)
-    : m_color { StyleAbsoluteColor { Color { color } } }
-{
-}
-
-StyleColor::StyleColor(StyleCurrentColor&& color)
-    : m_color { WTFMove(color) }
-{
-}
-
-StyleColor::StyleColor(StyleColorMix&& colorMix)
-    : m_color { resolveAbsoluteComponents(WTFMove(colorMix)) }
-{
-}
-
-StyleColor::StyleColor(StyleAbsoluteColor&& color)
-    : m_color { WTFMove(color) }
-{
-}
-
-StyleColor::StyleColor(const StyleColor& other)
-    : m_color { copy(other.m_color) }
-{
-}
-
-StyleColor& StyleColor::operator=(const StyleColor& other)
-{
-    m_color = copy(other.m_color);
-    return *this;
-}
-
-StyleColor::StyleColor(StyleColor&&) = default;
-StyleColor& StyleColor::operator=(StyleColor&&) = default;
-StyleColor::~StyleColor() = default;
-
-bool StyleColor::operator==(const StyleColor&) const = default;
-
-// This helper allows us to treat all the alternatives in ColorKind
-// as const references, pretending the UniqueRefs don't exist.
-template<typename... F>
-decltype(auto) StyleColor::visit(const StyleColor::ColorKind& color, F&&... f)
-{
-    auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
-    return WTF::switchOn(color,
-        [&](const StyleAbsoluteColor& absoluteColor) {
-            return visitor(absoluteColor);
-        },
-        [&](const StyleCurrentColor& currentColor) {
-            return visitor(currentColor);
-        },
-        [&](const UniqueRef<StyleColorMix>& colorMix) {
-            return visitor(colorMix.get());
-        }
-    );
-}
-
-StyleColor StyleColor::currentColor()
-{
-    return StyleColor { StyleCurrentColor { } };
-}
+static std::optional<Color> resolveAbsoluteComponents(const StyleColorMix&);
+static Color resolveColor(const StyleColorMix&, const Color& currentColor);
 
 StyleColor::ColorKind StyleColor::copy(const StyleColor::ColorKind& other)
 {
-    return StyleColor::visit(other,
-        [] (const StyleAbsoluteColor& absoluteColor) -> StyleColor::ColorKind {
-            return StyleAbsoluteColor { absoluteColor.color };
+    return WTF::switchOn(other,
+        [] (const Color& absoluteColor) -> StyleColor::ColorKind {
+            return absoluteColor;
         },
-        [] (const StyleCurrentColor&) -> StyleColor::ColorKind {
-            return StyleCurrentColor { };
+        [] (const StyleCurrentColor& currentColor) -> StyleColor::ColorKind {
+            return currentColor;
         },
-        [] (const StyleColorMix& colorMix) -> StyleColor::ColorKind {
-            return makeUniqueRef<StyleColorMix>(colorMix);
+        [] (const UniqueRef<StyleColorMix>& colorMix) -> StyleColor::ColorKind {
+            return makeUniqueRef<StyleColorMix>(colorMix.get());
         }
     );
 }
 
+StyleColor::~StyleColor() = default;
 
 Color StyleColor::colorFromAbsoluteKeyword(CSSValueID keyword)
 {
@@ -221,18 +152,30 @@ String StyleColor::debugDescription() const
 
 Color StyleColor::resolveColor(const Color& currentColor) const
 {
-    return StyleColor::visit(m_color,
-        [&](const auto& kind) {
-            return WebCore::resolveColor(kind, currentColor);
+    return WTF::switchOn(m_color,
+        [&] (const Color& absoluteColor) -> Color {
+            return absoluteColor;
+        },
+        [&] (const StyleCurrentColor&) -> Color {
+            return currentColor;
+        },
+        [&] (const UniqueRef<StyleColorMix>& colorMix) -> Color {
+            return WebCore::resolveColor(colorMix, currentColor);
         }
     );
 }
 
 bool StyleColor::containsCurrentColor() const
 {
-    return StyleColor::visit(m_color,
-        [](const auto& kind) {
-            return WebCore::containsCurrentColor(kind);
+    return WTF::switchOn(m_color,
+        [&] (const Color&) -> bool {
+            return false;
+        },
+        [&] (const StyleCurrentColor&) -> bool {
+            return true;
+        },
+        [&] (const UniqueRef<StyleColorMix>& colorMix) -> bool {
+            return colorMix->mixComponents1.color.containsCurrentColor() || colorMix->mixComponents2.color.containsCurrentColor();
         }
     );
 }
@@ -249,51 +192,151 @@ bool StyleColor::isColorMix() const
 
 bool StyleColor::isAbsoluteColor() const
 {
-    return std::holds_alternative<StyleAbsoluteColor>(m_color);
+    return std::holds_alternative<Color>(m_color);
 }
 
 const Color& StyleColor::absoluteColor() const
 {
     ASSERT(isAbsoluteColor());
-    return std::get<StyleAbsoluteColor>(m_color).color;
+    return std::get<Color>(m_color);
 }
 
 StyleColor::ColorKind StyleColor::resolveAbsoluteComponents(StyleColorMix&& colorMix)
 {
     if (auto absoluteColor = WebCore::resolveAbsoluteComponents(colorMix))
-        return { StyleAbsoluteColor { WTFMove(*absoluteColor) } };
+        return { WTFMove(*absoluteColor) };
     return { makeUniqueRef<StyleColorMix>(WTFMove(colorMix)) };
+}
+
+// MARK: color-mix()
+
+std::optional<Color> resolveAbsoluteComponents(const StyleColorMix& colorMix)
+{
+    if (!colorMix.mixComponents1.color.isAbsoluteColor() || !colorMix.mixComponents2.color.isAbsoluteColor())
+        return std::nullopt;
+
+    return mix(CSSResolvedColorMix {
+        colorMix.colorInterpolationMethod,
+        CSSResolvedColorMix::Component {
+            colorMix.mixComponents1.color.absoluteColor(),
+            colorMix.mixComponents1.percentage
+        },
+        CSSResolvedColorMix::Component {
+            colorMix.mixComponents2.color.absoluteColor(),
+            colorMix.mixComponents2.percentage
+        }
+    });
+}
+
+Color resolveColor(const StyleColorMix& colorMix, const Color& currentColor)
+{
+    return mix(CSSResolvedColorMix {
+        colorMix.colorInterpolationMethod,
+        CSSResolvedColorMix::Component {
+            colorMix.mixComponents1.color.resolveColor(currentColor),
+            colorMix.mixComponents1.percentage
+        },
+        CSSResolvedColorMix::Component {
+            colorMix.mixComponents2.color.resolveColor(currentColor),
+            colorMix.mixComponents2.percentage
+        }
+    });
 }
 
 // MARK: - Serialization
 
-String serializationForCSS(const StyleColor& color)
+void serializationForCSS(StringBuilder& builder, const StyleColorMix& colorMix)
 {
-    return StyleColor::visit(color.m_color,
-        [](const auto& kind) {
-            return WebCore::serializationForCSS(kind);
-        }
-    );
+    serializationForCSSColorMix<StyleColorMix>(builder, colorMix);
+}
+
+void serializationForCSS(StringBuilder& builder, const StyleCurrentColor&)
+{
+    builder.append("currentcolor"_s);
 }
 
 void serializationForCSS(StringBuilder& builder, const StyleColor& color)
 {
-    return StyleColor::visit(color.m_color,
-        [&](const auto& kind) {
-            WebCore::serializationForCSS(builder, kind);
+    WTF::switchOn(color.m_color,
+        [&] (const Color& absoluteColor) {
+            serializationForCSS(builder, absoluteColor);
+        },
+        [&] (const StyleCurrentColor& currentColor) {
+            serializationForCSS(builder, currentColor);
+        },
+        [&] (const UniqueRef<StyleColorMix>& colorMix) {
+            serializationForCSS(builder, colorMix);
+        }
+    );
+}
+
+String serializationForCSS(const StyleColorMix& colorMix)
+{
+    StringBuilder builder;
+    serializationForCSS(builder, colorMix);
+    return builder.toString();
+}
+
+String serializationForCSS(const StyleCurrentColor&)
+{
+    return "currentcolor"_s;
+}
+
+String serializationForCSS(const StyleColor& color)
+{
+    return WTF::switchOn(color.m_color,
+        [&] (const Color& absoluteColor) {
+            return serializationForCSS(absoluteColor);
+        },
+        [&] (const StyleCurrentColor& currentColor) {
+            return serializationForCSS(currentColor);
+        },
+        [&] (const UniqueRef<StyleColorMix>& colorMix) {
+            return serializationForCSS(colorMix);
         }
     );
 }
 
 // MARK: - TextStream.
 
+static TextStream& operator<<(TextStream& ts, const StyleColorMix::Component& component)
+{
+    ts << component.color;
+    if (component.percentage)
+        ts << " " << *component.percentage << "%";
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StyleColorMix& colorMix)
+{
+    ts << "color-mix(";
+    ts << "in " << colorMix.colorInterpolationMethod;
+    ts << ", " << colorMix.mixComponents1;
+    ts << ", " << colorMix.mixComponents2;
+    ts << ")";
+
+    return ts;
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& out, const StyleCurrentColor&)
+{
+    out << "currentColor";
+    return out;
+}
+
 WTF::TextStream& operator<<(WTF::TextStream& out, const StyleColor& color)
 {
     out << "StyleColor[";
 
-    StyleColor::visit(color.m_color,
-        [&](const auto& kind) {
-            out << kind;
+    WTF::switchOn(color.m_color,
+        [&] (const Color& absoluteColor) {
+            out << "absoluteColor(" << absoluteColor.debugDescription() << ")";
+        },
+        [&] (const StyleCurrentColor& currentColor) {
+            out << currentColor;
+        },
+        [&] (const UniqueRef<StyleColorMix>& colorMix) {
+            out << colorMix.get();
         }
     );
 

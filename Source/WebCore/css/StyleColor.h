@@ -33,14 +33,12 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
-#include "StyleAbsoluteColor.h"
-#include "StyleCurrentColor.h"
+#include "Color.h"
+#include "ColorInterpolationMethod.h"
 #include <wtf/OptionSet.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
-
-class Color;
 
 enum class StyleColorOptions : uint8_t {
     ForVisitedLink = 1 << 0,
@@ -49,34 +47,52 @@ enum class StyleColorOptions : uint8_t {
     UseElevatedUserInterfaceLevel = 1 << 3
 };
 
-// StyleColorMix is forward declared and stored in a UniqueRef to
-// avoid unnecessarily growing the size of StyleColor for the
-// uncommon case of unresolvable color-mix() due to currentColor.
 struct StyleColorMix;
+struct StyleCurrentColor {
+    friend constexpr bool operator==(const StyleCurrentColor&, const StyleCurrentColor&) = default;
+};
 
 class StyleColor {
 public:
-    // The default constructor initializes to StyleCurrentColor to preserve old behavior,
+    // The default constructor initializes to currentcolor to preserve old behavior,
     // we might want to change it to invalid color at some point.
-    StyleColor();
+    StyleColor()
+        : m_color { StyleCurrentColor { } }
+    {
+    }
 
-    // Convenience constructors that create StyleAbsoluteColor.
-    StyleColor(Color);
-    StyleColor(SRGBA<uint8_t>);
+    StyleColor(const Color& color)
+        : m_color { Color { color } }
+    {
+    }
 
-    StyleColor(StyleCurrentColor&&);
-    StyleColor(StyleColorMix&&);
-    StyleColor(StyleAbsoluteColor&&);
+    StyleColor(const SRGBA<uint8_t>& color)
+        : m_color { Color { color } }
+    {
+    }
 
-    StyleColor(const StyleColor&);
-    StyleColor& operator=(const StyleColor&);
+    StyleColor(StyleColorMix&& colorMix)
+        : m_color { resolveAbsoluteComponents(WTFMove(colorMix)) }
+    {
+    }
 
-    StyleColor(StyleColor&&);
-    StyleColor& operator=(StyleColor&&);
+    StyleColor(const StyleColor& other)
+        : m_color { copy(other.m_color) }
+    {
+    }
+
+    StyleColor& operator=(const StyleColor& other)
+    {
+        m_color = copy(other.m_color);
+        return *this;
+    }
+
+    StyleColor(StyleColor&&) = default;
+    StyleColor& operator=(StyleColor&&) = default;
 
     WEBCORE_EXPORT ~StyleColor();
 
-    static StyleColor currentColor();
+    static StyleColor currentColor() { return StyleColor { StyleCurrentColor { } }; }
 
     static Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
     static Color colorFromAbsoluteKeyword(CSSValueID);
@@ -106,34 +122,60 @@ public:
     bool isAbsoluteColor() const;
     const Color& absoluteColor() const;
 
-    WEBCORE_EXPORT Color resolveColor(const Color& currentColor) const;
+    WEBCORE_EXPORT Color resolveColor(const Color& colorPropertyValue) const;
 
-    bool operator==(const StyleColor&) const;
+    friend bool operator==(const StyleColor&, const StyleColor&) = default;
     friend WEBCORE_EXPORT String serializationForCSS(const StyleColor&);
     friend void serializationForCSS(StringBuilder&, const StyleColor&);
     friend WTF::TextStream& operator<<(WTF::TextStream&, const StyleColor&);
     String debugDescription() const;
 
 private:
-    using ColorKind = std::variant<
-        StyleCurrentColor,
-        StyleAbsoluteColor,
-        UniqueRef<StyleColorMix>
-    >;
-    StyleColor(ColorKind&&);
+    using ColorKind = std::variant<Color, StyleCurrentColor, UniqueRef<StyleColorMix>>;
 
-    template<typename... F>
-    static decltype(auto) visit(const ColorKind&, F&&...);
+    StyleColor(ColorKind&& color)
+        : m_color { WTFMove(color) }
+    {
+    }
 
     static ColorKind resolveAbsoluteComponents(StyleColorMix&&);
-    static ColorKind copy(const ColorKind&);
+    WEBCORE_EXPORT static ColorKind copy(const ColorKind&);
 
     ColorKind m_color;
 };
 
-void serializationForCSS(StringBuilder&, const StyleColor&);
-WEBCORE_EXPORT String serializationForCSS(const StyleColor&);
+struct StyleColorMix {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
+    struct Component {
+        StyleColor color;
+        std::optional<double> percentage;
+
+        friend bool operator==(const Component&, const Component&) = default;
+    };
+
+    friend bool operator==(const StyleColorMix&, const StyleColorMix&) = default;
+
+    ColorInterpolationMethod colorInterpolationMethod;
+    Component mixComponents1;
+    Component mixComponents2;
+};
+
+inline bool operator==(const UniqueRef<StyleColorMix>& a, const UniqueRef<StyleColorMix>& b)
+{
+    return a.get() == b.get();
+}
+
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleColorMix&);
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleCurrentColor&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleColor&);
+
+void serializationForCSS(StringBuilder&, const StyleColorMix&);
+void serializationForCSS(StringBuilder&, const StyleCurrentColor&);
+void serializationForCSS(StringBuilder&, const StyleColor&);
+
+WEBCORE_EXPORT String serializationForCSS(const StyleColorMix&);
+WEBCORE_EXPORT String serializationForCSS(const StyleCurrentColor&);
+WEBCORE_EXPORT String serializationForCSS(const StyleColor&);
 
 } // namespace WebCore

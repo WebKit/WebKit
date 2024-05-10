@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CSSUnresolvedColorMix.h"
-#include "StyleColorMix.h"
+#include "StyleColor.h"
 
 namespace WebCore {
 
