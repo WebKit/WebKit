@@ -344,6 +344,10 @@ protected:
     virtual Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     virtual void destroyScrollbar(WebCore::ScrollbarOrientation);
 
+    virtual void incrementalLoadingDidProgress() { }
+    virtual void incrementalLoadingDidCancel() { }
+    virtual void incrementalLoadingDidFinish() { }
+
 #if ENABLE(PDF_HUD)
     void updateHUDLocation();
     WebCore::IntRect frameForHUDInRootViewCoordinates() const;

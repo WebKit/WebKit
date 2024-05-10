@@ -199,6 +199,10 @@ private:
 
     void teardown() override;
 
+    void incrementalLoadingDidProgress() override;
+    void incrementalLoadingDidCancel() override;
+    void incrementalLoadingDidFinish() override;
+
     void installPDFDocument() override;
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
@@ -425,6 +429,9 @@ private:
     void updateLayerHierarchy();
     void updateLayerPositions();
 
+    void incrementalLoadingRepaintTimerFired();
+    void repaintForIncrementalLoad();
+
     void didChangeScrollOffset() override;
     void didChangeIsInWindow();
 
@@ -591,6 +598,8 @@ private:
 
     bool m_inActiveAutoscroll { false };
     WebCore::Timer m_autoscrollTimer { *this, &UnifiedPDFPlugin::autoscrollTimerFired };
+
+    WebCore::Timer m_incrementalLoadingRepaintTimer { *this, &UnifiedPDFPlugin::incrementalLoadingRepaintTimerFired };
 
     RetainPtr<WKPDFFormMutationObserver> m_pdfMutationObserver;
 

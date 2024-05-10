@@ -413,6 +413,11 @@ IntDegrees PDFDocumentLayout::rotationForPageAtIndex(PageIndex index) const
     return m_pageGeometry[index].rotation;
 }
 
+FloatSize PDFDocumentLayout::contentsSize() const
+{
+    return m_documentBounds.size();
+}
+
 FloatSize PDFDocumentLayout::scaledContentsSize() const
 {
     return m_documentBounds.size().scaled(m_scale);

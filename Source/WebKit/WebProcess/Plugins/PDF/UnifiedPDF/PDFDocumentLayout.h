@@ -93,6 +93,7 @@ public:
     float scale() const { return m_scale; }
 
     void updateLayout(WebCore::IntSize pluginSize, ShouldUpdateAutoSizeScale);
+    WebCore::FloatSize contentsSize() const;
     WebCore::FloatSize scaledContentsSize() const;
 
     void setDisplayMode(DisplayMode displayMode) { m_displayMode = displayMode; }

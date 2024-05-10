@@ -279,7 +279,24 @@ void UnifiedPDFPlugin::installPDFDocument()
         m_pdfTestCallback->handleEvent();
         m_pdfTestCallback = nullptr;
     }
+}
 
+void UnifiedPDFPlugin::incrementalLoadingDidProgress()
+{
+    static constexpr auto incrementalLoadRepaintInterval = 1_s;
+    if (!m_incrementalLoadingRepaintTimer.isActive())
+        m_incrementalLoadingRepaintTimer.startRepeating(incrementalLoadRepaintInterval);
+}
+
+void UnifiedPDFPlugin::incrementalLoadingDidCancel()
+{
+    m_incrementalLoadingRepaintTimer.stop();
+}
+
+void UnifiedPDFPlugin::incrementalLoadingDidFinish()
+{
+    m_incrementalLoadingRepaintTimer.stop();
+    repaintForIncrementalLoad();
 }
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
@@ -561,6 +578,24 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
     }
 
     m_pageBackgroundsContainerLayer->setChildren(WTFMove(pageContainerLayers));
+}
+
+void UnifiedPDFPlugin::incrementalLoadingRepaintTimerFired()
+{
+    repaintForIncrementalLoad();
+}
+
+void UnifiedPDFPlugin::repaintForIncrementalLoad()
+{
+    auto coverageRect = FloatRect { { }, m_documentLayout.contentsSize() };
+
+    if (auto* tiledBacking = m_contentsLayer->tiledBacking()) {
+        coverageRect = tiledBacking->coverageRect();
+
+        coverageRect = convertDown(CoordinateSpace::Contents, CoordinateSpace::PDFDocumentLayout, coverageRect);
+    }
+
+    setNeedsRepaintInDocumentRect(RepaintRequirement::PDFContent, coverageRect);
 }
 
 void UnifiedPDFPlugin::paintBackgroundLayerForPage(const GraphicsLayer*, GraphicsContext& context, const FloatRect& clipRect, PDFDocumentLayout::PageIndex pageIndex)
@@ -895,7 +930,6 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
         paintBackgroundLayerForPage(layer, context, clipRect, *backgroundLayerPageIndex);
         return;
     }
-
 }
 
 PDFPageCoverage UnifiedPDFPlugin::pageCoverageForRect(const FloatRect& clipRect) const

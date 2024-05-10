@@ -224,8 +224,6 @@ void AsyncPDFRenderer::coverageRectDidChange(const FloatRect& coverageRect)
     auto pageCoverage = plugin->pageCoverageForRect(coverageRect);
     auto pagePreviewScale = plugin->scaleForPagePreviews();
 
-    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::coverageRectDidChange " << coverageRect << " " << pageCoverage << " - preview scale " << pagePreviewScale);
-
     PDFPageIndexSet unwantedPageIndices;
     for (auto pageIndex : m_pagePreviews.keys())
         unwantedPageIndices.add(pageIndex);
@@ -242,6 +240,8 @@ void AsyncPDFRenderer::coverageRectDidChange(const FloatRect& coverageRect)
 
     for (auto pageIndex : unwantedPageIndices)
         removePreviewForPage(pageIndex);
+
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::coverageRectDidChange " << coverageRect << " " << pageCoverage << " - preview scale " << pagePreviewScale << " - have " << m_pagePreviews.size() << " page previews and " << m_enqueuedPagePreviews.size() << " enqueued");
 }
 
 void AsyncPDFRenderer::tilingScaleFactorDidChange(float)
