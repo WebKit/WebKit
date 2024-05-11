@@ -564,8 +564,6 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
         CRASH();
     }
 
-    AuxiliaryProcess::setNotifyOptions();
-
 #if USE(CACHE_COMPILED_SANDBOX)
     // The plugin process's DARWIN_USER_TEMP_DIR and DARWIN_USER_CACHE_DIR sandbox parameters are randomized so
     // so the compiled sandbox should not be cached because it won't be reused.
