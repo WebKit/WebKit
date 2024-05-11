@@ -492,10 +492,9 @@ private:
     void resetZoom();
 #endif
 
+    std::optional<PDFDocumentLayout::PageIndex> pageIndexForAnnotation(PDFAnnotation *) const;
     std::optional<PDFDocumentLayout::PageIndex> pageIndexWithHoveredAnnotation() const;
     void paintHoveredAnnotationOnPage(PDFDocumentLayout::PageIndex, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
-
-    WebCore::FloatRect documentRectForAnnotation(PDFAnnotation *) const;
 
     void followLinkAnnotation(PDFAnnotation *);
 
@@ -503,9 +502,12 @@ private:
     void updateTrackedAnnotation(PDFAnnotation *annotationUnderMouse);
     void finishTrackingAnnotation(PDFAnnotation *annotationUnderMouse, WebEventType, WebMouseEventButton, OptionSet<RepaintRequirement> = { });
 
+    void revealAnnotation(PDFAnnotation *);
+
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&, WebCore::GraphicsLayer::Type);
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
+    void setNeedsRepaintForAnnotation(PDFAnnotation *, OptionSet<RepaintRequirement>);
     void setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement>, const WebCore::FloatRect&);
     void setNeedsRepaintInDocumentRects(OptionSet<RepaintRequirement>, const Vector<WebCore::FloatRect>&);
 

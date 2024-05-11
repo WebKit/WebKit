@@ -396,6 +396,19 @@ RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(GraphicsLayerClient&
     return graphicsLayer;
 }
 
+void UnifiedPDFPlugin::setNeedsRepaintForAnnotation(PDFAnnotation *annotation, OptionSet<RepaintRequirement> repaintRequirements)
+{
+    if (!repaintRequirements)
+        return;
+
+    auto pageIndex = pageIndexForAnnotation(annotation);
+    if (!pageIndex)
+        return;
+
+    auto annotationBounds = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::PDFDocumentLayout, FloatRect { [annotation bounds] }, pageIndex);
+    setNeedsRepaintInDocumentRect(repaintRequirements, annotationBounds);
+}
+
 void UnifiedPDFPlugin::setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement> repaintRequirements, const FloatRect& rectInDocumentCoordinates)
 {
     if (!repaintRequirements)
@@ -1128,19 +1141,28 @@ static const WebCore::Color textAnnotationHoverColor()
     return color;
 }
 
-void UnifiedPDFPlugin::paintHoveredAnnotationOnPage(PDFDocumentLayout::PageIndex indexOfPaintedPage, WebCore::GraphicsContext& context, const WebCore::FloatRect& clipRect)
+void UnifiedPDFPlugin::paintHoveredAnnotationOnPage(PDFDocumentLayout::PageIndex indexOfPaintedPage, GraphicsContext& context, const FloatRect& clipRect)
 {
     ASSERT(pageIndexWithHoveredAnnotation());
     ASSERT(supportsForms());
 
     RetainPtr trackedAnnotation = m_annotationTrackingState.trackedAnnotation();
-    auto pageIndex = [m_pdfDocument indexForPage:[trackedAnnotation page]];
-    if (pageIndex != indexOfPaintedPage)
+    auto pageIndex = pageIndexForAnnotation(trackedAnnotation.get());
+    if (!pageIndex)
         return;
 
-    // FIXME: Share code with documentRectForAnnotation().
+    // The GraphicsContext is in PDFPage coordinates here.
     auto annotationRect = FloatRect { [trackedAnnotation bounds] };
     context.fillRect(annotationRect, textAnnotationHoverColor());
+}
+
+std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForAnnotation(PDFAnnotation *annotation) const
+{
+    auto pageIndex = [m_pdfDocument indexForPage:[annotation page]];
+    if (pageIndex == NSNotFound)
+        return { };
+
+    return pageIndex;
 }
 
 std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexWithHoveredAnnotation() const
@@ -1155,12 +1177,7 @@ std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexWithHover
     if (!m_annotationTrackingState.isBeingHovered())
         return { };
 
-    auto annotationRect = FloatRect { [trackedAnnotation bounds] };
-    auto pageIndex = [m_pdfDocument indexForPage:[trackedAnnotation page]];
-    if (pageIndex == NSNotFound)
-        return { };
-
-    return pageIndex;
+    return pageIndexForAnnotation(trackedAnnotation.get());
 }
 
 double UnifiedPDFPlugin::scaleForActualSize() const
@@ -2566,29 +2583,13 @@ void UnifiedPDFPlugin::repaintAnnotationsForFormField(NSString *fieldName)
 {
     RetainPtr annotations = [m_pdfDocument annotationsForFieldName:fieldName];
     for (PDFAnnotation *annotation in annotations.get())
-        setNeedsRepaintInDocumentRect(repaintRequirementsForAnnotation(annotation), documentRectForAnnotation(annotation));
-}
-
-WebCore::FloatRect UnifiedPDFPlugin::documentRectForAnnotation(PDFAnnotation *annotation) const
-{
-    if (!annotation)
-        return { };
-
-    auto pageIndex = [m_pdfDocument indexForPage:[annotation page]];
-    if (pageIndex == NSNotFound)
-        return { };
-
-    auto annotationPageBounds = FloatRect { [annotation bounds] };
-    return convertUp(CoordinateSpace::PDFPage, CoordinateSpace::PDFDocumentLayout, annotationPageBounds, pageIndex);
+        setNeedsRepaintForAnnotation(annotation, repaintRequirementsForAnnotation(annotation));
 }
 
 void UnifiedPDFPlugin::startTrackingAnnotation(RetainPtr<PDFAnnotation>&& annotation, WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
 {
     auto repaintRequirements = m_annotationTrackingState.startAnnotationTracking(WTFMove(annotation), mouseEventType, mouseEventButton);
-    if (repaintRequirements) {
-        auto annotationRect = documentRectForAnnotation(m_annotationTrackingState.trackedAnnotation());
-        setNeedsRepaintInDocumentRect(repaintRequirements, annotationRect);
-    }
+    setNeedsRepaintForAnnotation(m_annotationTrackingState.trackedAnnotation(), repaintRequirements);
 }
 
 void UnifiedPDFPlugin::updateTrackedAnnotation(PDFAnnotation *annotationUnderMouse)
@@ -2605,15 +2606,14 @@ void UnifiedPDFPlugin::updateTrackedAnnotation(PDFAnnotation *annotationUnderMou
         repaintRequirements.add(UnifiedPDFPlugin::repaintRequirementsForAnnotation(currentTrackedAnnotation.get()));
     }
 
-    if (!repaintRequirements.isEmpty())
-        setNeedsRepaintInDocumentRect(repaintRequirements, documentRectForAnnotation(currentTrackedAnnotation.get()));
+    setNeedsRepaintForAnnotation(currentTrackedAnnotation.get(), repaintRequirements);
 }
 
 void UnifiedPDFPlugin::finishTrackingAnnotation(PDFAnnotation* annotationUnderMouse, WebEventType mouseEventType, WebMouseEventButton mouseEventButton, OptionSet<RepaintRequirement> repaintRequirements)
 {
-    auto annotationRect = documentRectForAnnotation(m_annotationTrackingState.trackedAnnotation());
+    RetainPtr trackedAnnotation = m_annotationTrackingState.trackedAnnotation();
     repaintRequirements.add(m_annotationTrackingState.finishAnnotationTracking(annotationUnderMouse, mouseEventType, mouseEventButton));
-    setNeedsRepaintInDocumentRect(repaintRequirements, annotationRect);
+    setNeedsRepaintForAnnotation(trackedAnnotation.get(), repaintRequirements);
 }
 
 void UnifiedPDFPlugin::scrollToPointInContentsSpace(FloatPoint pointInContentsSpace)
@@ -3888,9 +3888,7 @@ void UnifiedPDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation
 
     if (m_activeAnnotation) {
         m_activeAnnotation->commit();
-
-        auto annotationRect = documentRectForAnnotation(m_activeAnnotation->annotation());
-        setNeedsRepaintInDocumentRect(repaintRequirementsForAnnotation(m_activeAnnotation->annotation(), IsAnnotationCommit::Yes), annotationRect);
+        setNeedsRepaintForAnnotation(m_activeAnnotation->annotation(), repaintRequirementsForAnnotation(m_activeAnnotation->annotation(), IsAnnotationCommit::Yes));
     }
 
     if (annotation) {
@@ -3901,12 +3899,20 @@ void UnifiedPDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation
 
         m_activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
         protectedActiveAnnotation()->attach(m_annotationContainer.get());
-
-        auto newAnnotationRectInContentsCoordinates = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::ScrolledContents, documentRectForAnnotation(protectedActiveAnnotation()->annotation()));
-        revealRectInContentsSpace(newAnnotationRectInContentsCoordinates);
+        revealAnnotation(protectedActiveAnnotation()->annotation());
     } else
         m_activeAnnotation = nullptr;
 #endif
+}
+
+void UnifiedPDFPlugin::revealAnnotation(PDFAnnotation *annotation)
+{
+    auto pageIndex = pageIndexForAnnotation(annotation);
+    if (!pageIndex)
+        return;
+
+    auto annotationBounds = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::ScrolledContents, FloatRect { [annotation bounds] }, *pageIndex);
+    revealRectInContentsSpace(annotationBounds);
 }
 
 #if PLATFORM(MAC)
@@ -4081,7 +4087,7 @@ Vector<WebCore::FloatRect> UnifiedPDFPlugin::annotationRectsForTesting() const
 {
     Vector<WebCore::FloatRect> annotationRects;
 
-    for (size_t pageIndex = 0; pageIndex < m_documentLayout.pageCount(); ++pageIndex) {
+    for (PDFDocumentLayout::PageIndex pageIndex = 0; pageIndex < m_documentLayout.pageCount(); ++pageIndex) {
         RetainPtr currentPage = m_documentLayout.pageAtIndex(pageIndex);
         if (!currentPage)
             break;
