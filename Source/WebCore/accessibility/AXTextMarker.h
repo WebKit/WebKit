@@ -48,11 +48,13 @@ enum class LineRangeType : uint8_t {
     Right,
 };
 
+struct SafeTextMarkerData;
+
 struct TextMarkerData {
     unsigned treeID;
     unsigned objectID;
 
-    Node* node; // FIXME: This should use a smart pointer.
+    Node* node;
     unsigned offset;
     Position::AnchorType anchorType;
     Affinity affinity;
@@ -99,9 +101,42 @@ struct TextMarkerData {
     {
         return ObjectIdentifier<AXIDType>(objectID);
     }
+
+    SafeTextMarkerData toSafeTextMarkerData() const;
+
 private:
     void initializeAXIDs(AXObjectCache&, Node*);
 };
+
+// Safer version of TextMarkerData with a WeakPtr for Node.
+// TextMarkerData uses a raw pointer for Node because it is
+// used with memset / memcmp.
+struct SafeTextMarkerData {
+    AXID treeID;
+    AXID objectID;
+
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> node;
+    unsigned offset { 0 };
+    Position::AnchorType anchorType { Position::AnchorType::PositionIsOffsetInAnchor };
+    Affinity affinity { Affinity::Upstream };
+
+    unsigned characterStart { 0 };
+    unsigned characterOffset { 0 };
+    bool ignored { false };
+
+    TextMarkerData toTextMarkerData() const;
+    AXID axObjectID() const { return objectID; }
+};
+
+inline TextMarkerData SafeTextMarkerData::toTextMarkerData() const
+{
+    return { treeID, objectID, node.get(), offset, anchorType, affinity, characterStart, characterOffset, ignored };
+}
+
+inline SafeTextMarkerData TextMarkerData::toSafeTextMarkerData() const
+{
+    return { axTreeID(), axObjectID(), node, offset, anchorType, affinity, characterStart, characterOffset, ignored };
+}
 
 #if PLATFORM(MAC)
 using PlatformTextMarkerData = AXTextMarkerRef;
@@ -210,7 +245,7 @@ private:
     bool atLineEnd() const { return atLineBoundaryForDirection(AXDirection::Next); }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
-    TextMarkerData m_data;
+    TextMarkerData m_data; // FIXME: This should be a SafeTextMarkerData.
 };
 
 class AXTextMarkerRange {

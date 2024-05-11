@@ -847,22 +847,22 @@ static RetainPtr<AXTextMarkerRef> AXTextMarkerRangeEnd(AXTextMarkerRangeRef text
     return adoptCF(AXTextMarkerRangeCopyEndMarker(textMarkerRange));
 }
 
-static TextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
+static SafeTextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
 {
-    TextMarkerData data;
     if (!textMarker)
-        return data;
+        return { };
 
     ASSERT(CFGetTypeID(textMarker) == AXTextMarkerGetTypeID());
     if (CFGetTypeID(textMarker) != AXTextMarkerGetTypeID())
-        return data;
+        return { };
 
-    ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(data));
-    if (AXTextMarkerGetLength(textMarker) != sizeof(data))
-        return data;
+    ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(TextMarkerData));
+    if (AXTextMarkerGetLength(textMarker) != sizeof(TextMarkerData))
+        return { };
 
-    memcpy(&data, AXTextMarkerGetBytePtr(textMarker), sizeof(data));
-    return data;
+    TextMarkerData data;
+    memcpy(&data, AXTextMarkerGetBytePtr(textMarker), sizeof(TextMarkerData));
+    return data.toSafeTextMarkerData();
 }
 
 AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -871,11 +871,8 @@ AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTe
     if (!cache || !textMarker)
         return nullptr;
 
-    auto textMarkerData = getBytesFromAXTextMarker(textMarker);
-    if (textMarkerData.ignored)
-        return nullptr;
-
-    return cache->accessibilityObjectForTextMarkerData(textMarkerData);
+    auto safeTextMarkerData = getBytesFromAXTextMarker(textMarker);
+    return cache->accessibilityObjectForTextMarkerData(safeTextMarkerData);
 }
 
 // TextMarker <-> VisiblePosition conversion.
@@ -899,8 +896,8 @@ VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, AXTextMarkerR
     if (!cache || !textMarker)
         return { };
 
-    auto textMarkerData = getBytesFromAXTextMarker(textMarker);
-    return cache->visiblePositionForTextMarkerData(textMarkerData);
+    auto safeTextMarkerData = getBytesFromAXTextMarker(textMarker);
+    return cache->visiblePositionForTextMarkerData(safeTextMarkerData);
 }
 
 // TextMarkerRange <-> VisiblePositionRange conversion.
@@ -947,8 +944,8 @@ CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, AXTextMarkerR
     if (!cache || !textMarker)
         return { };
 
-    auto textMarkerData = getBytesFromAXTextMarker(textMarker);
-    return cache->characterOffsetForTextMarkerData(textMarkerData);
+    auto safeTextMarkerData = getBytesFromAXTextMarker(textMarker);
+    return cache->characterOffsetForTextMarkerData(safeTextMarkerData);
 }
 
 // TextMarkerRange <-> SimpleRange conversion.

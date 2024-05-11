@@ -2814,7 +2814,8 @@ Ref<Document> AXObjectCache::protectedDocument() const
     return document();
 }
 
-VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarkerData& textMarkerData)
+template<typename TextMarkerDataType>
+VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarkerDataType& textMarkerData)
 {
     Ref node = *textMarkerData.node;
     if (!isNodeInUse(node) || node->isPseudoElement())
@@ -2836,16 +2837,19 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarker
     return visiblePosition;
 }
 
-CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(TextMarkerData& textMarkerData)
+template VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarkerData&);
+template VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const SafeTextMarkerData&);
+
+CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(const SafeTextMarkerData& textMarkerData)
 {
-    if (textMarkerData.ignored)
+    if (textMarkerData.ignored || !textMarkerData.node)
         return { };
 
-    RefPtrAllowingPartiallyDestroyed<Node> node = textMarkerData.node;
-    if (!node || !isNodeInUse(*node))
+    RefAllowingPartiallyDestroyed<Node> node = *textMarkerData.node;
+    if (!isNodeInUse(node))
         return { };
 
-    CharacterOffset result(node.get(), textMarkerData.characterStart, textMarkerData.characterOffset);
+    CharacterOffset result(node.ptr(), textMarkerData.characterStart, textMarkerData.characterOffset);
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
     if (textMarkerData.affinity == Affinity::Upstream)
@@ -3377,10 +3381,13 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
     return result;
 }
 
-AccessibilityObject* AXObjectCache::accessibilityObjectForTextMarkerData(TextMarkerData& textMarkerData)
+AccessibilityObject* AXObjectCache::accessibilityObjectForTextMarkerData(const SafeTextMarkerData& textMarkerData)
 {
-    RefPtr domNode = textMarkerData.node;
-    if (!isNodeInUse(*domNode))
+    if (textMarkerData.ignored)
+        return nullptr;
+
+    RefPtr domNode = textMarkerData.node.get();
+    if (!domNode || !isNodeInUse(*domNode))
         return nullptr;
 
     return getOrCreate(*domNode);

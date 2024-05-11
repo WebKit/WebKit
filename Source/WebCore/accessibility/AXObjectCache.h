@@ -450,14 +450,14 @@ public:
     AXTextMarker nextTextMarker(const AXTextMarker&);
     TextMarkerData textMarkerDataForPreviousCharacterOffset(const CharacterOffset&);
     AXTextMarker previousTextMarker(const AXTextMarker&);
-    VisiblePosition visiblePositionForTextMarkerData(const TextMarkerData&);
-    CharacterOffset characterOffsetForTextMarkerData(TextMarkerData&);
+    template<typename TextMarkerDataType> VisiblePosition visiblePositionForTextMarkerData(const TextMarkerDataType&);
+    CharacterOffset characterOffsetForTextMarkerData(const SafeTextMarkerData&);
     // Use ignoreNextNodeStart/ignorePreviousNodeEnd to determine the behavior when we are at node boundary.
     CharacterOffset nextCharacterOffset(const CharacterOffset&, bool ignoreNextNodeStart = true);
     CharacterOffset previousCharacterOffset(const CharacterOffset&, bool ignorePreviousNodeEnd = true);
     TextMarkerData startOrEndTextMarkerDataForRange(const SimpleRange&, bool);
     CharacterOffset startOrEndCharacterOffsetForRange(const SimpleRange&, bool, bool enterTextControls = false);
-    AccessibilityObject* accessibilityObjectForTextMarkerData(TextMarkerData&);
+    AccessibilityObject* accessibilityObjectForTextMarkerData(const SafeTextMarkerData&);
     std::optional<SimpleRange> rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&);
     static SimpleRange rangeForNodeContents(Node&);
     static unsigned lengthForRange(const SimpleRange&);

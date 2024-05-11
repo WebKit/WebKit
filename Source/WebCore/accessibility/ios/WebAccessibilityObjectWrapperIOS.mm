@@ -126,7 +126,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 @interface WebAccessibilityTextMarker : NSObject
 {
     AXObjectCache* _cache;
-    TextMarkerData _textMarkerData;
+    SafeTextMarkerData _safeTextMarkerData;
 }
 
 + (WebAccessibilityTextMarker *)textMarkerWithVisiblePosition:(VisiblePosition&)visiblePos cache:(AXObjectCache*)cache;
@@ -144,7 +144,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return nil;
     
     _cache = cache;
-    memcpy(&_textMarkerData, data, sizeof(TextMarkerData));
+    _safeTextMarkerData = data->toSafeTextMarkerData();
     return self;
 }
 
@@ -154,7 +154,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return nil;
     
     _cache = cache;
-    [data getBytes:&_textMarkerData length:sizeof(TextMarkerData)];
+    TextMarkerData textMarkerData;
+    [data getBytes:&textMarkerData length:sizeof(TextMarkerData)];
+    _safeTextMarkerData = textMarkerData.toSafeTextMarkerData();
     
     return self;
 }
@@ -201,39 +203,38 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 - (NSData *)dataRepresentation
 {
-    return [NSData dataWithBytes:&_textMarkerData length:sizeof(TextMarkerData)];
+    auto textMarkerData = _safeTextMarkerData.toTextMarkerData();
+    return [NSData dataWithBytes:&textMarkerData length:sizeof(TextMarkerData)];
 }
 
 - (VisiblePosition)visiblePosition
 {
-    return _cache->visiblePositionForTextMarkerData(_textMarkerData);
+    return _cache->visiblePositionForTextMarkerData(_safeTextMarkerData);
 }
 
 - (CharacterOffset)characterOffset
 {
-    return _cache->characterOffsetForTextMarkerData(_textMarkerData);
+    return _cache->characterOffsetForTextMarkerData(_safeTextMarkerData);
 }
 
 - (BOOL)isIgnored
 {
-    return _textMarkerData.ignored;
+    return _safeTextMarkerData.ignored;
 }
 
 - (AccessibilityObject*)accessibilityObject
 {
-    if (_textMarkerData.ignored)
-        return nullptr;
-    return _cache->accessibilityObjectForTextMarkerData(_textMarkerData);
+    return _cache->accessibilityObjectForTextMarkerData(_safeTextMarkerData);
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"[AXTextMarker %p] = node: %p offset: %d", self, _textMarkerData.node, _textMarkerData.offset];
+    return [NSString stringWithFormat:@"[AXTextMarker %p] = node: %p offset: %d", self, _safeTextMarkerData.node.get(), _safeTextMarkerData.offset];
 }
 
 - (TextMarkerData)textMarkerData
 {
-    return _textMarkerData;
+    return _safeTextMarkerData.toTextMarkerData();
 }
 
 @end
