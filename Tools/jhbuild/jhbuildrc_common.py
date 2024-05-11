@@ -46,7 +46,7 @@ def meson_version():
         else:
             return None
     except FileNotFoundError:
-        return none
+        return None
 
 
 def init(jhbuildrc_globals, jhbuild_platform):
@@ -116,5 +116,5 @@ def init(jhbuildrc_globals, jhbuild_platform):
             jhbuildrc_globals['conditions'].add('Thunder')
 
     REQUIRED_MESON_VERSION = 622
-    if meson_version() < REQUIRED_MESON_VERSION:
-        conditions.add('require-meson')
+    if not meson_version() or meson_version() < REQUIRED_MESON_VERSION:
+        jhbuildrc_globals['conditions'].add('require-meson')
