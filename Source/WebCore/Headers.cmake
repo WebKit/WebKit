@@ -869,7 +869,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/Rect.h
     css/RectBase.h
     css/ShorthandSerializer.h
-    css/StyleColor.h
     css/StyleProperties.h
     css/StylePropertiesInlines.h
     css/StyleRule.h
@@ -882,6 +881,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/calc/CSSCalcValue.h
 
     css/color/CSSColorDescriptors.h
+    css/color/StyleAbsoluteColor.h
+    css/color/StyleColor.h
+    css/color/StyleCurrentColor.h
 
     css/parser/CSSParser.h
     css/parser/CSSParserContext.h

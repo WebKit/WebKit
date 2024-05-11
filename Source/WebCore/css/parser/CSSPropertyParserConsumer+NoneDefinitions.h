@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
 namespace CSSPropertyParserHelpers {
