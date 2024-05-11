@@ -99,21 +99,18 @@ void AXObjectCache::relayNotification(const String& notificationName, RetainPtr<
         page->chrome().relayAccessibilityNotification(notificationName, notificationData);
 }
 
-void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotification notification)
+void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNotification notification)
 {
-    if (!object)
-        return;
-
     auto stringNotification = notificationPlatformName(notification);
     if (stringNotification.isEmpty())
         return;
 
     auto notificationName = stringNotification.createNSString();
-    [object->wrapper() accessibilityOverrideProcessNotification:notificationName.get()];
+    [object.wrapper() accessibilityOverrideProcessNotification:notificationName.get()];
 
     // To simulate AX notifications for LayoutTests on the simulator, call
     // the wrapper's accessibilityPostedNotification.
-    [object->wrapper() accessibilityPostedNotification:notificationName.get()];
+    [object.wrapper() accessibilityPostedNotification:notificationName.get()];
 }
 
 void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
@@ -131,31 +128,35 @@ void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 
 void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)
 {
-    postPlatformNotification(object, AXSelectedTextChanged);
+    if (object)
+        postPlatformNotification(*object, AXSelectedTextChanged);
 }
 
 void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, AXTextEditType, const String&, const VisiblePosition&)
 {
-    postPlatformNotification(object, AXValueChanged);
+    if (object)
+        postPlatformNotification(*object, AXValueChanged);
 }
 
 void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&)
 {
-    postPlatformNotification(object, AXValueChanged);
+    if (object)
+        postPlatformNotification(*object, AXValueChanged);
 }
 
 void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String&, const String&, HTMLTextFormControlElement&)
 {
-    postPlatformNotification(object, AXValueChanged);
+    if (object)
+        postPlatformNotification(*object, AXValueChanged);
 }
 
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* axFrameObject, AXLoadingEvent loadingEvent)
 {
     if (!axFrameObject)
         return;
-    
+
     if (loadingEvent == AXLoadingFinished && axFrameObject->document() == axFrameObject->topDocument())
-        postPlatformNotification(axFrameObject, AXLoadComplete);
+        postPlatformNotification(*axFrameObject, AXLoadComplete);
 }
 
 void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newNode)

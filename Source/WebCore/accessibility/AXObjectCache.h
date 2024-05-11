@@ -595,7 +595,7 @@ private:
 #endif
 
 protected:
-    void postPlatformNotification(AXCoreObject*, AXNotification);
+    void postPlatformNotification(AccessibilityObject&, AXNotification);
     void platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
 
     void platformPerformDeferredCacheUpdate();

@@ -311,20 +311,14 @@ static void exerciseIsIgnored(AccessibilityObject& object)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [[object.wrapper() attachmentView] accessibilityIsIgnored];
 ALLOW_DEPRECATED_DECLARATIONS_END
-
         return;
     }
     object.accessibilityIsIgnored();
 }
 #endif
 
-void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotification notification)
+void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNotification notification)
 {
-    if (!is<AccessibilityObject>(object)) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
 #endif
@@ -334,7 +328,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
     NSString *macNotification;
     switch (notification) {
     case AXActiveDescendantChanged:
-        if (object->isComboBox() || object->canBeControlledBy(AccessibilityRole::ComboBox))
+        if (object.isComboBox() || object.canBeControlledBy(AccessibilityRole::ComboBox))
             macNotification = @"AXActiveElementChanged";
         else
             macNotification = NSAccessibilityFocusedUIElementChangedNotification;
@@ -370,7 +364,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
         macNotification = @"AXInvalidStatusChanged";
         break;
     case AXSelectedChildrenChanged:
-        if (object->isTable() && object->isExposable())
+        if (object.isTable() && object.isExposable())
             macNotification = NSAccessibilitySelectedRowsChangedNotification;
         else
             macNotification = NSAccessibilitySelectedChildrenChangedNotification;
@@ -450,13 +444,13 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
         return;
     }
 
-    RefPtr protectedObject = object;
+    Ref protectedObject = object;
 
 #ifndef NDEBUG
-    exerciseIsIgnored(downcast<AccessibilityObject>(*object));
+    exerciseIsIgnored(object);
 #endif
 
-    AXPostNotificationWithUserInfo(object->wrapper(), macNotification, nil, skipSystemNotification);
+    AXPostNotificationWithUserInfo(object.wrapper(), macNotification, nil, skipSystemNotification);
 }
 
 void AXObjectCache::postPlatformAnnouncementNotification(const String& message)

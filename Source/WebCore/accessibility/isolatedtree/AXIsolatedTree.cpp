@@ -208,7 +208,7 @@ void AXIsolatedTree::reportLoadingProgress(double processingProgress)
             { AXPropertyName::TitleAttributeValue, WTFMove(title) },
         });
         if (cache)
-            cache->postPlatformNotification(axWebArea.get(), AXObjectCache::AXNotification::AXLayoutComplete);
+            cache->postPlatformNotification(*axWebArea, AXObjectCache::AXNotification::AXLayoutComplete);
     }
 }
 

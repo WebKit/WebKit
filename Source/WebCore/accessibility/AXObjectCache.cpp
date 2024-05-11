@@ -989,8 +989,8 @@ void AXObjectCache::buildIsolatedTree()
     setIsolatedTreeRoot(tree->rootNode().get());
 
     if (RefPtr webArea = rootWebArea()) {
-        postPlatformNotification(webArea.get(), AXNotification::AXLoadComplete);
-        postPlatformNotification(webArea.get(), AXNotification::AXFocusedUIElementChanged);
+        postPlatformNotification(*webArea, AXNotification::AXLoadComplete);
+        postPlatformNotification(*webArea, AXNotification::AXFocusedUIElementChanged);
     }
 }
 
@@ -1275,7 +1275,7 @@ void AXObjectCache::handleAllDeferredChildrenChanged()
 #if !PLATFORM(COCOA)
         // Neither the MAC nor IOS_FAMILY ports map AXChildrenChanged to a platform notification.
         for (auto& object : deferredChildrenChangedList)
-            postPlatformNotification(object.ptr(), AXChildrenChanged);
+            postPlatformNotification(object, AXChildrenChanged);
 #endif
     }
 }
@@ -1531,7 +1531,7 @@ void AXObjectCache::notificationPostTimerFired()
 #endif
 
     for (const auto& note : notificationsToPost)
-        postPlatformNotification(note.first.ptr(), note.second);
+        postPlatformNotification(note.first, note.second);
 }
 
 void AXObjectCache::passwordNotificationPostTimerFired()
@@ -2416,11 +2416,11 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
 #endif
     }
 
-    postPlatformNotification(target.get(), AXNotification::AXActiveDescendantChanged);
+    postPlatformNotification(*target, AXNotification::AXActiveDescendantChanged);
 
     // Table cell active descendant changes should trigger selected cell changes.
     if (target->isTable() && activeDescendant->isExposedTableCell())
-        postPlatformNotification(target.get(), AXSelectedCellsChanged);
+        postPlatformNotification(*target, AXSelectedCellsChanged);
 }
 
 static bool isTableOrRowRole(const AtomString& attrValue)
@@ -4308,7 +4308,7 @@ void AXObjectCache::handleMenuListValueChanged(Element& element)
     updateIsolatedTree(*object, AXMenuListValueChanged);
 #endif
 
-    postPlatformNotification(object.get(), AXMenuListValueChanged);
+    postPlatformNotification(*object, AXMenuListValueChanged);
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
