@@ -978,9 +978,9 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
 
         // Grid items should use the grid area sizes instead of the containing block (grid container)
         // sizes, we initialize the overrides here if needed to ensure it.
-        if (!child->overridingContainingBlockContentLogicalWidth() && !areMasonryColumns())
-            child->setOverridingContainingBlockContentLogicalWidth(0_lu);
-        if (!child->overridingContainingBlockContentLogicalHeight() && !areMasonryRows())
+        if (!child->hasOverridingContainingBlockContentLogicalWidth() && !areMasonryColumns())
+            child->setOverridingContainingBlockContentLogicalWidth(LayoutUnit());
+        if (!child->hasOverridingContainingBlockContentLogicalHeight() && !areMasonryRows())
             child->setOverridingContainingBlockContentLogicalHeight(std::nullopt);
 
         GridArea area = currentGrid().gridItemArea(*child);
@@ -1309,14 +1309,9 @@ static const StyleContentAlignmentData& contentAlignmentNormalBehaviorGrid()
 
 static bool overrideSizeChanged(const RenderBox& child, GridTrackSizingDirection direction, std::optional<LayoutUnit> width, std::optional<LayoutUnit> height)
 {
-    if (direction == GridTrackSizingDirection::ForColumns) {
-        if (auto overridingContainingBlockContentLogicalWidth = child.overridingContainingBlockContentLogicalWidth())
-            return *overridingContainingBlockContentLogicalWidth != width;
-        return true;
-    }
-    if (auto overridingContainingBlockContentLogicalHeight = child.overridingContainingBlockContentLogicalHeight())
-        return *overridingContainingBlockContentLogicalHeight != height;
-    return true;
+    if (direction == GridTrackSizingDirection::ForColumns)
+        return !child.hasOverridingContainingBlockContentLogicalWidth() || child.overridingContainingBlockContentLogicalWidth() != width;
+    return !child.hasOverridingContainingBlockContentLogicalHeight() || child.overridingContainingBlockContentLogicalHeight() != height;
 }
 
 static bool hasRelativeBlockAxisSize(const RenderGrid& grid, const RenderBox& child)
@@ -1646,9 +1641,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     bool blockFlowIsColumnAxis = childBlockDirection == GridTrackSizingDirection::ForRows;
     bool allowedToStretchChildBlockSize = blockFlowIsColumnAxis ? allowedToStretchChildAlongColumnAxis(child) : allowedToStretchChildAlongRowAxis(child);
     if (allowedToStretchChildBlockSize && !aspectRatioPrefersInline(child, blockFlowIsColumnAxis)) {
-        auto overridingContainingBlockContentSizeForChild = GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection);
-        ASSERT(overridingContainingBlockContentSizeForChild && *overridingContainingBlockContentSizeForChild);
-        LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(overridingContainingBlockContentSizeForChild->value(), child, GridTrackSizingDirection::ForRows);
+        LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child, GridTrackSizingDirection::ForRows);
         LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, std::nullopt);
         child.setOverridingLogicalHeight(desiredLogicalHeight);
 
@@ -1661,9 +1654,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
             child.setNeedsLayout(MarkOnlyThis);
         }
     } else if (!allowedToStretchChildBlockSize && allowedToStretchChildAlongRowAxis(child)) {
-        auto overridingContainingBlockContentSizeForChild = GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childInlineDirection);
-        ASSERT(overridingContainingBlockContentSizeForChild && *overridingContainingBlockContentSizeForChild);
-        LayoutUnit stretchedLogicalWidth = availableAlignmentSpaceForChildBeforeStretching(overridingContainingBlockContentSizeForChild->value(), child, GridTrackSizingDirection::ForColumns);
+        LayoutUnit stretchedLogicalWidth = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childInlineDirection).value(), child, GridTrackSizingDirection::ForColumns);
         LayoutUnit desiredLogicalWidth = child.constrainLogicalWidthInFragmentByMinMax(stretchedLogicalWidth, contentWidth(), *this, nullptr);
         child.setOverridingLogicalWidth(desiredLogicalWidth);
         if (desiredLogicalWidth != child.logicalWidth())
@@ -1679,17 +1670,13 @@ void RenderGrid::applySubgridStretchAlignmentToChildIfNeeded(RenderBox& child)
 
     if (renderGrid->isSubgrid(GridTrackSizingDirection::ForRows)) {
         auto childBlockDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, GridTrackSizingDirection::ForRows);
-        auto overridingContainingBlockContentSizeForChild = GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection);
-        ASSERT(overridingContainingBlockContentSizeForChild && *overridingContainingBlockContentSizeForChild);
-        auto stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(overridingContainingBlockContentSizeForChild->value(), child, GridTrackSizingDirection::ForRows);
+        auto stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child, GridTrackSizingDirection::ForRows);
         child.setOverridingLogicalHeight(stretchedLogicalHeight);
     }
 
     if (renderGrid->isSubgrid(GridTrackSizingDirection::ForColumns)) {
         auto childInlineDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, GridTrackSizingDirection::ForColumns);
-        auto overridingContainingBlockContentSizeForChild = GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childInlineDirection);
-        ASSERT(overridingContainingBlockContentSizeForChild && *overridingContainingBlockContentSizeForChild);
-        auto stretchedLogicalWidth = availableAlignmentSpaceForChildBeforeStretching(overridingContainingBlockContentSizeForChild->value(), child, GridTrackSizingDirection::ForColumns);
+        auto stretchedLogicalWidth = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childInlineDirection).value(), child, GridTrackSizingDirection::ForColumns);
         child.setOverridingLogicalWidth(stretchedLogicalWidth);
     }
 }
@@ -1727,7 +1714,7 @@ void RenderGrid::updateAutoMarginsInRowAxisIfNeeded(RenderBox& child)
     if (!marginEnd.isAuto())
         marginLogicalWidth += child.marginEnd();
 
-    auto availableAlignmentSpace = child.overridingContainingBlockContentLogicalWidth()->value() - child.logicalWidth() - marginLogicalWidth;
+    LayoutUnit availableAlignmentSpace = child.overridingContainingBlockContentLogicalWidth().value() - child.logicalWidth() - marginLogicalWidth;
     if (availableAlignmentSpace <= 0)
         return;
 
@@ -1758,7 +1745,7 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child)
     if (!marginAfter.isAuto())
         marginLogicalHeight += child.marginAfter();
 
-    auto availableAlignmentSpace = child.overridingContainingBlockContentLogicalHeight()->value() - child.logicalHeight() - marginLogicalHeight;
+    LayoutUnit availableAlignmentSpace = child.overridingContainingBlockContentLogicalHeight().value() - child.logicalHeight() - marginLogicalHeight;
     if (availableAlignmentSpace <= 0)
         return;
 
@@ -2226,8 +2213,8 @@ LayoutUnit RenderGrid::logicalOffsetForOutOfFlowChild(const RenderBox& child, Gr
 void RenderGrid::gridAreaPositionForOutOfFlowChild(const RenderBox& child, GridTrackSizingDirection direction, LayoutUnit& start, LayoutUnit& end) const
 {
     ASSERT(child.isOutOfFlowPositioned());
-    ASSERT(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, direction));
-    auto trackBreadth = GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, direction)->value();
+    ASSERT(GridLayoutFunctions::hasOverridingContainingBlockContentSizeForChild(child, direction));
+    LayoutUnit trackBreadth = GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, direction).value();
     bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
     auto& outOfFlowItemLine = isRowAxis ? m_outOfFlowItemColumn : m_outOfFlowItemRow;
     start = isRowAxis ? borderStart() : borderBefore();

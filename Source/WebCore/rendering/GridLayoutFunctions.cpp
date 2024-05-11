@@ -159,7 +159,12 @@ GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid& grid, con
     return isOrthogonalParent(grid, parent) ? (direction == GridTrackSizingDirection::ForColumns ? GridTrackSizingDirection::ForRows : GridTrackSizingDirection::ForColumns) : direction;
 }
 
-std::optional<RenderBox::ContainingBlockOverrideValue> overridingContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
+bool hasOverridingContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
+{
+    return direction == GridTrackSizingDirection::ForColumns ? child.hasOverridingContainingBlockContentLogicalWidth() : child.hasOverridingContainingBlockContentLogicalHeight();
+}
+
+std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
 {
     return direction == GridTrackSizingDirection::ForColumns ? child.overridingContainingBlockContentLogicalWidth() : child.overridingContainingBlockContentLogicalHeight();
 }

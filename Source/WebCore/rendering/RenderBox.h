@@ -291,13 +291,16 @@ public:
     inline LayoutUnit overridingContentLogicalWidth(LayoutUnit overridingLogicalWidth) const;
     inline LayoutUnit overridingContentLogicalHeight(LayoutUnit overridingLogicalHeight) const;
 
-    using ContainingBlockOverrideValue = std::optional<LayoutUnit>;
-    std::optional<ContainingBlockOverrideValue> overridingContainingBlockContentWidth(WritingMode) const;
-    std::optional<ContainingBlockOverrideValue> overridingContainingBlockContentHeight(WritingMode) const;
-    std::optional<ContainingBlockOverrideValue> overridingContainingBlockContentLogicalWidth() const;
-    std::optional<ContainingBlockOverrideValue> overridingContainingBlockContentLogicalHeight() const;
-    void setOverridingContainingBlockContentLogicalWidth(ContainingBlockOverrideValue);
-    void setOverridingContainingBlockContentLogicalHeight(ContainingBlockOverrideValue);
+    std::optional<LayoutUnit> overridingContainingBlockContentWidth() const override;
+    std::optional<LayoutUnit> overridingContainingBlockContentHeight() const override;
+    bool hasOverridingContainingBlockContentWidth() const override;
+    bool hasOverridingContainingBlockContentHeight() const override;
+    std::optional<LayoutUnit> overridingContainingBlockContentLogicalWidth() const;
+    std::optional<LayoutUnit> overridingContainingBlockContentLogicalHeight() const;
+    bool hasOverridingContainingBlockContentLogicalWidth() const;
+    bool hasOverridingContainingBlockContentLogicalHeight() const;
+    void setOverridingContainingBlockContentLogicalWidth(std::optional<LayoutUnit>);
+    void setOverridingContainingBlockContentLogicalHeight(std::optional<LayoutUnit>);
     void clearOverridingContainingBlockContentSize();
     void clearOverridingContainingBlockContentLogicalHeight();
 

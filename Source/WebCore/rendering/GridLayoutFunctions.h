@@ -67,7 +67,8 @@ bool isOrthogonalParent(const RenderGrid&, const RenderElement& parent);
 bool isAspectRatioBlockSizeDependentChild(const RenderBox&);
 GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid&, const RenderBox&, GridTrackSizingDirection);
 GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid&, const RenderElement& parent, GridTrackSizingDirection);
-std::optional<RenderBox::ContainingBlockOverrideValue> overridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
+bool hasOverridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
+std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
 bool hasRelativeOrIntrinsicSizeForChild(const RenderBox& child, GridTrackSizingDirection);
 
 bool isFlippedDirection(const RenderGrid&, GridTrackSizingDirection);
