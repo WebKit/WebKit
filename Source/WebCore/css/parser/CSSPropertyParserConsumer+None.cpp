@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+NoneDefinitions.h"
 
+#include "CSSCalcSymbolsAllowed.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 
