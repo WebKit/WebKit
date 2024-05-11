@@ -2360,7 +2360,8 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValSetPrivateFieldGeneric, void, (JSGloba
 JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void* frame, JSScope* callerScopeChain, EncodedJSValue encodedThisValue))
 {
     CallFrame* calleeFrame = reinterpret_cast<CallFrame*>(frame);
-    VM& vm = calleeFrame->deprecatedVM();
+    // We can't trust our callee since it could be garbage but our caller's should be ok.
+    VM& vm = calleeFrame->callerFrame()->deprecatedVM();
     auto scope = DECLARE_THROW_SCOPE(vm);
     calleeFrame->setCodeBlock(nullptr);
 
@@ -2370,7 +2371,8 @@ JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void* f
 JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void* frame, JSScope* callerScopeChain, EncodedJSValue encodedThisValue))
 {
     CallFrame* calleeFrame = reinterpret_cast<CallFrame*>(frame);
-    VM& vm = calleeFrame->deprecatedVM();
+    // We can't trust our callee since it could be garbage but our caller's should be ok.
+    VM& vm = calleeFrame->callerFrame()->deprecatedVM();
     auto scope = DECLARE_THROW_SCOPE(vm);
     calleeFrame->setCodeBlock(nullptr);
 
