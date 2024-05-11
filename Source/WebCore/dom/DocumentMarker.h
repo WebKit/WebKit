@@ -127,6 +127,7 @@ public:
 #endif
 
     struct TransparentContentData {
+        RefPtr<Node> node;
         WTF::UUID uuid;
     };
 

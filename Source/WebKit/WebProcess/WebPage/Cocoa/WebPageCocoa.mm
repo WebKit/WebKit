@@ -371,7 +371,7 @@ void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool
     if (visible)
         m_unifiedTextReplacementController->removeTransparentMarkersForSession(uuid, *sessionRange);
     else
-        document->markers().addMarker(*sessionRange, DocumentMarker::Type::TransparentContent, { DocumentMarker::TransparentContentData { uuid } });
+        document->markers().addTransparentContentMarker(*sessionRange, uuid);
 
     completionHandler();
 }
