@@ -2841,7 +2841,7 @@ CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(TextMarkerData& 
     if (textMarkerData.ignored)
         return { };
 
-    RefPtrAllowingPartiallyDestroyed<Node> node = textMarkerData.node;
+    RefPtrAllowingPartiallyDestroyed<Node> node = textMarkerData.node.get();
     if (!node || !isNodeInUse(*node))
         return { };
 
@@ -3379,7 +3379,7 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
 
 AccessibilityObject* AXObjectCache::accessibilityObjectForTextMarkerData(TextMarkerData& textMarkerData)
 {
-    RefPtr domNode = textMarkerData.node;
+    RefPtr domNode = textMarkerData.node.get();
     if (!isNodeInUse(*domNode))
         return nullptr;
 

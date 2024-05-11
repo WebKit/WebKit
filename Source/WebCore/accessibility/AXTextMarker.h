@@ -52,7 +52,7 @@ struct TextMarkerData {
     unsigned treeID;
     unsigned objectID;
 
-    Node* node; // FIXME: This should use a smart pointer.
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> node;
     unsigned offset;
     Position::AnchorType anchorType;
     Affinity affinity;
@@ -261,7 +261,7 @@ private:
 inline Node* AXTextMarker::node() const
 {
     ASSERT(isMainThread());
-    return m_data.node;
+    return m_data.node.get();
 }
 
 } // namespace WebCore
