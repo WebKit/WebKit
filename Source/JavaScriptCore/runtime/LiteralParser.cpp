@@ -875,24 +875,23 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserT
                     constexpr auto quoteMask = SIMD::splat(static_cast<UnsignedType>('"'));
                     constexpr auto escapeMask = SIMD::splat(static_cast<UnsignedType>('\\'));
                     constexpr auto controlMask = SIMD::splat(static_cast<UnsignedType>(' '));
-                    for (; m_ptr + (stride - 1) < m_end; m_ptr += stride) {
-                        auto input = SIMD::load(bitwise_cast<const UnsignedType*>(m_ptr));
+                    auto match = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
+                        auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
                         auto quotes = SIMD::equal(input, quoteMask);
                         auto escapes = SIMD::equal(input, escapeMask);
                         auto controls = SIMD::lessThan(input, controlMask);
                         auto mask = SIMD::merge(quotes, SIMD::merge(escapes, controls));
-                        if (auto index = SIMD::findFirstNonZeroIndex(mask)) {
+                        return SIMD::findFirstNonZeroIndex(mask);
+                    };
+
+                    for (; m_ptr + (stride - 1) < m_end; m_ptr += stride) {
+                        if (auto index = match(m_ptr)) {
                             m_ptr += index.value();
                             return;
                         }
                     }
                     if (m_ptr < m_end) {
-                        auto input = SIMD::load(bitwise_cast<const UnsignedType*>(m_end - stride));
-                        auto quotes = SIMD::equal(input, quoteMask);
-                        auto escapes = SIMD::equal(input, escapeMask);
-                        auto controls = SIMD::lessThan(input, controlMask);
-                        auto mask = SIMD::merge(quotes, SIMD::merge(escapes, controls));
-                        if (auto index = SIMD::findFirstNonZeroIndex(mask)) {
+                        if (auto index = match(m_end - stride)) {
                             m_ptr = m_end - stride + index.value();
                             return;
                         }

@@ -53,7 +53,7 @@ public:
 
     constexpr void setPosition(const CharacterType* position)
     {
-        ASSERT(!m_data.empty());
+        ASSERT(position <= m_data.data() + m_data.size());
         m_data = { position, m_data.data() + m_data.size() };
     }
 
