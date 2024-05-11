@@ -76,17 +76,6 @@ protected:
     {
     }
 
-#if COMPILER(MSVC)
-    // Work around an MSVC bug.
-    PODIntervalBase(const T& low, const T& high, const UserData& data)
-        : m_low(low)
-        , m_high(high)
-        , m_data(data)
-        , m_maxHigh(high)
-    {
-    }
-#endif
-
 private:
     T m_low;
     T m_high;

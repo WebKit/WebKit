@@ -228,11 +228,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunkSIMD()
 
 ALWAYS_INLINE void* untaggedPtr(void* ptr)
 {
-#if COMPILER(MSVC)
-        return CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).untaggedPtr();
-#else
-        return CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr();
-#endif
+    return CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr();
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunk()

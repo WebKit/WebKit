@@ -140,11 +140,7 @@ extern "C" {
 
    Signals are ignored by the crash reporter on OS X so we must do better.
 */
-#if COMPILER(GCC_COMPATIBLE) || COMPILER(MSVC)
 #define NO_RETURN_DUE_TO_CRASH NO_RETURN
-#else
-#define NO_RETURN_DUE_TO_CRASH
-#endif
 
 #ifdef __cplusplus
 enum class WTFLogChannelState : uint8_t { Off, On, OnWithAccumulation };
@@ -308,11 +304,7 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #define WTFBreakpointTrap() WTFCrash() // Not implemented.
 #endif
 
-#if COMPILER(MSVC)
-#define WTFBreakpointTrapUnderConstexprContext() ((void) 0)
-#else
 #define WTFBreakpointTrapUnderConstexprContext() __builtin_trap()
-#endif
 
 #ifndef CRASH
 

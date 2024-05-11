@@ -66,11 +66,7 @@ public:
             remove(size() - 1);
     }
 
-    // Visual Studio doesn't seem to see these private constructors from subclasses.
-    // FIXME: See what it takes to remove this hack.
-#if !COMPILER(MSVC)
 protected:
-#endif
     using Base::append;
     using Base::remove;
 

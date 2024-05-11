@@ -109,16 +109,9 @@ ALWAYS_INLINE JSValue profiledAdd(JSGlobalObject* globalObject, JSValue op1, JSV
     return result;
 }
 
-#if COMPILER(MSVC)
-extern "C" void * _ReturnAddress(void);
-#pragma intrinsic(_ReturnAddress)
-
-#define OUR_RETURN_ADDRESS _ReturnAddress()
-#else
 // FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
 // sometimes gives us a signed pointer, and sometimes does not.
 #define OUR_RETURN_ADDRESS removeCodePtrTag(__builtin_return_address(0))
-#endif
 
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationThrowStackOverflowError, void, (CodeBlock* codeBlock))

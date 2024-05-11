@@ -133,11 +133,7 @@ public:
         };
 
         auto replaceCall = [&] () {
-#if COMPILER(MSVC) && !COMPILER(CLANG)
-            ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation().retagged<JSInternalPtrTag>(), callReplacement);
-#else
             ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation().template retagged<JSInternalPtrTag>(), callReplacement);
-#endif
         };
 
         bool shouldEmitProfiling = !JSC::JITCode::isOptimizingJIT(codeBlock->jitType());
