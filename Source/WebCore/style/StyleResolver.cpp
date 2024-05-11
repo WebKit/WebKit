@@ -645,23 +645,32 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
         bool hasExplicitlyInherited = cacheEntry->renderStyle->hasExplicitlyInheritedProperties();
         bool inheritedStyleEqual = parentStyle.inheritedEqual(*cacheEntry->parentRenderStyle);
 
-        if (inheritedStyleEqual && !hasExplicitlyInherited) {
+        if (inheritedStyleEqual) {
             InsideLink linkStatus = state.style()->insideLink();
             // If the cache item parent style has identical inherited properties to the current parent style then the
             // resulting style will be identical too. We copy the inherited properties over from the cache and are done.
             style.inheritFrom(*cacheEntry->renderStyle);
 
-            // Unfortunately the link status is treated like an inherited property. We need to explicitly restore it.
+            // Link status is treated like an inherited property. We need to explicitly restore it.
             style.setInsideLink(linkStatus);
 
-            if (cacheEntry->userAgentAppearanceStyle && elementTypeHasAppearanceFromUAStyle(element))
-                state.setUserAgentAppearanceStyle(RenderStyle::clonePtr(*cacheEntry->userAgentAppearanceStyle));
+            if (!hasExplicitlyInherited) {
+                if (cacheEntry->userAgentAppearanceStyle && elementTypeHasAppearanceFromUAStyle(element))
+                    state.setUserAgentAppearanceStyle(RenderStyle::clonePtr(*cacheEntry->userAgentAppearanceStyle));
 
-            return;
+                return;
+            }
         }
 
-        if (!inheritedStyleEqual)
+        includedProperties = { };
+
+        if (!inheritedStyleEqual) {
             includedProperties.add(PropertyCascade::PropertyType::Inherited);
+            // FIXME: See colorFromPrimitiveValueWithResolvedCurrentColor().
+            bool mayContainResolvedCurrentcolor = style.disallowsFastPathInheritance() && hasExplicitlyInherited;
+            if (mayContainResolvedCurrentcolor && parentStyle.color() != cacheEntry->parentRenderStyle->color())
+                includedProperties.add(PropertyCascade::PropertyType::NonInherited);
+        }
         if (hasExplicitlyInherited)
             includedProperties.add(PropertyCascade::PropertyType::ExplicitlyInherited);
     }
