@@ -724,6 +724,8 @@ public:
 
     WEBCORE_EXPORT void scrollbarStyleDidChange();
 
+    FrameIdentifier rootFrameID() const final;
+
 private:
     explicit LocalFrameView(LocalFrame&);
 

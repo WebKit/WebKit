@@ -261,6 +261,7 @@ public:
 #endif
 
     uint64_t streamedBytes() const;
+    WebCore::FrameIdentifier rootFrameID() const final;
 
 protected:
     virtual double contentScaleFactor() const = 0;

@@ -28,7 +28,9 @@
 #include "Test.h"
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
+#include <wtf/SmallMap.h>
 #include <wtf/SmallSet.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
 namespace TestWebKitAPI {
@@ -150,5 +152,82 @@ TEST(WTF_SmallSet, Pointers) { testSmallSetOfPointers(); }
 TEST(WTF_SmallSet, VectorUint16) { testVectorsOfSmallSetsOfUnsigned<uint16_t>(); }
 TEST(WTF_SmallSet, VectorUint32) { testVectorsOfSmallSetsOfUnsigned<uint32_t>(); }
 TEST(WTF_SmallSet, VectorUint64) { testVectorsOfSmallSetsOfUnsigned<uint64_t>(); }
+
+TEST(WTF_SmallMap, Basic)
+{
+    SmallMap<int, UniqueRef<int>> map;
+    size_t iterations { 0 };
+
+    EXPECT_NULL(map.get(5));
+    map.forEach([&] (auto&, auto&) {
+        iterations++;
+    });
+    EXPECT_EQ(iterations, 0u);
+    EXPECT_EQ(map.size(), 0u);
+
+    map.remove(6);
+    map.ensure(5, [] {
+        return makeUniqueRefWithoutFastMallocCheck<int>(6);
+    });
+    map.remove(6);
+    EXPECT_EQ(map.get(5)->get(), 6);
+    map.remove(5);
+    EXPECT_NULL(map.get(5));
+    map.ensure(5, [] {
+        return makeUniqueRefWithoutFastMallocCheck<int>(6);
+    });
+    EXPECT_NULL(map.get(6));
+    map.forEach([&] (auto& key, auto& value) {
+        EXPECT_EQ(key, 5);
+        EXPECT_EQ(value.get(), 6);
+        iterations++;
+    });
+    EXPECT_EQ(iterations, 1u);
+    EXPECT_EQ(map.size(), 1u);
+
+    map.ensure(7, [] {
+        return makeUniqueRefWithoutFastMallocCheck<int>(8);
+    });
+    EXPECT_EQ(map.get(5)->get(), 6);
+    EXPECT_EQ(map.get(7)->get(), 8);
+    EXPECT_NULL(map.get(6));
+    bool saw5 { false };
+    bool saw7 { false };
+    map.forEach([&] (auto& key, auto& value) {
+        switch (key) {
+        case 5:
+            EXPECT_EQ(value.get(), 6);
+            EXPECT_FALSE(std::exchange(saw5, true));
+            return;
+        case 7:
+            EXPECT_EQ(value.get(), 8);
+            EXPECT_FALSE(std::exchange(saw7, true));
+            return;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    });
+    EXPECT_EQ(map.size(), 2u);
+
+    map.ensure(9, [] {
+        return makeUniqueRefWithoutFastMallocCheck<int>(10);
+    });
+    iterations = 0;
+    map.forEach([&] (auto& key, auto& value) {
+        iterations++;
+    });
+    EXPECT_EQ(iterations, 3u);
+    EXPECT_EQ(map.size(), 3u);
+
+    map.remove(5);
+    map.remove(7);
+    map.remove(9);
+    iterations = 0;
+    map.forEach([&] (auto& key, auto& value) {
+        iterations++;
+    });
+    EXPECT_EQ(iterations, 0u);
+    EXPECT_EQ(map.size(), 0u);
+}
 
 } // namespace TestWebKitAPI

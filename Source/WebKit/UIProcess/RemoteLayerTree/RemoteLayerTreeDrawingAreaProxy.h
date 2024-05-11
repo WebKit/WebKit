@@ -191,8 +191,6 @@ private:
 
     unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
 
-    HashMap<WebCore::ProcessIdentifier, WebCore::FrameIdentifier> m_commitsForFrameID;
-
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     Seconds m_acceleratedTimelineTimeOrigin;
     MonotonicTime m_animationCurrentTime;

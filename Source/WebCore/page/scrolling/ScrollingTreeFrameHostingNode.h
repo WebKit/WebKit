@@ -45,6 +45,7 @@ public:
     void willBeDestroyed() override;
     void addHostedChild(RefPtr<ScrollingTreeNode> node) { m_hostedChildren.add(node); }
     void removeHostedChildren();
+    void removeHostedChild(RefPtr<ScrollingTreeNode>);
 
 private:
     ScrollingTreeFrameHostingNode(ScrollingTree&, ScrollingNodeID);

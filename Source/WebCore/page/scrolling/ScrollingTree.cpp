@@ -315,9 +315,8 @@ void ScrollingTree::setOverlayScrollbarsEnabled(bool enabled)
     m_overlayScrollbarsEnabled = enabled;
 }
 
-void ScrollingTree::removeNode(ScrollingNodeID nodeID)
+void ScrollingTree::removeNode(ScrollingNodeID nodeID, ScrollingTreeFrameHostingNode* hostingNode)
 {
-
     m_latchingController.nodeWasRemoved(nodeID);
     if (auto node = m_nodeMap.take(nodeID)) {
         {
@@ -326,6 +325,8 @@ void ScrollingTree::removeNode(ScrollingNodeID nodeID)
             if (nodeList != m_nodeMapPerFrame.end())
                 nodeList->value.remove(nodeID);
         }
+        if (hostingNode)
+            hostingNode->removeHostedChild(node);
         node->willBeDestroyed();
     }
 }
@@ -351,11 +352,14 @@ bool ScrollingTree::commitTreeStateInternal(std::unique_ptr<ScrollingStateTree>&
         else {
             LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::commitTreeState - parent not present for hosted tree commit");
             // Add to hosted subtrees needing pairing since the hosting node is not in the scrolling tree yet
-            Vector<std::unique_ptr<ScrollingStateTree>> stateTreesPendingConnection;
-            if (m_hostedSubtreesNeedingPairing.contains(*hostingContextIdentifier))
-                stateTreesPendingConnection = m_hostedSubtreesNeedingPairing.take(*hostingContextIdentifier);
-            stateTreesPendingConnection.append(WTFMove(scrollingStateTree));
-            m_hostedSubtreesNeedingPairing.set(*hostingContextIdentifier, WTFMove(stateTreesPendingConnection));
+            m_hostedSubtreesNeedingPairing.ensure(*hostingContextIdentifier, [] {
+                return Vector<std::unique_ptr<ScrollingStateTree>> { };
+            }).iterator->value.append(WTFMove(scrollingStateTree));
+            return true;
+        }
+        if (!rootNode) {
+            if (commitState.frameHostingNode)
+                commitState.frameHostingNode->removeHostedChildren();
             return true;
         }
     }
@@ -423,8 +427,10 @@ bool ScrollingTree::commitTreeStateInternal(std::unique_ptr<ScrollingStateTree>&
 
     for (auto nodeID : commitState.unvisitedNodes) {
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::commitTreeState - removing unvisited node " << nodeID);
-        removeNode(nodeID);
+        removeNode(nodeID, commitState.frameHostingNode.get());
     }
+
+    LOG_WITH_STREAM(ScrollingTree, stream << "committed ScrollingTree" << scrollingTreeAsText(debugScrollingStateTreeAsTextBehaviors));
 
     // Recursively commit subtrees that can now be attatched
     auto subtrees = WTFMove(commitState.pendingSubtreesNeedingCommit);
@@ -437,7 +443,6 @@ bool ScrollingTree::commitTreeStateInternal(std::unique_ptr<ScrollingStateTree>&
 
     didCommitTree();
 
-    LOG_WITH_STREAM(ScrollingTree, stream << "committed ScrollingTree" << scrollingTreeAsText(debugScrollingStateTreeAsTextBehaviors));
     return succeeded;
 }
 

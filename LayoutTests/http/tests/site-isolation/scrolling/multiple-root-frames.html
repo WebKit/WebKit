@@ -5,7 +5,7 @@
     <pre id="scrollingTree"></pre>
 </body>
 <script>
-description("Verifies scrolling tree for simple page.");
+description("Verifies scrolling tree for page with multiple iframes in the same process.");
 jsTestIsAsync = true;
 
 if (window.testRunner) {
@@ -17,9 +17,11 @@ window.addEventListener('load', async () => {
     if (!window.internals)
         return
 
+    await UIHelper.ensurePresentationUpdate();
     document.getElementById('scrollingTree').innerText = await UIHelper.getScrollingTree();
     if (window.testRunner)
         testRunner.notifyDone();
 }, false);
 </script>
-<iframe width="300" height="300" src="http://localhost:8000/site-isolation/scrolling/resources/empty-iframe.html"></iframe>
+<iframe width="300" height="400" src="http://localhost:8000/site-isolation/scrolling/resources/empty-iframe.html"></iframe>
+<iframe width="200" height="100" src="http://localhost:8000/site-isolation/scrolling/resources/empty-iframe.html"></iframe>
