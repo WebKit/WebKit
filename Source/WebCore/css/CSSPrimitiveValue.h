@@ -125,6 +125,10 @@ public:
     bool isColor() const { return primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR; }
     const Color& color() const { ASSERT(isColor()); return *reinterpret_cast<const Color*>(&m_value.colorAsInteger); }
 
+    // Return an absolute color if possible, otherwise an invalid color.
+    // https://drafts.csswg.org/css-color-5/#absolute-color
+    Color absoluteColor() const;
+
     static Ref<CSSPrimitiveValue> createCustomIdent(String);
     bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
 

@@ -7431,7 +7431,3 @@ webkit.org/b/272417 imported/w3c/web-platform-tests/svg/path/property/priority.s
 
 # re-import css/css-align WPT failure
 webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html [ ImageOnlyFailure ]
-
-# re-import css/css-fonts/parsing crash. Skip until https://bugs.webkit.org/show_bug.cgi?id=273888 is fixed
-webkit.org/b/273888 imported/w3c/web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid.html [ Skip ]
-webkit.org/b/273888 imported/w3c/web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html [ Skip ]

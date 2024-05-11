@@ -313,6 +313,21 @@ CSSPrimitiveValue::CSSPrimitiveValue(Color color)
     new (reinterpret_cast<Color*>(&m_value.colorAsInteger)) Color(WTFMove(color));
 }
 
+Color CSSPrimitiveValue::absoluteColor() const
+{
+    if (isColor())
+        return color();
+
+    // FIXME: there are some cases where we can resolve a dynamic color at parse time, we should support them.
+    if (isUnresolvedColor())
+        return { };
+
+    if (StyleColor::isAbsoluteColorKeyword(valueID()))
+        return StyleColor::colorFromAbsoluteKeyword(valueID());
+
+    return { };
+}
+
 CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, CSSValueID valueID)
     : CSSValue(PrimitiveClass)
 {
