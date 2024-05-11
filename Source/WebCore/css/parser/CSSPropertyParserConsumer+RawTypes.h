@@ -93,7 +93,7 @@ struct SymbolRaw {
 NumberRaw replaceSymbol(SymbolRaw, const CSSCalcSymbolTable&);
 template<typename T> T replaceSymbol(T value, const CSSCalcSymbolTable&) { return value; }
 
-consteval double computeMinimumValue(CSSPropertyParserHelpers::IntegerValueRange range)
+constexpr double computeMinimumValue(CSSPropertyParserHelpers::IntegerValueRange range)
 {
     switch (range) {
     case CSSPropertyParserHelpers::IntegerValueRange::All:
