@@ -1378,7 +1378,7 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpExecGeneric, EncodedJSValue, (JSGlobalOb
     
     auto* regexp = jsDynamicCast<RegExpObject*>(base);
     if (UNLIKELY(!regexp))
-        OPERATION_RETURN(scope, throwVMTypeError(globalObject, scope));
+        OPERATION_RETURN(scope, throwVMTypeError(globalObject, scope, "Builtin RegExp exec can only be called on a RegExp object"_s));
 
     JSString* input = argument.toStringOrNull(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !input);
