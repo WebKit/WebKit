@@ -77,6 +77,7 @@ private:
     State m_state { State::Inactive };
     URL m_webPageURL;
     RetainPtr<BEMediaEnvironment> m_mediaEnvironment;
+    String m_environmentIdentifier;
 };
 
 } // namespace WebKit

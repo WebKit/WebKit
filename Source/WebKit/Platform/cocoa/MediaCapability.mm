@@ -46,6 +46,13 @@ MediaCapability::MediaCapability(URL&& webPageURL)
     , m_mediaEnvironment { createMediaEnvironment(m_webPageURL) }
 {
     setPlatformCapability([BEProcessCapability mediaPlaybackAndCaptureWithEnvironment:m_mediaEnvironment.get()]);
+#if USE(EXTENSIONKIT)
+    xpc_object_t xpcObject = [m_mediaEnvironment createXPCRepresentation];
+    if (!xpcObject)
+        return;
+    m_environmentIdentifier = String::fromUTF8(xpc_dictionary_get_string(xpcObject, "identifier"));
+#endif
+
 }
 
 bool MediaCapability::isActivatingOrActive() const
@@ -65,14 +72,7 @@ bool MediaCapability::isActivatingOrActive() const
 
 String MediaCapability::environmentIdentifier() const
 {
-#if USE(EXTENSIONKIT)
-    xpc_object_t xpcObject = [m_mediaEnvironment createXPCRepresentation];
-    if (!xpcObject)
-        return emptyString();
-    return String::fromUTF8(xpc_dictionary_get_string(xpcObject, "identifier"));
-#endif
-
-    return { };
+    return m_environmentIdentifier;
 }
 
 } // namespace WebKit
