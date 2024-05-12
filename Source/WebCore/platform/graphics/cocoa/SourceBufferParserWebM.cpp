@@ -925,6 +925,7 @@ webm::Status WebMParser::OnSimpleBlockBegin(const ElementMetadata&, const Simple
     *action = Action::kRead;
 
     m_currentBlock = std::make_optional<BlockVariant>(SimpleBlock(block));
+    m_currentDuration = MediaTime::zeroTime();
 
     return Status(Status::kOkCompleted);
 }
@@ -934,6 +935,7 @@ webm::Status WebMParser::OnSimpleBlockEnd(const ElementMetadata&, const SimpleBl
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     m_currentBlock = std::nullopt;
+    m_currentDuration = MediaTime::zeroTime();
 
     return Status(Status::kOkCompleted);
 }
@@ -1003,7 +1005,11 @@ webm::Status WebMParser::OnFrame(const FrameMetadata& metadata, Reader* reader, 
         return Skip(reader, bytesRemaining);
     }
 
-    return trackData->consumeFrameData(*reader, metadata, bytesRemaining, MediaTime(block->timecode + m_currentTimecode, m_timescale));
+    auto result = trackData->consumeFrameData(*reader, metadata, bytesRemaining, MediaTime(block->timecode + m_currentTimecode, m_timescale) + m_currentDuration);
+    if (std::holds_alternative<webm::Status>(result))
+        return std::get<webm::Status>(result);
+    m_currentDuration += std::get<MediaTime>(result);
+    return Status(Status::kOkCompleted);
 }
 
 
@@ -1067,7 +1073,7 @@ void WebMParser::VideoTrackData::resetCompletedFramesState()
     TrackData::resetCompletedFramesState();
 }
 
-webm::Status WebMParser::VideoTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const MediaTime& presentationTime)
+WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const MediaTime& presentationTime)
 {
 #if ENABLE(VP9)
     auto status = readFrameData(reader, metadata, bytesRemaining);
@@ -1203,7 +1209,7 @@ void WebMParser::AudioTrackData::resetCompletedFramesState()
     TrackData::resetCompletedFramesState();
 }
 
-webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const MediaTime& presentationTime)
+WebMParser::ConsumeFrameDataResult WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const MediaTime& presentationTime)
 {
     auto status = readFrameData(reader, metadata, bytesRemaining);
     if (!status.completed_ok())
@@ -1329,7 +1335,7 @@ webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, 
     drainPendingSamples();
 
     ASSERT(!*bytesRemaining);
-    return webm::Status(webm::Status::kOkCompleted);
+    return packetDuration;
 }
 
 
