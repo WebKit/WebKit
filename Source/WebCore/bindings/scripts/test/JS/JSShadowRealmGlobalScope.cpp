@@ -58,6 +58,21 @@ static JSC_DECLARE_CUSTOM_GETTER(jsShadowRealmGlobalScope_ShadowRealmGlobalScope
 using JSShadowRealmGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSShadowRealmGlobalScope>;
 
 /* Hash table */
+#if ENABLE(WYHASH_STRING_HASHER)
+
+static const struct CompactHashIndex JSShadowRealmGlobalScopeTableIndex[2] = {
+    { 0, -1 },
+    { -1, -1 },
+};
+
+
+static const HashTableValue JSShadowRealmGlobalScopeTableValues[] =
+{
+    { "ShadowRealmGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstructor, 0 } },
+};
+
+static const HashTable JSShadowRealmGlobalScopeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSShadowRealmGlobalScope::info(), JSShadowRealmGlobalScopeTableValues, JSShadowRealmGlobalScopeTableIndex };
+#else
 
 static const struct CompactHashIndex JSShadowRealmGlobalScopeTableIndex[2] = {
     { -1, -1 },
@@ -71,6 +86,7 @@ static const HashTableValue JSShadowRealmGlobalScopeTableValues[] =
 };
 
 static const HashTable JSShadowRealmGlobalScopeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSShadowRealmGlobalScope::info(), JSShadowRealmGlobalScopeTableValues, JSShadowRealmGlobalScopeTableIndex };
+#endif
 template<> const ClassInfo JSShadowRealmGlobalScopeDOMConstructor::s_info = { "ShadowRealmGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSShadowRealmGlobalScopeDOMConstructor) };
 
 template<> JSValue JSShadowRealmGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

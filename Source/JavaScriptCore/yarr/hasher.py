@@ -32,13 +32,9 @@ secret = [11562461410679940143, 16646288086500911323, 10285213230658275043, 6384
 
 
 def stringHash(str, useWYHash):
-    strLen = len(str)
     if useWYHash:
-        if strLen <= 48:
-            return superFastHash(str)
         return wyhash(str)
-    else:
-        return superFastHash(str)
+    return superFastHash(str)
 
 
 def avalancheBits(value):
