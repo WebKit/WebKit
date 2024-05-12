@@ -90,7 +90,10 @@ StyleColor::StyleColor(StyleColor&&) = default;
 StyleColor& StyleColor::operator=(StyleColor&&) = default;
 StyleColor::~StyleColor() = default;
 
-bool StyleColor::operator==(const StyleColor&) const = default;
+bool StyleColor::operator==(const StyleColor& other) const
+{
+    return m_color == other.m_color;
+}
 
 // This helper allows us to treat all the alternatives in ColorKind
 // as const references, pretending the UniqueRefs don't exist.
