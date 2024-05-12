@@ -1266,8 +1266,10 @@ TEST(KeyboardInputTests, AutocorrectionIndicatorColorNotAffectedByAuthorDefinedA
     CGImagePixelReader snapshotReaderExpected { expected.get() };
     CGImagePixelReader snapshotReaderActual { actual.get() };
 
-    for (int x = 0; x < frame.size.width * 3; ++x) {
-        for (int y = 0; y < frame.size.height * 3; ++y)
+    auto scale = UIScreen.mainScreen.scale;
+
+    for (int x = 0; x < frame.size.width * scale; ++x) {
+        for (int y = 0; y < frame.size.height * scale; ++y)
             EXPECT_EQ(snapshotReaderExpected.at(x, y), snapshotReaderActual.at(x, y));
     }
 }
