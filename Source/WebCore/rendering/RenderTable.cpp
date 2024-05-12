@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2014-2019 Google Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -416,9 +416,7 @@ void RenderTable::distributeExtraLogicalHeight(LayoutUnit extraLogicalHeight)
     if (RenderTableSection* section = firstBody())
         extraLogicalHeight -= section->distributeExtraLogicalHeightToRows(extraLogicalHeight);
 
-    // FIXME: We really would like to enable this ASSERT to ensure that all the extra space has been distributed.
-    // However our current distribution algorithm does not round properly and thus we can have some remaining height.
-    // ASSERT(!topSection() || !extraLogicalHeight);
+    ASSERT(!firstBody() || !extraLogicalHeight);
 }
 
 void RenderTable::simplifiedNormalFlowLayout()
