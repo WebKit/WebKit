@@ -291,10 +291,10 @@ public:
     inline LayoutUnit overridingContentLogicalWidth(LayoutUnit overridingLogicalWidth) const;
     inline LayoutUnit overridingContentLogicalHeight(LayoutUnit overridingLogicalHeight) const;
 
-    std::optional<LayoutUnit> overridingContainingBlockContentWidth() const override;
-    std::optional<LayoutUnit> overridingContainingBlockContentHeight() const override;
-    bool hasOverridingContainingBlockContentWidth() const override;
-    bool hasOverridingContainingBlockContentHeight() const override;
+    std::optional<LayoutUnit> overridingContainingBlockContentWidth() const;
+    std::optional<LayoutUnit> overridingContainingBlockContentHeight() const;
+    bool hasOverridingContainingBlockContentWidth() const;
+    bool hasOverridingContainingBlockContentHeight() const;
     std::optional<LayoutUnit> overridingContainingBlockContentLogicalWidth() const;
     std::optional<LayoutUnit> overridingContainingBlockContentLogicalHeight() const;
     bool hasOverridingContainingBlockContentLogicalWidth() const;
