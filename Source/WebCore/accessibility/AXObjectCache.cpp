@@ -2814,9 +2814,11 @@ Ref<Document> AXObjectCache::protectedDocument() const
     return document();
 }
 
-template<typename TextMarkerDataType>
-VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarkerDataType& textMarkerData)
+VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarkerData& textMarkerData)
 {
+    if (!textMarkerData.node)
+        return { };
+
     Ref node = *textMarkerData.node;
     if (!isNodeInUse(node) || node->isPseudoElement())
         return { };
@@ -2831,16 +2833,13 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarker
         return { };
 
     auto* cache = renderer->document().axObjectCache();
-    if (cache && !cache->m_idsInUse.contains(textMarkerData.axObjectID()))
+    if (cache && !cache->m_idsInUse.contains(textMarkerData.objectID))
         return { };
 
     return visiblePosition;
 }
 
-template VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarkerData&);
-template VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const SafeTextMarkerData&);
-
-CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(const SafeTextMarkerData& textMarkerData)
+CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(const TextMarkerData& textMarkerData)
 {
     if (textMarkerData.ignored || !textMarkerData.node)
         return { };
@@ -3381,7 +3380,7 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
     return result;
 }
 
-AccessibilityObject* AXObjectCache::accessibilityObjectForTextMarkerData(const SafeTextMarkerData& textMarkerData)
+AccessibilityObject* AXObjectCache::accessibilityObjectForTextMarkerData(const TextMarkerData& textMarkerData)
 {
     if (textMarkerData.ignored)
         return nullptr;

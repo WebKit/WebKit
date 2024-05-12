@@ -847,7 +847,7 @@ static RetainPtr<AXTextMarkerRef> AXTextMarkerRangeEnd(AXTextMarkerRangeRef text
     return adoptCF(AXTextMarkerRangeCopyEndMarker(textMarkerRange));
 }
 
-static SafeTextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
+static TextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
 {
     if (!textMarker)
         return { };
@@ -856,13 +856,13 @@ static SafeTextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
     if (CFGetTypeID(textMarker) != AXTextMarkerGetTypeID())
         return { };
 
-    ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(TextMarkerData));
-    if (AXTextMarkerGetLength(textMarker) != sizeof(TextMarkerData))
+    RawTextMarkerData rawTextMarkerData;
+    ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(rawTextMarkerData));
+    if (AXTextMarkerGetLength(textMarker) != sizeof(rawTextMarkerData))
         return { };
 
-    TextMarkerData data;
-    memcpy(&data, AXTextMarkerGetBytePtr(textMarker), sizeof(TextMarkerData));
-    return data.toSafeTextMarkerData();
+    memcpy(&rawTextMarkerData, AXTextMarkerGetBytePtr(textMarker), sizeof(rawTextMarkerData));
+    return rawTextMarkerData.toTextMarkerData();
 }
 
 AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -871,8 +871,8 @@ AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTe
     if (!cache || !textMarker)
         return nullptr;
 
-    auto safeTextMarkerData = getBytesFromAXTextMarker(textMarker);
-    return cache->accessibilityObjectForTextMarkerData(safeTextMarkerData);
+    auto textMarkerData = getBytesFromAXTextMarker(textMarker);
+    return cache->accessibilityObjectForTextMarkerData(textMarkerData);
 }
 
 // TextMarker <-> VisiblePosition conversion.
@@ -887,7 +887,8 @@ AXTextMarkerRef textMarkerForVisiblePosition(AXObjectCache* cache, const Visible
     if (!textMarkerData)
         return nil;
 
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData.value(), sizeof(textMarkerData.value()))).autorelease();
+    auto rawTextMarkerData = textMarkerData->toRawTextMarkerData();
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData))).autorelease();
 }
 
 VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -896,8 +897,8 @@ VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, AXTextMarkerR
     if (!cache || !textMarker)
         return { };
 
-    auto safeTextMarkerData = getBytesFromAXTextMarker(textMarker);
-    return cache->visiblePositionForTextMarkerData(safeTextMarkerData);
+    auto textMarkerData = getBytesFromAXTextMarker(textMarker);
+    return cache->visiblePositionForTextMarkerData(textMarkerData);
 }
 
 // TextMarkerRange <-> VisiblePositionRange conversion.
@@ -935,7 +936,8 @@ AXTextMarkerRef textMarkerForCharacterOffset(AXObjectCache* cache, const Charact
     auto textMarkerData = cache->textMarkerDataForCharacterOffset(characterOffset);
     if (!textMarkerData.objectID || textMarkerData.ignored)
         return nil;
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
+    auto rawTextMarkerData = textMarkerData.toRawTextMarkerData();
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData))).autorelease();
 }
 
 CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -944,8 +946,8 @@ CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, AXTextMarkerR
     if (!cache || !textMarker)
         return { };
 
-    auto safeTextMarkerData = getBytesFromAXTextMarker(textMarker);
-    return cache->characterOffsetForTextMarkerData(safeTextMarkerData);
+    auto textMarkerData = getBytesFromAXTextMarker(textMarker);
+    return cache->characterOffsetForTextMarkerData(textMarkerData);
 }
 
 // TextMarkerRange <-> SimpleRange conversion.
@@ -959,7 +961,8 @@ AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const std::op
     auto textMarkerData = cache->startOrEndTextMarkerDataForRange(*range, isStart);
     if (!textMarkerData.objectID)
         return nil;
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
+    auto rawTextMarkerData = textMarkerData.toRawTextMarkerData();
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData))).autorelease();
 }
 
 AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache* cache, const std::optional<SimpleRange>& range)
