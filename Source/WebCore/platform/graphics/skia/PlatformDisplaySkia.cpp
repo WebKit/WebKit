@@ -48,6 +48,7 @@ IGNORE_CLANG_WARNINGS_END
 
 namespace WebCore {
 
+#if !(PLATFORM(PLAYSTATION) && USE(COORDINATED_GRAPHICS))
 static sk_sp<const GrGLInterface> skiaGLInterface()
 {
     static NeverDestroyed<sk_sp<const GrGLInterface>> interface {
@@ -60,6 +61,7 @@ static sk_sp<const GrGLInterface> skiaGLInterface()
 
     return interface.get();
 }
+#endif
 
 GLContext* PlatformDisplay::skiaGLContext()
 {
@@ -81,6 +83,8 @@ GLContext* PlatformDisplay::skiaGLContext()
             m_skiaGLContext = WTFMove(skiaGLContext);
             m_skiaGrContext = WTFMove(skiaGrContext);
         }
+#else
+        UNUSED_PARAM(this);
 #endif
     });
     return m_skiaGLContext.get();
