@@ -192,7 +192,7 @@ WI.GradientEditor = class GradientEditor extends WI.Object
         this.dispatchEventToListeners(WI.GradientEditor.Event.ColorPickerToggled);
     }
 
-    _gradientTypeChanged(event)
+    _gradientTypeChanged()
     {
         const descriptor = this._gradientTypes[this._gradientTypePicker.value];
         if (!(this._gradient instanceof descriptor.type)) {
@@ -242,7 +242,7 @@ WI.GradientEditor = class GradientEditor extends WI.Object
         this.dispatchEventToListeners(WI.GradientEditor.Event.GradientChanged, {gradient: this._gradient});
     }
 
-    _angleUnitsChanged(event)
+    _angleUnitsChanged()
     {
         let units = this._angleUnitsSelectElement.value;
         let configuration = this._angleUnitsConfiguration.get(units);
