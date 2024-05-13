@@ -1852,7 +1852,7 @@ void FrameLoader::reportLocalLoadFailed(LocalFrame* frame, const String& url)
 void FrameLoader::reportBlockedLoadFailed(LocalFrame& frame, const URL& url)
 {
     ASSERT(!url.isEmpty());
-    auto message = makeString("Not allowed to use restricted network port ", url.port().value(), ": ", url.stringCenterEllipsizedToLength());
+    auto message = makeString("Not allowed to use restricted network port "_s, url.port().value(), ": "_s, url.stringCenterEllipsizedToLength());
     frame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
 }
 

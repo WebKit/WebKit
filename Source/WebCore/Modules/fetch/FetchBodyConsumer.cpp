@@ -196,7 +196,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
     auto form = DOMFormData::create(context, PAL::UTF8Encoding());
     auto mimeType = parseMIMEType(contentType);
     if (auto multipartBoundary = parseMultipartBoundary(mimeType)) {
-        auto boundaryWithDashes = makeString("--", *multipartBoundary);
+        auto boundaryWithDashes = makeString("--"_s, *multipartBoundary);
         CString boundary = boundaryWithDashes.utf8();
         size_t boundaryLength = boundary.length();
 

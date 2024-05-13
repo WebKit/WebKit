@@ -177,7 +177,7 @@ double TimingFunction::transformProgress(double progress, double duration, bool 
 ExceptionOr<RefPtr<TimingFunction>> TimingFunction::createFromCSSText(const String& cssText)
 {
     auto properties = MutableStyleProperties::create();
-    properties->parseDeclaration(makeString("animation-timing-function:", cssText), CSSParserContext(HTMLStandardMode));
+    properties->parseDeclaration(makeString("animation-timing-function:"_s, cssText), CSSParserContext(HTMLStandardMode));
     if (auto value = properties->getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
         if (auto function = createFromCSSValue(*value))
             return function;
@@ -236,12 +236,12 @@ String TimingFunction::cssText() const
             return "ease-out"_s;
         if (function->x1() == 0.42 && !function->y1() && function->x2() == 0.58 && function->y2() == 1.0)
             return "ease-in-out"_s;
-        return makeString("cubic-bezier(", function->x1(), ", ", function->y1(), ", ", function->x2(), ", ", function->y2(), ')');
+        return makeString("cubic-bezier("_s, function->x1(), ", "_s, function->y1(), ", "_s, function->x2(), ", "_s, function->y2(), ')');
     }
 
     if (auto* function = dynamicDowncast<StepsTimingFunction>(*this)) {
         if (function->stepPosition() == StepsTimingFunction::StepPosition::JumpEnd || function->stepPosition() == StepsTimingFunction::StepPosition::End)
-            return makeString("steps(", function->numberOfSteps(), ')');
+            return makeString("steps("_s, function->numberOfSteps(), ')');
     }
 
     TextStream stream;

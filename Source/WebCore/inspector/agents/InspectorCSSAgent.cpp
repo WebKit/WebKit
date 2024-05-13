@@ -176,7 +176,7 @@ public:
     String mergeId() override
     {
         ASSERT(m_styleSheet->id() == m_cssId.styleSheetId());
-        return makeString("SetStyleText ", m_styleSheet->id(), ':', m_cssId.ordinal());
+        return makeString("SetStyleText "_s, m_styleSheet->id(), ':', m_cssId.ordinal());
     }
 
     void merge(std::unique_ptr<Action> action) override
@@ -936,7 +936,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Ins
 
         auto pseudoClass = Inspector::Protocol::Helpers::parseEnumValueFromString<Inspector::Protocol::CSS::ForceablePseudoClass>(pseudoClassString);
         if (!pseudoClass)
-            return makeUnexpected(makeString("Unknown forcedPseudoClass: ", pseudoClassString));
+            return makeUnexpected(makeString("Unknown forcedPseudoClass: "_s, pseudoClassString));
 
         switch (*pseudoClass) {
         case Inspector::Protocol::CSS::ForceablePseudoClass::Active:

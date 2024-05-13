@@ -344,7 +344,7 @@ String ResourceResponseBase::sanitizeSuggestedFilename(const String& suggestedFi
     response.setHTTPStatusCode(200);
     String escapedSuggestedFilename = makeStringByReplacingAll(suggestedFilename, '\\', "\\\\"_s);
     escapedSuggestedFilename = makeStringByReplacingAll(escapedSuggestedFilename, '"', "\\\""_s);
-    response.setHTTPHeaderField(HTTPHeaderName::ContentDisposition, makeString("attachment; filename=\"", escapedSuggestedFilename, '"'));
+    response.setHTTPHeaderField(HTTPHeaderName::ContentDisposition, makeString("attachment; filename=\""_s, escapedSuggestedFilename, '"'));
     return response.suggestedFilename();
 }
 

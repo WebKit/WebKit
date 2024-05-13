@@ -168,7 +168,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorTimelineAgent::setInstruments(
 
         auto instrument = Inspector::Protocol::Helpers::parseEnumValueFromString<Inspector::Protocol::Timeline::Instrument>(instrumentString);
         if (!instrument)
-            return makeUnexpected(makeString("Unknown instrument: ", instrumentString));
+            return makeUnexpected(makeString("Unknown instrument: "_s, instrumentString));
 
         newInstruments.append(*instrument);
     }
@@ -298,7 +298,7 @@ void InspectorTimelineAgent::startFromConsole(JSC::JSGlobalObject* globalObject,
             if (recordTitle == title) {
                 if (auto* consoleAgent = m_instrumentingAgents.webConsoleAgent()) {
                     // FIXME: Send an enum to the frontend for localization?
-                    String warning = title.isEmpty() ? "Unnamed Profile already exists"_s : makeString("Profile \"", ScriptArguments::truncateStringForConsoleMessage(title), "\" already exists");
+                    String warning = title.isEmpty() ? "Unnamed Profile already exists"_s : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" already exists"_s);
                     consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Profile, MessageLevel::Warning, warning));
                 }
                 return;

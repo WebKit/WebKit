@@ -128,7 +128,7 @@ void DeviceOrientationEvent::requestPermission(Document& document, PermissionPro
 
     String errorMessage;
     if (!window->isAllowedToUseDeviceOrientation(errorMessage)) {
-        document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Call to requestPermission() failed, reason: ", errorMessage, "."));
+        document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Call to requestPermission() failed, reason: "_s, errorMessage, '.'));
         return promise.resolve(PermissionState::Denied);
     }
 

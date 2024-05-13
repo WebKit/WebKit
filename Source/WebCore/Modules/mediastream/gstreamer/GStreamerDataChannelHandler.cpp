@@ -87,7 +87,7 @@ GStreamerDataChannelHandler::GStreamerDataChannelHandler(GRefPtr<GstWebRTCDataCh
     : m_channel(WTFMove(channel))
 {
     static Atomic<uint64_t> nChannel = 0;
-    m_channelId = makeString("webkit-webrtc-data-channel-", nChannel.exchangeAdd(1));
+    m_channelId = makeString("webkit-webrtc-data-channel-"_s, nChannel.exchangeAdd(1));
 
     ASSERT(m_channel);
     static std::once_flag debugRegisteredFlag;

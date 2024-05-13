@@ -239,7 +239,7 @@ void logMemoryStatistics(LogMemoryStatisticsReason reason)
             continue;
         String tagName = displayNameForVMTag(i);
         if (!tagName)
-            tagName = makeString("Tag ", i);
+            tagName = makeString("Tag "_s, i);
         RELEASE_LOG(MemoryPressure, "  %" PUBLIC_LOG_STRING ": %lu MB in %zu regions", tagName.latin1().data(), dirty / MB, pages[i].regionCount);
     }
 

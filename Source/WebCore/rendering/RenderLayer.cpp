@@ -2659,13 +2659,13 @@ String RenderLayer::debugDescription() const
         compositedDescription = stream.release();
     }
 
-    return makeString("RenderLayer 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase),
+    return makeString("RenderLayer 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase),
         ' ', size().width(), 'x', size().height(),
-        transform() ? " has transform" : "",
-        hasFilter() ? " has filter" : "",
-        hasBackdropFilter() ? " has backdrop filter" : "",
-        hasBlendMode() ? " has blend mode" : "",
-        isolatesBlending() ? " isolates blending" : "",
+        transform() ? " has transform"_s : ""_s,
+        hasFilter() ? " has filter"_s : ""_s,
+        hasBackdropFilter() ? " has backdrop filter"_s : ""_s,
+        hasBlendMode() ? " has blend mode"_s : ""_s,
+        isolatesBlending() ? " isolates blending"_s : ""_s,
         compositedDescription);
 }
 

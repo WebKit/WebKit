@@ -556,21 +556,21 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     context.drawText(drawingState.timeFont(), TextRun(StringView(string)), timeLocation);
 
     FloatPoint statsLocation(captureSize.width() * .45, captureSize.height() * .75);
-    string = makeString("Requested frame rate: ", FormattedNumber::fixedWidth(frameRate(), 1), " fps");
+    string = makeString("Requested frame rate: "_s, FormattedNumber::fixedWidth(frameRate(), 1), " fps"_s);
     context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
 
     statsLocation.move(0, drawingState.statsFontSize());
-    string = makeString("Observed frame rate: ", FormattedNumber::fixedWidth(observedFrameRate(), 1), " fps");
+    string = makeString("Observed frame rate: "_s, FormattedNumber::fixedWidth(observedFrameRate(), 1), " fps"_s);
     context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
 
     auto size = this->size();
     statsLocation.move(0, drawingState.statsFontSize());
-    string = makeString("Size: ", size.width(), " x ", size.height());
+    string = makeString("Size: "_s, size.width(), " x "_s, size.height());
     context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
 
     if (mockCamera()) {
         statsLocation.move(0, drawingState.statsFontSize());
-        string = makeString("Preset size: ", captureSize.width(), " x ", captureSize.height());
+        string = makeString("Preset size: "_s, captureSize.width(), " x "_s, captureSize.height());
         context.drawText(drawingState.statsFont(), TextRun(StringView(string)), statsLocation);
 
         ASCIILiteral camera;

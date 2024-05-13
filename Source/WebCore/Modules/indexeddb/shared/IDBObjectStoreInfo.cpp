@@ -143,7 +143,7 @@ String IDBObjectStoreInfo::loggingString(int indent) const
 
 String IDBObjectStoreInfo::condensedLoggingString() const
 {
-    return makeString("<OS: ", m_name, " (", m_identifier, ")>");
+    return makeString("<OS: "_s, m_name, " ("_s, m_identifier, ")>"_s);
 }
 
 #endif

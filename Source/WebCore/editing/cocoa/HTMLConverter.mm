@@ -1861,14 +1861,14 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         String listStyleType = _caches->propertyValueForNode(element, CSSPropertyListStyleType);
         if (!listStyleType.length())
             listStyleType = @"disc";
-        list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:String("{" + listStyleType + "}") options:0]);
+        list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:makeString("{"_s, listStyleType, "}"_s) options:0]);
         [_textLists addObject:list.get()];
     } else if (element.hasTagName(olTag)) {
         RetainPtr<NSTextList> list;
         String listStyleType = _caches->propertyValueForNode(element, CSSPropertyListStyleType);
         if (!listStyleType.length())
             listStyleType = "decimal"_s;
-        list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:String("{" + listStyleType + "}") options:0]);
+        list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:makeString('{', listStyleType, '}') options:0]);
         if (RefPtr olElement = dynamicDowncast<HTMLOListElement>(element)) {
             auto startingItemNumber = olElement->start();
             [list setStartingItemNumber:startingItemNumber];

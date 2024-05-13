@@ -63,7 +63,7 @@ Exception convertToExceptionAndLog(ScriptExecutionContext* context, Error error)
 {
     auto exception = convertToException(error);
     if (context)
-        context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Cache API operation failed: ", exception.message()));
+        context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Cache API operation failed: "_s, exception.message()));
     return exception;
 }
 

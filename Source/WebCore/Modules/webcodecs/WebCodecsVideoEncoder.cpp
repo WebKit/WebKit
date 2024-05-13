@@ -259,7 +259,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
             --(protectedThis->m_beingEncodedQueueSize);
             if (!result.isNull()) {
                 if (RefPtr context = protectedThis->scriptExecutionContext())
-                    context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("VideoEncoder encode failed: ", result));
+                    context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("VideoEncoder encode failed: "_s, result));
                 protectedThis->closeEncoder(Exception { ExceptionCode::EncodingError, WTFMove(result) });
                 return;
             }

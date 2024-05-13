@@ -284,7 +284,7 @@ void ScreenCaptureKitCaptureSource::sessionFilterDidChange(SCContentFilter* cont
     }
     case SCContentFilterTypeDisplay: {
         auto *display = [contentFilter displayInfo].display;
-        device = CaptureDevice(String::number(display.displayID), CaptureDevice::DeviceType::Screen, makeString("Screen"), emptyString(), true);
+        device = CaptureDevice(String::number(display.displayID), CaptureDevice::DeviceType::Screen, "Screen"_str, emptyString(), true);
         m_content = display;
         break;
     }

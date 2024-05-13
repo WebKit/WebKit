@@ -212,7 +212,7 @@ void CookieJarDB::verifySchemaVersion()
     }
 
     // Update version
-    executeSQLStatement(m_database.prepareStatementSlow(makeString("PRAGMA user_version=", schemaVersion)));
+    executeSQLStatement(m_database.prepareStatementSlow(makeString("PRAGMA user_version="_s, schemaVersion)));
 }
 
 void CookieJarDB::deleteAllTables()
@@ -360,7 +360,7 @@ bool CookieJarDB::hasCookies(const URL& url)
         statement.bindNull(2);
     } else {
         statement.bindText(1, registrableDomain.string());
-        statement.bindText(2, makeString("*.", registrableDomain.string()));
+        statement.bindText(2, makeString("*."_s, registrableDomain.string()));
     }
 
     return statement.step() == SQLITE_ROW;
@@ -403,7 +403,7 @@ std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, 
     if (CookieUtil::isIPAddress(requestHost) || !requestHost.contains('.') || registrableDomain.isEmpty())
         pstmt->bindNull(6);
     else
-        pstmt->bindText(6, makeString("*.", registrableDomain.string()));
+        pstmt->bindText(6, makeString("*."_s, registrableDomain.string()));
 
     Vector<Cookie> results;
 

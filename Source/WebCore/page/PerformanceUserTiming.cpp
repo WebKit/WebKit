@@ -148,7 +148,7 @@ ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const String& 
     if (iterator != m_marksMap.end())
         return iterator->value.last()->startTime();
 
-    return Exception { ExceptionCode::SyntaxError, makeString("No mark named '", mark, "' exists") };
+    return Exception { ExceptionCode::SyntaxError, makeString("No mark named '"_s, mark, "' exists"_s) };
 }
 
 ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(double mark) const

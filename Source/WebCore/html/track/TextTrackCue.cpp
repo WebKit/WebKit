@@ -105,7 +105,7 @@ static inline bool isLegalNode(Node& node)
 
 static Exception invalidNodeException(Node& node)
 {
-    return Exception { ExceptionCode::InvalidNodeTypeError, makeString("Invalid node type: ", node.nodeName()) };
+    return Exception { ExceptionCode::InvalidNodeTypeError, makeString("Invalid node type: "_s, node.nodeName()) };
 }
 
 static ExceptionOr<void> checkForInvalidNodeTypes(Node& root)

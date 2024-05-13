@@ -425,7 +425,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
         m_hasPendingErrorEvent = true;
         loadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
 
-        auto message = makeString("Cannot load image ", imageURL.string(), " due to access control checks.");
+        auto message = makeString("Cannot load image "_s, imageURL.string(), " due to access control checks."_s);
         element().protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
 
         if (hasPendingDecodePromises())

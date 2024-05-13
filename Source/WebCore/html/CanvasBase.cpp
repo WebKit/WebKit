@@ -335,7 +335,7 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
     if (!area)
         return nullptr;
     if (area > maxCanvasArea()) {
-        auto message = makeString("Canvas area exceeds the maximum limit (width * height > ", maxCanvasArea(), ").");
+        auto message = makeString("Canvas area exceeds the maximum limit (width * height > "_s, maxCanvasArea(), ")."_s);
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
         return nullptr;
     }

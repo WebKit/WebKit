@@ -148,7 +148,7 @@ void LibWebRTCVPXInternalVideoDecoder::decode(std::span<const uint8_t> data, boo
             return;
 
         if (error)
-            protectedThis->m_outputCallback(makeUnexpected(makeString("VPx decoding failed with error ", error)));
+            protectedThis->m_outputCallback(makeUnexpected(makeString("VPx decoding failed with error "_s, error)));
 
         callback({ });
     });

@@ -310,7 +310,7 @@ void WebCoreAVFResourceLoader::startLoading()
     if (dataRequest && m_requestedLength > 0
         && !request.hasHTTPHeaderField(HTTPHeaderName::Range)) {
         String rangeEnd = dataRequest.requestsAllDataToEndOfResource ? emptyString() : makeString(m_requestedOffset + m_requestedLength - 1);
-        request.addHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes=", m_requestedOffset, '-', rangeEnd));
+        request.addHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, m_requestedOffset, '-', rangeEnd));
     }
 
     if (request.url().protocolIsData()) {

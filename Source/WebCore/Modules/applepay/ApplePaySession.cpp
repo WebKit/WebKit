@@ -78,7 +78,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePaySession);
 static ExceptionOr<ApplePayLineItem> convertAndValidateTotal(ApplePayLineItem&& lineItem)
 {
     if (!isValidDecimalMonetaryValue(lineItem.amount))
-        return Exception { ExceptionCode::TypeError, makeString("\"" + lineItem.amount, "\" is not a valid amount.") };
+        return Exception { ExceptionCode::TypeError, makeString("\""_s, lineItem.amount, "\" is not a valid amount."_s) };
 
     auto validatedTotal = PaymentRequestValidator::validateTotal(lineItem);
     if (validatedTotal.hasException())
@@ -94,7 +94,7 @@ static ExceptionOr<ApplePayLineItem> convertAndValidate(ApplePayLineItem&& lineI
         lineItem.amount = nullString();
     } else {
         if (!isValidDecimalMonetaryValue(lineItem.amount))
-            return Exception { ExceptionCode::TypeError, makeString("\"" + lineItem.amount, "\" is not a valid amount.") };
+            return Exception { ExceptionCode::TypeError, makeString("\""_s, lineItem.amount, "\" is not a valid amount."_s) };
     }
 
     return WTFMove(lineItem);
@@ -121,7 +121,7 @@ static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(std::optional<Ve
 static ExceptionOr<ApplePayShippingMethod> convertAndValidate(ApplePayShippingMethod&& shippingMethod)
 {
     if (!isValidDecimalMonetaryValue(shippingMethod.amount))
-        return Exception { ExceptionCode::TypeError, makeString("\"" + shippingMethod.amount, "\" is not a valid amount.") };
+        return Exception { ExceptionCode::TypeError, makeString("\""_s, shippingMethod.amount, "\" is not a valid amount."_s) };
 
     return WTFMove(shippingMethod);
 }
@@ -151,7 +151,7 @@ static ExceptionOr<ApplePayRecurringPaymentRequest> convertAndValidate(ApplePayR
     if (!regularBilling.label)
         return Exception(ExceptionCode::TypeError, "Missing label for 'regularBilling'."_s);
     if (!isValidDecimalMonetaryValue(regularBilling.amount) && regularBilling.type != ApplePayLineItem::Type::Pending)
-        return Exception(ExceptionCode::TypeError, makeString('"', regularBilling.amount, "\" is not a valid amount."));
+        return Exception(ExceptionCode::TypeError, makeString('"', regularBilling.amount, "\" is not a valid amount."_s));
 
     if (auto& trialBilling = recurringPaymentRequest.trialBilling) {
         if (trialBilling->paymentTiming != ApplePayPaymentTiming::Recurring)
@@ -203,7 +203,7 @@ static ExceptionOr<ApplePayAutomaticReloadPaymentRequest> convertAndValidate(App
 static ExceptionOr<ApplePayPaymentTokenContext> convertAndValidate(ApplePayPaymentTokenContext&& tokenContext)
 {
     if (!isValidDecimalMonetaryValue(tokenContext.amount))
-        return Exception { ExceptionCode::TypeError, makeString("\"" + tokenContext.amount, "\" is not a valid amount.") };
+        return Exception { ExceptionCode::TypeError, makeString("\""_s, tokenContext.amount, "\" is not a valid amount."_s) };
 
     return WTFMove(tokenContext);
 }

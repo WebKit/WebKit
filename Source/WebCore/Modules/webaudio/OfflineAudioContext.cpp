@@ -49,7 +49,7 @@ OfflineAudioContext::OfflineAudioContext(Document& document, const OfflineAudioC
     , m_length(options.length)
 {
     if (!renderTarget())
-        document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Failed to construct internal AudioBuffer with ", options.numberOfChannels, " channel(s), a sample rate of ", options.sampleRate, " and a length of ", options.length, "."));
+        document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Failed to construct internal AudioBuffer with "_s, options.numberOfChannels, " channel(s), a sample rate of "_s, options.sampleRate, " and a length of "_s, options.length, '.'));
     else if (noiseInjectionPolicy() == NoiseInjectionPolicy::Minimal)
         renderTarget()->setNeedsAdditionalNoise();
 }

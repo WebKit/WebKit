@@ -68,7 +68,7 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
     }
 
     if (targetIp.isEmpty() || !targetPort) {
-        completionHandler(makeString("Target IP/port is invalid, or not specified."));
+        completionHandler(makeString("Target IP/port is invalid, or not specified."_s));
         return;
     }
 

@@ -218,19 +218,19 @@ RefPtr<AXCoreObject> AXTextMarker::object() const
 
 String AXTextMarker::debugDescription() const
 {
-    auto separator = ", ";
+    auto separator = ", "_s;
     RefPtr object = this->object();
     return makeString(
-        "treeID ", treeID().loggingString()
-        , separator, "objectID ", objectID().loggingString()
-        , separator, "role ", object ? accessibilityRoleToString(object->roleValue()) : String("no object"_s)
+        "treeID "_s, treeID().loggingString()
+        , separator, "objectID "_s, objectID().loggingString()
+        , separator, "role "_s, object ? accessibilityRoleToString(object->roleValue()) : "no object"_str
         , isIgnored() ? makeString(separator, "ignored") : ""_s
         , isMainThread() && node() ? makeString(separator, node()->debugDescription()) : ""_s
-        , separator, "anchor ", m_data.anchorType
-        , separator, "affinity ", m_data.affinity
-        , separator, "offset ", m_data.offset
-        , separator, "characterStart ", m_data.characterStart
-        , separator, "characterOffset ", m_data.characterOffset
+        , separator, "anchor "_s, m_data.anchorType
+        , separator, "affinity "_s, m_data.affinity
+        , separator, "offset "_s, m_data.offset
+        , separator, "characterStart "_s, m_data.characterStart
+        , separator, "characterOffset "_s, m_data.characterOffset
     );
 }
 
@@ -349,7 +349,7 @@ std::optional<AXTextMarkerRange> AXTextMarkerRange::intersectionWith(const AXTex
 
 String AXTextMarkerRange::debugDescription() const
 {
-    return makeString("start: {", m_start.debugDescription(), "}\nend:   {", m_end.debugDescription(), "}");
+    return makeString("start: {"_s, m_start.debugDescription(), "}\nend:   {"_s, m_end.debugDescription(), '}');
 }
 
 std::partial_ordering partialOrder(const AXTextMarker& marker1, const AXTextMarker& marker2)

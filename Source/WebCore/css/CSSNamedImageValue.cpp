@@ -40,7 +40,7 @@ CSSNamedImageValue::~CSSNamedImageValue() = default;
 
 String CSSNamedImageValue::customCSSText() const
 {
-    return makeString("-webkit-named-image(", m_name, ')');
+    return makeString("-webkit-named-image("_s, m_name, ')');
 }
 
 bool CSSNamedImageValue::equals(const CSSNamedImageValue& other) const

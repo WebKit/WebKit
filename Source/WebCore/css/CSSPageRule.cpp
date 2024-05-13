@@ -57,7 +57,7 @@ String CSSPageRule::selectorText() const
     if (auto* selector = m_pageRule->selector()) {
         String pageSpecification = selector->selectorText();
         if (!pageSpecification.isEmpty() && pageSpecification != starAtom())
-            return makeString("@page ", pageSpecification);
+            return makeString("@page "_s, pageSpecification);
     }
     return "@page"_s;
 }

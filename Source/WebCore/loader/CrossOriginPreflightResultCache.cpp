@@ -57,11 +57,11 @@ Expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> CrossOriginPref
 {
     auto methods = parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods));
     if (!methods)
-        return makeUnexpected(makeString("Header Access-Control-Allow-Methods has an invalid value: ", response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods)));
+        return makeUnexpected(makeString("Header Access-Control-Allow-Methods has an invalid value: "_s, response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods)));
 
     auto headers = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders));
     if (!headers)
-        return makeUnexpected(makeString("Header Access-Control-Allow-Headers has an invalid value: ", response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders)));
+        return makeUnexpected(makeString("Header Access-Control-Allow-Headers has an invalid value: "_s, response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders)));
 
     Seconds expiryDelta = 0_s;
     if (parseAccessControlMaxAge(response.httpHeaderField(HTTPHeaderName::AccessControlMaxAge), expiryDelta)) {
@@ -76,10 +76,10 @@ Expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> CrossOriginPref
 std::optional<String> CrossOriginPreflightResultCacheItem::validateMethodAndHeaders(const String& method, const HTTPHeaderMap& requestHeaders) const
 {
     if (!allowsCrossOriginMethod(method, m_storedCredentialsPolicy))
-        return makeString("Method ", method, " is not allowed by Access-Control-Allow-Methods.");
+        return makeString("Method "_s, method, " is not allowed by Access-Control-Allow-Methods."_s);
 
     if (auto badHeader = validateCrossOriginHeaders(requestHeaders, m_storedCredentialsPolicy))
-        return makeString("Request header field ", *badHeader, " is not allowed by Access-Control-Allow-Headers.");
+        return makeString("Request header field "_s, *badHeader, " is not allowed by Access-Control-Allow-Headers."_s);
     return { };
 }
 

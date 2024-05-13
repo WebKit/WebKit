@@ -815,7 +815,7 @@ Ref<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, Ti
     layer->setBorderWidth(m_tileDebugBorderWidth);
     layer->setAntialiasesEdges(false);
     layer->setOpaque(m_tilesAreOpaque);
-    layer->setName(makeString("tile at ", tileRect.location().x(), ',', tileRect.location().y()));
+    layer->setName(makeString("tile at "_s, tileRect.location().x(), ',', tileRect.location().y()));
     layer->setContentsScale(m_deviceScaleFactor * temporaryScaleFactor);
     layer->setAcceleratesDrawing(m_acceleratesDrawing);
     layer->setWantsDeepColorBackingStore(m_wantsDeepColorBackingStore);

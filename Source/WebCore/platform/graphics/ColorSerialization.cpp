@@ -203,8 +203,8 @@ template<typename ColorType> static String serializationUsingColorFunction(const
 
     auto [c1, c2, c3, alpha] = color.unresolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
-    return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / ", numericComponent(alpha), ')');
+        return makeString("color("_s, serialization(ColorSpaceFor<ColorType>), ' ', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
+    return makeString("color("_s, serialization(ColorSpaceFor<ColorType>), ' ', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / "_s, numericComponent(alpha), ')');
 }
 
 static String serializationUsingColorFunction(const SRGBA<uint8_t>& color)

@@ -64,7 +64,7 @@ void CSSFontFaceSrcLocalValue::setSVGFontFaceElement(SVGFontFaceElement& element
 
 String CSSFontFaceSrcLocalValue::customCSSText() const
 {
-    return makeString("local(", serializeString(m_fontFaceName), ')');
+    return makeString("local("_s, serializeString(m_fontFaceName), ')');
 }
 
 bool CSSFontFaceSrcLocalValue::equals(const CSSFontFaceSrcLocalValue& other) const

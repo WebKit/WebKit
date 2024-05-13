@@ -133,7 +133,7 @@ static HashMap<pid_t, ThreadInfo>& threadInfoMap()
 
 static bool threadCPUUsage(pid_t id, float period, ThreadInfo& info)
 {
-    String path = makeString("/proc/self/task/", id, "/stat");
+    String path = makeString("/proc/self/task/"_s, id, "/stat"_s);
     int fd = open(path.utf8().data(), O_RDONLY);
     if (fd < 0)
         return false;

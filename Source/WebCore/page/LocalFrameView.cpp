@@ -1478,7 +1478,7 @@ void LocalFrameView::logMockScrollbarsControllerMessage(const String& message) c
 
 String LocalFrameView::debugDescription() const
 {
-    return makeString("LocalFrameView 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', m_frame->debugDescription());
+    return makeString("LocalFrameView 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', m_frame->debugDescription());
 }
 
 bool LocalFrameView::canShowNonOverlayScrollbars() const

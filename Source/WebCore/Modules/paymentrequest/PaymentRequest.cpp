@@ -90,10 +90,10 @@ static ExceptionOr<String> checkAndCanonicalizeData(ScriptExecutionContext& cont
 static ExceptionOr<void> checkAndCanonicalizeAmount(PaymentCurrencyAmount& amount)
 {
     if (!isWellFormedCurrencyCode(amount.currency))
-        return Exception { ExceptionCode::RangeError, makeString("\"", amount.currency, "\" is not a valid currency code.") };
+        return Exception { ExceptionCode::RangeError, makeString('"', amount.currency, "\" is not a valid currency code."_s) };
 
     if (!isValidDecimalMonetaryValue(amount.value))
-        return Exception { ExceptionCode::TypeError, makeString("\"", amount.value, "\" is not a valid decimal monetary value.") };
+        return Exception { ExceptionCode::TypeError, makeString('"', amount.value, "\" is not a valid decimal monetary value."_s) };
 
     amount.currency = amount.currency.convertToASCIIUppercase();
     return { };

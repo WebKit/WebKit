@@ -90,7 +90,7 @@ void LibWebRTCVPXVideoEncoder::create(Type type, const VideoEncoder::Config& con
         auto internalEncoder = encoder->m_internalEncoder;
         internalEncoder->postTask([callback = WTFMove(callback), descriptionCallback = WTFMove(descriptionCallback), encoder = WTFMove(encoder), error]() mutable {
             if (error) {
-                callback(makeUnexpected(makeString("VPx encoding initialization failed with error ", error)));
+                callback(makeUnexpected(makeString("VPx encoding initialization failed with error "_s, error)));
                 return;
             }
             callback(UniqueRef<VideoEncoder> { WTFMove(encoder) });
@@ -262,7 +262,7 @@ void LibWebRTCVPXInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame,
 
         String result;
         if (error)
-            result = makeString("VPx encoding failed with error ", error);
+            result = makeString("VPx encoding failed with error "_s, error);
         callback(WTFMove(result));
     });
 }

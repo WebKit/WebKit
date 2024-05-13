@@ -107,7 +107,7 @@ bool MockPageOverlayClient::mouseEvent(PageOverlay& overlay, const PlatformMouse
 {
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(overlay.page()->mainFrame())) {
         localMainFrame->document()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug,
-            makeString("MockPageOverlayClient::mouseEvent location (", event.position().x(), ", ", event.position().y(), ')'));
+            makeString("MockPageOverlayClient::mouseEvent location ("_s, event.position().x(), ", "_s, event.position().y(), ')'));
     }
     return false;
 }

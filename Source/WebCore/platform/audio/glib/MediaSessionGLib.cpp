@@ -235,7 +235,7 @@ bool MediaSessionGLib::ensureMprisSessionRegistered()
     }
 
     const auto& applicationID = getApplicationID();
-    m_instanceId = applicationID.isEmpty() ? makeString("org.mpris.MediaPlayer2.webkit.instance", getpid(), "-", m_identifier.toUInt64()) : makeString("org.mpris.MediaPlayer2.", applicationID.ascii().data(), ".Sandboxed.instance-", m_identifier.toUInt64());
+    m_instanceId = applicationID.isEmpty() ? makeString("org.mpris.MediaPlayer2.webkit.instance"_s, getpid(), '-', m_identifier.toUInt64()) : makeString("org.mpris.MediaPlayer2."_s, applicationID.ascii().data(), ".Sandboxed.instance-"_s, m_identifier.toUInt64());
 
     m_ownerId = g_bus_own_name_on_connection(m_connection.get(), m_instanceId.ascii().data(), G_BUS_NAME_OWNER_FLAGS_NONE, nullptr, nullptr, this, nullptr);
 

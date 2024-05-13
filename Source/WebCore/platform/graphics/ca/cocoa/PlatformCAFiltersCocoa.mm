@@ -131,7 +131,7 @@ void PlatformCAFilters::presentationModifiers(const FilterOperations& initialFil
         auto& canonicalFilterOperation = *canonicalFilterOperations[i];
         auto& initialFilterOperation = i < numberOfInitialFilters ? *initialFilterOperations[i] : passthroughFilter(canonicalFilterOperation.type());
         ASSERT(canonicalFilterOperation.type() == initialFilterOperation.type());
-        auto filterName = makeString("filter_", i);
+        auto filterName = makeString("filter_"_s, i);
         auto type = initialFilterOperation.type();
         switch (type) {
         case FilterOperation::Type::Default:
@@ -156,7 +156,7 @@ void PlatformCAFilters::presentationModifiers(const FilterOperations& initialFil
         case FilterOperation::Type::Brightness:
         case FilterOperation::Type::Contrast:
         case FilterOperation::Type::Blur: {
-            auto keyValueName = makeString("filters.", filterName, ".", animatedFilterPropertyName(initialFilterOperation.type()));
+            auto keyValueName = makeString("filters."_s, filterName, '.', animatedFilterPropertyName(initialFilterOperation.type()));
             presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:keyValueName initialValue:filterValueForOperation(&initialFilterOperation).get() additive:NO group:group.get()]) });
             continue;
         }
@@ -242,7 +242,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
 
     unsigned i = 0;
     auto array = createNSArray(filters.operations(), [&] (auto& operationPtr) -> id {
-        auto filterName = makeString("filter_", i++);
+        auto filterName = makeString("filter_"_s, i++);
         auto& filterOperation = *operationPtr;
         switch (filterOperation.type()) {
         case FilterOperation::Type::Default:

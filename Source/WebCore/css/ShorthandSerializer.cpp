@@ -1090,8 +1090,8 @@ String ShorthandSerializer::serializeGrid() const
         return String();
 
     if (isValueIDIncludingList(autoRows, CSSValueAuto))
-        return makeString("auto-flow", dense, " / ", serializeLonghandValue(columnsIndex));
-    return makeString("auto-flow", dense, " ", serializeLonghandValue(autoRowsIndex), " / ", serializeLonghandValue(columnsIndex));
+        return makeString("auto-flow"_s, dense, " / "_s, serializeLonghandValue(columnsIndex));
+    return makeString("auto-flow"_s, dense, ' ', serializeLonghandValue(autoRowsIndex), " / "_s, serializeLonghandValue(columnsIndex));
 }
 
 static bool isCustomIdentValue(const CSSValue& value)

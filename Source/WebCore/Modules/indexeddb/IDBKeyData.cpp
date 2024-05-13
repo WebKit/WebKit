@@ -358,12 +358,12 @@ String IDBKeyData::loggingString() const
         break;
     }
     case IndexedDB::KeyType::String:
-        result = "<string> - " + std::get<String>(m_value);
+        result = makeString("<string> - "_s, std::get<String>(m_value));
         break;
     case IndexedDB::KeyType::Date:
-        return makeString("<date> - ", std::get<Date>(m_value).value);
+        return makeString("<date> - "_s, std::get<Date>(m_value).value);
     case IndexedDB::KeyType::Number:
-        return makeString("<number> - ", std::get<double>(m_value));
+        return makeString("<number> - "_s, std::get<double>(m_value));
     case IndexedDB::KeyType::Max:
         return "<maximum>"_s;
     case IndexedDB::KeyType::Min:

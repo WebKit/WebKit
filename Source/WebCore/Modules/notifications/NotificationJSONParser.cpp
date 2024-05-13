@@ -170,49 +170,49 @@ ExceptionOr<NotificationOptionsPayload> NotificationJSONParser::parseNotificatio
     NotificationDirection direction = NotificationDirection::Auto;
     if (auto value = object.getValue(dirKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { ExceptionCode::SyntaxError, makeString("'", dirKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString('\'', dirKey(), "' member is specified but is not a string"_s) };
         auto directionString = object.getString(dirKey());
         auto parsedDirection = parseEnumerationFromString<NotificationDirection>(directionString);
         if (parsedDirection == std::nullopt)
-            return Exception { ExceptionCode::SyntaxError, makeString("'", dirKey(), "' member is specified but is not a valid NotificationDirection") };
+            return Exception { ExceptionCode::SyntaxError, makeString('\'', dirKey(), "' member is specified but is not a valid NotificationDirection"_s) };
         direction = *parsedDirection;
     }
 
     String lang;
     if (auto value = object.getValue(langKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { ExceptionCode::SyntaxError, makeString("'", langKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString('\'', langKey(), "' member is specified but is not a string"_s) };
         lang = value->asString();
     }
 
     String body;
     if (auto value = object.getValue(bodyKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { ExceptionCode::SyntaxError, makeString("'", bodyKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString('\'', bodyKey(), "' member is specified but is not a string"_s) };
         body = value->asString();
     }
 
     String tag;
     if (auto value = object.getValue(tagKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { ExceptionCode::SyntaxError, makeString("'", tagKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString('\'', tagKey(), "' member is specified but is not a string"_s) };
         tag = value->asString();
     }
 
     URL iconURL;
     if (auto value = object.getValue(iconKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { ExceptionCode::SyntaxError, makeString("'", iconKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString('\'', iconKey(), "' member is specified but is not a string"_s) };
 
         iconURL = URL { value->asString() };
         if (!iconURL.isValid())
-            return Exception { ExceptionCode::SyntaxError, makeString("'", iconKey(), "' member is specified but does not represent a valid URL") };
+            return Exception { ExceptionCode::SyntaxError, makeString('\'', iconKey(), "' member is specified but does not represent a valid URL"_s) };
     }
 
     std::optional<bool> silent;
     if (auto value = object.getValue(silentKey())) {
         if (value->type() != JSON::Value::Type::Boolean)
-            return Exception { ExceptionCode::SyntaxError, makeString("'", silentKey(), "' member is specified but is not a boolean") };
+            return Exception { ExceptionCode::SyntaxError, makeString('\'', silentKey(), "' member is specified but is not a boolean"_s) };
         silent = value->asBoolean();
     }
 

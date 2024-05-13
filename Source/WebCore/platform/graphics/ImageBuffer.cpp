@@ -431,7 +431,7 @@ String ImageBuffer::toDataURL(Ref<ImageBuffer> source, const String& mimeType, s
     auto encodedData = toData(WTFMove(source), mimeType, quality, preserveResolution);
     if (encodedData.isEmpty())
         return "data:,"_s;
-    return makeString("data:", mimeType, ";base64,", base64Encoded(encodedData));
+    return makeString("data:"_s, mimeType, ";base64,"_s, base64Encoded(encodedData));
 }
 
 Vector<uint8_t> ImageBuffer::toData(Ref<ImageBuffer> source, const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution)

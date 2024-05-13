@@ -145,7 +145,7 @@ static String keyIdentifierForWindowsKeyCode(unsigned short keyCode)
         case VK_DELETE:
             return "U+007F"_s;
         default:
-            return makeString("U+", hex(toASCIIUpper(keyCode), 4));
+            return makeString("U+"_s, hex(toASCIIUpper(keyCode), 4));
     }
 }
 

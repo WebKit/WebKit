@@ -232,7 +232,7 @@ String RenderThemeAdwaita::mediaControlsStyleSheet()
 String RenderThemeAdwaita::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
 {
 #if USE(GLIB)
-    auto path = makeString("/org/webkit/media-controls/", iconName, '.', iconType);
+    auto path = makeString("/org/webkit/media-controls/"_s, iconName, '.', iconType);
     auto data = adoptGRef(g_resources_lookup_data(path.latin1().data(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     if (!data)
         return emptyString();

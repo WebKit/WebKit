@@ -126,7 +126,7 @@ RefPtr<CSSTransformComponent> CSSTransformValue::item(size_t index)
 ExceptionOr<Ref<CSSTransformComponent>> CSSTransformValue::setItem(size_t index, Ref<CSSTransformComponent>&& value)
 {
     if (index > m_components.size())
-        return Exception { ExceptionCode::RangeError, makeString("Index ", index, " exceeds the range of CSSTransformValue.") };
+        return Exception { ExceptionCode::RangeError, makeString("Index "_s, index, " exceeds the range of CSSTransformValue."_s) };
 
     if (index == m_components.size())
         m_components.append(WTFMove(value));

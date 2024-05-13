@@ -88,7 +88,7 @@ IDBResourceIdentifier IDBResourceIdentifier::emptyValue()
 
 String IDBResourceIdentifier::loggingString() const
 {
-    return makeString('<', m_idbConnectionIdentifier.toUInt64(), ", ", m_resourceNumber, '>');
+    return makeString('<', m_idbConnectionIdentifier.toUInt64(), ", "_s, m_resourceNumber, '>');
 }
 
 #endif

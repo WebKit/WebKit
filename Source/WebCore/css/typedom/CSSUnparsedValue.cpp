@@ -140,7 +140,7 @@ std::optional<CSSUnparsedSegment> CSSUnparsedValue::item(size_t index)
 ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::setItem(size_t index, CSSUnparsedSegment&& val)
 {
     if (index > m_segments.size())
-        return Exception { ExceptionCode::RangeError, makeString("Index ", index, " exceeds index range for unparsed segments.") };
+        return Exception { ExceptionCode::RangeError, makeString("Index "_s, index, " exceeds index range for unparsed segments."_s) };
     if (index == m_segments.size())
         m_segments.append(WTFMove(val));
     else

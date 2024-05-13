@@ -36,13 +36,13 @@ namespace WebCore {
 class SQLError : public ThreadSafeRefCounted<SQLError> {
 public:
     static Ref<SQLError> create(unsigned code, String&& message) { return adoptRef(*new SQLError(code, WTFMove(message))); }
-    static Ref<SQLError> create(unsigned code, const char* message, int sqliteCode)
+    static Ref<SQLError> create(unsigned code, ASCIILiteral message, int sqliteCode)
     {
-        return create(code, makeString(message, " (", sqliteCode, ')'));
+        return create(code, makeString(message, " ("_s, sqliteCode, ')'));
     }
-    static Ref<SQLError> create(unsigned code, const char* message, int sqliteCode, const char* sqliteMessage)
+    static Ref<SQLError> create(unsigned code, ASCIILiteral message, int sqliteCode, const char* sqliteMessage)
     {
-        return create(code, makeString(message, " (", sqliteCode, ' ', sqliteMessage, ')'));
+        return create(code, makeString(message, " ("_s, sqliteCode, ' ', span(sqliteMessage), ')'));
     }
 
     unsigned code() const { return m_code; }

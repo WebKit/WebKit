@@ -56,7 +56,7 @@ static const char notOpenErrorMessage[] = "database is not open";
 static void unauthorizedSQLFunction(sqlite3_context *context, int, sqlite3_value **)
 {
     const char* functionName = (const char*)sqlite3_user_data(context);
-    sqlite3_result_error(context, makeString("Function ", functionName, " is unauthorized").utf8().data(), -1);
+    sqlite3_result_error(context, makeString("Function "_s, functionName, " is unauthorized"_s).utf8().data(), -1);
 }
 
 static void initializeSQLiteIfNecessary()
@@ -366,7 +366,7 @@ void SQLiteDatabase::setMaximumSize(int64_t size)
     Locker locker { m_authorizerLock };
     enableAuthorizer(false);
 
-    auto statement = prepareStatementSlow(makeString("PRAGMA max_page_count = ", newMaxPageCount));
+    auto statement = prepareStatementSlow(makeString("PRAGMA max_page_count = "_s, newMaxPageCount));
     if (!statement || statement->step() != SQLITE_ROW)
         LOG_ERROR("Failed to set maximum size of database to %lli bytes", static_cast<long long>(size));
 
@@ -424,7 +424,7 @@ int64_t SQLiteDatabase::totalSize()
 
 void SQLiteDatabase::setSynchronous(SynchronousPragma sync)
 {
-    executeCommandSlow(makeString("PRAGMA synchronous = ", static_cast<unsigned>(sync)));
+    executeCommandSlow(makeString("PRAGMA synchronous = "_s, static_cast<unsigned>(sync)));
 }
 
 void SQLiteDatabase::setBusyTimeout(int ms)
@@ -511,7 +511,7 @@ void SQLiteDatabase::clearAllTables()
     while (statement->step() == SQLITE_ROW)
         tables.append(statement->columnText(0));
     for (auto& table : tables) {
-        if (!executeCommandSlow(makeString("DROP TABLE ", table)))
+        if (!executeCommandSlow(makeString("DROP TABLE "_s, table)))
             LOG(SQLDatabase, "Unable to drop table %s", table.ascii().data());
     }
 }

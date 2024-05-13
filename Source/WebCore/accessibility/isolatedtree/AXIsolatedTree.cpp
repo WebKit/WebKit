@@ -327,16 +327,16 @@ void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
     ASSERT(isMainThread());
 
     if (m_unconnectedNodes.contains(axObject->objectID())) {
-        AXLOG(makeString("AXIsolatedTree::addUnconnectedNode exiting because an isolated object for ", axObject->objectID().loggingString(), " already exists."));
+        AXLOG(makeString("AXIsolatedTree::addUnconnectedNode exiting because an isolated object for "_s, axObject->objectID().loggingString(), " already exists."_s));
         return;
     }
 
     if (axObject->isDetached() || !axObject->wrapper()) {
-        AXLOG(makeString("AXIsolatedTree::addUnconnectedNode bailing because associated live object ID ", axObject->objectID().loggingString(), " had no wrapper or is detached. Object is:"));
+        AXLOG(makeString("AXIsolatedTree::addUnconnectedNode bailing because associated live object ID "_s, axObject->objectID().loggingString(), " had no wrapper or is detached. Object is:"_s));
         AXLOG(axObject.ptr());
         return;
     }
-    AXLOG(makeString("AXIsolatedTree::addUnconnectedNode creating isolated object from live object ID ", axObject->objectID().loggingString()));
+    AXLOG(makeString("AXIsolatedTree::addUnconnectedNode creating isolated object from live object ID "_s, axObject->objectID().loggingString()));
 
     // Because we are queuing a change for an object not intended to be connected to the rest of the tree,
     // we don't need to update m_nodeMap or m_pendingChildrenUpdates for this object or its parent as is
@@ -546,7 +546,7 @@ void AXIsolatedTree::updatePropertiesForSelfAndDescendants(AccessibilityObject& 
 void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXPropertyNameSet& properties)
 {
     AXTRACE("AXIsolatedTree::updateNodeProperties"_s);
-    AXLOG(makeString("Updating properties for objectID ", axObject.objectID().loggingString(), ": "));
+    AXLOG(makeString("Updating properties for objectID "_s, axObject.objectID().loggingString(), ": "_s));
     ASSERT(isMainThread());
 
     if (isUpdatingSubtree())
@@ -554,7 +554,7 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
 
     AXPropertyMap propertyMap;
     for (const auto& property : properties) {
-        AXLOG(makeString("Property: ", property));
+        AXLOG(makeString("Property: "_s, property));
         switch (property) {
         case AXPropertyName::AccessKey:
             propertyMap.set(AXPropertyName::AccessKey, axObject.accessKey().isolatedCopy());
@@ -844,7 +844,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     }
 
     if (axAncestor != &axObject) {
-        AXLOG(makeString("Original object with ID ", axObject.objectID().loggingString(), " wasn't in the isolated tree, so instead updating the closest in-isolated-tree ancestor:"));
+        AXLOG(makeString("Original object with ID "_s, axObject.objectID().loggingString(), " wasn't in the isolated tree, so instead updating the closest in-isolated-tree ancestor:"_s));
         AXLOG(axAncestor);
 
         // An explicit copy is necessary here because the nested calls to updateChildren
@@ -898,7 +898,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
         else {
             // This is a new child, add it to the tree.
             childrenChanged = true;
-            AXLOG(makeString("AXID ", axAncestor->objectID().loggingString(), " gaining new subtree, starting at ID ", newChildren[i]->objectID().loggingString(), ":"));
+            AXLOG(makeString("AXID "_s, axAncestor->objectID().loggingString(), " gaining new subtree, starting at ID "_s, newChildren[i]->objectID().loggingString(), ':'));
             AXLOG(newChildren[i]);
             collectNodeChangesForSubtree(*newChildren[i]);
         }
@@ -1022,7 +1022,7 @@ void AXIsolatedTree::setRootNode(AXIsolatedObject* root)
 void AXIsolatedTree::setFocusedNodeID(AXID axID)
 {
     AXTRACE("AXIsolatedTree::setFocusedNodeID"_s);
-    AXLOG(makeString("axID ", axID.loggingString()));
+    AXLOG(makeString("axID "_s, axID.loggingString()));
     ASSERT(isMainThread());
 
     Locker locker { m_changeLogLock };
@@ -1058,7 +1058,7 @@ void AXIsolatedTree::setSelectedTextMarkerRange(AXTextMarkerRange&& range)
 void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
 {
     AXTRACE("AXIsolatedTree::updateLoadingProgress"_s);
-    AXLOG(makeString("Updating loading progress to ", newProgressValue, " for treeID ", treeID().loggingString()));
+    AXLOG(makeString("Updating loading progress to "_s, newProgressValue, " for treeID "_s, treeID().loggingString()));
     ASSERT(isMainThread());
 
     m_loadingProgress = newProgressValue;
@@ -1095,7 +1095,7 @@ void AXIsolatedTree::updateRootScreenRelativePosition()
 void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
 {
     AXTRACE("AXIsolatedTree::removeNode"_s);
-    AXLOG(makeString("objectID ", axObject.objectID().loggingString()));
+    AXLOG(makeString("objectID "_s, axObject.objectID().loggingString()));
     ASSERT(isMainThread());
 
     auto labeledObjectIDs = axObjectCache() ? axObjectCache()->relatedObjectIDsFor(axObject, AXRelationType::LabelFor, AXObjectCache::UpdateRelations::No) : std::nullopt;
@@ -1115,7 +1115,7 @@ void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
 void AXIsolatedTree::removeSubtreeFromNodeMap(AXID objectID, AccessibilityObject* axParent)
 {
     AXTRACE("AXIsolatedTree::removeSubtreeFromNodeMap"_s);
-    AXLOG(makeString("Removing subtree for objectID ", objectID.loggingString()));
+    AXLOG(makeString("Removing subtree for objectID "_s, objectID.loggingString()));
     ASSERT(isMainThread());
 
     if (!objectID.isValid())
@@ -1125,13 +1125,13 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(AXID objectID, AccessibilityObject
         return;
 
     if (!m_nodeMap.contains(objectID)) {
-        AXLOG(makeString("Tried to remove AXID ", objectID.loggingString(), " that is no longer in m_nodeMap."));
+        AXLOG(makeString("Tried to remove AXID "_s, objectID.loggingString(), " that is no longer in m_nodeMap."_s));
         return;
     }
 
     AXID axParentID = axParent ? axParent->objectID() : AXID();
     if (axParentID != m_nodeMap.get(objectID).parentID) {
-        AXLOG(makeString("Tried to remove object ID ", objectID.loggingString(), " from a different parent ", axParentID.loggingString(), ", actual parent ", m_nodeMap.get(objectID).parentID.loggingString(), ", bailing out."));
+        AXLOG(makeString("Tried to remove object ID "_s, objectID.loggingString(), " from a different parent "_s, axParentID.loggingString(), ", actual parent "_s, m_nodeMap.get(objectID).parentID.loggingString(), ", bailing out."_s));
         return;
     }
 
@@ -1199,7 +1199,7 @@ void AXIsolatedTree::applyPendingChanges()
     }
 
     if (m_pendingFocusedNodeID != m_focusedNodeID) {
-        AXLOG(makeString("focusedNodeID ", m_focusedNodeID.loggingString(), " pendingFocusedNodeID ", m_pendingFocusedNodeID.loggingString()));
+        AXLOG(makeString("focusedNodeID "_s, m_focusedNodeID.loggingString(), " pendingFocusedNodeID "_s, m_pendingFocusedNodeID.loggingString()));
         m_focusedNodeID = m_pendingFocusedNodeID;
     }
 
@@ -1207,7 +1207,7 @@ void AXIsolatedTree::applyPendingChanges()
         auto axID = m_pendingSubtreeRemovals.takeLast();
         if (m_pendingProtectedFromDeletionIDs.contains(axID))
             continue;
-        AXLOG(makeString("removing subtree axID ", axID.loggingString()));
+        AXLOG(makeString("removing subtree axID "_s, axID.loggingString()));
         if (RefPtr object = objectForID(axID)) {
             // There's no need to call the more comprehensive AXCoreObject::detach here since
             // we're deleting the entire subtree of this object and thus don't need to `detachRemoteParts`.
@@ -1220,7 +1220,7 @@ void AXIsolatedTree::applyPendingChanges()
 
     for (const auto& item : m_pendingAppends) {
         AXID axID = item.isolatedObject->objectID();
-        AXLOG(makeString("appending axID ", axID.loggingString()));
+        AXLOG(makeString("appending axID "_s, axID.loggingString()));
         if (!axID.isValid())
             continue;
 
@@ -1261,7 +1261,7 @@ void AXIsolatedTree::applyPendingChanges()
     m_pendingParentUpdates.clear();
 
     for (auto& update : m_pendingChildrenUpdates) {
-        AXLOG(makeString("updating children for axID ", update.first.loggingString()));
+        AXLOG(makeString("updating children for axID "_s, update.first.loggingString()));
         if (RefPtr object = objectForID(update.first))
             object->setChildrenIDs(WTFMove(update.second));
     }

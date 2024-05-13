@@ -71,7 +71,7 @@ void WorkerThreadableLoader::loadResourceSynchronously(WorkerOrWorkletGlobalScop
     WorkerRunLoop& runLoop = workerOrWorkletGlobalScope.workerOrWorkletThread()->runLoop();
 
     // Create a unique mode just for this synchronous resource load.
-    auto mode = makeString("loadResourceSynchronouslyMode", runLoop.createUniqueId());
+    auto mode = makeString("loadResourceSynchronouslyMode"_s, runLoop.createUniqueId());
 
     Ref loader = WorkerThreadableLoader::create(workerOrWorkletGlobalScope, client, mode, WTFMove(request), options, String());
     bool success = true;

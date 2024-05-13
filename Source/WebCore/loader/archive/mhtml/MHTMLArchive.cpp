@@ -137,7 +137,7 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
     pageSerializer.serialize(*page);
 
     String boundary = generateRandomBoundary();
-    String endOfResourceBoundary = makeString("--", boundary, "\r\n");
+    String endOfResourceBoundary = makeString("--"_s, boundary, "\r\n"_s);
 
     GregorianDateTime now;
     now.setToCurrentLocalTime();
@@ -198,7 +198,7 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         }
     }
 
-    asciiString = makeString("--", boundary, "--\r\n").utf8();
+    asciiString = makeString("--"_s, boundary, "--\r\n"_s).utf8();
     mhtmlData.append(asciiString.span());
 
     return mhtmlData.take();

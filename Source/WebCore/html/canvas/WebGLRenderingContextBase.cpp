@@ -5419,7 +5419,7 @@ void WebGLRenderingContextBase::synthesizeGLError(GCGLenum error, const char* fu
 {
     auto errorCode = GraphicsContextGL::enumToErrorCode(error);
     if (shouldPrintToConsole())
-        printToConsole(MessageLevel::Error, makeString("WebGL: ", errorCodeToString(errorCode), ": ", functionName, ": ", description));
+        printToConsole(MessageLevel::Error, makeString("WebGL: "_s, errorCodeToString(errorCode), ": "_s, functionName, ": "_s, description));
     m_errors.add(errorCode);
 }
 
@@ -5427,7 +5427,7 @@ void WebGLRenderingContextBase::synthesizeLostContextGLError(GCGLenum error, con
 {
     auto errorCode = GraphicsContextGL::enumToErrorCode(error);
     if (shouldPrintToConsole())
-        printToConsole(MessageLevel::Error, makeString("WebGL: ", errorCodeToString(errorCode), ": ", functionName, ": ", description));
+        printToConsole(MessageLevel::Error, makeString("WebGL: "_s, errorCodeToString(errorCode), ": "_s, functionName, ": "_s, description));
     m_contextLostState->errors.add(errorCode);
 }
 

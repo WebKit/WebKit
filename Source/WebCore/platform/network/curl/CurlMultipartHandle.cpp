@@ -58,7 +58,7 @@ static std::optional<CString> extractBoundary(const CurlResponse& response)
         if (boundary.isEmpty())
             return std::nullopt;
 
-        return makeString("--", boundary).latin1();
+        return makeString("--"_s, boundary).latin1();
     }
 
     return std::nullopt;

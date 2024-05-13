@@ -59,13 +59,13 @@ void provideUserMediaTo(Page* page, UserMediaClient* client)
 void UserMediaController::logGetUserMediaDenial(Document& document)
 {
     if (RefPtr window = document.domWindow())
-        window->printErrorMessage(makeString("Not allowed to call getUserMedia."));
+        window->printErrorMessage("Not allowed to call getUserMedia."_s);
 }
 
 void UserMediaController::logGetDisplayMediaDenial(Document& document)
 {
     if (RefPtr window = document.domWindow())
-        window->printErrorMessage(makeString("Not allowed to call getDisplayMedia."));
+        window->printErrorMessage("Not allowed to call getDisplayMedia."_s);
 }
 
 void UserMediaController::logEnumerateDevicesDenial(Document& document)
@@ -74,7 +74,7 @@ void UserMediaController::logEnumerateDevicesDenial(Document& document)
     isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, document, LogPermissionsPolicyFailure::Yes);
     isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document, LogPermissionsPolicyFailure::Yes);
     if (RefPtr window = document.domWindow())
-        window->printErrorMessage(makeString("Not allowed to call enumerateDevices."));
+        window->printErrorMessage("Not allowed to call enumerateDevices."_s);
 }
 
 } // namespace WebCore

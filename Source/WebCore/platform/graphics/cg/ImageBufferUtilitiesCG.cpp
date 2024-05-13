@@ -242,7 +242,7 @@ template<typename Source> static String encodeToDataURL(Source&& source, const S
     if (encodedData.isEmpty())
         return "data:,"_s;
 
-    return makeString("data:", mimeType, ";base64,", base64Encoded(encodedData));
+    return makeString("data:"_s, mimeType, ";base64,"_s, base64Encoded(encodedData));
 }
 
 Vector<uint8_t> encodeData(CGImageRef image, const String& mimeType, std::optional<double> quality)

@@ -176,7 +176,7 @@ void ValidatedFormListedElement::reportNonFocusableControlError()
 {
     auto& document = asHTMLElement().document();
     if (document.frame()) {
-        auto message = makeString("An invalid form control with name='", name(), "' is not focusable.");
+        auto message = makeString("An invalid form control with name='"_s, name(), "' is not focusable."_s);
         document.addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, message);
     }
 }

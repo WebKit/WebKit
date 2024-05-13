@@ -550,7 +550,7 @@ WebAnimation* InspectorAnimationAgent::assertAnimation(Inspector::Protocol::Erro
 
 void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, RefPtr<Inspector::Protocol::Console::StackTrace> backtrace)
 {
-    auto animationId = makeString("animation:" + IdentifiersFactory::createIdentifier());
+    auto animationId = makeString("animation:"_s, IdentifiersFactory::createIdentifier());
     m_animationIdMap.set(animationId, &animation);
 
     auto animationPayload = Inspector::Protocol::Animation::Animation::create()

@@ -35,7 +35,7 @@ namespace WebCore {
 Ref<MediaResourceSniffer> MediaResourceSniffer::create(PlatformMediaResourceLoader& loader, ResourceRequest&& request, std::optional<size_t> maxSize)
 {
     if (maxSize)
-        request.addHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes=", 0, '-', *maxSize));
+        request.addHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, 0, '-', *maxSize));
     auto resource = loader.requestResource(WTFMove(request), PlatformMediaResourceLoader::LoadOption::DisallowCaching);
     if (!resource)
         return adoptRef(*new MediaResourceSniffer());

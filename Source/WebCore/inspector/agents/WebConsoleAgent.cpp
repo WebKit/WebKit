@@ -75,7 +75,7 @@ void WebConsoleAgent::frameWindowDiscarded(LocalDOMWindow& window)
 void WebConsoleAgent::didReceiveResponse(ResourceLoaderIdentifier requestIdentifier, const ResourceResponse& response)
 {
     if (response.httpStatusCode() >= 400) {
-        auto message = makeString("Failed to load resource: the server responded with a status of ", response.httpStatusCode(), " (", ScriptArguments::truncateStringForConsoleMessage(response.httpStatusText()), ')');
+        auto message = makeString("Failed to load resource: the server responded with a status of "_s, response.httpStatusCode(), " ("_s, ScriptArguments::truncateStringForConsoleMessage(response.httpStatusText()), ')');
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, response.url().string(), 0, 0, nullptr, requestIdentifier.toUInt64()));
     }
 }
@@ -92,7 +92,7 @@ void WebConsoleAgent::didFailLoading(ResourceLoaderIdentifier requestIdentifier,
     auto level = MessageLevel::Error;
     auto message = blockedTrackerErrorMessage(error);
     if (message.isEmpty())
-        message = makeString("Failed to load resource", error.localizedDescription().isEmpty() ? "" : ": ", error.localizedDescription());
+        message = makeString("Failed to load resource"_s, error.localizedDescription().isEmpty() ? ""_s : ": "_s, error.localizedDescription());
     else
         level = MessageLevel::Info;
 

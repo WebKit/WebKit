@@ -112,7 +112,7 @@ void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::
     if (!error.isEmpty()) {
         encoder->m_internalEncoder->postTask([callback = WTFMove(callback), error = WTFMove(error)]() mutable {
             GST_WARNING("Error creating encoder: %s", error.ascii().data());
-            callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: ", error)));
+            callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: "_s, error)));
         });
         return;
     }

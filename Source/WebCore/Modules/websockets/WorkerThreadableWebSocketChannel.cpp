@@ -415,7 +415,7 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
         auto& document = downcast<Document>(context);
         
         if (RefPtr frame = document.frame(); frame && MixedContentChecker::shouldBlockRequestForRunnableContent(*frame, document.securityOrigin(), url, MixedContentChecker::ShouldLogWarning::No)) {
-            peer->fail(makeString("The page at ", document.url().stringCenterEllipsizedToLength(), " was blocked from connecting insecurely to ", url.stringCenterEllipsizedToLength(), " either because the protocol is insecure or the page is embedded from an insecure page."));
+            peer->fail(makeString("The page at "_s, document.url().stringCenterEllipsizedToLength(), " was blocked from connecting insecurely to "_s, url.stringCenterEllipsizedToLength(), " either because the protocol is insecure or the page is embedded from an insecure page."_s));
             return;
         }
 

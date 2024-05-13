@@ -385,7 +385,7 @@ String PrintContext::pageProperty(LocalFrame* frame, const char* propertyName, i
     if (!strcmp(propertyName, "size"))
         return makeString(style->pageSize().width.value(), ' ', style->pageSize().height.value());
 
-    return makeString("pageProperty() unimplemented for: ", propertyName);
+    return makeString("pageProperty() unimplemented for: "_s, propertyName);
 }
 
 bool PrintContext::isPageBoxVisible(LocalFrame* frame, int pageNumber)

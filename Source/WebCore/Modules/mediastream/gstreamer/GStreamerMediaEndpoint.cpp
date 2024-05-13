@@ -94,7 +94,7 @@ GStreamerMediaEndpoint::~GStreamerMediaEndpoint()
 bool GStreamerMediaEndpoint::initializePipeline()
 {
     static uint32_t nPipeline = 0;
-    auto pipelineName = makeString("webkit-webrtc-pipeline-", nPipeline);
+    auto pipelineName = makeString("webkit-webrtc-pipeline-"_s, nPipeline);
     m_pipeline = gst_pipeline_new(pipelineName.ascii().data());
     registerActivePipeline(m_pipeline);
 
@@ -102,7 +102,7 @@ bool GStreamerMediaEndpoint::initializePipeline()
         handleMessage(message);
     });
 
-    auto binName = makeString("webkit-webrtcbin-", nPipeline++);
+    auto binName = makeString("webkit-webrtcbin-"_s, nPipeline++);
     m_webrtcBin = makeGStreamerElement("webrtcbin", binName.ascii().data());
     if (!m_webrtcBin)
         return false;

@@ -689,7 +689,7 @@ public:
         auto result = idbObjectStore->clear();
         ASSERT(!result.hasException());
         if (result.hasException()) {
-            m_requestCallback->sendFailure(makeString("Could not clear object store '", m_objectStoreName, "': ", static_cast<int>(result.releaseException().code())));
+            m_requestCallback->sendFailure(makeString("Could not clear object store '"_s, m_objectStoreName, "': "_s, static_cast<int>(result.releaseException().code())));
             return;
         }
 

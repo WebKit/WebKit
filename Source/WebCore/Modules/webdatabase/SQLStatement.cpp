@@ -116,9 +116,9 @@ bool SQLStatement::execute(Database& db)
     if (!statement) {
         LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.ascii().data(), statement.error(), database.lastErrorMsg());
         if (statement.error() == SQLITE_INTERRUPT)
-            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not prepare statement", statement.error(), "interrupted");
+            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not prepare statement"_s, statement.error(), "interrupted"_s);
         else
-            m_error = SQLError::create(SQLError::SYNTAX_ERR, "could not prepare statement", statement.error(), database.lastErrorMsg());
+            m_error = SQLError::create(SQLError::SYNTAX_ERR, "could not prepare statement"_s, statement.error(), database.lastErrorMsg());
         return false;
     }
 
@@ -139,7 +139,7 @@ bool SQLStatement::execute(Database& db)
 
         if (result != SQLITE_OK) {
             LOG(StorageAPI, "Failed to bind value index %i to statement for query '%s'", i + 1, m_statement.ascii().data());
-            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not bind value", result, database.lastErrorMsg());
+            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not bind value"_s, result, database.lastErrorMsg());
             return false;
         }
     }
@@ -164,7 +164,7 @@ bool SQLStatement::execute(Database& db)
         } while (result == SQLITE_ROW);
 
         if (result != SQLITE_DONE) {
-            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not iterate results", result, database.lastErrorMsg());
+            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not iterate results"_s, result, database.lastErrorMsg());
             return false;
         }
         break;
@@ -180,10 +180,10 @@ bool SQLStatement::execute(Database& db)
         setFailureDueToQuota();
         return false;
     case SQLITE_CONSTRAINT:
-        m_error = SQLError::create(SQLError::CONSTRAINT_ERR, "could not execute statement due to a constaint failure", result, database.lastErrorMsg());
+        m_error = SQLError::create(SQLError::CONSTRAINT_ERR, "could not execute statement due to a constaint failure"_s, result, database.lastErrorMsg());
         return false;
     default:
-        m_error = SQLError::create(SQLError::DATABASE_ERR, "could not execute statement", result, database.lastErrorMsg());
+        m_error = SQLError::create(SQLError::DATABASE_ERR, "could not execute statement"_s, result, database.lastErrorMsg());
         return false;
     }
 

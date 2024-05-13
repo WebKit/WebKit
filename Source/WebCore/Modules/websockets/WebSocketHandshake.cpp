@@ -66,7 +66,7 @@ static String resourceName(const URL& url)
     auto path = url.path();
     auto result = makeString(
         path,
-        path.isEmpty() ? "/" : "",
+        path.isEmpty() ? "/"_s : ""_s,
         url.queryWithLeadingQuestionMark()
     );
     ASSERT(!result.isEmpty());
@@ -154,7 +154,7 @@ bool WebSocketHandshake::secure() const
 
 String WebSocketHandshake::clientLocation() const
 {
-    return makeString(m_secure ? "wss" : "ws", "://", hostName(m_url, m_secure), resourceName(m_url));
+    return makeString(m_secure ? "wss"_s : "ws"_s, "://"_s, hostName(m_url, m_secure), resourceName(m_url));
 }
 
 CString WebSocketHandshake::clientHandshakeMessage() const
@@ -169,19 +169,19 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     // doesn't contain these headers.
 
     auto extensions = m_extensionDispatcher.createHeaderValue();
-    return makeString("GET ", resourceName(m_url), " HTTP/1.1\r\n"
+    return makeString("GET "_s, resourceName(m_url), " HTTP/1.1\r\n"
         "Upgrade: websocket\r\n"
         "Connection: Upgrade\r\n"
-        "Host: ", hostName(m_url, m_secure), "\r\n"
-        "Origin: ", m_clientOrigin, "\r\n",
-        m_clientProtocol.isEmpty() ? "" : "Sec-WebSocket-Protocol: ", m_clientProtocol, m_clientProtocol.isEmpty() ? "" : "\r\n",
+        "Host: "_s, hostName(m_url, m_secure), "\r\n"
+        "Origin: "_s, m_clientOrigin, "\r\n"_s,
+        m_clientProtocol.isEmpty() ? ""_s : "Sec-WebSocket-Protocol: "_s, m_clientProtocol, m_clientProtocol.isEmpty() ? ""_s : "\r\n"_s,
         "Pragma: no-cache\r\n"
         "Cache-Control: no-cache\r\n"
-        "Sec-WebSocket-Key: ", m_secWebSocketKey, "\r\n"
-        "Sec-WebSocket-Version: 13\r\n",
-        extensions.isEmpty() ? "" : "Sec-WebSocket-Extensions: ", extensions, extensions.isEmpty() ? "" : "\r\n",
-        "User-Agent: ", m_userAgent, "\r\n"
-        "\r\n").utf8();
+        "Sec-WebSocket-Key: "_s, m_secWebSocketKey, "\r\n"
+        "Sec-WebSocket-Version: 13\r\n"_s,
+        extensions.isEmpty() ? ""_s : "Sec-WebSocket-Extensions: "_s, extensions, extensions.isEmpty() ? ""_s : "\r\n"_s,
+        "User-Agent: "_s, m_userAgent, "\r\n"
+        "\r\n"_s).utf8();
 }
 
 ResourceRequest WebSocketHandshake::clientHandshakeRequest(const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const
@@ -237,7 +237,7 @@ int WebSocketHandshake::readServerHandshake(std::span<const uint8_t> header)
 
     if (statusCode != 101) {
         m_mode = Failed;
-        m_failureReason = makeString("Unexpected response code: ", statusCode);
+        m_failureReason = makeString("Unexpected response code: "_s, statusCode);
         return header.size();
     }
     m_mode = Normal;
@@ -404,13 +404,13 @@ int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& sta
     }
 
     if (!firstSpaceIndex || !secondSpaceIndex) {
-        m_failureReason = makeString("No response code found: ", trimInputSample(header.first(lineLength - 2)));
+        m_failureReason = makeString("No response code found: "_s, trimInputSample(header.first(lineLength - 2)));
         return lineLength;
     }
 
     StringView httpStatusLine(header.first(*firstSpaceIndex));
     if (!headerHasValidHTTPVersion(httpStatusLine)) {
-        m_failureReason = makeString("Invalid HTTP version string: ", httpStatusLine);
+        m_failureReason = makeString("Invalid HTTP version string: "_s, httpStatusLine);
         return lineLength;
     }
 
@@ -419,7 +419,7 @@ int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& sta
         return lineLength;
     for (int i = 0; i < 3; ++i) {
         if (!isASCIIDigit(statusCodeString[i])) {
-            m_failureReason = makeString("Invalid status code: ", statusCodeString);
+            m_failureReason = makeString("Invalid status code: "_s, statusCodeString);
             return lineLength;
         }
     }
@@ -459,7 +459,7 @@ std::span<const uint8_t> WebSocketHandshake::readHTTPHeaders(std::span<const uin
             || headerName == HTTPHeaderName::SecWebSocketAccept
             || headerName == HTTPHeaderName::SecWebSocketProtocol)
             && !value.containsOnlyASCII()) {
-            m_failureReason = makeString(name, " header value should only contain ASCII characters");
+            m_failureReason = makeString(name, " header value should only contain ASCII characters"_s);
             return { };
         }
         

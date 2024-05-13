@@ -124,14 +124,14 @@ String AccessibilityObject::dbg() const
 {
     String backingEntityDescription;
     if (auto* renderer = this->renderer())
-        backingEntityDescription = makeString(", ", renderer->debugDescription());
+        backingEntityDescription = makeString(", "_s, renderer->debugDescription());
     else if (auto* node = this->node())
-        backingEntityDescription = makeString(", ", node->debugDescription());
+        backingEntityDescription = makeString(", "_s, node->debugDescription());
 
     return makeString(
-        "{role: ", accessibilityRoleToString(roleValue()),
-        ", ID ", objectID().loggingString(),
-        backingEntityDescription, "}"
+        "{role: "_s, accessibilityRoleToString(roleValue()),
+        ", ID "_s, objectID().loggingString(),
+        backingEntityDescription, '}'
     );
 }
 
@@ -2514,7 +2514,7 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
 
 bool AccessibilityObject::insertText(const String& text)
 {
-    AXTRACE(makeString("AccessibilityObject::insertText text = ", text));
+    AXTRACE(makeString("AccessibilityObject::insertText text = "_s, text));
 
     if (!renderer())
         return false;

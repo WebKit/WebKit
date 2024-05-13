@@ -104,7 +104,7 @@ template<>
 struct LogArgument<WebCore::SourceBufferEvictionData> {
     static String toString(const WebCore::SourceBufferEvictionData& evictionData)
     {
-        return makeString("{ contentSize:", evictionData.contentSize, " evictableData:", evictionData.evictableSize, " maximumBufferSize:", evictionData.maximumBufferSize, " numSamples:", evictionData.numMediaSamples, " }");
+        return makeString("{ contentSize:"_s, evictionData.contentSize, " evictableData:"_s, evictionData.evictableSize, " maximumBufferSize:"_s, evictionData.maximumBufferSize, " numSamples:"_s, evictionData.numMediaSamples, " }"_s);
     }
 };
 

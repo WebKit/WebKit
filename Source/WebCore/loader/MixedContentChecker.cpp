@@ -237,7 +237,7 @@ void MixedContentChecker::checkFormForMixedContent(LocalFrame& frame, const URL&
     if (!isMixedContent(*frame.document(), url))
         return;
 
-    auto message = makeString("The page at ", frame.document()->url().stringCenterEllipsizedToLength(), " contains a form which targets an insecure URL ", url.stringCenterEllipsizedToLength(), ".\n");
+    auto message = makeString("The page at "_s, frame.document()->url().stringCenterEllipsizedToLength(), " contains a form which targets an insecure URL "_s, url.stringCenterEllipsizedToLength(), ".\n"_s);
     frame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 
     frame.checkedLoader()->client().didDisplayInsecureContent();

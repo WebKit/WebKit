@@ -448,7 +448,7 @@ void Database::closeDatabase()
 
 bool Database::getVersionFromDatabase(String& version, bool shouldCacheVersion)
 {
-    auto query = makeString("SELECT value FROM ", fullyQualifiedInfoTableName(),  " WHERE key = '", versionKey, "';");
+    auto query = makeString("SELECT value FROM "_s, fullyQualifiedInfoTableName(),  " WHERE key = '"_s, versionKey, "';"_s);
 
     m_databaseAuthorizer->disable();
 
@@ -468,7 +468,7 @@ bool Database::setVersionInDatabase(const String& version, bool shouldCacheVersi
 {
     // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
     // clause in the CREATE statement (see Database::performOpenAndVerify()).
-    auto query = makeString("INSERT INTO ", fullyQualifiedInfoTableName(),  " (key, value) VALUES ('", versionKey, "', ?);");
+    auto query = makeString("INSERT INTO "_s, fullyQualifiedInfoTableName(),  " (key, value) VALUES ('"_s, versionKey, "', ?);"_s);
 
     m_databaseAuthorizer->disable();
 

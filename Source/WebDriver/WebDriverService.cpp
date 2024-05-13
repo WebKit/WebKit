@@ -420,7 +420,7 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
             if (!ftpProxy)
                 return std::nullopt;
 
-            proxy.ftpURL = URL({ }, makeString("ftp://", ftpProxy));
+            proxy.ftpURL = URL({ }, makeString("ftp://"_s, ftpProxy));
             if (!proxy.ftpURL->isValid())
                 return std::nullopt;
         }
@@ -429,7 +429,7 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
             if (!httpProxy)
                 return std::nullopt;
 
-            proxy.httpURL = URL({ }, makeString("http://", httpProxy));
+            proxy.httpURL = URL({ }, makeString("http://"_s, httpProxy));
             if (!proxy.httpURL->isValid())
                 return std::nullopt;
         }
@@ -438,7 +438,7 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
             if (!sslProxy)
                 return std::nullopt;
 
-            proxy.httpsURL = URL({ }, makeString("https://", sslProxy));
+            proxy.httpsURL = URL({ }, makeString("https://"_s, sslProxy));
             if (!proxy.httpsURL->isValid())
                 return std::nullopt;
         }
@@ -447,7 +447,7 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
             if (!socksProxy)
                 return std::nullopt;
 
-            proxy.socksURL = URL({ }, makeString("socks://", socksProxy));
+            proxy.socksURL = URL({ }, makeString("socks://"_s, socksProxy));
             if (!proxy.socksURL->isValid())
                 return std::nullopt;
 
@@ -766,7 +766,7 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
         for (auto it = firstMatchCapabilities->begin(); it != firstMatchEnd; ++it) {
             if (requiredCapabilities->find(it->key) != requiredEnd) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument,
-                    makeString("Invalid firstMatch capabilities: key ", it->key, " is present in alwaysMatch")));
+                    makeString("Invalid firstMatch capabilities: key "_s, it->key, " is present in alwaysMatch"_s)));
                 return { };
             }
         }
@@ -829,7 +829,7 @@ void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList,
     sessionHostPtr->setHostAddress(m_targetAddress, m_targetPort);
     sessionHostPtr->connectToBrowser([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](std::optional<String> error) mutable {
         if (error) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, makeString("Failed to connect to browser: ", error.value())));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, makeString("Failed to connect to browser: "_s, error.value())));
             return;
         }
 

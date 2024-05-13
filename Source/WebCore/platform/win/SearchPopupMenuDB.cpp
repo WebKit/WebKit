@@ -255,7 +255,7 @@ void SearchPopupMenuDB::verifySchemaVersion()
 
     // Update version
 
-    executeSQLStatement(m_database.prepareStatementSlow(makeString("PRAGMA user_version=", schemaVersion)));
+    executeSQLStatement(m_database.prepareStatementSlow(makeString("PRAGMA user_version="_s, schemaVersion)));
 }
 
 void SearchPopupMenuDB::checkSQLiteReturnCode(int actual)

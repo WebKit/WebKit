@@ -167,7 +167,7 @@ ExceptionOr<String> trustedTypeCompliantString(TrustedType expectedType, ScriptE
         auto allowMissingTrustedTypes = contentSecurityPolicy->allowMissingTrustedTypesForSinkGroup(trustedTypeToString(expectedType), sink, "script"_s, stringValue);
 
         if (!allowMissingTrustedTypes)
-            return Exception { ExceptionCode::TypeError, makeString("This assignment requires a ", trustedTypeToString(expectedType)) };
+            return Exception { ExceptionCode::TypeError, makeString("This assignment requires a "_s, trustedTypeToString(expectedType)) };
     }
 
     return stringValue;
@@ -225,7 +225,7 @@ ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecuti
         auto allowMissingTrustedTypes = contentSecurityPolicy->allowMissingTrustedTypesForSinkGroup(trustedTypeToString(expectedType), sink, sinkGroup, scriptSource);
 
         if (!allowMissingTrustedTypes)
-            return Exception { ExceptionCode::TypeError, makeString("This assignment requires a ", trustedTypeToString(expectedType)) };
+            return Exception { ExceptionCode::TypeError, makeString("This assignment requires a "_s, trustedTypeToString(expectedType)) };
 
         return String(urlString);
     }

@@ -127,6 +127,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 #if COMPILER(MSVC)
 // See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
@@ -263,7 +264,7 @@ AXObjectCache::AXObjectCache(Document& document)
     AXTRACE(makeString("AXObjectCache::AXObjectCache 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 #ifndef NDEBUG
     if (m_pageID)
-        AXLOG(makeString("pageID ", m_pageID->loggingString()));
+        AXLOG(makeString("pageID "_s, m_pageID->loggingString()));
     else
         AXLOG("No pageID.");
 #endif
@@ -1065,7 +1066,7 @@ AccessibilityObject* AXObjectCache::create(AccessibilityRole role)
 void AXObjectCache::remove(AXID axID)
 {
     AXTRACE(makeString("AXObjectCache::remove 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
-    AXLOG(makeString("AXID ", axID.loggingString()));
+    AXLOG(makeString("AXID "_s, axID.loggingString()));
 
     if (!axID.isValid())
         return;
@@ -2434,7 +2435,7 @@ static bool isTableOrRowRole(const AtomString& attrValue)
 void AXObjectCache::handleRoleChanged(Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
     AXTRACE("AXObjectCache::handleRoleChanged"_s);
-    AXLOG(makeString("oldValue ", oldValue, " new value ", newValue));
+    AXLOG(makeString("oldValue "_s, oldValue, " new value "_s, newValue));
     ASSERT(oldValue != newValue);
 
     auto* object = get(element);
@@ -2485,7 +2486,7 @@ void AXObjectCache::deferAttributeChangeIfNeeded(Element& element, const Qualifi
         m_deferredAttributeChange.append({ element, attrName, oldValue, newValue });
         if (!m_performCacheUpdateTimer.isActive())
             m_performCacheUpdateTimer.startOneShot(0_s);
-        AXLOG(makeString("Deferring handling of attribute ", attrName.localName().string(), " for element ", element.debugDescription()));
+        AXLOG(makeString("Deferring handling of attribute "_s, attrName.localName().string(), " for element "_s, element.debugDescription()));
         return;
     }
     Ref protectedElement { element };
@@ -2512,8 +2513,8 @@ bool AXObjectCache::shouldProcessAttributeChange(Element* element, const Qualifi
 void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName& attrName, const AtomString& oldValue, const AtomString& newValue)
 {
     AXTRACE(makeString("AXObjectCache::handleAttributeChange 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
-    AXLOG(makeString("attribute ", attrName.localName(), " for element ", element ? element->debugDescription() : String("nullptr"_s)));
-    AXLOG(makeString("old value: ", oldValue, " new value: ", newValue));
+    AXLOG(makeString("attribute "_s, attrName.localName(), " for element "_s, element ? element->debugDescription() : "nullptr"_str));
+    AXLOG(makeString("old value: "_s, oldValue, " new value: "_s, newValue));
 
     enum class TableProperty : uint8_t { Exposed = 1 << 0, CellSlots = 1 << 1 };
     auto recomputeParentTableProperties = [this] (Element* element, OptionSet<TableProperty> properties) {
@@ -4226,9 +4227,9 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
 
     if (m_deferredFocusedNodeChange) {
         AXLOG(makeString(
-            "Processing deferred focused node change. Old node ",
+            "Processing deferred focused node change. Old node "_s,
             m_deferredFocusedNodeChange->first ? m_deferredFocusedNodeChange->first->debugDescription() : "nullptr"_s,
-            ", new node ",
+            ", new node "_s,
             m_deferredFocusedNodeChange->second ? m_deferredFocusedNodeChange->second->debugDescription() : "nullptr"_s
         ));
         // Don't update the modal with this focus change since it may need to be updated again as a result of processing m_deferredModalChangedList below.
@@ -4873,7 +4874,7 @@ static bool validRelation(Element& origin, Element& target, AXRelationType relat
 bool AXObjectCache::addRelation(Element& origin, Element& target, AXRelationType relationType)
 {
     AXTRACE("AXObjectCache::addRelation"_s);
-    AXLOG(makeString("origin: ", origin.debugDescription(), " target: ", target.debugDescription(), " relationType ", String::number(static_cast<uint8_t>(relationType))));
+    AXLOG(makeString("origin: "_s, origin.debugDescription(), " target: "_s, target.debugDescription(), " relationType "_s, static_cast<uint8_t>(relationType)));
 
     if (!validRelation(origin, target, relationType)) {
         ASSERT_NOT_REACHED();
@@ -4990,7 +4991,7 @@ bool AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
 
 void AXObjectCache::removeAllRelations(AXID axID)
 {
-    AXTRACE("AXObjectCache::removeRelations"_s + " for axID " + axID.loggingString());
+    AXTRACE(makeString("AXObjectCache::removeRelations for axID "_s, axID.loggingString()));
 
     auto it = m_relations.find(axID);
     if (it == m_relations.end())
@@ -5014,7 +5015,7 @@ void AXObjectCache::removeAllRelations(AXID axID)
 
 bool AXObjectCache::removeRelation(Element& origin, AXRelationType relationType)
 {
-    AXTRACE("AXObjectCache::removeRelations"_s + " for " + origin.debugDescription());
+    AXTRACE(makeString("AXObjectCache::removeRelations for "_s, origin.debugDescription()));
     AXLOG(relationType);
 
     auto* object = get(&origin);
@@ -5043,7 +5044,7 @@ bool AXObjectCache::removeRelation(Element& origin, AXRelationType relationType)
 void AXObjectCache::removeRelationByID(AXID originID, AXID targetID, AXRelationType relationType)
 {
     AXTRACE("AXObjectCache::removeRelationByID"_s);
-    AXLOG(makeString("originID ", originID.loggingString(), " targetID ", targetID.loggingString()));
+    AXLOG(makeString("originID "_s, originID.loggingString(), " targetID "_s, targetID.loggingString()));
     AXLOG(relationType);
 
     auto relationsIterator = m_relations.find(originID);

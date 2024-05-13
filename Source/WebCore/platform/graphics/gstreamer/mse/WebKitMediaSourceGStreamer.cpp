@@ -216,7 +216,7 @@ static void dumpPipeline(const char* description, const RefPtr<Stream>& stream)
     [[maybe_unused]] fileNamePattern;
     [[maybe_unused]] stream;
 #else
-    auto fileName = makeString("playback-pipeline-", stream->track->stringId(), "-", description);
+    auto fileName = makeString("playback-pipeline-"_s, stream->track->stringId(), '-', description);
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(findPipeline(GRefPtr<GstElement>(GST_ELEMENT(stream->source))).get()),
         GST_DEBUG_GRAPH_SHOW_ALL, fileName.utf8().data());
 #endif
@@ -328,7 +328,7 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
             continue;
         }
 
-        GRefPtr<WebKitMediaSrcPad> pad = WEBKIT_MEDIA_SRC_PAD(g_object_new(webkit_media_src_pad_get_type(), "name", makeString("src_", track->stringId()).utf8().data(), "direction", GST_PAD_SRC, NULL));
+        GRefPtr<WebKitMediaSrcPad> pad = WEBKIT_MEDIA_SRC_PAD(g_object_new(webkit_media_src_pad_get_type(), "name", makeString("src_"_s, track->stringId()).utf8().data(), "direction", GST_PAD_SRC, NULL));
         gst_pad_set_activatemode_function(GST_PAD(pad.get()), webKitMediaSrcActivateMode);
 
         ASSERT(track->initialCaps());

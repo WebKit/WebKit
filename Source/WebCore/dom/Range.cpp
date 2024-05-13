@@ -907,7 +907,7 @@ ExceptionOr<void> Range::setStartBefore(Node& node)
 #if ENABLE(TREE_DEBUGGING)
 String Range::debugDescription() const
 {
-    return makeString("from offset ", m_start.offset(), " of ", startContainer().debugDescription(), " to offset ", m_end.offset(), " of ", endContainer().debugDescription());
+    return makeString("from offset "_s, m_start.offset(), " of "_s, startContainer().debugDescription(), " to offset "_s, m_end.offset(), " of "_s, endContainer().debugDescription());
 }
 #endif
 

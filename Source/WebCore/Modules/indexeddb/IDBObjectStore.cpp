@@ -104,7 +104,7 @@ ExceptionOr<void> IDBObjectStore::setName(const String& name)
         return { };
 
     if (m_transaction.database().info().hasObjectStore(name))
-        return Exception { ExceptionCode::ConstraintError, makeString("Failed set property 'name' on 'IDBObjectStore': The database already has an object store named '", name, "'.") };
+        return Exception { ExceptionCode::ConstraintError, makeString("Failed set property 'name' on 'IDBObjectStore': The database already has an object store named '"_s, name, "'."_s) };
 
     m_transaction.database().renameObjectStore(*this, name);
     m_info.rename(name);

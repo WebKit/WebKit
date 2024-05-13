@@ -101,7 +101,7 @@ void ServiceWorkerClients::openWindow(ScriptExecutionContext& context, const Str
 
     auto url = context.completeURL(urlString);
     if (!url.isValid()) {
-        promise->reject(Exception { ExceptionCode::TypeError, makeString("URL string ", urlString, " cannot successfully be parsed"_s) });
+        promise->reject(Exception { ExceptionCode::TypeError, makeString("URL string "_s, urlString, " cannot successfully be parsed"_s) });
         return;
     }
 

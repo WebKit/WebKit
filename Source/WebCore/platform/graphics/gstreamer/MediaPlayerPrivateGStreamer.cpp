@@ -366,7 +366,7 @@ void MediaPlayerPrivateGStreamer::load(const URL&, const ContentType&, MediaSour
 void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
 {
     m_streamPrivate = &stream;
-    load(makeString("mediastream://", stream.id()));
+    load(makeString("mediastream://"_s, stream.id()));
     syncOnClock(false);
 
     if (RefPtr player = m_player.get())

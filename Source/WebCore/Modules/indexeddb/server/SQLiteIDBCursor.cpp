@@ -134,31 +134,31 @@ void SQLiteIDBCursor::currentData(IDBGetResult& result, const std::optional<IDBK
 
 static String buildPreIndexStatement(bool isDirectionNext)
 {
-    return makeString("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key = CAST(? AS TEXT) AND value ",
-        isDirectionNext ? '>' : '<', " CAST(? AS TEXT) ORDER BY value", isDirectionNext ? "" : " DESC", ';');
+    return makeString("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key = CAST(? AS TEXT) AND value "_s,
+        isDirectionNext ? '>' : '<', " CAST(? AS TEXT) ORDER BY value"_s, isDirectionNext ? ""_s : " DESC"_s, ';');
 }
 
 static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
 {
-    return makeString("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key ",
-        !keyRange.lowerKey.isNull() && !keyRange.lowerOpen ? ">=" : ">",
-        " CAST(? AS TEXT) AND key ",
-        !keyRange.upperKey.isNull() && !keyRange.upperOpen ? "<=" : "<",
-        " CAST(? AS TEXT) ORDER BY key",
-        cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::Prevunique ? " DESC" : "",
-        ", value",
-        cursorDirection == IndexedDB::CursorDirection::Prev ? " DESC" : "",
+    return makeString("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key "_s,
+        !keyRange.lowerKey.isNull() && !keyRange.lowerOpen ? ">="_s : ">"_s,
+        " CAST(? AS TEXT) AND key "_s,
+        !keyRange.upperKey.isNull() && !keyRange.upperOpen ? "<="_s : "<"_s,
+        " CAST(? AS TEXT) ORDER BY key"_s,
+        cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::Prevunique ? " DESC"_s : ""_s,
+        ", value"_s,
+        cursorDirection == IndexedDB::CursorDirection::Prev ? " DESC"_s : ""_s,
         ';');
 }
 
 static String buildObjectStoreStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
 {
-    return makeString("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key ",
-        !keyRange.lowerKey.isNull() && !keyRange.lowerOpen ? ">=" : ">",
-        " CAST(? AS TEXT) AND key ",
-        !keyRange.upperKey.isNull() && !keyRange.upperOpen ? "<=" : "<",
-        " CAST(? AS TEXT) ORDER BY key",
-        cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::Prevunique ? " DESC" : "",
+    return makeString("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key "_s,
+        !keyRange.lowerKey.isNull() && !keyRange.lowerOpen ? ">="_s : ">"_s,
+        " CAST(? AS TEXT) AND key "_s,
+        !keyRange.upperKey.isNull() && !keyRange.upperOpen ? "<="_s : "<"_s,
+        " CAST(? AS TEXT) ORDER BY key"_s,
+        cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::Prevunique ? " DESC"_s : ""_s,
         ';');
 }
 

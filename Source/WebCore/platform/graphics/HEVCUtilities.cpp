@@ -74,7 +74,7 @@ std::optional<AVCParameters> parseAVCCodecParameters(StringView codecString)
 String createAVCCodecParametersString(const AVCParameters& parameters)
 {
     // The format of the 'avc1' codec string is specified in ISO/IEC 14496-15:2014, Annex E.2.
-    return makeString("avc1."
+    return makeString("avc1."_s
         , hex(parameters.profileIDC, 2)
         , hex(parameters.constraintsFlags, 2)
         , hex(parameters.levelIDC, 2));
