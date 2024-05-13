@@ -725,7 +725,7 @@ void TypeChecker::visit(AST::Function& function)
         auto behaviors = analyze(function.body());
         if (behaviors.contains(Behavior::Next) && function.maybeReturnType())
             typeError(InferBottom::No, function.span(), "missing return at end of function"_s);
-        ASSERT(!behaviors.containsAny({ Behavior::Break, Behavior::Continue }));
+        ASSERT(!behaviors.containsAny({ Behavior::Break, Behavior::Continue }) || !m_errors.isEmpty());
     }
 
     const Type* functionType = m_types.functionType(WTFMove(parameters), m_returnType, mustUse);
