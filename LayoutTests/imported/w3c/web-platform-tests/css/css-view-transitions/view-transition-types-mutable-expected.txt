@@ -1,0 +1,5 @@
+
+FAIL ViewTransition.types is a ViewTransitionTypeSet Can't find variable: ViewTransitionTypeSet
+FAIL ViewTransitionTypeSet behaves like an ordinary Set of strings undefined is not an object (evaluating 'types.add')
+FAIL ViewTransitionTypeSet should reflect its members for a non-active transition promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transition.types.add')"
+

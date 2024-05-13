@@ -6933,7 +6933,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-with-sha
 imported/w3c/web-platform-tests/css/css-view-transitions/inline-with-offset-from-containing-block.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-left-of-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-overflow-zoomed.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/root-style-change-during-animation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-absolute.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/span-with-overflowing-text.html [ ImageOnlyFailure ]
@@ -6942,11 +6941,14 @@ imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-with-ove
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-left-of-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-with-overflow-zoomed.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-static.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/fractional-translation-from-position.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/scroller-child.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/scroller.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/names-are-tree-scoped.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-new-main-new-iframe.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main-new-iframe.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main-old-iframe.html [ ImageOnlyFailure ]
 
 # Timeouts
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition.sub.html [ Skip ]
@@ -6978,6 +6980,26 @@ imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mul
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-new-with-class-old-without.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-view-transition-group.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-view-transition-image-pair.html [ ImageOnlyFailure ]
+
+# View transitions Level 2 - cross document transitions.
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation [ Skip ]
+
+# View transitions Level 2 - types.
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-universal-match.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-early-mutation.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-early.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-late-mutation.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-matches.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-mutable.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-mutable-no-document-element-crashtest.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-removed.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-reserved-mutation.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-reserved.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-stay.html [ Skip ]
+
+# Depends on overflow-clip-margin (unimplemented).
+imported/w3c/web-platform-tests/css/css-view-transitions/new-content-with-overflow-zoomed.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-overflow-zoomed.html [ ImageOnlyFailure ]
 
 # Depends on object-view-box (unimplemented).
 imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-object-view-box.html [ ImageOnlyFailure ]

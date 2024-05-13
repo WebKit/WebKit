@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT pageswap on traverse navigation from script Test timed out
+
