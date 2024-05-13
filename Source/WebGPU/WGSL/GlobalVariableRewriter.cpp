@@ -1857,6 +1857,7 @@ void RewriteGlobalVariables::initializeVariables(AST::Function& function, const 
 
     auto& body = m_shaderModule.astBuilder().construct<AST::CompoundStatement>(
         SourceSpan::empty(),
+        AST::Attribute::List { },
         WTFMove(initializations)
     );
 
@@ -2044,6 +2045,7 @@ void RewriteGlobalVariables::storeInitialValue(AST::Expression& target, AST::Sta
 
         auto& forBody = m_shaderModule.astBuilder().construct<AST::CompoundStatement>(
             SourceSpan::empty(),
+            AST::Attribute::List { },
             WTFMove(forBodyStatements)
         );
 

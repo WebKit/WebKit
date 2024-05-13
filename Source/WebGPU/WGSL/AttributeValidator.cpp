@@ -51,6 +51,7 @@ public:
     void visit(AST::Variable&) override;
     void visit(AST::Structure&) override;
     void visit(AST::StructureMember&) override;
+    void visit(AST::CompoundStatement&) override;
 
 private:
     bool parseBuiltin(AST::Function*, std::optional<Builtin>&, AST::Attribute&);
@@ -383,6 +384,15 @@ void AttributeValidator::visit(AST::StructureMember& member)
     validateInvariant(member.span(), member.builtin(), member.invariant());
 
     AST::Visitor::visit(member);
+}
+
+void AttributeValidator::visit(AST::CompoundStatement& statement)
+{
+    for (auto& attribute : statement.attributes()) {
+        if (!is<AST::DiagnosticAttribute>(attribute))
+            error(attribute.span(), "invalid attribute for compound statement"_s);
+    }
+    AST::Visitor::visit(statement);
 }
 
 bool AttributeValidator::parseBuiltin(AST::Function* function, std::optional<Builtin>& builtin, AST::Attribute& attribute)
