@@ -11394,7 +11394,6 @@ IGNORE_CLANG_WARNINGS_END
 
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
-        VM* vm = &this->vm();
         CodeOrigin nodeSemanticOrigin = node->origin.semantic;
         auto nodeOp = node->op();
         patchpoint->setGenerator(
@@ -11412,24 +11411,10 @@ IGNORE_CLANG_WARNINGS_END
                 auto* callLinkInfo = state->addCallLinkInfo(nodeSemanticOrigin);
                 callLinkInfo->setUpCall(nodeOp == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call);
 
-                auto [slowPath, dispatchLabel] = CallLinkInfo::emitFastPath(jit, callLinkInfo);
-                CCallHelpers::Jump done = jit.jump();
-
-                slowPath.link(&jit);
-                CallLinkInfo::emitSlowPath(*vm, jit, callLinkInfo);
-
-                done.link(&jit);
-
-                auto doneLocation = jit.label();
-
+                CallLinkInfo::emitRegularCall(jit, callLinkInfo);
                 jit.addPtr(
                     CCallHelpers::TrustedImm32(-params.proc().frameSize()),
                     GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-
-                jit.addLinkTask(
-                    [=] (LinkBuffer& linkBuffer) {
-                        callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
-                    });
             });
 
         setJSValue(patchpoint);
@@ -11587,7 +11572,7 @@ IGNORE_CLANG_WARNINGS_END
                         return;
                     }
 
-                    auto* callLinkInfo = state->jitCode->common.m_directCallLinkInfos.add(semanticNodeOrigin, CallLinkInfo::UseDataIC::No, state->graph.m_codeBlock, executable);
+                    auto* callLinkInfo = state->jitCode->common.m_directCallLinkInfos.add(semanticNodeOrigin, DirectCallLinkInfo::UseDataIC::No, state->graph.m_codeBlock, executable);
                     callLinkInfo->setCallType(CallLinkInfo::DirectTailCall);
                     if (numAllocatedArgs > numPassedArgs)
                         callLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
@@ -11632,7 +11617,7 @@ IGNORE_CLANG_WARNINGS_END
                     return;
                 }
 
-                auto* callLinkInfo = state->jitCode->common.m_directCallLinkInfos.add(semanticNodeOrigin, CallLinkInfo::UseDataIC::No, state->graph.m_codeBlock, executable);
+                auto* callLinkInfo = state->jitCode->common.m_directCallLinkInfos.add(semanticNodeOrigin, DirectCallLinkInfo::UseDataIC::No, state->graph.m_codeBlock, executable);
                 callLinkInfo->setCallType(isConstruct ? CallLinkInfo::DirectConstruct : CallLinkInfo::DirectCall);
 
                 if (numAllocatedArgs > numPassedArgs)
@@ -11717,6 +11702,8 @@ IGNORE_CLANG_WARNINGS_END
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendVector(arguments);
 
+        patchpoint->append(m_out.intPtrZero, ValueRep::reg(BaselineJITRegisters::Call::callLinkInfoGPR));
+        patchpoint->append(m_out.intPtrZero, ValueRep::reg(BaselineJITRegisters::Call::callTargetGPR));
         patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
 
@@ -11730,7 +11717,6 @@ IGNORE_CLANG_WARNINGS_END
 
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
-        VM* vm = &this->vm();
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -11754,28 +11740,20 @@ IGNORE_CLANG_WARNINGS_END
 
                 shuffleData.numPassedArgs = numArgs;
                 shuffleData.numParameters = jit.codeBlock()->numParameters();
+                shuffleData.registers[BaselineJITRegisters::Call::callLinkInfoGPR] = ValueRecovery::inGPR(BaselineJITRegisters::Call::callLinkInfoGPR, DataFormatJS);
+                shuffleData.registers[BaselineJITRegisters::Call::callTargetGPR] = ValueRecovery::inGPR(BaselineJITRegisters::Call::callTargetGPR, DataFormatJS);
 
                 shuffleData.setupCalleeSaveRegisters(state->jitCode->calleeSaveRegisters());
 
                 auto* callLinkInfo = state->addCallLinkInfo(codeOrigin);
                 callLinkInfo->setUpCall(CallLinkInfo::TailCall);
 
-                auto [slowPath, dispatchLabel] = CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, scopedLambda<void()>([&] {
+                CallLinkInfo::emitTailCall(jit, callLinkInfo, scopedLambda<void()>([&] {
                     CallFrameShuffler shuffler { jit, shuffleData };
                     shuffler.setCalleeJSValueRegs(BaselineJITRegisters::Call::calleeJSR);
                     shuffler.prepareForTailCall();
                 }));
-
-                slowPath.link(&jit);
-                CallLinkInfo::emitTailCallSlowPath(*vm, jit, callLinkInfo, dispatchLabel);
-
-                auto doneLocation = jit.label();
                 jit.abortWithReason(JITDidReturnFromTailCall);
-
-                jit.addLinkTask(
-                    [=] (LinkBuffer& linkBuffer) {
-                        callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
-                    });
             });
     }
 
@@ -12092,45 +12070,23 @@ IGNORE_CLANG_WARNINGS_END
 
                 bool isTailCall = CallLinkInfo::callModeFor(callType) == CallMode::Tail;
 
-                ASSERT(!usedRegisters.contains(GPRInfo::regT2, IgnoreVectors)); // Used on the slow path.
-
-                CCallHelpers::JumpList slowPath;
-                CCallHelpers::Label dispatchLabel;
                 CCallHelpers::Jump done;
                 if (isTailCall) {
-                    std::tie(slowPath, dispatchLabel) = CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, scopedLambda<void()>([&] {
+                    CallLinkInfo::emitTailCall(jit, callLinkInfo, scopedLambda<void()>([&] {
                         jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
                         RegisterSet preserved;
-                        preserved.add(GPRInfo::regT0, IgnoreVectors);
+                        preserved.add(BaselineJITRegisters::Call::calleeGPR, IgnoreVectors);
+                        preserved.add(BaselineJITRegisters::Call::callLinkInfoGPR, IgnoreVectors);
+                        preserved.add(BaselineJITRegisters::Call::callTargetGPR, IgnoreVectors);
                         jit.prepareForTailCallSlow(preserved);
                     }));
-                } else {
-                    std::tie(slowPath, dispatchLabel) = CallLinkInfo::emitFastPath(jit, callLinkInfo);
-                    done = jit.jump();
-                }
-
-                slowPath.link(&jit);
-                // calleeGPR is always regT0. So we do not need to change it here.
-                if (isTailCall)
-                    CallLinkInfo::emitTailCallSlowPath(*vm, jit, callLinkInfo, dispatchLabel);
-                else
-                    CallLinkInfo::emitSlowPath(*vm, jit, callLinkInfo);
+                } else
+                    CallLinkInfo::emitRegularCall(jit, callLinkInfo);
 
                 if (isTailCall)
                     jit.abortWithReason(JITDidReturnFromTailCall);
                 else
-                    done.link(&jit);
-
-                auto doneLocation = jit.label();
-
-                jit.addPtr(
-                    CCallHelpers::TrustedImm32(-originalStackHeight),
-                    GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-
-                jit.addLinkTask(
-                    [=] (LinkBuffer& linkBuffer) {
-                        callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
-                    });
+                    jit.addPtr(CCallHelpers::TrustedImm32(-originalStackHeight), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
             });
 
         switch (node->op()) {
@@ -12375,42 +12331,23 @@ IGNORE_CLANG_WARNINGS_END
 
                 bool isTailCall = CallLinkInfo::callModeFor(callType) == CallMode::Tail;
 
-                CCallHelpers::JumpList slowPath;
-                CCallHelpers::Label dispatchLabel;
                 CCallHelpers::Jump done;
                 if (isTailCall) {
-                    std::tie(slowPath, dispatchLabel) = CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, scopedLambda<void()>([&] {
+                    CallLinkInfo::emitTailCall(jit, callLinkInfo, scopedLambda<void()>([&] {
                         jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
                         RegisterSet preserved;
-                        preserved.add(GPRInfo::regT0, IgnoreVectors);
+                        preserved.add(BaselineJITRegisters::Call::calleeGPR, IgnoreVectors);
+                        preserved.add(BaselineJITRegisters::Call::callLinkInfoGPR, IgnoreVectors);
+                        preserved.add(BaselineJITRegisters::Call::callTargetGPR, IgnoreVectors);
                         jit.prepareForTailCallSlow(preserved);
                     }));
-                } else {
-                    std::tie(slowPath, dispatchLabel) = CallLinkInfo::emitFastPath(jit, callLinkInfo);
-                    done = jit.jump();
-                }
-
-                slowPath.link(&jit);
-                if (isTailCall)
-                    CallLinkInfo::emitTailCallSlowPath(*vm, jit, callLinkInfo, dispatchLabel);
-                else
-                    CallLinkInfo::emitSlowPath(*vm, jit, callLinkInfo);
+                } else
+                    CallLinkInfo::emitRegularCall(jit, callLinkInfo);
 
                 if (isTailCall)
                     jit.abortWithReason(JITDidReturnFromTailCall);
                 else
-                    done.link(&jit);
-
-                auto doneLocation = jit.label();
-
-                jit.addPtr(
-                    CCallHelpers::TrustedImm32(-originalStackHeight),
-                    GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-
-                jit.addLinkTask(
-                    [=] (LinkBuffer& linkBuffer) {
-                        callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
-                    });
+                    jit.addPtr(CCallHelpers::TrustedImm32(-originalStackHeight), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
             });
 
         switch (node->op()) {

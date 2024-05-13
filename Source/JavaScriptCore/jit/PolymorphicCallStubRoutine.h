@@ -132,7 +132,6 @@ private:
     UniqueArray<uint32_t> m_fastCounts;
     CallLinkInfo* m_callLinkInfo { nullptr };
     bool m_notUsingCounting : 1 { false };
-    bool m_isDataIC : 1 { false };
     bool m_isClosureCall : 1 { false };
 };
 

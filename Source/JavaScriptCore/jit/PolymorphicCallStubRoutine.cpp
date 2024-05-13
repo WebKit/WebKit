@@ -50,7 +50,7 @@ void PolymorphicCallNode::unlinkOrUpgradeImpl(VM& vm, CodeBlock* oldCodeBlock, C
         if (!newCodeBlock || !owner()->upgradeIfPossible(vm, oldCodeBlock, newCodeBlock, m_index)) {
             m_cleared = true;
             CallLinkInfo* callLinkInfo = owner()->callLinkInfo();
-            dataLogLnIf(Options::dumpDisassembly(), "Unlinking polymorphic call at ", callLinkInfo->doneLocationIfExists(), ", bc#", callLinkInfo->codeOrigin().bytecodeIndex());
+            dataLogLnIf(Options::dumpDisassembly(), "Unlinking polymorphic call bc#", callLinkInfo->codeOrigin().bytecodeIndex());
             callLinkInfo->unlinkOrUpgrade(vm, oldCodeBlock, newCodeBlock);
         }
     }
@@ -77,7 +77,6 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsi
     , m_fastCounts(WTFMove(fastCounts))
     , m_callLinkInfo(&callLinkInfo)
     , m_notUsingCounting(notUsingCounting)
-    , m_isDataIC(m_callLinkInfo->isDataIC())
     , m_isClosureCall(isClosureCall)
 {
     for (unsigned index = 0; index < callSlots.size(); ++index) {
@@ -96,16 +95,12 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsi
     }
 
     WTF::storeStoreFence();
-    bool isCodeImmutable = m_isDataIC;
+    constexpr bool isCodeImmutable = true;
     makeGCAware(vm, isCodeImmutable);
 }
 
 bool PolymorphicCallStubRoutine::upgradeIfPossible(VM&, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock, uint8_t index)
 {
-    // Not DataIC.
-    if (!m_isDataIC)
-        return false;
-
     // It is possible that we can just upgrade the CallSlot and continue using this PolymorphicCallStubRoutine instead of unlinking CallLinkInfo.
     auto& callNode = leadingSpan()[index];
     auto& slot = trailingSpan()[index];

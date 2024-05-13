@@ -282,12 +282,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         ASSERT(m_jitCode->common.m_stubInfos.isEmpty());
     }
 
-    for (auto& record : m_jsCalls) {
-        std::visit([&](auto* info) {
-            info->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(record.doneLocation));
-        }, record.info);
-    }
-    
+
     for (auto& record : m_jsDirectCalls) {
         auto& info = *record.info;
         info.setSlowPathStart(linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath));
@@ -605,7 +600,7 @@ std::tuple<CompileTimeCallLinkInfo, JITCompiler::LinkableConstant> JITCompiler::
         LinkerIR::Constant callLinkInfoIndex = addToConstantPool(LinkerIR::Type::CallLinkInfo, unlinkedCallLinkInfoIndex);
         return std::tuple { callLinkInfo, LinkableConstant(callLinkInfoIndex) };
     }
-    auto* callLinkInfo = jitCode()->common.m_callLinkInfos.add(codeOrigin, CallLinkInfo::UseDataIC::Yes, m_graph.m_codeBlock);
+    auto* callLinkInfo = jitCode()->common.m_callLinkInfos.add(codeOrigin, m_graph.m_codeBlock);
     return std::tuple { callLinkInfo, LinkableConstant::nonCellPointer(*this, callLinkInfo) };
 }
 

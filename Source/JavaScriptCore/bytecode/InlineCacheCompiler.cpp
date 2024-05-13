@@ -2836,7 +2836,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             setSpillStateForJSCall(spillState);
 
             RELEASE_ASSERT(!access.callLinkInfo());
-            auto* callLinkInfo = m_callLinkInfos.add(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+            auto* callLinkInfo = m_callLinkInfos.add(m_stubInfo->codeOrigin, nullptr);
             access.m_callLinkInfo = callLinkInfo;
 
             // FIXME: If we generated a polymorphic call stub that jumped back to the getter
@@ -2916,21 +2916,10 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             // We *always* know that the getter/setter, if non-null, is a cell.
             jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
-            auto [slowCase, dispatchLabel] = CallLinkInfo::emitFastPath(jit, callLinkInfo);
-            auto doneLocation = jit.label();
-
+            CallLinkInfo::emitRegularCall(jit, callLinkInfo);
             if (accessCase.m_type == AccessCase::Getter)
                 jit.setupResults(valueRegs);
             done.append(jit.jump());
-
-            if (!slowCase.empty()) {
-                slowCase.link(&jit);
-                CallLinkInfo::emitSlowPath(vm, jit, callLinkInfo);
-
-                if (accessCase.m_type == AccessCase::Getter)
-                    jit.setupResults(valueRegs);
-                done.append(jit.jump());
-            }
 
             if (returnUndefined) {
                 ASSERT(accessCase.m_type == AccessCase::Getter);
@@ -2953,10 +2942,6 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
 
             bool callHasReturnValue = accessCase.isGetter();
             restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
-
-            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
-            });
         } else {
             ASSERT(accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomAccessorGetter || accessCase.m_type == AccessCase::CustomValueSetter || accessCase.m_type == AccessCase::CustomAccessorSetter);
             ASSERT(!doesPropertyStorageLoads); // Or we need an extra register. We rely on propertyOwnerGPR being correct here.
@@ -3556,7 +3541,6 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
 {
     CCallHelpers& jit = *m_jit;
     CodeBlock* codeBlock = jit.codeBlock();
-    VM& vm = m_vm;
     ECMAMode ecmaMode = m_ecmaMode;
     JSValueRegs valueRegs = m_stubInfo->valueRegs();
     GPRReg baseGPR = m_stubInfo->m_baseGPR;
@@ -3579,7 +3563,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
     setSpillStateForJSCall(spillState);
 
     ASSERT(!accessCase.callLinkInfo());
-    auto* callLinkInfo = m_callLinkInfos.add(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+    auto* callLinkInfo = m_callLinkInfos.add(m_stubInfo->codeOrigin, nullptr);
     accessCase.m_callLinkInfo = callLinkInfo;
 
     callLinkInfo->disallowStubs();
@@ -3655,23 +3639,9 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
     // We *always* know that the proxy function, if non-null, is a cell.
     jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
-    auto [slowCase, dispatchLabel] = CallLinkInfo::emitFastPath(jit, callLinkInfo);
-    auto doneLocation = jit.label();
-
+    CallLinkInfo::emitRegularCall(jit, callLinkInfo);
     if (accessCase.m_type != AccessCase::ProxyObjectStore)
         jit.setupResults(valueRegs);
-
-    if (!slowCase.empty()) {
-        auto done = jit.jump();
-
-        slowCase.link(&jit);
-        CallLinkInfo::emitSlowPath(vm, jit, callLinkInfo);
-
-        if (accessCase.m_type != AccessCase::ProxyObjectStore)
-            jit.setupResults(valueRegs);
-
-        done.link(&jit);
-    }
 
     if (codeBlock->useDataIC()) {
         jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
@@ -3692,10 +3662,6 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
         dontRestore.add(valueRegs, IgnoreVectors);
     }
     restoreLiveRegistersFromStackForCall(spillState, dontRestore);
-
-    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-        callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
-    });
     succeed();
 }
 
