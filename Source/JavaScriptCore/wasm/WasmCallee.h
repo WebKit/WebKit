@@ -397,7 +397,7 @@ public:
     const intptr_t wasmCallee;
     // In the JIT case, we want to always call the llint prologue from a jit function.
     // In the no-jit case, we dont' care.
-    CodePtr<LLintToWasmEntryPtrTag> wasmFunctionPrologue;
+    CodePtr<LLIntToWasmEntryPtrTag> wasmFunctionPrologue;
     RefPtr<Wasm::Callee> m_replacementCallee { nullptr };
 };
 

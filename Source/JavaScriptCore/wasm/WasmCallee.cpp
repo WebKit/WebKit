@@ -397,7 +397,7 @@ JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee(Vector<JSEntrypoint
     , wasmCallee(reinterpret_cast<intptr_t>(CalleeBits::boxNativeCalleeIfExists(callee)))
 {
     if (Options::useJIT())
-        wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<LLintToWasmEntryPtrTag>();
+        wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<LLIntToWasmEntryPtrTag>();
     else
         wasmFunctionPrologue = LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline);
 

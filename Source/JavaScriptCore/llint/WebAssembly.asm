@@ -949,7 +949,7 @@ opcodesEnd()
 
 .call:
 if ARM64 or ARM64E or ARMv7
-    call CP, LLintToWasmEntryPtrTag
+    call CP, LLIntToWasmEntryPtrTag
 else
     loadq AccumulatorCSRSlot[cfr], Accumulator
     call CP[cfr]

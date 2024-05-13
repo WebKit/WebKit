@@ -270,7 +270,7 @@ const NativeToJITGatePtrTag = constexpr NativeToJITGatePtrTag
 const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
 const YarrEntryPtrTag = constexpr YarrEntryPtrTag
 const CSSSelectorPtrTag = constexpr CSSSelectorPtrTag
-const LLintToWasmEntryPtrTag = constexpr LLintToWasmEntryPtrTag
+const LLIntToWasmEntryPtrTag = constexpr LLIntToWasmEntryPtrTag
 const NoPtrTag = constexpr NoPtrTag
  
 # VMTraps data
