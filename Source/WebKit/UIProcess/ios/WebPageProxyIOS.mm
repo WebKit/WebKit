@@ -1347,6 +1347,11 @@ static bool webViewSizeIsNarrow(WebCore::IntSize viewSize)
 
 #endif // !PLATFORM(MACCATALYST)
 
+static bool needsIPhoneUserAgent(const URL& url)
+{
+    return url.host() == "shopee.sg"_s && url.path() == "/payment/account-linking/landing"_s;
+}
+
 enum class RecommendDesktopClassBrowsingForRequest { No, Yes, Auto };
 static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceRequest& request)
 {
@@ -1427,6 +1432,9 @@ static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedFo
     if (equalLettersIgnoringASCIICase(host, "spotify.com"_s) || host.endsWithIgnoringASCIICase(".spotify.com"_s) || host.endsWithIgnoringASCIICase(".spotifycdn.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
+    if (needsIPhoneUserAgent(request.url()))
+        return RecommendDesktopClassBrowsingForRequest::No;
+
     return RecommendDesktopClassBrowsingForRequest::Auto;
 }
 
@@ -1504,6 +1512,12 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
     if (m_preferences->mediaSourceEnabled()) {
         // FIXME: This is a compatibility hack to ensure that turning MSE on via the existing preference still enables MSE.
         policies.setMediaSourcePolicy(WebsiteMediaSourcePolicy::Enable);
+    }
+
+    if (needsIPhoneUserAgent(request.url())) {
+        policies.setCustomUserAgent(makeStringByReplacingAll(standardUserAgentWithApplicationName(m_applicationNameForUserAgent), "iPad"_s, "iPhone"_s));
+        policies.setCustomNavigatorPlatform("iPhone"_s);
+        return WebContentMode::Mobile;
     }
 
     bool useDesktopBrowsingMode = useDesktopClassBrowsing(policies, request);
