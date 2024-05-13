@@ -249,7 +249,7 @@ class BitBucket(mocks.Requests):
                     contextLines=3,
                     whitespace='SHOW',
                     diffs=[dict(
-                        source=dict(toString='ChangeLog'),
+                        source=None,
                         destination=dict(toString='ChangeLog'),
                         hunks=[dict(
                             sourceLine=1,
