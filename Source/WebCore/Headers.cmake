@@ -2003,6 +2003,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaPlaybackTargetClient.h
     platform/graphics/MediaPlaybackTargetPicker.h
     platform/graphics/MediaPlayer.h
+    platform/graphics/MediaPlayerClientIdentifier.h
     platform/graphics/MediaPlayerEnums.h
     platform/graphics/MediaPlayerIdentifier.h
     platform/graphics/MediaPlayerPrivate.h
@@ -2074,6 +2075,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/VelocityData.h
     platform/graphics/VideoLayerManager.h
     platform/graphics/VideoPlaybackQualityMetrics.h
+    platform/graphics/VideoTarget.h
     platform/graphics/VideoTrackPrivate.h
     platform/graphics/VideoTrackPrivateClient.h
     platform/graphics/WidthCache.h

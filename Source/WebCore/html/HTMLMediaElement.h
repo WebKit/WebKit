@@ -863,6 +863,8 @@ private:
     FloatSize mediaPlayerVideoLayerSize() const final { return videoLayerSize(); }
     void mediaPlayerVideoLayerSizeDidChange(const FloatSize& size) final { m_videoLayerSize = size; }
 
+    MediaPlayerClientIdentifier mediaPlayerClientIdentifier() const final { return identifier(); }
+
     void pendingActionTimerFired();
     void progressEventTimerFired();
     void playbackProgressTimerFired();

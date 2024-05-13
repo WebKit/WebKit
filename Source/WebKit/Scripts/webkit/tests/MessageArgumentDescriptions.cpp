@@ -120,6 +120,7 @@
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
 #include <WebCore/MediaKeySystemRequestIdentifier.h>
+#include <WebCore/MediaPlayerClientIdentifier.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/MediaUniqueIdentifier.h>
@@ -483,6 +484,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::LayerHostingContextIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::LibWebRTCSocketIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaKeySystemRequestIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaPlayerClientIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaPlayerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaSessionIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ModelPlayerIdentifier));
@@ -620,6 +622,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::LayerHostingContextIdentifier"_s,
         "WebCore::LibWebRTCSocketIdentifier"_s,
         "WebCore::MediaKeySystemRequestIdentifier"_s,
+        "WebCore::MediaPlayerClientIdentifier"_s,
         "WebCore::MediaPlayerIdentifier"_s,
         "WebCore::MediaSessionIdentifier"_s,
         "WebCore::ModelPlayerIdentifier"_s,

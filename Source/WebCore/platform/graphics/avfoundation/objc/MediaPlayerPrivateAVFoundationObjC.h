@@ -369,7 +369,7 @@ private:
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics(AVPlayerLayer*) const;
 
-    void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final;
+    void setVideoTarget(const PlatformVideoTarget&) final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     const String& defaultSpatialTrackingLabel() const;

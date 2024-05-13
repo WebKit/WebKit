@@ -32,6 +32,7 @@
 #include "FourCC.h"
 #include "GraphicsTypesGL.h"
 #include "LayoutRect.h"
+#include "MediaPlayerClientIdentifier.h"
 #include "MediaPlayerEnums.h"
 #include "MediaPlayerIdentifier.h"
 #include "MediaPromiseTypes.h"
@@ -41,7 +42,7 @@
 #include "SecurityOriginData.h"
 #include "Timer.h"
 #include "VideoPlaybackQualityMetrics.h"
-#include "VideoReceiverEndpoint.h"
+#include "VideoTarget.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
@@ -315,6 +316,10 @@ public:
     virtual void mediaPlayerVideoLayerSizeDidChange(const FloatSize&) { }
 
     virtual bool isGStreamerHolePunchingEnabled() const { return false; }
+
+    virtual PlatformVideoTarget mediaPlayerVideoTarget() const { return nullptr; }
+
+    virtual MediaPlayerClientIdentifier mediaPlayerClientIdentifier() const { return { WTF::HashTableDeletedValue }; }
 
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
@@ -749,7 +754,7 @@ public:
 
     void setResourceOwner(const ProcessIdentity&);
 
-    void setVideoReceiverEndpoint(const VideoReceiverEndpoint&);
+    void setVideoTarget(const PlatformVideoTarget&);
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     const String& defaultSpatialTrackingLabel() const;
@@ -761,6 +766,9 @@ public:
 
     void setInFullscreenOrPictureInPicture(bool);
     bool isInFullscreenOrPictureInPicture() const;
+
+    PlatformVideoTarget videoTarget() const { return client().mediaPlayerVideoTarget(); }
+    MediaPlayerClientIdentifier clientIdentifier() const { return client().mediaPlayerClientIdentifier(); }
 
 private:
     MediaPlayer(MediaPlayerClient&);

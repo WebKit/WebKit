@@ -447,6 +447,9 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     m_defaultSpatialTrackingLabel = player->defaultSpatialTrackingLabel();
     m_spatialTrackingLabel = player->spatialTrackingLabel();
 #endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    setVideoTarget(player->videoTarget());
+#endif
 }
 
 MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
@@ -533,6 +536,11 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
             [m_avPlayer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
             m_videoFrameMetadataGatheringObserver = nil;
         }
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (m_videoTarget)
+        [m_avPlayer removeVideoTarget:m_videoTarget.get()];
+#endif
 
         m_avPlayer = nil;
     }
@@ -1188,6 +1196,13 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
             currentTimeDidChange(WTFMove(time));
         });
     }];
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (m_videoTarget) {
+        INFO_LOG(LOGIDENTIFIER, "Setting videoTarget");
+        [m_avPlayer addVideoTarget:m_videoTarget.get()];
+    }
+#endif
 
     if (m_isGatheringVideoFrameMetadata)
         startVideoFrameMetadataGathering();
@@ -4075,25 +4090,26 @@ void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
 }
 #endif
 
-void MediaPlayerPrivateAVFoundationObjC::setVideoReceiverEndpoint(const VideoReceiverEndpoint& endpoint)
+void MediaPlayerPrivateAVFoundationObjC::setVideoTarget(const PlatformVideoTarget& videoTarget)
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     assertIsMainThread();
 
-    if (!endpoint) {
+    if (m_videoTarget.get() == videoTarget.get())
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, !!videoTarget);
+    if (m_videoTarget)
+        [m_avPlayer removeVideoTarget:m_videoTarget.get()];
+
+    m_videoTarget = videoTarget;
+
+    if (m_videoTarget)
+        [m_avPlayer addVideoTarget:m_videoTarget.get()];
+    else
         [m_videoLayer setPlayer:m_avPlayer.get()];
-        return;
-    }
-
-    FigVideoTargetRef videoTarget;
-    OSStatus status = FigVideoTargetCreateWithVideoReceiverEndpointID(kCFAllocatorDefault, endpoint.get(), nullptr, &videoTarget);
-    if (status != noErr)
-        return;
-
-    m_videoTarget = adoptCF(videoTarget);
-    [m_avPlayer addVideoTarget:m_videoTarget.get()];
 #else
-    UNUSED_PARAM(endpoint);
+    UNUSED_PARAM(videoTarget);
 #endif
 }
 
@@ -4104,8 +4120,10 @@ void MediaPlayerPrivateAVFoundationObjC::isInFullscreenOrPictureInPictureChanged
 
     if (isInFullscreenOrPictureInPicture)
         [m_videoLayer setPlayer:nil];
-    else if (RetainPtr videoTarget = std::exchange(m_videoTarget, nullptr))
+    else if (RetainPtr videoTarget = std::exchange(m_videoTarget, nullptr)) {
+        INFO_LOG(LOGIDENTIFIER, "Clearing videoTarget");
         [m_avPlayer removeVideoTarget:videoTarget.get()];
+    }
 #else
     UNUSED_PARAM(isInFullscreenOrPictureInPicture);
 #endif

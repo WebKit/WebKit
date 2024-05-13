@@ -358,7 +358,7 @@ public:
     virtual void setShouldCheckHardwareSupport(bool value) { m_shouldCheckHardwareSupport = value; }
     bool shouldCheckHardwareSupport() const { return m_shouldCheckHardwareSupport; }
 
-    virtual void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) { }
+    virtual void setVideoTarget(const PlatformVideoTarget&) { }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     virtual const String& defaultSpatialTrackingLabel() const { return emptyString(); }

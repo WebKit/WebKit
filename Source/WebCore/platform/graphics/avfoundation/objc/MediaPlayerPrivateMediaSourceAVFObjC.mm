@@ -71,6 +71,12 @@
 @property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
 @end
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+@interface AVSampleBufferVideoRenderer (Staging_127455709)
+- (void)removeAllVideoTargets;
+@end
+#endif
+
 namespace WebCore {
 
 String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekState enumerationValue)
@@ -185,6 +191,10 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
         if (m_currentTimeDidChangeCallback)
             m_currentTimeDidChangeCallback(clampedTime);
     }];
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    m_videoTarget = player->videoTarget();
+#endif
 }
 
 MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
@@ -1033,6 +1043,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyVideoRenderer()
     CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
     [m_synchronizer removeRenderer:m_sampleBufferVideoRenderer.get() atTime:currentTime completionHandler:nil];
 
+    if ([m_sampleBufferVideoRenderer respondsToSelector:@selector(removeAllVideoTargets)])
+        [m_sampleBufferVideoRenderer removeAllVideoTargets];
     m_sampleBufferVideoRenderer = nullptr;
 #endif // ENABLE(LINEAR_MEDIA_PLAYER)
 }
@@ -1786,21 +1798,10 @@ WebSampleBufferVideoRendering *MediaPlayerPrivateMediaSourceAVFObjC::layerOrVide
 }
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-void MediaPlayerPrivateMediaSourceAVFObjC::setVideoReceiverEndpoint(const VideoReceiverEndpoint& endpoint)
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoTarget(const PlatformVideoTarget& videoTarget)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, !!endpoint);
-    if (!endpoint) {
-        m_videoTarget = nullptr;
-        updateDisplayLayerAndDecompressionSession();
-        return;
-    }
-
-    FigVideoTargetRef videoTarget;
-    OSStatus status = FigVideoTargetCreateWithVideoReceiverEndpointID(kCFAllocatorDefault, endpoint.get(), nullptr, &videoTarget);
-    if (status != noErr)
-        return;
-
-    m_videoTarget = adoptCF(videoTarget);
+    ALWAYS_LOG(LOGIDENTIFIER, !!videoTarget);
+    m_videoTarget = videoTarget;
     updateDisplayLayerAndDecompressionSession();
 }
 #endif

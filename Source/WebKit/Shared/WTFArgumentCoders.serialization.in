@@ -119,9 +119,9 @@ template: struct WebCore::AttributedStringTextTableIDType
 template: struct WebCore::BackForwardItemIdentifierType
 template: struct WebCore::DictationContextType
 template: struct WebCore::FrameIdentifierType
-template: struct WebCore::HTMLMediaElementIdentifierType
 template: struct WebCore::MediaKeySystemRequestIdentifierType
 template: struct WebCore::MediaPlayerIdentifierType
+template: struct WebCore::MediaPlayerClientIdentifierType
 template: struct WebCore::MediaSessionIdentifierType
 template: struct WebCore::ModelPlayerIdentifierType
 template: struct WebCore::PageIdentifierType

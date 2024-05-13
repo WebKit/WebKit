@@ -33,12 +33,15 @@
 
 namespace WebKit {
 
+static constexpr ASCIILiteral mediaElementIdentifierKey = "video-receiver-media-element-identifier"_s;
 static constexpr ASCIILiteral processIdentifierKey = "video-receiver-process-identifier"_s;
 static constexpr ASCIILiteral playerIdentifierKey = "video-receiver-player-identifier"_s;
 static constexpr ASCIILiteral endpointKey = "video-receiver-endpoint"_s;
+static constexpr ASCIILiteral cacheCommandKey = "video-receiver-cache-command"_s;
 
-VideoReceiverEndpointMessage::VideoReceiverEndpointMessage(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, WebCore::VideoReceiverEndpoint endpoint)
+VideoReceiverEndpointMessage::VideoReceiverEndpointMessage(WebCore::ProcessIdentifier processIdentifier, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, WebCore::VideoReceiverEndpoint endpoint)
     : m_processIdentifier { WTFMove(processIdentifier) }
+    , m_mediaElementIdentifier { WTFMove(mediaElementIdentifier) }
     , m_playerIdentifier { WTFMove(playerIdentifier) }
     , m_endpoint { WTFMove(endpoint) }
 {
@@ -48,11 +51,13 @@ VideoReceiverEndpointMessage::VideoReceiverEndpointMessage(WebCore::ProcessIdent
 VideoReceiverEndpointMessage VideoReceiverEndpointMessage::decode(xpc_object_t message)
 {
     auto processIdentifier = xpc_dictionary_get_uint64(message, processIdentifierKey.characters());
+    auto mediaElementIdentifier = xpc_dictionary_get_uint64(message, mediaElementIdentifierKey.characters());
     auto playerIdentifier = xpc_dictionary_get_uint64(message, playerIdentifierKey.characters());
     auto endpoint = xpc_dictionary_get_value(message, endpointKey.characters());
 
     return {
         WebCore::ProcessIdentifier(processIdentifier),
+        WebCore::HTMLMediaElementIdentifier(mediaElementIdentifier),
         WebCore::MediaPlayerIdentifier(playerIdentifier),
         WebCore::VideoReceiverEndpoint(endpoint)
     };
@@ -63,6 +68,7 @@ OSObjectPtr<xpc_object_t> VideoReceiverEndpointMessage::encode() const
     OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, messageName().characters());
     xpc_dictionary_set_uint64(message.get(), processIdentifierKey.characters(), m_processIdentifier.toUInt64());
+    xpc_dictionary_set_uint64(message.get(), mediaElementIdentifierKey.characters(), m_mediaElementIdentifier.toUInt64());
     xpc_dictionary_set_uint64(message.get(), playerIdentifierKey.characters(), m_playerIdentifier.toUInt64());
     xpc_dictionary_set_value(message.get(), endpointKey.characters(), m_endpoint.get());
     return message;

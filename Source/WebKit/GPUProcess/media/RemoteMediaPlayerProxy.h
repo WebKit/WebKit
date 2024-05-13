@@ -115,7 +115,7 @@ public:
     using WebCore::MediaPlayerClient::WeakValueType;
     using WebCore::MediaPlayerClient::weakPtrFactory;
 
-    static Ref<RemoteMediaPlayerProxy> create(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
+    static Ref<RemoteMediaPlayerProxy> create(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerClientIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
     ~RemoteMediaPlayerProxy();
 
     WebCore::MediaPlayerIdentifier identifier() const { return m_id; }
@@ -238,7 +238,7 @@ public:
     void addRemoteTextTrackProxy(WebCore::InbandTextTrackPrivate&);
 
 private:
-    RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
+    RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerClientIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
 
     // MediaPlayerClient
     void mediaPlayerCharacteristicChanged() final;
@@ -328,6 +328,8 @@ private:
     bool mediaPlayerPrefersSandboxedParsing() const final { return m_configuration.prefersSandboxedParsing; }
     bool mediaPlayerShouldDisableHDR() const final { return m_configuration.shouldDisableHDR; }
 
+    WebCore::PlatformVideoTarget mediaPlayerVideoTarget() const final;
+
     void startUpdateCachedStateMessageTimer();
     void updateCachedState(bool = false);
     void sendCachedState();
@@ -388,6 +390,7 @@ private:
     Vector<Ref<RemoteTextTrackProxy>> m_textTracks;
 
     WebCore::MediaPlayerIdentifier m_id;
+    WebCore::MediaPlayerClientIdentifier m_clientIdentifier;
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;
     RefPtr<WebCore::MediaPlayer> m_player;

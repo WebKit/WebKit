@@ -53,6 +53,12 @@ PlaybackSessionModelContext::PlaybackSessionModelContext(PlaybackSessionManagerP
 {
 }
 
+PlaybackSessionModelContext::~PlaybackSessionModelContext()
+{
+    if (m_manager && m_videoReceiverEndpoint)
+        m_manager->uncacheVideoReceiverEndpoint(m_contextId);
+}
+
 void PlaybackSessionModelContext::addClient(PlaybackSessionModelClient& client)
 {
     ASSERT(!m_clients.contains(client));
@@ -73,9 +79,22 @@ void PlaybackSessionModelContext::sendRemoteCommand(WebCore::PlatformMediaSessio
 
 void PlaybackSessionModelContext::setVideoReceiverEndpoint(const WebCore::VideoReceiverEndpoint& endpoint)
 {
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (m_videoReceiverEndpoint.get() == endpoint.get())
+        return;
+
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
+    if (m_manager && m_videoReceiverEndpoint)
+        m_manager->uncacheVideoReceiverEndpoint(m_contextId);
+
+    m_videoReceiverEndpoint = endpoint;
+
     if (m_manager)
         m_manager->setVideoReceiverEndpoint(m_contextId, endpoint);
+#else
+    UNUSED_PARAM(endpoint);
+#endif
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
@@ -779,10 +798,25 @@ void PlaybackSessionManagerProxy::sendRemoteCommand(PlaybackSessionContextIdenti
 void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContextIdentifier contextId, const WebCore::VideoReceiverEndpoint& endpoint)
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    auto interface = controlsManagerInterface();
-    if (!interface || !interface->playerIdentifier())
+    auto it = m_contextMap.find(contextId);
+    if (it == m_contextMap.end()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "no context, ", contextId.loggingString());
         return;
+    }
 
+    RefPtr interface = std::get<1>(it->value);
+    if (!interface) {
+        ERROR_LOG(LOGIDENTIFIER, "no interface or model, ", contextId.loggingString());
+        ASSERT_NOT_REACHED("Should never have null values in context map");
+        return;
+    }
+
+    if (!interface->playerIdentifier()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "no player identifier");
+        return;
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER);
     WebCore::MediaPlayerIdentifier playerIdentifier = *interface->playerIdentifier();
 
     Ref process = m_page->protectedProcess();
@@ -797,11 +831,33 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
     if (!xpcConnection)
         return;
 
-    VideoReceiverEndpointMessage endpointMessage(WTFMove(processIdentifier), WTFMove(playerIdentifier), endpoint);
+    VideoReceiverEndpointMessage endpointMessage(WTFMove(processIdentifier), contextId, WTFMove(playerIdentifier), endpoint);
     xpc_connection_send_message(xpcConnection.get(), endpointMessage.encode().get());
 #else
     UNUSED_PARAM(contextId);
     UNUSED_PARAM(endpoint);
+#endif
+}
+
+void PlaybackSessionManagerProxy::uncacheVideoReceiverEndpoint(PlaybackSessionContextIdentifier contextId)
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    Ref process = m_page->protectedProcess();
+    WebCore::ProcessIdentifier processIdentifier = process->coreProcessIdentifier();
+
+    Ref gpuProcess = process->processPool().ensureProtectedGPUProcess();
+    RefPtr connection = gpuProcess->protectedConnection();
+    if (!connection)
+        return;
+
+    OSObjectPtr xpcConnection = connection->xpcConnection();
+    if (!xpcConnection)
+        return;
+
+    VideoReceiverEndpointMessage endpointMessage(WTFMove(processIdentifier), contextId, { WTF::HashTableDeletedValue }, nullptr);
+    xpc_connection_send_message(xpcConnection.get(), endpointMessage.encode().get());
+#else
+    UNUSED_PARAM(contextId);
 #endif
 }
 

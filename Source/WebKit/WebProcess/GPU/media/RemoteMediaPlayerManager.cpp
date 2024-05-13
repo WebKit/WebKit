@@ -182,7 +182,8 @@ Ref<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlay
     proxyConfiguration.prefersSandboxedParsing = player->prefersSandboxedParsing();
 
     auto identifier = MediaPlayerIdentifier::generate();
-    gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(identifier, remoteEngineIdentifier, proxyConfiguration), 0);
+    auto clientIdentifier = player->clientIdentifier();
+    gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(identifier, clientIdentifier, remoteEngineIdentifier, proxyConfiguration), 0);
 
     auto remotePlayer = MediaPlayerPrivateRemote::create(player, remoteEngineIdentifier, identifier, *this);
     m_players.add(identifier, remotePlayer);

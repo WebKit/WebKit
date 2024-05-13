@@ -162,7 +162,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void needsVideoLayerChanged();
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final;
+    void setVideoTarget(const PlatformVideoTarget&) final;
 #endif
 
 #if !RELEASE_LOG_DISABLED

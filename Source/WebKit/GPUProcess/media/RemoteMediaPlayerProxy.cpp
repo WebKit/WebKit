@@ -76,13 +76,14 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<RemoteMediaPlayerProxy> RemoteMediaPlayerProxy::create(RemoteMediaPlayerManagerProxy& manager, MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& configuration, RemoteVideoFrameObjectHeap& videoFrameObjectHeap, const WebCore::ProcessIdentity& resourceOwner)
+Ref<RemoteMediaPlayerProxy> RemoteMediaPlayerProxy::create(RemoteMediaPlayerManagerProxy& manager, MediaPlayerIdentifier identifier, MediaPlayerClientIdentifier clientIdentifier, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& configuration, RemoteVideoFrameObjectHeap& videoFrameObjectHeap, const WebCore::ProcessIdentity& resourceOwner)
 {
-    return adoptRef(*new RemoteMediaPlayerProxy(manager, identifier, WTFMove(connection), engineIdentifier, WTFMove(configuration), videoFrameObjectHeap, resourceOwner));
+    return adoptRef(*new RemoteMediaPlayerProxy(manager, identifier, clientIdentifier, WTFMove(connection), engineIdentifier, WTFMove(configuration), videoFrameObjectHeap, resourceOwner));
 }
 
-RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& manager, MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& configuration, RemoteVideoFrameObjectHeap& videoFrameObjectHeap, const WebCore::ProcessIdentity& resourceOwner)
+RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& manager, MediaPlayerIdentifier identifier, MediaPlayerClientIdentifier clientIdentifier, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& configuration, RemoteVideoFrameObjectHeap& videoFrameObjectHeap, const WebCore::ProcessIdentity& resourceOwner)
     : m_id(identifier)
+    , m_clientIdentifier(clientIdentifier)
     , m_webProcessConnection(WTFMove(connection))
     , m_manager(manager)
     , m_engineIdentifier(engineIdentifier)
@@ -910,6 +911,15 @@ bool RemoteMediaPlayerProxy::mediaPlayerShouldDisableSleep() const
 bool RemoteMediaPlayerProxy::mediaPlayerShouldCheckHardwareSupport() const
 {
     return m_shouldCheckHardwareSupport;
+}
+
+WebCore::PlatformVideoTarget RemoteMediaPlayerProxy::mediaPlayerVideoTarget() const
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (m_manager)
+        return m_manager->videoTargetForMediaElementIdentifier(m_clientIdentifier);
+#endif
+    return nullptr;
 }
 
 void RemoteMediaPlayerProxy::startUpdateCachedStateMessageTimer()

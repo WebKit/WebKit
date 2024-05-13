@@ -7823,6 +7823,7 @@
 		CDAC20F323FC383A0021DEE3 /* RemoteCDMFactoryProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCDMFactoryProxyMessages.h; sourceTree = "<group>"; };
 		CDAC20F423FC383A0021DEE3 /* RemoteCDMProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCDMProxyMessages.h; sourceTree = "<group>"; };
 		CDAC20F523FC383B0021DEE3 /* RemoteCDMInstanceProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCDMInstanceProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		CDAD8DEC2BEC37BB00107D24 /* RemoteMediaPlayerManagerProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteMediaPlayerManagerProxyCocoa.mm; sourceTree = "<group>"; };
 		CDB2A1ED2697925C006B235C /* GPUProcessProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUProcessProxyCocoa.mm; sourceTree = "<group>"; };
 		CDB96AD32AB379C9007A90D3 /* WKVideoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKVideoView.h; path = ios/WKVideoView.h; sourceTree = "<group>"; };
 		CDB96AD42AB379CA007A90D3 /* WKVideoView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKVideoView.mm; path = ios/WKVideoView.mm; sourceTree = "<group>"; };
@@ -10318,6 +10319,7 @@
 		1D0ECEA923FC84BB00D172F6 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				CDAD8DEC2BEC37BB00107D24 /* RemoteMediaPlayerManagerProxyCocoa.mm */,
 				1D0ECEAA23FC858400D172F6 /* RemoteMediaPlayerProxyCocoa.mm */,
 			);
 			path = cocoa;

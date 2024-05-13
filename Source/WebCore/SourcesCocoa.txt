@@ -453,6 +453,7 @@ platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
 platform/graphics/cocoa/TransformationMatrixCocoa.cpp
 platform/graphics/cocoa/UnrealizedCoreTextFont.cpp
 platform/graphics/cocoa/VP9UtilitiesCocoa.mm @no-unify
+platform/graphics/cocoa/VideoTargetFactory.mm @no-unify
 platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
 platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm
