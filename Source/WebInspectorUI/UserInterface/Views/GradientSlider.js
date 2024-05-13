@@ -117,7 +117,7 @@ WI.GradientSlider = class GradientSlider extends WI.Object
         this._updateCanvas();
     }
 
-    knobCanDetach(knob)
+    knobCanDetach()
     {
         return this._knobs.length > 2;
     }
@@ -160,7 +160,7 @@ WI.GradientSlider = class GradientSlider extends WI.Object
         this._updateShadowKnob(event);
     }
 
-    _handleMouseout(event)
+    _handleMouseout()
     {
         if (!this._shadowKnob)
             return;
@@ -420,7 +420,7 @@ WI.GradientSliderKnob = class GradientSliderKnob extends WI.Object
             this.delegate.knobXDidChange(this);
     }
 
-    _handleMouseup(event)
+    _handleMouseup()
     {
         window.removeEventListener("mousemove", this, true);
         window.removeEventListener("mouseup", this, true);
@@ -433,7 +433,7 @@ WI.GradientSliderKnob = class GradientSliderKnob extends WI.Object
             this.selected = !this.selected;
     }
 
-    _handleTransitionEnd(event)
+    _handleTransitionEnd()
     {
         this.element.removeEventListener("transitionend", this);
         this.element.classList.remove(WI.GradientSliderKnob.FadeOutClassName);
