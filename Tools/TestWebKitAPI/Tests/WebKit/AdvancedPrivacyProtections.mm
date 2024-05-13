@@ -232,7 +232,7 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenNavigatingWith
 TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersByDomain)
 {
     [TestProtocol registerWithScheme:@"https"];
-    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"http://a.com", @"", @"" ], @[ @"", @"", @"" ] };
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"a.com", @"", @"" ], @[ @"", @"", @"" ] };
 
     auto webView = createWebViewWithAdvancedPrivacyProtections();
     auto url = [NSURL URLWithString:@"https://b.com/bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
@@ -262,7 +262,7 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersByPath)
 TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersByDomainAndPath)
 {
     [TestProtocol registerWithScheme:@"https"];
-    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"http://a.com", @"", @"" ], @[ @"/abc/", @"", @"" ] };
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"a.com", @"", @"" ], @[ @"/abc/", @"", @"" ] };
 
     auto webView = createWebViewWithAdvancedPrivacyProtections();
     auto url = [NSURL URLWithString:@"https://b.com/bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
