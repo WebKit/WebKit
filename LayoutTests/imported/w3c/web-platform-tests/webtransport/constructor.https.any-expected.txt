@@ -6,7 +6,7 @@ PASS WebTransport constructor should reject URL 'http://example.com/'
 PASS WebTransport constructor should reject URL 'quic-transport://example.com/'
 PASS WebTransport constructor should reject URL 'https:///'
 PASS WebTransport constructor should reject URL 'https://example.com/#failing'
-PASS WebTransport constructor should reject URL 'https://localhost:999999/'
+PASS WebTransport constructor should reject URL 'https://web-platform.test:999999/'
 PASS WebTransport constructor should allow options {"allowPooling":true}
 PASS WebTransport constructor should allow options {"requireUnreliable":true}
 PASS WebTransport constructor should allow options {"allowPooling":true,"requireUnreliable":true}

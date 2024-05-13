@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: text/css,*/*;q=0.1\r\nReferer: http://web-platform.test:8800/html/syntax/speculat...
 
     <!-- speculative case in document.write -->
-    <link rel="stylesheet" href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=efab125c-1514-41db-9dbf-837ebc4c084b&amp;encodingcheck=&Gbreve;" disabled>
+    <link rel="stylesheet" href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=8a17eefb-be1c-4105-b348-d73df795a441&amp;encodingcheck=&Gbreve;" disabled>
 
 
-FAIL Speculative parsing, document.write(): link-rel-stylesheet-disabled Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+FAIL Speculative parsing, document.write(): link-rel-stylesheet-disabled Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: text/css,*/*;q=0.1\r\nReferer: http://web-platform.test:8800/html/syntax/speculative-parsing/generated/document-write/link-rel-stylesheet-disabled.tentative.sub.html"
 

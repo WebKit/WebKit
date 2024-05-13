@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: image/webp,image/png,image/svg+xml,image/*;q=0.8,video/*;q=0.8,*/*;q=0.5\r\nRefer...
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: image/webp,image/avif,image/jxl,image/heic,image/heic-sequence,video/*;q=0.8,imag...
 
 
-FAIL Speculative parsing, page load: meta-csp-img-src-none Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: image/webp,image/png,image/svg+xml,image/*;q=0.8,video/*;q=0.8,*/*;q=0.5\r\nReferer: http://localhost:8800/html/syntax/speculative-parsing/generated/page-load/resources/meta-csp-img-src-none-framed.sub.html?uuid=f5ff9fd9-027f-4e08-a79e-65608bd6ca74"
+FAIL Speculative parsing, page load: meta-csp-img-src-none Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: image/webp,image/avif,image/jxl,image/heic,image/heic-sequence,video/*;q=0.8,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5\r\nReferer: http://web-platform.test:8800/html/syntax/speculative-parsing/generated/page-load/resources/meta-csp-img-src-none-framed.sub.html?uuid=d818405c-4cfe-492b-aec1-a5310910a95e"
 

@@ -1,6 +1,6 @@
 
     <!-- speculative case in document.write -->
-    <img data-src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=539bd26c-7e71-4084-9304-b2e9d35419fa&amp;encodingcheck=&Gbreve;">
+    <img data-src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=482d2a57-7dad-4ab8-abd6-7238af24285d&amp;encodingcheck=&Gbreve;">
 
 
 

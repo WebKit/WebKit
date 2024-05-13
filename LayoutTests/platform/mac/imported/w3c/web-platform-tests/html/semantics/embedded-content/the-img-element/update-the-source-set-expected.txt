@@ -1,6 +1,6 @@
 
 PASS <img data-expect="">
-FAIL <img src="" data-expect=""> assert_equals: expected "" but got "http://localhost:8800/html/semantics/embedded-content/the-img-element/update-the-source-set.html"
+FAIL <img src="" data-expect=""> assert_equals: expected "" but got "http://web-platform.test:8800/html/semantics/embedded-content/the-img-element/update-the-source-set.html"
 PASS <img src="data:,a" data-expect="data:,a">
 PASS <img srcset="" src="data:,a" data-expect="data:,a">
 PASS <img srcset="data:,b" src="data:,a" data-expect="data:,b">
@@ -63,7 +63,7 @@ PASS <picture><source srcset="data:,b" type="text/plain"><img src="data:,a" data
 PASS <picture><source srcset="data:,b" type="text/css"><img src="data:,a" data-expect="data:,a"></picture>
 FAIL <picture><source srcset="data:,b" type="video/mp4"><img src="data:,a" data-expect="data:,a"></picture> assert_equals: expected "data:,a" but got "data:,b"
 PASS <picture><source srcset="data:,b" type="video/ogg"><img src="data:,a" data-expect="data:,a"></picture>
-PASS <picture><source srcset="data:,b" type="video/webm"><img src="data:,a" data-expect="data:,a"></picture>
+FAIL <picture><source srcset="data:,b" type="video/webm"><img src="data:,a" data-expect="data:,a"></picture> assert_equals: expected "data:,a" but got "data:,b"
 PASS <picture><source srcset="data:,b" type="unknown/unknown"><img src="data:,a" data-expect="data:,a"></picture>
 PASS <picture><source srcset="data:,b" type="application/octet-stream"><img src="data:,a" data-expect="data:,a"></picture>
 PASS <picture><source srcset="data:,b" type="application/x-shockwave-flash"><img src="data:,a" data-expect="data:,a"></picture>

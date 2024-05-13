@@ -1,5 +1,5 @@
-{"browser_host": "localhost",
- "alternate_hosts": { "alt": "127.0.0.1" },
+{"browser_host": "web-platform.test",
+ "alternate_hosts": { "alt": "not-web-platform.test" },
  "ports":{"http":[8800, 8801],
           "https":[9443, 9444],
           "h2":[9000],

@@ -3,6 +3,10 @@ flex with 1 wrapper div inside:
 flex with several wrapper divs inside:
 
 
-PASS .pct 1
-PASS .pct 2
+FAIL .pct 1 assert_equals:
+<div class="pct" data-expected-height="50"></div>
+height expected 50 but got 10
+FAIL .pct 2 assert_equals:
+<div class="pct" data-expected-height="50"></div>
+height expected 50 but got 10
 

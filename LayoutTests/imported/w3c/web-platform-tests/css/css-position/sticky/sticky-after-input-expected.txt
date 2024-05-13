@@ -17,5 +17,5 @@
 16
 17
 
-PASS Sticky positioned element should reset the scroll position to unshifted position
+FAIL Sticky positioned element should reset the scroll position to unshifted position assert_equals: should reset the scroll to unshifted sticky position expected 0 but got 208
 

@@ -1,4 +1,4 @@
 To be scrolled into view
 
-PASS Scrolling an inline element with a large line height uses the bounding rect
+FAIL Scrolling an inline element with a large line height uses the bounding rect assert_approx_equals: expected 594 +/- 1 but got 8
 

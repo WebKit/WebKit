@@ -1,10 +1,10 @@
 
-PASS Verify AudioData constructors
-PASS Verify closing and cloning AudioData
-PASS Test we can construct AudioData with a negative timestamp.
-PASS Test conversion of uint8 data to float32
-PASS Test conversion of int16 data to float32
-PASS Test conversion of int32 data to float32
-PASS Test conversion of float32 data to float32
-PASS Test copying out planar and interleaved data
+FAIL Verify AudioData constructors AudioData creation failed
+FAIL Verify closing and cloning AudioData AudioData creation failed
+FAIL Test we can construct AudioData with a negative timestamp. AudioData creation failed
+FAIL Test conversion of uint8 data to float32 AudioData creation failed
+FAIL Test conversion of int16 data to float32 AudioData creation failed
+FAIL Test conversion of int32 data to float32 AudioData creation failed
+FAIL Test conversion of float32 data to float32 AudioData creation failed
+FAIL Test copying out planar and interleaved data AudioData creation failed
 

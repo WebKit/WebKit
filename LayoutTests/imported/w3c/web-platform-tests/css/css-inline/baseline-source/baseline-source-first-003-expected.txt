@@ -50,7 +50,7 @@ FAIL .target > * 8 assert_equals:
     <div><span></span></div>
     <div><span></span></div>
   </div>
-offsetLeft expected 10 but got 53
+offsetLeft expected 10 but got 50
 PASS .target > * 9
 PASS .target > * 10
 FAIL .target > * 11 assert_equals:
