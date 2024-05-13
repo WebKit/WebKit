@@ -28,6 +28,7 @@
 #if ENABLE(UNIFIED_PDF)
 
 #include "PDFDocumentLayout.h"
+#include "PDFPageCoverage.h"
 #include "PDFPluginBase.h"
 #include <WebCore/ElementIdentifier.h>
 #include <WebCore/GraphicsLayer.h>
@@ -63,7 +64,6 @@ class WebFrame;
 class WebMouseEvent;
 struct PDFContextMenu;
 struct PDFContextMenuItem;
-struct PDFPageCoverage;
 
 enum class WebEventType : uint8_t;
 enum class WebMouseEventButton : int8_t;
@@ -415,6 +415,7 @@ private:
 
     // Package up the data needed to paint a set of pages for the given clip, for use by UnifiedPDFPlugin::paintPDFContent and async rendering.
     PDFPageCoverage pageCoverageForRect(const WebCore::FloatRect& clipRect) const;
+    PDFPageCoverageAndScales pageCoverageAndScalesForRect(const WebCore::FloatRect& clipRect) const;
 
     enum class PaintingBehavior : bool { All, PageContentsOnly };
     enum class AllowsAsyncRendering : bool { No, Yes };

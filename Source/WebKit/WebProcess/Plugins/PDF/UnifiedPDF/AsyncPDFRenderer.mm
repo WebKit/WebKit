@@ -29,7 +29,6 @@
 #if ENABLE(UNIFIED_PDF)
 
 #include "Logging.h"
-#include "PDFPageCoverage.h"
 #include "UnifiedPDFPlugin.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <PDFKit/PDFKit.h>
@@ -228,7 +227,7 @@ void AsyncPDFRenderer::coverageRectDidChange(const FloatRect& coverageRect)
     for (auto pageIndex : m_pagePreviews.keys())
         unwantedPageIndices.add(pageIndex);
 
-    for (auto& pageInfo : pageCoverage.pages) {
+    for (auto& pageInfo : pageCoverage) {
         auto it = unwantedPageIndices.find(pageInfo.pageIndex);
         if (it != unwantedPageIndices.end()) {
             unwantedPageIndices.remove(it);
@@ -321,7 +320,7 @@ auto AsyncPDFRenderer::renderInfoForTile(const TileForGrid& tileInfo, const Floa
         tilingScaleFactor = tiledBacking->tilingScaleFactor();
 
     auto paintingClipRect = convertTileRectToPaintingCoords(tileRect, tilingScaleFactor);
-    auto pageCoverage = plugin->pageCoverageForRect(paintingClipRect);
+    auto pageCoverage = plugin->pageCoverageAndScalesForRect(paintingClipRect);
 
     return TileRenderInfo { tileRect, clipRect, pageCoverage, m_contentsVersion };
 }
@@ -626,7 +625,7 @@ void AsyncPDFRenderer::pdfContentChangedInRect(float pageScaleFactor, const Floa
         return;
 
     auto pageCoverage = plugin->pageCoverageForRect(paintingRect);
-    if (pageCoverage.pages.isEmpty())
+    if (pageCoverage.isEmpty())
         return;
 
     RetainPtr pdfDocument = plugin->pdfDocument();
@@ -652,7 +651,7 @@ void AsyncPDFRenderer::pdfContentChangedInRect(float pageScaleFactor, const Floa
     }
 
     auto pagePreviewScale = plugin->scaleForPagePreviews();
-    for (auto& pageInfo : pageCoverage.pages)
+    for (auto& pageInfo : pageCoverage)
         generatePreviewImageForPage(pageInfo.pageIndex, pagePreviewScale);
 }
 

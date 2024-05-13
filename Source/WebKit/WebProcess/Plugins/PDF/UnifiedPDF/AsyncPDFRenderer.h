@@ -123,7 +123,7 @@ private:
     struct TileRenderInfo {
         WebCore::FloatRect tileRect;
         std::optional<WebCore::FloatRect> clipRect; // If set, represents the portion of the tile that needs repaint (in the same coordinate system as tileRect).
-        PDFPageCoverage pageCoverage;
+        PDFPageCoverageAndScales pageCoverage;
         PDFContentsVersionIdentifier contentsVersion;
 
         bool equivalentForPainting(const TileRenderInfo& other) const
