@@ -6004,8 +6004,9 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     MESSAGE_CHECK_URL(process, unreachableURL);
 
     // If a provisional load has since been started in another process, ignore this message.
-    if (frame->provisionalLoadProcess().coreProcessIdentifier() != process->coreProcessIdentifier()) {
-        ASSERT(m_preferences->siteIsolationEnabled());
+    if (frame->provisionalLoadProcess().coreProcessIdentifier() != process->coreProcessIdentifier() && m_preferences->siteIsolationEnabled()) {
+        // FIXME: The API test ProcessSwap.DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted
+        // is probably not handled correctly with site isolation on.
         return;
     }
 
