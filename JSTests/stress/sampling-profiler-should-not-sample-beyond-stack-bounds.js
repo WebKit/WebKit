@@ -1,5 +1,5 @@
-//@ requireOptions("--useSamplingProfiler=true", "--useObjectAllocationSinking=false", "--sampleInterval=10")
-// Note that original test was using --useProbeOSRExit=1
+//@ requireOptions("--useSamplingProfiler=true", "--useObjectAllocationSinking=false", "--sampleInterval=30")
+// Note that original test was using --useProbeOSRExit=1 --sampleInterval=10
 
 function foo(ranges) {
     const CHUNK_SIZE = 95;
