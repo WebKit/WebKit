@@ -562,6 +562,12 @@ webkit_settings_get_experimental_features                      (void);
 WEBKIT_API WebKitFeatureList *
 webkit_settings_get_development_features                       (void);
 
+WEBKIT_API gboolean
+webkit_settings_apply_from_key_file                            (WebKitSettings  *settings,
+                                                                GKeyFile        *key_file,
+                                                                const gchar     *group_name,
+                                                                GError         **error);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

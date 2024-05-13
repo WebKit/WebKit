@@ -36,6 +36,7 @@
 #include <WebCore/SoupVersioning.h>
 #include <wtf/HashSet.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 static WebKitTestServer* gServer;
 
@@ -458,6 +459,68 @@ void testWebKitFeatures(Test* test, gconstpointer)
 #endif
 }
 
+void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
+{
+    GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new());
+    GUniquePtr<GKeyFile> key_file(g_key_file_new());
+    const char* key_file_contents = "[websettings]\n" \
+        "user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36\n" \
+        "enable-webaudio = 0\n" \
+        "enable-webrtc = true\n";
+
+    const char* invalidGroup = "[foo]\nbar = 42\n";
+    const char* unknownSetting = "[websettings]\n" \
+        "iamnotasetting = yes\n" \
+        "enable-webaudio = 0\n";
+    const char* invalidSettingType = "[websettings]\n" \
+        "enable-webaudio = ishouldnotbeastring\n";
+    auto bigIntNotSupported = makeString("[websettings]\nminimum-font-size = "_s, std::numeric_limits<uint64_t>::max(), '\n');
+    GUniqueOutPtr<GError> error;
+
+    // Loading settings from a file not containing a websettings group should raise an error.
+    g_key_file_load_from_data(key_file.get(), invalidGroup, strlen(invalidGroup), G_KEY_FILE_NONE, &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_false(webkit_settings_apply_from_key_file(settings.get(), key_file.get(), "websettings", &error.outPtr()));
+    g_assert_error(error.get(), G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_INVALID_VALUE);
+    g_assert_true(webkit_settings_get_enable_webaudio(settings.get()));
+
+    // Check default values of settings, before applying key_file settings.
+    g_assert_true(webkit_settings_get_enable_webaudio(settings.get()));
+    g_assert_false(webkit_settings_get_enable_webrtc(settings.get()));
+    CString defaultUserAgent = webkit_settings_get_user_agent(settings.get());
+
+    // Loading settings from a file that contains an unknown setting should raise an error.
+    g_key_file_load_from_data(key_file.get(), unknownSetting, strlen(unknownSetting), G_KEY_FILE_NONE, &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_false(webkit_settings_apply_from_key_file(settings.get(), key_file.get(), "websettings", &error.outPtr()));
+    g_assert_error(error.get(), G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_INVALID_VALUE);
+
+    // Mismatching a setting value type should raise an error.
+    g_key_file_load_from_data(key_file.get(), invalidSettingType, strlen(invalidSettingType), G_KEY_FILE_NONE, &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_false(webkit_settings_apply_from_key_file(settings.get(), key_file.get(), "websettings", &error.outPtr()));
+    g_assert_error(error.get(), G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_INVALID_VALUE);
+
+    // Overflowing uint settings should raise an error.
+    g_key_file_load_from_data(key_file.get(), bigIntNotSupported.utf8().data(), bigIntNotSupported.length(), G_KEY_FILE_NONE, &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_false(webkit_settings_apply_from_key_file(settings.get(), key_file.get(), "websettings", &error.outPtr()));
+    g_assert_error(error.get(), G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_INVALID_VALUE);
+
+    g_assert_true(g_key_file_load_from_data(key_file.get(), key_file_contents, strlen(key_file_contents), G_KEY_FILE_NONE, &error.outPtr()));
+    g_assert_no_error(error.get());
+
+    g_assert_true(webkit_settings_apply_from_key_file(settings.get(), key_file.get(), "websettings", &error.outPtr()));
+    g_assert_no_error(error.get());
+
+    // Check settings after apply key_file settings.
+    g_assert_false(webkit_settings_get_enable_webaudio(settings.get()));
+    g_assert_true(webkit_settings_get_enable_webrtc(settings.get()));
+
+    CString newUserAgent = webkit_settings_get_user_agent(settings.get());
+    g_assert_cmpstr(newUserAgent.data(), !=, defaultUserAgent.data());
+}
+
 #if PLATFORM(GTK)
 static CString convertWebViewMainResourceDataToCString(WebViewTest* test)
 {
@@ -566,6 +629,7 @@ void beforeAll()
     Test::add("WebKitSettings", "webkit-settings", testWebKitSettings);
     Test::add("WebKitSettings", "new-with-settings", testWebKitSettingsNewWithSettings);
     Test::add("WebKitSettings", "features", testWebKitFeatures);
+    Test::add("WebKitSettings", "config-file", testWebKitSettingsApplyFromConfigFile);
 #if PLATFORM(GTK)
     WebViewTest::add("WebKitSettings", "user-agent", testWebKitSettingsUserAgent);
 #endif

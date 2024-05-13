@@ -76,6 +76,7 @@ static gboolean enableITP;
 static gboolean exitAfterLoad;
 static gboolean webProcessCrashed;
 static gboolean printVersion;
+static char *configFile;
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
 static gboolean enableSandbox;
@@ -179,6 +180,7 @@ static const GOptionEntry commandLineOptions[] =
     { "exit-after-load", 0, 0, G_OPTION_ARG_NONE, &exitAfterLoad, "Quit the browser after the load finishes", NULL },
     { "time-zone", 't', 0, G_OPTION_ARG_STRING, &timeZone, "Set time zone", "TIMEZONE" },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WebKitGTK version", NULL },
+    { "config", 'C', 0, G_OPTION_ARG_FILENAME, &configFile, "Path to a configuration file", "PATH" },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };
@@ -997,6 +999,7 @@ int main(int argc, char *argv[])
     webkit_settings_set_enable_developer_extras(webkitSettings, TRUE);
     webkit_settings_set_enable_webgl(webkitSettings, TRUE);
     webkit_settings_set_enable_media_stream(webkitSettings, TRUE);
+
     if (!addSettingsGroupToContext(context, webkitSettings))
         g_clear_object(&webkitSettings);
 
@@ -1010,6 +1013,25 @@ int main(int argc, char *argv[])
         return 1;
     }
     g_option_context_free(context);
+
+    if (configFile) {
+        g_autoptr(GFile) file = g_file_new_for_commandline_arg(configFile);
+        g_autofree char* configFilePath = g_file_get_path(file);
+
+        if (!g_file_query_exists(file, NULL)) {
+            g_printerr("%s: File does not exist: %s\n", g_get_prgname(), configFilePath);
+            return EXIT_FAILURE;
+        }
+
+        g_autoptr(GError) error = NULL;
+        g_autoptr(GKeyFile) keyFile = g_key_file_new();
+        if (!g_key_file_load_from_file(keyFile, configFilePath, G_KEY_FILE_NONE, &error) || !webkit_settings_apply_from_key_file(webkitSettings, keyFile, "websettings", &error)) {
+            g_printerr("%s: Cannot load configuration file: %s\n", g_get_prgname(), error->message);
+            return EXIT_FAILURE;
+        }
+
+        g_clear_pointer(&configFile, g_free);
+    }
 
     if (printVersion) {
         g_print("WebKitGTK %u.%u.%u",
