@@ -110,14 +110,19 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
     std::array<uint16_t, 2> framebufferSize;
     MachSendRight completionSyncEvent;
 };
+
+[Nested, RValue] struct PlatformXR::FrameData::ExternalTexture {
+    MachSendRight handle;
+    bool isSharedTexture;
+};
 #endif
 
 [Nested, RValue] struct PlatformXR::FrameData::LayerData {
 #if PLATFORM(COCOA)
     std::optional<PlatformXR::FrameData::LayerSetupData> layerSetup;
     uint64_t renderingFrameIndex;
-    std::tuple<MachSendRight, bool> colorTexture;
-    std::tuple<MachSendRight, bool> depthStencilBuffer;
+    PlatformXR::FrameData::ExternalTexture colorTexture;
+    PlatformXR::FrameData::ExternalTexture depthStencilBuffer;
 #else
     WebCore::IntSize framebufferSize;
     PlatformGLObject opaqueTexture;

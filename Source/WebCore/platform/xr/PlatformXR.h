@@ -269,14 +269,19 @@ struct FrameData {
         std::array<uint16_t, 2> framebufferSize;
         MachSendRight completionSyncEvent;
     };
+
+    struct ExternalTexture {
+        MachSendRight handle;
+        bool isSharedTexture;
+    };
 #endif
 
     struct LayerData {
 #if PLATFORM(COCOA)
         std::optional<LayerSetupData> layerSetup = { std::nullopt };
         uint64_t renderingFrameIndex { 0 };
-        std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
-        std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
+        ExternalTexture colorTexture = { MachSendRight(), false };
+        ExternalTexture depthStencilBuffer = { MachSendRight(), false };
 #else
         WebCore::IntSize framebufferSize;
         PlatformGLObject opaqueTexture { 0 };

@@ -28,18 +28,15 @@
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
 
+#include "GraphicsContextGLCocoa.h"
 #include "IntSize.h"
-#include "WebGLFramebuffer.h"
 #include "WebGL2RenderingContext.h"
+#include "WebGLFramebuffer.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLUtilities.h"
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
-
-#if PLATFORM(COCOA)
-#include "GraphicsContextGLCocoa.h"
-#endif
 
 namespace WebCore {
 
@@ -71,12 +68,28 @@ static void createAndBindCompositorBuffer(GL& gl, WebXRExternalRenderbuffer& buf
     buffer.image.adopt(gl, image);
 }
 
-static GL::ExternalImageSource makeExternalImageSource(std::tuple<WTF::MachSendRight, bool>&& imageSource)
+static GL::ExternalImageSource makeExternalImageSource(const PlatformXR::FrameData::ExternalTexture& imageSource)
 {
-    auto [imageHandle, isSharedTexture] = WTFMove(imageSource);
-    if (isSharedTexture)
-        return GraphicsContextGLExternalImageSourceMTLSharedTextureHandle { WTFMove(imageHandle) };
-    return GraphicsContextGLExternalImageSourceIOSurfaceHandle { WTFMove(imageHandle) };
+    if (imageSource.isSharedTexture)
+        return GraphicsContextGLExternalImageSourceMTLSharedTextureHandle { MachSendRight(imageSource.handle) };
+    return GraphicsContextGLExternalImageSourceIOSurfaceHandle { MachSendRight(imageSource.handle) };
+}
+
+static void createAndBindTempBuffer(GL& gl, WebXRExternalRenderbuffer& buffer, GCGLenum internalFormat, IntSize size)
+{
+    if (!buffer.renderBufferObject) {
+        auto object = gl.createRenderbuffer();
+        if (!object)
+            return;
+        buffer.renderBufferObject.adopt(gl, object);
+    }
+    gl.bindRenderbuffer(GL::RENDERBUFFER, buffer.renderBufferObject);
+    gl.renderbufferStorage(GL::RENDERBUFFER, internalFormat, size.width(), size.height());
+}
+
+static IntSize toIntSize(const auto& size)
+{
+    return IntSize(size[0], size[1]);
 }
 
 std::unique_ptr<WebXROpaqueFramebuffer> WebXROpaqueFramebuffer::create(PlatformXR::LayerHandle handle, WebGLRenderingContextBase& context, Attributes&& attributes, IntSize framebufferSize)
@@ -152,14 +165,21 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
 
     int layerCount = (m_displayLayout == PlatformXR::Layout::Layered) ? 2 : 1;
     for (int layer = 0; layer < layerCount; ++layer) {
-        auto colorTextureSource = makeExternalImageSource(std::tuple<MachSendRight, bool> { data.colorTexture });
-        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].colorBuffer, GL::BGRA_EXT, WTFMove(colorTextureSource), layer);
-        ASSERT(m_displayAttachments[layer].colorBuffer.image);
-        if (!m_displayAttachments[layer].colorBuffer.image)
-            return;
+        if (data.colorTexture.handle) {
+            auto colorTextureSource = makeExternalImageSource(data.colorTexture);
+            createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].colorBuffer, GL::BGRA_EXT, WTFMove(colorTextureSource), layer);
+            ASSERT(m_displayAttachments[layer].colorBuffer.image);
+            if (!m_displayAttachments[layer].colorBuffer.image)
+                return;
+        } else {
+            IntSize framebufferSize = data.layerSetup ? toIntSize(data.layerSetup->framebufferSize) : IntSize(32, 32);
+            createAndBindTempBuffer(*gl, m_displayAttachments[layer].colorBuffer, GL::RGBA8, framebufferSize);
+        }
 
-        auto depthStencilBufferSource = makeExternalImageSource(std::tuple<MachSendRight, bool> { data.depthStencilBuffer });
-        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].depthStencilBuffer, GL::DEPTH24_STENCIL8, WTFMove(depthStencilBufferSource), layer);
+        if (data.depthStencilBuffer.handle) {
+            auto depthStencilBufferSource = makeExternalImageSource(data.depthStencilBuffer);
+            createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].depthStencilBuffer, GL::DEPTH24_STENCIL8, WTFMove(depthStencilBufferSource), layer);
+        }
     }
 
     m_renderingFrameIndex = data.renderingFrameIndex;
@@ -350,15 +370,10 @@ static PlatformXR::Layout displayLayout(const PlatformXR::FrameData::LayerSetupD
     return data.physicalSize[1][0] > 0 ? PlatformXR::Layout::Layered : PlatformXR::Layout::Shared;
 }
 
-static IntSize toIntSize(const auto& size)
-{
-    return IntSize(size[0], size[1]);
-}
-
 bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const PlatformXR::FrameData::LayerSetupData& data)
 {
     auto framebufferSize = IntSize(data.framebufferSize[0], data.framebufferSize[1]);
-    bool framebufferResize = m_framebufferSize != framebufferSize || m_displayLayout != displayLayout(data);
+    bool framebufferResize = !m_drawAttachments || m_framebufferSize != framebufferSize || m_displayLayout != displayLayout(data);
     bool foveationChange = !data.horizontalSamples[0].empty() && !data.verticalSamples.empty() && !data.horizontalSamples[1].empty();
     m_usingFoveation = foveationChange;
 

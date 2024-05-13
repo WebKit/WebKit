@@ -56,6 +56,11 @@ struct WebXRAttachmentSet {
     T colorBuffer;
     T depthStencilBuffer;
 
+    operator bool() const
+    {
+        return colorBuffer; // Need colorBuffer at the minimum!
+    }
+
     void release(GraphicsContextGL& gl)
     {
         colorBuffer.release(gl);

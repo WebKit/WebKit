@@ -108,11 +108,13 @@ WebCore::IntSize SimulatedXRDevice::recommendedResolution(PlatformXR::SessionMod
 
 void SimulatedXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&)
 {
+#if !PLATFORM(COCOA)
     GraphicsContextGLAttributes attributes;
     attributes.depth = false;
     attributes.stencil = false;
     attributes.antialias = false;
     m_gl = createWebProcessGraphicsContextGL(attributes);
+#endif
 
     if (m_trackingAndRenderingClient) {
         // WebXR FakeDevice waits for simulateInputConnection calls to add input sources-
@@ -134,11 +136,13 @@ void SimulatedXRDevice::shutDownTrackingAndRendering()
     if (m_supportsShutdownNotification)
         simulateShutdownCompleted();
     stopTimer();
+#if !PLATFORM(COCOA)
     if (m_gl) {
         for (auto layer : m_layers)
             m_gl->deleteTexture(layer.value);
         m_gl = nullptr;
     }
+#endif
     m_layers.clear();
 }
 
@@ -155,9 +159,11 @@ void SimulatedXRDevice::frameTimerFired()
 
     for (auto& layer : m_layers) {
 #if PLATFORM(COCOA)
-        auto surface = IOSurface::create(nullptr, recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB());
         data.layers.add(layer.key, PlatformXR::FrameData::LayerData {
-            .colorTexture = std::make_tuple(surface->createSendRight(), false)
+            .layerSetup = PlatformXR::FrameData::LayerSetupData {
+                .framebufferSize { static_cast<uint16_t>(layer.value.width()), static_cast<uint16_t>(layer.value.height()) }
+            },
+            .colorTexture = { MachSendRight(), false }
         });
 #else
         data.layers.add(layer.key, PlatformXR::FrameData::LayerData {
@@ -185,6 +191,12 @@ void SimulatedXRDevice::requestFrame(RequestFrameCallback&& callback)
 
 std::optional<PlatformXR::LayerHandle> SimulatedXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
 {
+#if PLATFORM(COCOA)
+    // TODO: Might need to pass the format type to WebXROpaqueFramebuffer to ensure alpha is handled correctly in tests.
+    UNUSED_PARAM(alpha);
+    PlatformXR::LayerHandle handle = ++m_layerIndex;
+    m_layers.add(handle, IntSize { static_cast<int>(width), static_cast<int>(height) });
+#else
     using GL = GraphicsContextGL;
     if (!m_gl)
         return std::nullopt;
@@ -200,15 +212,18 @@ std::optional<PlatformXR::LayerHandle> SimulatedXRDevice::createLayerProjection(
     m_gl->texImage2D(GL::TEXTURE_2D, 0, colorFormat, width, height, 0, colorFormat, GL::UNSIGNED_BYTE, 0);
 
     m_layers.add(handle, texture);
-    return handle;    
+#endif
+    return handle;
 }
 
 void SimulatedXRDevice::deleteLayer(PlatformXR::LayerHandle handle)
 {
     auto it = m_layers.find(handle);
     if (it != m_layers.end()) {
+#if !PLATFORM(COCOA)
         if (m_gl)
             m_gl->deleteTexture(it->value);
+#endif
         m_layers.remove(it);
     }
 }
