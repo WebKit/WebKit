@@ -320,15 +320,33 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
         void setInactive() final { }
         void doStart() final
         {
-            m_isStarted = true;
-            if (m_exception)
-                controller().error(*m_exception);
+            ASSERT(m_streamState == StreamState::NotStarted);
+            m_streamState = StreamState::Waiting;
+
+            closeStreamIfNeeded();
         }
 
-        void doPull() final { }
+        void doPull() final
+        {
+            if (closeStreamIfNeeded())
+                return;
+
+            if (m_queue.isEmpty()) {
+                m_streamState = StreamState::Waiting;
+                return;
+            }
+
+            if (!tryEnqueuing(m_queue.takeFirst().get()))
+                return;
+
+            pullFinished();
+        }
+
         void doCancel() final
         {
+            m_loaderState = LoaderState::Cancelled;
             m_loader->cancel();
+            m_queue.clear();
         }
 
         // FileReaderLoaderClient
@@ -336,26 +354,63 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
         void didReceiveData() final { }
         void didReceiveBinaryChunk(const SharedBuffer& buffer) final
         {
-            if (!controller().enqueue(buffer.tryCreateArrayBuffer()))
-                doCancel();
-        }
-        void didFinishLoading() final
-        {
-            controller().close();
-        }
-        void didFail(ExceptionCode code) final
-        {
-            Exception exception { code };
-            if (!m_isStarted) {
-                m_exception = WTFMove(exception);
+            if (m_streamState != StreamState::Waiting) {
+                m_queue.append(buffer.asFragmentedSharedBuffer());
                 return;
             }
-            controller().error(exception);
+
+            m_streamState = StreamState::Started;
+            if (!tryEnqueuing(buffer))
+                return;
+
+            pullFinished();
+        }
+
+        void didFinishLoading() final
+        {
+            m_loaderState = LoaderState::Completed;
+            closeStreamIfNeeded();
+        }
+
+        void didFail(ExceptionCode code) final
+        {
+            ASSERT(!m_exception);
+            m_exception = Exception { code };
+
+            m_loaderState = LoaderState::Completed;
+            closeStreamIfNeeded();
+        }
+
+        bool closeStreamIfNeeded()
+        {
+            if (m_loaderState != LoaderState::Completed || m_streamState == StreamState::NotStarted || !m_queue.isEmpty())
+                return false;
+
+            if (m_exception) {
+                controller().error(*m_exception);
+                return true;
+            }
+
+            controller().close();
+            return true;
+        }
+
+        bool tryEnqueuing(const FragmentedSharedBuffer& buffer)
+        {
+            bool didSucceed = controller().enqueue(buffer.tryCreateArrayBuffer());
+            if (!didSucceed)
+                didFail(ExceptionCode::OutOfMemoryError);
+
+            return didSucceed;
         }
 
         UniqueRef<FileReaderLoader> m_loader;
-        bool m_isStarted { false };
+        Deque<Ref<FragmentedSharedBuffer>> m_queue;
         std::optional<Exception> m_exception;
+        enum class StreamState : uint8_t { NotStarted, Started, Waiting };
+        StreamState m_streamState { StreamState::NotStarted };
+        enum class LoaderState : uint8_t { Started, Completed, Cancelled };
+        LoaderState m_loaderState { LoaderState::Started };
     };
 
     auto* context = scriptExecutionContext();
