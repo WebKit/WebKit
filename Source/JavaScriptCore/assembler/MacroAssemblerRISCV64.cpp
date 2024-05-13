@@ -28,7 +28,7 @@
 
 #if ENABLE(ASSEMBLER) && CPU(RISCV64)
 
-#include "OperaitonResult.h"
+#include "OperationResult.h"
 #include "ProbeContext.h"
 #include <wtf/InlineASM.h>
 
