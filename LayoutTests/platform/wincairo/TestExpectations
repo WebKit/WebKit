@@ -1917,7 +1917,12 @@ webxr [ Skip ]
 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
 
 # Needs JIT
+webkit.org/b/274059 webgl/2.0.0/conformance/uniforms/uniform-default-values.html [ Skip ] # Timeout
+webkit.org/b/274059 webgl/2.0.y/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Timeout
+webkit.org/b/274059 webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ] # Timeout
+webkit.org/b/274059 webgl/2.0.y/conformance/misc/uninitialized-test.html [ Skip ] # Timeout
 webkit.org/b/274059 webgl/2.0.y/conformance/rendering/multisample-corruption.html [ Skip ] # Timeout
+webkit.org/b/274059 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Skip ] # Failure Timeout
 
 webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Failure ]
 animations/shadow-host-child-change.html [ Skip ]
@@ -2114,7 +2119,6 @@ fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]
 
 webgl/lose-context-after-context-lost.html [ Failure ]
 webgl/max-active-contexts-gc.html [ Failure Pass ]
-webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Failure ]
 webgl/multiple-context-losses.html [ Failure ]
 
 fast/css3-text/css3-text-decoration/text-decoration-dashed.html [ ImageOnlyFailure ]
