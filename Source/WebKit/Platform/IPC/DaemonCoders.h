@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ArgumentCoders.h"
-#include <WebCore/PushSubscriptionIdentifier.h>
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/StdLibExtras.h>
@@ -37,9 +36,7 @@
 namespace WebCore {
 struct ExceptionData;
 class CertificateInfo;
-struct PushSubscriptionData;
 class PrivateClickMeasurement;
-class SecurityOriginData;
 class RegistrableDomain;
 namespace PCM {
 struct AttributionTimeToSendData;
@@ -49,10 +46,6 @@ struct EphemeralNonce;
 }
 
 namespace WebKit {
-
-namespace WebPushD {
-struct WebPushDaemonConnectionConfiguration;
-}
 
 namespace Daemon {
 
@@ -113,14 +106,9 @@ template<> struct Coder<class> { \
 }
 
 DECLARE_CODER(WebCore::CertificateInfo);
-DECLARE_CODER(WebCore::ExceptionData);
 DECLARE_CODER(WebCore::PrivateClickMeasurement);
 DECLARE_CODER(WebCore::PCM::AttributionTriggerData);
-DECLARE_CODER(WebCore::PushSubscriptionData);
-DECLARE_CODER(WebCore::PushSubscriptionIdentifier);
 DECLARE_CODER(WebCore::RegistrableDomain);
-DECLARE_CODER(WebCore::SecurityOriginData);
-DECLARE_CODER(WebPushD::WebPushDaemonConnectionConfiguration);
 DECLARE_CODER(WTF::WallTime);
 
 #undef DECLARE_CODER
@@ -139,33 +127,6 @@ template<> struct Coder<WTF::URL> {
         if (!string)
             return std::nullopt;
         return { WTF::URL(WTFMove(*string)) };
-    }
-};
-
-template<> struct Coder<WTF::UUID> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const WTF::UUID& instance)
-    {
-        encoder << static_cast<uint64_t>(instance.data() >> 64) << static_cast<uint64_t>(instance.data());
-    }
-    template<typename Decoder>
-    static std::optional<WTF::UUID> decode(Decoder& decoder)
-    {
-        std::optional<uint64_t> high;
-        decoder >> high;
-        if (!high)
-            return std::nullopt;
-
-        std::optional<uint64_t> low;
-        decoder >> low;
-        if (!low)
-            return std::nullopt;
-
-        auto result = (static_cast<UInt128>(*high) << 64) | *low;
-        if (result == WTF::UUID::deletedValue)
-            return { };
-
-        return WTF::UUID { result };
     }
 };
 
