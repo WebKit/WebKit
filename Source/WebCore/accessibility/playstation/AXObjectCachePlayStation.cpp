@@ -88,7 +88,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
     RefPtr protectedObject = &object;
     switch (notification) {
     case AXNotification::AXSelectedChildrenChanged:
-        protectedObject = dynamicDowncast<AccessibilityObject>(notifyChildrenSelectionChange(protectedObject.get()));
+        protectedObject = downcast<AccessibilityObject>(notifyChildrenSelectionChange(protectedObject.get()));
         break;
     case AXNotification::AXPressDidSucceed:
         notification = checkInteractableObjects(protectedObject.get());
