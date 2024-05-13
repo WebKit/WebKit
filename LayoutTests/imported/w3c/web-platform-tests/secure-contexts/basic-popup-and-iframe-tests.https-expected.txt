@@ -11,7 +11,7 @@ PASS Test Window.isSecureContext in a sandboxed iframe loading an https: URI
 PASS Test Window.isSecureContext in a sandboxed iframe loading a blob: URI
 PASS Test Window.isSecureContext in a sandboxed iframe loading a srcdoc
 PASS Test Window.isSecureContext in a sandboxed iframe loading a data: URL
-FAIL Test Window.isSecureContext in a popup loading an http: URI assert_false: an http: URI in a popup should not create a Secure Context expected false got true
+PASS Test Window.isSecureContext in a popup loading an http: URI
 PASS Test Window.isSecureContext in a popup loading an https: URI
 PASS Test Window.isSecureContext in a popup loading a blob: URI
 PASS Test Window.isSecureContext in a popup loading a javascript: URI

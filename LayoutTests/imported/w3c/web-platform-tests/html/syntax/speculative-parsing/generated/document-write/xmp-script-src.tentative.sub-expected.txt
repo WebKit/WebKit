@@ -1,6 +1,6 @@
 
     <!-- speculative case in document.write -->
-    <xmp><script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=a583efc4-c5a6-4b79-84dd-374e909eae57&amp;encodingcheck=&Gbreve;"></script></xmp>
+    <xmp><script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=9fcf86f3-379e-4deb-8916-9ac09a3826c3&amp;encodingcheck=&Gbreve;"></script></xmp>
 
 
 

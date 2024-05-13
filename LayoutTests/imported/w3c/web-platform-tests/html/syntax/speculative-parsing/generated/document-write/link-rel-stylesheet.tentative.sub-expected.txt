@@ -1,6 +1,6 @@
 
     <!-- speculative case in document.write -->
-    <link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=b27e9673-eddc-40db-8b97-0b9163ad30bd&amp;encodingcheck=&Gbreve;">
+    <link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=66013af1-5cd0-4a02-8849-15f79fe10547&amp;encodingcheck=&Gbreve;">
 
 
 

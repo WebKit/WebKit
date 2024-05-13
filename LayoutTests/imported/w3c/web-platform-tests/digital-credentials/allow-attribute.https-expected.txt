@@ -9,6 +9,6 @@ PASS Policy to use: digital-credentials-get 'none', is cross-origin: false, is a
 PASS Policy to use: digital-credentials-get 'none', is cross-origin: true, is allowed by policy: false
 PASS Policy to use: digital-credentials-get 'self', is cross-origin: false, is allowed by policy: true
 PASS Policy to use: digital-credentials-get 'self', is cross-origin: true, is allowed by policy: false
-PASS Policy to use: digital-credentials-get https://127.0.0.1:9443, is cross-origin: false, is allowed by policy: false
-PASS Policy to use: digital-credentials-get https://127.0.0.1:9443, is cross-origin: true, is allowed by policy: true
+PASS Policy to use: digital-credentials-get https://www1.web-platform.test:9443, is cross-origin: false, is allowed by policy: false
+PASS Policy to use: digital-credentials-get https://www1.web-platform.test:9443, is cross-origin: true, is allowed by policy: true
 

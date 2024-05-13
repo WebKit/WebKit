@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: */*\r\nReferer: http://web-platform.test:8800/html/syntax/speculative-parsing/gen...
 
     <!-- speculative case in document.write -->
-    <math><font><script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=866e905e-ad40-4dab-9af2-748b0f6a457c&amp;encodingcheck=&Gbreve;"></script></font></math>
+    <math><font><script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=15e3cd33-be86-462a-8ff7-d61060a86bc5&amp;encodingcheck=&Gbreve;"></script></font></math>
 
 
-FAIL Speculative parsing, document.write(): math-font-script-src Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+FAIL Speculative parsing, document.write(): math-font-script-src Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: */*\r\nReferer: http://web-platform.test:8800/html/syntax/speculative-parsing/generated/document-write/math-font-script-src.tentative.sub.html"
 

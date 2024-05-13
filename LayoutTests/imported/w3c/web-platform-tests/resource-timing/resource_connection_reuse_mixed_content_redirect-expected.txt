@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: NetworkError:  A network error occurred.
 Description
 
 This test validates that connectStart and connectEnd are the same when a connection is reused (e.g. when a persistent connection is used).
@@ -6,5 +5,10 @@ This test validates that connectStart and connectEnd are the same when a connect
 
 PASS window.performance is defined
 PASS window.performance.getEntriesByType is defined
-FAIL There should be 2 PerformanceEntries assert_equals: There should be 2 PerformanceEntries expected 2 but got 0
+PASS There should be 2 PerformanceEntries
+PASS connectStart and fetchStart should be the same
+PASS connectEnd and fetchStart should be the same
+PASS secureConnectionStart and fetchStart should be the same
+PASS domainLookupStart and fetchStart should be the same
+PASS domainLookupEnd and fetchStart should be the same
 

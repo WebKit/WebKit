@@ -1,9 +1,9 @@
-Blocked access to external URL http://nonexistent.localhost/
-Blocked access to external URL http://nonexistent.localhost/
 
 
-PASS new iframe: nonexistent host
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT new iframe: nonexistent host Test timed out
 PASS new iframe: X-Frame-Options prevents embedding
-PASS navigating an existing iframe: nonexistent host
+TIMEOUT navigating an existing iframe: nonexistent host Test timed out
 PASS navigating an existing iframe: X-Frame-Options prevents embedding
 

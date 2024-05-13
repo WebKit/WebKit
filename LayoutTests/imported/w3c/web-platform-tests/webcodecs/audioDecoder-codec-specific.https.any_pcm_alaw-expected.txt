@@ -1,11 +1,13 @@
 
-PASS Test isConfigSupported()
-PASS Test that AudioDecoder.isConfigSupported() returns a parsed configuration
-PASS Test configure()
-PASS Verify closed AudioDecoder operations
-PASS Test decoding
-PASS Test decoding a with negative timestamp
-PASS Test decoding after flush
-PASS Test reset during flush
-PASS AudioDecoder decodeQueueSize test
+Harness Error (FAIL), message = Error: alaw unsupported
+
+NOTRUN Test isConfigSupported()
+NOTRUN Test that AudioDecoder.isConfigSupported() returns a parsed configuration
+NOTRUN Test configure()
+NOTRUN Verify closed AudioDecoder operations
+NOTRUN Test decoding
+NOTRUN Test decoding a with negative timestamp
+NOTRUN Test decoding after flush
+NOTRUN Test reset during flush
+NOTRUN AudioDecoder decodeQueueSize test
 

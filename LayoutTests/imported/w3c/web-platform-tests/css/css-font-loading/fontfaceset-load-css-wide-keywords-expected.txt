@@ -1,3 +1,9 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didReceiveTitle: SyntaxError thrown when matching CSS-wide keyword
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
 
 PASS Loading CSS-wide keyword "initial" causes SyntaxError (document)
 PASS Loading CSS-wide keyword "inherit" causes SyntaxError (document)

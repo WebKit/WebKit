@@ -1,5 +1,7 @@
 
-PASS Simulcast setParameters active=false on first encoding stops sending frames for that encoding
-PASS Simulcast setParameters active=false on second encoding stops sending frames for that encoding
-PASS Simulcast setParameters active=false stops sending frames
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Simulcast setParameters active=false on first encoding stops sending frames for that encoding Test timed out
+NOTRUN Simulcast setParameters active=false on second encoding stops sending frames for that encoding
+NOTRUN Simulcast setParameters active=false stops sending frames
 

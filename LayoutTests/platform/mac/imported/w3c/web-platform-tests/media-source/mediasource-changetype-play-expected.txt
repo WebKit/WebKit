@@ -1,11 +1,21 @@
 
 PASS Check if browser supports enough test media types
+PASS Test audio-only changeType for audio/webm; codecs="vorbis" <-> audio/webm; codecs="vorbis"
+FAIL Test audio-only changeType for audio/webm; codecs="vorbis" <-> audio/mp4; codecs="mp4a.40.2" assert_unreached: Unexpected event 'error' Reached unreachable code
+PASS Test audio-only changeType for audio/webm; codecs="vorbis" <-> audio/mpeg
+PASS Test audio-only changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/webm; codecs="vorbis"
 PASS Test audio-only changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mp4; codecs="mp4a.40.2"
 PASS Test audio-only changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mpeg
-PASS Test audio-only changeType for audio/mpeg <-> audio/mp4; codecs="mp4a.40.2"
-PASS Test audio-only changeType for audio/mpeg <-> audio/mpeg
+FAIL Test audio-only changeType for audio/mpeg <-> audio/webm; codecs="vorbis" assert_unreached: Unexpected event 'error' Reached unreachable code
+FAIL Test audio-only changeType for audio/mpeg <-> audio/mp4; codecs="mp4a.40.2" assert_unreached: Unexpected event 'error' Reached unreachable code
+FAIL Test audio-only changeType for audio/mpeg <-> audio/mpeg assert_unreached: Unexpected event 'error' Reached unreachable code
+PASS Test video-only changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp8"
+PASS Test video-only changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp9"
+FAIL Test video-only changeType for video/webm; codecs="vp8" <-> video/mp4; codecs="avc1.4D4001" assert_unreached: Unexpected event 'error' Reached unreachable code
+PASS Test video-only changeType for video/webm; codecs="vp9" <-> video/webm; codecs="vp8"
+PASS Test video-only changeType for video/webm; codecs="vp9" <-> video/webm; codecs="vp9"
+FAIL Test video-only changeType for video/webm; codecs="vp9" <-> video/mp4; codecs="avc1.4D4001" assert_unreached: Unexpected event 'error' Reached unreachable code
+FAIL Test video-only changeType for video/mp4; codecs="avc1.4D4001" <-> video/webm; codecs="vp8" assert_equals: Event types match. expected "update" but got "updateend"
+FAIL Test video-only changeType for video/mp4; codecs="avc1.4D4001" <-> video/webm; codecs="vp9" assert_unreached: Unexpected event 'error' Reached unreachable code
 PASS Test video-only changeType for video/mp4; codecs="avc1.4D4001" <-> video/mp4; codecs="avc1.4D4001"
-PASS Test video-only changeType for video/mp4; codecs="avc1.4D4001" <-> video/mp4; codecs="hvc1.1.6.L60.90"
-PASS Test video-only changeType for video/mp4; codecs="hvc1.1.6.L60.90" <-> video/mp4; codecs="avc1.4D4001"
-PASS Test video-only changeType for video/mp4; codecs="hvc1.1.6.L60.90" <-> video/mp4; codecs="hvc1.1.6.L60.90"
 
