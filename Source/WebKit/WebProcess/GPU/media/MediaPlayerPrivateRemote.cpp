@@ -508,12 +508,6 @@ void MediaPlayerPrivateRemote::seeked(MediaTimeUpdateData&& timeData)
     m_currentTimeEstimator.setTime(timeData);
     if (auto player = m_player.get())
         player->seeked(timeData.currentTime);
-#if ENABLE(MEDIA_SOURCE)
-    // This message may well have been handled by the MediaSource object before
-    // theis message, which would result in the wrong
-    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
-        return mediaSourcePrivate->seeked(timeData.currentTime);
-#endif
 }
 
 void MediaPlayerPrivateRemote::timeChanged(RemoteMediaPlayerState&& state, MediaTimeUpdateData&& timeData)

@@ -5788,6 +5788,16 @@ void HTMLMediaElement::mediaPlayerMuteChanged()
     endProcessingMediaPlayerCallback();
 }
 
+void HTMLMediaElement::mediaPlayerSeeked(const MediaTime&)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSource)
+        m_mediaSource->monitorSourceBuffers(); // Update readyState.
+#endif
+}
+
 void HTMLMediaElement::mediaPlayerDurationChanged()
 {
     beginProcessingMediaPlayerCallback();
