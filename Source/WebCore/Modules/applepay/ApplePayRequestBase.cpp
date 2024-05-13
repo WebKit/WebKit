@@ -127,6 +127,10 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
     result.setApplePayLaterAvailability(request.applePayLaterAvailability);
 #endif
 
+#if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
+    result.setMerchantCategoryCode(request.merchantCategoryCode);
+#endif
+
     return WTFMove(result);
 }
 

@@ -217,6 +217,10 @@ class WebCore::PaymentSessionError {
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
     std::optional<WebCore::ApplePayLaterAvailability> applePayLaterAvailability();
 #endif
+
+#if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
+    String merchantCategoryCode();
+#endif
 };
 
 headers: <pal/cocoa/PassKitSoftLink.h>

@@ -67,5 +67,7 @@
 
     [Conditional=APPLE_PAY_LATER_AVAILABILITY] readonly attribute ApplePayLaterAvailability? applePayLaterAvailability;
 
+    [Conditional=APPLE_PAY_MERCHANT_CATEGORY_CODE] readonly attribute DOMString? merchantCategoryCode;
+
     boolean installmentConfigurationReturnsNil();
 };

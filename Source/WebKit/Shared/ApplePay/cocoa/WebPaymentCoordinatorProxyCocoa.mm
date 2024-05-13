@@ -51,6 +51,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
 
@@ -258,6 +259,15 @@ static PKApplePayLaterAvailability toPKApplePayLaterAvailability(WebCore::AppleP
 
 #endif // HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
 
+#if HAVE(PASSKIT_MERCHANT_CATEGORY_CODE)
+
+static PKMerchantCategoryCode toPKMerchantCategoryCode(const String& merchantCategoryCode)
+{
+    return parseInteger<int16_t>(merchantCategoryCode).value_or(PKMerchantCategoryCodeNone);
+}
+
+#endif // HAVE(PASSKIT_MERCHANT_CATEGORY_CODE)
+
 static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 {
     if (strings.isEmpty())
@@ -386,6 +396,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if HAVE(PASSKIT_DEFERRED_PAYMENTS)
     if (auto& deferredPaymentRequest = paymentRequest.deferredPaymentRequest())
         [result setDeferredPaymentRequest:platformDeferredPaymentRequest(*deferredPaymentRequest).get()];
+#endif
+
+#if HAVE(PASSKIT_MERCHANT_CATEGORY_CODE)
+    if (auto& merchantCategoryCode = paymentRequest.merchantCategoryCode(); !merchantCategoryCode.isNull())
+        [result setMerchantCategoryCode:toPKMerchantCategoryCode(merchantCategoryCode)];
 #endif
 
     return result;

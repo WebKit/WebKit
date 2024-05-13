@@ -147,6 +147,9 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
     m_applePayLaterAvailability = request.applePayLaterAvailability();
 #endif
+#if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
+    m_merchantCategoryCode = request.merchantCategoryCode();
+#endif
 
     ASSERT(showCount == hideCount);
     ++showCount;
