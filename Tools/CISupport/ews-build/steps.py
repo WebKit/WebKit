@@ -2582,10 +2582,21 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         failed_checks = []
         url = '{}status/{}/'.format(EWS_URL, change_id)
 
-        response = yield TwistedAdditions.request(url, logger=lambda content: self._addToLog('stdio', content))
-        if response and response.status_code // 100 != 2:
-            yield self._addToLog('stdio', f'Accessed {url} with unexpected status code {response.status_code}.\n')
-            return defer.returnValue(False if response.status_code // 100 == 4 else None)
+        for attempt in range(1, 4):
+            response = yield TwistedAdditions.request(url, logger=lambda content: self._addToLog('stdio', content))
+            if not response:
+                yield self._addToLog('stdio', f'Could not retrieve data from {url}.\n')
+                if attempt == 3:
+                    return defer.returnValue(None)
+                yield self._addToLog('stdio', f'Retrying, attempt {attempt + 1} of 3\n')
+            else:
+                if response.status_code // 100 != 2:
+                    yield self._addToLog('stdio', f'Accessed {url} with unexpected status code {response.status_code}.\n')
+                    if attempt == 3:
+                        return defer.returnValue(False if response.status_code // 100 == 4 else None)
+                    yield self._addToLog('stdio', f'Retrying, attempt {attempt + 1} of 3\n')
+                else:
+                    break
 
         # FIXME: safe-merge-queue should obtain skipped status from EWS instead of hardcoding
         queues_for_safe_merge = self.EMBEDDED_CHECKS + self.MACOS_CHECKS
@@ -2596,7 +2607,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         for queue in queues_for_safe_merge:
             queue_data = response.json().get(queue, None)
             # jsc-arm7-tests will not set its status if skipped, so we condition on jsc-armv7
-            if queue == 'jsc-armv7-tests' and response.json().get('jsc-armv7', None).get('state', None) == 3:
+            if queue == 'jsc-armv7-tests' and response.json().get('jsc-armv7', {}).get('state', None) == 3:
                 yield self._addToLog('stdio', f'{queue}: Skipped\n')
             elif queue_data:
                 status = queue_data.get('state', None)
