@@ -364,7 +364,7 @@ void printInternal(PrintStream&, WebCore::SerializationTag);
 void printInternal(PrintStream& out, WebCore::SerializationTag tag)
 {
     auto tagName = WebCore::name(tag);
-    if (tagName[0] != '<')
+    if (tagName[0U] != '<')
         out.print(tagName);
     else
         out.print("<unknown tag "_s, static_cast<unsigned>(tag), ">"_s);
