@@ -751,10 +751,6 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
             exitProcess(EX_NOPERM);
         }
     }
-
-#if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
-    register_for_dlsym_callbacks();
-#endif
 }
 
 void AuxiliaryProcess::applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix)
