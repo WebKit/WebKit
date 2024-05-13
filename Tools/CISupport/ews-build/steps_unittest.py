@@ -55,8 +55,8 @@ from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPIT
                     KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
                     MapBranchAlias, ReRunWebKitTests, RevertAppliedChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                     RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
-                    RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
-                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
+                    RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests,
+                    RunWebKitPyTests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                     RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree,
                     RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount,
                     ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
@@ -646,10 +646,10 @@ Failed 1/40 test programs. 10/630 subtests failed.''')
         return self.runStep()
 
 
-class TestWebKitPyPython2Tests(BuildStepMixinAdditions, unittest.TestCase):
+class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
-        self.jsonFileName = 'webkitpy_test_python2_results.json'
+        self.jsonFileName = 'webkitpy_test_results.json'
         self.json_with_failure = '''{"failures": [{"name": "webkitpy.port.wpe_unittest.WPEPortTest.test_diff_image"}]}\n'''
         self.json_with_errros = '''{"failures": [],
 "errors": [{"name": "webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks"}, {"name": "webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual"}]}\n'''
@@ -659,97 +659,7 @@ class TestWebKitPyPython2Tests(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success(self):
-        self.setupStep(RunWebKitPyPython2Tests())
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
-                        logfiles={'json': self.jsonFileName},
-                        timeout=120,
-                        )
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Passed webkitpy python2 tests')
-        return self.runStep()
-
-    def test_unexpected_failure(self):
-        self.setupStep(RunWebKitPyPython2Tests())
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
-                        logfiles={'json': self.jsonFileName},
-                        timeout=120,
-                        )
-            + ExpectShell.log('stdio', stdout='''Ran 1744 tests in 5.913s
-FAILED (failures=1, errors=0)''')
-            + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='webkitpy-tests (failure)')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(RunWebKitPyPython2Tests())
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
-                        logfiles={'json': self.jsonFileName},
-                        timeout=120,
-                        ) +
-            ExpectShell.log('json', stdout=self.json_with_failure) +
-            2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Found 1 webkitpy python2 test failure: webkitpy.port.wpe_unittest.WPEPortTest.test_diff_image')
-        return self.runStep()
-
-    def test_errors(self):
-        self.setupStep(RunWebKitPyPython2Tests())
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
-                        logfiles={'json': self.jsonFileName},
-                        timeout=120,
-                        ) +
-            ExpectShell.log('json', stdout=self.json_with_errros) +
-            2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Found 2 webkitpy python2 test failures: webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks, webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual')
-        return self.runStep()
-
-    def test_lot_of_failures(self):
-        self.setupStep(RunWebKitPyPython2Tests())
-        json_with_failures = json.dumps({"failures": [{"name": f'test{i}'} for i in range(1, 31)]})
-
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
-                        logfiles={'json': self.jsonFileName},
-                        timeout=120,
-                        ) +
-            ExpectShell.log('json', stdout=json_with_failures) +
-            2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Found 30 webkitpy python2 test failures: test1, test2, test3, test4, test5, test6, test7, test8, test9, test10 ...')
-        return self.runStep()
-
-
-class TestWebKitPyPython3Tests(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        self.jsonFileName = 'webkitpy_test_python3_results.json'
-        self.json_with_failure = '''{"failures": [{"name": "webkitpy.port.wpe_unittest.WPEPortTest.test_diff_image"}]}\n'''
-        self.json_with_errros = '''{"failures": [],
-"errors": [{"name": "webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks"}, {"name": "webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual"}]}\n'''
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
-        self.setupStep(RunWebKitPyPython3Tests())
+        self.setupStep(RunWebKitPyTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -759,11 +669,11 @@ class TestWebKitPyPython3Tests(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='Passed webkitpy python3 tests')
+        self.expectOutcome(result=SUCCESS, state_string='Passed webkitpy tests')
         return self.runStep()
 
     def test_unexpected_failure(self):
-        self.setupStep(RunWebKitPyPython3Tests())
+        self.setupStep(RunWebKitPyTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -779,7 +689,7 @@ FAILED (failures=1, errors=0)''')
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(RunWebKitPyPython3Tests())
+        self.setupStep(RunWebKitPyTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -790,11 +700,11 @@ FAILED (failures=1, errors=0)''')
             ExpectShell.log('json', stdout=self.json_with_failure) +
             2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Found 1 webkitpy python3 test failure: webkitpy.port.wpe_unittest.WPEPortTest.test_diff_image')
+        self.expectOutcome(result=FAILURE, state_string='Found 1 webkitpy test failure: webkitpy.port.wpe_unittest.WPEPortTest.test_diff_image')
         return self.runStep()
 
     def test_errors(self):
-        self.setupStep(RunWebKitPyPython3Tests())
+        self.setupStep(RunWebKitPyTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -805,11 +715,11 @@ FAILED (failures=1, errors=0)''')
             ExpectShell.log('json', stdout=self.json_with_errros) +
             2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Found 2 webkitpy python3 test failures: webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks, webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual')
+        self.expectOutcome(result=FAILURE, state_string='Found 2 webkitpy test failures: webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks, webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual')
         return self.runStep()
 
     def test_lot_of_failures(self):
-        self.setupStep(RunWebKitPyPython3Tests())
+        self.setupStep(RunWebKitPyTests())
         json_with_failures = json.dumps({'failures': [{f'name': f'test{i}'} for i in range(1, 31)]})
 
         self.expectRemoteCommands(
@@ -822,7 +732,7 @@ FAILED (failures=1, errors=0)''')
             ExpectShell.log('json', stdout=json_with_failures) +
             2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Found 30 webkitpy python3 test failures: test1, test2, test3, test4, test5, test6, test7, test8, test9, test10 ...')
+        self.expectOutcome(result=FAILURE, state_string='Found 30 webkitpy test failures: test1, test2, test3, test4, test5, test6, test7, test8, test9, test10 ...')
         return self.runStep()
 
 

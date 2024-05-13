@@ -3030,9 +3030,13 @@ class RunResultsdbpyTests(shell.ShellCommandNewStyle):
         return {'step': 'Failed resultsdbpy unit tests'}
 
 
-class WebKitPyTest(shell.ShellCommandNewStyle, AddToLogMixin):
-    language = 'python'
+class RunWebKitPyTests(shell.ShellCommandNewStyle, AddToLogMixin):
+    name = 'webkitpy-tests'
     descriptionDone = ['webkitpy-tests']
+    description = ['webkitpy-tests']
+    jsonFileName = 'webkitpy_test_results.json'
+    logfiles = {'json': jsonFileName}
+    command = ['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(jsonFileName)]
     flunkOnFailure = True
     NUM_FAILURES_TO_DISPLAY = 10
 
@@ -3060,7 +3064,7 @@ class WebKitPyTest(shell.ShellCommandNewStyle, AddToLogMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            message = 'Passed webkitpy {} tests'.format(self.language)
+            message = 'Passed webkitpy tests'
             self.setBuildSummary(message)
             return {'step': message}
 
@@ -3077,29 +3081,11 @@ class WebKitPyTest(shell.ShellCommandNewStyle, AddToLogMixin):
             return super().getResultSummary()
         pluralSuffix = 's' if len(failures) > 1 else ''
         failures_string = ', '.join([failure.get('name') for failure in failures[:self.NUM_FAILURES_TO_DISPLAY]])
-        message = 'Found {} webkitpy {} test failure{}: {}'.format(len(failures), self.language, pluralSuffix, failures_string)
+        message = 'Found {} webkitpy test failure{}: {}'.format(len(failures), pluralSuffix, failures_string)
         if len(failures) > self.NUM_FAILURES_TO_DISPLAY:
             message += ' ...'
         self.setBuildSummary(message)
         return {'step': message}
-
-
-class RunWebKitPyPython2Tests(WebKitPyTest):
-    language = 'python2'
-    name = 'webkitpy-tests-{}'.format(language)
-    description = ['webkitpy-tests running ({})'.format(language)]
-    jsonFileName = 'webkitpy_test_{}_results.json'.format(language)
-    logfiles = {'json': jsonFileName}
-    command = ['python', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(jsonFileName)]
-
-
-class RunWebKitPyPython3Tests(WebKitPyTest):
-    language = 'python3'
-    name = 'webkitpy-tests-{}'.format(language)
-    description = ['webkitpy-tests running ({})'.format(language)]
-    jsonFileName = 'webkitpy_test_{}_results.json'.format(language)
-    logfiles = {'json': jsonFileName}
-    command = ['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(jsonFileName)]
 
 
 class InstallGtkDependencies(shell.ShellCommandNewStyle):

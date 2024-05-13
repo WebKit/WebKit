@@ -62,8 +62,7 @@ class Events(service.BuildbotService):
         'ews-unit-tests', 'resultsdbpy-unit-tests',
         'upload-built-product', 'upload-test-results',
         'apply-watch-list', 'bindings-tests', 'check-webkit-style',
-        'webkitperl-tests', 're-run-webkitperl-tests',
-        'webkitpy-tests-python2', 'webkitpy-tests-python3'
+        'webkitperl-tests', 're-run-webkitperl-tests', 'webkitpy-tests'
     ]
 
     def __init__(self, master_hostname, type_prefix='', name='Events'):
