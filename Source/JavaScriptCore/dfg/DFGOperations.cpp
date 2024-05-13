@@ -1397,7 +1397,7 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpExecNonGlobalOrSticky, EncodedJSValue, (
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String input = string->value(globalObject);
+    auto input = string->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     unsigned lastIndex = 0;
@@ -1437,11 +1437,11 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpMatchFastGlobalString, EncodedJSValue, (
 
     ASSERT(regExp->global());
 
-    String s = string->value(globalObject);
+    auto s = string->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (regExp->eitherUnicode()) {
-        unsigned stringLength = s.length();
+        unsigned stringLength = s->length();
         OPERATION_RETURN(scope, JSValue::encode(collectMatches(
             vm, globalObject, string, s, regExp,
             [&](size_t end) ALWAYS_INLINE_LAMBDA {
@@ -1482,11 +1482,11 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntStringNoRadix, EncodedJSValue, (JSGlob
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto viewWithString = string->viewWithUnderlyingString(globalObject);
+    auto view = string->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
-    OPERATION_RETURN(scope, parseIntResult(parseInt(viewWithString.view, 0)));
+    OPERATION_RETURN(scope, parseIntResult(parseInt(view, 0)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationParseIntDoubleNoRadix, EncodedJSValue, (JSGlobalObject* globalObject, double value))
@@ -1509,10 +1509,10 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntString, EncodedJSValue, (JSGlobalObjec
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto viewWithString = string->viewWithUnderlyingString(globalObject);
+    auto view = string->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    OPERATION_RETURN(scope, parseIntResult(parseInt(viewWithString.view, radix)));
+    OPERATION_RETURN(scope, parseIntResult(parseInt(view, radix)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationParseIntGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedValue, int32_t radix))
@@ -1838,10 +1838,10 @@ JSC_DEFINE_JIT_OPERATION(operationToNumberString, EncodedJSValue, (JSGlobalObjec
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String view = string->value(globalObject);
+    auto view = string->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    unsigned size = view.length();
+    unsigned size = view->length();
     if (size == 1) {
         UChar c = view[0];
         if (isASCIIDigit(c))
@@ -2699,7 +2699,7 @@ JSC_DEFINE_JIT_OPERATION(operationResolveRope, StringImpl*, (JSGlobalObject* glo
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    OPERATION_RETURN(scope, string->value(globalObject).impl());
+    OPERATION_RETURN(scope, string->value(globalObject)->impl());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationResolveRopeString, JSString*, (JSGlobalObject* globalObject, JSRopeString* string))
@@ -2739,16 +2739,16 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringString, JSString*, (JSGloba
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = stringCell->value(globalObject);
+    auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String search = searchCell->value(globalObject);
+    auto search = searchCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String replacement = replacementCell->value(globalObject);
+    auto replacement = replacementCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, stringCell, WTFMove(string), WTFMove(search), WTFMove(replacement), nullptr)));
+    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, stringCell, string, search, replacement, nullptr)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitution, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell, JSString* replacementCell))
@@ -2758,16 +2758,16 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitution, 
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = stringCell->value(globalObject);
+    auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String search = searchCell->value(globalObject);
+    auto search = searchCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String replacement = replacementCell->value(globalObject);
+    auto replacement = replacementCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::No, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, stringCell, WTFMove(string), WTFMove(search), WTFMove(replacement), nullptr)));
+    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::No, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, stringCell, string, search, replacement, nullptr)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell))
@@ -2777,10 +2777,10 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JS
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = stringCell->value(globalObject);
+    auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String search = searchCell->value(globalObject);
+    auto search = searchCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
     size_t matchStart = StringView(string).find(vm.adaptiveStringSearcherTables(), StringView(search));
@@ -2788,9 +2788,9 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JS
         OPERATION_RETURN(scope,  stringCell);
 
     // Because replacement string is empty, it cannot include backreferences.
-    size_t searchLength = search.length();
+    size_t searchLength = search->length();
     size_t matchEnd = matchStart + searchLength;
-    auto result = tryMakeString(StringView(string).substring(0, matchStart), StringView(string).substring(matchEnd, string.length() - matchEnd));
+    auto result = tryMakeString(StringView(string).substring(0, matchStart), StringView(string).substring(matchEnd, string->length() - matchEnd));
     if (UNLIKELY(!result)) {
         throwOutOfMemoryError(globalObject, scope);
         OPERATION_RETURN(scope,  nullptr);
@@ -2806,16 +2806,16 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithTable8, JSString*
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = stringCell->value(globalObject);
+    auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String search = searchCell->value(globalObject);
+    auto search = searchCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String replacement = replacementCell->value(globalObject);
+    auto replacement = replacementCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::Yes>(globalObject, stringCell, WTFMove(string), WTFMove(search), WTFMove(replacement), table)));
+    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::Yes>(globalObject, stringCell, string, search, replacement, table)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitutionWithTable8, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell, JSString* replacementCell, const BoyerMooreHorspoolTable<uint8_t>* table))
@@ -2825,16 +2825,16 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitutionWi
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = stringCell->value(globalObject);
+    auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String search = searchCell->value(globalObject);
+    auto search = searchCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String replacement = replacementCell->value(globalObject);
+    auto replacement = replacementCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::No, StringReplaceUseTable::Yes>(globalObject, stringCell, WTFMove(string), WTFMove(search), WTFMove(replacement), table)));
+    OPERATION_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::No, StringReplaceUseTable::Yes>(globalObject, stringCell, string, search, replacement, table)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyStringWithTable8, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell, const BoyerMooreHorspoolTable<uint8_t>* table))
@@ -2844,10 +2844,10 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyStringWithTable8, JSSt
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = stringCell->value(globalObject);
+    auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String search = searchCell->value(globalObject);
+    auto search = searchCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
     size_t matchStart = table->find(string, search);
@@ -2855,9 +2855,9 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyStringWithTable8, JSSt
         OPERATION_RETURN(scope, stringCell);
 
     // Because replacement string is empty, it cannot include backreferences.
-    size_t searchLength = search.length();
+    size_t searchLength = search->length();
     size_t matchEnd = matchStart + searchLength;
-    auto result = tryMakeString(StringView(string).substring(0, matchStart), StringView(string).substring(matchEnd, string.length() - matchEnd));
+    auto result = tryMakeString(StringView(string).substring(0, matchStart), StringView(string).substring(matchEnd, string->length() - matchEnd));
     if (UNLIKELY(!result)) {
         throwOutOfMemoryError(globalObject, scope);
         OPERATION_RETURN(scope, nullptr);
@@ -2873,15 +2873,15 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringGeneric, JSString*, (JSGlob
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = stringCell->value(globalObject);
+    auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String search = searchCell->value(globalObject);
+    auto search = searchCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSValue replaceValue = JSValue::decode(encodedReplaceValue);
 
-    OPERATION_RETURN(scope, replaceUsingStringSearch(vm, globalObject, stringCell, WTFMove(string), WTFMove(search), replaceValue, StringReplaceMode::Single));
+    OPERATION_RETURN(scope, replaceUsingStringSearch(vm, globalObject, stringCell, string, search, replaceValue, StringReplaceMode::Single));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringSubstr, JSCell*, (JSGlobalObject* globalObject, JSCell* cell, int32_t from, int32_t span))
@@ -2944,13 +2944,13 @@ JSC_DEFINE_JIT_OPERATION(operationToLowerCase, JSString*, (JSGlobalObject* globa
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String inputString = string->value(globalObject);
+    auto inputString = string->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
-    if (!inputString.length())
+    if (!inputString->length())
         OPERATION_RETURN(scope, vm.smallStrings.emptyString());
 
-    String lowercasedString = inputString.is8Bit() ? inputString.convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(failingIndex) : inputString.convertToLowercaseWithoutLocale();
-    if (lowercasedString.impl() == inputString.impl())
+    String lowercasedString = inputString->is8Bit() ? inputString->convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(failingIndex) : inputString->convertToLowercaseWithoutLocale();
+    if (lowercasedString.impl() == inputString->impl())
         OPERATION_RETURN(scope, string);
     OPERATION_RETURN(scope, jsString(vm, WTFMove(lowercasedString)));
 }
@@ -2963,10 +2963,10 @@ JSC_DEFINE_JIT_OPERATION(operationStringLocaleCompare, UCPUStrictInt32, (JSGloba
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = base->value(globalObject);
+    auto string = base->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
-    String that = argument->value(globalObject);
+    auto that = argument->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
     auto* collator = globalObject->defaultCollator();
@@ -2982,13 +2982,13 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOf, UCPUStrictInt32, (JSGlobalObjec
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto thisViewWithString = base->viewWithUnderlyingString(globalObject);
+    auto thisView = base->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
-    auto otherViewWithString = argument->viewWithUnderlyingString(globalObject);
+    auto otherView = argument->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
-    size_t result = thisViewWithString.view.find(vm.adaptiveStringSearcherTables(), otherViewWithString.view);
+    size_t result = thisView->find(vm.adaptiveStringSearcherTables(), otherView);
     if (result == notFound)
         OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
     OPERATION_RETURN(scope, toUCPUStrictInt32(result));
@@ -3002,10 +3002,10 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithOneChar, UCPUStrictInt32, (JS
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto thisViewWithString = base->viewWithUnderlyingString(globalObject);
+    auto thisView = base->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
-    size_t result = thisViewWithString.view.find(static_cast<UChar>(character));
+    size_t result = thisView->find(static_cast<UChar>(character));
     if (result == notFound)
         OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
     OPERATION_RETURN(scope, toUCPUStrictInt32(result));
@@ -3019,21 +3019,21 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndex, UCPUStrictInt32, (JSGl
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto thisViewWithString = base->viewWithUnderlyingString(globalObject);
+    auto thisView = base->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
-    auto otherViewWithString = argument->viewWithUnderlyingString(globalObject);
+    auto otherView = argument->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
-    int32_t length = thisViewWithString.view.length();
+    int32_t length = thisView->length();
     unsigned pos = 0;
     if (position >= 0)
         pos = std::min<uint32_t>(position, length);
 
-    if (static_cast<unsigned>(length) < otherViewWithString.view.length() + pos)
+    if (static_cast<unsigned>(length) < otherView->length() + pos)
         OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
 
-    size_t result = thisViewWithString.view.find(vm.adaptiveStringSearcherTables(), otherViewWithString.view, pos);
+    size_t result = thisView->find(vm.adaptiveStringSearcherTables(), otherView, pos);
     if (result == notFound)
         OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
     OPERATION_RETURN(scope, toUCPUStrictInt32(result));
@@ -3047,10 +3047,10 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndexWithOneChar, UCPUStrictI
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto thisViewWithString = base->viewWithUnderlyingString(globalObject);
+    auto thisView = base->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
-    int32_t length = thisViewWithString.view.length();
+    int32_t length = thisView->length();
     unsigned pos = 0;
     if (position >= 0)
         pos = std::min<uint32_t>(position, length);
@@ -3058,7 +3058,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndexWithOneChar, UCPUStrictI
     if (static_cast<unsigned>(length) < 1 + pos)
         OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
 
-    size_t result = thisViewWithString.view.find(static_cast<UChar>(character), pos);
+    size_t result = thisView->find(static_cast<UChar>(character), pos);
     if (result == notFound)
         OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
     OPERATION_RETURN(scope, toUCPUStrictInt32(result));
@@ -3255,7 +3255,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithStringDescription, Symbol*, (JSGl
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = description->value(globalObject);
+    auto string = description->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
     OPERATION_RETURN(scope, Symbol::createWithDescription(vm, WTFMove(string)));
@@ -3439,12 +3439,12 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchString, char*, (JSGlobalObject* globalOb
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    StringImpl* strImpl = string->value(globalObject).impl();
+    auto str = string->value(globalObject);
 
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
     CodeBlock* codeBlock = callFrame->codeBlock();
     const StringJumpTable& linkedTable = codeBlock->dfgStringSwitchJumpTable(tableIndex);
-    OPERATION_RETURN(scope, linkedTable.ctiForValue(*unlinkedTable, strImpl).taggedPtr<char*>());
+    OPERATION_RETURN(scope, linkedTable.ctiForValue(*unlinkedTable, str->impl()).taggedPtr<char*>());
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompareStringImplLess, uintptr_t, (StringImpl* a, StringImpl* b))
@@ -4524,7 +4524,7 @@ JSC_DEFINE_JIT_OPERATION(operationThrowStaticError, void, (JSGlobalObject* globa
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    String errorMessage = message->value(globalObject);
+    auto errorMessage = message->value(globalObject);
     scope.throwException(globalObject, createError(globalObject, static_cast<ErrorTypeWithExtension>(errorType), errorMessage));
     OPERATION_RETURN(scope);
 }

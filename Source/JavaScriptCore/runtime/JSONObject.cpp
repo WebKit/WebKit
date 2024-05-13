@@ -385,7 +385,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     }
 
     if (value.isString()) {
-        String string = asString(value)->value(m_globalObject);
+        auto string = asString(value)->value(m_globalObject);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
         builder.appendQuotedJSONString(string);
         return StringifySucceeded;
@@ -1055,8 +1055,8 @@ void FastStringifier<CharType>::append(JSValue value)
 
     switch (cell.type()) {
     case StringType: {
-        auto& string = asString(&cell)->tryGetValue();
-        if (UNLIKELY(string.isNull())) {
+        auto string = asString(&cell)->tryGetValue();
+        if (UNLIKELY(string.data.isNull())) {
             recordFailure("String::tryGetValue"_s);
             return;
         }
@@ -1157,37 +1157,37 @@ void FastStringifier<CharType>::append(JSValue value)
         };
 
         if constexpr (sizeof(CharType) == 1) {
-            if (UNLIKELY(!string.is8Bit())) {
+            if (UNLIKELY(!string.data.is8Bit())) {
                 m_retryWith16BitFastStringifier = m_length < (m_capacity / 2);
                 recordFailure("16-bit string"_s);
                 return;
             }
-            auto stringLength = string.length();
+            auto stringLength = string.data.length();
             if (UNLIKELY(!hasRemainingCapacity(1 + stringLength + 1))) {
                 recordBufferFull();
                 return;
             }
             m_buffer[m_length] = '"';
-            if (UNLIKELY(charactersCopySameType(string.span8(), m_buffer + m_length + 1))) {
+            if (UNLIKELY(charactersCopySameType(string.data.span8(), m_buffer + m_length + 1))) {
                 recordFailure("string character needs escaping"_s);
                 return;
             }
             m_buffer[m_length + 1 + stringLength] = '"';
             m_length += 1 + stringLength + 1;
         } else {
-            auto stringLength = string.length();
+            auto stringLength = string.data.length();
             if (UNLIKELY(!hasRemainingCapacity(1 + stringLength + 1))) {
                 recordBufferFull();
                 return;
             }
             m_buffer[m_length] = '"';
-            if (string.is8Bit()) {
-                if (UNLIKELY(charactersCopyUpconvert(string.span8(), m_buffer + m_length + 1))) {
+            if (string.data.is8Bit()) {
+                if (UNLIKELY(charactersCopyUpconvert(string.data.span8(), m_buffer + m_length + 1))) {
                     recordFailure("string character needs escaping"_s);
                     return;
                 }
             } else {
-                if (UNLIKELY(charactersCopySameType(string.span16(), m_buffer + m_length + 1))) {
+                if (UNLIKELY(charactersCopySameType(string.data.span16(), m_buffer + m_length + 1))) {
                     recordFailure("string character needs escaping or surrogate pair handling"_s);
                     return;
                 }
@@ -1595,13 +1595,12 @@ JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncParse, (JSGlobalObject* globalObject, Call
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* string = callFrame->argument(0).toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    auto viewWithString = string->viewWithUnderlyingString(globalObject);
+    auto view = string->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    StringView view = viewWithString.view;
 
     JSValue unfiltered;
-    if (view.is8Bit()) {
-        LiteralParser jsonParser(globalObject, view.span8(), StrictJSON);
+    if (view->is8Bit()) {
+        LiteralParser jsonParser(globalObject, view->span8(), StrictJSON);
         unfiltered = jsonParser.tryLiteralParse();
         EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
         if (!unfiltered) {
@@ -1609,7 +1608,7 @@ JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncParse, (JSGlobalObject* globalObject, Call
             return throwVMError(globalObject, scope, createSyntaxError(globalObject, jsonParser.getErrorMessage()));
         }
     } else {
-        LiteralParser jsonParser(globalObject, view.span16(), StrictJSON);
+        LiteralParser jsonParser(globalObject, view->span16(), StrictJSON);
         unfiltered = jsonParser.tryLiteralParse();
         EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
         if (!unfiltered) {

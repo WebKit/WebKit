@@ -740,6 +740,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/GCIncomingRefCountedSet.h
     heap/GCLogging.h
     heap/GCMemoryOperations.h
+    heap/GCOwnedDataScope.h
     heap/GCRequest.h
     heap/GCSegmentedArray.h
     heap/Handle.h

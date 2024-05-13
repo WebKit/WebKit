@@ -133,7 +133,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return { };
     }
-    String programSource = programString->value(globalObject);
+    auto programSource = programString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
     
 
@@ -159,13 +159,13 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     DirectEvalExecutable* eval = callerBaselineCodeBlock->directEvalCodeCache().tryGet(programSource, bytecodeIndex);
     if (!eval) {
         if (!ecmaMode.isStrict()) {
-            if (programSource.is8Bit()) {
-                LiteralParser preparser(globalObject, programSource.span8(), SloppyJSON, callerBaselineCodeBlock);
+            if (programSource->is8Bit()) {
+                LiteralParser preparser(globalObject, programSource->span8(), SloppyJSON, callerBaselineCodeBlock);
                 if (JSValue parsedObject = preparser.tryLiteralParse())
                     RELEASE_AND_RETURN(scope, parsedObject);
 
             } else {
-                LiteralParser preparser(globalObject, programSource.span16(), SloppyJSON, callerBaselineCodeBlock);
+                LiteralParser preparser(globalObject, programSource->span16(), SloppyJSON, callerBaselineCodeBlock);
                 if (JSValue parsedObject = preparser.tryLiteralParse())
                     RELEASE_AND_RETURN(scope, parsedObject);
 

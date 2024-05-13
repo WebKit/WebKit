@@ -214,7 +214,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncFields, (JSGlobalObject* g
         if (!isISO8601 && !shouldAddEraAndEraYear) {
             auto string = jsCast<JSString*>(value)->value(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
-            if (string == "year"_s)
+            if (string.data == "year"_s)
                 shouldAddEraAndEraYear = true;
         }
         fieldNames.append(value);

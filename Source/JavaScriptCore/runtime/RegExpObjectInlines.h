@@ -65,7 +65,7 @@ inline JSValue RegExpObject::execInline(JSGlobalObject* globalObject, JSString* 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RegExp* regExp = this->regExp();
-    String input = string->value(globalObject);
+    auto input = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     bool globalOrSticky = regExp->globalOrSticky();
@@ -106,7 +106,7 @@ inline MatchResult RegExpObject::matchInline(
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RegExp* regExp = this->regExp();
-    String input = string->value(globalObject);
+    auto input = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned lastIndex = getRegExpObjectLastIndexAsUnsigned(globalObject, this, input);

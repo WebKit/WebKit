@@ -1847,8 +1847,8 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_char)
     JSString* string = asString(scrutinee);
     ASSERT(string->length() == 1);
     int defaultOffset = JUMP_OFFSET(bytecode.m_defaultOffset);
-    StringImpl* impl = string->value(globalObject).impl();
-    JUMP_TO(codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex).offsetForValue((*impl)[0], defaultOffset));
+    auto str = string->value(globalObject);
+    JUMP_TO(codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(str.data[0], defaultOffset));
     LLINT_END();
 }
 
@@ -1861,11 +1861,11 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_string)
     if (!scrutinee.isString())
         JUMP_TO(defaultOffset);
     else {
-        StringImpl* scrutineeStringImpl = asString(scrutinee)->value(globalObject).impl();
+        auto scrutineeString = asString(scrutinee)->value(globalObject);
 
         LLINT_CHECK_EXCEPTION();
 
-        JUMP_TO(codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(scrutineeStringImpl, defaultOffset));
+        JUMP_TO(codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(scrutineeString.data.impl(), defaultOffset));
     }
     LLINT_END();
 }

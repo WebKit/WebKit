@@ -107,7 +107,7 @@ static ALWAYS_INLINE EncodedJSValue throwVMToThisNumberError(JSGlobalObject* glo
 {
     auto typeString = jsTypeStringForValue(globalObject, thisValue)->value(globalObject);
     scope.assertNoException();
-    return throwVMTypeError(globalObject, scope, WTF::makeString("thisNumberValue called on incompatible "_s, typeString));
+    return throwVMTypeError(globalObject, scope, WTF::makeString("thisNumberValue called on incompatible "_s, typeString.data));
 }
 
 // The largest finite floating point number is 1.mantissa * 2^(0x7fe-0x3ff).

@@ -25,6 +25,8 @@
 #include "ArgList.h"
 #include "CallFrame.h"
 #include "CommonIdentifiers.h"
+#include "EnsureStillAliveHere.h"
+#include "GCOwnedDataScope.h"
 #include "GetVM.h"
 #include "Identifier.h"
 #include "PropertyDescriptor.h"
@@ -119,7 +121,7 @@ public:
     {
         return &vm.stringSpace();
     }
-    
+
     // We employ overflow checks in many places with the assumption that MaxLength
     // is INT_MAX. Hence, it cannot be changed into another length value without
     // breaking all the bounds and overflow checks that assume this.
@@ -220,12 +222,12 @@ public:
     AtomString toAtomString(JSGlobalObject*) const;
     AtomString toExistingAtomString(JSGlobalObject*) const;
 
-    StringViewWithUnderlyingString viewWithUnderlyingString(JSGlobalObject*) const;
+    GCOwnedDataScope<StringView> view(JSGlobalObject*) const;
 
     ALWAYS_INLINE bool equalInline(JSGlobalObject*, JSString* other) const;
     inline bool equal(JSGlobalObject*, JSString* other) const;
-    const String& value(JSGlobalObject*) const;
-    inline const String& tryGetValue(bool allocationAllowed = true) const;
+    GCOwnedDataScope<const String&> value(JSGlobalObject*) const;
+    inline GCOwnedDataScope<const String&> tryGetValue(bool allocationAllowed = true) const;
     const StringImpl* getValueImpl() const;
     const StringImpl* tryGetValueImpl() const;
     ALWAYS_INLINE unsigned length() const;
@@ -272,8 +274,6 @@ protected:
 
 private:
     friend class LLIntOffsetsExtractor;
-
-    StringView unsafeView(JSGlobalObject*) const;
 
     void swapToAtomString(VM&, RefPtr<AtomStringImpl>&&) const;
 
@@ -638,8 +638,7 @@ private:
     template<typename CharacterType> void resolveRopeInternalNoSubstring(CharacterType*, uint8_t* stackLimit) const;
     Identifier toIdentifier(JSGlobalObject*) const;
     void outOfMemory(JSGlobalObject* nullOrGlobalObjectForOOM) const;
-    StringView unsafeView(JSGlobalObject*) const;
-    StringViewWithUnderlyingString viewWithUnderlyingString(JSGlobalObject*) const;
+    GCOwnedDataScope<StringView> view(JSGlobalObject*) const;
 
     JSString* fiber0() const
     {
@@ -870,27 +869,27 @@ ALWAYS_INLINE AtomString JSString::toExistingAtomString(JSGlobalObject* globalOb
     return AtomStringImpl::lookUp(valueInternal().impl());
 }
 
-inline const String& JSString::value(JSGlobalObject* globalObject) const
+inline GCOwnedDataScope<const String&> JSString::value(JSGlobalObject* globalObject) const
 {
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();
     if (isRope())
-        return static_cast<const JSRopeString*>(this)->resolveRope(globalObject);
-    return valueInternal();
+        return { this, static_cast<const JSRopeString*>(this)->resolveRope(globalObject) };
+    return { this, valueInternal() };
 }
 
-inline const String& JSString::tryGetValue(bool allocationAllowed) const
+inline GCOwnedDataScope<const String&> JSString::tryGetValue(bool allocationAllowed) const
 {
     if (allocationAllowed) {
         if constexpr (validateDFGDoesGC)
             vm().verifyCanGC();
         if (isRope()) {
             // Pass nullptr for the JSGlobalObject so that resolveRope does not throw in the event of an OOM error.
-            return static_cast<const JSRopeString*>(this)->resolveRope(nullptr);
+            return { this, static_cast<const JSRopeString*>(this)->resolveRope(nullptr) };
         }
     } else
         RELEASE_ASSERT(!isRope());
-    return valueInternal();
+    return { this, valueInternal() };
 }
 
 inline JSString* JSString::getIndex(JSGlobalObject* globalObject, unsigned i)
@@ -898,7 +897,7 @@ inline JSString* JSString::getIndex(JSGlobalObject* globalObject, unsigned i)
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(canGetIndex(i));
-    StringView view = unsafeView(globalObject);
+    auto view = this->view(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
     return jsSingleCharacterString(vm, view[i]);
 }
@@ -1097,41 +1096,24 @@ inline bool isJSString(JSValue v)
     return v.isCell() && isJSString(v.asCell());
 }
 
-ALWAYS_INLINE StringView JSRopeString::unsafeView(JSGlobalObject* globalObject) const
-{
-    if constexpr (validateDFGDoesGC)
-        vm().verifyCanGC();
-    if (isSubstring())
-        return StringView { substringBase()->valueInternal() }.substring(substringOffset(), length());
-    return resolveRope(globalObject);
-}
-
-ALWAYS_INLINE StringViewWithUnderlyingString JSRopeString::viewWithUnderlyingString(JSGlobalObject* globalObject) const
+ALWAYS_INLINE GCOwnedDataScope<StringView> JSRopeString::view(JSGlobalObject* globalObject) const
 {
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();
     if (isSubstring()) {
         auto& base = substringBase()->valueInternal();
-        return { StringView { base }.substring(substringOffset(), length()), base };
+        // We return the substring as that's the owner and JSStringJoiner will end up retaining a reference to the underlying string.
+        return { substringBase(), StringView { base }.substring(substringOffset(), length()) };
     }
     auto& string = resolveRope(globalObject);
-    return { string, string };
+    return { this, string };
 }
 
-ALWAYS_INLINE StringView JSString::unsafeView(JSGlobalObject* globalObject) const
-{
-    if constexpr (validateDFGDoesGC)
-        vm().verifyCanGC();
-    if (isRope())
-        return static_cast<const JSRopeString*>(this)->unsafeView(globalObject);
-    return valueInternal();
-}
-
-ALWAYS_INLINE StringViewWithUnderlyingString JSString::viewWithUnderlyingString(JSGlobalObject* globalObject) const
+ALWAYS_INLINE GCOwnedDataScope<StringView> JSString::view(JSGlobalObject* globalObject) const
 {
     if (isRope())
-        return static_cast<const JSRopeString&>(*this).viewWithUnderlyingString(globalObject);
-    return { valueInternal(), valueInternal() };
+        return static_cast<const JSRopeString&>(*this).view(globalObject);
+    return { this, valueInternal() };
 }
 
 inline bool JSString::isSubstring() const

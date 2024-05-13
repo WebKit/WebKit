@@ -238,6 +238,21 @@ String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
     return makeString(nameString, nameString.isEmpty() || messageString.isEmpty() ? ""_s : ": "_s, messageString);
 }
 
+String ErrorInstance::tryGetMessageForDebugging()
+{
+    VM& vm = this->vm();
+
+    JSValue messageValue;
+    auto messagePropertName = vm.propertyNames->message;
+    PropertySlot messageSlot(this, PropertySlot::InternalMethodType::VMInquiry, &vm);
+    if (JSObject::getOwnNonIndexPropertySlot(vm, structure(), messagePropertName, messageSlot))
+        messageValue = messageSlot.getPureResult();
+
+    if (JSString* string = jsDynamicCast<JSString*>(messageValue))
+        return string->tryGetValue();
+    return emptyString();
+}
+
 void ErrorInstance::finalizeUnconditionally(VM& vm, CollectionScope)
 {
     if (!m_stackTrace)

@@ -1212,6 +1212,7 @@
 		53F40E8D1D5901F20099A1B6 /* WasmParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8C1D5901F20099A1B6 /* WasmParser.h */; };
 		53F40E931D5A4AB30099A1B6 /* WasmOMGIRGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E921D5A4AB30099A1B6 /* WasmOMGIRGenerator.h */; };
 		53F6BF6D1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53F9DD772BEFD76D004A17B7 /* GCOwnedDataScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9DD762BEFD76D004A17B7 /* GCOwnedDataScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53FA2AE11CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FA2AE01CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		554C418829B14CA5003C9F71 /* WebAssemblyGCObjectBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 554C418629B14CA5003C9F71 /* WebAssemblyGCObjectBase.h */; };
@@ -2152,8 +2153,8 @@
 		FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */; };
 		FE80C1971D775CDD008510C0 /* CatchScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80C1961D775B27008510C0 /* CatchScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE8C0312264A6911001A44AD /* SlowPathFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8C0311264A6910001A44AD /* SlowPathFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE8DE54B23AC1DAD005C9142 /* CacheableIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8DE54A23AC1DAD005C9142 /* CacheableIdentifier.h */; };
-		FE8DE54D23AC1E86005C9142 /* CacheableIdentifierInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8DE54C23AC1E86005C9142 /* CacheableIdentifierInlines.h */; };
+		FE8DE54B23AC1DAD005C9142 /* CacheableIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8DE54A23AC1DAD005C9142 /* CacheableIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE8DE54D23AC1E86005C9142 /* CacheableIdentifierInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8DE54C23AC1E86005C9142 /* CacheableIdentifierInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE912B4F2531193300FABDDF /* AbstractSlotVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = FE912B4E2531193300FABDDF /* AbstractSlotVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE912B5125311AD100FABDDF /* AbstractSlotVisitorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE912B5025311AD100FABDDF /* AbstractSlotVisitorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE99B2491C24C3D300C82159 /* JITNegGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE99B2481C24B6D300C82159 /* JITNegGenerator.h */; };
@@ -4292,6 +4293,7 @@
 		53F40E8E1D5902820099A1B6 /* WasmOMGIRGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOMGIRGenerator.cpp; sourceTree = "<group>"; };
 		53F40E921D5A4AB30099A1B6 /* WasmOMGIRGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOMGIRGenerator.h; sourceTree = "<group>"; };
 		53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternalFunctionAllocationProfile.h; sourceTree = "<group>"; };
+		53F9DD762BEFD76D004A17B7 /* GCOwnedDataScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCOwnedDataScope.h; sourceTree = "<group>"; };
 		53FA2AE01CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLIntPrototypeLoadAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
 		53FA2AE21CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
 		53FD04D11D7AB187003287D3 /* WasmCallingConvention.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCallingConvention.cpp; sourceTree = "<group>"; };
@@ -7026,6 +7028,7 @@
 				2ADFA26218EF3540004F9FCC /* GCLogging.cpp */,
 				2AABCDE618EF294200002096 /* GCLogging.h */,
 				5272987B235FC8BA005C982C /* GCMemoryOperations.h */,
+				53F9DD762BEFD76D004A17B7 /* GCOwnedDataScope.h */,
 				0F97152E1EB28BE900A1645D /* GCRequest.cpp */,
 				0F97152F1EB28BE900A1645D /* GCRequest.h */,
 				0FA6F38C20CC2C9500A03DCD /* GCSegmentedArray.cpp */,
@@ -10892,6 +10895,7 @@
 				0F2B66AF17B6B54500A7AE3F /* GCIncomingRefCountedSetInlines.h in Headers */,
 				2AABCDE718EF294200002096 /* GCLogging.h in Headers */,
 				522927D5235FD0B9005CB169 /* GCMemoryOperations.h in Headers */,
+				53F9DD772BEFD76D004A17B7 /* GCOwnedDataScope.h in Headers */,
 				0F9715311EB28BEE00A1645D /* GCRequest.h in Headers */,
 				A54E8EB018BFFBBB00556D28 /* GCSegmentedArray.h in Headers */,
 				A54E8EB118BFFBBE00556D28 /* GCSegmentedArrayInlines.h in Headers */,

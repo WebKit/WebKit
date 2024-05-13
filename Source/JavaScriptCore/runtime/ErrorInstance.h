@@ -97,6 +97,8 @@ public:
     JS_EXPORT_PRIVATE String sanitizedMessageString(JSGlobalObject*);
     JS_EXPORT_PRIVATE String sanitizedNameString(JSGlobalObject*);
     
+    JS_EXPORT_PRIVATE String tryGetMessageForDebugging();
+
     Vector<StackFrame>* stackTrace() { return m_stackTrace.get(); }
 
     bool materializeErrorInfoIfNeeded(VM&);

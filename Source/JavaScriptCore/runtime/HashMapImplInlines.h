@@ -93,12 +93,12 @@ ALWAYS_INLINE uint32_t jsMapHashImpl(JSGlobalObject* globalObject, VM& vm, JSVal
 
     if (value.isString()) {
         auto scope = DECLARE_THROW_SCOPE(vm);
-        String wtfString = asString(value)->value(globalObject);
+        auto wtfString = asString(value)->value(globalObject);
         if constexpr (expection == ExceptionExpectation::CanThrow)
             RETURN_IF_EXCEPTION(scope, UINT_MAX);
         else
             EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
-        return wtfString.impl()->hash();
+        return wtfString->impl()->hash();
     }
 
     if (value.isHeapBigInt())

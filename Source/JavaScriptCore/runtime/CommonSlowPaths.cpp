@@ -1258,7 +1258,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_static_error)
     auto bytecode = pc->as<OpThrowStaticError>();
     JSValue errorMessageValue = GET_C(bytecode.m_message).jsValue();
     RELEASE_ASSERT(errorMessageValue.isString());
-    String errorMessage = asString(errorMessageValue)->value(globalObject);
+    auto errorMessage = asString(errorMessageValue)->value(globalObject);
     ErrorTypeWithExtension errorType = bytecode.m_errorType;
     THROW(createError(globalObject, errorType, errorMessage));
 }

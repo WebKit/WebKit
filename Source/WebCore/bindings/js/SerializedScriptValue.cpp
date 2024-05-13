@@ -1804,7 +1804,7 @@ private:
             if (auto* stringObject = jsDynamicCast<StringObject*>(obj)) {
                 if (!addToObjectPoolIfNotDupe<EmptyStringObjectTag, StringObjectTag>(stringObject))
                     return true;
-                String str = asString(stringObject->internalValue())->value(m_lexicalGlobalObject);
+                auto str = asString(stringObject->internalValue())->value(m_lexicalGlobalObject);
                 dumpStringObject(str);
                 return true;
             }

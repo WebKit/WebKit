@@ -56,10 +56,10 @@ JSObject* createUndefinedVariableError(JSGlobalObject* globalObject, const Ident
 String errorDescriptionForValue(JSGlobalObject* globalObject, JSValue v)
 {
     if (v.isString()) {
-        String string = asString(v)->value(globalObject);
+        auto string = asString(v)->value(globalObject);
         if (!string)
             return string;
-        return tryMakeString('"', string, '"');
+        return tryMakeString('"', string.data, '"');
     }
 
     if (v.isSymbol()) {

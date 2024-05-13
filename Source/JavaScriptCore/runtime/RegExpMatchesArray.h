@@ -236,10 +236,10 @@ inline JSArray* createRegExpMatchesArray(JSGlobalObject* globalObject, JSString*
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     MatchResult ignoredResult;
-    String input = string->value(globalObject);
+    auto input = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, createRegExpMatchesArray(vm, globalObject, string, WTFMove(input), regExp, startOffset, ignoredResult));
+    RELEASE_AND_RETURN(scope, createRegExpMatchesArray(vm, globalObject, string, input, regExp, startOffset, ignoredResult));
 }
 JSArray* createEmptyRegExpMatchesArray(JSGlobalObject*, JSString*, RegExp*);
 Structure* createRegExpMatchesArrayStructure(VM&, JSGlobalObject*);

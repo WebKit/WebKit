@@ -713,11 +713,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationSwitchStringAndGetIndex, unsigned, (J
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    StringImpl* strImpl = string->value(globalObject).impl();
+    auto str = string->value(globalObject);
 
     RETURN_IF_EXCEPTION(throwScope, 0);
 
-    return unlinkedTable->indexForValue(strImpl, std::numeric_limits<unsigned>::max());
+    return unlinkedTable->indexForValue(str->impl(), std::numeric_limits<unsigned>::max());
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTypeOfObjectAsTypeofType, int32_t, (JSGlobalObject* globalObject, JSCell* object))

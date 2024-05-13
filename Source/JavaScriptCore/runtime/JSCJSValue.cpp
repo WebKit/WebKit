@@ -430,14 +430,14 @@ WTF::String JSValue::toWTFStringForConsole(JSGlobalObject* globalObject) const
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSString* string = toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    String result = string->value(globalObject);
+    auto result = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (isString())
-        return tryMakeString('"', result, '"');
+        return tryMakeString('"', result.data, '"');
     if (jsDynamicCast<JSArray*>(*this))
-        return tryMakeString('[', result, ']');
+        return tryMakeString('[', result.data, ']');
     if (jsDynamicCast<JSBigInt*>(*this))
-        return tryMakeString(result, 'n');
+        return tryMakeString(result.data, 'n');
     return result;
 }
 

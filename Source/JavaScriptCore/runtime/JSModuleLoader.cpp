@@ -248,11 +248,11 @@ JSInternalPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JS
         RELEASE_AND_RETURN(scope, globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, this, moduleName, parameters, referrer));
 
     auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
-    String moduleNameString = moduleName->value(globalObject);
+    auto moduleNameString = moduleName->value(globalObject);
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     scope.release();
-    promise->reject(globalObject, createError(globalObject, makeString("Could not import the module '"_s, moduleNameString, "'."_s)));
+    promise->reject(globalObject, createError(globalObject, makeString("Could not import the module '"_s, moduleNameString.data, "'."_s)));
     return promise;
 }
 

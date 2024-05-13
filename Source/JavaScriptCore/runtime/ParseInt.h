@@ -222,9 +222,9 @@ static ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, String
     EXCEPTION_ASSERT(!!scope.exception() == !string);
     if (UNLIKELY(!string))
         return { };
-    auto viewWithString = string->viewWithUnderlyingString(globalObject);
+    auto view = string->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, callback(viewWithString.view));
+    RELEASE_AND_RETURN(scope, callback(view));
 }
 
 // Mapping from integers 0..35 to digit identifying this value, for radix 2..36.

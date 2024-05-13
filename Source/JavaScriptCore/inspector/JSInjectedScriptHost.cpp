@@ -117,7 +117,7 @@ JSValue JSInjectedScriptHost::evaluateWithScopeExtension(JSGlobalObject* globalO
     if (!scriptValue.isString())
         return throwTypeError(globalObject, scope, "InjectedScriptHost.evaluateWithScopeExtension first argument must be a string."_s);
 
-    String program = asString(scriptValue)->value(globalObject);
+    auto program = asString(scriptValue)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     NakedPtr<Exception> exception;

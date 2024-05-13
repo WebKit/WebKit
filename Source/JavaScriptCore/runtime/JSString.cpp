@@ -291,7 +291,7 @@ double JSString::toNumber(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    StringView view = unsafeView(globalObject);
+    auto view = this->view(globalObject);
     RETURN_IF_EXCEPTION(scope, 0);
     return jsToNumber(view);
 }

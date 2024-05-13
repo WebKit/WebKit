@@ -585,5 +585,6 @@ using WTF::equal;
 using WTF::find;
 using WTF::containsOnly;
 using WTF::reverseFind;
+using WTF::codePointCompareLessThan;
 
 #include <wtf/text/AtomString.h>

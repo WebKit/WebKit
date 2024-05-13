@@ -1368,8 +1368,9 @@ public:
 
         if (auto* string = jsDynamicCast<JSString*>(cell)) {
             m_type = EncodedType::String;
-            StringImpl* impl = string->tryGetValue().impl();
-            this->allocate<CachedUniquedStringImpl>(encoder)->encode(encoder, *impl);
+            // TODO: This seems wrong? What if this fails.
+            auto str = string->tryGetValue();
+            this->allocate<CachedUniquedStringImpl>(encoder)->encode(encoder, *str.data.impl());
             return;
         }
 

@@ -540,7 +540,7 @@ String JSObject::calculatedClassName(JSObject* object)
             if (slot.isValue()) {
                 JSValue value = slot.getValue(globalObject, vm.propertyNames->toStringTagSymbol);
                 if (value.isString()) {
-                    String tag = asString(value)->value(globalObject);
+                    auto tag = asString(value)->value(globalObject);
                     if (UNLIKELY(scope.exception()))
                         scope.clearException();
                     return tag;

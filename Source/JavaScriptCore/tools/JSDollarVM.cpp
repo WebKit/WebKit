@@ -3275,7 +3275,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateBuiltin, (JSGlobalObject* globalObject, C
     if (callFrame->argumentCount() < 1 || !callFrame->argument(0).isString())
         return JSValue::encode(jsUndefined());
 
-    String functionText = asString(callFrame->argument(0))->value(globalObject);
+    auto functionText = asString(callFrame->argument(0))->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     SourceCode source = makeSource(WTFMove(functionText), { }, SourceTaintedOrigin::Untainted);
@@ -3293,7 +3293,7 @@ JSC_DEFINE_HOST_FUNCTION(functionRunTaintedString, (JSGlobalObject* globalObject
     if (callFrame->argumentCount() < 1 || !callFrame->argument(0).isString())
         return JSValue::encode(jsUndefined());
 
-    String functionText = asString(callFrame->argument(0))->value(globalObject);
+    auto functionText = asString(callFrame->argument(0))->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     SourceCode source = makeSource(functionText, { }, SourceTaintedOrigin::KnownTainted);
@@ -3315,7 +3315,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGetPrivateProperty, (JSGlobalObject* globalObje
     if (callFrame->argumentCount() < 2 || !callFrame->argument(1).isString())
         return encodedJSUndefined();
 
-    String str = asString(callFrame->argument(1))->value(globalObject);
+    auto str = asString(callFrame->argument(1))->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     SymbolImpl* symbol = vm.propertyNames->builtinNames().lookUpPrivateName(str);
@@ -3445,7 +3445,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFindTypeForExpression, (JSGlobalObject* globalO
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(callFrame->argument(1).isString());
-    String substring = asString(callFrame->argument(1))->value(globalObject);
+    auto substring = asString(callFrame->argument(1))->value(globalObject);
     String sourceCodeText = executable->source().view().toString();
     unsigned offset = static_cast<unsigned>(sourceCodeText.find(substring) + executable->source().startOffset());
     
@@ -3499,7 +3499,7 @@ JSC_DEFINE_HOST_FUNCTION(functionHasBasicBlockExecuted, (JSGlobalObject* globalO
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(callFrame->argument(1).isString());
-    String substring = asString(callFrame->argument(1))->value(globalObject);
+    auto substring = asString(callFrame->argument(1))->value(globalObject);
     String sourceCodeText = executable->source().view().toString();
     RELEASE_ASSERT(sourceCodeText.contains(substring));
     int offset = sourceCodeText.find(substring) + executable->source().startOffset();
@@ -3519,7 +3519,7 @@ JSC_DEFINE_HOST_FUNCTION(functionBasicBlockExecutionCount, (JSGlobalObject* glob
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(callFrame->argument(1).isString());
-    String substring = asString(callFrame->argument(1))->value(globalObject);
+    auto substring = asString(callFrame->argument(1))->value(globalObject);
     String sourceCodeText = executable->source().view().toString();
     RELEASE_ASSERT(sourceCodeText.contains(substring));
     int offset = sourceCodeText.find(substring) + executable->source().startOffset();

@@ -153,7 +153,7 @@ JSObject* constructDate(JSGlobalObject* globalObject, JSValue newTarget, const A
             JSValue primitive = arg0.toPrimitive(globalObject);
             RETURN_IF_EXCEPTION(scope, nullptr);
             if (primitive.isString()) {
-                String primitiveString = asString(primitive)->value(globalObject);
+                auto primitiveString = asString(primitive)->value(globalObject);
                 RETURN_IF_EXCEPTION(scope, nullptr);
                 value = vm.dateCache.parseDate(globalObject, vm, primitiveString);
                 RETURN_IF_EXCEPTION(scope, nullptr);
