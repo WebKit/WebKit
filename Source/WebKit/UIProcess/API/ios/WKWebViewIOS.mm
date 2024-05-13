@@ -4680,10 +4680,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return nil;
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewIOSAdditionsAfter.mm>
-#endif
-
 @end // WKWebView (WKPrivateIOS)
 
 #if ENABLE(FULLSCREEN_API)
