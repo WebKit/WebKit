@@ -455,9 +455,8 @@ bool SQLiteStorageArea::handleDatabaseCorruptionIfNeeded(int databaseError)
     if (databaseError != SQLITE_CORRUPT && databaseError != SQLITE_NOTADB)
         return false;
 
-    m_database = nullptr;
-    m_cache = std::nullopt;
-    m_cacheSize = std::nullopt;
+    close();
+
     RELEASE_LOG(Storage, "SQLiteStorageArea::handleDatabaseCorruption deletes corrupted database file '%s'", m_path.utf8().data());
     WebCore::SQLiteFileSystem::deleteDatabaseFile(m_path);
     return true;
