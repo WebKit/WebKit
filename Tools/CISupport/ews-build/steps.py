@@ -3269,7 +3269,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
         steps_to_add = self.follow_up_steps()
 
         if cmd.didFail():
-            steps_to_add += [RevertAppliedChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+            steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
@@ -3636,6 +3636,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
         else:
             steps_to_add += [
                 RevertAppliedChanges(),
+                CleanWorkingDirectory(),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 CompileJSCWithoutChange(),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
@@ -4144,6 +4145,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
             else:
                 steps_to_add += [
                     RevertAppliedChanges(),
+                    CleanWorkingDirectory(),
                     ValidateChange(verifyBugClosed=False, addURLs=False),
                     CompileWebKitWithoutChange(retry_build_on_failure=True),
                     ValidateChange(verifyBugClosed=False, addURLs=False),
@@ -4284,6 +4286,7 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 UploadTestResults(identifier='rerun'),
                                                 ExtractTestResults(identifier='rerun'),
                                                 RevertAppliedChanges(),
+                                                CleanWorkingDirectory(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 CompileWebKitWithoutChange(retry_build_on_failure=True),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
@@ -4713,7 +4716,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             if retry_count < AnalyzeLayoutTestsResultsRedTree.MAX_RETRY:
                 next_steps.append(AnalyzeLayoutTestsResultsRedTree())
             else:
-                next_steps.extend([RevertAppliedChanges()])
+                next_steps.extend([RevertAppliedChanges(), CleanWorkingDirectory()])
                 if platform == 'wpe':
                     next_steps.append(InstallWpeDependencies())
                 elif platform == 'gtk':
@@ -4757,7 +4760,9 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
             next_steps.extend([
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 KillOldProcesses(),
-                RevertAppliedChanges()])
+                RevertAppliedChanges(),
+                CleanWorkingDirectory(),
+            ])
             if platform == 'wpe':
                 next_steps.append(InstallWpeDependencies())
             elif platform == 'gtk':
@@ -5462,7 +5467,7 @@ class ReRunAPITests(RunAPITests):
     suffix = 'second_run'
 
     def doOnFailure(self):
-        steps_to_add = [RevertAppliedChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+        steps_to_add = [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
         platform = self.getProperty('platform')
         if platform == 'wpe':
             steps_to_add.append(InstallWpeDependencies())
