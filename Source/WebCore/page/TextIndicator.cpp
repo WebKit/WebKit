@@ -154,6 +154,8 @@ static SnapshotOptions snapshotOptionsForTextIndicatorOptions(OptionSet<TextIndi
             if (!options.contains(TextIndicatorOption::RespectTextColor))
                 snapshotOptions.flags.add(SnapshotFlags::ForceBlackText);
         }
+        if (options.contains(TextIndicatorOption::SkipReplacedContent))
+            snapshotOptions.flags.add(SnapshotFlags::ExcludeReplacedContent);
     } else
         snapshotOptions.flags.add(SnapshotFlags::ExcludeSelectionHighlighting);
 

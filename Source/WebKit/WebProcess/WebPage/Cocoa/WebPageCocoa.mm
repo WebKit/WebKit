@@ -335,7 +335,8 @@ void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<voi
         constexpr OptionSet textIndicatorOptions {
             TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
             TextIndicatorOption::ExpandClipBeyondVisibleRect,
-            TextIndicatorOption::UseSelectionRectForSizing
+            TextIndicatorOption::UseSelectionRectForSizing,
+            TextIndicatorOption::SkipReplacedContent,
         };
         if (auto textIndicator = TextIndicator::createWithRange(*sessionRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
             textIndicatorData = textIndicator->data();

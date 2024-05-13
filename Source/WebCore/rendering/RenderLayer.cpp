@@ -3296,7 +3296,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     RenderObject* subtreePaintRootForRenderer = nullptr;
 
     auto paintBehavior = [&]() {
-        constexpr OptionSet<PaintBehavior> flagsToCopy = { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting, PaintBehavior::ExcludeSelection };
+        constexpr OptionSet<PaintBehavior> flagsToCopy = { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting, PaintBehavior::ExcludeSelection, PaintBehavior::ExcludeReplacedContent };
         OptionSet<PaintBehavior> paintBehavior = paintingInfo.paintBehavior & flagsToCopy;
 
         if (localPaintFlags.contains(PaintLayerFlag::PaintingSkipRootBackground))
@@ -3778,7 +3778,7 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
         localPaintBehavior = paintBehavior;
 
     // FIXME: It's unclear if this flag copying is necessary.
-    constexpr OptionSet<PaintBehavior> flagsToCopy { PaintBehavior::ExcludeSelection, PaintBehavior::Snapshotting, PaintBehavior::DefaultAsynchronousImageDecode, PaintBehavior::CompositedOverflowScrollContent, PaintBehavior::ForceSynchronousImageDecode };
+    constexpr OptionSet<PaintBehavior> flagsToCopy { PaintBehavior::ExcludeSelection, PaintBehavior::Snapshotting, PaintBehavior::DefaultAsynchronousImageDecode, PaintBehavior::CompositedOverflowScrollContent, PaintBehavior::ForceSynchronousImageDecode, PaintBehavior::ExcludeReplacedContent };
     localPaintBehavior.add(localPaintingInfo.paintBehavior & flagsToCopy);
 
     if (localPaintingInfo.paintBehavior & PaintBehavior::DontShowVisitedLinks)
@@ -5888,6 +5888,7 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
     case PaintBehavior::EventRegionIncludeBackground: ts << "EventRegionIncludeBackground"; break;
     case PaintBehavior::Snapshotting: ts << "Snapshotting"; break;
     case PaintBehavior::DontShowVisitedLinks: ts << "DontShowVisitedLinks"; break;
+    case PaintBehavior::ExcludeReplacedContent: ts << "ExcludeReplacedContent"; break;
     }
 
     return ts;
