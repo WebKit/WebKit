@@ -293,6 +293,7 @@
       "name": "Win-Tests-EWS", "shortname": "wincairo-tests", "icon": "testOnly",
       "factory": "WinTestsFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "wincairo",
+      "triggered_by": ["win-build-ews"],
       "workernames": ["win-tests-ews-001", "win-tests-ews-002", "win-tests-ews-003", "win-tests-ews-004", "win-tests-ews-005", "win-tests-ews-006", "win-tests-ews-007", "win-tests-ews-008"]
     },
     {
@@ -505,6 +506,10 @@
     {
       "type": "Triggerable", "name": "gtk-wk2-tests-ews",
       "builderNames": ["GTK-WK2-Tests-EWS"]
+    },
+    {
+      "type": "Triggerable", "name": "win-build-ews",
+      "builderNames": ["Win-Build-EWS"]
     },
     {
       "type": "Triggerable", "name": "win-tests-ews",
