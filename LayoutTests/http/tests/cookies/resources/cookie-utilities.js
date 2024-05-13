@@ -23,11 +23,6 @@ function setBaseDocumentWhenFetchingDOMCookies(aDocument)
     g_baseDocumentWhenFetchingDOMCookies = aDocument;
 }
 
-function setDOMCookie(name, value, additionalProperties={})
-{
-    g_baseDocumentWhenFetchingDOMCookies.cookie = createCookie(name, value, additionalProperties);
-}
-
 function getDOMCookies()
 {
     if (!g_baseDocumentWhenFetchingDOMCookies)
@@ -174,16 +169,6 @@ async function shouldNotHaveCookie(name)
         testFailed(`Should not have cookie "${name}". But do with value ${value}.`);
 }
 
-async function shouldHaveCookie(name)
-{
-    let cookies = await getCookies();
-    let value = cookies[name];
-    if (value == undefined)
-        testFailed(`Should have cookie "${name}". But do not.`);
-    else
-        testPassed(`Has cookie "${name}".`);
-}
-
 async function shouldHaveCookieWithValue(name, expectedValue)
 {
     console.assert(expectedValue !== undefined);
@@ -205,16 +190,6 @@ function shouldNotHaveDOMCookie(name)
         testPassed(`Do not have DOM cookie "${name}".`);
     else
         testFailed(`Should not have DOM cookie "${name}". But do with value ${value}.`);
-}
-
-function shouldHaveDOMCookie(name)
-{
-    let cookies = getDOMCookies();
-    let value = cookies[name];
-    if (value == undefined)
-        testFailed(`Should have DOM cookie "${name}". But do not.`);
-    else
-        testPassed(`Has DOM cookie "${name}".`);
 }
 
 function shouldHaveDOMCookieWithValue(name, expectedValue)
