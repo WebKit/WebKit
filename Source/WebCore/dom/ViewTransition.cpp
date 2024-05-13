@@ -349,7 +349,8 @@ ExceptionOr<void> ViewTransition::captureOldState()
         m_initialLargeViewportSize = view->sizeForCSSLargeViewportUnits();
 
         auto result = forEachRendererInPaintOrder([&](RenderLayerModelObject& renderer) -> ExceptionOr<void> {
-            if (!Styleable::fromRenderer(renderer))
+            auto styleable = Styleable::fromRenderer(renderer);
+            if (!styleable || &styleable->element.treeScope() != document())
                 return { };
 
             if (auto name = effectiveViewTransitionName(renderer); !name.isNull()) {
@@ -394,8 +395,8 @@ ExceptionOr<void> ViewTransition::captureNewState()
     ListHashSet<AtomString> usedTransitionNames;
     if (CheckedPtr view = document()->renderView()) {
         auto result = forEachRendererInPaintOrder([&](RenderLayerModelObject& renderer) -> ExceptionOr<void> {
-            std::optional<const Styleable> styleable = Styleable::fromRenderer(renderer);
-            if (!styleable)
+            auto styleable = Styleable::fromRenderer(renderer);
+            if (!styleable || &styleable->element.treeScope() != document())
                 return { };
 
             if (auto name = effectiveViewTransitionName(renderer); !name.isNull()) {
