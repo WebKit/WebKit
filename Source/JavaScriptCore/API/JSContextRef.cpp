@@ -208,6 +208,28 @@ JSContextGroupRef JSContextGetGroup(JSContextRef ctx)
     return toRef(&globalObject->vm());
 }
 
+void JSContextSetSharedData(JSContextRef ctx, void* data)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    
+    JSGlobalObject* globalObject = toJS(ctx);
+    globalObject->sharedData = data;
+}
+
+void* JSContextGetSharedData(JSContextRef ctx)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    
+    JSGlobalObject* globalObject = toJS(ctx);
+    return globalObject->sharedData;
+}
+
 JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
 {
     if (!ctx) {
