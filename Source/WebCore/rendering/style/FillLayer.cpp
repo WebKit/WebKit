@@ -287,6 +287,17 @@ void FillLayer::fillUnsetProperties()
                 pattern = this;
         }
     }
+
+    for (curr = this; curr && curr->isMaskModeSet(); curr = curr->next()) { }
+    if (curr && curr != this) {
+        // We need to fill in the remaining values with the pattern specified.
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_maskMode = pattern->m_maskMode;
+            pattern = pattern->next();
+            if (pattern == curr || !pattern)
+                pattern = this;
+        }
+    }
 }
 
 void FillLayer::cullEmptyLayers()
