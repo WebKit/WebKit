@@ -25,12 +25,10 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
 #include "ColorInterpolationMethod.h"
 #include "StyleColor.h"
 #include <variant>
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -38,27 +36,38 @@ namespace Style {
 enum class ForVisitedLink : bool;
 }
 
+class CSSUnresolvedColor;
 class Document;
 class RenderStyle;
 
+struct CSSUnresolvedColorResolutionContext;
+
 struct CSSUnresolvedColorMix {
     struct Component {
-        friend bool operator==(const Component&, const Component&);
+        bool operator==(const Component&) const;
 
-        Ref<CSSPrimitiveValue> color;
-        RefPtr<CSSPrimitiveValue> percentage;
+        using Percentage = std::variant<PercentRaw, UnevaluatedCalc<PercentRaw>>;
+
+        UniqueRef<CSSUnresolvedColor> color;
+        std::optional<Percentage> percentage;
     };
 
-    friend bool operator==(const CSSUnresolvedColorMix&, const CSSUnresolvedColorMix&) = default;
+    bool operator==(const CSSUnresolvedColorMix&) const = default;
 
     ColorInterpolationMethod colorInterpolationMethod;
     Component mixComponents1;
     Component mixComponents2;
 };
 
+PercentRaw resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage&);
+
 void serializationForCSS(StringBuilder&, const CSSUnresolvedColorMix&);
 String serializationForCSS(const CSSUnresolvedColorMix&);
 
 StyleColor createStyleColor(const CSSUnresolvedColorMix&, const Document&, RenderStyle&, Style::ForVisitedLink);
+Color createColor(const CSSUnresolvedColorMix&, const CSSUnresolvedColorResolutionContext&);
+
+bool containsCurrentColor(const CSSUnresolvedColorMix&);
+bool containsColorSchemeDependentColor(const CSSUnresolvedColorMix&);
 
 } // namespace WebCore

@@ -32,10 +32,10 @@
 #include "config.h"
 #include "StyleColor.h"
 
-#include "CSSUnresolvedColor.h"
 #include "HashTools.h"
 #include "RenderTheme.h"
 #include "StyleColorMix.h"
+#include "StyleRelativeColor.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -60,6 +60,11 @@ StyleColor::StyleColor(SRGBA<uint8_t> color)
 {
 }
 
+StyleColor::StyleColor(StyleAbsoluteColor&& color)
+    : m_color { WTFMove(color) }
+{
+}
+
 StyleColor::StyleColor(StyleCurrentColor&& color)
     : m_color { WTFMove(color) }
 {
@@ -70,8 +75,78 @@ StyleColor::StyleColor(StyleColorMix&& colorMix)
 {
 }
 
-StyleColor::StyleColor(StyleAbsoluteColor&& color)
-    : m_color { WTFMove(color) }
+StyleColor::StyleColor(StyleRelativeColor<RGBFunctionModernRelative>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<HSLFunctionModern>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<HWBFunction>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<LabFunction>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<LCHFunction>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<OKLabFunction>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<OKLCHFunction>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+{
+}
+
+StyleColor::StyleColor(StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>&& relative)
+    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
 {
 }
 
@@ -110,6 +185,9 @@ decltype(auto) StyleColor::visit(const StyleColor::ColorKind& color, F&&... f)
         },
         [&](const UniqueRef<StyleColorMix>& colorMix) {
             return visitor(colorMix.get());
+        },
+        [&]<typename Descriptor>(const UniqueRef<StyleRelativeColor<Descriptor>>& relativeColor) {
+            return visitor(relativeColor.get());
         }
     );
 }
@@ -130,6 +208,9 @@ StyleColor::ColorKind StyleColor::copy(const StyleColor::ColorKind& other)
         },
         [] (const StyleColorMix& colorMix) -> StyleColor::ColorKind {
             return makeUniqueRef<StyleColorMix>(colorMix);
+        },
+        []<typename Descriptor>(const StyleRelativeColor<Descriptor>& relativeColor) -> StyleColor::ColorKind {
+            return makeUniqueRef<StyleRelativeColor<Descriptor>>(relativeColor);
         }
     );
 }
@@ -250,6 +331,25 @@ bool StyleColor::isColorMix() const
     return std::holds_alternative<UniqueRef<StyleColorMix>>(m_color);
 }
 
+bool StyleColor::isRelativeColor() const
+{
+    return std::holds_alternative<UniqueRef<StyleRelativeColor<RGBFunctionModernRelative>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<HSLFunctionModern>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<HWBFunction>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<LabFunction>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<LCHFunction>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<OKLabFunction>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<OKLCHFunction>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>>>(m_color)
+        || std::holds_alternative<UniqueRef<StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>>>(m_color);
+}
+
 bool StyleColor::isAbsoluteColor() const
 {
     return std::holds_alternative<StyleAbsoluteColor>(m_color);
@@ -261,11 +361,12 @@ const Color& StyleColor::absoluteColor() const
     return std::get<StyleAbsoluteColor>(m_color).color;
 }
 
-StyleColor::ColorKind StyleColor::resolveAbsoluteComponents(StyleColorMix&& colorMix)
+template<typename StyleColorType>
+StyleColor::ColorKind StyleColor::resolveAbsoluteComponents(StyleColorType&& colorType)
 {
-    if (auto absoluteColor = WebCore::resolveAbsoluteComponents(colorMix))
+    if (auto absoluteColor = WebCore::resolveAbsoluteComponents(colorType))
         return { StyleAbsoluteColor { WTFMove(*absoluteColor) } };
-    return { makeUniqueRef<StyleColorMix>(WTFMove(colorMix)) };
+    return { makeUniqueRef<StyleColorType>(WTFMove(colorType)) };
 }
 
 // MARK: - Serialization

@@ -27,12 +27,18 @@
 
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 bool unevaluatedCalcEqual(const Ref<CSSCalcValue>& a, const Ref<CSSCalcValue>& b)
 {
     return a->equals(b.get());
+}
+
+void unevaluatedCalcSerialization(StringBuilder& builder, const Ref<CSSCalcValue>& calc)
+{
+    builder.append(calc->customCSSText());
 }
 
 AngleRaw evaluateCalc(const UnevaluatedCalc<AngleRaw>& calc, const CSSCalcSymbolTable& symbolTable)

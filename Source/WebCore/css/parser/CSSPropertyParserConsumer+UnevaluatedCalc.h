@@ -27,8 +27,10 @@
 #include "CSSPropertyParserConsumer+RawTypes.h"
 #include <optional>
 #include <variant>
+#include <wtf/Brigand.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -37,6 +39,7 @@ class CSSCalcValue;
 
 // Type-erased helpers to allow for shared code.
 bool unevaluatedCalcEqual(const Ref<CSSCalcValue>&, const Ref<CSSCalcValue>&);
+void unevaluatedCalcSerialization(StringBuilder&, const Ref<CSSCalcValue>&);
 
 // `UnevaluatedCalc` annotates a `CSSCalcValue` with the raw value type that it
 // will be evaluated to, allowing the processing of calc in generic code.
@@ -50,6 +53,66 @@ template<typename T> struct UnevaluatedCalc {
     }
 };
 
+// MARK: - Utility templates
+
+template<typename T>
+struct IsUnevaluatedCalc : public std::integral_constant<bool, WTF::IsTemplate<T, UnevaluatedCalc>::value> { };
+
+template<typename TypeList>
+struct TypesMinusUnevaluatedCalc {
+    using ResultTypeList = brigand::remove_if<TypeList, IsUnevaluatedCalc<brigand::_1>>;
+    using type = VariantOrSingle<ResultTypeList>;
+};
+template<typename... Ts>
+using TypesMinusUnevaluatedCalcType = typename TypesMinusUnevaluatedCalc<brigand::list<Ts...>>::type;
+
+template<typename>
+struct TypePlusUnevaluatedCalc;
+
+template<> struct TypePlusUnevaluatedCalc<AngleRaw> {
+    using type = brigand::list<AngleRaw, UnevaluatedCalc<AngleRaw>>;
+};
+template<> struct TypePlusUnevaluatedCalc<PercentRaw> {
+    using type = brigand::list<PercentRaw, UnevaluatedCalc<PercentRaw>>;
+};
+template<> struct TypePlusUnevaluatedCalc<NumberRaw> {
+    using type = brigand::list<NumberRaw, UnevaluatedCalc<NumberRaw>>;
+};
+template<> struct TypePlusUnevaluatedCalc<LengthRaw> {
+    using type = brigand::list<LengthRaw, UnevaluatedCalc<LengthRaw>>;
+};
+template<> struct TypePlusUnevaluatedCalc<ResolutionRaw> {
+    using type = brigand::list<ResolutionRaw, UnevaluatedCalc<ResolutionRaw>>;
+};
+template<> struct TypePlusUnevaluatedCalc<TimeRaw> {
+    using type = brigand::list<TimeRaw, UnevaluatedCalc<TimeRaw>>;
+};
+template<> struct TypePlusUnevaluatedCalc<NoneRaw> {
+    using type = brigand::list<NoneRaw>;
+};
+template<> struct TypePlusUnevaluatedCalc<SymbolRaw> {
+    using type = brigand::list<SymbolRaw>;
+};
+
+template<typename TypeList>
+struct TypesPlusUnevaluatedCalc {
+    using ResultTypeList = brigand::flatten<brigand::transform<TypeList, TypePlusUnevaluatedCalc<brigand::_1>>>;
+    using type = VariantOrSingle<ResultTypeList>;
+};
+template<typename... Ts>
+using TypesPlusUnevaluatedCalcType = typename TypesPlusUnevaluatedCalc<brigand::list<Ts...>>::type;
+
+
+// MARK: - Serialization
+
+template<typename T>
+void serializationForCSS(StringBuilder& builder, const UnevaluatedCalc<T>& unevaluatedCalc)
+{
+    unevaluatedCalcSerialization(builder, unevaluatedCalc.calc);
+}
+
+// MARK: - Evaluation
+
 AngleRaw evaluateCalc(const UnevaluatedCalc<AngleRaw>&, const CSSCalcSymbolTable&);
 NumberRaw evaluateCalc(const UnevaluatedCalc<NumberRaw>&, const CSSCalcSymbolTable&);
 PercentRaw evaluateCalc(const UnevaluatedCalc<PercentRaw>&, const CSSCalcSymbolTable&);
@@ -57,19 +120,19 @@ LengthRaw evaluateCalc(const UnevaluatedCalc<LengthRaw>&, const CSSCalcSymbolTab
 ResolutionRaw evaluateCalc(const UnevaluatedCalc<ResolutionRaw>&, const CSSCalcSymbolTable&);
 TimeRaw evaluateCalc(const UnevaluatedCalc<TimeRaw>&, const CSSCalcSymbolTable&);
 
-template<typename Result, typename... Ts>
-auto evaluateCalc(const std::variant<Ts...>& component, const CSSCalcSymbolTable& symbolTable) -> Result
+template<typename... Ts>
+auto evaluateCalc(const std::variant<Ts...>& component, const CSSCalcSymbolTable& symbolTable) -> TypesMinusUnevaluatedCalcType<Ts...>
 {
-    return WTF::switchOn(component, [&](auto part) -> Result {
+    return WTF::switchOn(component, [&](auto part) -> TypesMinusUnevaluatedCalcType<Ts...> {
         return evaluateCalc(part, symbolTable);
     });
 }
 
-template<typename Result, typename... Ts>
-auto evaluateCalc(const std::optional<std::variant<Ts...>>& component, const CSSCalcSymbolTable& symbolTable) -> std::optional<Result>
+template<typename... Ts>
+auto evaluateCalc(const std::optional<std::variant<Ts...>>& component, const CSSCalcSymbolTable& symbolTable) -> std::optional<TypesMinusUnevaluatedCalcType<Ts...>>
 {
     if (component)
-        return evaluateCalc<Result>(*component, symbolTable);
+        return evaluateCalc(*component, symbolTable);
     return std::nullopt;
 }
 

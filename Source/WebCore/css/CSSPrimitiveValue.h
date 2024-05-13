@@ -245,6 +245,9 @@ private:
     } m_value;
 };
 
+void formatCSSNumberValue(StringBuilder&, double, ASCIILiteral suffix);
+String formatCSSNumberValue(double, ASCIILiteral suffix);
+
 template<typename TargetType> constexpr TargetType fromCSSValueID(CSSValueID);
 
 constexpr bool CSSPrimitiveValue::isFontIndependentLength(CSSUnitType type)

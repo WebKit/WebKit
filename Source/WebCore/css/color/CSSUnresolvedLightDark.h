@@ -36,19 +36,32 @@ namespace Style {
 enum class ForVisitedLink : bool;
 }
 
+class CSSUnresolvedColor;
 class Document;
 class RenderStyle;
 
-struct CSSUnresolvedLightDark {
-    friend bool operator==(const CSSUnresolvedLightDark&, const CSSUnresolvedLightDark&);
+struct CSSUnresolvedColorResolutionContext;
 
-    Ref<CSSPrimitiveValue> lightColor;
-    Ref<CSSPrimitiveValue> darkColor;
+enum class CSSUnresolvedLightDarkAppearance : bool { Light, Dark };
+
+struct CSSUnresolvedLightDark {
+    UniqueRef<CSSUnresolvedColor> lightColor;
+    UniqueRef<CSSUnresolvedColor> darkColor;
+
+    bool operator==(const CSSUnresolvedLightDark&) const;
 };
 
 void serializationForCSS(StringBuilder&, const CSSUnresolvedLightDark&);
 String serializationForCSS(const CSSUnresolvedLightDark&);
 
 StyleColor createStyleColor(const CSSUnresolvedLightDark&, const Document&, RenderStyle&, Style::ForVisitedLink);
+Color createColor(const CSSUnresolvedLightDark&, const CSSUnresolvedColorResolutionContext&);
+
+bool containsCurrentColor(const CSSUnresolvedLightDark&);
+
+constexpr bool containsColorSchemeDependentColor(const CSSUnresolvedLightDark&)
+{
+    return true;
+}
 
 } // namespace WebCore

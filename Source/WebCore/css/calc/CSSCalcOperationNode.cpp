@@ -30,6 +30,7 @@
 #include "CSSCalcInvertNode.h"
 #include "CSSCalcNegateNode.h"
 #include "CSSCalcPrimitiveValueNode.h"
+#include "CSSCalcSymbolNode.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSPrimitiveValue.h"
@@ -1170,6 +1171,10 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
     // If root is a numeric value, or a non-math function, serialize root per the normal rules for it and return the result.
     if (auto* valueNode = dynamicDowncast<CSSCalcPrimitiveValueNode>(node)) {
         builder.append(valueNode->customCSSText());
+        return;
+    }
+    if (auto* symbolNode = dynamicDowncast<CSSCalcSymbolNode>(node)) {
+        builder.append(symbolNode->customCSSText());
         return;
     }
 

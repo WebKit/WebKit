@@ -26,52 +26,64 @@
 #include "config.h"
 #include "StyleColorMix.h"
 
+#include "CSSColorMixResolver.h"
 #include "CSSColorMixSerialization.h"
-#include "CSSResolvedColorMix.h"
 #include "ColorSerialization.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-bool containsCurrentColor(const StyleColorMix& colorMix)
-{
-    return colorMix.mixComponents1.color.containsCurrentColor()
-        || colorMix.mixComponents2.color.containsCurrentColor();
-}
-
 // MARK: Resolve
 
 std::optional<Color> resolveAbsoluteComponents(const StyleColorMix& colorMix)
 {
-    if (!colorMix.mixComponents1.color.isAbsoluteColor() || !colorMix.mixComponents2.color.isAbsoluteColor())
+    if (containsNonAbsoluteColor(colorMix))
         return std::nullopt;
 
-    return mix(CSSResolvedColorMix {
-        colorMix.colorInterpolationMethod,
-        CSSResolvedColorMix::Component {
-            colorMix.mixComponents1.color.absoluteColor(),
-            colorMix.mixComponents1.percentage
-        },
-        CSSResolvedColorMix::Component {
-            colorMix.mixComponents2.color.absoluteColor(),
-            colorMix.mixComponents2.percentage
+    return mix(
+        CSSColorMixResolver {
+            colorMix.colorInterpolationMethod,
+            CSSColorMixResolver::Component {
+                colorMix.mixComponents1.color.absoluteColor(),
+                colorMix.mixComponents1.percentage
+            },
+            CSSColorMixResolver::Component {
+                colorMix.mixComponents2.color.absoluteColor(),
+                colorMix.mixComponents2.percentage
+            }
         }
-    });
+    );
 }
 
 Color resolveColor(const StyleColorMix& colorMix, const Color& currentColor)
 {
-    return mix(CSSResolvedColorMix {
-        colorMix.colorInterpolationMethod,
-        CSSResolvedColorMix::Component {
-            colorMix.mixComponents1.color.resolveColor(currentColor),
-            colorMix.mixComponents1.percentage
-        },
-        CSSResolvedColorMix::Component {
-            colorMix.mixComponents2.color.resolveColor(currentColor),
-            colorMix.mixComponents2.percentage
+    return mix(
+        CSSColorMixResolver {
+            colorMix.colorInterpolationMethod,
+            CSSColorMixResolver::Component {
+                colorMix.mixComponents1.color.resolveColor(currentColor),
+                colorMix.mixComponents1.percentage
+            },
+            CSSColorMixResolver::Component {
+                colorMix.mixComponents2.color.resolveColor(currentColor),
+                colorMix.mixComponents2.percentage
+            }
         }
-    });
+    );
+}
+
+bool containsNonAbsoluteColor(const StyleColorMix& colorMix)
+{
+    return !colorMix.mixComponents1.color.isAbsoluteColor()
+        || !colorMix.mixComponents2.color.isAbsoluteColor();
+}
+
+// MARK: - Current Color
+
+bool containsCurrentColor(const StyleColorMix& colorMix)
+{
+    return colorMix.mixComponents1.color.containsCurrentColor()
+        || colorMix.mixComponents2.color.containsCurrentColor();
 }
 
 // MARK: - Serialization
@@ -88,13 +100,13 @@ String serializationForCSS(const StyleColorMix& colorMix)
     return builder.toString();
 }
 
-// MARK: - TextStream.
+// MARK: - TextStream
 
 static WTF::TextStream& operator<<(WTF::TextStream& ts, const StyleColorMix::Component& component)
 {
     ts << component.color;
     if (component.percentage)
-        ts << " " << *component.percentage << "%";
+        ts << " " << component.percentage->value << "%";
     return ts;
 }
 

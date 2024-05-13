@@ -31,20 +31,6 @@
 
 namespace WebCore {
 
-// MARK: Current Color
-
-bool containsCurrentColor(const StyleAbsoluteColor&)
-{
-    return false;
-}
-
-// MARK: Resolve
-
-Color resolveColor(const StyleAbsoluteColor& absoluteColor, const Color&)
-{
-    return absoluteColor.color;
-}
-
 // MARK: - Serialization
 
 void serializationForCSS(StringBuilder& builder, const StyleAbsoluteColor& absoluteColor)
@@ -62,7 +48,6 @@ String serializationForCSS(const StyleAbsoluteColor& absoluteColor)
 WTF::TextStream& operator<<(WTF::TextStream& ts, const StyleAbsoluteColor& absoluteColor)
 {
     ts << "absoluteColor(" << absoluteColor.color.debugDescription() << ")";
-
     return ts;
 }
 

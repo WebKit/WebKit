@@ -44,6 +44,11 @@ CSSCalcSymbolNode::CSSCalcSymbolNode(CSSValueID symbol, CSSUnitType unitType)
 {
 }
 
+String CSSCalcSymbolNode::customCSSText() const
+{
+    return nameLiteralForSerialization(m_symbol);
+}
+
 bool CSSCalcSymbolNode::isResolvable() const
 {
     return false;

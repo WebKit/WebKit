@@ -240,13 +240,13 @@ TextStream& operator<<(TextStream& ts, const Markable<T, Traits>& item)
     return ts << "unset";
 }
 
-template<typename ItemType, size_t inlineCapacity>
-TextStream& operator<<(TextStream& ts, const Vector<ItemType, inlineCapacity>& vector)
+template<typename SizedContainer>
+TextStream& streamSizedContainer(TextStream& ts, const SizedContainer& sizedContainer)
 {
     ts << "[";
 
     unsigned count = 0;
-    for (const auto& value : vector) {
+    for (const auto& value : sizedContainer) {
         if (count)
             ts << ", ";
         ts << value;
@@ -254,10 +254,34 @@ TextStream& operator<<(TextStream& ts, const Vector<ItemType, inlineCapacity>& v
             break;
     }
 
-    if (count != vector.size())
+    if (count != sizedContainer.size())
         ts << ", ...";
 
     return ts << "]";
+}
+
+template<typename ItemType, size_t inlineCapacity>
+TextStream& operator<<(TextStream& ts, const Vector<ItemType, inlineCapacity>& vector)
+{
+    return streamSizedContainer(ts, vector);
+}
+
+template<typename ItemType>
+TextStream& operator<<(TextStream& ts, const FixedVector<ItemType>& vector)
+{
+    return streamSizedContainer(ts, vector);
+}
+
+template<typename ValueArg, typename HashArg, typename TraitsArg>
+TextStream& operator<<(TextStream& ts, const HashSet<ValueArg, HashArg, TraitsArg>& set)
+{
+    return streamSizedContainer(ts, set);
+}
+
+template<typename T, size_t size>
+TextStream& operator<<(TextStream& ts, const std::array<T, size>& array)
+{
+    return streamSizedContainer(ts, array);
 }
 
 template<typename T, typename Counter>
@@ -304,26 +328,6 @@ TextStream& operator<<(TextStream& ts, const HashMap<KeyArg, MappedArg, HashArg,
     return ts << "}";
 }
 
-template<typename ValueArg, typename HashArg, typename TraitsArg>
-TextStream& operator<<(TextStream& ts, const HashSet<ValueArg, HashArg, TraitsArg>& set)
-{
-    ts << "[";
-
-    unsigned count = 0;
-    for (const auto& item : set) {
-        if (count)
-            ts << ", ";
-        ts << item;
-        if (++count == ts.containerSizeLimit())
-            break;
-    }
-
-    if (count != set.size())
-        ts << ", ...";
-
-    return ts << "]";
-}
-
 template<typename Option>
 TextStream& operator<<(TextStream& ts, const OptionSet<Option>& options)
 {
@@ -335,26 +339,6 @@ TextStream& operator<<(TextStream& ts, const OptionSet<Option>& options)
         needComma = true;
         ts << option;
     }
-    return ts << "]";
-}
-
-template<typename T, size_t size>
-TextStream& operator<<(TextStream& ts, const std::array<T, size>& array)
-{
-    ts << "[";
-
-    unsigned count = 0;
-    for (const auto& value : array) {
-        if (count)
-            ts << ", ";
-        ts << value;
-        if (++count == ts.containerSizeLimit())
-            break;
-    }
-
-    if (count != array.size())
-        ts << ", ...";
-
     return ts << "]";
 }
 

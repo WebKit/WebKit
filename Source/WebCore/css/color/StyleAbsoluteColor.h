@@ -36,8 +36,15 @@ struct StyleAbsoluteColor {
     bool operator==(const StyleAbsoluteColor&) const = default;
 };
 
-Color resolveColor(const StyleAbsoluteColor&, const Color& currentColor);
-bool containsCurrentColor(const StyleAbsoluteColor&);
+inline Color resolveColor(const StyleAbsoluteColor& absoluteColor, const Color&)
+{
+    return absoluteColor.color;
+}
+
+constexpr bool containsCurrentColor(const StyleAbsoluteColor&)
+{
+    return false;
+}
 
 void serializationForCSS(StringBuilder&, const StyleAbsoluteColor&);
 String serializationForCSS(const StyleAbsoluteColor&);

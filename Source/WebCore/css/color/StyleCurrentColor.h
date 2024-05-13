@@ -25,18 +25,24 @@
 
 #pragma once
 
+#include "Color.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
-
-class Color;
 
 struct StyleCurrentColor {
     constexpr bool operator==(const StyleCurrentColor&) const = default;
 };
 
-Color resolveColor(const StyleCurrentColor&, const Color& currentColor);
-bool containsCurrentColor(const StyleCurrentColor&);
+inline Color resolveColor(const StyleCurrentColor&, const Color& currentColor)
+{
+    return currentColor;
+}
+
+constexpr bool containsCurrentColor(const StyleCurrentColor&)
+{
+    return true;
+}
 
 void serializationForCSS(StringBuilder&, const StyleCurrentColor&);
 String serializationForCSS(const StyleCurrentColor&);

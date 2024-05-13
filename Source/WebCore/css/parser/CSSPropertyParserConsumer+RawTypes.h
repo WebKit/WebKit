@@ -24,9 +24,23 @@
 
 #pragma once
 
+#include <optional>
 #include <variant>
+#include <wtf/Brigand.h>
+#include <wtf/Forward.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+template<typename... Ts>
+using VariantWrapper = typename std::variant<Ts...>;
+
+template<typename TypeList>
+using VariantOrSingle = std::conditional_t<
+    brigand::size<TypeList>::value == 1,
+    brigand::front<TypeList>,
+    brigand::wrap<TypeList, VariantWrapper>
+>;
 
 namespace CSSPropertyParserHelpers {
 enum class IntegerValueRange : uint8_t { All, Positive, NonNegative };
@@ -41,17 +55,21 @@ struct NoneRaw {
     bool operator==(const NoneRaw&) const = default;
 };
 
+void serializationForCSS(StringBuilder&, const NoneRaw&);
+
 struct NumberRaw {
     double value;
 
     bool operator==(const NumberRaw&) const = default;
 };
+void serializationForCSS(StringBuilder&, const NumberRaw&);
 
 struct PercentRaw {
     double value;
 
     bool operator==(const PercentRaw&) const = default;
 };
+void serializationForCSS(StringBuilder&, const PercentRaw&);
 
 struct AngleRaw {
     CSSUnitType type;
@@ -59,6 +77,7 @@ struct AngleRaw {
 
     bool operator==(const AngleRaw&) const = default;
 };
+void serializationForCSS(StringBuilder&, const AngleRaw&);
 
 struct LengthRaw {
     CSSUnitType type;
@@ -66,6 +85,7 @@ struct LengthRaw {
 
     bool operator==(const LengthRaw&) const = default;
 };
+void serializationForCSS(StringBuilder&, const LengthRaw&);
 
 struct ResolutionRaw {
     CSSUnitType type;
@@ -73,6 +93,7 @@ struct ResolutionRaw {
 
     bool operator==(const ResolutionRaw&) const = default;
 };
+void serializationForCSS(StringBuilder&, const ResolutionRaw&);
 
 struct TimeRaw {
     CSSUnitType type;
@@ -80,18 +101,58 @@ struct TimeRaw {
 
     bool operator==(const TimeRaw&) const = default;
 };
+void serializationForCSS(StringBuilder&, const TimeRaw&);
 
 struct SymbolRaw {
     CSSValueID value;
 
     bool operator==(const SymbolRaw&) const = default;
 };
+void serializationForCSS(StringBuilder&, const SymbolRaw&);
+
+// MARK: - Utility templates
+
+template<typename T>
+struct IsSymbolRaw : public std::integral_constant<bool, std::is_same_v<T, SymbolRaw>> { };
+
+template<typename TypeList>
+struct TypesMinusSymbolRaw {
+    using ResultTypeList = brigand::remove_if<TypeList, IsSymbolRaw<brigand::_1>>;
+    using type = VariantOrSingle<ResultTypeList>;
+};
+template<typename... Ts> using TypesMinusSymbolRawType = typename TypesMinusSymbolRaw<brigand::list<Ts...>>::type;
+
+template<typename TypeList>
+struct TypesPlusSymbolRaw {
+    using ResultTypeList = brigand::append<TypeList, brigand::list<SymbolRaw>>;
+    using type = VariantOrSingle<ResultTypeList>;
+};
+template<typename... Ts> using TypesPlusSymbolRawType = typename TypesPlusSymbolRaw<brigand::list<Ts...>>::type;
+
+// MARK: - Symbol replacement
 
 // Replaces the symbol with a value from the symbol table. This is only relevant
 // for SymbolRaw, so a catchall overload that implements the identity function is
 // provided to allow generic replacement.
 NumberRaw replaceSymbol(SymbolRaw, const CSSCalcSymbolTable&);
 template<typename T> T replaceSymbol(T value, const CSSCalcSymbolTable&) { return value; }
+
+// `resolve` helper to replace any SymbolRaw values with their symbol table value.
+template<typename... Ts>
+auto replaceSymbol(const std::variant<Ts...>& component, const CSSCalcSymbolTable& symbolTable) -> TypesMinusSymbolRawType<Ts...>
+{
+    return WTF::switchOn(component, [&](auto part) -> TypesMinusSymbolRawType<Ts...> {
+        return replaceSymbol(part, symbolTable);
+    });
+}
+
+template<typename... Ts>
+auto replaceSymbol(const std::optional<std::variant<Ts...>>& component, const CSSCalcSymbolTable& symbolTable) -> std::optional<TypesMinusSymbolRawType<Ts...>>
+{
+    if (component)
+        return replaceSymbol(*component, symbolTable);
+    return std::nullopt;
+}
 
 constexpr double computeMinimumValue(CSSPropertyParserHelpers::IntegerValueRange range)
 {
@@ -118,10 +179,11 @@ struct IntegerRaw {
 
 using LengthOrPercentRaw = std::variant<LengthRaw, PercentRaw>;
 using PercentOrNumberRaw = std::variant<PercentRaw, NumberRaw>;
-using NumberOrNoneRaw = std::variant<NumberRaw, NoneRaw>;
-using PercentOrNoneRaw = std::variant<PercentRaw, NoneRaw>;
-using PercentOrNumberOrNoneRaw = std::variant<PercentRaw, NumberRaw, NoneRaw>;
-using AngleOrNumberRaw = std::variant<AngleRaw, NumberRaw>;
-using AngleOrNumberOrNoneRaw = std::variant<AngleRaw, NumberRaw, NoneRaw>;
+
+template<typename... Ts>
+void serializationForCSS(StringBuilder& builder, const std::variant<Ts...>& variant)
+{
+    WTF::switchOn(variant, [&](auto& value) { serializationForCSS(builder, value); });
+}
 
 } // namespace WebCore

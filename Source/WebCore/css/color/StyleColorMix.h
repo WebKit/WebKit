@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSPropertyParserConsumer+RawTypes.h"
 #include "ColorInterpolationMethod.h"
 #include "StyleColor.h"
 #include <optional>
@@ -38,7 +39,7 @@ struct StyleColorMix {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     struct Component {
-        using Percentage = double;
+        using Percentage = PercentRaw;
 
         StyleColor color;
         std::optional<Percentage> percentage;
@@ -59,8 +60,9 @@ inline bool operator==(const UniqueRef<StyleColorMix>& a, const UniqueRef<StyleC
 }
 
 std::optional<Color> resolveAbsoluteComponents(const StyleColorMix&);
-
 Color resolveColor(const StyleColorMix&, const Color& currentColor);
+
+bool containsNonAbsoluteColor(const StyleColorMix&);
 bool containsCurrentColor(const StyleColorMix&);
 
 void serializationForCSS(StringBuilder&, const StyleColorMix&);

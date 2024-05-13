@@ -1212,30 +1212,49 @@ String CSSPrimitiveValue::stringValue() const
     }
 }
 
-static NEVER_INLINE String formatNonfiniteValue(double number, ASCIILiteral suffix)
+static NEVER_INLINE ASCIILiteral formatNonfiniteCSSNumberValuePrefix(double number)
 {
-    auto prefix = [&] {
-        if (number == std::numeric_limits<double>::infinity())
-            return "infinity"_s;
-        if (number == -std::numeric_limits<double>::infinity())
-            return "-infinity"_s;
-        ASSERT(std::isnan(number));
-        return "NaN"_s;
-    }();
-    return makeString(prefix, suffix.isEmpty() ? ""_s : " * 1"_s, suffix);
+    if (number == std::numeric_limits<double>::infinity())
+        return "infinity"_s;
+    if (number == -std::numeric_limits<double>::infinity())
+        return "-infinity"_s;
+    ASSERT(std::isnan(number));
+    return "NaN"_s;
+}
+
+static NEVER_INLINE void formatNonfiniteCSSNumberValue(StringBuilder& builder, double number, ASCIILiteral suffix)
+{
+    return builder.append(formatNonfiniteCSSNumberValuePrefix(number), suffix.isEmpty() ? ""_s : " * 1"_s, suffix);
+}
+
+static NEVER_INLINE String formatNonfiniteCSSNumberValue(double number, ASCIILiteral suffix)
+{
+    return makeString(formatNonfiniteCSSNumberValuePrefix(number), suffix.isEmpty() ? ""_s : " * 1"_s, suffix);
+}
+
+NEVER_INLINE void formatCSSNumberValue(StringBuilder& builder, double value, ASCIILiteral suffix)
+{
+    if (!std::isfinite(value))
+        return formatNonfiniteCSSNumberValue(builder, value, suffix);
+    return builder.append(FormattedCSSNumber::create(value), suffix);
+}
+
+NEVER_INLINE String formatCSSNumberValue(double value, ASCIILiteral suffix)
+{
+    if (!std::isfinite(value))
+        return formatNonfiniteCSSNumberValue(value, suffix);
+    return makeString(FormattedCSSNumber::create(value), suffix);
 }
 
 NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(ASCIILiteral suffix) const
 {
-    if (!std::isfinite(m_value.number))
-        return formatNonfiniteValue(m_value.number, suffix);
-    return makeString(FormattedCSSNumber::create(m_value.number), suffix);
+    return formatCSSNumberValue(m_value.number, suffix);
 }
 
 NEVER_INLINE String CSSPrimitiveValue::formatIntegerValue(ASCIILiteral suffix) const
 {
     if (!std::isfinite(m_value.number))
-        return formatNonfiniteValue(m_value.number, suffix);
+        return formatNonfiniteCSSNumberValue(m_value.number, suffix);
     return makeString(m_value.number, suffix);
 }
 

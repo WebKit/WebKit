@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSUnresolvedColorResolutionContext.h"
 #include "StyleColor.h"
 #include <optional>
 #include <wtf/OptionSet.h>
@@ -34,30 +35,29 @@ namespace WebCore {
 class Color;
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
+class CSSUnresolvedColor;
 
-struct ColorInterpolationMethod;
 struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
 // Options to augment color parsing.
 struct CSSColorParsingOptions {
-    bool clampHSLAtParseTime = false;
     bool acceptQuirkyColors = false;
     OptionSet<StyleColor::CSSColorType> allowedColorTypes = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System };
 };
 
-// MARK: <color-interpolation-method> (raw)
-std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange&);
+// MARK: <color> consuming (unresolved)
+std::optional<CSSUnresolvedColor> consumeUnresolvedColor(CSSParserTokenRange&, const CSSParserContext&, const CSSColorParsingOptions& = { });
 
-// MARK: <color> (raw)
-Color consumeColorRaw(CSSParserTokenRange&, const CSSParserContext&, const CSSColorParsingOptions&);
-Color parseColorRawWorkerSafe(const String&, const CSSParserContext&, const CSSColorParsingOptions&);
-Color parseColorRaw(const String&, const CSSParserContext&, const CSSColorParsingOptions&);
+// MARK: <color> consuming (CSSPrimitiveValue)
+RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, const CSSColorParsingOptions& = { });
 
-// MARK: <color> (CSSPrimitiveValue)
-RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, const CSSColorParsingOptions&);
-RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, bool acceptQuirkyColors = false, OptionSet<StyleColor::CSSColorType> = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System });
+// MARK: <color> consuming (raw)
+Color consumeColorRaw(CSSParserTokenRange&, const CSSParserContext&, const CSSColorParsingOptions&, const CSSUnresolvedColorResolutionContext& = { });
 
-}
-}
+// MARK: <color> parsing (raw)
+Color parseColorRaw(const String&, const CSSParserContext&, const CSSColorParsingOptions&, const CSSUnresolvedColorResolutionContext& = { });
+
+} // namespace CSSPropertyParserHelpers
+} // namespace WebCore

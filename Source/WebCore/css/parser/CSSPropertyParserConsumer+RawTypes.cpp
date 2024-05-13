@@ -26,8 +26,51 @@
 #include "CSSPropertyParserConsumer+RawTypes.h"
 
 #include "CSSCalcSymbolTable.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSValueKeywords.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+void serializationForCSS(StringBuilder& builder, const AngleRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+}
+
+void serializationForCSS(StringBuilder& builder, const NumberRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_NUMBER));
+}
+
+void serializationForCSS(StringBuilder& builder, const PercentRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_PERCENTAGE));
+}
+
+void serializationForCSS(StringBuilder& builder, const LengthRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+}
+
+void serializationForCSS(StringBuilder& builder, const TimeRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+}
+
+void serializationForCSS(StringBuilder& builder, const ResolutionRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+}
+
+void serializationForCSS(StringBuilder& builder, const NoneRaw&)
+{
+    builder.append("none"_s);
+}
+
+void serializationForCSS(StringBuilder& builder, const SymbolRaw& value)
+{
+    builder.append(nameLiteralForSerialization(value.value));
+}
 
 NumberRaw replaceSymbol(SymbolRaw raw, const CSSCalcSymbolTable& symbolTable)
 {

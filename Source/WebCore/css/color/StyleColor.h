@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "CSSColorDescriptors.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "StyleAbsoluteColor.h"
@@ -49,10 +50,12 @@ enum class StyleColorOptions : uint8_t {
     UseElevatedUserInterfaceLevel = 1 << 3
 };
 
-// StyleColorMix is forward declared and stored in a UniqueRef to
-// avoid unnecessarily growing the size of StyleColor for the
-// uncommon case of unresolvable color-mix() due to currentColor.
+// StyleColorMix and StyleRelativeColor are forward declared and stored in
+// UniqueRefs to avoid unnecessarily growing the size of StyleColor for the
+// uncommon case of un-resolvability due to currentColor.
 struct StyleColorMix;
+template<typename Descriptor>
+struct StyleRelativeColor;
 
 class StyleColor {
 public:
@@ -64,9 +67,24 @@ public:
     StyleColor(Color);
     StyleColor(SRGBA<uint8_t>);
 
+    StyleColor(StyleAbsoluteColor&&);
     StyleColor(StyleCurrentColor&&);
     StyleColor(StyleColorMix&&);
-    StyleColor(StyleAbsoluteColor&&);
+    StyleColor(StyleRelativeColor<RGBFunctionModernRelative>&&);
+    StyleColor(StyleRelativeColor<HSLFunctionModern>&&);
+    StyleColor(StyleRelativeColor<HWBFunction>&&);
+    StyleColor(StyleRelativeColor<LabFunction>&&);
+    StyleColor(StyleRelativeColor<LCHFunction>&&);
+    StyleColor(StyleRelativeColor<OKLabFunction>&&);
+    StyleColor(StyleRelativeColor<OKLCHFunction>&&);
+    StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>&&);
+    StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>&&);
+    StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>&&);
+    StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>&&);
+    StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>&&);
+    StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>&&);
+    StyleColor(StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>&&);
+    StyleColor(StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>&&);
 
     WEBCORE_EXPORT StyleColor(const StyleColor&);
     StyleColor& operator=(const StyleColor&);
@@ -103,6 +121,7 @@ public:
     bool containsCurrentColor() const;
     bool isCurrentColor() const;
     bool isColorMix() const;
+    bool isRelativeColor() const;
     bool isAbsoluteColor() const;
     const Color& absoluteColor() const;
 
@@ -116,16 +135,33 @@ public:
 
 private:
     using ColorKind = std::variant<
-        StyleCurrentColor,
         StyleAbsoluteColor,
-        UniqueRef<StyleColorMix>
+        StyleCurrentColor,
+        UniqueRef<StyleColorMix>,
+        UniqueRef<StyleRelativeColor<RGBFunctionModernRelative>>,
+        UniqueRef<StyleRelativeColor<HSLFunctionModern>>,
+        UniqueRef<StyleRelativeColor<HWBFunction>>,
+        UniqueRef<StyleRelativeColor<LabFunction>>,
+        UniqueRef<StyleRelativeColor<LCHFunction>>,
+        UniqueRef<StyleRelativeColor<OKLabFunction>>,
+        UniqueRef<StyleRelativeColor<OKLCHFunction>>,
+        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>>,
+        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>>,
+        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>>,
+        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>>,
+        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>>,
+        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>>,
+        UniqueRef<StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>>,
+        UniqueRef<StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>>
     >;
     StyleColor(ColorKind&&);
 
     template<typename... F>
     static decltype(auto) visit(const ColorKind&, F&&...);
 
-    static ColorKind resolveAbsoluteComponents(StyleColorMix&&);
+    template<typename StyleColorType>
+    static ColorKind resolveAbsoluteComponents(StyleColorType&&);
+
     static ColorKind copy(const ColorKind&);
 
     ColorKind m_color;

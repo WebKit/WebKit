@@ -29,9 +29,13 @@
 
 namespace WebCore {
 
+enum CSSValueID : uint16_t;
+
 class CSSCalcSymbolNode final : public CSSCalcExpressionNode {
 public:
     static Ref<CSSCalcSymbolNode> create(CSSValueID, CSSUnitType);
+
+    String customCSSText() const;
 
 private:
     CSSCalcSymbolNode(CSSValueID, CSSUnitType);

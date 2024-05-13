@@ -154,7 +154,7 @@ String serializationForRenderTreeAsText(const Color& color)
     });
 }
 
-static ASCIILiteral serialization(ColorSpace colorSpace)
+ASCIILiteral serialization(ColorSpace colorSpace)
 {
     switch (colorSpace) {
     case ColorSpace::A98RGB:

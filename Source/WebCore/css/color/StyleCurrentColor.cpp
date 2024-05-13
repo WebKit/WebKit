@@ -30,18 +30,6 @@
 
 namespace WebCore {
 
-bool containsCurrentColor(const StyleCurrentColor&)
-{
-    return true;
-}
-
-// MARK: Resolve
-
-Color resolveColor(const StyleCurrentColor&, const Color& currentColor)
-{
-    return currentColor;
-}
-
 // MARK: - Serialization
 
 void serializationForCSS(StringBuilder& builder, const StyleCurrentColor&)
@@ -54,7 +42,7 @@ String serializationForCSS(const StyleCurrentColor&)
     return "currentcolor"_s;
 }
 
-// MARK: - TextStream.
+// MARK: - TextStream
 
 WTF::TextStream& operator<<(WTF::TextStream& out, const StyleCurrentColor&)
 {
