@@ -54,10 +54,19 @@ JSC::EncodedJSValue constructJSExtendableMessageEvent(JSC::JSGlobalObject* lexic
     return JSValue::encode(object.strongWrapper.get());
 }
 
+JSC::JSValue JSExtendableMessageEvent::ports(JSC::JSGlobalObject& lexicalGlobalObject) const
+{
+    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+    return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, wrapped().cachedPorts(), [&](JSC::ThrowScope& throwScope) {
+        return toJS<IDLFrozenArray<IDLInterface<MessagePort>>>(lexicalGlobalObject, *globalObject(), throwScope, wrapped().ports());
+    });
+}
+
 template<typename Visitor>
 void JSExtendableMessageEvent::visitAdditionalChildren(Visitor& visitor)
 {
     wrapped().data().visit(visitor);
+    wrapped().cachedPorts().visit(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSExtendableMessageEvent);

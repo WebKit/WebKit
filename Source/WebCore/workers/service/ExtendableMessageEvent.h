@@ -68,6 +68,7 @@ public:
     ~ExtendableMessageEvent();
 
     JSValueInWrappedObject& data() { return m_data; }
+    JSValueInWrappedObject& cachedPorts() { return m_cachedPorts; }
 
     const String& origin() const { return m_origin; }
     const String& lastEventId() const { return m_lastEventId; }
@@ -83,6 +84,7 @@ private:
     String m_lastEventId;
     std::optional<ExtendableMessageEventSource> m_source;
     Vector<Ref<MessagePort>> m_ports;
+    JSValueInWrappedObject m_cachedPorts;
 };
 
 } // namespace WebCore

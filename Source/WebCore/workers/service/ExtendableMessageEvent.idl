@@ -35,7 +35,7 @@
     readonly attribute USVString origin;
     readonly attribute DOMString lastEventId;
     [SameObject] readonly attribute (ServiceWorkerClient or ServiceWorker or MessagePort)? source;
-    readonly attribute FrozenArray<MessagePort> ports;
+    [CustomGetter] readonly attribute FrozenArray<MessagePort> ports;
 };
 
 dictionary ExtendableMessageEventInit : ExtendableEventInit {
