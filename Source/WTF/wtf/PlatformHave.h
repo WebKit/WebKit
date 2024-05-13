@@ -177,7 +177,8 @@
 #define HAVE_PTHREAD_MAIN_NP 1
 #endif
 
-#if OS(DARWIN) && (CPU(X86_64) || CPU(ARM64)) && CPU(ADDRESS64)
+/* watchOS (ARM64_32) must not use int128_t because of wrong behavior. */
+#if (OS(DARWIN) || OS(LINUX)) && CPU(ADDRESS64)
 #define HAVE_INT128_T 1
 #endif
 
