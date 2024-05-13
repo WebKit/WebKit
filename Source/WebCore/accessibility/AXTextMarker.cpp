@@ -154,7 +154,7 @@ AXTextMarker::operator CharacterOffset() const
     } else
         setNodeIfNeeded();
 
-    CharacterOffset result(RefPtr { m_data.node.get() }.get(), m_data.characterStart, m_data.characterOffset);
+    CharacterOffset result((RefPtr { m_data.node.get() }).get(), m_data.characterStart, m_data.characterOffset);
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
     if (m_data.affinity == Affinity::Upstream)
