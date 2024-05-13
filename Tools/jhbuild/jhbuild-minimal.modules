@@ -76,7 +76,7 @@
       href="https://www.gnupg.org/ftp/gcrypt/"/>
 
   <!-- meson 0.62.2 required to build gstreamer-1.22.7 -->
-  <if condition-check="require-meson">
+  <if condition-set="require-meson">
     <distutils id="meson" python3="1">
       <branch module="mesonbuild/meson"
               version="0.62.2"
