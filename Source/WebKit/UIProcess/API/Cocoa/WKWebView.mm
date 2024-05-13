@@ -4383,6 +4383,15 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     });
 }
 
+- (BOOL)_isUnifiedTextReplacementActive
+{
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    return _page->isUnifiedTextReplacementActive();
+#else
+    return NO;
+#endif
+}
+
 @end
 
 @implementation WKWebView (WKDeprecated)

@@ -289,6 +289,16 @@ void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithUUI
 {
     [m_webView _textReplacementSession:sessionUUID updateState:state forReplacementWithUUID:replacementUUID];
 }
+
+void PageClientImplCocoa::unifiedTextReplacementActiveWillChange()
+{
+    [m_webView willChangeValueForKey:@"_unifiedTextReplacementActive"];
+}
+
+void PageClientImplCocoa::unifiedTextReplacementActiveDidChange()
+{
+    [m_webView didChangeValueForKey:@"_unifiedTextReplacementActive"];
+}
 #endif
 
 }

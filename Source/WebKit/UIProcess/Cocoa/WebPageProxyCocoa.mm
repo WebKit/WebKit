@@ -293,27 +293,6 @@ void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&&
 
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-
-void WebPageProxy::getTextIndicatorForID(WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
-{
-    if (!hasRunningProcess())
-        return;
-
-    sendWithAsyncReply(Messages::WebPage::GetTextIndicatorForID(uuid), WTFMove(completionHandler));
-}
-
-void WebPageProxy::updateTextIndicatorStyleVisibilityForID(WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
-{
-    if (!hasRunningProcess())
-        return;
-
-    sendWithAsyncReply(Messages::WebPage::UpdateTextIndicatorStyleVisibilityForID(uuid, visible), WTFMove(completionHandler));
-}
-
-#endif // UNIFIED_TEXT_REPLACEMENT
-
-
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& preferredFileName, const IPC::SharedBufferReference& bufferCopy)
@@ -1163,6 +1142,16 @@ bool WebPageProxy::shouldDeactivateMediaCapability() const
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
+void WebPageProxy::setUnifiedTextReplacementActive(bool active)
+{
+    if (m_isUnifiedTextReplacementActive == active)
+        return;
+
+    protectedPageClient()->unifiedTextReplacementActiveWillChange();
+    m_isUnifiedTextReplacementActive = active;
+    protectedPageClient()->unifiedTextReplacementActiveDidChange();
+}
+
 void WebPageProxy::willBeginTextReplacementSession(const WTF::UUID& uuid, WebUnifiedTextReplacementType type, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPage::WillBeginTextReplacementSession(uuid, type), WTFMove(completionHandler));
@@ -1198,16 +1187,6 @@ void WebPageProxy::textReplacementSessionDidReceiveEditAction(const WTF::UUID& u
     send(Messages::WebPage::TextReplacementSessionDidReceiveEditAction(uuid, action));
 }
 
-void WebPageProxy::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView)
-{
-    protectedPageClient()->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(sessionUUID, replacementUUID, selectionBoundsInRootView);
-}
-
-void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementData::State state, const WTF::UUID& replacementUUID)
-{
-    protectedPageClient()->textReplacementSessionUpdateStateForReplacementWithUUID(sessionUUID, state, replacementUUID);
-}
-
 void WebPageProxy::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
     if (!hasRunningProcess())
@@ -1222,6 +1201,43 @@ void WebPageProxy::enableTextIndicatorStyleForElementWithID(const String& elemen
         return;
 
     send(Messages::WebPage::EnableTextIndicatorStyleForElementWithID(elementID, uuid));
+}
+
+void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+{
+    if (!hasRunningProcess())
+        return;
+
+    sendWithAsyncReply(Messages::WebPage::GetTextIndicatorForID(uuid), WTFMove(completionHandler));
+}
+
+void WebPageProxy::updateTextIndicatorStyleVisibilityForID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+{
+    if (!hasRunningProcess())
+        return;
+
+    sendWithAsyncReply(Messages::WebPage::UpdateTextIndicatorStyleVisibilityForID(uuid, visible), WTFMove(completionHandler));
+}
+
+void WebPageProxy::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+{
+    MESSAGE_CHECK(sessionUUID.isValid());
+
+    protectedPageClient()->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(sessionUUID, replacementUUID, selectionBoundsInRootView);
+}
+
+void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementData::State state, const WTF::UUID& replacementUUID)
+{
+    MESSAGE_CHECK(sessionUUID.isValid());
+
+    protectedPageClient()->textReplacementSessionUpdateStateForReplacementWithUUID(sessionUUID, state, replacementUUID);
+}
+
+void WebPageProxy::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+{
+    MESSAGE_CHECK(uuid.isValid());
+
+    protectedPageClient()->removeTextIndicatorStyleForID(uuid);
 }
 
 #endif

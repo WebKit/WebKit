@@ -727,6 +727,10 @@ public:
     virtual void textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView) = 0;
 
     virtual void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID) = 0;
+
+    virtual void unifiedTextReplacementActiveWillChange() = 0;
+
+    virtual void unifiedTextReplacementActiveDidChange() = 0;
 #endif
 
 #if ENABLE(DATA_DETECTION)

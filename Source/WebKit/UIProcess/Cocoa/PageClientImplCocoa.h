@@ -118,6 +118,9 @@ public:
     void textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView) final;
 
     void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID) final;
+
+    void unifiedTextReplacementActiveWillChange() final;
+    void unifiedTextReplacementActiveDidChange() final;
 #endif
 
 protected:
