@@ -24,12 +24,12 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 SVGTextMetricsBuilder::SVGTextMetricsBuilder()
-    : m_text(0)
-    , m_run(StringView())
+    : m_run(StringView())
     , m_textPosition(0)
     , m_isComplexText(false)
     , m_totalWidth(0)

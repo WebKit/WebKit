@@ -47,7 +47,7 @@ private:
     void walkTree(RenderElement&, RenderSVGInlineText* stopAtLeaf, MeasureTextData&);
     std::tuple<unsigned, UChar> measureTextRenderer(RenderSVGInlineText&, const MeasureTextData&, std::tuple<unsigned, UChar>);
 
-    RenderSVGInlineText* m_text;
+    SingleThreadWeakPtr<RenderSVGInlineText> m_text;
     TextRun m_run;
     unsigned m_textPosition;
     bool m_isComplexText { false };

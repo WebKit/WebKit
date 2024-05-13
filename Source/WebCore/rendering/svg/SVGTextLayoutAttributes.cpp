@@ -42,4 +42,6 @@ float SVGTextLayoutAttributes::emptyValue()
     return s_emptyValue;
 }
 
+RenderSVGInlineText& SVGTextLayoutAttributes::context() { return m_context.get(); }
+const RenderSVGInlineText& SVGTextLayoutAttributes::context() const { return m_context.get(); }
 }

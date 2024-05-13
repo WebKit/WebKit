@@ -48,8 +48,8 @@ public:
     void clear();
     static float emptyValue();
 
-    RenderSVGInlineText& context() { return m_context; }
-    const RenderSVGInlineText& context() const { return m_context; }
+    RenderSVGInlineText& context();
+    const RenderSVGInlineText& context() const;
     
     SVGCharacterDataMap& characterDataMap() { return m_characterDataMap; }
     const SVGCharacterDataMap& characterDataMap() const { return m_characterDataMap; }
@@ -57,7 +57,7 @@ public:
     Vector<SVGTextMetrics>& textMetricsValues() { return m_textMetricsValues; }
 
 private:
-    RenderSVGInlineText& m_context;
+    SingleThreadWeakRef<RenderSVGInlineText> m_context;
     SVGCharacterDataMap m_characterDataMap;
     Vector<SVGTextMetrics> m_textMetricsValues;
 };
