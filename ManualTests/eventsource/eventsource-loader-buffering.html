@@ -29,7 +29,7 @@ function test_es() {
         end();
     };
     function end() {
-        if (es.readyState != es.CLOSED)
+        if (es.readyState !== es.CLOSED)
             es.close();
         log("ENDED");
     };
