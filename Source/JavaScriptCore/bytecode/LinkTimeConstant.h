@@ -135,6 +135,7 @@ class JSGlobalObject;
     v(arrayFromFastFillWithEmpty, nullptr) \
     v(arraySpeciesWatchpointIsValid, nullptr) \
     v(arraySort, nullptr) \
+    v(arrayPop, nullptr) \
     v(jsonParse, nullptr) \
     v(jsonStringify, nullptr) \
     v(String, nullptr) \

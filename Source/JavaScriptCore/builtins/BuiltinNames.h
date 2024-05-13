@@ -205,6 +205,7 @@ namespace JSC {
     macro(arrayFromFastFillWithEmpty) \
     macro(arraySpeciesWatchpointIsValid) \
     macro(arraySort) \
+    macro(arrayPop) \
     macro(jsonParse) \
     macro(jsonStringify) \
     macro(String) \
@@ -220,6 +221,7 @@ namespace JSC {
     macro(asyncFromSyncIteratorCreate) \
     macro(regExpStringIteratorCreate) \
     macro(iteratorHelperCreate) \
+    macro(failureKind) \
 
 
 namespace Symbols {

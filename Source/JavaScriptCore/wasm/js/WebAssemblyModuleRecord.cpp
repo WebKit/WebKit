@@ -101,7 +101,7 @@ void WebAssemblyModuleRecord::prepareLink(VM& vm, JSWebAssemblyInstance* instanc
     m_instance.set(vm, this, instance);
 }
 
-Synchronousness WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue)
+void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue)
 {
     VM& vm = globalObject->vm();
 
@@ -112,8 +112,6 @@ Synchronousness WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSVa
 
     JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(vm, globalObject, nullptr, exportSymbolTable, jsTDZValue(), this);
     setModuleEnvironment(globalObject, moduleEnvironment);
-
-    return Synchronousness::Sync;
 }
 
 // https://webassembly.github.io/spec/js-api/#read-the-imports

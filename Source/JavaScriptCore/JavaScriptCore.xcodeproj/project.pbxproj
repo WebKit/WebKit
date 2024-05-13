@@ -1849,7 +1849,7 @@
 		CEAE7D7B889B477BA93ABA6C /* ScriptFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 8852151A9C3842389B3215B7 /* ScriptFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CECFAD362372DAD000291599 /* FuzzerPredictions.h in Headers */ = {isa = PBXBuildFile; fileRef = CECFAD342372DAA700291599 /* FuzzerPredictions.h */; };
 		CECFAD372372DAD400291599 /* FileBasedFuzzerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = CECFAD322372DAA700291599 /* FileBasedFuzzerAgent.h */; };
-		D9722752DC54459B9125B539 /* JSModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 77B25CB2C3094A92A38E1DB3 /* JSModuleLoader.h */; };
+		D9722752DC54459B9125B539 /* JSModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 77B25CB2C3094A92A38E1DB3 /* JSModuleLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DC00039319D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h in Headers */ = {isa = PBXBuildFile; fileRef = DC00039019D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h */; };
 		DC0184191D10C1890057B053 /* JITWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = DC0184181D10C1870057B053 /* JITWorklist.h */; };
 		DC17E8181C9C91D9008A6AB3 /* ShadowChicken.h in Headers */ = {isa = PBXBuildFile; fileRef = DC17E8141C9C7FD4008A6AB3 /* ShadowChicken.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4707,6 +4707,7 @@
 		86FA9E8F142BBB2D001773B7 /* JSBoundFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBoundFunction.cpp; sourceTree = "<group>"; };
 		86FA9E90142BBB2E001773B7 /* JSBoundFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBoundFunction.h; sourceTree = "<group>"; };
 		8852151A9C3842389B3215B7 /* ScriptFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFetcher.h; sourceTree = "<group>"; };
+		8A5598AF2CB74D2300C19C3F /* ArrayHelpers.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = ArrayHelpers.js; sourceTree = "<group>"; };
 		8AA92D3D2CACA137002D872B /* JSIteratorHelperPrototype.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = JSIteratorHelperPrototype.js; sourceTree = "<group>"; };
 		8AF85BDA2C9CD1E4005E28DA /* JSIteratorHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSIteratorHelper.h; sourceTree = "<group>"; };
 		8AF85BDB2C9CD1E4005E28DA /* JSIteratorHelper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSIteratorHelper.cpp; sourceTree = "<group>"; };
@@ -9884,6 +9885,7 @@
 			isa = PBXGroup;
 			children = (
 				7CF9BC581B65D9A3009DB1EF /* ArrayConstructor.js */,
+				8A5598AF2CB74D2300C19C3F /* ArrayHelpers.js */,
 				7CF9BC591B65D9A3009DB1EF /* ArrayIteratorPrototype.js */,
 				A7D801A01880D66E0026C39B /* ArrayPrototype.js */,
 				8B1735EF1E92E52900369054 /* AsyncFromSyncIteratorPrototype.js */,

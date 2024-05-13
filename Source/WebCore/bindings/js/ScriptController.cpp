@@ -59,6 +59,7 @@
 #include "WebCoreJSClientData.h"
 #include "runtime_root.h"
 #include <JavaScriptCore/AbstractModuleRecord.h>
+#include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/ImportMap.h>
@@ -188,22 +189,20 @@ JSC::JSValue ScriptController::evaluateIgnoringException(const ScriptSourceCode&
     return evaluateInWorldIgnoringException(sourceCode, mainThreadNormalWorld());
 }
 
-void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const URL& topLevelModuleURL, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters, DOMWrapperWorld& world)
+void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters, DOMWrapperWorld& world)
 {
     JSLockHolder lock(world.vm());
 
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
-    auto* promise = JSExecState::loadModule(lexicalGlobalObject, topLevelModuleURL, JSC::JSScriptFetchParameters::create(lexicalGlobalObject.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
-    if (UNLIKELY(!promise))
-        return;
-    setupModuleScriptHandlers(moduleScript, *promise, world);
+    auto& promise = JSExecState::fetchModule(lexicalGlobalObject, moduleScript.moduleName(), JSC::JSScriptFetchParameters::create(lexicalGlobalObject.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
+    setupModuleScriptHandlers(moduleScript, promise, world);
 }
 
-void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const URL& topLevelModuleURL, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters)
+void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters)
 {
-    loadModuleScriptInWorld(moduleScript, topLevelModuleURL, WTFMove(topLevelFetchParameters), mainThreadNormalWorld());
+    loadModuleScriptInWorld(moduleScript, WTFMove(topLevelFetchParameters), mainThreadNormalWorld());
 }
 
 void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
@@ -213,10 +212,8 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
-    auto* promise = JSExecState::loadModule(lexicalGlobalObject, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
-    if (UNLIKELY(!promise))
-        return;
-    setupModuleScriptHandlers(moduleScript, *promise, world);
+    auto& promise = JSExecState::loadModule(lexicalGlobalObject, moduleScript.moduleName(), sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
+    setupModuleScriptHandlers(moduleScript, promise, world);
 }
 
 void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const ScriptSourceCode& sourceCode)
@@ -224,7 +221,7 @@ void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, cons
     loadModuleScriptInWorld(moduleScript, sourceCode, mainThreadNormalWorld());
 }
 
-JSC::JSValue ScriptController::linkAndEvaluateModuleScriptInWorld(LoadableModuleScript& moduleScript, DOMWrapperWorld& world)
+void ScriptController::evaluateModuleScriptInWorld(LoadableModuleScript& moduleScript, DOMWrapperWorld& world)
 {
     JSC::VM& vm = world.vm();
     JSLockHolder lock(vm);
@@ -236,21 +233,32 @@ JSC::JSValue ScriptController::linkAndEvaluateModuleScriptInWorld(LoadableModule
     // https://bugs.webkit.org/show_bug.cgi?id=164763
     Ref protectedFrame { m_frame };
 
-    NakedPtr<JSC::Exception> evaluationException;
-    auto returnValue = JSExecState::linkAndEvaluateModule(lexicalGlobalObject, Identifier::fromUid(vm, moduleScript.moduleKey()), jsUndefined(), evaluationException);
-    if (evaluationException) {
+    auto& promise = JSExecState::evaluateModule(lexicalGlobalObject, moduleScript.moduleName(), jsUndefined());
+
+    auto handleError = [&](JSValue error) {
         // FIXME: Give a chance to dump the stack trace if the "crossorigin" attribute allows.
         // https://bugs.webkit.org/show_bug.cgi?id=164539
         constexpr bool fromModule = true;
-        reportException(&lexicalGlobalObject, evaluationException, nullptr, fromModule);
-        return jsUndefined();
+        reportException(&lexicalGlobalObject, error, nullptr, fromModule);
+    };
+
+    if (promise.status(vm) == JSPromise::Status::Rejected) {
+        handleError(promise.result(vm));
+        return;
     }
-    return returnValue;
+
+    auto& rejectHandler = *JSNativeStdFunction::create(vm, &lexicalGlobalObject, 1, String(), [protectedFrame, handleError](JSGlobalObject* globalObject, CallFrame* callFrame) {
+        JSLockHolder lock { globalObject->vm() };
+        handleError(callFrame->argument(0));
+        return JSValue::encode(jsUndefined());
+    });
+
+    promise.then(&lexicalGlobalObject, nullptr, &rejectHandler);
 }
 
-JSC::JSValue ScriptController::linkAndEvaluateModuleScript(LoadableModuleScript& moduleScript)
+void ScriptController::evaluateModuleScript(LoadableModuleScript& moduleScript)
 {
-    return linkAndEvaluateModuleScriptInWorld(moduleScript, mainThreadNormalWorld());
+    evaluateModuleScriptInWorld(moduleScript, mainThreadNormalWorld());
 }
 
 JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModuleRecord& moduleRecord, DOMWrapperWorld& world, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
@@ -326,14 +334,6 @@ Ref<LocalFrame> ScriptController::protectedFrame() const
     return m_frame;
 }
 
-static Identifier jsValueToModuleKey(JSGlobalObject* lexicalGlobalObject, JSValue value)
-{
-    if (value.isSymbol())
-        return Identifier::fromUid(jsCast<Symbol*>(value)->privateName());
-    ASSERT(value.isString());
-    return asString(value)->toIdentifier(lexicalGlobalObject);
-}
-
 void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScriptRef, JSInternalPromise& promise, DOMWrapperWorld& world)
 {
     auto& proxy = jsWindowProxy(world);
@@ -345,12 +345,8 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
 
     RefPtr<LoadableModuleScript> moduleScript(&moduleScriptRef);
 
-    auto& fulfillHandler = *JSNativeStdFunction::create(lexicalGlobalObject.vm(), proxy.window(), 1, String(), [moduleScript](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
-        VM& vm = globalObject->vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        Identifier moduleKey = jsValueToModuleKey(globalObject, callFrame->argument(0));
-        RETURN_IF_EXCEPTION(scope, { });
-        moduleScript->notifyLoadCompleted(*moduleKey.impl());
+    auto& fulfillHandler = *JSNativeStdFunction::create(lexicalGlobalObject.vm(), proxy.window(), 0, String(), [moduleScript](JSGlobalObject*, CallFrame*) {
+        moduleScript->notifyLoadCompleted();
         return JSValue::encode(jsUndefined());
     });
 
@@ -360,7 +356,7 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
         auto scope = DECLARE_CATCH_SCOPE(vm);
         if (errorValue.isObject()) {
             auto* object = JSC::asObject(errorValue);
-            if (JSValue failureKindValue = object->getDirect(vm, builtinNames(vm).failureKindPrivateName())) {
+            if (JSValue failureKindValue = object->getDirect(vm, vm.propertyNames->builtinNames().failureKindPrivateName())) {
                 // This is host propagated error in the module loader pipeline.
                 switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
                 case ModuleFetchFailureKind::WasPropagatedError:

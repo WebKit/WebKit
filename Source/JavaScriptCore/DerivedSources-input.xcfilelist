@@ -37,6 +37,7 @@ $(PROJECT_DIR)/Scripts/xxd.pl
 $(PROJECT_DIR)/b3/air/AirOpcode.opcodes
 $(PROJECT_DIR)/b3/air/opcode_generator.rb
 $(PROJECT_DIR)/builtins/ArrayConstructor.js
+$(PROJECT_DIR)/builtins/ArrayHelpers.js
 $(PROJECT_DIR)/builtins/ArrayIteratorPrototype.js
 $(PROJECT_DIR)/builtins/ArrayPrototype.js
 $(PROJECT_DIR)/builtins/AsyncFromSyncIteratorPrototype.js

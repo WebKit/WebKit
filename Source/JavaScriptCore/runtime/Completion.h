@@ -65,18 +65,6 @@ inline JSValue profiledEvaluate(JSGlobalObject* globalObject, ProfilingReason re
 
 JS_EXPORT_PRIVATE JSValue evaluateWithScopeExtension(JSGlobalObject*, const SourceCode&, JSObject* scopeExtension, NakedPtr<Exception>& returnedException);
 
-// Load the module source and evaluate it.
-JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(JSGlobalObject*, Symbol* moduleId, JSValue parameters, JSValue scriptFetcher);
-JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(JSGlobalObject*, const String& moduleName, JSValue parameters, JSValue scriptFetcher);
-JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(JSGlobalObject*, const SourceCode&, JSValue scriptFetcher);
-
-// Fetch the module source, and instantiate the module record.
-JS_EXPORT_PRIVATE JSInternalPromise* loadModule(JSGlobalObject*, const Identifier& moduleKey, JSValue parameters, JSValue scriptFetcher);
-JS_EXPORT_PRIVATE JSInternalPromise* loadModule(JSGlobalObject*, const SourceCode&, JSValue scriptFetcher);
-
-// Link and evaluate the already linked module. This function is called in a sync manner.
-JS_EXPORT_PRIVATE JSValue linkAndEvaluateModule(JSGlobalObject*, const Identifier& moduleKey, JSValue scriptFetcher);
-
 JS_EXPORT_PRIVATE JSInternalPromise* importModule(JSGlobalObject*, const Identifier& moduleName, JSValue referrer, JSValue parameters, JSValue scriptFetcher);
 
 JS_EXPORT_PRIVATE HashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesFromDynamicImportOptions(JSGlobalObject*, JSValue, const Vector<RefPtr<UniquedStringImpl>>& supportedAssertions);

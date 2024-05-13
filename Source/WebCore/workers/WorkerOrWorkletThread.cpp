@@ -117,6 +117,14 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 {
     Ref protectedThis { *this };
 
+    CompletionHandler<void(const String&)> completionHandler = [evaluateCallback = WTFMove(m_evaluateCallback)](const String& exception) mutable {
+        if (evaluateCallback) {
+            callOnMainThread([evaluateCallback = WTFMove(evaluateCallback), exception]() mutable {
+                evaluateCallback(exception);
+            });
+        }
+    };
+
     if (isMainThread()) {
         m_globalScope = createGlobalScope();
         if (!m_globalScope)
@@ -124,13 +132,8 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 
         downcast<WorkerMainRunLoop>(m_runLoop.get()).setGlobalScope(*m_globalScope);
 
-        String exceptionMessage;
-        evaluateScriptIfNecessary(exceptionMessage);
+        evaluateScriptIfNecessary(WTFMove(completionHandler));
 
-        callOnMainThread([evaluateCallback = WTFMove(m_evaluateCallback), message = WTFMove(exceptionMessage)] {
-            if (evaluateCallback)
-                evaluateCallback(message);
-        });
         return;
     }
 
@@ -176,13 +179,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
             scriptController->forbidExecution();
     }
 
-    String exceptionMessage;
-    evaluateScriptIfNecessary(exceptionMessage);
-
-    callOnMainThread([evaluateCallback = WTFMove(m_evaluateCallback), message = exceptionMessage.isolatedCopy()] {
-        if (evaluateCallback)
-            evaluateCallback(message);
-    });
+    evaluateScriptIfNecessary(WTFMove(completionHandler));
 
     runEventLoop();
 

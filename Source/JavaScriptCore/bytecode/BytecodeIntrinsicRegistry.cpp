@@ -48,6 +48,7 @@
 #include "JSWrapForValidIterator.h"
 #include "LinkTimeConstant.h"
 #include "Nodes.h"
+#include "ScriptFetchParameters.h"
 #include "StrongInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -74,11 +75,14 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_MAX_ARRAY_INDEX.set(m_vm, jsNumber(MAX_ARRAY_INDEX));
     m_MAX_STRING_LENGTH.set(m_vm, jsNumber(JSString::MaxLength));
     m_MAX_SAFE_INTEGER.set(m_vm, jsDoubleNumber(maxSafeInteger()));
-    m_ModuleFetch.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Fetch)));
-    m_ModuleInstantiate.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Instantiate)));
-    m_ModuleSatisfy.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Satisfy)));
-    m_ModuleLink.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Link)));
-    m_ModuleReady.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Ready)));
+    m_ModuleTypeJavaScript.set(m_vm, jsNumber(static_cast<unsigned>(ScriptFetchParameters::Type::JavaScript)));
+    m_ModuleStatusNew.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::New)));
+    m_ModuleStatusUnlinked.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Unlinked)));
+    m_ModuleStatusLinking.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Linking)));
+    m_ModuleStatusLinked.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Linked)));
+    m_ModuleStatusEvaluating.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Evaluating)));
+    m_ModuleStatusEvaluatingAsync.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::EvaluatingAsync)));
+    m_ModuleStatusEvaluated.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Evaluated)));
     m_promiseRejectionReject.set(m_vm, jsNumber(static_cast<unsigned>(JSPromiseRejectionOperation::Reject)));
     m_promiseRejectionHandle.set(m_vm, jsNumber(static_cast<unsigned>(JSPromiseRejectionOperation::Handle)));
     m_promiseStatePending.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)));

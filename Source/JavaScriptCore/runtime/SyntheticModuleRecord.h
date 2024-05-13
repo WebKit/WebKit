@@ -55,7 +55,7 @@ public:
 
     static SyntheticModuleRecord* parseJSONModule(JSGlobalObject*, const Identifier& moduleKey, SourceCode&&);
 
-    Synchronousness link(JSGlobalObject*, JSValue scriptFetcher);
+    void link(JSGlobalObject*, JSValue scriptFetcher);
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
 
 private:

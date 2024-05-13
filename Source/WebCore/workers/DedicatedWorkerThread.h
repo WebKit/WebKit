@@ -48,7 +48,6 @@ public:
     virtual ~DedicatedWorkerThread();
 
     WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
-    void start() { WorkerThread::start(nullptr); }
 
 protected:
     Ref<WorkerGlobalScope> createWorkerGlobalScope(const WorkerParameters&, Ref<SecurityOrigin>&&, Ref<SecurityOrigin>&& topOrigin) override;

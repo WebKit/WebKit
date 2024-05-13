@@ -55,6 +55,7 @@
 #include "JSFunctionInlines.h"
 #include "JSInternalPromise.h"
 #include "JSLock.h"
+#include "JSModuleLoader.h"
 #include "JSNativeStdFunction.h"
 #include "JSONObject.h"
 #include "JSObjectInlines.h"
@@ -3588,6 +3589,11 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
     else
         printf("Exception: <out of memory while extracting exception string>\n");
 
+    if (exception.isUndefinedOrNull()) {
+        fflush(stdout);
+        return;
+    }
+
     Identifier nameID = Identifier::fromString(vm, "name"_s);
     CHECK_EXCEPTION();
     Identifier fileNameID = Identifier::fromString(vm, "sourceURL"_s);
@@ -3734,7 +3740,9 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
             if (isModule) {
                 // If necessary, prepend "./" so the module loader doesn't think this is a bare-name specifier.
                 fileName = isAbsolutePath(fileName) || isDottedRelativePath(fileName) ? fileName : makeString('.', pathSeparator(), fileName);
-                promise = loadAndEvaluateModule(globalObject, fileName, jsUndefined(), jsUndefined());
+                Identifier resolvedIdentifier = globalObject->moduleLoader()->resolve(globalObject, jsString(vm, fileName), jsUndefined(), jsUndefined());
+                RETURN_IF_EXCEPTION(scope, void());
+                promise = globalObject->moduleLoader()->fetchModuleAndEvaluate(globalObject, resolvedIdentifier, jsUndefined(), jsUndefined());
                 RETURN_IF_EXCEPTION(scope, void());
             } else {
                 if (!fetchScriptFromLocalFileSystem(fileName, scriptBuffer)) {
@@ -3765,7 +3773,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
         if (isModule) {
             if (!promise) {
                 // FIXME: This should use an absolute file URL https://bugs.webkit.org/show_bug.cgi?id=193077
-                promise = loadAndEvaluateModule(globalObject, jscSource(stringFromUTF(scriptBuffer), sourceOrigin, fileName, TextPosition(), SourceProviderSourceType::Module), jsUndefined());
+                promise = globalObject->moduleLoader()->loadModuleAndEvaluate(globalObject, jscSource(stringFromUTF(scriptBuffer), sourceOrigin, fileName, TextPosition(), SourceProviderSourceType::Module), jsUndefined());
                 RETURN_IF_EXCEPTION(scope, void());
             }
 

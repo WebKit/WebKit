@@ -68,9 +68,8 @@ bool LoadableModuleScript::wasCanceled() const
     return m_wasCanceled;
 }
 
-void LoadableModuleScript::notifyLoadCompleted(UniquedStringImpl& moduleKey)
+void LoadableModuleScript::notifyLoadCompleted()
 {
-    m_moduleKey = &moduleKey;
     m_isLoaded = true;
     notifyClientFinished();
 }

@@ -114,7 +114,7 @@ String WorkletGlobalScope::userAgent(const URL& url) const
 void WorkletGlobalScope::evaluate()
 {
     if (m_code)
-        script()->evaluate(*m_code);
+        script()->evaluateAndReportException(*m_code);
 }
 
 URL WorkletGlobalScope::completeURL(const String& url, ForceUTF8) const
@@ -155,7 +155,7 @@ void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, co
 void WorkletGlobalScope::fetchAndInvokeScript(const URL& moduleURL, FetchRequestCredentials credentials, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(!isMainThread());
-    script()->loadAndEvaluateModule(moduleURL, credentials, WTFMove(completionHandler));
+    script()->fetchWorkletModuleAndEvaluate(moduleURL, credentials, WTFMove(completionHandler));
 }
 
 MessagePortChannelProvider& WorkletGlobalScope::messagePortChannelProvider()

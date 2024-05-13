@@ -593,7 +593,6 @@ namespace WebCore {
     macro(encode) \
     macro(encoding) \
     macro(errorSteps) \
-    macro(failureKind) \
     macro(fatal) \
     macro(fetch) \
     macro(fetchRequest) \

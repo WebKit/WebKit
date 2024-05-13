@@ -98,15 +98,13 @@ public:
     void disableWebAssembly(const String& errorMessage);
     void setRequiresTrustedTypes(bool required);
 
-    void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
-    void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
+    void evaluateAndReportException(const ScriptSourceCode&);
+    void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException);
 
     JSC::JSValue evaluateModule(JSC::AbstractModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
 
-    void linkAndEvaluateModule(WorkerScriptFetcher&, const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
-    bool loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);
-
-    void loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials, CompletionHandler<void(std::optional<Exception>&&)>&&);
+    void loadModuleAndEvaluate(WorkerScriptFetcher&, const ScriptSourceCode&, CompletionHandler<void(const String&)>&&);
+    void fetchWorkletModuleAndEvaluate(const URL& moduleURL, FetchOptions::Credentials, CompletionHandler<void(std::optional<Exception>&&)>&&);
 
 protected:
     WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope; }

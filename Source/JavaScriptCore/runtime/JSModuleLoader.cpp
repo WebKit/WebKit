@@ -53,10 +53,11 @@ static JSC_DECLARE_HOST_FUNCTION(moduleLoaderParseModule);
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderRequestedModules);
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderRequestedModuleParameters);
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderEvaluate);
-static JSC_DECLARE_HOST_FUNCTION(moduleLoaderModuleDeclarationInstantiation);
+static JSC_DECLARE_HOST_FUNCTION(moduleLoaderLinkModuleRecord);
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderResolve);
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderFetch);
 static JSC_DECLARE_HOST_FUNCTION(moduleLoaderGetModuleNamespaceObject);
+static JSC_DECLARE_HOST_FUNCTION(moduleLoaderGetModuleType);
 
 }
 
@@ -75,30 +76,38 @@ void JSModuleLoader::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    JSMap* map = JSMap::create(vm, globalObject->mapStructure());
-    putDirect(vm, Identifier::fromString(vm, "registry"_s), map);
+    putDirect(vm, Identifier::fromString(vm, "moduleMap"_s), JSMap::create(vm, globalObject->mapStructure()));
+    putDirect(vm, Identifier::fromString(vm, "nonJSModuleArray"_s), constructEmptyArray(globalObject, nullptr));
+    putDirect(vm, Identifier::fromString(vm, "nextAsyncEvaluationValue"_s), jsNumber(1));
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getModuleNamespaceObject"_s, moduleLoaderGetModuleNamespaceObject, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getModuleType"_s, moduleLoaderGetModuleType, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("parseModule"_s, moduleLoaderParseModule, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Private);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("requestedModules"_s, moduleLoaderRequestedModules, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("requestedModuleParameters"_s, moduleLoaderRequestedModuleParameters, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("resolve"_s, moduleLoaderResolve, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Private);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("fetch"_s, moduleLoaderFetch, static_cast<unsigned>(PropertyAttribute::DontEnum), 3, ImplementationVisibility::Private);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("moduleDeclarationInstantiation"_s, moduleLoaderModuleDeclarationInstantiation, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Private);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("linkModuleRecord"_s, moduleLoaderLinkModuleRecord, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Private);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluate"_s, moduleLoaderEvaluate, static_cast<unsigned>(PropertyAttribute::DontEnum), 3, ImplementationVisibility::Private);
 
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().ensureRegisteredPublicName(), moduleLoaderEnsureRegisteredCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().requestFetchPublicName(), moduleLoaderRequestFetchCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().requestInstantiatePublicName(), moduleLoaderRequestInstantiateCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().requestSatisfyPublicName(), moduleLoaderRequestSatisfyCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().requestSatisfyUtilPublicName(), moduleLoaderRequestSatisfyUtilCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().linkPublicName(), moduleLoaderLinkCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().ensureModuleMapEntryPublicName(), moduleLoaderEnsureModuleMapEntryCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getModuleMapEntryPublicName(), moduleLoaderGetModuleMapEntryCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().hostFetchAndLoadImportedModulePublicName(), moduleLoaderHostFetchAndLoadImportedModuleCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().hostLoadImportedModulePublicName(), moduleLoaderHostLoadImportedModuleCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().fetchDescendantsOfAndLinkPublicName(), moduleLoaderFetchDescendantsOfAndLinkCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().innerModuleLoadingPublicName(), moduleLoaderInnerModuleLoadingCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().moduleLinkingPublicName(), moduleLoaderModuleLinkingCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().innerModuleLinkingPublicName(), moduleLoaderInnerModuleLinkingCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().moduleEvaluationPublicName(), moduleLoaderModuleEvaluationCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().asyncModuleEvaluationPublicName(), moduleLoaderAsyncModuleEvaluationCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().provideFetchPublicName(), moduleLoaderProvideFetchCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().loadAndEvaluateModulePublicName(), moduleLoaderLoadAndEvaluateModuleCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().innerModuleEvaluationPublicName(), moduleLoaderInnerModuleEvaluationCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().executeAsyncModulePublicName(), moduleLoaderExecuteAsyncModuleCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().asyncModuleExecutionFulfilledPublicName(), moduleLoaderAsyncModuleExecutionFulfilledCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().fetchModulePublicName(), moduleLoaderFetchModuleCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().fetchModuleAndEvaluatePublicName(), moduleLoaderFetchModuleAndEvaluateCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().loadModulePublicName(), moduleLoaderLoadModuleCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().linkAndEvaluateModulePublicName(), moduleLoaderLinkAndEvaluateModuleCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().loadModuleAndEvaluatePublicName(), moduleLoaderLoadModuleAndEvaluateCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().evaluateModulePublicName(), moduleLoaderEvaluateModuleCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().requestImportModulePublicName(), moduleLoaderRequestImportModuleCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().dependencyKeysIfEvaluatedPublicName(), moduleLoaderDependencyKeysIfEvaluatedCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
@@ -137,83 +146,126 @@ JSArray* JSModuleLoader::dependencyKeysIfEvaluated(JSGlobalObject* globalObject,
     return jsDynamicCast<JSArray*>(result);
 }
 
-JSValue JSModuleLoader::provideFetch(JSGlobalObject* globalObject, JSValue key, const SourceCode& sourceCode)
+Identifier JSModuleLoader::createIdentifierForEntryPointModule(VM&)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().provideFetchPublicName());
-    RETURN_IF_EXCEPTION(scope, { });
-    auto callData = JSC::getCallData(function);
-    ASSERT(callData.type != CallData::Type::None);
-
-    SourceCode source { sourceCode };
-    MarkedArgumentBuffer arguments;
-    arguments.append(key);
-    arguments.append(JSSourceCode::create(vm, WTFMove(source)));
-    ASSERT(!arguments.hasOverflowed());
-
-    RELEASE_AND_RETURN(scope, call(globalObject, function, callData, this, arguments));
+    // Generate the unique key for the source-provided module.
+    PrivateName privateName(PrivateName::Description, "EntryPointModule"_s);
+    return Identifier::fromUid(privateName.uid());
 }
 
-JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(JSGlobalObject* globalObject, JSValue moduleName, JSValue parameters, JSValue scriptFetcher)
+static JSInternalPromise* createRejectedPromise(ThrowScope& scope, JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().loadAndEvaluateModulePublicName());
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    auto callData = JSC::getCallData(function);
-    ASSERT(callData.type != CallData::Type::None);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(moduleName);
-    arguments.append(parameters);
-    arguments.append(scriptFetcher);
-    ASSERT(!arguments.hasOverflowed());
-
-    JSValue promise = call(globalObject, function, callData, this, arguments);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    return jsCast<JSInternalPromise*>(promise);
+    JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
+    return promise->rejectWithCaughtException(globalObject, scope);
 }
 
-JSInternalPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, JSValue moduleKey, JSValue parameters, JSValue scriptFetcher)
+JSInternalPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, const Identifier& moduleName, const SourceCode& sourceCode, JSValue scriptFetcher)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().loadModulePublicName());
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
+    auto callData = JSC::getCallData(function);
+    ASSERT(callData.type != CallData::Type::None);
+
+    SourceCode source { sourceCode };
+    MarkedArgumentBuffer arguments;
+    arguments.append(identifierToJSValue(vm, moduleName));
+    arguments.append(JSSourceCode::create(vm, WTFMove(source)));
+    arguments.append(scriptFetcher);
+    ASSERT(!arguments.hasOverflowed());
+
+    JSValue promise = call(globalObject, function, callData, this, arguments);
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
+    return jsCast<JSInternalPromise*>(promise);
+}
+
+JSInternalPromise* JSModuleLoader::loadModuleAndEvaluate(JSGlobalObject* globalObject, const SourceCode& sourceCode, JSValue scriptFetcher)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().loadModuleAndEvaluatePublicName());
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
+    auto callData = JSC::getCallData(function);
+    ASSERT(callData.type != CallData::Type::None);
+
+    Identifier moduleName = createIdentifierForEntryPointModule(vm);
+
+    SourceCode source { sourceCode };
+    MarkedArgumentBuffer arguments;
+    arguments.append(identifierToJSValue(vm, moduleName));
+    arguments.append(JSSourceCode::create(vm, WTFMove(source)));
+    arguments.append(scriptFetcher);
+    ASSERT(!arguments.hasOverflowed());
+
+    JSValue promise = call(globalObject, function, callData, this, arguments);
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
+    return jsCast<JSInternalPromise*>(promise);
+}
+
+JSInternalPromise* JSModuleLoader::fetchModule(JSGlobalObject* globalObject, const Identifier& moduleName, JSValue parameters, JSValue scriptFetcher)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().fetchModulePublicName());
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
     auto callData = JSC::getCallData(function);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
-    arguments.append(moduleKey);
+    arguments.append(identifierToJSValue(vm, moduleName));
     arguments.append(parameters);
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
     JSValue promise = call(globalObject, function, callData, this, arguments);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
     return jsCast<JSInternalPromise*>(promise);
 }
 
-JSValue JSModuleLoader::linkAndEvaluateModule(JSGlobalObject* globalObject, JSValue moduleKey, JSValue scriptFetcher)
+JSInternalPromise* JSModuleLoader::fetchModuleAndEvaluate(JSGlobalObject* globalObject, const Identifier& moduleName, JSValue parameters, JSValue scriptFetcher)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().linkAndEvaluateModulePublicName());
-    RETURN_IF_EXCEPTION(scope, { });
+    JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().fetchModuleAndEvaluatePublicName());
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
     auto callData = JSC::getCallData(function);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
-    arguments.append(moduleKey);
+    arguments.append(identifierToJSValue(vm, moduleName));
+    arguments.append(parameters);
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    RELEASE_AND_RETURN(scope, call(globalObject, function, callData, this, arguments));
+    JSValue promise = call(globalObject, function, callData, this, arguments);
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
+    return jsCast<JSInternalPromise*>(promise);
+}
+
+JSInternalPromise* JSModuleLoader::evaluateModule(JSGlobalObject* globalObject, const Identifier& moduleName, JSValue scriptFetcher)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().evaluateModulePublicName());
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
+    auto callData = JSC::getCallData(function);
+    ASSERT(callData.type != CallData::Type::None);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(identifierToJSValue(vm, moduleName));
+    arguments.append(scriptFetcher);
+    ASSERT(!arguments.hasOverflowed());
+
+    JSValue promise = call(globalObject, function, callData, this, arguments);
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
+    return jsCast<JSInternalPromise*>(promise);
 }
 
 JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, const Identifier& moduleName, JSValue referrer, JSValue parameters, JSValue scriptFetcher)
@@ -222,19 +274,19 @@ JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObj
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().requestImportModulePublicName());
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
     auto callData = JSC::getCallData(function);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
-    arguments.append(jsString(vm, moduleName.string()));
+    arguments.append(identifierToJSValue(vm, moduleName));
     arguments.append(referrer);
     arguments.append(parameters);
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
     JSValue promise = call(globalObject, function, callData, this, arguments);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, createRejectedPromise(scope, globalObject));
     return jsCast<JSInternalPromise*>(promise);
 }
 
@@ -422,7 +474,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderRequestedModuleParameters, (JSGlobalObject*
     return JSValue::encode(result);
 }
 
-JSC_DEFINE_HOST_FUNCTION(moduleLoaderModuleDeclarationInstantiation, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(moduleLoaderLinkModuleRecord, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -436,6 +488,14 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderModuleDeclarationInstantiation, (JSGlobalOb
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(jsBoolean(sync == Synchronousness::Async));
+}
+
+JSC_DEFINE_HOST_FUNCTION(moduleLoaderGetModuleType, (JSGlobalObject*, CallFrame* callFrame))
+{
+    if (auto* parameters = jsDynamicCast<JSScriptFetchParameters*>(callFrame->argument(0)))
+        return JSValue::encode(jsNumber(static_cast<uint8_t>(parameters->parameters().type())));
+
+    return JSValue::encode(jsNumber(static_cast<uint8_t>(ScriptFetchParameters::Type::JavaScript)));
 }
 
 // ------------------------------ Hook Functions ---------------------------

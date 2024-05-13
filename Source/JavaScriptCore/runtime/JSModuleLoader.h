@@ -47,12 +47,15 @@ public:
         return &vm.plainObjectSpace();
     }
 
-    enum Status {
-        Fetch = 1,
-        Instantiate,
-        Satisfy,
-        Link,
-        Ready,
+    // Implements [[Status]] of https://tc39.es/ecma262/#cyclic-module-record
+    enum class Status : uint8_t {
+        New,
+        Unlinked,
+        Linking,
+        Linked,
+        Evaluating,
+        EvaluatingAsync,
+        Evaluated,
     };
 
     static JSModuleLoader* create(JSGlobalObject* globalObject, VM& vm, Structure* structure)
@@ -66,16 +69,19 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
+    JS_EXPORT_PRIVATE static Identifier createIdentifierForEntryPointModule(VM&);
+
     // APIs to control the module loader.
-    JSValue provideFetch(JSGlobalObject*, JSValue key, const SourceCode&);
-    JSInternalPromise* loadAndEvaluateModule(JSGlobalObject*, JSValue moduleName, JSValue parameters, JSValue scriptFetcher);
-    JSInternalPromise* loadModule(JSGlobalObject*, JSValue moduleName, JSValue parameters, JSValue scriptFetcher);
-    JSValue linkAndEvaluateModule(JSGlobalObject*, JSValue moduleKey, JSValue scriptFetcher);
-    JSInternalPromise* requestImportModule(JSGlobalObject*, const Identifier&, JSValue referrer, JSValue parameters, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSInternalPromise* loadModule(JSGlobalObject*, const Identifier&, const SourceCode&, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSInternalPromise* loadModuleAndEvaluate(JSGlobalObject*, const SourceCode&, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSInternalPromise* fetchModule(JSGlobalObject*, const Identifier&, JSValue parameters, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSInternalPromise* fetchModuleAndEvaluate(JSGlobalObject*, const Identifier&, JSValue parameters, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSInternalPromise* evaluateModule(JSGlobalObject*, const Identifier&, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSInternalPromise* requestImportModule(JSGlobalObject*, const Identifier&, JSValue referrer, JSValue parameters, JSValue scriptFetcher);
 
     // Platform dependent hooked APIs.
     JSInternalPromise* importModule(JSGlobalObject*, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer);
-    Identifier resolve(JSGlobalObject*, JSValue name, JSValue referrer, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE Identifier resolve(JSGlobalObject*, JSValue name, JSValue referrer, JSValue scriptFetcher);
     JSInternalPromise* fetch(JSGlobalObject*, JSValue key, JSValue parameters, JSValue scriptFetcher);
     JSObject* createImportMetaProperties(JSGlobalObject*, JSValue key, JSModuleRecord*, JSValue scriptFetcher);
 
