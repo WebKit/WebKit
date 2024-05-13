@@ -63,6 +63,12 @@ void SimplifyMarkupCommand::doApply()
         RefPtr currentNode = startingNode;
         RefPtr<Node> topNodeWithStartingStyle;
         while (currentNode != rootNode) {
+            // FIXME: The simplification algorithm should be rewritten to eliminate redundant
+            // parents in cases where the children affect rendered content, as observed with
+            // <span><picture></picture></span>.
+            if (currentNode->hasTagName(HTMLNames::pictureTag))
+                break;
+
             if (currentNode->parentNode() != rootNode && isRemovableBlock(currentNode.get()))
                 nodesToRemove.append(*currentNode);
             
