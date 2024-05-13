@@ -385,17 +385,16 @@ Vector<uint8_t> FragmentedSharedBuffer::read(size_t offset, size_t length) const
     return data;
 }
 
-void FragmentedSharedBuffer::copyTo(void* destination, size_t length) const
+void FragmentedSharedBuffer::copyTo(std::span<uint8_t> destination) const
 {
-    return copyTo(destination, 0, length);
+    return copyTo(destination, 0);
 }
 
-void FragmentedSharedBuffer::copyTo(void* destination, size_t offset, size_t length) const
+void FragmentedSharedBuffer::copyTo(std::span<uint8_t> destination, size_t offset) const
 {
-    ASSERT(length + offset <= size());
     if (offset >= size())
         return;
-    auto remaining = std::min(length, size() - offset);
+    auto remaining = std::min(destination.size(), size() - offset);
     if (!remaining)
         return;
 
@@ -407,7 +406,7 @@ void FragmentedSharedBuffer::copyTo(void* destination, size_t offset, size_t len
         segment = std::upper_bound(segment, end(), offset, comparator);
         segment--; // std::upper_bound gives a pointer to the segment that is greater than offset. We want the segment just before that.
     }
-    auto destinationPtr = static_cast<uint8_t*>(destination);
+    auto destinationPtr = destination.data();
 
     size_t positionInSegment = offset - segment->beginPosition;
     size_t amountToCopyThisTime = std::min(remaining, segment->segment->size() - positionInSegment);

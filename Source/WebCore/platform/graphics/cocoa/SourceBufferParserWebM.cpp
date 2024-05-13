@@ -281,7 +281,7 @@ public:
                 continue;
             }
 
-            auto readResult = currentSegment.read(m_positionWithinSegment, numToRead, outputBuffer);
+            auto readResult = currentSegment.read({ outputBuffer, numToRead }, m_positionWithinSegment);
             if (!readResult.has_value())
                 return segmentReadErrorToWebmStatus(readResult.error());
             auto lastRead = readResult.value();
@@ -360,7 +360,7 @@ public:
                 if (!buffer.tryReserveInitialCapacity(numToRead))
                     return Status(Status::kNotEnoughMemory);
                 buffer.grow(numToRead);
-                auto readResult = currentSegment.read(m_positionWithinSegment, numToRead, buffer.data());
+                auto readResult = currentSegment.read(buffer.mutableSpan(), m_positionWithinSegment);
                 if (!readResult.has_value())
                     return segmentReadErrorToWebmStatus(readResult.error());
                 buffer.shrink(readResult.value());

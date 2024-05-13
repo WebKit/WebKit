@@ -80,7 +80,7 @@ public:
         enum class ReadError { EndOfFile, FatalError };
         using ReadResult = Expected<size_t, ReadError>;
 
-        ReadResult read(size_t position, size_t, uint8_t* destination) const;
+        ReadResult read(std::span<uint8_t> destination, size_t position = 0) const;
 
     private:
         std::variant<

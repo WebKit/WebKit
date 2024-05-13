@@ -203,8 +203,8 @@ public:
     bool isContiguous() const { return m_contiguous; }
 
     WEBCORE_EXPORT Ref<FragmentedSharedBuffer> copy() const;
-    WEBCORE_EXPORT void copyTo(void* destination, size_t length) const;
-    WEBCORE_EXPORT void copyTo(void* destination, size_t offset, size_t length) const;
+    WEBCORE_EXPORT void copyTo(std::span<uint8_t> destination) const;
+    WEBCORE_EXPORT void copyTo(std::span<uint8_t> destination, size_t offset) const;
 
     WEBCORE_EXPORT void forEachSegment(const Function<void(std::span<const uint8_t>)>&) const;
     WEBCORE_EXPORT bool startsWith(std::span<const uint8_t> prefix) const;

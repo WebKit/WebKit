@@ -108,16 +108,16 @@ size_t SourceBufferParser::Segment::size() const
     );
 }
 
-auto SourceBufferParser::Segment::read(size_t position, size_t sizeToRead, uint8_t* destination) const -> ReadResult
+auto SourceBufferParser::Segment::read(std::span<uint8_t> destination, size_t position) const -> ReadResult
 {
     size_t segmentSize = size();
-    sizeToRead = std::min(sizeToRead, segmentSize - std::min(position, segmentSize));
+    destination = destination.first(std::min(destination.size(), segmentSize - std::min(position, segmentSize)));
     return WTF::switchOn(m_segment,
 #if HAVE(MT_PLUGIN_FORMAT_READER)
         [&](const RetainPtr<MTPluginByteSourceRef>& byteSource) -> ReadResult
         {
             size_t sizeRead = 0;
-            auto status = MTPluginByteSourceRead(byteSource.get(), sizeToRead, CheckedInt64(position), destination, &sizeRead);
+            auto status = MTPluginByteSourceRead(byteSource.get(), destination.size(), CheckedInt64(position), destination.data(), &sizeRead);
             if (status == noErr)
                 return sizeRead;
             if (status == kMTPluginByteSourceError_EndOfStream)
@@ -127,8 +127,8 @@ auto SourceBufferParser::Segment::read(size_t position, size_t sizeToRead, uint8
 #endif
         [&](const Ref<SharedBuffer>& buffer) -> ReadResult
         {
-            buffer->copyTo(destination, position, sizeToRead);
-            return sizeToRead;
+            buffer->copyTo(destination, position);
+            return destination.size();
         }
     );
 }
@@ -140,7 +140,7 @@ Ref<SharedBuffer> SourceBufferParser::Segment::takeSharedBuffer()
         [&](RetainPtr<MTPluginByteSourceRef>&)
         {
             Vector<uint8_t> vector(size());
-            auto readResult = read(0, vector.size(), vector.data());
+            auto readResult = read(vector.mutableSpan());
             if (!readResult.has_value())
                 return SharedBuffer::create();
             vector.shrink(readResult.value());
