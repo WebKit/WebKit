@@ -960,7 +960,7 @@ double parseDate(std::span<const LChar> dateString, bool& isLocalTime)
                 // Since the passed-in length is used for both strings, the following checks that
                 // dateString has the time zone name as a prefix, not that it is equal.
                 auto tzName = span8(knownZone.tzName);
-                if (dateString.size() >= tzName.size() && equalLettersIgnoringASCIICase(dateString.data(), tzName)) {
+                if (dateString.size() >= tzName.size() && equalLettersIgnoringASCIICaseWithLength(dateString, tzName, tzName.size())) {
                     offset = knownZone.tzOffset;
                     dateString = dateString.subspan(tzName.size());
                     isLocalTime = false;

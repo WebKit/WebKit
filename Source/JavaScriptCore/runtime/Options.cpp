@@ -193,9 +193,10 @@ std::optional<T> parse(const char* string);
 template<>
 std::optional<OptionsStorage::Bool> parse(const char* string)
 {
-    if (equalLettersIgnoringASCIICase(string, "true"_s) || equalLettersIgnoringASCIICase(string, "yes"_s) || !strcmp(string, "1"))
+    auto span = WTF::span(string);
+    if (equalLettersIgnoringASCIICase(span, "true"_s) || equalLettersIgnoringASCIICase(span, "yes"_s) || !strcmp(string, "1"))
         return true;
-    if (equalLettersIgnoringASCIICase(string, "false"_s) || equalLettersIgnoringASCIICase(string, "no"_s) || !strcmp(string, "0"))
+    if (equalLettersIgnoringASCIICase(span, "false"_s) || equalLettersIgnoringASCIICase(span, "no"_s) || !strcmp(string, "0"))
         return false;
     return std::nullopt;
 }
@@ -263,13 +264,14 @@ std::optional<OptionsStorage::OptionString> parse(const char* string)
 template<>
 std::optional<OptionsStorage::GCLogLevel> parse(const char* string)
 {
-    if (equalLettersIgnoringASCIICase(string, "none"_s) || equalLettersIgnoringASCIICase(string, "no"_s) || equalLettersIgnoringASCIICase(string, "false"_s) || !strcmp(string, "0"))
+    auto span = WTF::span(string);
+    if (equalLettersIgnoringASCIICase(span, "none"_s) || equalLettersIgnoringASCIICase(span, "no"_s) || equalLettersIgnoringASCIICase(span, "false"_s) || !strcmp(string, "0"))
         return GCLogging::None;
 
-    if (equalLettersIgnoringASCIICase(string, "basic"_s) || equalLettersIgnoringASCIICase(string, "yes"_s) || equalLettersIgnoringASCIICase(string, "true"_s) || !strcmp(string, "1"))
+    if (equalLettersIgnoringASCIICase(span, "basic"_s) || equalLettersIgnoringASCIICase(span, "yes"_s) || equalLettersIgnoringASCIICase(span, "true"_s) || !strcmp(string, "1"))
         return GCLogging::Basic;
 
-    if (equalLettersIgnoringASCIICase(string, "verbose"_s) || !strcmp(string, "2"))
+    if (equalLettersIgnoringASCIICase(span, "verbose"_s) || !strcmp(string, "2"))
         return GCLogging::Verbose;
 
     return std::nullopt;
@@ -280,19 +282,20 @@ std::optional<OptionsStorage::OSLogType> parse(const char* string)
 {
     std::optional<OptionsStorage::OSLogType> result;
 
-    if (equalLettersIgnoringASCIICase(string, "none"_s) || equalLettersIgnoringASCIICase(string, "false"_s) || !strcmp(string, "0"))
+    auto span = WTF::span(string);
+    if (equalLettersIgnoringASCIICase(span, "none"_s) || equalLettersIgnoringASCIICase(span, "false"_s) || !strcmp(string, "0"))
         result = OSLogType::None;
-    else if (equalLettersIgnoringASCIICase(string, "true"_s) || !strcmp(string, "1"))
+    else if (equalLettersIgnoringASCIICase(span, "true"_s) || !strcmp(string, "1"))
         result = OSLogType::Error;
-    else if (equalLettersIgnoringASCIICase(string, "default"_s))
+    else if (equalLettersIgnoringASCIICase(span, "default"_s))
         result = OSLogType::Default;
-    else if (equalLettersIgnoringASCIICase(string, "info"_s))
+    else if (equalLettersIgnoringASCIICase(span, "info"_s))
         result = OSLogType::Info;
-    else if (equalLettersIgnoringASCIICase(string, "debug"_s))
+    else if (equalLettersIgnoringASCIICase(span, "debug"_s))
         result = OSLogType::Debug;
-    else if (equalLettersIgnoringASCIICase(string, "error"_s))
+    else if (equalLettersIgnoringASCIICase(span, "error"_s))
         result = OSLogType::Error;
-    else if (equalLettersIgnoringASCIICase(string, "fault"_s))
+    else if (equalLettersIgnoringASCIICase(span, "fault"_s))
         result = OSLogType::Fault;
 
     if (result && result.value() != Options::useOSLog())

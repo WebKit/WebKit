@@ -82,13 +82,12 @@ template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASC
 
 template<typename StringClassA, typename StringClassB> bool equalIgnoringASCIICaseCommon(const StringClassA&, const StringClassB&);
 
-template<typename CharacterType> bool equalLettersIgnoringASCIICase(const CharacterType*, std::span<const LChar> lowercaseLetters);
+template<typename CharacterType> bool equalLettersIgnoringASCIICase(std::span<const CharacterType>, std::span<const LChar> lowercaseLetters);
 template<typename CharacterType> bool equalLettersIgnoringASCIICase(std::span<const CharacterType>, ASCIILiteral);
 
 template<typename StringClass> bool equalLettersIgnoringASCIICaseCommon(const StringClass&, ASCIILiteral);
 
 bool equalIgnoringASCIICase(const char*, const char*);
-bool equalLettersIgnoringASCIICase(const char*, ASCIILiteral);
 
 // Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
 #if (CPU(X86_64) || CPU(ARM64)) && !ASAN_ENABLED
@@ -830,31 +829,30 @@ ALWAYS_INLINE static size_t reverseFindInner(std::span<const SearchCharacterType
     return delta;
 }
 
-// This is marked inline since it's mostly used in non-inline functions for each string type.
-// When used directly in code it's probably OK to be inline; maybe the loop will be unrolled.
-template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(const CharacterType* characters, std::span<const LChar> lowercaseLetters)
+template<typename CharacterType> inline bool equalLettersIgnoringASCIICaseWithLength(std::span<const CharacterType> characters, std::span<const LChar> lowercaseLetters, size_t length)
 {
-    for (auto lowercaseLetter : lowercaseLetters) {
-        if (!isASCIIAlphaCaselessEqual(*characters, lowercaseLetter))
+    ASSERT(characters.size() >= length);
+    ASSERT(lowercaseLetters.size() >= length);
+    for (size_t i = 0; i < length; ++i) {
+        if (!isASCIIAlphaCaselessEqual(characters[i], lowercaseLetters[i]))
             return false;
-        ++characters;
     }
     return true;
 }
 
-template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(const CharacterType* characters, std::span<const char> lowercaseLetters)
+template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(std::span<const CharacterType> characters, std::span<const LChar> lowercaseLetters)
+{
+    return characters.size() == lowercaseLetters.size() && equalLettersIgnoringASCIICaseWithLength(characters, lowercaseLetters, lowercaseLetters.size());
+}
+
+template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(std::span<const CharacterType> characters, std::span<const char> lowercaseLetters)
 {
     return equalLettersIgnoringASCIICase(characters, { reinterpret_cast<const LChar*>(lowercaseLetters.data()), lowercaseLetters.size() });
 }
 
-template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(const CharacterType* characters, ASCIILiteral lowercaseLetters)
+template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(std::span<const CharacterType> characters, ASCIILiteral lowercaseLetters)
 {
     return equalLettersIgnoringASCIICase(characters, lowercaseLetters.span8());
-}
-
-template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(std::span<const CharacterType> characters, ASCIILiteral literal)
-{
-    return characters.size() == literal.length() && equalLettersIgnoringASCIICase(characters, literal.span8());
 }
 
 template<typename StringClass> bool inline hasPrefixWithLettersIgnoringASCIICaseCommon(const StringClass& string, std::span<const LChar> lowercaseLetters)
@@ -867,8 +865,8 @@ template<typename StringClass> bool inline hasPrefixWithLettersIgnoringASCIICase
     ASSERT(string.length() >= lowercaseLetters.size());
 
     if (string.is8Bit())
-        return equalLettersIgnoringASCIICase(string.span8().data(), lowercaseLetters);
-    return equalLettersIgnoringASCIICase(string.span16().data(), lowercaseLetters);
+        return equalLettersIgnoringASCIICaseWithLength(string.span8(), lowercaseLetters, lowercaseLetters.size());
+    return equalLettersIgnoringASCIICaseWithLength(string.span16(), lowercaseLetters, lowercaseLetters.size());
 }
 
 // This is intentionally not marked inline because it's used often and is not speed-critical enough to want it inlined everywhere.
@@ -905,12 +903,7 @@ inline bool equalIgnoringASCIICase(const char* a, const char* b)
 
 inline bool equalLettersIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
 {
-    return a.length() == b.length() && equalLettersIgnoringASCIICase(a.span8().data(), b.span8());
-}
-
-inline bool equalLettersIgnoringASCIICase(const char* string, ASCIILiteral literal)
-{
-    return strlen(string) == literal.length() && equalLettersIgnoringASCIICase(string, literal.span8());
+    return equalLettersIgnoringASCIICase(a.span8(), b.span8());
 }
 
 inline bool equalIgnoringASCIICase(const char* string, ASCIILiteral literal)
@@ -1187,6 +1180,7 @@ ALWAYS_INLINE bool charactersContain(std::span<const CharacterType> span)
 using WTF::equalIgnoringASCIICase;
 using WTF::equalIgnoringASCIICaseWithLength;
 using WTF::equalLettersIgnoringASCIICase;
+using WTF::equalLettersIgnoringASCIICaseWithLength;
 using WTF::isLatin1;
 using WTF::span;
 using WTF::span8;

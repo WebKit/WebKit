@@ -9952,13 +9952,14 @@ RefPtr<HTMLAttachmentElement> Document::attachmentForIdentifier(const String& id
 
 static MessageSource messageSourceForWTFLogChannel(const WTFLogChannel& channel)
 {
-    if (equalLettersIgnoringASCIICase(channel.name, "media"_s))
+    auto channelName = span(channel.name);
+    if (equalLettersIgnoringASCIICase(channelName, "media"_s))
         return MessageSource::Media;
 
-    if (equalLettersIgnoringASCIICase(channel.name, "webrtc"_s))
+    if (equalLettersIgnoringASCIICase(channelName, "webrtc"_s))
         return MessageSource::WebRTC;
 
-    if (equalLettersIgnoringASCIICase(channel.name, "mediasource"_s))
+    if (equalLettersIgnoringASCIICase(channelName, "mediasource"_s))
         return MessageSource::MediaSource;
 
     return MessageSource::Other;
