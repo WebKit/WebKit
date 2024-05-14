@@ -234,8 +234,8 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned 
     // Write one row's worth of data into the frame.  
     for (int x = xBegin; x < xEnd; ++x) {
         const unsigned char sourceValue = rowBuffer[x - frameContext->xOffset];
-        if ((!frameContext->isTransparent || (sourceValue != frameContext->tpixel)) && (sourceValue < colorMap.size())) {
-            const size_t colorIndex = static_cast<size_t>(sourceValue) * 3;
+        const size_t colorIndex = static_cast<size_t>(sourceValue) * 3;
+        if ((!frameContext->isTransparent || (sourceValue != frameContext->tpixel)) && (colorIndex + 2 < colorMap.size())) {
             buffer.backingStore()->setPixel(currentAddress, colorMap[colorIndex], colorMap[colorIndex + 1], colorMap[colorIndex + 2], 255);
         } else {
             m_currentBufferSawAlpha = true;
