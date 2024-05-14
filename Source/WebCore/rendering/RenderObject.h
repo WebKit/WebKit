@@ -891,8 +891,8 @@ public:
     RepaintContainerStatus containerForRepaint() const;
     // Actually do the repaint of rect r for this object which has been computed in the coordinate space
     // of repaintContainer. If repaintContainer is nullptr, repaint via the view.
-    void repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const LayoutRect&, bool shouldClipToLayer = true) const;
-    
+    void repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, const LayoutRect&, bool shouldClipToLayer = true) const;
+
     // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
     // style changes.
     enum class ForceRepaint : bool { No, Yes };
