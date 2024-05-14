@@ -52,7 +52,7 @@ void expectEmpty(const StringBuilder& builder)
 {
     EXPECT_EQ(0U, builder.length());
     EXPECT_TRUE(builder.isEmpty());
-    EXPECT_EQ(0, builder.characters8());
+    EXPECT_EQ(0, builder.span8().data());
 }
 
 TEST(StringBuilderTest, DefaultConstructor)
@@ -87,12 +87,12 @@ TEST(StringBuilderTest, Append)
     StringBuilder builder2;
     builder2.reserveCapacity(100);
     builder2.append("xyz"_s);
-    const LChar* characters = builder2.characters8();
+    const LChar* characters = builder2.span8().data();
     builder2.append("0123456789"_s);
-    EXPECT_EQ(characters, builder2.characters8());
+    EXPECT_EQ(characters, builder2.span8().data());
     builder2.toStringPreserveCapacity(); // Test after reifyString with buffer preserved.
     builder2.append("abcd"_s);
-    EXPECT_EQ(characters, builder2.characters8());
+    EXPECT_EQ(characters, builder2.span8().data());
 
     // Test appending char32_t characters to StringBuilder.
     StringBuilder builderForUChar32Append;
@@ -230,7 +230,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     EXPECT_EQ(capacity, builder.capacity());
     EXPECT_EQ(String("0123456789"_s), string);
     EXPECT_EQ(string.impl(), builder.toStringPreserveCapacity().impl());
-    EXPECT_EQ(string.span8().data(), builder.characters8());
+    EXPECT_EQ(string.span8().data(), builder.span8().data());
 
     // Changing the StringBuilder should not affect the original result of toStringPreserveCapacity().
     builder.append("abcdefghijklmnopqrstuvwxyz"_s);
@@ -241,7 +241,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     capacity = builder.capacity();
     string = builder.toStringPreserveCapacity();
     EXPECT_EQ(capacity, builder.capacity());
-    EXPECT_EQ(string.span8().data(), builder.characters8());
+    EXPECT_EQ(string.span8().data(), builder.span8().data());
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"_s), string);
     builder.append("ABC"_s);
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"_s), string);
@@ -250,7 +250,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     capacity = builder.capacity();
     String string1 = builder.toStringPreserveCapacity();
     EXPECT_EQ(capacity, builder.capacity());
-    EXPECT_EQ(string1.span8().data(), builder.characters8());
+    EXPECT_EQ(string1.span8().data(), builder.span8().data());
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
     string1 = makeStringByReplacingAll(string1, '0', 'a');
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), builder.toStringPreserveCapacity());
@@ -260,7 +260,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     capacity = builder.capacity();
     string1 = builder.toStringPreserveCapacity();
     EXPECT_EQ(capacity, builder.capacity());
-    EXPECT_EQ(string.span8().data(), builder.characters8());
+    EXPECT_EQ(string.span8().data(), builder.span8().data());
     builder.shrink(10);
     builder.append("###"_s);
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);

@@ -1017,10 +1017,10 @@ slowPathBegin:
     } else {
         if (m_builder.is8Bit()) {
             token.stringIs8Bit = 1;
-            token.stringStart8 = m_builder.characters8();
+            token.stringStart8 = m_builder.span8().data();
         } else {
             token.stringIs8Bit = 0;
-            token.stringStart16 = m_builder.characters16();
+            token.stringStart16 = m_builder.span16().data();
         }
         token.stringOrIdentifierLength = m_builder.length();
     }
