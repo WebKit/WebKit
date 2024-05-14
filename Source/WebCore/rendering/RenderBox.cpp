@@ -2539,9 +2539,9 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
     // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
     auto position = styleToUse.position();
-    if (hasLayer() && layer()->transform()) {
+    if (hasLayer() && layer()->isTransformed()) {
         context.hasPositionFixedDescendant = position == PositionType::Fixed;
-        adjustedRects.transform(*layer()->transform(), document().deviceScaleFactor());
+        adjustedRects.transform(layer()->currentTransform(), document().deviceScaleFactor());
     } else if (position == PositionType::Fixed)
         context.hasPositionFixedDescendant = true;
 
