@@ -249,14 +249,20 @@ void GStreamerQuirksManager::setHolePunchEnabledForTesting(bool enabled)
 
 unsigned GStreamerQuirksManager::getAdditionalPlaybinFlags() const
 {
+    unsigned flags = 0;
     for (const auto& quirk : m_quirks) {
-        if (auto flags = quirk->getAdditionalPlaybinFlags()) {
-            GST_DEBUG("Quirk %s requests these playbin flags: %u", quirk->identifier(), flags);
-            return flags;
-        }
+        auto quirkFlags = quirk->getAdditionalPlaybinFlags();
+        GST_DEBUG("Quirk %s requests these playbin flags: %u", quirk->identifier(), quirkFlags);
+        flags |= quirkFlags;
     }
-    GST_DEBUG("Quirks didn't request any specific playbin flags.");
-    return getGstPlayFlag("text") | getGstPlayFlag("soft-colorbalance");
+
+    if (flags)
+        GST_DEBUG("Final quirk flags: %u", flags);
+    else {
+        GST_DEBUG("Quirks didn't request any specific playbin flags, returning default text+soft-colorbalance.");
+        flags = getGstPlayFlag("text") | getGstPlayFlag("soft-colorbalance");
+    }
+    return flags;
 }
 
 bool GStreamerQuirksManager::shouldParseIncomingLibWebRTCBitStream() const
