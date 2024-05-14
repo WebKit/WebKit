@@ -68,10 +68,34 @@ enum EventTargetInterfaceType NavigationHistoryEntry::eventTargetInterface() con
     return EventTargetInterfaceType::NavigationHistoryEntry;
 }
 
+const String& NavigationHistoryEntry::url() const
+{
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->isFullyActive())
+        return nullString();
+    return m_url.string();
+}
+
+String NavigationHistoryEntry::key() const
+{
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->isFullyActive())
+        return nullString();
+    return m_key.toString();
+}
+
+String NavigationHistoryEntry::id() const
+{
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->isFullyActive())
+        return nullString();
+    return m_id.toString();
+}
+
 uint64_t NavigationHistoryEntry::index() const
 {
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
-    if (!document || !document->domWindow())
+    if (!document || !document->isFullyActive())
         return -1;
     return document->domWindow()->navigation().entries().findIf([this] (auto& entry) {
         return entry.ptr() == this;
@@ -81,10 +105,10 @@ uint64_t NavigationHistoryEntry::index() const
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigationhistoryentry-samedocument
 bool NavigationHistoryEntry::sameDocument() const
 {
-    if (!m_documentSequenceNumber)
-        return false;
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
-    if (!document || !document->frame())
+    if (!document || !document->isFullyActive())
+        return false;
+    if (!m_documentSequenceNumber)
         return false;
     RefPtr currentItem = document->frame()->checkedHistory()->currentItem();
     if (!currentItem)
@@ -94,6 +118,10 @@ bool NavigationHistoryEntry::sameDocument() const
 
 JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) const
 {
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->isFullyActive())
+        return JSC::jsUndefined();
+
     if (!m_associatedHistoryItem)
         return JSC::jsUndefined();
 

@@ -49,9 +49,9 @@ public:
     static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, Ref<HistoryItem>& historyItem) { return adoptRef(*new NavigationHistoryEntry(context, historyItem)); }
     static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, const URL& url) { return adoptRef(*new NavigationHistoryEntry(context, url)); }
 
-    const String& url() const { return m_url.string(); };
-    String key() const { return m_key.toString(); };
-    String id() const { return m_id.toString(); };
+    const String& url() const;
+    String key() const;
+    String id() const;
     uint64_t index() const;
     bool sameDocument() const;
     JSC::JSValue getState(JSDOMGlobalObject&) const;
