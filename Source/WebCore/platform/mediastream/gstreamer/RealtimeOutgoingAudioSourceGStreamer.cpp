@@ -143,6 +143,42 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     }
 
     auto rtpCaps = adoptGRef(gst_caps_new_empty());
+
+    // When not present in caps, the vad support of the ssrc-audio-level extension should be
+    // enabled. In order to prevent caps negotiation issues with downstream, explicitely set it.
+    unsigned totalFields = gst_structure_n_fields(structure.get());
+    for (unsigned i = 0; i < totalFields; i++) {
+        auto fieldName = makeString(gst_structure_nth_field_name(structure.get(), i));
+        if (!fieldName.startsWith("extmap-"_s))
+            continue;
+
+        const auto value = gst_structure_get_value(structure.get(), fieldName.ascii().data());
+        if (!G_VALUE_HOLDS_STRING(value))
+            continue;
+
+        const char* uri = g_value_get_string(value);
+        if (!g_str_equal(uri, GST_RTP_HDREXT_BASE "ssrc-audio-level"))
+            continue;
+
+        GValue arrayValue G_VALUE_INIT;
+        gst_value_array_init(&arrayValue, 3);
+
+        GValue stringValue G_VALUE_INIT;
+        g_value_init(&stringValue, G_TYPE_STRING);
+
+        g_value_set_static_string(&stringValue, "");
+        gst_value_array_append_value(&arrayValue, &stringValue);
+
+        g_value_set_string(&stringValue, uri);
+        gst_value_array_append_value(&arrayValue, &stringValue);
+
+        g_value_set_static_string(&stringValue, "vad=on");
+        gst_value_array_append_and_take_value(&arrayValue, &stringValue);
+
+        gst_structure_remove_field(structure.get(), fieldName.ascii().data());
+        gst_structure_take_value(structure.get(), fieldName.ascii().data(), &arrayValue);
+    }
+
     gst_caps_append_structure(rtpCaps.get(), structure.release());
 
     g_object_set(m_inputCapsFilter.get(), "caps", m_inputCaps.get(), nullptr);
