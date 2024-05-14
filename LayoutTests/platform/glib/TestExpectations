@@ -1656,8 +1656,6 @@ webkit.org/b/273396 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailur
 webkit.org/b/273396 svg/animations/animateMotion-accumulate-1a.svg [ ImageOnlyFailure ]
 webkit.org/b/273396 svg/animations/animateMotion-accumulate-1b.svg [ ImageOnlyFailure ]
 
-webkit.org/b/273471 fast/canvas/canvas-composite-stroke-alpha.html [ Failure ]
-
 webkit.org/b/273472 fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
 
 webkit.org/b/273474 fast/text/emoji-variation-selector.html [ ImageOnlyFailure ]
