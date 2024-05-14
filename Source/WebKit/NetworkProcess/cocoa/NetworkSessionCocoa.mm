@@ -228,6 +228,8 @@ static String stringForTLSCipherSuite(tls_ciphersuite_t suite)
     case tls_ciphersuite_##cipher: \
         return "" #cipher ""_s
 
+// FIXME: rdar://128061442
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (suite) {
         STRINGIFY_CIPHER(RSA_WITH_3DES_EDE_CBC_SHA);
         STRINGIFY_CIPHER(RSA_WITH_AES_128_CBC_SHA);
@@ -256,6 +258,7 @@ static String stringForTLSCipherSuite(tls_ciphersuite_t suite)
         STRINGIFY_CIPHER(AES_256_GCM_SHA384);
         STRINGIFY_CIPHER(CHACHA20_POLY1305_SHA256);
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return { };
 
@@ -304,6 +307,8 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     case cipher: \
         return "" #cipher ""_s
 
+// FIXME: rdar://128061442
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (cipher) {
     STRINGIFY_CIPHER(SSL_RSA_EXPORT_WITH_RC4_40_MD5);
     STRINGIFY_CIPHER(SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5);
@@ -475,6 +480,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
         ASSERT_NOT_REACHED();
         return emptyString();
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #undef STRINGIFY_CIPHER
 }
