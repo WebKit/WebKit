@@ -887,10 +887,13 @@ struct WebCore::ShareData {
 
 enum class WebCore::ShareDataOriginator : bool
 
+using WebCore::TargetedElementIdentifiers = std::pair<WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier>;
+using WebCore::TargetedElementSelectors = Vector<HashSet<String>>;
+
 header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedElementAdjustment {
-    std::pair<WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier> identifiers
-    Vector<HashSet<String>> selectors
+    WebCore::TargetedElementIdentifiers identifiers
+    WebCore::TargetedElementSelectors selectors
 };
 
 header: <WebCore/ElementTargetingTypes.h>
