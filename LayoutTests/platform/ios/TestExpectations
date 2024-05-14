@@ -7306,3 +7306,5 @@ webkit.org/b/273984 http/tests/site-isolation/window-open-with-name-cross-site.h
 fast/viewport/ios/viewport-fit-auto.html [ Failure ]
 fast/viewport/ios/viewport-fit-contain.html [ Failure ]
 fast/viewport/ios/viewport-fit-cover.html [ Failure ]
+
+webkit.org/b/274180 editing/selection/ios/place-selection-in-overflow-area.html [ Timeout ]
