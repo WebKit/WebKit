@@ -1062,14 +1062,14 @@ void FastStringifier<CharType>::append(JSValue value)
         }
 
         auto charactersCopySameType = [&](auto span, auto* cursor) ALWAYS_INLINE_LAMBDA {
-#if CPU(ARM64) || CPU(X86_64)
+#if (CPU(ARM64) || CPU(X86_64)) && COMPILER(CLANG)
             constexpr size_t stride = 16 / sizeof(CharType);
             if (span.size() >= stride) {
                 using UnsignedType = std::make_unsigned_t<CharType>;
                 using BulkType = decltype(SIMD::load(static_cast<const UnsignedType*>(nullptr)));
-                const auto quoteMask = SIMD::splat(static_cast<UnsignedType>('"'));
-                const auto escapeMask = SIMD::splat(static_cast<UnsignedType>('\\'));
-                const auto controlMask = SIMD::splat(static_cast<UnsignedType>(' '));
+                constexpr auto quoteMask = SIMD::splat(static_cast<UnsignedType>('"'));
+                constexpr auto escapeMask = SIMD::splat(static_cast<UnsignedType>('\\'));
+                constexpr auto controlMask = SIMD::splat(static_cast<UnsignedType>(' '));
                 const auto* ptr = span.data();
                 const auto* end = ptr + span.size();
                 auto* cursorEnd = cursor + span.size();
@@ -1082,8 +1082,8 @@ void FastStringifier<CharType>::append(JSValue value)
                     auto controls = SIMD::lessThan(input, controlMask);
                     accumulated = SIMD::merge(accumulated, SIMD::merge(quotes, SIMD::merge(escapes, controls)));
                     if constexpr (sizeof(CharType) != 1) {
-                        const auto surrogateMask = SIMD::splat(static_cast<UnsignedType>(0xf800));
-                        const auto surrogateCheckMask = SIMD::splat(static_cast<UnsignedType>(0xd800));
+                        constexpr auto surrogateMask = SIMD::splat(static_cast<UnsignedType>(0xf800));
+                        constexpr auto surrogateCheckMask = SIMD::splat(static_cast<UnsignedType>(0xd800));
                         accumulated = SIMD::merge(accumulated, SIMD::equal(simde_vandq_u16(input, surrogateMask), surrogateCheckMask));
                     }
                 }
@@ -1095,8 +1095,8 @@ void FastStringifier<CharType>::append(JSValue value)
                     auto controls = SIMD::lessThan(input, controlMask);
                     accumulated = SIMD::merge(accumulated, SIMD::merge(quotes, SIMD::merge(escapes, controls)));
                     if constexpr (sizeof(CharType) != 1) {
-                        const auto surrogateMask = SIMD::splat(static_cast<UnsignedType>(0xf800));
-                        const auto surrogateCheckMask = SIMD::splat(static_cast<UnsignedType>(0xd800));
+                        constexpr auto surrogateMask = SIMD::splat(static_cast<UnsignedType>(0xf800));
+                        constexpr auto surrogateCheckMask = SIMD::splat(static_cast<UnsignedType>(0xd800));
                         accumulated = SIMD::merge(accumulated, SIMD::equal(simde_vandq_u16(input, surrogateMask), surrogateCheckMask));
                     }
                 }
@@ -1116,15 +1116,15 @@ void FastStringifier<CharType>::append(JSValue value)
         };
 
         auto charactersCopyUpconvert = [&](std::span<const LChar> span, UChar* cursor) ALWAYS_INLINE_LAMBDA {
-#if CPU(ARM64) || CPU(X86_64)
+#if (CPU(ARM64) || CPU(X86_64)) && COMPILER(CLANG)
             constexpr size_t stride = 16 / sizeof(LChar);
             if (span.size() >= stride) {
                 using UnsignedType = std::make_unsigned_t<LChar>;
                 using BulkType = decltype(SIMD::load(static_cast<const UnsignedType*>(nullptr)));
-                const auto quoteMask = SIMD::splat(static_cast<UnsignedType>('"'));
-                const auto escapeMask = SIMD::splat(static_cast<UnsignedType>('\\'));
-                const auto controlMask = SIMD::splat(static_cast<UnsignedType>(' '));
-                const auto zeros = SIMD::splat(static_cast<UnsignedType>(0));
+                constexpr auto quoteMask = SIMD::splat(static_cast<UnsignedType>('"'));
+                constexpr auto escapeMask = SIMD::splat(static_cast<UnsignedType>('\\'));
+                constexpr auto controlMask = SIMD::splat(static_cast<UnsignedType>(' '));
+                constexpr auto zeros = SIMD::splat(static_cast<UnsignedType>(0));
                 const auto* ptr = span.data();
                 const auto* end = ptr + span.size();
                 auto* cursorEnd = cursor + span.size();
