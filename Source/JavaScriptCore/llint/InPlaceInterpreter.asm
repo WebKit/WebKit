@@ -418,10 +418,9 @@ end
 end
 
 macro instructionLabel(instrname)
-    alignment()
-    unalignedglobal _ipint%instrname%_validate
-    _ipint%instrname%:
+    aligned _ipint%instrname%_validate 256
     _ipint%instrname%_validate:
+    _ipint%instrname%:
 end
 
 macro slowPathLabel(instrname)
