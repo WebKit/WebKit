@@ -1708,10 +1708,13 @@ void TypeChecker::visit(AST::ArrayTypeExpression& array)
 
         auto value = array.maybeElementCount()->constantValue();
         if (value.has_value()) {
-            auto elementCount = value->integerValue();
-            if (elementCount < 1) {
-                typeError(array.span(), "array count must be greater than 0"_s);
-                return;
+            int64_t elementCount = 0;
+            if (convertValue(array.maybeElementCount()->span(), concretize(elementCountType, m_types), value)) {
+                elementCount = value->integerValue();
+                if (elementCount < 1) {
+                    typeError(array.span(), "array count must be greater than 0"_s);
+                    return;
+                }
             }
             size = { static_cast<unsigned>(elementCount) };
         } else
