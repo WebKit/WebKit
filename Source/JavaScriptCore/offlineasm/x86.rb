@@ -115,6 +115,7 @@ def isMSVC
     $options.has_key?(:assembler) && $options[:assembler] == "MASM"
 end
 
+# TODO Cleanup unused isIntelSyntax paths
 def isIntelSyntax
     $options.has_key?(:assembler) && $options[:assembler] == "MASM"
 end
@@ -547,10 +548,10 @@ class LabelReference
         # FIXME: Implement this on platforms that aren't Mach-O.
         # https://bugs.webkit.org/show_bug.cgi?id=175104
         used
-        if !isIntelSyntax
+        if !isWin
             $asm.puts "movq #{asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
         else
-            $asm.puts "lea #{dst.x86Operand(:ptr)}, #{asmLabel}"
+            $asm.puts "lea #{asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
         end
         offsetRegister(offset, dst.x86Operand(:ptr))
     end
@@ -676,10 +677,10 @@ class Instruction
     def emitX86Lea(src, dst, kind)
         if src.is_a? LabelReference
             src.used
-            if !isIntelSyntax
+            if !isWin
                 $asm.puts "movq #{src.asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
             else
-                $asm.puts "lea #{dst.x86Operand(:ptr)}, #{src.asmLabel}"
+                $asm.puts "lea #{src.asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
             end
             if src.offset != 0
                 $asm.puts "add#{x86Suffix(kind)} #{orderOperands(const(src.offset), dst.x86Operand(kind))}"

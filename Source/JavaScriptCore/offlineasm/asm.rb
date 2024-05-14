@@ -385,7 +385,7 @@ if isMSVC
     $enableDebugAnnotations = false
 end
 
-$emitWinAsm = isMSVC ? outputFlnm.index(".asm") != nil : false
+$emitWinAsm = false # TODO Cleanup unused emitWinAsm code paths
 $commentPrefix = $emitWinAsm ? ";" : "//"
 
 # We want this in all ELF systems we support, except for C_LOOP (we'll disable it later on if we are building cloop)
