@@ -962,7 +962,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     ASSERT_NOT_REACHED();
 }
 
-void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const LayoutRect& r, bool shouldClipToLayer) const
+void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, const LayoutRect& r, bool shouldClipToLayer) const
 {
     if (r.isEmpty())
         return;
@@ -974,6 +974,9 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
         fragmentedFlow->repaintRectangleInFragments(r);
         return;
     }
+
+    if (!repaintContainer)
+        return;
 
     propagateRepaintToParentWithOutlineAutoIfNeeded(*repaintContainer, r);
 
