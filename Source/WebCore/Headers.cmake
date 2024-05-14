@@ -374,6 +374,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/gamepad/GamepadEffectParameters.h
     Modules/gamepad/GamepadHapticEffectType.h
+    Modules/gamepad/NavigatorGamepad.h
 
     Modules/geolocation/Geolocation.h
     Modules/geolocation/GeolocationClient.h

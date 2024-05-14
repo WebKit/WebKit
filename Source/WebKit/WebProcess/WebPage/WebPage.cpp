@@ -8102,6 +8102,11 @@ void WebPage::gamepadActivity(const Vector<std::optional<GamepadData>>& gamepadD
     WebGamepadProvider::singleton().gamepadActivity(gamepadDatas, eventVisibilty);
 }
 
+void WebPage::gamepadsRecentlyAccessed()
+{
+    send(Messages::WebPageProxy::GamepadsRecentlyAccessed());
+}
+
 #endif
 
 #if ENABLE(POINTER_LOCK)

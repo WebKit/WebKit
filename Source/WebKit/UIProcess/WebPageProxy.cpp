@@ -704,6 +704,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_limitsNavigationsToAppBoundDomains(m_configuration->limitsNavigationsToAppBoundDomains())
 #endif
     , m_browsingContextGroup(m_configuration->browsingContextGroup())
+#if ENABLE(GAMEPAD)
+    , m_recentGamepadAccessHysteresis([this](PAL::HysteresisState state) { recentGamepadAccessStateChanged(state); }, gamepadsRecentlyAccessedThreshold)
+#endif
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "constructor:");
 
@@ -10455,7 +10458,29 @@ void WebPageProxy::gamepadActivity(const Vector<std::optional<GamepadData>>& gam
     send(Messages::WebPage::GamepadActivity(gamepadDatas, eventVisibility));
 }
 
-#endif
+void WebPageProxy::recentGamepadAccessStateChanged(PAL::HysteresisState state)
+{
+    switch (state) {
+    case PAL::HysteresisState::Started:
+        m_uiClient->recentlyAccessedGamepadsForTesting(*this);
+        break;
+    case PAL::HysteresisState::Stopped:
+        m_uiClient->stoppedAccessingGamepadsForTesting(*this);
+    }
+}
+
+void WebPageProxy::gamepadsRecentlyAccessed()
+{
+    // FIXME: We'd like to message_check here to validate the process should be allowed
+    // to refresh the "recently using gamepads" state.
+    // We could check our "set of processes using gamepads" but it is already driven
+    // by web process messages, therefore a compromised WebProcess can add itself.
+    // Is there something meaningful we can do here?
+
+    m_recentGamepadAccessHysteresis.impulse();
+}
+
+#endif // ENABLE(GAMEPAD)
 
 void WebPageProxy::didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChallengeProxy>&& authenticationChallenge, NegotiatedLegacyTLS negotiatedLegacyTLS)
 {

@@ -242,6 +242,11 @@ public:
     virtual void updateClientBadge(WebKit::WebPageProxy&, const WebCore::SecurityOriginData&, std::optional<uint64_t>) { }
 
     virtual void didAdjustVisibilityWithSelectors(WebKit::WebPageProxy&, Vector<WTF::String>&&) { }
+
+#if ENABLE(GAMEPAD)
+    virtual void recentlyAccessedGamepadsForTesting(WebKit::WebPageProxy&) { }
+    virtual void stoppedAccessingGamepadsForTesting(WebKit::WebPageProxy&) { }
+#endif
 };
 
 } // namespace API

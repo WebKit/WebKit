@@ -204,6 +204,11 @@ private:
 
         void didAdjustVisibilityWithSelectors(WebPageProxy&, Vector<String>&&) final;
 
+#if ENABLE(GAMEPAD)
+        void recentlyAccessedGamepadsForTesting(WebPageProxy&) final;
+        void stoppedAccessingGamepadsForTesting(WebPageProxy&) final;
+#endif
+
         WeakPtr<UIDelegate> m_uiDelegate;
     };
 
@@ -312,6 +317,11 @@ private:
         bool webViewUpdatedAppBadge : 1;
         bool webViewUpdatedClientBadge : 1;
         bool webViewDidAdjustVisibilityWithSelectors : 1;
+
+#if ENABLE(GAMEPAD)
+        bool webViewRecentlyAccessedGamepadsForTesting : 1;
+        bool webViewStoppedAccessingGamepadsForTesting : 1;
+#endif
     } m_delegateMethods;
 };
 

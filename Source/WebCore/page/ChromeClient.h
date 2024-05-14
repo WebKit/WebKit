@@ -657,6 +657,10 @@ public:
 
     virtual void didAdjustVisibilityWithSelectors(Vector<String>&&) { }
 
+#if ENABLE(GAMEPAD)
+    virtual void gamepadsRecentlyAccessed() { }
+#endif
+
     WEBCORE_EXPORT virtual ~ChromeClient();
 
 protected:

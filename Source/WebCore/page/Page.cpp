@@ -106,6 +106,7 @@
 #include "ModelPlayerProvider.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
+#include "NavigatorGamepad.h"
 #include "OpportunisticTaskScheduler.h"
 #include "PageColorSampler.h"
 #include "PageConfiguration.h"
@@ -4797,6 +4798,17 @@ void Page::setDefaultSpatialTrackingLabel(const String& label)
     forEachDocument([&] (Document& document) {
         document.defaultSpatialTrackingLabelChanged(m_defaultSpatialTrackingLabel);
     });
+}
+#endif
+
+#if ENABLE(GAMEPAD)
+void Page::gamepadsRecentlyAccessed()
+{
+    if (MonotonicTime::now() - m_lastAccessNotificationTime < NavigatorGamepad::gamepadsRecentlyAccessedThreshold())
+        return;
+
+    chrome().client().gamepadsRecentlyAccessed();
+    m_lastAccessNotificationTime = MonotonicTime::now();
 }
 #endif
 

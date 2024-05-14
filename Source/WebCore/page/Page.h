@@ -1120,6 +1120,10 @@ public:
     const String& defaultSpatialTrackingLabel() const { return m_defaultSpatialTrackingLabel; }
 #endif
 
+#if ENABLE(GAMEPAD)
+    void gamepadsRecentlyAccessed();
+#endif
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1514,7 +1518,11 @@ private:
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
 #endif
-};
+
+#if ENABLE(GAMEPAD)
+    MonotonicTime m_lastAccessNotificationTime;
+#endif
+}; // class Page
 
 inline Page* Frame::page() const
 {

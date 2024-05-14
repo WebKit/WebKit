@@ -234,6 +234,11 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewUpdatedClientBadge = [delegate respondsToSelector:@selector(_webView:updatedClientBadge:fromSecurityOrigin:)];
 
     m_delegateMethods.webViewDidAdjustVisibilityWithSelectors = [delegate respondsToSelector:@selector(_webView:didAdjustVisibilityWithSelectors:)];
+
+#if ENABLE(GAMEPAD)
+    m_delegateMethods.webViewRecentlyAccessedGamepadsForTesting = [delegate respondsToSelector:@selector(_webViewRecentlyAccessedGamepadsForTesting:)];
+    m_delegateMethods.webViewStoppedAccessingGamepadsForTesting = [delegate respondsToSelector:@selector(_webViewStoppedAccessingGamepadsForTesting:)];
+#endif
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1936,6 +1941,38 @@ void UIDelegate::UIClient::didAdjustVisibilityWithSelectors(WebPageProxy&, Vecto
     RetainPtr nsSelectors = createNSArray(WTFMove(selectors));
     [delegate _webView:m_uiDelegate->m_webView.get().get() didAdjustVisibilityWithSelectors:nsSelectors.get()];
 }
+
+#if ENABLE(GAMEPAD)
+void UIDelegate::UIClient::recentlyAccessedGamepadsForTesting(WebPageProxy&)
+{
+    if (!m_uiDelegate)
+        return;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewRecentlyAccessedGamepadsForTesting)
+        return;
+
+    auto delegate = (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return;
+
+    [delegate _webViewRecentlyAccessedGamepadsForTesting:m_uiDelegate->m_webView.get().get()];
+}
+
+void UIDelegate::UIClient::stoppedAccessingGamepadsForTesting(WebPageProxy&)
+{
+    if (!m_uiDelegate)
+        return;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewStoppedAccessingGamepadsForTesting)
+        return;
+
+    auto delegate = (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return;
+
+    [delegate _webViewStoppedAccessingGamepadsForTesting:m_uiDelegate->m_webView.get().get()];
+}
+#endif
 
 #if ENABLE(WEBXR)
 static _WKXRSessionMode toWKXRSessionMode(PlatformXR::SessionMode mode)

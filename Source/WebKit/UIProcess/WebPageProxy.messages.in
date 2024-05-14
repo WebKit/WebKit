@@ -646,4 +646,8 @@ messages -> WebPageProxy {
     DidAdjustVisibilityWithSelectors(Vector<String> selectors)
 
     FrameNameChanged(WebCore::FrameIdentifier frameID, String frameName)
+
+#if ENABLE(GAMEPAD)
+    GamepadsRecentlyAccessed()
+#endif
 }

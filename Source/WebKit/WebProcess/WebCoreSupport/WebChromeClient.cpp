@@ -1823,4 +1823,11 @@ void WebChromeClient::didAdjustVisibilityWithSelectors(Vector<String>&& selector
     return protectedPage()->didAdjustVisibilityWithSelectors(WTFMove(selectors));
 }
 
+#if ENABLE(GAMEPAD)
+void WebChromeClient::gamepadsRecentlyAccessed()
+{
+    protectedPage()->gamepadsRecentlyAccessed();
+}
+#endif
+
 } // namespace WebKit

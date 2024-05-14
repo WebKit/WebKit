@@ -31,6 +31,7 @@
 #include "MessageSender.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NowPlayingMetadataObserver.h>
+#include <pal/HysteresisActivity.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/OptionSet.h>
@@ -1897,7 +1898,10 @@ public:
 #endif
 
 #if ENABLE(GAMEPAD)
+    static constexpr Seconds gamepadsRecentlyAccessedThreshold { 1500_ms };
+
     void gamepadActivity(const Vector<std::optional<GamepadData>>&, WebCore::EventMakesGamepadsVisible);
+    void gamepadsRecentlyAccessed();
 #endif
 
     void isLoadingChanged();
@@ -3049,6 +3053,10 @@ private:
 
     void frameNameChanged(IPC::Connection&, WebCore::FrameIdentifier, const String& frameName);
 
+#if ENABLE(GAMEPAD)
+    void recentGamepadAccessStateChanged(PAL::HysteresisState);
+#endif
+
     struct Internals;
     Internals& internals() { return m_internals; }
     const Internals& internals() const { return m_internals; }
@@ -3581,6 +3589,10 @@ private:
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     bool m_isUnifiedTextReplacementActive { false };
+#endif
+
+#if ENABLE(GAMEPAD)
+    PAL::HysteresisActivity m_recentGamepadAccessHysteresis;
 #endif
 };
 

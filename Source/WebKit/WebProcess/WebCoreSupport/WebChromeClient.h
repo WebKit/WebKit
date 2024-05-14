@@ -502,6 +502,10 @@ private:
 
     void didAdjustVisibilityWithSelectors(Vector<String>&&) final;
 
+#if ENABLE(GAMEPAD)
+    void gamepadsRecentlyAccessed() final;
+#endif
+
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 
