@@ -309,9 +309,11 @@ class Clone(Command):
                 sys.stderr.write('Completed clone, but failed to set parent, continuing...\n')
                 result += 1
 
+        if prefix:
+            raw_clone.title = '{} {}'.format(prefix, raw_issue.title)
+            raw_clone.commit_changes()
+
         try:
-            if prefix:
-                raw_clone.title = '{} {}'.format(prefix, raw_issue.title)
             raw_clone.priority = raw_issue.priority
             raw_clone.resolution = raw_issue.resolution
             raw_clone.commit_changes()
