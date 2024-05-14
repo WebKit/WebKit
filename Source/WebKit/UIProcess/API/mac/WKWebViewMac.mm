@@ -32,6 +32,7 @@
 #import "WKSafeBrowsingWarning.h"
 #import "WKTextFinderClient.h"
 #import "WKTextIndicatorStyleType.h"
+#import "WKWebViewConfigurationPrivate.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import "WebBackForwardList.h"
 #import "WebFrameProxy.h"

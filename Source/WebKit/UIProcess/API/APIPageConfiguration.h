@@ -308,6 +308,11 @@ public:
     void setAppHighlightsEnabled(bool enabled) { m_data.appHighlightsEnabled = enabled; }
 #endif
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    bool multiRepresentationHEICInsertionEnabled() const { return m_data.multiRepresentationHEICInsertionEnabled; }
+    void setMultiRepresentationHEICInsertionEnabled(bool enabled) { m_data.multiRepresentationHEICInsertionEnabled = enabled; }
+#endif
+
     const WTF::String& groupIdentifier() const { return m_data.groupIdentifier; }
     void setGroupIdentifier(WTF::String&& identifier) { m_data.groupIdentifier = WTFMove(identifier); }
 
@@ -551,6 +556,9 @@ private:
 #endif
 #if ENABLE(APP_HIGHLIGHTS)
         bool appHighlightsEnabled { DEFAULT_VALUE_FOR_AppHighlightsEnabled };
+#endif
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+        bool multiRepresentationHEICInsertionEnabled { false };
 #endif
         WTF::String groupIdentifier;
         WTF::String mediaContentTypesRequiringHardwareSupport;

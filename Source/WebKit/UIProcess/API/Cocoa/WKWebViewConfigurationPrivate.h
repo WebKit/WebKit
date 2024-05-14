@@ -176,6 +176,8 @@ typedef NS_ENUM(NSUInteger, _WKUnifiedTextReplacementBehavior) {
 
 @property (nonatomic, setter=_setMarkedTextInputEnabled:) BOOL _markedTextInputEnabled WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
+@property (nonatomic, setter=_setMultiRepresentationHEICInsertionEnabled:) BOOL _multiRepresentationHEICInsertionEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 @property (nonatomic, setter=_setScrollToTextFragmentIndicatorEnabled:) BOOL _scrollToTextFragmentIndicatorEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nonatomic, setter=_setScrollToTextFragmentMarkingEnabled:) BOOL _scrollToTextFragmentMarkingEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
