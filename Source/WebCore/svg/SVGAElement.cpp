@@ -85,7 +85,7 @@ void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& 
         return;
     } else if (name == SVGNames::relAttr) {
         if (m_relList)
-            m_relList->associatedAttributeValueChanged(newValue);
+            m_relList->associatedAttributeValueChanged();
     }
 
     SVGURIReference::parseAttribute(name, newValue);

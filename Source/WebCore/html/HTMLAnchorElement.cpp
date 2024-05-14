@@ -259,7 +259,7 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
         if (relValue.contains(opener))
             m_linkRelations.add(Relation::Opener);
         if (m_relList)
-            m_relList->associatedAttributeValueChanged(newValue);
+            m_relList->associatedAttributeValueChanged();
     }
 }
 

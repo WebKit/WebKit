@@ -170,7 +170,7 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
         auto didMutateRel = parsedRel != m_relAttribute;
         m_relAttribute = WTFMove(parsedRel);
         if (m_relList)
-            m_relList->associatedAttributeValueChanged(newValue);
+            m_relList->associatedAttributeValueChanged();
         if (didMutateRel)
             process();
         break;
@@ -191,7 +191,7 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     case AttributeNames::sizesAttr:
         if (m_sizes)
-            m_sizes->associatedAttributeValueChanged(newValue);
+            m_sizes->associatedAttributeValueChanged();
         process();
         break;
     case AttributeNames::mediaAttr: {

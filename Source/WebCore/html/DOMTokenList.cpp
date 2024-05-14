@@ -254,15 +254,6 @@ void DOMTokenList::updateTokensFromAttributeValue(const AtomString& value)
     m_tokensNeedUpdating = false;
 }
 
-void DOMTokenList::associatedAttributeValueChanged(const AtomString&)
-{
-    // Do not reset the DOMTokenList value if the attribute value was changed by us.
-    if (m_inUpdateAssociatedAttributeFromTokens)
-        return;
-
-    m_tokensNeedUpdating = true;
-}
-
 // https://dom.spec.whatwg.org/#concept-dtl-update
 void DOMTokenList::updateAssociatedAttributeFromTokens()
 {

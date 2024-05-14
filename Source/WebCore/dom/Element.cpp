@@ -2314,7 +2314,7 @@ void Element::classAttributeChanged(const AtomString& newClassString)
 
     if (hasRareData()) {
         if (auto* classList = elementRareData()->classList())
-            classList->associatedAttributeValueChanged(newClassString);
+            classList->associatedAttributeValueChanged();
     }
 }
 
@@ -2326,7 +2326,7 @@ void Element::partAttributeChanged(const AtomString& newValue)
 
     if (hasRareData()) {
         if (auto* partList = elementRareData()->partList())
-            partList->associatedAttributeValueChanged(newValue);
+            partList->associatedAttributeValueChanged();
     }
 
     if (needsStyleInvalidation() && isInShadowTree())

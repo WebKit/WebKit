@@ -119,7 +119,7 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
     switch (name.nodeName()) {
     case AttributeNames::sandboxAttr: {
         if (m_sandbox)
-            m_sandbox->associatedAttributeValueChanged(newValue);
+            m_sandbox->associatedAttributeValueChanged();
 
         String invalidTokens;
         setSandboxFlags(newValue.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(newValue, invalidTokens));
