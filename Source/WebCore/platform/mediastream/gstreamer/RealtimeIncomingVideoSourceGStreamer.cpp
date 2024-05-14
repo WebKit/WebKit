@@ -103,7 +103,7 @@ void RealtimeIncomingVideoSourceGStreamer::settingsDidChange(OptionSet<RealtimeM
 void RealtimeIncomingVideoSourceGStreamer::ensureSizeAndFramerate(const GRefPtr<GstCaps>& caps)
 {
     if (auto size = getVideoResolutionFromCaps(caps.get()))
-        setSize({ static_cast<int>(size->width()), static_cast<int>(size->height()) });
+        setIntrinsicSize({ static_cast<int>(size->width()), static_cast<int>(size->height()) });
 
     int frameRateNumerator, frameRateDenominator;
     auto* structure = gst_caps_get_structure(caps.get(), 0);
@@ -122,7 +122,7 @@ void RealtimeIncomingVideoSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& s
     auto* caps = gst_sample_get_caps(sample.get());
     ensureSizeAndFramerate(GRefPtr<GstCaps>(caps));
 
-    videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(sample), size(), fromGstClockTime(GST_BUFFER_PTS(buffer))), { });
+    videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(sample), intrinsicSize(), fromGstClockTime(GST_BUFFER_PTS(buffer))), { });
 }
 
 const GstStructure* RealtimeIncomingVideoSourceGStreamer::stats()
