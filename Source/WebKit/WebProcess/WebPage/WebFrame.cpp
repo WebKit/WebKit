@@ -432,6 +432,7 @@ void WebFrame::destroyProvisionalFrame()
             client->takeFrameInvalidator().release();
         if (RefPtr parent = frame->tree().parent())
             parent->tree().removeChild(*frame);
+        frame->loader().detachFromParent();
         frame->setView(nullptr);
     }
 }

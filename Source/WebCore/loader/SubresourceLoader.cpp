@@ -861,7 +861,7 @@ void SubresourceLoader::willCancel(const ResourceError& error)
     memoryCache.remove(*resource);
 }
 
-void SubresourceLoader::didCancel(const ResourceError&)
+void SubresourceLoader::didCancel(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (m_state == Uninitialized || reachedTerminalState())
         return;
@@ -872,7 +872,7 @@ void SubresourceLoader::didCancel(const ResourceError&)
     if (resource->type() != CachedResource::Type::MainResource)
         tracePoint(SubresourceLoadDidEnd, identifier().toUInt64());
 
-    resource->cancelLoad();
+    resource->cancelLoad(loadWillContinueInAnotherProcess);
     notifyDone(LoadCompletionType::Cancel);
 }
 

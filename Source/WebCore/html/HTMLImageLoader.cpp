@@ -72,13 +72,13 @@ void HTMLImageLoader::dispatchLoadEvent()
     element().dispatchEvent(Event::create(errorOccurred ? eventNames().errorEvent : eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-void HTMLImageLoader::notifyFinished(CachedResource&, const NetworkLoadMetrics& metrics)
+void HTMLImageLoader::notifyFinished(CachedResource&, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     ASSERT(image());
     CachedImage& cachedImage = *image();
 
     Ref<Element> protect(element());
-    ImageLoader::notifyFinished(cachedImage, metrics);
+    ImageLoader::notifyFinished(cachedImage, metrics, loadWillContinueInAnotherProcess);
 
     bool loadError = cachedImage.errorOccurred() || cachedImage.response().httpStatusCode() >= 400;
     if (!loadError) {

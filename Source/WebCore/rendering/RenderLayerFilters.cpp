@@ -67,7 +67,7 @@ bool RenderLayerFilters::hasSourceImage() const
     return m_targetSwitcher && m_targetSwitcher->hasSourceImage();
 }
 
-void RenderLayerFilters::notifyFinished(CachedResource&, const NetworkLoadMetrics&)
+void RenderLayerFilters::notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     // FIXME: This really shouldn't have to invalidate layer composition,
     // but tests like css3/filters/effect-reference-delete.html fail if that doesn't happen.

@@ -2581,7 +2581,17 @@ TEST(SiteIsolation, NavigateIframeToProvisionalNavigationFailure)
     checkProvisionalLoadFailure(@"https://webkit.org/terminate");
     checkProvisionalLoadFailure(@"https://apple.com/terminate");
 
-    // FIXME: Add tests navigating the iframe to each redirect_to_*_terminate.
+    checkProvisionalLoadFailure(@"https://example.com/redirect_to_example_terminate");
+    checkProvisionalLoadFailure(@"https://webkit.org/redirect_to_example_terminate");
+    checkProvisionalLoadFailure(@"https://apple.com/redirect_to_example_terminate");
+
+    checkProvisionalLoadFailure(@"https://example.com/redirect_to_webkit_terminate");
+    checkProvisionalLoadFailure(@"https://webkit.org/redirect_to_webkit_terminate");
+    checkProvisionalLoadFailure(@"https://apple.com/redirect_to_webkit_terminate");
+
+    checkProvisionalLoadFailure(@"https://example.com/redirect_to_apple_terminate");
+    checkProvisionalLoadFailure(@"https://webkit.org/redirect_to_apple_terminate");
+    checkProvisionalLoadFailure(@"https://apple.com/redirect_to_apple_terminate");
 }
 
 TEST(SiteIsolation, CancelProvisionalLoad)

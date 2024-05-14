@@ -2349,7 +2349,7 @@ void FrameLoader::commitProvisionalLoad()
         }
 
         // FIXME: Why only this frame and not parent frames?
-        checkLoadCompleteForThisFrame();
+        checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess::No);
     }
 }
 
@@ -2721,7 +2721,7 @@ void FrameLoader::handleLoadFailureRecovery(DocumentLoader& documentLoader, cons
     protectedFrame()->checkedNavigationScheduler()->scheduleRedirect(*m_frame->protectedDocument(), 0, url, IsMetaRefresh::No);
 }
 
-void FrameLoader::checkLoadCompleteForThisFrame()
+void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     ASSERT(m_client->hasWebView());
 
@@ -2765,8 +2765,10 @@ void FrameLoader::checkLoadCompleteForThisFrame()
         if (!provisionalDocumentLoader->isLoadingInAPISense() || provisionalDocumentLoader->isStopping()) {
             FRAMELOADER_RELEASE_LOG(ResourceLoading, "checkLoadCompleteForThisFrame: Failed provisional load (isTimeout = %d, isCancellation = %d, errorCode = %d, httpsFirstApplicable = %d)", error.isTimeout(), error.isCancellation(), error.errorCode(), isHTTPSFirstApplicable);
 
-            auto willInternallyHandleFailure = (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::NoRecovery || (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && (!isHTTPSFirstApplicable || isHTTPFallbackInProgress()))) ? WillInternallyHandleFailure::No : WillInternallyHandleFailure::Yes;
-            dispatchDidFailProvisionalLoad(*provisionalDocumentLoader, error, willInternallyHandleFailure);
+            if (loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::No) {
+                auto willInternallyHandleFailure = (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::NoRecovery || (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && (!isHTTPSFirstApplicable || isHTTPFallbackInProgress()))) ? WillInternallyHandleFailure::No : WillInternallyHandleFailure::Yes;
+                dispatchDidFailProvisionalLoad(*provisionalDocumentLoader, error, willInternallyHandleFailure);
+            }
 
             ASSERT(!provisionalDocumentLoader->isLoading());
 
@@ -3014,7 +3016,7 @@ void FrameLoader::closeAndRemoveChild(LocalFrame& child)
 }
 
 // Called every time a resource is completely loaded or an error is received.
-void FrameLoader::checkLoadComplete()
+void FrameLoader::checkLoadComplete(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     m_shouldCallCheckLoadComplete = false;
 
@@ -3034,7 +3036,7 @@ void FrameLoader::checkLoadComplete()
     // To process children before their parents, iterate the vector backwards.
     for (auto frame = frames.rbegin(); frame != frames.rend(); ++frame) {
         if ((*frame)->page())
-            (*frame)->checkedLoader()->checkLoadCompleteForThisFrame();
+            (*frame)->checkedLoader()->checkLoadCompleteForThisFrame(loadWillContinueInAnotherProcess);
     }
 }
 
@@ -3510,7 +3512,7 @@ ResourceLoaderIdentifier FrameLoader::loadResourceSynchronously(const ResourceRe
     return identifier;
 }
 
-void FrameLoader::receivedMainResourceError(const ResourceError& error)
+void FrameLoader::receivedMainResourceError(const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     // Retain because the stop may release the last reference to it.
     Ref frame = m_frame.get();
@@ -3544,7 +3546,7 @@ void FrameLoader::receivedMainResourceError(const ResourceError& error)
 
     checkCompleted();
     if (frame->page())
-        checkLoadComplete();
+        checkLoadComplete(loadWillContinueInAnotherProcess);
 }
 
 void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, const SecurityOrigin* requesterOrigin, bool shouldContinue)

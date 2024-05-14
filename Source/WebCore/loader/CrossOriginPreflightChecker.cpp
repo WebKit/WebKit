@@ -93,7 +93,7 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     loader.preflightSuccess(WTFMove(request));
 }
 
-void CrossOriginPreflightChecker::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void CrossOriginPreflightChecker::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
     Ref loader = m_loader.get();

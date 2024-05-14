@@ -1611,7 +1611,7 @@ VisibleInViewportState RenderElement::imageVisibleInViewport(const Document& doc
     return isVisibleInViewport() ? VisibleInViewportState::Yes : VisibleInViewportState::No;
 }
 
-void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     document().protectedCachedResourceLoader()->notifyFinished(resource);
 }

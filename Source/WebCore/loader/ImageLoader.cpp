@@ -395,7 +395,7 @@ inline void ImageLoader::rejectDecodePromises(ASCIILiteral message)
     rejectPromises(m_decodingPromises, message);
 }
 
-void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " notifyFinished - hasPendingLoadEvent " << m_hasPendingLoadEvent);
 

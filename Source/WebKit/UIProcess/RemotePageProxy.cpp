@@ -192,9 +192,6 @@ void RemotePageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameInfo, 
     if (!frame)
         return;
 
-    if (auto* provisionalFrame = frame->provisionalFrame(); provisionalFrame && provisionalFrame->isCrossSiteRedirect())
-        return;
-
     m_page->didFailProvisionalLoadForFrameShared(m_process.copyRef(), *frame, WTFMove(frameInfo), WTFMove(request), navigationID, provisionalURL, error, willContinueLoading, userData, willInternallyHandleFailure);
 }
 

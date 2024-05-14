@@ -23,6 +23,7 @@
 #pragma once
 
 #include "CachedResource.h"
+#include "FrameLoaderTypes.h"
 
 namespace WebCore {
 
@@ -61,7 +62,7 @@ private:
 
     void setBodyDataFrom(const CachedResource&) final;
 
-    void checkNotify(const NetworkLoadMetrics&) final;
+    void checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) final;
 
     Ref<TextResourceDecoder> m_decoder;
     String m_decodedSheetText;

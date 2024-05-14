@@ -92,7 +92,7 @@ class CachedRawResource;
         void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
         void finishedTimingForWorkerLoad(CachedResource&, const ResourceTiming&) override;
         void finishedTimingForWorkerLoad(const ResourceTiming&);
-        void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
+        void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 
         void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&);
         void didReceiveData(ResourceLoaderIdentifier, const SharedBuffer&);

@@ -85,7 +85,7 @@ bool LoadableNonModuleScriptBase::wasCanceled() const
     return m_cachedScript->wasCanceled();
 }
 
-void LoadableNonModuleScriptBase::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void LoadableNonModuleScriptBase::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     ASSERT(m_cachedScript);
     if (resource.resourceError().isAccessControl()) {

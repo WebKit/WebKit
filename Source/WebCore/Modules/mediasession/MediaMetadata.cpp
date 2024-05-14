@@ -70,7 +70,7 @@ void ArtworkImageLoader::requestImageResource()
         m_cachedImage->addClient(*this);
 }
 
-void ArtworkImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void ArtworkImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     ASSERT_UNUSED(resource, &resource == m_cachedImage);
     if (m_cachedImage->loadFailedOrCanceled() || m_cachedImage->errorOccurred() || !m_cachedImage->image()) {

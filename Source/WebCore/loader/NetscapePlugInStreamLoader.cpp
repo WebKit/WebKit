@@ -179,7 +179,7 @@ void NetscapePlugInStreamLoader::willCancel(const ResourceError& error)
         m_client->didFail(this, error);
 }
 
-void NetscapePlugInStreamLoader::didCancel(const ResourceError&)
+void NetscapePlugInStreamLoader::didCancel(LoadWillContinueInAnotherProcess)
 {
     notifyDone();
 }

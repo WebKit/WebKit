@@ -56,7 +56,7 @@ public:
     WEBCORE_EXPORT void requestImageResource();
 
 protected:
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 
 private:
     Document& m_document;

@@ -33,11 +33,10 @@
 
 namespace WebKit {
 
-ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProcess>&& frameProcess, bool isCrossSiteRedirect)
+ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProcess>&& frameProcess)
     : m_frame(frame)
     , m_frameProcess(WTFMove(frameProcess))
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
-    , m_isCrossSiteRedirect(isCrossSiteRedirect)
     , m_layerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier::generate())
 {
     process().markProcessAsRecentlyUsed();

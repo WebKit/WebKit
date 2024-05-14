@@ -65,7 +65,7 @@ private:
     // CachedRawResourceClient
     void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) final;
     void dataReceived(CachedResource&, const SharedBuffer&) final;
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 
     void fulfillRequestWithResource(CachedResource&);
 
@@ -124,7 +124,7 @@ void CachedResourceMediaLoader::responseReceived(CachedResource& resource, const
     m_parent.responseReceived(response.mimeType(), response.httpStatusCode(), response.contentRange(), response.expectedContentLength());
 }
 
-void CachedResourceMediaLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void CachedResourceMediaLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     if (resource.loadFailedOrCanceled()) {
         m_parent.loadFailed(resource.resourceError());

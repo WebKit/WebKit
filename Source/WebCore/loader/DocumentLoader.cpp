@@ -280,7 +280,7 @@ void DocumentLoader::setMainDocumentError(const ResourceError& error)
     frameLoader()->client().setMainDocumentError(this, error);
 }
 
-void DocumentLoader::mainReceivedError(const ResourceError& error)
+void DocumentLoader::mainReceivedError(const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     ASSERT(!error.isNull());
 
@@ -305,7 +305,7 @@ void DocumentLoader::mainReceivedError(const ResourceError& error)
 
     setMainDocumentError(error);
     clearMainResourceLoader();
-    frameLoader()->receivedMainResourceError(error);
+    frameLoader()->receivedMainResourceError(error, loadWillContinueInAnotherProcess);
 }
 
 void DocumentLoader::frameDestroyed()
@@ -430,7 +430,7 @@ bool DocumentLoader::isLoading() const
     return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty();
 }
 
-void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)
+void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     ASSERT(isMainThread());
 #if ENABLE(CONTENT_FILTERING)
@@ -458,7 +458,7 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
     if (!m_mainResource->resourceError().isNull())
         DOCUMENTLOADER_RELEASE_LOG("notifyFinished: canceling load (type=%d, code=%d)", static_cast<int>(m_mainResource->resourceError().type()), m_mainResource->resourceError().errorCode());
 
-    mainReceivedError(m_mainResource->resourceError());
+    mainReceivedError(m_mainResource->resourceError(), loadWillContinueInAnotherProcess);
 }
 
 void DocumentLoader::finishedLoading()
@@ -768,7 +768,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         switch (navigationPolicyDecision) {
         case NavigationPolicyDecision::IgnoreLoad:
         case NavigationPolicyDecision::LoadWillContinueInAnotherProcess:
-            stopLoadingForPolicyChange();
+            stopLoadingForPolicyChange(navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess ? LoadWillContinueInAnotherProcess::Yes : LoadWillContinueInAnotherProcess::No);
             break;
         case NavigationPolicyDecision::ContinueLoad:
             break;
@@ -1243,9 +1243,9 @@ ResourceError DocumentLoader::interruptedForPolicyChangeError() const
     return error;
 }
 
-void DocumentLoader::stopLoadingForPolicyChange()
+void DocumentLoader::stopLoadingForPolicyChange(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
-    cancelMainResourceLoad(interruptedForPolicyChangeError());
+    cancelMainResourceLoad(interruptedForPolicyChangeError(), loadWillContinueInAnotherProcess);
 }
 
 // https://w3c.github.io/ServiceWorker/#control-and-use-window-client
@@ -2326,7 +2326,7 @@ void DocumentLoader::cancelPolicyCheckIfNeeded()
     }
 }
 
-void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
+void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     Ref<DocumentLoader> protectedThis(*this);
     ResourceError error = resourceError.isNull() ? frameLoader()->cancelledError(m_request) : resourceError;
@@ -2338,7 +2338,7 @@ void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
     cancelPolicyCheckIfNeeded();
 
     if (mainResourceLoader())
-        mainResourceLoader()->cancel(error);
+        mainResourceLoader()->cancel(error, loadWillContinueInAnotherProcess);
 
     clearMainResource();
 

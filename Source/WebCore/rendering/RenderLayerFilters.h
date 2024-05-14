@@ -74,7 +74,7 @@ public:
     void applyFilterEffect(GraphicsContext& destinationContext);
 
 private:
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
 
     RenderLayer& m_layer;

@@ -681,7 +681,7 @@ void ResourceLoader::cancel()
     cancel(ResourceError());
 }
 
-void ResourceLoader::cancel(const ResourceError& error)
+void ResourceLoader::cancel(const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     // If the load has already completed - succeeded, failed, or previously cancelled - do nothing.
     if (m_reachedTerminalState)
@@ -724,7 +724,7 @@ void ResourceLoader::cancel(const ResourceError& error)
     if (m_reachedTerminalState)
         return;
 
-    didCancel(nonNullError);
+    didCancel(loadWillContinueInAnotherProcess);
 
     if (m_cancellationStatus == FinishedCancel)
         return;

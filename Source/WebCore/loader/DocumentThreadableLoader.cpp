@@ -476,7 +476,7 @@ void DocumentThreadableLoader::finishedTimingForWorkerLoad(const ResourceTiming&
     m_client->didFinishTiming(resourceTiming);
 }
 
-void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)
+void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess)
 {
     ASSERT(m_client);
     ASSERT_UNUSED(resource, &resource == m_resource);

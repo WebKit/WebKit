@@ -48,7 +48,7 @@ public:
     void stopLoading();
 
 private:
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 
     SingleThreadWeakRef<DocumentLoader> m_documentLoader;
     URL m_url;

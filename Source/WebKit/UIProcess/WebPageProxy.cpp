@@ -4658,9 +4658,10 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
             navigation = Ref { navigation },
             previousProvisionalLoadProcess = Ref { frame.provisionalLoadProcess() }
         ] () mutable {
-            if (frame->frameLoadState().state() == FrameLoadState::State::Provisional && !navigation->currentRequestIsCrossSiteRedirect()) {
+            if (frame->frameLoadState().state() == FrameLoadState::State::Provisional) {
                 sendToWebPageInProcess(previousProvisionalLoadProcess, Messages::WebPage::DestroyProvisionalFrame(frame->frameID()));
-                frame->didFailProvisionalLoad();
+                if (!navigation->currentRequestIsCrossSiteRedirect())
+                    frame->didFailProvisionalLoad();
             }
             newProcess->send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), webPageID);
         });
@@ -6192,7 +6193,11 @@ void WebPageProxy::sendToWebPageInProcess(WebProcessProxy& process, M&& message)
 {
     if (auto* remotePage = m_browsingContextGroup->remotePageInProcess(*this, process))
         return remotePage->send(std::forward<M>(message));
-    ASSERT(process.coreProcessIdentifier() == this->process().coreProcessIdentifier());
+    if (process.coreProcessIdentifier() != this->process().coreProcessIdentifier()) {
+        // If there is no longer a remote page in a process that is not the main frame process,
+        // not sending the message is the correct thing to do.
+        return;
+    }
     send(std::forward<M>(message));
 }
 

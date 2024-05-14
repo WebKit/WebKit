@@ -61,7 +61,7 @@ protected:
     LoadableNonModuleScriptBase(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);
 
 private:
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 
 protected:
     CachedResourceHandle<CachedScript> m_cachedScript { };

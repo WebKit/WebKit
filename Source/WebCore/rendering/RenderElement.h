@@ -317,7 +317,7 @@ protected:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
     void willBeDestroyed() override;
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 
     void setHasContinuationChainNode(bool b) { m_hasContinuationChainNode = b; }
 

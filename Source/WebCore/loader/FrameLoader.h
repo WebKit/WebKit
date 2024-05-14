@@ -191,7 +191,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<CFDictionaryRef> connectionProperties(ResourceLoader*);
 #endif
-    void receivedMainResourceError(const ResourceError&);
+    void receivedMainResourceError(const ResourceError&, LoadWillContinueInAnotherProcess);
 
     bool willLoadMediaElementURL(URL&, Node&);
 
@@ -223,7 +223,7 @@ public:
     void loadedResourceFromMemoryCache(CachedResource&, ResourceRequest& newRequest, ResourceError&);
     void tellClientAboutPastMemoryCacheLoads();
 
-    void checkLoadComplete();
+    void checkLoadComplete(LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     WEBCORE_EXPORT void detachFromParent();
     void detachViewsAndDocumentLoader();
 
@@ -394,7 +394,7 @@ private:
     void scrollToFragmentWithParentBoundary(const URL&, bool isNewNavigation = true);
 
     void dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocumentLoader, const ResourceError&, WillInternallyHandleFailure);
-    void checkLoadCompleteForThisFrame();
+    void checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess);
     void handleLoadFailureRecovery(DocumentLoader&, const ResourceError&, bool);
 
     void setDocumentLoader(RefPtr<DocumentLoader>&&);

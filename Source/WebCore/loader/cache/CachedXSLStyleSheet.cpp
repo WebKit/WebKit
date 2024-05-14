@@ -81,7 +81,7 @@ void CachedXSLStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
     checkNotify(metrics);
 }
 
-void CachedXSLStyleSheet::checkNotify(const NetworkLoadMetrics&)
+void CachedXSLStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     if (isLoading())
         return;

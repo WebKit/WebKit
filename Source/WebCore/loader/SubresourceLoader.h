@@ -86,7 +86,7 @@ private:
     void didFinishLoading(const NetworkLoadMetrics&) final;
     void didFail(const ResourceError&) final;
     void willCancel(const ResourceError&) final;
-    void didCancel(const ResourceError&) final;
+    void didCancel(LoadWillContinueInAnotherProcess) final;
     
     void updateReferrerPolicy(const String&);
 
