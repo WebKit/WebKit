@@ -40,6 +40,9 @@ void SetGlobalLastContext(gl::Context *context);
 Thread *GetCurrentThread();
 Debug *GetDebug();
 
+void SetEGLValidationEnabled(bool enabled);
+bool IsEGLValidationEnabled();
+
 // Sync the current context from Thread to global state.
 class [[nodiscard]] ScopedSyncCurrentContextFromThread
 {

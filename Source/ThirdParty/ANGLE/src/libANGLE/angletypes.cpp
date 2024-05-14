@@ -1074,6 +1074,7 @@ bool CompressBlob(const size_t cacheSize, const uint8_t *cacheData, MemoryBuffer
 {
     uLong uncompressedSize       = static_cast<uLong>(cacheSize);
     uLong expectedCompressedSize = zlib_internal::GzipExpectedCompressedSize(uncompressedSize);
+    uLong actualCompressedSize   = expectedCompressedSize;
 
     // Allocate memory.
     if (!compressedData->resize(expectedCompressedSize))
@@ -1082,7 +1083,7 @@ bool CompressBlob(const size_t cacheSize, const uint8_t *cacheData, MemoryBuffer
         return false;
     }
 
-    int zResult = zlib_internal::GzipCompressHelper(compressedData->data(), &expectedCompressedSize,
+    int zResult = zlib_internal::GzipCompressHelper(compressedData->data(), &actualCompressedSize,
                                                     cacheData, uncompressedSize, nullptr, nullptr);
 
     if (zResult != Z_OK)
@@ -1091,11 +1092,9 @@ bool CompressBlob(const size_t cacheSize, const uint8_t *cacheData, MemoryBuffer
         return false;
     }
 
-    // Resize it to expected size.
-    if (!compressedData->resize(expectedCompressedSize))
-    {
-        return false;
-    }
+    // Trim to actual size.
+    ASSERT(actualCompressedSize <= expectedCompressedSize);
+    compressedData->trim(actualCompressedSize);
 
     return true;
 }
@@ -1133,13 +1132,16 @@ bool DecompressBlob(const uint8_t *compressedData,
         return false;
     }
 
-    // Resize it to expected size.
-    if (!uncompressedData->resize(destLen))
-    {
-        return false;
-    }
+    // Trim to actual size.
+    ASSERT(destLen <= uncompressedSize);
+    uncompressedData->trim(destLen);
 
     return true;
+}
+
+uint32_t GenerateCrc(const uint8_t *data, size_t size)
+{
+    return static_cast<uint32_t>(crc32_z(0u, data, size));
 }
 
 UnlockedTailCall::UnlockedTailCall() = default;

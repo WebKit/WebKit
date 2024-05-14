@@ -22,7 +22,6 @@ set(libangle_common_headers
     "src/common/PoolAlloc.h"
     "src/common/RingBufferAllocator.h"
     "src/common/SimpleMutex.h"
-    "src/common/Spinlock.h"
     "src/common/SynchronizedValue.h"
     "src/common/WorkerThread.h"
     "src/common/aligned_memory.h"

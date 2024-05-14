@@ -12,8 +12,8 @@
 
 #include <array>
 #include <atomic>
-#include <mutex>
 
+#include "common/SimpleMutex.h"
 #include "common/angleutils.h"
 #include "common/backtrace_utils.h"
 #include "common/vulkan/vk_headers.h"
@@ -113,7 +113,7 @@ class MemoryReport final : angle::NonCopyable
         VkDeviceSize importedMemory;
         VkDeviceSize importedMemoryMax;
     };
-    mutable std::mutex mMemoryReportMutex;
+    mutable angle::SimpleMutex mMemoryReportMutex;
     VkDeviceSize mCurrentTotalAllocatedMemory;
     VkDeviceSize mMaxTotalAllocatedMemory;
     angle::HashMap<VkObjectType, MemorySizes> mSizesPerType;
@@ -198,7 +198,7 @@ class MemoryAllocationTracker : angle::NonCopyable
     std::atomic<uint32_t> mPendingMemoryTypeIndex;
 
     // Mutex is used to update the data when debug layers are enabled.
-    std::mutex mMemoryAllocationMutex;
+    angle::SimpleMutex mMemoryAllocationMutex;
 
     // Additional information regarding memory allocation with debug layers enabled, including
     // allocation ID and a record of all active allocations.

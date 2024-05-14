@@ -9626,7 +9626,7 @@ egl::Error Context::releaseExternalContext()
     return egl::NoError();
 }
 
-std::mutex &Context::getProgramCacheMutex() const
+angle::SimpleMutex &Context::getProgramCacheMutex() const
 {
     return mDisplay->getProgramCacheMutex();
 }

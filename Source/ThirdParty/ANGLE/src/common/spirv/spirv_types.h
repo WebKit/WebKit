@@ -128,8 +128,9 @@ enum HeaderIndex
 // Returns whether SPIR-V is valid.  Useful for ASSERTs.  Automatically generates a warning if
 // SPIR-V is not valid.
 bool Validate(const Blob &blob);
+#if defined(ANGLE_ENABLE_ASSERTS)
 void Print(const Blob &blob);
-
+#endif
 }  // namespace spirv
 }  // namespace angle
 

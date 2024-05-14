@@ -17,7 +17,6 @@
 
 namespace rx
 {
-
 class TextureWgpu : public TextureImpl
 {
   public:
@@ -176,18 +175,41 @@ class TextureWgpu : public TextureImpl
 
   private:
     angle::Result setImageImpl(const gl::Context *context,
+                               GLenum internalFormat,
+                               GLenum type,
                                const gl::ImageIndex &index,
-                               const gl::Extents &size);
+                               const gl::Extents &size,
+                               const gl::PixelUnpackState &unpack,
+                               const uint8_t *pixels);
+
+    angle::Result setSubImageImpl(const gl::Context *context,
+                                  GLenum internalFormat,
+                                  GLenum type,
+                                  const gl::ImageIndex &index,
+                                  const gl::Box &area,
+                                  const gl::PixelUnpackState &unpack,
+                                  const uint8_t *pixels);
+
+    angle::Result initializeImage(ContextWgpu *contextWgpu, ImageMipLevels mipLevels);
 
     angle::Result redefineLevel(const gl::Context *context,
                                 const gl::ImageIndex &index,
                                 const gl::Extents &size);
 
+    uint32_t getMipLevelCount(ImageMipLevels mipLevels) const;
+
+    uint32_t getMaxLevelCount() const;
+    angle::Result respecifyImageStorageIfNecessary(ContextWgpu *contextWgpu, gl::Command source);
+    void prepareForGenerateMipmap(ContextWgpu *contextWgpu);
+    angle::Result maybeUpdateBaseMaxLevels(ContextWgpu *contextWgpu);
     void initSingleLayerRenderTargets(ContextWgpu *contextWgpu,
                                       GLuint layerCount,
                                       gl::LevelIndex levelIndex,
                                       gl::RenderToTextureImageIndex renderToTextureIndex);
     webgpu::ImageHelper *mImage;
+    gl::LevelIndex mCurrentBaseLevel;
+    gl::LevelIndex mCurrentMaxLevel;
+    gl::CubeFaceArray<gl::TexLevelMask> mRedefinedLevels;
 
     // Render targets stored as array of vector of vectors
     //

@@ -11,6 +11,7 @@
 #ifndef COMMON_SYNCHRONIZEDVALUE_H_
 #define COMMON_SYNCHRONIZEDVALUE_H_
 
+#include "common/SimpleMutex.h"
 #include "common/debug.h"
 
 #include <mutex>
@@ -19,7 +20,7 @@
 namespace angle
 {
 
-template <typename T, typename Lockable = std::mutex>
+template <typename T, typename Lockable = angle::SimpleMutex>
 class ConstStrictLockPtr
 {
   public:
@@ -35,7 +36,7 @@ class ConstStrictLockPtr
         : mLock(std::move(other.mLock)), mValue(other.mValue)
     {}
 
-    ConstStrictLockPtr(const ConstStrictLockPtr &) = delete;
+    ConstStrictLockPtr(const ConstStrictLockPtr &)            = delete;
     ConstStrictLockPtr &operator=(const ConstStrictLockPtr &) = delete;
 
     ~ConstStrictLockPtr() = default;
@@ -48,7 +49,7 @@ class ConstStrictLockPtr
     T const &mValue;
 };
 
-template <typename T, typename Lockable = std::mutex>
+template <typename T, typename Lockable = angle::SimpleMutex>
 class StrictLockPtr : public ConstStrictLockPtr<T, Lockable>
 {
   private:
@@ -64,7 +65,7 @@ class StrictLockPtr : public ConstStrictLockPtr<T, Lockable>
         : BaseType(std::move(static_cast<BaseType &&>(other)))
     {}
 
-    StrictLockPtr(const StrictLockPtr &) = delete;
+    StrictLockPtr(const StrictLockPtr &)            = delete;
     StrictLockPtr &operator=(const StrictLockPtr &) = delete;
 
     ~StrictLockPtr() = default;
@@ -85,7 +86,7 @@ struct SynchronizedValueStrictLockPtr<const SV>
     using type = ConstStrictLockPtr<typename SV::value_type, typename SV::mutex_type>;
 };
 
-template <typename T, typename Lockable = std::mutex>
+template <typename T, typename Lockable = angle::SimpleMutex>
 class ConstUniqueLockPtr : public std::unique_lock<Lockable>
 {
   private:
@@ -110,7 +111,7 @@ class ConstUniqueLockPtr : public std::unique_lock<Lockable>
         : BaseType(std::move(static_cast<BaseType &&>(other))), mValue(other.mValue)
     {}
 
-    ConstUniqueLockPtr(const ConstUniqueLockPtr &) = delete;
+    ConstUniqueLockPtr(const ConstUniqueLockPtr &)            = delete;
     ConstUniqueLockPtr &operator=(const ConstUniqueLockPtr &) = delete;
 
     ~ConstUniqueLockPtr() = default;
@@ -130,7 +131,7 @@ class ConstUniqueLockPtr : public std::unique_lock<Lockable>
     T const &mValue;
 };
 
-template <typename T, typename Lockable = std::mutex>
+template <typename T, typename Lockable = angle::SimpleMutex>
 class UniqueLockPtr : public ConstUniqueLockPtr<T, Lockable>
 {
   private:
@@ -152,7 +153,7 @@ class UniqueLockPtr : public ConstUniqueLockPtr<T, Lockable>
         : BaseType(std::move(static_cast<BaseType &&>(other)))
     {}
 
-    UniqueLockPtr(const UniqueLockPtr &) = delete;
+    UniqueLockPtr(const UniqueLockPtr &)            = delete;
     UniqueLockPtr &operator=(const UniqueLockPtr &) = delete;
 
     ~UniqueLockPtr() = default;
@@ -181,7 +182,7 @@ struct SynchronizedValueUniqueLockPtr<const SV>
     using type = ConstUniqueLockPtr<typename SV::value_type, typename SV::mutex_type>;
 };
 
-template <typename T, typename Lockable = std::mutex>
+template <typename T, typename Lockable = angle::SimpleMutex>
 class SynchronizedValue
 {
   public:
@@ -199,7 +200,7 @@ class SynchronizedValue
     {}
 
     template <typename... Args>
-    SynchronizedValue(Args &&... args) noexcept(noexcept(T(std::forward<Args>(args)...)))
+    SynchronizedValue(Args &&...args) noexcept(noexcept(T(std::forward<Args>(args)...)))
         : mValue(std::forward<Args>(args)...)
     {}
 
@@ -336,7 +337,7 @@ class SynchronizedValue
       public:
         DerefValue(DerefValue &&other) : mLock(std::move(other.mLock)), mValue(other.mValue) {}
 
-        DerefValue(const DerefValue &) = delete;
+        DerefValue(const DerefValue &)            = delete;
         DerefValue &operator=(const DerefValue &) = delete;
 
         operator T &() { return mValue; }
@@ -363,7 +364,7 @@ class SynchronizedValue
             : mLock(std::move(other.mLock)), mValue(other.mValue)
         {}
 
-        ConstDerefValue(const ConstDerefValue &) = delete;
+        ConstDerefValue(const ConstDerefValue &)            = delete;
         ConstDerefValue &operator=(const ConstDerefValue &) = delete;
 
         operator const T &() { return mValue; }

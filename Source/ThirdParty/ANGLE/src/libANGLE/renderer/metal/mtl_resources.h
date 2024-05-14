@@ -52,11 +52,12 @@ class Resource : angle::NonCopyable
     // Check whether the resource still being used by GPU including the pending (uncommitted)
     // command buffer.
     bool isBeingUsedByGPU(Context *context) const;
-    // Checks whether the last command buffer that uses the given resource has been committed or not
+    // Checks whether the last command buffer that uses the given resource has been committed or
+    // not
     bool hasPendingWorks(Context *context) const;
+    bool hasPendingRenderWorks(Context *context) const;
 
-    void setUsedByCommandBufferWithQueueSerial(uint64_t serial, bool writing);
-    void setWrittenToByRenderEncoder(uint64_t serial);
+    void setUsedByCommandBufferWithQueueSerial(uint64_t serial, bool writing, bool isRenderCommand);
 
     uint64_t getCommandBufferQueueSerial() const { return mUsageRef->cmdBufferQueueSerial; }
 
@@ -72,13 +73,19 @@ class Resource : angle::NonCopyable
     bool isCPUReadMemDirty() const { return mUsageRef->cpuReadMemDirty; }
     void resetCPUReadMemDirty() { mUsageRef->cpuReadMemDirty = false; }
 
-    bool getLastWritingRenderEncoderSerial() const
+    uint64_t getLastReadingRenderEncoderSerial() const
+    {
+        return mUsageRef->lastReadingRenderEncoderSerial;
+    }
+    uint64_t getLastWritingRenderEncoderSerial() const
     {
         return mUsageRef->lastWritingRenderEncoderSerial;
     }
-    void setLastWritingRenderEncoderSerial(uint64_t serial) const
+
+    uint64_t getLastRenderEncoderSerial() const
     {
-        mUsageRef->lastWritingRenderEncoderSerial = serial;
+        return std::max(mUsageRef->lastReadingRenderEncoderSerial,
+                        mUsageRef->lastWritingRenderEncoderSerial);
     }
 
     virtual size_t estimatedByteSize() const = 0;
@@ -109,15 +116,16 @@ class Resource : angle::NonCopyable
         // This flag is useful for BufferMtl to know whether it should update the shadow copy
         bool cpuReadMemDirty = false;
 
-        // The id of the last render encoder to write to this resource
+        // The id of the last render encoder to read/write to this resource
+        uint64_t lastReadingRenderEncoderSerial = 0;
         uint64_t lastWritingRenderEncoderSerial = 0;
     };
 
     // One resource object might just be a view of another resource. For example, a texture 2d
-    // object might be a view of one face of a cube texture object. Another example is one texture
-    // object of size 2x2 might be a mipmap view of a texture object size 4x4. Thus, if one object
-    // is being used by a command buffer, it means the other object is being used also. In this
-    // case, the two objects must share the same UsageRef property.
+    // object might be a view of one face of a cube texture object. Another example is one
+    // texture object of size 2x2 might be a mipmap view of a texture object size 4x4. Thus, if
+    // one object is being used by a command buffer, it means the other object is being used
+    // also. In this case, the two objects must share the same UsageRef property.
     std::shared_ptr<UsageRef> mUsageRef;
 };
 
@@ -230,8 +238,8 @@ class Texture final : public Resource,
     TextureRef createShaderImageView(const MipmapNativeLevel &level,
                                      int layer,
                                      MTLPixelFormat format);
-    // Same as above but the target format must be compatible, for example sRGB to linear. In this
-    // case texture doesn't need format view usage flag.
+    // Same as above but the target format must be compatible, for example sRGB to linear. In
+    // this case texture doesn't need format view usage flag.
     TextureRef createViewWithCompatibleFormat(MTLPixelFormat format);
     // Create a swizzled view
     TextureRef createSwizzleView(MTLPixelFormat format, const TextureSwizzleChannels &swizzle);

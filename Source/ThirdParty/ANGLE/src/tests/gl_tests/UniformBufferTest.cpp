@@ -78,6 +78,74 @@ TEST_P(UniformBufferTest, Simple)
     EXPECT_PIXEL_NEAR(0, 0, 128, 191, 64, 255, 1);
 }
 
+// Test a scenario that draws then update UBO (using bufferData or bufferSubData or mapBuffer) then
+// draws with updated data.
+TEST_P(UniformBufferTest, DrawThenUpdateThenDraw)
+{
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+
+void main()
+{
+    vec2 position = vec2(float(gl_VertexID >> 1), float(gl_VertexID & 1));
+    position = 2.0 * position - 1.0;
+    gl_Position = vec4(position.x, position.y, 0.0, 1.0);
+})";
+
+    enum class BufferUpdateMethod
+    {
+        BUFFER_DATA,
+        BUFFER_SUB_DATA,
+        MAP_BUFFER,
+    };
+
+    ANGLE_GL_PROGRAM(program, kVS, mkFS);
+    GLint uniformBufferIndex = glGetUniformBlockIndex(program, "uni");
+    ASSERT_NE(uniformBufferIndex, -1);
+
+    for (BufferUpdateMethod method :
+         {BufferUpdateMethod::BUFFER_DATA, BufferUpdateMethod::BUFFER_SUB_DATA,
+          BufferUpdateMethod::MAP_BUFFER})
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+        float floatData1[4] = {0.25f, 0.75f, 0.125f, 1.0f};
+
+        GLBuffer uniformBuffer;
+        glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(float) * 4, floatData1, GL_DYNAMIC_DRAW);
+
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniformBuffer);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+
+        glUniformBlockBinding(program, uniformBufferIndex, 0);
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        float floatData2[4] = {0.25f, 0.0f, 0.125f, 0.0f};
+        switch (method)
+        {
+            case BufferUpdateMethod::BUFFER_DATA:
+                glBufferData(GL_UNIFORM_BUFFER, sizeof(float) * 4, floatData2, GL_DYNAMIC_DRAW);
+                break;
+            case BufferUpdateMethod::BUFFER_SUB_DATA:
+                glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float) * 4, floatData2);
+                break;
+            case BufferUpdateMethod::MAP_BUFFER:
+                void *mappedBuffer =
+                    glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(float) * 4, GL_MAP_WRITE_BIT);
+                memcpy(mappedBuffer, floatData2, sizeof(floatData2));
+                glUnmapBuffer(GL_UNIFORM_BUFFER);
+                break;
+        }
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_NEAR(0, 0, 128, 191, 64, 255, 1);
+    }
+}
+
 // Test that using a UBO with a non-zero offset and size actually works.
 // The first step of this test renders a color from a UBO with a zero offset.
 // The second step renders a color from a UBO with a non-zero offset.

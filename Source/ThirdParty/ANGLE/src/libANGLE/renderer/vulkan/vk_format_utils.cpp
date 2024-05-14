@@ -311,7 +311,7 @@ angle::FormatID ExternalFormatTable::getOrAllocExternalFormatID(uint64_t externa
                                                                 VkFormat colorAttachmentFormat,
                                                                 VkFormatFeatureFlags formatFeatures)
 {
-    std::unique_lock<std::mutex> lock(mExternalYuvFormatMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mExternalYuvFormatMutex);
     for (size_t index = 0; index < mExternalYuvFormats.size(); index++)
     {
         if (mExternalYuvFormats[index].externalFormat == externalFormat)

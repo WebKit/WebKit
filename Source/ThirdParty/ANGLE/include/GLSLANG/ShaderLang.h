@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 350
+#define ANGLE_SH_VERSION 351
 
 enum ShShaderSpec
 {
@@ -566,6 +566,9 @@ struct ShBuiltInResources
 
     // The maximum complexity an expression can be when limitExpressionComplexity is turned on.
     int MaxExpressionComplexity;
+
+    // The maximum depth of certain nestable statements (while, switch);
+    int MaxStatementDepth;
 
     // The maximum depth a call stack can be.
     int MaxCallStackDepth;

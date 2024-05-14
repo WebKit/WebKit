@@ -12,7 +12,6 @@
 
 #include "libANGLE/renderer/CLContextImpl.h"
 
-#include "common/Spinlock.h"
 #include "common/SynchronizedValue.h"
 
 #include <unordered_set>
@@ -92,7 +91,7 @@ class CLContextCL : public CLContextImpl
         std::unordered_set<const _cl_sampler *> mSamplers;
         std::unordered_set<const _cl_command_queue *> mDeviceQueues;
     };
-    using MutableData = angle::SynchronizedValue<Mutable, angle::Spinlock>;
+    using MutableData = angle::SynchronizedValue<Mutable>;
 
     const cl_context mNative;
     MutableData mData;

@@ -76,7 +76,6 @@ class ResourceMap final : angle::NonCopyable
     // null values represent reserved handles.
     Iterator begin() const;
     Iterator end() const;
-    Iterator find(IDType handle) const;
 
     Iterator beginWithNull() const;
     Iterator endWithNull() const;
@@ -220,22 +219,6 @@ typename ResourceMap<ResourceType, IDType>::Iterator
 ResourceMap<ResourceType, IDType>::endWithNull() const
 {
     return Iterator(*this, static_cast<GLuint>(mFlatResourcesSize), mHashedResources.end(), false);
-}
-
-template <typename ResourceType, typename IDType>
-typename ResourceMap<ResourceType, IDType>::Iterator ResourceMap<ResourceType, IDType>::find(
-    IDType handle) const
-{
-    if (handle < mFlatResourcesSize)
-    {
-        return (mFlatResources[handle] != InvalidPointer()
-                    ? Iterator(handle, mHashedResources.begin())
-                    : end());
-    }
-    else
-    {
-        return mHashedResources.find(handle);
-    }
 }
 
 template <typename ResourceType, typename IDType>

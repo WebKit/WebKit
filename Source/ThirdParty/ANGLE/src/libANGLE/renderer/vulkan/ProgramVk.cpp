@@ -119,9 +119,16 @@ class LinkTaskVk final : public vk::Context, public LinkTask
             ANGLE_TRY(contextVk->switchToFramebufferFetchMode(true));
         }
 
-        // Update the relevant perf counters
-        angle::VulkanPerfCounters &from = contextVk->getPerfCounters();
-        angle::VulkanPerfCounters &to   = getPerfCounters();
+        // Forward any errors
+        if (mErrorCode != VK_SUCCESS)
+        {
+            contextVk->handleError(mErrorCode, mErrorFile, mErrorFunction, mErrorLine);
+            return angle::Result::Stop;
+        }
+
+        // Accumulate relevant perf counters
+        const angle::VulkanPerfCounters &from = getPerfCounters();
+        angle::VulkanPerfCounters &to         = contextVk->getPerfCounters();
 
         to.pipelineCreationCacheHits += from.pipelineCreationCacheHits;
         to.pipelineCreationCacheMisses += from.pipelineCreationCacheMisses;
@@ -130,12 +137,6 @@ class LinkTaskVk final : public vk::Context, public LinkTask
         to.pipelineCreationTotalCacheMissesDurationNs +=
             from.pipelineCreationTotalCacheMissesDurationNs;
 
-        // Forward any errors
-        if (mErrorCode != VK_SUCCESS)
-        {
-            contextVk->handleError(mErrorCode, mErrorFile, mErrorFunction, mErrorLine);
-            return angle::Result::Stop;
-        }
         return angle::Result::Continue;
     }
 

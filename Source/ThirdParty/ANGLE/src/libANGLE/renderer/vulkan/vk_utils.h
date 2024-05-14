@@ -18,6 +18,7 @@
 #include "common/FixedVector.h"
 #include "common/Optional.h"
 #include "common/PackedEnums.h"
+#include "common/SimpleMutex.h"
 #include "common/WorkerThread.h"
 #include "common/backtrace_utils.h"
 #include "common/debug.h"
@@ -211,7 +212,7 @@ class QueueSerialIndexAllocator final
     }
     SerialIndex allocate()
     {
-        std::lock_guard<std::mutex> lock(mMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
         if (mFreeIndexBitSetArray.none())
         {
             ERR() << "Run out of queue serial index. All " << kMaxQueueSerialIndexCount
@@ -227,7 +228,7 @@ class QueueSerialIndexAllocator final
 
     void release(SerialIndex index)
     {
-        std::lock_guard<std::mutex> lock(mMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
         ASSERT(index <= mLargestIndexEverAllocated);
         ASSERT(!mFreeIndexBitSetArray.test(index));
         mFreeIndexBitSetArray.set(index);
@@ -245,7 +246,7 @@ class QueueSerialIndexAllocator final
   private:
     angle::BitSetArray<kMaxQueueSerialIndexCount> mFreeIndexBitSetArray;
     std::atomic<size_t> mLargestIndexEverAllocated;
-    std::mutex mMutex;
+    angle::SimpleMutex mMutex;
 };
 
 class [[nodiscard]] ScopedQueueSerialIndex final : angle::NonCopyable
@@ -701,7 +702,9 @@ class AtomicRefCounted : angle::NonCopyable
     unsigned int getAndReleaseRef()
     {
         ASSERT(isReferenced());
-        return mRefCount.fetch_sub(1, std::memory_order_relaxed);
+        // This is used by RefCountedEvent which will decrement in clean up thread, so
+        // memory_order_acq_rel is needed.
+        return mRefCount.fetch_sub(1, std::memory_order_acq_rel);
     }
 
     bool isReferenced() const { return mRefCount.load(std::memory_order_relaxed) != 0; }

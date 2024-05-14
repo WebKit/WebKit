@@ -254,6 +254,9 @@ bool ValidateCopyMetalSharedEventANGLE(const ValidationContext *val,
                                        const egl::Display *dpyPacked,
                                        egl::SyncID syncPacked);
 
+// EGL_ANGLE_no_error
+bool ValidateSetValidationEnabledANGLE(const ValidationContext *val, EGLBoolean validationState);
+
 // EGL_ANGLE_power_preference
 bool ValidateReleaseHighPowerGPUANGLE(const ValidationContext *val,
                                       const egl::Display *dpyPacked,

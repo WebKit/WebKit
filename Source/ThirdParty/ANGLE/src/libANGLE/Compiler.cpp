@@ -37,7 +37,7 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
            state.getClientMajorVersion() == 3 || state.getClientMajorVersion() == 4);
 
     {
-        std::lock_guard<std::mutex> lock(display->getDisplayGlobalMutex());
+        std::lock_guard<angle::SimpleMutex> lock(display->getDisplayGlobalMutex());
         if (gActiveCompilers == 0)
         {
             sh::Initialize();
@@ -277,7 +277,7 @@ Compiler::~Compiler() = default;
 
 void Compiler::onDestroy(const Context *context)
 {
-    std::lock_guard<std::mutex> lock(context->getDisplay()->getDisplayGlobalMutex());
+    std::lock_guard<angle::SimpleMutex> lock(context->getDisplay()->getDisplayGlobalMutex());
     for (auto &pool : mPools)
     {
         for (ShCompilerInstance &instance : pool)

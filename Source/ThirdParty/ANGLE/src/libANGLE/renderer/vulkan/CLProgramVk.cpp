@@ -618,7 +618,7 @@ angle::Result CLProgramVk::createKernel(const cl::Kernel &kernel,
                                         const char *name,
                                         CLKernelImpl::Ptr *kernelOut)
 {
-    std::scoped_lock<std::mutex> sl(mProgramMutex);
+    std::scoped_lock<angle::SimpleMutex> sl(mProgramMutex);
 
     const auto devProgram = getDeviceProgramData(name);
     ASSERT(devProgram != nullptr);
@@ -757,7 +757,7 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
                                 BuildType buildType,
                                 const LinkProgramsList &LinkProgramsList)
 {
-    std::scoped_lock<std::mutex> sl(mProgramMutex);
+    std::scoped_lock<angle::SimpleMutex> sl(mProgramMutex);
 
     // Cache original options string
     mProgramOpts = options;

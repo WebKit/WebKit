@@ -137,6 +137,7 @@ const ProcEntry g_procTable[] = {
     {"eglReleaseThread", P(EGL_ReleaseThread)},
     {"eglSetBlobCacheFuncsANDROID", P(EGL_SetBlobCacheFuncsANDROID)},
     {"eglSetDamageRegionKHR", P(EGL_SetDamageRegionKHR)},
+    {"eglSetValidationEnabledANGLE", P(EGL_SetValidationEnabledANGLE)},
     {"eglSignalSyncKHR", P(EGL_SignalSyncKHR)},
     {"eglStreamAttribKHR", P(EGL_StreamAttribKHR)},
     {"eglStreamConsumerAcquireKHR", P(EGL_StreamConsumerAcquireKHR)},

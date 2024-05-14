@@ -624,6 +624,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
                                                                                      strings);
         return CallCapture(EntryPoint::EGLSetDamageRegionKHR, std::move(params));
     }
+    if (strcmp(nameToken, "eglSetValidationEnabledANGLE") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNEGLSETVALIDATIONENABLEDANGLEPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::EGLSetValidationEnabledANGLE, std::move(params));
+    }
     if (strcmp(nameToken, "eglSignalSyncKHR") == 0)
     {
         ParamBuffer params = ParseParameters<std::remove_pointer<PFNEGLSIGNALSYNCKHRPROC>::type>(

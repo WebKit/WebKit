@@ -12,6 +12,7 @@
 #include <sstream>
 
 #include "anglebase/no_destructor.h"
+#include "common/SimpleMutex.h"
 #include "common/debug.h"
 #include "common/tls.h"
 #include "common/utilities.h"
@@ -1035,10 +1036,10 @@ egl::Error Renderer11::initializeD3DDevice()
 
 void Renderer11::setGlobalDebugAnnotator()
 {
-    static angle::base::NoDestructor<std::mutex> gMutex;
+    static angle::base::NoDestructor<angle::SimpleMutex> gMutex;
     static angle::base::NoDestructor<DebugAnnotator11> gGlobalAnnotator;
 
-    std::lock_guard<std::mutex> lg(*gMutex);
+    std::lock_guard<angle::SimpleMutex> lg(*gMutex);
     gl::InitializeDebugAnnotations(gGlobalAnnotator.get());
 }
 

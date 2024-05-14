@@ -2009,6 +2009,65 @@ TEST_P(RobustResourceInitTestES3, CompressedSubImage)
     }
 }
 
+// Test drawing to a framebuffer with not all draw buffers enabled
+TEST_P(RobustResourceInitTestES3, SparseDrawBuffers)
+{
+    constexpr char kVS[] = R"(#version 300 es
+void main() {
+  gl_PointSize = 100.0;
+  gl_Position = vec4(0, 0, 0, 1);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+layout(location = 1) out vec4 output1;
+layout(location = 3) out vec4 output2;
+void main()
+{
+    output1 = vec4(0.0, 1.0, 0.0, 1.0);
+    output2 = vec4(0.0, 0.0, 1.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    std::vector<GLTexture> textures(4);
+    for (size_t i = 0; i < textures.size(); i++)
+    {
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i],
+                               0);
+    }
+
+    glViewport(0, 0, 1, 1);
+
+    constexpr GLenum drawBuffers[4] = {
+        GL_NONE,
+        GL_COLOR_ATTACHMENT1,
+        GL_NONE,
+        GL_COLOR_ATTACHMENT3,
+    };
+    glDrawBuffers(4, drawBuffers);
+
+    glDrawArrays(GL_POINTS, 0, 1);
+
+    const GLColor expectedColors[4] = {
+        GLColor::transparentBlack,
+        GLColor::green,
+        GLColor::transparentBlack,
+        GLColor::blue,
+    };
+    for (size_t i = 0; i < textures.size(); i++)
+    {
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, expectedColors[i]) << " at attachment " << i;
+    }
+}
+
 // Tests that a partial scissor still initializes contents as expected.
 TEST_P(RobustResourceInitTest, ClearWithScissor)
 {

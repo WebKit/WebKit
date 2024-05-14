@@ -270,14 +270,14 @@ const char *CLPlatformVk::getWSIExtension()
 // vk::GlobalOps
 void CLPlatformVk::putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffer &value)
 {
-    std::scoped_lock<std::mutex> lock(mBlobCacheMutex);
+    std::scoped_lock<angle::SimpleMutex> lock(mBlobCacheMutex);
     size_t valueSize = value.size();
     mBlobCache.put(key, std::move(const_cast<angle::MemoryBuffer &>(value)), valueSize);
 }
 
 bool CLPlatformVk::getBlob(const angle::BlobCacheKey &key, angle::BlobCacheValue *valueOut)
 {
-    std::scoped_lock<std::mutex> lock(mBlobCacheMutex);
+    std::scoped_lock<angle::SimpleMutex> lock(mBlobCacheMutex);
     const angle::MemoryBuffer *entry;
     bool result = mBlobCache.get(key, &entry);
     if (result)

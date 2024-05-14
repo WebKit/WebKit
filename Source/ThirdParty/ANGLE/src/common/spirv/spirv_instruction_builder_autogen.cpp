@@ -25,6 +25,15 @@ uint32_t MakeLengthOp(size_t length, spv::Op op)
     ASSERT(length <= 0xFFFFu);
     ASSERT(op <= 0xFFFFu);
 
+    // It's easy for a complex shader to be crafted to hit the length limit,
+    // turn that into a crash instead of a security bug.  Ideally, the compiler
+    // would gracefully fail compilation, so this is more of a safety net.
+    if (ANGLE_UNLIKELY(length > 0xFFFFu))
+    {
+        ERR() << "Complex shader not representible in SPIR-V";
+        ANGLE_CRASH();
+    }
+
     return static_cast<uint32_t>(length) << 16 | op;
 }
 }  // anonymous namespace

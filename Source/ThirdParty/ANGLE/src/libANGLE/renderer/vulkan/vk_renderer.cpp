@@ -80,7 +80,7 @@ constexpr size_t kImageSizeThresholdForDedicatedMemoryAllocation = 4 * 1024 * 10
 
 // Pipeline cache header version. It should be incremented any time there is an update to the cache
 // header or data structure.
-constexpr uint16_t kPipelineCacheVersion = 1;
+constexpr uint32_t kPipelineCacheVersion = 2;
 
 // Update the pipeline cache every this many swaps.
 constexpr uint32_t kPipelineCacheVkUpdatePeriod = 60;
@@ -281,6 +281,9 @@ constexpr const char *kSkippedMessages[] = {
     "Undefined-Value-ShaderFragmentOutputMismatch",
     // https://issuetracker.google.com/336652255
     "UNASSIGNED-CoreValidation-DrawState-InvalidImageLayout",
+    // https://issuetracker.google.com/336847261
+    "VUID-VkImageCreateInfo-pNext-02397",
+    "VUID-vkCmdDraw-None-06550",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -922,30 +925,13 @@ uint32_t GetMemoryTypeBitsExcludingHostVisible(Renderer *renderer,
     return memoryTypeBitsOut;
 }
 
-// CRC16-CCITT is used for header before the pipeline cache key data.
-uint16_t ComputeCRC16(const uint8_t *data, const size_t size)
-{
-    constexpr uint16_t kPolynomialCRC16 = 0x8408;
-    uint16_t rem                        = 0;
-
-    for (size_t i = 0; i < size; i++)
-    {
-        rem ^= data[i];
-        for (int j = 0; j < 8; j++)
-        {
-            rem = (rem & 1) ? kPolynomialCRC16 ^ (rem >> 1) : rem >> 1;
-        }
-    }
-    return rem;
-}
-
 // Header data type used for the pipeline cache.
 ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
 
 class CacheDataHeader
 {
   public:
-    void setData(uint16_t compressedDataCRC,
+    void setData(uint32_t compressedDataCRC,
                  uint32_t cacheDataSize,
                  uint16_t numChunks,
                  uint16_t chunkIndex)
@@ -957,8 +943,8 @@ class CacheDataHeader
         mChunkIndex        = chunkIndex;
     }
 
-    void getData(uint16_t *versionOut,
-                 uint16_t *compressedDataCRCOut,
+    void getData(uint32_t *versionOut,
+                 uint32_t *compressedDataCRCOut,
                  uint32_t *cacheDataSizeOut,
                  size_t *numChunksOut,
                  size_t *chunkIndexOut) const
@@ -982,8 +968,8 @@ class CacheDataHeader
     // it is possible to modify the fields in the header, it is recommended to keep the version on
     // top and the same size unless absolutely necessary.
 
-    uint16_t mVersion;
-    uint16_t mCompressedDataCRC;
+    uint32_t mVersion;
+    uint32_t mCompressedDataCRC;
     uint32_t mCacheDataSize;
     uint16_t mNumChunks;
     uint16_t mChunkIndex;
@@ -992,7 +978,7 @@ class CacheDataHeader
 ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 
 // Pack header data for the pipeline cache key data.
-void PackHeaderDataForPipelineCache(uint16_t compressedDataCRC,
+void PackHeaderDataForPipelineCache(uint32_t compressedDataCRC,
                                     uint32_t cacheDataSize,
                                     uint16_t numChunks,
                                     uint16_t chunkIndex,
@@ -1003,8 +989,8 @@ void PackHeaderDataForPipelineCache(uint16_t compressedDataCRC,
 
 // Unpack header data from the pipeline cache key data.
 void UnpackHeaderDataForPipelineCache(CacheDataHeader *data,
-                                      uint16_t *versionOut,
-                                      uint16_t *compressedDataCRCOut,
+                                      uint32_t *versionOut,
+                                      uint32_t *compressedDataCRCOut,
                                       uint32_t *cacheDataSizeOut,
                                       size_t *numChunksOut,
                                       size_t *chunkIndexOut)
@@ -1075,10 +1061,10 @@ void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDevicePr
     ASSERT(numChunks <= UINT16_MAX);
     size_t chunkSize = UnsignedCeilDivide(static_cast<unsigned int>(compressedData.size()),
                                           static_cast<unsigned int>(numChunks));
-    uint16_t compressedDataCRC = 0;
+    uint32_t compressedDataCRC = 0;
     if (kEnableCRCForPipelineCache)
     {
-        compressedDataCRC = ComputeCRC16(compressedData.data(), compressedData.size());
+        compressedDataCRC = angle::GenerateCrc(compressedData.data(), compressedData.size());
     }
 
     for (size_t chunkIndex = 0; chunkIndex < numChunks; ++chunkIndex)
@@ -1163,8 +1149,8 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
     }
 
     // Get the number of chunks and other values from the header for data validation.
-    uint16_t cacheVersion;
-    uint16_t compressedDataCRC;
+    uint32_t cacheVersion;
+    uint32_t compressedDataCRC;
     uint32_t uncompressedCacheDataSize;
     size_t numChunks;
     size_t chunkIndex0;
@@ -1186,22 +1172,9 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
     }
     else
     {
-        // Either the header structure has been updated, or the header value has been changed.
-        if (cacheVersion > kPipelineCacheVersion + (1 << 8))
-        {
-            // TODO(abdolrashidi): Data corruption in the version should result in a fatal error.
-            // For now, a warning is shown instead, but it should change when the version field is
-            // no longer new.
-            WARN() << "Existing cache version is significantly greater than the new version"
-                      ", possibly due to data corruption: "
-                   << "newVersion = " << kPipelineCacheVersion
-                   << ", existingVersion = " << cacheVersion;
-        }
-        else
-        {
-            WARN() << "Change in cache header version detected: " << "newVersion = "
-                   << kPipelineCacheVersion << ", existingVersion = " << cacheVersion;
-        }
+        WARN() << "Change in cache header version detected: " << "newVersion = "
+               << kPipelineCacheVersion << ", existingVersion = " << cacheVersion;
+
         return angle::Result::Continue;
     }
 
@@ -1228,8 +1201,8 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
         }
 
         // Validate the header values and ensure there is enough space to store.
-        uint16_t checkCacheVersion;
-        uint16_t checkCompressedDataCRC;
+        uint32_t checkCacheVersion;
+        uint32_t checkCompressedDataCRC;
         uint32_t checkUncompressedCacheDataSize;
         size_t checkNumChunks;
         size_t checkChunkIndex;
@@ -1268,7 +1241,8 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
     // CRC for compressed data and size for decompressed data should match the values in the header.
     if (kEnableCRCForPipelineCache)
     {
-        uint16_t computedCompressedDataCRC = ComputeCRC16(compressedData.data(), compressedSize);
+        uint32_t computedCompressedDataCRC =
+            angle::GenerateCrc(compressedData.data(), compressedSize);
         if (computedCompressedDataCRC != compressedDataCRC)
         {
             if (compressedDataCRC == 0)
@@ -1399,7 +1373,7 @@ void OneOffCommandPool::init(vk::ProtectionType protectionType)
 
 void OneOffCommandPool::destroy(VkDevice device)
 {
-    std::unique_lock<std::mutex> lock(mMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMutex);
     for (PendingOneOffCommands &pending : mPendingCommands)
     {
         pending.commandBuffer.releaseHandle();
@@ -1411,7 +1385,7 @@ void OneOffCommandPool::destroy(VkDevice device)
 angle::Result OneOffCommandPool::getCommandBuffer(vk::Context *context,
                                                   vk::PrimaryCommandBuffer *commandBufferOut)
 {
-    std::unique_lock<std::mutex> lock(mMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMutex);
 
     if (!mPendingCommands.empty() &&
         context->getRenderer()->hasResourceUseFinished(mPendingCommands.front().use))
@@ -1458,7 +1432,7 @@ angle::Result OneOffCommandPool::getCommandBuffer(vk::Context *context,
 void OneOffCommandPool::releaseCommandBuffer(const QueueSerial &submitQueueSerial,
                                              vk::PrimaryCommandBuffer &&primary)
 {
-    std::unique_lock<std::mutex> lock(mMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMutex);
     mPendingCommands.push_back({vk::ResourceUse(submitQueueSerial), std::move(primary)});
 }
 
@@ -1520,7 +1494,8 @@ Renderer::~Renderer() {}
 
 bool Renderer::hasSharedGarbage()
 {
-    return !mSharedGarbageList.empty() || !mSuballocationGarbageList.empty();
+    return !mSharedGarbageList.empty() || !mSuballocationGarbageList.empty() ||
+           !mRefCountedEventGarbageList.empty();
 }
 
 void Renderer::onDestroy(vk::Context *context)
@@ -1719,7 +1694,12 @@ angle::Result Renderer::enableInstanceExtensions(vk::Context *context,
             mEnabledInstanceExtensions.push_back(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
         }
 
-        if (ExtensionFound(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME, instanceExtensionNames))
+        ANGLE_FEATURE_CONDITION(
+            &mFeatures, supportsSurfaceMaintenance1,
+            !isMockICDEnabled() && ExtensionFound(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME,
+                                                  instanceExtensionNames));
+
+        if (mFeatures.supportsSurfaceMaintenance1.enabled)
         {
             mEnabledInstanceExtensions.push_back(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME);
         }
@@ -2392,6 +2372,10 @@ void Renderer::appendDeviceExtensionFeaturesNotPromoted(
 // - VK_KHR_sampler_ycbcr_conversion:       samplerYcbcrConversion (feature)
 // - VK_KHR_multiview:                      multiview (feature),
 //                                          maxMultiviewViewCount (property)
+// - VK_KHR_16bit_storage                   storageBuffer16BitAccess (feature)
+//                                          uniformAndStorageBuffer16BitAccess (feature)
+//                                          storagePushConstant16 (feature)
+//                                          storageInputOutput16 (feature)
 //
 //
 // Note that subgroup and protected memory features and properties came from unpublished extensions
@@ -2415,6 +2399,10 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo11(
         vk::AddToPNextChain(deviceFeatures, &mMultiviewFeatures);
         vk::AddToPNextChain(deviceProperties, &mMultiviewProperties);
     }
+    if (ExtensionFound(VK_KHR_16BIT_STORAGE_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &m16BitStorageFeatures);
+    }
 }
 
 // The following features and properties used by ANGLE have been promoted to Vulkan 1.2:
@@ -2428,6 +2416,9 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo11(
 // - VK_EXT_host_query_reset:               hostQueryReset (feature)
 // - VK_KHR_imageless_framebuffer:          imagelessFramebuffer (feature)
 // - VK_KHR_timeline_semaphore:             timelineSemaphore (feature)
+// - VK_KHR_8bit_storage                    storageBuffer8BitAccess (feature)
+//                                          uniformAndStorageBuffer8BitAccess (feature)
+//                                          storagePushConstant8 (feature)
 //
 // Note that supportedDepthResolveModes is used just to check if the property struct is populated.
 // ANGLE always uses VK_RESOLVE_MODE_SAMPLE_ZERO_BIT for both depth and stencil, and support for
@@ -2472,6 +2463,11 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo12(
     {
         vk::AddToPNextChain(deviceFeatures, &mTimelineSemaphoreFeatures);
     }
+
+    if (ExtensionFound(VK_KHR_8BIT_STORAGE_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &m8BitStorageFeatures);
+    }
 }
 
 // The following features and properties used by ANGLE have been promoted to Vulkan 1.3:
@@ -2498,6 +2494,11 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo13(
     if (ExtensionFound(VK_EXT_EXTENDED_DYNAMIC_STATE_2_EXTENSION_NAME, deviceExtensionNames))
     {
         vk::AddToPNextChain(deviceFeatures, &mExtendedDynamicState2Features);
+    }
+
+    if (ExtensionFound(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mSynchronization2Features);
     }
 }
 
@@ -2672,6 +2673,15 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mHostImageCopyProperties.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT;
 
+    m8BitStorageFeatures       = {};
+    m8BitStorageFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
+
+    m16BitStorageFeatures       = {};
+    m16BitStorageFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR;
+
+    mSynchronization2Features       = {};
+    mSynchronization2Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES;
+
 #if defined(ANGLE_PLATFORM_ANDROID)
     mExternalFormatResolveFeatures = {};
     mExternalFormatResolveFeatures.sType =
@@ -2746,6 +2756,9 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mTimelineSemaphoreFeatures.pNext                        = nullptr;
     mHostImageCopyFeatures.pNext                            = nullptr;
     mHostImageCopyProperties.pNext                          = nullptr;
+    m8BitStorageFeatures.pNext                              = nullptr;
+    m16BitStorageFeatures.pNext                             = nullptr;
+    mSynchronization2Features.pNext                         = nullptr;
 #if defined(ANGLE_PLATFORM_ANDROID)
     mExternalFormatResolveFeatures.pNext   = nullptr;
     mExternalFormatResolveProperties.pNext = nullptr;
@@ -3106,6 +3119,14 @@ void Renderer::enableDeviceExtensionsPromotedTo11(const vk::ExtensionNameList &d
     {
         vk::AddToPNextChain(&mEnabledFeatures, &mProtectedMemoryFeatures);
     }
+
+    if (mFeatures.supports16BitStorageBuffer.enabled ||
+        mFeatures.supports16BitUniformAndStorageBuffer.enabled ||
+        mFeatures.supports16BitPushConstant.enabled || mFeatures.supports16BitInputOutput.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_KHR_16BIT_STORAGE_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &m16BitStorageFeatures);
+    }
 }
 
 // See comment above appendDeviceExtensionFeaturesPromotedTo12.  Additional extensions are enabled
@@ -3166,6 +3187,14 @@ void Renderer::enableDeviceExtensionsPromotedTo12(const vk::ExtensionNameList &d
         mEnabledDeviceExtensions.push_back(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
         vk::AddToPNextChain(&mEnabledFeatures, &mTimelineSemaphoreFeatures);
     }
+
+    if (mFeatures.supports8BitStorageBuffer.enabled ||
+        mFeatures.supports8BitUniformAndStorageBuffer.enabled ||
+        mFeatures.supports8BitPushConstant.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_KHR_8BIT_STORAGE_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &m8BitStorageFeatures);
+    }
 }
 
 // See comment above appendDeviceExtensionFeaturesPromotedTo13.
@@ -3186,6 +3215,12 @@ void Renderer::enableDeviceExtensionsPromotedTo13(const vk::ExtensionNameList &d
     {
         mEnabledDeviceExtensions.push_back(VK_EXT_EXTENDED_DYNAMIC_STATE_2_EXTENSION_NAME);
         vk::AddToPNextChain(&mEnabledFeatures, &mExtendedDynamicState2Features);
+    }
+
+    if (mFeatures.supportsSynchronization2.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mSynchronization2Features);
     }
 }
 
@@ -4984,12 +5019,39 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsTimelineSemaphore,
                             mTimelineSemaphoreFeatures.timelineSemaphore == VK_TRUE);
 
+    // 8bit storage features
+    ANGLE_FEATURE_CONDITION(&mFeatures, supports8BitStorageBuffer,
+                            m8BitStorageFeatures.storageBuffer8BitAccess == VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supports8BitUniformAndStorageBuffer,
+                            m8BitStorageFeatures.uniformAndStorageBuffer8BitAccess == VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supports8BitPushConstant,
+                            m8BitStorageFeatures.storagePushConstant8 == VK_TRUE);
+
+    // 16bit storage features
+    ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitStorageBuffer,
+                            m16BitStorageFeatures.storageBuffer16BitAccess == VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitUniformAndStorageBuffer,
+                            m16BitStorageFeatures.uniformAndStorageBuffer16BitAccess == VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitPushConstant,
+                            m16BitStorageFeatures.storagePushConstant16 == VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitInputOutput,
+                            m16BitStorageFeatures.storageInputOutput16 == VK_TRUE);
+
 #if defined(ANGLE_PLATFORM_ANDROID)
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsExternalFormatResolve,
                             mExternalFormatResolveFeatures.externalFormatResolve == VK_TRUE);
 #else
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsExternalFormatResolve, false);
 #endif
+
+    // Disable use of VkCmdWaitEvent for image barriers for now.
+    // https://issuetracker.google.com/336844257
+    ANGLE_FEATURE_CONDITION(&mFeatures, useVkEventForImageBarrier, false);
 
     // Disable memory report feature overrides if extension is not supported.
     if ((mFeatures.logMemoryReportCallbacks.enabled || mFeatures.logMemoryReportStats.enabled) &&
@@ -5047,7 +5109,7 @@ angle::Result Renderer::ensurePipelineCacheInitialized(vk::Context *context)
         return angle::Result::Continue;
     }
 
-    std::unique_lock<std::mutex> lock(mPipelineCacheMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mPipelineCacheMutex);
 
     // If another thread initialized it first don't redo it
     if (mPipelineCacheInitialized)
@@ -5073,7 +5135,7 @@ angle::Result Renderer::getPipelineCache(vk::Context *context,
 {
     ANGLE_TRY(ensurePipelineCacheInitialized(context));
 
-    std::mutex *pipelineCacheMutex =
+    angle::SimpleMutex *pipelineCacheMutex =
         (context->getFeatures().mergeProgramPipelineCachesToGlobalCache.enabled)
             ? &mPipelineCacheMutex
             : nullptr;
@@ -5444,6 +5506,8 @@ void Renderer::cleanupGarbage()
     // Note: do this after clean up mSuballocationGarbageList so that we will have more chances to
     // find orphaned blocks being empty.
     mOrphanedBufferBlockList.pruneEmptyBufferBlocks(this);
+    // Clean up event garbages
+    mRefCountedEventGarbageList.cleanupSubmittedGarbage(this);
 }
 
 void Renderer::cleanupPendingSubmissionGarbage()
@@ -5451,6 +5515,7 @@ void Renderer::cleanupPendingSubmissionGarbage()
     // Check if pending garbage is still pending. If not, move them to the garbage list.
     mSharedGarbageList.cleanupUnsubmittedGarbage(this);
     mSuballocationGarbageList.cleanupUnsubmittedGarbage(this);
+    mRefCountedEventGarbageList.cleanupUnsubmittedGarbage(this);
 }
 
 void Renderer::onNewValidationMessage(const std::string &message)
@@ -5517,7 +5582,7 @@ void Renderer::setGlobalDebugAnnotator(bool *installedAnnotatorOut)
     {
         if (installDebugAnnotatorVk)
         {
-            std::unique_lock<std::mutex> lock(gl::GetDebugMutex());
+            std::unique_lock<angle::SimpleMutex> lock(gl::GetDebugMutex());
             gl::InitializeDebugAnnotations(&mAnnotator);
         }
     }
@@ -5839,7 +5904,7 @@ void Renderer::logCacheStats() const
         return;
     }
 
-    std::unique_lock<std::mutex> localLock(mCacheStatsMutex);
+    std::unique_lock<angle::SimpleMutex> localLock(mCacheStatsMutex);
 
     int cacheType = 0;
     INFO() << "Vulkan object cache hit ratios: ";
@@ -5906,13 +5971,13 @@ angle::Result Renderer::getFormatDescriptorCountForExternalFormat(vk::Context *c
 
 void Renderer::onAllocateHandle(vk::HandleType handleType)
 {
-    std::unique_lock<std::mutex> localLock(mActiveHandleCountsMutex);
+    std::unique_lock<angle::SimpleMutex> localLock(mActiveHandleCountsMutex);
     mActiveHandleCounts.onAllocate(handleType);
 }
 
 void Renderer::onDeallocateHandle(vk::HandleType handleType)
 {
-    std::unique_lock<std::mutex> localLock(mActiveHandleCountsMutex);
+    std::unique_lock<angle::SimpleMutex> localLock(mActiveHandleCountsMutex);
     mActiveHandleCounts.onDeallocate(handleType);
 }
 

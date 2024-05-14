@@ -293,7 +293,7 @@ InitState FramebufferAttachment::initState() const
                      : InitState::Initialized;
 }
 
-angle::Result FramebufferAttachment::initializeContents(const Context *context)
+angle::Result FramebufferAttachment::initializeContents(const Context *context) const
 {
     ASSERT(mResource);
     ANGLE_TRY(mResource->initializeContents(context, mTarget.binding(), mTarget.textureIndex()));

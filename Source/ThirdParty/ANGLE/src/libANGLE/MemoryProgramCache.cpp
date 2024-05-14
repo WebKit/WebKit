@@ -194,7 +194,7 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
     }
 
     {
-        std::scoped_lock<std::mutex> lock(mBlobCache.getMutex());
+        std::scoped_lock<angle::SimpleMutex> lock(mBlobCache.getMutex());
         // TODO: http://anglebug.com/7568
         // This was a workaround for Chrome until it added support for EGL_ANDROID_blob_cache,
         // tracked by http://anglebug.com/2516. This issue has since been closed, but removing this

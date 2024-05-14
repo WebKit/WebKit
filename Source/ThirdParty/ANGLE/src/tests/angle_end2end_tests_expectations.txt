@@ -654,6 +654,8 @@ b/308668391 PIXEL4ORXL VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleNoD
 8598 PIXEL6 VULKAN : VulkanPerformanceCounterTest.RenderToTextureDepthStencilRenderbufferShouldNotLoad/* = SKIP
 8598 PIXEL6 VULKAN : VulkanPerformanceCounterTest.RenderToTextureDepthStencilTextureShouldNotLoad/* = SKIP
 8598 PIXEL6 VULKAN : VulkanPerformanceCounterTest.RenderToTextureUninitializedAndUnusedDepthStencil/* = SKIP
+// New failures after AP1A.240405.002 upgrade
+b/336847261 PIXEL6 VULKAN : StateChangeTestES3.LineWidth/* = SKIP
 
 // ARM drivers cannot support xfb emulation because they lack support for the
 // vertexPipelineStoresAndAtomics Vulkan feature.  The tests that force-enable this feature are
@@ -1406,6 +1408,25 @@ b/292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = 
 // WebGPU failures
 8485 WGPU : RendererTest.SimpleOperation/* = SKIP
 8582 WGPU : ClearTest.* = SKIP
+8547 WGPU : Texture2DTest.Tex* = SKIP
+8547 WGPU : Texture2DTest.Upload* = SKIP
+8547 WGPU : Texture2DTest.*Superseding* = SKIP
+8547 WGPU : Texture2DTest.*Multiple* = SKIP
+8547 WGPU : Texture2DTest.*Copy* = SKIP
+8547 WGPU : Texture2DTest.*Mutable* = SKIP
+
+// Linux/UHD 630 failures caused by OS/driver upgrade.
+8683 LINUX INTEL OPENGL : AtomicCounterBufferTest31.AtomicCounterReadCompute/* = SKIP
+8683 LINUX INTEL OPENGL : ClearTest.ChangeFramebufferAttachmentFromRGBAtoRGB/* = SKIP
+8683 LINUX INTEL OPENGL : ClipControlTest.OriginFragCoord/* = SKIP
+8683 LINUX INTEL VULKAN : CubeMapTextureTest.SampleCoordinateTransformGrad/* = SKIP
+8683 LINUX INTEL OPENGL : EGLMultiContextTest.ReuseUnterminatedDisplay/* = SKIP
+8683 LINUX INTEL OPENGL : GLSLTest.FragCoordConsistency/* = SKIP
+8683 LINUX INTEL OPENGL : GLSLTest_ES31.StructAndArrayEqualOperator/* = SKIP
+8683 LINUX INTEL VULKAN : TransformFeedbackTest.BufferOutOfMemory/* = SKIP
+8683 LINUX INTEL OPENGL : WEBGLVideoTextureTest.VerifySamplerVideoWEBGL/* = SKIP
+8683 LINUX INTEL OPENGL : WEBGLVideoTextureTest.VerifySamplerVideoWEBGLAsParameter/* = SKIP
+8683 LINUX INTEL OPENGL : WEBGLVideoTextureTest.VerifyStateManagerKnowsBindingVideoImage/* = SKIP
 
 // Slow tests, should appear last in this file
 5076 : GLSLTest.VerifyMaxVertexUniformVectors* = TIMEOUT

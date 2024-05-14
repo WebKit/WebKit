@@ -46,12 +46,17 @@ angle::Result SurfaceGL::initializeContents(const gl::Context *context,
     switch (binding)
     {
         case GL_BACK:
-            ANGLE_TRY(blitter->clearFramebuffer(context, true, false, false, framebufferGL));
-            break;
+        {
+            gl::DrawBufferMask colorAttachments{0};
+            ANGLE_TRY(
+                blitter->clearFramebuffer(context, colorAttachments, false, false, framebufferGL));
+        }
+        break;
 
         case GL_DEPTH:
         case GL_STENCIL:
-            ANGLE_TRY(blitter->clearFramebuffer(context, false, true, true, framebufferGL));
+            ANGLE_TRY(blitter->clearFramebuffer(context, gl::DrawBufferMask(), true, true,
+                                                framebufferGL));
             break;
 
         default:

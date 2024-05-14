@@ -75,7 +75,12 @@ void GetRenderTargetLayerCountAndIndex(webgpu::ImageHelper *image,
 
 }  // namespace
 
-TextureWgpu::TextureWgpu(const gl::TextureState &state) : TextureImpl(state) {}
+TextureWgpu::TextureWgpu(const gl::TextureState &state)
+    : TextureImpl(state),
+      mImage(new webgpu::ImageHelper()),
+      mCurrentBaseLevel(state.getBaseLevel()),
+      mCurrentMaxLevel(state.getMaxLevel())
+{}
 
 TextureWgpu::~TextureWgpu() {}
 
@@ -89,9 +94,7 @@ angle::Result TextureWgpu::setImage(const gl::Context *context,
                                     gl::Buffer *unpackBuffer,
                                     const uint8_t *pixels)
 {
-    // TODO(liza): Upload texture data.
-    UNIMPLEMENTED();
-    return setImageImpl(context, index, size);
+    return setImageImpl(context, internalFormat, type, index, size, unpack, pixels);
 }
 
 angle::Result TextureWgpu::setSubImage(const gl::Context *context,
@@ -103,7 +106,7 @@ angle::Result TextureWgpu::setSubImage(const gl::Context *context,
                                        gl::Buffer *unpackBuffer,
                                        const uint8_t *pixels)
 {
-    return angle::Result::Continue;
+    return setSubImageImpl(context, format, type, index, area, unpack, pixels);
 }
 
 angle::Result TextureWgpu::setCompressedImage(const gl::Context *context,
@@ -274,6 +277,13 @@ angle::Result TextureWgpu::syncState(const gl::Context *context,
                                      const gl::Texture::DirtyBits &dirtyBits,
                                      gl::Command source)
 {
+    ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
+    ANGLE_TRY(respecifyImageStorageIfNecessary(contextWgpu, source));
+    const bool isGenerateMipmap = source == gl::Command::GenerateMipmap;
+    ANGLE_TRY(initializeImage(contextWgpu, isGenerateMipmap
+                                               ? ImageMipLevels::FullMipChainForGenerateMipmap
+                                               : ImageMipLevels::EnabledLevels));
+    mImage->flushStagedUpdates(contextWgpu);
     return angle::Result::Continue;
 }
 
@@ -300,11 +310,18 @@ angle::Result TextureWgpu::getAttachmentRenderTarget(const gl::Context *context,
                                                      GLsizei samples,
                                                      FramebufferAttachmentRenderTarget **rtOut)
 {
+    ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
+    ANGLE_TRY(respecifyImageStorageIfNecessary(contextWgpu, gl::Command::Draw));
+    if (!mImage->isInitialized())
+    {
+        ANGLE_TRY(initializeImage(contextWgpu, ImageMipLevels::EnabledLevels));
+    }
+    // Note: Flushing updates will be moved to FramebufferWgpu when deferring clears is supported.
+    mImage->flushStagedUpdates(contextWgpu);
+
     GLuint layerIndex = 0, layerCount = 0, imageLayerCount = 0;
     GetRenderTargetLayerCountAndIndex(mImage, imageIndex, &layerIndex, &layerCount,
                                       &imageLayerCount);
-
-    ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
 
     // NOTE: Multisampling not yet supported
     ASSERT(samples <= 1);
@@ -337,46 +354,255 @@ angle::Result TextureWgpu::getAttachmentRenderTarget(const gl::Context *context,
 }
 
 angle::Result TextureWgpu::setImageImpl(const gl::Context *context,
+                                        GLenum internalFormat,
+                                        GLenum type,
                                         const gl::ImageIndex &index,
-                                        const gl::Extents &size)
+                                        const gl::Extents &size,
+                                        const gl::PixelUnpackState &unpack,
+                                        const uint8_t *pixels)
 {
-    return redefineLevel(context, index, size);
+    ANGLE_TRY(redefineLevel(context, index, size));
+    return setSubImageImpl(context, internalFormat, type, index, gl::Box(gl::kOffsetZero, size),
+                           unpack, pixels);
+}
+
+angle::Result TextureWgpu::setSubImageImpl(const gl::Context *context,
+                                           GLenum internalFormat,
+                                           GLenum type,
+                                           const gl::ImageIndex &index,
+                                           const gl::Box &area,
+                                           const gl::PixelUnpackState &unpack,
+                                           const uint8_t *pixels)
+{
+
+    ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
+
+    gl::InternalFormat internalFormatInfo = gl::GetInternalFormatInfo(internalFormat, type);
+    gl::Extents glExtents                 = gl::Extents(area.width, area.height, area.depth);
+    GLuint inputRowPitch                  = 0;
+    GLuint inputDepthPitch                = 0;
+    uint32_t outputRowPitch = roundUp(internalFormatInfo.pixelBytes * glExtents.width, (GLuint)256);
+    uint32_t outputDepthPitch = outputRowPitch * glExtents.height;
+    uint32_t allocationSize   = outputDepthPitch * glExtents.depth;
+    ANGLE_CHECK_GL_MATH(contextWgpu,
+                        internalFormatInfo.computeRowPitch(type, glExtents.width, unpack.alignment,
+                                                           unpack.rowLength, &inputRowPitch));
+    ANGLE_CHECK_GL_MATH(contextWgpu,
+                        internalFormatInfo.computeDepthPitch(glExtents.height, unpack.imageHeight,
+                                                             inputRowPitch, &inputDepthPitch));
+
+    ANGLE_TRY(mImage->stageTextureUpload(contextWgpu, glExtents, inputRowPitch, inputDepthPitch,
+                                         outputRowPitch, outputDepthPitch, allocationSize, index,
+                                         pixels));
+    return angle::Result::Continue;
+}
+
+angle::Result TextureWgpu::initializeImage(ContextWgpu *contextWgpu, ImageMipLevels mipLevels)
+{
+    if (mImage->isInitialized())
+    {
+        return angle::Result::Continue;
+    }
+    DisplayWgpu *displayWgpu                = contextWgpu->getDisplay();
+    const gl::ImageDesc *firstLevelDesc     = &mState.getBaseLevelDesc();
+    uint32_t levelCount                     = getMipLevelCount(mipLevels);
+    gl::LevelIndex firstLevel               = gl::LevelIndex(mState.getEffectiveBaseLevel());
+    const gl::Extents &firstLevelExtents    = firstLevelDesc->size;
+    wgpu::TextureDimension textureDimension = gl_wgpu::getWgpuTextureDimension(mState.getType());
+    wgpu::TextureUsage textureUsage = wgpu::TextureUsage::CopySrc | wgpu::TextureUsage::CopyDst |
+                                      wgpu::TextureUsage::RenderAttachment |
+                                      wgpu::TextureUsage::TextureBinding;
+    return mImage->initImage(
+        displayWgpu->getDevice(), firstLevel,
+        mImage->createTextureDescriptor(textureUsage, textureDimension,
+                                        gl_wgpu::getExtent3D(firstLevelExtents),
+                                        wgpu::TextureFormat::RGBA8Unorm, levelCount, 1));
 }
 
 angle::Result TextureWgpu::redefineLevel(const gl::Context *context,
                                          const gl::ImageIndex &index,
                                          const gl::Extents &size)
 {
-    bool levelWithinRange = false;
-    gl::LevelIndex levelIndexGL(index.getLevelIndex());
-    if (mImage && levelIndexGL >= mImage->getFirstAllocatedLevel() &&
-        levelIndexGL <
-            (mImage->getFirstAllocatedLevel() + mImage->getTextureDescriptor().mipLevelCount))
+    if (mImage != nullptr)
     {
-        levelWithinRange      = true;
-        bool dimensionChanged = mImage->getTextureDescriptor().dimension !=
-                                gl_wgpu::getWgpuTextureDimension(index.getType());
-        if (dimensionChanged || size != wgpu_gl::getExtents(mImage->getTextureDescriptor().size))
+        // If there are any staged changes for this index, we can remove them since we're going to
+        // override them with this call.
+        gl::LevelIndex levelIndexGL(index.getLevelIndex());
+        // Multilayer images are not yet supported.
+        const uint32_t layerIndex = 0;
+        mImage->removeStagedUpdates(levelIndexGL);
+
+        if (mImage->isInitialized())
         {
-            mImage = nullptr;
+            TextureLevelAllocation levelAllocation =
+                mImage->isTextureLevelInAllocatedImage(levelIndexGL)
+                    ? TextureLevelAllocation::WithinAllocatedImage
+                    : TextureLevelAllocation::OutsideAllocatedImage;
+            TextureLevelDefinition levelDefinition =
+                (size == wgpu_gl::getExtents(mImage->getSize()))
+                    ? TextureLevelDefinition::Compatible
+                    : TextureLevelDefinition::Incompatible;
+            if (TextureRedefineLevel(levelAllocation, levelDefinition, mState.getImmutableFormat(),
+                                     mImage->getLevelCount(), layerIndex, index,
+                                     mImage->getFirstAllocatedLevel(), &mRedefinedLevels))
+            {
+                mImage->resetImage();
+            }
         }
     }
+    else
+    {
+        mImage = new webgpu::ImageHelper;
+    }
 
-    if (size.empty())
+    return angle::Result::Continue;
+}
+
+uint32_t TextureWgpu::getMipLevelCount(ImageMipLevels mipLevels) const
+{
+    switch (mipLevels)
+    {
+        // Returns level count from base to max that has been specified, i.e, enabled.
+        case ImageMipLevels::EnabledLevels:
+            return mState.getEnabledLevelCount();
+        // Returns all mipmap levels from base to max regardless if an image has been specified or
+        // not.
+        case ImageMipLevels::FullMipChainForGenerateMipmap:
+            return getMaxLevelCount() - mState.getEffectiveBaseLevel();
+
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+uint32_t TextureWgpu::getMaxLevelCount() const
+{
+    // getMipmapMaxLevel will be 0 here if mipmaps are not used, so the levelCount is always +1.
+    return mState.getMipmapMaxLevel() + 1;
+}
+
+angle::Result TextureWgpu::respecifyImageStorageIfNecessary(ContextWgpu *contextWgpu,
+                                                            gl::Command source)
+{
+    ASSERT(mState.getBuffer().get() == nullptr);
+
+    // Before redefining the image for any reason, check to see if it's about to go through mipmap
+    // generation.  In that case, drop every staged change for the subsequent mips after base, and
+    // make sure the image is created with the complete mip chain.
+    const bool isGenerateMipmap = source == gl::Command::GenerateMipmap;
+    if (isGenerateMipmap)
+    {
+        prepareForGenerateMipmap(contextWgpu);
+    }
+
+    // Set base and max level before initializing the image
+    ANGLE_TRY(maybeUpdateBaseMaxLevels(contextWgpu));
+
+    // It is possible for the image to have a single level (because it doesn't use mipmapping),
+    // then have more levels defined in it and mipmapping enabled.  In that case, the image needs
+    // to be recreated.
+    bool isMipmapEnabledByMinFilter = false;
+    if (!isGenerateMipmap && mImage && mImage->isInitialized())
+    {
+        isMipmapEnabledByMinFilter =
+            mImage->getLevelCount() < getMipLevelCount(ImageMipLevels::EnabledLevels);
+    }
+
+    // If generating mipmaps and the image needs to be recreated (not full-mip already, or changed
+    // usage flags), make sure it's recreated.
+    if (isGenerateMipmap && mImage && mImage->isInitialized() &&
+        (!mState.getImmutableFormat() &&
+         mImage->getLevelCount() !=
+             getMipLevelCount(ImageMipLevels::FullMipChainForGenerateMipmap)))
+    {
+        mImage->flushStagedUpdates(contextWgpu);
+
+        mImage->resetImage();
+    }
+
+    // Also recreate the image if it's changed in usage, or if any of its levels are redefined and
+    // no update to base/max levels were done (otherwise the above call would have already taken
+    // care of this).
+    // TODO(liza): Respecify the image once copying images is supported.
+    if (TextureHasAnyRedefinedLevels(mRedefinedLevels) || isMipmapEnabledByMinFilter)
+    {
+        mImage->flushStagedUpdates(contextWgpu);
+
+        mImage->resetImage();
+    }
+
+    return angle::Result::Continue;
+}
+
+void TextureWgpu::prepareForGenerateMipmap(ContextWgpu *contextWgpu)
+{
+    gl::LevelIndex baseLevel(mState.getEffectiveBaseLevel());
+    gl::LevelIndex maxLevel(mState.getMipmapMaxLevel());
+
+    // Remove staged updates to the range that's being respecified (which is all the mips except
+    // baseLevel).
+    gl::LevelIndex firstGeneratedLevel = baseLevel + 1;
+    for (GLuint levelToRemove = mState.getEffectiveBaseLevel();
+         levelToRemove < mState.getMipmapMaxLevel(); levelToRemove++)
+    {
+        mImage->removeStagedUpdates(gl::LevelIndex(levelToRemove));
+    }
+
+    TextureRedefineGenerateMipmapLevels(baseLevel, maxLevel, firstGeneratedLevel,
+                                        &mRedefinedLevels);
+
+    // If generating mipmap and base level is incompatibly redefined, the image is going to be
+    // recreated.  Don't try to preserve the other mips.
+    if (IsTextureLevelRedefined(mRedefinedLevels, mState.getType(), baseLevel))
+    {
+        ASSERT(!mState.getImmutableFormat());
+        mImage->resetImage();
+    }
+}
+
+angle::Result TextureWgpu::maybeUpdateBaseMaxLevels(ContextWgpu *contextWgpu)
+{
+    bool baseLevelChanged = mCurrentBaseLevel.get() != static_cast<GLint>(mState.getBaseLevel());
+    bool maxLevelChanged  = mCurrentMaxLevel.get() != static_cast<GLint>(mState.getMaxLevel());
+
+    if (!maxLevelChanged && !baseLevelChanged)
     {
         return angle::Result::Continue;
     }
 
-    wgpu::Device device = webgpu::GetDevice(context);
+    gl::LevelIndex newBaseLevel = gl::LevelIndex(mState.getEffectiveBaseLevel());
+    gl::LevelIndex newMaxLevel  = gl::LevelIndex(mState.getEffectiveMaxLevel());
+    ASSERT(newBaseLevel <= newMaxLevel);
 
-    if (mImage == nullptr && !levelWithinRange)
+    if (!mImage->isInitialized())
     {
-        mImage                          = new webgpu::ImageHelper();
-        webgpu::TextureInfo textureInfo = mImage->getWgpuTextureInfo(index);
-        return mImage->initImage(device, textureInfo.usage, textureInfo.dimension,
-                                 gl_wgpu::getExtent3D(size), wgpu::TextureFormat::RGBA8Sint,
-                                 textureInfo.mipLevelCount, 1, 0);
+        return angle::Result::Continue;
     }
+
+    if (mState.getImmutableFormat())
+    {
+        // For immutable texture, baseLevel/maxLevel should be a subset of the texture's actual
+        // number of mip levels. We don't need to respecify an image.
+        ASSERT(!baseLevelChanged || newBaseLevel >= mImage->getFirstAllocatedLevel());
+        ASSERT(!maxLevelChanged || newMaxLevel < gl::LevelIndex(mImage->getLevelCount()));
+    }
+    else if (!baseLevelChanged && (newMaxLevel <= mImage->getLastAllocatedLevel()))
+    {
+        // With a valid image, check if only changing the maxLevel to a subset of the texture's
+        // actual number of mip levels
+        ASSERT(maxLevelChanged);
+    }
+    else
+    {
+        // TODO(liza): Respecify the image once copying images is supported.
+        mImage->resetImage();
+        return angle::Result::Continue;
+    }
+
+    mCurrentBaseLevel = newBaseLevel;
+    mCurrentMaxLevel  = newMaxLevel;
+
     return angle::Result::Continue;
 }
 
@@ -430,8 +656,8 @@ void TextureWgpu::initSingleLayerRenderTargets(ContextWgpu *contextWgpu,
         textureViewDesc.format        = mImage->getTextureDescriptor().format;
         wgpu::TextureView textureView = mImage->getTexture().CreateView(&textureViewDesc);
 
-        renderTargets[layerIndex].set(textureView, mImage->toWgpuLevel(levelIndex), layerIndex,
-                                      mImage->toWgpuTextureFormat());
+        renderTargets[layerIndex].set(mImage, textureView, mImage->toWgpuLevel(levelIndex),
+                                      layerIndex, mImage->toWgpuTextureFormat());
     }
 }
 

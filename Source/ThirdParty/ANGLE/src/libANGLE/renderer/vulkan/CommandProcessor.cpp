@@ -184,14 +184,14 @@ VkResult SharedFence::wait(VkDevice device, uint64_t timeout) const
 // FenceRecycler implementation
 void FenceRecycler::destroy(Context *context)
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     mRecyler.destroy(context->getDevice());
 }
 
 void FenceRecycler::fetch(VkDevice device, Fence *fenceOut)
 {
     ASSERT(fenceOut != nullptr && !fenceOut->valid());
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     if (!mRecyler.empty())
     {
         mRecyler.fetch(fenceOut);
@@ -201,7 +201,7 @@ void FenceRecycler::fetch(VkDevice device, Fence *fenceOut)
 
 void FenceRecycler::recycle(Fence &&fence)
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     mRecyler.recycle(std::move(fence));
 }
 
@@ -500,7 +500,7 @@ VkResult CommandBatch::waitFence(VkDevice device, uint64_t timeout) const
 
 VkResult CommandBatch::waitFenceUnlocked(VkDevice device,
                                          uint64_t timeout,
-                                         std::unique_lock<std::mutex> *lock) const
+                                         std::unique_lock<angle::SimpleMutex> *lock) const
 {
     ASSERT(hasFence());
     VkResult status;
@@ -541,7 +541,7 @@ void CommandProcessor::handleError(VkResult errorCode,
         handleDeviceLost(mRenderer);
     }
 
-    std::lock_guard<std::mutex> queueLock(mErrorMutex);
+    std::lock_guard<angle::SimpleMutex> queueLock(mErrorMutex);
     Error error = {errorCode, file, function, line};
     mErrors.emplace(error);
 }
@@ -553,7 +553,7 @@ CommandProcessor::CommandProcessor(vk::Renderer *renderer, CommandQueue *command
       mTaskThreadShouldExit(false),
       mNeedCommandsAndGarbageCleanup(false)
 {
-    std::lock_guard<std::mutex> queueLock(mErrorMutex);
+    std::lock_guard<angle::SimpleMutex> queueLock(mErrorMutex);
     while (!mErrors.empty())
     {
         mErrors.pop();
@@ -564,7 +564,7 @@ CommandProcessor::~CommandProcessor() = default;
 
 angle::Result CommandProcessor::checkAndPopPendingError(Context *errorHandlingContext)
 {
-    std::lock_guard<std::mutex> queueLock(mErrorMutex);
+    std::lock_guard<angle::SimpleMutex> queueLock(mErrorMutex);
     if (mErrors.empty())
     {
         return angle::Result::Continue;
@@ -586,7 +586,7 @@ angle::Result CommandProcessor::queueCommand(CommandProcessorTask &&task)
     std::unique_lock<std::mutex> enqueueLock(mTaskEnqueueMutex);
     if (mTaskQueue.full())
     {
-        std::lock_guard<std::mutex> dequeueLock(mTaskDequeueMutex);
+        std::lock_guard<angle::SimpleMutex> dequeueLock(mTaskDequeueMutex);
         // Check mTasks again in case someone just drained the mTasks.
         if (mTaskQueue.full())
         {
@@ -658,7 +658,7 @@ angle::Result CommandProcessor::processTasksImpl(bool *exitThread)
         enqueueLock.unlock();
 
         // Take submission lock to ensure the submission is in the same order as we received.
-        std::lock_guard<std::mutex> dequeueLock(mTaskDequeueMutex);
+        std::lock_guard<angle::SimpleMutex> dequeueLock(mTaskDequeueMutex);
         if (!mTaskQueue.empty())
         {
             CommandProcessorTask task(std::move(mTaskQueue.front()));
@@ -789,7 +789,7 @@ angle::Result CommandProcessor::waitForAllWorkToBeSubmitted(Context *context)
     // Take mWorkerMutex lock so that no one is able to enqueue more work while we drain it
     // and handle device lost.
     std::lock_guard<std::mutex> enqueueLock(mTaskEnqueueMutex);
-    std::lock_guard<std::mutex> dequeueLock(mTaskDequeueMutex);
+    std::lock_guard<angle::SimpleMutex> dequeueLock(mTaskDequeueMutex);
     // Sync any errors to the context
     // Do this inside the mutex to prevent new errors adding to the list.
     ANGLE_TRY(checkAndPopPendingError(context));
@@ -1012,7 +1012,7 @@ angle::Result CommandProcessor::waitForResourceUseToBeSubmitted(Context *context
     {
         // We do not hold mTaskEnqueueMutex lock, so that we still allow other context to enqueue
         // work while we are processing them.
-        std::lock_guard<std::mutex> dequeueLock(mTaskDequeueMutex);
+        std::lock_guard<angle::SimpleMutex> dequeueLock(mTaskDequeueMutex);
 
         // Do this inside the mutex to prevent new errors adding to the list.
         ANGLE_TRY(checkAndPopPendingError(context));
@@ -1037,7 +1037,7 @@ angle::Result CommandProcessor::waitForPresentToBeSubmitted(SwapchainStatus *swa
         return angle::Result::Continue;
     }
 
-    std::lock_guard<std::mutex> dequeueLock(mTaskDequeueMutex);
+    std::lock_guard<angle::SimpleMutex> dequeueLock(mTaskDequeueMutex);
     size_t maxTaskCount = mTaskQueue.size();
     size_t taskCount    = 0;
     while (taskCount < maxTaskCount && swapchainStatus->isPending)
@@ -1063,8 +1063,8 @@ CommandQueue::~CommandQueue() = default;
 
 void CommandQueue::destroy(Context *context)
 {
-    std::lock_guard<std::mutex> lock(mMutex);
-    std::lock_guard<std::mutex> enqueuelock(mQueueSubmitMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> enqueuelock(mQueueSubmitMutex);
     // Force all commands to finish by flushing all queues.
     for (VkQueue queue : mQueueMap)
     {
@@ -1103,7 +1103,7 @@ void CommandQueue::destroy(Context *context)
 
 angle::Result CommandQueue::init(Context *context, const DeviceQueueMap &queueMap)
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     // In case Renderer gets re-initialized, we can't rely on constructor to do initialization.
     mLastSubmittedSerials.fill(kZeroSerial);
     mLastCompletedSerials.fill(kZeroSerial);
@@ -1126,8 +1126,8 @@ void CommandQueue::handleDeviceLost(vk::Renderer *renderer)
     ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::handleDeviceLost");
     VkDevice device = renderer->getDevice();
     // Hold both locks while clean up mInFlightCommands.
-    std::lock_guard<std::mutex> dequeuelock(mMutex);
-    std::lock_guard<std::mutex> enqueuelock(mQueueSubmitMutex);
+    std::lock_guard<angle::SimpleMutex> dequeuelock(mMutex);
+    std::lock_guard<angle::SimpleMutex> enqueuelock(mQueueSubmitMutex);
 
     while (!mInFlightCommands.empty())
     {
@@ -1170,7 +1170,7 @@ angle::Result CommandQueue::postSubmitCheck(Context *context)
         // destroyed. This is important to keep peak memory usage at check when game launched and a
         // lot of staging buffers used for textures upload and then gets released. But if there is
         // only one command buffer in flight, we do not wait here to ensure we keep GPU busy.
-        std::unique_lock<std::mutex> lock(mMutex);
+        std::unique_lock<angle::SimpleMutex> lock(mMutex);
         while (suballocationGarbageSize > kMaxBufferSuballocationGarbageSize &&
                mInFlightCommands.size() > 1)
         {
@@ -1195,7 +1195,7 @@ angle::Result CommandQueue::finishResourceUse(Context *context,
     VkDevice device = context->getDevice();
 
     {
-        std::unique_lock<std::mutex> lock(mMutex);
+        std::unique_lock<angle::SimpleMutex> lock(mMutex);
         while (!mInFlightCommands.empty() && !hasResourceUseFinished(use))
         {
             bool finished;
@@ -1232,7 +1232,7 @@ angle::Result CommandQueue::waitIdle(Context *context, uint64_t timeout)
     // Fill the local variable with lock
     vk::ResourceUse use;
     {
-        std::lock_guard<std::mutex> lock(mMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
         if (mInFlightCommands.empty())
         {
             return angle::Result::Continue;
@@ -1259,7 +1259,7 @@ angle::Result CommandQueue::waitForResourceUseToFinishWithUserTimeout(Context *c
     VkDevice device      = context->getDevice();
     size_t finishedCount = 0;
     {
-        std::unique_lock<std::mutex> lock(mMutex);
+        std::unique_lock<angle::SimpleMutex> lock(mMutex);
         *result = hasResourceUseFinished(use) ? VK_SUCCESS : VK_NOT_READY;
         while (!mInFlightCommands.empty() && !hasResourceUseFinished(use))
         {
@@ -1317,7 +1317,7 @@ void CommandQueue::flushWaitSemaphores(ProtectionType protectionType,
 {
     ASSERT(!waitSemaphores.empty());
     ASSERT(waitSemaphores.size() == waitSemaphoreStageMasks.size());
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
 
     CommandsState &state = mCommandsStateMap[priority][protectionType];
 
@@ -1337,7 +1337,7 @@ angle::Result CommandQueue::flushOutsideRPCommands(
     egl::ContextPriority priority,
     OutsideRenderPassCommandBufferHelper **outsideRPCommands)
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     ANGLE_TRY(ensurePrimaryCommandBufferValid(context, protectionType, priority));
     CommandsState &state = mCommandsStateMap[priority][protectionType];
     return (*outsideRPCommands)->flushToPrimary(context, &state);
@@ -1351,7 +1351,7 @@ angle::Result CommandQueue::flushRenderPassCommands(
     VkFramebuffer framebufferOverride,
     RenderPassCommandBufferHelper **renderPassCommands)
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     ANGLE_TRY(ensurePrimaryCommandBufferValid(context, protectionType, priority));
     CommandsState &state = mCommandsStateMap[priority][protectionType];
     return (*renderPassCommands)->flushToPrimary(context, &state, renderPass, framebufferOverride);
@@ -1365,7 +1365,7 @@ angle::Result CommandQueue::submitCommands(Context *context,
                                            const QueueSerial &submitQueueSerial)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::submitCommands");
-    std::unique_lock<std::mutex> lock(mMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMutex);
     vk::Renderer *renderer = context->getRenderer();
     VkDevice device        = renderer->getDevice();
 
@@ -1452,7 +1452,7 @@ angle::Result CommandQueue::queueSubmitOneOff(Context *context,
                                               SubmitPolicy submitPolicy,
                                               const QueueSerial &submitQueueSerial)
 {
-    std::unique_lock<std::mutex> lock(mMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMutex);
     DeviceScoped<CommandBatch> scopedBatch(context->getDevice());
     CommandBatch &batch  = scopedBatch.get();
     batch.queueSerial    = submitQueueSerial;
@@ -1496,7 +1496,7 @@ angle::Result CommandQueue::queueSubmitOneOff(Context *context,
 }
 
 angle::Result CommandQueue::queueSubmit(Context *context,
-                                        std::unique_lock<std::mutex> &&dequeueLock,
+                                        std::unique_lock<angle::SimpleMutex> &&dequeueLock,
                                         egl::ContextPriority contextPriority,
                                         const VkSubmitInfo &submitInfo,
                                         DeviceScoped<CommandBatch> &commandBatch,
@@ -1509,7 +1509,7 @@ angle::Result CommandQueue::queueSubmit(Context *context,
     // order. This lock relay (first take mMutex and then mQueueSubmitMutex, and then release
     // mMutex) ensures we always have a lock covering the entire call which ensures the strict
     // submission order.
-    std::lock_guard<std::mutex> queueSubmitLock(mQueueSubmitMutex);
+    std::lock_guard<angle::SimpleMutex> queueSubmitLock(mQueueSubmitMutex);
     // CPU should be throttled to avoid mInFlightCommands from growing too fast. Important for
     // off-screen scenarios.
     if (mInFlightCommands.full())
@@ -1556,20 +1556,20 @@ void CommandQueue::queuePresent(egl::ContextPriority contextPriority,
                                 const VkPresentInfoKHR &presentInfo,
                                 SwapchainStatus *swapchainStatus)
 {
-    std::lock_guard<std::mutex> queueSubmitLock(mQueueSubmitMutex);
+    std::lock_guard<angle::SimpleMutex> queueSubmitLock(mQueueSubmitMutex);
     VkQueue queue                      = getQueue(contextPriority);
     swapchainStatus->lastPresentResult = vkQueuePresentKHR(queue, &presentInfo);
 }
 
 const angle::VulkanPerfCounters CommandQueue::getPerfCounters() const
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     return mPerfCounters;
 }
 
 void CommandQueue::resetPerFramePerfCounters()
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     mPerfCounters.commandQueueSubmitCallsPerFrame = 0;
     mPerfCounters.vkQueueSubmitCallsPerFrame      = 0;
 }
@@ -1624,7 +1624,7 @@ angle::Result CommandQueue::finishOneCommandBatchAndCleanup(Context *context,
                                                             uint64_t timeout,
                                                             bool *anyFinished)
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
 
     // If there are in-flight submissions in the queue, they can be finished.
     *anyFinished = false;

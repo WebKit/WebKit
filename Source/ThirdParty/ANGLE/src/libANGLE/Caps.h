@@ -810,6 +810,9 @@ struct ClientExtensions
 
     // EGL_ANGLE_display_power_preference
     bool displayPowerPreferenceANGLE = false;
+
+    // EGL_ANGLE_no_error
+    bool noErrorANGLE = false;
 };
 
 }  // namespace egl

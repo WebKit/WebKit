@@ -1151,6 +1151,13 @@ struct FeaturesVk : FeatureSetBase
         &members, "https://anglebug.com/7899"
     };
 
+    FeatureInfo supportsSurfaceMaintenance1 = {
+        "supportsSurfaceMaintenance1",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_EXT_surface_maintenance1 extension",
+        &members, "https://anglebug.com/7847"
+    };
+
     FeatureInfo supportsSwapchainMaintenance1 = {
         "supportsSwapchainMaintenance1",
         FeatureCategory::VulkanFeatures,
@@ -1373,6 +1380,69 @@ struct FeaturesVk : FeatureSetBase
         "can either be combined into a single pipeline or can be decoupled into separate pipelines. This feature"
         "is enabled when the former is the case.",
         &members, "http://anglebug.com/8601"
+    };
+
+    FeatureInfo supports8BitStorageBuffer = {
+        "supports8BitStorageBuffer",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_8bit_storage extension and has the storageBuffer8BitAccess feature",
+        &members, "http://anglebug.com/8676"
+    };
+
+    FeatureInfo supports8BitUniformAndStorageBuffer = {
+        "supports8BitUniformAndStorageBuffer",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_8bit_storage extension and has the uniformAndStorageBuffer8BitAccess feature",
+        &members, "http://anglebug.com/8676"
+    };
+
+    FeatureInfo supports8BitPushConstant = {
+        "supports8BitPushConstant",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_8bit_storage extension and has the storagePushConstant8 feature",
+        &members, "http://anglebug.com/8676"
+    };
+
+    FeatureInfo supports16BitStorageBuffer = {
+        "supports16BitStorageBuffer",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_16bit_storage extension and has the storageBuffer16BitAccess feature",
+        &members, "http://anglebug.com/8676"
+    };
+
+    FeatureInfo supports16BitUniformAndStorageBuffer = {
+        "supports16BitUniformAndStorageBuffer",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_16bit_storage extension and has the uniformAndStorageBuffer16BitAccess feature",
+        &members, "http://anglebug.com/8676"
+    };
+
+    FeatureInfo supports16BitPushConstant = {
+        "supports16BitPushConstant",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_16bit_storage extension and has the storagePushConstant16 feature",
+        &members, "http://anglebug.com/8676"
+    };
+
+    FeatureInfo supports16BitInputOutput = {
+        "supports16BitInputOutput",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_16bit_storage extension and has the storageInputOutput16 feature",
+        &members, "http://anglebug.com/8676"
+    };
+
+    FeatureInfo useVkEventForImageBarrier = {
+        "useVkEventForImageBarrier",
+        FeatureCategory::VulkanFeatures,
+        "Uses VkEvent instead of VkCmdPipelineBarrier for image barriers",
+        &members, "https://issuetracker.google.com/336844257"
+    };
+
+    FeatureInfo supportsSynchronization2 = {
+        "supportsSynchronization2",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_KHR_synchronization2 extension",
+        &members, "https://issuetracker.google.com/336844257"
     };
 
 };

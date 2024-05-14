@@ -1396,6 +1396,7 @@ void TCompiler::setResourceString()
         << ":EXT_draw_buffers:" << mResources.EXT_draw_buffers
         << ":FragmentPrecisionHigh:" << mResources.FragmentPrecisionHigh
         << ":MaxExpressionComplexity:" << mResources.MaxExpressionComplexity
+        << ":MaxStatementDepth:" << mResources.MaxStatementDepth
         << ":MaxCallStackDepth:" << mResources.MaxCallStackDepth
         << ":MaxFunctionParameters:" << mResources.MaxFunctionParameters
         << ":EXT_blend_func_extended:" << mResources.EXT_blend_func_extended

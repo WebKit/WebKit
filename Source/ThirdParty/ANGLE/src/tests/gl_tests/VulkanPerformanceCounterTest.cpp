@@ -7973,7 +7973,7 @@ TEST_P(VulkanPerformanceCounterTest, FBOChangeAndClearAndBackDoesNotBreakRenderP
 // This is test for optimization in vulkan backend. efootball_pes_2021 usage shows this usage
 // pattern and we expect implementation to reuse the storage for performance.
 TEST_P(VulkanPerformanceCounterTest,
-       bufferDataWithSizeFollowedByZeroAndThenSizeAgainShouldReuseStorage)
+       BufferDataWithSizeFollowedByZeroAndThenSizeAgainShouldReuseStorage)
 {
     GLBuffer buffer;
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
@@ -8056,6 +8056,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest);
 ANGLE_INSTANTIATE_TEST(
     VulkanPerformanceCounterTest,
     ES3_VULKAN(),
+    ES3_VULKAN().enable(Feature::PadBuffersToMaxVertexAttribStride),
     ES3_VULKAN_SWIFTSHADER().disable(Feature::PreferMonolithicPipelinesOverLibraries),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::PreferMonolithicPipelinesOverLibraries),
     ES3_VULKAN_SWIFTSHADER()

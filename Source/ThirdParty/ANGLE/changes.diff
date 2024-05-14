@@ -68,10 +68,10 @@ index a636c5e7773d4186fc58a665b1a4e6c0cf7cc345..d1624a7c49f745f41ef6d381151e8ae9
              "name": "allow_inline_const_vertex_data",
              "category": "Features",
 diff --git a/scripts/generate_entry_points.py b/scripts/generate_entry_points.py
-index be01613d38156442d875325cd1b5e4c833d3f13e..cda7afffe7ee3d83c3ea33cefc91e1b00e06ede5 100755
+index 0bf5224fa2af81ed2966630b50d37e1ea79b427d..6d9d4d8ddf0c0ecba3c8ae74881ae6d2eb5cc965 100755
 --- a/scripts/generate_entry_points.py
 +++ b/scripts/generate_entry_points.py
-@@ -988,6 +988,7 @@ FORMAT_DICT = {
+@@ -1009,6 +1009,7 @@ FORMAT_DICT = {
      "GLfloat": "%f",
      "GLint": "%d",
      "GLintptr": UNSIGNED_LONG_LONG_FORMAT,
@@ -130,7 +130,7 @@ index 466387f2a92f2bda5884e6cde7910678690fe58d..835cc7d42424dfc18067140a8c9d1236
 +    </enums>
  </registry>
 diff --git a/scripts/registry_xml.py b/scripts/registry_xml.py
-index b079d64876f91ccb81e6603056d593d4e633c8dd..78b48901ca2c2ba053c91182fb35ded0ef0efd0c 100644
+index ed55ba4ec9f352b87d5173487901c28fbd9f2789..5466e3a1accfc7e69369deddf9000dea34db49c7 100644
 --- a/scripts/registry_xml.py
 +++ b/scripts/registry_xml.py
 @@ -73,6 +73,7 @@ angle_requestable_extensions = [
@@ -142,10 +142,10 @@ index b079d64876f91ccb81e6603056d593d4e633c8dd..78b48901ca2c2ba053c91182fb35ded0
      "GL_ANGLE_yuv_internal_format",
      "GL_CHROMIUM_color_buffer_float_rgb",
 diff --git a/src/common/entry_points_enum_autogen.cpp b/src/common/entry_points_enum_autogen.cpp
-index b67bc6aefa272402f24c91e7f8078343c1b7f9a6..f633d17cc1cfa9815721441b922b4f60c23cc545 100644
+index 0d67ff89532ff68519b37365d0ff14485047d2f7..13afacc588d96b51565f0353c884f1bb9faaac17 100644
 --- a/src/common/entry_points_enum_autogen.cpp
 +++ b/src/common/entry_points_enum_autogen.cpp
-@@ -538,6 +538,8 @@ const char *GetEntryPointName(EntryPoint ep)
+@@ -540,6 +540,8 @@ const char *GetEntryPointName(EntryPoint ep)
              return "glBindImageTexture";
          case EntryPoint::GLBindImageTextures:
              return "glBindImageTextures";
@@ -155,10 +155,10 @@ index b67bc6aefa272402f24c91e7f8078343c1b7f9a6..f633d17cc1cfa9815721441b922b4f60
              return "glBindProgramPipeline";
          case EntryPoint::GLBindProgramPipelineEXT:
 diff --git a/src/common/entry_points_enum_autogen.h b/src/common/entry_points_enum_autogen.h
-index 70bbb9cf2266293f4fa531375aa4e4940c73c487..c93f2175820133c09634985fb655b8a0191b00cb 100644
+index 0baf7b43315d641a5d688d5662afb38907b0e8a2..5826f25e125ec68c336acf7c07a789b9623c6066 100644
 --- a/src/common/entry_points_enum_autogen.h
 +++ b/src/common/entry_points_enum_autogen.h
-@@ -275,6 +275,7 @@ enum class EntryPoint
+@@ -276,6 +276,7 @@ enum class EntryPoint
      GLBindFramebufferOES,
      GLBindImageTexture,
      GLBindImageTextures,
@@ -376,7 +376,7 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
-index 6064c50d2624731aa748a49063c95ac61166c083..66a64ec8c460f118fd2ec883019fe7eceb838252 100644
+index 4a419a72cd1d7e0a4dfcb16bce4d86563cd11b62..3b7b4379a00a06d1aa679f754703b9fb5e6704b0 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
 +++ b/src/compiler/translator/glslang_tab_autogen.cpp
 @@ -1,5 +1,8 @@
@@ -402,7 +402,7 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index 0bff8b8d716e27b16d4002b27e3df765a57a551e..6e3b4096410b4ba90e296310772aa76c08e176c4 100644
+index 1b23bd94a8a4e3905b18ef232587053ea02525cf..051f5038798a1756c50604f7c6d00b6a1e0d34f9 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
 @@ -9912,6 +9912,14 @@ void Context::textureFoveationParameters(TextureID texturePacked,
@@ -718,7 +718,7 @@ index c041ffa4ff5acdba55c3b15550a8c873a620cece..56615a98d7bf80ef0eaa5f0f0b2e1f35
                              UNREACHABLE();
                              break;
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
-index 08b431099786e24e6b27a6539812e520c92436bb..3902781af7459dc8a880bd44f957df36fcbd8c78 100644
+index 60e1c179b0034b98ef6d3f02c8aec01cc7bf3e89..65d62ecee723c52926e21d98c59d1a6739319945 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/BufferMtl.mm
 @@ -390,7 +390,7 @@ ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
@@ -731,7 +731,7 @@ index 08b431099786e24e6b27a6539812e520c92436bb..3902781af7459dc8a880bd44f957df36
      }
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.h b/src/libANGLE/renderer/metal/ContextMtl.h
-index 2eab2f1f9c1c55b7b7156a754e470ce32d5e0ffd..afcdb0a6c143fc7e8ab8817378a34e328c113837 100644
+index acdd008c5424d3ab67df0ffe384bb459143348a1..7283095e00b5c260f276c497de5d53d1de27d2b9 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.h
 +++ b/src/libANGLE/renderer/metal/ContextMtl.h
 @@ -272,6 +272,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
@@ -745,7 +745,7 @@ index 2eab2f1f9c1c55b7b7156a754e470ce32d5e0ffd..afcdb0a6c143fc7e8ab8817378a34e32
      // override mtl::ErrorHandler
      void handleError(GLenum error,
                       const char *message,
-@@ -554,6 +558,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -555,6 +559,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
          DIRTY_BIT_RENDER_PIPELINE,
          DIRTY_BIT_UNIFORM_BUFFERS_BINDING,
          DIRTY_BIT_RASTERIZER_DISCARD,
@@ -753,7 +753,7 @@ index 2eab2f1f9c1c55b7b7156a754e470ce32d5e0ffd..afcdb0a6c143fc7e8ab8817378a34e32
  
          DIRTY_BIT_INVALID,
          DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
-@@ -648,6 +653,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -649,6 +654,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
      IncompleteTextureSet mIncompleteTextures;
      ProvokingVertexHelper mProvokingVertexHelper;
  
@@ -764,7 +764,7 @@ index 2eab2f1f9c1c55b7b7156a754e470ce32d5e0ffd..afcdb0a6c143fc7e8ab8817378a34e32
  };
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 7814194df88c4fc9c145b8f3738bfa5bdc07b73e..dd66cefef922b31372cb2b88685ca80626f59e43 100644
+index c3e64b8ac65b40be8a0f18a938ac3764d2dc9025..ebf8cc057715c81b2f252cc29adb65c8ef623018 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
 @@ -263,6 +263,8 @@ void ContextMtl::onDestroy(const gl::Context *context)
@@ -994,6 +994,48 @@ index b58d7f9d67932bb582c149623aca5054c53333e7..c61d5f65d4e9b6cc85eae02d42f75181
      uint32_t offset = static_cast<uint32_t>(packPixelsParams.offset);
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
+diff --git a/src/libANGLE/renderer/metal/ImageMtl.mm b/src/libANGLE/renderer/metal/ImageMtl.mm
+index a4a809fabe7572c1d212ff8fb4da35b1f67b6a01..eb2bd204b9edda65ba372b8fcb24f8092b9f4f65 100644
+--- a/src/libANGLE/renderer/metal/ImageMtl.mm
++++ b/src/libANGLE/renderer/metal/ImageMtl.mm
+@@ -86,7 +86,9 @@ egl::Error TextureImageSiblingMtl::ValidateClientBuffer(const DisplayMtl *displa
+         return egl::EglBadAttribute() << "Unrecognized format";
+     }
+ 
+-    if (format.metalFormat != texture.pixelFormat)
++    angle::FormatID srcAngleFormatId = mtl::Format::MetalToAngleFormatID(texture.pixelFormat);
++    const mtl::Format &srcFormat = display->getPixelFormat(srcAngleFormatId);
++    if (!format.isViewCompatible(srcFormat))
+     {
+         return egl::EglBadAttribute() << "Incompatible format";
+     }
+@@ -120,18 +122,21 @@ angle::Result TextureImageSiblingMtl::initImpl(DisplayMtl *displayMtl)
+ {
+     mNativeTexture = mtl::Texture::MakeFromMetal((__bridge id<MTLTexture>)(mBuffer));
+ 
+-    if (mNativeTexture->textureType() == MTLTextureType2DArray)
++    angle::FormatID angleFormatId = intendedFormatForMTLTexture(mNativeTexture->get(), mAttribs);
++    mFormat                       = displayMtl->getPixelFormat(angleFormatId);
++
++    if (mNativeTexture->textureType() == MTLTextureType2DArray ||
++        mNativeTexture->pixelFormat() != mFormat.metalFormat)
+     {
+         mtl::TextureRef baseTexture = std::move(mNativeTexture);
+         unsigned textureArraySlice =
+             static_cast<unsigned>(mAttribs.getAsInt(EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 0));
+         mNativeTexture =
+-            baseTexture->createSliceMipView(textureArraySlice, mtl::kZeroNativeMipLevel);
++        baseTexture->createSliceMipViewWithCompatibleFormat(textureArraySlice,
++                                                            mtl::kZeroNativeMipLevel,
++                                                            mFormat.metalFormat);
+     }
+ 
+-    angle::FormatID angleFormatId = intendedFormatForMTLTexture(mNativeTexture->get(), mAttribs);
+-    mFormat                       = displayMtl->getPixelFormat(angleFormatId);
+-
+     if (mNativeTexture)
+     {
+         size_t resourceSize = EstimateTextureSizeInBytes(
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 index 76281b1fea3e4d85758cbe097b2c7d5f66aa8f1a..ae9a545b29dcabf050b451781e77f9c45f1bb6e5 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
@@ -1053,10 +1095,10 @@ index b0726b984f41119e930897b043a7da70a446a12a..d1877ade8fb10211d437c2d0dba8ea27
      params.srcDefaultAlphaData  = convertedFormat.defaultAlpha;
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.h b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..f99ce9fd8ceba2be71bf34d43a081ddf64ced2d4 100644
+index 7cf68b2d13a8b04fffc57d6223a8b60c7c0df010..0bbd15bd77be43272d8b8542a76926e544af59e8 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.h
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-@@ -101,6 +101,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
+@@ -104,6 +104,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
      bool isTimeElapsedEntryComplete(uint64_t id);
      double getTimeElapsedEntryInSeconds(uint64_t id);
  
@@ -1065,7 +1107,7 @@ index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..f99ce9fd8ceba2be71bf34d43a081ddf
    private:
      void onCommandBufferCompleted(id<MTLCommandBuffer> buf,
                                    uint64_t serial,
-@@ -143,6 +145,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
+@@ -146,6 +148,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
      void recordCommandBufferTimeElapsed(std::lock_guard<std::mutex> &lg,
                                          uint64_t id,
                                          double seconds);
@@ -1074,7 +1116,7 @@ index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..f99ce9fd8ceba2be71bf34d43a081ddf
  };
  
  class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::NonCopyable
-@@ -412,8 +416,10 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -426,8 +430,10 @@ class RenderCommandEncoder final : public CommandEncoder
      RenderCommandEncoder &setStencilRefVals(uint32_t frontRef, uint32_t backRef);
      RenderCommandEncoder &setStencilRefVal(uint32_t ref);
  
@@ -1087,7 +1129,7 @@ index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..f99ce9fd8ceba2be71bf34d43a081ddf
  
      RenderCommandEncoder &setBlendColor(float r, float g, float b, float a);
  
-@@ -562,6 +568,8 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -576,6 +582,8 @@ class RenderCommandEncoder final : public CommandEncoder
      RenderCommandEncoder &setDepthLoadAction(MTLLoadAction action, double clearValue);
      RenderCommandEncoder &setStencilLoadAction(MTLLoadAction action, uint32_t clearValue);
  
@@ -1096,7 +1138,7 @@ index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..f99ce9fd8ceba2be71bf34d43a081ddf
      void setLabel(NSString *label);
  
      void pushDebugGroup(NSString *label) override;
-@@ -569,8 +577,11 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -583,8 +591,11 @@ class RenderCommandEncoder final : public CommandEncoder
  
      const RenderPassDesc &renderPassDesc() const { return mRenderPassDesc; }
      bool hasDrawCalls() const { return mHasDrawCalls; }
@@ -1109,7 +1151,7 @@ index 9d72fa50090a581422ca5ed603a60e48a6f04e1d..f99ce9fd8ceba2be71bf34d43a081ddf
    private:
      // Override CommandEncoder
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..84f21a6c03382e4ccba7f6cdb0fba84bda733177 100644
+index 6ca770bbf26ec46ec79c9f45fce214e373fe7c3f..b874cdfe491325d85067a77b9d4608809ebadcb6 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 @@ -373,12 +373,20 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
@@ -1141,7 +1183,7 @@ index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..84f21a6c03382e4ccba7f6cdb0fba84b
      [resource ANGLE_MTL_RELEASE];
  }
  
-@@ -634,6 +643,20 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
+@@ -644,6 +653,20 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
  
      ANGLE_MTL_LOG("Completed MTLCommandBuffer %llu:%p", serial, buf);
  
@@ -1162,7 +1204,7 @@ index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..84f21a6c03382e4ccba7f6cdb0fba84b
      if (timeElapsedEntry != 0)
      {
          // Record this command buffer's elapsed time.
-@@ -1318,6 +1341,7 @@ void RenderCommandEncoder::reset()
+@@ -1362,6 +1385,7 @@ void RenderCommandEncoder::reset()
      CommandEncoder::reset();
      mRecording        = false;
      mPipelineStateSet = false;
@@ -1170,7 +1212,7 @@ index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..84f21a6c03382e4ccba7f6cdb0fba84b
      mCommands.clear();
  }
  
-@@ -1732,8 +1756,26 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
+@@ -1776,8 +1800,26 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
      return setStencilRefVals(ref, ref);
  }
  
@@ -1198,7 +1240,7 @@ index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..84f21a6c03382e4ccba7f6cdb0fba84b
      if (mStateCache.viewport.valid() && mStateCache.viewport.value() == viewport)
      {
          return *this;
-@@ -1745,12 +1787,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
+@@ -1789,12 +1831,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
      return *this;
  }
  
@@ -1224,7 +1266,7 @@ index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..84f21a6c03382e4ccba7f6cdb0fba84b
  
      MTLScissorRect clampedRect = {rect.x, rect.y, std::min(rect.width, clampedWidth),
                                    std::min(rect.height, clampedHeight)};
-@@ -1762,6 +1814,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
+@@ -1806,6 +1858,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
  
      mStateCache.scissorRect = clampedRect;
  
@@ -1248,7 +1290,7 @@ index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..84f21a6c03382e4ccba7f6cdb0fba84b
      mCommands.push(CmdType::SetScissorRect).push(clampedRect);
  
      return *this;
-@@ -2168,6 +2237,17 @@ void RenderCommandEncoder::popDebugGroup()
+@@ -2211,6 +2280,17 @@ void RenderCommandEncoder::popDebugGroup()
      mCommands.push(CmdType::PopDebugGroup);
  }
  
@@ -1266,7 +1308,7 @@ index 470f8c1df7a8c24f9e2aaacffb5b762e844456ef..84f21a6c03382e4ccba7f6cdb0fba84b
  RenderCommandEncoder &RenderCommandEncoder::setColorStoreAction(MTLStoreAction action,
                                                                  uint32_t colorAttachmentIndex)
  {
-@@ -2263,6 +2343,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
+@@ -2306,6 +2386,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
      return *this;
  }
  
@@ -1296,6 +1338,52 @@ index b430aa0263545ce6d35ae410e62b035cd41b6c23..96438f09f8b4f576ee2280206b3bdbf4
  // The native image index used by Metal back-end,  the image index uses native mipmap level instead
  // of "virtual" level modified by OpenGL's base level.
  using MipmapNativeLevel = gl::LevelIndexWrapper<uint32_t>;
+diff --git a/src/libANGLE/renderer/metal/mtl_format_utils.h b/src/libANGLE/renderer/metal/mtl_format_utils.h
+index db95298598177500cebd0eb81cfcb845656031b2..8cbd1014b7dd9c2886272df3ae0923ccec49b512 100644
+--- a/src/libANGLE/renderer/metal/mtl_format_utils.h
++++ b/src/libANGLE/renderer/metal/mtl_format_utils.h
+@@ -89,6 +89,10 @@ struct Format : public FormatBase
+     // Need conversion between source format and this format?
+     bool needConversion(angle::FormatID srcFormatId) const;
+ 
++    // Are the formats view compatible without requiring
++    // MTLTextureUsagePixelFormatView?
++    bool isViewCompatible(const Format &srcFormat) const;
++
+     MTLPixelFormat metalFormat = MTLPixelFormatInvalid;
+ 
+     LoadFunctionMap textureLoadFunctions       = nullptr;
+diff --git a/src/libANGLE/renderer/metal/mtl_format_utils.mm b/src/libANGLE/renderer/metal/mtl_format_utils.mm
+index 4716f475d096fca832ba3023a3859d5f4d525220..62e615b3da04251f89d116adaa02326d485bcd92 100644
+--- a/src/libANGLE/renderer/metal/mtl_format_utils.mm
++++ b/src/libANGLE/renderer/metal/mtl_format_utils.mm
+@@ -161,6 +161,26 @@ bool Format::needConversion(angle::FormatID srcFormatId) const
+     return srcFormatId != actualFormatId;
+ }
+ 
++bool Format::isViewCompatible(const Format &srcFormat) const
++{
++    if (srcFormat.metalFormat == metalFormat)
++        return true;
++
++    // The pixel layout is considered different if the number of components differs,
++    if (srcFormat.caps.channels != caps.channels)
++        return false;
++
++    // ... or if their size or order is different from the components in the original pixel format.
++    if (srcFormat.caps.pixelBytes != caps.pixelBytes)
++        return false;
++
++    // This is overly conservative but reject compressed formats
++    if (srcFormat.caps.compressed || caps.compressed)
++        return false;
++
++    return true;
++}
++
+ bool Format::isPVRTC() const
+ {
+     switch (metalFormat)
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 index 9e5487d393a0a2bd64106fc70e7b3f73626e2490..956808f2cd03665bd09d95cf4af90e2eeacdd0ef 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
@@ -1407,8 +1495,24 @@ index 3eaa9a64e79af26faa786102ece3f0bdea84d090..7ecb6db9d993df8985fcb6f701dfe7ca
 +#endif
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
+diff --git a/src/libANGLE/renderer/metal/mtl_resources.h b/src/libANGLE/renderer/metal/mtl_resources.h
+index b0aa166a63fcd66bf6ac5faa5e10735b792624d3..d132acb7ccf1da94a71472d409df71eb1b8d57d5 100644
+--- a/src/libANGLE/renderer/metal/mtl_resources.h
++++ b/src/libANGLE/renderer/metal/mtl_resources.h
+@@ -225,6 +225,11 @@ class Texture final : public Resource,
+     TextureRef createCubeFaceView(uint32_t face);
+     // Create a view of one slice at a level.
+     TextureRef createSliceMipView(uint32_t slice, const MipmapNativeLevel &level);
++    // Same as above but the target format must be compatible, for example sRGB to linear. In this
++    // case texture doesn't need format view usage flag.
++    TextureRef createSliceMipViewWithCompatibleFormat(uint32_t slice,
++                                                      const MipmapNativeLevel &level,
++                                                      MTLPixelFormat format);
+     // Create a view of a level.
+     TextureRef createMipView(const MipmapNativeLevel &level);
+     // Create a view with different format
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 99388f85e1a0991ef2f6aba0ade19c4d9ffb49e5..c1b1cd2c9ed1e907811f8dc770091aee5ed0522f 100644
+index 7e8a0dd0b8717f5f61f0f6056aa82b3e113b434e..cac11852374d00aab7199d6827d3fd1deaf5d64b 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
 @@ -78,12 +78,10 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
@@ -1424,6 +1528,38 @@ index 99388f85e1a0991ef2f6aba0ade19c4d9ffb49e5..c1b1cd2c9ed1e907811f8dc770091aee
      }
  }
  
+@@ -696,7 +694,9 @@ TextureRef Texture::createCubeFaceView(uint32_t face)
+     }
+ }
+ 
+-TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &level)
++TextureRef Texture::createSliceMipViewWithCompatibleFormat(uint32_t slice,
++                                                           const MipmapNativeLevel &level,
++                                                           MTLPixelFormat format)
+ {
+     ANGLE_MTL_OBJC_SCOPE
+     {
+@@ -705,7 +705,7 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
+             case MTLTextureTypeCube:
+             case MTLTextureType2D:
+             case MTLTextureType2DArray:
+-                return TextureRef(new Texture(this, pixelFormat(), MTLTextureType2D,
++                return TextureRef(new Texture(this, format, MTLTextureType2D,
+                                               NSMakeRange(level.get(), 1), NSMakeRange(slice, 1)));
+             default:
+                 UNREACHABLE();
+@@ -714,6 +714,11 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
+     }
+ }
+ 
++TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &level)
++{
++    return createSliceMipViewWithCompatibleFormat(slice, level, pixelFormat());
++}
++
+ TextureRef Texture::createMipView(const MipmapNativeLevel &level)
+ {
+     ANGLE_MTL_OBJC_SCOPE
 diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/renderer/metal/mtl_state_cache.mm
 index 8534c5c32fbc218da6c00ed95804026ccab508ef..7b2e9926b29407d7870b0da20a6591d0982146e7 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
@@ -1568,10 +1704,10 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +if __name__ == '__main__':
 +    sys.exit(main())
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index e8cd9d6590b4c287da41f4f443c916eb0e394d29..436741d3d6e3cf1be24c189f597fb0546e48c172 100644
+index 39ca05160237bfadaebe1055e3c48d24d10bbbce..c2a1a2b8509ff3e2d61632144d2edc5c6a21f8db 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -5907,6 +5907,13 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -5912,6 +5912,13 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                                  mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE);
                              }
                              break;
@@ -1740,7 +1876,7 @@ index 90e66f65fd0ed97bab162879b051ec659a73a899..f483e6e3e70bd255e1274552af43a4af
  void GL_APIENTRY glAcquireTexturesANGLE(GLuint numTextures,
                                          const GLuint *textures,
 diff --git a/src/libGLESv2/libGLESv2_autogen.def b/src/libGLESv2/libGLESv2_autogen.def
-index 30b46aab0d3681d40d518b17638d62015c617ac9..a69a449676f94df67a9cf807282d31b72e9fd7b2 100644
+index eba29f641efeb79278483f8fd2c64bd78ae96d72..1f56684d6d962c0c55ede94f16deb1af856b2d72 100644
 --- a/src/libGLESv2/libGLESv2_autogen.def
 +++ b/src/libGLESv2/libGLESv2_autogen.def
 @@ -668,6 +668,9 @@ EXPORTS
@@ -1754,7 +1890,7 @@ index 30b46aab0d3681d40d518b17638d62015c617ac9..a69a449676f94df67a9cf807282d31b7
      glAcquireTexturesANGLE
      glReleaseTexturesANGLE
 diff --git a/src/libGLESv2/libGLESv2_no_capture_autogen.def b/src/libGLESv2/libGLESv2_no_capture_autogen.def
-index 69b8813ccaf7c76e019170616fc660345ef5d2bf..3d10bccb6878e6915872bf870cd4296c5aa6002e 100644
+index 2a6dcaf7abf0042aa718b405e654bd2e04ef01ec..b66f700fd17415080b662b524d46de97b2b3013e 100644
 --- a/src/libGLESv2/libGLESv2_no_capture_autogen.def
 +++ b/src/libGLESv2/libGLESv2_no_capture_autogen.def
 @@ -668,6 +668,9 @@ EXPORTS
@@ -1768,7 +1904,7 @@ index 69b8813ccaf7c76e019170616fc660345ef5d2bf..3d10bccb6878e6915872bf870cd4296c
      glAcquireTexturesANGLE
      glReleaseTexturesANGLE
 diff --git a/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def b/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def
-index f0e9ba15d8e7e5a0365ebe7f4a3de426c7485df4..bfa7b37d8443137a87dbc66189f69993484f6bf2 100644
+index 4f26348fc9502c6bf4b59dfdc2a2b95c15e910bb..1eb20100d0dd2254bdfa0f1579dd7f122f8693e0 100644
 --- a/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def
 +++ b/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def
 @@ -668,6 +668,9 @@ EXPORTS
@@ -1782,7 +1918,7 @@ index f0e9ba15d8e7e5a0365ebe7f4a3de426c7485df4..bfa7b37d8443137a87dbc66189f69993
      glAcquireTexturesANGLE
      glReleaseTexturesANGLE
 diff --git a/src/libGLESv2/libGLESv2_with_capture_autogen.def b/src/libGLESv2/libGLESv2_with_capture_autogen.def
-index 8459f034d68c41ff43d20e82a8283ca49e619d7b..76515bbeb40bc531a84e897f93517417f62ec583 100644
+index fe74d6f7e94c69fc2c2822ac2ccf61c01fc1dc3b..4d7bff75691682685ff223afa397aa5423862889 100644
 --- a/src/libGLESv2/libGLESv2_with_capture_autogen.def
 +++ b/src/libGLESv2/libGLESv2_with_capture_autogen.def
 @@ -668,6 +668,9 @@ EXPORTS
@@ -1824,10 +1960,10 @@ index aaa4a9c9b07088ed7a42f45907a9bd160d68f62c..1cd1ffb3b3314aef809dce317c758dea
      glAcquireTexturesANGLE
      glReleaseTexturesANGLE
 diff --git a/src/libGLESv2/proc_table_egl_autogen.cpp b/src/libGLESv2/proc_table_egl_autogen.cpp
-index b2d8ee2783966701f57af4b7af494a36a5cb16d9..a3f9d1953f18d5368d84c8320f9eebb492be5c9a 100644
+index 30b21095096259a4a15464974b6034ba2d014bae..db899f5385d97839f80f1784b83144a6be26c431 100644
 --- a/src/libGLESv2/proc_table_egl_autogen.cpp
 +++ b/src/libGLESv2/proc_table_egl_autogen.cpp
-@@ -189,6 +189,7 @@ const ProcEntry g_procTable[] = {
+@@ -190,6 +190,7 @@ const ProcEntry g_procTable[] = {
      {"glBindFramebufferOES", P(GL_BindFramebufferOES)},
      {"glBindImageTexture", P(GL_BindImageTexture)},
      DESKTOP_ONLY("glBindImageTextures", GL_BindImageTextures)
@@ -1860,10 +1996,10 @@ index 6a5c120fb355fde1a9601c7f33a9b4a386f74804..0c80559095384143369d72d9d5c8e0fa
      {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
      {"glBindRenderbuffer", P(GL_BindRenderbuffer)},
 diff --git a/src/tests/angle_end2end_tests.gni b/src/tests/angle_end2end_tests.gni
-index 71ca0ef1c30c944fa6c637cb785856ebd5fc8351..c2c12a0985b26fa6928a936727ba00ebcaaea37a 100644
+index d00ee119c687b90e0544ba3a9c8973f6264af1ec..b3bfc0f13d32c5d4fc62e8ca2de8d0030d1973e7 100644
 --- a/src/tests/angle_end2end_tests.gni
 +++ b/src/tests/angle_end2end_tests.gni
-@@ -222,6 +222,7 @@ angle_end2end_tests_mac_sources = [
+@@ -223,6 +223,7 @@ angle_end2end_tests_mac_sources = [
    "egl_tests/EGLSyncTestMetalSharedEvent.mm",
    "egl_tests/EGLWaitUntilWorkScheduledTest.cpp",
    "gl_tests/ImageTestMetal.mm",
@@ -1892,7 +2028,7 @@ index 1d97825639c15db5a79b539d29c44801c138a71e..0f85476b8c8b5af8d6ffbafa27061a7a
      window->makeCurrent();
  
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index 678316808ced76e06011f033193c6323ef7022e3..8c3557697132ae75b8cf3089ae980eed42e4f72d 100644
+index 7758d320e90863f0140d431f5839f5c5c257db4b..a0025c30ca10fd1c98dbc17747d1a23033dbebd2 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
 @@ -200,6 +200,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
@@ -1904,7 +2040,7 @@ index 678316808ced76e06011f033193c6323ef7022e3..8c3557697132ae75b8cf3089ae980eed
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
      {Feature::InjectAsmStatementIntoLoopBodies, "injectAsmStatementIntoLoopBodies"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index 3e7a582bd52c4933e3e342ddd83ccffcf316306f..5b0ec97e6109d8fe8729fd79fa5e44d24109f1c3 100644
+index 54b4bd1c3449355cd3ef61886671383634cb8055..d93afca0ac9c1c40b11bdedd7fe59b37e26c5d0b 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
 @@ -200,6 +200,7 @@ enum class Feature
@@ -1975,10 +2111,10 @@ index e2b10bd735501250f2269775b74be18fc2e9ddfe..ce649afb220e062a141c84cc663cb1fd
  ANGLE_TRACE_LOADER_EXPORT extern PFNGLRELEASETEXTURESANGLEPROC t_glReleaseTexturesANGLE;
  ANGLE_TRACE_LOADER_EXPORT extern PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC
 diff --git a/util/capture/trace_interpreter_autogen.cpp b/util/capture/trace_interpreter_autogen.cpp
-index aa10a34d20a373f343292a375ed20a0d5be168d4..db0e20a82c6d0455f57cef254dfff293ca8879d9 100644
+index 6f5e03b2b7ed8c1d568a7c1a3413ef917b2a96a8..1efdca81e80f4889f27ee04e5e7775092c1e3aa2 100644
 --- a/util/capture/trace_interpreter_autogen.cpp
 +++ b/util/capture/trace_interpreter_autogen.cpp
-@@ -889,6 +889,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
+@@ -896,6 +896,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
              paramTokens, strings);
          return CallCapture(EntryPoint::GLBindImageTexture, std::move(params));
      }

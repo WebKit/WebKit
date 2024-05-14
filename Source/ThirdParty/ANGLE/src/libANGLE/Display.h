@@ -14,6 +14,7 @@
 #include <mutex>
 #include <vector>
 
+#include "common/SimpleMutex.h"
 #include "common/WorkerThread.h"
 #include "libANGLE/AttributeMap.h"
 #include "libANGLE/BlobCache.h"
@@ -281,8 +282,8 @@ class Display final : public LabeledObject,
 
     egl::Error waitUntilWorkScheduled();
 
-    std::mutex &getDisplayGlobalMutex() { return mDisplayGlobalMutex; }
-    std::mutex &getProgramCacheMutex() { return mProgramCacheMutex; }
+    angle::SimpleMutex &getDisplayGlobalMutex() { return mDisplayGlobalMutex; }
+    angle::SimpleMutex &getProgramCacheMutex() { return mProgramCacheMutex; }
 
     gl::MemoryShaderCache *getMemoryShaderCache() { return &mMemoryShaderCache; }
 
@@ -417,12 +418,12 @@ class Display final : public LabeledObject,
 
     angle::FeatureList mFeatures;
 
-    std::mutex mScratchBufferMutex;
+    angle::SimpleMutex mScratchBufferMutex;
     std::vector<angle::ScratchBuffer> mScratchBuffers;
     std::vector<angle::ScratchBuffer> mZeroFilledBuffers;
 
-    std::mutex mDisplayGlobalMutex;
-    std::mutex mProgramCacheMutex;
+    angle::SimpleMutex mDisplayGlobalMutex;
+    angle::SimpleMutex mProgramCacheMutex;
 
     bool mTerminatedByApi;
 };

@@ -19,14 +19,6 @@
 namespace rx
 {
 
-enum class ImageMipLevels
-{
-    EnabledLevels                 = 0,
-    FullMipChainForGenerateMipmap = 1,
-
-    InvalidEnum = 2,
-};
-
 enum class TextureUpdateResult
 {
     ImageUnaffected,

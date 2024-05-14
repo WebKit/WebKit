@@ -11,6 +11,7 @@
 #include "test_utils/gl_raii.h"
 
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/ProgramVk.h"
@@ -97,6 +98,117 @@ TEST_P(VulkanDescriptorSetTest, AtomicCounterReadLimitedDescriptorPool)
     }
 }
 
+class VulkanDescriptorSetLayoutDescTest : public ANGLETest<>
+{
+  protected:
+    VulkanDescriptorSetLayoutDescTest() {}
+
+    void testSetUp() override { ANGLETest::testSetUp(); }
+
+    void testTearDown() override { ANGLETest::testTearDown(); }
+
+    gl::Context *hackContext() const
+    {
+        egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
+        gl::ContextID contextID = {
+            static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
+        return display->getContext(contextID);
+    }
+
+    rx::ContextVk *hackANGLE() const
+    {
+        // Hack the angle!
+        return rx::GetImplAs<rx::ContextVk>(hackContext());
+    }
+
+    struct DescriptorSetBinding
+    {
+        uint32_t bindingIndex;
+        VkDescriptorType type;
+        uint32_t bindingCount;
+        VkShaderStageFlagBits shaderStage;
+    };
+
+    const std::array<DescriptorSetBinding, 12> mBindings = {{
+        {0, VK_DESCRIPTOR_TYPE_SAMPLER, 1, VK_SHADER_STAGE_VERTEX_BIT},
+        {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT},
+        {2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT},
+        {3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT},
+        {4, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1, VK_SHADER_STAGE_VERTEX_BIT},
+        {5, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1, VK_SHADER_STAGE_FRAGMENT_BIT},
+        {6, VK_DESCRIPTOR_TYPE_SAMPLER, 1, VK_SHADER_STAGE_VERTEX_BIT},
+        {7, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT},
+        {8, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT},
+        {9, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT},
+        {10, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1, VK_SHADER_STAGE_VERTEX_BIT},
+        {11, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1, VK_SHADER_STAGE_FRAGMENT_BIT},
+    }};
+
+    void updateBindings(const std::vector<uint32_t> &bindingIndices,
+                        rx::vk::DescriptorSetLayoutDesc *desc)
+    {
+        for (uint32_t index : bindingIndices)
+        {
+            ASSERT(index < mBindings.size());
+            const DescriptorSetBinding &binding = mBindings[index];
+            desc->update(binding.bindingIndex, binding.type, binding.bindingCount,
+                         binding.shaderStage, nullptr);
+        }
+    }
+
+    rx::vk::DescriptorSetLayoutDesc mDescriptorSetLayoutDesc;
+    rx::DescriptorSetLayoutCache mDescriptorSetLayoutCache;
+};
+
+// Test basic interaction between DescriptorSetLayoutDesc and DescriptorSetLayoutCache
+TEST_P(VulkanDescriptorSetLayoutDescTest, Basic)
+{
+    const std::vector<uint32_t> bindingsPattern1 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+    const std::vector<uint32_t> bindingsPattern2 = {0, 1};
+    const std::vector<uint32_t> bindingsPattern3 = {0, 1, 5, 9};
+
+    angle::Result result;
+    rx::ContextVk *contextVk = hackANGLE();
+    rx::vk::AtomicBindingPointer<rx::vk::DescriptorSetLayout> descriptorSetLayout;
+
+    mDescriptorSetLayoutDesc = {};
+    updateBindings(bindingsPattern1, &mDescriptorSetLayoutDesc);
+    result = mDescriptorSetLayoutCache.getDescriptorSetLayout(contextVk, mDescriptorSetLayoutDesc,
+                                                              &descriptorSetLayout);
+    EXPECT_EQ(result, angle::Result::Continue);
+    EXPECT_EQ(mDescriptorSetLayoutCache.getCacheMissCount(), 1u);
+
+    mDescriptorSetLayoutDesc = {};
+    updateBindings(bindingsPattern2, &mDescriptorSetLayoutDesc);
+    result = mDescriptorSetLayoutCache.getDescriptorSetLayout(contextVk, mDescriptorSetLayoutDesc,
+                                                              &descriptorSetLayout);
+    EXPECT_EQ(result, angle::Result::Continue);
+    EXPECT_EQ(mDescriptorSetLayoutCache.getCacheMissCount(), 2u);
+
+    mDescriptorSetLayoutDesc = {};
+    updateBindings(bindingsPattern3, &mDescriptorSetLayoutDesc);
+    size_t reusedDescHash = mDescriptorSetLayoutDesc.hash();
+    result = mDescriptorSetLayoutCache.getDescriptorSetLayout(contextVk, mDescriptorSetLayoutDesc,
+                                                              &descriptorSetLayout);
+    EXPECT_EQ(result, angle::Result::Continue);
+    EXPECT_EQ(mDescriptorSetLayoutCache.getCacheMissCount(), 3u);
+
+    rx::vk::DescriptorSetLayoutDesc desc;
+    updateBindings(bindingsPattern3, &desc);
+    size_t newDescHash = desc.hash();
+    EXPECT_EQ(reusedDescHash, newDescHash);
+
+    result =
+        mDescriptorSetLayoutCache.getDescriptorSetLayout(contextVk, desc, &descriptorSetLayout);
+    EXPECT_EQ(result, angle::Result::Continue);
+    EXPECT_EQ(mDescriptorSetLayoutCache.getCacheHitCount(), 1u);
+    EXPECT_EQ(mDescriptorSetLayoutCache.getCacheMissCount(), 3u);
+
+    descriptorSetLayout.reset();
+    mDescriptorSetLayoutCache.destroy(contextVk->getRenderer());
+}
+
 ANGLE_INSTANTIATE_TEST(VulkanDescriptorSetTest, ES31_VULKAN(), ES31_VULKAN_SWIFTSHADER());
+ANGLE_INSTANTIATE_TEST(VulkanDescriptorSetLayoutDescTest, ES31_VULKAN());
 
 }  // namespace

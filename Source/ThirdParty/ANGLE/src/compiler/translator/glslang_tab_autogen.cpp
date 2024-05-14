@@ -4567,7 +4567,7 @@ yyreduce:
         case 307: /* $@8: %empty  */
         {
             context->symbolTable.push();
-            context->incrLoopNestingLevel();
+            context->incrLoopNestingLevel((yylsp[-1]));
         }
         break;
 
@@ -4584,7 +4584,7 @@ yyreduce:
 
         case 309: /* $@9: %empty  */
         {
-            context->incrLoopNestingLevel();
+            context->incrLoopNestingLevel((yylsp[0]));
         }
         break;
 
@@ -4601,7 +4601,7 @@ yyreduce:
         case 311: /* $@10: %empty  */
         {
             context->symbolTable.push();
-            context->incrLoopNestingLevel();
+            context->incrLoopNestingLevel((yylsp[-1]));
         }
         break;
 

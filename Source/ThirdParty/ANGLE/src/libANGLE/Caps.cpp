@@ -1410,6 +1410,7 @@ std::vector<std::string> ClientExtensions::getStrings() const
     InsertExtensionString("EGL_KHR_debug",                                    debug,                              &extensionStrings);
     InsertExtensionString("EGL_ANGLE_feature_control",                        featureControlANGLE,                &extensionStrings);
     InsertExtensionString("EGL_ANGLE_display_power_preference",               displayPowerPreferenceANGLE,        &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_no_error",                               noErrorANGLE,                       &extensionStrings);
     // clang-format on
 
     return extensionStrings;

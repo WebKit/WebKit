@@ -22,9 +22,7 @@
       'android-arm64-exp-pixel6': {  # android-arm64-pixel6 below for android-arm64-test
         'os_type': 'android',
         'mixins': [
-          'android_u',
-          'oriole',
-          'gpu-swarming-pool',
+          'gpu_pixel_6_experimental',
           'limited_capacity_bot',
         ],
         'test_suites': {
@@ -46,9 +44,7 @@
       'android-arm64-pixel4': {
         'os_type': 'android',
         'mixins': [
-          'android_r',
-          'flame',
-          'gpu-swarming-pool',
+          'gpu_pixel_4_stable',
         ],
         'test_suites': {
           'gtest_tests': 'android_gtests',
@@ -58,9 +54,7 @@
       'android-arm64-pixel4-perf': {
         'os_type': 'android',
         'mixins': [
-          'android_r',
-          'flame',
-          'gpu-swarming-pool',
+          'gpu_pixel_4_stable',
           'timeout_120m',
         ],
         'test_suites': {
@@ -70,9 +64,7 @@
       'android-arm64-pixel6': {
         'os_type': 'android',
         'mixins': [
-          'android_t',
-          'oriole',
-          'gpu-swarming-pool',
+          'gpu_pixel_6_stable',
         ],
         'test_suites': {
           'gtest_tests': 'android_vulkan_gtests',
@@ -82,9 +74,7 @@
       'android-arm64-pixel6-perf': {
         'os_type': 'android',
         'mixins': [
-          'android_t',
-          'oriole',
-          'gpu-swarming-pool',
+          'gpu_pixel_6_stable',
           'timeout_120m',
         ],
         'test_suites': {
@@ -102,9 +92,11 @@
       'linux-exp-intel': {
         'os_type': 'linux',
         'mixins': [
-          'linux_intel_uhd_630_stable',
+          'linux_intel_uhd_630_experimental',
         ],
         'test_suites': {
+          'gtest_tests': 'linux_intel_gtests',
+          'isolated_scripts': 'isolated_scripts_group_common',
         },
       },
       'linux-exp-swiftshader': {
@@ -247,7 +239,6 @@
           'mac_mini_intel_gpu_experimental',
         ],
         'test_suites': {
-          'gtest_tests': 'mac_amd_and_intel_gtests',
         },
       },
       'mac-exp-nvidia': {

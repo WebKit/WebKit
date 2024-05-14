@@ -1274,10 +1274,13 @@ bool BufferVk::shouldRedefineStorage(vk::Renderer *renderer,
     }
     else
     {
-        size_t alignment   = renderer->getDefaultBufferAlignment();
-        size_t sizeInBytes = roundUpPow2(size, kBufferSizeGranularity);
-        size_t alignedSize = roundUp(sizeInBytes, alignment);
-        if (alignedSize != mBuffer.getSize())
+        size_t paddedBufferSize =
+            (renderer->getFeatures().padBuffersToMaxVertexAttribStride.enabled)
+                ? (size + static_cast<size_t>(renderer->getMaxVertexAttribStride()))
+                : size;
+        size_t sizeInBytes = roundUpPow2(paddedBufferSize, kBufferSizeGranularity);
+        size_t alignedSize = roundUp(sizeInBytes, renderer->getDefaultBufferAlignment());
+        if (alignedSize > mBuffer.getSize())
         {
             return true;
         }

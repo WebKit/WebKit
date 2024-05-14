@@ -98,6 +98,9 @@ EXPORTS
     ; EGL_ANGLE_metal_shared_event_sync
     eglCopyMetalSharedEventANGLE
 
+    ; EGL_ANGLE_no_error
+    eglSetValidationEnabledANGLE
+
     ; EGL_ANGLE_power_preference
     eglForceGPUSwitchANGLE
     eglHandleGPUSwitchANGLE

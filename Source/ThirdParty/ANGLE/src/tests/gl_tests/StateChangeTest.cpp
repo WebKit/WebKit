@@ -9609,6 +9609,49 @@ TEST_P(StateChangeTestES3, DepthTestWriteAndFunc)
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests state change for depth test while depth write is enabled
+TEST_P(StateChangeTestES3, DepthTestToggleWithDepthWrite)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    glClearColor(0, 0, 0, 1);
+    glClearDepthf(0.5);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Enable depth write, but keep depth test disabled.  Internally, depth write may be disabled
+    // because of the depth test.
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS);
+
+    // Draw with a different depth, but because depth test is disabled, depth is not actually
+    // changed.
+    glUniform4f(colorLoc, 1, 0, 0, 1);
+    drawQuad(program, essl1_shaders::PositionAttrib(), -0.3f);
+
+    // Enable depth test, but don't change state otherwise.  The following draw must change depth.
+    glEnable(GL_DEPTH_TEST);
+
+    glUniform4f(colorLoc, 0, 1, 0, 1);
+    drawQuad(program, essl1_shaders::PositionAttrib(), -0.2f);
+
+    // Verify that depth was changed in the last draw call.
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::green);
+
+    glDepthFunc(GL_GREATER);
+    glUniform4f(colorLoc, 0, 0, 1, 1);
+    drawQuad(program, essl1_shaders::PositionAttrib(), -0.1f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests state change for stencil test and function
 TEST_P(StateChangeTestES3, StencilTestAndFunc)
 {
@@ -11007,6 +11050,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(StateChangeTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     StateChangeTestES3,
     ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8),
+    ES3_VULKAN().disable(Feature::UseDepthWriteEnableDynamicState),
     ES3_VULKAN()
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),

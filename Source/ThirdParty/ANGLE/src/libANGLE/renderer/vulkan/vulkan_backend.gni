@@ -98,6 +98,8 @@ vulkan_backend_sources = [
   "vk_internal_shaders_autogen.cpp",
   "vk_internal_shaders_autogen.h",
   "vk_mandatory_format_support_table_autogen.cpp",
+  "vk_ref_counted_event.cpp",
+  "vk_ref_counted_event.h",
   "vk_renderer.cpp",
   "vk_renderer.h",
   "vk_resource.cpp",

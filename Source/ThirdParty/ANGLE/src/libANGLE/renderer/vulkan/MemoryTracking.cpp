@@ -249,7 +249,7 @@ void MemoryAllocationTracker::onMemoryAllocImpl(vk::MemoryAllocationType allocTy
     {
         // If enabled (debug layers), we keep more details in the memory tracker, such as handle,
         // and log the action to the output.
-        std::unique_lock<std::mutex> lock(mMemoryAllocationMutex);
+        std::unique_lock<angle::SimpleMutex> lock(mMemoryAllocationMutex);
 
         uint32_t allocTypeIndex = ToUnderlying(allocType);
         uint32_t memoryHeapIndex =
@@ -313,7 +313,7 @@ void MemoryAllocationTracker::onMemoryDeallocImpl(vk::MemoryAllocationType alloc
         {
             vk::MemoryAllocInfoMapKey memoryAllocInfoMapKey(handle);
             MemoryAllocInfoMap &memInfoMap = memInfoPerBacktrace.second;
-            std::unique_lock<std::mutex> lock(mMemoryAllocationMutex);
+            std::unique_lock<angle::SimpleMutex> lock(mMemoryAllocationMutex);
 
             if (memInfoMap.find(memoryAllocInfoMapKey) != memInfoMap.end())
             {
@@ -505,7 +505,7 @@ MemoryReport::MemoryReport()
 void MemoryReport::processCallback(const VkDeviceMemoryReportCallbackDataEXT &callbackData,
                                    bool logCallback)
 {
-    std::unique_lock<std::mutex> lock(mMemoryReportMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMemoryReportMutex);
     VkDeviceSize size = 0;
     std::string reportType;
     switch (callbackData.type)
@@ -583,7 +583,7 @@ void MemoryReport::processCallback(const VkDeviceMemoryReportCallbackDataEXT &ca
 
 void MemoryReport::logMemoryReportStats() const
 {
-    std::unique_lock<std::mutex> lock(mMemoryReportMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMemoryReportMutex);
 
     INFO() << std::right << "GPU Memory Totals:       Allocated=" << std::setw(10)
            << mCurrentTotalAllocatedMemory << " (max=" << std::setw(10) << mMaxTotalAllocatedMemory

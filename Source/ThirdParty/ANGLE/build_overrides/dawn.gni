@@ -1,4 +1,5 @@
 build_with_chromium = false
+build_with_angle = true
 dawn_build_dxc = false
 
 dawn_angle_dir = "//"

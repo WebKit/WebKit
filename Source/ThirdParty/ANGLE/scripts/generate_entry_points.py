@@ -464,7 +464,14 @@ void EGLAPIENTRY EGL_{name}({params})
 
         {{
             ANGLE_EGL_SCOPED_CONTEXT_LOCK({name}, thread{comma_if_needed_context_lock}{internal_context_lock_params});
-            ANGLE_EGL_VALIDATE_VOID(thread, {name}, {labeled_object}, {internal_params});
+            if (IsEGLValidationEnabled())
+            {{
+                ANGLE_EGL_VALIDATE_VOID(thread, {name}, {labeled_object}, {internal_params});
+            }}
+            else
+            {{
+                {attrib_map_init}
+            }}
 
             {name}(thread{comma_if_needed}{internal_params});
         }}
@@ -489,7 +496,14 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN = """\
 
         {{
             ANGLE_EGL_SCOPED_CONTEXT_LOCK({name}, thread{comma_if_needed_context_lock}{internal_context_lock_params});
-            ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+            if (IsEGLValidationEnabled())
+            {{
+                ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+            }}
+            else
+            {{
+                {attrib_map_init}
+            }}
 
             returnValue = {name}(thread{comma_if_needed}{internal_params});
         }}
@@ -512,7 +526,14 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
 
     {packed_gl_enum_conversions}
 
-    ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+    if (IsEGLValidationEnabled())
+    {{
+        ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+    }}
+    else
+    {{
+        {attrib_map_init}
+    }}
 
     returnValue = {name}(thread{comma_if_needed}{internal_params});
 
@@ -999,6 +1020,7 @@ FORMAT_DICT = {
     "GLushort": "%u",
     "int": "%d",
     # EGL-specific types
+    "EGLBoolean": "%u",
     "EGLConfig": POINTER_FORMAT,
     "EGLContext": POINTER_FORMAT,
     "EGLDisplay": POINTER_FORMAT,
@@ -1907,6 +1929,13 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
 
     packed_gl_enum_conversions = []
 
+    # egl::AttributeMap objects do not convert the raw input parameters to a map until they are
+    # validated because it is possible to have unterminated attribute lists if one of the
+    # attributes is invalid.
+    # When validation is disabled, force the conversion from attribute list to map using
+    # initializeWithoutValidation.
+    attrib_map_init = []
+
     for param in params:
         name = just_the_name(param)
 
@@ -1917,6 +1946,9 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
                 "\n        " + internal_type + " " + internal_name + " = PackParam<" +
                 internal_type + ">(" + name + ");"
             ]
+
+            if 'AttributeMap' in internal_type:
+                attrib_map_init.append(internal_name + ".initializeWithoutValidation();")
 
     pass_params = [param_print_argument(api, command_node, param) for param in params]
     format_params = [param_format_string(param) for param in params]
@@ -1940,6 +1972,8 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             ", ".join(params),
         "internal_params":
             ", ".join(internal_params),
+        "attrib_map_init":
+            "\n".join(attrib_map_init),
         "context_private_internal_params":
             ", ".join(
                 ["context->getMutablePrivateState()", "context->getMutablePrivateStateCache()"] +
@@ -3112,10 +3146,11 @@ def get_unlocked_tail_call(api, cmd_name):
     # - eglPrepareSwapBuffersANGLE -> Calls vkAcquireNextImageKHR in tail call
     #
     # - eglSwapBuffers, eglSwapBuffersWithDamageKHR and
-    #   eglSwapBuffersWithFrameTokenANGLE -> May throttle the CPU in tail call
+    #   eglSwapBuffersWithFrameTokenANGLE -> May throttle the CPU in tail call or
+    #   calls native EGL function
     #
     # - eglClientWaitSyncKHR, eglClientWaitSync, glClientWaitSync,
-    #   glFinishFenceNV -> May wait on fence in tail call
+    #   glFinishFenceNV -> May wait on fence in tail call or call native EGL function
     #
     # - glTexImage2D, glTexImage3D, glTexSubImage2D, glTexSubImage3D,
     #   glCompressedTexImage2D, glCompressedTexImage3D,
@@ -3125,12 +3160,14 @@ def get_unlocked_tail_call(api, cmd_name):
     # - glCompileShader and glLinkProgram -> May perform the compilation / link
     #   in tail call
     #
+    # - eglCreateSync, eglCreateImage, eglDestroySync, eglDestroyImage -> Calls
+    #   native EGL function in tail call
+    #
     if (cmd_name in [
             'eglDestroySurface', 'eglMakeCurrent', 'eglReleaseThread', 'eglCreateWindowSurface',
             'eglCreatePlatformWindowSurface', 'eglCreatePlatformWindowSurfaceEXT',
-            'eglPrepareSwapBuffersANGLE', 'eglSwapBuffers', 'eglSwapBuffersWithDamageKHR',
-            'eglSwapBuffersWithFrameTokenANGLE', 'glFinishFenceNV', 'glCompileShader',
-            'glLinkProgram'
+            'eglPrepareSwapBuffersANGLE', 'eglSwapBuffersWithFrameTokenANGLE', 'glFinishFenceNV',
+            'glCompileShader', 'glLinkProgram'
     ] or cmd_name.startswith('glTexImage2D') or cmd_name.startswith('glTexImage3D') or
             cmd_name.startswith('glTexSubImage2D') or cmd_name.startswith('glTexSubImage3D') or
             cmd_name.startswith('glCompressedTexImage2D') or
@@ -3139,7 +3176,21 @@ def get_unlocked_tail_call(api, cmd_name):
             cmd_name.startswith('glCompressedTexSubImage3D')):
         return 'egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);'
 
-    if cmd_name in ['eglClientWaitSyncKHR', 'eglClientWaitSync', 'glClientWaitSync']:
+    if cmd_name in [
+            'eglClientWaitSyncKHR',
+            'eglClientWaitSync',
+            'eglCreateImageKHR',
+            'eglCreateImage',
+            'eglCreateSyncKHR',
+            'eglCreateSync',
+            'eglDestroySyncKHR',
+            'eglDestroySync',
+            'eglSwapBuffers',
+            'eglSwapBuffersWithDamageKHR',
+            'eglWaitSyncKHR',
+            'eglWaitSync',
+            'glClientWaitSync',
+    ]:
         return 'egl::Display::GetCurrentThreadUnlockedTailCall()->run(&returnValue);'
 
     # Otherwise assert that no tail calls where generated

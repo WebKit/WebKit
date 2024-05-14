@@ -249,6 +249,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->HashFunction = nullptr;
 
     resources->MaxExpressionComplexity = 256;
+    resources->MaxStatementDepth       = 256;
     resources->MaxCallStackDepth       = 256;
     resources->MaxFunctionParameters   = 1024;
 

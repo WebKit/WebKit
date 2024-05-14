@@ -149,6 +149,10 @@
             <proto>void <name>eglWaitUntilWorkScheduledANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
         </command>
+        <command>
+            <proto>void <name>eglSetValidationEnabledANGLE</name></proto>
+            <param><ptype>EGLBoolean</ptype> <name>validationState</name></param>
+        </command>
     </commands>
     <!-- SECTION: ANGLE extension interface definitions -->
     <extensions>
@@ -511,6 +515,11 @@
         <extension name="EGL_ANGLE_d3d_texture_client_buffer" supported="egl">
             <require>
                 <enum name="EGL_D3D_TEXTURE_ANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_no_error" supported="egl">
+            <require>
+                <command name="eglSetValidationEnabledANGLE"/>
             </require>
         </extension>
     </extensions>

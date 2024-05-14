@@ -27,6 +27,7 @@ class MemoryBuffer final : NonCopyable
     MemoryBuffer &operator=(MemoryBuffer &&other);
 
     [[nodiscard]] bool resize(size_t size);
+    void trim(size_t size);
     void clear() { (void)resize(0); }
     size_t size() const { return mSize; }
     bool empty() const { return mSize == 0; }

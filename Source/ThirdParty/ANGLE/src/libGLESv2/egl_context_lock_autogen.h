@@ -142,6 +142,9 @@ ScopedContextMutexLock GetContextLock_QueryDisplayAttribANGLE(Thread *thread,
 ScopedContextMutexLock GetContextLock_CopyMetalSharedEventANGLE(Thread *thread,
                                                                 egl::Display *dpyPacked);
 
+// EGL_ANGLE_no_error
+ScopedContextMutexLock GetContextLock_SetValidationEnabledANGLE(Thread *thread);
+
 // EGL_ANGLE_power_preference
 ScopedContextMutexLock GetContextLock_ReleaseHighPowerGPUANGLE(Thread *thread,
                                                                egl::Display *dpyPacked,

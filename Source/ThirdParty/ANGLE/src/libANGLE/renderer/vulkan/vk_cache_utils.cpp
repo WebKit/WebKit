@@ -4274,10 +4274,8 @@ bool operator==(const AttachmentOpsArray &lhs, const AttachmentOpsArray &rhs)
 
 // DescriptorSetLayoutDesc implementation.
 DescriptorSetLayoutDesc::DescriptorSetLayoutDesc()
-    : mPackedDescriptorSetLayout{}, mValidDescriptorSetLayoutIndexMask()
-{
-    mImmutableSamplers.fill(VK_NULL_HANDLE);
-}
+    : mDescriptorSetLayoutBindings{}, mImmutableSamplers{}
+{}
 
 DescriptorSetLayoutDesc::~DescriptorSetLayoutDesc() = default;
 
@@ -4288,20 +4286,32 @@ DescriptorSetLayoutDesc &DescriptorSetLayoutDesc::operator=(const DescriptorSetL
 
 size_t DescriptorSetLayoutDesc::hash() const
 {
-    size_t genericHash = angle::ComputeGenericHash(mValidDescriptorSetLayoutIndexMask);
-    for (size_t bindingIndex : mValidDescriptorSetLayoutIndexMask)
+    size_t validDescriptorSetLayoutBindingsCount = mDescriptorSetLayoutBindings.size();
+    size_t validImmutableSamplersCount           = mImmutableSamplers.size();
+
+    ASSERT(validDescriptorSetLayoutBindingsCount != 0 || validImmutableSamplersCount == 0);
+
+    size_t genericHash = 0;
+    if (validDescriptorSetLayoutBindingsCount > 0)
     {
-        genericHash ^= angle::ComputeGenericHash(mPackedDescriptorSetLayout[bindingIndex]) ^
-                       angle::ComputeGenericHash(mImmutableSamplers[bindingIndex]);
+        genericHash = angle::ComputeGenericHash(
+            mDescriptorSetLayoutBindings.data(),
+            validDescriptorSetLayoutBindingsCount * sizeof(PackedDescriptorSetBinding));
     }
+
+    if (validImmutableSamplersCount > 0)
+    {
+        genericHash ^= angle::ComputeGenericHash(mImmutableSamplers.data(),
+                                                 validImmutableSamplersCount * sizeof(VkSampler));
+    }
+
     return genericHash;
 }
 
 bool DescriptorSetLayoutDesc::operator==(const DescriptorSetLayoutDesc &other) const
 {
-    return memcmp(&mPackedDescriptorSetLayout, &other.mPackedDescriptorSetLayout,
-                  sizeof(mPackedDescriptorSetLayout)) == 0 &&
-           memcmp(&mImmutableSamplers, &other.mImmutableSamplers, sizeof(mImmutableSamplers)) == 0;
+    return mDescriptorSetLayoutBindings == other.mDescriptorSetLayoutBindings &&
+           mImmutableSamplers == other.mImmutableSamplers;
 }
 
 void DescriptorSetLayoutDesc::update(uint32_t bindingIndex,
@@ -4310,43 +4320,46 @@ void DescriptorSetLayoutDesc::update(uint32_t bindingIndex,
                                      VkShaderStageFlags stages,
                                      const Sampler *immutableSampler)
 {
-    ASSERT(static_cast<size_t>(descriptorType) < std::numeric_limits<uint16_t>::max());
+    ASSERT(static_cast<size_t>(descriptorType) < std::numeric_limits<uint8_t>::max());
     ASSERT(count < std::numeric_limits<uint16_t>::max());
+    ASSERT(bindingIndex < std::numeric_limits<uint16_t>::max());
 
-    PackedDescriptorSetBinding &packedBinding = mPackedDescriptorSetLayout[bindingIndex];
-
+    PackedDescriptorSetBinding packedBinding = {};
     SetBitField(packedBinding.type, descriptorType);
     SetBitField(packedBinding.count, count);
     SetBitField(packedBinding.stages, stages);
+    SetBitField(packedBinding.bindingIndex, bindingIndex);
+    SetBitField(packedBinding.hasImmutableSampler, 0);
 
     if (immutableSampler)
     {
         ASSERT(count == 1);
-        ASSERT(bindingIndex < gl::IMPLEMENTATION_MAX_ACTIVE_TEXTURES);
-
-        mImmutableSamplers[bindingIndex] = immutableSampler->getHandle();
+        SetBitField(packedBinding.hasImmutableSampler, 1);
+        mImmutableSamplers.push_back(immutableSampler->getHandle());
     }
 
-    mValidDescriptorSetLayoutIndexMask.set(bindingIndex, count > 0);
+    mDescriptorSetLayoutBindings.push_back(std::move(packedBinding));
 }
 
 void DescriptorSetLayoutDesc::unpackBindings(DescriptorSetLayoutBindingVector *bindings) const
 {
-    for (size_t bindingIndex : mValidDescriptorSetLayoutIndexMask)
+    size_t immutableSamplersIndex = 0;
+
+    // Unpack all valid descriptor set layout bindings
+    for (const PackedDescriptorSetBinding &packedBinding : mDescriptorSetLayoutBindings)
     {
-        const PackedDescriptorSetBinding &packedBinding = mPackedDescriptorSetLayout[bindingIndex];
         ASSERT(packedBinding.count != 0);
 
         VkDescriptorSetLayoutBinding binding = {};
-        binding.binding                      = static_cast<uint32_t>(bindingIndex);
+        binding.binding                      = static_cast<uint32_t>(packedBinding.bindingIndex);
         binding.descriptorCount              = packedBinding.count;
         binding.descriptorType               = static_cast<VkDescriptorType>(packedBinding.type);
         binding.stageFlags = static_cast<VkShaderStageFlags>(packedBinding.stages);
-        if (mImmutableSamplers[bindingIndex] != VK_NULL_HANDLE)
+
+        if (packedBinding.hasImmutableSampler)
         {
             ASSERT(packedBinding.count == 1);
-            ASSERT(bindingIndex < gl::IMPLEMENTATION_MAX_ACTIVE_TEXTURES);
-            binding.pImmutableSamplers = &mImmutableSamplers[bindingIndex];
+            binding.pImmutableSamplers = &mImmutableSamplers[immutableSamplersIndex++];
         }
 
         bindings->push_back(binding);
@@ -4371,12 +4384,18 @@ PipelineLayoutDesc &PipelineLayoutDesc::operator=(const PipelineLayoutDesc &rhs)
 
 size_t PipelineLayoutDesc::hash() const
 {
-    return angle::ComputeGenericHash(*this);
+    size_t genericHash = angle::ComputeGenericHash(mPushConstantRange);
+    for (const DescriptorSetLayoutDesc &descriptorSetLayoutDesc : mDescriptorSetLayouts)
+    {
+        genericHash ^= descriptorSetLayoutDesc.hash();
+    }
+    return genericHash;
 }
 
 bool PipelineLayoutDesc::operator==(const PipelineLayoutDesc &other) const
 {
-    return memcmp(this, &other, sizeof(PipelineLayoutDesc)) == 0;
+    return mPushConstantRange == other.mPushConstantRange &&
+           mDescriptorSetLayouts == other.mDescriptorSetLayouts;
 }
 
 void PipelineLayoutDesc::updateDescriptorSetLayout(DescriptorSetIndex setIndex,
@@ -6360,21 +6379,21 @@ template class SharedCacheKeyManager<SharedFramebufferCacheKey>;
 template class SharedCacheKeyManager<SharedDescriptorSetCacheKey>;
 
 // PipelineCacheAccess implementation.
-std::unique_lock<std::mutex> PipelineCacheAccess::getLock()
+std::unique_lock<angle::SimpleMutex> PipelineCacheAccess::getLock()
 {
     if (mMutex == nullptr)
     {
-        return std::unique_lock<std::mutex>();
+        return std::unique_lock<angle::SimpleMutex>();
     }
 
-    return std::unique_lock<std::mutex>(*mMutex);
+    return std::unique_lock<angle::SimpleMutex>(*mMutex);
 }
 
 VkResult PipelineCacheAccess::createGraphicsPipeline(vk::Context *context,
                                                      const VkGraphicsPipelineCreateInfo &createInfo,
                                                      vk::Pipeline *pipelineOut)
 {
-    std::unique_lock<std::mutex> lock = getLock();
+    std::unique_lock<angle::SimpleMutex> lock = getLock();
 
     return pipelineOut->initGraphics(context->getDevice(), createInfo, *mPipelineCache);
 }
@@ -6383,7 +6402,7 @@ VkResult PipelineCacheAccess::createComputePipeline(vk::Context *context,
                                                     const VkComputePipelineCreateInfo &createInfo,
                                                     vk::Pipeline *pipelineOut)
 {
-    std::unique_lock<std::mutex> lock = getLock();
+    std::unique_lock<angle::SimpleMutex> lock = getLock();
 
     return pipelineOut->initCompute(context->getDevice(), createInfo, *mPipelineCache);
 }
@@ -6392,7 +6411,7 @@ void PipelineCacheAccess::merge(Renderer *renderer, const vk::PipelineCache &pip
 {
     ASSERT(isThreadSafe());
 
-    std::unique_lock<std::mutex> lock = getLock();
+    std::unique_lock<angle::SimpleMutex> lock = getLock();
 
     mPipelineCache->merge(renderer->getDevice(), 1, pipelineCache.ptr());
 }
@@ -7457,7 +7476,7 @@ angle::Result DescriptorSetLayoutCache::getDescriptorSetLayout(
     vk::AtomicBindingPointer<vk::DescriptorSetLayout> *descriptorSetLayoutOut)
 {
     // Note: this function may be called without holding the share group lock.
-    std::unique_lock<std::mutex> lock(mMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMutex);
 
     auto iter = mPayload.find(desc);
     if (iter != mPayload.end())
@@ -7465,6 +7484,18 @@ angle::Result DescriptorSetLayoutCache::getDescriptorSetLayout(
         vk::RefCountedDescriptorSetLayout &layout = iter->second;
         descriptorSetLayoutOut->set(&layout);
         mCacheStats.hit();
+        return angle::Result::Continue;
+    }
+
+    // Descriptor set layout handle is allowed to be VK_NULL_HANDLE iff
+    // VK_EXT_graphics_pipeline_library is supported and pre-rasterization and fragment shader
+    // subsets can be independently compiled.
+    if (!context->getFeatures().combineAllShadersInPipelineLibrary.enabled && desc.empty())
+    {
+        auto insertedItem = mPayload.emplace(desc, vk::DescriptorSetLayout());
+        vk::RefCountedDescriptorSetLayout &insertedLayout = insertedItem.first->second;
+        descriptorSetLayoutOut->set(&insertedLayout);
+
         return angle::Result::Continue;
     }
 
@@ -7519,7 +7550,7 @@ angle::Result PipelineLayoutCache::getPipelineLayout(
     vk::AtomicBindingPointer<vk::PipelineLayout> *pipelineLayoutOut)
 {
     // Note: this function may be called without holding the share group lock.
-    std::unique_lock<std::mutex> lock(mMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMutex);
 
     auto iter = mPayload.find(desc);
     if (iter != mPayload.end())
@@ -7538,10 +7569,9 @@ angle::Result PipelineLayoutCache::getPipelineLayout(
         if (layoutPtr.valid())
         {
             VkDescriptorSetLayout setLayout = layoutPtr.get().getHandle();
-            if (setLayout != VK_NULL_HANDLE)
-            {
-                setLayoutHandles.push_back(setLayout);
-            }
+            ASSERT(setLayout != VK_NULL_HANDLE ||
+                   !context->getFeatures().combineAllShadersInPipelineLibrary.enabled);
+            setLayoutHandles.push_back(setLayout);
         }
     }
 

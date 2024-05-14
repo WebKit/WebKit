@@ -28,6 +28,8 @@ ANGLE_REQUIRE_CONSTANT_INIT gl::Context *g_LastContext(nullptr);
 static_assert(std::is_trivially_destructible<decltype(g_LastContext)>::value,
               "global last context is not trivially destructible");
 
+bool g_EGLValidationEnabled = true;
+
 // Called only on Android platform
 [[maybe_unused]] void ThreadCleanupCallback(void *ptr)
 {
@@ -173,6 +175,16 @@ ScopedSyncCurrentContextFromThread::ScopedSyncCurrentContextFromThread(egl::Thre
 ScopedSyncCurrentContextFromThread::~ScopedSyncCurrentContextFromThread()
 {
     SetContextCurrent(mThread, mThread->getContext());
+}
+
+void SetEGLValidationEnabled(bool enabled)
+{
+    g_EGLValidationEnabled = enabled;
+}
+
+bool IsEGLValidationEnabled()
+{
+    return g_EGLValidationEnabled;
 }
 
 }  // namespace egl

@@ -515,6 +515,13 @@ void *EGLAPIENTRY eglCopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSyncKHR sync)
     return EGL_CopyMetalSharedEventANGLE(dpy, sync);
 }
 
+// EGL_ANGLE_no_error
+void EGLAPIENTRY eglSetValidationEnabledANGLE(EGLBoolean validationState)
+{
+    EnsureEGLLoaded();
+    return EGL_SetValidationEnabledANGLE(validationState);
+}
+
 // EGL_ANGLE_power_preference
 void EGLAPIENTRY eglReleaseHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx)
 {

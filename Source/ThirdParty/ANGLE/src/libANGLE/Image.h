@@ -10,6 +10,7 @@
 #define LIBANGLE_IMAGE_H_
 
 #include "common/FastVector.h"
+#include "common/SimpleMutex.h"
 #include "common/angleutils.h"
 #include "libANGLE/AttributeMap.h"
 #include "libANGLE/Debug.h"
@@ -154,7 +155,7 @@ struct ImageState : private angle::NonCopyable
     EGLenum colorspace;
     bool hasProtectedContent;
 
-    mutable std::mutex targetsLock;
+    mutable angle::SimpleMutex targetsLock;
 
     static constexpr size_t kTargetsSetSize = 2;
     angle::FlatUnorderedSet<ImageSibling *, kTargetsSetSize> targets;

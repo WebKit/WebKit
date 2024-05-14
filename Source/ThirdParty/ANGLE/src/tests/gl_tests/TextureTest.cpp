@@ -2092,6 +2092,29 @@ TEST_P(Texture2DTest, ZeroSizedUploads)
     EXPECT_GL_NO_ERROR();
 }
 
+// Tests uploading a red texture and immediately reading from it.
+TEST_P(Texture2DTest, SimpleUpload)
+{
+    const GLuint width            = getWindowWidth();
+    const GLuint height           = getWindowHeight();
+    const GLuint windowPixelCount = width * height;
+    std::vector<GLColor> pixelsRed(windowPixelCount, GLColor::red);
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 pixelsRed.data());
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture2D, 0);
+
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+    std::vector<GLColor> output(windowPixelCount, GLColor::green);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, output.data());
+    EXPECT_EQ(pixelsRed, output);
+}
+
 // Test that interleaved superseded updates work as expected
 TEST_P(Texture2DTest, InterleavedSupersedingTextureUpdates)
 {
@@ -12306,6 +12329,65 @@ TEST_P(Texture2DTest, UploadThenFSThenNewRPThenFSThenVS)
     });
 }
 
+// Test that interleaved updates and draw calls many times work
+TEST_P(Texture2DTest, DrawThenUpdateMultipleTimes)
+{
+    constexpr uint32_t kTexWidth  = 16;
+    constexpr uint32_t kTexHeight = 16;
+    constexpr uint32_t kBpp       = 4;
+
+    // Create the texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTexWidth, kTexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+
+    constexpr GLubyte kInitialColor = 16;
+    GLubyte expectedFinalColorValue = kInitialColor;
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // First draw the screen with initial color
+    {
+        ANGLE_GL_PROGRAM(colorProgram, angle::essl1_shaders::vs::Simple(),
+                         angle::essl1_shaders::fs::UniformColor());
+        glUseProgram(colorProgram);
+        GLint colorUniformLocation =
+            glGetUniformLocation(colorProgram, angle::essl1_shaders::ColorUniform());
+        ASSERT_NE(colorUniformLocation, -1);
+        glUniform4f(colorUniformLocation, kInitialColor / 256.f, kInitialColor / 256.f,
+                    kInitialColor / 256.f, kInitialColor / 256.f);
+        drawQuad(colorProgram, angle::essl1_shaders::PositionAttrib(), 0.5f);
+    }
+
+    // Then update the texture then draw it multiple times
+    constexpr GLubyte kColorsToUpdate[] = {16, 64, 64};
+    setUpProgram();
+    glUseProgram(mProgram);
+    glUniform1i(mTexture2DUniformLocation, 0);
+
+    for (auto color : kColorsToUpdate)
+    {
+        expectedFinalColorValue += color;
+        std::vector<GLubyte> fullTextureData(kTexWidth * kTexHeight * kBpp, color);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTexWidth, kTexHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                        fullTextureData.data());
+
+        drawQuad(mProgram, "position", 0.5f);
+    }
+
+    // The final color should be sum of all updated colors.
+    const GLColor expectedFinalColor(expectedFinalColorValue, expectedFinalColorValue,
+                                     expectedFinalColorValue, expectedFinalColorValue);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(1 * getWindowWidth() / 4, getWindowHeight() / 2, expectedFinalColor);
+}
+
 // Test that clears due to emulated formats are to the correct level given non-zero base level.
 TEST_P(Texture2DTestES3, NonZeroBaseEmulatedClear)
 {
@@ -14390,7 +14472,8 @@ void main()
 ANGLE_INSTANTIATE_TEST(Texture2DTest,
                        ANGLE_ALL_TEST_PLATFORMS_ES2,
                        ES2_EMULATE_COPY_TEX_IMAGE_VIA_SUB(),
-                       ES2_EMULATE_COPY_TEX_IMAGE());
+                       ES2_EMULATE_COPY_TEX_IMAGE(),
+                       ES2_WEBGPU());
 ANGLE_INSTANTIATE_TEST_ES2(TextureCubeTest);
 ANGLE_INSTANTIATE_TEST_ES2(Texture2DTestWithDrawScale);
 ANGLE_INSTANTIATE_TEST_ES2(Sampler2DAsFunctionParameterTest);

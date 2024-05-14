@@ -452,8 +452,14 @@ config("angle_common_config") {
     "src/common/base",
     "src/common/third_party/xxhash",
   ]
+  libs = []
   if (is_android) {
-    libs = [ "log" ]
+    libs += [ "log" ]
+  }
+
+  if (is_win && !angle_is_winuwp && !build_with_chromium) {
+    # Needed for futex support
+    libs += [ "synchronization.lib" ]
   }
 
   defines = []
@@ -1098,11 +1104,6 @@ angle_source_set("libANGLE_no_vulkan") {
       "gdi32.lib",
       "user32.lib",
     ]
-
-    if (!build_with_chromium) {
-      # Needed for futex support
-      libs += [ "synchronization.lib" ]
-    }
   }
 
   if (angle_enable_d3d11) {
@@ -1244,15 +1245,9 @@ group("angle_abseil") {
   if (angle_enable_abseil) {
     # When build_with_chromium=true we need to include "//third_party/abseil-cpp:absl" while
     # we can be more specific when building standalone ANGLE.
-    if (build_with_chromium) {
+    # Also build the combined target when building Dawn to avoid multiply defined globals.
+    if (build_with_chromium || angle_enable_wgpu) {
       public_deps = [ "$angle_abseil_cpp_dir:absl" ]
-    } else if (angle_enable_wgpu) {
-      # Use Dawn's abseil build files when Dawn will also be built. Multiple build targets
-      # with the same files causes link issues in component builds.
-      public_deps = [
-        "$angle_dawn_dir/third_party/gn/abseil-cpp:flat_hash_map",
-        "$angle_dawn_dir/third_party/gn/abseil-cpp:flat_hash_set",
-      ]
     } else {
       public_deps = [
         "$angle_abseil_cpp_dir/absl/container:flat_hash_map",

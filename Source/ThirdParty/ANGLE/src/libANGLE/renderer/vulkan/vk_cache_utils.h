@@ -13,6 +13,7 @@
 
 #include "common/Color.h"
 #include "common/FixedVector.h"
+#include "common/SimpleMutex.h"
 #include "common/WorkerThread.h"
 #include "libANGLE/Uniform.h"
 #include "libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h"
@@ -984,17 +985,11 @@ class GraphicsPipelineDesc final
 constexpr size_t kGraphicsPipelineDescSize = sizeof(GraphicsPipelineDesc);
 static_assert(kGraphicsPipelineDescSize == kGraphicsPipelineDescSumOfSizes, "Size mismatch");
 
-constexpr uint32_t kMaxDescriptorSetLayoutBindings =
-    std::max(gl::IMPLEMENTATION_MAX_ACTIVE_TEXTURES,
-             gl::IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS);
-
+// Values are based on data recorded here -> https://anglebug.com/8677#c4
+constexpr size_t kDefaultDescriptorSetLayoutBindingsCount = 8;
+constexpr size_t kDefaultImmutableSamplerBindingsCount    = 1;
 using DescriptorSetLayoutBindingVector =
-    angle::FixedVector<VkDescriptorSetLayoutBinding, kMaxDescriptorSetLayoutBindings>;
-
-// Technically this needs to only be kMaxDescriptorSetLayoutBindings but due to struct padding
-// issues round up size to 64.
-constexpr uint32_t kMaxDescriptorSetLayoutCount = roundUpPow2(kMaxDescriptorSetLayoutBindings, 64u);
-using DescriptorSetLayoutIndexMask              = angle::BitSet<kMaxDescriptorSetLayoutCount>;
+    angle::FastVector<VkDescriptorSetLayoutBinding, kDefaultDescriptorSetLayoutBindingsCount>;
 
 // A packed description of a descriptor set layout. Use similarly to RenderPassDesc and
 // GraphicsPipelineDesc. Currently we only need to differentiate layouts based on sampler and ubo
@@ -1018,39 +1013,53 @@ class DescriptorSetLayoutDesc final
 
     void unpackBindings(DescriptorSetLayoutBindingVector *bindings) const;
 
-    bool empty() const { return !mValidDescriptorSetLayoutIndexMask.any(); }
+    bool empty() const { return mDescriptorSetLayoutBindings.empty(); }
 
   private:
     // There is a small risk of an issue if the sampler cache is evicted but not the descriptor
     // cache we would have an invalid handle here. Thus propose follow-up work:
     // TODO: https://issuetracker.google.com/issues/159156775: Have immutable sampler use serial
-    struct PackedDescriptorSetBinding
+    union PackedDescriptorSetBinding
     {
-        uint8_t type;    // Stores a packed VkDescriptorType descriptorType.
-        uint8_t stages;  // Stores a packed VkShaderStageFlags.
-        uint16_t count;  // Stores a packed uint32_t descriptorCount.
+        struct
+        {
+            uint8_t type;                  // Stores a packed VkDescriptorType descriptorType.
+            uint8_t stages;                // Stores a packed VkShaderStageFlags.
+            uint16_t count;                // Stores a packed uint32_t descriptorCount
+            uint16_t bindingIndex;         // Stores the binding index
+            uint16_t hasImmutableSampler;  // Whether this binding has an immutable sampler
+        };
+        uint64_t value;
+
+        bool operator==(const PackedDescriptorSetBinding &other) const
+        {
+            return value == other.value;
+        }
     };
 
-    // 1x 32bit
-    static_assert(sizeof(PackedDescriptorSetBinding) == 4, "Unexpected size");
+    // 1x 64bit
+    static_assert(sizeof(PackedDescriptorSetBinding) == 8, "Unexpected size");
 
-    // This is a compact representation of a descriptor set layout.
-    std::array<PackedDescriptorSetBinding, kMaxDescriptorSetLayoutBindings>
-        mPackedDescriptorSetLayout;
-    gl::ActiveTextureArray<VkSampler> mImmutableSamplers;
-
-    DescriptorSetLayoutIndexMask mValidDescriptorSetLayoutIndexMask;
+    angle::FastVector<PackedDescriptorSetBinding, kDefaultDescriptorSetLayoutBindingsCount>
+        mDescriptorSetLayoutBindings;
+    angle::FastVector<VkSampler, kDefaultImmutableSamplerBindingsCount> mImmutableSamplers;
 };
 
 // The following are for caching descriptor set layouts. Limited to max three descriptor set
 // layouts. This can be extended in the future.
-constexpr size_t kMaxDescriptorSetLayouts = 3;
+constexpr size_t kMaxDescriptorSetLayouts = ToUnderlying(DescriptorSetIndex::EnumCount);
 
-struct PackedPushConstantRange
+union PackedPushConstantRange
 {
-    uint8_t offset;
-    uint8_t size;
-    uint16_t stageMask;
+    struct
+    {
+        uint8_t offset;
+        uint8_t size;
+        uint16_t stageMask;
+    };
+    uint32_t value;
+
+    bool operator==(const PackedPushConstantRange &other) const { return value == other.value; }
 };
 
 static_assert(sizeof(PackedPushConstantRange) == sizeof(uint32_t), "Unexpected Size");
@@ -1298,7 +1307,7 @@ class PipelineCacheAccess
     PipelineCacheAccess()  = default;
     ~PipelineCacheAccess() = default;
 
-    void init(const vk::PipelineCache *pipelineCache, std::mutex *mutex)
+    void init(const vk::PipelineCache *pipelineCache, angle::SimpleMutex *mutex)
     {
         mPipelineCache = pipelineCache;
         mMutex         = mutex;
@@ -1316,10 +1325,10 @@ class PipelineCacheAccess
     bool isThreadSafe() const { return mMutex != nullptr; }
 
   private:
-    std::unique_lock<std::mutex> getLock();
+    std::unique_lock<angle::SimpleMutex> getLock();
 
     const vk::PipelineCache *mPipelineCache = nullptr;
-    std::mutex *mMutex;
+    angle::SimpleMutex *mMutex;
 };
 
 // Monolithic pipeline creation tasks are created as soon as a pipeline is created out of libraries.
@@ -2559,8 +2568,12 @@ class DescriptorSetLayoutCache final : angle::NonCopyable
         const vk::DescriptorSetLayoutDesc &desc,
         vk::AtomicBindingPointer<vk::DescriptorSetLayout> *descriptorSetLayoutOut);
 
+    // Helpers for white box tests
+    size_t getCacheHitCount() const { return mCacheStats.getHitCount(); }
+    size_t getCacheMissCount() const { return mCacheStats.getMissCount(); }
+
   private:
-    mutable std::mutex mMutex;
+    mutable angle::SimpleMutex mMutex;
     std::unordered_map<vk::DescriptorSetLayoutDesc, vk::RefCountedDescriptorSetLayout> mPayload;
     CacheStats mCacheStats;
 };
@@ -2580,7 +2593,7 @@ class PipelineLayoutCache final : public HasCacheStats<VulkanCacheType::Pipeline
         vk::AtomicBindingPointer<vk::PipelineLayout> *pipelineLayoutOut);
 
   private:
-    mutable std::mutex mMutex;
+    mutable angle::SimpleMutex mMutex;
     std::unordered_map<vk::PipelineLayoutDesc, vk::RefCountedPipelineLayout> mPayload;
 };
 

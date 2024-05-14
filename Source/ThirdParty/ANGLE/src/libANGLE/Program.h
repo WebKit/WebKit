@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "common/Optional.h"
+#include "common/SimpleMutex.h"
 #include "common/angleutils.h"
 #include "common/mathutil.h"
 #include "common/utilities.h"
@@ -567,7 +568,7 @@ class Program final : public LabeledObject, public angle::Subject
     // actual binary.  This cache ensures the second call does not need to call |serialize()| again.
     angle::MemoryBuffer mBinary;
 
-    std::mutex mHistogramMutex;
+    angle::SimpleMutex mHistogramMutex;
 };
 }  // namespace gl
 

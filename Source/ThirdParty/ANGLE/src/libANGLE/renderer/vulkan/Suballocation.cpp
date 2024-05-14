@@ -154,14 +154,14 @@ VkResult BufferBlock::allocate(VkDeviceSize size,
                                VmaVirtualAllocation *allocationOut,
                                VkDeviceSize *offsetOut)
 {
-    std::unique_lock<std::mutex> lock(mVirtualBlockMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mVirtualBlockMutex);
     mCountRemainsEmpty = 0;
     return mVirtualBlock.allocate(size, alignment, allocationOut, offsetOut);
 }
 
 void BufferBlock::free(VmaVirtualAllocation allocation, VkDeviceSize offset)
 {
-    std::unique_lock<std::mutex> lock(mVirtualBlockMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mVirtualBlockMutex);
     mVirtualBlock.free(allocation, offset);
 }
 
@@ -172,7 +172,7 @@ int32_t BufferBlock::getAndIncrementEmptyCounter()
 
 void BufferBlock::calculateStats(vma::StatInfo *pStatInfo) const
 {
-    std::unique_lock<std::mutex> lock(mVirtualBlockMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mVirtualBlockMutex);
     mVirtualBlock.calculateStats(pStatInfo);
 }
 

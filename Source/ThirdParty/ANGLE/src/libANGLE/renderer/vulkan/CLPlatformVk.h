@@ -9,6 +9,7 @@
 #define LIBANGLE_RENDERER_VULKAN_CLPLATFORMVK_H_
 
 #include "common/MemoryBuffer.h"
+#include "common/SimpleMutex.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/CLPlatformImpl.h"
 
@@ -69,7 +70,7 @@ class CLPlatformVk : public CLPlatformImpl, public vk::Context, public vk::Globa
     const char *getWSIExtension();
     const char *getWSILayer() { return nullptr; }
 
-    mutable std::mutex mBlobCacheMutex;
+    mutable angle::SimpleMutex mBlobCacheMutex;
     angle::SizedMRUCache<angle::BlobCacheKey, angle::MemoryBuffer> mBlobCache;
 };
 

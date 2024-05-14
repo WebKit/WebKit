@@ -144,7 +144,7 @@ void InstallDebugAnnotator(egl::Display *display, vk::Renderer *renderer)
 
     if (!installedAnnotator)
     {
-        std::unique_lock<std::mutex> lock(gl::GetDebugMutex());
+        std::unique_lock<angle::SimpleMutex> lock(gl::GetDebugMutex());
         display->setGlobalDebugAnnotator();
     }
 }

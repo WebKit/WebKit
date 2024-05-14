@@ -89,7 +89,7 @@ void SecondaryCommandPool::collect(VulkanSecondaryCommandBuffer *buffer)
     }
     else
     {
-        std::lock_guard<std::mutex> lock(mOverflowMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mOverflowMutex);
         mCollectedBuffersOverflow.emplace_back(bufferHandle);
         mHasOverflow.store(true, std::memory_order_relaxed);
     }
@@ -111,7 +111,7 @@ void SecondaryCommandPool::freeCollectedBuffers(VkDevice device)
     {
         std::vector<VkCommandBuffer> buffers;
         {
-            std::lock_guard<std::mutex> lock(mOverflowMutex);
+            std::lock_guard<angle::SimpleMutex> lock(mOverflowMutex);
             buffers = std::move(mCollectedBuffersOverflow);
             mHasOverflow.store(false, std::memory_order_relaxed);
         }

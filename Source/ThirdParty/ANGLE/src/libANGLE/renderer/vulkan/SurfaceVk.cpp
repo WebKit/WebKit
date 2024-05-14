@@ -483,7 +483,7 @@ void TryAcquireNextImageUnlocked(VkDevice device,
     impl::UnlockedTryAcquireData *tryAcquire = &acquire->unlockedTryAcquireData;
     impl::UnlockedTryAcquireResult *result   = &acquire->unlockedTryAcquireResult;
 
-    std::lock_guard<std::mutex> lock(tryAcquire->mutex);
+    std::lock_guard<angle::SimpleMutex> lock(tryAcquire->mutex);
 
     // Check again under lock if acquire is still needed.  Another thread might have done it before
     // the lock is taken.
@@ -1647,9 +1647,9 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
         }
     }
 
-    // Get the list of compatible present modes to avoid unnecessary swapchain recreation.
-    VkSwapchainPresentModesCreateInfoEXT compatibleModesInfo = {};
-    if (renderer->getFeatures().supportsSwapchainMaintenance1.enabled)
+    // Get the list of compatible present modes to avoid unnecessary swapchain recreation.  Also
+    // update minImageCount with the per-present limit.
+    if (renderer->getFeatures().supportsSurfaceMaintenance1.enabled)
     {
         VkPhysicalDeviceSurfaceInfo2KHR surfaceInfo2 = {};
         surfaceInfo2.sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
@@ -1676,18 +1676,9 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
 
         mCompatiblePresentModes.resize(compatibleModes.presentModeCount);
 
-        // The implementation must always return the given preesnt mode as compatible with itself.
+        // The implementation must always return the given present mode as compatible with itself.
         ASSERT(IsCompatiblePresentMode(mDesiredSwapchainPresentMode, mCompatiblePresentModes.data(),
                                        mCompatiblePresentModes.size()));
-
-        if (compatibleModes.presentModeCount > 1)
-        {
-            compatibleModesInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODES_CREATE_INFO_EXT;
-            compatibleModesInfo.presentModeCount = compatibleModes.presentModeCount;
-            compatibleModesInfo.pPresentModes    = mCompatiblePresentModes.data();
-
-            vk::AddToPNextChain(&swapchainInfo, &compatibleModesInfo);
-        }
 
         // Vulkan spec says "The per-present mode image counts may be less-than or greater-than the
         // image counts returned when VkSurfacePresentModeEXT is not provided.". Use the per present
@@ -1696,6 +1687,20 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
         mSurfaceCaps                = surfaceCaps2.surfaceCapabilities;
         mMinImageCount              = GetMinImageCount(mSurfaceCaps);
         swapchainInfo.minImageCount = mMinImageCount;
+    }
+
+    VkSwapchainPresentModesCreateInfoEXT compatibleModesInfo = {};
+    if (renderer->getFeatures().supportsSwapchainMaintenance1.enabled)
+    {
+        if (mCompatiblePresentModes.size() > 1)
+        {
+            compatibleModesInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODES_CREATE_INFO_EXT;
+            compatibleModesInfo.presentModeCount =
+                static_cast<uint32_t>(mCompatiblePresentModes.size());
+            compatibleModesInfo.pPresentModes = mCompatiblePresentModes.data();
+
+            vk::AddToPNextChain(&swapchainInfo, &compatibleModesInfo);
+        }
     }
     else
     {
@@ -2212,6 +2217,8 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
 
         mColorImageMS.resolve(image.image.get(), resolveRegion,
                               &commandBufferHelper->getCommandBuffer());
+
+        contextVk->trackImagesWithOutsideRenderPassEvent(&mColorImageMS, image.image.get());
         contextVk->getPerfCounters().swapchainResolveOutsideSubpass++;
     }
 

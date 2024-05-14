@@ -322,6 +322,7 @@ def angle_builder(name, cpu):
     active_experimental_builders = [
         "android-arm64-exp-test",
         "android-arm64-exp-s22-test",
+        "linux-exp-test",
         "mac-exp-test",
     ]
 

@@ -6977,4 +6977,17 @@ bool ValidateReleaseExternalContextANGLE(const ValidationContext *val, const egl
 
     return true;
 }
+
+bool ValidateSetValidationEnabledANGLE(const ValidationContext *val, EGLBoolean validationState)
+{
+    const ClientExtensions &clientExtensions = Display::GetClientExtensions();
+    if (!clientExtensions.noErrorANGLE)
+    {
+        val->setError(EGL_BAD_ACCESS, "EGL_ANGLE_no_error is not available.");
+        return false;
+    }
+
+    return true;
+}
+
 }  // namespace egl

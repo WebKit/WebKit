@@ -504,6 +504,26 @@ const std::vector<IndexRange> BufferMtl::getRestartIndicesFromClientData(
     return restartIndices;
 }
 
+angle::Result BufferMtl::allocateNewMetalBuffer(ContextMtl *contextMtl,
+                                                MTLStorageMode storageMode,
+                                                size_t size,
+                                                bool returnOldBufferImmediately)
+{
+    mtl::BufferManager &bufferManager = contextMtl->getBufferManager();
+    if (returnOldBufferImmediately && mBuffer)
+    {
+        // Return the current buffer to the buffer manager
+        // It will not be re-used until it's no longer in use.
+        bufferManager.returnBuffer(contextMtl, mBuffer);
+        mBuffer = nullptr;
+    }
+    ANGLE_TRY(bufferManager.getBuffer(contextMtl, storageMode, size, mBuffer));
+
+    onStateChange(angle::SubjectMessage::InternalMemoryAllocationChanged);
+
+    return angle::Result::Continue;
+}
+
 angle::Result BufferMtl::setDataImpl(const gl::Context *context,
                                      gl::BufferBinding target,
                                      const void *data,
@@ -537,18 +557,9 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
     }
 
     // Re-create the buffer
-    mtl::BufferManager &bufferManager = contextMtl->getBufferManager();
-    if (mBuffer)
-    {
-        // Return the current buffer to the buffer manager
-        // It will not be re-used until it's no longer in use.
-        bufferManager.returnBuffer(contextMtl, mBuffer);
-        mBuffer = nullptr;
-    }
-
-    // Get a new buffer
     auto storageMode = mtl::Buffer::getStorageModeForUsage(contextMtl, usage);
-    ANGLE_TRY(bufferManager.getBuffer(contextMtl, storageMode, adjustedSize, mBuffer));
+    ANGLE_TRY(allocateNewMetalBuffer(contextMtl, storageMode, adjustedSize,
+                                     /*returnOldBufferImmediately=*/true));
 
 #ifndef NDEBUG
     ANGLE_MTL_OBJC_SCOPE
@@ -628,11 +639,11 @@ angle::Result BufferMtl::putDataInNewBufferAndStartUsingNewBuffer(ContextMtl *co
 {
     ASSERT(isOffsetAndSizeMetalBlitCompatible(offset, sizeToCopy));
 
-    mtl::BufferManager &bufferManager = contextMtl->getBufferManager();
-    mtl::BufferRef oldBuffer          = mBuffer;
-    auto storageMode                  = mtl::Buffer::getStorageModeForUsage(contextMtl, mUsage);
+    mtl::BufferRef oldBuffer = mBuffer;
+    auto storageMode         = mtl::Buffer::getStorageModeForUsage(contextMtl, mUsage);
 
-    ANGLE_TRY(bufferManager.getBuffer(contextMtl, storageMode, mGLSize, mBuffer));
+    ANGLE_TRY(allocateNewMetalBuffer(contextMtl, storageMode, mGLSize,
+                                     /*returnOldBufferImmediately=*/false));
     mBuffer->get().label = [NSString stringWithFormat:@"BufferMtl=%p(%lu)", this, ++mRevisionCount];
 
     uint8_t *ptr = mBuffer->mapWithOpt(contextMtl, false, true);
@@ -657,6 +668,7 @@ angle::Result BufferMtl::putDataInNewBufferAndStartUsingNewBuffer(ContextMtl *co
         }
     }
 
+    mtl::BufferManager &bufferManager = contextMtl->getBufferManager();
     bufferManager.returnBuffer(contextMtl, oldBuffer);
     return angle::Result::Continue;
 }
@@ -753,12 +765,11 @@ angle::Result BufferMtl::commitShadowCopy(ContextMtl *contextMtl)
 
 angle::Result BufferMtl::commitShadowCopy(ContextMtl *contextMtl, size_t size)
 {
-    mtl::BufferManager &bufferManager = contextMtl->getBufferManager();
-    auto storageMode                  = mtl::Buffer::getStorageModeForUsage(contextMtl, mUsage);
+    auto storageMode = mtl::Buffer::getStorageModeForUsage(contextMtl, mUsage);
 
-    bufferManager.returnBuffer(contextMtl, mBuffer);
     size_t bufferSize = (mGLSize == 0 ? mShadowCopy.size() : mGLSize);
-    ANGLE_TRY(bufferManager.getBuffer(contextMtl, storageMode, bufferSize, mBuffer));
+    ANGLE_TRY(allocateNewMetalBuffer(contextMtl, storageMode, bufferSize,
+                                     /*returnOldBufferImmediately=*/true));
 
     if (size)
     {

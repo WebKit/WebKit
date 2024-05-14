@@ -232,6 +232,32 @@ angle::Result UnbindAttachments(const gl::Context *context,
     return angle::Result::Continue;
 }
 
+angle::Result CheckIfAttachmentNeedsClearing(const gl::Context *context,
+                                             const gl::FramebufferAttachment *attachment,
+                                             bool *needsClearInit)
+{
+    if (attachment->initState() == gl::InitState::Initialized)
+    {
+        *needsClearInit = false;
+        return angle::Result::Continue;
+    }
+
+    // Special case for 2D array and 3D textures. The init state tracks initialization for all
+    // layers but only one will be cleared by a clear call. Initialize those entire textures
+    // here.
+    if (attachment->type() == GL_TEXTURE &&
+        (attachment->getTextureImageIndex().getTarget() == gl::TextureTarget::_2DArray ||
+         attachment->getTextureImageIndex().getTarget() == gl::TextureTarget::_3D))
+    {
+        ANGLE_TRY(attachment->initializeContents(context));
+        *needsClearInit = false;
+        return angle::Result::Continue;
+    }
+
+    *needsClearInit = true;
+    return angle::Result::Continue;
+}
+
 }  // anonymous namespace
 
 BlitGL::BlitGL(const FunctionsGL *functions,
@@ -1052,19 +1078,113 @@ angle::Result BlitGL::clearRenderbuffer(const gl::Context *context,
 }
 
 angle::Result BlitGL::clearFramebuffer(const gl::Context *context,
-                                       bool colorClear,
+                                       const gl::DrawBufferMask &colorAttachments,
                                        bool depthClear,
                                        bool stencilClear,
                                        FramebufferGL *source)
 {
     // initializeResources skipped because no local state is used
 
+    bool hasIntegerColorAttachments = false;
+
+    // Filter the color attachments for ones that actually have an init state of uninitialized.
+    gl::DrawBufferMask uninitializedColorAttachments;
+    for (size_t colorAttachmentIdx : colorAttachments)
+    {
+        bool needsInit = false;
+        const gl::FramebufferAttachment *attachment =
+            source->getState().getColorAttachment(colorAttachmentIdx);
+        ANGLE_TRY(CheckIfAttachmentNeedsClearing(context, attachment, &needsInit));
+        uninitializedColorAttachments[colorAttachmentIdx] = needsInit;
+        if (needsInit && (attachment->getComponentType() == GL_INT ||
+                          attachment->getComponentType() == GL_UNSIGNED_INT))
+        {
+            hasIntegerColorAttachments = true;
+        }
+    }
+
+    bool depthNeedsInit = false;
+    if (depthClear)
+    {
+        ANGLE_TRY(CheckIfAttachmentNeedsClearing(context, source->getState().getDepthAttachment(),
+                                                 &depthNeedsInit));
+    }
+
+    bool stencilNeedsInit = false;
+    if (stencilClear)
+    {
+        ANGLE_TRY(CheckIfAttachmentNeedsClearing(context, source->getState().getStencilAttachment(),
+                                                 &stencilNeedsInit));
+    }
+
     // Clear all attachments
     GLbitfield clearMask = 0;
-    ANGLE_TRY(SetClearState(mStateManager, colorClear, depthClear, stencilClear, &clearMask));
+    ANGLE_TRY(SetClearState(mStateManager, uninitializedColorAttachments.any(), depthNeedsInit,
+                            stencilNeedsInit, &clearMask));
 
     mStateManager->bindFramebuffer(GL_FRAMEBUFFER, source->getFramebufferID());
-    ANGLE_GL_TRY(context, mFunctions->clear(clearMask));
+
+    // If we're not clearing all attached color attachments, we need to clear them individually with
+    // glClearBuffer*
+    if ((clearMask & GL_COLOR_BUFFER_BIT) &&
+        (uninitializedColorAttachments != source->getState().getColorAttachmentsMask() ||
+         uninitializedColorAttachments != source->getState().getEnabledDrawBuffers() ||
+         hasIntegerColorAttachments))
+    {
+        for (size_t colorAttachmentIdx : uninitializedColorAttachments)
+        {
+            const gl::FramebufferAttachment *attachment =
+                source->getState().getColorAttachment(colorAttachmentIdx);
+            if (attachment->initState() == gl::InitState::Initialized)
+            {
+                continue;
+            }
+
+            switch (attachment->getComponentType())
+            {
+                case GL_UNSIGNED_NORMALIZED:
+                case GL_SIGNED_NORMALIZED:
+                case GL_FLOAT:
+                {
+                    constexpr GLfloat clearValue[] = {0, 0, 0, 0};
+                    ANGLE_GL_TRY(context,
+                                 mFunctions->clearBufferfv(
+                                     GL_COLOR, static_cast<GLint>(colorAttachmentIdx), clearValue));
+                }
+                break;
+
+                case GL_INT:
+                {
+                    constexpr GLint clearValue[] = {0, 0, 0, 0};
+                    ANGLE_GL_TRY(context,
+                                 mFunctions->clearBufferiv(
+                                     GL_COLOR, static_cast<GLint>(colorAttachmentIdx), clearValue));
+                }
+                break;
+
+                case GL_UNSIGNED_INT:
+                {
+                    constexpr GLuint clearValue[] = {0, 0, 0, 0};
+                    ANGLE_GL_TRY(context,
+                                 mFunctions->clearBufferuiv(
+                                     GL_COLOR, static_cast<GLint>(colorAttachmentIdx), clearValue));
+                }
+                break;
+
+                default:
+                    UNREACHABLE();
+                    break;
+            }
+        }
+
+        // Remove color buffer bit and clear the rest of the attachments with glClear
+        clearMask = clearMask & ~GL_COLOR_BUFFER_BIT;
+    }
+
+    if (clearMask != 0)
+    {
+        ANGLE_GL_TRY(context, mFunctions->clear(clearMask));
+    }
 
     return angle::Result::Continue;
 }

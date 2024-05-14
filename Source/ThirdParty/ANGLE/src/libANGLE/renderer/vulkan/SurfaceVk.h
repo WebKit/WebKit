@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_VULKAN_SURFACEVK_H_
 
 #include "common/CircularBuffer.h"
+#include "common/SimpleMutex.h"
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/SurfaceImpl.h"
 #include "libANGLE/renderer/vulkan/CommandProcessor.h"
@@ -207,7 +208,7 @@ struct SwapchainImage : angle::NonCopyable
 struct UnlockedTryAcquireData : angle::NonCopyable
 {
     // A mutex to protect against concurrent attempts to call vkAcquireNextImageKHR.
-    std::mutex mutex;
+    angle::SimpleMutex mutex;
 
     // Given that the CPU is throttled after a number of swaps, there is an upper bound to the
     // number of semaphores that are used to acquire swapchain images, and that is

@@ -473,6 +473,28 @@ TEST_P(ClearTest, RGBA8Framebuffer)
     EXPECT_PIXEL_NEAR(0, 0, 128, 128, 128, 128, 1.0);
 }
 
+// Test uploading a texture and then clearing a RGBA8 Framebuffer
+TEST_P(ClearTest, TextureUploadAndRGBA8Framebuffer)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBOs[0]);
+
+    GLTexture texture;
+
+    constexpr uint32_t kSize = 16;
+    std::vector<GLColor> pixelData(kSize * kSize, GLColor::blue);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 pixelData.data());
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+    EXPECT_PIXEL_NEAR(0, 0, 0, 0, 255, 255, 1.0);
+
+    glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    EXPECT_PIXEL_NEAR(0, 0, 128, 128, 128, 128, 1.0);
+}
+
 // Test to validate that we can go from an RGBA framebuffer attachment, to an RGB one and still
 // have a correct behavior after.
 TEST_P(ClearTest, ChangeFramebufferAttachmentFromRGBAtoRGB)

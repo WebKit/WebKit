@@ -467,7 +467,6 @@
 		7B359E0F2A7CFD610016DC59 /* angle_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359E062A7CFD610016DC59 /* angle_version.h */; };
 		7B359E122A7CFD610016DC59 /* RingBufferAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359E092A7CFD610016DC59 /* RingBufferAllocator.cpp */; };
 		7B359E132A7CFD610016DC59 /* platform_helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359E0A2A7CFD610016DC59 /* platform_helpers.h */; };
-		7B359E142A7CFD610016DC59 /* Spinlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359E0B2A7CFD610016DC59 /* Spinlock.h */; };
 		7B359E152A7CFD610016DC59 /* platform_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359E0C2A7CFD610016DC59 /* platform_helpers.cpp */; };
 		7B359E162A7CFD610016DC59 /* SynchronizedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359E0D2A7CFD610016DC59 /* SynchronizedValue.h */; };
 		7B7608312898322F000012A1 /* loadimage_astc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B7608302898322F000012A1 /* loadimage_astc.cpp */; };
@@ -1565,7 +1564,6 @@
 		7B359E082A7CFD610016DC59 /* system_utils_ios.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = system_utils_ios.cpp; sourceTree = "<group>"; };
 		7B359E092A7CFD610016DC59 /* RingBufferAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RingBufferAllocator.cpp; sourceTree = "<group>"; };
 		7B359E0A2A7CFD610016DC59 /* platform_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = platform_helpers.h; sourceTree = "<group>"; };
-		7B359E0B2A7CFD610016DC59 /* Spinlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spinlock.h; sourceTree = "<group>"; };
 		7B359E0C2A7CFD610016DC59 /* platform_helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform_helpers.cpp; sourceTree = "<group>"; };
 		7B359E0D2A7CFD610016DC59 /* SynchronizedValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynchronizedValue.h; sourceTree = "<group>"; };
 		7B359E172A7CFE0B0016DC59 /* RegenerateStructNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegenerateStructNames.h; sourceTree = "<group>"; };
@@ -2767,7 +2765,6 @@
 				7B359E052A7CFD610016DC59 /* RingBufferAllocator.h */,
 				7BBC97D42BDB11C800628E74 /* SimpleMutex.cpp */,
 				7BBC97D52BDB11C800628E74 /* SimpleMutex.h */,
-				7B359E0B2A7CFD610016DC59 /* Spinlock.h */,
 				5CCD818B1DBFEA10006066B8 /* string_utils.cpp */,
 				5CCD818C1DBFEA10006066B8 /* string_utils.h */,
 				7B359E0D2A7CFD610016DC59 /* SynchronizedValue.h */,
@@ -3668,7 +3665,6 @@
 				A3C49C04255DF719005E8DF7 /* SoftLinking.h in Headers */,
 				31CDFF6C2491849200486F27 /* SourceLocation.h in Headers */,
 				FF62F64927446DC800AD6EDC /* SpecializationConstant.h in Headers */,
-				7B359E142A7CFD610016DC59 /* Spinlock.h in Headers */,
 				31CDFF7B2491849700486F27 /* SplitSequenceOperator.h in Headers */,
 				31CD0082249184FD00486F27 /* State.h in Headers */,
 				31CD002B249184E700486F27 /* StateManagerGL.h in Headers */,

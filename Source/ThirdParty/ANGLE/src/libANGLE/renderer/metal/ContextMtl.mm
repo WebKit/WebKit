@@ -2421,7 +2421,7 @@ angle::Result ContextMtl::startOcclusionQueryInRenderPass(QueryMtl *query, bool 
     // We need to mark the query's buffer as being written in this command buffer now. Since the
     // actual writing is deferred until the render pass ends and user could try to read the query
     // result before the render pass ends.
-    mCmdBuffer.setWriteDependency(query->getVisibilityResultBuffer());
+    mCmdBuffer.setWriteDependency(query->getVisibilityResultBuffer(), /*isRenderCommand=*/true);
 
     return angle::Result::Continue;
 }
