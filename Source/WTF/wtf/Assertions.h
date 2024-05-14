@@ -230,9 +230,6 @@ WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefixAndPrintStream(WTF::PrintStr
 WTF_EXPORT_PRIVATE void WTFPrintBacktraceWithPrefixAndPrintStream(WTF::PrintStream&, void** stack, int size, const char* prefix);
 #endif
 WTF_EXPORT_PRIVATE void WTFPrintBacktrace(void** stack, int size);
-#if !RELEASE_LOG_DISABLED
-WTF_EXPORT_PRIVATE void WTFReleaseLogStackTrace(WTFLogChannel*);
-#endif
 
 WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 
@@ -622,8 +619,6 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define RELEASE_LOG_WITH_LEVEL(channel, level, ...) ((void)0)
 #define RELEASE_LOG_WITH_LEVEL_IF(isAllowed, channel, level, ...) do { if (isAllowed) RELEASE_LOG_WITH_LEVEL(channel, level, __VA_ARGS__); } while (0)
 
-#define RELEASE_LOG_STACKTRACE(channel) ((void)0)
-
 #elif USE(OS_LOG)
 
 #define PUBLIC_LOG_STRING "{public}s"
@@ -702,13 +697,10 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #endif
 
 #if !RELEASE_LOG_DISABLED
-#define RELEASE_LOG_STACKTRACE(channel) WTFReleaseLogStackTrace(&LOG_CHANNEL(channel))
 #define RELEASE_LOG_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG(channel, __VA_ARGS__); } while (0)
 #define RELEASE_LOG_ERROR_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_ERROR(channel, __VA_ARGS__); } while (0)
 #define RELEASE_LOG_INFO_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_INFO(channel, __VA_ARGS__); } while (0)
 #define RELEASE_LOG_DEBUG_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_DEBUG(channel, __VA_ARGS__); } while (0)
-
-#define RELEASE_LOG_STACKTRACE(channel) WTFReleaseLogStackTrace(&LOG_CHANNEL(channel))
 #endif
 
 /* ALWAYS_LOG */

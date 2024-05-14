@@ -621,34 +621,6 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
     }
 }
 
-#if !RELEASE_LOG_DISABLED
-void WTFReleaseLogStackTrace(WTFLogChannel* channel)
-{
-    void* stack[kDefaultFramesToShow + kDefaultFramesToSkip];
-    int frames = kDefaultFramesToShow + kDefaultFramesToSkip;
-    WTFGetBacktrace(stack, &frames);
-    StackTraceSymbolResolver { { stack, static_cast<size_t>(frames) } }.forEach([&](int frameNumber, void* stackFrame, const char* name) {
-#if USE(OS_LOG)
-        if (name)
-            os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, name);
-        else
-            os_log(channel->osLogChannel, "%-3d %p", frameNumber, stackFrame);
-#else
-        StringPrintStream out;
-        if (name)
-            out.printf("%-3d %p %s", frameNumber, stackFrame, name);
-        else
-            out.printf("%-3d %p", frameNumber, stackFrame);
-#if ENABLE(JOURNALD_LOG)
-        sd_journal_send("WEBKIT_SUBSYSTEM=%s", channel->subsystem, "WEBKIT_CHANNEL=%s", channel->name, "MESSAGE=%s", out.toCString().data(), nullptr);
-#else
-        fprintf(stderr, "[%s:%s:-] %s\n", channel->subsystem, channel->name, out.toCString().data());
-#endif
-#endif
-    });
-}
-#endif
-
 } // extern "C"
 
 #if (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X86_64) || CPU(ARM64))
