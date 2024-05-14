@@ -32,6 +32,7 @@
 #include "config.h"
 #include "StyleColor.h"
 
+#include "CSSUnresolvedColor.h"
 #include "HashTools.h"
 #include "RenderTheme.h"
 #include "StyleColorMix.h"

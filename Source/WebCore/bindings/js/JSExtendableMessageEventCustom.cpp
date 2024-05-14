@@ -29,7 +29,9 @@
 
 #include "JSDOMConstructor.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMConvertSequences.h"
 #include "JSDOMConvertStrings.h"
+#include "JSMessagePort.h"
 
 namespace WebCore {
 

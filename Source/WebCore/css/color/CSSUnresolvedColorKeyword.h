@@ -33,6 +33,7 @@ namespace Style {
 enum class ForVisitedLink : bool;
 }
 
+class Color;
 class Document;
 class RenderStyle;
 class StyleColor;

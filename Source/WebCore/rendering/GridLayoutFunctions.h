@@ -27,11 +27,11 @@
 
 #include "GridPositionsResolver.h"
 #include "LayoutUnit.h"
+#include "RenderBox.h"
 
 namespace WebCore {
 
 enum class ItemPosition : uint8_t;
-class RenderBox;
 class RenderElement;
 class RenderGrid;
 

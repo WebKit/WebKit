@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGTextLayoutAttributes.h"
 
+#include "RenderSVGInlineText.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
 

@@ -29,6 +29,7 @@
 #include "CSSUnresolvedColorResolutionContext.h"
 #include "CSSValueKeywords.h"
 #include "ColorFromPrimitiveValue.h"
+#include "StyleBuilderState.h"
 
 namespace WebCore {
 

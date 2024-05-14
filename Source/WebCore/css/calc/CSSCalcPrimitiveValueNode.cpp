@@ -27,6 +27,7 @@
 #include "CSSCalcPrimitiveValueNode.h"
 
 #include "CSSCalcCategoryMapping.h"
+#include "CSSCalcSymbolTable.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CalcExpressionLength.h"

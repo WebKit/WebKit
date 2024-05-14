@@ -26,8 +26,11 @@
 #include "config.h"
 #include "CSSCalcSymbolNode.h"
 
+#include "CSSCalcCategoryMapping.h"
 #include "CSSCalcSymbolTable.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
+#include "CalcExpressionNode.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
