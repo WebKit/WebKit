@@ -52,6 +52,7 @@ public:
 
     const WTF::String& renderedText() const { return m_info.renderedText; }
     const WTF::String& searchableText() const { return m_info.searchableText; }
+    const WTF::String& screenReaderText() const { return m_info.screenReaderText; }
     const Vector<Vector<WTF::String>>& selectors() const { return m_info.selectors; }
     WebCore::PositionType positionType() const { return m_info.positionType; }
     WebCore::FloatRect boundsInRootView() const { return m_info.boundsInRootView; }

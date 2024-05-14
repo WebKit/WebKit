@@ -501,4 +501,14 @@ TEST(ElementTargeting, AdjustVisibilityAfterRecreatingElement)
     Util::run(&didAdjustment);
 }
 
+TEST(ElementTargeting, TargetedElementScreenReaderText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-7"];
+    RetainPtr element = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
+
+    EXPECT_TRUE([[element renderedText] containsString:@"{200,100}"]);
+    EXPECT_FALSE([[element screenReaderText] containsString:@"{200,100}"]);
+}
+
 } // namespace TestWebKitAPI

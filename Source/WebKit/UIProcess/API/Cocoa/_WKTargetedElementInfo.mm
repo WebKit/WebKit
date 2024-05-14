@@ -114,6 +114,11 @@
     return _info->searchableText();
 }
 
+- (NSString *)screenReaderText
+{
+    return _info->screenReaderText();
+}
+
 - (_WKRectEdge)offsetEdges
 {
     _WKRectEdge edges = _WKRectEdgeNone;

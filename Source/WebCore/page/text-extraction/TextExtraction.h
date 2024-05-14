@@ -37,9 +37,11 @@ enum class ExceptionCode : uint8_t;
 
 namespace TextExtraction {
 
+enum class IncludeGeometryText : bool { No, Yes };
+
 WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
 
-String extractRenderedText(Element&);
+String extractRenderedText(Element&, IncludeGeometryText);
 
 } // namespace TextExtraction
 } // namespace WebCore

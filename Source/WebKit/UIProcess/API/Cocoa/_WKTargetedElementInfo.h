@@ -52,6 +52,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @property (nonatomic, readonly, copy) NSArray<NSArray<NSString *> *> *selectorsIncludingShadowHosts;
 @property (nonatomic, readonly, copy) NSString *renderedText;
 @property (nonatomic, readonly, copy) NSString *searchableText;
+@property (nonatomic, readonly, copy) NSString *screenReaderText;
 @property (nonatomic, readonly) _WKRectEdge offsetEdges;
 
 // In root view coordinates. To be deprecated and removed, once clients adopt the more explicit bounds properties above.

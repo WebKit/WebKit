@@ -57,6 +57,7 @@ struct TargetedElementInfo {
     RectEdges<bool> offsetEdges;
     String renderedText;
     String searchableText;
+    String screenReaderText;
     Vector<Vector<String>> selectors;
     FloatRect boundsInRootView;
     FloatRect boundsInClientCoordinates;

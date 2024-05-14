@@ -910,6 +910,7 @@ header: <WebCore/ElementTargetingTypes.h>
     WebCore::RectEdges<bool> offsetEdges
     String renderedText
     String searchableText
+    String screenReaderText;
     Vector<Vector<String>> selectors
     WebCore::FloatRect boundsInRootView
     WebCore::FloatRect boundsInClientCoordinates

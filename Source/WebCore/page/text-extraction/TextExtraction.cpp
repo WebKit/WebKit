@@ -466,7 +466,7 @@ static IntSize reducePrecision(FloatSize size)
     };
 }
 
-static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets, ContainerNode& node, BlockFlowDirection direction)
+static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets, ContainerNode& node, BlockFlowDirection direction, IncludeGeometryText includeGeometryText)
 {
     CheckedPtr renderer = node.renderer();
     if (!renderer)
@@ -506,7 +506,7 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
 
     if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(*renderer)) {
         if (auto contentDocument = frameRenderer->iframeElement().protectedContentDocument())
-            extractRenderedText(stringsAndOffsets, *contentDocument, direction);
+            extractRenderedText(stringsAndOffsets, *contentDocument, direction, includeGeometryText);
         return;
     }
 
@@ -518,9 +518,11 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
         appendStrings({ makeString('{', roundedSizeIgnoringZoom.width(), ',', roundedSizeIgnoringZoom.height(), '}') }, frameView->contentsToRootView(renderReplaced.absoluteBoundingBoxRect()));
     };
 
-    if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderer)) {
-        appendReplacedRenderer(*renderReplaced);
-        return;
+    if (includeGeometryText == IncludeGeometryText::Yes) {
+        if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderer)) {
+            appendReplacedRenderer(*renderReplaced);
+            return;
+        }
     }
 
     for (auto& descendant : descendantsOfType<RenderObject>(*renderer)) {
@@ -545,18 +547,20 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
 
         if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(descendant)) {
             if (auto contentDocument = frameRenderer->iframeElement().protectedContentDocument())
-                extractRenderedText(stringsAndOffsets, *contentDocument, direction);
+                extractRenderedText(stringsAndOffsets, *contentDocument, direction, includeGeometryText);
             continue;
         }
 
-        if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(descendant)) {
-            appendReplacedRenderer(*renderReplaced);
-            continue;
+        if (includeGeometryText == IncludeGeometryText::Yes) {
+            if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(descendant)) {
+                appendReplacedRenderer(*renderReplaced);
+                continue;
+            }
         }
     }
 }
 
-String extractRenderedText(Element& element)
+String extractRenderedText(Element& element, IncludeGeometryText includeGeometryText)
 {
     if (!element.renderer())
         return emptyString();
@@ -564,7 +568,7 @@ String extractRenderedText(Element& element)
     auto direction = element.renderer()->style().blockFlowDirection();
 
     Vector<StringsAndBlockOffset> stringsAndOffsets;
-    extractRenderedText(stringsAndOffsets, element, direction);
+    extractRenderedText(stringsAndOffsets, element, direction, includeGeometryText);
 
     bool ascendingOrder = [&] {
         switch (direction) {
