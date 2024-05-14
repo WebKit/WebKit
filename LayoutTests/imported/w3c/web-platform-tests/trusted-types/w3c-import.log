@@ -49,9 +49,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-defaultPolicy.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getAttributeType-namespace.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getAttributeType-svg.html
-/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getPropertyType.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getPropertyType.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-isXXX.html
-/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-metadata.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-metadata.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Window-TrustedTypes.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html
@@ -119,6 +119,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-source-file-path.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-svg-script-set-href.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-svg-script.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-tojson.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/tt-block-eval.html

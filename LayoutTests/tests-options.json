@@ -5711,6 +5711,9 @@
     "imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-metadata.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-metadata.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html": [
         "slow"
     ],
