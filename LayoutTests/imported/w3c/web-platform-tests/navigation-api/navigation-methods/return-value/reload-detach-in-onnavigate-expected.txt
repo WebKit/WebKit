@@ -1,4 +1,6 @@
 
 
-FAIL reload() promise rejections when detaching an iframe inside onnavigate assert_unreached: finished must not fulfill Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT reload() promise rejections when detaching an iframe inside onnavigate Test timed out
 

@@ -1,3 +1,5 @@
 
-FAIL navigate() and intercept() with a rejected promise assert_unreached: Should have rejected: undefined Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT navigate() and intercept() with a rejected promise Test timed out
 

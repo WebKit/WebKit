@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT entry.getState() behavior after navigating away using the navigation API, then back Test timed out
+FAIL entry.getState() behavior after navigating away using the navigation API, then back assert_not_equals: got disallowed value undefined
 

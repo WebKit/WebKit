@@ -1,4 +1,6 @@
 
 
-FAIL navigate event destination after iframe detach promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'back_destination.key')"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT navigate event destination after iframe detach Test timed out
 

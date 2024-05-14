@@ -1,4 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
 
-
-FAIL Removing a currentEntry from the joint session history shouldn't dispose it assert_equals: expected 1 but got 2
 

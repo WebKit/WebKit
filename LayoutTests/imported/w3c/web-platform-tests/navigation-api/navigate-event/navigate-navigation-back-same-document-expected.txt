@@ -1,5 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigate event for navigation.back() - same-document Test timed out
 

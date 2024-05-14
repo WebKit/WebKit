@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT history.state should be nulled by navigate() Test timed out
+PASS history.state should be nulled by navigate()
 

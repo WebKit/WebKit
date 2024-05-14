@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT currententrychange fires for navigation.navigate() Test timed out
+PASS currententrychange fires for navigation.navigate()
 

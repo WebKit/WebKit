@@ -1,4 +1,4 @@
 
 
-FAIL navigation.navigate() in an opaque origin iframe assert_unreached: finished must not fulfill Reached unreachable code
+PASS navigation.navigate() in an opaque origin iframe
 

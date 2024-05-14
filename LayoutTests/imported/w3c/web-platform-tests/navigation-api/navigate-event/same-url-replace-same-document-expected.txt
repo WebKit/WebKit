@@ -1,3 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
 
-PASS navigate() to the current URL same document should replace
 

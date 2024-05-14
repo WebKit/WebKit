@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigate() with info and state Test timed out
+FAIL navigate() with info and state promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigation.currentEntry.getState().statevar')"
 

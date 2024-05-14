@@ -1,4 +1,6 @@
 
 
-FAIL navigate() inside onpagehide assert_unreached: finished must not fulfill Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT navigate() inside onpagehide Test timed out
 

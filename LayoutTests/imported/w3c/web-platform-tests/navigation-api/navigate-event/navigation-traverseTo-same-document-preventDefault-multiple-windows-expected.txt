@@ -1,4 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
 
-
-FAIL navigation.traverseTo() - if a top window cancels the traversal, any iframes should not fire navigate assert_unreached: Should have rejected: undefined Reached unreachable code
 

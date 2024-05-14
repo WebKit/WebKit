@@ -1,4 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
 
-PASS reload() with an unserializable state (WritableStream)
-FAIL reload() with an unserializable state (SharedArrayBuffer) assert_unreached: finished must not fulfill Reached unreachable code
 
