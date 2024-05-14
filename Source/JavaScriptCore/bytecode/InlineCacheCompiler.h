@@ -184,6 +184,8 @@ public:
         return m_stubRoutine->startAddress() <= pcAsInt && pcAsInt <= m_stubRoutine->endAddress();
     }
 
+    CallLinkInfo* callLinkInfoAt(const ConcurrentJSLocker&, unsigned index);
+
     // If this returns false then we are requesting a reset of the owning StructureStubInfo.
     bool visitWeak(VM&) const;
 
@@ -304,12 +306,12 @@ public:
     // Fall through on success. Two kinds of failures are supported: fall-through, which means that we
     // should try a different case; and failure, which means that this was the right case but it needs
     // help from the slow path.
-    void generateWithGuard(AccessCase&, MacroAssembler::JumpList& fallThrough);
+    void generateWithGuard(unsigned index, AccessCase&, MacroAssembler::JumpList& fallThrough);
 
     // Fall through on success, add a jump to the failure list on failure.
-    void generate(AccessCase&);
+    void generate(unsigned index, AccessCase&);
 
-    void generateImpl(AccessCase&);
+    void generateImpl(unsigned index, AccessCase&);
 
     static bool canEmitIntrinsicGetter(StructureStubInfo&, JSFunction*, Structure*);
 
@@ -331,7 +333,7 @@ private:
 
     void emitDOMJITGetter(GetterSetterAccessCase&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
     void emitModuleNamespaceLoad(ModuleNamespaceAccessCase&, MacroAssembler::JumpList& fallThrough);
-    void emitProxyObjectAccess(ProxyObjectAccessCase&, MacroAssembler::JumpList& fallThrough);
+    void emitProxyObjectAccess(unsigned index, ProxyObjectAccessCase&, MacroAssembler::JumpList& fallThrough);
     void emitIntrinsicGetter(IntrinsicGetterAccessCase&);
 
     VM& m_vm;
@@ -347,7 +349,6 @@ private:
     ScratchRegisterAllocator::PreservedState m_preservedReusedRegisterState;
     GPRReg m_scratchGPR { InvalidGPRReg };
     FPRReg m_scratchFPR { InvalidFPRReg };
-    Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     ScalarRegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
     ScalarRegisterSet m_liveRegistersForCall;
     CallSiteIndex m_callSiteIndex;
@@ -359,6 +360,7 @@ private:
     bool m_doesCalls : 1 { false };
     Vector<StructureID, 4> m_weakStructures;
     Vector<ObjectPropertyCondition, 64> m_conditions;
+    Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16> m_callLinkInfos;
 };
 
 } // namespace JSC

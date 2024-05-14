@@ -237,6 +237,9 @@ public:
     {
         return m_inlineAccessBaseStructureID.get();
     }
+
+    CallLinkInfo* callLinkInfoAt(const ConcurrentJSLocker&, unsigned index);
+
 private:
     ALWAYS_INLINE bool considerRepatchingCacheImpl(VM& vm, CodeBlock* codeBlock, Structure* structure, CacheableIdentifier impl)
     {

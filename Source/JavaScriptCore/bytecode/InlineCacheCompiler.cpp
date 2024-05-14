@@ -1397,7 +1397,7 @@ Ref<InlineCacheHandler> InlineCacheCompiler::generateSlowPathHandler(VM& vm, Acc
     return handler;
 }
 
-void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers::JumpList& fallThrough)
+void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCase, CCallHelpers::JumpList& fallThrough)
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -1554,7 +1554,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     case AccessCase::ProxyObjectStore:
     case AccessCase::IndexedProxyObjectLoad: {
         ASSERT(!accessCase.viaGlobalProxy());
-        emitProxyObjectAccess(accessCase.as<ProxyObjectAccessCase>(), fallThrough);
+        emitProxyObjectAccess(index, accessCase.as<ProxyObjectAccessCase>(), fallThrough);
         return;
     }
 
@@ -2592,17 +2592,17 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         break;
     }
 
-    generateImpl(accessCase);
+    generateImpl(index, accessCase);
 }
 
-void InlineCacheCompiler::generate(AccessCase& accessCase)
+void InlineCacheCompiler::generate(unsigned index, AccessCase& accessCase)
 {
     RELEASE_ASSERT(m_stubInfo->hasConstantIdentifier);
     accessCase.checkConsistency(*m_stubInfo);
-    generateImpl(accessCase);
+    generateImpl(index, accessCase);
 }
 
-void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
+void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
 {
     SuperSamplerScope superSamplerScope(false);
     dataLogLnIf(InlineCacheCompilerInternal::verbose, "\n\nGenerating code for: ", accessCase);
@@ -2813,7 +2813,6 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             jit.store32(CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
         if (accessCase.m_type == AccessCase::Getter || accessCase.m_type == AccessCase::Setter) {
-            auto& access = accessCase.as<GetterSetterAccessCase>();
             ASSERT(baseGPR != loadedValueGPR);
             ASSERT(accessCase.m_type != AccessCase::Setter || valueRegsPayloadGPR != loadedValueGPR);
 
@@ -2835,9 +2834,8 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
 
             setSpillStateForJSCall(spillState);
 
-            RELEASE_ASSERT(!access.callLinkInfo());
-            auto* callLinkInfo = m_callLinkInfos.add(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
-            access.m_callLinkInfo = callLinkInfo;
+            m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+            auto* callLinkInfo = m_callLinkInfos[index].get();
 
             // FIXME: If we generated a polymorphic call stub that jumped back to the getter
             // stub, which then jumped back to the main code, then we'd have a reachability
@@ -3552,7 +3550,7 @@ void InlineCacheCompiler::emitModuleNamespaceLoad(ModuleNamespaceAccessCase& acc
     succeed();
 }
 
-void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCase, MacroAssembler::JumpList& fallThrough)
+void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAccessCase& accessCase, MacroAssembler::JumpList& fallThrough)
 {
     CCallHelpers& jit = *m_jit;
     CodeBlock* codeBlock = jit.codeBlock();
@@ -3578,9 +3576,8 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
 
     setSpillStateForJSCall(spillState);
 
-    ASSERT(!accessCase.callLinkInfo());
-    auto* callLinkInfo = m_callLinkInfos.add(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
-    accessCase.m_callLinkInfo = callLinkInfo;
+    m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+    auto* callLinkInfo = m_callLinkInfos[index].get();
 
     callLinkInfo->disallowStubs();
 
@@ -4303,12 +4300,16 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     if (!m_stubInfo->hasConstantIdentifier)
         allGuardedByStructureCheck = false;
     FixedVector<RefPtr<AccessCase>> keys(WTFMove(cases));
+    m_callLinkInfos.resize(keys.size());
     Vector<JSCell*> cellsToMark;
     for (auto& entry : keys) {
         if (!scratchFPR && needsScratchFPR(entry->m_type))
             scratchFPR = allocator.allocateScratchFPR();
 
-        doesCalls |= entry->doesCalls(vm(), &cellsToMark);
+        if (entry->doesCalls(vm())) {
+            doesCalls = true;
+            entry->collectDependentCells(vm(), cellsToMark);
+        }
         doesJSCalls |= JSC::doesJSCalls(entry->type());
 
         if (!m_stubInfo->hasConstantIdentifier) {
@@ -4375,7 +4376,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     fallThrough.link(&jit);
                     fallThrough.shrink(0);
                     if (keys[i]->requiresInt32PropertyCheck())
-                        generateWithGuard(*keys[i], fallThrough);
+                        generateWithGuard(i, *keys[i], fallThrough);
                 }
 
                 if (needsStringPropertyCheck || needsSymbolPropertyCheck || acceptValueProperty) {
@@ -4408,7 +4409,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     fallThrough.link(&jit);
                     fallThrough.shrink(0);
                     if (keys[i]->requiresIdentifierNameMatch() && !keys[i]->uid()->isSymbol())
-                        generateWithGuard(*keys[i], fallThrough);
+                        generateWithGuard(i, *keys[i], fallThrough);
                 }
 
                 if (needsSymbolPropertyCheck || acceptValueProperty) {
@@ -4437,7 +4438,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     fallThrough.link(&jit);
                     fallThrough.shrink(0);
                     if (keys[i]->requiresIdentifierNameMatch() && keys[i]->uid()->isSymbol())
-                        generateWithGuard(*keys[i], fallThrough);
+                        generateWithGuard(i, *keys[i], fallThrough);
                 }
 
                 if (acceptValueProperty) {
@@ -4454,7 +4455,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     fallThrough.link(&jit);
                     fallThrough.shrink(0);
                     if (!keys[i]->requiresIdentifierNameMatch() && !keys[i]->requiresInt32PropertyCheck())
-                        generateWithGuard(*keys[i], fallThrough);
+                        generateWithGuard(i, *keys[i], fallThrough);
                 }
             }
         } else {
@@ -4463,7 +4464,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             for (unsigned i = keys.size(); i--;) {
                 fallThrough.link(&jit);
                 fallThrough.shrink(0);
-                generateWithGuard(*keys[i], fallThrough);
+                generateWithGuard(i, *keys[i], fallThrough);
             }
         }
 
@@ -4481,7 +4482,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
         BinarySwitch binarySwitch(m_scratchGPR, caseValues.span(), BinarySwitch::Int32);
         while (binarySwitch.advance(jit))
-            generate(*keys[binarySwitch.caseIndex()]);
+            generate(binarySwitch.caseIndex(), *keys[binarySwitch.caseIndex()]);
         m_failAndRepatch.append(binarySwitch.fallThrough());
     }
 
@@ -4781,11 +4782,19 @@ void InlineCacheHandler::aboutToDie()
         m_stubRoutine->aboutToDie();
 }
 
+CallLinkInfo* InlineCacheHandler::callLinkInfoAt(const ConcurrentJSLocker& locker, unsigned index)
+{
+    if (!m_stubRoutine)
+        return nullptr;
+    return m_stubRoutine->callLinkInfoAt(locker, index);
+}
+
 bool InlineCacheHandler::visitWeak(VM& vm) const
 {
     if (!m_stubRoutine)
         return true;
 
+    m_stubRoutine->visitWeak(vm);
     for (StructureID weakReference : m_stubRoutine->weakStructures()) {
         Structure* structure = weakReference.decode();
         if (!vm.heap.isMarked(structure))

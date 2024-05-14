@@ -159,7 +159,10 @@ public:
     using Base = PolymorphicAccessJITStubRoutine;
     friend class JITStubRoutine;
 
-    MarkingGCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&&);
+    MarkingGCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&&);
+
+    bool visitWeakImpl(VM&);
+    CallLinkInfo* callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned);
 
 protected:
     template<typename Visitor> void markRequiredObjectsInternalImpl(Visitor&);
@@ -168,7 +171,7 @@ protected:
 
 private:
     FixedVector<WriteBarrier<JSCell>> m_cells;
-    Bag<OptimizingCallLinkInfo> m_callLinkInfos;
+    FixedVector<std::unique_ptr<OptimizingCallLinkInfo>> m_callLinkInfos;
 };
 
 
@@ -180,7 +183,7 @@ public:
     using Base = MarkingGCAwareJITStubRoutine;
     friend class JITStubRoutine;
 
-    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&&, CodeBlock*, DisposableCallSiteIndex);
+    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&&, CodeBlock*, DisposableCallSiteIndex);
     ~GCAwareJITStubRoutineWithExceptionHandler();
 
 
@@ -224,7 +227,7 @@ private:
 
 Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
     const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, FixedVector<RefPtr<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, VM&, JSCell* owner, bool makesCalls,
-    const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&& callLinkInfos,
+    const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers, DisposableCallSiteIndex exceptionHandlingCallSiteIndex);
 
 } // namespace JSC
