@@ -3724,8 +3724,21 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
     if (m_videoSourceOrientation.usesWidthAsHeight())
         originalSize = originalSize.transposedSize();
 
+    auto scopeExit = makeScopeExit([&] {
+        if (RefPtr player = m_player.get()) {
+            GST_DEBUG_OBJECT(pipeline(), "Notifying sizeChanged event to upper layer");
+            player->sizeChanged();
+        }
+    });
+
     GST_DEBUG_OBJECT(pipeline(), "Original video size: %dx%d", originalSize.width(), originalSize.height());
-    GST_DEBUG_OBJECT(pipeline(), "Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
+    if (isMediaStreamPlayer()) {
+        GST_DEBUG_OBJECT(pipeline(), "Using original MediaStream track video intrinsic size");
+        m_videoSize = originalSize;
+        return;
+    }
+
+    GST_DEBUG_OBJECT(pipeline(), "Applying pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
 
     // Calculate DAR based on PAR and video size.
     int displayWidth = originalSize.width() * pixelAspectRatioNumerator;
@@ -3754,8 +3767,6 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
 
     GST_DEBUG_OBJECT(pipeline(), "Saving natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
     m_videoSize = FloatSize(static_cast<int>(width), static_cast<int>(height));
-    if (RefPtr player = m_player.get())
-        player->sizeChanged();
 }
 
 void MediaPlayerPrivateGStreamer::setCachedPosition(const MediaTime& cachedPosition) const
