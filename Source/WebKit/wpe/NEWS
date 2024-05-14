@@ -1,4 +1,23 @@
 =================
+WPE WebKit 2.44.2
+=================
+
+What's new in WPE WebKit 2.44.2?
+
+  - Decrease input notifications for gamepad inputs.
+  - Disable the gst-libav AAC decoder.
+  - Make gamepads visible on axis movements, and not only on button presses.
+  - Make user scripts and style sheets visible in the Web Inspector.
+  - Use the geolocation portal where available, with the existing geoclue
+    as fallback if the portal is not usable.
+  - Use optimized assembler BoringSSL modules with USE_LIBWEBRTC enabled.
+  - Fix mouse location in WebDriver when output device scaling is in effect.
+  - Fix touch input event propagation.
+  - Fix the build on 32-bit ARM with USE_LIBWEBRTC enabled.
+  - Fix the build with ENABLE_WEBAUDIO disabled.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.44.1
 =================
 
