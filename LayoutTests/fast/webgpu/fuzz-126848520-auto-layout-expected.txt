@@ -1,5 +1,5 @@
      0                0
      8                0
-Buffer size is invalid
+GPUDevice.createBindGroup: entrySize == 0 or entrySize(16) > buffer size(16) or layoutBinding->minBindingSize(1073741820) > entrySize(16)
 done
 
