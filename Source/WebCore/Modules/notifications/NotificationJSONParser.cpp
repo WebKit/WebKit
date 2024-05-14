@@ -126,12 +126,12 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
     String title;
     if (auto value = object.getValue(titleKey())) {
         if (value->type() != JSON::Value::Type::String)
-            return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, titleKey(), "' member is specified but is not a string") };
+            return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, titleKey(), "' member is specified but is not a string"_s) };
         title = value->asString();
     }
 
     if (title.isEmpty())
-        return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, titleKey(), "' member is missing or is an empty string") };
+        return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, titleKey(), "' member is missing or is an empty string"_s) };
 
     std::optional<unsigned long long> appBadge;
     if (auto value = object.getValue(appBadgeKey())) {
@@ -158,7 +158,7 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
     bool isMutable = false;
     if (auto value = object.getValue(mutableKey())) {
         if (value->type() != JSON::Value::Type::Boolean)
-            return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, mutableKey(), "' member is specified but is not a boolean") };
+            return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, mutableKey(), "' member is specified but is not a boolean"_s) };
         isMutable = *(value->asBoolean());
     }
 

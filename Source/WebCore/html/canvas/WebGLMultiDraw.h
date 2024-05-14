@@ -53,8 +53,8 @@ public:
     void multiDrawElementsInstancedWEBGL(GCGLenum mode, Int32List&& countsList, GCGLuint countsOffset, GCGLenum type, Int32List&& offsetsList, GCGLuint offsetsOffset, Int32List&& instanceCountsList, GCGLuint instanceCountsOffset, GCGLsizei drawcount);
 
 private:
-    bool validateDrawcount(WebGLRenderingContextBase&, const char* functionName, GCGLsizei drawcount);
-    bool validateOffset(WebGLRenderingContextBase&, const char* functionName, const char* outOfBoundsDescription, GCGLsizei, GCGLuint offset, GCGLsizei drawcount);
+    bool validateDrawcount(WebGLRenderingContextBase&, ASCIILiteral functionName, GCGLsizei drawcount);
+    bool validateOffset(WebGLRenderingContextBase&, ASCIILiteral functionName, const char* outOfBoundsDescription, GCGLsizei, GCGLuint offset, GCGLsizei drawcount);
 };
 
 } // namespace WebCore

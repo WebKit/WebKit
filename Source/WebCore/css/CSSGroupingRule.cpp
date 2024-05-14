@@ -125,7 +125,7 @@ void CSSGroupingRule::appendCSSTextForItemsInternal(StringBuilder& builder, Stri
         return;
     }
 
-    builder.append(static_cast<StringView>(rules), "\n}");
+    builder.append(static_cast<StringView>(rules), "\n}"_s);
 }
 
 void CSSGroupingRule::appendCSSTextForItems(StringBuilder& builder) const

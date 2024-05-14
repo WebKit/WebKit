@@ -61,13 +61,13 @@ void WebGLMultiDraw::multiDrawArraysWEBGL(GCGLenum mode, Int32List&& firstsList,
         return;
     auto& context = this->context();
 
-    if (!validateDrawcount(context, "multiDrawArraysWEBGL", drawcount)
-        || !validateOffset(context, "multiDrawArraysWEBGL", "firstsOffset out of bounds", firstsList.length(), firstsOffset, drawcount)
-        || !validateOffset(context, "multiDrawArraysWEBGL", "countsOffset out of bounds", countsList.length(), countsOffset, drawcount)) {
+    if (!validateDrawcount(context, "multiDrawArraysWEBGL"_s, drawcount)
+        || !validateOffset(context, "multiDrawArraysWEBGL"_s, "firstsOffset out of bounds"_s, firstsList.length(), firstsOffset, drawcount)
+        || !validateOffset(context, "multiDrawArraysWEBGL"_s, "countsOffset out of bounds"_s, countsList.length(), countsOffset, drawcount)) {
         return;
     }
 
-    if (!context.validateVertexArrayObject("multiDrawArraysWEBGL"))
+    if (!context.validateVertexArrayObject("multiDrawArraysWEBGL"_s))
         return;
 
     if (context.m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context, *context.m_currentProgram))
@@ -90,14 +90,14 @@ void WebGLMultiDraw::multiDrawArraysInstancedWEBGL(GCGLenum mode, Int32List&& fi
         return;
     auto& context = this->context();
 
-    if (!validateDrawcount(context, "multiDrawArraysInstancedWEBGL", drawcount)
-        || !validateOffset(context, "multiDrawArraysInstancedWEBGL", "firstsOffset out of bounds", firstsList.length(), firstsOffset, drawcount)
-        || !validateOffset(context, "multiDrawArraysInstancedWEBGL", "countsOffset out of bounds", countsList.length(), countsOffset, drawcount)
-        || !validateOffset(context, "multiDrawArraysInstancedWEBGL", "instanceCountsOffset out of bounds", instanceCountsList.length(), instanceCountsOffset, drawcount)) {
+    if (!validateDrawcount(context, "multiDrawArraysInstancedWEBGL"_s, drawcount)
+        || !validateOffset(context, "multiDrawArraysInstancedWEBGL"_s, "firstsOffset out of bounds"_s, firstsList.length(), firstsOffset, drawcount)
+        || !validateOffset(context, "multiDrawArraysInstancedWEBGL"_s, "countsOffset out of bounds"_s, countsList.length(), countsOffset, drawcount)
+        || !validateOffset(context, "multiDrawArraysInstancedWEBGL"_s, "instanceCountsOffset out of bounds"_s, instanceCountsList.length(), instanceCountsOffset, drawcount)) {
         return;
     }
 
-    if (!context.validateVertexArrayObject("multiDrawArraysInstancedWEBGL"))
+    if (!context.validateVertexArrayObject("multiDrawArraysInstancedWEBGL"_s))
         return;
 
     if (context.m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context, *context.m_currentProgram))
@@ -120,13 +120,13 @@ void WebGLMultiDraw::multiDrawElementsWEBGL(GCGLenum mode, Int32List&& countsLis
         return;
     auto& context = this->context();
 
-    if (!validateDrawcount(context, "multiDrawElementsWEBGL", drawcount)
-        || !validateOffset(context, "multiDrawElementsWEBGL", "countsOffset out of bounds", countsList.length(), countsOffset, drawcount)
-        || !validateOffset(context, "multiDrawElementsWEBGL", "offsetsOffset out of bounds", offsetsList.length(), offsetsOffset, drawcount)) {
+    if (!validateDrawcount(context, "multiDrawElementsWEBGL"_s, drawcount)
+        || !validateOffset(context, "multiDrawElementsWEBGL"_s, "countsOffset out of bounds"_s, countsList.length(), countsOffset, drawcount)
+        || !validateOffset(context, "multiDrawElementsWEBGL"_s, "offsetsOffset out of bounds"_s, offsetsList.length(), offsetsOffset, drawcount)) {
         return;
     }
 
-    if (!context.validateVertexArrayObject("multiDrawElementsWEBGL"))
+    if (!context.validateVertexArrayObject("multiDrawElementsWEBGL"_s))
         return;
 
     if (context.m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context, *context.m_currentProgram))
@@ -149,14 +149,14 @@ void WebGLMultiDraw::multiDrawElementsInstancedWEBGL(GCGLenum mode, Int32List&& 
         return;
     auto& context = this->context();
 
-    if (!validateDrawcount(context, "multiDrawElementsInstancedWEBGL", drawcount)
-        || !validateOffset(context, "multiDrawElementsInstancedWEBGL", "countsOffset out of bounds", countsList.length(), countsOffset, drawcount)
-        || !validateOffset(context, "multiDrawElementsInstancedWEBGL", "offsetsOffset out of bounds", offsetsList.length(), offsetsOffset, drawcount)
-        || !validateOffset(context, "multiDrawElementsInstancedWEBGL", "instanceCountsOffset out of bounds", instanceCountsList.length(), instanceCountsOffset, drawcount)) {
+    if (!validateDrawcount(context, "multiDrawElementsInstancedWEBGL"_s, drawcount)
+        || !validateOffset(context, "multiDrawElementsInstancedWEBGL"_s, "countsOffset out of bounds"_s, countsList.length(), countsOffset, drawcount)
+        || !validateOffset(context, "multiDrawElementsInstancedWEBGL"_s, "offsetsOffset out of bounds"_s, offsetsList.length(), offsetsOffset, drawcount)
+        || !validateOffset(context, "multiDrawElementsInstancedWEBGL"_s, "instanceCountsOffset out of bounds"_s, instanceCountsList.length(), instanceCountsOffset, drawcount)) {
         return;
     }
 
-    if (!context.validateVertexArrayObject("multiDrawElementsInstancedWEBGL"))
+    if (!context.validateVertexArrayObject("multiDrawElementsInstancedWEBGL"_s))
         return;
 
     if (context.m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context, *context.m_currentProgram))
@@ -173,7 +173,7 @@ void WebGLMultiDraw::multiDrawElementsInstancedWEBGL(GCGLenum mode, Int32List&& 
     context.markContextChangedAndNotifyCanvasObserver();
 }
 
-bool WebGLMultiDraw::validateDrawcount(WebGLRenderingContextBase& context, const char* functionName, GCGLsizei drawcount)
+bool WebGLMultiDraw::validateDrawcount(WebGLRenderingContextBase& context, ASCIILiteral functionName, GCGLsizei drawcount)
 {
     if (drawcount < 0) {
         context.synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "negative drawcount");
@@ -183,10 +183,10 @@ bool WebGLMultiDraw::validateDrawcount(WebGLRenderingContextBase& context, const
     return true;
 }
 
-bool WebGLMultiDraw::validateOffset(WebGLRenderingContextBase& context, const char* functionName, const char* outOfBoundsDescription, GCGLsizei size, GCGLuint offset, GCGLsizei drawcount)
+bool WebGLMultiDraw::validateOffset(WebGLRenderingContextBase& context, ASCIILiteral functionName, const char* outOfBoundsDescription, GCGLsizei size, GCGLuint offset, GCGLsizei drawcount)
 {
     if (drawcount > size) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "drawcount out of bounds");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "drawcount out of bounds"_s);
         return false;
     }
 

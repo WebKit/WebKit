@@ -1073,15 +1073,15 @@ String ShorthandSerializer::serializeGrid() const
     auto& columns = longhandValue(columnsIndex);
 
     bool autoFlowContainsDense = gridAutoFlowContains(autoFlow, CSSValueDense);
-    auto dense = autoFlowContainsDense ? " dense" : "";
+    auto dense = autoFlowContainsDense ? " dense"_s : ""_s;
 
     if (gridAutoFlowContains(autoFlow, CSSValueColumn)) {
         if (!isValueIDIncludingList(autoRows, CSSValueAuto) || !isValueIDIncludingList(columns, CSSValueNone))
             return String();
 
         if (isValueIDIncludingList(autoColumns, CSSValueAuto))
-            return makeString(serializeLonghandValue(rowsIndex), " / auto-flow", dense);
-        return makeString(serializeLonghandValue(rowsIndex), " / auto-flow", dense, ' ', serializeLonghandValue(autoColumnsIndex));
+            return makeString(serializeLonghandValue(rowsIndex), " / auto-flow"_s, dense);
+        return makeString(serializeLonghandValue(rowsIndex), " / auto-flow"_s, dense, ' ', serializeLonghandValue(autoColumnsIndex));
     }
 
     if (!gridAutoFlowContains(autoFlow, CSSValueRow) && !autoFlowContainsDense)
@@ -1221,13 +1221,13 @@ String ShorthandSerializer::serializeOffset() const
     }
 
     auto position = includePosition ? serializeLonghandValue(positionIndex) : String();
-    auto pathSeparator = includePosition && includePath ? " " : "";
+    auto pathSeparator = includePosition && includePath ? " "_s : ""_s;
     auto path = includePath ? serializeLonghandValue(pathIndex) : String();
-    auto distanceSeparator = includeDistance ? " " : "";
+    auto distanceSeparator = includeDistance ? " "_s : ""_s;
     auto distance = includeDistance ? serializeLonghandValue(distanceIndex) : String();
-    auto rotateSeparator = includeRotate ? " " : "";
+    auto rotateSeparator = includeRotate ? " "_s : ""_s;
     auto rotate = includeRotate ? serializeLonghandValue(rotateIndex) : String();
-    auto anchorSeparator = includeAnchor ? " / " : "";
+    auto anchorSeparator = includeAnchor ? " / "_s : ""_s;
     auto anchor = includeAnchor ? serializeLonghandValue(anchorIndex) : String();
 
     return makeString(position,

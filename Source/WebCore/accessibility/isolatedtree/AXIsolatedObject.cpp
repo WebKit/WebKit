@@ -78,8 +78,8 @@ AXIsolatedObject::~AXIsolatedObject()
 String AXIsolatedObject::dbg() const
 {
     return makeString(
-        "{role: ", accessibilityRoleToString(roleValue()),
-        ", ID ", objectID().loggingString(), "}"
+        "{role: "_s, accessibilityRoleToString(roleValue()),
+        ", ID "_s, objectID().loggingString(), '}'
     );
 }
 

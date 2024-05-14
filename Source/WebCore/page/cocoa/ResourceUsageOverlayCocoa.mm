@@ -432,11 +432,11 @@ static void drawMemoryPie(CGContextRef context, FloatRect& rect, HistoricResourc
 static String formatByteNumber(size_t number)
 {
     if (number >= 1024 * 1048576)
-        return makeString(FormattedNumber::fixedWidth(number / (1024. * 1048576), 3), " GB");
+        return makeString(FormattedNumber::fixedWidth(number / (1024. * 1048576), 3), " GB"_s);
     if (number >= 1048576)
-        return makeString(FormattedNumber::fixedWidth(number / 1048576., 2), " MB");
+        return makeString(FormattedNumber::fixedWidth(number / 1048576., 2), " MB"_s);
     if (number >= 1024)
-        return makeString(FormattedNumber::fixedWidth(number / 1024, 1), " kB");
+        return makeString(FormattedNumber::fixedWidth(number / 1024, 1), " kB"_s);
     return String::number(number);
 }
 
@@ -464,8 +464,8 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
 
     static NeverDestroyed<RetainPtr<CGColorRef>> colorForLabels = createColor(0.9, 0.9, 0.9, 1);
     showText(context, 10, 20, colorForLabels.get().get(), makeString("        CPU: "_s, FormattedNumber::fixedPrecision(data.cpu.last(), 6, TrailingZerosPolicy::Keep)));
-    showText(context, 10, 30, colorForLabels.get().get(), "  Footprint: " + formatByteNumber(memoryFootprint()));
-    showText(context, 10, 40, colorForLabels.get().get(), "   External: " + formatByteNumber(data.totalExternalSize.last()));
+    showText(context, 10, 30, colorForLabels.get().get(), makeString("  Footprint: "_s, formatByteNumber(memoryFootprint())));
+    showText(context, 10, 40, colorForLabels.get().get(), makeString("   External: "_s, formatByteNumber(data.totalExternalSize.last())));
 
     float y = 55;
     for (auto& category : data.categories) {
@@ -473,7 +473,7 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
         size_t reclaimable = category.reclaimableSize.last();
         size_t external = category.externalSize.last();
         
-        auto label = makeString(pad(' ', 11, category.name), ": ", formatByteNumber(dirty));
+        auto label = makeString(pad(' ', 11, category.name), ": "_s, formatByteNumber(dirty));
         if (external)
             label = label + makeString(" + "_s, formatByteNumber(external));
         if (reclaimable)
@@ -486,8 +486,8 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     y -= 5;
 
     MonotonicTime now = MonotonicTime::now();
-    showText(context, 10, y + 10, colorForLabels.get().get(), "    Eden GC: " + gcTimerString(data.timeOfNextEdenCollection, now));
-    showText(context, 10, y + 20, colorForLabels.get().get(), "    Full GC: " + gcTimerString(data.timeOfNextFullCollection, now));
+    showText(context, 10, y + 10, colorForLabels.get().get(), makeString("    Eden GC: "_s, gcTimerString(data.timeOfNextEdenCollection, now)));
+    showText(context, 10, y + 20, colorForLabels.get().get(), makeString("    Full GC: "_s, gcTimerString(data.timeOfNextFullCollection, now)));
 
     drawCpuHistory(context, viewBounds.size.width - 70, 0, viewBounds.size.height, data.cpu);
     drawGCHistory(context, viewBounds.size.width - 140, 0, viewBounds.size.height, data.gcHeapSize, data.categories[MemoryCategory::GCHeap].dirtySize);

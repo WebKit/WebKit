@@ -80,7 +80,7 @@ String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const ClientOrigin
 #if !LOG_DISABLED
 String IDBDatabaseIdentifier::loggingString() const
 {
-    return makeString(m_databaseName, "@", m_origin.topOrigin.debugString(), ":", m_origin.clientOrigin.debugString(), m_isTransient ? ", transient" : "");
+    return makeString(m_databaseName, '@', m_origin.topOrigin.debugString(), ':', m_origin.clientOrigin.debugString(), m_isTransient ? ", transient"_s : ""_s);
 }
 #endif
 

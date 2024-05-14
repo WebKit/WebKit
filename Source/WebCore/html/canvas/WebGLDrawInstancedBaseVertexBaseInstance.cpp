@@ -55,7 +55,7 @@ void WebGLDrawInstancedBaseVertexBaseInstance::drawArraysInstancedBaseInstanceWE
         return;
     auto& context = this->context();
 
-    if (!context.validateVertexArrayObject("drawArraysInstancedBaseInstanceWEBGL"))
+    if (!context.validateVertexArrayObject("drawArraysInstancedBaseInstanceWEBGL"_s))
         return;
 
     if (context.m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context, *context.m_currentProgram))
@@ -78,7 +78,7 @@ void WebGLDrawInstancedBaseVertexBaseInstance::drawElementsInstancedBaseVertexBa
         return;
     auto& context = this->context();
 
-    if (!context.validateVertexArrayObject("drawElementsInstancedBaseVertexBaseInstanceWEBGL"))
+    if (!context.validateVertexArrayObject("drawElementsInstancedBaseVertexBaseInstanceWEBGL"_s))
         return;
 
     if (context.m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context, *context.m_currentProgram))

@@ -804,7 +804,7 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
     if (securityOrigin()->canLoadLocalResources() && scriptExecutionContext()->isDocument() && document()->settings().allowSettingAnyXHRHeaderFromFileURLs())
         allowUnsafeHeaderField = true;
     if (!allowUnsafeHeaderField && isForbiddenHeader(name, normalizedValue)) {
-        logConsoleError(scriptExecutionContext(), "Refused to set unsafe header \"" + name + "\"");
+        logConsoleError(scriptExecutionContext(), makeString("Refused to set unsafe header \""_s, name, '"'));
         return { };
     }
 
@@ -837,7 +837,7 @@ String XMLHttpRequest::getAllResponseHeaders() const
 
         StringBuilder stringBuilder;
         for (auto& header : headers)
-            stringBuilder.append(asASCIILowercase(header.first), ": ", header.second, "\r\n");
+            stringBuilder.append(asASCIILowercase(header.first), ": "_s, header.second, "\r\n"_s);
 
         m_allResponseHeaders = stringBuilder.toString();
     }

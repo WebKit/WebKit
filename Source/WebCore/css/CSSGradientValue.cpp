@@ -184,20 +184,20 @@ static bool appendColorInterpolationMethod(StringBuilder& builder, CSSGradientCo
     return WTF::switchOn(colorInterpolationMethod.method.colorSpace,
         [&] (const ColorInterpolationMethod::OKLab&) {
             if (colorInterpolationMethod.defaultMethod != CSSGradientColorInterpolationMethod::Default::OKLab) {
-                builder.append(needsLeadingSpace ? " " : "", "in oklab");
+                builder.append(needsLeadingSpace ? " "_s : ""_s, "in oklab"_s);
                 return true;
             }
             return false;
         },
         [&] (const ColorInterpolationMethod::SRGB&) {
             if (colorInterpolationMethod.defaultMethod != CSSGradientColorInterpolationMethod::Default::SRGB) {
-                builder.append(needsLeadingSpace ? " " : "", "in srgb");
+                builder.append(needsLeadingSpace ? " "_s : ""_s, "in srgb"_s);
                 return true;
             }
             return false;
         },
         [&]<typename MethodColorSpace> (const MethodColorSpace& methodColorSpace) {
-            builder.append(needsLeadingSpace ? " " : "", "in ", serializationForCSS(methodColorSpace.interpolationColorSpace));
+            builder.append(needsLeadingSpace ? " "_s : ""_s, "in "_s, serializationForCSS(methodColorSpace.interpolationColorSpace));
             if constexpr (hasHueInterpolationMethod<MethodColorSpace>)
                 serializationForCSS(builder, methodColorSpace.hueInterpolationMethod);
             return true;
@@ -397,7 +397,7 @@ bool CSSPrefixedLinearGradientValue::equals(const CSSPrefixedLinearGradientValue
 String CSSDeprecatedLinearGradientValue::customCSSText() const
 {
     StringBuilder result;
-    result.append("-webkit-gradient(linear, "_s, m_data.firstX->cssText(), ' ', m_data.firstY->cssText(), ", ", m_data.secondX->cssText(), ' ', m_data.secondY->cssText());
+    result.append("-webkit-gradient(linear, "_s, m_data.firstX->cssText(), ' ', m_data.firstY->cssText(), ", "_s, m_data.secondX->cssText(), ' ', m_data.secondY->cssText());
     appendGradientStops(result, m_stops);
     result.append(')');
     return result.toString();

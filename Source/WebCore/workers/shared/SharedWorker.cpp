@@ -116,7 +116,7 @@ SharedWorker::SharedWorker(Document& document, const SharedWorkerKey& key, Ref<M
     : ActiveDOMObject(&document)
     , m_key(key)
     , m_port(WTFMove(port))
-    , m_identifierForInspector("SharedWorker:" + Inspector::IdentifiersFactory::createIdentifier())
+    , m_identifierForInspector(makeString("SharedWorker:"_s, Inspector::IdentifiersFactory::createIdentifier()))
     , m_blobURLExtension({ m_key.url.protocolIsBlob() ? m_key.url : URL(), document.topOrigin().data() }) // Keep blob URL alive until the worker has finished loading.
 {
     SHARED_WORKER_RELEASE_LOG("SharedWorker:");

@@ -53,7 +53,7 @@ public:
     GCGLint maxDrawBuffers() final;
     GCGLint maxColorAttachments() final;
     void initializeDefaultObjects() final;
-    bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
+    bool validateBlendEquation(ASCIILiteral functionName, GCGLenum mode) final;
 
     void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&) final;
 

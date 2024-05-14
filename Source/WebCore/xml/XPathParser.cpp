@@ -254,7 +254,7 @@ bool Parser::lexQName(String& name)
     if (!lexNCName(n2))
         return false;
 
-    name = n1 + ":" + n2;
+    name = makeString(n1, ':', n2);
     return true;
 }
 
@@ -356,7 +356,7 @@ inline Parser::Token Parser::nextTokenInternal()
         skipWS();
         if (peekCurHelper() == '*') {
             m_nextPos++;
-            return Token(NAMETEST, name + ":*");
+            return Token(NAMETEST, makeString(name, ":*"_s));
         }
         
         // Make a full qname.
@@ -364,7 +364,7 @@ inline Parser::Token Parser::nextTokenInternal()
         if (!lexNCName(n2))
             return Token(XPATH_ERROR);
         
-        name = name + ":" + n2;
+        name = makeString(name, ':', n2);
     }
 
     skipWS();

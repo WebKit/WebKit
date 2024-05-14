@@ -74,7 +74,7 @@ void EXTDisjointTimerQuery::deleteQueryEXT(WebGLTimerQueryEXT* query)
         return;
 
     if (!query->validate(context)) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete", "object does not belong to this context");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete"_s, "object does not belong to this context"_s);
         return;
     }
 
@@ -108,7 +108,7 @@ void EXTDisjointTimerQuery::beginQueryEXT(GCGLenum target, WebGLTimerQueryEXT& q
 
     Locker locker { context.objectGraphLock() };
 
-    if (!context.validateWebGLObject("beginQueryEXT", query))
+    if (!context.validateWebGLObject("beginQueryEXT"_s, query))
         return;
 
     // The WebGL extension requires ending time elapsed queries when they are deleted.
@@ -116,17 +116,17 @@ void EXTDisjointTimerQuery::beginQueryEXT(GCGLenum target, WebGLTimerQueryEXT& q
     // to defer query results until control is returned to the user agent's main loop.
 
     if (target != GraphicsContextGL::TIME_ELAPSED_EXT) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "beginQueryEXT", "invalid target");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "beginQueryEXT"_s, "invalid target"_s);
         return;
     }
 
     if (query.target() && query.target() != target) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQueryEXT", "query type does not match target");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQueryEXT"_s, "query type does not match target"_s);
         return;
     }
 
     if (context.m_activeQuery) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQueryEXT", "query object of target is already active");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQueryEXT"_s, "query object of target is already active"_s);
         return;
     }
 
@@ -146,12 +146,12 @@ void EXTDisjointTimerQuery::endQueryEXT(GCGLenum target)
     Locker locker { context.objectGraphLock() };
 
     if (target != GraphicsContextGL::TIME_ELAPSED_EXT) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "endQueryEXT", "invalid target");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "endQueryEXT"_s, "invalid target"_s);
         return;
     }
 
     if (!context.m_activeQuery) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "endQueryEXT", "query object of target is not active");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "endQueryEXT"_s, "query object of target is not active"_s);
         return;
     }
 
@@ -171,16 +171,16 @@ void EXTDisjointTimerQuery::queryCounterEXT(WebGLTimerQueryEXT& query, GCGLenum 
     if (!context.scriptExecutionContext())
         return;
 
-    if (!context.validateWebGLObject("queryCounterEXT", query))
+    if (!context.validateWebGLObject("queryCounterEXT"_s, query))
         return;
 
     if (target != GraphicsContextGL::TIMESTAMP_EXT) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "queryCounterEXT", "invalid target");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "queryCounterEXT"_s, "invalid target"_s);
         return;
     }
 
     if (query.target() && query.target() != target) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "queryCounterEXT", "query type does not match target");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "queryCounterEXT"_s, "query type does not match target"_s);
         return;
     }
 
@@ -201,7 +201,7 @@ WebGLAny EXTDisjointTimerQuery::getQueryEXT(GCGLenum target, GCGLenum pname)
     auto& context = this->context();
 
     if (target != GraphicsContextGL::TIME_ELAPSED_EXT && target != GraphicsContextGL::TIMESTAMP_EXT) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQueryEXT", "invalid target");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQueryEXT"_s, "invalid target"_s);
         return nullptr;
     }
 
@@ -213,7 +213,7 @@ WebGLAny EXTDisjointTimerQuery::getQueryEXT(GCGLenum target, GCGLenum pname)
     case GraphicsContextGL::QUERY_COUNTER_BITS_EXT:
         return context.protectedGraphicsContextGL()->getQueryiEXT(target, pname);
     }
-    context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQueryEXT", "invalid parameter name");
+    context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQueryEXT"_s, "invalid parameter name"_s);
     return nullptr;
 }
 
@@ -223,16 +223,16 @@ WebGLAny EXTDisjointTimerQuery::getQueryObjectEXT(WebGLTimerQueryEXT& query, GCG
         return nullptr;
     auto& context = this->context();
 
-    if (!context.validateWebGLObject("getQueryObjectEXT", query))
+    if (!context.validateWebGLObject("getQueryObjectEXT"_s, query))
         return nullptr;
 
     if (!query.target()) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getQueryObjectEXT", "query has not been used");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getQueryObjectEXT"_s, "query has not been used"_s);
         return nullptr;
     }
 
     if (&query == context.m_activeQuery) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getQueryObjectEXT", "query is currently active");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getQueryObjectEXT"_s, "query is currently active"_s);
         return nullptr;
     }
 
@@ -246,7 +246,7 @@ WebGLAny EXTDisjointTimerQuery::getQueryObjectEXT(WebGLTimerQueryEXT& query, GCG
             return false;
         return static_cast<bool>(context.protectedGraphicsContextGL()->getQueryObjectiEXT(query.object(), pname));
     }
-    context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQueryObjectEXT", "invalid parameter name");
+    context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQueryObjectEXT"_s, "invalid parameter name"_s);
     return nullptr;
 }
 

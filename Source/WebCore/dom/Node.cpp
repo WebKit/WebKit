@@ -2123,12 +2123,12 @@ static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, con
     node->showNode();
     if (!node->isShadowRoot()) {
         if (auto* frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(node))
-            showSubTreeAcrossFrame(frameOwner->protectedContentDocument().get(), markedNode, indent + "\t");
+            showSubTreeAcrossFrame(frameOwner->protectedContentDocument().get(), markedNode, makeString(indent, '\t'));
         if (RefPtr shadowRoot = node->shadowRoot())
-            showSubTreeAcrossFrame(shadowRoot.get(), markedNode, indent + "\t");
+            showSubTreeAcrossFrame(shadowRoot.get(), markedNode, makeString(indent, '\t'));
     }
     for (RefPtr child = node->firstChild(); child; child = child->nextSibling())
-        showSubTreeAcrossFrame(child.get(), markedNode, indent + "\t");
+        showSubTreeAcrossFrame(child.get(), markedNode, makeString(indent, '\t'));
 }
 
 void Node::showTreeForThisAcrossFrame() const

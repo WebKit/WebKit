@@ -39,7 +39,7 @@ String WorkerLocation::href() const
 
 String WorkerLocation::protocol() const
 {
-    return makeString(m_url.protocol(), ":");
+    return makeString(m_url.protocol(), ':');
 }
 
 String WorkerLocation::host() const

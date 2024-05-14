@@ -224,7 +224,7 @@ String AXTextMarker::debugDescription() const
         "treeID "_s, treeID().loggingString()
         , separator, "objectID "_s, objectID().loggingString()
         , separator, "role "_s, object ? accessibilityRoleToString(object->roleValue()) : "no object"_str
-        , isIgnored() ? makeString(separator, "ignored") : ""_s
+        , isIgnored() ? makeString(separator, "ignored"_s) : ""_s
         , isMainThread() && node() ? makeString(separator, node()->debugDescription()) : ""_s
         , separator, "anchor "_s, m_data.anchorType
         , separator, "affinity "_s, m_data.affinity

@@ -314,7 +314,7 @@ String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
     RefPtr parent = parentNode();
     if (is<HTMLOptGroupElement>(parent))
-        return "    " + displayLabel();
+        return makeString("    "_s, displayLabel());
     return displayLabel();
 }
 

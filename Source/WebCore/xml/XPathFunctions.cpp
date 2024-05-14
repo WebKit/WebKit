@@ -363,7 +363,7 @@ static inline String expandedNameLocalPart(Node& node)
 static inline String expandedName(Node& node)
 {
     auto& prefix = node.prefix();
-    return prefix.isEmpty() ? expandedNameLocalPart(node) : prefix + ":" + expandedNameLocalPart(node);
+    return prefix.isEmpty() ? expandedNameLocalPart(node) : makeString(prefix, ':', expandedNameLocalPart(node));
 }
 
 Value FunLocalName::evaluate() const

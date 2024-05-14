@@ -253,7 +253,7 @@ public:
 
     GCGLuint maxTransformFeedbackSeparateAttribs() const;
 
-    bool checkAndTranslateAttachments(const char* functionName, GCGLenum, Vector<GCGLenum>&);
+    bool checkAndTranslateAttachments(ASCIILiteral functionName, GCGLenum, Vector<GCGLenum>&);
 
     void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&) override;
 
@@ -266,33 +266,33 @@ private:
 
     void initializeContextState() final;
 
-    RefPtr<ArrayBufferView> arrayBufferViewSliceFactory(const char* const functionName, const ArrayBufferView& data, unsigned startByte, unsigned bytelength);
-    RefPtr<ArrayBufferView> sliceArrayBufferView(const char* const functionName, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length);
+    RefPtr<ArrayBufferView> arrayBufferViewSliceFactory(ASCIILiteral functionName, const ArrayBufferView& data, unsigned startByte, unsigned bytelength);
+    RefPtr<ArrayBufferView> sliceArrayBufferView(ASCIILiteral functionName, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length);
 
     long long getInt64Parameter(GCGLenum) final;
     Vector<bool> getIndexedBooleanArrayParameter(GCGLenum pname, GCGLuint index);
 
     void initializeDefaultObjects() final;
-    bool validateBufferTarget(const char* functionName, GCGLenum target) final;
-    bool validateBufferTargetCompatibility(const char*, GCGLenum, WebGLBuffer*);
-    WebGLBuffer* validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage) final;
-    WebGLBuffer* validateBufferDataTarget(const char* functionName, GCGLenum target) final;
-    bool validateAndCacheBufferBinding(const AbstractLocker&, const char* functionName, GCGLenum target, WebGLBuffer*) final;
+    bool validateBufferTarget(ASCIILiteral functionName, GCGLenum target) final;
+    bool validateBufferTargetCompatibility(ASCIILiteral, GCGLenum, WebGLBuffer*);
+    WebGLBuffer* validateBufferDataParameters(ASCIILiteral functionName, GCGLenum target, GCGLenum usage) final;
+    WebGLBuffer* validateBufferDataTarget(ASCIILiteral functionName, GCGLenum target) final;
+    bool validateAndCacheBufferBinding(const AbstractLocker&, ASCIILiteral functionName, GCGLenum target, WebGLBuffer*) final;
     GCGLint maxDrawBuffers() final;
     GCGLint maxColorAttachments() final;
-    bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
-    bool validateCapability(const char* functionName, GCGLenum cap) final;
+    bool validateBlendEquation(ASCIILiteral functionName, GCGLenum mode) final;
+    bool validateCapability(ASCIILiteral functionName, GCGLenum cap) final;
     template<typename T, typename TypedArrayType>
-    std::optional<std::span<const T>> validateClearBuffer(const char* functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset);
+    std::optional<std::span<const T>> validateClearBuffer(ASCIILiteral functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset);
     bool validateFramebufferTarget(GCGLenum target) final;
     WebGLFramebuffer* getFramebufferBinding(GCGLenum target) final;
-    bool validateNonDefaultFramebufferAttachment(const char* functionName, GCGLenum attachment);
+    bool validateNonDefaultFramebufferAttachment(ASCIILiteral functionName, GCGLenum attachment);
     enum ActiveQueryKey { SamplesPassed = 0, PrimitivesWritten = 1, TimeElapsed = 2, NumKeys = 3 };
-    std::optional<ActiveQueryKey> validateQueryTarget(const char* functionName, GCGLenum target);
-    void renderbufferStorageImpl(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, const char* functionName) final;
+    std::optional<ActiveQueryKey> validateQueryTarget(ASCIILiteral functionName, GCGLenum target);
+    void renderbufferStorageImpl(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, ASCIILiteral functionName) final;
     void renderbufferStorageHelper(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height);
 
-    bool setIndexedBufferBinding(const char *functionName, GCGLenum target, GCGLuint index, WebGLBuffer*);
+    bool setIndexedBufferBinding(ASCIILiteral functionName, GCGLenum target, GCGLuint index, WebGLBuffer*);
 
     IntRect getTextureSourceSubRectangle(GCGLsizei width, GCGLsizei height);
 
@@ -301,14 +301,14 @@ private:
     // Helper function to check texture 3D target and texture bound to the target.
     // Generate GL errors and return 0 if target is invalid or texture bound is
     // null. Otherwise, return the texture bound to the target.
-    RefPtr<WebGLTexture> validateTexture3DBinding(const char* functionName, GCGLenum target);
+    RefPtr<WebGLTexture> validateTexture3DBinding(ASCIILiteral functionName, GCGLenum target);
 
     // Helper function to check immutable texture 2D target and texture bound to the target.
     // Generate GL errors and return 0 if target is invalid or texture bound is
     // null. Otherwise, return the texture bound to the target.
-    RefPtr<WebGLTexture> validateTextureStorage2DBinding(const char* functionName, GCGLenum target);
+    RefPtr<WebGLTexture> validateTextureStorage2DBinding(ASCIILiteral functionName, GCGLenum target);
 
-    bool validateTexFuncLayer(const char*, GCGLenum texTarget, GCGLint layer);
+    bool validateTexFuncLayer(ASCIILiteral functionName, GCGLenum texTarget, GCGLint layer);
     GCGLint maxTextureLevelForTarget(GCGLenum target) final;
 
     void uncacheDeletedBuffer(const AbstractLocker&, WebGLBuffer*) final;

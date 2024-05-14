@@ -253,7 +253,7 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
     if (isContextLost())
         return nullptr;
 
-    const char* functionName = "getFramebufferAttachmentParameter";
+    auto functionName = "getFramebufferAttachmentParameter"_s;
     if (!validateFramebufferFuncParameters(functionName, target, attachment))
         return nullptr;
 
@@ -342,7 +342,7 @@ GCGLint WebGLRenderingContext::maxColorAttachments()
     return m_maxColorAttachments;
 }
 
-bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GCGLenum mode)
+bool WebGLRenderingContext::validateBlendEquation(ASCIILiteral functionName, GCGLenum mode)
 {
     switch (mode) {
     case GraphicsContextGL::FUNC_ADD:

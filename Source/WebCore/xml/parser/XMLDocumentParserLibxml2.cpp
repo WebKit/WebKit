@@ -729,7 +729,7 @@ static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttribut
         AtomString namespaceQName = xmlnsAtom();
         AtomString namespaceURI = toAtomString(namespaces[i].uri);
         if (namespaces[i].prefix)
-            namespaceQName = makeAtomString("xmlns:", toString(namespaces[i].prefix));
+            namespaceQName = makeAtomString("xmlns:"_s, toString(namespaces[i].prefix));
 
         auto result = Element::parseAttributeName(XMLNSNames::xmlnsNamespaceURI, namespaceQName);
         if (result.hasException())
@@ -1489,7 +1489,7 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
         int valueLength = (int) (attributes[i].end - attributes[i].value);
         String attrValue = toString(attributes[i].value, valueLength);
         String attrPrefix = toString(attributes[i].prefix);
-        String attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + ":" + attrLocalName;
+        String attrQName = attrPrefix.isEmpty() ? attrLocalName : makeString(attrPrefix, ':', attrLocalName);
 
         state->set(attrQName, attrValue);
     }
@@ -1497,7 +1497,7 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
 
 std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader& cachedResourceLoader, const String& string)
 {
-    String parseString = "<?xml version=\"1.0\"?><attrs " + string + " />";
+    auto parseString = makeString("<?xml version=\"1.0\"?><attrs "_s, string, " />"_s);
 
     AttributeParseState attributes;
 

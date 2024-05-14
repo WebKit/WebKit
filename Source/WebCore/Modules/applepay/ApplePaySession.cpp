@@ -159,14 +159,14 @@ static ExceptionOr<ApplePayRecurringPaymentRequest> convertAndValidate(ApplePayR
         if (!trialBilling->label)
             return Exception(ExceptionCode::TypeError, "Missing label for 'trialBilling'."_s);
         if (!isValidDecimalMonetaryValue(trialBilling->amount) && trialBilling->type != ApplePayLineItem::Type::Pending)
-            return Exception(ExceptionCode::TypeError, makeString('"', trialBilling->amount, "\" is not a valid amount."));
+            return Exception(ExceptionCode::TypeError, makeString('"', trialBilling->amount, "\" is not a valid amount."_s));
     }
 
     if (auto& managementURL = recurringPaymentRequest.managementURL; !URL { managementURL }.isValid())
-        return Exception(ExceptionCode::TypeError, makeString('"', managementURL, "\" is not a valid URL."));
+        return Exception(ExceptionCode::TypeError, makeString('"', managementURL, "\" is not a valid URL."_s));
 
     if (auto& tokenNotificationURL = recurringPaymentRequest.tokenNotificationURL; !tokenNotificationURL.isNull() && !URL { tokenNotificationURL }.isValid())
-        return Exception(ExceptionCode::TypeError, makeString('"', tokenNotificationURL, "\" is not a valid URL."));
+        return Exception(ExceptionCode::TypeError, makeString('"', tokenNotificationURL, "\" is not a valid URL."_s));
 
     return WTFMove(recurringPaymentRequest);
 }
@@ -183,15 +183,15 @@ static ExceptionOr<ApplePayAutomaticReloadPaymentRequest> convertAndValidate(App
     if (!automaticReloadBilling.label)
         return Exception(ExceptionCode::TypeError, "Missing label for 'automaticReloadBilling'."_s);
     if (!isValidDecimalMonetaryValue(automaticReloadBilling.amount) && automaticReloadBilling.type != ApplePayLineItem::Type::Pending)
-        return Exception(ExceptionCode::TypeError, makeString('"', automaticReloadBilling.amount, "\" is not a valid amount."));
+        return Exception(ExceptionCode::TypeError, makeString('"', automaticReloadBilling.amount, "\" is not a valid amount."_s));
     if (!isValidDecimalMonetaryValue(automaticReloadBilling.automaticReloadPaymentThresholdAmount))
-        return Exception(ExceptionCode::TypeError, makeString('"', automaticReloadBilling.automaticReloadPaymentThresholdAmount, "\" is not a valid automaticReloadPaymentThresholdAmount."));
+        return Exception(ExceptionCode::TypeError, makeString('"', automaticReloadBilling.automaticReloadPaymentThresholdAmount, "\" is not a valid automaticReloadPaymentThresholdAmount."_s));
 
     if (auto& managementURL = automaticReloadPaymentRequest.managementURL; !URL { managementURL }.isValid())
-        return Exception(ExceptionCode::TypeError, makeString('"', managementURL, "\" is not a valid URL."));
+        return Exception(ExceptionCode::TypeError, makeString('"', managementURL, "\" is not a valid URL."_s));
 
     if (auto& tokenNotificationURL = automaticReloadPaymentRequest.tokenNotificationURL; !tokenNotificationURL.isNull() && !URL { tokenNotificationURL }.isValid())
-        return Exception(ExceptionCode::TypeError, makeString('"', tokenNotificationURL, "\" is not a valid URL."));
+        return Exception(ExceptionCode::TypeError, makeString('"', tokenNotificationURL, "\" is not a valid URL."_s));
 
     return WTFMove(automaticReloadPaymentRequest);
 }
@@ -234,10 +234,10 @@ ExceptionOr<void> ApplePayDeferredPaymentRequest::validate() const
     if (!deferredBilling.label)
         return Exception(ExceptionCode::TypeError, "Missing label for 'deferredBilling'."_s);
     if (!isValidDecimalMonetaryValue(deferredBilling.amount) && deferredBilling.type != ApplePayLineItem::Type::Pending)
-        return Exception(ExceptionCode::TypeError, makeString('"', deferredBilling.amount, "\" is not a valid amount."));
+        return Exception(ExceptionCode::TypeError, makeString('"', deferredBilling.amount, "\" is not a valid amount."_s));
 
     if (!URL { managementURL }.isValid())
-        return Exception(ExceptionCode::TypeError, makeString('"', managementURL, "\" is not a valid URL."));
+        return Exception(ExceptionCode::TypeError, makeString('"', managementURL, "\" is not a valid URL."_s));
 
     if (freeCancellationDate.isNaN()) {
         if (!freeCancellationDateTimeZone.isEmpty())
@@ -245,13 +245,13 @@ ExceptionOr<void> ApplePayDeferredPaymentRequest::validate() const
     } else if (freeCancellationDateTimeZone.isEmpty())
         return Exception(ExceptionCode::TypeError, "Missing 'freeCancellationDateTimeZone' when 'freeCancellationDate' is set."_s);
     else if (!isTimeZoneValid(freeCancellationDateTimeZone))
-        return Exception(ExceptionCode::TypeError, makeString('"', freeCancellationDateTimeZone, "\" is not a valid time zone."));
+        return Exception(ExceptionCode::TypeError, makeString('"', freeCancellationDateTimeZone, "\" is not a valid time zone."_s));
 
     if (paymentDescription.isEmpty())
         return Exception(ExceptionCode::TypeError, "Missing 'paymentDescription'."_s);
 
     if (!tokenNotificationURL.isNull() && !URL { tokenNotificationURL }.isValid())
-        return Exception(ExceptionCode::TypeError, makeString('"', tokenNotificationURL, "\" is not a valid URL."));
+        return Exception(ExceptionCode::TypeError, makeString('"', tokenNotificationURL, "\" is not a valid URL."_s));
 
     return { };
 }
@@ -358,7 +358,7 @@ static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& d
 static ExceptionOr<ApplePayPaymentOrderDetails> convertAndValidate(ApplePayPaymentOrderDetails&& orderDetails)
 {
     if (auto& webServiceURL = orderDetails.webServiceURL; !URL { webServiceURL }.isValid())
-        return Exception(ExceptionCode::TypeError, makeString('"', webServiceURL, "\" is not a valid URL."));
+        return Exception(ExceptionCode::TypeError, makeString('"', webServiceURL, "\" is not a valid URL."_s));
 
     return WTFMove(orderDetails);
 }

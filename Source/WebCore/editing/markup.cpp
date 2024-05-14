@@ -884,9 +884,9 @@ bool StyledMarkupAccumulator::appendNodeToPreserveMSOList(Node& node)
         if (msoListDefinitionsEnd == notFound || start >= msoListDefinitionsEnd)
             return false;
 
-        append("<head><style class=\"", WebKitMSOListQuirksStyle, "\">\n<!--\n",
+        append("<head><style class=\""_s, WebKitMSOListQuirksStyle, "\">\n<!--\n"_s,
             StringView(textChild->data()).substring(start, msoListDefinitionsEnd - start + 3),
-            "\n-->\n</style></head>");
+            "\n-->\n</style></head>"_s);
 
         return true;
     }
@@ -1141,9 +1141,9 @@ String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Do
         "<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"\n"
         "xmlns:w=\"urn:schemas-microsoft-com:office:word\"\n"
         "xmlns:m=\"http://schemas.microsoft.com/office/2004/12/omml\"\n"
-        "xmlns=\"http://www.w3.org/TR/REC-html40\">",
+        "xmlns=\"http://www.w3.org/TR/REC-html40\">"_s,
         result,
-        "</html>");
+        "</html>"_s);
 }
 
 static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)

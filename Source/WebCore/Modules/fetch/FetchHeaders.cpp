@@ -78,7 +78,7 @@ static ExceptionOr<void> appendToHeaderMap(const String& name, const String& val
 
     String combinedValue = normalizedValue;
     if (headers.contains(name))
-        combinedValue = makeString(headers.get(name), ", ", normalizedValue);
+        combinedValue = makeString(headers.get(name), ", "_s, normalizedValue);
     auto canWriteResult = canWriteHeader(name, normalizedValue, combinedValue, guard);
     if (canWriteResult.hasException())
         return canWriteResult.releaseException();

@@ -256,7 +256,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
         // greater than maximum tokens), then jump to the step labeled default
         if (index > maxTokensForAutofillFieldCategory(category) - 1)
             return defaultLabel();
-        idlValue = makeString(tokens[index], " ", idlValue);
+        idlValue = makeString(tokens[index], ' ', idlValue);
     }
 
     // 12, If the indexth token in tokens is the first entry, then skip to the step labeled done.

@@ -155,7 +155,7 @@ String CSSNumericType::debugString() const
         flex ? makeString(" flex:"_s, *flex) : String(),
         percent ? makeString(" percent:"_s, *percent) : String(),
         percentHint ? makeString(" percentHint:"_s, WebCore::debugString(*percentHint)) : String(),
-    " }");
+    " }"_s);
 }
 
 auto CSSNumericType::valueForType(CSSNumericBaseType type) -> BaseTypeStorage&
