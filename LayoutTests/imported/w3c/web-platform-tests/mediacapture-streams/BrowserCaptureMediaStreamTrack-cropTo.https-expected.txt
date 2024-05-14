@@ -1,0 +1,9 @@
+When prompted, accept to give permission to use your audio, video devices.
+
+Description
+This test checks that BrowserCaptureMediaStreamTrack cropping works as expected.
+
+Start test
+
+FAIL Tests that cropping MediaStreamTrack objects works as expected promise_test: Unhandled rejection with value: object "InvalidStateError: getDisplayMedia must be called from a user gesture handler."
+

@@ -14,6 +14,7 @@ PASS sampleSize is supported
 PASS echoCancellation is supported
 FAIL autoGainControl is supported assert_true: expected true got undefined
 FAIL noiseSuppression is supported assert_true: expected true got undefined
+FAIL voiceIsolation is supported assert_true: expected true got undefined
 FAIL latency is supported assert_true: expected true got undefined
 FAIL channelCount is supported assert_true: expected true got undefined
 PASS deviceId is supported

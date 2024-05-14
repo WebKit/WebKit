@@ -8,7 +8,7 @@
 
 idl_test(
   ['mediacapture-streams'],
-  ['WebIDL', 'dom', 'html', 'permissions'],
+  ['webidl', 'dom', 'html', 'permissions'],
   async idl_array => {
     const inputDevices = [];
     const outputDevices = [];

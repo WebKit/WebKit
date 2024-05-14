@@ -1,0 +1,11 @@
+When prompted, accept to give permission to use your audio, video devices.
+
+Description
+This test checks that restricting BrowserCaptureMediaStreamTrack works as expected.
+
+
+
+FAIL Tests that restricting MediaStreamTrack objects works as expected (StackingContext). promise_test: Unhandled rejection with value: object "InvalidStateError: getDisplayMedia must be called from a user gesture handler."
+FAIL Tests that restricting MediaStreamTrack objects works as expected (OnlyOneBoxFragment). promise_test: Unhandled rejection with value: object "InvalidStateError: getDisplayMedia must be called from a user gesture handler."
+FAIL Tests that restricting MediaStreamTrack objects works as expected (FlattenedIn3D). promise_test: Unhandled rejection with value: object "InvalidStateError: getDisplayMedia must be called from a user gesture handler."
+

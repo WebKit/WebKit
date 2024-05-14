@@ -1,5 +1,0 @@
-
-PASS webkitMediaStream interface should not exist
-PASS navigator.webkitGetUserMedia should not exist
-PASS navigator.mozGetUserMedia should not exist
-

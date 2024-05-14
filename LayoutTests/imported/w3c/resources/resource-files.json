@@ -7939,7 +7939,6 @@
         "web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1-ref.html",
         "web-platform-tests/mathml/tools/operator-dictionary.xsl",
         "web-platform-tests/mediacapture-record/support/MediaRecorder-iframe.html",
-        "web-platform-tests/mediacapture-streams/crashtests/enumerateDevices-after-discard-1.https.html",
         "web-platform-tests/mediacapture-streams/iframe-enumerate-cleared.html",
         "web-platform-tests/mediacapture-streams/iframe-enumerate-nogum.html",
         "web-platform-tests/mediacapture-streams/iframe-enumerate.html",

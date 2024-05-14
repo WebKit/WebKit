@@ -5674,6 +5674,8 @@ imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mouseover-
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
 imported/w3c/web-platform-tests/uievents/click/click_events_on_input.html [ Pass Failure ]
 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html [ Pass Failure ]
+# Test is failing since its import.
+webkit.org/b/274091 imported/w3c/web-platform-tests/mediacapture-streams/BrowserCaptureMediaStreamTrack-restrictTo.https.html [ Failure ]
 
 webkit.org/b/162032 js/date-constructor.html [ Pass Timeout ]
 
