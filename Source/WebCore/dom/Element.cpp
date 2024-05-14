@@ -2100,14 +2100,14 @@ void Element::notifyAttributeChanged(const QualifiedName& name, const AtomString
     }
 }
 
-void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
+void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
     if (oldValue == newValue)
         return;
 
     switch (name.nodeName()) {
     case AttributeNames::classAttr:
-        classAttributeChanged(newValue);
+        classAttributeChanged(newValue, reason);
         break;
     case AttributeNames::idAttr: {
         AtomString oldId = elementData()->idForStyleResolution();
@@ -2298,24 +2298,34 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
     }
 }
 
-void Element::classAttributeChanged(const AtomString& newClassString)
+void Element::classAttributeChanged(const AtomString& newClassString, AttributeModificationReason reason)
 {
     // Note: We'll need ElementData, but it doesn't have to be UniqueElementData.
     if (!elementData())
         ensureUniqueElementData();
 
-    {
-        auto shouldFoldCase = document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
-        SpaceSplitString newClassNames(newClassString, shouldFoldCase);
-        Style::ClassChangeInvalidation styleInvalidation(*this, elementData()->classNames(), newClassNames);
-        document().invalidateQuerySelectorAllResultsForClassAttributeChange(*this, elementData()->classNames(), newClassNames);
-        elementData()->setClassNames(WTFMove(newClassNames));
-    }
-
     if (hasRareData()) {
         if (auto* classList = elementRareData()->classList())
             classList->associatedAttributeValueChanged();
     }
+
+    if (reason == AttributeModificationReason::Parser) {
+        // If ElementData is ShareableElementData created in parserSetAttributes,
+        // it is possible that SpaceSplitString is already created and set.
+        // We also do not need to invalidate caches / styles since it is not inserted to the tree yet.
+        if (elementData()->classNames().keyString() == newClassString)
+            return;
+        auto shouldFoldCase = document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
+        SpaceSplitString newClassNames(newClassString, shouldFoldCase);
+        elementData()->setClassNames(WTFMove(newClassNames));
+        return;
+    }
+
+    auto shouldFoldCase = document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
+    SpaceSplitString newClassNames(newClassString, shouldFoldCase);
+    Style::ClassChangeInvalidation styleInvalidation(*this, elementData()->classNames(), newClassNames);
+    document().invalidateQuerySelectorAllResultsForClassAttributeChange(*this, elementData()->classNames(), newClassNames);
+    elementData()->setClassNames(WTFMove(newClassNames));
 }
 
 void Element::partAttributeChanged(const AtomString& newValue)

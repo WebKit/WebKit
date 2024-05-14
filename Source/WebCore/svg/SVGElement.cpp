@@ -1021,7 +1021,7 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (attrName == HTMLNames::classAttr) {
-        classAttributeChanged(className());
+        classAttributeChanged(className(), AttributeModificationReason::Directly);
         invalidateInstances();
         return;
     }

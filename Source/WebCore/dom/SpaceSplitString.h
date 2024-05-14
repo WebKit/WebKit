@@ -78,6 +78,8 @@ public:
         m_refCount = tempRefCount;
     }
 
+    const AtomString& keyString() const { return m_keyString; }
+
     static ptrdiff_t tokensMemoryOffset() { return sizeof(SpaceSplitStringData); }
 
 private:
@@ -108,6 +110,13 @@ public:
 
     enum class ShouldFoldCase : bool { No, Yes };
     SpaceSplitString(const AtomString&, ShouldFoldCase);
+
+    const AtomString& keyString() const
+    {
+        if (m_data)
+            return m_data->keyString();
+        return nullAtom();
+    }
 
     friend bool operator==(const SpaceSplitString&, const SpaceSplitString&) = default;
     void set(const AtomString&, ShouldFoldCase);
