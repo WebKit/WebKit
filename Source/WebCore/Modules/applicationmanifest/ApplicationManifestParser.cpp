@@ -448,6 +448,8 @@ URL ApplicationManifestParser::parseId(const JSON::Object& manifest, const URL& 
     if (!protocolHostAndPortAreEqual(idURL, startURL))
         return startURL;
 
+    idURL.removeFragmentIdentifier();
+
     return idURL;
 }
 

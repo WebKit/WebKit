@@ -380,9 +380,12 @@ TEST_F(ApplicationManifestParserTest, Id)
     testId("./foo"_s, m_startURL, "https://example.com/foo"_s);
     testId("foo/"_s, m_startURL, "https://example.com/foo/"_s);
     testId("../../foo/bar"_s, m_startURL, "https://example.com/foo/bar"_s);
-    testId("../../foo/bar?query=hi#hi"_s, m_startURL, "https://example.com/foo/bar?query=hi#hi"_s);
+    testId("../../foo/bar?query=hi#fragment"_s, m_startURL, "https://example.com/foo/bar?query=hi"_s);
+    testId("../../foo/bar?query=hi#"_s, m_startURL, "https://example.com/foo/bar?query=hi"_s);
 
     testId("https://example.com/foo"_s, m_startURL, "https://example.com/foo"_s);
+    testId("https://example.com/foo#"_s, m_startURL, "https://example.com/foo"_s);
+    testId("https://example.com/foo#fragment"_s, m_startURL, "https://example.com/foo"_s);
     testId("https://anothersite.com/foo"_s, m_startURL, m_startURL.string());
     testId("https://invalid.com:a"_s, m_startURL, m_startURL.string());
 }
