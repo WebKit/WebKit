@@ -282,6 +282,11 @@ bool MediaControlsHost::shouldForceControlsDisplay() const
     return m_mediaElement && m_mediaElement->shouldForceControlsDisplay();
 }
 
+bool MediaControlsHost::supportsSeeking() const
+{
+    return m_mediaElement && m_mediaElement->supportsSeeking();
+}
+
 String MediaControlsHost::externalDeviceDisplayName() const
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

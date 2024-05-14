@@ -351,6 +351,9 @@ class MediaController
 
         this.controls.shouldUseSingleBarLayout = this.controls instanceof InlineMediaControls && this.isYouTubeEmbedWithTitle;
 
+        if (this.host && !this.host.supportsSeeking && this.layoutTraits.isFullscreen)
+            this.controls.timeControl.scrubber.disabled = true;
+
         this._updateControlsAvailability();
     }
 
