@@ -1655,6 +1655,7 @@ ALWAYS_INLINE auto FunctionParser<Context>::parseNestedBlocksEagerly(bool& shoul
             if (UNLIKELY(!(type.isVoid() || isValueType(type))))
                 return { };
             inlineSignature = m_typeInformation.thunkFor(type);
+            m_offset++;
         } else
             return { };
 
@@ -1666,9 +1667,6 @@ ALWAYS_INLINE auto FunctionParser<Context>::parseNestedBlocksEagerly(bool& shoul
         WASM_TRY_ADD_TO_CONTEXT(addBlock(inlineSignature, m_expressionStack, block, newStack));
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
         ASSERT(newStack.size() == inlineSignature->argumentCount());
-
-        // Only increment after possible block failures are checked.
-        m_offset++;
 
         switchToBlock(WTFMove(block), WTFMove(newStack));
 
