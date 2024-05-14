@@ -721,6 +721,9 @@ void WebProcessPool::registerNotificationObservers()
         "com.apple.accessibility.cache.ax"_s,
         "com.apple.accessibility.cache.enhance.text.legibility"_s,
         "com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent"_s,
+        "com.apple.accessibility.cache.invert.colors"_s,
+        "com.apple.accessibility.cache.vot"_s,
+        "com.apple.accessibility.cache.zoom"_s,
         "com.apple.language.changed"_s,
         "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"_s,
 #if !PLATFORM(MAC)
