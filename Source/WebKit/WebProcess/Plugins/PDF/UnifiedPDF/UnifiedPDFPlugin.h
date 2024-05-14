@@ -184,8 +184,6 @@ public:
         Plugin
     };
 
-    Vector<WebCore::FloatRect> boundsForSelection(const PDFSelection *, CoordinateSpace inSpace) const;
-
     RetainPtr<PDFPage> pageAtIndex(PDFDocumentLayout::PageIndex) const;
 
     void setPDFDisplayModeForTesting(const String&) final;
@@ -391,8 +389,14 @@ private:
 
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition) final;
     RefPtr<WebCore::TextIndicator> textIndicatorForSelection(PDFSelection *, OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
+
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
-    std::optional<WebCore::FloatRect> selectionBoundsForFirstPageInDocumentSpace(const RetainPtr<PDFSelection>&) const;
+
+    enum class FirstPageOnly : bool { No, Yes };
+    PDFPageCoverage pageCoverageForSelection(PDFSelection *, FirstPageOnly = FirstPageOnly::No) const;
+
+    Vector<WebCore::FloatRect> boundsForSelection(PDFSelection *, CoordinateSpace) const;
+
     bool showDefinitionForSelection(PDFSelection *);
     std::pair<String, RetainPtr<PDFSelection>> textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint&, WebHitTestResultData&) override;
     WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition) override;
