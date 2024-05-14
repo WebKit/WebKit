@@ -436,12 +436,12 @@ static std::optional<CSSUnresolvedColor> consumeColorFunction(CSSParserTokenRang
         if (!originColor)
             return { };
 
-        return consumeColorSpace(args, [&]<typename Descriptor> {
+        return consumeColorSpace(args, [&]<typename Descriptor>() {
             return makeCSSUnresolvedColor(consumeRelativeFunctionParameters<Descriptor>(args, state, WTFMove(*originColor)));
         });
     }
 
-    return consumeColorSpace(args, [&]<typename Descriptor> {
+    return consumeColorSpace(args, [&]<typename Descriptor>() {
         return makeCSSUnresolvedColor(consumeAbsoluteFunctionParameters<Descriptor>(args, state));
     });
 }
