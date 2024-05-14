@@ -1700,8 +1700,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-eleme
 
 imported/w3c/web-platform-tests/svg/import/filters-displace-01-f-manual.svg [ Failure ]
 
-imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg [ Failure ]
-
 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
 
 fast/mediastream/mediastreamtrack-video-zoom.html [ Failure ]
