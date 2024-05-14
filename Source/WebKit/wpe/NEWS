@@ -1,4 +1,16 @@
 =================
+WPE WebKit 2.45.2
+=================
+
+What's new in WPE WebKit 2.45.2?
+
+  - Use Cairo on big-endian platforms for now, since Skia does not support them.
+  - Fix a crash in GIF image decoder.
+  - Revert the text scaling fix, since it caused several issues in some sites.
+  - Add new API to load settings from a config file.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.45.1
 =================
 
