@@ -1939,10 +1939,10 @@ TEST(WKDownload, ResumeWithExtraInitialDataOnDisk)
         NSError *error = nil;
         [[NSFileManager defaultManager] removeItemAtURL:expectedDownloadFile error:&error];
         EXPECT_NULL(error);
-        EXPECT_TRUE([[(NSString *)makeString(longString<3000>('b'), longString<3000>('c')) dataUsingEncoding:NSUTF8StringEncoding] writeToURL:expectedDownloadFile atomically:YES]);
+        EXPECT_TRUE([[(NSString *)makeString(longString<3000>('b'), longString<2000>('c')) dataUsingEncoding:NSUTF8StringEncoding] writeToURL:expectedDownloadFile atomically:YES]);
     });
 
-    checkFileContents(expectedDownloadFile, makeString(longString<3000>('b'), longString<3000>('c'), longString<5000>('d')));
+    checkFileContents(expectedDownloadFile, makeString(longString<3000>('b'), longString<2000>('c'), longString<5000>('d')));
 }
 
 TEST(WKDownload, ResumeWithInvalidResumeData)
