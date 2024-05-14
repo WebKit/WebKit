@@ -167,6 +167,7 @@ private:
     void promoteUpcomingAPIMethodTracker(const String& destinationKey);
     void notifyCommittedToEntry(NavigationAPIMethodTracker*, NavigationHistoryEntry*);
     Result apiMethodTrackerDerivedResult(const NavigationAPIMethodTracker&);
+    void abortOngoingNavigation(std::optional<Exception> = std::nullopt);
 
     std::optional<size_t> m_currentEntryIndex;
     RefPtr<NavigationTransition> m_transition;

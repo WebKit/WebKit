@@ -478,6 +478,23 @@ void Navigation::cleanupAPIMethodTracker(NavigationAPIMethodTracker* apiMethodTr
     }
 }
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#abort-the-ongoing-navigation
+void Navigation::abortOngoingNavigation(std::optional<Exception> error)
+{
+    ASSERT(m_ongoingNavigateEvent);
+    m_ongoingNavigateEvent = nullptr;
+    // FIXME: dispatch navigateerrorEvent.
+    if (m_ongoingAPIMethodTracker) {
+        JSC::JSValue exceptionObject;
+        if (!error)
+            error = Exception { ExceptionCode::AbortError, "Navigation was aborted"_s };
+        m_ongoingAPIMethodTracker->committedPromise->reject(*error, RejectAsHandled::No, exceptionObject);
+        m_ongoingAPIMethodTracker->finishedPromise->reject(*error, RejectAsHandled::No, exceptionObject);
+        cleanupAPIMethodTracker(m_ongoingAPIMethodTracker.get());
+    }
+    // FIXME: handle NavigationTransition.
+}
+
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inner-navigate-event-firing-algorithm
 bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationType, Ref<NavigationDestination>&& destination, const String& downloadRequestFilename)
 {
@@ -531,8 +548,8 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
     if (event->defaultPrevented()) {
         // FIXME: If navigationType is "traverse", then consume history-action user activation.
-        // FIXME: If event's abort controller's signal is not aborted, then abort the ongoing navigation given navigation.
-        m_ongoingNavigateEvent = nullptr;
+        if (!abortController->signal().aborted())
+            abortOngoingNavigation();
         return false;
     }
 
