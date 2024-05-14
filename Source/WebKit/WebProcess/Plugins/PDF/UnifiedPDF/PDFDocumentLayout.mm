@@ -355,7 +355,7 @@ void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidt
 
             // Center each page vertically in the row.
             // Center the pair of pages horizontally.
-            float horizontalSpace = maxRowWidth - 2 * documentMargin.width() - leftPageBounds.width() - rightPageBounds.width();
+            float horizontalSpace = maxRowWidth - 2 * documentMargin.width() - leftPageBounds.width() - rightPageBounds.width() - pageMargin.width();
             leftPageBounds.setX(std::floor(documentMargin.width() + horizontalSpace / 2));
             rightPageBounds.setX(leftPageBounds.maxX() + pageMargin.width());
 
