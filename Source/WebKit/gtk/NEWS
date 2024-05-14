@@ -1,4 +1,16 @@
 ================
+WebKitGTK 2.45.2
+================
+
+What's new in WebKitGTK 2.45.2?
+
+  - Use cairo on big-endian for now, since skia doesn't support it.
+  - Fix a crash in GIF image decoder.
+  - Revert the text scaling fix, since it caused several issues in some sites.
+  - Add new API to load settings from a config file.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.45.1
 ================
 
