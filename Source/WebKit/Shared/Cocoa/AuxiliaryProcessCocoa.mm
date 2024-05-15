@@ -39,6 +39,7 @@
 #import <objc/runtime.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
+#import <pal/spi/cocoa/NotifySPI.h>
 #import <wtf/FileSystem.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -335,5 +336,32 @@ bool AuxiliaryProcess::isSystemWebKit()
     return isSystemWebKit;
 }
 
+#if ENABLE(NOTIFY_BLOCKING)
+static bool shouldRestrictNotifyd()
+{
+    static dispatch_once_t once;
+    static bool hasEntitlement = false;
+    dispatch_once(&once, ^{
+        xpc_object_t entitlement = xpc_copy_entitlement_for_token("com.apple.developer.web-browser-engine.restrict.notifyd", nullptr);
+        if (entitlement == XPC_BOOL_TRUE)
+            hasEntitlement = true;
+        if (entitlement)
+            xpc_release(entitlement);
+    });
+    return hasEntitlement;
+}
+#endif
+
+void AuxiliaryProcess::setNotifyOptions()
+{
+    uint32_t opts = NOTIFY_OPT_DISPATCH;
+#if ENABLE(NOTIFY_BLOCKING)
+    if (shouldRestrictNotifyd())
+        opts |= NOTIFY_OPT_LOOPBACK;
+#elif ENABLE(NOTIFY_FILTERING)
+    opts |= NOTIFY_OPT_REGEN | NOTIFY_OPT_FILTERED;
+#endif
+    notify_set_options(opts);
+}
 
 } // namespace WebKit
