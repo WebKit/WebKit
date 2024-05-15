@@ -103,7 +103,12 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationCha
     bool isTLSHandshake = scheme == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested
         || scheme == ProtectionSpace::AuthenticationScheme::ClientCertificateRequested;
 
-    if (!isTLSHandshake) {
+#if USE(GLIB)
+    bool askUserForCredentials = scheme == ProtectionSpace::AuthenticationScheme::ClientCertificatePINRequested;
+#else
+    bool askUserForCredentials = false;
+#endif
+    if (!askUserForCredentials && !isTLSHandshake) {
         completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
         return;
     }
