@@ -5224,27 +5224,25 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
     LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u) replacementRange:(%u, %u)", string, selectedRange.location, selectedRange.length, replacementRange.location, replacementRange.length);
 
 #if HAVE(INLINE_PREDICTIONS)
-    BOOL hasTextCompletion = [&] {
-        if (!isAttributedString)
-            return NO;
+    if (RetainPtr attributedString = dynamic_objc_cast<NSAttributedString>(string)) {
+        BOOL hasTextCompletion = [&] {
+            __block BOOL result;
 
-        __block BOOL result;
+            [attributedString enumerateAttribute:NSTextCompletionAttributeName inRange:NSMakeRange(0, [attributedString length]) options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+                if ([value respondsToSelector:@selector(boolValue)] && [value boolValue]) {
+                    result = YES;
+                    *stop = YES;
+                }
+            }];
 
-        NSAttributedString *attributedString = (NSAttributedString *)string;
-        [attributedString enumerateAttribute:NSTextCompletionAttributeName inRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
-            if ([value respondsToSelector:@selector(boolValue)] && [value boolValue]) {
-                result = YES;
-                *stop = YES;
-            }
-        }];
+            return result;
+        }();
 
-        return result;
-    }();
-
-    if (hasTextCompletion || m_isHandlingAcceptedCandidate) {
-        m_isHandlingAcceptedCandidate = hasTextCompletion;
-        m_page->setWritingSuggestion([string string], selectedRange);
-        return;
+        if (hasTextCompletion || m_isHandlingAcceptedCandidate) {
+            m_isHandlingAcceptedCandidate = hasTextCompletion;
+            m_page->setWritingSuggestion([attributedString string], selectedRange);
+            return;
+        }
     }
 #endif
 

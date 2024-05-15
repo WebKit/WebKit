@@ -219,6 +219,70 @@ TEST(WKWebViewMacEditingTests, InlinePredictionsShouldSurpressAutocorrection)
     NSString *hasSpellingMarker = [webView stringByEvaluatingJavaScript:@"internals.hasSpellingMarker(6, 9) ? 'true' : 'false'"];
     EXPECT_STREQ("false", hasSpellingMarker.UTF8String);
 }
+
+
+@interface SetMarkedTextWithNoAttributedStringTestCandidate : NSTextCheckingResult
+@end
+
+@implementation SetMarkedTextWithNoAttributedStringTestCandidate {
+    RetainPtr<NSString> _string;
+    NSRange _range;
+}
+
+- (instancetype)initWithReplacementString:(NSString *)string inRange:(NSRange)range
+{
+    if (self = [super init]) {
+        _string = string;
+        _range = range;
+    }
+    return self;
+}
+
+- (NSString *)replacementString
+{
+    return _string.get();
+}
+
+- (NSTextCheckingType)resultType
+{
+    return NSTextCheckingTypeReplacement;
+}
+
+- (NSRange)range
+{
+    return _range;
+}
+
+@end
+
+TEST(WKWebViewMacEditingTests, SetMarkedTextWithNoAttributedString)
+{
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[TestWKWebView<NSTextInputClient, NSTextInputClient_Async> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [webView _setContinuousSpellCheckingEnabledForTesting:YES];
+    [webView synchronouslyLoadHTMLString:@"<body id='p' contenteditable>Is it &nbsp;</body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView _setEditable:YES];
+    [webView waitForNextPresentationUpdate];
+
+    NSString *modifySelectionJavascript = @""
+    "(() => {"
+    "  const node = document.getElementById('p').firstChild;"
+    "  const range = document.createRange();"
+    "  range.setStart(node, 7);"
+    "  range.setEnd(node, 7);"
+    "  "
+    "  var selection = window.getSelection();"
+    "  selection.removeAllRanges();"
+    "  selection.addRange(range);"
+    "})();";
+
+    [webView stringByEvaluatingJavaScript:modifySelectionJavascript];
+
+    [webView _handleAcceptedCandidate:adoptNS([[SetMarkedTextWithNoAttributedStringTestCandidate alloc] initWithReplacementString:@"test" inRange:NSMakeRange(0, 0)]).get()];
+
+    [webView setMarkedText:@"hello" selectedRange:NSMakeRange(4, 0) replacementRange:NSMakeRange(6, 4)];
+}
 #endif
 
 #endif // PLATFORM(MAC)
