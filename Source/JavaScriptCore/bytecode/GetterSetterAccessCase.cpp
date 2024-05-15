@@ -70,11 +70,6 @@ GetterSetterAccessCase::GetterSetterAccessCase(const GetterSetterAccessCase& oth
     m_domAttribute = other.m_domAttribute;
 }
 
-Ref<AccessCase> GetterSetterAccessCase::cloneImpl() const
-{
-    return adoptRef(*new GetterSetterAccessCase(*this));
-}
-
 JSObject* GetterSetterAccessCase::tryGetAlternateBaseImpl() const
 {
     if (auto* object = customSlotBase())

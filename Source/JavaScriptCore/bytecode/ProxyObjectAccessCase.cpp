@@ -54,11 +54,6 @@ Ref<AccessCase> ProxyObjectAccessCase::create(VM& vm, JSCell* owner, AccessType 
     return adoptRef(*new ProxyObjectAccessCase(vm, owner, type, identifier));
 }
 
-Ref<AccessCase> ProxyObjectAccessCase::cloneImpl() const
-{
-    return adoptRef(*new ProxyObjectAccessCase(*this));
-}
-
 void ProxyObjectAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Indenter& indent) const
 {
     Base::dumpImpl(out, comma, indent);

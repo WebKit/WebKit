@@ -323,7 +323,6 @@ protected:
 
     AccessCase& operator=(const AccessCase&) = delete;
 
-    Ref<AccessCase> cloneImpl() const;
     WatchpointSet* additionalSetImpl() const { return nullptr; }
     JSObject* tryGetAlternateBaseImpl() const;
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const { }
@@ -346,10 +345,6 @@ private:
     DECLARE_VISIT_AGGREGATE_WITH_MODIFIER(const);
     bool visitWeak(VM&) const;
     template<typename Visitor> void propagateTransitions(Visitor&) const;
-
-    // FIXME: This only exists because of how AccessCase puts post-generation things into itself.
-    // https://bugs.webkit.org/show_bug.cgi?id=156456
-    Ref<AccessCase> clone() const;
 
     AccessType m_type;
 protected:

@@ -50,11 +50,6 @@ Ref<AccessCase> ModuleNamespaceAccessCase::create(VM& vm, JSCell* owner, Cacheab
     return adoptRef(*new ModuleNamespaceAccessCase(vm, owner, identifier, moduleNamespaceObject, moduleEnvironment, scopeOffset));
 }
 
-Ref<AccessCase> ModuleNamespaceAccessCase::cloneImpl() const
-{
-    return adoptRef(*new ModuleNamespaceAccessCase(*this));
-}
-
 } // namespace JSC
 
 #endif // ENABLE(JIT)

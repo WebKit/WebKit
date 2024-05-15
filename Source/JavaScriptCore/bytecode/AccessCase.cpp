@@ -315,11 +315,6 @@ JSObject* AccessCase::tryGetAlternateBaseImpl() const
     }
 }
 
-Ref<AccessCase> AccessCase::cloneImpl() const
-{
-    return adoptRef(*new AccessCase(*this));
-}
-
 bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
 {
     if (viaGlobalProxy())
@@ -1575,15 +1570,6 @@ void AccessCase::operator delete(AccessCase* accessCase, std::destroying_delete_
         std::destroy_at(accessCase);
         std::decay_t<decltype(*accessCase)>::freeAfterDestruction(accessCase);
     });
-}
-
-Ref<AccessCase> AccessCase::clone() const
-{
-    RefPtr<AccessCase> result;
-    const_cast<AccessCase*>(this)->runWithDowncast([&](auto* accessCase) {
-        result = accessCase->cloneImpl();
-    });
-    return result.releaseNonNull();
 }
 
 WatchpointSet* AccessCase::additionalSet() const

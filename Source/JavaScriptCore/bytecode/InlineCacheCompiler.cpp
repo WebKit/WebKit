@@ -3990,10 +3990,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             // If the case had been generated, then we have to keep the original in m_list in case we
             // fail to regenerate. That case may have data structures that are used by the code that it
             // had generated. If the case had not been generated, then we want to remove it from m_list.
-            if (doesJSCalls(someCase->type()))
-                cases.append(someCase->clone());
-            else
-                cases.append(someCase);
+            cases.append(someCase);
 
             additionalWatchpointSets.appendVector(sets);
         }();

@@ -46,7 +46,6 @@ private:
     ProxyObjectAccessCase(const ProxyObjectAccessCase&);
 
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const;
-    Ref<AccessCase> cloneImpl() const;
 };
 
 } // namespace JSC
