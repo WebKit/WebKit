@@ -42,6 +42,10 @@ OBJC_CLASS PDFDestination;
 OBJC_CLASS PDFPage;
 OBJC_CLASS WKPDFFormMutationObserver;
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 class FrameView;
 class KeyboardScrollingAnimator;
@@ -74,11 +78,12 @@ enum class RepaintRequirement : uint8_t {
     Selection       = 1 << 1,
     HoverOverlay    = 1 << 2
 };
+using RepaintRequirements = OptionSet<RepaintRequirement>;
 
 class AnnotationTrackingState {
 public:
-    OptionSet<RepaintRequirement> startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
-    OptionSet<RepaintRequirement> finishAnnotationTracking(PDFAnnotation* annotationUnderMouse, WebEventType, WebMouseEventButton);
+    RepaintRequirements startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
+    RepaintRequirements finishAnnotationTracking(PDFAnnotation* annotationUnderMouse, WebEventType, WebMouseEventButton);
 
     PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
     bool isBeingHovered() const;
@@ -128,7 +133,7 @@ public:
     void handlePDFActionForAnnotation(PDFAnnotation *, unsigned currentPageIndex);
 #endif
     enum class IsAnnotationCommit : bool { No, Yes };
-    static OptionSet<RepaintRequirement> repaintRequirementsForAnnotation(PDFAnnotation *, IsAnnotationCommit = IsAnnotationCommit::No);
+    static RepaintRequirements repaintRequirementsForAnnotation(PDFAnnotation *, IsAnnotationCommit = IsAnnotationCommit::No);
     void repaintAnnotationsForFormField(NSString *fieldName);
 
     Vector<WebCore::FloatRect> annotationRectsForTesting() const final;
@@ -505,16 +510,16 @@ private:
 
     void startTrackingAnnotation(RetainPtr<PDFAnnotation>&&, WebEventType, WebMouseEventButton);
     void updateTrackedAnnotation(PDFAnnotation *annotationUnderMouse);
-    void finishTrackingAnnotation(PDFAnnotation *annotationUnderMouse, WebEventType, WebMouseEventButton, OptionSet<RepaintRequirement> = { });
+    void finishTrackingAnnotation(PDFAnnotation *annotationUnderMouse, WebEventType, WebMouseEventButton, RepaintRequirements = { });
 
     void revealAnnotation(PDFAnnotation *);
 
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&, WebCore::GraphicsLayer::Type);
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
-    void setNeedsRepaintForAnnotation(PDFAnnotation *, OptionSet<RepaintRequirement>);
-    void setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement>, const WebCore::FloatRect&);
-    void setNeedsRepaintInDocumentRects(OptionSet<RepaintRequirement>, const Vector<WebCore::FloatRect>&);
+    void setNeedsRepaintForAnnotation(PDFAnnotation *, RepaintRequirements);
+    void setNeedsRepaintInDocumentRect(RepaintRequirements, const WebCore::FloatRect&);
+    void setNeedsRepaintInDocumentRects(RepaintRequirements, const Vector<WebCore::FloatRect>&);
 
     // "Up" is inside-out.
     template <typename T>
@@ -629,6 +634,8 @@ private:
     std::unique_ptr<PDFDataDetectorOverlayController> m_dataDetectorOverlayController;
 #endif
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, RepaintRequirement);
 
 } // namespace WebKit
 
