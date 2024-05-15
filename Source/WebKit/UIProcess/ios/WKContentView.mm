@@ -522,6 +522,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
         [self _updateForScreen:newWindow.screen];
     }
+
+    if (window && !newWindow)
+        [self dismissPickers];
 }
 
 - (void)didMoveToWindow
