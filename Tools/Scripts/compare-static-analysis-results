@@ -24,91 +24,62 @@
 import os
 import subprocess
 import argparse
-import sys
+import json
 
 CHECKERS = ['NoUncountedMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
 PROJECTS = ['WebCore', 'WebKit']
 
 
 def parser():
-    parser = argparse.ArgumentParser(description='compare dirty file lists')
-    parser.add_argument(
-        'archived_dir',
-        help='directory of dirty lists from previous build'
-    )
+    parser = argparse.ArgumentParser(description='Finds new regressions and fixes between two smart pointer static analysis results')
     parser.add_argument(
         'new_dir',
-        help='directory of dirty lists from new build'
+        help='Path to directory of results from new build'
+    )
+    parser.add_argument(
+        '--archived-dir',
+        dest='archived_dir',
+        help='Path to directory of previous results for comparison'
     )
     parser.add_argument(
         '--build-output',
         dest='build_output',
-        help='output from new build',
+        help='Path to the static analyzer output from the new build',
     )
     parser.add_argument(
         '--scan-build-path',
         dest='scan_build',
-        help='path to scan-build'
+        help='Path to scan-build executable'
+    )
+    parser.add_argument(
+        '--check-expectations',
+        dest='check_expectations',
+        action='store_true',
+        default=False,
+        help='Compare new results to expectations (instead of a previous run)'
     )
     return parser.parse_args()
 
 
-def find_diff(file1, file2, mode):
-    # Create empty file if the corresponding one doesn't exist - this happens if a checker is added or removed
-    if not os.path.exists(f'{file1}-{mode}'):
-        f = open(f'{file1}-{mode}', 'a')
-        f.close()
-    if not os.path.exists(f'{file2}-{mode}'):
-        f = open(f'{file2}-{mode}', 'a')
-        f.close()
+def find_diff(args, file1, file2):
+    if not args.check_expectations:
+        # Create empty file if the corresponding one doesn't exist - this happens if a checker is added or removed
+        if not os.path.exists(file1):
+            f = open(file1, 'a')
+            f.close()
+        if not os.path.exists(file2):
+            f = open(file2, 'a')
+            f.close()
 
-    # Find new regressions
-    new_lines_list = []
-    find_issues_cmd = f"/usr/bin/grep -F -v -f {file1}-{mode} {file2}-{mode}"
-    try:
-        new_lines = subprocess.check_output(find_issues_cmd, shell=True, stderr=subprocess.STDOUT, text=True)
-        new_lines_list = new_lines.splitlines()
-    except subprocess.CalledProcessError as e:
-        if not e.returncode == 1:
-            sys.stderr.write(f'{e.output}')
+    with open(file1) as baseline_file, open(file2) as new_file:
+        baseline_list = baseline_file.read().splitlines()
+        new_file_list = new_file.read().splitlines()
+        # Find new regressions
+        diff_new_from_baseline = set(new_file_list) - set(baseline_list)
+         # Find fixes
+        diff_baseline_from_new = set(baseline_list) - set(new_file_list)
 
-    # Find all fixes
-    fixed_lines_list = []
-    find_fixes_cmd = f'grep -F -v -f {file2}-{mode} {file1}-{mode}'
-    try:
-        fixed_lines = subprocess.check_output(find_fixes_cmd, shell=True, text=True, stderr=subprocess.STDOUT)
-        fixed_lines_list = fixed_lines.splitlines()
-    except subprocess.CalledProcessError as e:
-        if not e.returncode == 1:
-            sys.stderr.write(f'{e.output}')
-
-    return set(new_lines_list), set(fixed_lines_list)
-
-
-def compare_project_results(args, archive_path, new_path, project):
-    new_issues_total = set()
-    new_files_total = set()
-    fixed_issues_total = set()
-    fixed_files_total = set()
-
-    for checker in CHECKERS:
-        print(f'{checker}:')
-        new_issues, fixed_issues = find_diff(f'{archive_path}/{checker}', f'{new_path}/{checker}', 'issues')
-        new_files, fixed_files = find_diff(f'{archive_path}/{checker}', f'{new_path}/{checker}', 'files')
-        fixed_issues_total.update(fixed_issues)
-        fixed_files_total.update(fixed_files)
-        new_issues_total.update(new_issues)
-        new_files_total.update(new_files)
-
-        print(f'    Issues fixed: {len(fixed_issues)}')
-        print(f'    Files fixed: {len(fixed_files)}')
-        print(f'    New issues: {len(new_issues)}')
-        print(f'    New files with issues: {len(new_files)}\n')
-
-    if new_issues_total and args.scan_build:
-        create_filtered_results_dir(args, project, new_issues_total, 'StaticAnalyzerRegressions')
-
-    return new_issues_total, new_files_total
+    return set(diff_new_from_baseline), set(diff_baseline_from_new)
 
 
 def create_filtered_results_dir(args, project, issues, category='StaticAnalyzerRegressions'):
@@ -125,23 +96,101 @@ def create_filtered_results_dir(args, project, issues, category='StaticAnalyzerR
     subprocess.run([args.scan_build, '--generate-index-only', os.path.abspath(path_to_project)])
 
 
+def compare_project_results_to_expectations(args, new_path, project):
+    unexpected_issues_total = set()
+    unexpected_buggy_files = set()
+    unexpected_clean_files = set()
+
+    # Compare the list of dirty files to the expectations list of files
+    for checker in CHECKERS:
+        # Get unexpected clean and buggy files per checker
+        buggy_files, clean_files = find_diff(args, os.path.abspath(f'Source/{project}/{checker}Expectations.txt'), f'{new_path}/{project}/{checker}-files.txt')
+        unexpected_clean_files.update(clean_files)
+        unexpected_buggy_files.update(buggy_files)
+
+        # Get unexpected issues per checker
+        unexpected_issues = set()
+        with open(f'{new_path}/issues_per_file.json') as f:
+            issues_per_file = json.load(f)
+        for file_name in buggy_files:
+            unexpected_issues.update(issues_per_file[checker][file_name])
+        unexpected_issues_total.update(unexpected_issues)
+
+        with open(f'{new_path}/{project}/UnexpectedCleanFiles{checker}.txt', 'a') as f:
+            f.write('\n'.join(clean_files))
+        with open(f'{new_path}/{project}/UnexpectedFailedFiles{checker}.txt', 'a') as f:
+            f.write('\n'.join(buggy_files))
+        with open(f'{new_path}/{project}/UnexpectedIssues{checker}.txt', 'a') as f:
+            f.write('\n'.join(unexpected_issues))
+
+        print(f'{checker}:')
+        print(f'    Unexpected passing files: {len(clean_files)}')
+        print(f'    Unexpected failing files: {len(buggy_files)}')
+        print(f'    Unexpected issues: {len(unexpected_issues)}\n')
+
+    if unexpected_issues_total and args.scan_build:
+        create_filtered_results_dir(args, project, unexpected_issues_total, 'StaticAnalyzerUnexpectedRegressions')
+    return unexpected_buggy_files, unexpected_clean_files, unexpected_issues_total
+
+
+def compare_project_results_by_run(args, archive_path, new_path, project):
+    new_issues_total = set()
+    new_files_total = set()
+    fixed_issues_total = set()
+    fixed_files_total = set()
+
+    for checker in CHECKERS:
+        print(f'{checker}:')
+        new_issues, fixed_issues = find_diff(args, f'{archive_path}/{checker}-issues', f'{new_path}/{project}/{checker}-issues.txt')
+        new_files, fixed_files = find_diff(args, f'{archive_path}/{checker}-files', f'{new_path}/{project}/{checker}-files.txt')
+        fixed_issues_total.update(fixed_issues)
+        fixed_files_total.update(fixed_files)
+        new_issues_total.update(new_issues)
+        new_files_total.update(new_files)
+
+        print(f'    Issues fixed: {len(fixed_issues)}')
+        print(f'    Files fixed: {len(fixed_files)}')
+        print(f'    New issues: {len(new_issues)}')
+        print(f'    New files with issues: {len(new_files)}\n')
+
+    if new_issues_total and args.scan_build:
+        create_filtered_results_dir(args, project, new_issues_total, 'StaticAnalyzerRegressions')
+
+    return new_issues_total, new_files_total
+
+
 def main():
     args = parser()
     new_issues_total = set()
     new_files_total = set()
+    unexpected_passes_total = set()
+    unexpected_failures_total = set()
+    unexpected_issues_total = set()
 
     for project in PROJECTS:
-        archive_path = os.path.abspath(f'{args.archived_dir}/{project}')
-        new_path = os.path.abspath(f'{args.new_dir}/{project}')
         print(f'\n------ {project} ------\n')
-        new_issues, new_files = compare_project_results(args, archive_path, new_path, project)
-        new_issues_total.update(new_issues)
-        new_files_total.update(new_files)
+        new_path = os.path.abspath(f'{args.new_dir}')
+        if args.check_expectations:
+            unexpected_failures, unexpected_passes, unexpected_issues = compare_project_results_to_expectations(args, new_path, project)
+            unexpected_failures_total.update(unexpected_failures)
+            unexpected_passes_total.update(unexpected_passes)
+            unexpected_issues_total.update(unexpected_issues)
+        else:
+            archive_path = os.path.abspath(f'{args.archived_dir}/{project}')
+            new_issues, new_files = compare_project_results_by_run(args, archive_path, new_path, project)
+            new_issues_total.update(new_issues)
+            new_files_total.update(new_files)
 
-    if new_issues_total:
-        print(f'\nTotal new issues: {len(new_issues_total)}')
-    if new_files_total:
-        print(f'Total new files: {len(new_files_total)}')
+    print('\n')
+    for type, type_total in {
+        'new issues': new_issues_total,
+        'new files': new_files_total,
+        'unexpected failing files': unexpected_failures_total,
+        'unexpected passing files': unexpected_passes_total,
+        'unexpected issues': unexpected_issues_total
+    }:
+        if type_total:
+            print(f'Total {type}: {len(type_total)}')
 
     return 0
 

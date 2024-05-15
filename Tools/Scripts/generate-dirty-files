@@ -38,21 +38,22 @@ PROJECTS = ['WebCore', 'WebKit']
 
 
 def parser():
-    parser = argparse.ArgumentParser(description='analyze clang results')
+    parser = argparse.ArgumentParser(description='Generates files listing new regressions and files per checker type')
     parser.add_argument(
         'results_dir',
-        help='directory of results to parse'
+        help='Path to directory of results to parse'
     )
     parser.add_argument(
         '--output-dir',
         dest='output_dir',
-        help='output directory for dirty files list',
+        help='Path to output directory for generated files',
         default='smart-pointer-result-archive'
     )
     parser.add_argument(
         '--build-dir',
         dest='build_dir',
-        help='path to build directory, used to standardize file paths'
+        help='Path to build directory, used to standardize file paths',
+        required=True
     )
 
     return parser.parse_args()
@@ -69,8 +70,7 @@ def parse_results_file(args, file_path):
                 if 'BUGFILE' in line:
                     bug_file = line.removeprefix('<!-- BUGFILE ')
                     bug_file = bug_file.removesuffix(' -->\n')
-                    if args.build_dir:
-                        bug_file = bug_file.removeprefix(f'{args.build_dir}/')
+                    bug_file = bug_file.removeprefix(f'{args.build_dir}/')
                 if 'ISSUEHASHCONTENTOFLINEINCONTEXT' in line:
                     issue_hash = line.removeprefix('<!-- ISSUEHASHCONTENTOFLINEINCONTEXT ')
                     issue_hash = issue_hash.removesuffix(' -->\n')
@@ -94,24 +94,30 @@ def find_project_results(args, project, file_list, results_data):
             if not file_name:
                 continue
 
-            # Create files listing issue hashes and file names.
             if bug_type not in bug_counts:
                 bug_counts[bug_type] = 0
             bug_counts[bug_type] += 1
-            issue_obj = {"hash": issue_hash, "bugtype": bug_type, "line": bug_line}
-            list_of_issues = results_data.get(file_name, [])
-            list_of_issues.append(issue_obj)
-            results_data[file_name] = list_of_issues
 
-            output_file_name = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}-issues')
-            f = open(output_file_name, 'a')
-            f.write(f'{issue_hash}\n')
-            f.close()
+            # Truncates path after project name to match the expectations file
+            try:
+                file_name = file_name.split(f'{project}/')[1]
+            except IndexError:
+                continue
 
-            output_file_name_2 = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}-files')
-            f = open(output_file_name_2, 'a')
-            f.write(f'{file_name}\n')
-            f.close()
+            # Maps filename to issues for each bug type
+            file_dict = results_data.get(CHECKER_MAP[bug_type], {})
+            if not file_name in file_dict:
+                file_dict[file_name] = []
+            file_dict[file_name].append(issue_hash)
+            results_data[CHECKER_MAP[bug_type]] = file_dict
+
+            output_file_name = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}-issues.txt')
+            with open(output_file_name, 'a') as f:
+                f.write(f'{issue_hash}\n')
+
+            output_file_name_2 = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}-files.txt')
+            with open(output_file_name_2, 'a') as f:
+                f.write(f'{file_name}\n')
 
     for type, count in bug_counts.items():
         print(f'    {type}: {count}')
@@ -142,7 +148,7 @@ def find_all_results(args):
         find_project_results(args, project, project_files, results_data)
 
     print("\nWriting results files...")
-    results_data_file = os.path.abspath(f'{args.output_dir}/dirty_file_data.json')
+    results_data_file = os.path.abspath(f'{args.output_dir}/issues_per_file.json')
     with open(results_data_file, "w") as f:
         results_data_obj = json.dumps(results_data, indent=4)
         f.write(results_data_obj)
