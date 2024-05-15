@@ -120,6 +120,7 @@ private:
     RefPtr<API::NavigationAction> m_navigationAction;
     WeakPtr<WebPageProxy> m_page;
     InitiatingAction m_action;
+    bool m_isInDestructor { false };
 
     RetainPtr<SOAuthorizationViewController> m_viewController;
 #if PLATFORM(MAC)
