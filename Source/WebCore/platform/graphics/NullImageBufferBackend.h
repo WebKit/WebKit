@@ -39,7 +39,6 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<NullImageBufferBackend> create(const Parameters&, const ImageBufferCreationContext&);
     WEBCORE_EXPORT ~NullImageBufferBackend();
     static size_t calculateMemoryCost(const Parameters&) { return 0; }
-    static size_t calculateExternalMemoryCost(const Parameters&) { return 0; }
 
     NullGraphicsContext& context() final;
     RefPtr<NativeImage> copyNativeImage() final;

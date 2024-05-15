@@ -30,6 +30,7 @@
 #include "IntSize.h"
 #include "PixelBuffer.h"
 #include "TaskSource.h"
+#include <atomic>
 #include <wtf/HashSet.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakHashSet.h>
@@ -97,7 +98,9 @@ public:
     void makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
 
     size_t memoryCost() const;
+#if ENABLE(RESOURCE_USAGE)
     size_t externalMemoryCost() const;
+#endif
 
     void setOriginClean() { m_originClean = true; }
     void setOriginTainted() { m_originClean = false; }
@@ -159,7 +162,6 @@ protected:
 
     RefPtr<ImageBuffer> setImageBuffer(RefPtr<ImageBuffer>&&) const;
     virtual bool hasCreatedImageBuffer() const { return false; }
-    static size_t activePixelMemory();
 
     RefPtr<ImageBuffer> allocateImageBuffer() const;
     String lastFillText() const { return m_lastFillText; }
@@ -171,11 +173,9 @@ private:
     virtual void createImageBuffer() const { }
     bool shouldAccelerate(uint64_t area) const;
 
-
     mutable IntSize m_size;
-    mutable Lock m_imageBufferAssignmentLock;
     mutable RefPtr<ImageBuffer> m_imageBuffer;
-    mutable size_t m_imageBufferCost { 0 };
+    mutable std::atomic<size_t> m_imageBufferMemoryCost { 0 };
     mutable std::unique_ptr<GraphicsContextStateSaver> m_contextStateSaver;
 
     String m_lastFillText;

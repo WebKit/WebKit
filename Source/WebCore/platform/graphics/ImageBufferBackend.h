@@ -103,13 +103,11 @@ public:
         RenderingMode renderingMode;
         AffineTransform baseTransform;
         size_t memoryCost;
-        size_t externalMemoryCost;
     };
 
     WEBCORE_EXPORT virtual ~ImageBufferBackend();
 
     WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
-    static size_t calculateExternalMemoryCost(const Parameters&) { return 0; }
     WEBCORE_EXPORT static AffineTransform calculateBaseTransform(const Parameters&);
 
     virtual GraphicsContext& context() = 0;

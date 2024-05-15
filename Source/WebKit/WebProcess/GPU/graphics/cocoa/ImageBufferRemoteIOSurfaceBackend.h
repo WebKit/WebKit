@@ -40,7 +40,6 @@ class ImageBufferRemoteIOSurfaceBackend final : public WebCore::ImageBufferBacke
 public:
     static WebCore::IntSize calculateSafeBackendSize(const Parameters&);
     static size_t calculateMemoryCost(const Parameters&);
-    static size_t calculateExternalMemoryCost(const Parameters&);
 
     static std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle);
 

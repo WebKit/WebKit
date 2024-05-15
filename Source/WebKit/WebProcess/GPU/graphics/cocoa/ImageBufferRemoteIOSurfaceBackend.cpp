@@ -51,11 +51,6 @@ size_t ImageBufferRemoteIOSurfaceBackend::calculateMemoryCost(const Parameters& 
     return ImageBufferIOSurfaceBackend::calculateMemoryCost(parameters);
 }
 
-size_t ImageBufferRemoteIOSurfaceBackend::calculateExternalMemoryCost(const Parameters& parameters)
-{
-    return ImageBufferIOSurfaceBackend::calculateExternalMemoryCost(parameters);
-}
-
 std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> ImageBufferRemoteIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
 {
     if (!std::holds_alternative<MachSendRight>(handle)) {

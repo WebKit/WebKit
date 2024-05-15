@@ -48,8 +48,6 @@
 #include <atomic>
 #include <wtf/Vector.h>
 
-static std::atomic<size_t> s_activePixelMemory { 0 };
-
 namespace WebCore {
 
 constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Low;
@@ -110,25 +108,18 @@ void CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyR
 
 size_t CanvasBase::memoryCost() const
 {
-    // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful
-    // about what data we access here and how. We need to hold a lock to prevent m_imageBuffer
-    // from being changed while we access it.
-    Locker locker { m_imageBufferAssignmentLock };
-    if (!m_imageBuffer)
-        return 0;
-    return m_imageBuffer->memoryCost();
+    // May be called from GC threads.
+    return m_imageBufferMemoryCost.load(std::memory_order::relaxed);
 }
 
+#if ENABLE(RESOURCE_USAGE)
 size_t CanvasBase::externalMemoryCost() const
 {
-    // externalMemoryCost() may be invoked concurrently from a GC thread, and we need to be careful
-    // about what data we access here and how. We need to hold a lock to prevent m_imageBuffer
-    // from being changed while we access it.
-    Locker locker { m_imageBufferAssignmentLock };
-    if (!m_imageBuffer)
-        return 0;
-    return m_imageBuffer->externalMemoryCost();
+    // For the purposes of Web Inspector, external memory means memory reported as 1) being traceable from JS objects, i.e. GC owned memory
+    // 2) not allocated from "Page" category, e.g. from bmalloc.
+    return memoryCost();
 }
+#endif
 
 static inline size_t maxCanvasArea()
 {
@@ -264,39 +255,31 @@ void CanvasBase::setSize(const IntSize& size)
 
 RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) const
 {
-    RefPtr<ImageBuffer> returnBuffer;
-    {
-        Locker locker { m_imageBufferAssignmentLock };
-        m_contextStateSaver = nullptr;
-        returnBuffer = std::exchange(m_imageBuffer, WTFMove(buffer));
-    }
+    m_contextStateSaver = nullptr;
+    RefPtr returnBuffer = std::exchange(m_imageBuffer, WTFMove(buffer));
 
-    auto* context = renderingContext();
-
-    if (m_imageBuffer && m_size != m_imageBuffer->truncatedLogicalSize()) {
-        m_size = m_imageBuffer->truncatedLogicalSize();
-
-        if (context)
-            InspectorInstrumentation::didChangeCanvasSize(*context);
-    }
-
-    size_t previousMemoryCost = m_imageBufferCost;
-    m_imageBufferCost = memoryCost();
-    s_activePixelMemory += m_imageBufferCost - previousMemoryCost;
-
-    if (context && m_imageBuffer && previousMemoryCost != m_imageBufferCost)
-        InspectorInstrumentation::didChangeCanvasMemory(*context);
-
+    IntSize oldSize = m_size;
+    size_t oldMemoryCost = m_imageBufferMemoryCost.load(std::memory_order::relaxed);
+    size_t newMemoryCost = 0;
     if (m_imageBuffer) {
+        m_size = m_imageBuffer->truncatedLogicalSize();
+        newMemoryCost = m_imageBuffer->memoryCost();
         m_imageBuffer->context().setShadowsIgnoreTransforms(true);
         m_imageBuffer->context().setImageInterpolationQuality(defaultInterpolationQuality);
         m_imageBuffer->context().setStrokeThickness(1);
         m_contextStateSaver = makeUnique<GraphicsContextStateSaver>(m_imageBuffer->context());
-
-        JSC::JSLockHolder lock(scriptExecutionContext()->vm());
-        scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), memoryCost());
     }
-
+    m_imageBufferMemoryCost.store(newMemoryCost, std::memory_order::relaxed);
+    if (newMemoryCost) {
+        JSC::JSLockHolder lock(scriptExecutionContext()->vm());
+        scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), newMemoryCost);
+    }
+    if (auto* context = renderingContext()) {
+        if (oldSize != m_size)
+            InspectorInstrumentation::didChangeCanvasSize(*context);
+        if (oldMemoryCost != newMemoryCost)
+            InspectorInstrumentation::didChangeCanvasMemory(*context);
+    }
     return returnBuffer;
 }
 
@@ -396,11 +379,6 @@ bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer) c
     if (m_canvasNoiseHashSalt)
         return m_canvasNoiseInjection.postProcessPixelBufferResults(std::forward<Ref<PixelBuffer>>(pixelBuffer), *m_canvasNoiseHashSalt);
     return false;
-}
-
-size_t CanvasBase::activePixelMemory()
-{
-    return s_activePixelMemory.load();
 }
 
 void CanvasBase::resetGraphicsContextState() const
