@@ -564,6 +564,18 @@ TEST_F(ApplicationManifestParserTest, Scope)
     m_startURL = URL { "https://example.com/documents/home"_s };
     m_manifestURL = URL { "https://example.com/resources/manifest.json"_s };
 
+    // Removes query
+    testScope("\"https://example.com/documents/home?query\""_s, "https://example.com/documents/home"_s, false);
+    testScope("\"https://example.com/documents/home?query=whatever\""_s, "https://example.com/documents/home"_s, false);
+
+    // Removes fragment
+    testScope("\"https://example.com/documents/home#\""_s, "https://example.com/documents/home"_s, false);
+    testScope("\"https://example.com/documents/home#fragment\""_s, "https://example.com/documents/home"_s, false);
+
+    // Removes query and fragment
+    testScope("\"https://example.com/documents/home?#\""_s, "https://example.com/documents/home"_s, false);
+    testScope("\"https://example.com/documents/home?query#fragment\""_s, "https://example.com/documents/home"_s, false);
+
     // It's fine if the document URL or manifest URL aren't within the application scope - only the start URL needs to be.
     testScope("\"https://example.com/other\""_s, "https://example.com/other/start-url"_s, "https://example.com/other"_s, false);
 }

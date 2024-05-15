@@ -486,6 +486,8 @@ std::optional<URL> ApplicationManifestParser::parseScope(const JSON::Object& man
         return std::nullopt;
     }
 
+    scopeURL.removeQueryAndFragmentIdentifier();
+
     return scopeURL;
 }
 
