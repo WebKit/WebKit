@@ -43,7 +43,7 @@
 
 - (void)setAttribute:(NSString *)name value:(NSString *)value
 {
-    downcast<WebCore::Element>(*_impl).setAttribute(name, value);
+    downcast<WebCore::Element>(*_impl).setAttribute(name, AtomString { value });
 }
 
 - (NSString *)tagName

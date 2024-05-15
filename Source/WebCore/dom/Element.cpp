@@ -146,6 +146,7 @@
 #include "StyleTreeResolver.h"
 #include "TextIterator.h"
 #include "TouchAction.h"
+#include "TrustedType.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityAdjustment.h"
 #include "VoidCallback.h"
@@ -1953,6 +1954,50 @@ const AtomString& Element::getAttributeNS(const AtomString& namespaceURI, const 
     return getAttribute(QualifiedName(nullAtom(), localName, namespaceURI));
 }
 
+static ExceptionOr<String> trustedTypesCompliantAttributeValue(const String attributeType, const TrustedTypeOrString& value, Element* element, String sink)
+{
+    auto stringValueHolder = WTF::switchOn(value,
+        [&](const String& string) -> ExceptionOr<String> {
+            if (attributeType.isNull())
+                return String(string);
+            return trustedTypeCompliantString(stringToTrustedType(attributeType), *(element->document().scriptExecutionContext()), string, sink);
+        },
+        [&](const RefPtr<TrustedHTML>& trustedHTML) -> ExceptionOr<String> {
+            if (attributeType.isNull() || attributeType == "TrustedHTML"_s)
+                return trustedHTML->toString();
+            return trustedTypeCompliantString(stringToTrustedType(attributeType), *(element->document().scriptExecutionContext()), trustedHTML->toString(), sink);
+        },
+        [&](const RefPtr<TrustedScript>& trustedScript) -> ExceptionOr<String> {
+            if (attributeType.isNull() || attributeType == "TrustedScript"_s)
+                return trustedScript->toString();
+            return trustedTypeCompliantString(stringToTrustedType(attributeType), *(element->document().scriptExecutionContext()), trustedScript->toString(), sink);
+
+        },
+        [&](const RefPtr<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
+            if (attributeType.isNull() || attributeType == "TrustedScriptURL"_s)
+                return trustedScriptURL->toString();
+            return trustedTypeCompliantString(stringToTrustedType(attributeType), *(element->document().scriptExecutionContext()), trustedScriptURL->toString(), sink);
+        }
+    );
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
+    return stringValueHolder.releaseReturnValue();
+}
+
+ALWAYS_INLINE unsigned Element::validateAttributeIndex(unsigned index, const QualifiedName& qname) const
+{
+    if (index == ElementData::attributeNotFound)
+        return index;
+
+    ASSERT(elementData());
+
+    if ((index < elementData()->length()) && (elementData()->attributeAt(index).name() == qname))
+        return index;
+
+    return elementData()->findAttributeIndexByName(qname.localName(), false);
+}
+
 // https://dom.spec.whatwg.org/#dom-element-toggleattribute
 ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force)
 {
@@ -1965,7 +2010,19 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std:
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
         if (!force || *force) {
-            setAttributeInternal(index, QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() }, emptyAtom(), InSynchronizationOfLazyAttribute::No);
+            auto name = QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
+            if (!document().scriptExecutionContext()->settingsValues().trustedTypesEnabled)
+                setAttributeInternal(index, name, emptyAtom(), InSynchronizationOfLazyAttribute::No);
+            else {
+                auto attributeTypeAndSink = trustedTypeForAttribute(nodeName(), name.localName().convertToASCIILowercase(), this->namespaceURI(), name.namespaceURI());
+                auto attributeValue = trustedTypesCompliantAttributeValue(attributeTypeAndSink.attributeType, emptyAtom(), this, attributeTypeAndSink.sink);
+
+                if (attributeValue.hasException())
+                    return attributeValue.releaseException();
+
+                index = validateAttributeIndex(index, name);
+                setAttributeInternal(index, name, AtomString(attributeValue.releaseReturnValue()), InSynchronizationOfLazyAttribute::No);
+            }
             return true;
         }
         return false;
@@ -1980,6 +2037,11 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std:
 
 ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const AtomString& value)
 {
+    return setAttribute(qualifiedName, TrustedTypeOrString { value });
+}
+
+ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const TrustedTypeOrString& value)
+{
     if (!Document::isValidName(qualifiedName))
         return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '"_s, qualifiedName, '\'') };
 
@@ -1987,8 +2049,18 @@ ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const A
     auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
     auto name = index != ElementData::attributeNotFound ? attributeAt(index).name() : QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
-    setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::No);
+    if (!document().scriptExecutionContext()->settingsValues().trustedTypesEnabled)
+        setAttributeInternal(index, name, std::get<AtomString>(value), InSynchronizationOfLazyAttribute::No);
+    else {
+        auto attributeTypeAndSink = trustedTypeForAttribute(nodeName(), name.localName().convertToASCIILowercase(), this->namespaceURI(), name.namespaceURI());
+        auto attributeValue = trustedTypesCompliantAttributeValue(attributeTypeAndSink.attributeType, value, this, attributeTypeAndSink.sink);
 
+        if (attributeValue.hasException())
+            return attributeValue.releaseException();
+
+        index = validateAttributeIndex(index, name);
+        setAttributeInternal(index, name,  AtomString(attributeValue.releaseReturnValue()), InSynchronizationOfLazyAttribute::No);
+    }
     return { };
 }
 
@@ -2289,7 +2361,7 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
 
     auto newElements = copyToVectorOf<WeakPtr<Element, WeakPtrImplWithEventTargetData>>(*elements);
     explicitlySetAttrElementsMap().set(attributeName, WTFMove(newElements));
-    
+
     if (CheckedPtr cache = document().existingAXObjectCache()) {
         for (auto element : elements.value()) {
             // FIXME: Should this pass `element` instead of `*this`?
@@ -3212,7 +3284,7 @@ static void appendAttributes(StringBuilder& builder, const Element& element)
             classNamesToDump = maxNumClassNames;
             addEllipsis = true;
         }
-        
+
         for (size_t i = 0; i < classNamesToDump; ++i) {
             if (i > 0)
                 builder.append(' ');
@@ -3280,11 +3352,20 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
 
     auto& elementData = ensureUniqueElementData();
 
-    auto existingAttributeIndex = elementData.findAttributeIndexByName(attrNode.qualifiedName());
-
     // Attr::value() will return its 'm_standaloneValue' member any time its Element is set to nullptr. We need to cache this value
     // before making changes to attrNode's Element connections.
     auto attrNodeValue = attrNode.value();
+
+    if (document().scriptExecutionContext()->settingsValues().trustedTypesEnabled) {
+        auto attributeTypeAndSink = trustedTypeForAttribute(nodeName(), attrNode.qualifiedName().localName().convertToASCIILowercase(), this->namespaceURI(), attrNode.qualifiedName().namespaceURI());
+        auto attributeNodeValue = trustedTypesCompliantAttributeValue(attributeTypeAndSink.attributeType, attrNodeValue, this, attributeTypeAndSink.sink);
+
+        if (attributeNodeValue.hasException())
+            return attributeNodeValue.releaseException();
+        attrNodeValue = AtomString(attributeNodeValue.releaseReturnValue());
+    }
+
+    auto existingAttributeIndex = elementData.findAttributeIndexByName(attrNode.qualifiedName());
 
     if (existingAttributeIndex == ElementData::attributeNotFound) {
         attachAttributeNodeIfNeeded(attrNode);
@@ -3324,6 +3405,16 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
     // before making changes to attrNode's Element connections.
     auto attrNodeValue = attrNode.value();
     unsigned index = 0;
+
+    if (document().scriptExecutionContext()->settingsValues().trustedTypesEnabled) {
+        auto attributeTypeAndSink = trustedTypeForAttribute(nodeName(), attrNode.qualifiedName().localName(), this->namespaceURI(), attrNode.qualifiedName().namespaceURI());
+        auto attributeNodeValue = trustedTypesCompliantAttributeValue(attributeTypeAndSink.attributeType, attrNodeValue, this, attributeTypeAndSink.sink);
+
+        if (attributeNodeValue.hasException())
+            return attributeNodeValue.releaseException();
+        attrNodeValue = AtomString(attributeNodeValue.releaseReturnValue());
+    }
+
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         synchronizeAllAttributes();
@@ -3382,10 +3473,27 @@ ExceptionOr<QualifiedName> Element::parseAttributeName(const AtomString& namespa
 
 ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const AtomString& value)
 {
+    return setAttributeNS(namespaceURI, qualifiedName, TrustedTypeOrString { value });
+}
+
+ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedTypeOrString& value)
+{
     auto result = parseAttributeName(namespaceURI, qualifiedName);
     if (result.hasException())
         return result.releaseException();
-    setAttribute(result.releaseReturnValue(), value);
+    if (!document().scriptExecutionContext()->settingsValues().trustedTypesEnabled)
+        setAttribute(result.releaseReturnValue(), std::get<AtomString>(value));
+    else {
+        QualifiedName parsedAttributeName  = result.returnValue();
+        auto attributeTypeAndSink = trustedTypeForAttribute(nodeName(), parsedAttributeName.localName(), this->namespaceURI(), parsedAttributeName.namespaceURI());
+        auto attributeValue = trustedTypesCompliantAttributeValue(attributeTypeAndSink.attributeType, value, this, attributeTypeAndSink.sink);
+
+        if (attributeValue.hasException())
+            return attributeValue.releaseException();
+
+        setAttribute(result.releaseReturnValue(), AtomString(attributeValue.releaseReturnValue()));
+    }
+
     return { };
 }
 

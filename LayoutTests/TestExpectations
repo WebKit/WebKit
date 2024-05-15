@@ -5483,13 +5483,14 @@ webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/zer
 webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/start-edge-in-block-layout-direction.html [ Skip ]
 
 # Trusted Types aren't fully implemented yet
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-event-handlers.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-svg-script.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-no-unsafe-eval.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-report-only.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-importScripts.html [ Pass Failure ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-navigation.html [ Pass Failure ]
+webkit.org/b/274088 imported/w3c/web-platform-tests/trusted-types/Element-setAttribute-respects-Elements-node-documents-globals-CSP.html [ Pass Failure ]
 
 # These tests are image failures
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-000.html [ Skip ]
