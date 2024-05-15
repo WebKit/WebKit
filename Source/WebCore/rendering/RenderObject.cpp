@@ -537,7 +537,7 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
         return true;
 
     if (auto* textControl = dynamicDowncast<RenderTextControl>(*object)) {
-        if (!textControl->isFlexItem() && !textControl->isGridItem()) {
+        if (!textControl->isFlexItem() && !textControl->isGridItem() && object->style().fieldSizing() != FieldSizing::Content) {
             // Flexing type of layout systems may compute different size than what input's preferred width is which won't happen unless they run their layout as well.
             return true;
         }
