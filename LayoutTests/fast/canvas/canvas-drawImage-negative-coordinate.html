@@ -1,0 +1,25 @@
+<style>
+    canvas {
+        outline: 1px solid red;
+        aspect-ratio: 1 / 1;
+    }
+</style>
+<body>
+    <canvas id="test"></canvas>
+    <script>
+        const srcCanvas = document.createElement('canvas');
+        const srcCtx = srcCanvas.getContext('2d');
+        srcCanvas.width = 80;
+        srcCanvas.height = 80;
+
+        const destCanvas = document.querySelector('#test');
+        const destCtx = destCanvas.getContext('2d');
+        destCtx.imageSmoothingEnabled = false;
+
+        srcCtx.fillStyle = 'yellow';
+        srcCtx.fillRect(0, 0, 80, 80);
+        srcCtx.fillStyle = 'green';
+        srcCtx.fillRect(10, 10, 40, 40);
+        destCtx.drawImage(srcCanvas, -20, -20, 80, 80, 20, 20, 200, 200);
+    </script>
+</body>
