@@ -941,6 +941,10 @@ public:
         
     void adjustLayersForLayoutViewport(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale);
 
+#if PLATFORM(COCOA)
+    void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID);
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
     void focusTextInputContextAndPlaceCaret(const WebCore::ElementContext&, const WebCore::IntPoint&, CompletionHandler<void(bool)>&&);
@@ -963,7 +967,6 @@ public:
     WebCore::FloatRect unconstrainedLayoutViewportRect() const;
 
     void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID);
-    void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID);
     void scrollingNodeScrollWillStartScroll(std::optional<WebCore::ScrollingNodeID>);
     void scrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID>);
 
@@ -1762,6 +1765,9 @@ public:
     void willRecordNavigationSnapshot(WebBackForwardListItem&);
 
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
+
+    void willBeginViewGesture();
+    void didEndViewGesture();
 
     bool isPlayingAudio() const;
     bool hasMediaStreaming() const;

@@ -176,9 +176,7 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID
     if (m_webPageProxy.scrollingUpdatesDisabledForTesting())
         return;
 
-#if PLATFORM(IOS_FAMILY)
     m_webPageProxy.scrollingNodeScrollViewDidScroll(scrolledNodeID);
-#endif
 
     if (m_scrollingTree->isHandlingProgrammaticScroll())
         return;

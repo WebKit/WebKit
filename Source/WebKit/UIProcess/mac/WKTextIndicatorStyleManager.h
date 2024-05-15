@@ -43,6 +43,11 @@ class WebViewImpl;
 - (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
 - (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
 
+- (BOOL)hasActiveTextIndicatorStyle;
+
+- (void)suppressTextIndicatorStyle;
+- (void)restoreTextIndicatorStyle;
+
 @end
 
 #endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)

@@ -259,11 +259,6 @@ void WebPageProxy::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID no
     protectedPageClient()->scrollingNodeScrollViewWillStartPanGesture(nodeID);
 }
 
-void WebPageProxy::scrollingNodeScrollViewDidScroll(ScrollingNodeID nodeID)
-{
-    protectedPageClient()->scrollingNodeScrollViewDidScroll(nodeID);
-}
-
 void WebPageProxy::scrollingNodeScrollWillStartScroll(std::optional<ScrollingNodeID> nodeID)
 {
     protectedPageClient()->scrollingNodeScrollWillStartScroll(nodeID.value_or(ScrollingNodeID { }));

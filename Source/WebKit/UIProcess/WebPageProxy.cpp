@@ -11699,6 +11699,16 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
     m_navigationClient->didRemoveNavigationGestureSnapshot(*this);
 }
 
+void WebPageProxy::willBeginViewGesture()
+{
+    protectedPageClient()->willBeginViewGesture();
+}
+
+void WebPageProxy::didEndViewGesture()
+{
+    protectedPageClient()->didEndViewGesture();
+}
+
 void WebPageProxy::isPlayingMediaDidChange(MediaProducerMediaStateFlags newState)
 {
 #if PLATFORM(IOS_FAMILY)

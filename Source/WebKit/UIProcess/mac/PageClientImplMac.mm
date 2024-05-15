@@ -763,6 +763,21 @@ void PageClientImpl::layerTreeCommitComplete()
 {
 }
 
+void PageClientImpl::scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID)
+{
+    m_impl->suppressContentRelativeChildViews(WebViewImpl::ContentRelativeChildViewsSuppressionType::TemporarilyRemove);
+}
+
+void PageClientImpl::willBeginViewGesture()
+{
+    m_impl->suppressContentRelativeChildViews(WebViewImpl::ContentRelativeChildViewsSuppressionType::Remove);
+}
+
+void PageClientImpl::didEndViewGesture()
+{
+    m_impl->suppressContentRelativeChildViews(WebViewImpl::ContentRelativeChildViewsSuppressionType::Restore);
+}
+
 #if ENABLE(FULLSCREEN_API)
 
 WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()

@@ -1403,6 +1403,9 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 - (void)setPageZoom:(CGFloat)pageZoom
 {
     THROW_IF_SUSPENDED;
+#if PLATFORM(MAC)
+    _impl->suppressContentRelativeChildViews(WebKit::WebViewImpl::ContentRelativeChildViewsSuppressionType::TemporarilyRemove);
+#endif
     _page->setPageZoomFactor(pageZoom);
 }
 
@@ -3732,6 +3735,9 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_setTextZoomFactor:(double)zoomFactor
 {
     THROW_IF_SUSPENDED;
+#if PLATFORM(MAC)
+    _impl->suppressContentRelativeChildViews(WebKit::WebViewImpl::ContentRelativeChildViewsSuppressionType::TemporarilyRemove);
+#endif
     _page->setTextZoomFactor(zoomFactor);
 }
 

@@ -138,6 +138,8 @@ void ViewGestureController::willBeginGesture(ViewGestureType type)
 
     m_activeGestureType = type;
     m_currentGestureID = takeNextGestureID();
+
+    m_webPageProxy.willBeginViewGesture();
 }
 
 void ViewGestureController::didEndGesture()
@@ -146,6 +148,8 @@ void ViewGestureController::didEndGesture()
 
     m_activeGestureType = ViewGestureType::None;
     m_currentGestureID = 0;
+
+    m_webPageProxy.didEndViewGesture();
 }
 
 void ViewGestureController::setAlternateBackForwardListSourcePage(WebPageProxy* page)

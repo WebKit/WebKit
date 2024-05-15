@@ -514,6 +514,8 @@ public:
 #if PLATFORM(COCOA)
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) = 0;
     virtual void layerTreeCommitComplete() = 0;
+
+    virtual void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) = 0;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -541,7 +543,6 @@ public:
     virtual double minimumZoomScale() const = 0;
     virtual WebCore::FloatRect documentRect() const = 0;
     virtual void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID) = 0;
-    virtual void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) = 0;
     virtual void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID) = 0;
     virtual void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID) = 0;
     virtual Vector<String> mimeTypesWithCustomContentProviders() = 0;
@@ -593,6 +594,9 @@ public:
     virtual void navigationGestureDidEnd() = 0;
     virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) = 0;
     virtual void didRemoveNavigationGestureSnapshot() = 0;
+
+    virtual void willBeginViewGesture() { }
+    virtual void didEndViewGesture() { }
 
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() = 0;
     virtual void didFinishNavigation(API::Navigation*) = 0;

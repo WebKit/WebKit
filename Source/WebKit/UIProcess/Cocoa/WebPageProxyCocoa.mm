@@ -279,6 +279,11 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
     }
 }
 
+void WebPageProxy::scrollingNodeScrollViewDidScroll(ScrollingNodeID nodeID)
+{
+    protectedPageClient()->scrollingNodeScrollViewDidScroll(nodeID);
+}
+
 bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 {
     return protectedPageClient()->scrollingUpdatesDisabledForTesting();

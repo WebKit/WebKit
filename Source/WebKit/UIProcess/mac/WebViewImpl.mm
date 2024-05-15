@@ -126,6 +126,7 @@
 #import <WebKit/WKShareSheet.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebBackForwardList.h>
+#import <pal/HysteresisActivity.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -1221,6 +1222,7 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     , m_undoTarget(adoptNS([[WKEditorUndoTarget alloc] init]))
     , m_windowVisibilityObserver(adoptNS([[WKWindowVisibilityObserver alloc] initWithView:view impl:*this]))
     , m_accessibilitySettingsObserver(adoptNS([[WKAccessibilitySettingsObserver alloc] initWithImpl:*this]))
+    , m_contentRelativeViewsHysteresis(makeUnique<PAL::HysteresisActivity>([this](auto state) { this->contentRelativeViewsHysteresisTimerFired(state); }, 500_ms))
     , m_mouseTrackingObserver(adoptNS([[WKMouseTrackingObserver alloc] initWithViewImpl:*this]))
     , m_primaryTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:view.frame options:trackingAreaOptions() owner:m_mouseTrackingObserver.get() userInfo:nil]))
 {
@@ -1655,6 +1657,8 @@ void WebViewImpl::renewGState()
 {
     if (m_textIndicatorWindow)
         dismissContentRelativeChildWindowsWithAnimation(false);
+
+    suppressContentRelativeChildViews(ContentRelativeChildViewsSuppressionType::TemporarilyRemove);
 
     // Update the view frame.
     if ([m_view window])
@@ -3436,6 +3440,57 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 #endif
 }
 
+bool WebViewImpl::hasContentRelativeChildViews() const
+{
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+    return [m_textIndicatorStyleManager hasActiveTextIndicatorStyle];
+#else
+    return false;
+#endif
+}
+
+void WebViewImpl::suppressContentRelativeChildViews(ContentRelativeChildViewsSuppressionType type)
+{
+    if (!hasContentRelativeChildViews())
+        return;
+
+    switch (type) {
+    case ContentRelativeChildViewsSuppressionType::Remove:
+        return m_contentRelativeViewsHysteresis->start();
+
+    case ContentRelativeChildViewsSuppressionType::Restore:
+        return m_contentRelativeViewsHysteresis->stop();
+
+    case ContentRelativeChildViewsSuppressionType::TemporarilyRemove:
+        return m_contentRelativeViewsHysteresis->impulse();
+    }
+}
+
+void WebViewImpl::contentRelativeViewsHysteresisTimerFired(PAL::HysteresisState state)
+{
+    if (!hasContentRelativeChildViews())
+        return;
+
+    if (state == PAL::HysteresisState::Started)
+        suppressContentRelativeChildViews();
+    else
+        restoreContentRelativeChildViews();
+}
+
+void WebViewImpl::suppressContentRelativeChildViews()
+{
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+    [m_textIndicatorStyleManager suppressTextIndicatorStyle];
+#endif
+}
+
+void WebViewImpl::restoreContentRelativeChildViews()
+{
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+    [m_textIndicatorStyleManager restoreTextIndicatorStyle];
+#endif
+}
+
 void WebViewImpl::hideWordDefinitionWindow()
 {
     WebCore::DictionaryLookup::hidePopup();
@@ -4610,6 +4665,7 @@ void WebViewImpl::setMagnification(double magnification, CGPoint centerPoint)
         [NSException raise:NSInvalidArgumentException format:@"Magnification should be a positive number"];
 
     dismissContentRelativeChildWindowsWithAnimation(false);
+    suppressContentRelativeChildViews(ContentRelativeChildViewsSuppressionType::TemporarilyRemove);
 
     m_page->scalePageInViewCoordinates(magnification, WebCore::roundedIntPoint(centerPoint));
 }
@@ -4620,6 +4676,7 @@ void WebViewImpl::setMagnification(double magnification)
         [NSException raise:NSInvalidArgumentException format:@"Magnification should be a positive number"];
 
     dismissContentRelativeChildWindowsWithAnimation(false);
+    suppressContentRelativeChildViews(ContentRelativeChildViewsSuppressionType::TemporarilyRemove);
 
     WebCore::FloatPoint viewCenter(NSMidX([m_view bounds]), NSMidY([m_view bounds]));
     m_page->scalePageInViewCoordinates(magnification, roundedIntPoint(viewCenter));
