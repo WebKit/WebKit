@@ -109,7 +109,7 @@ void CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyR
 size_t CanvasBase::memoryCost() const
 {
     // May be called from GC threads.
-    return m_imageBufferMemoryCost.load(std::memory_order::relaxed);
+    return m_imageBufferMemoryCost.load(std::memory_order_relaxed);
 }
 
 #if ENABLE(RESOURCE_USAGE)
@@ -259,7 +259,7 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
     RefPtr returnBuffer = std::exchange(m_imageBuffer, WTFMove(buffer));
 
     IntSize oldSize = m_size;
-    size_t oldMemoryCost = m_imageBufferMemoryCost.load(std::memory_order::relaxed);
+    size_t oldMemoryCost = m_imageBufferMemoryCost.load(std::memory_order_relaxed);
     size_t newMemoryCost = 0;
     if (m_imageBuffer) {
         m_size = m_imageBuffer->truncatedLogicalSize();
@@ -269,7 +269,7 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
         m_imageBuffer->context().setStrokeThickness(1);
         m_contextStateSaver = makeUnique<GraphicsContextStateSaver>(m_imageBuffer->context());
     }
-    m_imageBufferMemoryCost.store(newMemoryCost, std::memory_order::relaxed);
+    m_imageBufferMemoryCost.store(newMemoryCost, std::memory_order_relaxed);
     if (newMemoryCost) {
         JSC::JSLockHolder lock(scriptExecutionContext()->vm());
         scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), newMemoryCost);
