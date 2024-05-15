@@ -439,7 +439,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
     RegistrableDomain navigationDomain(navigation.currentRequest().url());
     // addAllowedFirstPartyForCookies can be sync, but we need completionHander to be invoked after this function.
     auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    if (!m_provisionalFrame || navigation.currentRequestIsCrossSiteRedirect()) {
+    if (!m_provisionalFrame || m_provisionalFrame->process().coreProcessIdentifier() != process.coreProcessIdentifier() || navigation.currentRequestIsCrossSiteRedirect()) {
         RefPtr page = m_page.get();
         // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
         RegistrableDomain mainFrameDomain(page->mainFrame()->url());

@@ -452,7 +452,6 @@ Page::~Page()
     m_validationMessageClient = nullptr;
     m_diagnosticLoggingClient = nullptr;
     m_performanceLoggingClient = nullptr;
-    m_rootFrames.clear();
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame))
         localMainFrame->setView(nullptr);
     setGroupName(String());
@@ -468,6 +467,7 @@ Page::~Page()
         frame.willDetachPage();
         frame.detachFromPage();
     });
+    ASSERT(m_rootFrames.isEmpty());
 
     if (RefPtr scrollingCoordinator = m_scrollingCoordinator)
         scrollingCoordinator->pageDestroyed();

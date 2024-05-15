@@ -39,11 +39,64 @@
 namespace WebCore {
 
 #if ASSERT_ENABLED
-static HashMap<FrameIdentifier, WeakRef<Frame>>& allFrames()
-{
-    static NeverDestroyed<HashMap<FrameIdentifier, WeakRef<Frame>>> map;
-    return map;
-}
+class FrameLifetimeVerifier {
+public:
+    static FrameLifetimeVerifier& singleton()
+    {
+        static NeverDestroyed<FrameLifetimeVerifier> instance;
+        return instance.get();
+    }
+
+    void frameCreated(Frame& frame)
+    {
+        auto& pair = m_map.ensure(frame.frameID(), [] {
+            return std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>> { };
+        }).iterator->value;
+
+        switch (frame.frameType()) {
+        case Frame::FrameType::Local:
+            ASSERT_WITH_MESSAGE(!pair.first, "There should never be two LocalFrames with the same ID in the same process");
+            pair.first = downcast<LocalFrame>(frame);
+            break;
+        case Frame::FrameType::Remote:
+            ASSERT_WITH_MESSAGE(!pair.second, "There should never be two RemoteFrames with the same ID in the same process");
+            pair.second = downcast<RemoteFrame>(frame);
+            break;
+        }
+    }
+
+    void frameDestroyed(Frame& frame)
+    {
+        auto it = m_map.find(frame.frameID());
+        ASSERT(it != m_map.end());
+        auto& pair = it->value;
+        switch (frame.frameType()) {
+        case Frame::FrameType::Local:
+            ASSERT(pair.first == &frame);
+            if (pair.second)
+                pair.first = nullptr;
+            else
+                m_map.remove(it);
+            break;
+        case Frame::FrameType::Remote:
+            ASSERT(pair.second == &frame);
+            if (pair.first)
+                pair.second = nullptr;
+            else
+                m_map.remove(it);
+        }
+    }
+
+    bool isRootFrameIdentifier(FrameIdentifier identifier)
+    {
+        auto it = m_map.find(identifier);
+        if (it == m_map.end())
+            return false;
+        return it->value.first && it->value.first->isRootFrame();
+    }
+private:
+    HashMap<FrameIdentifier, std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>>> m_map;
+};
 #endif
 
 Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
@@ -66,10 +119,7 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
         ownerElement->setContentFrame(*this);
 
 #if ASSERT_ENABLED
-    WeakPtr maybeOldFrame = allFrames().take(frameID);
-    auto addResult = allFrames().add(frameID, *this);
-    ASSERT(addResult.isNewEntry);
-    ASSERT_WITH_MESSAGE(!maybeOldFrame || is<LocalFrame>(maybeOldFrame) != is<LocalFrame>(*this), "The only time there should be two frames with the same ID in the same process is when swapping between local and remote frames.");
+    FrameLifetimeVerifier::singleton().frameCreated(*this);
 #endif
 }
 
@@ -79,13 +129,7 @@ Frame::~Frame()
     m_navigationScheduler->cancel();
 
 #if ASSERT_ENABLED
-    auto it = allFrames().find(m_frameID);
-    if (it == allFrames().end())
-        return;
-    if (it->value.ptr() == this)
-        allFrames().remove(it);
-    else
-        ASSERT_WITH_MESSAGE(is<LocalFrame>(it->value) != is<LocalFrame>(this), "The only time there should be two frames with the same ID in the same process is when swapping between local and remote frames.");
+    FrameLifetimeVerifier::singleton().frameDestroyed(*this);
 #endif
 }
 
@@ -103,6 +147,13 @@ void Frame::resetWindowProxy()
 
 void Frame::detachFromPage()
 {
+    if (isRootFrame()) {
+        if (m_page) {
+            m_page->removeRootFrame(downcast<LocalFrame>(*this));
+            if (auto* scrollingCoordinator = m_page->scrollingCoordinator())
+                scrollingCoordinator->rootFrameWasRemoved(frameID());
+        }
+    }
     m_page = nullptr;
 }
 
@@ -156,8 +207,7 @@ RefPtr<FrameView> Frame::protectedVirtualView() const
 #if ASSERT_ENABLED
 bool Frame::isRootFrameIdentifier(FrameIdentifier identifier)
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(allFrames().get(identifier));
-    return localFrame && localFrame->isRootFrame();
+    return FrameLifetimeVerifier::singleton().isRootFrameIdentifier(identifier);
 }
 #endif
 

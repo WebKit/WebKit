@@ -232,13 +232,7 @@ LocalFrame::~LocalFrame()
     if (!isMainFrame() && localMainFrame)
         localMainFrame->selfOnlyDeref();
 
-    if (isRootFrame()) {
-        if (RefPtr page = this->page()) {
-            page->removeRootFrame(*this);
-            if (auto* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->rootFrameWasRemoved(frameID());
-        }
-    }
+    detachFromPage();
 }
 
 void LocalFrame::addDestructionObserver(FrameDestructionObserver& observer)

@@ -134,6 +134,7 @@ void RemoteLayerTreeDrawingArea::attachViewOverlayGraphicsLayer(WebCore::FrameId
 
 void RemoteLayerTreeDrawingArea::addRootFrame(WebCore::FrameIdentifier frameID)
 {
+    ASSERT(Frame::isRootFrameIdentifier(frameID));
     auto layer = GraphicsLayer::create(graphicsLayerFactory(), *this);
     layer->setName(makeString("drawing area root "_s, frameID));
     m_rootLayers.append(RootLayerInfo {

@@ -155,7 +155,7 @@ static void printTree(const ExpectedFrameTree& n, size_t indent = 0)
 
 static void checkFrameTreesInProcesses(NSSet<_WKFrameTreeNode *> *actualTrees, Vector<ExpectedFrameTree>&& expectedFrameTrees)
 {
-    bool result = frameTreesMatch(actualTrees, WTFMove(expectedFrameTrees));
+    bool result = frameTreesMatch(actualTrees, Vector<ExpectedFrameTree> { expectedFrameTrees });
     if (!result) {
         WTFLogAlways("ACTUAL");
         for (_WKFrameTreeNode *n in actualTrees)
@@ -2616,14 +2616,13 @@ TEST(SiteIsolation, CancelProvisionalLoad)
         },
     });
 
-    [webView evaluateJavaScript:
-        @"let i = document.getElementById('testiframe');"
-        "i.addEventListener('load', () => { alert('iframe loaded') });"
-        "i.src = 'https://webkit.org/never_respond';"
-        "setTimeout(()=>{ i.src = 'https://example.com/respond_quickly' }, Math.random() * 500)"
-        completionHandler:nil];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe loaded");
-    checkFrameTreesInProcesses(webView.get(), {
+    auto checkStateAfterSequentialFrameLoads = [webView = RetainPtr { webView }, navigationDelegate = RetainPtr { navigationDelegate }] (NSString *first, NSString *second, Vector<ExpectedFrameTree>&& expectedTrees) {
+        [webView evaluateJavaScript:[NSString stringWithFormat:@"i = document.getElementById('testiframe'); i.addEventListener('load', () => { alert('iframe loaded') }); i.src = '%@'; setTimeout(()=>{ i.src = '%@' }, Math.random() * 100)", first, second] completionHandler:nil];
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe loaded");
+        checkFrameTreesInProcesses(webView.get(), WTFMove(expectedTrees));
+    };
+
+    checkStateAfterSequentialFrameLoads(@"https://webkit.org/never_respond", @"https://example.com/respond_quickly", {
         { "https://webkit.org"_s,
             { { RemoteFrame }, { RemoteFrame } }
         }, { RemoteFrame,
@@ -2631,9 +2630,36 @@ TEST(SiteIsolation, CancelProvisionalLoad)
         },
     });
 
-    // FIXME: Add tests for other combinations of provisional loads starting in the process the frame is already in,
-    // a new process we've never seen before, and the main frame process then starting another provisional load in
-    // those processes. Also, test these cases for provisional loads that respond after a short delay to give a chance
+    checkStateAfterSequentialFrameLoads(@"https://example.com/never_respond", @"https://webkit.org/respond_quickly", {
+        { "https://webkit.org"_s,
+            { { RemoteFrame }, { "https://webkit.org"_s } }
+        }, { RemoteFrame,
+            { { "https://example.com"_s }, { RemoteFrame } }
+        },
+    });
+
+    checkStateAfterSequentialFrameLoads(@"https://apple.com/never_respond", @"https://webkit.org/respond_quickly", {
+        { "https://webkit.org"_s,
+            { { RemoteFrame }, { "https://webkit.org"_s } }
+        }, { RemoteFrame,
+            { { "https://example.com"_s }, { RemoteFrame } }
+        },
+    });
+
+    checkStateAfterSequentialFrameLoads(@"https://apple.com/never_respond", @"https://example.com/respond_quickly", {
+        { "https://webkit.org"_s,
+            { { RemoteFrame }, { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://example.com"_s }, { "https://example.com"_s } }
+        },
+    });
+
+    // FIXME: Test loading https://apple.com/never_respond then https://apple.com/respond_quickly
+    // FrameLoader::continueLoadAfterNavigationPolicy returns early because the page is disconnected by something.
+    // We may need to destroy a provisional frame then make a new one if there's already a provisional frame in a process.
+    // WebProcessProxy::shutDown is also being called in the middle of loading, which isn't great.
+
+    // FIXME: Test cases for provisional loads that respond after a short delay to give a chance
     // that the load commits during the time another provisional navigation starts.
 }
 
