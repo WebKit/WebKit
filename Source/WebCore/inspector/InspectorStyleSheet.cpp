@@ -1171,7 +1171,7 @@ ExceptionOr<CSSStyleRule*> InspectorStyleSheet::addRule(const String& selector)
     if (!styleSheetText.isEmpty())
         styleSheetText.append('\n');
 
-    styleSheetText.append(selector, " {}");
+    styleSheetText.append(selector, " {}"_s);
 
     // Using setText() as this operation changes the stylesheet rule set.
     setText(styleSheetText.toString());

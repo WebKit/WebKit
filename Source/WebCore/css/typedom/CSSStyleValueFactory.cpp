@@ -89,7 +89,7 @@ ExceptionOr<RefPtr<CSSStyleValue>> CSSStyleValueFactory::extractShorthandCSSValu
     CSSParser::ParseResult parseResult = CSSParser::parseValue(styleDeclaration, propertyID, cssText, important, parserContext);
 
     if (parseResult == CSSParser::ParseResult::Error)
-        return Exception { ExceptionCode::TypeError, makeString(cssText, " cannot be parsed.") };
+        return Exception { ExceptionCode::TypeError, makeString(cssText, " cannot be parsed."_s) };
 
     return constructStyleValueForShorthandSerialization(styleDeclaration->getPropertyValue(propertyID), parserContext);
 }

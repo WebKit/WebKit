@@ -214,9 +214,9 @@ String FontPlatformData::description() const
 {
     String fontDescription { adoptCF(CFCopyDescription(ctFont())).get() };
     return makeString(fontDescription, ' ', m_size,
-        (m_syntheticBold ? " synthetic bold" : ""),
-        (m_syntheticOblique ? " synthetic oblique" : ""),
-        (m_orientation == FontOrientation::Vertical ? " vertical orientation" : ""));
+        (m_syntheticBold ? " synthetic bold"_s : ""_s),
+        (m_syntheticOblique ? " synthetic oblique"_s : ""_s),
+        (m_orientation == FontOrientation::Vertical ? " vertical orientation"_s : ""_s));
 }
 
 #endif

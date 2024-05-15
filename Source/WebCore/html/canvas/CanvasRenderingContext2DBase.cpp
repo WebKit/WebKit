@@ -328,16 +328,16 @@ String CanvasRenderingContext2DBase::State::fontString() const
     StringBuilder serializedFont;
     const auto& font = this->font.fontDescription();
 
-    auto italic = font.italic() ? "italic " : "";
-    auto smallCaps = font.variantCaps() == FontVariantCaps::Small ? "small-caps " : "";
-    serializedFont.append(italic, smallCaps, font.computedSize(), "px");
+    auto italic = font.italic() ? "italic "_s : ""_s;
+    auto smallCaps = font.variantCaps() == FontVariantCaps::Small ? "small-caps "_s : ""_s;
+    serializedFont.append(italic, smallCaps, font.computedSize(), "px"_s);
 
     for (unsigned i = 0; i < font.familyCount(); ++i) {
         StringView family = font.familyAt(i);
         if (family.startsWith("-webkit-"_s))
             family = family.substring(8);
 
-        auto separator = i ? ", " : " ";
+        auto separator = i ? ", "_s : " "_s;
         serializedFont.append(separator, serializeFontFamily(family.toString()));
     }
 

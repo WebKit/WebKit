@@ -119,7 +119,7 @@ PageSerializer::SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSer
 {
     // MarkupAccumulator does not serialize the <?xml ... line, so we add it explicitly to ensure the right encoding is specified.
     if (m_document.isXMLDocument() || m_document.xmlStandalone())
-        append("<?xml version=\"", m_document.xmlVersion(), "\" encoding=\"", m_document.charset(), "\"?>");
+        append("<?xml version=\""_s, m_document.xmlVersion(), "\" encoding=\""_s, m_document.charset(), "\"?>"_s);
 }
 
 void PageSerializer::SerializerMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
@@ -135,7 +135,7 @@ void PageSerializer::SerializerMarkupAccumulator::appendStartTag(StringBuilder& 
         MarkupAccumulator::appendStartTag(out, element, namespaces);
 
     if (element.hasTagName(HTMLNames::headTag))
-        out.append("<meta charset=\"", m_document.charset(), "\">");
+        out.append("<meta charset=\""_s, m_document.charset(), "\">"_s);
 
     // FIXME: For object (plugins) tags and video tag we could replace them by an image of their current contents.
 }

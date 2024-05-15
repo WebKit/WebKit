@@ -70,7 +70,7 @@ template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestCallbackInterface
 
 template<> std::optional<TestCallbackInterface::Enum> parseEnumerationFromString<TestCallbackInterface::Enum>(const String&);
 template<> std::optional<TestCallbackInterface::Enum> parseEnumeration<TestCallbackInterface::Enum>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestCallbackInterface::Enum>();
+template<> ASCIILiteral expectedEnumerationValues<TestCallbackInterface::Enum>();
 
 template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInterface::Dictionary>(JSC::JSGlobalObject&, JSC::JSValue);
 

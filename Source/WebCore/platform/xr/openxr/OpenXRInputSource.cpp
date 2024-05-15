@@ -63,8 +63,8 @@ XrResult OpenXRInputSource::initialize()
     RETURN_RESULT_IF_FAILED(xrStringToPath(m_instance, m_subactionPathName.utf8().data(), &m_subactionPath), m_instance);
 
     // Initialize Action Set.
-    String prefix = "input_" + handenessName;
-    String actionSetName = prefix + "_action_set";
+    auto prefix = makeString("input_"_s, handenessName);
+    auto actionSetName = makeString(prefix, "_action_set"_s);
     auto createInfo =  createStructure<XrActionSetCreateInfo, XR_TYPE_ACTION_SET_CREATE_INFO>();
     std::strncpy(createInfo.actionSetName, actionSetName.utf8().data(), XR_MAX_ACTION_SET_NAME_SIZE - 1);
     std::strncpy(createInfo.localizedActionSetName, actionSetName.utf8().data(), XR_MAX_ACTION_SET_NAME_SIZE - 1);
@@ -87,7 +87,7 @@ XrResult OpenXRInputSource::initialize()
     // Initialize axes.
     for (auto axisType : openXRAxisTypes) {
         XrAction axisAction = XR_NULL_HANDLE;
-        String name = prefix + "_axis_" + axisTypetoString(axisType);
+        auto name = makeString(prefix, "_axis_"_s, axisTypetoString(axisType));
         RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_VECTOR2F_INPUT, name, axisAction), m_instance, false);
         m_axisActions.add(axisType, axisAction);
     }
@@ -250,7 +250,7 @@ XrResult OpenXRInputSource::createAction(XrActionType actionType, const String& 
 
 XrResult OpenXRInputSource::createButtonActions(OpenXRButtonType type, const String& prefix, OpenXRButtonActions& actions) const
 {
-    auto name = prefix + "_button_" + buttonTypeToString(type);
+    auto name = makeString(prefix, "_button_"_s, buttonTypeToString(type));
 
     RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_BOOLEAN_INPUT, name + "_press", actions.press), m_instance);
     RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_BOOLEAN_INPUT, name + "_touch", actions.touch), m_instance);

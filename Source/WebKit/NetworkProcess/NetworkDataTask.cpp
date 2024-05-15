@@ -155,7 +155,7 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, Negotiated
             completionHandler(PolicyAction::Ignore);
             cancel();
             if (m_client)
-                m_client->didCompleteWithError({ String(), 0, url, "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9." });
+                m_client->didCompleteWithError({ String(), 0, url, makeString("Cancelled load from '"_s, url.stringCenterEllipsizedToLength(), "' because it is using HTTP/0.9."_s) });
             return;
         }
     }
@@ -169,7 +169,7 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, Negotiated
             completionHandler(PolicyAction::Ignore);
             cancel();
             if (m_client)
-                m_client->didCompleteWithError({ String(), 0, url, "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because localhost did not resolve to a loopback address." });
+                m_client->didCompleteWithError({ String(), 0, url, makeString("Cancelled load from '"_s, url.stringCenterEllipsizedToLength(), "' because localhost did not resolve to a loopback address."_s) });
             return;
         }
     }

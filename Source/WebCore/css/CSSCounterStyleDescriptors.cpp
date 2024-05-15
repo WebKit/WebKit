@@ -486,7 +486,7 @@ String CSSCounterStyleDescriptors::rangesCSSText() const
 
 String CSSCounterStyleDescriptors::Pad::cssText() const
 {
-    return makeString(m_padMinimumLength, " ", m_padSymbol.cssText());
+    return makeString(m_padMinimumLength, ' ', m_padSymbol.cssText());
 }
 
 String CSSCounterStyleDescriptors::padCSSText() const

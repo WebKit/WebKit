@@ -166,7 +166,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(JSGlobalObje
         result.partialRequiredLongMember = convert<IDLLong>(lexicalGlobalObject, partialRequiredLongMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else {
-        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "partialRequiredLongMember", "TestStandaloneDictionary", "long");
+        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "partialRequiredLongMember"_s, "TestStandaloneDictionary"_s, "long"_s);
         return { };
     }
 #endif
@@ -365,9 +365,9 @@ template<> std::optional<TestStandaloneDictionary::EnumInStandaloneDictionaryFil
     return parseEnumerationFromString<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(value.toWTFString(&lexicalGlobalObject));
 }
 
-template<> const char* expectedEnumerationValues<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>()
+template<> ASCIILiteral expectedEnumerationValues<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>()
 {
-    return "\"enumValue1\", \"enumValue2\"";
+    return "\"enumValue1\", \"enumValue2\""_s;
 }
 
 } // namespace WebCore

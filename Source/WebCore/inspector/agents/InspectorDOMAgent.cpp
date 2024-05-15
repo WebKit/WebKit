@@ -788,7 +788,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributesAsText(
         return makeUnexpected(errorString);
 
     auto parsedElement = createHTMLElement(element->document(), spanTag);
-    auto result = parsedElement.get().setInnerHTML("<span " + text + "></span>");
+    auto result = parsedElement.get().setInnerHTML(makeString("<span "_s, text, "></span>"_s));
     if (result.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(result.releaseException()));
 

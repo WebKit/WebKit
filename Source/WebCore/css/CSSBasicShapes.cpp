@@ -119,7 +119,7 @@ String CSSCircleValue::customCSSText() const
     auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
     auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
     return makeString("circle("_s, radius, radius.isNull() ? ""_s : " "_s,
-        "at ", serializePositionOffset(x, y), ' ', serializePositionOffset(y, x), ')');
+        "at "_s, serializePositionOffset(x, y), ' ', serializePositionOffset(y, x), ')');
 }
 
 bool CSSCircleValue::equals(const CSSCircleValue& other) const

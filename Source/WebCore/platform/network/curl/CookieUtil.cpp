@@ -112,7 +112,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
 
         // Enforce a dot character prefix to hostnames which are not ip addresses and not single value hostnames such as localhost
         if (!isIPAddress(attributeValue) && !attributeValue.startsWith('.') && attributeValue.find('.') != notFound)
-            attributeValue = "." + attributeValue;
+            attributeValue = makeString('.', attributeValue);
 
         result.domain = attributeValue.convertToASCIILowercase();
 

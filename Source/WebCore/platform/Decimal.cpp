@@ -862,7 +862,7 @@ String Decimal::toString() const
         }
 
         if (adjustedExponent)
-            builder.append(adjustedExponent < 0 ? "e" : "e+", adjustedExponent);
+            builder.append(adjustedExponent < 0 ? "e"_s : "e+"_s, adjustedExponent);
     }
     return builder.toString();
 }

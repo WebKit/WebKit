@@ -975,7 +975,7 @@ RefPtr<JSON::Object> Session::createElement(RefPtr<JSON::Value>&& value)
     if (!valueObject)
         return nullptr;
 
-    auto elementID = valueObject->getString("session-node-" + id());
+    auto elementID = valueObject->getString(makeString("session-node-"_s, id()));
     if (!elementID)
         return nullptr;
 
@@ -987,7 +987,7 @@ RefPtr<JSON::Object> Session::createElement(RefPtr<JSON::Value>&& value)
 Ref<JSON::Object> Session::createElement(const String& elementID)
 {
     auto elementObject = JSON::Object::create();
-    elementObject->setString("session-node-" + id(), elementID);
+    elementObject->setString(makeString("session-node-"_s, id()), elementID);
     return elementObject;
 }
 
@@ -1000,7 +1000,7 @@ RefPtr<JSON::Object> Session::createShadowRoot(RefPtr<JSON::Value>&& value)
     if (!valueObject)
         return nullptr;
 
-    auto elementID = valueObject->getString("session-node-" + id());
+    auto elementID = valueObject->getString(makeString("session-node-"_s, id()));
     if (!elementID)
         return nullptr;
 
@@ -2409,7 +2409,7 @@ void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argument
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, "function(){\n" + script + "\n}");
+        parameters->setString("function"_s, makeString("function(){\n"_s, script, "\n}"_s));
         parameters->setArray("arguments"_s, WTFMove(arguments));
         if (mode == ExecuteScriptMode::Async)
             parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);

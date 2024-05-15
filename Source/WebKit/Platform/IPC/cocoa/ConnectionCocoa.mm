@@ -251,7 +251,7 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
 
     default:
         auto messageName = message->messageName();
-        auto errorMessage = makeString("Unhandled error code 0x", hex(kr), ", message '", description(messageName), "' (", messageName, ')');
+        auto errorMessage = makeString("Unhandled error code 0x"_s, hex(kr), ", message '"_s, description(messageName), "' ("_s, messageName, ')');
         WebKit::logAndSetCrashLogMessage(errorMessage.utf8().data());
         CRASH_WITH_INFO(kr, WTF::enumToUnderlyingType(messageName));
     }
@@ -482,7 +482,7 @@ static mach_msg_header_t* readFromMachPort(mach_port_t machPort, ReceiveBuffer& 
 
     if (kr != MACH_MSG_SUCCESS) {
 #if ASSERT_ENABLED
-        auto errorMessage = makeString("Unhandled error code 0x", hex(kr), " from mach_msg, receive port is 0x", hex(machPort));
+        auto errorMessage = makeString("Unhandled error code 0x"_s, hex(kr), " from mach_msg, receive port is 0x"_s, hex(machPort));
         WebKit::logAndSetCrashLogMessage(errorMessage.utf8().data());
 #endif
         ASSERT_NOT_REACHED();

@@ -261,13 +261,13 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
 {
     auto method = toCommandHTTPMethod(request.method);
     if (!method) {
-        sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, String("Unknown method: " + request.method)));
+        sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, makeString("Unknown method: "_s, request.method)));
         return;
     }
     CommandHandler handler;
     HashMap<String, String> parameters;
     if (!findCommand(method.value(), request.path, &handler, parameters)) {
-        sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, String("Unknown command: " + request.path)));
+        sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, makeString("Unknown command: "_s, request.path)));
         return;
     }
 

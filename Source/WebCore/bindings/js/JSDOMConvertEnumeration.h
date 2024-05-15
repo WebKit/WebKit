@@ -35,7 +35,7 @@ namespace WebCore {
 // Specialized by generated code for IDL enumeration conversion.
 template<typename T> std::optional<T> parseEnumerationFromString(const String&);
 template<typename T> std::optional<T> parseEnumeration(JSC::JSGlobalObject&, JSC::JSValue);
-template<typename T> const char* expectedEnumerationValues();
+template<typename T> ASCIILiteral expectedEnumerationValues();
 
 // Specialized by generated code for IDL enumeration conversion.
 template<typename T> JSC::JSString* convertEnumerationToJS(JSC::VM&, T);

@@ -60,7 +60,7 @@ static void appendDirectoryFiles(const String& directory, const String& relative
         if (!fileType)
             continue;
 
-        String childRelativePath = relativePath + "/" + childName;
+        auto childRelativePath = makeString(relativePath, '/', childName);
         if (*fileType == FileSystem::FileType::Directory)
             appendDirectoryFiles(childPath, childRelativePath, files);
         else if (*fileType == FileSystem::FileType::Regular)

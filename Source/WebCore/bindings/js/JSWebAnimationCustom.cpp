@@ -61,10 +61,10 @@ EncodedJSValue constructJSWebAnimation(JSGlobalObject* lexicalGlobalObject, Call
     ASSERT(jsConstructor);
     auto* context = jsConstructor->scriptExecutionContext();
     if (UNLIKELY(!context))
-        return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "Animation");
+        return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "Animation"_s);
     auto& document = downcast<Document>(*context);
     auto effect = convert<IDLNullable<IDLInterface<AnimationEffect>>>(*lexicalGlobalObject, callFrame.argument(0), [](JSGlobalObject& lexicalGlobalObject, ThrowScope& scope) {
-        throwArgumentTypeError(lexicalGlobalObject, scope, 0, "effect", "Animation", nullptr, "AnimationEffect");
+        throwArgumentTypeError(lexicalGlobalObject, scope, 0, "effect"_s, "Animation"_s, nullptr, "AnimationEffect"_s);
     });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
@@ -74,7 +74,7 @@ EncodedJSValue constructJSWebAnimation(JSGlobalObject* lexicalGlobalObject, Call
     }
 
     auto timeline = convert<IDLNullable<IDLInterface<AnimationTimeline>>>(*lexicalGlobalObject, callFrame.uncheckedArgument(1), [](JSGlobalObject& lexicalGlobalObject, ThrowScope& scope) {
-        throwArgumentTypeError(lexicalGlobalObject, scope, 1, "timeline", "Animation", nullptr, "AnimationTimeline");
+        throwArgumentTypeError(lexicalGlobalObject, scope, 1, "timeline"_s, "Animation"_s, nullptr, "AnimationTimeline"_s);
     });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = WebAnimation::create(document, WTFMove(effect), WTFMove(timeline));

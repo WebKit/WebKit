@@ -580,7 +580,7 @@ void CurlRequest::invokeDidReceiveResponseForFile(const URL& url)
         CurlResponse response;
         response.url = WTFMove(url);
         response.statusCode = 200;
-        response.headers.append("Content-Type: " + mimeType);
+        response.headers.append(makeString("Content-Type: "_s, mimeType));
 
         invokeDidReceiveResponse(response, [this] {
             startWithJobManager();

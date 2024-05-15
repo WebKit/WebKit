@@ -89,7 +89,7 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
 
     ASSERT(url.protocolIs("ws"_s) || url.protocolIs("wss"_s));
 
-    URL httpsURL { "https://" + m_url.host() };
+    URL httpsURL { makeString("https://"_s, m_url.host()) };
     m_httpsURL = httpsURL.createCFURL();
 
     // Don't check for HSTS violation for ephemeral sessions since
@@ -451,7 +451,7 @@ void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyRespons
 CFStringRef SocketStreamHandleImpl::copyCFStreamDescription(void* info)
 {
     SocketStreamHandleImpl* handle = static_cast<SocketStreamHandleImpl*>(info);
-    return String("WebKit socket stream, " + handle->m_url.string()).createCFString().leakRef();
+    return makeString("WebKit socket stream, "_s, handle->m_url.string()).createCFString().leakRef();
 }
 
 void SocketStreamHandleImpl::readStreamCallback(CFReadStreamRef stream, CFStreamEventType type, void* clientCallBackInfo)
@@ -655,7 +655,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (CFEqual(CFErrorGetDomain(error), kCFErrorDomainOSStatus)) {
         const char* descriptionOSStatus = GetMacOSStatusCommentString(static_cast<OSStatus>(errorCode));
         if (descriptionOSStatus && descriptionOSStatus[0] != '\0')
-            description = makeString("OSStatus Error ", errorCode, ": ", descriptionOSStatus);
+            description = makeString("OSStatus Error "_s, errorCode, ": "_s, span(descriptionOSStatus));
     }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

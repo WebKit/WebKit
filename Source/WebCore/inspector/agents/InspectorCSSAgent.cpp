@@ -135,7 +135,7 @@ private:
 
     String mergeId() final
     {
-        return "SetStyleSheetText " + m_styleSheet->id();
+        return makeString("SetStyleSheetText "_s, m_styleSheet->id());
     }
 
     void merge(std::unique_ptr<Action> action) override

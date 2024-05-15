@@ -560,7 +560,7 @@ Ref<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
 Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, std::optional<uint16_t> port)
 {
     String decodedHost = PAL::decodeURLEscapeSequences(host);
-    auto origin = create(URL { protocol + "://" + host + "/" });
+    auto origin = create(URL { makeString(protocol, "://"_s, host, '/') });
     if (port && !WTF::isDefaultPortForProtocol(*port, protocol))
         origin->m_data.setPort(port);
     return origin;

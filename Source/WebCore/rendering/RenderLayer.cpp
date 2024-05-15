@@ -875,7 +875,7 @@ String RenderLayer::name() const
 {
     if (!isReflection())
         return renderer().debugDescription();
-    return makeString(renderer().debugDescription(), " (reflection)");
+    return makeString(renderer().debugDescription(), " (reflection)"_s);
 }
 
 RenderLayerCompositor& RenderLayer::compositor() const

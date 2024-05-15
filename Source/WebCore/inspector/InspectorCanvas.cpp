@@ -112,7 +112,7 @@ Ref<InspectorCanvas> InspectorCanvas::create(CanvasRenderingContext& context)
 }
 
 InspectorCanvas::InspectorCanvas(CanvasRenderingContext& context)
-    : m_identifier("canvas:" + IdentifiersFactory::createIdentifier())
+    : m_identifier(makeString("canvas:"_s, IdentifiersFactory::createIdentifier()))
     , m_context(context)
 {
 }

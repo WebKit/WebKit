@@ -1027,8 +1027,8 @@ protected:
     virtual bool validateAndCacheBufferBinding(const AbstractLocker&, ASCIILiteral functionName, GCGLenum target, WebGLBuffer*);
 
     // Wrapper for GraphicsContextGLOpenGL::synthesizeGLError that sends a message to the JavaScript console.
-    void synthesizeGLError(GCGLenum, ASCIILiteral functionName, const char* description);
-    void synthesizeLostContextGLError(GCGLenum, ASCIILiteral functionName, const char* description);
+    void synthesizeGLError(GCGLenum, ASCIILiteral functionName, ASCIILiteral description);
+    void synthesizeLostContextGLError(GCGLenum, ASCIILiteral functionName, ASCIILiteral description);
 
     // Clamp the width and height to GL_MAX_VIEWPORT_DIMS.
     IntSize clampedCanvasSize();
@@ -1083,12 +1083,12 @@ template<typename T>
 bool WebGLRenderingContextBase::validateWebGLObject(ASCIILiteral functionName, const T& object)
 {
     if (object.context() != this) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "object does not belong to this context");
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "object does not belong to this context"_s);
         return false;
     }
     if (!object.isUsable()) {
         constexpr GCGLenum error = (std::is_same_v<T, WebGLProgram> || std::is_same_v<T, WebGLShader>) ? GraphicsContextGL::INVALID_VALUE : GraphicsContextGL::INVALID_OPERATION;
-        synthesizeGLError(error, functionName, "attempt to use a deleted object");
+        synthesizeGLError(error, functionName, "attempt to use a deleted object"_s);
         return false;
     }
     return true;

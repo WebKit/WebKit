@@ -1473,7 +1473,7 @@ void LocalFrameView::logMockScrollbarsControllerMessage(const String& message) c
     if (!document)
         return;
     document->addConsoleMessage(MessageSource::Other, MessageLevel::Debug,
-        makeString(m_frame->isMainFrame() ? "Main" : "", "LocalFrameView: ", message));
+        makeString(m_frame->isMainFrame() ? "Main"_s : ""_s, "LocalFrameView: "_s, message));
 }
 
 String LocalFrameView::debugDescription() const

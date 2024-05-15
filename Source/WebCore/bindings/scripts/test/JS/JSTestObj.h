@@ -127,28 +127,28 @@ template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumType);
 
 template<> std::optional<TestObj::EnumType> parseEnumerationFromString<TestObj::EnumType>(const String&);
 template<> std::optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestObj::EnumType>();
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumType>();
 
 String convertEnumerationToString(TestObj::EnumTrailingComma);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumTrailingComma);
 
 template<> std::optional<TestObj::EnumTrailingComma> parseEnumerationFromString<TestObj::EnumTrailingComma>(const String&);
 template<> std::optional<TestObj::EnumTrailingComma> parseEnumeration<TestObj::EnumTrailingComma>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestObj::EnumTrailingComma>();
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumTrailingComma>();
 
 String convertEnumerationToString(TestObj::Optional);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::Optional);
 
 template<> std::optional<TestObj::Optional> parseEnumerationFromString<TestObj::Optional>(const String&);
 template<> std::optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestObj::Optional>();
+template<> ASCIILiteral expectedEnumerationValues<TestObj::Optional>();
 
 String convertEnumerationToString(AlternateEnumName);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, AlternateEnumName);
 
 template<> std::optional<AlternateEnumName> parseEnumerationFromString<AlternateEnumName>(const String&);
 template<> std::optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<AlternateEnumName>();
+template<> ASCIILiteral expectedEnumerationValues<AlternateEnumName>();
 
 #if ENABLE(Condition1)
 
@@ -157,7 +157,7 @@ template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumA);
 
 template<> std::optional<TestObj::EnumA> parseEnumerationFromString<TestObj::EnumA>(const String&);
 template<> std::optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestObj::EnumA>();
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumA>();
 
 #endif
 
@@ -168,7 +168,7 @@ template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumB);
 
 template<> std::optional<TestObj::EnumB> parseEnumerationFromString<TestObj::EnumB>(const String&);
 template<> std::optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestObj::EnumB>();
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumB>();
 
 #endif
 
@@ -179,7 +179,7 @@ template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumC);
 
 template<> std::optional<TestObj::EnumC> parseEnumerationFromString<TestObj::EnumC>(const String&);
 template<> std::optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestObj::EnumC>();
+template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumC>();
 
 #endif
 
@@ -188,21 +188,21 @@ template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::Kind);
 
 template<> std::optional<TestObj::Kind> parseEnumerationFromString<TestObj::Kind>(const String&);
 template<> std::optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestObj::Kind>();
+template<> ASCIILiteral expectedEnumerationValues<TestObj::Kind>();
 
 String convertEnumerationToString(TestObj::Size);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::Size);
 
 template<> std::optional<TestObj::Size> parseEnumerationFromString<TestObj::Size>(const String&);
 template<> std::optional<TestObj::Size> parseEnumeration<TestObj::Size>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestObj::Size>();
+template<> ASCIILiteral expectedEnumerationValues<TestObj::Size>();
 
 String convertEnumerationToString(TestObj::Confidence);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::Confidence);
 
 template<> std::optional<TestObj::Confidence> parseEnumerationFromString<TestObj::Confidence>(const String&);
 template<> std::optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestObj::Confidence>();
+template<> ASCIILiteral expectedEnumerationValues<TestObj::Confidence>();
 
 template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSC::JSGlobalObject&, JSC::JSValue);
 

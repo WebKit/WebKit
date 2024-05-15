@@ -37,7 +37,7 @@ template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestStandaloneDiction
 
 template<> std::optional<TestStandaloneDictionary::EnumInStandaloneDictionaryFile> parseEnumerationFromString<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(const String&);
 template<> std::optional<TestStandaloneDictionary::EnumInStandaloneDictionaryFile> parseEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>();
+template<> ASCIILiteral expectedEnumerationValues<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>();
 
 } // namespace WebCore
 

@@ -220,7 +220,7 @@ String createHEVCCodecParametersString(const HEVCParameters& parameters)
     }
 
     StringBuilder resultBuilder;
-    resultBuilder.append(parameters.codec == HEVCParameters::Codec::Hev1 ? "hev1" : "hvc1", '.');
+    resultBuilder.append(parameters.codec == HEVCParameters::Codec::Hev1 ? "hev1"_s : "hvc1"_s, '.');
     if (parameters.generalProfileSpace) {
         // The format of the 'hevc' codec string is specified in ISO/IEC 14496-15:2014, Annex E.3.
         char profileSpaceCharacter = 'A' + parameters.generalProfileSpace - 1;

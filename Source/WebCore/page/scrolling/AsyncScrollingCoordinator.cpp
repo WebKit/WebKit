@@ -1195,7 +1195,7 @@ String AsyncScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingSt
             if (m_eventTrackingRegionsDirty)
                 tree->rootStateNode()->setEventTrackingRegions(absoluteEventTrackingRegions());
             if (m_scrollingStateTrees.size() > 1)
-                stateTree.append("Tree-for-root-frameID: " + key.toString());
+                stateTree.append(makeString("Tree-for-root-frameID: "_s, key.toString()));
             stateTree.append(tree->scrollingStateTreeAsText(behavior));
         }
     });

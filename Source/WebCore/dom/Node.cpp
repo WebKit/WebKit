@@ -1977,13 +1977,13 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
 String Node::description() const
 {
     auto name = nodeName();
-    return makeString(name.isEmpty() ? "<none>" : "", name);
+    return makeString(name.isEmpty() ? "<none>"_s : ""_s, name);
 }
 
 String Node::debugDescription() const
 {
     auto name = nodeName();
-    return makeString(name.isEmpty() ? "<none>" : "", name, " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    return makeString(name.isEmpty() ? "<none>"_s : ""_s, name, " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }
 
 #if ENABLE(TREE_DEBUGGING)

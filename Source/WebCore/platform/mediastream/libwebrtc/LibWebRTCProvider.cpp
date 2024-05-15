@@ -442,7 +442,7 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
         StringBuilder sdpFmtpLineBuilder;
         bool hasParameter = false;
         for (auto& parameter : codec.parameters) {
-            sdpFmtpLineBuilder.append(hasParameter ? ";" : "", StringView(std::span(parameter.first)), '=', StringView(std::span(parameter.second)));
+            sdpFmtpLineBuilder.append(hasParameter ? ";"_s : ""_s, std::span(parameter.first), '=', std::span(parameter.second));
             hasParameter = true;
         }
         String sdpFmtpLine;

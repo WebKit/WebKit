@@ -777,7 +777,7 @@ String DateComponents::toString(SecondFormat format) const
     case DateComponentsType::Time:
         return toStringForTime(format);
     case DateComponentsType::Week:
-        return makeString(pad('0', 4, m_year), "-W", pad('0', 2, m_week));
+        return makeString(pad('0', 4, m_year), "-W"_s, pad('0', 2, m_week));
     case DateComponentsType::Invalid:
         break;
     }

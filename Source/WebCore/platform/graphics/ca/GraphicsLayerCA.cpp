@@ -2211,13 +2211,13 @@ void GraphicsLayerCA::updateNames()
     auto name = debugName();
     switch (structuralLayerPurpose()) {
     case StructuralLayerForPreserves3D:
-        m_structuralLayer->setName("preserve-3d: " + name);
+        m_structuralLayer->setName(makeString("preserve-3d: "_s, name));
         break;
     case StructuralLayerForReplicaFlattening:
-        m_structuralLayer->setName("replica flattening: " + name);
+        m_structuralLayer->setName(makeString("replica flattening: "_s, name));
         break;
     case StructuralLayerForBackdrop:
-        m_structuralLayer->setName("backdrop hosting: " + name);
+        m_structuralLayer->setName(makeString("backdrop hosting: "_s, name));
         break;
     case NoStructuralLayer:
         break;
@@ -4654,7 +4654,7 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(const CloneID& cloneID,
 #if ENABLE(TREE_DEBUGGING)
         resultLayer->setName(makeString("clone "_s, hex(cloneID[0U]), " of "_s, sourceLayer->layerID().object()));
 #else
-        resultLayer->setName("clone of " + m_name);
+        resultLayer->setName(makeString("clone of "_s, m_name));
 #endif
         addResult.iterator->value = resultLayer;
     }

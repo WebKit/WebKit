@@ -216,7 +216,7 @@ struct LogArgument<URL> {
 
         if (url.string().length() < maximumURLLengthForLogging)
             return url.string();
-        return makeString(StringView(url.string()).left(maximumURLLengthForLogging), "...");
+        return makeString(StringView(url.string()).left(maximumURLLengthForLogging), "..."_s);
 #else
         UNUSED_PARAM(url);
         return "[url]"_s;
@@ -2686,7 +2686,7 @@ void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error
         if (!lastErrorMessage)
             return message;
 
-        return makeString(message, ": ", lastErrorMessage);
+        return makeString(message, ": "_s, lastErrorMessage);
     };
 
     // 2 - Set the error attribute to a new MediaError object whose code attribute is

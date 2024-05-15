@@ -110,7 +110,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
         result.promise = convert<IDLPromise<IDLAny>>(lexicalGlobalObject, promiseValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else {
-        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "promise", "TestPromiseRejectionEventInit", "Promise");
+        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "promise"_s, "TestPromiseRejectionEventInit"_s, "Promise"_s);
         return { };
     }
     JSValue reasonValue;

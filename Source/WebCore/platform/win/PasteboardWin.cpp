@@ -694,7 +694,7 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
     ASSERT(url.containsOnlyASCII()); // URL::string() is URL encoded.
 
     String fsPath = fileSystemPathFromURLOrTitle(url, titleStr, ".URL"_s, true);
-    String contentString("[InternetShortcut]\r\nURL=" + url + "\r\n");
+    auto contentString = makeString("[InternetShortcut]\r\nURL="_s, url, "\r\n"_s);
     CString content = contentString.latin1();
 
     if (fsPath.length() <= 0)

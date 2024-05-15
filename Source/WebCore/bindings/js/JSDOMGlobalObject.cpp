@@ -709,16 +709,16 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
 
 String JSDOMGlobalObject::defaultAgentClusterID()
 {
-    return makeString(Process::identifier().toUInt64(), "-default");
+    return makeString(Process::identifier().toUInt64(), "-default"_s);
 }
 
 String JSDOMGlobalObject::agentClusterID() const
 {
     // Service workers may run in process but they need to be in a separate agent cluster.
     if (is<ServiceWorkerGlobalScope>(scriptExecutionContext()))
-        return makeString(Process::identifier().toUInt64(), "-serviceworker");
+        return makeString(Process::identifier().toUInt64(), "-serviceworker"_s);
     if (is<SharedWorkerGlobalScope>(scriptExecutionContext()))
-        return makeString(Process::identifier().toUInt64(), "-sharedworker");
+        return makeString(Process::identifier().toUInt64(), "-sharedworker"_s);
     return defaultAgentClusterID();
 }
 

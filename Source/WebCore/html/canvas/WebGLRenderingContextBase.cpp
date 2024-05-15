@@ -2077,7 +2077,7 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::MAX_TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
         if (m_extTextureFilterAnisotropic)
             return getUnsignedIntParameter(GraphicsContextGL::MAX_TEXTURE_MAX_ANISOTROPY_EXT);
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter"_s, "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter"_s, "invalid parameter name, EXT_texture_filter_anisotropic not enabled"_s);
         return nullptr;
     case GraphicsContextGL::DEPTH_CLAMP_EXT: // EXT_depth_clamp
         if (m_extDepthClamp)
@@ -5415,7 +5415,7 @@ void WebGLRenderingContextBase::LRUImageBufferCache::bubbleToFront(size_t idx)
         m_buffers[i].swap(m_buffers[i-1]);
 }
 
-void WebGLRenderingContextBase::synthesizeGLError(GCGLenum error, ASCIILiteral functionName, const char* description)
+void WebGLRenderingContextBase::synthesizeGLError(GCGLenum error, ASCIILiteral functionName, ASCIILiteral description)
 {
     auto errorCode = GraphicsContextGL::enumToErrorCode(error);
     if (shouldPrintToConsole())
@@ -5423,7 +5423,7 @@ void WebGLRenderingContextBase::synthesizeGLError(GCGLenum error, ASCIILiteral f
     m_errors.add(errorCode);
 }
 
-void WebGLRenderingContextBase::synthesizeLostContextGLError(GCGLenum error, ASCIILiteral functionName, const char* description)
+void WebGLRenderingContextBase::synthesizeLostContextGLError(GCGLenum error, ASCIILiteral functionName, ASCIILiteral description)
 {
     auto errorCode = GraphicsContextGL::enumToErrorCode(error);
     if (shouldPrintToConsole())

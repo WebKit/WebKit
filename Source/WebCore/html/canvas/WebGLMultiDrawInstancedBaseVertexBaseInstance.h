@@ -51,7 +51,7 @@ public:
 
 private:
     bool validateDrawcount(WebGLRenderingContextBase&, ASCIILiteral functionName, GCGLsizei drawcount);
-    bool validateOffset(WebGLRenderingContextBase&, ASCIILiteral functionName, const char* outOfBoundsDescription, GCGLsizei, GCGLuint offset, GCGLsizei drawcount);
+    bool validateOffset(WebGLRenderingContextBase&, ASCIILiteral functionName, ASCIILiteral outOfBoundsDescription, GCGLsizei, GCGLuint offset, GCGLsizei drawcount);
 };
 
 } // namespace WebCore

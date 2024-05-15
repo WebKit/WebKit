@@ -444,10 +444,10 @@ String ShorthandSerializer::serializeLonghands(unsigned lengthLimit, ASCIILitera
 String ShorthandSerializer::serializeLonghandsOmittingInitialValues() const
 {
     StringBuilder result;
-    auto prefix = "";
+    auto prefix = ""_s;
     for (auto longhand : longhands()) {
         if (!isInitialValue(longhand))
-            result.append(std::exchange(prefix, " "), serializeValue(longhand));
+            result.append(std::exchange(prefix, " "_s), serializeValue(longhand));
     }
     return result.isEmpty() ? serializeLonghandValue(0) : result.toString();
 }
@@ -796,7 +796,7 @@ String ShorthandSerializer::serializeBorderImage() const
     StringBuilder result;
     bool omittedSlice = false;
     bool omittedWidth = false;
-    auto separator = "";
+    auto separator = ""_s;
     for (auto longhand : longhands()) {
         if (isInitialValue(longhand)) {
             if (longhand.property == CSSPropertyBorderImageSlice || longhand.property == CSSPropertyMaskBorderSlice)
@@ -822,11 +822,11 @@ String ShorthandSerializer::serializeBorderImage() const
 
         // Append separator and text.
         if (longhand.property == CSSPropertyBorderImageWidth || longhand.property == CSSPropertyMaskBorderWidth)
-            separator = " / ";
+            separator = " / "_s;
         else if (longhand.property == CSSPropertyBorderImageOutset || longhand.property == CSSPropertyMaskBorderOutset)
-            separator = omittedWidth ? " / / " : " / ";
+            separator = omittedWidth ? " / / "_s : " / "_s;
         result.append(separator, valueText);
-        separator = " ";
+        separator = " "_s;
     }
     if (result.isEmpty())
         return nameString(CSSValueNone);
@@ -966,14 +966,14 @@ String ShorthandSerializer::serializeFont() const
     bool includeLineHeight = !isLonghandInitialValue(lineHeightIndex);
 
     auto style = includeStyle ? serializeLonghandValue(styleIndex) : String();
-    auto capsSeparator = includeCaps && includeStyle ? " " : "";
+    auto capsSeparator = includeCaps && includeStyle ? " "_s : ""_s;
     auto caps = includeCaps ? nameLiteral(capsKeyword) : ""_s;
-    auto weightSeparator = includeWeight && (includeStyle || includeCaps) ? " " : "";
+    auto weightSeparator = includeWeight && (includeStyle || includeCaps) ? " "_s : ""_s;
     auto weight = includeWeight ? serializeLonghandValue(weightIndex) : String();
-    auto stretchSeparator = includeStretch && (includeStyle || includeCaps || includeWeight) ? " " : "";
+    auto stretchSeparator = includeStretch && (includeStyle || includeCaps || includeWeight) ? " "_s : ""_s;
     auto stretch = includeStretch ? nameLiteral(stretchKeyword) : ""_s;
-    auto sizeSeparator = includeStyle || includeCaps || includeWeight || includeStretch ? " " : "";
-    auto lineHeightSeparator = includeLineHeight ? " / " : "";
+    auto sizeSeparator = includeStyle || includeCaps || includeWeight || includeStretch ? " "_s : ""_s;
+    auto lineHeightSeparator = includeLineHeight ? " / "_s : ""_s;
     auto lineHeight = includeLineHeight ? serializeLonghandValue(lineHeightIndex) : String();
 
     return makeString(style,

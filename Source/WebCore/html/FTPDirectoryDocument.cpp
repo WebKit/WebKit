@@ -170,10 +170,10 @@ static String processFilesizeString(const String& size, bool isDirectory)
         return unknownFileSizeText();
 
     if (*bytes < 1000000)
-        return makeString(FormattedNumber::fixedWidth(*bytes / 1000.0, 2), " KB");
+        return makeString(FormattedNumber::fixedWidth(*bytes / 1000.0, 2), " KB"_s);
     if (*bytes < 1000000000)
-        return makeString(FormattedNumber::fixedWidth(*bytes / 1000000.0, 2), " MB");
-    return makeString(FormattedNumber::fixedWidth(*bytes / 1000000000.0, 2), " GB");
+        return makeString(FormattedNumber::fixedWidth(*bytes / 1000000.0, 2), " MB"_s);
+    return makeString(FormattedNumber::fixedWidth(*bytes / 1000000000.0, 2), " GB"_s);
 }
 
 static bool wasLastDayOfMonth(int year, int month, int day)

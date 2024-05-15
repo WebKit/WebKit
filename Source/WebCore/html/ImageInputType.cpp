@@ -70,8 +70,8 @@ bool ImageInputType::appendFormData(DOMFormData& formData) const
         return true;
     }
 
-    formData.append(makeString(name, ".x"), String::number(m_clickLocation.x()));
-    formData.append(makeString(name, ".y"), String::number(m_clickLocation.y()));
+    formData.append(makeString(name, ".x"_s), String::number(m_clickLocation.x()));
+    formData.append(makeString(name, ".y"_s), String::number(m_clickLocation.y()));
 
     return true;
 }

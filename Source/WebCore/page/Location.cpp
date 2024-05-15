@@ -87,7 +87,7 @@ String Location::href() const
 
 String Location::protocol() const
 {
-    return makeString(url().protocol(), ":");
+    return makeString(url().protocol(), ':');
 }
 
 String Location::host() const

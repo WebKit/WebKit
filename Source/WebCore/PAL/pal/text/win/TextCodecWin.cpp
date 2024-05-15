@@ -32,6 +32,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -114,7 +115,7 @@ LanguageManager::LanguageManager()
             info.m_aliases.append(name);
             info.m_aliases.append(String(cpInfo.wszHeaderCharset).latin1());
             info.m_aliases.append(String(cpInfo.wszBodyCharset).latin1());
-            String cpName = "cp" + String::number(cpInfo.uiCodePage);
+            auto cpName = makeString("cp"_s, cpInfo.uiCodePage);
             info.m_aliases.append(cpName.latin1());
             supportedCharsets().add(i->value.data());
         }

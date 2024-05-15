@@ -47,7 +47,7 @@ JSValue JSRTCRtpSFrameTransform::setEncryptionKey(JSGlobalObject& lexicalGlobalO
 
     EnsureStillAliveScope argument0 = callFrame.uncheckedArgument(0);
     auto key = convert<IDLInterface<CryptoKey>>(lexicalGlobalObject, argument0.value(), [](auto& lexicalGlobalObject, auto& scope) {
-        throwArgumentTypeError(lexicalGlobalObject, scope, 0, "key", "SFrameTransform", "setEncryptionKey", "CryptoKey");
+        throwArgumentTypeError(lexicalGlobalObject, scope, 0, "key"_s, "SFrameTransform"_s, "setEncryptionKey"_s, "CryptoKey"_s);
     });
     RETURN_IF_EXCEPTION(throwScope, jsUndefined());
 

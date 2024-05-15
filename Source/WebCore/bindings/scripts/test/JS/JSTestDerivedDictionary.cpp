@@ -114,7 +114,7 @@ template<> TestDerivedDictionary convertDictionary<TestDerivedDictionary>(JSGlob
         result.partialRequiredLongMember = convert<IDLLong>(lexicalGlobalObject, partialRequiredLongMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else {
-        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "partialRequiredLongMember", "TestDerivedDictionary", "long");
+        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "partialRequiredLongMember"_s, "TestDerivedDictionary"_s, "long"_s);
         return { };
     }
     JSValue partialStringMemberValue;

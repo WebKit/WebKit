@@ -95,32 +95,32 @@ private:
         context.setFillColor(SRGBA<uint8_t> { 230, 230, 230 });
 
         FloatPoint position = { 10, 20 };
-        String string =  "CPU: " + cpuUsageString(gData.cpu);
+        auto string =  makeString("CPU: "_s, cpuUsageString(gData.cpu));
         context.drawText(m_textFont, TextRun(string), position);
         position.move(0, gFontSize + 2);
 
-        string = "Memory: " + formatByteNumber(gData.totalDirtySize);
+        string = makeString("Memory: "_s, formatByteNumber(gData.totalDirtySize));
         context.drawText(m_textFont, TextRun(string), position);
         position.move(0, gFontSize + 2);
 
-        string = "External: " + formatByteNumber(gData.totalExternalSize);
+        string = makeString("External: "_s, formatByteNumber(gData.totalExternalSize));
         context.drawText(m_textFont, TextRun(string), position);
         position.move(0, gFontSize + 2);
 
-        string = "GC Heap: " + formatByteNumber(gData.categories[MemoryCategory::GCHeap].dirtySize);
+        string = makeString("GC Heap: "_s, formatByteNumber(gData.categories[MemoryCategory::GCHeap].dirtySize));
         context.drawText(m_textFont, TextRun(string), position);
         position.move(0, gFontSize + 2);
 
-        string = "GC owned: " + formatByteNumber(gData.categories[MemoryCategory::GCOwned].dirtySize);
+        string = makeString("GC owned: "_s, formatByteNumber(gData.categories[MemoryCategory::GCOwned].dirtySize));
         context.drawText(m_textFont, TextRun(string), position);
         position.move(0, gFontSize + 2);
 
         MonotonicTime now = MonotonicTime::now();
-        string = "Eden GC: " + gcTimerString(gData.timeOfNextEdenCollection, now);
+        string = makeString("Eden GC: "_s, gcTimerString(gData.timeOfNextEdenCollection, now));
         context.drawText(m_textFont, TextRun(string), position);
         position.move(0, gFontSize + 2);
 
-        string = "Full GC: " + gcTimerString(gData.timeOfNextFullCollection, now);
+        string = makeString("Full GC: "_s, gcTimerString(gData.timeOfNextFullCollection, now));
         context.drawText(m_textFont, TextRun(string), position);
         position.move(0, gFontSize + 2);
     }

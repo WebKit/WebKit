@@ -119,7 +119,7 @@ std::optional<ScriptType> ScriptElement::determineScriptType(const String& type,
     if (type.isNull()) {
         if (language.isEmpty())
             return ScriptType::Classic;
-        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/" + language))
+        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(makeString("text/"_s, language)))
             return ScriptType::Classic;
         return std::nullopt;
     }

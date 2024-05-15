@@ -49,9 +49,9 @@ namespace WebCore {
 static String validationPolicyAsString(OptionSet<TileGrid::ValidationPolicyFlag> policy)
 {
     return makeString('[',
-        policy.contains(TileGrid::PruneSecondaryTiles) ? "prune secondary" : "",
-        policy.containsAll({ TileGrid::PruneSecondaryTiles, TileGrid::UnparentAllTiles }) ? ", " : "",
-        policy.contains(TileGrid::PruneSecondaryTiles) ? "unparent all" : "",
+        policy.contains(TileGrid::PruneSecondaryTiles) ? "prune secondary"_s : ""_s,
+        policy.containsAll({ TileGrid::PruneSecondaryTiles, TileGrid::UnparentAllTiles }) ? ", "_s : ""_s,
+        policy.contains(TileGrid::PruneSecondaryTiles) ? "unparent all"_s : ""_s,
         ']');
 }
 

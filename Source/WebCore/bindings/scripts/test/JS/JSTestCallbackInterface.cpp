@@ -86,9 +86,9 @@ template<> std::optional<TestCallbackInterface::Enum> parseEnumeration<TestCallb
     return parseEnumerationFromString<TestCallbackInterface::Enum>(value.toWTFString(&lexicalGlobalObject));
 }
 
-template<> const char* expectedEnumerationValues<TestCallbackInterface::Enum>()
+template<> ASCIILiteral expectedEnumerationValues<TestCallbackInterface::Enum>()
 {
-    return "\"value1\", \"value2\"";
+    return "\"value1\", \"value2\""_s;
 }
 
 template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInterface::Dictionary>(JSGlobalObject& lexicalGlobalObject, JSValue value)
@@ -124,7 +124,7 @@ template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInter
         result.requiredMember = convert<IDLUSVString>(lexicalGlobalObject, requiredMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else {
-        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "requiredMember", "TestCallbackInterfaceDictionary", "USVString");
+        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "requiredMember"_s, "TestCallbackInterfaceDictionary"_s, "USVString"_s);
         return { };
     }
     return result;
