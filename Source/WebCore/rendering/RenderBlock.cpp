@@ -156,11 +156,11 @@ public:
         // Protect against double insert where a descendant would end up with multiple containing blocks.
         auto previousContainingBlock = m_containerMap.get(positionedDescendant);
         if (previousContainingBlock && previousContainingBlock != &containingBlock) {
-            if (auto* descendants = m_descendantsMap.get(previousContainingBlock.get()))
+            if (auto* descendants = m_descendantsMap.get(*previousContainingBlock.get()))
                 descendants->remove(positionedDescendant);
         }
 
-        auto& descendants = m_descendantsMap.ensure(&containingBlock, [] {
+        auto& descendants = m_descendantsMap.ensure(containingBlock, [] {
             return makeUnique<TrackedRendererListHashSet>();
         }).iterator->value;
 
@@ -199,7 +199,7 @@ public:
         if (!containingBlock)
             return;
 
-        auto descendantsIterator = m_descendantsMap.find(containingBlock.get());
+        auto descendantsIterator = m_descendantsMap.find(*containingBlock.get());
         ASSERT(descendantsIterator != m_descendantsMap.end());
         if (descendantsIterator == m_descendantsMap.end())
             return;
@@ -214,7 +214,7 @@ public:
     
     void removeContainingBlock(const RenderBlock& containingBlock)
     {
-        auto descendants = m_descendantsMap.take(&containingBlock);
+        auto descendants = m_descendantsMap.take(containingBlock);
         if (!descendants)
             return;
 
@@ -224,11 +224,11 @@ public:
     
     TrackedRendererListHashSet* positionedRenderers(const RenderBlock& containingBlock) const
     {
-        return m_descendantsMap.get(&containingBlock);
+        return m_descendantsMap.get(containingBlock);
     }
 
 private:
-    using DescendantsMap = HashMap<CheckedPtr<const RenderBlock>, std::unique_ptr<TrackedRendererListHashSet>>;
+    using DescendantsMap = SingleThreadWeakHashMap<const RenderBlock, std::unique_ptr<TrackedRendererListHashSet>>;
     using ContainerMap = SingleThreadWeakHashMap<const RenderBox, SingleThreadWeakPtr<const RenderBlock>>;
     
     DescendantsMap m_descendantsMap;
@@ -316,31 +316,10 @@ RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, Opt
     ASSERT(isRenderBlock());
 }
 
-static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock& block)
-{
-    if (!percentHeightDescendantsMap)
-        return;
-    auto descendantSet = percentHeightDescendantsMap->take(block);
-    if (!descendantSet)
-        return;
-    
-    for (auto& descendant : *descendantSet) {
-        auto it = percentHeightContainerMap->find(descendant);
-        ASSERT(it != percentHeightContainerMap->end());
-        if (it == percentHeightContainerMap->end())
-            continue;
-        auto& containerSet = it->value;
-        ASSERT(containerSet.contains(block));
-        containerSet.remove(block);
-        if (containerSet.isEmptyIgnoringNullReferences())
-            percentHeightContainerMap->remove(it);
-    }
-}
-
 RenderBlock::~RenderBlock()
 {
     // Blocks can be added to gRareDataMap during willBeDestroyed(), so this code can't move there.
-    if (gRareDataMap)
+    if (renderBlockHasRareData())
         gRareDataMap->remove(this);
 
     // Do not add any more code here. Add it to willBeDestroyed() instead.
@@ -354,22 +333,7 @@ void RenderBlock::willBeDestroyed()
             parent()->dirtyLinesFromChangedChild(*this);
     }
 
-    blockWillBeDestroyed();
-
     RenderBox::willBeDestroyed();
-}
-
-void RenderBlock::blockWillBeDestroyed()
-{
-    removeFromUpdateScrollInfoAfterLayoutTransaction();
-
-    removeBlockFromPercentageDescendantAndContainerMaps(*this);
-    positionedDescendantsMap().removeContainingBlock(*this);
-}
-
-bool RenderBlock::hasRareData() const
-{
-    return gRareDataMap ? gRareDataMap->contains(this) : false;
 }
 
 void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle)
@@ -547,12 +511,6 @@ void RenderBlock::endAndCommitUpdateScrollInfoAfterLayoutTransaction()
     }
 }
 
-void RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction()
-{
-    if (auto* transaction = view().frameView().layoutContext().updateScrollInfoAfterLayoutTransactionIfExists(); transaction && transaction->nestedCount)
-        transaction->blocks.remove(*this);
-}
-
 void RenderBlock::updateScrollInfoAfterLayout()
 {
     if (!hasNonVisibleOverflow())
@@ -591,20 +549,23 @@ void RenderBlock::layout()
     invalidateBackgroundObscurationStatus();
 }
 
-static RenderBlockRareData* getBlockRareData(const RenderBlock& block)
+RenderBlockRareData* RenderBlock::getBlockRareData() const
 {
-    return gRareDataMap ? gRareDataMap->get(block) : nullptr;
+    if (!renderBlockHasRareData())
+        return nullptr;
+    ASSERT(gRareDataMap);
+    return gRareDataMap->get(*this);
 }
 
-static RenderBlockRareData& ensureBlockRareData(const RenderBlock& block)
+RenderBlockRareData& RenderBlock::ensureBlockRareData()
 {
     if (!gRareDataMap)
         gRareDataMap = new RenderBlockRareDataMap;
-    
-    auto& rareData = gRareDataMap->add(block, nullptr).iterator->value;
-    if (!rareData)
-        rareData = makeUnique<RenderBlockRareData>();
-    return *rareData.get();
+
+    return *gRareDataMap->ensure(*this, [this] {
+        setRenderBlockHasRareData(true);
+        return makeUnique<RenderBlockRareData>();
+    }).iterator->value;
 }
 
 void RenderBlock::preparePaginationBeforeBlockLayout(bool& relayoutChildren)
@@ -2653,7 +2614,7 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
 
 RenderFragmentedFlow* RenderBlock::cachedEnclosingFragmentedFlow() const
 {
-    RenderBlockRareData* rareData = getBlockRareData(*this);
+    RenderBlockRareData* rareData = getBlockRareData();
 
     if (!rareData || !rareData->m_enclosingFragmentedFlow)
         return nullptr;
@@ -2663,7 +2624,7 @@ RenderFragmentedFlow* RenderBlock::cachedEnclosingFragmentedFlow() const
 
 bool RenderBlock::cachedEnclosingFragmentedFlowNeedsUpdate() const
 {
-    RenderBlockRareData* rareData = getBlockRareData(*this);
+    RenderBlockRareData* rareData = getBlockRareData();
 
     if (!rareData || !rareData->m_enclosingFragmentedFlow)
         return true;
@@ -2673,13 +2634,13 @@ bool RenderBlock::cachedEnclosingFragmentedFlowNeedsUpdate() const
 
 void RenderBlock::setCachedEnclosingFragmentedFlowNeedsUpdate()
 {
-    RenderBlockRareData& rareData = ensureBlockRareData(*this);
+    RenderBlockRareData& rareData = ensureBlockRareData();
     rareData.m_enclosingFragmentedFlow = std::nullopt;
 }
 
 RenderFragmentedFlow* RenderBlock::updateCachedEnclosingFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) const
 {
-    RenderBlockRareData& rareData = ensureBlockRareData(*this);
+    RenderBlockRareData& rareData = const_cast<RenderBlock&>(*this).ensureBlockRareData();
     rareData.m_enclosingFragmentedFlow = fragmentedFlow;
 
     return fragmentedFlow;
@@ -2687,7 +2648,7 @@ RenderFragmentedFlow* RenderBlock::updateCachedEnclosingFragmentedFlow(RenderFra
 
 RenderFragmentedFlow* RenderBlock::locateEnclosingFragmentedFlow() const
 {
-    RenderBlockRareData* rareData = getBlockRareData(*this);
+    RenderBlockRareData* rareData = getBlockRareData();
     if (!rareData || !rareData->m_enclosingFragmentedFlow)
         return updateCachedEnclosingFragmentedFlow(RenderBox::locateEnclosingFragmentedFlow());
 
@@ -2708,34 +2669,34 @@ void RenderBlock::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(R
 
 LayoutUnit RenderBlock::paginationStrut() const
 {
-    RenderBlockRareData* rareData = getBlockRareData(*this);
+    RenderBlockRareData* rareData = getBlockRareData();
     return rareData ? rareData->m_paginationStrut : 0_lu;
 }
 
 LayoutUnit RenderBlock::pageLogicalOffset() const
 {
-    RenderBlockRareData* rareData = getBlockRareData(*this);
+    RenderBlockRareData* rareData = getBlockRareData();
     return rareData ? rareData->m_pageLogicalOffset : 0_lu;
 }
 
 void RenderBlock::setPaginationStrut(LayoutUnit strut)
 {
-    RenderBlockRareData* rareData = getBlockRareData(*this);
+    RenderBlockRareData* rareData = getBlockRareData();
     if (!rareData) {
         if (!strut)
             return;
-        rareData = &ensureBlockRareData(*this);
+        rareData = &ensureBlockRareData();
     }
     rareData->m_paginationStrut = strut;
 }
 
 void RenderBlock::setPageLogicalOffset(LayoutUnit logicalOffset)
 {
-    RenderBlockRareData* rareData = getBlockRareData(*this);
+    RenderBlockRareData* rareData = getBlockRareData();
     if (!rareData) {
         if (!logicalOffset)
             return;
-        rareData = &ensureBlockRareData(*this);
+        rareData = &ensureBlockRareData();
     }
     rareData->m_pageLogicalOffset = logicalOffset;
 }
@@ -3387,17 +3348,17 @@ LayoutRect RenderBlock::paintRectToClipOutFromBorder(const LayoutRect& paintRect
 
 LayoutUnit RenderBlock::intrinsicBorderForFieldset() const
 {
-    auto* rareData = getBlockRareData(*this);
+    auto* rareData = getBlockRareData();
     return rareData ? rareData->m_intrinsicBorderForFieldset : 0_lu;
 }
 
 void RenderBlock::setIntrinsicBorderForFieldset(LayoutUnit padding)
 {
-    auto* rareData = getBlockRareData(*this);
+    auto* rareData = getBlockRareData();
     if (!rareData) {
         if (!padding)
             return;
-        rareData = &ensureBlockRareData(*this);
+        rareData = &ensureBlockRareData();
     }
     rareData->m_intrinsicBorderForFieldset = padding;
 }

@@ -114,16 +114,16 @@ static_assert(sizeof(RenderBox) == sizeof(SameSizeAsRenderBox), "RenderBox shoul
 
 using namespace HTMLNames;
 
-using OverrideSizeMap = HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit>;
+using OverrideSizeMap = SingleThreadWeakHashMap<const RenderBox, LayoutUnit>;
 static OverrideSizeMap* gOverridingLogicalHeightMap = nullptr;
 static OverrideSizeMap* gOverridingLogicalWidthMap = nullptr;
 
-using OverridingLengthMap = HashMap<SingleThreadWeakRef<const RenderBox>, Length>;
+using OverridingLengthMap = SingleThreadWeakHashMap<const RenderBox, Length>;
 static OverridingLengthMap* gOverridingLogicalHeightLengthMap = nullptr;
 static OverridingLengthMap* gOverridingLogicalWidthLengthMap = nullptr;
 
 // FIXME: We should store these based on physical direction.
-using OverrideOptionalSizeMap = HashMap<SingleThreadWeakRef<const RenderBox>, RenderBox::ContainingBlockOverrideValue>;
+using OverrideOptionalSizeMap = SingleThreadWeakHashMap<const RenderBox, RenderBox::ContainingBlockOverrideValue>;
 static OverrideOptionalSizeMap* gOverridingContainingBlockContentLogicalHeightMap = nullptr;
 static OverrideOptionalSizeMap* gOverridingContainingBlockContentLogicalWidthMap = nullptr;
 
@@ -155,13 +155,6 @@ void RenderBox::willBeDestroyed()
 {
     if (frame().eventHandler().autoscrollRenderer() == this)
         frame().eventHandler().stopAutoscrollTimer(true);
-
-    clearOverridingContentSize();
-    clearOverridingContainingBlockContentSize();
-
-    RenderBlock::removePercentHeightDescendantIfNeeded(*this);
-
-    ShapeOutsideInfo::removeInfo(*this);
 
     if (hasInitializedStyle()) {
         if (style().hasSnapPosition())
@@ -441,9 +434,9 @@ void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style,
         return;
 
     if (!shapeOutside)
-        ShapeOutsideInfo::removeInfo(*this);
+        removeShapeOutsideInfo();
     else
-        ShapeOutsideInfo::ensureInfo(*this).markShapeAsDirty();
+        ensureShapeOutsideInfo().markShapeAsDirty();
 
     if (shapeOutside || shapeOutside != oldShapeOutside)
         markShapeOutsideDependentsForLayout();
@@ -1307,42 +1300,50 @@ std::optional<LayoutUnit> RenderBox::overridingLogicalWidth() const
 {
     if (!gOverridingLogicalWidthMap)
         return { };
-    return gOverridingLogicalWidthMap->getOptional(*this);
+    if (auto result = gOverridingLogicalWidthMap->find(*this); result != gOverridingLogicalWidthMap->end())
+        return result->value;
+    return { };
 }
 
 std::optional<LayoutUnit> RenderBox::overridingLogicalHeight() const
 {
     if (!gOverridingLogicalHeightMap)
         return { };
-    return gOverridingLogicalHeightMap->getOptional(*this);
+    if (auto result = gOverridingLogicalHeightMap->find(*this); result != gOverridingLogicalHeightMap->end())
+        return result->value;
+    return { };
 }
 
 std::optional<RenderBox::ContainingBlockOverrideValue> RenderBox::overridingContainingBlockContentWidth(WritingMode writingMode) const
 {
     if (WebCore::isHorizontalWritingMode(writingMode))
-        return gOverridingContainingBlockContentLogicalWidthMap ? gOverridingContainingBlockContentLogicalWidthMap->getOptional(*this) : std::nullopt;
-    return gOverridingContainingBlockContentLogicalHeightMap ? gOverridingContainingBlockContentLogicalHeightMap->getOptional(*this) : std::nullopt;
+        return overridingContainingBlockContentLogicalWidth();
+    return overridingContainingBlockContentLogicalHeight();
 }
 
 std::optional<RenderBox::ContainingBlockOverrideValue> RenderBox::overridingContainingBlockContentHeight(WritingMode writingMode) const
 {
     if (WebCore::isHorizontalWritingMode(writingMode))
-        return gOverridingContainingBlockContentLogicalHeightMap ? gOverridingContainingBlockContentLogicalHeightMap->getOptional(*this) : std::nullopt;
-    return gOverridingContainingBlockContentLogicalWidthMap ? gOverridingContainingBlockContentLogicalWidthMap->getOptional(*this) : std::nullopt;
+        return overridingContainingBlockContentLogicalHeight();
+    return overridingContainingBlockContentLogicalWidth();
 }
 
 std::optional<RenderBox::ContainingBlockOverrideValue> RenderBox::overridingContainingBlockContentLogicalWidth() const
 {
     if (!gOverridingContainingBlockContentLogicalWidthMap)
         return { };
-    return gOverridingContainingBlockContentLogicalWidthMap->getOptional(*this);
+    if (auto result = gOverridingContainingBlockContentLogicalWidthMap->find(*this); result != gOverridingContainingBlockContentLogicalWidthMap->end())
+        return result->value;
+    return { };
 }
 
 std::optional<RenderBox::ContainingBlockOverrideValue> RenderBox::overridingContainingBlockContentLogicalHeight() const
 {
     if (!gOverridingContainingBlockContentLogicalHeightMap)
         return { };
-    return gOverridingContainingBlockContentLogicalHeightMap->getOptional(*this);
+    if (auto result = gOverridingContainingBlockContentLogicalHeightMap->find(*this); result != gOverridingContainingBlockContentLogicalHeightMap->end())
+        return result->value;
+    return { };
 }
 
 void RenderBox::setOverridingContainingBlockContentLogicalWidth(ContainingBlockOverrideValue logicalWidth)
@@ -1376,7 +1377,9 @@ std::optional<Length> RenderBox::overridingLogicalHeightLength() const
 {
     if (!gOverridingLogicalHeightLengthMap)
         return { };
-    return gOverridingLogicalHeightLengthMap->getOptional(*this);
+    if (auto result = gOverridingLogicalHeightLengthMap->find(*this); result != gOverridingLogicalHeightLengthMap->end())
+        return result->value;
+    return { };
 }
 
 void RenderBox::setOverridingLogicalHeightLength(const Length& height)
@@ -1396,7 +1399,9 @@ std::optional<Length> RenderBox::overridingLogicalWidthLength() const
 {
     if (!gOverridingLogicalWidthLengthMap)
         return { };
-    return gOverridingLogicalWidthLengthMap->getOptional(*this);
+    if (auto result = gOverridingLogicalWidthLengthMap->find(*this); result != gOverridingLogicalWidthLengthMap->end())
+        return result->value;
+    return { };
 }
 
 void RenderBox::setOverridingLogicalWidthLength(const Length& height)
@@ -2002,7 +2007,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 
     ShapeValue* shapeOutsideValue = style().shapeOutside();
     if (!view().frameView().layoutContext().isInRenderTreeLayout() && isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image) {
-        ShapeOutsideInfo::ensureInfo(*this).markShapeAsDirty();
+        ensureShapeOutsideInfo().markShapeAsDirty();
         markShapeOutsideDependentsForLayout();
     }
 
@@ -5800,6 +5805,41 @@ void RenderBox::updateFloatPainterAfterSelfPaintingLayerChange()
     };
     if (auto* floatingObject = floatingObjectForFloatPainting())
         floatingObject->setPaintsFloat(true);
+}
+
+using ShapeOutsideInfoMap = SingleThreadWeakHashMap<const RenderBox, std::unique_ptr<ShapeOutsideInfo>>;
+static ShapeOutsideInfoMap& shapeOutsideInfoMap()
+{
+    static NeverDestroyed<ShapeOutsideInfoMap> staticInfoMap;
+    return staticInfoMap;
+}
+
+ShapeOutsideInfo* RenderBox::shapeOutsideInfo() const
+{
+    if (!renderBoxHasShapeOutsideInfo())
+        return nullptr;
+
+    if (!ShapeOutsideInfo::isEnabledFor(*this))
+        return nullptr;
+
+    return shapeOutsideInfoMap().get(*this);
+}
+
+ShapeOutsideInfo& RenderBox::ensureShapeOutsideInfo()
+{
+    setRenderBoxHasShapeOutsideInfo(true);
+    return *shapeOutsideInfoMap().ensure(*this, [&] {
+        return makeUnique<ShapeOutsideInfo>(*this);
+    }).iterator->value;
+}
+
+void RenderBox::removeShapeOutsideInfo()
+{
+    if (!renderBoxHasShapeOutsideInfo())
+        return;
+
+    setRenderBoxHasShapeOutsideInfo(false);
+    shapeOutsideInfoMap().remove(*this);
 }
 
 } // namespace WebCore

@@ -608,11 +608,6 @@ public:
         return nullptr;
     }
 
-    ShapeOutsideInfo* shapeOutsideInfo() const
-    {
-        return ShapeOutsideInfo::isEnabledFor(*this) ? ShapeOutsideInfo::info(*this) : nullptr;
-    }
-
     void markShapeOutsideDependentsForLayout()
     {
         if (isFloating())
@@ -643,6 +638,8 @@ public:
     void updateFloatPainterAfterSelfPaintingLayerChange();
 
     bool computeHasTransformRelatedProperty(const RenderStyle&) const;
+
+    ShapeOutsideInfo* shapeOutsideInfo() const;
 
 protected:
     RenderBox(Type, Element&, RenderStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
@@ -769,6 +766,9 @@ private:
     void clipContentForBorderRadius(GraphicsContext&, const LayoutPoint&, float);
 
     void addLayoutOverflow(const LayoutRect&, const LayoutRect& flippedClientRect);
+
+    ShapeOutsideInfo& ensureShapeOutsideInfo();
+    void removeShapeOutsideInfo();
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).

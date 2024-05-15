@@ -175,8 +175,6 @@ void RenderBlockFlow::willBeDestroyed()
     if (legacyLineLayout())
         legacyLineLayout()->lineBoxes().deleteLineBoxes();
 
-    blockWillBeDestroyed();
-
     // NOTE: This jumps down to RenderBox, bypassing RenderBlock since it would do duplicate work.
     RenderBox::willBeDestroyed();
 }

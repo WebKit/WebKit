@@ -2162,6 +2162,8 @@ RenderObject::RenderObjectRareData& RenderObject::ensureRareData()
 
 void RenderObject::removeRareData()
 {
+    if (!hasRareData())
+        return;
     rareDataMap().remove(*this);
     m_stateBitfields.clearFlag(StateFlag::HasRareData);
 }
