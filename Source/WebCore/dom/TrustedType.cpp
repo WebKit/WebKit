@@ -37,6 +37,7 @@
 #include "TrustedTypePolicyFactory.h"
 #include "WindowOrWorkerGlobalScopeTrustedTypes.h"
 #include "WorkerGlobalScope.h"
+#include "XLinkNames.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -79,6 +80,19 @@ ASCIILiteral trustedTypeToString(TrustedType trustedType)
     case TrustedType::TrustedScriptURL:
         return "TrustedScriptURL"_s;
     }
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+TrustedType stringToTrustedType(String str)
+{
+    if (str == "TrustedHTML"_s)
+        return TrustedType::TrustedHTML;
+    if (str == "TrustedScript"_s)
+        return TrustedType::TrustedScript;
+    if (str == "TrustedScriptURL"_s)
+        return TrustedType::TrustedScriptURL;
 
     ASSERT_NOT_REACHED();
     return { };
@@ -197,6 +211,42 @@ ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExe
             return scriptURL->toString();
         }
     );
+}
+
+AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const String& attributeName, const String& elementNamespace, const String& attributeNamespace)
+{
+    AttributeTypeAndSink returnValues;
+    auto localName = elementName.convertToASCIILowercase();
+
+    AtomString elementNS = elementNamespace.isEmpty() ? HTMLNames::xhtmlNamespaceURI : AtomString(elementNamespace);
+    AtomString attributeNS = attributeNamespace.isEmpty() ? nullAtom() : AtomString(attributeNamespace);
+
+    QualifiedName element(nullAtom(), AtomString(localName), elementNS);
+    QualifiedName attribute(nullAtom(), AtomString(attributeName), attributeNS);
+
+    if (attributeNS.isNull() && !attributeName.isNull()) {
+        auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(attribute);
+        if (!eventName.isNull()) {
+            returnValues.sink = "Element "_s + attributeName;
+            returnValues.attributeType = trustedTypeToString(TrustedType::TrustedScript);
+            return returnValues;
+        }
+    }
+
+    if (element.matches(HTMLNames::iframeTag) && attribute.matches(HTMLNames::srcdocAttr)) {
+        returnValues.sink = "HTMLIFrameElement srcdoc"_s;
+        returnValues.attributeType = trustedTypeToString(TrustedType::TrustedHTML);
+    }
+    if (element.matches(HTMLNames::scriptTag) && attribute.matches(HTMLNames::srcAttr)) {
+        returnValues.sink = "HTMLScriptElement src"_s;
+        returnValues.attributeType = trustedTypeToString(TrustedType::TrustedScriptURL);
+    }
+    if (element.matches(SVGNames::scriptTag) && (attribute.matches(SVGNames::hrefAttr) || attribute.matches(XLinkNames::hrefAttr))) {
+        returnValues.sink = "SVGScriptElement href"_s;
+        returnValues.attributeType = trustedTypeToString(TrustedType::TrustedScriptURL);
+    }
+
+    return returnValues;
 }
 
 // https://w3c.github.io/trusted-types/dist/spec/#require-trusted-types-for-pre-navigation-check
