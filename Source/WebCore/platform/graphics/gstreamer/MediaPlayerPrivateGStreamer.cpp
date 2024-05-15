@@ -3448,8 +3448,10 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     ASSERT(is<TextureMapperPlatformLayerProxyDMABuf>(proxy));
 
     Locker locker { proxy.lock() };
-    if (!proxy.isActive())
+    if (!proxy.isActive()) {
+        GST_ERROR_OBJECT(pipeline(), "TextureMapperPlatformLayerProxyDMABuf is inactive");
         return;
+    }
 
     // Currently we have to cover two ways of detecting a DMABuf memory. The most reliable is by detecting
     // the memory:DMABuf feature on the GstCaps object. All sensible decoders yielding DMABufs specify this.
@@ -3544,12 +3546,16 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
         .height = static_cast<uint32_t>GST_VIDEO_INFO_HEIGHT(&videoInfo),
         .flags = GBMBufferSwapchain::BufferDescription::LinearStorage,
     };
-    if (bufferDescription.format.fourcc == DMABufFormat::FourCC::Invalid)
+    if (bufferDescription.format.fourcc == DMABufFormat::FourCC::Invalid) {
+        GST_ERROR_OBJECT(pipeline(), "Invalid DMABuf fourcc for GStreamer video format %s", gst_video_format_to_string(GST_VIDEO_INFO_FORMAT(&videoInfo)));
         return;
+    }
 
     auto swapchainBuffer = m_swapchain->getBuffer(bufferDescription);
-    if (!swapchainBuffer)
+    if (!swapchainBuffer) {
+        GST_ERROR_OBJECT(pipeline(), "Swap chain has no available buffer");
         return;
+    }
 
     // Destination helper struct, maps the gbm_bo object into CPU-memory space and copies from the accompanying Source in fill().
     struct Destination {
@@ -3614,6 +3620,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     // The updated buffer is pushed into the composition stage. The DMABufObject handle uses the swapchain address as the handle base.
     // When the buffer is pushed for the first time, the lambda will be invoked to retrieve a more complete DMABufObject for the
     // given GBMBufferSwapchain::Buffer object.
+    GST_TRACE_OBJECT(pipeline(), "Pushing DMABuf object to TextureMapper");
     downcast<TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(
         DMABufObject(reinterpret_cast<uintptr_t>(m_swapchain.get()) + swapchainBuffer->handle()),
         [&](auto&& initialObject) {
