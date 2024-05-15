@@ -465,7 +465,7 @@ class TaskPool(object):
     def do(self, function, *args, **kwargs):
         callback = kwargs.pop('callback', None)
         group = kwargs.pop('group', None)
-        if group and group not in self._group_queues:
+        if group and group not in self.mutually_exclusive_groups:
             raise ValueError("'{}' is not a recognized group".format(group))
 
         if not self.queue:
