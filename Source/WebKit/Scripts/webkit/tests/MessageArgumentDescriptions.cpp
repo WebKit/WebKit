@@ -71,10 +71,14 @@
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #endif
 #include "RemoteMediaResourceIdentifier.h"
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 #include "RemoteMediaSourceIdentifier.h"
+#endif
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 #include "RemoteSourceBufferIdentifier.h"
+#endif
 #include "RemoteVideoFrameIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
@@ -561,10 +565,14 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteLegacyCDMSessionIdentifier));
 #endif
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteMediaResourceIdentifier));
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteMediaSourceIdentifier));
+#endif
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteRemoteCommandListenerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteSerializedImageBufferIdentifier));
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteSourceBufferIdentifier));
+#endif
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteVideoFrameIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingBackendIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingUpdateID));
@@ -699,10 +707,14 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteLegacyCDMSessionIdentifier"_s,
 #endif
         "WebKit::RemoteMediaResourceIdentifier"_s,
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
         "WebKit::RemoteMediaSourceIdentifier"_s,
+#endif
         "WebKit::RemoteRemoteCommandListenerIdentifier"_s,
         "WebKit::RemoteSerializedImageBufferIdentifier"_s,
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
         "WebKit::RemoteSourceBufferIdentifier"_s,
+#endif
         "WebKit::RemoteVideoFrameIdentifier"_s,
         "WebKit::RenderingBackendIdentifier"_s,
         "WebKit::RenderingUpdateID"_s,
