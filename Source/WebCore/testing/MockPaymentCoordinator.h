@@ -105,7 +105,7 @@ public:
 #endif
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    const std::optional<ApplePayDisbursementPaymentRequest>& disbursementPaymentRequest() const { return m_disbursementPaymentRequest; }
+    const std::optional<ApplePayDisbursementRequest>& disbursementRequest() const { return m_disbursementRequest; }
 #endif
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
@@ -187,7 +187,7 @@ private:
 #endif
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    std::optional<ApplePayDisbursementPaymentRequest> m_disbursementPaymentRequest;
+    std::optional<ApplePayDisbursementRequest> m_disbursementRequest;
 #endif
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)

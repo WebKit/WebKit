@@ -32,7 +32,7 @@
 #import "ApplePayPaymentSetupFeaturesWebKit.h"
 #import "AutomaticReloadPaymentRequest.h"
 #import "DeferredPaymentRequest.h"
-#import "DisbursementPaymentRequest.h"
+#import "DisbursementRequest.h"
 #import "PaymentSetupConfigurationWebKit.h"
 #import "PaymentTokenContext.h"
 #import "RecurringPaymentRequest.h"

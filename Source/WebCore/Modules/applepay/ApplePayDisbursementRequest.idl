@@ -23,27 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(APPLE_PAY_DISBURSEMENTS)
-
-#include <WebCore/ApplePayLineItem.h>
-#include <wtf/WallTime.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebCore {
-
-enum class ApplePayContactField : uint8_t;
-
-template<typename> class ExceptionOr;
-
-struct ApplePayDisbursementPaymentRequest final {
-    std::optional<Vector<ApplePayContactField>> requiredRecipientContactFields;
-
-    ExceptionOr<void> validate() const;
-    ExceptionOr<ApplePayDisbursementPaymentRequest> convertAndValidate() &&;
+[
+    Conditional=APPLE_PAY_DISBURSEMENTS,
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ApplePayDisbursementRequest {
+    sequence<ApplePayContactField> requiredRecipientContactFields;
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(APPLE_PAY_DISBURSEMENTS)

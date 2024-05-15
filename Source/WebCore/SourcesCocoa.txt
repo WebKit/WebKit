@@ -31,7 +31,7 @@ JSApplePayCouponCodeUpdate.cpp
 JSApplePayDateComponents.cpp
 JSApplePayDateComponentsRange.cpp
 JSApplePayDeferredPaymentRequest.cpp
-JSApplePayDisbursementPaymentRequest.cpp
+JSApplePayDisbursementRequest.cpp
 JSApplePayDetailsUpdateBase.cpp
 JSApplePayError.cpp
 JSApplePayErrorCode.cpp

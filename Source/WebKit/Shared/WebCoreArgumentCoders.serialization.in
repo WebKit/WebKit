@@ -1185,7 +1185,7 @@ struct WebCore::ApplePayDetailsUpdateBase {
     std::optional<WebCore::ApplePayDeferredPaymentRequest> newDeferredPaymentRequest;
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    std::optional<WebCore::ApplePayDisbursementPaymentRequest> newDisbursementPaymentRequest;
+    std::optional<WebCore::ApplePayDisbursementRequest> newDisbursementRequest;
 #endif
 }
 
@@ -1259,7 +1259,7 @@ enum class WebCore::ApplePayErrorCode : uint8_t {
 #endif // ENABLE(APPLE_PAY)
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-struct WebCore::ApplePayDisbursementPaymentRequest {
+struct WebCore::ApplePayDisbursementRequest {
     std::optional<Vector<WebCore::ApplePayContactField>> requiredRecipientContactFields
 };
 #endif

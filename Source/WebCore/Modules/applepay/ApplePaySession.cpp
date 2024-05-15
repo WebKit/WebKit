@@ -333,8 +333,8 @@ static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& d
 #endif
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    if (paymentRequest.disbursementPaymentRequest)
-        result.setDisbursementPaymentRequest(WTFMove(*paymentRequest.disbursementPaymentRequest));
+    if (paymentRequest.disbursementRequest)
+        result.setDisbursementRequest(WTFMove(*paymentRequest.disbursementRequest));
 #endif
 
     // FIXME: Merge this validation into the validation we are doing above.

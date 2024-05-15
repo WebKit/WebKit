@@ -350,7 +350,7 @@ void PaymentAuthorizationPresenter::completeShippingContactSelection(std::option
 
     RetainPtr<PKPaymentRequestShippingContactUpdate> shippingContactUpdate;
 #if HAVE(PASSKIT_DISBURSEMENTS)
-    if (update->newDisbursementPaymentRequest)
+    if (update->newDisbursementRequest)
         shippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithPaymentSummaryItems:WebCore::platformDisbursementSummaryItems(WTFMove(update->newLineItems))]);
     else
 #endif // HAVE(PASSKIT_DISBURSEMENTS)

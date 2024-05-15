@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8" />
 <title>
-    Tests for providing `disbursementPaymentRequest` as part of
+    Tests for providing `disbursementRequest` as part of
     `ApplePayModifier`.
 </title>
 <script src="/js-test-resources/ui-helper.js"></script>
@@ -23,7 +23,7 @@
                 method.data.features = ["paymentRequestDisbursements"];
                 new PaymentRequest([method], validPaymentDetails());
             }
-        }, "Should have a feature for `disbursementPaymentRequest`.");
+        }, "Should have a feature for `disbursementRequest`.");
 
         const RESOLVED_PROMISE = Promise.resolve({});
 
@@ -60,10 +60,10 @@
             ];
         }
 
-        function testValidDisbursementPaymentRequest(description, options) {
+        function testValidDisbursementRequest(description, options) {
             const {
-                initialDisbursementPaymentRequest,
-                expectedDisbursementPaymentRequest,
+                initialDisbursementRequest,
+                expectedDisbursementRequest,
             } = options;
             user_activation_test(async (test) => {
                 const detailsInit = {
@@ -75,11 +75,11 @@
                         },
                     },
                 };
-                if (initialDisbursementPaymentRequest !== undefined) {
+                if (initialDisbursementRequest !== undefined) {
                     detailsInit.modifiers = modifiersWithData(
                         {
-                            disbursementPaymentRequest:
-                                initialDisbursementPaymentRequest,
+                            disbursementRequest:
+                                initialDisbursementRequest,
                         },
                         validLineItems
                     );
@@ -107,23 +107,23 @@
 
                 const response = await request.show();
 
-                const { disbursementPaymentRequest } =
+                const { disbursementRequest } =
                     internals.mockPaymentCoordinator;
-                const assert = disbursementPaymentRequest
+                const assert = disbursementRequest
                     ? assert_object_equals
                     : assert_equals;
                 assert(
-                    disbursementPaymentRequest,
-                    expectedDisbursementPaymentRequest,
-                    "check that the `DisbursementPaymentRequest` matches"
+                    disbursementRequest,
+                    expectedDisbursementRequest,
+                    "check that the `DisbursementRequest` matches"
                 );
                 await response.complete("success");
             }, description + " as part of the request.");
         }
 
-        function testInvalidDisbursementPaymentRequest(
+        function testInvalidDisbursementRequest(
             description,
-            { disbursementPaymentRequest, expectedErrorType }
+            { disbursementRequest, expectedErrorType }
         ) {
             user_activation_test(async (test) => {
                 const detailsInit = {
@@ -136,9 +136,9 @@
                     },
                 };
 
-                if (disbursementPaymentRequest) {
+                if (disbursementRequest) {
                     detailsInit.modifiers = modifiersWithData(
-                        { disbursementPaymentRequest },
+                        { disbursementRequest },
                         validLineItems
                     );
                 }
@@ -159,27 +159,27 @@
             }, description + " as part of the request.");
         }
 
-        testValidDisbursementPaymentRequest("Should propagate all data", {
-            initialDisbursementPaymentRequest: {},
-            expectedDisbursementPaymentRequest: {},
+        testValidDisbursementRequest("Should propagate all data", {
+            initialDisbursementRequest: {},
+            expectedDisbursementRequest: {},
         });
 
-        testValidDisbursementPaymentRequest(
+        testValidDisbursementRequest(
             "Should propagate recipient contact information",
             {
-                initialDisbursementPaymentRequest: {
+                initialDisbursementRequest: {
                     requiredRecipientContactFields: ["email", "name"],
                 },
-                expectedDisbursementPaymentRequest: {
+                expectedDisbursementRequest: {
                     requiredRecipientContactFields: ["email", "name"],
                 },
             }
         );
 
-        testInvalidDisbursementPaymentRequest(
+        testInvalidDisbursementRequest(
             "Should error when incorrect `requiredRecipientContactFields` are provided",
             {
-                disbursementPaymentRequest: {
+                disbursementRequest: {
                     requiredRecipientContactFields: ["invalid1", "invalid2"],
                 },
                 expectedErrorType: TypeError,

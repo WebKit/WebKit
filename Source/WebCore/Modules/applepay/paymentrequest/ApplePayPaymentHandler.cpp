@@ -303,7 +303,7 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
 #endif
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-        request.setDisbursementPaymentRequest(WTFMove(applePayModifier->disbursementPaymentRequest));
+        request.setDisbursementRequest(WTFMove(applePayModifier->disbursementRequest));
 #endif
     }
 
@@ -711,7 +711,7 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(Vector<Ref<Appl
         update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-        update.newDisbursementPaymentRequest = WTFMove(applePayModifier.disbursementPaymentRequest);
+        update.newDisbursementRequest = WTFMove(applePayModifier.disbursementRequest);
 #endif
     }
 
@@ -761,7 +761,7 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingOptionUpdated()
         update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-        update.newDisbursementPaymentRequest = WTFMove(applePayModifier.disbursementPaymentRequest);
+        update.newDisbursementRequest = WTFMove(applePayModifier.disbursementRequest);
 #endif
     }
 
@@ -811,7 +811,7 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<Ref<AppleP
             update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-            update.newDisbursementPaymentRequest = WTFMove(applePayModifier.disbursementPaymentRequest);
+            update.newDisbursementRequest = WTFMove(applePayModifier.disbursementRequest);
 #endif
         }
 
@@ -864,7 +864,7 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<Ref<AppleP
         update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-        update.newDisbursementPaymentRequest = WTFMove(applePayModifier.disbursementPaymentRequest);
+        update.newDisbursementRequest = WTFMove(applePayModifier.disbursementRequest);
 #endif
     }
 

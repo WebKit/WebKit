@@ -29,7 +29,7 @@
 
 #include "ApplePayAutomaticReloadPaymentRequest.h"
 #include "ApplePayDeferredPaymentRequest.h"
-#include "ApplePayDisbursementPaymentRequest.h"
+#include "ApplePayDisbursementRequest.h"
 #include "ApplePayError.h"
 #include "ApplePayLaterAvailability.h"
 #include "ApplePayLineItem.h"
@@ -170,8 +170,8 @@ public:
 #endif
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    const std::optional<ApplePayDisbursementPaymentRequest>& disbursementPaymentRequest() const { return m_disbursementPaymentRequest; }
-    void setDisbursementPaymentRequest(std::optional<ApplePayDisbursementPaymentRequest>&& disbursementPaymentRequest) { m_disbursementPaymentRequest = WTFMove(disbursementPaymentRequest); }
+    const std::optional<ApplePayDisbursementRequest>& disbursementRequest() const { return m_disbursementRequest; }
+    void setDisbursementRequest(std::optional<ApplePayDisbursementRequest>&& disbursementRequest) { m_disbursementRequest = WTFMove(disbursementRequest); }
 #endif
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
@@ -222,7 +222,7 @@ public:
         , std::optional<ApplePayDeferredPaymentRequest>&& deferredPaymentRequest
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-        , std::optional<ApplePayDisbursementPaymentRequest>&& disbursementPaymentRequest
+        , std::optional<ApplePayDisbursementRequest>&& disbursementRequest
 #endif
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
         , std::optional<ApplePayLaterAvailability>&& applePayLaterAvailability
@@ -269,7 +269,7 @@ public:
             , m_deferredPaymentRequest(WTFMove(deferredPaymentRequest))
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-            , m_disbursementPaymentRequest(WTFMove(disbursementPaymentRequest))
+            , m_disbursementRequest(WTFMove(disbursementRequest))
 #endif
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
             , m_applePayLaterAvailability(WTFMove(applePayLaterAvailability))
@@ -335,7 +335,7 @@ private:
 #endif
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    std::optional<ApplePayDisbursementPaymentRequest> m_disbursementPaymentRequest;
+    std::optional<ApplePayDisbursementRequest> m_disbursementRequest;
 #endif
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)

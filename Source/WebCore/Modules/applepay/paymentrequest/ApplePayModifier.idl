@@ -39,6 +39,6 @@
 
     [Conditional=APPLE_PAY_DEFERRED_PAYMENTS] ApplePayDeferredPaymentRequest deferredPaymentRequest;
 
-    [Conditional=APPLE_PAY_DISBURSEMENTS] ApplePayDisbursementPaymentRequest disbursementPaymentRequest;
+    [Conditional=APPLE_PAY_DISBURSEMENTS] ApplePayDisbursementRequest disbursementRequest;
 
 };

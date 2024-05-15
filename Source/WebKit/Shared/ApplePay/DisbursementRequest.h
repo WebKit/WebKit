@@ -38,7 +38,7 @@ enum class ApplePayContactField : uint8_t;
 
 namespace WebKit {
 
-RetainPtr<PKDisbursementPaymentRequest> platformDisbursementPaymentRequest(const WebCore::ApplePaySessionPaymentRequest&, const URL& originatingURL, const std::optional<Vector<WebCore::ApplePayContactField>>& requiredrecipientContactFields);
+RetainPtr<PKDisbursementPaymentRequest> platformDisbursementRequest(const WebCore::ApplePaySessionPaymentRequest&, const URL& originatingURL, const std::optional<Vector<WebCore::ApplePayContactField>>& requiredrecipientContactFields);
 
 } // namespace WebKit
 

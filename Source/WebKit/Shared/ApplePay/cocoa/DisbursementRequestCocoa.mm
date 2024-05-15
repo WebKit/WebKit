@@ -24,14 +24,14 @@
  */
 
 #import "config.h"
-#import "DisbursementPaymentRequest.h"
+#import "DisbursementRequest.h"
 
 #if HAVE(PASSKIT_DISBURSEMENTS)
 
 #import "WebPaymentCoordinatorProxyCocoa.h"
 
 #import <WebCore/ApplePayContactField.h>
-#import <WebCore/ApplePayDisbursementPaymentRequest.h>
+#import <WebCore/ApplePayDisbursementRequest.h>
 #import <WebCore/ApplePaySessionPaymentRequest.h>
 #import <WebCore/PaymentSummaryItems.h>
 
@@ -44,7 +44,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-RetainPtr<PKDisbursementPaymentRequest> platformDisbursementPaymentRequest(const ApplePaySessionPaymentRequest& request, const URL& originatingURL, const std::optional<Vector<ApplePayContactField>>& requiredRecipientContactFields)
+RetainPtr<PKDisbursementPaymentRequest> platformDisbursementRequest(const ApplePaySessionPaymentRequest& request, const URL& originatingURL, const std::optional<Vector<ApplePayContactField>>& requiredRecipientContactFields)
 {
     // This merchantID is not actually used for web payments, passing an empty string here is fine
     auto disbursementRequest = adoptNS([PAL::allocPKDisbursementRequestInstance() initWithMerchantIdentifier:@"" currencyCode:request.currencyCode() regionCode:request.countryCode() supportedNetworks:createNSArray(request.supportedNetworks()).get() merchantCapabilities:toPKMerchantCapabilities(request.merchantCapabilities()) summaryItems:WebCore::platformDisbursementSummaryItems(request.lineItems())]);
