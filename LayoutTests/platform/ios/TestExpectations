@@ -135,6 +135,7 @@ http/tests/media/modern-media-controls/overflow-support [ Pass ]
 # media/modern-media-controls/tracks-support [ Pass ]
 
 media/media-source/media-managedmse-airplay.html [ Pass ]
+media/media-source/media-managedmse-airplay-withsrc.html [ Pass ]
 media/media-source/media-managedmse-idl.html [ Pass ]
 webkit.org/b/269897 media/media-source/media-managedmse-poster.html [ Skip ]
 

@@ -6873,6 +6873,8 @@ void HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()
 
 bool HTMLMediaElement::hasWirelessPlaybackTargetAlternative() const
 {
+    if (m_loadState != LoadingFromSourceElement)
+        return false;
     for (auto& source : childrenOfType<HTMLSourceElement>(*this)) {
         auto mediaURL = source.getNonEmptyURLAttribute(srcAttr);
         bool maybeSuitable = !mediaURL.isEmpty();
