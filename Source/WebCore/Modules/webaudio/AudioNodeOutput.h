@@ -68,6 +68,7 @@ public:
 
     // Must be called with the context's graph lock.
     void disconnectAll();
+    void forEachInputNode(Function<void(AudioNode&)>&&) const;
 
     void setNumberOfChannels(unsigned);
     unsigned numberOfChannels() const { return m_numberOfChannels; }

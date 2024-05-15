@@ -251,6 +251,10 @@ protected:
 
     void clear();
 
+protected:
+    // Only accessed when the graph lock is held.
+    const Vector<AudioConnectionRefPtr<AudioNode>>& referencedSourceNodes() const { return m_referencedSourceNodes; }
+
 private:
     void scheduleNodeDeletion();
     void workletIsReady();

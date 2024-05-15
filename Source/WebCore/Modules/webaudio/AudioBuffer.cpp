@@ -155,7 +155,7 @@ void AudioBuffer::releaseMemory()
     Locker locker { m_channelsLock };
     m_channels = { };
     m_channelWrappers = { };
-    m_needsAdditionalNoise = false;
+    m_noiseInjectionMultiplier = 0;
 }
 
 ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalObject, unsigned channelIndex)
@@ -264,7 +264,7 @@ ExceptionOr<void> AudioBuffer::copyToChannel(Ref<Float32Array>&& source, unsigne
     ASSERT(dst);
     
     memmove(dst + bufferOffset, src, count * sizeof(*dst));
-    m_needsAdditionalNoise = false;
+    m_noiseInjectionMultiplier = 0;
     return { };
 }
 
@@ -273,7 +273,7 @@ void AudioBuffer::zero()
     for (auto& channel : m_channels)
         channel->zeroFill();
 
-    m_needsAdditionalNoise = false;
+    m_noiseInjectionMultiplier = 0;
 }
 
 size_t AudioBuffer::memoryCost() const
@@ -315,7 +315,7 @@ bool AudioBuffer::copyTo(AudioBuffer& other) const
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex)
         memcpy(other.rawChannelData(channelIndex), m_channels[channelIndex]->data(), length() * sizeof(float));
 
-    other.m_needsAdditionalNoise = m_needsAdditionalNoise;
+    other.m_noiseInjectionMultiplier = m_noiseInjectionMultiplier;
     return true;
 }
 
@@ -335,13 +335,13 @@ WebCoreOpaqueRoot root(AudioBuffer* buffer)
 
 void AudioBuffer::applyNoiseIfNeeded()
 {
-    if (!m_needsAdditionalNoise)
+    if (!m_noiseInjectionMultiplier)
         return;
 
     for (auto& channel : m_channels)
-        AudioUtilities::applyNoise(channel->data(), channel->length(), 0.001);
+        AudioUtilities::applyNoise(channel->data(), channel->length(), m_noiseInjectionMultiplier);
 
-    m_needsAdditionalNoise = false;
+    m_noiseInjectionMultiplier = 0;
 }
 
 } // namespace WebCore

@@ -877,6 +877,7 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIs)
     checkFingerprintForNoise(@"testOscillatorCompressor");
     checkFingerprintForNoise(@"testOscillatorCompressorWorklet");
     checkFingerprintForNoise(@"testOscillatorCompressorAnalyzer");
+    checkFingerprintForNoise(@"testLoopingOscillatorCompressorBiquadFilter");
 }
 
 // FIXME when rdar://115137641 is resolved.
