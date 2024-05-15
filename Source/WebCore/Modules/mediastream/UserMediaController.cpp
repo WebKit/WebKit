@@ -71,8 +71,8 @@ void UserMediaController::logGetDisplayMediaDenial(Document& document)
 void UserMediaController::logEnumerateDevicesDenial(Document& document)
 {
     // We redo the check to print to the console log.
-    isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, document, LogPermissionsPolicyFailure::Yes);
-    isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document, LogPermissionsPolicyFailure::Yes);
+    isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Camera, document, LogPermissionsPolicyFailure::Yes);
+    isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Microphone, document, LogPermissionsPolicyFailure::Yes);
     if (RefPtr window = document.domWindow())
         window->printErrorMessage("Not allowed to call enumerateDevices."_s);
 }

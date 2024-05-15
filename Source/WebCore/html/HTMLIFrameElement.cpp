@@ -176,7 +176,7 @@ ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
 const PermissionsPolicy& HTMLIFrameElement::permissionsPolicy() const
 {
     if (!m_permissionsPolicy)
-        m_permissionsPolicy = PermissionsPolicy::parse(document(), *this, attributeWithoutSynchronization(allowAttr));
+        m_permissionsPolicy = PermissionsPolicy::parse(document(), *this);
     return *m_permissionsPolicy;
 }
 

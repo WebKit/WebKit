@@ -77,11 +77,11 @@ static bool isAllowedByPermissionsPolicy(const Document& document, PermissionNam
 {
     switch (name) {
     case PermissionName::Camera:
-        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, document, LogPermissionsPolicyFailure::No);
+        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Camera, document, LogPermissionsPolicyFailure::No);
     case PermissionName::Geolocation:
-        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Geolocation, document, LogPermissionsPolicyFailure::No);
+        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Geolocation, document, LogPermissionsPolicyFailure::No);
     case PermissionName::Microphone:
-        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document, LogPermissionsPolicyFailure::No);
+        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Microphone, document, LogPermissionsPolicyFailure::No);
     default:
         return true;
     }

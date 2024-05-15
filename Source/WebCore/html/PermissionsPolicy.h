@@ -27,6 +27,7 @@
 
 #include "SecurityOriginData.h"
 #include <wtf/HashSet.h>
+#include <wtf/HashTraits.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -36,10 +37,10 @@ class HTMLIFrameElement;
 
 class PermissionsPolicy {
 public:
-    static PermissionsPolicy defaultPolicy(Document& document) { return parse(document, nullptr, { }); }
-    static PermissionsPolicy parse(Document& document, const HTMLIFrameElement& frame, StringView allow) { return parse(document, &frame, allow); }
+    static PermissionsPolicy defaultPolicy(Document& document) { return PermissionsPolicy { document, nullptr }; }
+    static PermissionsPolicy parse(Document& document, const HTMLIFrameElement& frame) { return PermissionsPolicy { document, &frame }; }
 
-    enum class Type {
+    enum class Feature : uint8_t {
         Camera,
         Microphone,
         SpeakerSelection,
@@ -63,45 +64,37 @@ public:
         XRSpatialTracking,
 #endif
         PrivateToken,
+        Invalid
     };
-    bool allows(Type, const SecurityOriginData&) const;
-
-    struct AllowRule {
-        enum class Type { All, None, List };
-        Type type { Type::List };
-        HashSet<SecurityOriginData> allowedList;
-    };
+    bool allows(Feature, const SecurityOriginData&) const;
 
 private:
-    static PermissionsPolicy parse(Document&, const HTMLIFrameElement*, StringView);
+    PermissionsPolicy(Document&, const HTMLIFrameElement*);
 
-    AllowRule m_cameraRule;
-    AllowRule m_microphoneRule;
-    AllowRule m_speakerSelectionRule;
-    AllowRule m_displayCaptureRule;
-    AllowRule m_gamepadRule;
-    AllowRule m_geolocationRule;
-    AllowRule m_paymentRule;
-    AllowRule m_syncXHRRule;
-    AllowRule m_fullscreenRule;
-    AllowRule m_webShareRule;
-    AllowRule m_screenWakeLockRule;
+    // https://w3c.github.io/webappsec-permissions-policy/#allowlists
+    class Allowlist {
+    public:
+        Allowlist() = default;
+        enum AllowAllOriginsTag { AllowAllOrigins };
+        explicit Allowlist(AllowAllOriginsTag) : m_origins(AllowAllOrigins) { }
+        explicit Allowlist(const SecurityOriginData& origin): m_origins(HashSet<SecurityOriginData> { origin }) { }
+        explicit Allowlist(HashSet<SecurityOriginData>&& origins) : m_origins(WTFMove(origins)) { }
+        bool matches(const SecurityOriginData&) const;
 
-#if ENABLE(DEVICE_ORIENTATION)
-    AllowRule m_gyroscopeRule;
-    AllowRule m_accelerometerRule;
-    AllowRule m_magnetometerRule;
-#endif
-#if ENABLE(WEB_AUTHN)
-    AllowRule m_publickeyCredentialsGetRule;
-#endif
-#if ENABLE(WEBXR)
-    AllowRule m_xrSpatialTrackingRule;
-#endif
-    AllowRule m_privateTokenRule;
+    private:
+        std::variant<HashSet<SecurityOriginData>, AllowAllOriginsTag> m_origins;
+    };
+    Ref<SecurityOrigin> declaredOrigin(const HTMLIFrameElement&) const;
+    Allowlist parseAllowlist(StringView, const SecurityOriginData& containerOrigin, const SecurityOriginData& targetOrigin, bool useStarAsDefaultAllowlistValue);
+
+    // https://w3c.github.io/webappsec-permissions-policy/#policy-directives
+    using PolicyDirective = HashMap<Feature, Allowlist, IntHash<Feature>, WTF::StrongEnumHashTraits<Feature>>;
+    PolicyDirective parsePolicyDirective(StringView, const SecurityOriginData& containerOrigin, const SecurityOriginData& targetOrigin, bool useStarAsDefaultAllowlistValue);
+
+    PolicyDirective m_effectivePolicy;
 };
 
 enum class LogPermissionsPolicyFailure : bool { No, Yes };
-extern bool isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type, const Document&, LogPermissionsPolicyFailure = LogPermissionsPolicyFailure::Yes);
+extern bool isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature, const Document&, LogPermissionsPolicyFailure = LogPermissionsPolicyFailure::Yes);
 
 } // namespace WebCore

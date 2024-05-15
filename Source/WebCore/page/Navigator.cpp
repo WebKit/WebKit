@@ -141,7 +141,7 @@ static std::optional<URL> shareableURLForShareData(ScriptExecutionContext& conte
 
 static bool validateWebSharePolicy(Document& document)
 {
-    return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::WebShare, document, LogPermissionsPolicyFailure::Yes);
+    return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::WebShare, document, LogPermissionsPolicyFailure::Yes);
 }
 
 bool Navigator::canShare(Document& document, const ShareData& data)
