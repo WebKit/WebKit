@@ -2465,6 +2465,7 @@
 		E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */ = {isa = PBXBuildFile; fileRef = E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */; };
 		E568B92220A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */; };
 		E596DD6A251E71D400C275A7 /* WKContactPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E596DD68251E71D300C275A7 /* WKContactPicker.h */; };
+		E5AF80FD2BB4F05F00726F63 /* PickerDismissalReason.h in Headers */ = {isa = PBXBuildFile; fileRef = E5AF80FC2BB4F00A00726F63 /* PickerDismissalReason.h */; };
 		E5BEF6822130C48000F31111 /* WebDataListSuggestionsDropdownIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BEF6802130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.h */; };
 		E5CB07DC20E1678F0022C183 /* WKFormColorControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E5CB07DA20E1678F0022C183 /* WKFormColorControl.h */; };
 		E5CBA76427A318E100DF7858 /* UnifiedSource120.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CBA75F27A3187800DF7858 /* UnifiedSource120.cpp */; };
@@ -8078,6 +8079,7 @@
 		E568B92120A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = WebDataListSuggestionsDropdownMac.mm; sourceTree = "<group>"; };
 		E596DD68251E71D300C275A7 /* WKContactPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContactPicker.h; sourceTree = "<group>"; };
 		E596DD69251E71D400C275A7 /* WKContactPicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContactPicker.mm; sourceTree = "<group>"; };
+		E5AF80FC2BB4F00A00726F63 /* PickerDismissalReason.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PickerDismissalReason.h; sourceTree = "<group>"; };
 		E5BEF6802130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDataListSuggestionsDropdownIOS.h; path = ios/WebDataListSuggestionsDropdownIOS.h; sourceTree = "<group>"; };
 		E5BEF6812130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDataListSuggestionsDropdownIOS.mm; path = ios/WebDataListSuggestionsDropdownIOS.mm; sourceTree = "<group>"; };
 		E5CB07DA20E1678F0022C183 /* WKFormColorControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFormColorControl.h; path = ios/forms/WKFormColorControl.h; sourceTree = "<group>"; };
@@ -9492,6 +9494,7 @@
 				1ABC3DF31899E437004F0626 /* NavigationState.mm */,
 				5C6CE6D31F59EA350007C6CB /* PageClientImplCocoa.h */,
 				5C6CE6D01F59BC460007C6CB /* PageClientImplCocoa.mm */,
+				E5AF80FC2BB4F00A00726F63 /* PickerDismissalReason.h */,
 				1185025E2673B0A700A6425E /* PlatformXRCoordinator.mm */,
 				CDA29A1E1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h */,
 				CDA29A221CBEB61A00901CCF /* PlaybackSessionManagerProxy.messages.in */,
@@ -16515,6 +16518,7 @@
 				832ED18C1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.h in Headers */,
 				7AFBD36F21E546F8005DBACB /* PersistencyUtils.h in Headers */,
 				E5DEFA6826F8F42600AB68DB /* PhotosUISPI.h in Headers */,
+				E5AF80FD2BB4F05F00726F63 /* PickerDismissalReason.h in Headers */,
 				5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */,
 				0F5E200418E77051003EC3E5 /* PlatformCAAnimationRemote.h in Headers */,
 				46D246262AFE956500F24C94 /* PlatformCAAnimationRemoteProperties.h in Headers */,

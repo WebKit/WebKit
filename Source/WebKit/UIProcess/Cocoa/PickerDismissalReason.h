@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKAPICast.h"
-
-#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-
-@class WKWebView;
-@protocol WKShareSheetDelegate;
-
-namespace WebCore {
-struct ShareDataWithParsedURL;
-}
+#pragma once
 
 namespace WebKit {
-enum class PickerDismissalReason : uint8_t;
-}
 
-@interface WKShareSheet : NSObject
+enum class PickerDismissalReason : uint8_t {
+    ResetState,
+    ViewRemoved,
+    ProcessExited,
+    Testing,
+};
 
-- (instancetype)initWithView:(WKWebView *)view;
-
-- (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL&)data inRect:(std::optional<WebCore::FloatRect>)rect completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
-
-- (BOOL)dismissIfNeededWithReason:(WebKit::PickerDismissalReason)reason;
-
-@property (nonatomic, weak) id <WKShareSheetDelegate> delegate;
-@end
-
-@protocol WKShareSheetDelegate <NSObject>
-@optional
-- (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet;
-- (void)shareSheet:(WKShareSheet *)shareSheet willShowActivityItems:(NSArray *)activityItems;
-@end
-
-#endif // PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+} // namespace WebKit

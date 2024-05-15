@@ -29,6 +29,7 @@
 #if HAVE(CONTACTSUI)
 
 #import "ContactsUISPI.h"
+#import "PickerDismissalReason.h"
 #import <Contacts/Contacts.h>
 #import <WebCore/ContactInfo.h>
 #import <WebCore/ContactsRequestData.h>
@@ -182,6 +183,22 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
 - (void)dismiss
 {
     [self dismissWithContacts:nil];
+}
+
+- (BOOL)dismissIfNeededWithReason:(WebKit::PickerDismissalReason)reason
+{
+#if HAVE(CNCONTACTPICKERVIEWCONTROLLER)
+    if (reason == WebKit::PickerDismissalReason::ViewRemoved) {
+        if ([_contactPickerViewController _wk_isInFullscreenPresentation])
+            return NO;
+    }
+#endif
+
+    if (reason == WebKit::PickerDismissalReason::ProcessExited || reason == WebKit::PickerDismissalReason::ViewRemoved)
+        [self setDelegate:nil];
+
+    [self dismiss];
+    return YES;
 }
 
 #pragma mark - Completion
