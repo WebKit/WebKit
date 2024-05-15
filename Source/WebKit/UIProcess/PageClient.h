@@ -30,6 +30,7 @@
 #include "PDFPluginIdentifier.h"
 #include "PasteboardAccessIntent.h"
 #include "SameDocumentNavigationType.h"
+#include "TextIndicatorStyle.h"
 #include "WebColorPicker.h"
 #include "WebDateTimePicker.h"
 #include "WebPopupMenuProxy.h"
@@ -698,6 +699,7 @@ public:
     virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    virtual void addTextIndicatorStyleForID(const WTF::UUID&, WebKit::TextIndicatorStyle) = 0;
     virtual void removeTextIndicatorStyleForID(const WTF::UUID&) = 0;
 #endif
     virtual void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) { }

@@ -25,8 +25,12 @@
 
 #pragma once
 
-typedef NS_ENUM(NSInteger, WKTextIndicatorStyleType) {
-    WKTextIndicatorStyleTypeInitial,
-    WKTextIndicatorStyleTypeSource,
-    WKTextIndicatorStyleTypeFinal
+namespace WebKit {
+
+enum class TextIndicatorStyle : uint8_t {
+    Initial,
+    Source,
+    Final
 };
+
+} // namespace WebKit

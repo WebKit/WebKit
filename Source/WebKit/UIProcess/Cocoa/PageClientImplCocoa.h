@@ -46,6 +46,8 @@ struct AppHighlight;
 
 namespace WebKit {
 
+enum class TextIndicatorStyle : uint8_t;
+
 class PageClientImplCocoa : public PageClient {
 public:
     PageClientImplCocoa(WKWebView *);
@@ -97,6 +99,7 @@ public:
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyle) final;
     void removeTextIndicatorStyleForID(const WTF::UUID&) final;
 #endif
 

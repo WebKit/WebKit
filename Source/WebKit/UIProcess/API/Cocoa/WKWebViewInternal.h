@@ -60,6 +60,10 @@
 #define WK_WEB_VIEW_PROTOCOLS <WKShareSheetDelegate>
 #endif
 
+#if PLATFORM(COCOA)
+#import "WKTextIndicatorStyleType.h"
+#endif
+
 #if !defined(WK_WEB_VIEW_PROTOCOLS)
 #define WK_WEB_VIEW_PROTOCOLS
 #endif
@@ -390,6 +394,7 @@ struct PerWebProcessState {
 - (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
 
 - (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebKit::WebTextReplacementDataState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
+- (void)_addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
 - (void)_removeTextIndicatorStyleForID:(NSUUID *)uuid;
 #endif
 

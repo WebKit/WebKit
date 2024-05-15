@@ -313,7 +313,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 std::optional<WebCore::SimpleRange> WebPage::getRangeForUUID(const WTF::UUID& uuid)
 {
-    auto range = m_unifiedTextReplacementController->contextRangeForSessionWithUUID(uuid);
+    auto range = m_unifiedTextReplacementController->contextRangeForSessionOrRangeWithUUID(uuid);
     if (range)
         return range;
 
@@ -321,15 +321,8 @@ std::optional<WebCore::SimpleRange> WebPage::getRangeForUUID(const WTF::UUID& uu
     return WebCore::makeSimpleRange(liveRange);
 }
 
-void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+void WebPage::createTextIndicatorForRange(const WebCore::SimpleRange& range, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
-    auto sessionRange = getRangeForUUID(uuid);
-
-    if (!sessionRange) {
-        completionHandler(std::nullopt);
-        return;
-    }
-
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
         std::optional<TextIndicatorData> textIndicatorData;
         constexpr OptionSet textIndicatorOptions {
@@ -338,12 +331,23 @@ void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<voi
             TextIndicatorOption::UseSelectionRectForSizing,
             TextIndicatorOption::SkipReplacedContent,
         };
-        if (auto textIndicator = TextIndicator::createWithRange(*sessionRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
+        if (auto textIndicator = TextIndicator::createWithRange(range, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
             textIndicatorData = textIndicator->data();
         completionHandler(WTFMove(textIndicatorData));
         return;
     }
     completionHandler(std::nullopt);
+}
+
+void WebPage::createTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+{
+    auto sessionRange = getRangeForUUID(uuid);
+
+    if (!sessionRange) {
+        completionHandler(std::nullopt);
+        return;
+    }
+    createTextIndicatorForRange(*sessionRange, WTFMove(completionHandler));
 }
 
 void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool visible, CompletionHandler<void()>&& completionHandler)
@@ -370,7 +374,7 @@ void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool
     }
 
     if (visible)
-        m_unifiedTextReplacementController->removeTransparentMarkersForSession(uuid, *sessionRange);
+        m_unifiedTextReplacementController->removeTransparentMarkersForSession(uuid, RemoveAllMarkersForSession::No);
     else
         document->markers().addTransparentContentMarker(*sessionRange, uuid);
 

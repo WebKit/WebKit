@@ -56,4 +56,11 @@ struct WebKit::WebUnifiedTextReplacementContextData {
     WebCore::AttributedString attributedText;
     WebCore::CharacterRange range;
 };
+
+header: "TextIndicatorStyle.h"
+[CustomHeader] enum class WebKit::TextIndicatorStyle : uint8_t {
+    Initial,
+    Source,
+    Final,
+};
 #endif

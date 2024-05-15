@@ -525,6 +525,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    AddTextIndicatorStyleForID(WTF::UUID uuid, enum:uint8_t WebKit::TextIndicatorStyle style, struct WebCore::TextIndicatorData data)
     RemoveTextIndicatorStyleForID(WTF::UUID uuid)
 #endif
 

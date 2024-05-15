@@ -47,6 +47,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <pal/HysteresisActivity.h>
+#include <wtf/UUID.h>
 
 #if ENABLE(APPLE_PAY)
 #include "WebPaymentCoordinatorProxy.h"
@@ -290,6 +291,10 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     Deque<QueuedTouchEvents> touchEventQueue;
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    HashMap<WTF::UUID, WebCore::TextIndicatorData> textIndicatorDataForChunk;
 #endif
 
     MonotonicTime didFinishDocumentLoadForMainFrameTimestamp;
