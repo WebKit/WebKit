@@ -64,7 +64,7 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @interface _WKApplicationManifest : NSObject <NSSecureCoding>
 
 - (instancetype)init NS_UNAVAILABLE;
-- (nullable instancetype)initWithJSONData:(NSData *)jsonData manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (nullable instancetype)initWithJSONData:(NSData *)jsonData manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL WK_API_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2));
 
 @property (nonatomic, readonly, nullable, copy) NSString *rawJSON;
 @property (nonatomic, readonly, nullable, copy) NSString *name;
@@ -76,9 +76,9 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @property (nonatomic, readonly, copy) NSURL *startURL;
 @property (nonatomic, readonly, copy) NSURL *manifestId WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic, readonly) _WKApplicationManifestDisplayMode displayMode;
-@property (nonatomic, readonly, copy) NSArray<NSString *> *categories WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly, copy) NSArray<NSString *> *categories WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 @property (nonatomic, readonly, copy) NSArray<_WKApplicationManifestIcon *> *icons WK_API_AVAILABLE(macos(13.0), ios(16.0));
-@property (nonatomic, readonly, copy) NSArray<_WKApplicationManifestShortcut *> *shortcuts WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly, copy) NSArray<_WKApplicationManifestShortcut *> *shortcuts WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly, nullable, copy) UIColor *backgroundColor WK_API_AVAILABLE(ios(17.0));
@@ -106,7 +106,7 @@ WK_CLASS_AVAILABLE(macos(13.0), ios(16.0))
 
 @end
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1))
 @interface _WKApplicationManifestShortcut : NSObject <NSSecureCoding>
 
 @property (nonatomic, readonly, copy) NSString *name;
