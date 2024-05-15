@@ -173,7 +173,8 @@ then
     fi
 elif [[ "${WK_PLATFORM_NAME}" == iphoneos ||
         "${WK_PLATFORM_NAME}" == appletvos ||
-        "${WK_PLATFORM_NAME}" == watchos ]]
+        "${WK_PLATFORM_NAME}" == watchos ||
+        "${WK_PLATFORM_NAME}" == xros ]]
 then
     if [[ "${PRODUCT_NAME}" == jsc ||
           "${PRODUCT_NAME}" == dynbench ||

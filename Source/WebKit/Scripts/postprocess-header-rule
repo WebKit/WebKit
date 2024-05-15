@@ -57,7 +57,7 @@ if [[ "${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" != "YES" ]]; then
         else
             [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
         fi
-    elif [[ "${PLATFORM_NAME}" =~ "iphone" ]]; then
+    elif [[ "${WK_PLATFORM_NAME}" =~ "iphone" ]]; then
         [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET}
         [[ -n ${XROS_VERSION} ]] || XROS_VERSION="NA"
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"

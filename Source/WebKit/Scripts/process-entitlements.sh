@@ -614,7 +614,8 @@ then
     fi
 elif [[ "${WK_PLATFORM_NAME}" == iphoneos ||
         "${WK_PLATFORM_NAME}" == appletvos ||
-        "${WK_PLATFORM_NAME}" == watchos ]]
+        "${WK_PLATFORM_NAME}" == watchos ||
+        "${WK_PLATFORM_NAME}" == xros ]]
 then
     if [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.Development ]]; then true
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent ]]; then ios_family_process_webcontent_entitlements

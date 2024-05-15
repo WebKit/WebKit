@@ -144,10 +144,7 @@ WK_SECURITY_INTERFACE_LDFLAGS_macosx = -framework SecurityInterface;
 WK_UIKIT_LDFLAGS = $(WK_UIKIT_LDFLAGS_$(WK_COCOA_TOUCH));
 WK_UIKIT_LDFLAGS_cocoatouch = -framework UIKit;
 
-// This intentionally uses PLATFORM_NAME instead of WK_PLATFORM_NAME, because
-// it's impossible to tell the difference between visionOS and iOS with the latter.
-// Don't copy this unless you also need to differentiate!
-WK_MRUIKIT_LDFLAGS = $(WK_MRUIKIT_LDFLAGS_$(PLATFORM_NAME));
+WK_MRUIKIT_LDFLAGS = $(WK_MRUIKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_MRUIKIT_LDFLAGS_xros = -weak_framework MRUIKit;
 WK_MRUIKIT_LDFLAGS_xrsimulator = -weak_framework MRUIKit;
 
@@ -324,6 +321,8 @@ WK_HAVE_URL_FORMATTING = $(WK_HAVE_URL_FORMATTING_$(WK_PLATFORM_NAME));
 WK_HAVE_URL_FORMATTING_iphoneos = YES;
 WK_HAVE_URL_FORMATTING_maccatalyst = YES;
 WK_HAVE_URL_FORMATTING_iphonesimulator = YES;
+WK_HAVE_URL_FORMATTING_xros = YES;
+WK_HAVE_URL_FORMATTING_xrsimulator = YES;
 WK_HAVE_URL_FORMATTING_watchos = YES;
 WK_HAVE_URL_FORMATTING_watchsimulator = YES;
 WK_HAVE_URL_FORMATTING_appletvos = NO
@@ -334,5 +333,6 @@ WK_HAVE_URL_FORMATTING_MACOS_SINCE_1014 = YES;
 WK_TRACE_POINTS_OUTPUT_PATH = $(WK_TRACE_POINTS_OUTPUT_PATH_USE_OVERRIDE_FRAMEWORKS_DIR_$(WK_USE_OVERRIDE_FRAMEWORKS_DIR)_$(WK_PLATFORM_NAME));
 WK_TRACE_POINTS_OUTPUT_PATH_USE_OVERRIDE_FRAMEWORKS_DIR_NO_macosx = $(DSTROOT)/AppleInternal/Library/Ariadne/Plists/WebKit.plist;
 WK_TRACE_POINTS_OUTPUT_PATH_USE_OVERRIDE_FRAMEWORKS_DIR_NO_iphoneos = $(DSTROOT)/AppleInternal/Library/Ariadne/Plists/WebKit.plist;
+WK_TRACE_POINTS_OUTPUT_PATH_USE_OVERRIDE_FRAMEWORKS_DIR_NO_xros = $(DSTROOT)/AppleInternal/Library/Ariadne/Plists/WebKit.plist;
 
 SWIFT_INSTALL_OBJC_HEADER = NO
