@@ -176,8 +176,8 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
             return;
         }
         auto& group = *kvp.value.get();
-        if (!validateBindGroup(group)) {
-            makeInvalid(@"buffer is too small");
+        if (NSString* error = errorValidatingBindGroup(group, m_pipeline->minimumBufferSizes(bindGroupIndex))) {
+            makeInvalid(error);
             return;
         }
         [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:bindGroupIndex];

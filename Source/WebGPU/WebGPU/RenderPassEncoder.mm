@@ -453,8 +453,8 @@ bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
             return false;
         }
         auto& group = *weakBindGroup.get();
-        if (!validateBindGroup(group)) {
-            makeInvalid(@"buffer is too small");
+        if (NSString* error = errorValidatingBindGroup(group, m_pipeline->minimumBufferSizes(groupIndex))) {
+            makeInvalid(error);
             return false;
         }
         [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
