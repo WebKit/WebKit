@@ -168,7 +168,7 @@ static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(S
 #if ENABLE(WEB_AUTHN)
     } else if (value.startsWith(publickeyCredentialsGetRuleToken)) {
         feature = PermissionsPolicy::Feature::PublickeyCredentialsGetRule;
-        remainingValue = value.substring(magnetometerToken.length());
+        remainingValue = value.substring(publickeyCredentialsGetRuleToken.length());
 #endif
 #if ENABLE(WEBXR)
     } else if (value.startsWith(xrSpatialTrackingToken)) {

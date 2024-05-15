@@ -1883,5 +1883,3 @@ webkit.org/b/274130 [ Debug ] media/video-pause-immediately.html [ Pass Failure 
 
 # webkit.org/b/274219 (REGRESSION (278786@main): [ MacOS iOS ] 3X http/wpt/webauthn tests are consistent failures)
 http/wpt/webauthn/idl.https.html [ Failure ]
-http/wpt/webauthn/public-key-credential-cross-origin.https.html [ Failure ]
-http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https.html [ Failure ]
