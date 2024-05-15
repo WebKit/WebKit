@@ -188,7 +188,7 @@ def main():
         'unexpected failing files': unexpected_failures_total,
         'unexpected passing files': unexpected_passes_total,
         'unexpected issues': unexpected_issues_total
-    }:
+    }.items():
         if type_total:
             print(f'Total {type}: {len(type_total)}')
 
