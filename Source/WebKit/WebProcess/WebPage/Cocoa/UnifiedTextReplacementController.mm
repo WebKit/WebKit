@@ -231,9 +231,10 @@ void UnifiedTextReplacementController::didEndTextReplacementSession<WebUnifiedTe
         auto data = std::get<WebCore::DocumentMarker::UnifiedTextReplacementData>(marker.data());
 
         auto offsetRange = WebCore::OffsetRange { marker.startOffset(), marker.endOffset() };
-        markers.removeMarkers(node, offsetRange, { WebCore::DocumentMarker::Type::UnifiedTextReplacement });
 
         auto rangeToReplace = makeSimpleRange(node, marker);
+
+        markers.removeMarkers(node, offsetRange, { WebCore::DocumentMarker::Type::UnifiedTextReplacement });
 
         if (!accepted && data.state != WebCore::DocumentMarker::UnifiedTextReplacementData::State::Reverted)
             replaceContentsOfRangeInSession(uuid, rangeToReplace, data.originalText);
@@ -398,13 +399,13 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         auto length = superRange.length - previousRange.length;
         if (superRange.length < previousRange.length) {
             ASSERT_NOT_REACHED();
-            return WebCore::CharacterRange { 0 , 0 };
+            return WebCore::CharacterRange { 0, 0 };
         }
         return WebCore::CharacterRange { location, length };
     };
 
     auto replacedRange = resolvedRange;
-    for (auto  [sessionUUID, sessionRangeVector] : m_textIndicatorCharacterRangesForSessions) {
+    for (auto [sessionUUID, sessionRangeVector] : m_textIndicatorCharacterRangesForSessions) {
         if (sessionUUID != uuid)
             continue;
 
