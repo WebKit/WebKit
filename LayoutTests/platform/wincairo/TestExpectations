@@ -416,9 +416,6 @@ webgl/webgl-worker.html [ Skip ]
 # Accelerated canvas isn't supported yet
 fast/canvas/canvas-will-read-frequently.html [ Skip ]
 
-# Limiting accelerated canvases not implemented for WK1
-fast/canvas/image-buffer-backend-count-limit.html [ Skip ]
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
 #//////////////////////////////////////////////////////////////////////////////////////////

@@ -2825,6 +2825,3 @@ http/tests/media/hls/hls-webvtt-style.html [ Pass Timeout ]
 [ Ventura Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode.html [ Skip ]
 
 webkit.org/b/273577 [ Ventura ] http/tests/media/hls/track-webvtt-multitracks.html [ Skip ]
-
-# Limiting accelerated canvases not implemented for WK1
-fast/canvas/image-buffer-backend-count-limit.html [ Skip ]
