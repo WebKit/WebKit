@@ -94,7 +94,7 @@ private:
     void deleteCookie(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String cookieName, CompletionHandler<void(std::optional<String>)>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    void addMessageToConsole(const Inspector::ConsoleMessage&);
+    void addMessageToConsole(const Inspector::ConsoleMessage&) override;
 #endif
 
     String m_sessionIdentifier;

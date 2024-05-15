@@ -457,7 +457,7 @@ void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message,
     }
 
     // 4. Let parsed be the result of parsing JSON into Infra values given data. If this throws an exception, then send an error response given connection, null, and invalid argument, and finally return.
-    auto parsedMessageValue = JSON::Value::parseJSON(String::fromUTF8(message.data, message.dataLength));
+    auto parsedMessageValue = JSON::Value::parseJSON(String::fromUTF8(std::span<const char>(message.data, message.dataLength)));
     if (!parsedMessageValue) {
         // TODO send error response
         WTFLogAlways("WebDriver handle Message: Failed to parse incoming message");

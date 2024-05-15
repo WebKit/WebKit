@@ -28,6 +28,16 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <atomic>
 #include <wtf/WeakPtr.h>
+
+namespace WebCore {
+class InspectorInstrumentationConsoleMessageClient;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::InspectorInstrumentationConsoleMessageClient> : std::true_type { };
+}
+
 namespace WebCore {
 
 #define FAST_RETURN_IF_NO_FRONTENDS(value)                       \

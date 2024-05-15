@@ -197,7 +197,7 @@ WebSocketMessageHandler::Message WebSocketMessageHandler::Message::fail(CommandR
 
 std::optional<Command> Command::fromData(const char* data, size_t dataLength)
 {
-    auto messageValue = JSON::Value::parseJSON(String::fromUTF8(data, dataLength));
+    auto messageValue = JSON::Value::parseJSON(String::fromUTF8(std::span<const char>(data, dataLength)));
     if (!messageValue)
         return std::nullopt;
 

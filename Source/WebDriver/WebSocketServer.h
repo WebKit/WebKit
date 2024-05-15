@@ -42,6 +42,15 @@ typedef struct _SoupWebsocketConnection SoupWebsocketConnection;
 #endif
 
 namespace WebDriver {
+class WebSocketServer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebDriver::WebSocketServer> : std::true_type { };
+}
+
+namespace WebDriver {
 
 class Session;
 class WebDriverService;

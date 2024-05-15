@@ -42,6 +42,15 @@ typedef struct _GSubprocess GSubprocess;
 #endif
 
 namespace WebDriver {
+class BiDiEventHandler;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebDriver::BiDiEventHandler> : std::true_type { };
+}
+
+namespace WebDriver {
 
 struct ConnectToBrowserAsyncData;
 
