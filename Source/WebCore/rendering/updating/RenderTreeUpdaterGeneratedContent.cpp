@@ -310,6 +310,12 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         return;
     }
 
+    CheckedPtr parentForWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->parent();
+    if (!parentForWritingSuggestions) {
+        destroyWritingSuggestionsIfNeeded();
+        return;
+    }
+
     auto textWithoutSuggestion = nodeBeforeWritingSuggestionsTextRenderer->text();
 
     auto offset = writingSuggestionData->offset();
@@ -345,23 +351,13 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, renderer.document(), WTFMove(newStyle));
         newWritingSuggestionsRenderer->initializeStyle();
 
-        auto rendererAfterWritingSuggestions = [&]() -> CheckedPtr<RenderObject> {
-            CheckedPtr rendererBefore = nodeBeforeWritingSuggestions->renderer();
-            if (!rendererBefore || rendererBefore->parent() != &renderer)
-                return nullptr;
-
-            CheckedPtr rendererAfter = rendererBefore->nextSibling();
-            if (!rendererAfter || rendererAfter->parent() != &renderer)
-                return nullptr;
-
-            return rendererAfter;
-        }();
+        CheckedPtr rendererAfterWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->nextSibling();
 
         auto writingSuggestionsText = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, renderer.document(), writingSuggestionData->content());
         m_updater.m_builder.attach(*newWritingSuggestionsRenderer, WTFMove(writingSuggestionsText));
 
         editor.setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
-        m_updater.m_builder.attach(renderer, WTFMove(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
+        m_updater.m_builder.attach(*parentForWritingSuggestions, WTFMove(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
 
         auto* prefixNode = nodeBeforeWritingSuggestionsTextRenderer->textNode();
         if (!prefixNode) {
@@ -372,7 +368,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
         if (!suffix.isEmpty()) {
             auto suffixRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, *prefixNode, suffix);
-            m_updater.m_builder.attach(renderer, WTFMove(suffixRenderer), rendererAfterWritingSuggestions.get());
+            m_updater.m_builder.attach(*parentForWritingSuggestions, WTFMove(suffixRenderer), rendererAfterWritingSuggestions.get());
         }
     }
 }
