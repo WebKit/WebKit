@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IntPoint.h"
+#include "TileGridIdentifier.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/MonotonicTime.h>
@@ -70,18 +71,19 @@ enum class TiledBackingScrollability : uint8_t {
 };
 
 using TileIndex = IntPoint;
-using TileGridIndex = unsigned;
+class TiledBacking;
 
 class TiledBackingClient : public CanMakeWeakPtr<TiledBackingClient> {
 public:
     virtual ~TiledBackingClient() = default;
 
     // paintDirtyRect is in the same coordinate system as tileClip.
-    virtual void willRepaintTile(TileGridIndex, TileIndex, const FloatRect& tileClip, const FloatRect& paintDirtyRect) = 0;
-    virtual void willRemoveTile(TileGridIndex, TileIndex) = 0;
-    virtual void willRepaintAllTiles(TileGridIndex) = 0;
-    virtual void coverageRectDidChange(const FloatRect&) = 0;
-    virtual void tilingScaleFactorDidChange(float) = 0;
+    virtual void willRepaintTile(TiledBacking&, TileGridIdentifier, TileIndex, const FloatRect& tileClip, const FloatRect& paintDirtyRect) = 0;
+    virtual void willRemoveTile(TiledBacking&, TileGridIdentifier, TileIndex) = 0;
+    virtual void willRepaintAllTiles(TiledBacking&, TileGridIdentifier) = 0;
+    virtual void willRemoveGrid(TiledBacking&, TileGridIdentifier) = 0;
+    virtual void coverageRectDidChange(TiledBacking&, const FloatRect&) = 0;
+    virtual void tilingScaleFactorDidChange(TiledBacking&, float) = 0;
 };
 
 

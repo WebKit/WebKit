@@ -28,6 +28,7 @@
 #include "IntPointHash.h"
 #include "IntRect.h"
 #include "PlatformCALayerClient.h"
+#include "TileGridIdentifier.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
@@ -52,6 +53,8 @@ class TileGrid : public PlatformCALayerClient {
 public:
     explicit TileGrid(TileController&);
     ~TileGrid();
+
+    TileGridIdentifier identifier() const { return m_identifier; }
 
 #if USE(CA)
     PlatformCALayer& containerLayer() { return m_containerLayer; }
@@ -150,6 +153,7 @@ private:
     bool isUsingDisplayListDrawing(PlatformCALayer*) const override;
     bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const override;
 
+    TileGridIdentifier m_identifier;
     TileController& m_controller;
 #if USE(CA)
     Ref<PlatformCALayer> m_containerLayer;

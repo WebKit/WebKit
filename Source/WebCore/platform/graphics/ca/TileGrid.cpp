@@ -58,7 +58,8 @@ static String validationPolicyAsString(OptionSet<TileGrid::ValidationPolicyFlag>
 #endif
 
 TileGrid::TileGrid(TileController& controller)
-    : m_controller(controller)
+    : m_identifier(TileGridIdentifier::generate())
+    , m_controller(controller)
     , m_containerLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_cohortRemovalTimer(*this, &TileGrid::cohortRemovalTimerFired)
     , m_tileSize(kDefaultTileSize, kDefaultTileSize)
