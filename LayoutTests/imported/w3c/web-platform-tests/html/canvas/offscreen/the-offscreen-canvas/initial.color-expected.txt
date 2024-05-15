@@ -1,4 +1,5 @@
 initial.color
+
 Initial state is transparent black
 
 

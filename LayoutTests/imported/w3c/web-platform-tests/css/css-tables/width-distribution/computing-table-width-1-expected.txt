@@ -1,5 +1,7 @@
 Width Distribution
+
 "Computing the table width"
+
 This is testing that the table root's width when the TABLEROOT width is auto Spec Text
 
 

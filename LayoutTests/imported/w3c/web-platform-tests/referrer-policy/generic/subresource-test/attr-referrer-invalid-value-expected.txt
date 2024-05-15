@@ -1,4 +1,5 @@
 Invalid referrerPolicy attribute value
+
 Running...
 
 PASS Invalid referrerpolicy values not reflected

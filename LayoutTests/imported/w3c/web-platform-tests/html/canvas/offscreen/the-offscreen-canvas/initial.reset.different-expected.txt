@@ -1,4 +1,5 @@
 initial.reset.different
+
 Changing size resets canvas to transparent black
 
 

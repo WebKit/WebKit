@@ -3,6 +3,5 @@ Defined in "Web IDL" (draft)
 
 Actual output:
 
-
 PASS Canvas test: context.arguments.missing
 

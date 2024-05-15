@@ -1,5 +1,6 @@
 Status after preflight
 
+
 PASS CORS - status after preflight on GET 200
 PASS CORS - status after preflight on GET 204
 PASS CORS - status after preflight on GET 400

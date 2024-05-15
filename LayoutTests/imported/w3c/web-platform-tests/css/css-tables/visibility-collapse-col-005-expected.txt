@@ -1,4 +1,5 @@
 Visibility collapse
+
 Spec
 Setting a spanning column to visibility:collapse changes table width but not height. The right two columns here have been collapsed.
 

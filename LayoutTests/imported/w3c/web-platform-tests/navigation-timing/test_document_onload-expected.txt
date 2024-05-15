@@ -1,4 +1,5 @@
 Description
+
 This test checks that the transferSize, encodedBodySize and decodedBodySize attributes have correct values when checked in the onload handler
 
 

@@ -1,4 +1,5 @@
 2d.path.stroke.overlap
+
 Stroked subpaths are combined before being drawn
 
 

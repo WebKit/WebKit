@@ -1,10 +1,12 @@
 Summary
+
 Harness status: OK
 
 Found 1 tests
 
 1 Pass
 Details
+
 Result	Test Name	Message
 Pass	Testing legacy API is not defined	
 Asserts run

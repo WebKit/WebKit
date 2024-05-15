@@ -1,4 +1,5 @@
 2d.shadow.canvas.transparent.1
+
 Shadows are not drawn for transparent canvases
 
 

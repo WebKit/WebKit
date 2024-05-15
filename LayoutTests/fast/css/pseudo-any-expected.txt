@@ -1,6 +1,8 @@
 This page tests :-webkit-any. This window needs to be focused for the :focus tests to pass.
 h1
+
 h1
+
 div
 foo
 b i

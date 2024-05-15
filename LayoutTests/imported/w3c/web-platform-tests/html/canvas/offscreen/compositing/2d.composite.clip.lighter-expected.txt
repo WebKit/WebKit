@@ -1,4 +1,5 @@
 2d.composite.clip.lighter
+
 fill() does not affect pixels outside the clip region.
 
 

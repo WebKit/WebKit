@@ -1,4 +1,5 @@
 Description
+
 This test validates that the values of window.performance.getEntriesByType("navigation")[0].(type/unloadEventEnd/unloadEventStart) are only exposed when the same-origin test passes.
 
 

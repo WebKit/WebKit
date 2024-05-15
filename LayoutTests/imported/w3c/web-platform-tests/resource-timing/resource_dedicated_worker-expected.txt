@@ -1,4 +1,5 @@
 Description
+
 This test validates that resources requested by dedicated workers don't appear in the main document.
 
 

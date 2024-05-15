@@ -1,9 +1,6 @@
 2d.path.roundrect.selfintersect
 Actual output:
-
 Expected output:
-
-
 
 
 PASS Canvas test: 2d.path.roundrect.selfintersect

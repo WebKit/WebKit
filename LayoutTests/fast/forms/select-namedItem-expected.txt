@@ -1,4 +1,5 @@
 Test for HTMLSelectElement.namedItem()
+
 FOUND ITEM: 2
 FOUND ITEM: 1
 FOUND ITEM: 1

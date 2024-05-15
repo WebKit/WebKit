@@ -1,9 +1,6 @@
 2d.path.quadraticCurveTo.basic
 Actual output:
-
 Expected output:
-
-
 
 
 PASS Canvas test: 2d.path.quadraticCurveTo.basic

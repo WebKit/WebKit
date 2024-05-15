@@ -1,4 +1,5 @@
 2d.strokeRect.zero.1
+
 strokeRect of 0x0 pixels draws nothing
 
 

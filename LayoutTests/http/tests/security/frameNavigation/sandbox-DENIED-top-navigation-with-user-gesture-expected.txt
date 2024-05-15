@@ -5,3 +5,4 @@ This tests that a sandboxed iframe without 'allow-top-navigation-by-user-activat
 
 127.0.0.1
 
+

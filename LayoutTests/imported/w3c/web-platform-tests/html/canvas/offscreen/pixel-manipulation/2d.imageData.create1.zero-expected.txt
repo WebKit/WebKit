@@ -1,4 +1,5 @@
 2d.imageData.create1.zero
+
 createImageData(null) throws TypeError
 
 

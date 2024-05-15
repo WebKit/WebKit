@@ -1,4 +1,5 @@
 Description
+
 This test checks for the presence of the navigator.mediaDevices.enumerateDevices() method.
 
 

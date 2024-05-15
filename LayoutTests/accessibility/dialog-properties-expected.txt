@@ -11,4 +11,5 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Just a dialog.
+
 OK  Cancel

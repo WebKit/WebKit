@@ -60,6 +60,7 @@ PASS .grid 58
 PASS .grid 59
 PASS .grid 60
 item writing-mode: vertical-lr;
+
 grid-template-rows: auto;
 XXXXXXXXXX
 grid-template-rows: 0px;
@@ -83,6 +84,7 @@ grid-template-rows: minmax(auto, 25px); item border height: 10px;
 grid-template-rows: minmax(auto, 0px); item height + margin + border + padding: 10px;
 grid-template-rows: minmax(auto, 25px); item height + margin + border + padding: 10px;
 item writing-mode: vertical-rl;
+
 grid-template-rows: auto;
 XXXXXXXXXX
 grid-template-rows: 0px;
@@ -106,6 +108,7 @@ grid-template-rows: minmax(auto, 25px); item border height: 10px;
 grid-template-rows: minmax(auto, 0px); item height + margin + border + padding: 10px;
 grid-template-rows: minmax(auto, 25px); item height + margin + border + padding: 10px;
 grid container writing-mode: vertical-lr; & item writing-mode: horizontal-tb;
+
 grid-template-rows: auto;
 XXXXXXXXXX
 grid-template-rows: minmax(auto, 0px);
@@ -129,6 +132,7 @@ grid-template-rows: minmax(auto, 25px); item border width: 10px;
 grid-template-rows: minmax(auto, 0px); item width + margin + border + padding: 10px;
 grid-template-rows: minmax(auto, 25px); item width + margin + border + padding: 10px;
 grid container writing-mode: vertical-rl; & item writing-mode: horizontal-tb;
+
 grid-template-rows: auto;
 XXXXXXXXXX
 grid-template-rows: minmax(auto, 0px);

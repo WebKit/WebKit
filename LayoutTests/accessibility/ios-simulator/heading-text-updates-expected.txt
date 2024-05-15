@@ -67,6 +67,9 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 firstChild.data
+
 firstChild.data
+
 firstChild.data
+
 firstChild.data

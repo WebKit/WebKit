@@ -1,9 +1,6 @@
 2d.drawImage.alpha
 Actual output:
-
 Expected output:
-
-
 
 
 PASS Canvas test: 2d.drawImage.alpha

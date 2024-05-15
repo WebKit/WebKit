@@ -1,4 +1,5 @@
 Description
+
 This test validates that document.hidden == false and document.visibilityState == "visible" for windowless subdocuments.
 
 

@@ -1,11 +1,7 @@
 size.attributes.setAttribute.octal
 Parsing of non-negative integers in setAttribute
-
 Actual output:
-
 Expected output:
-
-
 
 
 PASS Parsing of non-negative integers in setAttribute

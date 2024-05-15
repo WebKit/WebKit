@@ -1,4 +1,5 @@
 2d.text.draw.align.end.ltr
+
 textAlign end with ltr is the right edge
 
 

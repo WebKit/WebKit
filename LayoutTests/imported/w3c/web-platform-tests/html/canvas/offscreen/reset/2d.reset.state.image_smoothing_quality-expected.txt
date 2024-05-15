@@ -1,4 +1,5 @@
 2d.reset.state.image_smoothing_quality
+
 check that the state is reset
 
 

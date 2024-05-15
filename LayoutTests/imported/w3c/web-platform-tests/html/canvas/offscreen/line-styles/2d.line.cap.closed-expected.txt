@@ -1,4 +1,5 @@
 2d.line.cap.closed
+
 Line caps are not drawn at the corners of an unclosed rectangle
 
 

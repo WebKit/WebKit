@@ -1,4 +1,5 @@
 Visibility collapse
+
 Spec
 Setting row and spanning column to visibility:collapse changes height and width.
 

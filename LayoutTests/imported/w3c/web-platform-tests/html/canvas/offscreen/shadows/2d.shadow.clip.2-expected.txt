@@ -1,4 +1,5 @@
 2d.shadow.clip.2
+
 Shadows are not drawn outside the clipping region
 
 

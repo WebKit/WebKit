@@ -1,4 +1,5 @@
 Testing hittest on a layer with null transform
+
 https://bugs.webkit.org/show_bug.cgi?id=24252
 
 transformed element

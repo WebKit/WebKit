@@ -1,9 +1,6 @@
 2d.composite.image.clear
 Actual output:
-
 Expected output:
-
-
 
 
 PASS Canvas test: 2d.composite.image.clear

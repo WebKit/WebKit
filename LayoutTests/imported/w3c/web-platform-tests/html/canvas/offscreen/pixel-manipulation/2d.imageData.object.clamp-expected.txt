@@ -1,4 +1,5 @@
 2d.imageData.object.clamp
+
 ImageData.data clamps numbers to [0, 255]
 
 

@@ -1,4 +1,5 @@
 2d.imageData.get.range
+
 getImageData() returns values in the range [0, 255]
 
 

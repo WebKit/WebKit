@@ -1,4 +1,5 @@
 Description
+
 This test checks for the absence of microphone in navigator.mediaDevices.enumerateDevices() method when blocked by Permissions-Policy header.
 
 

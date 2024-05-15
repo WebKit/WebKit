@@ -1,4 +1,5 @@
 Description
+
 This test validates that the value of the window.performance.navigation.redirectCount attribute, as well as the window.performance.timing.redirectStart and redirectEnd attributes on a non-redirected navigation.
 
 

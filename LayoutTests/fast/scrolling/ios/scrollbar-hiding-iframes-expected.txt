@@ -1,10 +1,14 @@
 Both Visible
 
+
 Horizontal visible
+
 
 Vertical visible
 
+
 None visible
+
 
 
 (scrolling tree

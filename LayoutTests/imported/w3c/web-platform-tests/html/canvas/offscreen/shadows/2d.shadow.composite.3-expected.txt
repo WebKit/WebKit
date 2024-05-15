@@ -1,4 +1,5 @@
 2d.shadow.composite.3
+
 Areas outside shadows are drawn correctly with destination-out
 
 

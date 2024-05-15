@@ -1,4 +1,5 @@
 Visibility collapse and overflow
+
 Collapsed row should not contribute to overflow
 
 Collapsed section should not contribute to overflow

@@ -1,11 +1,7 @@
 2d.gradient.conic.negative.rotation
 Conic gradient with negative rotation
-
 Actual output:
-
 Expected output:
-
-
 
 
 PASS Conic gradient with negative rotation

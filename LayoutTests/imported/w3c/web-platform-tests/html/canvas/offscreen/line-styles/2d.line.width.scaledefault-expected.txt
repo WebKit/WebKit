@@ -1,4 +1,5 @@
 2d.line.width.scaledefault
+
 Default lineWidth strokes are affected by scale transformations
 
 

@@ -1,4 +1,5 @@
 2d.path.arcTo.nonfinite
+
 arcTo() with Infinity/NaN is ignored
 
 

@@ -1,4 +1,5 @@
 Calc width on col is treated as auto in auto tables
 
+
 PASS #theTable 1
 

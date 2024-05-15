@@ -1,11 +1,7 @@
 2d.fillRect.shadow
 fillRect draws shadows
-
 Actual output:
-
 Expected output:
-
-
 
 
 PASS fillRect draws shadows

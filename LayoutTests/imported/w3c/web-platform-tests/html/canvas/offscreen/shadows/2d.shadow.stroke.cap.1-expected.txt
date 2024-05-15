@@ -1,4 +1,5 @@
 2d.shadow.stroke.cap.1
+
 Shadows are not drawn for areas outside stroke caps
 
 

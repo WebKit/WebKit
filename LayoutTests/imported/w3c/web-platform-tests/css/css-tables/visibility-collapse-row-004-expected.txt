@@ -1,4 +1,5 @@
 Visibility collapse changes table height even when its height is fixed
+
 a
 b
 

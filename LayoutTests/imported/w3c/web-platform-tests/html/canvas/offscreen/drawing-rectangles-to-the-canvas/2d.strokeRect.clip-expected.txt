@@ -1,4 +1,5 @@
 2d.strokeRect.clip
+
 strokeRect is affected by clipping regions
 
 

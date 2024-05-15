@@ -1,4 +1,5 @@
 Description
+
 This test uses drawFocusIfNeeded does nothing if the element is not in focus but comparing ImageData from before and after.
 
 Before:

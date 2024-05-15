@@ -1,4 +1,5 @@
 PerformanceObservers: navigation
+
 Navigation will queue a PerformanceEntry.
 
 

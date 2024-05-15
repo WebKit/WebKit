@@ -1,9 +1,6 @@
 2d.text.draw.fontface
 Actual output:
-
 Expected output:
-
-
 
 
 PASS Canvas test: 2d.text.draw.fontface

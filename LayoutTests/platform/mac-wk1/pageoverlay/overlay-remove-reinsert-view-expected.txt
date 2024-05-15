@@ -1,4 +1,5 @@
 Initial layers
+
 View-relative:
 (GraphicsLayer
   (children 1
@@ -29,6 +30,7 @@ Document-relative:
   )
 )
 Layers after removal
+
 View-relative:
 (no view-relative overlay root)
 

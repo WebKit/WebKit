@@ -1,4 +1,5 @@
 Visibility hidden
+
 Spec
 Setting a table to visibility:hidden, but rows and cells to different visibility values.
 

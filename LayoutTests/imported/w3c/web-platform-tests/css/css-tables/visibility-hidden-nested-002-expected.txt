@@ -1,4 +1,5 @@
 Visibility hidden
+
 Spec
 Setting a table to visibility:hidden, but rows and cells to different nested visibility values. Height and width of table should not change.
 

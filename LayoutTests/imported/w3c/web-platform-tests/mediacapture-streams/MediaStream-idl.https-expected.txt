@@ -1,6 +1,7 @@
 When prompted, accept to share your video and audio stream.
 
 Description
+
 This test checks that the MediaStream constructor follows the algorithm set in the spec.
 
 

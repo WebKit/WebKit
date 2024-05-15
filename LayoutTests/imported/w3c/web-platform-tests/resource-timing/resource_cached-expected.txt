@@ -1,4 +1,5 @@
 Description
+
 This test validates that a 304 Not Modified resource appears in the buffer.
 
 

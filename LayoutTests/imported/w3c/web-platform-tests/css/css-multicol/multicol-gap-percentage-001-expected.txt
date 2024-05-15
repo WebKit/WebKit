@@ -12,6 +12,7 @@ PASS .multicol 10
 PASS .multicol 11
 PASS .multicol 12
 Multicol container: fixed width
+
 X
 X
 XX X X
@@ -19,6 +20,7 @@ XX X X
 XXXXX
 XXXXX
 Multicol container: intrinsic width
+
 X
 X
 
@@ -28,6 +30,7 @@ XX X X
 XXXXX
 XXXXX
 Multicol container: auto width
+
 X
 X
 XX X X

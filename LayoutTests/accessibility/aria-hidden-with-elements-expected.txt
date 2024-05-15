@@ -5,6 +5,7 @@ test
 test
 
 heading
+
 This tests that aria-hidden works as expected on elements that are subclasses of AccessibilityRenderObject
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

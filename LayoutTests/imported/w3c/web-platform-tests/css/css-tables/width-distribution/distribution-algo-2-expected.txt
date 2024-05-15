@@ -1,5 +1,7 @@
 Width Distribution
+
 "Distribution Algorithm"
+
 Tests the first step that all cells get their min content guess which is that of their min content Spec Text
 
 

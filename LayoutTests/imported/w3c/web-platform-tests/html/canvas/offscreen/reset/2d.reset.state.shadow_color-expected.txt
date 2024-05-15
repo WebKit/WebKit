@@ -1,4 +1,5 @@
 2d.reset.state.shadow_color
+
 check that the state is reset
 
 

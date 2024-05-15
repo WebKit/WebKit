@@ -1,4 +1,5 @@
 PerformanceObservers: resource
+
 New resources will queue a PerformanceEntry.
 
 

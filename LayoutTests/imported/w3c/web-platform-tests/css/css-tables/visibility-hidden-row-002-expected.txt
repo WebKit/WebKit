@@ -1,4 +1,5 @@
 Visibility hidden
+
 Spec
 Setting cells to visibility:hidden doesn't change table height or width.
 

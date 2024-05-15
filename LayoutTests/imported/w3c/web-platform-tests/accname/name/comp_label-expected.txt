@@ -1,7 +1,9 @@
 AccName: Label Tests
+
 Tests the #comp_label portions of the AccName Name Computation algorithm.
 
 Elements with roles that support aria-label use
+
 x
 x
 x
@@ -73,6 +75,7 @@ x
 x
 x
 HTML elements that support aria-label
+
 x
 x
 x
@@ -87,11 +90,17 @@ x
 x
 x
 x
+
 x
+
 x
+
 x
+
 x
+
 x
+
 
 x
 x
@@ -107,11 +116,15 @@ x	x
 x
 Undefined aria-label tests
 
+
 Name computation precedence tests
+
 x   x    x  x label    label   x
 x
+
 x
 Empty/whitespace aria-label tests
+
  x my button
 x
 x my button

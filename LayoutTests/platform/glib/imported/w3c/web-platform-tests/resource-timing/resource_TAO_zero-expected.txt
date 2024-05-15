@@ -1,4 +1,5 @@
 Description
+
 This test validates that for a cross origin resource, the timing allow check algorithm will fail when the HTTP response includes zero Timing-Allow-Origin header value.
 
 

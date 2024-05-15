@@ -1,4 +1,5 @@
 Testing application of kerning to CJK text
+
 default
 YeYeYeYeティティティティ
 font-kerning: none;

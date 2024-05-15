@@ -1,6 +1,7 @@
 When prompted, accept to give permission to use your audio, video devices.
 
 Description
+
 This test checks that BrowserCaptureMediaStreamTrack cropping works as expected.
 
 Start test

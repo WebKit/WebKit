@@ -1,4 +1,5 @@
 2d.path.stroke.prune.arc
+
 Zero-length line segments from arcTo and arc are removed before stroking
 
 

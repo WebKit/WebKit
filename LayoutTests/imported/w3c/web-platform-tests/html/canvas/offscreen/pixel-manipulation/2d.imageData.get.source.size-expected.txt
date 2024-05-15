@@ -1,4 +1,5 @@
 2d.imageData.get.source.size
+
 getImageData() returns bigger ImageData for bigger source rectangle
 
 

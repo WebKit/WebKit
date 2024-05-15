@@ -1,4 +1,5 @@
 Test for WebKit bug 26723: clientX,Y , screenX , Y always (0, 0) in dragstart event
+
 DRAG ME!
 SUCCESS Expected 119 for clientX and got it.
 

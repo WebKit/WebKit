@@ -20,6 +20,7 @@ PASS .grid 18
 PASS .grid 19
 PASS .grid 20
 Small content area
+
 box-sizing: content-box
 X
 
@@ -41,6 +42,7 @@ X
 
 X
 Big content area
+
 box-sizing: content-box
 X
 

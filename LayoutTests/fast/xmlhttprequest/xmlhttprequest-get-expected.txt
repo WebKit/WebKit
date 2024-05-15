@@ -1,4 +1,5 @@
 GET test
+
 responseText
 <?xml version="1.0"?>
 <!DOCTYPE doc [

@@ -1,9 +1,6 @@
 2d.composite.image.destination-out
 Actual output:
-
 Expected output:
-
-
 
 
 PASS Canvas test: 2d.composite.image.destination-out

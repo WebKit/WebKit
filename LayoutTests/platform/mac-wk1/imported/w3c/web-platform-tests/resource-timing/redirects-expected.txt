@@ -1,4 +1,5 @@
 Description
+
 This test validates that, when a fetching resources that encounter same-origin redirects, attributes of the PerformanceResourceTiming entry conform to the specification.
 
 

@@ -1,6 +1,7 @@
 This tests that documents can navigate the location of any of it's sub-frames regardless of domain.
 
 127.0.0.1
+
   Perform Test
 
 --------
@@ -9,8 +10,10 @@ Frame: '<!--frame1-->'
 localhost
 
 
+
 --------
 Frame: 'targetFrame'
 --------
 localhost
+
 PASSED: Navigation succeeded.

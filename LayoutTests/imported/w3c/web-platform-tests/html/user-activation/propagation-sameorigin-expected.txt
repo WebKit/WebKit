@@ -1,4 +1,5 @@
 User activation propagation across same-origin frame boundary
+
 Tests that user activation propagates across same-origin frame boundary.
 
 Click anywhere on the green area (child frame).

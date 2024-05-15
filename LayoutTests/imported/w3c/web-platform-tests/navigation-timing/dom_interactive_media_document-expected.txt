@@ -1,4 +1,5 @@
 Description
+
 This tests that a media document has positive-value domInteractive.
 
 

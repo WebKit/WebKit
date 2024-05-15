@@ -36,7 +36,9 @@ PASS .grid 34
 PASS .grid 35
 PASS .grid 36
 1) place-content: normal
+
 1.2) Unconstrained grid container
+
 X
 XXXX XXX XX X
 X
@@ -48,6 +50,7 @@ X
 X
 X
 1.2) Constrained grid container
+
 X
 XXXX XXX XX X
 X
@@ -59,7 +62,9 @@ X
 X
 X
 2) place-content: stretch
+
 2.2) Unconstrained grid container
+
 X
 XXXX XXX XX X
 X
@@ -71,6 +76,7 @@ X
 X
 X
 2.2) Constrained grid container
+
 X
 XXXX XXX XX X
 X
@@ -82,7 +88,9 @@ X
 X
 X
 3) place-content: start
+
 3.1) Unconstrained grid container
+
 X
 XXXX XXX XX X
 X
@@ -94,6 +102,7 @@ X
 X
 X
 3.2) Constrained grid container
+
 X
 XXXX XXX XX X
 X

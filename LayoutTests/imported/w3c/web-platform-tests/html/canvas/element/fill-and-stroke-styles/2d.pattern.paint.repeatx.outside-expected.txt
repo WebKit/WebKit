@@ -1,9 +1,6 @@
 2d.pattern.paint.repeatx.outside
 Actual output:
-
 Expected output:
-
-
 
 
 PASS Canvas test: 2d.pattern.paint.repeatx.outside

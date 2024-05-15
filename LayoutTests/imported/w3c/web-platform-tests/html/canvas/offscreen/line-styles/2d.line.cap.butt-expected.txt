@@ -1,4 +1,5 @@
 2d.line.cap.butt
+
 lineCap 'butt' is rendered correctly
 
 
