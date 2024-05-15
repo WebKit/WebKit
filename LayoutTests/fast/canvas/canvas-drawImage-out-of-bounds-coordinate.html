@@ -1,0 +1,42 @@
+<style>
+    canvas {
+        outline: 1px solid red;
+        aspect-ratio: 1 / 1;
+    }
+</style>
+<body>
+    <canvas id="test1"></canvas>
+    <canvas id="test2"></canvas>
+    <script>
+        function drawImageToCanvas(source, destCanvas) {
+            const destCtx = destCanvas.getContext('2d');
+            destCtx.imageSmoothingEnabled = false;
+
+            destCtx.drawImage(source, -100, -100, 200, 200, -25, -25, 100, 100);
+            destCtx.drawImage(source, -100,    0, 200, 100, -25,  75, 100, 100);
+
+            destCtx.drawImage(source,    0, -100, 100, 200,  75, -25, 100, 100);
+            destCtx.drawImage(source, -100, -100, 300, 300, -25, -25, 300, 300);
+
+            destCtx.drawImage(source,    0, -100, 200, 200, 175, -25, 100, 100);
+            destCtx.drawImage(source,    0,    0, 200, 100, 175,  75, 100, 100);
+        }
+
+        const srcCanvas = document.createElement('canvas');
+        const srcCtx = srcCanvas.getContext('2d');
+        srcCanvas.width = 80;
+        srcCanvas.height = 80;
+
+        srcCtx.fillStyle = 'green';
+        srcCtx.fillRect(0, 0, srcCanvas.width, srcCanvas.height);
+
+        drawImageToCanvas(srcCanvas, document.querySelector('#test1'));
+
+        const dataURL = srcCanvas.toDataURL();
+        const image = new Image();
+        image.src = dataURL;
+        image.onload = () => {
+            drawImageToCanvas(image, document.querySelector('#test2'));
+        };
+    </script>
+</body>
