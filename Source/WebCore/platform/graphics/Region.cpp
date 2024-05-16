@@ -667,6 +667,15 @@ void Region::setShape(Shape&& shape)
         *m_shape = WTFMove(shape);
 }
 
+bool Region::Shape::isValid() const
+{
+    for (auto span = spans_begin(), end = spans_end(); span != end; ++span) {
+        if (UNLIKELY(span->segmentIndex > m_segments.size()))
+            return false;
+    }
+    return true;
+}
+
 TextStream& operator<<(TextStream& ts, const Region& region)
 {
     ts << "\n";
