@@ -5368,6 +5368,9 @@ sub GenerateImplementation
         my $vtableRefGnu = GetGnuVTableRefForInterface($interface);
         my $vtableRefWin = GetWinVTableRefForInterface($interface);
 
+        # We use a templated verifyVTable function here to force the type
+        # being checked to be a dependent type so we can rely on `if constexpr`
+        # not causing errors when evaluated.
         push(@implContent, <<END) if $vtableNameGnu;
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
@@ -5376,17 +5379,9 @@ extern "C" { extern void (*const ${vtableRefWin}[])(); }
 #else
 extern "C" { extern void* ${vtableNameGnu}[]; }
 #endif
-#endif
-
-END
-
-        push(@implContent, "JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
-        push(@implContent, "{\n");
-        push(@implContent, <<END) if $vtableNameGnu;
-
-    if constexpr (std::is_polymorphic_v<${implType}>) {
-#if ENABLE(BINDING_INTEGRITY)
-        const void* actualVTablePointer = getVTablePointer(impl.ptr());
+template<typename T, typename = std::enable_if_t<std::is_same_v<T, ${implType}>, void>> static inline void verifyVTable(${implType}* ptr) {
+    if constexpr (std::is_polymorphic_v<T>) {
+        const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
         void* expectedVTablePointer = ${vtableRefWin};
 #else
@@ -5398,8 +5393,17 @@ END
         // to toJS() we currently require $interfaceName you to opt out of binding hardening
         // by adding the SkipVTableValidation attribute to the interface IDL definition
         RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
-#endif
     }
+}
+#endif
+END
+
+        push(@implContent, "JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
+        push(@implContent, "{\n");
+        push(@implContent, <<END) if $vtableNameGnu;
+#if ENABLE(BINDING_INTEGRITY)
+    verifyVTable<$implType>(impl.ptr());
+#endif
 END
         push(@implContent, "    return createWrapper<${implType}>(globalObject, WTFMove(impl));\n");
         push(@implContent, "}\n\n");

@@ -335,14 +335,9 @@ extern "C" { extern void (*const __identifier("??_7TestOverloadedConstructors@We
 #else
 extern "C" { extern void* _ZTVN7WebCore26TestOverloadedConstructorsE[]; }
 #endif
-#endif
-
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructors>&& impl)
-{
-
-    if constexpr (std::is_polymorphic_v<TestOverloadedConstructors>) {
-#if ENABLE(BINDING_INTEGRITY)
-        const void* actualVTablePointer = getVTablePointer(impl.ptr());
+template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestOverloadedConstructors>, void>> static inline void verifyVTable(TestOverloadedConstructors* ptr) {
+    if constexpr (std::is_polymorphic_v<T>) {
+        const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
         void* expectedVTablePointer = __identifier("??_7TestOverloadedConstructors@WebCore@@6B@");
 #else
@@ -354,8 +349,14 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObj
         // to toJS() we currently require TestOverloadedConstructors you to opt out of binding hardening
         // by adding the SkipVTableValidation attribute to the interface IDL definition
         RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
-#endif
     }
+}
+#endif
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructors>&& impl)
+{
+#if ENABLE(BINDING_INTEGRITY)
+    verifyVTable<TestOverloadedConstructors>(impl.ptr());
+#endif
     return createWrapper<TestOverloadedConstructors>(globalObject, WTFMove(impl));
 }
 

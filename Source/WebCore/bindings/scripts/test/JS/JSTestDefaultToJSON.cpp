@@ -852,14 +852,9 @@ extern "C" { extern void (*const __identifier("??_7TestDefaultToJSON@WebCore@@6B
 #else
 extern "C" { extern void* _ZTVN7WebCore17TestDefaultToJSONE[]; }
 #endif
-#endif
-
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
-{
-
-    if constexpr (std::is_polymorphic_v<TestDefaultToJSON>) {
-#if ENABLE(BINDING_INTEGRITY)
-        const void* actualVTablePointer = getVTablePointer(impl.ptr());
+template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestDefaultToJSON>, void>> static inline void verifyVTable(TestDefaultToJSON* ptr) {
+    if constexpr (std::is_polymorphic_v<T>) {
+        const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
         void* expectedVTablePointer = __identifier("??_7TestDefaultToJSON@WebCore@@6B@");
 #else
@@ -871,8 +866,14 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObj
         // to toJS() we currently require TestDefaultToJSON you to opt out of binding hardening
         // by adding the SkipVTableValidation attribute to the interface IDL definition
         RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
-#endif
     }
+}
+#endif
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
+{
+#if ENABLE(BINDING_INTEGRITY)
+    verifyVTable<TestDefaultToJSON>(impl.ptr());
+#endif
     return createWrapper<TestDefaultToJSON>(globalObject, WTFMove(impl));
 }
 
