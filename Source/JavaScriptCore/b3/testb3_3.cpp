@@ -28,6 +28,59 @@
 
 #if ENABLE(B3_JIT) && !CPU(ARM)
 
+void testCSEStoreWithLoop()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* loop = proc.addBlock();
+    BasicBlock* body = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    // --------------------------- Root ---------------------------
+    Value* constZero = root->appendIntConstant(proc, Origin(), Int64, 0);
+    Value* constOne = root->appendIntConstant(proc, Origin(), Int64, 1);
+    Value* constTen = root->appendIntConstant(proc, Origin(), Int64, 10);
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* count = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    UpsilonValue* originalCounter = root->appendNew<UpsilonValue>(proc, Origin(), constZero);
+    root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loop));
+
+    // --------------------------- Loop ---------------------------
+    Value* loopCounter = loop->appendNew<Value>(proc, Phi, Int64, Origin());
+    Value* incCounter = loop->appendNew<Value>(proc, Add, Origin(), loopCounter, constOne);
+    UpsilonValue* incCounterUpsilon = loop->appendNew<UpsilonValue>(proc, Origin(), incCounter);
+    originalCounter->setPhi(loopCounter);
+    incCounterUpsilon->setPhi(loopCounter);
+    Value* valueFromAddress = loop->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    loop->appendNewControlValue(proc, Branch, Origin(),
+        loop->appendNew<Value>(proc, Below, Origin(), incCounter, constTen),
+        FrequentedBlock(body),
+        FrequentedBlock(loop));
+
+    // --------------------------- Body ---------------------------
+    body->appendNew<MemoryValue>(proc, Store, Origin(), count, address);
+    CheckValue* checkAdd = body->appendNew<CheckValue>(proc, CheckAdd, Origin(), count, valueFromAddress);
+    checkAdd->setGenerator(
+        [&](CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.abortWithReason(B3Oops);
+        });
+    body->appendNew<MemoryValue>(proc, Store, Origin(), checkAdd, address);
+    body->appendNewControlValue(proc, Branch, Origin(),
+        body->appendNew<Value>(proc, Below, Origin(), incCounter, count),
+        FrequentedBlock(loop),
+        FrequentedBlock(done));
+
+    // --------------------------- Done ---------------------------
+    done->appendNew<MemoryValue>(proc, Store, Origin(), checkAdd, address);
+    done->appendNewControlValue(proc, Return, Origin(), address);
+
+
+    auto code = compileProc(proc);
+    int64_t num = 1;
+    invoke<int64_t>(*code, bitwise_cast<intptr_t>(&num), 2);
+    CHECK_EQ(num, 5);
+}
 
 void testLoadPreIndex32()
 {
@@ -4099,6 +4152,7 @@ void addShrTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN(testZShrArgImm32(0xffffffff, 0));
     RUN(testZShrArgImm32(0xffffffff, 1));
     RUN(testZShrArgImm32(0xffffffff, 63));
+    RUN(testCSEStoreWithLoop());
 
     if (Options::useB3CanonicalizePrePostIncrements()) {
         RUN(testLoadPreIndex32());
