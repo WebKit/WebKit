@@ -93,21 +93,6 @@ void BaseAudioSharedUnit::startProducingData()
     if (++m_producingCount != 1)
         return;
 
-#if PLATFORM(MAC)
-    prewarmAudioUnitCreation([weakThis = WeakPtr { *this }] {
-        if (weakThis)
-            weakThis->continueStartProducingData();
-    });
-#else
-    continueStartProducingData();
-#endif
-}
-
-void BaseAudioSharedUnit::continueStartProducingData()
-{
-    if (!m_producingCount)
-        return;
-
     if (isProducingData())
         return;
 

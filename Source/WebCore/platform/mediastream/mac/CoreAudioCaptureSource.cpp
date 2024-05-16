@@ -343,6 +343,15 @@ void CoreAudioCaptureSource::setIsInBackground(bool value)
 }
 #endif
 
+#if PLATFORM(MAC)
+void CoreAudioCaptureSource::whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback)
+{
+    unit().prewarmAudioUnitCreation([callback = WTFMove(callback)] () mutable {
+        callback({ });
+    });
+}
+#endif
+
 void CoreAudioCaptureSource::audioUnitWillStart()
 {
     forEachObserver([](auto& observer) {

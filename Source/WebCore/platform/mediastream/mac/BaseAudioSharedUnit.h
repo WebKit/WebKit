@@ -102,7 +102,6 @@ public:
 protected:
     void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
     void captureFailed();
-    void continueStartProducingData();
 
     virtual void cleanupAudioUnit() = 0;
     virtual OSStatus startInternal() = 0;
