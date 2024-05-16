@@ -85,17 +85,19 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF
     auto attributedStringFromRange = WebCore::editingAttributedString(*contextRange);
     auto selectedTextCharacterRange = WebCore::characterRange(*contextRange, *selectedTextRange);
 
-    auto attributedStringCharacterCount = attributedStringFromRange.string.length();
-    auto contextRangeCharacterCount = WebCore::characterCount(*contextRange);
+    if (uuid.isValid()) {
+        auto attributedStringCharacterCount = attributedStringFromRange.string.length();
+        auto contextRangeCharacterCount = WebCore::characterCount(*contextRange);
 
-    // Postcondition: the selected text character range must be a valid range within the
-    // attributed string formed by the context range; the length of the entire context range
-    // being equal to the length of the attributed string implies the range is valid.
-    if (UNLIKELY(attributedStringCharacterCount != contextRangeCharacterCount)) {
-        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string length (%u) != context range length (%llu)", uuid.toString().utf8().data(), attributedStringCharacterCount, contextRangeCharacterCount);
-        ASSERT_NOT_REACHED();
-        completionHandler({ });
-        return;
+        // Postcondition: the selected text character range must be a valid range within the
+        // attributed string formed by the context range; the length of the entire context range
+        // being equal to the length of the attributed string implies the range is valid.
+        if (UNLIKELY(attributedStringCharacterCount != contextRangeCharacterCount)) {
+            RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string length (%u) != context range length (%llu)", uuid.toString().utf8().data(), attributedStringCharacterCount, contextRangeCharacterCount);
+            ASSERT_NOT_REACHED();
+            completionHandler({ });
+            return;
+        }
     }
 
     completionHandler({ { WTF::UUID { 0 }, attributedStringFromRange, selectedTextCharacterRange } });
