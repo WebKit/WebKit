@@ -795,11 +795,14 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
         auto& entries = pipelineEntries[bindGroupLayout.group];
         HashMap<String, uint64_t> entryMap;
         for (auto& entry : bindGroupLayout.entries) {
+            auto visibility = convertVisibility(entry.visibility);
+            auto stage = visibility / 2;
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=265204 - use a set instead
             if (auto existingBindingIndex = entries.findIf([&](const WGPUBindGroupLayoutEntry& e) {
                 return e.binding == entry.webBinding;
             }); existingBindingIndex != notFound) {
-                entries[existingBindingIndex].visibility |= convertVisibility(entry.visibility);
+                entries[existingBindingIndex].visibility |= visibility;
+                entries[existingBindingIndex].metalBinding[stage] = entry.binding;
                 continue;
             }
             WGPUBindGroupLayoutEntry newEntry = { };
@@ -816,8 +819,8 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
             }
 
             newEntry.binding = entry.webBinding;
-            newEntry.metalBinding = entry.binding;
-            newEntry.visibility = convertVisibility(entry.visibility);
+            newEntry.metalBinding[stage] = entry.binding;
+            newEntry.visibility = visibility;
             WTF::switchOn(entry.bindingMember, [&](const WGSL::BufferBindingLayout& bufferBinding) {
                 newEntry.buffer = WGPUBufferBindingLayout {
                     .nextInChain = nullptr,

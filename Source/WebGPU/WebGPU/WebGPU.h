@@ -1146,7 +1146,7 @@ typedef struct WGPUBindGroupDescriptor {
 typedef struct WGPUBindGroupLayoutEntry {
     WGPUChainedStruct const * nextInChain;
     uint32_t binding;
-    uint32_t metalBinding;
+    uint32_t metalBinding[WGPUShaderStage_Compute / 2 + 1];
     WGPUShaderStageFlags visibility;
     WGPUBufferBindingLayout buffer;
     WGPUSamplerBindingLayout sampler;

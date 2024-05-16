@@ -189,7 +189,7 @@ RefPtr<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutD
         return WGPUBindGroupLayoutEntry {
             .nextInChain = nullptr,
             .binding = entry.binding,
-            .metalBinding = entry.binding,
+            .metalBinding = { entry.binding, entry.binding, entry.binding },
             .visibility = m_convertToBackingContext->convertShaderStageFlagsToBacking(entry.visibility),
             .buffer = {
                 nullptr,
