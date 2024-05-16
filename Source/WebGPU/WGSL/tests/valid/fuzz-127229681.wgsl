@@ -47,76 +47,76 @@ fn f() -> u32 {
         _ = x[0];
     { let x = unpack4x8snorm(pack4xI8(vec4i(128, 127, -128, -128))); _ = x[0];
  }
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
         _ = x[0];
         _ =& x[-1];
      ;
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
     { let x = unpack4x8snorm(pack4xI8(vec4i(128, 127, -128, -128))); _ = x[0];
  }
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
         _ =& x[-1];
      ;
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
         _ =& x[-1];
      ;
         _ = x[0];
     { let x = unpack4x8snorm(pack4xI8(vec4i(128, 127, -128, -128))); _ = x[0];
  }
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
     { let x = (zptr);
  _ = x[0];
  }
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
         _ = x[0];
         _ =& x[-1];
      ;
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
         _ =& x[-1];
      ;
         _ = x[0];
     { let x = unpack4x8snorm(pack4xI8(vec4i(128, 127, -128, -128))); _ = x[0];
  }
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
     { let x = unpack4x8snorm(pack4xI8(vec4i(128, 127, -128, -128))); _ = x[0];
  }
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
         _ =& x[-1];
      ;
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
         _ = x[0];
     { let x = unpack4x8snorm(pack4xI8(vec4i(128, 127, -128, -128))); _ = x[0];
  }
-y/=*(zptr);
-        _ = x[0];
-        _ = x[0];
-        _ =& x[-1];
-     ;
-y/=*(zptr);
-        _ = x[0];
-    { let x = unpack4x8snorm(pack4xI8(vec4i(128, 127, -128, -128))); _ = x[0];
- }
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
         _ = x[0];
         _ =& x[-1];
      ;
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
+        _ = x[0];
+    { let x = unpack4x8snorm(pack4xI8(vec4i(128, 127, -128, -128))); _ = x[0];
+ }
+y.x[0]/=(*(zptr))[0].x[0];
+        _ = x[0];
+        _ = x[0];
+        _ =& x[-1];
+     ;
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
         _ = x[0];
     { let x = unpack4x8snorm(pack4xI8(vec4i(128, 127, -128, -128))); _ = x[0];
  }
-y/=*(zptr);
+y.x[0]/=(*(zptr))[0].x[0];
         _ = x[0];
     return x1 +2;
     return x1 +2;

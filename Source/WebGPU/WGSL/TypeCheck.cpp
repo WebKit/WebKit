@@ -211,6 +211,8 @@ private:
     bool convertValue(const SourceSpan&, const Type*, std::optional<ConstantValue>&);
     bool convertValueImpl(const SourceSpan&, const Type*, ConstantValue&);
 
+    void binaryExpression(const SourceSpan&, AST::Expression*, AST::BinaryOperation, AST::Expression&, AST::Expression&);
+
     template<typename TargetConstructor, typename Validator, typename... Arguments>
     void allocateSimpleConstructor(ASCIILiteral, TargetConstructor, const Validator&, Arguments&&...);
     void allocateTextureStorageConstructor(ASCIILiteral, Types::TextureStorage::Kind);
@@ -222,7 +224,7 @@ private:
     std::optional<AddressSpace> addressSpace(AST::Expression&);
 
     template<typename CallArguments>
-    const Type* chooseOverload(ASCIILiteral, AST::Expression&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
+    const Type* chooseOverload(ASCIILiteral, const SourceSpan&, AST::Expression*, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
 
     template<typename Node>
     void setConstantValue(Node&, const Type*, const ConstantValue&);
@@ -844,30 +846,16 @@ void TypeChecker::visit(AST::CallStatement& statement)
 
 void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
 {
-    // FIXME: Implement type checking - infer is called to avoid ASSERT in
-    // TypeChecker::visit(AST::Expression&)
-    infer(statement.leftExpression(), Evaluation::Runtime);
-    infer(statement.rightExpression(), Evaluation::Runtime);
-
-    ASCIILiteral operationName;
-    if (statement.operation() == AST::BinaryOperation::Divide)
-        operationName = "division"_s;
-    else if (statement.operation() == AST::BinaryOperation::Modulo)
-        operationName = "modulo"_s;
-    if (!operationName.isNull()) {
-        auto* rightType = statement.rightExpression().inferredType();
-        if (auto* vectorType = std::get_if<Types::Vector>(rightType))
-            rightType = vectorType->element;
-        if (satisfies(rightType, Constraints::Integer)) {
-            if (statement.operation() == AST::BinaryOperation::Divide)
-                m_shaderModule.setUsesDivision();
-            else
-                m_shaderModule.setUsesModulo();
-            auto rightValue = statement.rightExpression().constantValue();
-            if (rightValue && containsZero(*rightValue, statement.rightExpression().inferredType()))
-                typeError(InferBottom::No, statement.span(), "invalid "_s, operationName, " by zero"_s);
-        }
+    auto* left = infer(statement.leftExpression(), Evaluation::Runtime);
+    auto* referenceType = std::get_if<Types::Reference>(left);
+    if (!referenceType) {
+        typeError(InferBottom::No, statement.span(), "cannot assign to a value of type '"_s, *left, '\'');
+        return;
     }
+
+    binaryExpression(statement.span(), nullptr, statement.operation(), statement.leftExpression(), statement.rightExpression());
+    // Reset the inferred type since this is a statement
+    m_inferredType = nullptr;
 }
 
 void TypeChecker::visit(AST::DecrementIncrementStatement& statement)
@@ -1184,26 +1172,31 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
 {
-    chooseOverload("operator"_s, binary, toASCIILiteral(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
+    binaryExpression(binary.span(), &binary, binary.operation(), binary.leftExpression(), binary.rightExpression());
+}
+
+void TypeChecker::binaryExpression(const SourceSpan& span, AST::Expression* expression, AST::BinaryOperation operation, AST::Expression& leftExpression, AST::Expression& rightExpression)
+{
+    chooseOverload("operator"_s, span, expression, toASCIILiteral(operation), ReferenceWrapperVector<AST::Expression, 2> { leftExpression, rightExpression }, { });
 
     ASCIILiteral operationName;
-    if (binary.operation() == AST::BinaryOperation::Divide)
+    if (operation == AST::BinaryOperation::Divide)
         operationName = "division"_s;
-    else if (binary.operation() == AST::BinaryOperation::Modulo)
+    else if (operation == AST::BinaryOperation::Modulo)
         operationName = "modulo"_s;
     if (!operationName.isNull()) {
-        auto* rightType = binary.rightExpression().inferredType();
+        auto* rightType = rightExpression.inferredType();
         if (auto* vectorType = std::get_if<Types::Vector>(rightType))
             rightType = vectorType->element;
         if (satisfies(rightType, Constraints::Integer)) {
-            if (binary.operation() == AST::BinaryOperation::Divide)
+            if (operation == AST::BinaryOperation::Divide)
                 m_shaderModule.setUsesDivision();
             else
                 m_shaderModule.setUsesModulo();
-            auto leftValue = binary.leftExpression().constantValue();
-            auto rightValue = binary.rightExpression().constantValue();
-            if (!leftValue && rightValue && containsZero(*rightValue, binary.rightExpression().inferredType()))
-                typeError(InferBottom::No, binary.span(), "invalid "_s, operationName, " by zero"_s);
+            auto leftValue = leftExpression.constantValue();
+            auto rightValue = rightExpression.constantValue();
+            if (!leftValue && rightValue && containsZero(*rightValue, rightExpression.inferredType()))
+                typeError(InferBottom::No, span, "invalid "_s, operationName, " by zero"_s);
         }
     }
 }
@@ -1361,7 +1354,7 @@ void TypeChecker::visit(AST::CallExpression& call)
             }
         }
 
-        auto* result = chooseOverload("initializer"_s, call, targetName, call.arguments(), typeArguments);
+        auto* result = chooseOverload("initializer"_s, call.span(), &call, targetName, call.arguments(), typeArguments);
         if (result) {
             // FIXME: this will go away once we track used intrinsics properly
             if (targetName == "workgroupUniformLoad"_s)
@@ -1633,7 +1626,7 @@ void TypeChecker::visit(AST::UnaryExpression& unary)
         inferred(m_types.referenceType(pointer->addressSpace, pointer->element, pointer->accessMode));
         return;
     }
-    chooseOverload("operator"_s, unary, toASCIILiteral(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
+    chooseOverload("operator"_s, unary.span(), &unary, toASCIILiteral(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
 }
 
 // Literal Expressions
@@ -1889,7 +1882,7 @@ const Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::Fie
 }
 
 template<typename CallArguments>
-const Type* TypeChecker::chooseOverload(ASCIILiteral kind, AST::Expression& expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
+const Type* TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& span, AST::Expression* expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
 {
     auto it = m_overloadedOperations.find(target);
     if (it == m_overloadedOperations.end())
@@ -1910,14 +1903,14 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, AST::Expression& expr
     if (overload.has_value()) {
         ASSERT(overload->parameters.size() == callArguments.size());
         if (m_discardResult == DiscardResult::Yes && it->value.mustUse)
-            typeError(InferBottom::No, expression.span(), "ignoring return value of builtin '"_s, target, '\'');
+            typeError(InferBottom::No, span, "ignoring return value of builtin '"_s, target, '\'');
 
         for (unsigned i = 0; i < callArguments.size(); ++i)
             callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
 
-        if (it->value.kind == OverloadedDeclaration::Constructor) {
-            if (auto* call = dynamicDowncast<AST::CallExpression>(expression))
+        if (expression && it->value.kind == OverloadedDeclaration::Constructor) {
+            if (auto* call = dynamicDowncast<AST::CallExpression>(*expression))
                 call->m_isConstructor = true;
         }
 
@@ -1935,16 +1928,16 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, AST::Expression& expr
 
         auto constantFunction = it->value.constantFunction;
         if (!constantFunction && m_evaluation < Evaluation::Runtime) {
-            typeError(InferBottom::No, expression.span(), "cannot call function from "_s, evaluationToString(m_evaluation), " context"_s);
+            typeError(InferBottom::No, span, "cannot call function from "_s, evaluationToString(m_evaluation), " context"_s);
             return m_types.bottomType();
         }
 
         if (isConstant && constantFunction) {
             auto result = constantFunction(overload->result, WTFMove(arguments));
             if (!result)
-                typeError(InferBottom::No, expression.span(), result.error());
-            else
-                setConstantValue(expression, overload->result, WTFMove(*result));
+                typeError(InferBottom::No, span, result.error());
+            else if (expression)
+                setConstantValue(*expression, overload->result, WTFMove(*result));
         }
 
         return overload->result;
@@ -1970,7 +1963,7 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, AST::Expression& expr
         }
         typeArgumentsStream.print(">");
     }
-    typeError(expression.span(), "no matching overload for "_s, kind, ' ', target, typeArgumentsStream.toString(), '(', valueArgumentsStream.toString(), ')');
+    typeError(span, "no matching overload for "_s, kind, ' ', target, typeArgumentsStream.toString(), '(', valueArgumentsStream.toString(), ')');
     return m_types.bottomType();
 }
 

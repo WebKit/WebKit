@@ -1,4 +1,5 @@
-// RUN: %metal-compile main 2>&1| %check
+// RUN: %metal-compile main
+// RUN: %metal main | %check
 
 @compute @workgroup_size(1)
 fn main()
