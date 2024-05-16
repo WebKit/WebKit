@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-clone.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-constructor-init-body-override.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-consume-empty.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-consume.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-disturbed.any.js

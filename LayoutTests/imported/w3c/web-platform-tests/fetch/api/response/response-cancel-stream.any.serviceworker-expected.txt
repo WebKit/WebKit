@@ -5,4 +5,5 @@ PASS Cancelling a closed blob Response stream
 PASS Cancelling a starting Response stream
 PASS Cancelling a loading Response stream
 PASS Cancelling a closed Response stream
+PASS Accessing .body after canceling it
 

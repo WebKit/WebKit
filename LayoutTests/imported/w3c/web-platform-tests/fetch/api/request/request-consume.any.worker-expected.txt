@@ -2,32 +2,39 @@
 PASS Consume String request's body as text
 PASS Consume String request's body as blob
 PASS Consume String request's body as arrayBuffer
+FAIL Consume String request's body as bytes request.bytes is not a function. (In 'request.bytes()', 'request.bytes' is undefined)
 PASS Consume String request's body as JSON
 PASS Consume ArrayBuffer request's body as text
 PASS Consume ArrayBuffer request's body as blob
 PASS Consume ArrayBuffer request's body as arrayBuffer
+FAIL Consume ArrayBuffer request's body as bytes request.bytes is not a function. (In 'request.bytes()', 'request.bytes' is undefined)
 PASS Consume ArrayBuffer request's body as JSON
 PASS Consume Uint8Array request's body as text
 PASS Consume Uint8Array request's body as blob
 PASS Consume Uint8Array request's body as arrayBuffer
+FAIL Consume Uint8Array request's body as bytes request.bytes is not a function. (In 'request.bytes()', 'request.bytes' is undefined)
 PASS Consume Uint8Array request's body as JSON
 PASS Consume Int8Array request's body as text
 PASS Consume Int8Array request's body as blob
 PASS Consume Int8Array request's body as arrayBuffer
+FAIL Consume Int8Array request's body as bytes request.bytes is not a function. (In 'request.bytes()', 'request.bytes' is undefined)
 PASS Consume Int8Array request's body as JSON
 PASS Consume Float32Array request's body as text
 PASS Consume Float32Array request's body as blob
 PASS Consume Float32Array request's body as arrayBuffer
+FAIL Consume Float32Array request's body as bytes request.bytes is not a function. (In 'request.bytes()', 'request.bytes' is undefined)
 PASS Consume Float32Array request's body as JSON
 PASS Consume DataView request's body as text
 PASS Consume DataView request's body as blob
 PASS Consume DataView request's body as arrayBuffer
+FAIL Consume DataView request's body as bytes request.bytes is not a function. (In 'request.bytes()', 'request.bytes' is undefined)
 PASS Consume DataView request's body as JSON
 PASS Consume FormData request's body as FormData
 PASS Consume blob response's body as blob
 PASS Consume blob response's body as text
 PASS Consume blob response's body as json
 PASS Consume blob response's body as arrayBuffer
+FAIL Consume blob response's body as bytes request.bytes is not a function. (In 'request.bytes()', 'request.bytes' is undefined)
 PASS Consume blob response's body as blob (empty blob as input)
 PASS Consume JSON from text: '"null"'
 PASS Consume JSON from text: '"1"'

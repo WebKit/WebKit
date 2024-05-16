@@ -30,6 +30,7 @@ PASS Already aborted signal rejects immediately
 PASS Request is still 'used' if signal is aborted before fetching
 PASS response.arrayBuffer() rejects if already aborted
 PASS response.blob() rejects if already aborted
+FAIL response.bytes() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: response[bodyMethod] is not a function. (In 'response[bodyMethod]()', 'response[bodyMethod]' is undefined)"
 PASS response.formData() rejects if already aborted
 PASS response.json() rejects if already aborted
 PASS response.text() rejects if already aborted
@@ -41,6 +42,7 @@ PASS Underlying connection is closed when aborting after receiving response
 PASS Underlying connection is closed when aborting after receiving response - no-cors
 PASS Fetch aborted & connection closed when aborted after calling response.arrayBuffer()
 PASS Fetch aborted & connection closed when aborted after calling response.blob()
+FAIL Fetch aborted & connection closed when aborted after calling response.bytes() promise_test: Unhandled rejection with value: object "TypeError: response[bodyMethod] is not a function. (In 'response[bodyMethod]()', 'response[bodyMethod]' is undefined)"
 PASS Fetch aborted & connection closed when aborted after calling response.formData()
 PASS Fetch aborted & connection closed when aborted after calling response.json()
 PASS Fetch aborted & connection closed when aborted after calling response.text()
@@ -49,5 +51,5 @@ PASS Stream errors once aborted, after reading. Underlying connection closed.
 PASS Stream will not error if body is empty. It's closed with an empty queue before it errors.
 FAIL Readable stream synchronously cancels with AbortError if aborted before reading assert_true: Cancel called sync expected true got false
 PASS Signal state is cloned
-PASS Clone aborts with original controller
+FAIL Clone aborts with original controller assert_array_equals: Abort events fired in correct order expected property 0 to be "original-aborted" but got "clone-aborted" (expected array ["original-aborted", "clone-aborted"] got ["clone-aborted", "original-aborted"])
 

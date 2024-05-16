@@ -1,0 +1,3 @@
+
+FAIL realm of the Uint8Array from Response bytes() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'window.Response.prototype.bytes.call')"
+

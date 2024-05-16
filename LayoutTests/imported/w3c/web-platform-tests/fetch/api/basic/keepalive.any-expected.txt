@@ -1,0 +1,16 @@
+frame "<!--frame2-->" - has 1 onunload handler(s)
+frame "<!--frame3-->" - has 1 onunload handler(s)
+
+PASS [keepalive] simple GET request on 'load' [no payload]; setting up
+PASS [keepalive] simple GET request on 'pagehide' [no payload]; setting up
+PASS [keepalive] simple GET request on 'unload' [no payload]; setting up
+PASS [keepalive] simple POST request on 'load' [no payload]; setting up
+PASS [keepalive] simple POST request on 'pagehide' [no payload]; setting up
+PASS [keepalive] simple POST request on 'unload' [no payload]; setting up
+PASS [keepalive] simple GET request on 'load' [no payload]
+PASS [keepalive] simple GET request on 'pagehide' [no payload]
+PASS [keepalive] simple GET request on 'unload' [no payload]
+PASS [keepalive] simple POST request on 'load' [no payload]
+PASS [keepalive] simple POST request on 'pagehide' [no payload]
+PASS [keepalive] simple POST request on 'unload' [no payload]
+

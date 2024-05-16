@@ -15,6 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/json.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/many-empty-chunks-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-arraybuffer-realm.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-blob-realm.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-body-read-task-handling.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-cancel-stream.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-clone-iframe.window.js
@@ -25,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-error-from-stream.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-error.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-from-stream.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-headers-guard.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-init-001.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-init-002.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-init-contenttype.any.js

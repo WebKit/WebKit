@@ -5,6 +5,7 @@ Harness Error (TIMEOUT), message = null
 PASS Already aborted request does not land in service worker
 PASS response.arrayBuffer() rejects if already aborted
 PASS response.blob() rejects if already aborted
+FAIL response.bytes() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: response[bodyMethod] is not a function. (In 'response[bodyMethod]()', 'response[bodyMethod]' is undefined)"
 PASS response.formData() rejects if already aborted
 PASS response.json() rejects if already aborted
 PASS response.text() rejects if already aborted

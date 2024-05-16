@@ -15,18 +15,22 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy.css
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy.es
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy.es.headers
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy.json
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy.png
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy.ttf
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy_audio.mp3
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy_audio.oga
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy_video.mp4
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy_video.ogv
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/dummy_video.webm
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/empty.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/fetch-destination-worker-frame.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/fetch-destination-worker-iframe.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/fetch-destination-worker-no-load-event.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/fetch-destination-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/import-declaration-type-css.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/import-declaration-type-json.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/resources/importer.js

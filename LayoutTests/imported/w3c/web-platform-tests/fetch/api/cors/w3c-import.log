@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-expose-star.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-keepalive.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-multiple-origins.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.js

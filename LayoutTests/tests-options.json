@@ -3047,31 +3047,7 @@
     "imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-disallowed-for-all.https.sub.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/fetch/api/headers/header-values-normalize.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/fetch/api/headers/header-values.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/fetch/api/request/request-cache-default-conditional.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/fetch/api/request/request-cache.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/fetch/api/response/response-clone.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html": [
