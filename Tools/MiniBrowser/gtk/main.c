@@ -980,6 +980,8 @@ int main(int argc, char *argv[])
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
 #endif
 
+    g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
+
 #if GTK_CHECK_VERSION(3, 98, 0)
     gtk_init();
 #else
