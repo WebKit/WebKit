@@ -2370,26 +2370,20 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
         return;
     }
 
-    // Handle active-descendant changes when the target allows for it, or the controlled object allows for it.
-    RefPtr<AccessibilityObject> target;
     if (object->shouldFocusActiveDescendant()) {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         setIsolatedTreeFocusedObject(activeDescendant.get());
 #endif
-        target = object;
-    } else if (object->isComboBox()) {
-        // If the combobox's activeDescendant is inside a descendant owned or controlled by the combobox, that descendant should be the target of the notification and not the combobox itself.
-        if (auto* ownedObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::OwnerFor, *activeDescendant))
-            target = ownedObject;
-        else if (auto* controlledObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::ControllerFor, *activeDescendant))
-            target = controlledObject;
-        else
-            target = object;
-    } else if (object->supportsActiveDescendant())
+        postPlatformNotification(*activeDescendant, AXNotification::AXFocusedUIElementChanged);
+    }
+
+    // Handle active-descendant changes when the target allows for it, or the controlled object allows for it.
+    RefPtr<AccessibilityObject> target;
+    if (object->supportsActiveDescendant())
         target = object;
     else {
-        // Check to see if the active descendant is a child of the controlled object. Then we have to use that
-        // controlled object as the target we use in notifications.
+        // Check to see if the active descendant is a descendant of an object controlled by this object.
+        // In that case, the controlled object will be the target for the notification.
         auto controlledObjects = object->relatedObjects(AXRelationType::ControllerFor);
         if (controlledObjects.size()) {
             target = Accessibility::findAncestor(*activeDescendant, false, [&controlledObjects] (const auto& activeDescendantAncestor) {
@@ -2401,21 +2395,10 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
     if (!target)
         return;
 
-    if (target == object) {
-        if (target->isComboBox()) {
-            // The combobox does not own or control the element to which activeDescendant belongs.
-            // Establish this implicit relationship.
-            RefPtr controlled = Accessibility::findAncestor(*activeDescendant, false, [] (const auto& ancestor) {
-                return ancestor.canBeControlledBy(AccessibilityRole::ComboBox);
-            });
-            if (controlled)
-                addRelation(target.get(), controlled.get(), AXRelationType::ControllerFor);
-        }
-    } else {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (target != object)
         updateIsolatedTree(target.get(), AXNotification::AXActiveDescendantChanged);
 #endif
-    }
 
     postPlatformNotification(*target, AXNotification::AXActiveDescendantChanged);
 

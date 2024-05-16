@@ -1,13 +1,13 @@
 This tests variations of the comboboxes and elements it can control and own. Then verifies the active-descendant is reflected correctly.
 
-Received notification for List1
-PASS: list.activeElement.isEqual(listitem1) === true
-Received notification for Listbox2
-PASS: listbox.activeElement.isEqual(option2_1) === true
-Received notification for Grid3
-PASS: grid.activeElement.isEqual(row3_1) === true
-Received notification for Tree4
-PASS: tree.activeElement.isEqual(treeitem4_1) === true
+Received notification for Combobox1
+PASS: combobox.activeElement.isEqual(listitem1) === true
+Received notification for Combobox2
+PASS: combobox.activeElement.isEqual(option2_1) === true
+Received notification for Combobox3
+PASS: combobox.activeElement.isEqual(row3_1) === true
+Received notification for Combobox4
+PASS: combobox.activeElement.isEqual(treeitem4_1) === true
 
 PASS successfullyParsed is true
 

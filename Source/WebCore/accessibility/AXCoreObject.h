@@ -1056,7 +1056,6 @@ public:
     AccessibilityChildrenVector ownedObjects() const { return relatedObjects(AXRelationType::OwnerFor); }
     AccessibilityChildrenVector owners() const { return relatedObjects(AXRelationType::OwnedBy); }
     virtual AccessibilityChildrenVector relatedObjects(AXRelationType) const = 0;
-    bool canBeControlledBy(AccessibilityRole) const;
 
     virtual AXCoreObject* internalLinkElement() const = 0;
     void appendRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;

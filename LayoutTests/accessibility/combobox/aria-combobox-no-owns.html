@@ -27,17 +27,17 @@ if (window.accessibilityController) {
     });
 
     document.getElementById("combobox").focus();
-    var list = accessibilityController.accessibleElementById("list");
+    var combobox = accessibilityController.accessibleElementById("combobox");
     document.getElementById("combobox").setAttribute("aria-activedescendant", "item1");
     var listitem1 = accessibilityController.accessibleElementById("item1");
     setTimeout(async function() {
         await waitFor(() => {
             return activeElementChangeCount;
         });
-        output += expect("list.activeElement.isEqual(listitem1)", "true");
+        output += expect("combobox.activeElement.isEqual(listitem1)", "true");
 
-        debug(output);
         accessibilityController.removeNotificationListener();
+        debug(output);
         finishJSTest();
     }, 0);
 }
