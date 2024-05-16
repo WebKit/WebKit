@@ -44,6 +44,31 @@ template<Replacement = Replacement::None, typename CharacterType> static bool ap
 template<> char32_t next<Replacement::None, LChar>(std::span<const LChar> characters, size_t& offset)
 {
     return characters[offset++];
+    const LChar* source;
+    char* const target = *targetStart;
+    const ptrdiff_t targetCapacity = targetEnd - *targetStart;
+    ptrdiff_t i = 0;
+    bool result = true;
+    for (source = *sourceStart; source < sourceEnd; ++source) {
+        if (UNLIKELY(i >= targetCapacity)) {
+            result = false;
+            break;
+        }
+
+        UBool sawError = false;
+        // Work around bug in either Windows compiler or old version of ICU, where passing a uint8_t to
+        // U8_APPEND warns, by converting from uint8_t to a wider type.
+        char32_t character = *source;
+        U8_APPEND(target, i, targetCapacity, character, sawError);
+
+        if (UNLIKELY(sawError)) {
+            result = false;
+            break;
+        }
+    }
+    *sourceStart = source;
+    *targetStart = target + i;
+    return result;
 }
 
 template<> char32_t next<Replacement::None, char8_t>(std::span<const char8_t> characters, size_t& offset)
@@ -109,6 +134,34 @@ template<Replacement replacement = Replacement::None, typename SourceCharacterTy
         char32_t character = next<replacement>(source, sourceOffset);
         if (character == sentinelCodePoint) {
             resultCode = ConversionResultCode::SourceInvalid;
+    auto result = ConversionResult::Success;
+    const UChar* source = *sourceStart;
+    char* const target = *targetStart;
+    UBool sawError = false;
+    const ptrdiff_t targetCapacity = targetEnd - target;
+    ptrdiff_t i = 0;
+    while (source < sourceEnd) {
+        char32_t ch;
+        int j = 0;
+        U16_NEXT(source, j, sourceEnd - source, ch);
+        if (U_IS_SURROGATE(ch)) {
+            if (source + j == sourceEnd && U_IS_SURROGATE_LEAD(ch)) {
+                result = ConversionResult::SourceExhausted;
+                break;
+            }
+            if (strict) {
+                result = ConversionResult::SourceIllegal;
+                break;
+            }
+            ch = replacementCharacter;
+        }
+        if (i >= targetCapacity) {
+            result = ConversionResult::TargetExhausted;
+            break;
+        }
+        U8_APPEND(reinterpret_cast<uint8_t*>(target), i, targetCapacity, ch, sawError);
+        if (sawError) {
+            result = ConversionResult::TargetExhausted;
             break;
         }
         if (bufferOffset == buffer.size()) {

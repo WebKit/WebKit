@@ -106,6 +106,16 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
         result = WTF::Unicode::convert(string->span16(), target);
     if (result.code == WTF::Unicode::ConversionResultCode::SourceInvalid)
         return 0;
+    char* destination = buffer;
+    bool failed = false;
+    if (string->is8Bit()) {
+        const LChar* source = string->characters8();
+        failed = !convertLatin1ToUTF8(&source, source + string->length(), &destination, destination + bufferSize - 1);
+    } else {
+        const UChar* source = string->characters16();
+        auto result = convertUTF16ToUTF8(&source, source + string->length(), &destination, destination + bufferSize - 1);
+        failed = result != ConversionResult::Success;
+    }
 
     buffer[result.buffer.size()] = '\0';
     return result.buffer.size() + 1;
