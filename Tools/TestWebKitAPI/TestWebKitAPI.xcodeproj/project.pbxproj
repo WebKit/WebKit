@@ -97,6 +97,7 @@
 		11C2598D21FA6324004C9E23 /* async-script-load.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 11C2598C21FA618D004C9E23 /* async-script-load.html */; };
 		143DDE9820C9018B007F76FA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
 		14CC42E624B8D8FA00E64F48 /* JSRunLoopTimer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14CC42E524B8D8FA00E64F48 /* JSRunLoopTimer.mm */; };
+		155B87332BF55D7800D93968 /* TextBoundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 155B872B2BF55D7800D93968 /* TextBoundaries.cpp */; };
 		1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A02C84B125D4A5E00E3F4BD /* find.html */; };
 		1A3524AE1D63A4FB0031729B /* Scope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3524AC1D63A4FB0031729B /* Scope.cpp */; };
 		1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4F81CD1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm */; };
@@ -2069,6 +2070,7 @@
 		144D40EC221B46A7004B474F /* UUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UUID.cpp; sourceTree = "<group>"; };
 		14CC42E524B8D8FA00E64F48 /* JSRunLoopTimer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSRunLoopTimer.mm; sourceTree = "<group>"; };
 		14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaturatedArithmeticOperations.cpp; sourceTree = "<group>"; };
+		155B872B2BF55D7800D93968 /* TextBoundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBoundaries.cpp; sourceTree = "<group>"; };
 		1A02C84B125D4A5E00E3F4BD /* find.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = find.html; sourceTree = "<group>"; };
 		1A02C84E125D4A8400E3F4BD /* Find.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Find.cpp; sourceTree = "<group>"; };
 		1A3524A91D627BD40031729B /* DeletedAddressOfOperator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeletedAddressOfOperator.h; sourceTree = "<group>"; };
@@ -4433,6 +4435,7 @@
 				CE4D5DE51F6743BA0072CFC6 /* StringWithDirection.cpp */,
 				41E67A8425D16E83007B0A4C /* STUNMessageParsingTest.cpp */,
 				1C9DD9222697655B00274DB2 /* SVGImageCasts.cpp */,
+				155B872B2BF55D7800D93968 /* TextBoundaries.cpp */,
 				93A258981F92FF15003E510C /* TextCodec.cpp */,
 				CDC2C7141797089D00E627FB /* TimeRanges.cpp */,
 				7AD3FE8D1D75FB8D00B169A4 /* TransformationMatrix.cpp */,
@@ -6742,6 +6745,7 @@
 				F4517B672054C49500C26721 /* TestWKWebViewController.mm in Sources */,
 				F472E00327D966F200F3A172 /* TextAlternatives.mm in Sources */,
 				F45033F5206BEC95009351CE /* TextAutosizingBoost.mm in Sources */,
+				155B87332BF55D7800D93968 /* TextBoundaries.cpp in Sources */,
 				93E6193B1F931B3A00AF245E /* TextCodec.cpp in Sources */,
 				CE3524F91B1441C40028A7C5 /* TextFieldDidBeginAndEndEditing.cpp in Sources */,
 				F494B36A263120780060A310 /* TextServicesTests.mm in Sources */,
