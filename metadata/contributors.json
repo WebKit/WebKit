@@ -1887,6 +1887,14 @@
    },
    {
       "emails" : [
+         "dan.hecht@apple.com"
+      ],
+      "expertise" : "JavaScriptCore",
+      "github" : "dhecht",
+      "name" : "Dan Hecht"
+   },
+   {
+      "emails" : [
          "dtr_bugzilla@apple.com"
       ],
       "github" : "drobson1005",
