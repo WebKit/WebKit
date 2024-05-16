@@ -24,7 +24,8 @@ const duration = {
   nanoseconds: 9,
 };
 
-const expected = formatDurationFormatPattern(duration, style);
-
 const df = new Intl.DurationFormat("en", {style});
+
+const expected = formatDurationFormatPattern(df, duration);
+
 assert.sameValue(df.format(duration), expected, `Assert DurationFormat format output using ${style} style option`);

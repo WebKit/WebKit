@@ -69,6 +69,18 @@ test/built-ins/Object/entries/order-after-define-property-with-function.js:
 test/built-ins/Object/keys/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
+test/built-ins/Promise/try/args.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: asyncTest called with non-function argument'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: asyncTest called with non-function argument'
+test/built-ins/Promise/try/ctx-ctor.js:
+  default: "TypeError: undefined is not an object (evaluating 'instance.promise.constructor')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'instance.promise.constructor')"
+test/built-ins/Promise/try/return-value.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: asyncTest called with non-function argument'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: asyncTest called with non-function argument'
+test/built-ins/Promise/try/throws.js:
+  default: "TypeError: assert.throwsAsync is not a function. (In 'assert.throwsAsync("
+  strict mode: "TypeError: assert.throwsAsync is not a function. (In 'assert.throwsAsync("
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 'Test262Error: Expected SameValue(«function Array() {'
   strict mode: 'Test262Error: Expected SameValue(«function Array() {'
@@ -213,6 +225,9 @@ test/built-ins/Temporal/Duration/prototype/round/constructor-in-calendar-fields.
 test/built-ins/Temporal/Duration/prototype/round/date-and-time-durations-opposite-signs.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", calendar)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", calendar)')"
+test/built-ins/Temporal/Duration/prototype/round/dst-balancing-result.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
 test/built-ins/Temporal/Duration/prototype/round/dst-rounding-result.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
@@ -222,9 +237,9 @@ test/built-ins/Temporal/Duration/prototype/round/duplicate-calendar-fields.js:
 test/built-ins/Temporal/Duration/prototype/round/largestunit-correct-rebalancing.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: "ReferenceError: Can't find variable: unit"
-test/built-ins/Temporal/Duration/prototype/round/normalized-time-duration-to-days-loop-arbitrarily.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-combinations-relativeto.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
 test/built-ins/Temporal/Duration/prototype/round/out-of-range-when-adjusting-rounded-days.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
@@ -258,9 +273,6 @@ test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-out-of-r
 test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-out-of-range-forward-offset-shift.js:
   default: 'Test262Error: RangeError should be thrown Expected a RangeError but got a Error'
   strict mode: 'Test262Error: RangeError should be thrown Expected a RangeError but got a Error'
-test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-normalized-time-duration-to-days-range-errors.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
 test/built-ins/Temporal/Duration/prototype/round/result-out-of-range.js:
   default: 'Test262Error: result is out of range Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: result is out of range Expected a RangeError to be thrown but no exception was thrown at all'
@@ -333,12 +345,18 @@ test/built-ins/Temporal/Duration/prototype/toString/throws-when-rounded-duration
 test/built-ins/Temporal/Duration/prototype/total/balance-subseconds.js:
   default: 'Test262Error: Expected SameValue(«2.9989989990000003», «2.998998999») to be true'
   strict mode: 'Test262Error: Expected SameValue(«2.9989989990000003», «2.998998999») to be true'
+test/built-ins/Temporal/Duration/prototype/total/dst-balancing-result.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
+test/built-ins/Temporal/Duration/prototype/total/dst-day-length.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
 test/built-ins/Temporal/Duration/prototype/total/dst-rounding-result.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-test/built-ins/Temporal/Duration/prototype/total/normalized-time-duration-to-days-loop-arbitrarily.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/built-ins/Temporal/Duration/prototype/total/no-dst-day-length.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, \"+04:30\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, \"+04:30\")')"
 test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-1.js:
   default: 'Test262Error: return value of total() Expected SameValue(«4000», «4000.0000000000005») to be true'
   strict mode: 'Test262Error: return value of total() Expected SameValue(«4000», «4000.0000000000005») to be true'
@@ -346,11 +364,11 @@ test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-va
   default: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
   strict mode: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
 test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-3.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, tz, cal)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, tz, cal)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone())')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone())')"
 test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-4.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone(), createCalendar())')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone(), createCalendar())')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone())')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone())')"
 test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-5.js:
   default: 'Test262Error: BalanceTimeDuration should implement floating-point calculation correctly for largestUnit nanoseconds Expected SameValue(«8.69228866946552e+24», «8.692288669465521e+24») to be true'
   strict mode: 'Test262Error: BalanceTimeDuration should implement floating-point calculation correctly for largestUnit nanoseconds Expected SameValue(«8.69228866946552e+24», «8.692288669465521e+24») to be true'
@@ -375,9 +393,9 @@ test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-getpossi
 test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-invalid-offset-string.js:
   default: 'Test262Error: "0 is not a valid offset string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: "0 is not a valid offset string Expected a TypeError but got a RangeError'
-test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-normalized-time-duration-to-days-range-errors.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
+test/built-ins/Temporal/Duration/prototype/total/total-of-each-unit-relativeto.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
 test/built-ins/Temporal/Duration/prototype/total/zero-day-length.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, \"iso8601\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, \"iso8601\")')"
@@ -1018,32 +1036,83 @@ test/intl402/DurationFormat/constructor-options-fractionalDigits-valid.js:
   default: 'Test262Error: undefined is supported by DurationFormat Expected SameValue(«0», «undefined») to be true'
   strict mode: 'Test262Error: undefined is supported by DurationFormat Expected SameValue(«0», «undefined») to be true'
 test/intl402/DurationFormat/prototype/format/fractions-of-subsecond-units-en.js:
-  default: 'Test262Error: DurationFormat output when nanoseconds first "numeric" unit Expected SameValue(«3 sec, 444 ms, 55 μs», «3 sec, 444 ms, & 55.006 μs») to be true'
-  strict mode: 'Test262Error: DurationFormat output when nanoseconds first "numeric" unit Expected SameValue(«3 sec, 444 ms, 55 μs», «3 sec, 444 ms, & 55.006 μs») to be true'
-test/intl402/DurationFormat/prototype/format/mixed-short-and-numeric.js:
-  default: 'Test262Error: Expected SameValue(«5 days, 1 hr, 2:03», «5 days, 1 hr, & 2:03») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«5 days, 1 hr, 2:03», «5 days, 1 hr, & 2:03») to be true'
+  default: 'Test262Error: DurationFormat output when microseconds first "numeric" unit Expected SameValue(«3 sec, 444 ms», «3 sec, 444.055006 ms») to be true'
+  strict mode: 'Test262Error: DurationFormat output when microseconds first "numeric" unit Expected SameValue(«3 sec, 444 ms», «3 sec, 444.055006 ms») to be true'
+test/intl402/DurationFormat/prototype/format/negative-duration-style-default-en.js:
+  default: 'Test262Error: DurationFormat format output using default style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4 hr, -5 min, -6 sec, -7 ms, -8 μs, -9 ns», «-1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using default style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4 hr, -5 min, -6 sec, -7 ms, -8 μs, -9 ns», «-1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns») to be true'
+test/intl402/DurationFormat/prototype/format/negative-duration-style-short-en.js:
+  default: 'Test262Error: DurationFormat format output using short style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4 hr, -5 min, -6 sec, -7 ms, -8 μs, -9 ns», «-1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using short style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4 hr, -5 min, -6 sec, -7 ms, -8 μs, -9 ns», «-1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns») to be true'
+test/intl402/DurationFormat/prototype/format/negative-duration-with-leading-zero-style-default-en.js:
+  default: 'Test262Error: DurationFormat format output using default style option Expected SameValue(«0 hr, -1 sec», «-0 hr, 1 sec») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using default style option Expected SameValue(«0 hr, -1 sec», «-0 hr, 1 sec») to be true'
+test/intl402/DurationFormat/prototype/format/negative-duration-with-leading-zero-style-digital-en.js:
+  default: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«0:00:-01», «-0:00:01») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«0:00:-01», «-0:00:01») to be true'
+test/intl402/DurationFormat/prototype/format/negative-duration-with-leading-zero-style-long-en.js:
+  default: 'Test262Error: DurationFormat format output using long style option Expected SameValue(«0 hours, -1 second», «-0 hours, 1 second») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using long style option Expected SameValue(«0 hours, -1 second», «-0 hours, 1 second») to be true'
+test/intl402/DurationFormat/prototype/format/negative-duration-with-leading-zero-style-narrow-en.js:
+  default: 'Test262Error: DurationFormat format output using narrow style option Expected SameValue(«0h -1s», «-0h 1s») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using narrow style option Expected SameValue(«0h -1s», «-0h 1s») to be true'
+test/intl402/DurationFormat/prototype/format/negative-duration-with-leading-zero-style-short-en.js:
+  default: 'Test262Error: DurationFormat format output using short style option Expected SameValue(«0 hr, -1 sec», «-0 hr, 1 sec») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using short style option Expected SameValue(«0 hr, -1 sec», «-0 hr, 1 sec») to be true'
 test/intl402/DurationFormat/prototype/format/negative-durationstyle-digital-en.js:
-  default: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06», «-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06.007008009») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06», «-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06.007008009») to be true'
+  default: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06», «-1 yr, 2 mths, 3 wks, 3 days, 4:05:06») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06», «-1 yr, 2 mths, 3 wks, 3 days, 4:05:06») to be true'
+test/intl402/DurationFormat/prototype/format/negative-durationstyle-long-en.js:
+  default: 'Test262Error: DurationFormat format output using long style option Expected SameValue(«-1 year, -2 months, -3 weeks, -3 days, -4 hours, -5 minutes, -6 seconds, -7 milliseconds, -8 microseconds, -9 nanoseconds», «-1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, 9 nanoseconds») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using long style option Expected SameValue(«-1 year, -2 months, -3 weeks, -3 days, -4 hours, -5 minutes, -6 seconds, -7 milliseconds, -8 microseconds, -9 nanoseconds», «-1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, 9 nanoseconds») to be true'
+test/intl402/DurationFormat/prototype/format/negative-durationstyle-narrow-en.js:
+  default: 'Test262Error: DurationFormat format output using narrow style option Expected SameValue(«-1y -2mo -3w -3d -4h -5m -6s -7ms -8μs -9ns», «-1y 2mo 3w 3d 4h 5m 6s 7ms 8μs 9ns») to be true'
+  strict mode: 'Test262Error: DurationFormat format output using narrow style option Expected SameValue(«-1y -2mo -3w -3d -4h -5m -6s -7ms -8μs -9ns», «-1y 2mo 3w 3d 4h 5m 6s 7ms 8μs 9ns») to be true'
+test/intl402/DurationFormat/prototype/format/numeric-hour-with-zero-minutes-and-non-zero-seconds-with-auto-display-and-zero-fractional.js:
+  default: 'Test262Error: Duration is {"hours":0,"minutes":0,"seconds":1} Expected SameValue(«0, 01», «0:00:01») to be true'
+  strict mode: 'Test262Error: Duration is {"hours":0,"minutes":0,"seconds":1} Expected SameValue(«0, 01», «0:00:01») to be true'
+test/intl402/DurationFormat/prototype/format/numeric-hour-with-zero-minutes-and-non-zero-seconds-with-auto-display.js:
+  default: 'Test262Error: Duration is {"hours":0,"minutes":0,"seconds":1} Expected SameValue(«0, 01», «0:00:01») to be true'
+  strict mode: 'Test262Error: Duration is {"hours":0,"minutes":0,"seconds":1} Expected SameValue(«0, 01», «0:00:01») to be true'
 test/intl402/DurationFormat/prototype/format/numeric-hour-with-zero-minutes-and-non-zero-seconds.js:
-  default: 'Test262Error: Minutes always displayed when between displayed hours and seconds, even if minutes is 0 Expected SameValue(«1, 03», «1:00:03») to be true'
-  strict mode: 'Test262Error: Minutes always displayed when between displayed hours and seconds, even if minutes is 0 Expected SameValue(«1, 03», «1:00:03») to be true'
+  default: 'Test262Error: Duration is {"hours":0,"minutes":0,"seconds":1} Expected SameValue(«0, 01», «0:00:01») to be true'
+  strict mode: 'Test262Error: Duration is {"hours":0,"minutes":0,"seconds":1} Expected SameValue(«0, 01», «0:00:01») to be true'
 test/intl402/DurationFormat/prototype/format/precision-exact-mathematical-values.js:
-  default: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000», «0:00:10,000,000.000000001») to be true'
-  strict mode: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000», «0:00:10,000,000.000000001») to be true'
-test/intl402/DurationFormat/prototype/format/style-digital-en.js:
-  default: 'Test262Error: Assert DurationFormat format output using digital style option Expected SameValue(«1 yr, 2 mths, 3 wks, 3 days, 4:05:06», «1 yr, 2 mths, 3 wks, 3 days, 4:05:06.007008009») to be true'
-  strict mode: 'Test262Error: Assert DurationFormat format output using digital style option Expected SameValue(«1 yr, 2 mths, 3 wks, 3 days, 4:05:06», «1 yr, 2 mths, 3 wks, 3 days, 4:05:06.007008009») to be true'
+  default: 'Test262Error: Duration is {"seconds":9007199254740991,"milliseconds":9007199254740991,"microseconds":9007199254740991,"nanoseconds":9007199254740991} Expected SameValue(«0:00:9,016,215,470,202,186», «0:00:9,016,215,470,202,185») to be true'
+  strict mode: 'Test262Error: Duration is {"seconds":9007199254740991,"milliseconds":9007199254740991,"microseconds":9007199254740991,"nanoseconds":9007199254740991} Expected SameValue(«0:00:9,016,215,470,202,186», «0:00:9,016,215,470,202,185») to be true'
 test/intl402/DurationFormat/prototype/format/style-digital-fractionalDigits-undefined-en.js:
   default: 'Test262Error: format output with nanosecond digits and fractionalDigits: undefined using digital style option Expected SameValue(«1:22:33», «1:22:33.111222333») to be true'
   strict mode: 'Test262Error: format output with nanosecond digits and fractionalDigits: undefined using digital style option Expected SameValue(«1:22:33», «1:22:33.111222333») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-digital-en.js:
-  default: 'Test262Error: Using style : digital: length Expected SameValue(«5», «7») to be true'
-  strict mode: 'Test262Error: Using style : digital: length Expected SameValue(«5», «7») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-default-en.js:
+  default: 'Test262Error: Using style : default: length Expected SameValue(«49», «40») to be true'
+  strict mode: 'Test262Error: Using style : default: length Expected SameValue(«49», «40») to be true'
 test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-digital-en.js:
-  default: 'Test262Error: Using style : digital: length Expected SameValue(«28», «30») to be true'
-  strict mode: 'Test262Error: Using style : digital: length Expected SameValue(«28», «30») to be true'
+  default: 'Test262Error: Using style : digital: length Expected SameValue(«28», «22») to be true'
+  strict mode: 'Test262Error: Using style : digital: length Expected SameValue(«28», «22») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-long-en.js:
+  default: 'Test262Error: Using style : long: length Expected SameValue(«49», «40») to be true'
+  strict mode: 'Test262Error: Using style : long: length Expected SameValue(«49», «40») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-narrow-en.js:
+  default: 'Test262Error: Using style : narrow: length Expected SameValue(«39», «30») to be true'
+  strict mode: 'Test262Error: Using style : narrow: length Expected SameValue(«39», «30») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-short-en.js:
+  default: 'Test262Error: Using style : short: length Expected SameValue(«49», «40») to be true'
+  strict mode: 'Test262Error: Using style : short: length Expected SameValue(«49», «40») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/negative-duration-with-leading-zero-style-default-en.js:
+  default: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
+  strict mode: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/negative-duration-with-leading-zero-style-digital-en.js:
+  default: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
+  strict mode: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/negative-duration-with-leading-zero-style-long-en.js:
+  default: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
+  strict mode: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/negative-duration-with-leading-zero-style-narrow-en.js:
+  default: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
+  strict mode: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/negative-duration-with-leading-zero-style-short-en.js:
+  default: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
+  strict mode: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
@@ -1112,11 +1181,11 @@ test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-p
 test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-present-arrow-func-declare-arguments-assign.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/expressions/assignment/destructuring/iterator-destructuring-property-reference-target-evaluation-order.js:
-  default: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, target-key-tostring, iterator-step, iterator-done, set] to have the same contents. '
-  strict mode: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, target-key-tostring, iterator-step, iterator-done, set] to have the same contents. '
+  default: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, iterator-step, iterator-done, target-key-tostring, set] to have the same contents. '
+  strict mode: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, iterator-step, iterator-done, target-key-tostring, set] to have the same contents. '
 test/language/expressions/assignment/destructuring/keyed-destructuring-property-reference-target-evaluation-order.js:
-  default: 'Test262Error: Expected [source, source-key, source-key-tostring, get, target, target-key, target-key-tostring, set] and [source, source-key, source-key-tostring, target, target-key, target-key-tostring, get, set] to have the same contents. '
-  strict mode: 'Test262Error: Expected [source, source-key, source-key-tostring, get, target, target-key, target-key-tostring, set] and [source, source-key, source-key-tostring, target, target-key, target-key-tostring, get, set] to have the same contents. '
+  default: 'Test262Error: Expected [source, source-key, source-key-tostring, get, target, target-key, target-key-tostring, set] and [source, source-key, source-key-tostring, target, target-key, get, target-key-tostring, set] to have the same contents. '
+  strict mode: 'Test262Error: Expected [source, source-key, source-key-tostring, get, target, target-key, target-key-tostring, set] and [source, source-key, source-key-tostring, target, target-key, get, target-key-tostring, set] to have the same contents. '
 test/language/expressions/assignment/destructuring/obj-prop-__proto__dup.js:
   default: 'SyntaxError: Attempted to redefine __proto__ property.'
   strict mode: 'SyntaxError: Attempted to redefine __proto__ property.'

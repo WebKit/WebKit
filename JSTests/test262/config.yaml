@@ -12,6 +12,7 @@ flags:
   import-assertions: useImportAttributes
   json-modules: useImportAttributes
   promise-with-resolvers: usePromiseWithResolversMethod
+  promise-try: usePromiseTryMethod
 skip:
   features:
     - callable-boundary-realms

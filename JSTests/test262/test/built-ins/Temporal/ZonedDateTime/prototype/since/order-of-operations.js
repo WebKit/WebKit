@@ -327,64 +327,39 @@ const expectedOpsForCalendarDifference = [
   "call this.calendar.dateUntil",
 ];
 
-const expectedOpsForCalendarRounding = [
-  // RoundDuration → MoveRelativeZonedDateTime → AddZonedDateTime
+const expectedOpsForCalendarRounding = expected.concat(expectedOpsForCalendarDifference, [
+  // RoundRelativeDuration
+  "call this.calendar.dateAdd",
   "call this.calendar.dateAdd",
   "call this.timeZone.getPossibleInstantsFor",
-  // RoundDuration → NanosecondsToDays
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
-  // RoundDuration → NanosecondsToDays → AddDaysToZonedDateTime
   "call this.timeZone.getPossibleInstantsFor",
-];
+]);
 
-// code path that skips RoundDuration:
+// code path that skips RoundRelativeDuration:
 instance.since(otherDateTimePropertyBag, createOptionsObserver({ largestUnit: "years", smallestUnit: "nanoseconds", roundingIncrement: 1 }));
 assert.compareArray(actual, expected.concat(expectedOpsForCalendarDifference), "order of operations with largestUnit years and no rounding");
 actual.splice(0); // clear
 
-// code path through RoundDuration that rounds to the nearest year:
-const expectedOpsForYearRounding = expected.concat(expectedOpsForCalendarDifference, expectedOpsForCalendarRounding, [
-  // RoundDuration
-  "call this.calendar.dateAdd",    // 12.d
-  "call this.calendar.dateAdd",    // 12.f
-  "call this.calendar.dateUntil",  // 12.n
-  "call this.calendar.dateAdd",    // 12.x MoveRelativeDate
-  // (12.r not called because other units can't add up to >1 year at this point)
-  // BalanceDateDurationRelative
-  "call this.calendar.dateAdd",    // 9.c
-  "call this.calendar.dateUntil"   // 9.d
-]);
+// code path through RoundRelativeDuration that rounds to the nearest year:
 instance.since(otherDateTimePropertyBag, createOptionsObserver({ smallestUnit: "years" }));
-assert.compareArray(actual, expectedOpsForYearRounding, "order of operations with smallestUnit = years");
+assert.compareArray(actual, expectedOpsForCalendarRounding, "order of operations with smallestUnit = years");
 actual.splice(0); // clear
 
-// code path through RoundDuration that rounds to the nearest month:
-const expectedOpsForMonthRounding = expected.concat(expectedOpsForCalendarDifference, expectedOpsForCalendarRounding, [
-  // RoundDuration
-  "call this.calendar.dateAdd",    // 13.c
-  "call this.calendar.dateAdd",    // 13.e
-  "call this.calendar.dateUntil",  // 13.m
-  "call this.calendar.dateAdd",    // 13.w MoveRelativeDate
-  // BalanceDateDurationRelative
-  "call this.calendar.dateAdd",    // 10.d
-  "call this.calendar.dateUntil",  // 10.e
-]);
+// code path through RoundRelativeDuration that rounds to the nearest month:
 instance.since(otherDateTimePropertyBag, createOptionsObserver({ smallestUnit: "months" }));
-assert.compareArray(actual, expectedOpsForMonthRounding, "order of operations with smallestUnit = months");
+assert.compareArray(actual, expectedOpsForCalendarRounding, "order of operations with smallestUnit = months");
 actual.splice(0); // clear
 
-// code path through RoundDuration that rounds to the nearest week:
-const expectedOpsForWeekRounding = expected.concat(expectedOpsForCalendarDifference, expectedOpsForCalendarRounding, [
-  // RoundDuration
-  "call this.calendar.dateUntil",  // 14.f
-  "call this.calendar.dateAdd",    // 14.p MoveRelativeDate
-  // BalanceDateDurationRelative
-  "call this.calendar.dateAdd",    // 16
-  "call this.calendar.dateUntil",  // 17
-]);
+// code path through RoundRelativeDuration that rounds to the nearest week:
 instance.since(otherDateTimePropertyBag, createOptionsObserver({ smallestUnit: "weeks" }));
-assert.compareArray(actual, expectedOpsForWeekRounding, "order of operations with smallestUnit = weeks");
+assert.compareArray(actual, expected.concat(expectedOpsForCalendarDifference, [
+  // RoundRelativeDuration
+  "call this.calendar.dateUntil",
+  "call this.calendar.dateAdd",
+  "call this.calendar.dateAdd",
+  "call this.timeZone.getPossibleInstantsFor",
+  "call this.timeZone.getPossibleInstantsFor",
+]), "order of operations with smallestUnit = weeks");
 actual.splice(0); // clear
 
 instance.since(otherDateTimePropertyBag, createOptionsObserver({ largestUnit: "hours" }));
