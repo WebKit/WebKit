@@ -5254,24 +5254,24 @@ header: <WebCore/MediaConstraints.h>
     std::optional<int> m_min;
     std::optional<int> m_max;
     std::optional<int> m_exact;
-    std::optional<int> m_ideal;
+    [Validator='*dataType == WebCore::MediaConstraint::DataType::Integer'] std::optional<int> m_ideal;
 };
 
 [CustomHeader] class WebCore::DoubleConstraint : WebCore::MediaConstraint {
     std::optional<double> m_min;
     std::optional<double> m_max;
     std::optional<double> m_exact;
-    std::optional<double> m_ideal;
+    [Validator='*dataType == WebCore::MediaConstraint::DataType::Double'] std::optional<double> m_ideal;
 };
 
 [CustomHeader] class WebCore::BooleanConstraint : WebCore::MediaConstraint {
     std::optional<bool> m_exact;
-    std::optional<bool> m_ideal;
+    [Validator='*dataType == WebCore::MediaConstraint::DataType::Boolean'] std::optional<bool> m_ideal;
 };
 
 [CustomHeader] class WebCore::StringConstraint : WebCore::MediaConstraint {
     Vector<String> m_exact;
-    Vector<String> m_ideal;
+    [Validator='*dataType == WebCore::MediaConstraint::DataType::String'] Vector<String> m_ideal;
 };
 
 header: <WebCore/VideoPreset.h>
