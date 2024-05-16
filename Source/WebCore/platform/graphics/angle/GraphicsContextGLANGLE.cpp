@@ -2629,7 +2629,8 @@ void GraphicsContextGLANGLE::clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, 
 {
     if (!makeContextCurrent())
         return;
-
+    if (!validateClearBufferv(buffer, values.size()))
+        return;
     GL_ClearBufferiv(buffer, drawbuffer, values.data());
     checkGPUStatus();
 }
@@ -2638,7 +2639,8 @@ void GraphicsContextGLANGLE::clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer,
 {
     if (!makeContextCurrent())
         return;
-
+    if (!validateClearBufferv(buffer, values.size()))
+        return;
     GL_ClearBufferuiv(buffer, drawbuffer, values.data());
     checkGPUStatus();
 }
@@ -2647,7 +2649,8 @@ void GraphicsContextGLANGLE::clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, 
 {
     if (!makeContextCurrent())
         return;
-
+    if (!validateClearBufferv(buffer, values.size()))
+        return;
     GL_ClearBufferfv(buffer, drawbuffer, values.data());
     checkGPUStatus();
 }
@@ -3336,6 +3339,26 @@ void GraphicsContextGLANGLE::requestExtension(const String& name)
         m_webglColorBufferFloatRGB = true;
 }
 
+bool GraphicsContextGLANGLE::validateClearBufferv(GCGLenum buffer, size_t valuesSize)
+{
+    // ClearBuffersfv, iv, uiv are missing ANGLE Robust* entry-point. Make the call act similar way as other
+    // calls that validate buffer sizes by validating it here.
+    switch (buffer) {
+    case GraphicsContextGL::COLOR:
+        if (valuesSize == 4)
+            return true;
+        break;
+    case GraphicsContextGL::DEPTH:
+    case GraphicsContextGL::STENCIL:
+        if (valuesSize == 1)
+            return true;
+        break;
+    default:
+        break;
+    }
+    addError(GCGLErrorCode::InvalidOperation);
+    return false;
+}
 }
 
 #endif // ENABLE(WEBGL)
