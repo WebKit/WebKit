@@ -119,7 +119,7 @@ void RenderBoxModelObject::ContinuationChainNode::insertAfter(ContinuationChainN
     after.next = this;
 }
 
-using ContinuationChainNodeMap = HashMap<SingleThreadWeakRef<const RenderBoxModelObject>, std::unique_ptr<RenderBoxModelObject::ContinuationChainNode>>;
+using ContinuationChainNodeMap = SingleThreadWeakHashMap<const RenderBoxModelObject, std::unique_ptr<RenderBoxModelObject::ContinuationChainNode>>;
 
 static ContinuationChainNodeMap& continuationChainNodeMap()
 {
@@ -127,7 +127,7 @@ static ContinuationChainNodeMap& continuationChainNodeMap()
     return map;
 }
 
-using FirstLetterRemainingTextMap = HashMap<SingleThreadWeakRef<const RenderBoxModelObject>, SingleThreadWeakPtr<RenderTextFragment>>;
+using FirstLetterRemainingTextMap = SingleThreadWeakHashMap<const RenderBoxModelObject, SingleThreadWeakPtr<RenderTextFragment>>;
 
 static FirstLetterRemainingTextMap& firstLetterRemainingTextMap()
 {
@@ -187,12 +187,6 @@ RenderBoxModelObject::~RenderBoxModelObject()
 
 void RenderBoxModelObject::willBeDestroyed()
 {
-    if (hasContinuationChainNode())
-        removeFromContinuationChain();
-
-    if (isFirstLetter())
-        clearFirstLetterRemainingText();
-
     if (!renderTreeBeingDestroyed())
         view().imageQualityController().rendererWillBeDestroyed(*this);
 

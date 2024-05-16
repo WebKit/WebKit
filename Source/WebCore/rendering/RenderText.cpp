@@ -113,7 +113,7 @@ private:
     unsigned m_offsetAfterLastTypedCharacter { 0 };
 };
 
-using SecureTextTimerMap = HashMap<SingleThreadWeakRef<RenderText>, std::unique_ptr<SecureTextTimer>>;
+using SecureTextTimerMap = SingleThreadWeakHashMap<RenderText, std::unique_ptr<SecureTextTimer>>;
 
 static SecureTextTimerMap& secureTextTimers()
 {
@@ -141,7 +141,7 @@ inline unsigned SecureTextTimer::takeOffsetAfterLastTypedCharacter()
 
 void SecureTextTimer::fired()
 {
-    ASSERT(secureTextTimers().get(&m_renderer) == this);
+    ASSERT(secureTextTimers().get(m_renderer) == this);
     m_offsetAfterLastTypedCharacter = 0;
     m_renderer.setText(m_renderer.text(), true /* forcing setting text as it may be masked later */);
 }
@@ -401,7 +401,8 @@ void RenderText::removeAndDestroyTextBoxes()
 
 void RenderText::willBeDestroyed()
 {
-    secureTextTimers().remove(this);
+    if (m_hasSecureTextTimer)
+        secureTextTimers().remove(*this);
 
     removeAndDestroyTextBoxes();
 
@@ -1674,12 +1675,14 @@ void RenderText::secureText(UChar maskingCharacter)
     UChar characterToReveal = 0;
     unsigned revealedCharactersOffset = 0;
 
-    if (SecureTextTimer* timer = secureTextTimers().get(this)) {
-        // We take the offset out of the timer to make this one-shot. We count on this being called only once.
-        // If it's called a second time we assume the text is different and a character should not be revealed.
-        revealedCharactersOffset = timer->takeOffsetAfterLastTypedCharacter();
-        if (revealedCharactersOffset && revealedCharactersOffset <= length)
-            characterToReveal = text()[--revealedCharactersOffset];
+    if (m_hasSecureTextTimer) {
+        if (SecureTextTimer* timer = secureTextTimers().get(*this)) {
+            // We take the offset out of the timer to make this one-shot. We count on this being called only once.
+            // If it's called a second time we assume the text is different and a character should not be revealed.
+            revealedCharactersOffset = timer->takeOffsetAfterLastTypedCharacter();
+            if (revealedCharactersOffset && revealedCharactersOffset <= length)
+                characterToReveal = text()[--revealedCharactersOffset];
+        }
     }
 
     UChar* characters;
@@ -2053,6 +2056,7 @@ void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTyp
 {
     if (style().textSecurity() == TextSecurity::None)
         return;
+    m_hasSecureTextTimer = true;
     auto& secureTextTimer = secureTextTimers().add(*this, nullptr).iterator->value;
     if (!secureTextTimer)
         secureTextTimer = makeUnique<SecureTextTimer>(*this);

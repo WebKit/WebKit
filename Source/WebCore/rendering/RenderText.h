@@ -279,6 +279,7 @@ private:
     unsigned m_useBackslashAsYenSymbol : 1 { false };
     unsigned m_originalTextDiffersFromRendered : 1 { false };
     unsigned m_hasInlineWrapperForDisplayContents : 1 { false };
+    unsigned m_hasSecureTextTimer : 1 { false };
 };
 
 String applyTextTransform(const RenderStyle&, const String&, UChar previousCharacter);
