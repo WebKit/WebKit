@@ -2530,3 +2530,5 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.htm
 [ Monterey Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
 
 webkit.org/b/273308 http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
+
+[ Debug ] ipc/dirty-region-overflow.html [ Skip ]
