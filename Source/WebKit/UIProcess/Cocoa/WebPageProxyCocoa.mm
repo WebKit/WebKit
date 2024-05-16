@@ -1219,8 +1219,10 @@ void WebPageProxy::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKi
 
 void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
-    if (!hasRunningProcess())
+    if (!hasRunningProcess()) {
+        completionHandler(std::nullopt);
         return;
+    }
 
     auto textIndicatorData = internals().textIndicatorDataForChunk.getOptional(uuid);
 
@@ -1234,8 +1236,10 @@ void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandle
 
 void WebPageProxy::updateTextIndicatorStyleVisibilityForID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
 {
-    if (!hasRunningProcess())
+    if (!hasRunningProcess()) {
+        completionHandler();
         return;
+    }
 
     sendWithAsyncReply(Messages::WebPage::UpdateTextIndicatorStyleVisibilityForID(uuid, visible), WTFMove(completionHandler));
 }
