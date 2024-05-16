@@ -232,3 +232,6 @@ testRegExp(/(?<!(ab*?))c/i, "A", null);
 testRegExp(/(?<!(AB*?))c/, "A", null);
 testRegExp(/(?<!(ab*))c/i, "A", null);
 testRegExp(/(?<!(AB*))c/, "A", null);
+
+// Test 101
+testRegExp(/(?<=Result = |<)(\w+(?:Error|Response))/, "<Result = LoadFinishedResponse>(", ["LoadFinishedResponse", "LoadFinishedResponse"]);

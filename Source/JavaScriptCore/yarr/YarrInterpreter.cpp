@@ -2625,15 +2625,22 @@ public:
             ASSERT(matchDirection == Backward || minimumSize >= parenthesesInputCountAlreadyChecked);
 
             unsigned countToCheck = 0;
+            unsigned backwardUncheckAmount = 0;
 
             if (matchDirection == Forward)
                 countToCheck = minimumSize - parenthesesInputCountAlreadyChecked;
-            else if (minimumSize > parenthesesInputCountAlreadyChecked) {
-                countToCheck = minimumSize - parenthesesInputCountAlreadyChecked;
-                haveCheckedInput(minimumSize);
-            } else if (minimumSize > disjunction->m_minimumSize) {
-                countToCheck = minimumSize - disjunction->m_minimumSize;
-                haveCheckedInput(currentCountAlreadyChecked);
+            else {
+                // Backward case
+                unsigned minAlreadyChecked = std::min(disjunction->m_minimumSize, parenthesesInputCountAlreadyChecked);
+                if (minimumSize > minAlreadyChecked) {
+                    countToCheck = minimumSize - minAlreadyChecked;
+                    haveCheckedInput(countToCheck + currentCountAlreadyChecked);
+
+                    if (minimumSize > disjunction->m_minimumSize)
+                        backwardUncheckAmount = countToCheck;
+                    else
+                        backwardUncheckAmount = minimumSize;
+                }
             }
 
             if (countToCheck) {
@@ -2737,7 +2744,6 @@ public:
                                 return ErrorCode::OffsetTooLarge;
                         }
                     } else { // Backward
-                        unsigned uncheckAmount = 0;
                         CheckedUint32 checkedCountForLookbehind = currentCountAlreadyChecked;
                         ASSERT(checkedCountForLookbehind >= term.inputPosition);
                         checkedCountForLookbehind -= term.inputPosition;
@@ -2758,13 +2764,6 @@ public:
                         if (auto error = emitDisjunction(term.parentheses.disjunction, checkedCountForLookbehind, positiveInputOffset + minimumSize, term.matchDirection()))
                             return error;
                         atomParentheticalAssertionEnd(term.parentheses.lastSubpatternId, term.frameLocation, term.quantityMaxCount, term.quantityType);
-
-                        if (uncheckAmount) {
-                            checkInput(uncheckAmount);
-                            currentCountAlreadyChecked += uncheckAmount;
-                            if (currentCountAlreadyChecked.hasOverflowed())
-                                return ErrorCode::OffsetTooLarge;
-                        }
                     }
                     break;
                 }
@@ -2775,8 +2774,8 @@ public:
                 }
             }
 
-            if (matchDirection == Backward && countToCheck)
-                uncheckInput(countToCheck);
+            if (matchDirection == Backward && backwardUncheckAmount)
+                uncheckInput(backwardUncheckAmount);
         }
         return std::nullopt;
     }
