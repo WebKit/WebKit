@@ -2149,16 +2149,6 @@ compositing/animation/matrix-animation.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Failure ]
 
-# <rdar://problem/60169524> REGRESSION: (20A211?) [ wk1 ] fast/scrolling/scrollable-area-frame-zero-size-and-border.html is failing.
-[ Monterey+ ] fast/scrolling/scrollable-area-frame-zero-size-and-border.html [ Pass Failure ]
-
-# <rdar://problem/48603627> FuzzDragon -- Null Ptr Deref @ WebCore::genericFamily -- DOS parseWebKit
-[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-loose.html [ Pass Crash ]
-
-# <rdar://problem/63022026> REGRESSION: [ 20A267-20A279 ]: multiple fast tests are failing with scrolling related diffs.
-[ Monterey+ ] fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
-
-
 # rdar://65642935 15 canvas layout tests consistently failing
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 [ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.miter.obtuse.html [ Failure ]
@@ -2182,12 +2172,6 @@ webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 # rdar://problem/66487888 [ Monterey+ ] media/media-source/media-source-webm.html is a constant failure
 [ Monterey+ ] media/media-source/media-source-webm.html [ Failure ]
 
-# rdar://65188503
-[ Monterey+ ] platform/mac/media/media-source/is-type-supported-vp9-codec-check.html [ Skip ]
-
-# rdar://65188503
-[ Monterey+ ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
-
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-45.html [ Slow ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-15.html [ Slow ]
 
@@ -2207,31 +2191,16 @@ webkit.org/b/245034 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 
 webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
 
-webkit.org/b/221095 [ Monterey+ ] media/mediacapabilities/vp9.html [ Skip ]
-
-
-webkit.org/b/221369 [ Monterey+ ] media/media-source/media-source-webm-append-buffer-after-abort.html [ Skip ]
-webkit.org/b/220552 [ Monterey+ ] media/media-source/media-source-webm-init-inside-segment.html [ Skip ]
-
 webkit.org/b/221347 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html [ Pass Failure ]
 
 
 webkit.org/b/221717 [ Monterey+ ] http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Timeout ]
-
-
-webkit.org/b/222493 [ Monterey+ ] media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
-
 
 webkit.org/b/223104 compositing/visibility/iframe-visibility-hidden.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/222686 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.html [ Pass Failure ]
 
 webkit.org/b/223816 [ arm64 ] platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html [ Failure ]
-
-# webkit.org/b/221300 Updating tests expectations for 3 tests
-[ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
-[ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
-[ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
 
 webkit.org/b/223770 media/video-playback-quality.html [ Pass Failure ]
 
@@ -2326,10 +2295,6 @@ imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ S
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ]
 
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
-
-# webkit.org/b/235733 Skip 2 editing/execCommand tests for making subsequent tests fail on wk1 Apple Silicon macs.
-[ Monterey+ release ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
-[ Monterey+ release ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
 
 # Push subscription tests don't work without service worker support.
 http/tests/push-api [ Skip ]
@@ -2612,8 +2577,6 @@ webkit.org/b/260360 inspector/timeline/timeline-event-TimerFire.html [ Failure ]
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerInstall.html [ Failure ]
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerRemove.html [ Failure ]
 
-webkit.org/b/260883 [ Monterey+ ] inspector/timeline/timeline-recording.html [ Skip ]
-
 # rdar://105177062 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] css3/filters/backdrop/add-remove-add-backdrop-filter.html is a consistent image failure)
 css3/filters/backdrop/add-remove-add-backdrop-filter.html [ Pass ImageOnlyFailure ]
 
@@ -2654,8 +2617,6 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-if
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph-background-image.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph.html [ ImageOnlyFailure ]
 
-webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-lists.html [ Crash ]
-
 fast/forms/select/select-show-picker.html [ Skip ]
 
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
@@ -2668,9 +2629,6 @@ fast/forms/select/select-show-picker.html [ Skip ]
 [ Monterey+ ] imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-custom-timing-function.html [ Pass ImageOnlyFailure ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/261339 [ Monterey+ Debug ] editing/selection/cleared-by-relayout.html [ Crash ]
-webkit.org/b/261339 [ Monterey+ Debug ] imported/w3c/web-platform-tests/editing/crashtests/designMode-document-will-be-blurred-by-focus-event-listener.html [ Crash ]
 
 webkit.org/b/261427 [ Ventura+ ] media/track/track-in-band-mode.html [ Pass Crash ]
 
@@ -2736,8 +2694,6 @@ fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 # webkit.org/b/273522 2 backdrop-filter tests in imported/w3c/web-platform-tests/css/filter-effects are constant failures
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-grayscale-001.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-sepia.html [ ImageOnlyFailure ]
-
-webkit.org/b/270273 [ Monterey+ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Skip ]
 
 webkit.org/b/270274 [ Monterey+ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ]
 
