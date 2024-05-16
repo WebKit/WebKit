@@ -214,6 +214,21 @@ inline bool isEqual(WKDDActionContext *a, WKDDActionContext* b)
 }
 #endif
 
+#if USE(PASSKIT) && !PLATFORM(WATCHOS)
+static bool CNPostalAddressTesting_isEqual(CNPostalAddress *a, CNPostalAddress *b)
+{
+    // CNPostalAddress treats a nil formattedAddress and empty formattedAddress the same for equality.
+    // But, there's other behavior with CNPostalAddress where nil-vs-empty makes a critical difference.
+    // To regression test our IPC of the object, we explicitly make sure that "nil goes in, nil comes out"
+    if (a.formattedAddress && !b.formattedAddress)
+        return false;
+    if (!a.formattedAddress && b.formattedAddress)
+        return false;
+
+    return [a isEqual:b];
+}
+#endif
+
 inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting& b)
 {
     id aObject = a.valueAsID();
@@ -226,6 +241,10 @@ inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting
     // DDActionContext doesn't have an isEqual: reliable for our unit testing, so do it ourselves.
     if ([aObject isKindOfClass:PAL::getWKDDActionContextClass()] && [bObject isKindOfClass:PAL::getWKDDActionContextClass()])
         return isEqual(aObject, bObject);
+#endif
+#if USE(PASSKIT) && !PLATFORM(WATCHOS)
+    if ([aObject isKindOfClass:PAL::getCNPostalAddressClass()])
+        return CNPostalAddressTesting_isEqual(aObject, bObject);
 #endif
 
     return [aObject isEqual:bObject];
@@ -608,6 +627,8 @@ TEST(IPCSerialization, Basic)
     address.get().country = @"United States of America";
     address.get().ISOCountryCode = @"US";
     address.get().formattedAddress = @"Hello world";
+    runTestNS({ address.get() });
+    address.get().formattedAddress = nil;
     runTestNS({ address.get() });
 
     // PKContact

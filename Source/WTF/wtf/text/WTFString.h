@@ -341,6 +341,9 @@ inline void swap(String& a, String& b) { a.swap(b); }
 // Used in a small number of places where the long standing behavior has been "nil if empty".
 NSString * nsStringNilIfEmpty(const String&);
 
+// Used in a small number of places where null strings should be converted to nil but empty strings should be maintained.
+NSString * nsStringNilIfNull(const String&);
+
 #endif
 
 WTF_EXPORT_PRIVATE int codePointCompare(const String&, const String&);
@@ -513,6 +516,13 @@ inline String::operator NSString *() const
 inline NSString * nsStringNilIfEmpty(const String& string)
 {
     if (string.isEmpty())
+        return nil;
+    return *string.impl();
+}
+
+inline NSString * nsStringNilIfNull(const String& string)
+{
+    if (string.isNull())
         return nil;
     return *string.impl();
 }
