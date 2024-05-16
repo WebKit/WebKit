@@ -67,6 +67,8 @@ public:
     using ConfigureAudioStorageCallback = Function<std::unique_ptr<CARingBuffer>(const CAAudioStreamDescription&, size_t frameCount)>;
     WEBCORE_EXPORT void setConfigureAudioStorageCallback(ConfigureAudioStorageCallback&&);
 
+    void recreateAudioMixIfNeeded();
+
 private:
     AudioSourceProviderAVFObjC(AVPlayerItem *);
 

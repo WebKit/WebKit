@@ -175,6 +175,15 @@ void AudioSourceProviderAVFObjC::setAudioTrack(AVAssetTrack *avAssetTrack)
     createMixIfNeeded();
 }
 
+void AudioSourceProviderAVFObjC::recreateAudioMixIfNeeded()
+{
+    if (!m_avAudioMix)
+        return;
+
+    destroyMixIfNeeded();
+    createMixIfNeeded();
+}
+
 void AudioSourceProviderAVFObjC::destroyMixIfNeeded()
 {
     if (!m_avAudioMix)

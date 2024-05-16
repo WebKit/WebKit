@@ -3632,6 +3632,10 @@ void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::Bufferi
     if (m_bufferingPolicy == policy)
         return;
 
+#if HAVE(AVPLAYER_RESOURCE_CONSERVATION_LEVEL)
+    bool isMovingFromResourcesPurgeableBufferPolicy = m_bufferingPolicy == MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
+#endif
+
     m_bufferingPolicy = policy;
 
     if (!m_avPlayer)
@@ -3645,6 +3649,11 @@ void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::Bufferi
 
     if ([m_avPlayer respondsToSelector:@selector(setResourceConservationLevelWhilePaused:)]) {
         m_avPlayer.get().resourceConservationLevelWhilePaused = static_cast<AVPlayerResourceConservationLevel>(policy);
+
+        // FIXME: Remove this workaround once rdar://123901202 is fixed.
+        if (isMovingFromResourcesPurgeableBufferPolicy && m_provider)
+            m_provider->recreateAudioMixIfNeeded();
+
         updateStates();
         return;
     }
