@@ -12,7 +12,7 @@ function createCookie(name, value, additionalProperties)
     for (let propertyName in additionalProperties) {
         cookie += `; ${propertyName}`;
         let propertyValue = additionalProperties[propertyName];
-        if (propertyValue != undefined)
+        if (propertyValue !== undefined && propertyValue !== null)
             cookie += "=" + propertyValue;
     }
     return cookie;
@@ -168,7 +168,7 @@ async function shouldNotHaveCookie(name)
 {
     let cookies = await getCookies();
     let value = cookies[name];
-    if (value == undefined)
+    if (value === undefined || value === null)
         testPassed(`Do not have cookie "${name}".`);
     else
         testFailed(`Should not have cookie "${name}". But do with value ${value}.`);
@@ -178,7 +178,7 @@ async function shouldHaveCookie(name)
 {
     let cookies = await getCookies();
     let value = cookies[name];
-    if (value == undefined)
+    if (value === undefined || value === null)
         testFailed(`Should have cookie "${name}". But do not.`);
     else
         testPassed(`Has cookie "${name}".`);
@@ -189,7 +189,7 @@ async function shouldHaveCookieWithValue(name, expectedValue)
     console.assert(expectedValue !== undefined);
     let cookies = await getCookies();
     let value = cookies[name];
-    if (value == undefined)
+    if (value === undefined || value === null)
         testFailed(`Should have cookie "${name}". But do not.`);
     else if (value === expectedValue)
         testPassed(`Has cookie "${name}" with value ${value}.`);
@@ -201,7 +201,7 @@ function shouldNotHaveDOMCookie(name)
 {
     let cookies = getDOMCookies();
     let value = cookies[name];
-    if (value == undefined)
+    if (value === undefined || value === null)
         testPassed(`Do not have DOM cookie "${name}".`);
     else
         testFailed(`Should not have DOM cookie "${name}". But do with value ${value}.`);
@@ -211,7 +211,7 @@ function shouldHaveDOMCookie(name)
 {
     let cookies = getDOMCookies();
     let value = cookies[name];
-    if (value == undefined)
+    if (value === undefined || value === null)
         testFailed(`Should have DOM cookie "${name}". But do not.`);
     else
         testPassed(`Has DOM cookie "${name}".`);
@@ -222,7 +222,7 @@ function shouldHaveDOMCookieWithValue(name, expectedValue)
     console.assert(expectedValue !== undefined);
     let cookies = getDOMCookies();
     let value = cookies[name];
-    if (value == undefined)
+    if (value === undefined || value === null)
         testFailed(`Should have DOM cookie "${name}". But do not.`);
     else if (value === expectedValue)
         testPassed(`Has DOM cookie "${name}" with value ${value}.`);
