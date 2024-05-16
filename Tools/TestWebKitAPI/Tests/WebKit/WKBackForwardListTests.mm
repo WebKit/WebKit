@@ -569,6 +569,20 @@ TEST(WKBackForwardList, BackForwardNavigationSkipsItemsWithoutUserGestureFragmen
     });
 }
 
+TEST(WKBackForwardList, BackForwardNavigationSkipsItemsWithoutUserGesturePushStateAfterEvaluateJS)
+{
+    runBackForwardNavigationSkipsItemsWithoutUserGestureTest([](WKWebView* webView, ASCIILiteral destination) {
+        // Do a call to evaluateJavaScript (with user gesture) *BEFORE* the pushState and make sure it doesn't count
+        // as a user gesture for the pushState().
+        __block bool didRunScript = false;
+        [webView evaluateJavaScript:@"window.foo = 1;" completionHandler:^(id, NSError *) {
+            didRunScript = true;
+        }];
+        TestWebKitAPI::Util::run(&didRunScript);
+        [webView _evaluateJavaScriptWithoutUserGesture:makeString("history.pushState(null, document.title, "_s, destination, ");"_s) completionHandler:nil];
+    });
+}
+
 TEST(WKBackForwardList, BackForwardNavigationSkipsItemsWithoutUserGestureSubframe)
 {
     TestWebKitAPI::HTTPServer server({
