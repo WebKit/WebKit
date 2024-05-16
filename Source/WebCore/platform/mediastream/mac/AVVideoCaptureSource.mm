@@ -833,11 +833,6 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 
     ASSERT(m_currentPreset->format());
 
-    if (!m_isRunning) {
-        m_needsResolutionReconfiguration = true;
-        return;
-    }
-
     if (!lockForConfiguration())
         return;
 
@@ -1192,13 +1187,10 @@ void AVVideoCaptureSource::captureOutputDidFinishProcessingPhoto(RetainPtr<AVCap
 
 void AVVideoCaptureSource::reconfigureIfNeeded()
 {
-    if (!m_isRunning || (!m_needsResolutionReconfiguration && !m_needsTorchReconfiguration && !m_needsWhiteBalanceReconfiguration))
+    if (!m_isRunning || (!m_needsTorchReconfiguration && !m_needsWhiteBalanceReconfiguration))
         return;
 
     beginConfiguration();
-
-    if (std::exchange(m_needsResolutionReconfiguration, false))
-        setSessionSizeFrameRateAndZoom();
 
     if (std::exchange(m_needsTorchReconfiguration, false))
         updateTorch();

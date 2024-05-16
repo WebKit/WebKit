@@ -182,7 +182,6 @@ private:
     bool m_interrupted { false };
     bool m_isRunning { false };
     bool m_hasBegunConfigurationForConstraints { false };
-    bool m_needsResolutionReconfiguration { false };
     bool m_needsTorchReconfiguration { false };
     bool m_needsWhiteBalanceReconfiguration { false };
 
