@@ -1137,7 +1137,10 @@ inline GridLength BuilderConverter::createGridTrackBreadth(const CSSPrimitiveVal
     if (primitiveValue.isFlex())
         return GridLength(primitiveValue.doubleValue());
 
-    return primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(builderState.cssToLengthConversionData());
+    auto length = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(builderState.cssToLengthConversionData());
+    if (!length.isUndefined())
+        return length;
+    return Length(0.0, LengthType::Fixed);
 }
 
 inline GridTrackSize BuilderConverter::createGridTrackSize(const CSSValue& value, BuilderState& builderState)
