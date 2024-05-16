@@ -290,6 +290,7 @@ struct _WebKitWebViewPrivate {
     HashSet<unsigned> frameDisplayedCallbacksToRemove;
 #endif
 
+    RefPtr<API::PageConfiguration> configurationForNextRelatedView;
     WebKitWebView* relatedView;
     CString title;
     CString customTextEncoding;
@@ -909,7 +910,8 @@ static void webkitWebViewConstructed(GObject* object)
     if (!priv->websitePolicies)
         priv->websitePolicies = adoptGRef(webkit_website_policies_new());
 
-    webkitWebViewCreatePage(webView, webkitWebViewCreatePageConfiguration(webView));
+    Ref configuration = priv->relatedView && priv->relatedView->priv->configurationForNextRelatedView ? priv->relatedView->priv->configurationForNextRelatedView.releaseNonNull() : webkitWebViewCreatePageConfiguration(webView);
+    webkitWebViewCreatePage(webView, WTFMove(configuration));
     webkitWebContextWebViewCreated(priv->context.get(), webView);
 
     priv->loadObserver = makeUnique<PageLoadStateObserver>(webView);
@@ -2646,21 +2648,27 @@ void webkitWebViewSetIcon(WebKitWebView* webView, const LinkIcon& icon, API::Dat
 }
 #endif
 
-RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFeatures& windowFeatures, WebKitNavigationAction* navigationAction)
+RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration, WindowFeatures&& windowFeatures, WebKitNavigationAction* navigationAction)
 {
+    RefPtr openerProcess = configuration->openerProcess();
+
+    ASSERT(!webView->priv->configurationForNextRelatedView);
+    SetForScope configurationScope(webView->priv->configurationForNextRelatedView, WTFMove(configuration));
+
     WebKitWebView* newWebView;
     g_signal_emit(webView, signals[CREATE], 0, navigationAction, &newWebView);
     if (!newWebView)
         return nullptr;
 
-    if (&getPage(webView).process() != &getPage(newWebView).process()) {
+    Ref newPage = getPage(newWebView);
+    if (&getPage(webView) != newPage->configuration().relatedPage() || openerProcess != newPage->configuration().openerProcess()) {
         g_warning("WebKitWebView returned by WebKitWebView::create signal was not created with the related WebKitWebView");
         return nullptr;
     }
 
     webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), windowFeatures);
 
-    return &getPage(newWebView);
+    return newPage;
 }
 
 void webkitWebViewReadyToShowPage(WebKitWebView* webView)
