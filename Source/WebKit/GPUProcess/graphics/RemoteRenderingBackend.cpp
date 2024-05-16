@@ -275,6 +275,8 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
     assertIsCurrent(workQueue());
     adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
     RefPtr<ImageBuffer> imageBuffer;
+    if (renderingMode == RenderingMode::Accelerated)
+        renderingMode = m_sharedResourceCache->adjustAcceleratedImageBufferRenderingMode(purpose);
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (m_gpuConnectionToWebProcess->isDynamicContentScalingEnabled() && (purpose == RenderingPurpose::LayerBacking || purpose == RenderingPurpose::DOM))
@@ -305,8 +307,8 @@ void RemoteRenderingBackend::releaseImageBuffer(RenderingResourceIdentifier rend
 {
     assertIsCurrent(workQueue());
     m_remoteDisplayLists.take(renderingResourceIdentifier);
-    bool success = m_remoteImageBuffers.take(renderingResourceIdentifier).get();
-    MESSAGE_CHECK(success, "Resource is being released before being cached."_s);
+    auto imageBuffer = takeImageBuffer(renderingResourceIdentifier);
+    MESSAGE_CHECK(imageBuffer, "Resource is being released before being cached."_s);
 }
 
 void RemoteRenderingBackend::createRemoteImageBufferSet(RemoteImageBufferSetIdentifier bufferSetIdentifier, WebCore::RenderingResourceIdentifier displayListIdentifier)

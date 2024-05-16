@@ -3974,6 +3974,9 @@ webkit.org/b/156148 svg/text/text-vkern.svg [ Failure ]
 webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-05-t.svg [ Failure ]
 webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]
 
+# Accelerated canvases not implemented.
+fast/canvas/image-buffer-backend-count-limit.html [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

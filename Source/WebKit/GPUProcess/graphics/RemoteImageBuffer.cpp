@@ -31,6 +31,7 @@
 #include "IPCSemaphore.h"
 #include "RemoteImageBufferMessages.h"
 #include "RemoteRenderingBackend.h"
+#include "RemoteSharedResourceCache.h"
 #include "StreamConnectionWorkQueue.h"
 #include <WebCore/GraphicsContext.h>
 
@@ -54,6 +55,11 @@ RemoteImageBuffer::RemoteImageBuffer(Ref<WebCore::ImageBuffer> imageBuffer, Remo
     : m_backend(&backend)
     , m_imageBuffer(WTFMove(imageBuffer))
 {
+    if (m_imageBuffer->renderingMode() == RenderingMode::Accelerated) {
+        auto& sharedResourceCache = backend.sharedResourceCache();
+        m_sharedCacheAcceleratedCounter = sharedResourceCache.acceleratedImageBufferCounter();
+        m_globalAcceleratedCounter = sharedResourceCache.globalAcceleratedImageBufferCounter();
+    }
 }
 
 RemoteImageBuffer::~RemoteImageBuffer()

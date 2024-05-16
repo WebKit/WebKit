@@ -80,6 +80,8 @@ private:
     RefPtr<RemoteRenderingBackend> m_backend;
     Ref<WebCore::ImageBuffer> m_imageBuffer;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest { ScopedRenderingResourcesRequest::acquire() };
+    RefPtr<ResourceCounter> m_sharedCacheAcceleratedCounter;
+    RefPtr<ResourceCounter> m_globalAcceleratedCounter;
 };
 
 } // namespace WebKit

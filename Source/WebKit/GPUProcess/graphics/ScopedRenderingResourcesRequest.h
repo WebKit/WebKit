@@ -27,6 +27,7 @@
 
 #include <atomic>
 #include <utility>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
 
@@ -81,5 +82,10 @@ inline bool hasOutstandingRenderingResourceUsage()
 {
     return ScopedRenderingResourcesRequest::s_requests;
 }
+
+class ResourceCounter : public ThreadSafeRefCounted<ResourceCounter> {
+public:
+    size_t count() const { return refCount() - 1; }
+};
 
 }
