@@ -43,6 +43,7 @@ public:
 
     String customCSSText() const;
     bool equals(const CSSValuePair&) const;
+    bool canBeCoalesced() const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
     {

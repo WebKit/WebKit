@@ -31,6 +31,7 @@
 #include "CSSPropertyParser.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnparsedValue.h"
+#include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
 #include "Document.h"
 #include "StylePropertyShorthand.h"
@@ -120,6 +121,13 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value); primitiveValue && primitiveValue->isNumberOrInteger()) {
         if (!CSSProperty::allowsNumberOrIntegerInput(propertyID))
             return Exception { ExceptionCode::TypeError, "Invalid value: This property doesn't allow <number> input"_s };
+    }
+
+    // FIXME: CSSValuePair has specific behavior related to coalescing its 2 values when they are equal.
+    // Throw an error when using them with Typed OM to avoid subtle bugs when the serialization isn't representative of the value.
+    if (auto pair = dynamicDowncast<CSSValuePair>(value)) {
+        if (pair->canBeCoalesced())
+            return Exception { ExceptionCode::NotSupportedError, "Invalid values"_s };
     }
 
     if (!setProperty(propertyID, value.releaseNonNull()))

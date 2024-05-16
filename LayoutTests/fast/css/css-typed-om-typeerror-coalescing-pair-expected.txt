@@ -1,0 +1,17 @@
+This test checks that we throw error when using Typed OM set() with a coalesced pair of values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS () => {
+      var element = document.getElementById("element");
+      element.attributeStyleMap.set('width', CSSStyleValue.parse('border-bottom-left-radius', '30px'))
+    } threw exception NotSupportedError: Invalid values.
+PASS () => {
+      var element2 = document.getElementById("element2");
+      element2.attributeStyleMap.set('width', CSSStyleValue.parse('border-bottom-left-radius', '30px 10px'))
+    } threw exception TypeError: Invalid values.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
