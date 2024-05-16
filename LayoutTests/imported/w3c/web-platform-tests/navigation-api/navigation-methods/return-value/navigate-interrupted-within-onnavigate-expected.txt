@@ -1,2 +1,4 @@
-FAIL: Timed out waiting for notifyDone to be called
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Navigation aborted
+
+FAIL if navigate() is called inside onnavigate, the previous navigation and navigate event are cancelled assert_array_equals: expected property 1 to be "#2" but got "" (expected array ["", "#2"] got ["", ""])
 

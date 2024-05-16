@@ -385,6 +385,15 @@ void Navigation::resolveFinishedPromise(NavigationAPIMethodTracker* apiMethodTra
     cleanupAPIMethodTracker(apiMethodTracker);
 }
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#reject-the-finished-promise
+void Navigation::rejectFinishedPromise(NavigationAPIMethodTracker* apiMethodTracker, Exception&& exception, JSC::JSValue exceptionObject)
+{
+    // finished is already marked as handled at this point so don't overwrite that.
+    apiMethodTracker->finishedPromise->reject(exception, RejectAsHandled::Yes, exceptionObject);
+    apiMethodTracker->committedPromise->reject(exception, RejectAsHandled::No, exceptionObject);
+    cleanupAPIMethodTracker(apiMethodTracker);
+}
+
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#notify-about-the-committed-to-entry
 void Navigation::notifyCommittedToEntry(NavigationAPIMethodTracker* apiMethodTracker, NavigationHistoryEntry* entry)
 {
@@ -478,6 +487,36 @@ void Navigation::cleanupAPIMethodTracker(NavigationAPIMethodTracker* apiMethodTr
     }
 }
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#abort-the-ongoing-navigation
+void Navigation::abortOngoingNavigation(NavigateEvent& event)
+{
+    m_focusChangedDuringOnoingNavigation = false;
+    m_suppressNormalScrollRestorationDuringOngoingNavigation = false;
+
+    if (event.isBeingDispatched())
+        event.preventDefault();
+
+    auto& globalObject = *scriptExecutionContext()->globalObject();
+    JSC::JSLockHolder locker(globalObject.vm());
+    auto exception = Exception(ExceptionCode::AbortError, "Navigation aborted"_s);
+    auto domException = createDOMException(globalObject, exception.isolatedCopy());
+
+    event.signal()->signalAbort(domException);
+
+    m_ongoingNavigateEvent = nullptr;
+
+    // FIXME: Fill in exception information.
+    dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, 0, 0, { globalObject.vm(), domException }));
+
+    if (m_ongoingAPIMethodTracker)
+        rejectFinishedPromise(m_ongoingAPIMethodTracker.get(), WTFMove(exception), domException);
+
+    if (m_transition) {
+        // FIXME: Reject navigation's transition's finished promise with error.
+        m_transition = nullptr;
+    }
+}
+
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inner-navigate-event-firing-algorithm
 bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationType, Ref<NavigationDestination>&& destination, const String& downloadRequestFilename)
 {
@@ -489,6 +528,9 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         ASSERT(m_upcomingTraverseMethodTrackers.isEmpty());
         return true;
     }
+
+    if (m_ongoingNavigateEvent)
+        abortOngoingNavigation(*m_ongoingNavigateEvent);
 
     promoteUpcomingAPIMethodTracker(destination->key());
 
@@ -531,8 +573,10 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
     if (event->defaultPrevented()) {
         // FIXME: If navigationType is "traverse", then consume history-action user activation.
-        // FIXME: If event's abort controller's signal is not aborted, then abort the ongoing navigation given navigation.
-        m_ongoingNavigateEvent = nullptr;
+        if (!event->signal()->aborted())
+            abortOngoingNavigation(event);
+        else
+            m_ongoingNavigateEvent = nullptr;
         return false;
     }
 
@@ -572,7 +616,10 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         // FIXME: Step 33.4: We need to wait for all promises.
 
         if (document->isFullyActive() && !abortController->signal().aborted()) {
-            ASSERT(m_ongoingNavigateEvent == event.ptr());
+            // If a new event has been dispatched in our event handler then we were aborted above.
+            if (m_ongoingNavigateEvent != event.ptr())
+                return false;
+
             m_ongoingNavigateEvent = nullptr;
 
             event->finish();
@@ -589,10 +636,10 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
                 // FIXME: Fill in error information.
                 dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, { }, 0, 0, { }));
             }
+        } else {
+            // FIXME: and the following failure steps given reason rejectionReason:
+            m_ongoingNavigateEvent = nullptr;
         }
-
-        // FIXME: and the following failure steps given reason rejectionReason:
-        m_ongoingNavigateEvent = nullptr;
     } else if (apiMethodTracker)
         cleanupAPIMethodTracker(apiMethodTracker.get());
 
