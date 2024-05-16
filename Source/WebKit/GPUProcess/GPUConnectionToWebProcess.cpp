@@ -153,6 +153,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+#include <WebCore/CoreAudioSharedUnit.h>
 #include <WebCore/SecurityOrigin.h>
 #endif
 
@@ -1107,6 +1108,11 @@ void GPUConnectionToWebProcess::setOrientationForMediaCapture(IntDegrees orienta
 
 void GPUConnectionToWebProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture)
 {
+#if PLATFORM(MAC) && ENABLE(MEDIA_STREAM)
+    if (allowAudioCapture)
+        CoreAudioSharedUnit::singleton().prewarmAudioUnitCreation([] { });
+#endif
+
     m_allowsAudioCapture |= allowAudioCapture;
     m_allowsVideoCapture |= allowVideoCapture;
     m_allowsDisplayCapture |= allowDisplayCapture;
