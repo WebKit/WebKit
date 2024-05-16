@@ -552,13 +552,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
             return;
         }
 
-        proxy->source().whenReady([completionHandler = WTFMove(completionHandler), proxy = WeakPtr { *proxy }] (auto&& error) mutable {
-            if (!!error || !proxy) {
-                completionHandler(error, { }, { });
-                return;
-            }
-            completionHandler({ }, proxy->settings(), proxy->source().capabilities());
-        });
+        completionHandler({ }, proxy->settings(), proxy->source().capabilities());
         m_proxies.add(id, WTFMove(proxy));
     };
 
