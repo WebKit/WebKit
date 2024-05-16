@@ -58,6 +58,7 @@ Interpolate = properties.Interpolate
 THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
 MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}'
 HASH_LENGTH_TO_DISPLAY = 8
+SCAN_BUILD_OUTPUT_DIR = 'scan-build-output'
 
 DNS_NAME = CURRENT_HOSTNAME
 if DNS_NAME in BUILD_WEBKIT_HOSTNAMES:
@@ -101,6 +102,23 @@ class CustomFlagsMixin(object):
         else:
             device_model = platform
         self.command += ['--' + device_model]
+
+
+class ShellMixin(object):
+    WINDOWS_SHELL_PLATFORMS = ['wincairo']
+
+    def has_windows_shell(self):
+        return self.getProperty('platform', '*') in self.WINDOWS_SHELL_PLATFORMS
+
+    def shell_command(self, command):
+        if self.has_windows_shell():
+            return ['sh', '-c', command]
+        return ['/bin/sh', '-c', command]
+
+    def shell_exit_0(self):
+        if self.has_windows_shell():
+            return 'exit 0'
+        return 'true'
 
 
 class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
@@ -1568,6 +1586,215 @@ class GenerateS3URL(master.MasterShellCommandNewStyle):
         return super().getResultSummary()
 
 
+class ArchiveStaticAnalyzerResults(shell.ShellCommandNewStyle):
+    command = ["Tools/Scripts/generate-static-analysis-archive", "--id-string", WithProperties("Build #%(buildnumber)s"),
+               "--output-root", SCAN_BUILD_OUTPUT_DIR, "--destination", "/tmp/static-analysis.zip"]
+    name = "archive-static-analyzer-results"
+    description = ["archiving static analyzer results"]
+    descriptionDone = ["archived static analyzer results"]
+    haltOnFailure = True
+
+
+class UploadStaticAnalyzerResults(UploadTestResults):
+    name = "upload-static-analyzer-results"
+    workersrc = "/tmp/static-analysis.zip"
+    haltOnFailure = True
+
+
+class ScanBuildSmartPointer(steps.ShellSequence, ShellMixin):
+    name = "scan-build-smart-pointer"
+    description = ["scanning with static analyzer"]
+    descriptionDone = ["scanned with static analyzer"]
+    flunkOnFailure = True
+    analyzeFailed = False
+    bugs = 0
+
+    def __init__(self, **kwargs):
+        kwargs['timeout'] = 2 * 60 * 60
+        super().__init__(**kwargs)
+        self.commandFailed = False
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.commands = []
+        build_command = f"Tools/Scripts/build-and-analyze --output-dir {os.path.join(self.getProperty('builddir'), f'build/{SCAN_BUILD_OUTPUT_DIR}')} "
+        build_command += f"--only-smart-pointers --analyzer-path={os.path.join(self.getProperty('builddir'), 'llvm-project/build/bin/clang')} "
+        build_command += '--scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx '
+        build_command += '2>&1 | python3 Tools/Scripts/filter-static-analyzer'
+
+        for command in [
+            self.shell_command(f"/bin/rm -rf {os.path.join(self.getProperty('builddir'), f'build/{SCAN_BUILD_OUTPUT_DIR}')}"),
+            self.shell_command(build_command)
+        ]:
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+
+        log_text = self.log_observer.getStdout()
+        index = log_text.rfind('Total issue count:')
+        if index != -1:
+            total_issue_count_regex = re.compile(r'^Total issue count: (\d+)$', re.MULTILINE)
+            match = total_issue_count_regex.search(log_text[index:])
+            if match:
+                self.bugs += int(match.group(1))
+
+        f_index = log_text.rfind('ANALYZE SUCCEEDED')
+        if f_index == -1:
+            self.analyzeFailed = True
+            rc = FAILURE
+
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'build-log.txt',
+                links={self.name: 'Full build log'},
+                content_type='text/plain',
+            )
+        ]
+
+        if rc == SUCCESS:
+            steps_to_add += [ParseStaticAnalyzerResults(), CompareStaticAnalyzerResults(), ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults()]
+        self.build.addStepsAfterCurrentStep(steps_to_add)
+
+        defer.returnValue(rc)
+
+    def getResultSummary(self):
+        status = ''
+        if self.analyzeFailed:
+            status += 'ANALYZE FAILED: '
+        status += self.name
+
+        if self.commandFailed:
+            status += ' failed to build, and'
+        status += f' found {self.bugs} issues'
+
+        if self.results != SUCCESS:
+            status += f' ({Results[self.results]})'
+
+        return {u'step': status}
+
+
+class ParseStaticAnalyzerResults(shell.ShellCommandNewStyle):
+    name = 'parse-static-analyzer-results'
+    description = ['parsing static analyzer results']
+    descriptionDone = ['parsed static analyzer results']
+    haltOnFailure = True
+    resultMsg = ''
+
+    @defer.inlineCallbacks
+    def run(self):
+        output_dir = f"smart-pointer-result-archive/{self.getProperty('buildnumber')}"
+        self.command = ['python3', 'Tools/Scripts/generate-dirty-files']
+        self.command += [os.path.join(self.getProperty('builddir'), f'build/{SCAN_BUILD_OUTPUT_DIR}')]
+        self.command += ['--output-dir', os.path.join(self.getProperty('builddir'), output_dir)]
+        self.command += ['--build-dir', os.path.join(self.getProperty('builddir'), 'build')]
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+        if rc != SUCCESS:
+            return defer.returnValue(rc)
+
+        log_text = self.log_observer.getStdout()
+        index = log_text.rfind('Total')
+        self.resultMsg = log_text[index:]
+
+        return defer.returnValue(rc)
+
+    def evaluateCommand(self, cmd):
+        if cmd.rc != 0:
+            self.commandFailed = True
+            return FAILURE
+        return SUCCESS
+
+    def getResultSummary(self):
+        status = ''
+        if self.resultMsg:
+            status += f' Issues by project: {self.resultMsg}'
+        if self.results != SUCCESS:
+            status += f'{self.name} ({Results[self.results]})'
+
+        return {u'step': status}
+
+
+class CompareStaticAnalyzerResults(shell.ShellCommandNewStyle):
+    name = 'compare-static-analyzer-results'
+    description = ['comparing static analyzer results']
+    descriptionDone = ['compared static analyzer results']
+    resultMsg = ''
+
+    @defer.inlineCallbacks
+    def run(self):
+        new_dir = f"smart-pointer-result-archive/{self.getProperty('buildnumber')}"
+        self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results']
+        self.command += [os.path.join(self.getProperty('builddir'), new_dir)]
+        self.command += ['--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build']
+        self.command += ['--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations']
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+        if rc != SUCCESS:
+            return defer.returnValue(rc)
+
+        self.createResultMessage()
+
+        if self.getProperty('unexpected_failing_files', 0):
+            # FIXME: Add steps to upload lists to S3
+            return defer.returnValue(FAILURE)
+        return defer.returnValue(rc)
+
+    def createResultMessage(self):
+        log_text = self.log_observer.getStdout()
+        match = re.search(r'^Total unexpected failing files: (\d+)', log_text, re.MULTILINE)
+        if match:
+            self.resultMsg += f'Unexpected failing files: {match.group(1)} '
+            self.setProperty('unexpected_failing_files', int(match.group(1)))
+        match = re.search(r'^Total unexpected passing files: (\d+)', log_text, re.MULTILINE)
+        if match:
+            self.resultMsg += f'Unexpected passing files: {match.group(1)} '
+            self.setProperty('unexpected_passing_files', int(match.group(1)))
+        match = re.search(r'^Total unexpected issues: (\d+)', log_text, re.MULTILINE)
+        if match:
+            self.resultMsg += f'Unexpected issues: {match.group(1)}'
+
+    def getResultSummary(self):
+        status = ''
+        if self.resultMsg:
+            status = f'{self.resultMsg}'
+        elif self.results == SUCCESS:
+            status = 'Found no unexpected results'
+        if self.results != SUCCESS:
+            status += f' ({Results[self.results]})'
+
+        return {u'step': status}
+
+
+class UpdateSmartPointerBaseline(steps.ShellSequence, ShellMixin):
+    name = 'update-smart-pointer-baseline'
+    description = ['updating smart pointer baseline']
+    descriptionDone = ['updated smart pointer baseline']
+
+    def run(self):
+        new_dir = f"smart-pointer-result-archive/{self.getProperty('buildnumber')}"
+        self.commands = []
+        for command in [
+            self.shell_command(f"rm -r {os.path.join(self.getProperty('builddir'), 'smart-pointer-result-archive/baseline')}"),
+            self.shell_command(f"cp -r {os.path.join(self.getProperty('builddir'), new_dir)} {os.path.join(self.getProperty('builddir'), 'smart-pointer-result-archive/baseline')}")
+        ]:
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
+
+        return super().run()
+
+
 class TransferToS3(master.MasterShellCommandNewStyle):
     name = "transfer-to-s3"
     description = ["transferring to s3"]
@@ -1614,6 +1841,9 @@ class ExtractTestResults(master.MasterShellCommandNewStyle):
         self.setProperty('result_directory', self.resultDirectory)
         return self.resultDirectory.replace('public_html/', '/') + '/'
 
+    def resultDownloadURL(self):
+        return self.zipFile.replace('public_html/', '')
+
     def addCustomURLs(self):
         self.addURL("view layout test results", self.resultDirectoryURL() + "results.html")
         self.addURL("view dashboard test results", self.resultDirectoryURL() + "dashboard-layout-test-results/results.html")
@@ -1623,6 +1853,22 @@ class ExtractTestResults(master.MasterShellCommandNewStyle):
         rc = yield super().run()
         self.addCustomURLs()
         defer.returnValue(rc)
+
+
+class ExtractStaticAnalyzerTestResults(ExtractTestResults):
+    name = 'extract-static-analyzer-test-results'
+
+    def getLastBuildStepByName(self, name):
+        for step in reversed(self.build.executedSteps):
+            if name in step.name:
+                return step
+        return None
+
+    def addCustomURLs(self):
+        step = self.getLastBuildStepByName(CompareStaticAnalyzerResults.name)
+        step.addURL("View full static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/results.html")
+        step.addURL("View unexpected static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/unexpected-results.html")
+        step.addURL("Download full static analyzer results", self.resultDownloadURL())
 
 
 class PrintConfiguration(steps.ShellSequence):

@@ -285,6 +285,12 @@ class DownloadAndPerfTestFactory(Factory):
             self.addStep(RunBenchmarkTests(timeout=2000))
 
 
+class SmartPointerStaticAnalyzerFactory(Factory):
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
+        self.addStep(ScanBuildSmartPointer())
+
+
 class CrossTargetDownloadAndPerfTestFactory(DownloadAndPerfTestFactory):
     shouldInstallDependencies = False
     shouldUseCrossTargetImage = True
