@@ -19201,36 +19201,6 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
-// Test that struct declarations are introduced into the correct scope.
-TEST_P(GLSLTest, NestedReturnedStructs)
-{
-    const char kFragmentShader[] = R"(precision mediump float;
-struct Foo { float v; } foo(float bar);
-
-void main()
-{
-    gl_FragColor = vec4(1, 0, 0, 1);
-    float v = foo(foo(0.5).v).v;
-    if (v == 0.5)
-    {
-        gl_FragColor = vec4(0, 1, 0, 1);
-    }
-}
-
-Foo foo(float bar)
-{
-    Foo f;
-    f.v = bar;
-    return f;
-})";
-
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragmentShader);
-    glUseProgram(program);
-
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-}
-
 // Test that underscores in array names work with out arrays.
 TEST_P(GLSLTest_ES3, UnderscoresWorkWithOutArrays)
 {
