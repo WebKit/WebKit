@@ -50,7 +50,6 @@ Ref<AsyncPDFRenderer> AsyncPDFRenderer::create(UnifiedPDFPlugin& plugin)
 AsyncPDFRenderer::AsyncPDFRenderer(UnifiedPDFPlugin& plugin)
     : m_plugin(plugin)
     , m_paintingWorkQueue(ConcurrentWorkQueue::create("WebKit: PDF Painting Work Queue"_s, WorkQueue::QOS::UserInteractive)) // Maybe make this concurrent?
-    , m_contentsVersion(PDFContentsVersionIdentifier::generate())
     , m_maxConcurrentTileRenders(std::clamp(WTF::numberOfProcessorCores() - 2, 4, 16))
 {
 }
@@ -148,7 +147,7 @@ RefPtr<WebCore::ImageBuffer> AsyncPDFRenderer::previewImageForPage(PDFDocumentLa
     return m_pagePreviews.get(pageIndex);
 }
 
-bool AsyncPDFRenderer::renderInfoIsValidForTile(const TileForGrid& tileInfo, const TileRenderInfo& renderInfo, CheckContentVersion checkContentVersion) const
+bool AsyncPDFRenderer::renderInfoIsValidForTile(const TileForGrid& tileInfo, const TileRenderInfo& renderInfo) const
 {
     ASSERT(isMainRunLoop());
     if (!m_pdfContentsLayer)
@@ -161,10 +160,7 @@ bool AsyncPDFRenderer::renderInfoIsValidForTile(const TileForGrid& tileInfo, con
     auto currentTileRect = tiledBacking->rectForTile(tileInfo.tileIndex);
     auto currentRenderInfo = renderInfoForTile(tileInfo, currentTileRect);
 
-    if (checkContentVersion == CheckContentVersion::Yes)
-        return renderInfo.equivalentForPainting(currentRenderInfo);
-
-    return renderInfo.equivalentForPaintingIgnoringContentVersion(currentRenderInfo);
+    return renderInfo.equivalentForPainting(currentRenderInfo);
 }
 
 void AsyncPDFRenderer::willRepaintTile(TiledBacking&, TileGridIdentifier gridIdentifier, TileIndex tileIndex, const FloatRect& tileRect, const FloatRect& tileDirtyRect)
@@ -180,8 +176,7 @@ void AsyncPDFRenderer::willRepaintTile(TiledBacking&, TileGridIdentifier gridIde
         if (renderInfo.tileRect != tileRect)
             return false;
 
-        // It's OK to paint tiles with a stale content version (e.g. old state of a checkbox). We'll paint the new tile whne we get it.
-        return renderInfoIsValidForTile(tileInfo, renderInfo, CheckContentVersion::No);
+        return renderInfoIsValidForTile(tileInfo, renderInfo);
     };
 
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::willRepaintTile " << tileInfo << " rect " << tileRect << " (dirty rect " << tileDirtyRect << ") - already queued "
@@ -342,7 +337,7 @@ auto AsyncPDFRenderer::renderInfoForTile(const TileForGrid& tileInfo, const Floa
     auto paintingClipRect = convertTileRectToPaintingCoords(tileRect, tilingScaleFactor);
     auto pageCoverage = plugin->pageCoverageAndScalesForRect(paintingClipRect);
 
-    return TileRenderInfo { tileRect, clipRect, pageCoverage, m_contentsVersion };
+    return TileRenderInfo { tileRect, clipRect, pageCoverage };
 }
 
 void AsyncPDFRenderer::enqueuePaintWithClip(const TileForGrid& tileInfo, const TileRenderInfo& renderInfo)
@@ -535,7 +530,7 @@ void AsyncPDFRenderer::didCompleteTileRender(RefPtr<WebCore::ImageBuffer>&& imag
     --m_numConcurrentTileRenders;
     serviceRequestQueue();
 
-    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didCompleteNewTileRender - got results for tile at " << tileInfo << " clip " << renderInfo.clipRect << " ident " << renderIdentifier
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didCompleteTileRender - got results for tile at " << tileInfo << " clip " << renderInfo.clipRect << " ident " << renderIdentifier
         << " (" << m_rendereredTiles.size() << " tiles in cache). Request revoked " << !requestWasValid);
 
     if (!requestWasValid)
@@ -551,11 +546,11 @@ void AsyncPDFRenderer::didCompleteTileRender(RefPtr<WebCore::ImageBuffer>&& imag
     if (renderInfo.clipRect) {
         auto renderedTilesIt = m_rendereredTiles.find(tileInfo);
         if (renderedTilesIt == m_rendereredTiles.end()) {
-            LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didCompleteTileUpdateRender - tile to be updated " << tileInfo << " has been removed");
+            LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didCompleteTileRender - tile to be updated " << tileInfo << " has been removed");
             return;
         }
 
-        LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didCompleteTileUpdateRender - updating tile " << tileInfo << " in rect " << *renderInfo.clipRect);
+        LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didCompleteTileRender - updating tile " << tileInfo << " in rect " << *renderInfo.clipRect);
 
         RefPtr existingBuffer = renderedTilesIt->value.buffer;
         auto& context = existingBuffer->context();
@@ -651,8 +646,6 @@ void AsyncPDFRenderer::pdfContentChangedInRect(float pageScaleFactor, const Floa
     RetainPtr pdfDocument = plugin->pdfDocument();
     if (!pdfDocument)
         return;
-
-    m_contentsVersion = PDFContentsVersionIdentifier::generate();
 
     auto toTileTransform = paintingToTileTransform(pageScaleFactor);
     auto paintingRectInTileCoordinates = toTileTransform.mapRect(paintingRect);
