@@ -62,6 +62,29 @@ gboolean wpe_keymap_get_entries_for_keyval(WPEKeymap* keymap, guint keyval, WPEK
 }
 
 /**
+ * wpe_keymap_translate_keyboard_state:
+ * @keymap: a #WPEKaymap
+ * @keycode: a hardware keycode
+ * @modifiers: a #WPEModifiers
+ * @group: active keyboard group
+ * @keyval: (out) (optional): return location for keyval
+ * @effective_group: (out) (optional): return location for effective group
+ * @level: (out) (optional): return location for level
+ * @consumed_modifiers: (out) (optional): return location for modifiers that were used to determine the group or level
+ *
+ * Translate @keycode, @modifiers and @group into a keyval, effective group and level.
+ * Modifiers that affected the translation are returned in @consumed_modifiers.
+ *
+ * Returns: %TRUE if there was a keyval bound to keycode, modifiers and group, or %FALSE otherwise
+ */
+gboolean wpe_keymap_translate_keyboard_state(WPEKeymap* keymap, guint keycode, WPEModifiers modifiers, int group, guint* keyval, int* effectiveGroup, int* level, WPEModifiers* consumedModifiers)
+{
+    g_return_val_if_fail(WPE_IS_KEYMAP(keymap), FALSE);
+
+    return WPE_KEYMAP_GET_CLASS(keymap)->translate_keyboard_state(keymap, keycode, modifiers, group, keyval, effectiveGroup, level, consumedModifiers);
+}
+
+/**
  * wpe_keymap_get_modifiers:
  * @keymap: a #WPEKaymap
  *
