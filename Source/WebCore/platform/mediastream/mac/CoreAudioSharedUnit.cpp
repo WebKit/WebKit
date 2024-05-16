@@ -263,7 +263,7 @@ void CoreAudioSharedUnit::setStoredVPIOUnit(StoredAudioUnit&& unit)
 {
     RELEASE_LOG(WebRTC, "CoreAudioSharedUnit::setStoredVPIOUnit");
 
-    static constexpr Seconds delayBeforeStoredVPIOUnitDeallocation = 60_s;
+    static constexpr Seconds delayBeforeStoredVPIOUnitDeallocation = 3_s;
     m_storedVPIOUnit = WTFMove(unit);
     m_storedVPIOUnitDeallocationTimer.startOneShot(delayBeforeStoredVPIOUnitDeallocation);
 }
