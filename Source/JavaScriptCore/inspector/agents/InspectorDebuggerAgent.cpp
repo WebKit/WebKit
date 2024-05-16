@@ -444,7 +444,8 @@ void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::JSGlobalObject* globalObj
     if (!m_currentAsyncCallIdentifierStack.isEmpty()) {
         auto it = m_pendingAsyncCalls.find(m_currentAsyncCallIdentifierStack.last());
         ASSERT(it != m_pendingAsyncCalls.end());
-        parentStackTrace = it->value;
+        if (LIKELY(it != m_pendingAsyncCalls.end()))
+            parentStackTrace = it->value;
     }
 
     auto identifier = asyncCallIdentifier(asyncCallType, callbackId);
