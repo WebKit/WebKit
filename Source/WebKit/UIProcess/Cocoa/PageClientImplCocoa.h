@@ -126,6 +126,10 @@ public:
     void unifiedTextReplacementActiveDidChange() final;
 #endif
 
+#if ENABLE(GAMEPAD)
+    void setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed) final;
+#endif
+
 protected:
     RetainPtr<WKWebView> webView() const { return m_webView.get(); }
 

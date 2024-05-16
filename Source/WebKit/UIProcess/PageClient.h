@@ -764,6 +764,14 @@ public:
 #if HAVE(SPATIAL_TRACKING_LABEL)
     virtual const String& spatialTrackingLabel() const = 0;
 #endif
+
+#if ENABLE(GAMEPAD)
+    enum class GamepadsRecentlyAccessed : bool {
+        No,
+        Yes
+    };
+    virtual void setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed) { }
+#endif
 };
 
 } // namespace WebKit

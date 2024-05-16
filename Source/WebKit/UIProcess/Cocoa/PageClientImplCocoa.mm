@@ -308,4 +308,11 @@ void PageClientImplCocoa::unifiedTextReplacementActiveDidChange()
 }
 #endif
 
+#if ENABLE(GAMEPAD)
+void PageClientImplCocoa::setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed gamepadsRecentlyAccessed)
+{
+    [m_webView _setGamepadsRecentlyAccessed:(gamepadsRecentlyAccessed == GamepadsRecentlyAccessed::No) ? NO : YES];
+}
+#endif
+
 }

@@ -10462,9 +10462,11 @@ void WebPageProxy::recentGamepadAccessStateChanged(PAL::HysteresisState state)
 {
     switch (state) {
     case PAL::HysteresisState::Started:
+        protectedPageClient()->setGamepadsRecentlyAccessed(PageClient::GamepadsRecentlyAccessed::Yes);
         m_uiClient->recentlyAccessedGamepadsForTesting(*this);
         break;
     case PAL::HysteresisState::Stopped:
+        protectedPageClient()->setGamepadsRecentlyAccessed(PageClient::GamepadsRecentlyAccessed::No);
         m_uiClient->stoppedAccessingGamepadsForTesting(*this);
     }
 }

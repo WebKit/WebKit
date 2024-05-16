@@ -2051,6 +2051,12 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 #import <WebKitAdditions/WKWebViewAdditionsAfter.mm>
 #endif
 
+#if ENABLE(GAMEPAD) && !__has_include(<WebKitAdditions/WKWebViewAdditionsAfter+Gamepad.mm>)
+- (void)_setGamepadsRecentlyAccessed:(BOOL)gamepadsRecentlyAccessed
+{
+}
+#endif
+
 @end
 
 #pragma mark -

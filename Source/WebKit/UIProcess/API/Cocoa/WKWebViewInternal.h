@@ -371,6 +371,10 @@ struct PerWebProcessState {
 #if ENABLE(PAGE_LOAD_OBSERVER)
     RetainPtr<NSString> _pendingPageLoadObserverHost;
 #endif
+
+#if ENABLE(GAMEPAD)
+    RetainPtr<id> _gamepadsRecentlyAccessedState;
+#endif
 }
 
 - (BOOL)_isValid;
@@ -411,6 +415,10 @@ struct PerWebProcessState {
 - (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting;
 
 - (void)_didAccessBackForwardList NS_DIRECT;
+
+#if ENABLE(GAMEPAD)
+- (void)_setGamepadsRecentlyAccessed:(BOOL)gamepadsRecentlyAccessed;
+#endif
 
 - (WKPageRef)_pageForTesting;
 - (NakedPtr<WebKit::WebPageProxy>)_page;
