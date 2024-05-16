@@ -191,6 +191,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
     switch (state) {
     case WebTextReplacementData::State::Active: {
         document->selection().setSelection({ rangeToReplace });
+        document->selection().revealSelection();
 
         auto rect = document->view()->contentsToRootView(WebCore::unionRect(WebCore::RenderObject::absoluteTextRects(rangeToReplace)));
         m_webPage->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(uuid, replacement.uuid, rect);
