@@ -12,14 +12,16 @@
 #include "include/gpu/graphite/TextureInfo.h"
 #include "include/gpu/graphite/vk/VulkanGraphiteTypes.h"
 #include "include/gpu/vk/VulkanExtensions.h"
-#include "src/gpu/graphite/AttachmentTypes.h"
+#include "include/gpu/vk/VulkanTypes.h"
 #include "src/gpu/graphite/ContextUtils.h"
 #include "src/gpu/graphite/GraphicsPipelineDesc.h"
 #include "src/gpu/graphite/GraphiteResourceKey.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/RendererProvider.h"
 #include "src/gpu/graphite/RuntimeEffectDictionary.h"
 #include "src/gpu/graphite/vk/VulkanGraphiteUtilsPriv.h"
 #include "src/gpu/graphite/vk/VulkanRenderPass.h"
+#include "src/gpu/graphite/vk/VulkanSamplerYcbcrConversion.h"
 #include "src/gpu/graphite/vk/VulkanSharedContext.h"
 #include "src/gpu/vk/VulkanUtilsPriv.h"
 
@@ -120,9 +122,6 @@ void VulkanCaps::init(const ContextOptions& contextOptions,
         fShouldPersistentlyMapCpuToGpuBuffers = false;
     }
 
-    this->initFormatTable(vkInterface, physDev, physDevProperties);
-    this->initDepthStencilFormatTable(vkInterface, physDev, physDevProperties);
-
     if (!contextOptions.fDisableDriverCorrectnessWorkarounds) {
         this->applyDriverCorrectnessWorkarounds(physDevProperties);
     }
@@ -156,6 +155,11 @@ void VulkanCaps::init(const ContextOptions& contextOptions,
     if (extensions->hasExtension(VK_EXT_DEVICE_FAULT_EXTENSION_NAME, 1)) {
         fSupportsDeviceFaultInfo = true;
     }
+
+    // Note that format table initialization should be performed at the end of this method to ensure
+    // all capability determinations are completed prior to populating the format tables.
+    this->initFormatTable(vkInterface, physDev, physDevProperties);
+    this->initDepthStencilFormatTable(vkInterface, physDev, physDevProperties);
 
     this->finishInitialization(contextOptions);
 }
@@ -964,16 +968,20 @@ void VulkanCaps::SupportedSampleCounts::initSampleCounts(const skgpu::VulkanInte
     VkImageFormatProperties properties;
 
     VkResult result;
-    VULKAN_CALL_RESULT(interface, result,
-                       GetPhysicalDeviceImageFormatProperties(physDev,
-                                                              format,
-                                                              VK_IMAGE_TYPE_2D,
-                                                              VK_IMAGE_TILING_OPTIMAL,
-                                                              usage,
-                                                              0,  // createFlags
-                                                              &properties));
+    // VULKAN_CALL_RESULT requires a VulkanSharedContext for tracking DEVICE_LOST, but VulkanCaps
+    // are initialized before a VulkanSharedContext is available. The _NOCHECK variant only requires
+    // a VulkanInterface, so we can use that and log failures manually.
+    VULKAN_CALL_RESULT_NOCHECK(interface,
+                               result,
+                               GetPhysicalDeviceImageFormatProperties(physDev,
+                                                                      format,
+                                                                      VK_IMAGE_TYPE_2D,
+                                                                      VK_IMAGE_TILING_OPTIMAL,
+                                                                      usage,
+                                                                      0,  // createFlags
+                                                                      &properties));
     if (result != VK_SUCCESS) {
-        SKGPU_LOG_W("Vulkan call GetPhysicalDeviceImageFormatProperties failed");
+        SKGPU_LOG_W("Vulkan call GetPhysicalDeviceImageFormatProperties failed: %d", result);
         return;
     }
 
@@ -1464,6 +1472,30 @@ void VulkanCaps::buildKeyForTexture(SkISize dimensions,
                  (static_cast<uint32_t>(vkSpec.fSharingMode)         << 6)  |
                  (static_cast<uint32_t>(vkSpec.fAspectMask)          << 7)  |
                  (static_cast<uint32_t>(vkSpec.fImageUsageFlags)     << 19);
+}
+
+ImmutableSamplerInfo VulkanCaps::getImmutableSamplerInfo(sk_sp<TextureProxy> proxy) const {
+    if (proxy) {
+        const skgpu::VulkanYcbcrConversionInfo& ycbcrConversionInfo =
+                proxy->textureInfo().vulkanTextureSpec().fYcbcrConversionInfo;
+
+        if (ycbcrConversionInfo.isValid()) {
+            ImmutableSamplerInfo immutableSamplerInfo;
+            // ycbcrConversionInfo's fFormat being VK_FORMAT_UNDEFINED indicates we are using an
+            // external format rather than a known VkFormat.
+            immutableSamplerInfo.fFormat = ycbcrConversionInfo.fFormat == VK_FORMAT_UNDEFINED
+                    ? ycbcrConversionInfo.fExternalFormat
+                    : ycbcrConversionInfo.fFormat;
+            immutableSamplerInfo.fNonFormatYcbcrConversionInfo =
+                    ycbcrConversionInfo.nonFormatInfoAsUInt32();
+            immutableSamplerInfo.fFormatFeatures = ycbcrConversionInfo.fFormatFeatures;
+            return immutableSamplerInfo;
+        }
+    }
+
+    // If the proxy is null or the YCbCr conversion for that proxy is invalid, then return a
+    // default ImmutableSamplerInfo struct.
+    return {};
 }
 
 } // namespace skgpu::graphite

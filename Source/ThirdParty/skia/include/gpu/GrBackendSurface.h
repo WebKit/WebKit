@@ -12,11 +12,11 @@
 #include "include/core/SkSize.h"
 #include "include/gpu/GpuTypes.h"
 #include "include/gpu/GrTypes.h"
+#include "include/gpu/mock/GrMockTypes.h"
 #include "include/private/base/SkAPI.h"
 #include "include/private/base/SkAnySubclass.h"
+#include "include/private/base/SkDebug.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
-
-#include "include/gpu/mock/GrMockTypes.h"
 
 enum class SkTextureCompressionType;
 class GrBackendFormatData;
@@ -105,7 +105,7 @@ public:
 private:
     // Size determined by looking at the GrBackendFormatData subclasses, then guessing-and-checking.
     // Compiler will complain if this is too small - in that case, just increase the number.
-    inline constexpr static size_t kMaxSubclassSize = 64;
+    inline constexpr static size_t kMaxSubclassSize = 80;
     using AnyFormatData = SkAnySubclass<GrBackendFormatData, kMaxSubclassSize>;
 
     friend class GrBackendSurfacePriv;
@@ -220,7 +220,7 @@ public:
 private:
     // Size determined by looking at the GrBackendTextureData subclasses, then guessing-and-checking.
     // Compiler will complain if this is too small - in that case, just increase the number.
-    inline constexpr static size_t kMaxSubclassSize = 160;
+    inline constexpr static size_t kMaxSubclassSize = 176;
     using AnyTextureData = SkAnySubclass<GrBackendTextureData, kMaxSubclassSize>;
 
     friend class GrBackendSurfacePriv;
@@ -348,7 +348,7 @@ private:
     // Size determined by looking at the GrBackendRenderTargetData subclasses, then
     // guessing-and-checking. Compiler will complain if this is too small - in that case, just
     // increase the number.
-    inline constexpr static size_t kMaxSubclassSize = 160;
+    inline constexpr static size_t kMaxSubclassSize = 176;
     using AnyRenderTargetData = SkAnySubclass<GrBackendRenderTargetData, kMaxSubclassSize>;
 
     friend class GrBackendSurfacePriv;

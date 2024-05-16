@@ -2,6 +2,10 @@ load("@skia_user_config//:copts.bzl", "DEFAULT_COPTS")
 load("//bazel:macros.bzl", "bool_flag", "exports_files_legacy", "skia_filegroup", "wasm_cc_binary")
 load("//bazel/karma:karma_test.bzl", "karma_test")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy(
@@ -68,6 +72,7 @@ genrule(
 CK_DEFINES = [
     "CK_INCLUDE_PATHOPS",
     "EMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0",  # Allows us to compile with -fno-rtti
+    "SK_DISABLE_LEGACY_PARAGRAPH_UNICODE=1",
 ] + select({
     ":enable_fonts_true": ["CK_INCLUDE_PARAGRAPH"],
     ":enable_fonts_false": ["CK_NO_FONTS"],
@@ -292,6 +297,7 @@ cc_binary(
     ] + select({
         ":enable_fonts_true": [
             "//:fontmgr_data_freetype",
+            "//:fontmgr_empty_freetype",
             "//modules/skparagraph:skparagraph_harfbuzz_icu",
         ],
         ":enable_fonts_false": [],
@@ -301,7 +307,8 @@ cc_binary(
             "//:skshaper_unicode",
             "//:skunicode_icu",
             "//modules/skottie",
-            "//modules/skottie:utils",
+            "//modules/skottie/utils:skottie_utils",
+            "//modules/skottie/utils:text_editor",
         ],
         ":enable_skottie_false": [],
     }) + select({

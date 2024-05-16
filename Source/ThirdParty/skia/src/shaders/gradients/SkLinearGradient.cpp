@@ -14,6 +14,7 @@
 #include "include/core/SkScalar.h"
 #include "include/core/SkShader.h"
 #include "include/effects/SkGradientShader.h"
+#include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkTArray.h"
 #include "src/core/SkReadBuffer.h"
 #include "src/core/SkWriteBuffer.h"
@@ -47,9 +48,12 @@ SkLinearGradient::SkLinearGradient(const SkPoint pts[2], const Descriptor& desc)
 
 sk_sp<SkFlattenable> SkLinearGradient::CreateProc(SkReadBuffer& buffer) {
     DescriptorScope desc;
-    SkMatrix legacyLocalMatrix;
+    SkMatrix legacyLocalMatrix, *lmPtr = nullptr;
     if (!desc.unflatten(buffer, &legacyLocalMatrix)) {
         return nullptr;
+    }
+    if (!legacyLocalMatrix.isIdentity()) {
+        lmPtr = &legacyLocalMatrix;
     }
     SkPoint pts[2];
     pts[0] = buffer.readPoint();
@@ -61,7 +65,7 @@ sk_sp<SkFlattenable> SkLinearGradient::CreateProc(SkReadBuffer& buffer) {
                                         desc.fColorCount,
                                         desc.fTileMode,
                                         desc.fInterpolation,
-                                        &legacyLocalMatrix);
+                                        lmPtr);
 }
 
 void SkLinearGradient::flatten(SkWriteBuffer& buffer) const {
@@ -96,7 +100,7 @@ sk_sp<SkShader> SkGradientShader::MakeLinear(const SkPoint pts[2],
                                              SkTileMode mode,
                                              const Interpolation& interpolation,
                                              const SkMatrix* localMatrix) {
-    if (!pts || !SkScalarIsFinite((pts[1] - pts[0]).length())) {
+    if (!pts || !SkIsFinite((pts[1] - pts[0]).length())) {
         return nullptr;
     }
     if (!SkGradientBaseShader::ValidGradient(colors, colorCount, mode, interpolation)) {

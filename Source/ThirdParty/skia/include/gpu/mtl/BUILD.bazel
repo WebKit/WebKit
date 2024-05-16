@@ -1,5 +1,9 @@
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -9,5 +13,8 @@ skia_filegroup(
     srcs = [
         "MtlMemoryAllocator.h",
     ],
-    visibility = ["//include/gpu:__pkg__"],
+    visibility = [
+        "//include/gpu:__pkg__",
+        "//src/gpu/mtl:__pkg__",
+    ],
 )

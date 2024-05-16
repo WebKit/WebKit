@@ -16,10 +16,13 @@
 #include "src/gpu/graphite/CommandBuffer.h"
 #include "src/gpu/graphite/ComputePipeline.h"
 #include "src/gpu/graphite/ContextPriv.h"
+#include "src/gpu/graphite/ContextUtils.h"
 #include "src/gpu/graphite/GlobalCache.h"
 #include "src/gpu/graphite/GraphicsPipeline.h"
 #include "src/gpu/graphite/GraphicsPipelineDesc.h"
 #include "src/gpu/graphite/Log.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
+#include "src/gpu/graphite/RendererProvider.h"
 #include "src/gpu/graphite/ResourceCache.h"
 #include "src/gpu/graphite/Sampler.h"
 #include "src/gpu/graphite/SharedContext.h"
@@ -28,7 +31,16 @@
 
 namespace skgpu::graphite {
 
-ResourceProvider::ResourceProvider(SharedContext* sharedContext,
+// This is only used when tracing is enabled at compile time.
+[[maybe_unused]] static std::string to_str(const SharedContext* ctx,
+                                           const GraphicsPipelineDesc& gpDesc,
+                                           const RenderPassDesc& rpDesc) {
+    const ShaderCodeDictionary* dict = ctx->shaderCodeDictionary();
+    const RenderStep* step = ctx->rendererProvider()->lookup(gpDesc.renderStepID());
+    return GetPipelineLabel(dict, rpDesc, step, gpDesc.paintParamsID());
+}
+
+ResourceProvider::ResourceProvider(SharedContext* sharedContext,\
                                    SingleOwner* singleOwner,
                                    uint32_t recorderID,
                                    size_t resourceBudget)
@@ -53,7 +65,10 @@ sk_sp<GraphicsPipeline> ResourceProvider::findOrCreateGraphicsPipeline(
         // threads. If this happens, GlobalCache returns the first-through-gate pipeline and we
         // discard the redundant pipeline. While this is wasted effort in the rare event of a race,
         // it allows pipeline creation to be performed without locking the global cache.
-        TRACE_EVENT0_ALWAYS("skia.shaders", "createGraphicsPipeline");
+        // NOTE: The parameters to TRACE_EVENT are only evaluated inside an if-block when the
+        // category is enabled.
+        TRACE_EVENT1("skia.shaders", "createGraphicsPipeline", "desc",
+                     TRACE_STR_COPY(to_str(fSharedContext, pipelineDesc, renderPassDesc).c_str()));
         pipeline = this->createGraphicsPipeline(runtimeDict, pipelineDesc, renderPassDesc);
         if (pipeline) {
             // TODO: Should we store a null pipeline if we failed to create one so that subsequent
@@ -82,6 +97,7 @@ sk_sp<ComputePipeline> ResourceProvider::findOrCreateComputePipeline(
 
 sk_sp<Texture> ResourceProvider::findOrCreateScratchTexture(SkISize dimensions,
                                                             const TextureInfo& info,
+                                                            std::string_view label,
                                                             skgpu::Budgeted budgeted) {
     SkASSERT(info.isValid());
 
@@ -91,7 +107,11 @@ sk_sp<Texture> ResourceProvider::findOrCreateScratchTexture(SkISize dimensions,
     // Scratch textures are not shareable
     fSharedContext->caps()->buildKeyForTexture(dimensions, info, kType, Shareable::kNo, &key);
 
-    return this->findOrCreateTextureWithKey(dimensions, info, key, budgeted);
+    return this->findOrCreateTextureWithKey(dimensions,
+                                            info,
+                                            key,
+                                            std::move(label),
+                                            budgeted);
 }
 
 sk_sp<Texture> ResourceProvider::findOrCreateDepthStencilAttachment(SkISize dimensions,
@@ -106,7 +126,11 @@ sk_sp<Texture> ResourceProvider::findOrCreateDepthStencilAttachment(SkISize dime
     // stomping on each other's data.
     fSharedContext->caps()->buildKeyForTexture(dimensions, info, kType, Shareable::kYes, &key);
 
-    return this->findOrCreateTextureWithKey(dimensions, info, key, skgpu::Budgeted::kYes);
+    return this->findOrCreateTextureWithKey(dimensions,
+                                            info,
+                                            key,
+                                            "DepthStencilAttachment",
+                                            skgpu::Budgeted::kYes);
 }
 
 sk_sp<Texture> ResourceProvider::findOrCreateDiscardableMSAAAttachment(SkISize dimensions,
@@ -123,22 +147,28 @@ sk_sp<Texture> ResourceProvider::findOrCreateDiscardableMSAAAttachment(SkISize d
     // render pass.
     fSharedContext->caps()->buildKeyForTexture(dimensions, info, kType, Shareable::kYes, &key);
 
-    return this->findOrCreateTextureWithKey(dimensions, info, key, skgpu::Budgeted::kYes);
+    return this->findOrCreateTextureWithKey(dimensions,
+                                            info,
+                                            key,
+                                            "DiscardableMSAAAttachment",
+                                            skgpu::Budgeted::kYes);
 }
 
 sk_sp<Texture> ResourceProvider::findOrCreateTextureWithKey(SkISize dimensions,
                                                             const TextureInfo& info,
                                                             const GraphiteResourceKey& key,
+                                                            std::string_view label,
                                                             skgpu::Budgeted budgeted) {
     // If the resource is shareable it should be budgeted since it shouldn't be backing any client
     // owned object.
     SkASSERT(key.shareable() == Shareable::kNo || budgeted == skgpu::Budgeted::kYes);
 
     if (Resource* resource = fResourceCache->findAndRefResource(key, budgeted)) {
+        resource->setLabel(label);
         return sk_sp<Texture>(static_cast<Texture*>(resource));
     }
 
-    auto tex = this->createTexture(dimensions, info, budgeted);
+    auto tex = this->createTexture(dimensions, info, std::move(label), budgeted);
     if (!tex) {
         return nullptr;
     }
@@ -149,14 +179,14 @@ sk_sp<Texture> ResourceProvider::findOrCreateTextureWithKey(SkISize dimensions,
     return tex;
 }
 
-sk_sp<Sampler> ResourceProvider::findOrCreateCompatibleSampler(const SamplerDesc& desc) {
-    GraphiteResourceKey key = fSharedContext->caps()->makeSamplerKey(desc);
+sk_sp<Sampler> ResourceProvider::findOrCreateCompatibleSampler(const SamplerDesc& samplerDesc) {
+    GraphiteResourceKey key = fSharedContext->caps()->makeSamplerKey(samplerDesc);
 
     if (Resource* resource = fResourceCache->findAndRefResource(key, skgpu::Budgeted::kYes)) {
         return sk_sp<Sampler>(static_cast<Sampler*>(resource));
     }
 
-    sk_sp<Sampler> sampler = this->createSampler(desc);
+    sk_sp<Sampler> sampler = this->createSampler(samplerDesc);
     if (!sampler) {
         return nullptr;
     }
@@ -168,7 +198,8 @@ sk_sp<Sampler> ResourceProvider::findOrCreateCompatibleSampler(const SamplerDesc
 
 sk_sp<Buffer> ResourceProvider::findOrCreateBuffer(size_t size,
                                                    BufferType type,
-                                                   AccessPattern accessPattern) {
+                                                   AccessPattern accessPattern,
+                                                   std::string_view label) {
     static const ResourceType kType = GraphiteResourceKey::GenerateResourceType();
 
     GraphiteResourceKey key;
@@ -199,9 +230,10 @@ sk_sp<Buffer> ResourceProvider::findOrCreateBuffer(size_t size,
 
     skgpu::Budgeted budgeted = skgpu::Budgeted::kYes;
     if (Resource* resource = fResourceCache->findAndRefResource(key, budgeted)) {
+        resource->setLabel(std::move(label));
         return sk_sp<Buffer>(static_cast<Buffer*>(resource));
     }
-    auto buffer = this->createBuffer(size, type, accessPattern);
+    auto buffer = this->createBuffer(size, type, accessPattern, std::move(label));
     if (!buffer) {
         return nullptr;
     }

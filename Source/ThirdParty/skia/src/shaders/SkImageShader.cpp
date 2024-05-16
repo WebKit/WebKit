@@ -20,6 +20,7 @@
 #include "include/private/base/SkMath.h"
 #include "modules/skcms/skcms.h"
 #include "src/base/SkArenaAlloc.h"
+#include "src/core/SkBitmapProcState.h"
 #include "src/core/SkColorSpaceXformSteps.h"
 #include "src/core/SkEffectPriv.h"
 #include "src/core/SkImageInfoPriv.h"
@@ -33,7 +34,6 @@
 #include "src/core/SkSamplingPriv.h"
 #include "src/core/SkWriteBuffer.h"
 #include "src/image/SkImage_Base.h"
-#include "src/shaders/SkLocalMatrixShader.h"
 
 #ifdef SK_ENABLE_LEGACY_SHADERCONTEXT
 #include "src/shaders/SkBitmapProcShader.h"
@@ -192,8 +192,8 @@ bool SkImageShader::isOpaque() const {
 static bool legacy_shader_can_handle(const SkMatrix& inv) {
     SkASSERT(!inv.hasPerspective());
 
-    // We only have methods for scale+translate
-    if (!inv.isScaleTranslate()) {
+    // Scale+translate methods are always present, but affine might not be.
+    if (!SkOpts::S32_alpha_D32_filter_DXDY && !inv.isScaleTranslate()) {
         return false;
     }
 
@@ -311,13 +311,14 @@ sk_sp<SkShader> SkImageShader::MakeRaw(sk_sp<SkImage> image,
         return SkShaders::Empty();
     }
     auto subset = SkRect::Make(image->dimensions());
-    return SkLocalMatrixShader::MakeWrapped<SkImageShader>(localMatrix,
-                                                           image,
-                                                           subset,
-                                                           tmx, tmy,
-                                                           options,
-                                                           /*raw=*/true,
-                                                           /*clampAsIfUnpremul=*/false);
+
+    sk_sp<SkShader> s = sk_make_sp<SkImageShader>(image,
+                                                  subset,
+                                                  tmx, tmy,
+                                                  options,
+                                                  /*raw=*/true,
+                                                  /*clampAsIfUnpremul=*/false);
+    return s->makeWithLocalMatrix(localMatrix ? *localMatrix : SkMatrix::I());
 }
 
 sk_sp<SkShader> SkImageShader::MakeSubset(sk_sp<SkImage> image,
@@ -342,13 +343,14 @@ sk_sp<SkShader> SkImageShader::MakeSubset(sk_sp<SkImage> image,
     if (!SkRect::Make(image->bounds()).contains(subset)) {
         return nullptr;
     }
-    return SkLocalMatrixShader::MakeWrapped<SkImageShader>(localMatrix,
-                                                           std::move(image),
-                                                           subset,
-                                                           tmx, tmy,
-                                                           options,
-                                                           /*raw=*/false,
-                                                           clampAsIfUnpremul);
+
+    sk_sp<SkShader> s = sk_make_sp<SkImageShader>(std::move(image),
+                                                  subset,
+                                                  tmx, tmy,
+                                                  options,
+                                                  /*raw=*/false,
+                                                  clampAsIfUnpremul);
+    return s->makeWithLocalMatrix(localMatrix ? *localMatrix : SkMatrix::I());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -619,6 +621,10 @@ bool SkImageShader::appendStages(const SkStageRec& rec, const SkShaders::MatrixR
             case kRGBA_F16Norm_SkColorType:
             case kRGBA_F16_SkColorType:     p->append(SkRasterPipelineOp::gather_f16,   ctx); break;
             case kRGBA_F32_SkColorType:     p->append(SkRasterPipelineOp::gather_f32,   ctx); break;
+            case kBGRA_10101010_XR_SkColorType:
+                p->append(SkRasterPipelineOp::gather_10101010_xr,  ctx);
+                p->append(SkRasterPipelineOp::swap_rb);
+                break;
             case kRGBA_10x6_SkColorType:    p->append(SkRasterPipelineOp::gather_10x6,  ctx); break;
 
             case kGray_8_SkColorType:       p->append(SkRasterPipelineOp::gather_a8,    ctx);

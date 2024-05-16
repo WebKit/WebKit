@@ -11,6 +11,7 @@
 #include "include/core/SkBitmap.h"
 #include "include/core/SkBlendMode.h"
 #include "include/core/SkBlender.h"
+#include "include/core/SkBlurTypes.h"
 #include "include/core/SkColorFilter.h"
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkColorType.h"
@@ -27,12 +28,14 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkRegion.h"
 #include "include/core/SkShader.h"
+#include "include/core/SkStrokeRec.h"
 #include "include/core/SkSurface.h"
 #include "include/core/SkTextBlob.h"
 #include "include/core/SkTileMode.h"
 #include "include/core/SkTypes.h"
 #include "include/core/SkVertices.h"
 #include "include/private/base/SkDebug.h"
+#include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkSafe32.h"
 #include "include/private/base/SkTPin.h"
 #include "include/private/base/SkTemplates.h"
@@ -42,12 +45,14 @@
 #include "src/base/SkEnumBitMask.h"
 #include "src/base/SkMSAN.h"
 #include "src/core/SkBlenderBase.h"
+#include "src/core/SkBlurMaskFilterImpl.h"
 #include "src/core/SkCanvasPriv.h"
 #include "src/core/SkDevice.h"
 #include "src/core/SkImageFilterTypes.h"
 #include "src/core/SkImageFilter_Base.h"
 #include "src/core/SkImagePriv.h"
 #include "src/core/SkLatticeIter.h"
+#include "src/core/SkMaskFilterBase.h"
 #include "src/core/SkMatrixPriv.h"
 #include "src/core/SkPaintPriv.h"
 #include "src/core/SkSpecialImage.h"
@@ -526,14 +531,6 @@ int SkCanvas::only_axis_aligned_saveBehind(const SkRect* bounds) {
     return this->getSaveCount() - 1;
 }
 
-// In our current design/features, we should never have a layer (src) in a different colorspace
-// than its parent (dst), so we assert that here. This is called out from other asserts, in case
-// we add some feature in the future to allow a given layer/imagefilter to operate in a specific
-// colorspace.
-static void check_drawdevice_colorspaces(SkDevice* src, SkDevice* dst) {
-    SkASSERT(dst && (!src || dst->imageInfo().colorSpace() == src->imageInfo().colorSpace()));
-}
-
 // Helper function to compute the center reference point used for scale decomposition under
 // non-linear transformations.
 static skif::ParameterSpace<SkPoint> compute_decomposition_center(
@@ -684,7 +681,7 @@ get_layer_mapping_and_bounds(
 // Ideally image filters operate in the dst color type, but if there is insufficient alpha bits
 // we move some bits from color channels into the alpha channel since that can greatly improve
 // the quality of blurs and other filters.
-static SkColorType image_filter_color_type(SkImageInfo dstInfo) {
+static SkColorType image_filter_color_type(const SkColorInfo& dstInfo) {
     if (dstInfo.bytesPerPixel() <= 4 &&
         dstInfo.colorType() != kRGBA_8888_SkColorType &&
         dstInfo.colorType() != kBGRA_8888_SkColorType) {
@@ -719,26 +716,18 @@ void SkCanvas::internalDrawDeviceWithFilter(SkDevice* src,
                                             FilterSpan filters,
                                             const SkPaint& paint,
                                             DeviceCompatibleWithFilter compat,
+                                            const SkColorInfo& filterColorInfo,
                                             SkScalar scaleFactor,
                                             bool srcIsCoverageLayer) {
     // The dst is always required, the src can be null if 'filter' is non-null and does not require
-    // a source image.
+    // a source image. For regular filters, 'src' is the layer and 'dst' is the parent device. For
+    // backdrop filters, 'src' is the parent device and 'dst' is the layer.
     SkASSERT(dst);
 
-    check_drawdevice_colorspaces(src, dst);
-    sk_sp<SkColorSpace> filterColorSpace = dst->imageInfo().refColorSpace(); // == src.refColorSpace
+    sk_sp<SkColorSpace> filterColorSpace = filterColorInfo.refColorSpace();
 
-    // 'filterColorType' ends up being the actual color type of the layer, so image filtering is
-    // effectively done in the layer's format. We get there in a roundabout way due to handling both
-    // regular and backdrop filters:
-    //  - For regular filters, 'src' is the layer and 'dst' is the parent device. But the layer
-    //    was constructed with a color type equal to image_filter_color_type(dst), so this matches
-    //    the layer.
-    //  - For backdrop filters, 'src' is the parent device and 'dst' is the layer, which was already
-    //    constructed as image_filter_color_type(src). Calling image_filter_color_type twice does
-    //    not change the color type, so it remains the color type of the layer.
     const SkColorType filterColorType =
-            srcIsCoverageLayer ? kAlpha_8_SkColorType : image_filter_color_type(dst->imageInfo());
+            srcIsCoverageLayer ? kAlpha_8_SkColorType : image_filter_color_type(filterColorInfo);
 
     // 'filter' sees the src device's buffer as the implicit input image, and processes the image
     // in this device space (referred to as the "layer" space). However, the filter
@@ -919,6 +908,7 @@ void SkCanvas::internalDrawDeviceWithFilter(SkDevice* src,
                                             FilterSpan filters,
                                             const SkPaint& paint,
                                             DeviceCompatibleWithFilter compat,
+                                            const SkColorInfo& filterColorInfo,
                                             SkScalar scaleFactor,
                                             bool srcIsCoverageLayer) {
     const SkImageFilter* filter = filters.empty() ? nullptr : filters.front().get();
@@ -926,19 +916,9 @@ void SkCanvas::internalDrawDeviceWithFilter(SkDevice* src,
     // coverage image filters won't be supported in the old filter rendering code path
     (void) srcIsCoverageLayer;
 
-    check_drawdevice_colorspaces(src, dst);
-    sk_sp<SkColorSpace> filterColorSpace = dst->imageInfo().refColorSpace(); // == src.refColorSpace
+    sk_sp<SkColorSpace> filterColorSpace = filterColorInfo.refColorSpace();
 
-    // 'filterColorType' ends up being the actual color type of the layer, so image filtering is
-    // effectively done in the layer's format. We get there in a roundabout way due to handling both
-    // regular and backdrop filters:
-    //  - For regular filters, 'src' is the layer and 'dst' is the parent device. But the layer
-    //    was constructed with a color type equal to image_filter_color_type(dst), so this matches
-    //    the layer.
-    //  - For backdrop filters, 'src' is the parent device and 'dst' is the layer, which was already
-    //    constructed as image_filter_color_type(src). Calling image_filter_color_type twice does
-    //    not change the color type, so it remains the color type of the layer.
-    const SkColorType filterColorType = image_filter_color_type(dst->imageInfo());
+    const SkColorType filterColorType = image_filter_color_type(filterColorInfo);
 
     // 'filter' sees the src device's buffer as the implicit input image, and processes the image
     // in this device space (referred to as the "layer" space). However, the filter
@@ -1280,6 +1260,7 @@ void SkCanvas::internalSaveLayer(const SaveLayerRec& rec,
         // In this case it still has an output that we need to render, but do so now since there is
         // no new layer pushed on the stack and the paired restore() will be a no-op.
         if (!filters.empty() && !priorDevice->isNoPixelsDevice()) {
+            SkColorInfo filterColorInfo = priorDevice->imageInfo().colorInfo();
 #if defined(SK_RESOLVE_FILTERS_BEFORE_RESTORE)
             const SkImageFilter* filter = filters.empty() ? nullptr : filters.front().get();
             skif::ParameterSpace<SkRect> emptyInput{SkRect::MakeEmpty()};
@@ -1294,14 +1275,18 @@ void SkCanvas::internalSaveLayer(const SaveLayerRec& rec,
                 SkSamplingOptions sampling{useNN ? SkFilterMode::kNearest : SkFilterMode::kLinear};
                 priorDevice->drawFilteredImage(newLayerMapping,
                                                /*src=*/nullptr,
-                                               image_filter_color_type(priorDevice->imageInfo()),
+                                               image_filter_color_type(filterColorInfo),
                                                filter,
                                                sampling,
                                                restorePaint);
             }
 #else
+            if (rec.fColorSpace) {
+                filterColorInfo = filterColorInfo.makeColorSpace(sk_ref_sp(rec.fColorSpace));
+            }
             this->internalDrawDeviceWithFilter(/*src=*/nullptr, priorDevice, filters, restorePaint,
-                                               DeviceCompatibleWithFilter::kUnknown);
+                                               DeviceCompatibleWithFilter::kUnknown,
+                                               filterColorInfo);
 #endif
         }
 
@@ -1333,11 +1318,15 @@ void SkCanvas::internalSaveLayer(const SaveLayerRec& rec,
         } else {
             layerColorType = SkToBool(rec.fSaveLayerFlags & kF16ColorType)
                                     ? kRGBA_F16_SkColorType
-                                    : image_filter_color_type(priorDevice->imageInfo());
+                                    : image_filter_color_type(priorDevice->imageInfo().colorInfo());
         }
-        SkImageInfo info = SkImageInfo::Make(layerBounds.width(), layerBounds.height(),
-                                             layerColorType, kPremul_SkAlphaType,
-                                             priorDevice->imageInfo().refColorSpace());
+        SkImageInfo info =
+                SkImageInfo::Make(layerBounds.width(),
+                                  layerBounds.height(),
+                                  layerColorType,
+                                  kPremul_SkAlphaType,
+                                  rec.fColorSpace ? sk_ref_sp(rec.fColorSpace)
+                                                  : priorDevice->imageInfo().refColorSpace());
 
         SkPixelGeometry geo = rec.fSaveLayerFlags & kPreserveLCDText_SaveLayerFlag
                                       ? fProps.pixelGeometry()
@@ -1395,11 +1384,13 @@ void SkCanvas::internalSaveLayer(const SaveLayerRec& rec,
         bool scaleBackdrop = rec.fExperimentalBackdropScale != 1.0f;
         auto compat = (!filters.empty() || backdropFilter || scaleBackdrop)
                 ? DeviceCompatibleWithFilter::kUnknown : DeviceCompatibleWithFilter::kYes;
+        // Using the color info of 'newDevice' is equivalent to using 'rec.fColorSpace'.
         this->internalDrawDeviceWithFilter(priorDevice,     // src
                                            newDevice.get(), // dst
                                            backdropAsSpan,
                                            backdropPaint,
                                            compat,
+                                           newDevice->imageInfo().colorInfo(),
                                            rec.fExperimentalBackdropScale);
     }
 
@@ -1500,6 +1491,7 @@ void SkCanvas::internalRestore() {
                                                    layer->fImageFilters,
                                                    layer->fPaint,
                                                    DeviceCompatibleWithFilter::kYes,
+                                                   layer->fDevice->imageInfo().colorInfo(),
                                                    /*scaleFactor=*/1.0f,
                                                    layer->fIsCoverage);
             } else {
@@ -2085,7 +2077,7 @@ void SkCanvas::drawPath(const SkPath& path, const SkPaint& paint) {
 static bool fillable(const SkRect& r) {
     SkScalar w = r.width();
     SkScalar h = r.height();
-    return SkScalarIsFinite(w) && w > 0 && SkScalarIsFinite(h) && h > 0;
+    return SkIsFinite(w, h) && w > 0 && h > 0;
 }
 
 static SkPaint clean_paint_for_lattice(const SkPaint* paint) {
@@ -2270,13 +2262,81 @@ void SkCanvas::onDrawPoints(PointMode mode, size_t count, const SkPoint pts[],
     }
 }
 
+static const SkBlurMaskFilterImpl* can_attempt_blurred_rrect_draw(const SkPaint& paint) {
+    if (paint.getPathEffect()) {
+        return nullptr;
+    }
+
+    // TODO: Once stroke-and-fill goes away, we can check the paint's style directly.
+    if (SkStrokeRec(paint).getStyle() != SkStrokeRec::kFill_Style) {
+        return nullptr;
+    }
+
+    const SkMaskFilterBase* maskFilter = as_MFB(paint.getMaskFilter());
+    if (!maskFilter || maskFilter->type() != SkMaskFilterBase::Type::kBlur) {
+        return nullptr;
+    }
+
+    const SkBlurMaskFilterImpl* blurMaskFilter =
+            static_cast<const SkBlurMaskFilterImpl*>(maskFilter);
+    if (blurMaskFilter->blurStyle() != kNormal_SkBlurStyle) {
+        return nullptr;
+    }
+
+    return blurMaskFilter;
+}
+
+std::optional<AutoLayerForImageFilter> SkCanvas::attemptBlurredRRectDraw(
+        const SkRRect& rrect, const SkPaint& paint, SkEnumBitMask<PredrawFlags> flags) {
+    SkASSERT(!(flags & PredrawFlags::kSkipMaskFilterAutoLayer));
+    const SkRect& bounds = rrect.getBounds();
+
+    if (!this->topDevice()->useDrawCoverageMaskForMaskFilters()) {
+        // Regular draw in the legacy mask filter case.
+        return this->aboutToDraw(paint, &bounds, flags);
+    }
+
+    if (!this->getTotalMatrix().isSimilarity()) {
+        // TODO: If the CTM does more than just translation, rotation, and uniform scale, then the
+        // results of analytic blurring will be different than mask filter blurring. Skip the
+        // specialized path in this case.
+        return this->aboutToDraw(paint, &bounds, flags);
+    }
+
+    const SkBlurMaskFilterImpl* blurMaskFilter = can_attempt_blurred_rrect_draw(paint);
+    if (!blurMaskFilter) {
+        // Can't attempt a specialized blurred draw, so do a regular draw.
+        return this->aboutToDraw(paint, &bounds, flags);
+    }
+
+    auto layer = this->aboutToDraw(paint, &bounds, flags | PredrawFlags::kSkipMaskFilterAutoLayer);
+    if (!layer) {
+        // predrawNotify failed.
+        return std::nullopt;
+    }
+
+    const float deviceSigma = blurMaskFilter->computeXformedSigma(this->getTotalMatrix());
+    if (this->topDevice()->drawBlurredRRect(rrect, layer->paint(), deviceSigma)) {
+        // Analytic draw was successful.
+        return std::nullopt;
+    }
+
+    // Fall back on a regular draw, adding any mask filter layer we skipped earlier. We know the
+    // paint has a mask filter here, otherwise we would have failed the can_attempt check above.
+    layer->addMaskFilterLayer(&bounds);
+    return layer;
+}
+
 void SkCanvas::onDrawRect(const SkRect& r, const SkPaint& paint) {
     SkASSERT(r.isSorted());
     if (this->internalQuickReject(r, paint)) {
         return;
     }
 
-    auto layer = this->aboutToDraw(paint, &r, PredrawFlags::kCheckForOverwrite);
+    // Returns a layer if a blurred draw is not applicable or was unsuccessful.
+    std::optional<AutoLayerForImageFilter> layer = this->attemptBlurredRRectDraw(
+            SkRRect::MakeRect(r), paint, PredrawFlags::kCheckForOverwrite);
+
     if (layer) {
         this->topDevice()->drawRect(r, layer->paint());
     }
@@ -2344,7 +2404,10 @@ void SkCanvas::onDrawOval(const SkRect& oval, const SkPaint& paint) {
         return;
     }
 
-    auto layer = this->aboutToDraw(paint, &oval);
+    // Returns a layer if a blurred draw is not applicable or was unsuccessful.
+    std::optional<AutoLayerForImageFilter> layer =
+            this->attemptBlurredRRectDraw(SkRRect::MakeOval(oval), paint, PredrawFlags::kNone);
+
     if (layer) {
         this->topDevice()->drawOval(oval, layer->paint());
     }
@@ -2360,7 +2423,8 @@ void SkCanvas::onDrawArc(const SkRect& oval, SkScalar startAngle,
 
     auto layer = this->aboutToDraw(paint, &oval);
     if (layer) {
-        this->topDevice()->drawArc(oval, startAngle, sweepAngle, useCenter, layer->paint());
+        this->topDevice()->drawArc(SkArc::Make(oval, startAngle, sweepAngle, useCenter),
+                                   layer->paint());
     }
 }
 
@@ -2382,7 +2446,10 @@ void SkCanvas::onDrawRRect(const SkRRect& rrect, const SkPaint& paint) {
         return;
     }
 
-    auto layer = this->aboutToDraw(paint, &bounds);
+    // Returns a layer if a blurred draw is not applicable or was unsuccessful.
+    std::optional<AutoLayerForImageFilter> layer =
+            this->attemptBlurredRRectDraw(rrect, paint, PredrawFlags::kNone);
+
     if (layer) {
         this->topDevice()->drawRRect(rrect, layer->paint());
     }
@@ -2516,7 +2583,8 @@ void SkCanvas::onDrawImage2(const SkImage* image, SkScalar x, SkScalar y,
             if (this->predrawNotify()) {
                 // While we are skipping an initial layer, evaluate the rest of the image filter
                 // pipeline in the same color format as we would have if there was a layer.
-                const auto filterColorType = image_filter_color_type(device->imageInfo());
+                const auto filterColorType =
+                        image_filter_color_type(device->imageInfo().colorInfo());
                 device->drawFilteredImage(mapping, special.get(), filterColorType, filter.get(),
                                           sampling,realPaint);
             }
@@ -2607,7 +2675,7 @@ void SkCanvas::onDrawImageRect2(const SkImage* image, const SkRect& src, const S
         // how the image filters will access 'image' (possibly different than just 'outputBounds').
         auto backend = device->createImageFilteringBackend(
                 device->surfaceProps(),
-                image_filter_color_type(device->imageInfo()));
+                image_filter_color_type(device->imageInfo().colorInfo()));
         auto [mapping, srcBounds] = *mappingAndBounds;
         skif::Stats stats;
         skif::Context ctx{std::move(backend),

@@ -1,5 +1,9 @@
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -7,7 +11,10 @@ exports_files_legacy()
 # This group is exported as //modules/svg/svg.gni:skia_svg_sources.
 skia_filegroup(
     name = "private_hdrs",
-    srcs = ["SkSVGTextPriv.h"],
+    srcs = [
+        "SkSVGRectPriv.h",
+        "SkSVGTextPriv.h",
+    ],
     visibility = ["//modules/svg:__pkg__"],
 )
 
@@ -26,12 +33,14 @@ skia_filegroup(
         "SkSVGFeBlend.cpp",
         "SkSVGFeColorMatrix.cpp",
         "SkSVGFeComposite.cpp",
+        "SkSVGFeComponentTransfer.cpp",
         "SkSVGFeDisplacementMap.cpp",
         "SkSVGFeFlood.cpp",
         "SkSVGFeGaussianBlur.cpp",
         "SkSVGFeImage.cpp",
         "SkSVGFeLightSource.cpp",
         "SkSVGFeLighting.cpp",
+        "SkSVGFeMerge.cpp",
         "SkSVGFeMorphology.cpp",
         "SkSVGFeOffset.cpp",
         "SkSVGFeTurbulence.cpp",

@@ -9,6 +9,7 @@
 #define skgpu_graphite_task_RenderPassTask_DEFINED
 
 #include "src/gpu/graphite/CommandBuffer.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/task/Task.h"
 
 namespace skgpu::graphite {
@@ -32,9 +33,11 @@ public:
 
     ~RenderPassTask() override;
 
-    bool prepareResources(ResourceProvider*, const RuntimeEffectDictionary*) override;
+    Status prepareResources(ResourceProvider*,
+                            ScratchResourceManager*,
+                            const RuntimeEffectDictionary*) override;
 
-    bool addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
+    Status addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
 
 private:
     RenderPassTask(DrawPassList, const RenderPassDesc&, sk_sp<TextureProxy> target);

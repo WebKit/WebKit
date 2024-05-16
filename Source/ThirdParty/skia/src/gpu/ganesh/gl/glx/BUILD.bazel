@@ -1,5 +1,9 @@
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library", "skia_filegroup")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -22,7 +26,7 @@ skia_cc_library(
         "GrGLMakeGLXInterface.cpp",
     ],
     hdrs = [
-        "//include/gpu/gl/glx:public_hdrs",
+        "//include/gpu/ganesh/gl/glx:public_hdrs",
     ],
     defines = ["SK_DISABLE_LEGACY_GLXINTERFACE_FACTORY"],
     visibility = ["//:__pkg__"],

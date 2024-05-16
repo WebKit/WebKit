@@ -1,5 +1,9 @@
 load("//bazel:macros.bzl", "exports_files_legacy", "skia_filegroup")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -15,5 +19,8 @@ skia_filegroup(
         "GrMtlTypes.h",
         "SkSurfaceMetal.h",
     ],
-    visibility = ["//include/gpu/ganesh:__pkg__"],
+    visibility = [
+        "//include/gpu/ganesh:__pkg__",
+        "//src/gpu/ganesh/mtl:__pkg__",
+    ],
 )

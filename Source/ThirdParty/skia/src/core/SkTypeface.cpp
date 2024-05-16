@@ -253,7 +253,10 @@ sk_sp<SkTypeface> SkTypeface::MakeDeserialize(SkStream* stream, sk_sp<SkFontMgr>
 
         [[maybe_unused]] FactoryId id = desc.getFactoryId();
         SkDEBUGF("Could not find factory %c%c%c%c for %s.\n",
-                 (id >> 24) & 0xFF, (id >> 16) & 0xFF, (id >> 8) & 0xFF, (id >> 0) & 0xFF,
+                 (char)((id >> 24) & 0xFF),
+                 (char)((id >> 16) & 0xFF),
+                 (char)((id >> 8) & 0xFF),
+                 (char)((id >> 0) & 0xFF),
                  desc.getFamilyName());
 
         if (lastResortMgr) {
@@ -473,7 +476,8 @@ std::unique_ptr<SkAdvancedTypefaceMetrics> SkTypeface::getAdvancedMetrics() cons
             this->getFamilyName(&result->fPostScriptName);
         }
     }
-    if (result && result->fType == SkAdvancedTypefaceMetrics::kTrueType_Font) {
+    if (result && (result->fType == SkAdvancedTypefaceMetrics::kTrueType_Font ||
+                   result->fType == SkAdvancedTypefaceMetrics::kCFF_Font)) {
         SkOTTableOS2::Version::V2::Type::Field fsType;
         constexpr SkFontTableTag os2Tag = SkTEndian_SwapBE32(SkOTTableOS2::TAG);
         constexpr size_t fsTypeOffset = offsetof(SkOTTableOS2::Version::V2, fsType);

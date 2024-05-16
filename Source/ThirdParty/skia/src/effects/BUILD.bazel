@@ -1,5 +1,9 @@
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -29,11 +33,6 @@ EFFECTS_FILES = [
 split_srcs_and_hdrs(
     name = "effects",
     files = EFFECTS_FILES,
-)
-
-skia_filegroup(
-    name = "legacy_draw_looper",
-    srcs = ["SkLayerDrawLooper.cpp"],
 )
 
 skia_filegroup(

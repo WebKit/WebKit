@@ -1,9 +1,12 @@
 load("//bazel:flags.bzl", "bool_flag", "selects", "string_flag_with_values")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 # @platforms is found at https://github.com/bazelbuild/platforms
-package(default_visibility = ["//:__subpackages__"])
 
 config_setting(
     name = "linux_x64",
@@ -184,12 +187,6 @@ string_flag_with_values(
         # Deprecated, do not use.
         "fci_fontmgr",
     ],
-)
-
-bool_flag(
-    # This is necessary because Bazel provides no way to compile header files on their own
-    name = "compile_generated_cpp_files_for_headers",
-    default = False,
 )
 
 bool_flag(

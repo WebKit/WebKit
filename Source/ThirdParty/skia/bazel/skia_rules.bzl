@@ -12,12 +12,10 @@ load("@skia_user_config//:linkopts.bzl", "DEFAULT_LINKOPTS")
 load("//bazel:cc_binary_with_flags.bzl", "cc_binary_with_flags")
 load(
     "//bazel:generate_cpp_files_for_headers.bzl",
-    _generate_cpp_files_for_header_list = "generate_cpp_files_for_header_list",
     _generate_cpp_files_for_headers = "generate_cpp_files_for_headers",
 )
 
 generate_cpp_files_for_headers = _generate_cpp_files_for_headers
-generate_cpp_files_for_header_list = _generate_cpp_files_for_header_list
 
 def select_multi(values_map, default_cases = None):
     """select() but allowing multiple matches of the keys.
@@ -202,15 +200,18 @@ def skia_cc_deps(name, visibility, deps = [], linkopts = [], textual_hdrs = [], 
         testonly = testonly,
     )
 
-def skia_defines(name, visibility, defines):
-    """A self-documenting wrapper around cc_library for defines"""
-    native.cc_library(name = name, visibility = visibility, defines = defines)
-
 def skia_filegroup(**kwargs):
     """A wrapper around filegroup allowing us to customize visibility in G3."""
     native.filegroup(**kwargs)
 
-def skia_objc_library(name, copts = DEFAULT_OBJC_COPTS, **kwargs):
+def skia_objc_library(
+        name,
+        copts = DEFAULT_OBJC_COPTS,
+        deps = [],
+        ios_frameworks = [],
+        mac_frameworks = [],
+        sdk_frameworks = [],
+        **kwargs):
     """A wrapper around objc_library for Skia Objective C libraries.
 
     This lets us provide compiler flags (copts) consistently to the Skia build (e.g. //:skia_public)
@@ -221,18 +222,27 @@ def skia_objc_library(name, copts = DEFAULT_OBJC_COPTS, **kwargs):
         name: the name of the underlying target.
         copts: Flags which should be passed to the C++ compiler. By default, we use
             DEFAULT_OBJC_COPTS from @skia_user_config//:copts.bzl.
+        deps: https://bazel.build/reference/be/objective-c#objc_library.deps
+        ios_frameworks: A list (not select) of iOS-specific Frameworks.
+        mac_frameworks: A list (not select) of Mac-specific Frameworks.
+        sdk_frameworks: https://bazel.build/reference/be/objective-c#objc_library.sdk_frameworks
+                        except this should only be a list, not a select.
         **kwargs: Normal arguments to objc_library
     """
+    if len(ios_frameworks) > 0 or len(mac_frameworks) > 0:
+        sdk_frameworks += select({
+            "@platforms//os:ios": ios_frameworks,
+            "@platforms//os:macos": mac_frameworks,
+            "//conditions:default": [],
+        })
 
-    # Internally, we need to combine sdk_frameworks and deps, but we can only
-    # do that if both are lists
-    # https://github.com/bazelbuild/bazel/issues/14157
-    sdks = kwargs.get("sdk_frameworks", None)
-    deps = kwargs.get("deps", [])
-    if type(sdks) != "NoneType":
-        if type(sdks) != "list" or type(deps) != "list":
-            fail("sdk_frameworks and deps must both be normal lists, not selects")
-    native.objc_library(name = name, copts = copts, **kwargs)
+    native.objc_library(
+        name = name,
+        copts = copts,
+        deps = deps,
+        sdk_frameworks = sdk_frameworks,
+        **kwargs
+    )
 
 # buildifier: disable=unnamed-macro
 def exports_files_legacy(label_list = None, visibility = None):

@@ -8,7 +8,7 @@ load("//toolchain:download_toolchains.bzl", "download_toolchains_for_skia")
 
 download_toolchains_for_skia("clang_linux_amd64", "clang_mac", "ndk_linux_amd64")
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("//bazel:gcs_mirror.bzl", "gcs_mirror_url")
 
 # See https://github.com/emscripten-core/emsdk/tree/85d27a4a2a60d591613a305b14ae438c2bb3ce11/bazel#setup-instructions
@@ -616,6 +616,42 @@ cipd_install(
     tag = "version:47",
 )
 
+http_file(
+    name = "buildifier_linux_x64",
+    downloaded_file_path = "buildifier",
+    executable = True,
+    sha256 = "be63db12899f48600bad94051123b1fd7b5251e7661b9168582ce52396132e92",
+    urls = gcs_mirror_url(
+        ext = "",
+        sha256 = "be63db12899f48600bad94051123b1fd7b5251e7661b9168582ce52396132e92",
+        url = "https://github.com/bazelbuild/buildtools/releases/download/v6.4.0/buildifier-linux-amd64",
+    ),
+)
+
+http_file(
+    name = "buildifier_macos_arm64",
+    downloaded_file_path = "buildifier",
+    executable = True,
+    sha256 = "fa07ba0d20165917ca4cc7609f9b19a8a4392898148b7babdf6bb2a7dd963f05",
+    urls = gcs_mirror_url(
+        ext = "",
+        sha256 = "fa07ba0d20165917ca4cc7609f9b19a8a4392898148b7babdf6bb2a7dd963f05",
+        url = "https://github.com/bazelbuild/buildtools/releases/download/v6.4.0/buildifier-darwin-arm64",
+    ),
+)
+
+http_file(
+    name = "buildifier_macos_x64",
+    downloaded_file_path = "buildifier",
+    executable = True,
+    sha256 = "eeb47b2de27f60efe549348b183fac24eae80f1479e8b06cac0799c486df5bed",
+    urls = gcs_mirror_url(
+        ext = "",
+        sha256 = "eeb47b2de27f60efe549348b183fac24eae80f1479e8b06cac0799c486df5bed",
+        url = "https://github.com/bazelbuild/buildtools/releases/download/v6.4.0/buildifier-darwin-amd64",
+    ),
+)
+
 ##################################
 # Docker rules and dependencies. #
 ##################################
@@ -653,7 +689,7 @@ load(
 # Pulls the gcr.io/skia-public/debugger-app-base container.
 container_pull(
     name = "debugger-app-base",
-    digest = "sha256:24edbde4082b5bbfc6b52ca8a88d974a6898a134bca815348a72e89598fba4a9",
+    digest = "sha256:e9508b902e1aaea4c6233e7dec4d7cdaf98145310bd5620e44bccfba8295489d",
     registry = "gcr.io",
     repository = "skia-public/debugger-app-base",
 )
@@ -661,7 +697,7 @@ container_pull(
 # Pulls the gcr.io/skia-public/jsfiddle-base container.
 container_pull(
     name = "jsfiddle-base",
-    digest = "sha256:453d00b44c6baac7c5a6a27d00a0b51805e8636cbfb8da176c7c33dc3728bb3f",
+    digest = "sha256:c9b24124977b6ce7cdc1ccb7ac7c248a777ec1f6fe67571d125fdc5b17a32859",
     registry = "gcr.io",
     repository = "skia-public/jsfiddle-base",
 )
@@ -669,7 +705,7 @@ container_pull(
 # Pulls the gcr.io/skia-public/shaders-base container.
 container_pull(
     name = "shaders-base",
-    digest = "sha256:cbf986e97789cab9c3fc6bdb82c12a2330ca75ba473607f5daf29f9747ae9a45",
+    digest = "sha256:edc6a51fe9de3b95949dfdfa1cdd17966044503ce4a3dcb5fcaf23256df8afa0",
     registry = "gcr.io",
     repository = "skia-public/shaders-base",
 )
@@ -677,7 +713,7 @@ container_pull(
 # Pulls the gcr.io/skia-public/skottie-base container.
 container_pull(
     name = "skottie-base",
-    digest = "sha256:9727f56830b976b5567c9ce10b3505f6ee1c9e69af0e6bb749bfd74dc42c37c1",
+    digest = "sha256:8ecbf179f1e3176640a88377882243df2d311f35afe833ec5809702a66698761",
     registry = "gcr.io",
     repository = "skia-public/skottie-base",
 )

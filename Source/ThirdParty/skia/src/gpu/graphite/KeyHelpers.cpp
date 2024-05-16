@@ -11,6 +11,8 @@
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkData.h"
 #include "include/core/SkImageInfo.h"
+#include "include/core/SkM44.h"
+#include "include/core/SkScalar.h"
 #include "include/effects/SkRuntimeEffect.h"
 #include "include/gpu/graphite/Surface.h"
 #include "src/base/SkHalf.h"
@@ -35,6 +37,7 @@
 #include "src/gpu/Swizzle.h"
 #include "src/gpu/graphite/Caps.h"
 #include "src/gpu/graphite/DrawContext.h"
+#include "src/gpu/graphite/Image_Base_Graphite.h"
 #include "src/gpu/graphite/Image_Graphite.h"
 #include "src/gpu/graphite/Image_YUVA_Graphite.h"
 #include "src/gpu/graphite/KeyContext.h"
@@ -48,13 +51,13 @@
 #include "src/gpu/graphite/ResourceProvider.h"
 #include "src/gpu/graphite/RuntimeEffectDictionary.h"
 #include "src/gpu/graphite/ShaderCodeDictionary.h"
+#include "src/gpu/graphite/Surface_Graphite.h"
 #include "src/gpu/graphite/Texture.h"
 #include "src/gpu/graphite/TextureProxy.h"
 #include "src/gpu/graphite/TextureProxyView.h"
 #include "src/gpu/graphite/TextureUtils.h"
 #include "src/gpu/graphite/Uniform.h"
 #include "src/gpu/graphite/UniformManager.h"
-#include "src/gpu/graphite/YUVATextureProxies.h"
 #include "src/image/SkImage_Base.h"
 #include "src/shaders/SkBlendShader.h"
 #include "src/shaders/SkColorFilterShader.h"
@@ -619,6 +622,7 @@ void add_yuv_image_uniform_data(const ShaderCodeDictionary* dict,
     gatherer->write(SkSize::Make(1.f/imgData.fImgSize.width(), 1.f/imgData.fImgSize.height()));
     gatherer->write(SkSize::Make(1.f/imgData.fImgSizeUV.width(), 1.f/imgData.fImgSizeUV.height()));
     gatherer->write(imgData.fSubset);
+    gatherer->write(imgData.fLinearFilterUVInset);
     gatherer->write(SkTo<int>(imgData.fTileModes[0]));
     gatherer->write(SkTo<int>(imgData.fTileModes[1]));
     gatherer->write(SkTo<int>(imgData.fSampling.filter));
@@ -677,9 +681,13 @@ void YUVImageShaderBlock::AddBlock(const KeyContext& keyContext,
         return;
     }
 
+    SkTileMode uvTileModes[2] = { imgData.fTileModes[0] == SkTileMode::kDecal
+                                          ? SkTileMode::kClamp : imgData.fTileModes[0],
+                                  imgData.fTileModes[1] == SkTileMode::kDecal
+                                          ? SkTileMode::kClamp : imgData.fTileModes[1] };
     gatherer->add(imgData.fSampling, imgData.fTileModes, imgData.fTextureProxies[0]);
-    gatherer->add(imgData.fSamplingUV, imgData.fTileModes, imgData.fTextureProxies[1]);
-    gatherer->add(imgData.fSamplingUV, imgData.fTileModes, imgData.fTextureProxies[2]);
+    gatherer->add(imgData.fSamplingUV, uvTileModes, imgData.fTextureProxies[1]);
+    gatherer->add(imgData.fSamplingUV, uvTileModes, imgData.fTextureProxies[2]);
     gatherer->add(imgData.fSampling, imgData.fTileModes, imgData.fTextureProxies[3]);
 
     if (imgData.fSampling.useCubic) {
@@ -1243,7 +1251,8 @@ static void add_to_key(const KeyContext& keyContext,
     SkASSERT(filter);
 
     sk_sp<TextureProxy> proxy = RecorderPriv::CreateCachedProxy(keyContext.recorder(),
-                                                                filter->bitmap());
+                                                                filter->bitmap(),
+                                                                "TableColorFilterTexture");
     if (!proxy) {
         SKGPU_LOG_W("Couldn't create TableColorFilter's table");
 
@@ -1450,8 +1459,9 @@ static void add_to_key(const KeyContext& keyContext,
 
     CoordClampShaderBlock::CoordClampData data(shader->subset());
 
+    KeyContextWithCoordClamp childContext(keyContext);
     CoordClampShaderBlock::BeginBlock(keyContext, builder, gatherer, data);
-        AddToKey(keyContext, builder, gatherer, shader->shader().get());
+    AddToKey(childContext, builder, gatherer, shader->shader().get());
     builder->endBlock();
 }
 static void notify_in_use(Recorder* recorder,
@@ -1478,9 +1488,8 @@ static void add_yuv_image_to_key(const KeyContext& keyContext,
                                  SkSamplingOptions sampling) {
     SkASSERT(!imageToDraw->isAlphaOnly());
 
-    const YUVATextureProxies& yuvaProxies =
-            static_cast<const Image_YUVA*>(imageToDraw.get())->yuvaProxies();
-    const SkYUVAInfo& yuvaInfo = yuvaProxies.yuvaInfo();
+    const Image_YUVA* yuvaImage = static_cast<const Image_YUVA*>(imageToDraw.get());
+    const SkYUVAInfo& yuvaInfo = yuvaImage->yuvaInfo();
     // We would want to add a translation to the local matrix to handle other sitings.
     SkASSERT(yuvaInfo.sitingX() == SkYUVAInfo::Siting::kCentered);
     SkASSERT(yuvaInfo.sitingY() == SkYUVAInfo::Siting::kCentered);
@@ -1489,51 +1498,82 @@ static void add_yuv_image_to_key(const KeyContext& keyContext,
                                            origShader->tileModeY(),
                                            imageToDraw->dimensions(),
                                            origShader->subset());
-    for (int i = 0; i < SkYUVAInfo::kYUVAChannelCount; ++i) {
-        memset(&imgData.fChannelSelect[i], 0, sizeof(SkV4));
-    }
-    int textureCount = 0;
-    SkYUVAInfo::YUVALocations yuvaLocations = yuvaProxies.yuvaLocations();
-    // We assume the U and V planes are the same size and have the same subsampling
-    SkASSERT(yuvaProxies.proxy(yuvaLocations[SkYUVAInfo::kU].fPlane)->dimensions() ==
-             yuvaProxies.proxy(yuvaLocations[SkYUVAInfo::kV].fPlane)->dimensions());
-    SkASSERT(yuvaInfo.planeSubsamplingFactors(yuvaLocations[SkYUVAInfo::kU].fPlane) ==
-             yuvaInfo.planeSubsamplingFactors(yuvaLocations[SkYUVAInfo::kV].fPlane));
     for (int locIndex = 0; locIndex < SkYUVAInfo::kYUVAChannelCount; ++locIndex) {
-        auto [yuvPlane, yuvChannel] = yuvaLocations[locIndex];
-        if (yuvPlane >= 0) {
-            SkASSERT(locIndex == textureCount);
-            TextureProxyView view = yuvaProxies.makeView(yuvPlane);
+        const TextureProxyView& view = yuvaImage->proxyView(locIndex);
+        if (view) {
             imgData.fTextureProxies[locIndex] = view.refProxy();
-            imgData.fChannelSelect[locIndex][static_cast<int>(yuvChannel)] = 1.0f;
-            ++textureCount;
-            // V will share this size and filter data
-            if (locIndex == SkYUVAInfo::kU) {
-                auto [ssx, ssy] = yuvaInfo.planeSubsamplingFactors(yuvPlane);
-                if (ssx > 1 || ssy > 1) {
-                    // We need to adjust the image size we use for sampling to reflect the
-                    // actual image size of the UV planes. However, since our coordinates
-                    // are in Y's texel space we need to scale accordingly.
-                    imgData.fImgSizeUV = {view.dimensions().width()*ssx,
-                                          view.dimensions().height()*ssy};
-                    if (imgData.fSampling.filter == SkFilterMode::kNearest) {
-                        imgData.fSamplingUV = SkSamplingOptions(SkFilterMode::kLinear,
-                                                                imgData.fSampling.mipmap);
-                    }
-                }
-
+            // The view's swizzle has the data channel for the YUVA location in all slots, so read
+            // the 0th slot to determine fChannelSelect
+            switch(view.swizzle()[0]) {
+                case 'r': imgData.fChannelSelect[locIndex] = {1.f, 0.f, 0.f, 0.f}; break;
+                case 'g': imgData.fChannelSelect[locIndex] = {0.f, 1.f, 0.f, 0.f}; break;
+                case 'b': imgData.fChannelSelect[locIndex] = {0.f, 0.f, 1.f, 0.f}; break;
+                case 'a': imgData.fChannelSelect[locIndex] = {0.f, 0.f, 0.f, 1.f}; break;
+                default:
+                    imgData.fChannelSelect[locIndex] = {0.f, 0.f, 0.f, 0.f};
+                    SkDEBUGFAILF("Unexpected swizzle for YUVA data: %c", view.swizzle()[0]);
+                    break;
             }
+        } else {
+            // Only the A proxy view should be null, in which case we bind the Y proxy view to
+            // pass validation and send all 1s for the channel selection to signal opaque alpha.
+            SkASSERT(locIndex == 3);
+            imgData.fTextureProxies[locIndex] = yuvaImage->proxyView(SkYUVAInfo::kY).refProxy();
+            imgData.fChannelSelect[locIndex] = {1.f, 1.f, 1.f, 1.f};
         }
     }
-    SkASSERT(textureCount == 3 || textureCount == 4);
-    // If the format has no alpha, we still need to set the proxy to something
-    if (textureCount == 3) {
-        imgData.fTextureProxies[3] = imgData.fTextureProxies[0];
-        // All ones will be a signal that there is no alpha.
-        for (int i = 0; i < 4; ++i) {
-            imgData.fChannelSelect[SkYUVAInfo::kA][i] = 1.0f;
+
+    auto [ssx, ssy] = yuvaImage->uvSubsampleFactors();
+    if (ssx > 1 || ssy > 1) {
+        // We need to adjust the image size we use for sampling to reflect the actual image size of
+        // the UV planes. However, since our coordinates are in Y's texel space we need to scale
+        // accordingly.
+        const TextureProxyView& view = yuvaImage->proxyView(SkYUVAInfo::kU);
+        imgData.fImgSizeUV = {view.dimensions().width()*ssx, view.dimensions().height()*ssy};
+        // This promotion of nearest to linear filtering for UV planes exists to mimic
+        // libjpeg[-turbo]'s do_fancy_upsampling option. We will filter the subsampled plane,
+        // however we want to filter at a fixed point for each logical image pixel to simulate
+        // nearest neighbor. In the shader we detect that the UV filtermode doesn't match the Y
+        // filtermode, and snap to Y pixel centers.
+        if (imgData.fSampling.filter == SkFilterMode::kNearest) {
+            imgData.fSamplingUV = SkSamplingOptions(SkFilterMode::kLinear,
+                                                    imgData.fSampling.mipmap);
+            // Consider a logical image pixel at the edge of the subset. When computing the logical
+            // pixel color value we should use a blend of two values from the subsampled plane.
+            // Depending on where the subset edge falls in actual subsampled plane, one of those
+            // values may come from outside the subset. Hence, we will use the default inset
+            // in Y texel space of 1/2. This applies the wrap mode to the subset but allows
+            // linear filtering to read pixels that are just outside the subset.
+            imgData.fLinearFilterUVInset.fX = 0.5f;
+            imgData.fLinearFilterUVInset.fY = 0.5f;
+        } else if (imgData.fSampling.filter == SkFilterMode::kLinear) {
+            // We need to inset so that we aren't sampling outside the subset, but no farther.
+            // Start by mapping the subset to UV texel space
+            float scaleX = 1.f/ssx;
+            float scaleY = 1.f/ssy;
+            SkRect subsetUV = {imgData.fSubset.fLeft  *scaleX,
+                               imgData.fSubset.fTop   *scaleY,
+                               imgData.fSubset.fRight *scaleX,
+                               imgData.fSubset.fBottom*scaleY};
+            // Round to UV texel borders
+            SkIRect iSubsetUV = subsetUV.roundOut();
+            // Inset in UV and map back to Y texel space. This gives us the largest possible
+            // inset rectangle that will not sample outside of the subset texels in UV space.
+            SkRect insetRectUV = {(iSubsetUV.fLeft  +0.5f)*ssx,
+                                  (iSubsetUV.fTop   +0.5f)*ssy,
+                                  (iSubsetUV.fRight -0.5f)*ssx,
+                                  (iSubsetUV.fBottom-0.5f)*ssy};
+            // Compute intersection with original inset
+            SkRect insetRect = imgData.fSubset.makeOutset(-0.5f, -0.5f);
+            (void) insetRect.intersect(insetRectUV);
+            // Compute max inset values to ensure we always remain within the subset.
+            imgData.fLinearFilterUVInset = {std::max(insetRect.fLeft - imgData.fSubset.fLeft,
+                                                     imgData.fSubset.fRight - insetRect.fRight),
+                                            std::max(insetRect.fTop - imgData.fSubset.fTop,
+                                                     imgData.fSubset.fBottom - insetRect.fBottom)};
         }
     }
+
     float yuvM[20];
     SkColorMatrix_YUV2RGB(yuvaInfo.yuvColorSpace(), yuvM);
     // We drop the fourth column entirely since the transformation
@@ -1609,6 +1649,23 @@ static void add_to_key(const KeyContext& keyContext,
         builder->addBlock(BuiltInCodeSnippetID::kError);
         return;
     }
+    if (!as_IB(shader->image())->isGraphiteBacked()) {
+        // GetGraphiteBacked() created a new image (or fetched a cached image) from the client
+        // image provider. This image was not available when NotifyInUse() visited the shader tree,
+        // so call notify again. These images shouldn't really be producing new tasks since it's
+        // unlikely that a client will be fulfilling with a dynamic image that wraps a long-lived
+        // SkSurface. However, the images can be linked to a surface that rendered the initial
+        // content and not calling notifyInUse() prevents unlinking the image from the Device.
+        // If the client image provider then holds on to many of these images, the leaked Device and
+        // DrawContext memory can be surprisingly high. b/338453542.
+        // TODO (b/330864257): Once paint keys are extracted at draw time, AddToKey() will be
+        // fully responsible for notifyInUse() calls and then we can simply always call this on
+        // `imageToDraw`. The DrawContext that samples the image will also be available to AddToKey
+        // so we won't have to pass in nullptr.
+        SkASSERT(as_IB(imageToDraw)->isGraphiteBacked());
+        static_cast<Image_Base*>(imageToDraw.get())->notifyInUse(keyContext.recorder(),
+                                                                 /*drawContext=*/nullptr);
+    }
     if (as_IB(imageToDraw)->isYUVA()) {
         return add_yuv_image_to_key(keyContext,
                                       builder,
@@ -1627,7 +1684,27 @@ static void add_to_key(const KeyContext& keyContext,
                                         view.proxy()->dimensions(),
                                         shader->subset(),
                                         ReadSwizzle::kRGBA);
-    imgData.fSampling = newSampling;
+
+    // Here we detect pixel aligned blit-like image draws. Some devices have low precision filtering
+    // and will produce degraded (blurry) images unexpectedly for sequential exact pixel blits when
+    // not using nearest filtering. This is common for canvas scrolling implementations. Forcing
+    // nearest filtering when possible can also be a minor perf/power optimization depending on the
+    // hardware.
+    bool samplingHasNoEffect = false;
+    // Cubic sampling is will not filter the same as nearest even when pixel aligned.
+    if (keyContext.optimizeSampling() == KeyContext::OptimizeSampling::kYes &&
+        !newSampling.useCubic) {
+        SkMatrix totalM = keyContext.local2Dev().asM33();
+        if (keyContext.localMatrix()) {
+            totalM.preConcat(*keyContext.localMatrix());
+        }
+        totalM.normalizePerspective();
+        // The matrix should be translation with only pixel aligned 2d translation.
+        samplingHasNoEffect = totalM.isTranslate() && SkScalarIsInt(totalM.getTranslateX()) &&
+                              SkScalarIsInt(totalM.getTranslateY());
+    }
+
+    imgData.fSampling = samplingHasNoEffect ? SkFilterMode::kNearest : newSampling;
     imgData.fTextureProxy = view.refProxy();
     skgpu::Swizzle readSwizzle = view.swizzle();
     // If the color type is alpha-only, propagate the alpha value to the other channels.
@@ -1660,7 +1737,7 @@ static void add_to_key(const KeyContext& keyContext,
     ImageShaderBlock::AddBlock(keyContext, builder, gatherer, imgData);
 }
 static void notify_in_use(Recorder* recorder,
-                          DrawContext*,
+                          DrawContext* drawContext,
                           const SkImageShader* shader) {
     auto image = as_IB(shader->image());
     if (!image->isGraphiteBacked()) {
@@ -1668,9 +1745,7 @@ static void notify_in_use(Recorder* recorder,
         return;
     }
 
-    // TODO(b/323887207): Once scratch devices are linked to special images and their use needs to
-    // be linked to specific draw contexts, that will be passed in here.
-    static_cast<Image_Base*>(image)->notifyInUse(recorder);
+    static_cast<Image_Base*>(image)->notifyInUse(recorder, drawContext);
 }
 
 static void add_to_key(const KeyContext& keyContext,
@@ -1688,6 +1763,7 @@ static void add_to_key(const KeyContext& keyContext,
         // If the image is not graphite backed then we can assume the origin will be TopLeft as we
         // require that in the ImageProvider utility. Also Graphite YUV images are assumed to be
         // TopLeft origin.
+        // TODO (b/336788317): Fold YUVAImage's origin into this matrix as well.
         auto imgBase = as_IB(imgShader->image());
         if (imgBase->isGraphiteBacked() && !imgBase->isYUVA()) {
             auto imgGraphite = static_cast<Image*>(imgBase);
@@ -1701,21 +1777,17 @@ static void add_to_key(const KeyContext& keyContext,
     }
 
     matrix.postConcat(shader->localMatrix());
-    if (!matrix.isIdentity()) {
+    LocalMatrixShaderBlock::LMShaderData lmShaderData(matrix);
 
-        LocalMatrixShaderBlock::LMShaderData lmShaderData(matrix);
+    KeyContextWithLocalMatrix newContext(keyContext, matrix);
 
-        KeyContextWithLocalMatrix newContext(keyContext, matrix);
+    LocalMatrixShaderBlock::BeginBlock(newContext, builder, gatherer, lmShaderData);
 
-        LocalMatrixShaderBlock::BeginBlock(newContext, builder, gatherer, lmShaderData);
+        AddToKey(newContext, builder, gatherer, wrappedShader);
 
-            AddToKey(newContext, builder, gatherer, wrappedShader);
-
-        builder->endBlock();
-    } else  {
-        AddToKey(keyContext, builder, gatherer, wrappedShader);
-    }
+    builder->endBlock();
 }
+
 static void notify_in_use(Recorder* recorder,
                           DrawContext* drawContext,
                           const SkLocalMatrixShader* shader) {
@@ -1738,11 +1810,14 @@ static void add_to_key(const KeyContext& keyContext,
     std::unique_ptr<SkPerlinNoiseShader::PaintingData> paintingData = shader->getPaintingData();
     paintingData->generateBitmaps();
 
-    sk_sp<TextureProxy> perm = RecorderPriv::CreateCachedProxy(
-            keyContext.recorder(), paintingData->getPermutationsBitmap());
+    sk_sp<TextureProxy> perm =
+            RecorderPriv::CreateCachedProxy(keyContext.recorder(),
+                                            paintingData->getPermutationsBitmap(),
+                                            "PerlinNoisePermTable");
 
     sk_sp<TextureProxy> noise =
-            RecorderPriv::CreateCachedProxy(keyContext.recorder(), paintingData->getNoiseBitmap());
+            RecorderPriv::CreateCachedProxy(keyContext.recorder(), paintingData->getNoiseBitmap(),
+                                            "PerlinNoiseNoiseTable");
 
     if (!perm || !noise) {
         SKGPU_LOG_W("Couldn't create tables for PerlinNoiseShader");
@@ -1794,12 +1869,34 @@ static void add_to_key(const KeyContext& keyContext,
         return;
     }
 
+    // NOTE: While this is intended to be a "scratch" surface, we don't use MakeScratch() because
+    // the SkPicture could contain arbitrary operations that rely on the Recorder's atlases, which
+    // means the Surface's device has to participate in flushing when the atlas fills up.
+    // TODO: Can this be an approx-fit image that's generated?
     // TODO: right now we're explicitly not caching here. We could expand the ImageProvider
     // API to include already Graphite-backed images, add a Recorder-local cache or add
     // rendered-picture images to the global cache.
-    sk_sp<SkImage> img = info.makeImage(
-            SkSurfaces::RenderTarget(recorder, info.imageInfo, skgpu::Mipmapped::kNo, &info.props),
-            shader->picture().get());
+    sk_sp<Surface> surface = Surface::Make(recorder,
+                                           info.imageInfo,
+                                           "PictureShaderTexture",
+                                           Budgeted::kYes,
+                                           Mipmapped::kNo,
+                                           SkBackingFit::kExact,
+                                           &info.props);
+    if (!surface) {
+        SKGPU_LOG_W("Could not create surface to render PictureShader");
+        builder->addBlock(BuiltInCodeSnippetID::kError);
+        return;
+    }
+
+    // NOTE: Don't call CachedImageInfo::makeImage() since that uses the legacy makeImageSnapshot()
+    // API, which results in an extra texture copy on a Graphite Surface.
+    surface->getCanvas()->concat(info.matrixForDraw);
+    surface->getCanvas()->drawPicture(shader->picture().get());
+    sk_sp<SkImage> img = SkSurfaces::AsImage(std::move(surface));
+    // TODO: 'img' did not exist when notify_in_use() was called, but ideally the DrawTask to render
+    // into 'surface' would be a child of the current device. While we push all tasks to the root
+    // list this works out okay, but will need to be addressed before we move off that system.
     if (!img) {
         SKGPU_LOG_W("Couldn't create SkImage for PictureShader");
         builder->addBlock(BuiltInCodeSnippetID::kError);
@@ -2025,7 +2122,8 @@ static void add_gradient_to_key(const KeyContext& keyContext,
             shader->setCachedBitmap(colorsAndOffsetsBitmap);
         }
 
-        proxy = RecorderPriv::CreateCachedProxy(keyContext.recorder(), shader->cachedBitmap());
+        proxy = RecorderPriv::CreateCachedProxy(keyContext.recorder(), shader->cachedBitmap(),
+                                                "GradientTexture");
         if (!proxy) {
             SKGPU_LOG_W("Couldn't create GradientShader's color and offset bitmap proxy");
             builder->addBlock(BuiltInCodeSnippetID::kError);

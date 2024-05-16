@@ -6,6 +6,11 @@ load(
     "skia_cc_deps",
     "skia_cc_library",
     "skia_filegroup",
+    "skia_objc_library",
+)
+
+package(
+    default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
@@ -148,7 +153,11 @@ skia_filegroup(
     name = "osfile_platform",
     srcs = select({
         "@platforms//os:windows": ["SkOSFile_win.cpp"],
-        "@platforms//os:ios": ["SkOSFile_posix.cpp"],
+        "@platforms//os:ios": [
+            "SkOSFile_ios.h",
+            "SkOSFile_posix.cpp",
+            "//include/ports:core_foundation_hdrs",
+        ],
         "//conditions:default": ["SkOSFile_posix.cpp"],
     }),
 )
@@ -312,6 +321,22 @@ skia_filegroup(
 )
 
 skia_cc_library(
+    name = "fontmgr_custom",
+    srcs = [
+        "SkFontMgr_custom.cpp",
+    ],
+    hdrs = [
+        "SkFontMgr_custom.h",
+    ],
+    deps = [
+        ":freetype_support",
+        "//src/base",
+        "//src/core",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
     name = "freetype_support",
     srcs = [
         ":typeface_freetype",
@@ -326,46 +351,45 @@ skia_cc_library(
 )
 
 skia_cc_library(
-    name = "fontmgr_fontconfig_freetype",
+    name = "fontmgr_android_freetype",
     srcs = [
-        "SkFontMgr_fontconfig.cpp",
+        "SkFontMgr_android.cpp",
+        "SkFontMgr_android_parser.cpp",
     ],
     hdrs = [
-        "//include/ports:fontconfig_fontmgr_hdrs",
+        "SkFontMgr_android_parser.h",
+        "//include/ports:android_fontmgr_hdrs",
     ],
-    defines = ["SK_FONTMGR_FONTCONFIG_AVAILABLE"],
+    defines = ["SK_FONTMGR_ANDROID_AVAILABLE"],
     visibility = ["//:__pkg__"],
     deps = [
         ":freetype_support",
         "//:core",
-        "//bazel/external/fontconfig",
         "//src/base",
         "//src/core:core_priv",
+        "@expat",
     ],
 )
 
-filegroup(
-    name = "fontmgr_custom",
+skia_objc_library(
+    name = "fontmgr_coretext",
     srcs = [
-        "SkFontMgr_custom.cpp",
-        "SkFontMgr_custom.h",
-    ],
-)
-
-skia_cc_library(
-    name = "fontmgr_empty_freetype",
-    srcs = [
-        "SkFontMgr_custom_empty.cpp",
-        ":fontmgr_custom",
+        "SkFontMgr_mac_ct.cpp",
     ],
     hdrs = [
-        "//include/ports:empty_fontmgr_hdrs",
+        "//include/ports:coretext_fontmgr_hdrs",
     ],
-    defines = ["SK_FONTMGR_FREETYPE_EMPTY_AVAILABLE"],
+    defines = ["SK_FONTMGR_CORETEXT_AVAILABLE"],
     features = ["layering_check"],
+    ios_frameworks = [
+        "CoreText",
+        "CoreGraphics",
+        "CoreFoundation",
+    ],
+    mac_frameworks = ["ApplicationServices"],
     visibility = ["//:__pkg__"],
     deps = [
-        ":freetype_support",
+        ":coretext_typeface",
         "//:core",
         "//src/base",
         "//src/core:core_priv",
@@ -376,7 +400,6 @@ skia_cc_library(
     name = "fontmgr_data_freetype",
     srcs = [
         "SkFontMgr_custom_embedded.cpp",
-        ":fontmgr_custom",
     ],
     hdrs = [
         "//include/ports:data_fontmgr_hdrs",
@@ -385,6 +408,47 @@ skia_cc_library(
     features = ["layering_check"],
     visibility = ["//:__pkg__"],
     deps = [
+        ":fontmgr_custom",
+        ":freetype_support",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_directory_freetype",
+    srcs = [
+        "SkFontMgr_custom_directory.cpp",
+    ],
+    hdrs = [
+        "//include/ports:directory_fontmgr_hdrs",
+    ],
+    defines = ["SK_FONTMGR_FREETYPE_DIRECTORY_AVAILABLE"],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":fontmgr_custom",
+        ":freetype_support",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_empty_freetype",
+    srcs = [
+        "SkFontMgr_custom_empty.cpp",
+    ],
+    hdrs = [
+        "//include/ports:empty_fontmgr_hdrs",
+    ],
+    defines = ["SK_FONTMGR_FREETYPE_EMPTY_AVAILABLE"],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":fontmgr_custom",
         ":freetype_support",
         "//:core",
         "//src/base",
@@ -416,21 +480,81 @@ skia_cc_library(
 )
 
 skia_cc_library(
-    name = "fontmgr_android_freetype",
+    name = "fontmgr_fontconfig_freetype",
     srcs = [
-        "SkFontMgr_android.cpp",
-        "SkFontMgr_android_parser.cpp",
+        "SkFontMgr_fontconfig.cpp",
     ],
     hdrs = [
-        "SkFontMgr_android_parser.h",
-        "//include/ports:android_fontmgr_hdrs",
+        "//include/ports:fontconfig_fontmgr_hdrs",
     ],
+    defines = ["SK_FONTMGR_FONTCONFIG_AVAILABLE"],
     visibility = ["//:__pkg__"],
     deps = [
         ":freetype_support",
         "//:core",
+        "//bazel/external/fontconfig",
         "//src/base",
         "//src/core:core_priv",
-        "@expat",
+    ],
+)
+
+skia_filegroup(
+    name = "typeface_mac_hdrs",
+    srcs = ["SkTypeface_mac_ct.h"],
+    visibility = ["//src/utils/mac:__pkg__"],
+)
+
+skia_objc_library(
+    name = "coretext_typeface",
+    srcs = [
+        "SkScalerContext_mac_ct.cpp",
+        "SkScalerContext_mac_ct.h",
+        "SkTypeface_mac_ct.cpp",
+    ],
+    hdrs = [
+        "SkTypeface_mac_ct.h",
+        "//include/ports:mac_typeface",
+    ],
+    features = ["layering_check"],
+    ios_frameworks = [
+        "CoreFoundation",
+        "CoreGraphics",
+        "CoreText",
+    ],
+    mac_frameworks = ["ApplicationServices"],
+    visibility = [
+        "//:__pkg__",
+        "//modules/skshaper:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/utils/mac:mac_utils_priv",
+    ],
+)
+
+skia_objc_library(
+    name = "imagegenerator_coregraphics",
+    srcs = [
+        "SkImageGeneratorCG.cpp",
+    ],
+    hdrs = [
+        "//include/ports:imagegenerator_cg_hdrs",
+    ],
+    features = ["layering_check"],
+    ios_frameworks = [
+        "CoreGraphics",
+        "ImageIO",
+        "MobileCoreServices",
+    ],
+    mac_frameworks = ["ApplicationServices"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/codec:any_decoder",
+        "//src/core:core_priv",
+        "//src/utils/mac:mac_utils_priv",
     ],
 )

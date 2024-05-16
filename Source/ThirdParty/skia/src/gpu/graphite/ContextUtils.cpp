@@ -16,33 +16,43 @@
 #include "src/gpu/graphite/PaintParams.h"
 #include "src/gpu/graphite/PipelineData.h"
 #include "src/gpu/graphite/RecorderPriv.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/Renderer.h"
 #include "src/gpu/graphite/ResourceProvider.h"
 #include "src/gpu/graphite/ShaderCodeDictionary.h"
 #include "src/gpu/graphite/UniformManager.h"
 #include "src/gpu/graphite/UniquePaintParamsID.h"
 #include "src/gpu/graphite/compute/ComputeStep.h"
+#include "src/gpu/graphite/geom/Geometry.h"
 #include "src/sksl/SkSLString.h"
 #include "src/sksl/SkSLUtil.h"
 
 namespace skgpu::graphite {
 
-std::tuple<UniquePaintParamsID, const UniformDataBlock*, const TextureDataBlock*>
-ExtractPaintData(Recorder* recorder,
-                 PipelineDataGatherer* gatherer,
-                 PaintParamsKeyBuilder* builder,
-                 const Layout layout,
-                 const SkM44& local2Dev,
-                 const PaintParams& p,
-                 sk_sp<TextureProxy> dstTexture,
-                 SkIPoint dstOffset,
-                 const SkColorInfo& targetColorInfo) {
+std::tuple<UniquePaintParamsID, const UniformDataBlock*, const TextureDataBlock*> ExtractPaintData(
+        Recorder* recorder,
+        PipelineDataGatherer* gatherer,
+        PaintParamsKeyBuilder* builder,
+        const Layout layout,
+        const SkM44& local2Dev,
+        const PaintParams& p,
+        const Geometry& geometry,
+        sk_sp<TextureProxy> dstTexture,
+        SkIPoint dstOffset,
+        const SkColorInfo& targetColorInfo) {
     SkDEBUGCODE(builder->checkReset());
 
     gatherer->resetWithNewLayout(layout);
 
-    KeyContext keyContext(
-            recorder, local2Dev, targetColorInfo, p.color(), std::move(dstTexture), dstOffset);
+    KeyContext keyContext(recorder,
+                          local2Dev,
+                          targetColorInfo,
+                          geometry.isShape() || geometry.isEdgeAAQuad()
+                                  ? KeyContext::OptimizeSampling::kYes
+                                  : KeyContext::OptimizeSampling::kNo,
+                          p.color(),
+                          std::move(dstTexture),
+                          dstOffset);
     p.toKey(keyContext, builder, gatherer);
 
     UniquePaintParamsID paintID = recorder->priv().shaderCodeDictionary()->findOrCreate(builder);
@@ -202,7 +212,7 @@ std::string get_ssbo_fields(SkSpan<const Uniform> uniforms,
 
         SkSL::String::appendf(&result, "    %s %s", SkSLTypeString(u.type()), uniformName.c_str());
         if (u.count()) {
-            SkSL::String::appendf(&result, "[%u]", u.count());
+            SkSL::String::appendf(&result, "[%d]", u.count());
         }
         result.append(";\n");
     }
@@ -347,7 +357,7 @@ std::string EmitUniformsFromStorageBuffer(const char* bufferNamePrefix,
     for (const Uniform& u : uniforms) {
         SkSL::String::appendf(&result, "%s %s", SkSLTypeString(u.type()), u.name());
         if (u.count()) {
-            SkSL::String::appendf(&result, "[%u]", u.count());
+            SkSL::String::appendf(&result, "[%d]", u.count());
         }
         SkSL::String::appendf(
                 &result, " = %sUniformData[%s].%s;\n", bufferNamePrefix, ssboIndex, u.name());
@@ -531,6 +541,10 @@ VertSkSLInfo BuildVertexSkSL(const ResourceBindingRequirements& bindingReqs,
     sksl += "}";
 
     result.fSkSL = std::move(sksl);
+    result.fLabel = step->name();
+    if (defineLocalCoordsVarying) {
+        result.fLabel += " (w/ local coords)";
+    }
 
     return result;
 }
@@ -542,12 +556,11 @@ FragSkSLInfo BuildFragmentSkSL(const Caps* caps,
                                UniquePaintParamsID paintID,
                                bool useStorageBuffers,
                                skgpu::Swizzle writeSwizzle) {
+    FragSkSLInfo result;
     if (!paintID.isValid()) {
-        // TODO: we should return the error shader code here
+        // Depth-only draw so no fragment shader to compile
         return {};
     }
-
-    FragSkSLInfo result;
 
     const char* shadingSsboIndex =
             useStorageBuffers && step->performsShading() ? "shadingSsboIndex" : nullptr;
@@ -567,7 +580,25 @@ FragSkSLInfo BuildFragmentSkSL(const Caps* caps,
     result.fBlendInfo = shaderInfo.blendInfo();
     result.fRequiresLocalCoords = shaderInfo.needsLocalCoords();
 
+    result.fLabel = writeSwizzle.asString().c_str();
+    result.fLabel += " + ";
+    result.fLabel = step->name();
+    result.fLabel += " + ";
+    result.fLabel += dict->idToString(paintID).c_str();
+
     return result;
+}
+
+std::string GetPipelineLabel(const ShaderCodeDictionary* dict,
+                             const RenderPassDesc& renderPassDesc,
+                             const RenderStep* renderStep,
+                             UniquePaintParamsID paintID) {
+    std::string label = renderPassDesc.toPipelineLabel().c_str(); // includes the write swizzle
+    label += " + ";
+    label += renderStep->name();
+    label += " + ";
+    label += dict->idToString(paintID).c_str(); // will be "(empty)" for depth-only draws
+    return label;
 }
 
 std::string BuildComputeSkSL(const Caps* caps, const ComputeStep* step) {

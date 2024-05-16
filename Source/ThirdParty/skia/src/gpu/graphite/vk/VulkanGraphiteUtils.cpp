@@ -55,7 +55,7 @@ VkShaderModule createVulkanShaderModule(const VulkanSharedContext* context,
 
     VkShaderModule shaderModule;
     VkResult result;
-    VULKAN_CALL_RESULT(context->interface(),
+    VULKAN_CALL_RESULT(context,
                        result,
                        CreateShaderModule(context->device(),
                                           &moduleCreateInfo,
@@ -73,16 +73,17 @@ void DescriptorDataToVkDescSetLayout(const VulkanSharedContext* ctxt,
                                      VkDescriptorSetLayout* outLayout) {
     skia_private::STArray<kDescriptorTypeCount, VkDescriptorSetLayoutBinding> bindingLayouts;
     for (size_t i = 0; i < requestedDescriptors.size(); i++) {
-        if (requestedDescriptors[i].count != 0) {
+        if (requestedDescriptors[i].fCount != 0) {
             const DescriptorData& currDescriptor = requestedDescriptors[i];
             VkDescriptorSetLayoutBinding& layoutBinding = bindingLayouts.push_back();
             memset(&layoutBinding, 0, sizeof(VkDescriptorSetLayoutBinding));
-            layoutBinding.binding = currDescriptor.bindingIndex;
-            layoutBinding.descriptorType = DsTypeEnumToVkDs(currDescriptor.type);
-            layoutBinding.descriptorCount = currDescriptor.count;
+            layoutBinding.binding = currDescriptor.fBindingIndex;
+            layoutBinding.descriptorType = DsTypeEnumToVkDs(currDescriptor.fType);
+            layoutBinding.descriptorCount = currDescriptor.fCount;
             layoutBinding.stageFlags =
-                    PipelineStageFlagsToVkShaderStageFlags(currDescriptor.pipelineStageFlags);
-            // TODO(b/302126498): Optionally set immutableSamplers here. Needed for YCbCr
+                    PipelineStageFlagsToVkShaderStageFlags(currDescriptor.fPipelineStageFlags);
+            // TODO(b/302126498): Set pImmutableSampler to currDescriptor.fImmutableSampler once
+            // immutable samplers are created and used within graphite.
             layoutBinding.pImmutableSamplers = nullptr;
         }
     }
@@ -96,12 +97,10 @@ void DescriptorDataToVkDescSetLayout(const VulkanSharedContext* ctxt,
     layoutCreateInfo.pBindings = &bindingLayouts.front();
 
     VkResult result;
-    VULKAN_CALL_RESULT(ctxt->interface(),
-                       result,
-                       CreateDescriptorSetLayout(ctxt->device(),
-                                                 &layoutCreateInfo,
-                                                 nullptr,
-                                                 outLayout));
+    VULKAN_CALL_RESULT(
+            ctxt,
+            result,
+            CreateDescriptorSetLayout(ctxt->device(), &layoutCreateInfo, nullptr, outLayout));
     if (result != VK_SUCCESS) {
         SkDebugf("Failed to create VkDescriptorSetLayout\n");
         outLayout = VK_NULL_HANDLE;

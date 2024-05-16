@@ -144,6 +144,7 @@ static bool check_shader_module(wgpu::ShaderModule* module,
 }
 
 bool DawnCompileWGSLShaderModule(const DawnSharedContext* sharedContext,
+                                 const char* label,
                                  const std::string& wgsl,
                                  wgpu::ShaderModule* module,
                                  ShaderErrorHandler* errorHandler) {
@@ -152,6 +153,9 @@ bool DawnCompileWGSLShaderModule(const DawnSharedContext* sharedContext,
 
     wgpu::ShaderModuleDescriptor desc;
     desc.nextInChain = &wgslDesc;
+    if (sharedContext->caps()->setBackendLabels()) {
+        desc.label = label;
+    }
 
     *module = sharedContext->device().CreateShaderModule(&desc);
 

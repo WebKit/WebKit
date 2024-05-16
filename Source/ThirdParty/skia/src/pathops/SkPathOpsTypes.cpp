@@ -6,13 +6,14 @@
  */
 #include "src/pathops/SkPathOpsTypes.h"
 
-#include "include/private/base/SkFloatBits.h"
 #include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkMath.h"
 #include "include/private/base/SkTemplates.h"
+#include "src/base/SkFloatBits.h"
 
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
 
 static bool arguments_denormalized(float a, float b, int epsilon) {
     float denormalizedCheck = FLT_EPSILON * epsilon / 2;
@@ -39,7 +40,7 @@ static bool equal_ulps_no_normal_check(float a, float b, int epsilon, int depsil
 }
 
 static bool equal_ulps_pin(float a, float b, int epsilon, int depsilon) {
-    if (!SkScalarIsFinite(a) || !SkScalarIsFinite(b)) {
+    if (!SkIsFinite(a, b)) {
         return false;
     }
     if (arguments_denormalized(a, b, depsilon)) {
@@ -69,7 +70,7 @@ static bool not_equal_ulps(float a, float b, int epsilon) {
 }
 
 static bool not_equal_ulps_pin(float a, float b, int epsilon) {
-    if (!SkScalarIsFinite(a) || !SkScalarIsFinite(b)) {
+    if (!SkIsFinite(a, b)) {
         return false;
     }
     if (arguments_denormalized(a, b, epsilon)) {
@@ -187,16 +188,16 @@ bool AlmostLessOrEqualUlps(float a, float b) {
 }
 
 int UlpsDistance(float a, float b) {
-    SkFloatIntUnion floatIntA, floatIntB;
-    floatIntA.fFloat = a;
-    floatIntB.fFloat = b;
+    int32_t floatIntA, floatIntB;
+    memcpy(&floatIntA, &a, sizeof(int32_t));
+    memcpy(&floatIntB, &b, sizeof(int32_t));
     // Different signs means they do not match.
-    if ((floatIntA.fSignBitInt < 0) != (floatIntB.fSignBitInt < 0)) {
+    if ((floatIntA < 0) != (floatIntB < 0)) {
         // Check for equality to make sure +0 == -0
         return a == b ? 0 : SK_MaxS32;
     }
     // Find the difference in ULPs.
-    return SkTAbs(floatIntA.fSignBitInt - floatIntB.fSignBitInt);
+    return SkTAbs(floatIntA - floatIntB);
 }
 
 SkOpGlobalState::SkOpGlobalState(SkOpContourHead* head,

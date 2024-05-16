@@ -6,7 +6,6 @@
  */
 
 #include "include/core/SkPoint3.h"
-
 #include "include/private/base/SkFloatingPoint.h"
 
 #include <cmath>
@@ -29,8 +28,8 @@ static inline bool is_length_nearly_zero(float x, float y, float z, float *lengt
 
 SkScalar SkPoint3::Length(SkScalar x, SkScalar y, SkScalar z) {
     float magSq = get_length_squared(x, y, z);
-    if (SkScalarIsFinite(magSq)) {
-        return sk_float_sqrt(magSq);
+    if (SkIsFinite(magSq)) {
+        return std::sqrt(magSq);
     } else {
         double xx = x;
         double yy = y;
@@ -56,7 +55,7 @@ bool SkPoint3::normalize() {
     // sqrtf does not provide enough precision; since sqrt takes a double,
     // there's no additional penalty to storing invScale in a double
     double invScale;
-    if (sk_float_isfinite(magSq)) {
+    if (SkIsFinite(magSq)) {
         invScale = magSq;
     } else {
         // our magSq step overflowed to infinity, so use doubles instead.
@@ -72,7 +71,7 @@ bool SkPoint3::normalize() {
     fX *= scale;
     fY *= scale;
     fZ *= scale;
-    if (!sk_float_isfinite(fX) || !sk_float_isfinite(fY) || !sk_float_isfinite(fZ)) {
+    if (!SkIsFinite(fX, fY, fZ)) {
         this->set(0, 0, 0);
         return false;
     }

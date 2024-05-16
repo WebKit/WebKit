@@ -13,10 +13,11 @@
 #include "include/gpu/graphite/ContextOptions.h"
 #include "include/gpu/graphite/TextureInfo.h"
 #include "include/gpu/graphite/dawn/DawnBackendContext.h"
-#include "src/gpu/graphite/AttachmentTypes.h"
 #include "src/gpu/graphite/ComputePipelineDesc.h"
 #include "src/gpu/graphite/GraphicsPipelineDesc.h"
 #include "src/gpu/graphite/GraphiteResourceKey.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
+#include "src/gpu/graphite/ResourceTypes.h"
 #include "src/gpu/graphite/UniformManager.h"
 #include "src/gpu/graphite/dawn/DawnGraphiteUtilsPriv.h"
 #include "src/gpu/graphite/dawn/DawnUtilsPriv.h"
@@ -529,11 +530,17 @@ void DawnCaps::initFormatTable(const wgpu::Device& device) {
         }
     }
 
-    // TODO(crbug.com/dawn/1856): Support storage binding for compute shader in Dawn.
     // Format: R8Unorm
     {
         info = &fFormatTable[GetFormatIndex(wgpu::TextureFormat::R8Unorm)];
+#if !defined(__EMSCRIPTEN__)
+        info->fFlags = FormatInfo::kAllFlags;
+        if (!device.HasFeature(wgpu::FeatureName::R8UnormStorage)) {
+            info->fFlags &= ~FormatInfo::kStorage_Flag;
+        }
+#else
         info->fFlags = FormatInfo::kAllFlags & ~FormatInfo::kStorage_Flag;
+#endif
         info->fColorTypeInfoCount = 3;
         info->fColorTypeInfos = std::make_unique<ColorTypeInfo[]>(info->fColorTypeInfoCount);
         int ctIdx = 0;

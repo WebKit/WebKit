@@ -22,6 +22,14 @@
 
 namespace skiatest::graphite {
 
+// TODO: http://crbug.com/dawn/2450 - Currently manually setting the device to null and calling
+//       tick/process events one last time to ensure that the device is lost accordingly at
+//       destruction. Once device lost is, by default, a spontaneous event, remove this.
+DawnTestContext::~DawnTestContext() {
+    fBackendContext.fDevice = nullptr;
+    tick();
+}
+
 std::unique_ptr<GraphiteTestContext> DawnTestContext::Make(wgpu::BackendType backend) {
     static std::unique_ptr<dawn::native::Instance> sInstance;
     static SkOnce sOnce;
@@ -92,8 +100,8 @@ std::unique_ptr<GraphiteTestContext> DawnTestContext::Make(wgpu::BackendType bac
     if (adapter.HasFeature(wgpu::FeatureName::TransientAttachments)) {
         features.push_back(wgpu::FeatureName::TransientAttachments);
     }
-    if (adapter.HasFeature(wgpu::FeatureName::Norm16TextureFormats)) {
-        features.push_back(wgpu::FeatureName::Norm16TextureFormats);
+    if (adapter.HasFeature(wgpu::FeatureName::Unorm16TextureFormats)) {
+        features.push_back(wgpu::FeatureName::Unorm16TextureFormats);
     }
     if (adapter.HasFeature(wgpu::FeatureName::DualSourceBlending)) {
         features.push_back(wgpu::FeatureName::DualSourceBlending);
@@ -110,24 +118,26 @@ std::unique_ptr<GraphiteTestContext> DawnTestContext::Make(wgpu::BackendType bac
     if (adapter.HasFeature(wgpu::FeatureName::TextureCompressionBC)) {
         features.push_back(wgpu::FeatureName::TextureCompressionBC);
     }
+    if (adapter.HasFeature(wgpu::FeatureName::R8UnormStorage)) {
+        features.push_back(wgpu::FeatureName::R8UnormStorage);
+    }
 
     wgpu::DeviceDescriptor desc;
     desc.requiredFeatureCount  = features.size();
     desc.requiredFeatures      = features.data();
     desc.nextInChain           = &togglesDesc;
+    desc.deviceLostCallbackInfo.callback =
+        [](WGPUDeviceImpl *const *, WGPUDeviceLostReason reason, const char* message, void*) {
+            if (reason != WGPUDeviceLostReason_Destroyed) {
+                SK_ABORT("Device lost: %s\n", message);
+            }
+        };
 
     wgpu::Device device = wgpu::Device::Acquire(matchedAdaptor.CreateDevice(&desc));
     SkASSERT(device);
     device.SetUncapturedErrorCallback(
             [](WGPUErrorType type, const char* message, void*) {
                 SkDebugf("Device error: %s\n", message);
-            },
-            /*userdata=*/nullptr);
-    device.SetDeviceLostCallback(
-            [](WGPUDeviceLostReason reason, const char* message, void*) {
-                if (reason != WGPUDeviceLostReason_Destroyed) {
-                    SK_ABORT("Device lost: %s\n", message);
-                }
             },
             /*userdata=*/nullptr);
 

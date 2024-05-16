@@ -28,7 +28,9 @@ UploadBufferManager::~UploadBufferManager() {}
 
 std::tuple<TextureUploadWriter, BindBufferInfo> UploadBufferManager::getTextureUploadWriter(
         size_t requiredBytes, size_t requiredAlignment) {
-    auto[bufferMapPtr, bindInfo] = this->makeBindInfo(requiredBytes, requiredAlignment);
+    auto[bufferMapPtr, bindInfo] = this->makeBindInfo(requiredBytes,
+                                                      requiredAlignment,
+                                                      "TextureUploadBuffer");
     if (!bufferMapPtr) {
         return {TextureUploadWriter(), BindBufferInfo()};
     }
@@ -37,7 +39,7 @@ std::tuple<TextureUploadWriter, BindBufferInfo> UploadBufferManager::getTextureU
 }
 
 std::tuple<void*/*mappedPtr*/, BindBufferInfo> UploadBufferManager::makeBindInfo(
-        size_t requiredBytes, size_t requiredAlignment) {
+        size_t requiredBytes, size_t requiredAlignment, std::string_view label) {
     if (!requiredBytes) {
         return {nullptr, BindBufferInfo()};
     }
@@ -46,14 +48,24 @@ std::tuple<void*/*mappedPtr*/, BindBufferInfo> UploadBufferManager::makeBindInfo
     requiredBytes = SkAlignTo(requiredBytes, requiredAlignment);
     if (requiredBytes > kReusedBufferSize) {
         // Create a dedicated buffer for this request.
-        sk_sp<Buffer> buffer = fResourceProvider->findOrCreateBuffer(
-                requiredBytes, BufferType::kXferCpuToGpu, AccessPattern::kHostVisible);
+        sk_sp<Buffer> buffer = fResourceProvider->findOrCreateBuffer(requiredBytes,
+                                                                     BufferType::kXferCpuToGpu,
+                                                                     AccessPattern::kHostVisible,
+                                                                     std::move(label));
+        void* bufferMapPtr = buffer ? buffer->map() : nullptr;
+        if (!bufferMapPtr) {
+            // Unlike [Draw|Static]BufferManager, the UploadManager does not track if any buffer
+            // mapping has failed. This is because it's common for uploads to be scoped to a
+            // specific image creation. In that case, the image can be returned as null to signal a
+            // very isolated failure instead of taking down the entire Recording. For the other
+            // managers, failures to map buffers creates unrecoverable scenarios.
+            return {nullptr, BindBufferInfo()};
+        }
 
         BindBufferInfo bindInfo;
         bindInfo.fBuffer = buffer.get();
         bindInfo.fOffset = 0;
 
-        void* bufferMapPtr = buffer->map();
         fUsedBuffers.push_back(std::move(buffer));
         return {bufferMapPtr, bindInfo};
     }
@@ -65,10 +77,13 @@ std::tuple<void*/*mappedPtr*/, BindBufferInfo> UploadBufferManager::makeBindInfo
     }
 
     if (!fReusedBuffer) {
-        fReusedBuffer = fResourceProvider->findOrCreateBuffer(
-                kReusedBufferSize, BufferType::kXferCpuToGpu, AccessPattern::kHostVisible);
+        fReusedBuffer = fResourceProvider->findOrCreateBuffer(kReusedBufferSize,
+                                                              BufferType::kXferCpuToGpu,
+                                                              AccessPattern::kHostVisible,
+                                                              std::move(label));
         fReusedBufferOffset = 0;
-        if (!fReusedBuffer) {
+        if (!fReusedBuffer || !fReusedBuffer->map()) {
+            fReusedBuffer = nullptr;
             return {nullptr, BindBufferInfo()};
         }
     }
@@ -78,6 +93,7 @@ std::tuple<void*/*mappedPtr*/, BindBufferInfo> UploadBufferManager::makeBindInfo
     bindInfo.fOffset = fReusedBufferOffset;
 
     void* bufferMapPtr = fReusedBuffer->map();
+    SkASSERT(bufferMapPtr); // Should have been validated when it was created
     bufferMapPtr = SkTAddOffset<void>(bufferMapPtr, fReusedBufferOffset);
 
     fReusedBufferOffset += requiredBytes;

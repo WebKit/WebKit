@@ -9,9 +9,9 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkScalar.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkFloatBits.h"
 #include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkTo.h"
+#include "src/base/SkFloatBits.h"
 #include "tests/Test.h"
 
 #include <array>
@@ -97,7 +97,7 @@ static bool isFinite_int(float x) {
 }
 
 static bool isFinite_float(float x) {
-    return SkToBool(sk_float_isfinite(x));
+    return SkToBool(SkIsFinite(x));
 }
 
 static bool isFinite_mulzero(float x) {
@@ -128,16 +128,16 @@ enum FloatClass {
 static void test_floatclass(skiatest::Reporter* reporter, float value, FloatClass fc) {
     // our sk_float_is... function may return int instead of bool,
     // hence the double ! to turn it into a bool
-    REPORTER_ASSERT(reporter, !!sk_float_isfinite(value) == (fc == kFinite));
-    REPORTER_ASSERT(reporter, !!sk_float_isinf(value) == (fc == kInfinite));
-    REPORTER_ASSERT(reporter, !!sk_float_isnan(value) == (fc == kNaN));
+    REPORTER_ASSERT(reporter, !!SkIsFinite(value) == (fc == kFinite));
+    REPORTER_ASSERT(reporter, !!std::isinf(value) == (fc == kInfinite));
+    REPORTER_ASSERT(reporter, !!SkIsNaN(value)    == (fc == kNaN));
 }
 
 #if defined _WIN32
-#pragma warning ( push )
+#pragma warning(push)
 // we are intentionally causing an overflow here
 //      (warning C4756: overflow in constant arithmetic)
-#pragma warning ( disable : 4756 )
+#pragma warning(disable : 4756)
 #endif
 
 static void test_isfinite(skiatest::Reporter* reporter) {

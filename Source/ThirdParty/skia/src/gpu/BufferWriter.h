@@ -401,6 +401,7 @@ struct IndexWriter : public BufferWriter {
         this->validate(arraySize);
         memcpy(fPtr, array, arraySize);
         fPtr = SkTAddOffset<void>(fPtr, arraySize);
+
     }
 
     friend IndexWriter& operator<<(IndexWriter& w, uint16_t val);
@@ -466,7 +467,7 @@ struct TextureUploadWriter : public BufferWriter {
     // `srcRowBytes` wide, and the written block is `dstRowBytes` wide and `rowCount` bytes tall.
     void write(size_t offset, const void* src, size_t srcRowBytes, size_t dstRowBytes,
                size_t trimRowBytes, int rowCount) {
-        this->validate(dstRowBytes * rowCount);
+        this->validate(offset + dstRowBytes * rowCount);
         void* dst = SkTAddOffset<void>(fPtr, offset);
         SkRectMemcpy(dst, dstRowBytes, src, srcRowBytes, trimRowBytes, rowCount);
     }
@@ -475,7 +476,7 @@ struct TextureUploadWriter : public BufferWriter {
                          const SkImageInfo& srcInfo, const void* src, size_t srcRowBytes,
                          const SkImageInfo& dstInfo, size_t dstRowBytes) {
         SkASSERT(srcInfo.width() == dstInfo.width() && srcInfo.height() == dstInfo.height());
-        this->validate(dstRowBytes * dstInfo.height());
+        this->validate(offset + dstRowBytes * dstInfo.height());
         void* dst = SkTAddOffset<void>(fPtr, offset);
         SkAssertResult(SkConvertPixels(dstInfo, dst, dstRowBytes, srcInfo, src, srcRowBytes));
     }
@@ -484,6 +485,7 @@ struct TextureUploadWriter : public BufferWriter {
     // colorType into a 3 channel RGB_888 format.
     void writeRGBFromRGBx(size_t offset, const void* src, size_t srcRowBytes, size_t dstRowBytes,
                           int rowPixels, int rowCount) {
+        this->validate(offset + dstRowBytes * rowCount);
         void* dst = SkTAddOffset<void>(fPtr, offset);
         auto* sRow = reinterpret_cast<const char*>(src);
         auto* dRow = reinterpret_cast<char*>(dst);

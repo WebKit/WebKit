@@ -24,6 +24,10 @@ const int $kMaskFormatA8   = 0;
 const int $kMaskFormatA565 = 1;
 const int $kMaskFormatARGB = 2;
 
+const int $kShapeTypeRect = 0;
+const int $kShapeTypeRRect = 1;
+const int $kShapeTypeCircle = 2;
+
 // Matches GrTextureEffect::kLinearInset, to make sure we don't touch an outer
 // row or column with a weight of 0 when linear filtering.
 const float $kLinearInset = 0.5 + 0.00001;
@@ -161,6 +165,7 @@ $pure half4 $sample_image_subset(float2 pos,
                                  int tileModeX,
                                  int tileModeY,
                                  int filterMode,
+                                 float2 linearFilterInset,
                                  sampler2D s) {
     // Do hard-edge shader transitions to the border color for nearest-neighbor decal tiling at the
     // subset boundaries. Snap the input coordinates to nearest neighbor before comparing to the
@@ -187,7 +192,7 @@ $pure half4 $sample_image_subset(float2 pos,
     if (filterMode == $kFilterModeNearest) {
         insetClamp = float4(floor(subset.xy) + $kLinearInset, ceil(subset.zw) - $kLinearInset);
     } else {
-        insetClamp = float4(subset.xy + $kLinearInset, subset.zw - $kLinearInset);
+        insetClamp = float4(subset.xy + linearFilterInset.x, subset.zw - linearFilterInset.y);
     }
     float2 clampedPos = clamp(pos, insetClamp.xy, insetClamp.zw);
     half4 color = $sample_image(clampedPos, invImgSize, s);
@@ -266,7 +271,7 @@ $pure half4 $cubic_filter_image(float2 pos,
         for (int x = 0; x < 4; ++x) {
             rowColor += wx[x] * $sample_image_subset(pos + float2(x, y), invImgSize, subset,
                                                      tileModeX, tileModeY, $kFilterModeNearest,
-                                                     s);
+                                                     float2($kLinearInset), s);
         }
         color += wy[y] * rowColor;
     }
@@ -289,7 +294,7 @@ $pure half4 sk_image_shader(float2 coords,
                             half4x4 csXformCoeffs,
                             sampler2D s) {
     half4 sampleColor = $sample_image_subset(coords, invImgSize, subset, tileModeX, tileModeY,
-                                             filterMode, s);
+                                             filterMode, float2($kLinearInset), s);
     return $color_space_transform_swizzle(sampleColor, csXformFlags, csXformSrcKind,
                                           csXformGamutTransform, csXformDstKind, csXformCoeffs);
 }
@@ -352,6 +357,7 @@ $pure half4 sk_yuv_image_shader(float2 coords,
                                 float2 invImgSizeY,
                                 float2 invImgSizeUV,  // Relative to Y's coordinate space
                                 float4 subset,
+                                float2 linearFilterUVInset,
                                 int tileModeX,
                                 int tileModeY,
                                 int filterModeY,
@@ -373,18 +379,21 @@ $pure half4 sk_yuv_image_shader(float2 coords,
         coords = floor(coords) + 0.5;
     }
 
+    int tileModeX_UV = tileModeX == $kTileModeDecal ? $kTileModeClamp : tileModeX;
+    int tileModeY_UV = tileModeY == $kTileModeDecal ? $kTileModeClamp : tileModeY;
+
     half4 sampleColorY, sampleColorU, sampleColorV, sampleColorA;
     sampleColorY = $sample_image_subset(coords, invImgSizeY, subset, tileModeX, tileModeY,
-                                        filterModeY, sY);
-    sampleColorU = $sample_image_subset(coords, invImgSizeUV, subset, tileModeX, tileModeY,
-                                        filterModeUV, sU);
-    sampleColorV = $sample_image_subset(coords, invImgSizeUV, subset, tileModeX, tileModeY,
-                                        filterModeUV, sV);
+                                        filterModeY, float2($kLinearInset), sY);
+    sampleColorU = $sample_image_subset(coords, invImgSizeUV, subset, tileModeX_UV, tileModeY_UV,
+                                        filterModeUV, linearFilterUVInset, sU);
+    sampleColorV = $sample_image_subset(coords, invImgSizeUV, subset, tileModeX_UV, tileModeY_UV,
+                                        filterModeUV, linearFilterUVInset, sV);
     if (channelSelectA == half4(1)) {
         sampleColorA = half4(0, 0, 0, 1);
     } else {
         sampleColorA = $sample_image_subset(coords, invImgSizeY, subset, tileModeX, tileModeY,
-                                            filterModeY, sA);
+                                            filterModeY, float2($kLinearInset), sA);
     }
 
     return $yuv_to_rgb(sampleColorY, sampleColorU, sampleColorV, sampleColorA,
@@ -409,12 +418,15 @@ $pure half4 sk_cubic_yuv_image_shader(float2 coords,
                                       sampler2D sU,
                                       sampler2D sV,
                                       sampler2D sA) {
+    int tileModeX_UV = tileModeX == $kTileModeDecal ? $kTileModeClamp : tileModeX;
+    int tileModeY_UV = tileModeY == $kTileModeDecal ? $kTileModeClamp : tileModeY;
+
     half4 sampleColorY, sampleColorU, sampleColorV, sampleColorA;
     sampleColorY = $cubic_filter_image(coords, invImgSizeY, subset, tileModeX, tileModeY,
                                        cubicCoeffs, sY);
-    sampleColorU = $cubic_filter_image(coords, invImgSizeUV, subset, tileModeX, tileModeY,
+    sampleColorU = $cubic_filter_image(coords, invImgSizeUV, subset, tileModeX_UV, tileModeY_UV,
                                        cubicCoeffs, sU);
-    sampleColorV = $cubic_filter_image(coords, invImgSizeUV, subset, tileModeX, tileModeY,
+    sampleColorV = $cubic_filter_image(coords, invImgSizeUV, subset, tileModeX_UV, tileModeY_UV,
                                        cubicCoeffs, sV);
     if (channelSelectA == half4(1)) {
         sampleColorA = half4(0, 0, 0, 1);
@@ -1162,7 +1174,7 @@ $pure half4 sk_coeff_blend(half4 src, half4 dst, half4 coeffs) {
 }
 
 $pure half4 sk_table_colorfilter(half4 inColor, sampler2D s) {
-    half4 coords = unpremul(inColor) * 255.0/256.0 + 0.5/256.0;
+    half4 coords = unpremul(inColor) * (255.0/256.0) + (0.5/256.0);
     half4 color = half4(sample(s, half2(coords.r, 3.0/8.0)).r,
                         sample(s, half2(coords.g, 5.0/8.0)).r,
                         sample(s, half2(coords.b, 7.0/8.0)).r,
@@ -1230,10 +1242,9 @@ $pure half4 sdf_text_coverage_fn(half texColor,
                                     : half2(0.7071);
 
     // Computing the Jacobian and multiplying by the gradient.
-    half2 Jdx = half2(dFdx(unormTexCoords));
-    half2 Jdy = half2(dFdy(unormTexCoords));
-    half2 grad = half2(dist_grad.x * Jdx.x + dist_grad.y * Jdy.x,
-                       dist_grad.x * Jdx.y + dist_grad.y * Jdy.y);
+    half4 jacobian = half4(dFdx(unormTexCoords), dFdy(unormTexCoords));
+    half2 grad = half2(dot(dist_grad, jacobian.xz),
+                       dot(dist_grad, jacobian.yw));
 
     // This gives us a smooth step across approximately one fragment.
     half afwidth = 0.65 * length(grad);
@@ -1391,14 +1402,13 @@ $pure half4 analytic_rrect_coverage_fn(float4 coords,
 
             d.y = -max(innerDist.x, innerDist.y);
             if (strokeParams.x > 0.0) {
-                float strokeDim = min(strokeWidth.x, strokeWidth.y);
-                if (innerDist.y >= -0.5 && strokeWidth.y > strokeDim) {
-                    strokeDim = strokeWidth.y;
-                }
-                if (innerDist.x >= -0.5 && strokeWidth.x > strokeDim) {
-                    strokeDim = strokeWidth.x;
-                }
-                scale = min(strokeDim, 1.0);
+                float narrowStroke = min(strokeWidth.x, strokeWidth.y);
+                // On an axis where innerDist >= -0.5, allow strokeWidth.x/y to be preserved as-is.
+                // On an axis where innerDist < -0.5, use the smaller of strokeWidth.x/y.
+                float2 strokeDim = mix(float2(narrowStroke), strokeWidth,
+                                       greaterThanEqual(innerDist, float2(-0.5)));
+                // Preserve the wider axis from the above calculation.
+                scale = saturate(max(strokeDim.x, strokeDim.y));
                 bias = coverage_bias(scale);
             } else {
                 // A hairline, so scale and bias should both be 1
@@ -1423,4 +1433,122 @@ $pure half4 per_edge_aa_quad_coverage_fn(float4 coords,
     float2 outerDist = min(edgeDistances.xy, edgeDistances.zw);
     float c = min(outerDist.x, outerDist.y) * coords.w;
     return half4(saturate(c));
+}
+
+$pure half4 $rect_blur_coverage_fn(float2 coords,
+                                   float4 rect,
+                                   half isFast,
+                                   half invSixSigma,
+                                   sampler2D integral) {
+    half xCoverage;
+    half yCoverage;
+
+    if (isFast != 0.0) {
+        // Get the smaller of the signed distance from the frag coord to the left and right
+        // edges and similar for y.
+        // The integral texture goes "backwards" (from 3*sigma to -3*sigma), So, the below
+        // computations align the left edge of the integral texture with the inset rect's
+        // edge extending outward 6 * sigma from the inset rect.
+        half2 pos = max(half2(rect.LT - coords), half2(coords - rect.RB));
+        xCoverage = sample(integral, float2(invSixSigma * pos.x, 0.5)).r;
+        yCoverage = sample(integral, float2(invSixSigma * pos.y, 0.5)).r;
+
+    } else {
+        // We just consider just the x direction here. In practice we compute x and y
+        // separately and multiply them together.
+        // We define our coord system so that the point at which we're evaluating a kernel
+        // defined by the normal distribution (K) at 0. In this coord system let L be left
+        // edge and R be the right edge of the rectangle.
+        // We can calculate C by integrating K with the half infinite ranges outside the
+        // L to R range and subtracting from 1:
+        //   C = 1 - <integral of K from from -inf to  L> - <integral of K from R to inf>
+        // K is symmetric about x=0 so:
+        //   C = 1 - <integral of K from from -inf to  L> - <integral of K from -inf to -R>
+
+        // The integral texture goes "backwards" (from 3*sigma to -3*sigma) which is
+        // factored in to the below calculations.
+        // Also, our rect uniform was pre-inset by 3 sigma from the actual rect being
+        // blurred, also factored in.
+        half4 rect = half4(half2(rect.LT - coords), half2(coords - rect.RB));
+        xCoverage = 1 - sample(integral, float2(invSixSigma * rect.L, 0.5)).r
+                      - sample(integral, float2(invSixSigma * rect.R, 0.5)).r;
+        yCoverage = 1 - sample(integral, float2(invSixSigma * rect.T, 0.5)).r
+                      - sample(integral, float2(invSixSigma * rect.B, 0.5)).r;
+    }
+
+    return half4(xCoverage * yCoverage);
+}
+
+$pure half4 $circle_blur_coverage_fn(float2 coords, float4 circle, sampler2D blurProfile) {
+    // We just want to compute "(length(vec) - solidRadius + 0.5) / textureRadius" but need to
+    // rearrange to avoid passing large values to length() that would overflow. We've precalculated
+    // "1 / textureRadius" and "(solidRadius - 0.5) / textureRadius" on the CPU as circle.z and
+    // circle.w, respectively.
+    float invTextureRadius = circle.z;
+    float normSolidRadius = circle.w;
+
+    half2 vec = half2((coords - circle.xy) * invTextureRadius);
+    float dist = length(vec) - normSolidRadius;
+    return sample(blurProfile, float2(dist, 0.5)).rrrr;
+}
+
+$pure half4 $rrect_blur_coverage_fn(float2 coords,
+                                    float4 proxyRect,
+                                    half edgeSize,
+                                    sampler2D ninePatch) {
+    // Warp the fragment position to the appropriate part of the 9-patch blur texture by
+    // snipping out the middle section of the proxy rect.
+    float2 translatedFragPosFloat = coords - proxyRect.LT;
+    float2 proxyCenter = (proxyRect.RB - proxyRect.LT) * 0.5;
+
+    // Position the fragment so that (0, 0) marks the center of the proxy rectangle.
+    // Negative coordinates are on the left/top side and positive numbers are on the
+    // right/bottom.
+    translatedFragPosFloat -= proxyCenter;
+
+    // Temporarily strip off the fragment's sign. x/y are now strictly increasing as we
+    // move away from the center.
+    half2 fragDirection = half2(sign(translatedFragPosFloat));
+    translatedFragPosFloat = abs(translatedFragPosFloat);
+
+    // Our goal is to snip out the "middle section" of the proxy rect (everything but the
+    // edge). We've repositioned our fragment position so that (0, 0) is the centerpoint
+    // and x/y are always positive, so we can subtract here and interpret negative results
+    // as being within the middle section.
+    half2 translatedFragPosHalf = half2(translatedFragPosFloat - (proxyCenter - edgeSize));
+
+    // Remove the middle section by clamping to zero.
+    translatedFragPosHalf = max(translatedFragPosHalf, 0);
+
+    // Reapply the fragment's sign, so that negative coordinates once again mean left/top
+    // side and positive means bottom/right side.
+    translatedFragPosHalf *= fragDirection;
+
+    // Offset the fragment so that (0, 0) marks the upper-left again, instead of the center
+    // point.
+    translatedFragPosHalf += half2(edgeSize);
+
+    half2 proxyDims = half2(2.0 * edgeSize);
+    half2 texCoord = translatedFragPosHalf / proxyDims;
+
+    return sample(ninePatch, texCoord).rrrr;
+}
+
+$pure half4 blur_coverage_fn(float2 coords,
+                             float4 shapeData,
+                             half2 blurData,
+                             int shapeType,
+                             sampler2D s) {
+    switch (shapeType) {
+        case $kShapeTypeRect: {
+            return $rect_blur_coverage_fn(coords, shapeData, blurData.x, blurData.y, s);
+        }
+        case $kShapeTypeCircle: {
+            return $circle_blur_coverage_fn(coords, shapeData, s);
+        }
+        case $kShapeTypeRRect: {
+            return $rrect_blur_coverage_fn(coords, shapeData, blurData.x, s);
+        }
+    }
+    return half4(0);
 }

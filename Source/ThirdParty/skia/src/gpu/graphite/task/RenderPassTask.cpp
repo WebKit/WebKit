@@ -13,6 +13,7 @@
 #include "src/gpu/graphite/DrawPass.h"
 #include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/ResourceProvider.h"
+#include "src/gpu/graphite/ScratchResourceManager.h"
 #include "src/gpu/graphite/Texture.h"
 #include "src/gpu/graphite/TextureProxy.h"
 
@@ -48,29 +49,36 @@ RenderPassTask::RenderPassTask(DrawPassList passes,
 
 RenderPassTask::~RenderPassTask() = default;
 
-bool RenderPassTask::prepareResources(ResourceProvider* resourceProvider,
-                                      const RuntimeEffectDictionary* runtimeDict) {
+Task::Status RenderPassTask::prepareResources(ResourceProvider* resourceProvider,
+                                              ScratchResourceManager* scratchManager,
+                                              const RuntimeEffectDictionary* runtimeDict) {
     SkASSERT(fTarget);
-    if (!TextureProxy::InstantiateIfNotLazy(resourceProvider, fTarget.get())) {
+    if (!TextureProxy::InstantiateIfNotLazy(scratchManager, fTarget.get())) {
         SKGPU_LOG_W("Failed to instantiate RenderPassTask target. Will not create renderpass!");
         SKGPU_LOG_W("Dimensions are (%d, %d).",
                     fTarget->dimensions().width(), fTarget->dimensions().height());
-        return false;
+        return Status::kFail;
     }
 
     // Assuming one draw pass per renderpasstask for now
     SkASSERT(fDrawPasses.size() == 1);
     for (const auto& drawPass: fDrawPasses) {
         if (!drawPass->prepareResources(resourceProvider, runtimeDict, fRenderPassDesc)) {
-            return false;
+            return Status::kFail;
         }
     }
-    return true;
+
+    // Once all internal resources have been prepared and instantiated, reclaim any pending returns
+    // from the scratch manager, since at the equivalent point in the task graph's addCommands()
+    // phase, the renderpass will have sampled from any scratch textures and their contents no
+    // longer have to be preserved.
+    scratchManager->notifyResourcesConsumed();
+    return Status::kSuccess;
 }
 
-bool RenderPassTask::addCommands(Context* context,
-                                 CommandBuffer* commandBuffer,
-                                 ReplayTargetData replayData) {
+Task::Status RenderPassTask::addCommands(Context* context,
+                                         CommandBuffer* commandBuffer,
+                                         ReplayTargetData replayData) {
     // TBD: Expose the surfaces that will need to be attached within the renderpass?
 
     // TODO: for task execution, start the render pass, then iterate passes and
@@ -98,7 +106,7 @@ bool RenderPassTask::addCommands(Context* context,
                 fTarget->dimensions(), fRenderPassDesc.fColorAttachment.fTextureInfo);
         if (!colorAttachment) {
             SKGPU_LOG_W("Could not get Color attachment for RenderPassTask");
-            return false;
+            return Status::kFail;
         }
         resolveAttachment = fTarget->refTexture();
     } else {
@@ -115,26 +123,23 @@ bool RenderPassTask::addCommands(Context* context,
                 dimensions, fRenderPassDesc.fDepthStencilAttachment.fTextureInfo);
         if (!depthStencilAttachment) {
             SKGPU_LOG_W("Could not get DepthStencil attachment for RenderPassTask");
-            return false;
+            return Status::kFail;
         }
     }
 
-    // TODO: We need to handle the case where we need to load the single sampled target's data into
-    // the discardable MSAA Surface. On different backends this will be done in various ways. On
-    // Metal we can simply insert a draw at the start of the render pass sampling the single target
-    // texture as normal. In Vulkan, we need to create a whole new subpass at the start, use the
-    // single sample resolve as an input attachment in that subpass, and then do a draw. The big
-    // thing with Vulkan is that this input attachment and subpass means we also need to update
-    // the fRenderPassDesc here.
     // TODO(b/313629288) we always pass in the render target's dimensions as the viewport here.
     // Using the dimensions of the logical device that we're drawing to could reduce flakiness in
     // rendering.
-    return commandBuffer->addRenderPass(fRenderPassDesc,
-                                        std::move(colorAttachment),
-                                        std::move(resolveAttachment),
-                                        std::move(depthStencilAttachment),
-                                        SkRect::Make(fTarget->dimensions()),
-                                        fDrawPasses);
+    if (commandBuffer->addRenderPass(fRenderPassDesc,
+                                     std::move(colorAttachment),
+                                     std::move(resolveAttachment),
+                                     std::move(depthStencilAttachment),
+                                     SkRect::Make(fTarget->dimensions()),
+                                     fDrawPasses)) {
+        return Status::kSuccess;
+    } else {
+        return Status::kFail;
+    }
 }
 
 } // namespace skgpu::graphite

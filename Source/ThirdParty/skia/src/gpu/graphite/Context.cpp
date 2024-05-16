@@ -301,7 +301,7 @@ void Context::asyncReadPixels(const TextureProxy* proxy,
 
         auto swizzle = caps->getReadSwizzle(srcImageInfo.colorType(), proxy->textureInfo());
         TextureProxyView view(sk_ref_sp(proxy), swizzle);
-        auto srcImage = sk_make_sp<Image>(kNeedNewImageUniqueID, view, srcImageInfo.colorInfo());
+        auto srcImage = sk_make_sp<Image>(view, srcImageInfo.colorInfo());
 
         SkPaint paint;
         paint.setBlendMode(SkBlendMode::kSrc);
@@ -503,15 +503,18 @@ void Context::asyncReadPixelsYUV420(Recorder* recorder,
 
     // Make three or four Surfaces to draw the YUV[A] planes into
     SkImageInfo yaInfo = SkImageInfo::MakeA8(srcRect.size());
-    sk_sp<SkSurface> ySurface = Surface::MakeGraphite(recorder, yaInfo, Budgeted::kNo);
+    sk_sp<SkSurface> ySurface = Surface::Make(recorder, yaInfo, "AsyncReadPixelsYPlane",
+                                              Budgeted::kNo);
     sk_sp<SkSurface> aSurface;
     if (readAlpha) {
-        aSurface = Surface::MakeGraphite(recorder, yaInfo, Budgeted::kNo);
+        aSurface = Surface::Make(recorder, yaInfo, "AsyncReadPixelsAPlane", Budgeted::kNo);
     }
 
     SkImageInfo uvInfo = yaInfo.makeWH(yaInfo.width()/2, yaInfo.height()/2);
-    sk_sp<SkSurface> uSurface = Surface::MakeGraphite(recorder, uvInfo, Budgeted::kNo);
-    sk_sp<SkSurface> vSurface = Surface::MakeGraphite(recorder, uvInfo, Budgeted::kNo);
+    sk_sp<SkSurface> uSurface = Surface::Make(recorder, uvInfo, "AsyncReadPixelsUPlane",
+                                              Budgeted::kNo);
+    sk_sp<SkSurface> vSurface = Surface::Make(recorder, uvInfo, "AsyncReadPixelsVPlane",
+                                              Budgeted::kNo);
 
     if (!ySurface || !uSurface || !vSurface || (readAlpha && !aSurface)) {
         callback(callbackContext, nullptr);
@@ -718,7 +721,7 @@ Context::PixelTransferResult Context::transferPixels(const TextureProxy* proxy,
     size_t rowBytes = caps->getAlignedTextureDataRowBytes(bpp * srcRect.width());
     size_t size = SkAlignTo(rowBytes * srcRect.height(), caps->requiredTransferBufferAlignment());
     sk_sp<Buffer> buffer = fResourceProvider->findOrCreateBuffer(
-            size, BufferType::kXferGpuToCpu, AccessPattern::kHostVisible);
+            size, BufferType::kXferGpuToCpu, AccessPattern::kHostVisible, "TransferToCpu");
     if (!buffer) {
         return {};
     }
@@ -908,6 +911,7 @@ bool ContextPriv::supportsPathRendererStrategy(PathRendererStrategy strategy) {
             return true;
         case PathRendererStrategy::kComputeAnalyticAA:
         case PathRendererStrategy::kComputeMSAA16:
+        case PathRendererStrategy::kComputeMSAA8:
             return SkToBool(pathAtlasFlags & AtlasProvider::PathAtlasFlags::kCompute);
         case PathRendererStrategy::kRasterAA:
             return SkToBool(pathAtlasFlags & AtlasProvider::PathAtlasFlags::kRaster);

@@ -147,6 +147,7 @@ add_library(Skia STATIC
     src/codec/SkImageGenerator_FromEncoded.cpp
     src/codec/SkJpegCodec.cpp
     src/codec/SkJpegDecoderMgr.cpp
+    src/codec/SkJpegMetadataDecoderImpl.cpp
     src/codec/SkJpegSegmentScan.cpp
     src/codec/SkJpegSourceMgr.cpp
     src/codec/SkJpegUtility.cpp

@@ -119,7 +119,7 @@ public:
 protected:
     void performTest(float* SK_RESTRICT dst, const float* SK_RESTRICT src, int count) override {
         for (int i = 0; i < count; ++i) {
-            dst[i] = 1.0f / sk_float_sqrt(src[i]);
+            dst[i] = 1.0f / std::sqrt(src[i]);
         }
     }
 private:
@@ -187,10 +187,6 @@ static bool isFinite_int(float x) {
     return exponent != 0xFF;
 }
 
-static bool isFinite_float(float x) {
-    return SkToBool(sk_float_isfinite(x));
-}
-
 static bool isFinite_mulzero(float x) {
     float y = x * 0;
     return y == y;
@@ -198,10 +194,6 @@ static bool isFinite_mulzero(float x) {
 
 static bool isfinite_and_int(const float data[4]) {
     return  isFinite_int(data[0]) && isFinite_int(data[1]) && isFinite_int(data[2]) && isFinite_int(data[3]);
-}
-
-static bool isfinite_and_float(const float data[4]) {
-    return  isFinite_float(data[0]) && isFinite_float(data[1]) && isFinite_float(data[2]) && isFinite_float(data[3]);
 }
 
 static bool isfinite_and_mulzero(const float data[4]) {
@@ -212,10 +204,6 @@ static bool isfinite_and_mulzero(const float data[4]) {
 
 static bool isfinite_plus_int(const float data[4]) {
     return  isFinite_int(mulzeroadd(data));
-}
-
-static bool isfinite_plus_float(const float data[4]) {
-    return  !sk_float_isnan(mulzeroadd(data));
 }
 
 static bool isfinite_plus_mulzero(const float data[4]) {
@@ -232,10 +220,8 @@ static const struct {
     const char*     fName;
 } gRec[] = {
     MAKEREC(isfinite_and_int),
-    MAKEREC(isfinite_and_float),
     MAKEREC(isfinite_and_mulzero),
     MAKEREC(isfinite_plus_int),
-    MAKEREC(isfinite_plus_float),
     MAKEREC(isfinite_plus_mulzero),
 };
 
@@ -364,7 +350,7 @@ protected:
         } else {
             for (int j = 0; j < loops; ++j) {
                 for (int i = 0; i < ARRAY; ++i) {
-                    accum += sk_float_floor(data[i]);
+                    accum += std::floor(data[i]);
                 }
                 this->process(accum);
             }
@@ -606,8 +592,6 @@ DEF_BENCH( return new IsFiniteBench(0); )
 DEF_BENCH( return new IsFiniteBench(1); )
 DEF_BENCH( return new IsFiniteBench(2); )
 DEF_BENCH( return new IsFiniteBench(3); )
-DEF_BENCH( return new IsFiniteBench(4); )
-DEF_BENCH( return new IsFiniteBench(5); )
 
 DEF_BENCH( return new FloorBench(false); )
 DEF_BENCH( return new FloorBench(true); )
@@ -623,7 +607,7 @@ DEF_BENCH( return new FixedMathBench(); )
 
 //////////////////////////////////////////////////////////////
 
-#include "include/private/base/SkFloatBits.h"
+#include "src/base/SkFloatBits.h"
 class Floor2IntBench : public Benchmark {
     enum {
         ARRAY = 1000,
