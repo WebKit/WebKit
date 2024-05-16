@@ -1014,7 +1014,30 @@ public:
     unsigned rm() { return (m_opcode >> 16) & 0b11111; }
     unsigned q() { return (m_opcode >> 30) & 0b1; }
 };
+// ---- simd trunc instruction
 
+class A64DOpcodeSimdTruncate : public A64DOpcode {
+private:
+    static const char* const s_opNames[4];
+
+public:
+    static constexpr uint32_t mask = 0x1f000000;
+    static constexpr uint32_t pattern = 0x0a000000;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeSimdTruncate, thisObj);
+
+    const char* format();
+
+    const char* opName() { return s_opNames[opc()]; }
+    unsigned opc() { return (m_opcode >> 29) & 0x3; }
+    unsigned op2() { return (m_opcode >> 16) & 0x1f; }
+    unsigned op3() { return (m_opcode >> 10) & 0x3f; }
+    unsigned op4() { return m_opcode & 0xf; }
+};
+
+
+
+// ---
 
 
 } } // namespace JSC::ARM64Disassembler
