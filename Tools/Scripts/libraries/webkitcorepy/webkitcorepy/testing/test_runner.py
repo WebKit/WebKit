@@ -122,7 +122,7 @@ class TestRunner(object):
 
                 if args.log_level >= logging.WARNING and sys.stdout.isatty():
                     _, columns = Terminal.size()
-                    sys.stdout.write('\033[F\033[K' * math.ceil(chars / (columns or chars)))
+                    sys.stdout.write('\033[F\033[K' * int(math.ceil(chars / (columns or chars))))
 
         except KeyboardInterrupt:
             sys.stderr.write('\nUser interupted the program\n\n')
