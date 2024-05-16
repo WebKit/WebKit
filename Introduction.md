@@ -521,7 +521,7 @@ When an object which implements the semantics required by RefPtr and Ref is crea
 we must immediately *adopt* it into `Ref` type using `adoptRef` as follows:
 
 ```cpp
-class A : public RefCounted<T> {
+class A : public RefCounted<A> {
 public:
     int m_foo;
 
