@@ -36,6 +36,10 @@
 #include "unix/BreakpadExceptionHandler.h"
 #endif
 
+#if USE(GLIB)
+#include <glib.h>
+#endif
+
 namespace WebKit {
 
 AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon()
@@ -60,13 +64,22 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
     return true;
 }
 
-void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
+static void ignoreSigpipe()
 {
     struct sigaction signalAction;
     memset(&signalAction, 0, sizeof(signalAction));
     RELEASE_ASSERT(!sigemptyset(&signalAction.sa_mask));
     signalAction.sa_handler = SIG_IGN;
     RELEASE_ASSERT(!sigaction(SIGPIPE, &signalAction, nullptr));
+}
+
+void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
+{
+    ignoreSigpipe();
+
+#if USE(GLIB)
+    g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
+#endif
 }
 
 } // namespace WebKit
