@@ -211,19 +211,19 @@ inline RefCountedBase::~RefCountedBase()
 #endif
 }
 
-template<typename T, typename Deleter = std::default_delete<T>> class RefCounted : public RefCountedBase {
+template<typename T> class RefCounted : public RefCountedBase {
     WTF_MAKE_NONCOPYABLE(RefCounted); WTF_MAKE_FAST_ALLOCATED;
 public:
     void deref() const
     {
         if (derefBase())
-            Deleter()(const_cast<T*>(static_cast<const T*>(this)));
+            delete const_cast<T*>(static_cast<const T*>(this));
     }
 
     void derefAllowingPartiallyDestroyed() const
     {
         if (derefAllowingPartiallyDestroyedBase())
-            Deleter()(const_cast<T*>(static_cast<const T*>(this)));
+            delete const_cast<T*>(static_cast<const T*>(this));
     }
 
 protected:
