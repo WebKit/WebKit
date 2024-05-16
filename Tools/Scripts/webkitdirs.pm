@@ -45,7 +45,7 @@ use File::Path qw(make_path mkpath rmtree);
 use File::Spec;
 use File::Temp qw(tempdir);
 use File::stat;
-use List::Util;
+use List::Util qw(first);
 use POSIX;
 use Time::HiRes qw(usleep);
 use Text::ParseWords;
@@ -580,6 +580,17 @@ sub determineArchitecture
     $architecture = 'arm64' if $architecture =~ /aarch64/i;
 }
 
+sub xcodeBuildRequestsInRecencyOrder
+{
+    determineBaseProductDir();
+    my @buildRequests = sort { -M $a <=> -M $b } <"$baseProductDir/XCBuildData/*.xcbuilddata/build-request.json">;
+
+    return map {
+        open(my $fh, $_) or warn "Can't open previous build request: $!";
+        return decode_json(join '', <$fh>) if $fh;
+    } @buildRequests;
+}
+
 sub determineXcodeDestination
 {
     return if defined $destination;
@@ -617,16 +628,47 @@ sub determineXcodeDestination
     }
         
     if (!$generic && $xcodeSDKPlatformName =~ /simulator$/) {
-        my $runtime = simulatorRuntime($portName);
-        for my $device (iOSSimulatorDevices()) {
-            if ($device->{runtime} eq $runtime) {
-                $destination .= ',id=' . $device->{UDID};
-                return;
-            }
+        # Two goals:
+        # 1. Find a simulator device to build for, to avoid building multiple architectures.
+        # 2. Try to pick a simulator that's been used before (either by command-line or IDE builds) to avoid
+        #    unnecessary recompilation.
+        #
+        # Changing the targeted simulator between builds breaks incremental building, because it changes
+        # build settings like TARGET_DEVICE_IDENTIFIER.
+        my $prevBuildRequest = first {
+            $_->{parameters}->{activeRunDestination}->{platform} eq $xcodeSDKPlatformName
+        } xcodeBuildRequestsInRecencyOrder();
+        my $prevUDID = $prevBuildRequest->{parameters}->{overrides}->{synthesized}->{table}->{TARGET_DEVICE_IDENTIFIER} if $prevBuildRequest;
+        if ($prevBuildRequest && !$prevUDID) {
+            warn "Can't find UDID in previous $xcodeSDKPlatformName build request, builds may not be incremental.\n";
         }
-        warn "Unable to find a simulator target for $xcodeSDKPlatformName. " .
-            "Building for a generic device, which may build unwanted additional architectures";
-        $generic = 1;
+        
+        # Sort the list of devices to match the ordering in Xcode's UI.
+        my @devices = sort { $a->{name} cmp $b->{name} } iOSSimulatorDevices();
+        my $prevDevice = first { $prevUDID && $_->{UDID} eq $prevUDID } @devices;
+        if ($prevUDID && !$prevDevice) {
+            warn "Simulator with UDID '$prevUDID' not found, falling back to another available simulator. " .
+                "This build may not be incremental.\n";
+        }
+        
+        # If we found the previous device, check that the runtime being built has not changed (e.g. due to a
+        # major SDK update). If it has changed, or if no previous device is available, fall back to the first
+        # eligible device in the list.
+        my $runtime = simulatorRuntime($portName);
+        my $device;
+        if ($prevDevice && $prevDevice->{runtime} eq $runtime) {
+            $device = $prevDevice;
+        } else {
+            $device = first { $_->{runtime} eq $runtime } @devices;
+        }
+        
+        if ($device) {
+            $destination .= ',id=' . $device->{UDID};
+        } else {
+            warn "Unable to find a simulator target for $xcodeSDKPlatformName. " .
+                "Building for a generic device, which may build unwanted additional architectures";
+            $generic = 1;
+        }
     }
     
     $destination = 'generic/' . $destination if $generic;
