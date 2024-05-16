@@ -284,16 +284,16 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::U
 
     document->selection().setSelection({ *sessionRange });
 
+    m_textIndicatorCharacterRangesForSessions.removeFirstMatching([uuid](auto& session) {
+        return session.first == uuid;
+    });
+    removeTransparentMarkersForSession(uuid, RemoveAllMarkersForSession::Yes);
+
     m_replacementTypes.remove(uuid);
     m_contextRanges.remove(uuid);
     m_originalDocumentNodes.remove(uuid);
     m_replacedDocumentNodes.remove(uuid);
     m_replacementLocationOffsets.remove(uuid);
-
-    m_textIndicatorCharacterRangesForSessions.removeFirstMatching([uuid](auto session) {
-        return session.first == uuid;
-    });
-    removeTransparentMarkersForSession(uuid, RemoveAllMarkersForSession::Yes);
 }
 
 void UnifiedTextReplacementController::removeTransparentMarkersForSession(const WTF::UUID& uuid, RemoveAllMarkersForSession removeAll)
