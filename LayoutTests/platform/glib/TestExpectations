@@ -4143,6 +4143,9 @@ imported/w3c/web-platform-tests/css/css-view-transitions/names-are-tree-scoped.h
 
 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ ImageOnlyFailure ]
 
+# This test hits some infinite-loop condition inside Cairo
+fast/css/repeating-conic-gradient-small-range.html [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

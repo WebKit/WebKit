@@ -576,49 +576,100 @@ GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAda
             stops.first().color = stops.last().color;
             stops.shrink(1);
             numberOfStops = 1;
+        } else if (std::abs(gradientRange) < (float(1) / (2 << 15))) {
+            // If the gradient range is too small, the subsequent replication of stops
+            // across the complete [0, maxExtent] range can challenging to complete both
+            // because of potentially-expensive initial traversal across the [0, first-offset]
+            // and [last-offset, maxExtent] ranges as well as likely exorbitant memory consumption
+            // needed for all such generated stops. In case of such a gradient range the initial
+            // Vector of stops remains unchanged, and additional stops for the purpose of the
+            // repeating nature of the gradient are not computed.
         } else {
+            // Since the gradient range is deemed big enough, the amount of necessary stops is
+            // calculated for both the [0, first-offset] and the [last-offset, maxExtent] ranges.
             float maxExtent = gradientAdapter.maxExtent(maxLengthForRepeat, gradientLength);
+            CheckedSize numberOfGeneratedStopsBeforeFirst;
+            CheckedSize numberOfGeneratedStopsAfterLast;
 
-            size_t originalNumberOfStops = numberOfStops;
-            size_t originalFirstStopIndex = 0;
-
-            // Work backwards from the first, adding stops until we get one before 0.
-            float firstOffset = *stops[0].offset;
-            if (firstOffset > 0) {
-                float currOffset = firstOffset;
-                size_t srcStopOrdinal = originalNumberOfStops - 1;
+            if (*stops.first().offset > 0) {
+                float currOffset = *stops.first().offset;
+                size_t srcStopOrdinal = numberOfStops - 1;
 
                 while (true) {
-                    auto newStop = stops[originalFirstStopIndex + srcStopOrdinal];
-                    newStop.offset = currOffset;
-                    stops.insert(0, newStop);
-                    ++originalFirstStopIndex;
+                    ++numberOfGeneratedStopsBeforeFirst;
                     if (currOffset < 0)
                         break;
 
                     if (srcStopOrdinal)
-                        currOffset -= *stops[originalFirstStopIndex + srcStopOrdinal].offset - *stops[originalFirstStopIndex + srcStopOrdinal - 1].offset;
-                    srcStopOrdinal = (srcStopOrdinal + originalNumberOfStops - 1) % originalNumberOfStops;
+                        currOffset -= *stops[srcStopOrdinal].offset - *stops[srcStopOrdinal - 1].offset;
+                    srcStopOrdinal = (srcStopOrdinal + numberOfStops - 1) % numberOfStops;
                 }
             }
 
-            // Work forwards from the end, adding stops until we get one after 1.
-            float lastOffset = *stops[stops.size() - 1].offset;
-            if (lastOffset < maxExtent) {
-                float currOffset = lastOffset;
+            if (*stops.last().offset < maxExtent) {
+                float currOffset = *stops.last().offset;
                 size_t srcStopOrdinal = 0;
 
                 while (true) {
-                    size_t srcStopIndex = originalFirstStopIndex + srcStopOrdinal;
-                    auto newStop = stops[srcStopIndex];
-                    newStop.offset = currOffset;
-                    stops.append(newStop);
+                    ++numberOfGeneratedStopsAfterLast;
                     if (currOffset > maxExtent)
                         break;
-                    if (srcStopOrdinal < originalNumberOfStops - 1)
-                        currOffset += *stops[srcStopIndex + 1].offset - *stops[srcStopIndex].offset;
-                    srcStopOrdinal = (srcStopOrdinal + 1) % originalNumberOfStops;
+
+                    if (srcStopOrdinal < numberOfStops - 1)
+                        currOffset += *stops[srcStopOrdinal + 1].offset - *stops[srcStopOrdinal].offset;
+                    srcStopOrdinal = (srcStopOrdinal + 1) % numberOfStops;
                 }
+            }
+
+            // With the number of stops necessary for the repeating gradient now known, we can impose
+            // some reasonable limit to prevent generation of memory-expensive amounts of gradient stops.
+            CheckedSize checkedNumberOfGeneratedStops = CheckedSize(numberOfStops) + numberOfGeneratedStopsBeforeFirst + numberOfGeneratedStopsAfterLast;
+            if (checkedNumberOfGeneratedStops.hasOverflowed() || checkedNumberOfGeneratedStops.value() > (2 << 15)) {
+                // More than 65536 gradient stops are expected. Let's fall back to the initially-provided
+                // Vector of stops, effectively meaning the repetition of stops is not applied.
+            } else {
+                // An affordable amount of gradient stops is determined. A separate Vector object is constructed
+                // accordingly, first generating the repeated stops in the [0, first-offset] range, then adding
+                // the original stops, and finally generating the repeated stops in the [last-offset, maxExtent]
+                // range. The resulting Vector is then moved in to replace the original stops.
+                Vector<ResolvedGradientStop> generatedStops;
+                generatedStops.reserveInitialCapacity(checkedNumberOfGeneratedStops.value());
+
+                if (numberOfGeneratedStopsBeforeFirst > 0) {
+                    float currOffset = *stops.first().offset;
+                    size_t srcStopOrdinal = numberOfStops - 1;
+
+                    for (size_t i = 0; i < numberOfGeneratedStopsBeforeFirst; ++i) {
+                        auto newStop = stops[srcStopOrdinal];
+                        newStop.offset = currOffset;
+                        generatedStops.append(newStop);
+
+                        if (srcStopOrdinal)
+                            currOffset -= *stops[srcStopOrdinal].offset - *stops[srcStopOrdinal - 1].offset;
+                        srcStopOrdinal = (srcStopOrdinal + numberOfStops - 1) % numberOfStops;
+                    }
+
+                    generatedStops.reverse();
+                }
+
+                generatedStops.appendVector(stops);
+
+                if (numberOfGeneratedStopsAfterLast > 0) {
+                    float currOffset = *stops.last().offset;
+                    size_t srcStopOrdinal = 0;
+
+                    for (size_t i = 0; i < numberOfGeneratedStopsAfterLast; ++i) {
+                        auto newStop = stops[srcStopOrdinal];
+                        newStop.offset = currOffset;
+                        generatedStops.append(newStop);
+
+                        if (srcStopOrdinal < numberOfStops - 1)
+                            currOffset += *stops[srcStopOrdinal + 1].offset - *stops[srcStopOrdinal].offset;
+                        srcStopOrdinal = (srcStopOrdinal + 1) % numberOfStops;
+                    }
+                }
+
+                stops = WTFMove(generatedStops);
             }
         }
     }
