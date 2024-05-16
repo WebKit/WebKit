@@ -109,6 +109,9 @@ JSString* jsTypeStringForValueWithConcurrency(VM& vm, JSGlobalObject* globalObje
             return nullptr;
         }
     }
+    // This case can happen for internal objects like GetterSetter, that
+    // can be exposed to this function by transformations like LICM blind hoisting.
+    // The actual result shouldn't matter, as long as it matches buildTypeOf.
     return vm.smallStrings.objectString();
 }
 

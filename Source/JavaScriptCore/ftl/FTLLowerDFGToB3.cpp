@@ -20149,7 +20149,9 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock stringCase = m_out.newBlock();
         LBasicBlock notStringCase = m_out.newBlock();
         LBasicBlock bigIntCase = m_out.newBlock();
+        LBasicBlock notBigIntCase = m_out.newBlock();
         LBasicBlock symbolCase = m_out.newBlock();
+        LBasicBlock notSymbolCase = m_out.newBlock();
         LBasicBlock notCellCase = m_out.newBlock();
         LBasicBlock numberCase = m_out.newBlock();
         LBasicBlock notNumberCase = m_out.newBlock();
@@ -20209,13 +20211,24 @@ IGNORE_CLANG_WARNINGS_END
         m_out.appendTo(notStringCase, bigIntCase);
         m_out.branch(
             isHeapBigInt(value, provenType(child) & (SpecCell - SpecObject - SpecString)),
-            unsure(bigIntCase), unsure(symbolCase));
+            unsure(bigIntCase), unsure(notBigIntCase));
 
-        m_out.appendTo(bigIntCase, symbolCase);
+        m_out.appendTo(bigIntCase, notBigIntCase);
         functor(TypeofType::BigInt);
 
-        m_out.appendTo(symbolCase, notCellCase);
+        m_out.appendTo(notBigIntCase, symbolCase);
+        m_out.branch(
+            isSymbol(value, provenType(child) & (SpecCell - SpecObject - SpecString - SpecBigInt)),
+            unsure(symbolCase), unsure(notSymbolCase));
+
+        m_out.appendTo(symbolCase, notSymbolCase);
         functor(TypeofType::Symbol);
+
+        m_out.appendTo(notSymbolCase, notCellCase);
+        // This case can happen for internal objects like GetterSetter too, that
+        // can be exposed to this function by transformations like LICM blind hoisting.
+        // The actual result shouldn't matter, as long as it matches jsTypeStringForValueWithConcurrency.
+        functor(TypeofType::Object);
 
         m_out.appendTo(notCellCase, numberCase);
         m_out.branch(
