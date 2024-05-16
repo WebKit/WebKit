@@ -224,7 +224,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseIndexForGlobal(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseFunctionIndex(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseExceptionIndex(uint32_t&);
-    PartialResult WARN_UNUSED_RETURN parseBranchTarget(uint32_t&);
+    PartialResult WARN_UNUSED_RETURN parseBranchTarget(uint32_t&, uint32_t = 0);
     PartialResult WARN_UNUSED_RETURN parseDelegateTarget(uint32_t&, uint32_t);
 
     struct TableInitImmediates {
@@ -1372,11 +1372,17 @@ auto FunctionParser<Context>::parseExceptionIndex(uint32_t& result) -> PartialRe
 }
 
 template<typename Context>
-auto FunctionParser<Context>::parseBranchTarget(uint32_t& resultTarget) -> PartialResult
+auto FunctionParser<Context>::parseBranchTarget(uint32_t& resultTarget, uint32_t unreachableBlocks) -> PartialResult
 {
     uint32_t target;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get br / br_if's target"_s);
-    WASM_PARSER_FAIL_IF(target >= m_controlStack.size(), "br / br_if's target "_s, target, " exceeds control stack size "_s, m_controlStack.size());
+
+    auto controlStackSize = m_controlStack.size();
+    // Take into account the unreachable blocks in the control stack that were not added because they were unrechable
+    if (unreachableBlocks)
+        controlStackSize += (unreachableBlocks - 1);
+    WASM_PARSER_FAIL_IF(target >= controlStackSize, "br / br_if's target "_s, target, " exceeds control stack size "_s, controlStackSize);
+
     resultTarget = target;
     return { };
 }
@@ -3652,7 +3658,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case Br:
     case BrIf: {
         uint32_t target;
-        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target, m_unreachableBlocks));
         return { };
     }
 
