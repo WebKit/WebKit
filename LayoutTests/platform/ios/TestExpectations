@@ -2585,6 +2585,7 @@ platform/ios/media/video-interruption-suspendunderlock.html [ Skip ]
 media/airplay-allows-buffering.html
 media/airplay-autoplay.html
 media/airplay-target-availability.html
+media/airplay-target-availability-disableremoteplayback.html
 
 # needs enhanced eventSender.contextMenu() return value
 webkit.org/b/116651 media/context-menu-actions.html

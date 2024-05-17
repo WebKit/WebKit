@@ -461,10 +461,14 @@ public:
     void playbackTargetPickerWasDismissed() override;
     bool hasWirelessPlaybackTargetAlternative() const;
     bool isWirelessPlaybackTargetDisabled() const;
+    void isWirelessPlaybackTargetDisabledChanged();
+    bool hasTargetAvailabilityListeners();
+    bool hasEnabledTargetAvailabilityListeners();
 #endif
 
     bool isPlayingToWirelessPlaybackTarget() const override { return m_isPlayingToWirelessTarget; };
     void setIsPlayingToWirelessTarget(bool);
+
     bool webkitCurrentPlaybackTargetIsWireless() const;
 
     void setPlayingOnSecondScreen(bool value);
@@ -1342,6 +1346,7 @@ private:
 
     std::optional<RemotePlaybackConfiguration> m_remotePlaybackConfiguration;
 
+    bool m_wirelessPlaybackTargetDisabled { false };
     bool m_isPlayingToWirelessTarget { false };
     bool m_playingOnSecondScreen { false };
     bool m_removedBehaviorRestrictionsAfterFirstUserGesture { false };

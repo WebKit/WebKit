@@ -636,7 +636,7 @@ HTMLMediaElement::~HTMLMediaElement()
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks()) {
+    if (hasTargetAvailabilityListeners()) {
         m_hasPlaybackTargetAvailabilityListeners = false;
         if (m_mediaSession)
             m_mediaSession->setHasPlaybackTargetAvailabilityListeners(false);
@@ -905,12 +905,13 @@ void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomStr
         mediaSession().setWirelessVideoPlaybackDisabled(newValue != nullAtom());
         FALLTHROUGH;
     case AttributeNames::disableremoteplaybackAttr:
-#if ENABLE(MEDIA_SOURCE)
     case AttributeNames::webkitairplayAttr:
+        isWirelessPlaybackTargetDisabledChanged();
+#if ENABLE(MEDIA_SOURCE)
         if (RefPtr mediaSource = m_mediaSource; mediaSource && isWirelessPlaybackTargetDisabled())
             mediaSource->openIfDeferredOpen();
-        break;
 #endif
+        break;
 #endif
     default:
         break;
@@ -3041,7 +3042,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-            if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
+            if (hasEnabledTargetAvailabilityListeners())
                 enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::OnlyWhenChanged);
 #endif
             m_initiallyMuted = m_volume < 0.05 || muted();
@@ -6478,14 +6479,15 @@ void HTMLMediaElement::clearMediaPlayer()
     forgetResourceSpecificTracks();
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks()) {
+    if (hasTargetAvailabilityListeners()) {
         m_hasPlaybackTargetAvailabilityListeners = false;
         if (m_mediaSession)
             m_mediaSession->setHasPlaybackTargetAvailabilityListeners(false);
 
         // Send an availability event in case scripts want to hide the picker when the element
         // doesn't support playback to a target.
-        enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always);
+        if (!isWirelessPlaybackTargetDisabled())
+            enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always);
     }
 
     if (m_isPlayingToWirelessTarget)
@@ -6780,6 +6782,9 @@ void HTMLMediaElement::webkitShowPlaybackTargetPicker()
 
 void HTMLMediaElement::wirelessRoutesAvailableDidChange()
 {
+    if (isWirelessPlaybackTargetDisabled())
+        return;
+
     bool hasTargets = mediaSession().hasWirelessPlaybackTargets();
     Ref { m_remote }->availabilityChanged(hasTargets);
 
@@ -6823,7 +6828,7 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
 
 void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior behavior)
 {
-    bool hasTargets = m_mediaSession && mediaSession().hasWirelessPlaybackTargets();
+    bool hasTargets = !isWirelessPlaybackTargetDisabled() && m_mediaSession && mediaSession().hasWirelessPlaybackTargets();
     if (behavior == EnqueueBehavior::OnlyWhenChanged && hasTargets == m_lastTargetAvailabilityEventState)
         return;
 
@@ -6861,7 +6866,7 @@ void HTMLMediaElement::playbackTargetPickerWasDismissed()
 
 void HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()
 {
-    bool hasListeners = hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks();
+    bool hasListeners = hasEnabledTargetAvailabilityListeners();
     if (m_hasPlaybackTargetAvailabilityListeners == hasListeners)
         return;
 
@@ -6889,11 +6894,48 @@ bool HTMLMediaElement::hasWirelessPlaybackTargetAlternative() const
     return false;
 }
 
-bool HTMLMediaElement::isWirelessPlaybackTargetDisabled() const
+bool HTMLMediaElement::hasTargetAvailabilityListeners()
 {
-    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::webkitairplayAttr), "deny"_s)
+    return hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks();
+}
+
+bool HTMLMediaElement::hasEnabledTargetAvailabilityListeners()
+{
+    return !m_wirelessPlaybackTargetDisabled && hasTargetAvailabilityListeners();
+}
+
+void HTMLMediaElement::isWirelessPlaybackTargetDisabledChanged()
+{
+    bool disabled = equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::webkitairplayAttr), "deny"_s)
         || hasAttributeWithoutSynchronization(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)
         || hasAttributeWithoutSynchronization(HTMLNames::disableremoteplaybackAttr);
+    if (m_wirelessPlaybackTargetDisabled == disabled)
+        return;
+
+    m_wirelessPlaybackTargetDisabled = disabled;
+
+    if (!m_wirelessPlaybackTargetDisabled && hasTargetAvailabilityListeners()) {
+        m_hasPlaybackTargetAvailabilityListeners = true;
+        mediaSession().setActive(true);
+        mediaSession().setHasPlaybackTargetAvailabilityListeners(true);
+        enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always);
+    } else if (m_wirelessPlaybackTargetDisabled && hasTargetAvailabilityListeners()) {
+        m_hasPlaybackTargetAvailabilityListeners = false;
+        mediaSession().setHasPlaybackTargetAvailabilityListeners(false);
+
+        // If the client has disabled remote playback, also has availability listeners,
+        // and the last state sent to the client was that targets were available,
+        // fire one last event indicating no pickable targets exist. This has the effect
+        // of having players disable their remote playback picker buttons.
+        if (m_lastTargetAvailabilityEventState)
+            enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always);
+    }
+    scheduleUpdateMediaState();
+}
+
+bool HTMLMediaElement::isWirelessPlaybackTargetDisabled() const
+{
+    return m_wirelessPlaybackTargetDisabled;
 }
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -6931,10 +6973,13 @@ bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventLi
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
         return Node::addEventListener(eventType, WTFMove(listener), options);
 
-    bool isFirstAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) && !m_remote->hasAvailabilityCallbacks();
+    bool isFirstAvailabilityChangedListener = !hasTargetAvailabilityListeners();
 
     if (!Node::addEventListener(eventType, WTFMove(listener), options))
         return false;
+
+    if (isWirelessPlaybackTargetDisabled())
+        return true;
 
     if (isFirstAvailabilityChangedListener) {
         m_hasPlaybackTargetAvailabilityListeners = true;
@@ -6966,7 +7011,7 @@ bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventLis
     if (!listenerWasRemoved)
         return false;
 
-    bool didRemoveLastAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) && !m_remote->hasAvailabilityCallbacks();
+    bool didRemoveLastAvailabilityChangedListener = !hasTargetAvailabilityListeners();
     ALWAYS_LOG(LOGIDENTIFIER, "removed last listener = ", didRemoveLastAvailabilityChangedListener);
     if (didRemoveLastAvailabilityChangedListener) {
         m_hasPlaybackTargetAvailabilityListeners = false;
@@ -7710,7 +7755,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks()) {
+    if (hasEnabledTargetAvailabilityListeners()) {
         m_hasPlaybackTargetAvailabilityListeners = true;
         mediaSession().setHasPlaybackTargetAvailabilityListeners(true);
         enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always); // Ensure the event listener gets at least one event.
