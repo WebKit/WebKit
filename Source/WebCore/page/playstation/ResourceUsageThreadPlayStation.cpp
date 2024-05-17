@@ -30,7 +30,7 @@
 
 #include <JavaScriptCore/GCActivityCallback.h>
 #include <JavaScriptCore/VM.h>
-#include <showmap.h>
+#include <memory-extra/showmap.h>
 
 namespace WebCore {
 
@@ -71,17 +71,15 @@ void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageDa
 
     // TODO: collect dirty size of "MemoryCategory::Images" and "MemoryCategory::Layers"
 
-    showmap::Result<256> result;
+    memory_extra::showmap::Result<4> result;
+    auto entry = result.reserve("SceNKFastMalloc");
     result.collect();
-    data.totalDirtySize = result.effectiveRss();
+    data.totalDirtySize = result.rss;
 
-    if (auto* entry = result.entry("SceNKFastMalloc")) {
-        auto rss = entry->effectiveRss();
-        RELEASE_ASSERT(data.totalDirtySize > rss);
-        categories[MemoryCategory::Other].dirtySize = data.totalDirtySize - rss;
-        categories[MemoryCategory::bmalloc].dirtySize = rss - std::min(rss, currentGCDirtySize);
-    } else
-        categories[MemoryCategory::Other] = data.totalDirtySize - std::min(data.totalDirtySize, currentGCDirtySize);
+    auto rss = entry->rss;
+    RELEASE_ASSERT(data.totalDirtySize > rss);
+    categories[MemoryCategory::Other].dirtySize = data.totalDirtySize - rss;
+    categories[MemoryCategory::bmalloc].dirtySize = rss - std::min(rss, currentGCDirtySize);
 
     data.totalExternalSize = currentGCOwnedExternal;
 

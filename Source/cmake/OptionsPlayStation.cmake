@@ -361,6 +361,9 @@ set(PAL_LIBRARY_TYPE OBJECT)
 set(WebCore_LIBRARY_TYPE OBJECT)
 set(WebKit_LIBRARY_TYPE SHARED)
 
+find_library(MEMORY_EXTRA_LIB MemoryExtra)
+find_path(MEMORY_EXTRA_INCLUDE_DIR NAMES memory-extra)
+
 # Enable multi process builds for Visual Studio
 if (NOT ${CMAKE_GENERATOR} MATCHES "Ninja")
     add_definitions(/MP)

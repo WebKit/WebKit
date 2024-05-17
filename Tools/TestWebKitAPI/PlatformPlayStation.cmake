@@ -11,6 +11,10 @@ list(APPEND TestWTF_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBKIT_LIBRARIES_DIR}/include
 )
 
+list(APPEND TestWTF_LIBRARIES
+    ${MEMORY_EXTRA_LIB}
+)
+
 WEBKIT_ADD_TARGET_CXX_FLAGS(TestWTF -Wno-unused-function)
 
 list(APPEND TestJavaScriptCore_SOURCES
@@ -18,6 +22,10 @@ list(APPEND TestJavaScriptCore_SOURCES
 )
 list(APPEND TestJavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBKIT_LIBRARIES_DIR}/include
+)
+
+list(APPEND TestJavaScriptCore_LIBRARIES
+    ${MEMORY_EXTRA_LIB}
 )
 
 WEBKIT_ADD_TARGET_CXX_FLAGS(TestJavaScriptCore -Wno-unused-function)
