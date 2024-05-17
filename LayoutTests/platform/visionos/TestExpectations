@@ -1,0 +1,163 @@
+###
+### Test Expectations for visionOS and the visionOS simulator
+###
+
+accessibility [ Skip ]
+animations [ Skip ]
+applicationmanifest [ Skip ]
+compositing [ Skip ]
+contact-picker [ Skip ]
+contentfiltering [ Skip ]
+crypto [ Skip ]
+css-custom-properties-api [ Skip ]
+css1 [ Skip ]
+css2.1 [ Skip ]
+css3 [ Skip ]
+cssom [ Skip ]
+css-dark-mode [ Skip ]
+css-typedom [ Skip ]
+displaylists [ Skip ]
+dom [ Skip ]
+editing [ Skip ]
+fast [ Skip ]
+fetch [ Skip ]
+fonts [ Skip ]
+fullscreen [ Skip ]
+gamepad [ Skip ]
+geometry [ Skip ]
+highlight [ Skip ]
+html5lib [ Skip ]
+http [ Skip ]
+ietestcenter [ Skip ]
+imported [ Skip ]
+inspector [ Skip ]
+intersection-observer [ Skip ]
+ipc [ Skip ]
+jquery [ Skip ]
+js [ Skip ]
+loader [ Skip ]
+mathml [ Skip ]
+media [ Skip ]
+memory [ Skip ]
+mhtml [ Skip ]
+overlay-region [ Skip ]
+pageoverlay [ Skip ]
+perf [ Skip ]
+performance-api [ Skip ]
+platform [ Skip ]
+plugins [ Skip ]
+pointerevents [ Skip ]
+pointer-lock [ Skip ]
+printing [ Skip ]
+quicklook [ Skip ]
+requestidlecallback [ Skip ]
+scrollbars [ Skip ]
+scrollingcoordinator [ Skip ]
+security [ Skip ]
+storage [ Skip ]
+streams [ Skip ]
+svg [ Skip ]
+swipe [ Skip ]
+system-preview [ Skip ]
+tables [ Skip ]
+tiled-drawing [ Skip ]
+transforms [ Skip ]
+transitions [ Skip ]
+traversal [ Skip ]
+userscripts [ Skip ]
+wasm [ Skip ]
+webanimations [ Skip ]
+webarchive [ Skip ]
+webaudio [ Skip ]
+webgl [ Skip ]
+webrtc [ Skip ]
+webxr [ Skip ]
+workers [ Skip ]
+
+##
+## Platform-specific tests un-skipped on visionOS
+##
+
+fast/events/pointer [ Pass ]
+interaction-region [ Pass ]
+overlay-region [ Pass ]
+
+imported/w3c/web-platform-tests/webxr [ Pass ]
+http/wpt/webxr [ Pass ]
+webxr [ Pass ]
+
+###################################################################################################
+### START OF Legitimate failures (due to platform behavioral differences)
+
+# These tests do not make sense, because they depend on the software keyboard
+# taking up space in the test runner window; on visionOS, the keyboard is in
+# its own separate window. <rdar://81427165>
+# NOTE: Some of these could likely be redesigned to work, others just don't make sense at all.
+editing/selection/ios/scrolling-to-focused-element-inside-iframe.html [ Skip ]
+fast/events/ios/do-not-show-keyboard-when-focusing-after-blur.html [ Skip ]
+fast/forms/ios/inputmode-removing-none.html [ Skip ]
+fast/forms/ios/inputmode-change-update-keyboard.html [ Skip ]
+
+# WebXR - Missing modules.
+imported/w3c/web-platform-tests/webxr/anchors [ Skip ]
+imported/w3c/web-platform-tests/webxr/ar-module [ Skip ]
+imported/w3c/web-platform-tests/webxr/depth-sensing [ Skip ]
+imported/w3c/web-platform-tests/webxr/dom-overlay [ Skip ]
+imported/w3c/web-platform-tests/webxr/gamepads-module [ Skip ]
+imported/w3c/web-platform-tests/webxr/hand-input [ Skip ]
+imported/w3c/web-platform-tests/webxr/hit-test [ Skip ]
+imported/w3c/web-platform-tests/webxr/layers [ Skip ]
+imported/w3c/web-platform-tests/webxr/light-estimation [ Skip ]
+
+### END OF Legitimate failures
+###################################################################################################
+
+###################################################################################################
+### START OF failures due to missing WebKitTestRunner features
+
+### END OF failures due to missing WebKitTestRunner features
+###################################################################################################
+
+###################################################################################################
+### START OF Triaged failures
+
+# rdar://125739629 [ visionOS ] Multiple tests in imported/w3c/web-platform-tests/webxr are consistent failing
+imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html [ Failure ]
+imported/w3c/web-platform-tests/webxr/webxr_feature_policy.https.html [ Failure ]
+imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html [ Failure ]
+imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https.html [ Failure ]
+imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html [ Failure ]
+imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html [ Failure ]
+imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html [ Failure ]
+imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https.html [ Failure ]
+
+### END OF Triaged failures
+###################################################################################################
+
+###################################################################################################
+### START OF Undiagnosed failures
+
+
+### END OF Undiagnosed failures
+###################################################################################################
+
+###################################################################################################
+### START OF Undiagnosed timeouts
+
+
+### END OF Undiagnosed timeouts
+###################################################################################################
+
+###################################################################################################
+### START OF Web platform tests
+
+
+### END OF Web platform tests
+###################################################################################################
+
+###################################################################################################
+### START OF Flaky tests
+
+
+### END OF Flaky tests
+###################################################################################################
