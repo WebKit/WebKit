@@ -23,6 +23,7 @@
 
 #include "BaseTarget.xcconfig"
 #include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/AppleFeatures.xcconfig"
+#include? "../../../../Internal/Configurations/AdditionalFeatureDefines.xcconfig"
 
 GCC_PREPROCESSOR_DEFINITIONS = $(ENABLE_RELOCATABLE_WEBPUSHD) $(inherited);
 

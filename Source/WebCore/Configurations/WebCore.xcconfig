@@ -23,6 +23,8 @@
 
 #include "FeatureDefines.xcconfig"
 #include "../../../Configurations/Version.xcconfig"
+#include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/AppleFeatures.xcconfig"
+#include? "../../../Internal/Configurations/AdditionalFeatureDefines.xcconfig"
 
 GCC_PREFIX_HEADER = WebCorePrefix.h;
 
