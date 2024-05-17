@@ -175,6 +175,7 @@ private:
     WebCore::Color accentColor() override;
 
     WebKitWebResourceLoadManager* webResourceLoadManager() override;
+    void didClearEditorStateAfterPageTransition() final { }
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;

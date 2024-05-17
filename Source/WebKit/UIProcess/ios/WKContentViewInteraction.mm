@@ -8222,6 +8222,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         block();
 }
 
+- (void)_didClearEditorStateAfterPageTransition
+{
+    _cachedSelectedTextRange = nil;
+    _lastSelectionDrawingInfo = { };
+}
+
 - (void)_updateInitialWritingDirectionIfNecessary
 {
     if (!_page->isEditable())

@@ -168,6 +168,7 @@ private:
     void selectionDidChange() override;
 
     WebKitWebResourceLoadManager* webResourceLoadManager() override;
+    void didClearEditorStateAfterPageTransition() final { }
 
     WKWPE::View& m_view;
 };

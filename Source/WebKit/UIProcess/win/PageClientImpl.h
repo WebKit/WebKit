@@ -155,6 +155,7 @@ private:
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return WebCore::UserInterfaceLayoutDirection::LTR; }
 
     void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
+    void didClearEditorStateAfterPageTransition() final { }
 
     // Members of PageClientImpl class
     DefaultUndoController m_undoController;

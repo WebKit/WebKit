@@ -3054,7 +3054,7 @@ void WebPageProxy::clearEditorStateAfterPageTransition(EditorStateIdentifier ide
     internals().editorState = { };
     internals().editorState.identifier = identifier;
 
-    dispatchDidUpdateEditorState();
+    protectedPageClient()->didClearEditorStateAfterPageTransition();
 }
 
 void WebPageProxy::scheduleFullEditorStateUpdate()

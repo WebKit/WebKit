@@ -7308,7 +7308,5 @@ fast/viewport/ios/viewport-fit-auto.html [ Failure ]
 fast/viewport/ios/viewport-fit-contain.html [ Failure ]
 fast/viewport/ios/viewport-fit-cover.html [ Failure ]
 
-webkit.org/b/274180 editing/selection/ios/place-selection-in-overflow-area.html [ Timeout ]
-
 # webkit.org/b/274219 (REGRESSION (278786@main): [ MacOS iOS ] 3X http/wpt/webauthn tests are consistent failures)
 http/wpt/webauthn/idl.https.html [ Failure ]
