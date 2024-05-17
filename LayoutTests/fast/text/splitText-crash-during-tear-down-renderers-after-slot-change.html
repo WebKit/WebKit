@@ -12,7 +12,6 @@
     if (window.testRunner)
         testRunner.dumpAsText();
     function f0() {
-        try { x44.outerHTML = "This test passes if it does not crash."; } catch { }
         try { x47.select(); } catch { }
         try { window.onanimationstart = f4; } catch { }
     }
@@ -32,9 +31,8 @@
 </textarea>
 <embed class="class1" part="part1">
 </object>
-<details open="" tabindex="-1">
-    <summary id="x44" itemgroup="AA">
-    </summary>
+<details open>
+    <summary itemgroup="AA" id="summary">This test passes if it does not crash.</summary>
     <dd dir="rtl" class="class0" onclick="f0()">
         <li id="x19" accesskey="A">
         </li>
