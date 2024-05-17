@@ -7310,3 +7310,5 @@ fast/viewport/ios/viewport-fit-cover.html [ Failure ]
 
 # webkit.org/b/274219 (REGRESSION (278786@main): [ MacOS iOS ] 3X http/wpt/webauthn tests are consistent failures)
 http/wpt/webauthn/idl.https.html [ Failure ]
+
+webkit.org/b/274340 fast/events/ios/key-command-transpose.html [ Pass Timeout ]
