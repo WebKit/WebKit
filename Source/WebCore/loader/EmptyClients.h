@@ -153,10 +153,6 @@ class EmptyChromeClient : public ChromeClient {
     std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) final;
 #endif
 
-#if ENABLE(APP_HIGHLIGHTS)
-    void storeAppHighlight(AppHighlight&&) const final;
-#endif
-
     void setTextIndicator(const TextIndicatorData&) const final;
 
     DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const final;

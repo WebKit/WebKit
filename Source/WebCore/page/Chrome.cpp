@@ -541,13 +541,6 @@ void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& argume
     m_client->dispatchViewportPropertiesDidChange(arguments);
 }
 
-#if ENABLE(APP_HIGHLIGHTS)
-void Chrome::storeAppHighlight(AppHighlight&& highlight) const
-{
-    m_client->storeAppHighlight(WTFMove(highlight));
-}
-#endif
-
 void Chrome::setCursor(const Cursor& cursor)
 {
     m_client->setCursor(cursor);

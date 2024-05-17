@@ -388,10 +388,6 @@ private:
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags) final;
     void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
 
-#if ENABLE(APP_HIGHLIGHTS)
-    void storeAppHighlight(WebCore::AppHighlight&&) const final;
-#endif
-
     void setTextIndicator(const WebCore::TextIndicatorData&) const final;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)

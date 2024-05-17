@@ -715,12 +715,6 @@ std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTime
 }
 #endif
 
-#if ENABLE(APP_HIGHLIGHTS)
-void WebChromeClient::storeAppHighlight(WebCore::AppHighlight&&) const
-{
-}
-#endif
-
 void WebChromeClient::setTextIndicator(const WebCore::TextIndicatorData& indicatorData) const
 {
 }

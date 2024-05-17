@@ -12664,16 +12664,6 @@ void WebPageProxy::getTextFragmentMatch(CompletionHandler<void(const String&)>&&
     sendWithAsyncReply(Messages::WebPage::GetTextFragmentMatch(), WTFMove(callback));
 }
 
-#if ENABLE(APP_HIGHLIGHTS)
-void WebPageProxy::storeAppHighlight(const WebCore::AppHighlight& highlight)
-{
-    MESSAGE_CHECK(m_process, !highlight.highlight->isEmpty());
-
-    protectedPageClient()->storeAppHighlight(highlight);
-
-}
-#endif
-
 #if PLATFORM(COCOA)
 void WebPageProxy::insertTextPlaceholder(const IntSize& size, CompletionHandler<void(const std::optional<ElementContext>&)>&& completionHandler)
 {

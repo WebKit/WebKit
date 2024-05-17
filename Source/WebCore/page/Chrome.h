@@ -204,10 +204,6 @@ public:
 
     std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&);
 
-#if ENABLE(APP_HIGHLIGHTS)
-    void storeAppHighlight(AppHighlight&&) const;
-#endif
-
     void runOpenPanel(LocalFrame&, FileChooser&);
     void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
     void showContactPicker(const ContactsRequestData&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&&);

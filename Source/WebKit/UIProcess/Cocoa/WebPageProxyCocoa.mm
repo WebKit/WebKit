@@ -741,7 +741,11 @@ void WebPageProxy::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForH
 
     setUpHighlightsObserver();
 
-    send(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup, requestOriginatedInApp));
+    auto completionHandler = [this, protectedThis = Ref { *this }] (WebCore::AppHighlight&& highlight) {
+        MESSAGE_CHECK(!highlight.highlight->isEmpty());
+        protectedPageClient()->storeAppHighlight(highlight);
+    };
+    sendWithAsyncReply(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup, requestOriginatedInApp), WTFMove(completionHandler));
 }
 
 void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedMemory>>& highlights, const std::optional<unsigned> index)

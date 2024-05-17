@@ -351,10 +351,6 @@ public:
     virtual std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) = 0;
 #endif
 
-#if ENABLE(APP_HIGHLIGHTS)
-    virtual void storeAppHighlight(WebCore::AppHighlight&&) const = 0;
-#endif
-
     virtual void setTextIndicator(const TextIndicatorData&) const = 0;
 
     virtual void runOpenPanel(LocalFrame&, FileChooser&) = 0;
