@@ -88,7 +88,7 @@ protected:
     void setPIPStandbyElement(WebCore::HTMLVideoElement*);
 
     void setAnimatingFullScreen(bool);
-    void requestRestoreFullScreen();
+    void requestRestoreFullScreen(CompletionHandler<void(bool)>&&);
     void requestExitFullScreen();
     void setFullscreenInsets(const WebCore::FloatBoxExtent&);
     void setFullscreenAutoHideDuration(Seconds);

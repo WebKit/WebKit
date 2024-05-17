@@ -108,7 +108,7 @@ public:
     void willExitFullScreen();
     void didExitFullScreen();
     void setAnimatingFullScreen(bool);
-    void requestRestoreFullScreen();
+    void requestRestoreFullScreen(CompletionHandler<void(bool)>&&);
     void requestExitFullScreen();
     void saveScrollPosition();
     void restoreScrollPosition();

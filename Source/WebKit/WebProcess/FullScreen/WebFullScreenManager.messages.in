@@ -22,7 +22,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 messages -> WebFullScreenManager LegacyReceiver {
-    RequestRestoreFullScreen()
+    RequestRestoreFullScreen() -> (bool succeeded) Async
     RequestExitFullScreen()
     WillEnterFullScreen(WebCore::MediaPlayerEnums::VideoFullscreenMode mode);
     DidEnterFullScreen()

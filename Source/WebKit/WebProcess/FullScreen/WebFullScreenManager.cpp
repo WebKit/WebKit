@@ -470,7 +470,7 @@ void WebFullScreenManager::setAnimatingFullScreen(bool animating)
     m_element->document().fullscreenManager().setAnimatingFullscreen(animating);
 }
 
-void WebFullScreenManager::requestRestoreFullScreen()
+void WebFullScreenManager::requestRestoreFullScreen(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!m_element);
     if (m_element)
@@ -484,7 +484,7 @@ void WebFullScreenManager::requestRestoreFullScreen()
 
     ALWAYS_LOG(LOGIDENTIFIER, "<", element->tagName(), " id=\"", element->getIdAttribute(), "\">");
     WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, &element->document());
-    element->document().fullscreenManager().requestFullscreenForElement(*element, nullptr, WebCore::FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
+    element->document().fullscreenManager().requestFullscreenForElement(*element, nullptr, WebCore::FullscreenManager::ExemptIFrameAllowFullscreenRequirement, WTFMove(completionHandler));
 }
 
 void WebFullScreenManager::requestExitFullScreen()

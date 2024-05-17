@@ -1117,7 +1117,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     }];
 }
 
-- (void)requestRestoreFullScreen
+- (void)requestRestoreFullScreen:(CompletionHandler<void(bool)>&&)completionHandler
 {
     if (_fullScreenState != WebKit::NotInFullScreen) {
         OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, _fullScreenState, " != NotInFullScreen, dropping");
@@ -1130,7 +1130,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
     if (auto* manager = self._manager) {
         OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
-        manager->requestRestoreFullScreen();
+        manager->requestRestoreFullScreen(WTFMove(completionHandler));
         return;
     }
 
@@ -1305,7 +1305,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         if (_enterRequested) {
             _enterRequested = NO;
             OBJC_ALWAYS_LOG(logIdentifier, "repaint completed, enter requested");
-            [self requestRestoreFullScreen];
+            [self requestRestoreFullScreen:nil];
         } else
             OBJC_ALWAYS_LOG(logIdentifier, "repaint completed");
 
@@ -1374,8 +1374,14 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
             if (!_exitingFullScreen) {
                 if (_fullScreenState == WebKit::InFullScreen)
                     videoPresentationInterface->preparedToReturnToStandby();
-                else
-                    [self requestRestoreFullScreen];
+                else {
+                    auto completion = [videoPresentationInterface = Ref { *videoPresentationInterface }] (bool succeeded) {
+                        if (!succeeded)
+                            videoPresentationInterface->failedToRestoreFullscreen();
+                    };
+
+                    [self requestRestoreFullScreen:WTFMove(completion)];
+                }
             } else
                 _enterRequested = YES;
 

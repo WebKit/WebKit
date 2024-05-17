@@ -6584,8 +6584,6 @@ webkit.org/b/257336 imported/w3c/web-platform-tests/css/css-tables/visibility-co
 # Only Sonoma+/iOS 17+ have support for auto word breaking. Skipped globally and re-enabled for each platform.
 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Skip ]
 
-webkit.org/b/255970 [ Debug ] fullscreen/exit-full-screen-video-crash.html [ Crash ]
-
 # These tests time out because WebTransport only has a stub implementation.
 imported/w3c/web-platform-tests/webtransport/bidirectional-cancel-crash.https.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/constructor.https.any.worker.html [ Skip ]

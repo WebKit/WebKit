@@ -131,10 +131,10 @@ void WebFullScreenManagerProxy::setAnimatingFullScreen(bool animating)
     m_page.send(Messages::WebFullScreenManager::SetAnimatingFullScreen(animating));
 }
 
-void WebFullScreenManagerProxy::requestRestoreFullScreen()
+void WebFullScreenManagerProxy::requestRestoreFullScreen(CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_page.send(Messages::WebFullScreenManager::RequestRestoreFullScreen());
+    m_page.sendWithAsyncReply(Messages::WebFullScreenManager::RequestRestoreFullScreen(), WTFMove(completionHandler));
 }
 
 void WebFullScreenManagerProxy::requestExitFullScreen()

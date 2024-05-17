@@ -460,7 +460,7 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         [](void* data)
         {
             auto& view = *reinterpret_cast<View*>(data);
-            view.page().fullScreenManager()->requestRestoreFullScreen();
+            view.page().fullScreenManager()->requestRestoreFullScreen([](bool) { });
         },
         // request_exit_fullscreen
         [](void* data)

@@ -846,6 +846,12 @@ void VideoPresentationInterfaceIOS::finalizeSetup()
     });
 }
 
+void VideoPresentationInterfaceIOS::failedToRestoreFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+}
+
 void VideoPresentationInterfaceIOS::returnToStandby()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
