@@ -383,15 +383,7 @@ set(WTF_PUBLIC_HEADERS
     dtoa/strtod.h
     dtoa/utils.h
 
-    fast_float/ascii_number.h
-    fast_float/bigint.h
-    fast_float/decimal_to_binary.h
-    fast_float/digit_comparison.h
     fast_float/fast_float.h
-    fast_float/fast_table.h
-    fast_float/float_common.h
-    fast_float/parse_number.h
-    fast_float/simple_decimal_conversion.h
 
     persistence/PersistentCoders.h
     persistence/PersistentDecoder.h
