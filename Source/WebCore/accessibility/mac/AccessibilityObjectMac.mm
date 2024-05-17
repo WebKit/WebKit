@@ -45,6 +45,7 @@
 #import "TextCheckerClient.h"
 #import "TextCheckingHelper.h"
 #import "TextDecorationPainter.h"
+#import "TextIterator.h"
 #import <wtf/cocoa/SpanCocoa.h>
 
 #if PLATFORM(MAC)

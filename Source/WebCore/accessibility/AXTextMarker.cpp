@@ -25,6 +25,7 @@
 #include "config.h"
 #include "AXTextMarker.h"
 
+#include "AXIsolatedObject.h"
 #include "AXLogger.h"
 #include "AXObjectCache.h"
 #include "AXTreeStore.h"

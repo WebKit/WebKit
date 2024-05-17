@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
 #include "HTMLStyleElement.h"
+#include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "RawDataDocumentParser.h"
 #include <wtf/IsoMallocInlines.h>

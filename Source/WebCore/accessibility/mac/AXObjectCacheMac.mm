@@ -32,6 +32,7 @@
 #import "AccessibilityObject.h"
 #import "AccessibilityTable.h"
 #import "DeprecatedGlobalSettings.h"
+#import "LocalFrameView.h"
 #import "RenderObject.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>

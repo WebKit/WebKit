@@ -29,6 +29,7 @@
 #include "CommonVM.h"
 #include "CustomElementReactionQueue.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "HTMLSlotElement.h"
 #include "IdleCallbackController.h"
 #include "Microtasks.h"

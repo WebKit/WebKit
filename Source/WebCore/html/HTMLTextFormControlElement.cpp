@@ -39,6 +39,7 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
+#include "GCReachableRef.h"
 #include "HTMLBRElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"

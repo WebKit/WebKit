@@ -30,6 +30,7 @@
 
 #import "ColorSpaceCG.h"
 #import "FloatRoundedRect.h"
+#import "GraphicsContext.h"
 
 namespace WebCore {
 

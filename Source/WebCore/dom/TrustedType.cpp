@@ -32,6 +32,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "LocalDOMWindow.h"
 #include "Node.h"
+#include "SVGNames.h"
 #include "Text.h"
 #include "TrustedTypePolicy.h"
 #include "TrustedTypePolicyFactory.h"

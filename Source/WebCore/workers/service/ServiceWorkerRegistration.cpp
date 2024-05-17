@@ -40,6 +40,7 @@
 #include "NotificationClient.h"
 #include "NotificationPermission.h"
 #include "PushEvent.h"
+#include "PushNotificationEvent.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerGlobalScope.h"

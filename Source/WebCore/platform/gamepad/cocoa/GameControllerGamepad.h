@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "GameControllerHapticEngines.h"
 #include "PlatformGamepad.h"
 #include <wtf/RetainPtr.h>
 

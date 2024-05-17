@@ -29,6 +29,7 @@
 #import "Logging.h"
 #import "PlatformCALayer.h"
 #import "PlatformCALayerContentsDelayedReleaser.h"
+#import "ScrollingThread.h"
 #import "ScrollingTreeFixedNodeCocoa.h"
 #import "ScrollingTreeFrameHostingNode.h"
 #import "ScrollingTreeFrameScrollingNodeMac.h"
