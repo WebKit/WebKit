@@ -136,6 +136,16 @@ void ThreadGlobalData::initializeFontCache()
     m_fontCache = makeUnique<FontCache>();
 }
 
+#if ENABLE(WEB_AUDIO)
+
+void ThreadGlobalData::initializeAudioNoiseInjectionMultiplierTable()
+{
+    ASSERT(!m_audioNoiseInjectionMultiplierTable);
+    m_audioNoiseInjectionMultiplierTable = makeUniqueWithoutFastMallocCheck<AudioNoiseInjectionMultiplierTable>();
+}
+
+#endif
+
 } // namespace WebCore
 
 namespace PAL {

@@ -45,6 +45,10 @@ struct CachedResourceRequestInitiatorTypes;
 struct EventNames;
 struct MIMETypeRegistryThreadGlobalData;
 
+#if ENABLE(WEB_AUDIO)
+using AudioNoiseInjectionMultiplierTable = std::array<float, 262144>;
+#endif
+
 class ThreadGlobalData : public PAL::ThreadGlobalData {
     WTF_MAKE_NONCOPYABLE(ThreadGlobalData);
     WTF_MAKE_FAST_ALLOCATED;
@@ -105,6 +109,15 @@ public:
     FontCache* fontCacheIfExists() { return m_fontCache.get(); }
     FontCache* fontCacheIfNotDestroyed() { return m_destroyed ? nullptr : &fontCache(); }
 
+#if ENABLE(WEB_AUDIO)
+    AudioNoiseInjectionMultiplierTable& audioNoiseInjectionMultiplierTable()
+    {
+        if (!m_audioNoiseInjectionMultiplierTable)
+            initializeAudioNoiseInjectionMultiplierTable();
+        return *m_audioNoiseInjectionMultiplierTable;
+    }
+#endif
+
 private:
     bool m_destroyed { false };
 
@@ -114,6 +127,10 @@ private:
     WEBCORE_EXPORT void initializeMimeTypeRegistryThreadGlobalData();
     WEBCORE_EXPORT void initializeFontCache();
 
+#if ENABLE(WEB_AUDIO)
+    WEBCORE_EXPORT void initializeAudioNoiseInjectionMultiplierTable();
+#endif
+
     std::unique_ptr<CachedResourceRequestInitiatorTypes> m_cachedResourceRequestInitiatorTypes;
     std::unique_ptr<EventNames> m_eventNames;
     std::unique_ptr<ThreadTimers> m_threadTimers;
@@ -121,6 +138,10 @@ private:
     JSC::JSGlobalObject* m_currentState { nullptr };
     std::unique_ptr<MIMETypeRegistryThreadGlobalData> m_MIMETypeRegistryThreadGlobalData;
     std::unique_ptr<FontCache> m_fontCache;
+
+#if ENABLE(WEB_AUDIO)
+    std::unique_ptr<AudioNoiseInjectionMultiplierTable> m_audioNoiseInjectionMultiplierTable;
+#endif
 
 #ifndef NDEBUG
     bool m_isMainThread;

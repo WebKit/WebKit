@@ -27,10 +27,9 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioUtilities.h"
+#include "ThreadGlobalData.h"
 #include <random>
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MathExtras.h>
-#include <wtf/WeakRandom.h>
 
 namespace WebCore {
 
@@ -84,24 +83,14 @@ void applyNoise(float* values, size_t numberOfElementsToProcess, float standardD
     std::mt19937 generator(device());
     std::normal_distribution<float> distribution(1, standardDeviation);
 
-    HashMap<float, float> noiseMultipliers;
-    auto computeNoiseMultiplier = [&](float rawValue) {
-        if (!noiseMultipliers.isValidKey(rawValue))
-            return distribution(generator);
-
-        auto result = noiseMultipliers.ensure(rawValue, [&] {
-            return distribution(generator);
-        }).iterator->value;
-
-        static constexpr auto maxNoiseMultiplierMapSize = 250000;
-        if (noiseMultipliers.size() >= maxNoiseMultiplierMapSize)
-            noiseMultipliers.remove(noiseMultipliers.random());
-
-        return result;
-    };
-
-    for (size_t i = 0; i < numberOfElementsToProcess; ++i)
-        values[i] *= computeNoiseMultiplier(values[i]);
+    auto& table = threadGlobalData().audioNoiseInjectionMultiplierTable();
+    std::fill(std::begin(table), std::end(table), std::nanf(""));
+    for (size_t i = 0; i < numberOfElementsToProcess; ++i) {
+        auto& multiplier = table[DefaultHash<double>::hash(values[i]) % table.size()];
+        if (std::isnan(multiplier))
+            multiplier = distribution(generator);
+        values[i] *= multiplier;
+    }
 }
 
 } // AudioUtilites
