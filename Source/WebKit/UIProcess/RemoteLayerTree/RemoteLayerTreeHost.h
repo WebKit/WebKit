@@ -36,6 +36,10 @@
 OBJC_CLASS CAAnimation;
 OBJC_CLASS WKAnimationDelegate;
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaProxy;
@@ -56,7 +60,7 @@ public:
     RemoteLayerTreeDrawingAreaProxy& drawingArea() const;
 
     // Returns true if the root layer changed.
-    bool updateLayerTree(const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
+    bool updateLayerTree(const IPC::Connection&, const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
     void asyncSetLayerContents(WebCore::PlatformLayerIdentifier, ImageBufferBackendHandle&&, const WebCore::RenderingResourceIdentifier&);
 
     void setIsDebugLayerTreeHost(bool flag) { m_isDebugLayerTreeHost = flag; }
@@ -95,7 +99,7 @@ public:
     MonotonicTime animationCurrentTime() const;
 #endif
 
-    void remotePageProcessCrashed(WebCore::ProcessIdentifier);
+    void remotePageProcessDidTerminate(WebCore::ProcessIdentifier);
 
 private:
     void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);

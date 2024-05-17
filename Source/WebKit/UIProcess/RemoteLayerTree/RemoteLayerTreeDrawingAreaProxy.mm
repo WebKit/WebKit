@@ -105,14 +105,14 @@ void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
     sendUpdateGeometry();
 }
 
-void RemoteLayerTreeDrawingAreaProxy::remotePageProcessCrashed(WebCore::ProcessIdentifier processIdentifier)
+void RemoteLayerTreeDrawingAreaProxy::remotePageProcessDidTerminate(WebCore::ProcessIdentifier processIdentifier)
 {
     if (!m_remoteLayerTreeHost)
         return;
 
     if (auto* scrollingCoordinator = m_webPageProxy->scrollingCoordinatorProxy()) {
         scrollingCoordinator->willCommitLayerAndScrollingTrees();
-        m_remoteLayerTreeHost->remotePageProcessCrashed(processIdentifier);
+        m_remoteLayerTreeHost->remotePageProcessDidTerminate(processIdentifier);
         scrollingCoordinator->didCommitLayerAndScrollingTrees();
     }
 }
@@ -281,7 +281,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
         if (layerTreeTransaction.hasAnyLayerChanges())
             ++m_countOfTransactionsWithNonEmptyLayerChanges;
 
-        if (m_remoteLayerTreeHost->updateLayerTree(layerTreeTransaction)) {
+        if (m_remoteLayerTreeHost->updateLayerTree(connection, layerTreeTransaction)) {
             if (!m_replyForUnhidingContent)
                 webPageProxy->setRemoteLayerTreeRootNode(m_remoteLayerTreeHost->rootNode());
             else
@@ -334,7 +334,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     if (m_debugIndicatorLayerTreeHost) {
         float scale = indicatorScale(layerTreeTransaction.contentsSize());
         webPageProxy->scrollingCoordinatorProxy()->willCommitLayerAndScrollingTrees();
-        bool rootLayerChanged = m_debugIndicatorLayerTreeHost->updateLayerTree(layerTreeTransaction, scale);
+        bool rootLayerChanged = m_debugIndicatorLayerTreeHost->updateLayerTree(connection, layerTreeTransaction, scale);
         webPageProxy->scrollingCoordinatorProxy()->didCommitLayerAndScrollingTrees();
         IntPoint scrollPosition;
 #if PLATFORM(MAC)

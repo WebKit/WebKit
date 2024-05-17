@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreeHost.h"
 
+#import "AuxiliaryProcessProxy.h"
 #import "LayerProperties.h"
 #import "Logging.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -136,10 +137,17 @@ bool RemoteLayerTreeHost::updateBannerLayers(const RemoteLayerTreeTransaction& t
 }
 #endif
 
-bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
+bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
 {
     if (!m_drawingArea)
         return false;
+
+    auto* sender = AuxiliaryProcessProxy::fromConnection(connection);
+    if (!sender) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    auto processIdentifier = sender->coreProcessIdentifier();
 
     for (const auto& createdLayer : transaction.createdLayers())
         createLayer(createdLayer);
@@ -179,7 +187,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 
     if (auto contextHostedID = transaction.remoteContextHostedIdentifier()) {
         m_hostedLayers.set(*contextHostedID, rootNode->layerID());
-        m_hostedLayersInProcess.ensure(transaction.processIdentifier(), [] {
+        m_hostedLayersInProcess.ensure(processIdentifier, [] {
             return HashSet<WebCore::PlatformLayerIdentifier>();
         }).iterator->value.add(rootNode->layerID());
         rootNode->setRemoteContextHostedIdentifier(*contextHostedID);
@@ -216,7 +224,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         layerForID(layerAndClone.layerID).contents = layerForID(layerAndClone.cloneLayerID).contents;
 
     for (auto& destroyedLayer : transaction.destroyedLayers())
-        layerWillBeRemoved(transaction.processIdentifier(), destroyedLayer);
+        layerWillBeRemoved(processIdentifier, destroyedLayer);
 
     // Drop the contents of any layers which were unparented; the Web process will re-send
     // the backing store in the commit that reparents them.
@@ -495,7 +503,7 @@ MonotonicTime RemoteLayerTreeHost::animationCurrentTime() const
 }
 #endif
 
-void RemoteLayerTreeHost::remotePageProcessCrashed(WebCore::ProcessIdentifier processIdentifier)
+void RemoteLayerTreeHost::remotePageProcessDidTerminate(WebCore::ProcessIdentifier processIdentifier)
 {
     for (auto layerID : m_hostedLayersInProcess.take(processIdentifier)) {
         if (auto* node = nodeForID(layerID))

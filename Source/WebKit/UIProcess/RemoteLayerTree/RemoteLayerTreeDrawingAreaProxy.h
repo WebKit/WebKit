@@ -99,7 +99,7 @@ protected:
 
 private:
 
-    void remotePageProcessCrashed(WebCore::ProcessIdentifier) final;
+    void remotePageProcessDidTerminate(WebCore::ProcessIdentifier) final;
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
     void windowKindDidChange() final;

@@ -95,7 +95,7 @@ void RemotePageProxy::processDidTerminate(WebCore::ProcessIdentifier processIden
     if (!m_page)
         return;
     if (auto* drawingArea = m_page->drawingArea())
-        drawingArea->remotePageProcessCrashed(processIdentifier);
+        drawingArea->remotePageProcessDidTerminate(processIdentifier);
     if (RefPtr mainFrame = m_page->mainFrame())
         mainFrame->remoteProcessDidTerminate(process());
 }

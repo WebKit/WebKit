@@ -369,7 +369,6 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         rootLayer.layer->flushCompositingStateForThisLayerOnly();
 
         RemoteLayerTreeTransaction layerTransaction;
-        layerTransaction.setProcessIdentifier(WebCore::Process::identifier());
         layerTransaction.setTransactionID(transactionID);
         layerTransaction.setCallbackIDs(WTFMove(m_pendingCallbackIDs));
 
