@@ -420,44 +420,67 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         if (sessionUUID != uuid)
             continue;
 
-        // session.second.last() will always be valid because when creating
+        // sessionRangeVector.last() will always be valid because when creating
         // the structure we always create the vector with an element.
         auto replaceCharacterRange = subCharacterRange(range, sessionRangeVector.last().second);
         replacedRange = WebCore::resolveCharacterRange(*sessionRange, replaceCharacterRange);
         break;
     }
 
-    auto replaceTextIndicatorUUID = WTF::UUID::createVersion4();
-    m_webPage->createTextIndicatorForRange(replacedRange, [uuid = replaceTextIndicatorUUID, weakWebPage = WeakPtr { m_webPage }](std::optional<WebCore::TextIndicatorData>&& textIndicatorData) {
+#if PLATFORM(MAC)
+    auto sourceTextIndicatorUUID = WTF::UUID::createVersion4();
+    m_webPage->createTextIndicatorForRange(replacedRange, [sourceTextIndicatorUUID, weakWebPage = WeakPtr { m_webPage }](std::optional<WebCore::TextIndicatorData>&& textIndicatorData) {
         if (!weakWebPage)
             return;
         RefPtr protectedWebPage = weakWebPage.get();
         if (textIndicatorData)
-            protectedWebPage->addTextIndicatorStyleForID(uuid, WebKit::TextIndicatorStyle::Source, *textIndicatorData);
+            protectedWebPage->addTextIndicatorStyleForID(sourceTextIndicatorUUID, WebKit::TextIndicatorStyle::Source, *textIndicatorData);
     });
+#endif
 
     replaceContentsOfRangeInSession(uuid, resolvedRange, *fragment);
 
+    auto finalTextIndicatorUUID = WTF::UUID::createVersion4();
+    auto characterRangeAfterReplace = WebCore::CharacterRange(range.location, range.length + characterCountDelta);
+
     auto sessionRangeAfterReplace = contextRangeForSessionWithUUID(uuid);
-    if (!sessionRange) {
+    if (!sessionRangeAfterReplace) {
         ASSERT_NOT_REACHED();
         return;
     }
-    auto characterRangeAfterReplace = WebCore::CharacterRange(range.location, range.length + characterCountDelta);
+
+    auto replacedRangeAfterReplace = WebCore::resolveCharacterRange(*sessionRangeAfterReplace, characterRangeAfterReplace);
+
+    m_webPage->createTextIndicatorForRange(replacedRangeAfterReplace, [finalTextIndicatorUUID, weakWebPage = WeakPtr { m_webPage }](std::optional<WebCore::TextIndicatorData>&& textIndicatorData) {
+        if (!weakWebPage)
+            return;
+        RefPtr protectedWebPage = weakWebPage.get();
+        if (textIndicatorData)
+            protectedWebPage->addTextIndicatorStyleForID(finalTextIndicatorUUID, TextIndicatorStyle::Final, *textIndicatorData);
+    });
 
     bool attachedToExistingSession = false;
-    for (auto& session : m_textIndicatorCharacterRangesForSessions) {
-        if (session.first == uuid) {
-            // session.second.last() will always be valid because when creating
+    for (auto& [sessionUUID, sessionRangeVector] : m_textIndicatorCharacterRangesForSessions) {
+        if (sessionUUID == uuid) {
+            // sessionRangeVector.last() will always be valid because when creating
             // the structure we always create the vector with an element.
-            session.second.append({ replaceTextIndicatorUUID, subCharacterRange(range, session.second.last().second) });
+            auto characterRange = subCharacterRange(range, sessionRangeVector.last().second);
+#if PLATFORM(MAC)
+            sessionRangeVector.append({ sourceTextIndicatorUUID, characterRange });
+#endif
+            sessionRangeVector.append({ finalTextIndicatorUUID, characterRange });
 
             attachedToExistingSession = true;
             break;
         }
     }
-    if (!attachedToExistingSession)
-        m_textIndicatorCharacterRangesForSessions.append({ uuid, { { replaceTextIndicatorUUID, characterRangeAfterReplace } } });
+    if (!attachedToExistingSession) {
+#if PLATFORM(MAC)
+        m_textIndicatorCharacterRangesForSessions.append({ uuid, { { sourceTextIndicatorUUID, characterRangeAfterReplace }, { finalTextIndicatorUUID , characterRangeAfterReplace } } });
+#else
+        m_textIndicatorCharacterRangesForSessions.append({ uuid, { { finalTextIndicatorUUID, characterRangeAfterReplace } } });
+#endif
+    }
 }
 
 void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction(const WTF::UUID& uuid, WebTextReplacementData::EditAction action)
