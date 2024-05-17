@@ -54,14 +54,6 @@ RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage& webPage)
 
 RemoteLayerTreeContext::~RemoteLayerTreeContext()
 {
-    for (auto& layer : m_livePlatformLayers.values())
-        layer->clearContext();
-
-
-    auto graphicsLayers = m_liveGraphicsLayers;
-    for (auto& layer : graphicsLayers)
-        Ref { layer.get() }->clearContext();
-
     // Make sure containers are empty before destruction to avoid hitting the assertion in CanMakeCheckedPtr.
     m_livePlatformLayers.clear();
     m_liveGraphicsLayers.clear();

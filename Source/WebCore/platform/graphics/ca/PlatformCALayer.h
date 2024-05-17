@@ -343,7 +343,7 @@ public:
 protected:
     PlatformCALayer(LayerType, PlatformCALayerClient* owner);
 
-    virtual LayerPool& layerPool();
+    virtual LayerPool* layerPool();
 
     const LayerType m_layerType;
     const PlatformLayerIdentifier m_layerID;

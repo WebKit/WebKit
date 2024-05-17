@@ -162,7 +162,7 @@ private:
         std::atomic<bool> m_hasPendingFlush { false };
     };
 
-    std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
+    Ref<RemoteLayerTreeContext> m_remoteLayerTreeContext;
     
     struct RootLayerInfo {
         Ref<WebCore::GraphicsLayer> layer;

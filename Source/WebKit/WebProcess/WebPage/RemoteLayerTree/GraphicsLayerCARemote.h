@@ -41,7 +41,6 @@ public:
     bool filtersCanBeComposited(const WebCore::FilterOperations& filters) override;
 
     void moveToContext(RemoteLayerTreeContext&);
-    void clearContext() { m_context = nullptr; }
     LayerMode layerMode() const final;
     
 private:
@@ -66,7 +65,7 @@ private:
 
     RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate(WebCore::GraphicsLayerAsyncContentsDisplayDelegate*) final;
 
-    RemoteLayerTreeContext* m_context;
+    WeakPtr<RemoteLayerTreeContext> m_context;
 };
 
 } // namespace WebKit

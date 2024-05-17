@@ -158,7 +158,7 @@ void PlatformCALayer::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y
 
 Ref<PlatformCALayer> PlatformCALayer::createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client, IntSize size)
 {
-    if (auto layerFromPool = layerPool().takeLayerWithSize(size)) {
+    if (auto layerFromPool = layerPool() ? layerPool()->takeLayerWithSize(size) : nullptr) {
         layerFromPool->setOwner(client);
         return layerFromPool.releaseNonNull();
     }
@@ -171,13 +171,14 @@ Ref<PlatformCALayer> PlatformCALayer::createCompatibleLayerOrTakeFromPool(Platfo
 void PlatformCALayer::moveToLayerPool()
 {
     ASSERT(!superlayer());
-    layerPool().addLayer(this);
+    if (auto pool = layerPool())
+        pool->addLayer(this);
 }
 
-LayerPool& PlatformCALayer::layerPool()
+LayerPool* PlatformCALayer::layerPool()
 {
     static LayerPool* sharedPool = new LayerPool;
-    return *sharedPool;
+    return sharedPool;
 }
 
 void PlatformCALayer::clearContents()

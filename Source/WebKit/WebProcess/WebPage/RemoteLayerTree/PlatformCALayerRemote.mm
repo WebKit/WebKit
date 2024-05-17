@@ -118,6 +118,7 @@ PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other,
 
 Ref<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* owner) const
 {
+    RELEASE_ASSERT(m_context.get());
     auto clone = PlatformCALayerRemote::create(*this, owner, *m_context);
 
     updateClonedLayerProperties(clone);
@@ -131,14 +132,14 @@ PlatformCALayerRemote::~PlatformCALayerRemote()
     for (const auto& layer : m_children)
         downcast<PlatformCALayerRemote>(*layer).m_superlayer = nullptr;
 
-    if (m_context)
-        m_context->layerWillLeaveContext(*this);
+    if (RefPtrAllowingPartiallyDestroyed<RemoteLayerTreeContext> protectedContext = m_context.get())
+        protectedContext->layerWillLeaveContext(*this);
 }
 
 void PlatformCALayerRemote::moveToContext(RemoteLayerTreeContext& context)
 {
-    if (m_context)
-        m_context->layerWillLeaveContext(*this);
+    if (RefPtr protectedContext = m_context.get())
+        protectedContext->layerWillLeaveContext(*this);
 
     m_context = &context;
 
@@ -272,7 +273,7 @@ bool PlatformCALayerRemote::containsBitmapOnly() const
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 RemoteLayerBackingStore::IncludeDisplayList PlatformCALayerRemote::shouldIncludeDisplayListInBackingStore() const
 {
-    if (!m_context->useDynamicContentScalingDisplayListsForDOMRendering())
+    if (m_context && !m_context->useDynamicContentScalingDisplayListsForDOMRendering())
         return RemoteLayerBackingStore::IncludeDisplayList::No;
     if (containsBitmapOnly())
         return RemoteLayerBackingStore::IncludeDisplayList::No;
@@ -294,7 +295,7 @@ void PlatformCALayerRemote::updateBackingStore()
 #if PLATFORM(IOS_FAMILY)
     parameters.colorSpace = m_wantsDeepColorBackingStore ? DestinationColorSpace { extendedSRGBColorSpaceRef() } : DestinationColorSpace::SRGB();
 #else
-    if (auto displayColorSpace = m_context->displayColorSpace())
+    if (auto displayColorSpace = m_context ? m_context->displayColorSpace() : std::nullopt)
         parameters.colorSpace = displayColorSpace.value();
 #endif
 
@@ -334,8 +335,8 @@ void PlatformCALayerRemote::copyContentsFromLayer(PlatformCALayer* layer)
 {
     ASSERT(m_properties.clonedLayerID == layer->layerID());
     
-    if (!m_properties.changedProperties)
-        m_context->layerPropertyChangedWhileBuildingTransaction(*this);
+    if (RefPtr protectedContext = m_context.get(); protectedContext && !m_properties.changedProperties)
+        protectedContext->layerPropertyChangedWhileBuildingTransaction(*this);
 
     m_properties.notePropertiesChanged(LayerChange::ClonedContentsChanged);
 }
@@ -457,8 +458,8 @@ void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnim
     
     m_properties.notePropertiesChanged(LayerChange::AnimationsChanged);
 
-    if (m_context)
-        m_context->willStartAnimationOnLayer(*this);
+    if (RefPtr protectedContext = m_context.get())
+        protectedContext->willStartAnimationOnLayer(*this);
 }
 
 void PlatformCALayerRemote::removeAnimationForKey(const String& key)
@@ -1074,6 +1075,7 @@ void PlatformCALayerRemote::setIsDescendentOfSeparatedPortal(bool value)
 
 Ref<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
+    RELEASE_ASSERT(m_context.get());
     return PlatformCALayerRemote::create(layerType, client, *m_context);
 }
 
@@ -1096,9 +1098,9 @@ unsigned PlatformCALayerRemote::backingStoreBytesPerPixel() const
     return m_properties.backingStoreOrProperties.store->bytesPerPixel();
 }
 
-LayerPool& PlatformCALayerRemote::layerPool()
+LayerPool* PlatformCALayerRemote::layerPool()
 {
-    return m_context->layerPool();
+    return m_context ? &m_context->layerPool() : nullptr;
 }
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
