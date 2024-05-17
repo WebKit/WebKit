@@ -214,6 +214,10 @@ on the system setting.
  */
 - (nullable id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebViewConfigurationAdditions.h>
+#endif
+
 @end
 
 #if TARGET_OS_IPHONE

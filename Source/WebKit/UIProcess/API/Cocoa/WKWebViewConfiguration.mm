@@ -599,6 +599,10 @@ static NSString *defaultApplicationNameForUserAgent()
 }
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewConfigurationAdditions.mm>
+#endif
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
