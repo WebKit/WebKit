@@ -37,7 +37,6 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProc
     : m_frame(frame)
     , m_frameProcess(WTFMove(frameProcess))
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
-    , m_layerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier::generate())
 {
     process().markProcessAsRecentlyUsed();
 }

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "WebPageProxyIdentifier.h"
-#include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/WeakPtr.h>
 
@@ -55,15 +54,12 @@ public:
     WebProcessProxy& process() const;
     Ref<WebProcessProxy> protectedProcess() const;
 
-    WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
-
     Ref<FrameProcess> takeFrameProcess();
 
 private:
     WeakRef<WebFrameProxy> m_frame;
     Ref<FrameProcess> m_frameProcess;
     Ref<VisitedLinkStore> m_visitedLinkStore;
-    WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
 };
 
 } // namespace WebKit

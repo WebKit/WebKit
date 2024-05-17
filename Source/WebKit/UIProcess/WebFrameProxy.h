@@ -30,6 +30,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/ListHashSet.h>
@@ -216,6 +217,7 @@ private:
     WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;
 #endif
     CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)> m_navigateCallback;
+    const WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
 };
 
 } // namespace WebKit

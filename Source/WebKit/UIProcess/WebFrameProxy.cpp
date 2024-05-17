@@ -92,6 +92,7 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIde
     : m_page(page)
     , m_frameProcess(process)
     , m_frameID(frameID)
+    , m_layerHostingContextIdentifier(LayerHostingContextIdentifier::generate())
 {
     ASSERT(!allFrames().contains(frameID));
     allFrames().set(frameID, *this);
@@ -449,14 +450,14 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
     }
 
     if (this->process().processID() != process.processID())
-        process.send(Messages::WebPage::CreateProvisionalFrame({ m_provisionalFrame->layerHostingContextIdentifier() }, frameID()), page()->webPageIDInProcess(process));
+        process.send(Messages::WebPage::CreateProvisionalFrame({ m_layerHostingContextIdentifier }, frameID()), page()->webPageIDInProcess(process));
 }
 
 void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent hasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
-        protectedProcess()->send(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
+        protectedProcess()->send(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_layerHostingContextIdentifier), m_page->webPageID());
         m_frameProcess = std::exchange(m_provisionalFrame, nullptr)->takeFrameProcess();
     }
     protectedPage()->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
