@@ -241,18 +241,16 @@ void AsyncScrollingCoordinator::frameViewVisualViewportChanged(LocalFrameView& f
         return;
     
     // If the root layer does not have a ScrollingStateNode, then we should create one.
-    RefPtr node = stateNodeForScrollableArea(frameView);
-    if (!node)
+    RefPtr frameScrollingNode = dynamicDowncast<ScrollingStateFrameScrollingNode>(stateNodeForScrollableArea(frameView));
+    if (!frameScrollingNode)
         return;
-
-    auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*node);
 
     auto visualViewportIsSmallerThanLayoutViewport = [](const LocalFrameView& frameView) {
         auto layoutViewport = frameView.layoutViewportRect();
         auto visualViewport = frameView.visualViewportRect();
         return visualViewport.width() < layoutViewport.width() || visualViewport.height() < layoutViewport.height();
     };
-    frameScrollingNode.setVisualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport(frameView));
+    frameScrollingNode->setVisualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport(frameView));
 }
 
 void AsyncScrollingCoordinator::frameViewWillBeDetached(LocalFrameView& frameView)
@@ -1059,13 +1057,13 @@ void AsyncScrollingCoordinator::setViewportConstraintedNodeConstraints(Scrolling
 
     switch (constraints.constraintType()) {
     case ViewportConstraints::FixedPositionConstraint: {
-        auto& fixedNode = downcast<ScrollingStateFixedNode>(*node);
-        fixedNode.updateConstraints((const FixedPositionViewportConstraints&)constraints);
+        if (RefPtr fixedNode = dynamicDowncast<ScrollingStateFixedNode>(node))
+            fixedNode->updateConstraints((const FixedPositionViewportConstraints&)constraints);
         break;
     }
     case ViewportConstraints::StickyPositionConstraint: {
-        auto& stickyNode = downcast<ScrollingStateStickyNode>(*node);
-        stickyNode.updateConstraints((const StickyPositionViewportConstraints&)constraints);
+        if (RefPtr stickyNode = dynamicDowncast<ScrollingStateStickyNode>(node))
+            stickyNode->updateConstraints((const StickyPositionViewportConstraints&)constraints);
         break;
     }
     }
