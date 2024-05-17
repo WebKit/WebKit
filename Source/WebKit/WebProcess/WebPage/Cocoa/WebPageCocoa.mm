@@ -330,6 +330,7 @@ void WebPage::createTextIndicatorForRange(const WebCore::SimpleRange& range, Com
             TextIndicatorOption::ExpandClipBeyondVisibleRect,
             TextIndicatorOption::UseSelectionRectForSizing,
             TextIndicatorOption::SkipReplacedContent,
+            TextIndicatorOption::RespectTextColor
         };
         if (auto textIndicator = TextIndicator::createWithRange(range, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
             textIndicatorData = textIndicator->data();
