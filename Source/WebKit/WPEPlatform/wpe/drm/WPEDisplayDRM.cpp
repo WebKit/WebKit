@@ -346,7 +346,7 @@ static const char* wpeDisplayDRMGetDRMRenderNode(WPEDisplay* display)
 {
     auto* priv = WPE_DISPLAY_DRM(display)->priv;
     if (!priv->drmRenderNode.isNull())
-        priv->drmRenderNode.data();
+        return priv->drmRenderNode.data();
     return priv->drmDevice.data();
 }
 
