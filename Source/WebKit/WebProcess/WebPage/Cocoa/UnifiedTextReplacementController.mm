@@ -299,6 +299,20 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::U
     m_replacementLocationOffsets.remove(uuid);
 }
 
+void UnifiedTextReplacementController::removeTransparentMarkersForUUID(const WebCore::SimpleRange& range, const WTF::UUID& uuid)
+{
+
+    RefPtr document = this->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    document->markers().filterMarkers(range, [&](const WebCore::DocumentMarker& marker) {
+        return std::get<WebCore::DocumentMarker::TransparentContentData>(marker.data()).uuid == uuid ? WebCore::FilterMarkerResult::Remove : WebCore::FilterMarkerResult::Keep;
+    }, { WebCore::DocumentMarker::Type::TransparentContent });
+}
+
 void UnifiedTextReplacementController::removeTransparentMarkersForSession(const WTF::UUID& uuid, RemoveAllMarkersForSession removeAll)
 {
     RefPtr document = this->document();
@@ -307,21 +321,15 @@ void UnifiedTextReplacementController::removeTransparentMarkersForSession(const 
         return;
     }
 
-    auto removeMarkersForUUID = [document](WebCore::SimpleRange range, WTF::UUID uuid) {
-        document->markers().filterMarkers(range, [&](const WebCore::DocumentMarker& marker) {
-            return std::get<WebCore::DocumentMarker::TransparentContentData>(marker.data()).uuid == uuid ? WebCore::FilterMarkerResult::Remove : WebCore::FilterMarkerResult::Keep;
-        }, { WebCore::DocumentMarker::Type::TransparentContent });
-    };
-
     if (auto sessionRange = contextRangeForSessionWithUUID(uuid)) {
-        removeMarkersForUUID(*sessionRange, uuid);
+        removeTransparentMarkersForUUID(*sessionRange, uuid);
         if (removeAll == RemoveAllMarkersForSession::No)
             return;
 
         for (auto session : m_textIndicatorCharacterRangesForSessions) {
             if (session.first == uuid) {
                 for (auto textIndicatorCharacterRange : session.second)
-                    removeMarkersForUUID(*sessionRange, textIndicatorCharacterRange.first);
+                    removeTransparentMarkersForUUID(*sessionRange, textIndicatorCharacterRange.first);
             }
         }
     }
@@ -330,7 +338,7 @@ void UnifiedTextReplacementController::removeTransparentMarkersForSession(const 
         for (auto textIndicatorCharacterRange : session.second) {
             if (textIndicatorCharacterRange.first == uuid) {
                 if (auto sessionRange = contextRangeForSessionWithUUID(session.first))
-                    removeMarkersForUUID(*sessionRange, uuid);
+                    removeTransparentMarkersForUUID(*sessionRange, uuid);
             }
         }
     }
@@ -647,10 +655,10 @@ std::optional<WebCore::SimpleRange> UnifiedTextReplacementController::contextRan
     if (sessionRange)
         return sessionRange;
 
-    for (auto session : m_textIndicatorCharacterRangesForSessions) {
-        for (auto [textIndicatorUUID, textIndicatorRange] : session.second) {
+    for (auto [sessionUUID, textIndicatorUUIDtoRanges] : m_textIndicatorCharacterRangesForSessions) {
+        for (auto [textIndicatorUUID, textIndicatorRange] : textIndicatorUUIDtoRanges) {
             if (textIndicatorUUID == uuid) {
-                auto fullSessionRange = contextRangeForSessionWithUUID(textIndicatorUUID);
+                auto fullSessionRange = contextRangeForSessionWithUUID(sessionUUID);
                 if (fullSessionRange)
                     return WebCore::resolveCharacterRange(*fullSessionRange, textIndicatorRange);
             }

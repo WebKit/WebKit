@@ -80,6 +80,7 @@ public:
     std::optional<WebCore::SimpleRange> contextRangeForSessionWithUUID(const WTF::UUID&) const;
     std::optional<WebCore::SimpleRange> contextRangeForSessionOrRangeWithUUID(const WTF::UUID&) const;
 
+    void removeTransparentMarkersForUUID(const WebCore::SimpleRange&, const WTF::UUID&);
     void removeTransparentMarkersForSession(const WTF::UUID&, RemoveAllMarkersForSession);
 
 private:

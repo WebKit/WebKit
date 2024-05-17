@@ -376,9 +376,7 @@ void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool
     if (visible) {
         // FIXME: <https://webkit.org/b/274198> Text indicator style logic in WebPage and UnifiedTextReplacementController should be shared.
         if (m_textIndicatorStyleEnablementRanges.contains(uuid)) {
-            document->markers().filterMarkers(*sessionRange, [uuid](const WebCore::DocumentMarker& marker) {
-                return std::get<WebCore::DocumentMarker::TransparentContentData>(marker.data()).uuid == uuid ? WebCore::FilterMarkerResult::Remove : WebCore::FilterMarkerResult::Keep;
-            }, { WebCore::DocumentMarker::Type::TransparentContent });
+            m_unifiedTextReplacementController->removeTransparentMarkersForUUID(*sessionRange, uuid);
         } else
             m_unifiedTextReplacementController->removeTransparentMarkersForSession(uuid, RemoveAllMarkersForSession::No);
     } else
