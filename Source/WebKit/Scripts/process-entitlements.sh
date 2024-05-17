@@ -198,37 +198,40 @@ function webcontent_sandbox_entitlements()
 function notify_entitlements()
 {
     plistbuddy Add :com.apple.developer.web-browser-engine.restrict.notifyd bool YES
-    plistbuddy Add :com.apple.private.darwin-notification.introspect array
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:0 string com.apple.CFPreferences._domainsChangedExternally
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:1 string com.apple.WebKit.LibraryPathDiagnostics
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:2 string com.apple.WebKit.deleteAllCode
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:3 string com.apple.WebKit.fullGC
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:4 string com.apple.accessibility.cache.app.ax
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:5 string com.apple.accessibility.cache.ax
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:6 string com.apple.accessibility.cache.enhance.text.legibility
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:7 string com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:8 string com.apple.accessibility.cache.guided.access.via.mdm
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:9 string com.apple.accessibility.cache.invert.colors
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:10 string com.apple.accessibility.cache.invert.colorscom.apple.WebKit.WebContent
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:11 string com.apple.accessibility.cache.vot
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:12 string com.apple.accessibility.cache.zoom
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:13 string com.apple.language.changed
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:14 string com.apple.mediaaccessibility.captionAppearanceSettingsChanged
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:15 string com.apple.powerlog.state_changed
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:16 string com.apple.system.logging.prefschanged
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:17 string com.apple.system.lowpowermode
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:18 string com.apple.system.timezone
-    plistbuddy Add :com.apple.private.darwin-notification.introspect:19 string com.apple.zoomwindow
-    if [[ "${WK_PLATFORM_NAME}" == macosx ]]
+    if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:20 string com.apple.system.DirectoryService.InvalidateCache
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:21 string com.apple.system.DirectoryService.InvalidateCache.group
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:22 string com.apple.system.DirectoryService.InvalidateCache.host
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:23 string com.apple.system.DirectoryService.InvalidateCache.service
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:24 string com.apple.system.DirectoryService.InvalidateCache.user
-    else
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:20 string com.apple.mobile.usermanagerd.foregrounduser_changed
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:21 string com.apple.mobile.keybagd.user_changed
+        plistbuddy Add :com.apple.private.darwin-notification.introspect array
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:0 string com.apple.CFPreferences._domainsChangedExternally
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:1 string com.apple.WebKit.LibraryPathDiagnostics
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:2 string com.apple.WebKit.deleteAllCode
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:3 string com.apple.WebKit.fullGC
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:4 string com.apple.accessibility.cache.app.ax
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:5 string com.apple.accessibility.cache.ax
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:6 string com.apple.accessibility.cache.enhance.text.legibility
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:7 string com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:8 string com.apple.accessibility.cache.guided.access.via.mdm
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:9 string com.apple.accessibility.cache.invert.colors
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:10 string com.apple.accessibility.cache.invert.colorscom.apple.WebKit.WebContent
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:11 string com.apple.accessibility.cache.vot
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:12 string com.apple.accessibility.cache.zoom
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:13 string com.apple.language.changed
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:14 string com.apple.mediaaccessibility.captionAppearanceSettingsChanged
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:15 string com.apple.powerlog.state_changed
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:16 string com.apple.system.logging.prefschanged
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:17 string com.apple.system.lowpowermode
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:18 string com.apple.system.timezone
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:19 string com.apple.zoomwindow
+        if [[ "${WK_PLATFORM_NAME}" == macosx ]]
+        then
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:20 string com.apple.system.DirectoryService.InvalidateCache
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:21 string com.apple.system.DirectoryService.InvalidateCache.group
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:22 string com.apple.system.DirectoryService.InvalidateCache.host
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:23 string com.apple.system.DirectoryService.InvalidateCache.service
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:24 string com.apple.system.DirectoryService.InvalidateCache.user
+        else
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:20 string com.apple.mobile.usermanagerd.foregrounduser_changed
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:21 string com.apple.mobile.keybagd.user_changed
+        fi
     fi
 }
 
@@ -254,11 +257,6 @@ function mac_process_webcontent_shared_entitlements()
             plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
         fi
 
-        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" > 140000 ))
-        then
-            notify_entitlements
-        fi
-
         if [[ "${WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT}" == YES ]]
         then
             plistbuddy Add :com.apple.private.xpc.domain-extension bool YES
@@ -268,6 +266,11 @@ function mac_process_webcontent_shared_entitlements()
     if [[ "${WK_XPC_SERVICE_VARIANT}" == Development ]]
     then
         plistbuddy Add :com.apple.security.cs.disable-library-validation bool YES
+    fi
+
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" > 140000 ))
+    then
+        notify_entitlements
     fi
 }
 
