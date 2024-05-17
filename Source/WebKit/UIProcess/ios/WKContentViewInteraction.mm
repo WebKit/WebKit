@@ -4425,7 +4425,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     if (action == @selector(_swapCharacters:))
-        return editorState.isContentRichlyEditable && [super canPerformAction:action withSender:sender];
+        return [self unifiedTextReplacementBehavior] != WebKit::WebUnifiedTextReplacementBehavior::None && [super canPerformAction:action withSender:sender];
 #endif
 
     if (action == @selector(paste:) || action == @selector(_pasteAsQuotation:) || action == @selector(_pasteAndMatchStyle:) || action == @selector(pasteAndMatchStyle:)) {
@@ -6912,6 +6912,10 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         return _focusedElementInformation.isWritingSuggestionsEnabled;
     }();
     traits.inlinePredictionType = allowsInlinePredictions ? UITextInlinePredictionTypeDefault : UITextInlinePredictionTypeNo;
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    [self _updateTextInputTraitsForUnifiedTextReplacement:traits];
 #endif
 
     [self _updateTextInputTraitsForInteractionTintColor];
@@ -11728,6 +11732,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
 - (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType
 {
     if (!_page->preferences().textIndicatorStylingEnabled())
@@ -11749,6 +11754,12 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
     [_textStyleManager removeTextIndicatorStyleForID:uuid];
 }
+
+- (WebKit::WebUnifiedTextReplacementBehavior)unifiedTextReplacementBehavior
+{
+    return _page->configuration().unifiedTextReplacementBehavior();
+}
+
 #endif
 
 #if HAVE(UIFINDINTERACTION)

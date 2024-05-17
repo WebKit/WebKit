@@ -4613,11 +4613,6 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
 }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-bool WebViewImpl::wantsCompleteUnifiedTextReplacementBehavior() const
-{
-    return isEditable() || unifiedTextReplacementBehavior() == WebUnifiedTextReplacementBehavior::Complete;
-}
-
 void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, WKTextIndicatorStyleType styleType)
 {
     if (!m_page->preferences().textIndicatorStylingEnabled())
@@ -6435,6 +6430,11 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 WebUnifiedTextReplacementBehavior WebViewImpl::unifiedTextReplacementBehavior() const
 {
     return m_page->configuration().unifiedTextReplacementBehavior();
+}
+
+bool WebViewImpl::wantsCompleteUnifiedTextReplacementBehavior() const
+{
+    return [m_view _web_wantsCompleteUnifiedTextReplacementBehavior];
 }
 #endif
 

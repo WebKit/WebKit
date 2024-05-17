@@ -400,6 +400,8 @@ struct PerWebProcessState {
 - (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebKit::WebTextReplacementDataState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
 - (void)_addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
 - (void)_removeTextIndicatorStyleForID:(NSUUID *)uuid;
+
+- (BOOL)_wantsCompleteUnifiedTextReplacementBehavior;
 #endif
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;

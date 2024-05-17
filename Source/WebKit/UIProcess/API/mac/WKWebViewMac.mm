@@ -1235,6 +1235,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+- (BOOL)_web_wantsCompleteUnifiedTextReplacementBehavior
+{
+    return [self _wantsCompleteUnifiedTextReplacementBehavior];
+}
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
 
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo

@@ -159,6 +159,10 @@ struct TranslationContextMenuInfo;
 - (void)_didHandleAcceptedCandidate;
 - (void)_didUpdateCandidateListVisibility:(BOOL)visible;
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+- (BOOL)_web_wantsCompleteUnifiedTextReplacementBehavior;
+#endif
+
 @end
 
 namespace WebCore {
