@@ -41,15 +41,15 @@ class PathSegListCache {
 public:
     static PathSegListCache& singleton();
 
-    const SVGPathByteStream::Data* get(const AtomString& attributeValue) const;
-    void add(const AtomString& attributeValue, const SVGPathByteStream::Data&);
+    std::optional<DataRef<SVGPathByteStream::Data>> get(const AtomString& attributeValue) const;
+    void add(const AtomString& attributeValue, DataRef<SVGPathByteStream::Data>);
     void clear();
 
 private:
     friend class NeverDestroyed<PathSegListCache, MainThreadAccessTraits>;
     PathSegListCache() = default;
 
-    HashMap<AtomString, SVGPathByteStream::Data> m_cache;
+    HashMap<AtomString, DataRef<SVGPathByteStream::Data>> m_cache;
     uint64_t m_sizeInBytes { 0 };
     static constexpr uint64_t maxItemSizeInBytes = 5 * 1024; // 5 Kb.
     static constexpr uint64_t maxCacheSizeInBytes = 150 * 1024; // 150 Kb.
@@ -61,15 +61,14 @@ PathSegListCache& PathSegListCache::singleton()
     return cache;
 }
 
-const SVGPathByteStream::Data* PathSegListCache::get(const AtomString& attributeValue) const
+std::optional<DataRef<SVGPathByteStream::Data>> PathSegListCache::get(const AtomString& attributeValue) const
 {
-    auto iterator = m_cache.find(attributeValue);
-    return iterator != m_cache.end() ? &iterator->value : nullptr;
+    return m_cache.getOptional(attributeValue);
 }
 
-void PathSegListCache::add(const AtomString& attributeValue, const SVGPathByteStream::Data& data)
+void PathSegListCache::add(const AtomString& attributeValue, DataRef<SVGPathByteStream::Data> data)
 {
-    size_t newDataSize = data.size();
+    size_t newDataSize = data->size();
     if (UNLIKELY(newDataSize > maxItemSizeInBytes))
         return;
 
@@ -78,11 +77,11 @@ void PathSegListCache::add(const AtomString& attributeValue, const SVGPathByteSt
         ASSERT(!m_cache.isEmpty());
         auto iteratorToRemove = m_cache.random();
         ASSERT(iteratorToRemove != m_cache.end());
-        ASSERT(m_sizeInBytes >= iteratorToRemove->value.size());
-        m_sizeInBytes -= iteratorToRemove->value.size();
+        ASSERT(m_sizeInBytes >= iteratorToRemove->value->size());
+        m_sizeInBytes -= iteratorToRemove->value->size();
         m_cache.remove(iteratorToRemove);
     }
-    m_cache.add(attributeValue, data);
+    m_cache.add(attributeValue, WTFMove(data));
 }
 
 void PathSegListCache::clear()
@@ -112,9 +111,9 @@ void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomStrin
     if (name == SVGNames::dAttr) {
         auto& cache = PathSegListCache::singleton();
         if (newValue.isEmpty())
-            Ref { m_pathSegList }->baseVal()->updateByteStreamData({ });
-        else if (auto* data = cache.get(newValue))
-            Ref { m_pathSegList }->baseVal()->updateByteStreamData(*data);
+            Ref { m_pathSegList }->baseVal()->clearByteStreamData();
+        else if (auto data = cache.get(newValue))
+            Ref { m_pathSegList }->baseVal()->updateByteStreamData(WTFMove(data.value()));
         else if (Ref { m_pathSegList }->baseVal()->parse(newValue))
             cache.add(newValue, m_pathSegList->baseVal()->existingPathByteStream().data());
         else

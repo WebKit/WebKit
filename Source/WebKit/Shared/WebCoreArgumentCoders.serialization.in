@@ -2967,7 +2967,7 @@ struct WebCore::LengthSize {
 }
 
 class WebCore::SVGPathByteStream {
-    Vector<unsigned char> data();
+    Vector<unsigned char> bytes();
 }
 
 header: <WebCore/BasicShapes.h>
