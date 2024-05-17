@@ -59,4 +59,6 @@ PASS multipart/form-data: characters not in encoding in name and value (normal f
 PASS multipart/form-data: characters not in encoding in name and value (formdata event)
 PASS multipart/form-data: character not in encoding in filename (normal form)
 PASS multipart/form-data: character not in encoding in filename (formdata event)
+PASS multipart/form-data: lone surrogate in name and value (normal form)
+PASS multipart/form-data: lone surrogate in name and value (formdata event)
 
