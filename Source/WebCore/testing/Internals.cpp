@@ -506,6 +506,8 @@ static bool markerTypeFrom(const String& markerType, DocumentMarker::Type& resul
     else if (equalLettersIgnoringASCIICase(markerType, "unifiedtextreplacement"_s))
         result = DocumentMarker::Type::UnifiedTextReplacement;
 #endif
+    else if (equalLettersIgnoringASCIICase(markerType, "transparentcontent"_s))
+        result = DocumentMarker::Type::TransparentContent;
     else
         return false;
 
