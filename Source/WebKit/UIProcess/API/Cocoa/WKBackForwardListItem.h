@@ -31,6 +31,7 @@
  */
 NS_ASSUME_NONNULL_BEGIN
 
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKBackForwardListItem : NSObject
 

@@ -57,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
  @helperclass @link WKWebViewConfiguration @/link
  Used to configure @link WKWebView @/link instances.
  */
+WK_SWIFT_UI_ACTOR
 #if TARGET_OS_IPHONE
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebView : UIView
@@ -250,7 +251,7 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
    - A `frame` value of `nil` to represent the main frame
    - A `contentWorld` value of `WKContentWorld.pageWorld`
 */
-- (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler;
+- (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(WK_SWIFT_UI_ACTOR void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler;
 
 /* @abstract Evaluates the given JavaScript string.
  @param javaScriptString The JavaScript string to evaluate.
@@ -272,7 +273,7 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
  evaluateJavaScript: is a great way to set up global state for future JavaScript execution in a given world. (e.g. Importing libraries/utilities that future JavaScript execution will rely on)
  Once your global state is set up, consider using callAsyncJavaScript: for more flexible interaction with the JavaScript programming model.
 */
-- (void)evaluateJavaScript:(NSString *)javaScriptString inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)evaluateJavaScript:(NSString *)javaScriptString inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(WK_SWIFT_UI_ACTOR void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /* @abstract Calls the given JavaScript string as an async JavaScript function, passing the given named arguments to that function.
  @param functionBody The JavaScript string to use as the function body.
@@ -344,30 +345,30 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
 
  The above function text will create a promise that will fulfull with the value 42 after a one second delay, wait for it to resolve, then return the fulfillment value of 42.
 */
-- (void)callAsyncJavaScript:(NSString *)functionBody arguments:(nullable NSDictionary<NSString *, id> *)arguments inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(id WK_NULLABLE_RESULT result, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)callAsyncJavaScript:(NSString *)functionBody arguments:(nullable NSDictionary<NSString *, id> *)arguments inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(WK_SWIFT_UI_ACTOR void (^ _Nullable)(id WK_NULLABLE_RESULT result, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*! @abstract Closes all out-of-window media presentations in a WKWebView.
  @discussion Includes picture-in-picture and fullscreen.
  */
-- (void)closeAllMediaPresentationsWithCompletionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
+- (void)closeAllMediaPresentationsWithCompletionHandler:(WK_SWIFT_UI_ACTOR void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)closeAllMediaPresentations WK_API_DEPRECATED_WITH_REPLACEMENT("closeAllMediaPresentationsWithCompletionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
 
 /*! @abstract Pauses media playback in WKWebView.
  @discussion Pauses media playback. Media in the page can be restarted by calling play() on a media element or resume() on an AudioContext in JavaScript. A user can also use media controls to play media content after it has been paused.
  */
-- (void)pauseAllMediaPlaybackWithCompletionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
+- (void)pauseAllMediaPlaybackWithCompletionHandler:(WK_SWIFT_UI_ACTOR void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 #ifndef __swift__
-- (void)pauseAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("pauseAllMediaPlaybackWithCompletionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
+- (void)pauseAllMediaPlayback:(WK_SWIFT_UI_ACTOR void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("pauseAllMediaPlaybackWithCompletionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
 #endif
 
 /*! @abstract Suspends or resumes all media playback in WKWebView.
   @param suspended Whether media playback should be suspended or resumed.
   @discussion If suspended is true, this pauses media playback and blocks all attempts by the page or the user to resume until setAllMediaPlaybackSuspended is called again with suspended set to false. Media playback should always be suspended and resumed in pairs.
 */
-- (void)setAllMediaPlaybackSuspended:(BOOL)suspended completionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
+- (void)setAllMediaPlaybackSuspended:(BOOL)suspended completionHandler:(WK_SWIFT_UI_ACTOR void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 #ifndef __swift__
-- (void)resumeAllMediaPlayback:(void (^ _Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("setAllMediaPlaybackSuspended:completionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
-- (void)suspendAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("setAllMediaPlaybackSuspended:completionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
+- (void)resumeAllMediaPlayback:(WK_SWIFT_UI_ACTOR void (^ _Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("setAllMediaPlaybackSuspended:completionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
+- (void)suspendAllMediaPlayback:(WK_SWIFT_UI_ACTOR void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("setAllMediaPlaybackSuspended:completionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
 #endif
 
 /*! @abstract Get the current media playback state of a WKWebView.
@@ -377,9 +378,9 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
  If no media playback exists in the current WKWebView, WKMediaPlaybackState will equal
  WKMediaPlaybackStateNone.
  */
-- (void)requestMediaPlaybackStateWithCompletionHandler:(void (^)(WKMediaPlaybackState))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
+- (void)requestMediaPlaybackStateWithCompletionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKMediaPlaybackState))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 #ifndef __swift__
-- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("requestMediaPlaybackStateWithCompletionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
+- (void)requestMediaPlaybackState:(WK_SWIFT_UI_ACTOR void (^)(WKMediaPlaybackState))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("requestMediaPlaybackStateWithCompletionHandler:", macos(11.3, 12.0), ios(14.5, 15.0));
 #endif
 
 /*! @abstract The state of camera capture on a web page.
@@ -402,7 +403,7 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
  If value is WKMediaCaptureStateMuted, any active camera capture will become muted.
  If value is WKMediaCaptureStateActive, any muted camera capture will become active.
  */
-- (void)setCameraCaptureState:(WKMediaCaptureState)state completionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
+- (void)setCameraCaptureState:(WKMediaCaptureState)state completionHandler:(WK_SWIFT_UI_ACTOR void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 /*! @abstract Set microphone capture state of a WKWebView.
  @param state state to apply for capture.
@@ -412,7 +413,7 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
  If value is WKMediaCaptureStateMuted, any active microphone capture will become muted.
  If value is WKMediaCaptureStateActive, any muted microphone capture will become active.
  */
-- (void)setMicrophoneCaptureState:(WKMediaCaptureState)state completionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
+- (void)setMicrophoneCaptureState:(WKMediaCaptureState)state completionHandler:(WK_SWIFT_UI_ACTOR void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 /*! @abstract Get a snapshot for the visible viewport of WKWebView.
  @param snapshotConfiguration An object that specifies how the snapshot is configured.
@@ -422,9 +423,9 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
  device scale. The completionHandler is passed the image of the viewport contents or an error.
  */
 #if TARGET_OS_IPHONE
-- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(UIImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_NAME(takeSnapshot(configuration:)) WK_API_AVAILABLE(ios(11.0));
+- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(WK_SWIFT_UI_ACTOR void (^)(UIImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_NAME(takeSnapshot(configuration:)) WK_API_AVAILABLE(ios(11.0));
 #else
-- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_NAME(takeSnapshot(configuration:)) WK_API_AVAILABLE(macos(10.13));
+- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_NAME(takeSnapshot(configuration:)) WK_API_AVAILABLE(macos(10.13));
 #endif
 
 /*! @abstract Create a PDF document representation from the web page currently displayed in the WKWebView
@@ -435,7 +436,7 @@ The completionHandler is passed the resulting PDF document data or an error.
 The data can be used to create a PDFDocument object.
 If the data is written to a file the resulting file is a valid PDF document.
 */
-- (void)createPDFWithConfiguration:(nullable WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData * _Nullable pdfDocumentData, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)createPDFWithConfiguration:(nullable WKPDFConfiguration *)pdfConfiguration completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData * _Nullable pdfDocumentData, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /* @abstract Create WebKit web archive data representing the current web content of the WKWebView
 @param completionHandler A block to invoke when the web archive data is ready.
@@ -443,7 +444,7 @@ If the data is written to a file the resulting file is a valid PDF document.
 It can be used to represent web content on a pasteboard, loaded into a WKWebView directly, and saved to a file for later use.
 The uniform type identifier kUTTypeWebArchive can be used get the related pasteboard type and MIME type.
 */
-- (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)createWebArchiveDataWithCompletionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *, NSError *))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
  will trigger back-forward list navigations.
@@ -505,7 +506,7 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
   A match found by the search is selected and the page is scrolled to reveal the selection.
   The completion handler is called after the search completes.
 */
-- (void)findString:(NSString *)string withConfiguration:(nullable WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)findString:(NSString *)string withConfiguration:(nullable WKFindConfiguration *)configuration completionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKFindResult *result))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /* @abstract Checks whether or not WKWebViews handle the given URL scheme by default.
  @param scheme The URL scheme to check.
@@ -517,14 +518,14 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  @param completionHandler A block called when the download has started.
  @discussion The download needs its delegate to be set in the completionHandler to receive updates about its progress.
  */
-- (void)startDownloadUsingRequest:(NSURLRequest *)request completionHandler:(void(^)(WKDownload *))completionHandler WK_API_AVAILABLE(macos(11.3), ios(14.5));
+- (void)startDownloadUsingRequest:(NSURLRequest *)request completionHandler:(WK_SWIFT_UI_ACTOR void(^)(WKDownload *))completionHandler WK_API_AVAILABLE(macos(11.3), ios(14.5));
 
 /* @abstract Resumes a download that failed or was canceled.
  @param resumeData Data from a WKDownloadDelegate's didFailWithError or a WKDownload's cancel completionHandler.
  @param completionHandler A block called when the download has resumed.
  @discussion The download needs its delegate to be set in the completionHandler to receive updates about its progress.
  */
-- (void)resumeDownloadFromResumeData:(NSData *)resumeData completionHandler:(void(^)(WKDownload *))completionHandler WK_API_AVAILABLE(macos(11.3), ios(14.5));
+- (void)resumeDownloadFromResumeData:(NSData *)resumeData completionHandler:(WK_SWIFT_UI_ACTOR void(^)(WKDownload *))completionHandler WK_API_AVAILABLE(macos(11.3), ios(14.5));
 
 /* @abstract The media type for the WKWebView
  @discussion The value of mediaType will override the normal value of the CSS media property.

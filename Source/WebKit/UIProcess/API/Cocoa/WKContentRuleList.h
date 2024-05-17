@@ -27,6 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @interface WKContentRuleList : NSObject
 

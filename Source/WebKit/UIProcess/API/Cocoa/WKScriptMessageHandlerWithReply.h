@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*! A class conforming to  the WKScriptMessageHandlerWithReply protocol provides a
 method for receiving messages from JavaScript running in a webpage and replying to them asynchronously.
 */
+WK_SWIFT_UI_ACTOR
 @protocol WKScriptMessageHandlerWithReply <NSObject>
 
 /*! @abstract Invoked when a script message is received from a webpage.
@@ -87,7 +88,7 @@ method for receiving messages from JavaScript running in a webpage and replying 
    - The JavaScript promise is fulfilled with the value 42.
    - JavaScript execution continues and the value 42 is returned.
  */
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message replyHandler:(void (^)(id _Nullable reply, NSString *_Nullable errorMessage))replyHandler WK_SWIFT_ASYNC(3) WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message replyHandler:(WK_SWIFT_UI_ACTOR void (^)(id _Nullable reply, NSString *_Nullable errorMessage))replyHandler WK_SWIFT_ASYNC(3) WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 @end
 

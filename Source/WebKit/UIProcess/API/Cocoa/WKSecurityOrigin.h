@@ -34,6 +34,7 @@
  */
 NS_ASSUME_NONNULL_BEGIN
 
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
 @interface WKSecurityOrigin : NSObject
 

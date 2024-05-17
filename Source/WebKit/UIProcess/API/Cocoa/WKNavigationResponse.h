@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*! Contains information about a navigation response, used for making policy decisions.
  */
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKNavigationResponse : NSObject
 

@@ -90,6 +90,7 @@ typedef NS_OPTIONS(NSUInteger, WKAudiovisualMediaTypes) {
  which to initialize a web view.
  @helps Contains properties used to configure a @link WKWebView @/link.
  */
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebViewConfiguration : NSObject <NSSecureCoding, NSCopying>
 

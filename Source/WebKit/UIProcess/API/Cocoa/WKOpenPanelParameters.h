@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*! WKOpenPanelParameters contains parameters that a file upload control has specified.
  */
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.12))
 @interface WKOpenPanelParameters : NSObject
 
