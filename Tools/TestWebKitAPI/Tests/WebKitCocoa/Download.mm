@@ -2735,6 +2735,10 @@ TEST(WKDownload, LockdownModePDF)
     auto server = simplePDFTestServer();
     NSURL *expectedDownloadFile = tempPDFThatDoesNotExist();
 
+    delegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        completionHandler(WKNavigationResponsePolicyAllow);
+    };
+
     delegate.get().navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
         download.delegate = delegate.get();
         delegate.get().decideDestinationUsingResponse = ^(WKDownload *download, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {

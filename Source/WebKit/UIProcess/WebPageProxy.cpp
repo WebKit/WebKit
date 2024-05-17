@@ -7353,17 +7353,29 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
 
+        bool shouldForceDownload = [&] {
+            if (policyAction != PolicyAction::Use || process->lockdownMode() != WebProcessProxy::LockdownMode::Enabled)
+                return false;
+            if (MIMETypeRegistry::isPDFMIMEType(navigationResponse->response().mimeType()))
+                return true;
+            if (MIMETypeRegistry::isSupportedModelMIMEType(navigationResponse->response().mimeType()))
+                return true;
 #if USE(QUICK_LOOK)
-        if (policyAction == PolicyAction::Use && process->lockdownMode() == WebProcessProxy::LockdownMode::Enabled && (MIMETypeRegistry::isPDFMIMEType(navigationResponse->response().mimeType()) || MIMETypeRegistry::isSupportedModelMIMEType(navigationResponse->response().mimeType()) || PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType())))
+            if (PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType()))
+                return true;
+#endif
+            return false;
+        }();
+        if (shouldForceDownload)
             policyAction = PolicyAction::Download;
-#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
+
+#if USE(QUICK_LOOK) && ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
         if (policyAction == PolicyAction::Use && PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType())) {
             auto auditToken = m_process->connection()->getAuditToken();
             bool status = sandbox_enable_state_flag("EnableQuickLookSandboxResources", *auditToken);
             WEBPAGEPROXY_RELEASE_LOG(Sandbox, "Enabling EnableQuickLookSandboxResources state flag, status = %d", status);
         }
-#endif // ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
-#endif // USE(QUICK_LOOK)
+#endif
         receivedNavigationResponsePolicyDecision(policyAction, navigation.get(), request, WTFMove(navigationResponse), WTFMove(completionHandler));
     }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No);
 
