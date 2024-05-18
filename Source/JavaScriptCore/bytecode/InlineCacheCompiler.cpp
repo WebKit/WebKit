@@ -442,8 +442,6 @@ static bool isStateless(AccessCase::AccessType type)
 {
     switch (type) {
     case AccessCase::Load:
-    case AccessCase::LoadMegamorphic:
-    case AccessCase::StoreMegamorphic:
     case AccessCase::Transition:
     case AccessCase::Delete:
     case AccessCase::DeleteNonConfigurable:
@@ -470,10 +468,12 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::InstanceOfMiss:
     case AccessCase::InHit:
     case AccessCase::InMiss:
-    case AccessCase::InMegamorphic:
     case AccessCase::IndexedNoIndexingInMiss:
         return false;
 
+    case AccessCase::InMegamorphic:
+    case AccessCase::LoadMegamorphic:
+    case AccessCase::StoreMegamorphic:
     case AccessCase::ArrayLength:
     case AccessCase::StringLength:
     case AccessCase::DirectArgumentsLength:
@@ -1361,9 +1361,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(
     return { };
 }
 
-InlineCacheHandler::InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint)
+InlineCacheHandler::InlineCacheHandler(StructureStubInfo& stubInfo, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint)
     : m_callTarget(stubRoutine->code().code().template retagged<JITStubRoutinePtrTag>())
     , m_jumpTarget(CodePtr<NoPtrTag> { m_callTarget.retagged<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>())
+    , m_uid(stubInfo.identifier().uid())
     , m_stubRoutine(WTFMove(stubRoutine))
     , m_watchpoint(WTFMove(watchpoint))
 {
@@ -2408,10 +2409,16 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         auto allocator = makeDefaultScratchAllocator(scratchGPR);
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
         GPRReg scratch3GPR = allocator.allocateScratchGPR();
+        GPRReg scratch4GPR = allocator.allocateScratchGPR();
 
         ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-        auto slowCases = jit.loadMegamorphicProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR);
+        CCallHelpers::JumpList slowCases;
+        if (useHandlerIC()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfUid()), scratch4GPR);
+            slowCases.append(jit.loadMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
+        } else
+            slowCases.append(jit.loadMegamorphicProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
 
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
         succeed();
@@ -2435,10 +2442,18 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         auto allocator = makeDefaultScratchAllocator(scratchGPR);
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
         GPRReg scratch3GPR = allocator.allocateScratchGPR();
+        GPRReg scratch4GPR = allocator.allocateScratchGPR();
 
         ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
-        auto [slow, reallocating] = jit.storeMegamorphicProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR);
+        CCallHelpers::JumpList slow;
+        CCallHelpers::JumpList reallocating;
+
+        if (useHandlerIC()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfUid()), scratch4GPR);
+            std::tie(slow, reallocating) = jit.storeMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR);
+        } else
+            std::tie(slow, reallocating) = jit.storeMegamorphicProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR);
 
         CCallHelpers::Label doneLabel = jit.label();
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
@@ -2476,10 +2491,16 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         auto allocator = makeDefaultScratchAllocator(scratchGPR);
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
         GPRReg scratch3GPR = allocator.allocateScratchGPR();
+        GPRReg scratch4GPR = allocator.allocateScratchGPR();
 
         ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-        auto slowCases = jit.hasMegamorphicProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR);
+        CCallHelpers::JumpList slowCases;
+        if (useHandlerIC()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfUid()), scratch4GPR);
+            slowCases.append(jit.hasMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
+        } else
+            slowCases.append(jit.hasMegamorphicProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
 
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
         succeed();
@@ -4040,7 +4061,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             if (allAreSimpleLoadOrMiss) {
                 cases.shrink(0);
                 additionalWatchpointSets.clear();
-                cases.append(AccessCase::create(vm(), codeBlock, AccessCase::LoadMegamorphic, identifier));
+                cases.append(AccessCase::create(vm(), codeBlock, AccessCase::LoadMegamorphic, useHandlerIC() ? nullptr : identifier));
                 generatedMegamorphicCode = true;
             }
             break;
@@ -4111,7 +4132,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             if (allAreSimpleReplaceOrTransition) {
                 cases.shrink(0);
                 additionalWatchpointSets.clear();
-                cases.append(AccessCase::create(vm(), codeBlock, AccessCase::StoreMegamorphic, identifier));
+                cases.append(AccessCase::create(vm(), codeBlock, AccessCase::StoreMegamorphic, useHandlerIC() ? nullptr : identifier));
                 generatedMegamorphicCode = true;
             }
             break;
@@ -4179,7 +4200,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             if (allAreSimpleHitOrMiss) {
                 cases.shrink(0);
                 additionalWatchpointSets.clear();
-                cases.append(AccessCase::create(vm(), codeBlock, AccessCase::InMegamorphic, identifier));
+                cases.append(AccessCase::create(vm(), codeBlock, AccessCase::InMegamorphic, useHandlerIC() ? nullptr : identifier));
                 generatedMegamorphicCode = true;
             }
             break;
@@ -4229,7 +4250,8 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
         poly.m_list.shrink(0);
         poly.m_list.append(stub->cases().span());
-        auto handler = InlineCacheHandler::create(WTFMove(stub), WTFMove(watchpoint));
+
+        auto handler = InlineCacheHandler::create(*m_stubInfo, WTFMove(stub), WTFMove(watchpoint));
         dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", handler->callTarget());
 
         AccessGenerationResult::Kind resultKind;

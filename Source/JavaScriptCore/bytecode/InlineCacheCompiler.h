@@ -166,9 +166,9 @@ public:
     static ptrdiff_t offsetOfJumpTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_jumpTarget); }
     static ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(InlineCacheHandler, m_next); }
 
-    static Ref<InlineCacheHandler> create(Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint)
+    static Ref<InlineCacheHandler> create(StructureStubInfo& stubInfo, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint)
     {
-        return adoptRef(*new InlineCacheHandler(WTFMove(stubRoutine), WTFMove(watchpoint)));
+        return adoptRef(*new InlineCacheHandler(stubInfo, WTFMove(stubRoutine), WTFMove(watchpoint)));
     }
 
     CodePtr<JITStubRoutinePtrTag> callTarget() const { return m_callTarget; }
@@ -196,14 +196,17 @@ public:
     void addOwner(CodeBlock*);
     void removeOwner(CodeBlock*);
 
+    static ptrdiff_t offsetOfUid() { return OBJECT_OFFSETOF(InlineCacheHandler, m_uid); }
+
 private:
     InlineCacheHandler() = default;
-    InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&);
+    InlineCacheHandler(StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&);
 
     static Ref<InlineCacheHandler> createSlowPath(VM&, AccessType);
 
     CodePtr<JITStubRoutinePtrTag> m_callTarget;
     CodePtr<JITStubRoutinePtrTag> m_jumpTarget;
+    UniquedStringImpl* m_uid { nullptr };
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     std::unique_ptr<StructureStubInfoClearingWatchpoint> m_watchpoint;
     RefPtr<InlineCacheHandler> m_next;
