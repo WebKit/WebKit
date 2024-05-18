@@ -34,14 +34,14 @@
 
 namespace WebCore {
 
-bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
+bool GlyphPage::fill(std::span<const UChar> buffer)
 {
     const Font& font = this->font();
     auto* skiaHarfBuzzFont = font.platformData().skiaHarfBuzzFont();
     if (!skiaHarfBuzzFont)
         return false;
 
-    StringView stringView(std::span(buffer, bufferLength));
+    StringView stringView(buffer);
     auto codePoints = stringView.codePoints();
     auto codePointsIterator = codePoints.begin();
 
