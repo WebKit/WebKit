@@ -86,6 +86,13 @@
             }
         }
     },
+    "TestWebKitWebContext": {
+        "subtests": {
+            "/webkit/WebKitWebContext/memory-pressure": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/274345"}}
+            }
+        }
+    },
     "TestWebKitWebView": {
         "subtests": {
             "/webkit/WebKitWebView/is-web-process-responsive": {
@@ -111,6 +118,9 @@
                         "gtk": {"status": ["CRASH", "FAIL"], "bug": "webkit.org/b/269585"},
                         "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/271327"}
                 }
+            },
+            "/webkit/WebKitWebView/is-playing-audio": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/274344"}}
             }
         }
     },
