@@ -1,3 +1,5 @@
-FAIL: Timed out waiting for notifyDone to be called
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Navigation aborted
 
+
+PASS navigation.traverseTo() - if a top window cancels the traversal, any iframes should not fire navigate
 

@@ -1,4 +1,4 @@
 Click me
 
-PASS clicking on an <a> element that navigates same-document targeting a same-origin window
+FAIL clicking on an <a> element that navigates same-document targeting a same-origin window assert_true: cancelable expected true got false
 

@@ -170,6 +170,17 @@ RefPtr<HistoryItem> BackForwardController::itemAtIndex(int i)
     return protectedClient()->itemAtIndex(i);
 }
 
+Vector<Ref<HistoryItem>> BackForwardController::allItems()
+{
+    Vector<Ref<HistoryItem>> historyItems;
+    for (int index = -1 * static_cast<int>(backCount()); index <= static_cast<int>(forwardCount()); index++) {
+        if (RefPtr item = itemAtIndex(index))
+            historyItems.append(item.releaseNonNull());
+    }
+
+    return historyItems;
+}
+
 void BackForwardController::close()
 {
     protectedClient()->close();

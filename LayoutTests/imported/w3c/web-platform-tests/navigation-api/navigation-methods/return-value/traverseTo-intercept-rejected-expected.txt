@@ -1,3 +1,5 @@
 
-FAIL traverseTo() promise rejection with rejected intercept() assert_equals: expected "#1" but got ""
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT traverseTo() promise rejection with rejected intercept() Test timed out
 

@@ -1,6 +1,3 @@
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigation.currentEntry/entries()/canGoBack/canGoForward after iframe removal Test timed out
+PASS navigation.currentEntry/entries()/canGoBack/canGoForward after iframe removal
 

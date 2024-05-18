@@ -45,6 +45,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
+#include "Navigation.h"
 #include "Page.h"
 #include "ScrollingCoordinator.h"
 #include "SerializedScriptValue.h"
@@ -929,6 +930,9 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
 
     addVisitedLink(*page, URL({ }, urlString));
     frame->checkedLoader()->client().updateGlobalHistory();
+
+    if (document && document->settings().navigationAPIEnabled())
+        document->protectedWindow()->navigation().updateForNavigation(*currentItem, NavigationNavigationType::Push);
 }
 
 void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject, const String& urlString)
@@ -956,6 +960,9 @@ void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject
 
     addVisitedLink(*page, URL({ }, urlString));
     frame->checkedLoader()->client().updateGlobalHistory();
+
+    if (RefPtr document = frame->document(); document && document->settings().navigationAPIEnabled())
+        document->protectedWindow()->navigation().updateForNavigation(*currentItem, NavigationNavigationType::Replace);
 }
 
 void HistoryController::replaceCurrentItem(RefPtr<HistoryItem>&& item)

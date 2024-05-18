@@ -68,15 +68,15 @@ window.onload = async function () {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 
-    navigation.onnavigate = function(e) {
-        log("hasUAVisualTransition " + e.hasUAVisualTransition);
-        updateContent();
-    };
-
     await UIHelper.delayFor(0);
 
     history.pushState(null, null, "#second");
     updateContent();
+
+    navigation.onnavigate = function(e) {
+        log("hasUAVisualTransition " + e.hasUAVisualTransition);
+        updateContent();
+    };
 
     await UIHelper.delayFor(0);
     await startSwipeGesture();

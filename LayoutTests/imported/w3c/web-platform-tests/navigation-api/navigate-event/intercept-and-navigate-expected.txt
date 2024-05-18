@@ -1,3 +1,5 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Using intercept() then navigate() in the ensuing currententrychange should abort the finished promise (but not the committed promise) Test timed out
 

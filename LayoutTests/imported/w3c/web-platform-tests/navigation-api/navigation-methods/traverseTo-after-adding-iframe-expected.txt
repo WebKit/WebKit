@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigation.traverseTo() should work in an iframe that is not present in all history entries Test timed out
+PASS navigation.traverseTo() should work in an iframe that is not present in all history entries
 

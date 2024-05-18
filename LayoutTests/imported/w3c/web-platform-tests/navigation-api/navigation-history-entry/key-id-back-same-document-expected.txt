@@ -1,3 +1,5 @@
 
-FAIL NavigationHistoryEntry's key and id on same-document back navigation assert_not_equals: got disallowed value "c6782442-aa4a-487e-94a7-68b0ade1bcae"
+Harness Error (TIMEOUT), message = null
+
+PASS NavigationHistoryEntry's key and id on same-document back navigation
 

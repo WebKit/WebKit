@@ -1,3 +1,4 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+
+PASS Removing a currentEntry from the joint session history shouldn't dispose it
 

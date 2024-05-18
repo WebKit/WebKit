@@ -256,7 +256,7 @@ ExceptionOr<void> Location::replace(LocalDOMWindow& activeWindow, LocalDOMWindow
         return Exception { ExceptionCode::SecurityError };
 
     // We call LocalDOMWindow::setLocation directly here because replace() always operates on the current frame.
-    frame->window()->setLocation(activeWindow, completedURL, SetLocationLocking::LockHistoryAndBackForwardList);
+    frame->window()->setLocation(activeWindow, completedURL, NavigationHistoryBehavior::Replace, SetLocationLocking::LockHistoryAndBackForwardList);
     return { };
 }
 
@@ -305,8 +305,13 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     if (!incumbentWindow.document()->canNavigate(frame.get(), completedURL))
         return Exception { ExceptionCode::SecurityError };
 
+    // https://html.spec.whatwg.org/multipage/nav-history-apis.html#the-location-interface:location-object-navigate
+    auto historyHandling = NavigationHistoryBehavior::Auto;
+    if (!firstFrame->loader().isComplete() && firstFrame->document() && !firstFrame->document()->domWindow()->hasTransientActivation())
+        historyHandling = NavigationHistoryBehavior::Replace;
+
     ASSERT(frame->window());
-    frame->window()->setLocation(incumbentWindow, completedURL);
+    frame->window()->setLocation(incumbentWindow, completedURL, historyHandling);
     return { };
 }
 

@@ -55,6 +55,7 @@ HistoryItem::HistoryItem(Client& client, const String& urlString, std::optional<
     , m_originalURLString(urlString)
     , m_pruningReason(PruningReason::None)
     , m_identifier(identifier ? *identifier : BackForwardItemIdentifier::generate())
+    , m_uuidIdentifier(WTF::UUID::createVersion4Weak())
     , m_client(client)
 {
 }
@@ -88,6 +89,7 @@ HistoryItem::HistoryItem(const HistoryItem& item)
     , m_scaleIsInitial(item.m_scaleIsInitial)
 #endif
     , m_identifier(item.m_identifier)
+    , m_uuidIdentifier(WTF::UUID::createVersion4Weak())
     , m_client(item.m_client)
 {
 }

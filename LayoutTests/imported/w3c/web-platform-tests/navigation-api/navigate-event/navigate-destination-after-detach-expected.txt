@@ -1,6 +1,3 @@
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigate event destination after iframe detach Test timed out
+PASS navigate event destination after iframe detach
 

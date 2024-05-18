@@ -70,6 +70,8 @@ public:
     WEBCORE_EXPORT RefPtr<HistoryItem> currentItem();
     WEBCORE_EXPORT RefPtr<HistoryItem> forwardItem();
 
+    Vector<Ref<HistoryItem>> allItems();
+
 private:
     Ref<Page> protectedPage() const;
     Ref<BackForwardClient> protectedClient() const;

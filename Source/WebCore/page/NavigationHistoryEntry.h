@@ -30,7 +30,6 @@
 #include "EventTarget.h"
 #include "HistoryItem.h"
 #include <wtf/RefCounted.h>
-#include <wtf/UUID.h>
 
 namespace JSC {
 class JSValue;
@@ -46,8 +45,7 @@ public:
     using RefCounted<NavigationHistoryEntry>::ref;
     using RefCounted<NavigationHistoryEntry>::deref;
 
-    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, Ref<HistoryItem>& historyItem) { return adoptRef(*new NavigationHistoryEntry(context, historyItem)); }
-    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, const URL& url) { return adoptRef(*new NavigationHistoryEntry(context, url)); }
+    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem) { return adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem))); }
 
     const String& url() const;
     String key() const;
@@ -58,21 +56,18 @@ public:
 
     void setState(RefPtr<SerializedScriptValue>&&);
 
+    HistoryItem& associatedHistoryItem() const { return m_associatedHistoryItem; }
+
 private:
-    NavigationHistoryEntry(ScriptExecutionContext*, Ref<HistoryItem>&);
-    NavigationHistoryEntry(ScriptExecutionContext*, const URL&);
+    NavigationHistoryEntry(ScriptExecutionContext*, Ref<HistoryItem>&&);
 
     enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    const URL m_url;
-    const WTF::UUID m_key;
     const WTF::UUID m_id;
-    // TODO: Every entry is supposed to have an associated history item.
-    std::optional<Ref<HistoryItem>> m_associatedHistoryItem;
-    std::optional<long long> m_documentSequenceNumber;
+    Ref<HistoryItem> m_associatedHistoryItem;
 };
 
 } // namespace WebCore

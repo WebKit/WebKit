@@ -40,21 +40,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
-NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>& historyItem)
+NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem)
     : ContextDestructionObserver(context)
-    , m_url(historyItem->url())
-    , m_key(WTF::UUID::createVersion4())
     , m_id(WTF::UUID::createVersion4())
-    , m_associatedHistoryItem(historyItem)
-    , m_documentSequenceNumber(historyItem->documentSequenceNumber())
-{
-}
-
-NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, const URL& url)
-    : ContextDestructionObserver(context)
-    , m_url(url)
-    , m_key(WTF::UUID::createVersion4())
-    , m_id(WTF::UUID::createVersion4())
+    , m_associatedHistoryItem(WTFMove(historyItem))
 {
 }
 
@@ -73,7 +62,7 @@ const String& NavigationHistoryEntry::url() const
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return nullString();
-    return m_url.string();
+    return m_associatedHistoryItem->urlString();
 }
 
 String NavigationHistoryEntry::key() const
@@ -81,7 +70,7 @@ String NavigationHistoryEntry::key() const
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return nullString();
-    return m_key.toString();
+    return m_associatedHistoryItem->uuidIdentifier().toString();
 }
 
 String NavigationHistoryEntry::id() const
@@ -108,12 +97,10 @@ bool NavigationHistoryEntry::sameDocument() const
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return false;
-    if (!m_documentSequenceNumber)
-        return false;
     RefPtr currentItem = document->frame()->checkedHistory()->currentItem();
     if (!currentItem)
         return false;
-    return currentItem->documentSequenceNumber() == *m_documentSequenceNumber;
+    return currentItem->documentSequenceNumber() == m_associatedHistoryItem->documentSequenceNumber();
 }
 
 JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) const
@@ -122,10 +109,7 @@ JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) c
     if (!document || !document->isFullyActive())
         return JSC::jsUndefined();
 
-    if (!m_associatedHistoryItem)
-        return JSC::jsUndefined();
-
-    auto stateObject = m_associatedHistoryItem->get().navigationAPIStateObject();
+    auto stateObject = m_associatedHistoryItem->navigationAPIStateObject();
     if (!stateObject)
         return JSC::jsUndefined();
 
@@ -134,10 +118,7 @@ JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) c
 
 void NavigationHistoryEntry::setState(RefPtr<SerializedScriptValue>&& state)
 {
-    if (!m_associatedHistoryItem)
-        return;
-
-    m_associatedHistoryItem->get().setNavigationAPIStateObject(WTFMove(state));
+    m_associatedHistoryItem->setNavigationAPIStateObject(WTFMove(state));
 }
 
 } // namespace WebCore

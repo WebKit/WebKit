@@ -1,4 +1,4 @@
 
 
-FAIL navigation.entries() behavior when multiple windows navigate. assert_not_equals: got disallowed value "http://web-platform.test:8800/navigation-api/navigation-history-entry/entries-after-navigations-in-multiple-windows.html"
+FAIL navigation.entries() behavior when multiple windows navigate. assert_equals: expected 2 but got 1
 

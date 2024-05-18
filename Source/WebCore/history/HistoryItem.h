@@ -37,6 +37,7 @@
 #include "SerializedScriptValue.h"
 #include <memory>
 #include <wtf/RefCounted.h>
+#include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -83,10 +84,13 @@ public:
     WEBCORE_EXPORT Ref<HistoryItem> copy() const;
 
     const BackForwardItemIdentifier& identifier() const { return m_identifier; }
+    const WTF::UUID& uuidIdentifier() const { return m_uuidIdentifier; }
 
     // Resets the HistoryItem to its initial state, as returned by create().
     void reset();
-    
+
+    bool operator==(const HistoryItem& other) const { return identifier() == other.identifier(); }
+
     WEBCORE_EXPORT const String& originalURLString() const;
     WEBCORE_EXPORT const String& urlString() const;
     
@@ -288,6 +292,7 @@ private:
 #endif
 
     BackForwardItemIdentifier m_identifier;
+    WTF::UUID m_uuidIdentifier;
     std::optional<PolicyContainer> m_policyContainer;
     Ref<Client> m_client;
 };

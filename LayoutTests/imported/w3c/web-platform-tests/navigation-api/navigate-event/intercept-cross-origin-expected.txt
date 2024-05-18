@@ -1,7 +1,6 @@
 FAIL: Timed out waiting for notifyDone to be called
 
 Directory listing for /
-
 %CERTS_DIR%
 .cache
 .gitattributes

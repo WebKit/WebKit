@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: expected "4ee017b9-616c-4b0e-84b8-06f91fea3afd" but got "a73e2a7c-e045-4897-946e-9cec39c2a75f"
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: expected "34c66e70-c401-4b89-b4df-11f4c044fff7" but got "519e15d0-f2c0-45d0-b0eb-159df815a265"
 
 PASS navigate() with history: 'replace' option
 

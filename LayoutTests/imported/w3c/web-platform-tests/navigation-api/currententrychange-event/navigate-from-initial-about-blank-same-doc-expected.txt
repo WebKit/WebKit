@@ -1,4 +1,4 @@
 
 
-PASS currententrychange does not fire when navigating away from the initial about:blank
+FAIL currententrychange does not fire when navigating away from the initial about:blank assert_unreached: currententrychange should not fire Reached unreachable code
 

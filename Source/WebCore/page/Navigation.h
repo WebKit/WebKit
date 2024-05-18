@@ -92,11 +92,7 @@ public:
     using RefCounted<Navigation>::ref;
     using RefCounted<Navigation>::deref;
 
-    enum class HistoryBehavior : uint8_t {
-        Auto,
-        Push,
-        Replace,
-    };
+    using HistoryBehavior = NavigationHistoryBehavior;
 
     struct UpdateCurrentEntryOptions {
         JSC::JSValue state;
@@ -127,7 +123,7 @@ public:
     bool canGoBack() const;
     bool canGoForward() const;
 
-    void initializeEntries(const Ref<HistoryItem>& currentItem, Vector<Ref<HistoryItem>> &items);
+    void initializeEntries(Ref<HistoryItem>&& currentItem, Vector<Ref<HistoryItem>>& items);
 
     Result navigate(const String& url, NavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
@@ -139,11 +135,12 @@ public:
 
     ExceptionOr<void> updateCurrentEntry(UpdateCurrentEntryOptions&&);
 
-    bool dispatchTraversalNavigateEvent(Ref<HistoryItem>);
+    bool dispatchTraversalNavigateEvent(HistoryItem&);
     bool dispatchPushReplaceReloadNavigateEvent(const URL&, NavigationNavigationType, bool isSameDocument);
     bool dispatchDownloadNavigateEvent(const URL&, const String& downloadFilename);
 
     void updateForNavigation(Ref<HistoryItem>&&, NavigationNavigationType);
+    void updateForReactivation(Vector<Ref<HistoryItem>>& newHistoryItems, HistoryItem& reactivatedItem);
 
 private:
     explicit Navigation(LocalDOMWindow&);
@@ -155,7 +152,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     bool hasEntriesAndEventsDisabled() const;
-    Result performTraversal(const String& key, Navigation::Options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
+    Result performTraversal(const String& key, Navigation::Options, FrameLoadType, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
     std::optional<Ref<NavigationHistoryEntry>> findEntryByKey(const String& key);
     ExceptionOr<RefPtr<SerializedScriptValue>> serializeState(JSC::JSValue state);
     bool innerDispatchNavigateEvent(NavigationNavigationType, Ref<NavigationDestination>&&, const String& downloadRequestFilename);

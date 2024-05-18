@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigate event for navigation.back() - same-document in an iframe Test timed out
+PASS navigate event for navigation.back() - same-document in an iframe
 

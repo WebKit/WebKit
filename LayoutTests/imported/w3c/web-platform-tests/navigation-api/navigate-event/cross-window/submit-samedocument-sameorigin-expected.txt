@@ -1,4 +1,4 @@
 
 
-FAIL submitting a <form> element that navigates same-document targeting a same-origin window assert_equals: navigationType expected "push" but got "replace"
+FAIL submitting a <form> element that navigates same-document targeting a same-origin window assert_true: cancelable expected true got false
 
