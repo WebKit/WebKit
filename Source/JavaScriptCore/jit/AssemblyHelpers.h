@@ -1646,7 +1646,7 @@ public:
 #endif
     }
     
-    void callExceptionFuzz(VM&);
+    void callExceptionFuzz(VM&, GPRReg exceptionReg);
     
     enum ExceptionCheckKind { NormalExceptionCheck, InvertedExceptionCheck };
     enum ExceptionJumpWidth { NormalJumpWidth, FarJumpWidth };
