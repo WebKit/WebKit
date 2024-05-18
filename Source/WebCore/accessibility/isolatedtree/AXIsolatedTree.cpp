@@ -739,7 +739,7 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
             propertyMap.set(AXPropertyName::Title, axObject.title().isolatedCopy());
             break;
         case AXPropertyName::URL:
-            propertyMap.set(AXPropertyName::URL, axObject.url().isolatedCopy());
+            propertyMap.set(AXPropertyName::URL, std::make_shared<URL>(axObject.url().isolatedCopy()));
             break;
         case AXPropertyName::ValueForRange:
             propertyMap.set(AXPropertyName::ValueForRange, axObject.valueForRange());
