@@ -669,11 +669,10 @@ bool Navigation::dispatchPushReplaceReloadNavigateEvent(const URL& url, Navigati
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-download-request-navigate-event
-bool Navigation::dispatchDownloadNavigateEvent(const URL&, const String& downloadFilename)
+bool Navigation::dispatchDownloadNavigateEvent(const URL& url, const String& downloadFilename)
 {
-    // FIXME
-    UNUSED_PARAM(downloadFilename);
-    return false;
+    Ref destination = NavigationDestination::create(url, nullptr, false);
+    return innerDispatchNavigateEvent(NavigationNavigationType::Push, WTFMove(destination), downloadFilename);
 }
 
 } // namespace WebCore
