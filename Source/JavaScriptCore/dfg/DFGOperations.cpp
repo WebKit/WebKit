@@ -1582,6 +1582,7 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpTest, size_t, (JSGlobalObject* globalObj
     JSValue argument = JSValue::decode(encodedArgument);
 
     JSString* input = argument.toStringOrNull(globalObject);
+    EXCEPTION_ASSERT(!!scope.exception() == !input);
     if (!input)
         OPERATION_RETURN(scope, false);
     OPERATION_RETURN(scope, regExpObject->testInline(globalObject, input));
