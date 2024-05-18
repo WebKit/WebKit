@@ -129,7 +129,8 @@ static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::I
         return false;
     }
 
-    if (callee->replacement(instance->memory()->mode()))  {
+    MemoryMode memoryMode = instance->memory()->mode();
+    if (callee->replacement(memoryMode))  {
         dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
         tierUpCounter.optimizeSoon();
         return true;
@@ -138,10 +139,10 @@ static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::I
     bool compile = false;
     {
         Locker locker { tierUpCounter.m_lock };
-        switch (tierUpCounter.m_compilationStatus) {
+        switch (tierUpCounter.compilationStatus(memoryMode)) {
         case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
             compile = true;
-            tierUpCounter.m_compilationStatus = Wasm::LLIntTierUpCounter::CompilationStatus::Compiling;
+            tierUpCounter.setCompilationStatus(memoryMode, Wasm::LLIntTierUpCounter::CompilationStatus::Compiling);
             break;
         case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
             tierUpCounter.optimizeAfterWarmUp();
@@ -158,7 +159,7 @@ static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::I
             plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
 #if ENABLE(WEBASSEMBLY_OMGJIT)
         else // No need to check OMG allow list: if we didn't want to compile this function, shouldJIT should have returned false.
-            plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), instance->memory()->mode(), Wasm::Plan::dontFinalize()));
+            plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), memoryMode, Wasm::Plan::dontFinalize()));
 #endif
 
         if (plan) {
@@ -170,14 +171,15 @@ static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::I
         }
     }
 
-    return !!callee->replacement(instance->memory()->mode());
+    return !!callee->replacement(memoryMode);
 }
 
 static inline bool jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Instance* instance)
 {
     Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
 
-    if (callee->replacement(instance->memory()->mode()))  {
+    MemoryMode memoryMode = instance->memory()->mode();
+    if (callee->replacement(memoryMode))  {
         dataLogLnIf(Options::verboseOSR(), "    SIMD code was already compiled.");
         return true;
     }
@@ -185,16 +187,16 @@ static inline bool jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Insta
     bool compile = false;
     while (!compile) {
         Locker locker { tierUpCounter.m_lock };
-        switch (tierUpCounter.m_compilationStatus) {
+        switch (tierUpCounter.compilationStatus(memoryMode)) {
         case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
             compile = true;
-            tierUpCounter.m_compilationStatus = Wasm::LLIntTierUpCounter::CompilationStatus::Compiling;
+            tierUpCounter.setCompilationStatus(memoryMode, Wasm::LLIntTierUpCounter::CompilationStatus::Compiling);
             break;
         case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
-            // This spinlock is bad, but this is only temporary.
+            // FIXME: This spinlock is bad, but this is only temporary. https://bugs.webkit.org/show_bug.cgi?id=274326
             continue;
         case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
-            RELEASE_ASSERT(!!callee->replacement(instance->memory()->mode()));
+            RELEASE_ASSERT(!!callee->replacement(memoryMode));
             return true;
         }
     }
@@ -206,15 +208,15 @@ static inline bool jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Insta
         plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
 #if ENABLE(WEBASSEMBLY_OMGJIT)
     else
-        plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), instance->memory()->mode(), Wasm::Plan::dontFinalize()));
+        plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), memoryMode, Wasm::Plan::dontFinalize()));
 #endif
 
     Wasm::ensureWorklist().enqueue(*plan);
     plan->waitForCompletion();
 
-    Locker locker { tierUpCounter.m_lock };
-    RELEASE_ASSERT(tierUpCounter.m_compilationStatus == Wasm::LLIntTierUpCounter::CompilationStatus::Compiled);
-    RELEASE_ASSERT(!!callee->replacement(instance->memory()->mode()));
+        Locker locker { tierUpCounter.m_lock };
+        RELEASE_ASSERT(tierUpCounter.compilationStatus(memoryMode) == Wasm::LLIntTierUpCounter::CompilationStatus::Compiled);
+        RELEASE_ASSERT(!!callee->replacement(memoryMode));
 
     return true;
 }
@@ -327,16 +329,17 @@ WASM_SLOW_PATH_DECL(loop_osr)
             WASM_RETURN_TWO(buffer, osrEntryCallee->entrypoint().taggedPtr());
         };
 
-        if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
+        MemoryMode memoryMode = instance->memory()->mode();
+        if (auto* osrEntryCallee = callee->osrEntryCallee(memoryMode))
             return doOSREntry(osrEntryCallee);
 
         bool compile = false;
         {
             Locker locker { tierUpCounter.m_lock };
-            switch (tierUpCounter.m_loopCompilationStatus) {
+            switch (tierUpCounter.loopCompilationStatus(memoryMode)) {
             case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
                 compile = true;
-                tierUpCounter.m_loopCompilationStatus = Wasm::LLIntTierUpCounter::CompilationStatus::Compiling;
+                tierUpCounter.setLoopCompilationStatus(memoryMode, Wasm::LLIntTierUpCounter::CompilationStatus::Compiling);
                 break;
             case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
                 tierUpCounter.optimizeAfterWarmUp();
@@ -347,7 +350,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
         }
 
         if (compile) {
-            Ref<Wasm::Plan> plan = adoptRef(*static_cast<Wasm::Plan*>(new Wasm::OSREntryPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::Callee>(*callee), callee->functionIndex(), callee->hasExceptionHandlers(), osrEntryData.loopIndex, instance->memory()->mode(), Wasm::Plan::dontFinalize())));
+            Ref<Wasm::Plan> plan = adoptRef(*static_cast<Wasm::Plan*>(new Wasm::OSREntryPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::Callee>(*callee), callee->functionIndex(), callee->hasExceptionHandlers(), osrEntryData.loopIndex, memoryMode, Wasm::Plan::dontFinalize())));
             Wasm::ensureWorklist().enqueue(plan.copyRef());
             if (UNLIKELY(!Options::useConcurrentJIT()))
                 plan->waitForCompletion();
@@ -355,7 +358,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
                 tierUpCounter.optimizeAfterWarmUp();
         }
 
-        if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
+        if (auto* osrEntryCallee = callee->osrEntryCallee(memoryMode))
             return doOSREntry(osrEntryCallee);
 
 #endif

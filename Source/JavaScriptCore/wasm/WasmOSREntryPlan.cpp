@@ -162,14 +162,14 @@ void OSREntryPlan::work(CompilationEffort)
                 LLIntCallee* llintCallee = static_cast<LLIntCallee*>(m_callee.ptr());
                 Locker locker { llintCallee->tierUpCounter().m_lock };
                 llintCallee->setOSREntryCallee(callee.copyRef(), mode());
-                llintCallee->tierUpCounter().m_loopCompilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
+                llintCallee->tierUpCounter().setLoopCompilationStatus(mode(), LLIntTierUpCounter::CompilationStatus::Compiled);
                 break;
             }
             case CompilationMode::IPIntMode: {
                 IPIntCallee* ipintCallee = static_cast<IPIntCallee*>(m_callee.ptr());
                 Locker locker { ipintCallee->tierUpCounter().m_lock };
                 ipintCallee->setOSREntryCallee(callee.copyRef(), mode());
-                ipintCallee->tierUpCounter().m_loopCompilationStatus = IPIntTierUpCounter::CompilationStatus::Compiled;
+                ipintCallee->tierUpCounter().setLoopCompilationStatus(mode(), IPIntTierUpCounter::CompilationStatus::Compiled);
                 break;
             }
             case CompilationMode::BBQMode: {
@@ -177,7 +177,7 @@ void OSREntryPlan::work(CompilationEffort)
                 Locker locker { bbqCallee->tierUpCount()->getLock() };
                 bbqCallee->setOSREntryCallee(callee.copyRef(), mode());
                 bbqCallee->tierUpCount()->osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
-                bbqCallee->tierUpCount()->m_compilationStatusForOMGForOSREntry = TierUpCount::CompilationStatus::Compiled;
+                bbqCallee->tierUpCount()->setCompilationStatusForOMGForOSREntry(mode(), TierUpCount::CompilationStatus::Compiled);
                 break;
             }
             default:

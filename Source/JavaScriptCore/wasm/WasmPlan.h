@@ -63,7 +63,7 @@ public:
     void addCompletionTask(VM&, CompletionTask&&);
 
     void setMode(MemoryMode mode) { m_mode = mode; }
-    MemoryMode mode() const { return m_mode; }
+    ALWAYS_INLINE MemoryMode mode() const { return m_mode; }
 
     String errorMessage() const { return crossThreadCopy(m_errorMessage); }
 
