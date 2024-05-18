@@ -52,9 +52,9 @@ UnifiedTextReplacementController::UnifiedTextReplacementController(WebPage& webP
 {
 }
 
-void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF::UUID& uuid, WebUnifiedTextReplacementType type, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
+void UnifiedTextReplacementController::willBeginTextReplacementSession(const std::optional<WebUnifiedTextReplacementSessionData>& session, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s)", uuid.toString().utf8().data());
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s)", session ? session->uuid.toString().utf8().data() : "");
 
     RefPtr document = this->document();
     if (!document) {
@@ -65,19 +65,19 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF
 
     auto contextRange = m_webPage->autocorrectionContextRange();
     if (!contextRange) {
-        RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => no context range", uuid.toString().utf8().data());
+        RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => no context range", session ? session->uuid.toString().utf8().data() : "");
         completionHandler({ });
         return;
     }
 
     // If the UUID is invalid, the session is ephemeral.
-    if (uuid.isValid()) {
+    if (session) {
         auto liveRange = createLiveRange(*contextRange);
 
-        ASSERT(!m_contextRanges.contains(uuid));
-        m_contextRanges.set(uuid, liveRange);
+        ASSERT(!m_contextRanges.contains(session->uuid));
 
-        m_replacementTypes.set(uuid, type);
+        m_contextRanges.set(session->uuid, liveRange);
+        m_replacementTypes.set(session->uuid, session->replacementType);
     }
 
     auto selectedTextRange = document->selection().selection().firstRange();
@@ -85,7 +85,7 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF
     auto attributedStringFromRange = WebCore::editingAttributedString(*contextRange);
     auto selectedTextCharacterRange = WebCore::characterRange(*contextRange, *selectedTextRange);
 
-    if (uuid.isValid()) {
+    if (session) {
         auto attributedStringCharacterCount = attributedStringFromRange.string.length();
         auto contextRangeCharacterCount = WebCore::characterCount(*contextRange);
 
@@ -93,7 +93,7 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF
         // attributed string formed by the context range; the length of the entire context range
         // being equal to the length of the attributed string implies the range is valid.
         if (UNLIKELY(attributedStringCharacterCount != contextRangeCharacterCount)) {
-            RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string length (%u) != context range length (%llu)", uuid.toString().utf8().data(), attributedStringCharacterCount, contextRangeCharacterCount);
+            RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string length (%u) != context range length (%llu)", session->uuid.toString().utf8().data(), attributedStringCharacterCount, contextRangeCharacterCount);
             ASSERT_NOT_REACHED();
             completionHandler({ });
             return;
@@ -103,14 +103,14 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF
     completionHandler({ { WTF::UUID { 0 }, attributedStringFromRange, selectedTextCharacterRange } });
 }
 
-void UnifiedTextReplacementController::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebUnifiedTextReplacementContextData>& contexts)
+void UnifiedTextReplacementController::didBeginTextReplacementSession(const WebUnifiedTextReplacementSessionData& session, const Vector<WebUnifiedTextReplacementContextData>& contexts)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::didBeginTextReplacementSession (%s) [received contexts: %zu]", uuid.toString().utf8().data(), contexts.size());
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::didBeginTextReplacementSession (%s) [received contexts: %zu]", session.uuid.toString().utf8().data(), contexts.size());
 }
 
-void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
+void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplacements(const WebUnifiedTextReplacementSessionData& session, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveReplacements (%s) [received replacements: %zu, finished: %d]", uuid.toString().utf8().data(), replacements.size(), finished);
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveReplacements (%s) [received replacements: %zu, finished: %d]", session.uuid.toString().utf8().data(), replacements.size(), finished);
 
     RefPtr document = this->document();
     if (!document) {
@@ -118,9 +118,9 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
         return;
     }
 
-    ASSERT(m_contextRanges.contains(uuid));
+    ASSERT(m_contextRanges.contains(session.uuid));
 
-    m_webPage->removeTextIndicatorStyleForID(uuid);
+    m_webPage->removeTextIndicatorStyleForID(session.uuid);
 
     document->selection().clear();
 
@@ -129,10 +129,10 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
     // This ensures that subsequent calls of this function should effectively be treated as just more iterations
     // of the following for-loop.
 
-    auto& additionalOffset = m_replacementLocationOffsets.add(uuid, 0).iterator->value;
+    auto& additionalOffset = m_replacementLocationOffsets.add(session.uuid, 0).iterator->value;
 
     for (const auto& replacementData : replacements) {
-        auto sessionRange = contextRangeForSessionWithUUID(uuid);
+        auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
         if (!sessionRange) {
             ASSERT_NOT_REACHED();
             return;
@@ -142,21 +142,21 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
 
         auto resolvedRange = resolveCharacterRange(*sessionRange, { locationWithOffset, replacementData.originalRange.length });
 
-        replaceContentsOfRangeInSession(uuid, resolvedRange, replacementData.replacement);
+        replaceContentsOfRangeInSession(session.uuid, resolvedRange, replacementData.replacement);
 
         auto newRangeWithOffset = WebCore::CharacterRange { locationWithOffset, replacementData.replacement.length() };
         auto newResolvedRange = resolveCharacterRange(*sessionRange, newRangeWithOffset);
 
         auto originalString = [context.attributedText.nsAttributedString() attributedSubstringFromRange:replacementData.originalRange];
 
-        auto markerData = WebCore::DocumentMarker::UnifiedTextReplacementData { originalString.string, replacementData.uuid, uuid, WebCore::DocumentMarker::UnifiedTextReplacementData::State::Pending };
+        auto markerData = WebCore::DocumentMarker::UnifiedTextReplacementData { originalString.string, replacementData.uuid, session.uuid, WebCore::DocumentMarker::UnifiedTextReplacementData::State::Pending };
         addMarker(newResolvedRange, WebCore::DocumentMarker::Type::UnifiedTextReplacement, markerData);
 
         additionalOffset += static_cast<int>(replacementData.replacement.length()) - static_cast<int>(replacementData.originalRange.length);
     }
 
     if (finished) {
-        auto sessionRange = contextRangeForSessionWithUUID(uuid);
+        auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
         if (!sessionRange) {
             ASSERT_NOT_REACHED();
             return;
@@ -166,9 +166,9 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
     }
 }
 
-void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID& uuid, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
+void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement(const WebUnifiedTextReplacementSessionData& session, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement (%s) [new state: %hhu, replacement: %s]", uuid.toString().utf8().data(), enumToUnderlyingType(state), replacement.uuid.toString().utf8().data());
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement (%s) [new state: %hhu, replacement: %s]", session.uuid.toString().utf8().data(), enumToUnderlyingType(state), replacement.uuid.toString().utf8().data());
 
     RefPtr document = this->document();
     if (!document) {
@@ -176,7 +176,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         return;
     }
 
-    auto sessionRange = contextRangeForSessionWithUUID(uuid);
+    auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
         return;
@@ -196,7 +196,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         document->selection().revealSelection();
 
         auto rect = document->view()->contentsToRootView(WebCore::unionRect(WebCore::RenderObject::absoluteTextRects(rangeToReplace)));
-        m_webPage->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(uuid, replacement.uuid, rect);
+        m_webPage->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(session.uuid, replacement.uuid, rect);
 
         return;
     }
@@ -207,7 +207,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         auto offsetRange = WebCore::OffsetRange { marker.startOffset(), marker.endOffset() };
         document->markers().removeMarkers(node, offsetRange, { WebCore::DocumentMarker::Type::UnifiedTextReplacement });
 
-        replaceContentsOfRangeInSession(uuid, rangeToReplace, data.originalText);
+        replaceContentsOfRangeInSession(session.uuid, rangeToReplace, data.originalText);
 
         return;
     }
@@ -218,11 +218,11 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
 }
 
 template<>
-void UnifiedTextReplacementController::didEndTextReplacementSession<WebUnifiedTextReplacementType::PlainText>(const WTF::UUID& uuid, bool accepted)
+void UnifiedTextReplacementController::didEndTextReplacementSession<WebUnifiedTextReplacementSessionData::ReplacementType::PlainText>(const WebUnifiedTextReplacementSessionData& session, bool accepted)
 {
     RefPtr document = this->document();
 
-    auto sessionRange = contextRangeForSessionWithUUID(uuid);
+    auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
         return;
@@ -240,26 +240,26 @@ void UnifiedTextReplacementController::didEndTextReplacementSession<WebUnifiedTe
         markers.removeMarkers(node, offsetRange, { WebCore::DocumentMarker::Type::UnifiedTextReplacement });
 
         if (!accepted && data.state != WebCore::DocumentMarker::UnifiedTextReplacementData::State::Reverted)
-            replaceContentsOfRangeInSession(uuid, rangeToReplace, data.originalText);
+            replaceContentsOfRangeInSession(session.uuid, rangeToReplace, data.originalText);
 
         return false;
     });
 }
 
 template<>
-void UnifiedTextReplacementController::didEndTextReplacementSession<WebUnifiedTextReplacementType::RichText>(const WTF::UUID& uuid, bool accepted)
+void UnifiedTextReplacementController::didEndTextReplacementSession<WebUnifiedTextReplacementSessionData::ReplacementType::RichText>(const WebUnifiedTextReplacementSessionData& session, bool accepted)
 {
     if (accepted)
         return;
 
     RefPtr document = this->document();
 
-    textReplacementSessionPerformEditActionForRichText(*document, uuid, WebTextReplacementData::EditAction::Undo);
+    textReplacementSessionPerformEditActionForRichText(*document, session, WebTextReplacementData::EditAction::Undo);
 }
 
-void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::UUID& uuid, bool accepted)
+void UnifiedTextReplacementController::didEndTextReplacementSession(const WebUnifiedTextReplacementSessionData& session, bool accepted)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::didEndTextReplacementSession (%s) [accepted: %d]", uuid.toString().utf8().data(), accepted);
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::didEndTextReplacementSession (%s) [accepted: %d]", session.uuid.toString().utf8().data(), accepted);
 
     RefPtr document = this->document();
     if (!document) {
@@ -267,19 +267,19 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::U
         return;
     }
 
-    auto replacementType = m_replacementTypes.get(uuid);
+    auto replacementType = m_replacementTypes.get(session.uuid);
     switch (replacementType) {
-    case WebUnifiedTextReplacementType::PlainText:
-        didEndTextReplacementSession<WebUnifiedTextReplacementType::PlainText>(uuid, accepted);
+    case WebUnifiedTextReplacementSessionData::ReplacementType::PlainText:
+        didEndTextReplacementSession<WebUnifiedTextReplacementSessionData::ReplacementType::PlainText>(session, accepted);
         break;
-    case WebUnifiedTextReplacementType::RichText:
-        didEndTextReplacementSession<WebUnifiedTextReplacementType::RichText>(uuid, accepted);
+    case WebUnifiedTextReplacementSessionData::ReplacementType::RichText:
+        didEndTextReplacementSession<WebUnifiedTextReplacementSessionData::ReplacementType::RichText>(session, accepted);
         break;
     }
 
-    m_webPage->removeTextIndicatorStyleForID(uuid);
+    m_webPage->removeTextIndicatorStyleForID(session.uuid);
 
-    auto sessionRange = contextRangeForSessionWithUUID(uuid);
+    auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
         return;
@@ -287,16 +287,16 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WTF::U
 
     document->selection().setSelection({ *sessionRange });
 
-    m_textIndicatorCharacterRangesForSessions.removeFirstMatching([uuid](auto& session) {
-        return session.first == uuid;
+    m_textIndicatorCharacterRangesForSessions.removeFirstMatching([&](auto& candidateSession) {
+        return candidateSession.first == session.uuid;
     });
-    removeTransparentMarkersForSession(uuid, RemoveAllMarkersForSession::Yes);
+    removeTransparentMarkersForSession(session.uuid, RemoveAllMarkersForSession::Yes);
 
-    m_replacementTypes.remove(uuid);
-    m_contextRanges.remove(uuid);
-    m_originalDocumentNodes.remove(uuid);
-    m_replacedDocumentNodes.remove(uuid);
-    m_replacementLocationOffsets.remove(uuid);
+    m_replacementTypes.remove(session.uuid);
+    m_contextRanges.remove(session.uuid);
+    m_originalDocumentNodes.remove(session.uuid);
+    m_replacedDocumentNodes.remove(session.uuid);
+    m_replacementLocationOffsets.remove(session.uuid);
 }
 
 void UnifiedTextReplacementController::removeTransparentMarkersForUUID(const WebCore::SimpleRange& range, const WTF::UUID& uuid)
@@ -344,16 +344,16 @@ void UnifiedTextReplacementController::removeTransparentMarkersForSession(const 
     }
 }
 
-void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID& uuid, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context, bool finished)
+void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange(const WebUnifiedTextReplacementSessionData& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context, bool finished)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) [range: %llu, %llu]", uuid.toString().utf8().data(), range.location, range.length);
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) [range: %llu, %llu]", session.uuid.toString().utf8().data(), range.location, range.length);
 
     auto contextTextCharacterCount = context.attributedText.string.length();
 
     // Precondition: the range is always relative to the context's attributed text, so by definition it must
     // be strictly less than the length of the attributed string.
     if (UNLIKELY(contextTextCharacterCount < range.location + range.length)) {
-        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => trying to replace a range larger than the context range (context range length: %u, range.location %llu, range.length %llu)", uuid.toString().utf8().data(), contextTextCharacterCount, range.location, range.length);
+        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => trying to replace a range larger than the context range (context range length: %u, range.location %llu, range.length %llu)", session.uuid.toString().utf8().data(), contextTextCharacterCount, range.location, range.length);
         ASSERT_NOT_REACHED();
         return;
     }
@@ -364,20 +364,20 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    auto sessionRange = contextRangeForSessionWithUUID(uuid);
+    auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    m_webPage->removeTextIndicatorStyleForID(uuid);
+    m_webPage->removeTextIndicatorStyleForID(session.uuid);
 
     document->selection().clear();
 
     auto sessionRangeCharacterCount = WebCore::characterCount(*sessionRange);
 
     if (UNLIKELY(range.length + sessionRangeCharacterCount < contextTextCharacterCount)) {
-        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => the range offset by the character count delta must have a non-negative size (context range length: %u, range.length %llu, session length: %llu)", uuid.toString().utf8().data(), contextTextCharacterCount, range.length, sessionRangeCharacterCount);
+        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => the range offset by the character count delta must have a non-negative size (context range length: %u, range.length %llu, session length: %llu)", session.uuid.toString().utf8().data(), contextTextCharacterCount, range.length, sessionRangeCharacterCount);
         ASSERT_NOT_REACHED();
         return;
     }
@@ -388,15 +388,15 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
     auto characterCountDelta = sessionRangeCharacterCount - contextTextCharacterCount;
     auto resolvedRange = resolveCharacterRange(*sessionRange, { range.location, range.length + characterCountDelta });
 
-    if (!m_originalDocumentNodes.contains(uuid)) {
-        auto contents = m_contextRanges.get(uuid)->cloneContents();
+    if (!m_originalDocumentNodes.contains(session.uuid)) {
+        auto contents = m_contextRanges.get(session.uuid)->cloneContents();
         if (contents.hasException()) {
-            RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => exception when cloning contents", uuid.toString().utf8().data());
+            RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => exception when cloning contents", session.uuid.toString().utf8().data());
             ASSERT_NOT_REACHED();
             return;
         }
 
-        m_originalDocumentNodes.set(uuid, contents.returnValue()); // Deep clone.
+        m_originalDocumentNodes.set(session.uuid, contents.returnValue()); // Deep clone.
     }
 
     RefPtr fragment = WebCore::createFragment(*document->frame(), attributedText.nsAttributedString().get(), { WebCore::FragmentCreationOptions::NoInterchangeNewlines, WebCore::FragmentCreationOptions::SanitizeMarkup });
@@ -417,7 +417,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
 
     auto replacedRange = resolvedRange;
     for (auto [sessionUUID, sessionRangeVector] : m_textIndicatorCharacterRangesForSessions) {
-        if (sessionUUID != uuid)
+        if (sessionUUID != session.uuid)
             continue;
 
         // sessionRangeVector.last() will always be valid because when creating
@@ -438,12 +438,12 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
     });
 #endif
 
-    replaceContentsOfRangeInSession(uuid, resolvedRange, *fragment);
+    replaceContentsOfRangeInSession(session.uuid, resolvedRange, *fragment);
 
     auto finalTextIndicatorUUID = WTF::UUID::createVersion4();
     auto characterRangeAfterReplace = WebCore::CharacterRange(range.location, range.length + characterCountDelta);
 
-    auto sessionRangeAfterReplace = contextRangeForSessionWithUUID(uuid);
+    auto sessionRangeAfterReplace = contextRangeForSessionWithUUID(session.uuid);
     if (!sessionRangeAfterReplace) {
         ASSERT_NOT_REACHED();
         return;
@@ -461,7 +461,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
 
     bool attachedToExistingSession = false;
     for (auto& [sessionUUID, sessionRangeVector] : m_textIndicatorCharacterRangesForSessions) {
-        if (sessionUUID == uuid) {
+        if (sessionUUID == session.uuid) {
             // sessionRangeVector.last() will always be valid because when creating
             // the structure we always create the vector with an element.
             auto characterRange = subCharacterRange(range, sessionRangeVector.last().second);
@@ -476,16 +476,16 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
     }
     if (!attachedToExistingSession) {
 #if PLATFORM(MAC)
-        m_textIndicatorCharacterRangesForSessions.append({ uuid, { { sourceTextIndicatorUUID, characterRangeAfterReplace }, { finalTextIndicatorUUID , characterRangeAfterReplace } } });
+        m_textIndicatorCharacterRangesForSessions.append({ session.uuid, { { sourceTextIndicatorUUID, characterRangeAfterReplace }, { finalTextIndicatorUUID , characterRangeAfterReplace } } });
 #else
-        m_textIndicatorCharacterRangesForSessions.append({ uuid, { { finalTextIndicatorUUID, characterRangeAfterReplace } } });
+        m_textIndicatorCharacterRangesForSessions.append({ session.uuid, { { finalTextIndicatorUUID, characterRangeAfterReplace } } });
 #endif
     }
 }
 
-void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction(const WTF::UUID& uuid, WebTextReplacementData::EditAction action)
+void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction(const WebUnifiedTextReplacementSessionData& session, WebTextReplacementData::EditAction action)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) [action: %hhu]", uuid.toString().utf8().data(), enumToUnderlyingType(action));
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) [action: %hhu]", session.uuid.toString().utf8().data(), enumToUnderlyingType(action));
 
     RefPtr document = this->document();
     if (!document) {
@@ -493,20 +493,20 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
         return;
     }
 
-    auto replacementType = m_replacementTypes.get(uuid);
+    auto replacementType = m_replacementTypes.get(session.uuid);
     switch (replacementType) {
-    case WebUnifiedTextReplacementType::PlainText:
-        return textReplacementSessionPerformEditActionForPlainText(*document, uuid, action);
-    case WebUnifiedTextReplacementType::RichText:
-        return textReplacementSessionPerformEditActionForRichText(*document, uuid, action);
+    case WebUnifiedTextReplacementSessionData::ReplacementType::PlainText:
+        return textReplacementSessionPerformEditActionForPlainText(*document, session, action);
+    case WebUnifiedTextReplacementSessionData::ReplacementType::RichText:
+        return textReplacementSessionPerformEditActionForRichText(*document, session, action);
     }
 }
 
-void UnifiedTextReplacementController::textReplacementSessionPerformEditActionForPlainText(WebCore::Document& document, const WTF::UUID& uuid, WebTextReplacementData::EditAction action)
+void UnifiedTextReplacementController::textReplacementSessionPerformEditActionForPlainText(WebCore::Document& document, const WebUnifiedTextReplacementSessionData& session, WebTextReplacementData::EditAction action)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionPerformEditActionForPlainText (%s) [action: %hhu]", uuid.toString().utf8().data(), enumToUnderlyingType(action));
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionPerformEditActionForPlainText (%s) [action: %hhu]", session.uuid.toString().utf8().data(), enumToUnderlyingType(action));
 
-    auto sessionRange = contextRangeForSessionWithUUID(uuid);
+    auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
         return;
@@ -539,9 +539,9 @@ void UnifiedTextReplacementController::textReplacementSessionPerformEditActionFo
             }
         }();
 
-        replaceContentsOfRangeInSession(uuid, rangeToReplace, previousText);
+        replaceContentsOfRangeInSession(session.uuid, rangeToReplace, previousText);
 
-        auto newData = WebCore::DocumentMarker::UnifiedTextReplacementData { currentText, oldData.uuid, uuid, newState };
+        auto newData = WebCore::DocumentMarker::UnifiedTextReplacementData { currentText, oldData.uuid, session.uuid, newState };
         auto newOffsetRange = WebCore::OffsetRange { offsetRange.start, offsetRange.end + previousText.length() - currentText.length() };
 
         markers.addMarker(node, WebCore::DocumentMarker { WebCore::DocumentMarker::Type::UnifiedTextReplacement, newOffsetRange, WTFMove(newData) });
@@ -550,11 +550,11 @@ void UnifiedTextReplacementController::textReplacementSessionPerformEditActionFo
     });
 }
 
-void UnifiedTextReplacementController::textReplacementSessionPerformEditActionForRichText(WebCore::Document& document, const WTF::UUID& uuid, WebTextReplacementData::EditAction action)
+void UnifiedTextReplacementController::textReplacementSessionPerformEditActionForRichText(WebCore::Document& document, const WebUnifiedTextReplacementSessionData& session, WebTextReplacementData::EditAction action)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionPerformEditActionForRichText (%s) [action: %hhu]", uuid.toString().utf8().data(), enumToUnderlyingType(action));
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionPerformEditActionForRichText (%s) [action: %hhu]", session.uuid.toString().utf8().data(), enumToUnderlyingType(action));
 
-    auto sessionRange = contextRangeForSessionWithUUID(uuid);
+    auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
         return;
@@ -563,54 +563,54 @@ void UnifiedTextReplacementController::textReplacementSessionPerformEditActionFo
     if (m_originalDocumentNodes.isEmpty())
         return;
 
-    auto contents = m_contextRanges.get(uuid)->cloneContents();
+    auto contents = m_contextRanges.get(session.uuid)->cloneContents();
     if (contents.hasException()) {
-        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) => exception when cloning contents", uuid.toString().utf8().data());
+        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) => exception when cloning contents", session.uuid.toString().utf8().data());
         return;
     }
 
     switch (action) {
     case WebTextReplacementData::EditAction::Undo: {
-        RefPtr originalFragment = m_originalDocumentNodes.take(uuid);
+        RefPtr originalFragment = m_originalDocumentNodes.take(session.uuid);
         if (!originalFragment) {
             ASSERT_NOT_REACHED();
             return;
         }
 
-        m_replacedDocumentNodes.set(uuid, contents.returnValue()); // Deep clone.
-        replaceContentsOfRangeInSession(uuid, *sessionRange, *originalFragment);
+        m_replacedDocumentNodes.set(session.uuid, contents.returnValue()); // Deep clone.
+        replaceContentsOfRangeInSession(session.uuid, *sessionRange, *originalFragment);
 
         break;
     }
 
     case WebTextReplacementData::EditAction::Redo: {
-        RefPtr originalFragment = m_replacedDocumentNodes.take(uuid);
+        RefPtr originalFragment = m_replacedDocumentNodes.take(session.uuid);
         if (!originalFragment) {
             ASSERT_NOT_REACHED();
             return;
         }
 
-        m_replacedDocumentNodes.set(uuid, contents.returnValue()); // Deep clone.
-        replaceContentsOfRangeInSession(uuid, *sessionRange, *originalFragment);
+        m_replacedDocumentNodes.set(session.uuid, contents.returnValue()); // Deep clone.
+        replaceContentsOfRangeInSession(session.uuid, *sessionRange, *originalFragment);
 
         break;
     }
 
     case WebTextReplacementData::EditAction::UndoAll: {
-        RefPtr originalFragment = m_originalDocumentNodes.take(uuid);
+        RefPtr originalFragment = m_originalDocumentNodes.take(session.uuid);
         if (!originalFragment) {
             ASSERT_NOT_REACHED();
             return;
         }
 
-        replaceContentsOfRangeInSession(uuid, *sessionRange, *originalFragment);
-        m_replacedDocumentNodes.remove(uuid);
+        replaceContentsOfRangeInSession(session.uuid, *sessionRange, *originalFragment);
+        m_replacedDocumentNodes.remove(session.uuid);
 
         break;
     }
     }
 
-    RefPtr updatedLiveRange = m_contextRanges.get(uuid);
+    RefPtr updatedLiveRange = m_contextRanges.get(session.uuid);
     if (!updatedLiveRange) {
         ASSERT_NOT_REACHED();
         return;
@@ -621,11 +621,11 @@ void UnifiedTextReplacementController::textReplacementSessionPerformEditActionFo
     case WebTextReplacementData::EditAction::UndoAll: {
         auto updatedContents = updatedLiveRange->cloneContents();
         if (updatedContents.hasException()) {
-            RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) => exception when cloning contents after action", uuid.toString().utf8().data());
+            RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) => exception when cloning contents after action", session.uuid.toString().utf8().data());
             return;
         }
 
-        m_originalDocumentNodes.set(uuid, updatedContents.returnValue()); // Deep clone.
+        m_originalDocumentNodes.set(session.uuid, updatedContents.returnValue()); // Deep clone.
 
         break;
     }

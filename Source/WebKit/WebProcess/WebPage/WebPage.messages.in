@@ -780,19 +780,19 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    WillBeginTextReplacementSession(WTF::UUID uuid, enum:uint8_t WebKit::WebUnifiedTextReplacementType type) -> (Vector<WebKit::WebUnifiedTextReplacementContextData> contexts)
+    WillBeginTextReplacementSession(std::optional<WebKit::WebUnifiedTextReplacementSessionData> session) -> (Vector<WebKit::WebUnifiedTextReplacementContextData> contexts)
 
-    DidBeginTextReplacementSession(WTF::UUID uuid, Vector<WebKit::WebUnifiedTextReplacementContextData> contexts)
+    DidBeginTextReplacementSession(struct WebKit::WebUnifiedTextReplacementSessionData session, Vector<WebKit::WebUnifiedTextReplacementContextData> contexts)
 
-    TextReplacementSessionDidReceiveReplacements(WTF::UUID uuid, Vector<WebKit::WebTextReplacementData> replacements, struct WebKit::WebUnifiedTextReplacementContextData context, bool finished)
+    TextReplacementSessionDidReceiveReplacements(struct WebKit::WebUnifiedTextReplacementSessionData session, Vector<WebKit::WebTextReplacementData> replacements, struct WebKit::WebUnifiedTextReplacementContextData context, bool finished)
 
-    TextReplacementSessionDidUpdateStateForReplacement(WTF::UUID uuid, enum:uint8_t WebKit::WebTextReplacementDataState state, struct WebKit::WebTextReplacementData replacement, struct WebKit::WebUnifiedTextReplacementContextData context)
+    TextReplacementSessionDidUpdateStateForReplacement(struct WebKit::WebUnifiedTextReplacementSessionData session, enum:uint8_t WebKit::WebTextReplacementDataState state, struct WebKit::WebTextReplacementData replacement, struct WebKit::WebUnifiedTextReplacementContextData context)
 
-    DidEndTextReplacementSession(WTF::UUID uuid, bool accepted)
+    DidEndTextReplacementSession(struct WebKit::WebUnifiedTextReplacementSessionData session, bool accepted)
 
-    TextReplacementSessionDidReceiveTextWithReplacementRange(WTF::UUID uuid, struct WebCore::AttributedString attributedText, struct WebCore::CharacterRange range, struct WebKit::WebUnifiedTextReplacementContextData context, bool finished);
+    TextReplacementSessionDidReceiveTextWithReplacementRange(struct WebKit::WebUnifiedTextReplacementSessionData session, struct WebCore::AttributedString attributedText, struct WebCore::CharacterRange range, struct WebKit::WebUnifiedTextReplacementContextData context, bool finished);
 
-    TextReplacementSessionDidReceiveEditAction(WTF::UUID uuid, enum:uint8_t WebKit::WebTextReplacementData::EditAction action);
+    TextReplacementSessionDidReceiveEditAction(struct WebKit::WebUnifiedTextReplacementSessionData session, enum:uint8_t WebKit::WebTextReplacementData::EditAction action);
     
     EnableTextIndicatorStyleAfterElementWithID(String elementID, WTF::UUID uuid);
     

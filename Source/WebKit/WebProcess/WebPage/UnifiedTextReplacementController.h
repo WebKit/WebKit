@@ -28,6 +28,7 @@
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
 #include "WebTextReplacementData.h"
+#include "WebUnifiedTextReplacementSessionData.h"
 
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/Node.h>
@@ -46,7 +47,7 @@ class Editor;
 
 namespace WebKit {
 
-enum class WebUnifiedTextReplacementType : uint8_t;
+enum class WebUnifiedTextReplacementSessionDataReplacementType : uint8_t;
 
 enum class RemoveAllMarkersForSession : uint8_t { No, Yes };
 
@@ -61,19 +62,19 @@ class UnifiedTextReplacementController final {
 public:
     explicit UnifiedTextReplacementController(WebPage&);
 
-    void willBeginTextReplacementSession(const WTF::UUID&, WebUnifiedTextReplacementType, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&&);
+    void willBeginTextReplacementSession(const std::optional<WebUnifiedTextReplacementSessionData>&, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&&);
 
-    void didBeginTextReplacementSession(const WTF::UUID&, const Vector<WebUnifiedTextReplacementContextData>&);
+    void didBeginTextReplacementSession(const WebUnifiedTextReplacementSessionData&, const Vector<WebUnifiedTextReplacementContextData>&);
 
-    void textReplacementSessionDidReceiveReplacements(const WTF::UUID&, const Vector<WebTextReplacementData>&, const WebUnifiedTextReplacementContextData&, bool finished);
+    void textReplacementSessionDidReceiveReplacements(const WebUnifiedTextReplacementSessionData&, const Vector<WebTextReplacementData>&, const WebUnifiedTextReplacementContextData&, bool finished);
 
-    void textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID&, WebTextReplacementData::State, const WebTextReplacementData&, const WebUnifiedTextReplacementContextData&);
+    void textReplacementSessionDidUpdateStateForReplacement(const WebUnifiedTextReplacementSessionData&, WebTextReplacementData::State, const WebTextReplacementData&, const WebUnifiedTextReplacementContextData&);
 
-    void didEndTextReplacementSession(const WTF::UUID&, bool accepted);
+    void didEndTextReplacementSession(const WebUnifiedTextReplacementSessionData&, bool accepted);
 
-    void textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebUnifiedTextReplacementContextData&, bool finished);
+    void textReplacementSessionDidReceiveTextWithReplacementRange(const WebUnifiedTextReplacementSessionData&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebUnifiedTextReplacementContextData&, bool finished);
 
-    void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebTextReplacementData::EditAction);
+    void textReplacementSessionDidReceiveEditAction(const WebUnifiedTextReplacementSessionData&, WebTextReplacementData::EditAction);
 
     void updateStateForSelectedReplacementIfNeeded();
 
@@ -91,11 +92,11 @@ private:
     void replaceContentsOfRangeInSession(const WTF::UUID&, const WebCore::SimpleRange&, const String&);
     void replaceContentsOfRangeInSession(const WTF::UUID&, const WebCore::SimpleRange&, WebCore::DocumentFragment&);
 
-    void textReplacementSessionPerformEditActionForPlainText(WebCore::Document&, const WTF::UUID&, WebTextReplacementData::EditAction);
-    void textReplacementSessionPerformEditActionForRichText(WebCore::Document&, const WTF::UUID&, WebTextReplacementData::EditAction);
+    void textReplacementSessionPerformEditActionForPlainText(WebCore::Document&, const WebUnifiedTextReplacementSessionData&, WebTextReplacementData::EditAction);
+    void textReplacementSessionPerformEditActionForRichText(WebCore::Document&, const WebUnifiedTextReplacementSessionData&, WebTextReplacementData::EditAction);
 
-    template<WebUnifiedTextReplacementType Type>
-    void didEndTextReplacementSession(const WTF::UUID&, bool accepted);
+    template<WebUnifiedTextReplacementSessionData::ReplacementType Type>
+    void didEndTextReplacementSession(const WebUnifiedTextReplacementSessionData&, bool accepted);
 
     RefPtr<WebCore::Document> document() const;
 
@@ -106,7 +107,7 @@ private:
 
     // FIXME: Unify these states into a single `State` struct.
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_contextRanges;
-    HashMap<WTF::UUID, WebUnifiedTextReplacementType> m_replacementTypes;
+    HashMap<WTF::UUID, WebUnifiedTextReplacementSessionData::ReplacementType> m_replacementTypes;
     HashMap<WTF::UUID, int> m_replacementLocationOffsets;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_originalDocumentNodes;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_replacedDocumentNodes;

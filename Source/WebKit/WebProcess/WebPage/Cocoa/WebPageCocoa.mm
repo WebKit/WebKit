@@ -351,7 +351,7 @@ void WebPage::createTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<
     createTextIndicatorForRange(*sessionRange, WTFMove(completionHandler));
 }
 
-void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
 {
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame) {
@@ -1068,39 +1068,39 @@ void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void WebPage::willBeginTextReplacementSession(const WTF::UUID& uuid, WebUnifiedTextReplacementType type, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
+void WebPage::willBeginTextReplacementSession(const std::optional<WebUnifiedTextReplacementSessionData>& session, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
 {
-    m_unifiedTextReplacementController->willBeginTextReplacementSession(uuid, type, WTFMove(completionHandler));
+    m_unifiedTextReplacementController->willBeginTextReplacementSession(session, WTFMove(completionHandler));
 }
 
-void WebPage::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebUnifiedTextReplacementContextData>& contexts)
+void WebPage::didBeginTextReplacementSession(const WebUnifiedTextReplacementSessionData& session, const Vector<WebUnifiedTextReplacementContextData>& contexts)
 {
-    m_unifiedTextReplacementController->didBeginTextReplacementSession(uuid, contexts);
+    m_unifiedTextReplacementController->didBeginTextReplacementSession(session, contexts);
 }
 
-void WebPage::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
+void WebPage::textReplacementSessionDidReceiveReplacements(const WebUnifiedTextReplacementSessionData& session, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidReceiveReplacements(uuid, replacements, context, finished);
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveReplacements(session, replacements, context, finished);
 }
 
-void WebPage::textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID& uuid, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
+void WebPage::textReplacementSessionDidUpdateStateForReplacement(const WebUnifiedTextReplacementSessionData& session, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidUpdateStateForReplacement(uuid, state, replacement, context);
+    m_unifiedTextReplacementController->textReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context);
 }
 
-void WebPage::didEndTextReplacementSession(const WTF::UUID& uuid, bool accepted)
+void WebPage::didEndTextReplacementSession(const WebUnifiedTextReplacementSessionData& session, bool accepted)
 {
-    m_unifiedTextReplacementController->didEndTextReplacementSession(uuid, accepted);
+    m_unifiedTextReplacementController->didEndTextReplacementSession(session, accepted);
 }
 
-void WebPage::textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID& uuid, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context, bool finished)
+void WebPage::textReplacementSessionDidReceiveTextWithReplacementRange(const WebUnifiedTextReplacementSessionData& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context, bool finished)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidReceiveTextWithReplacementRange(uuid, attributedText, range, context, finished);
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
 }
 
-void WebPage::textReplacementSessionDidReceiveEditAction(const WTF::UUID& uuid, WebKit::WebTextReplacementData::EditAction action)
+void WebPage::textReplacementSessionDidReceiveEditAction(const WebUnifiedTextReplacementSessionData& session, WebKit::WebTextReplacementData::EditAction action)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidReceiveEditAction(uuid, action);
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveEditAction(session, action);
 }
 
 void WebPage::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect rect)

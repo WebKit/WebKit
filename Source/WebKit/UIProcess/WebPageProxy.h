@@ -499,6 +499,7 @@ struct WebSpeechSynthesisVoice;
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 struct WebTextReplacementData;
 struct WebUnifiedTextReplacementContextData;
+struct WebUnifiedTextReplacementSessionData;
 #endif
 struct WebsitePoliciesData;
 #if PLATFORM(WPE) && USE(GBM)
@@ -536,7 +537,7 @@ enum class WebEventModifier : uint8_t;
 enum class WebEventType : uint8_t;
 enum class WebTextReplacementDataEditAction : uint8_t;
 enum class WebTextReplacementDataState : uint8_t;
-enum class WebUnifiedTextReplacementType : uint8_t;
+enum class WebUnifiedTextReplacementSessionDataReplacementType : uint8_t;
 enum class WindowKind : uint8_t;
 
 template<typename> class MonotonicObjectIdentifier;
@@ -2400,19 +2401,19 @@ public:
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     void setUnifiedTextReplacementActive(bool);
 
-    void willBeginTextReplacementSession(const WTF::UUID&, WebUnifiedTextReplacementType, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&&);
+    void willBeginTextReplacementSession(const std::optional<WebUnifiedTextReplacementSessionData>&, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&&);
 
-    void didBeginTextReplacementSession(const WTF::UUID&, const Vector<WebKit::WebUnifiedTextReplacementContextData>&);
+    void didBeginTextReplacementSession(const WebUnifiedTextReplacementSessionData&, const Vector<WebKit::WebUnifiedTextReplacementContextData>&);
 
-    void textReplacementSessionDidReceiveReplacements(const WTF::UUID&, const Vector<WebKit::WebTextReplacementData>&, const WebKit::WebUnifiedTextReplacementContextData&, bool finished);
+    void textReplacementSessionDidReceiveReplacements(const WebUnifiedTextReplacementSessionData&, const Vector<WebKit::WebTextReplacementData>&, const WebKit::WebUnifiedTextReplacementContextData&, bool finished);
 
-    void textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID&, WebKit::WebTextReplacementDataState, const WebKit::WebTextReplacementData&, const WebKit::WebUnifiedTextReplacementContextData&);
+    void textReplacementSessionDidUpdateStateForReplacement(const WebUnifiedTextReplacementSessionData&, WebKit::WebTextReplacementDataState, const WebKit::WebTextReplacementData&, const WebKit::WebUnifiedTextReplacementContextData&);
 
-    void didEndTextReplacementSession(const WTF::UUID&, bool accepted);
+    void didEndTextReplacementSession(const WebUnifiedTextReplacementSessionData&, bool accepted);
 
-    void textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebKit::WebUnifiedTextReplacementContextData&, bool finished);
+    void textReplacementSessionDidReceiveTextWithReplacementRange(const WebUnifiedTextReplacementSessionData&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebKit::WebUnifiedTextReplacementContextData&, bool finished);
 
-    void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebKit::WebTextReplacementDataEditAction);
+    void textReplacementSessionDidReceiveEditAction(const WebUnifiedTextReplacementSessionData&, WebKit::WebTextReplacementDataEditAction);
 
     bool isUnifiedTextReplacementActive() const { return m_isUnifiedTextReplacementActive; }
 

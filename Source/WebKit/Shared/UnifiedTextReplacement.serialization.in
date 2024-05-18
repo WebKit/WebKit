@@ -45,8 +45,8 @@ header: "WebTextReplacementData.h"
     WebKit::WebTextReplacementDataState state;
 };
 
-header: "WebUnifiedTextReplacementContextData.h"
-[CustomHeader] enum class WebKit::WebUnifiedTextReplacementType : uint8_t {
+header: "WebUnifiedTextReplacementSessionData.h"
+[CustomHeader] enum class WebKit::WebUnifiedTextReplacementSessionDataReplacementType : uint8_t {
     PlainText,
     RichText,
 }
@@ -55,6 +55,12 @@ struct WebKit::WebUnifiedTextReplacementContextData {
     WTF::UUID uuid;
     WebCore::AttributedString attributedText;
     WebCore::CharacterRange range;
+};
+
+header: "WebUnifiedTextReplacementSessionData.h"
+[CustomHeader] struct WebKit::WebUnifiedTextReplacementSessionData {
+    WTF::UUID uuid;
+    WebKit::WebUnifiedTextReplacementSessionDataReplacementType replacementType;
 };
 
 header: "TextIndicatorStyle.h"

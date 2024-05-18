@@ -27,23 +27,20 @@
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
-#import <WebCore/AttributedString.h>
-#import <WebCore/CharacterRange.h>
 #import <wtf/UUID.h>
 
 namespace WebKit {
 
-struct WebUnifiedTextReplacementContextData {
-    WTF::UUID uuid;
-    WebCore::AttributedString attributedText;
-    WebCore::CharacterRange range;
+enum class WebUnifiedTextReplacementSessionDataReplacementType : uint8_t {
+    PlainText,
+    RichText,
 };
 
-enum class WebUnifiedTextReplacementBehavior : uint8_t {
-    None,
-    Default,
-    Limited,
-    Complete,
+struct WebUnifiedTextReplacementSessionData {
+    using ReplacementType = WebUnifiedTextReplacementSessionDataReplacementType;
+
+    WTF::UUID uuid;
+    ReplacementType replacementType { ReplacementType::RichText };
 };
 
 }
