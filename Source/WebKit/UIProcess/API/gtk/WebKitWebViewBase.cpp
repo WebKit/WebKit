@@ -35,6 +35,7 @@
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "DropTarget.h"
 #include "EditorState.h"
+#include "GtkSettingsManager.h"
 #include "InputMethodFilter.h"
 #include "KeyAutoRepeatHandler.h"
 #include "KeyBindingTranslator.h"
@@ -245,6 +246,7 @@ struct _WebKitWebViewBasePrivate {
     _WebKitWebViewBasePrivate()
         : updateActivityStateTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::updateActivityStateTimerFired)
 #if GTK_CHECK_VERSION(3, 24, 0)
+        , pageScaleFactor(1.0)
         , releaseEmojiChooserTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::releaseEmojiChooserTimerFired)
 #endif
         , nextPresentationUpdateTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::nextPresentationUpdateTimerFired)
@@ -339,6 +341,7 @@ struct _WebKitWebViewBasePrivate {
     RunLoop::Timer updateActivityStateTimer;
 
     PlatformDisplayID displayID;
+    double pageScaleFactor; // Adjusts all CSS units to match fontDPI
 
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxy::FullscreenState fullScreenState;
@@ -424,6 +427,26 @@ webkitWebViewBaseAccessibleInterfaceInit(GtkAccessibleInterface* iface)
 }
 #endif
 
+static void refreshInternalScaling(WebKitWebViewBase* self)
+{
+    // We have for the moment settled on the scheme of entirely trusting
+    // fontDPI to determine the overall page scaling of the web view, and not
+    // performing any separate font scaling. The page scaling ensures the fonts
+    // are the specified size, and scaling the entire page, as opposed to just
+    // the fonts, ensures that the layout is self-consistent (i.e., that divs
+    // or other boxes holding text won't find their contents overflowing or
+    // wrapping weirdly.
+
+    double newPageScale = WebCore::fontDPI() / 96.;
+
+    // Adjust the page zoom if needed, updating the internal scale factor.
+    if (std::abs(newPageScale / self->priv->pageScaleFactor - 1.) > 0.02) {
+        auto* page = webkitWebViewBaseGetPage(self);
+        page->setPageZoomFactor(page->pageZoomFactor() * newPageScale / self->priv->pageScaleFactor);
+        self->priv->pageScaleFactor = newPageScale;
+    }
+}
+
 static void webkitWebViewBaseUpdateDisplayID(WebKitWebViewBase* webViewBase, GdkMonitor* monitor)
 {
     if (!monitor)
@@ -434,6 +457,7 @@ static void webkitWebViewBaseUpdateDisplayID(WebKitWebViewBase* webViewBase, Gdk
         return;
 
     webViewBase->priv->displayID = displayID;
+    refreshInternalScaling(webViewBase);
     if (webViewBase->priv->pageProxy)
         webViewBase->priv->pageProxy->windowScreenDidChange(displayID);
 }
@@ -845,6 +869,7 @@ static void webkitWebViewBaseDispose(GObject* gobject)
         webkitWebViewAccessibleSetWebView(WEBKIT_WEB_VIEW_ACCESSIBLE(webView->priv->accessible.get()), nullptr);
 #endif
 
+    GtkSettingsManager::singleton().removeObserver(webView);
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
 #if GTK_CHECK_VERSION(3, 24, 0)
     webkitWebViewBaseCompleteEmojiChooserRequest(webView, emptyString());
@@ -2555,9 +2580,15 @@ WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)
     return webkitWebViewBase->priv->pageProxy.get();
 }
 
+double webkitWebViewBaseGetPageScale(WebKitWebViewBase* webkitWebViewBase)
+{
+    return webkitWebViewBase->priv->pageScaleFactor;
+}
+
 static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 {
     webkitWebViewBase->priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
+    refreshInternalScaling(webkitWebViewBase);
 }
 
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<API::PageConfiguration>&& configuration)
@@ -2573,8 +2604,15 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     if (priv->displayID)
         priv->pageProxy->windowScreenDidChange(priv->displayID);
 
+    refreshInternalScaling(webkitWebViewBase);
     // We attach this here, because changes in scale factor are passed directly to the page proxy.
     g_signal_connect(webkitWebViewBase, "notify::scale-factor", G_CALLBACK(deviceScaleFactorChanged), nullptr);
+    // Also watch for changes to xft-dpi
+    GtkSettingsManager::singleton().addObserver([webkitWebViewBase](const GtkSettingsState& state) {
+        if (!state.xftDPI)
+            return;
+        refreshInternalScaling(webkitWebViewBase);
+    }, webkitWebViewBase);
 }
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)
