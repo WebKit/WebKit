@@ -84,7 +84,7 @@ bool writeOriginToFile(const String& filePath, const ClientOrigin& origin)
 
     WTF::Persistence::Encoder encoder;
     encoder << origin;
-    FileSystem::writeToFile(originFileHandle, encoder.buffer(), encoder.bufferSize());
+    FileSystem::writeToFile(originFileHandle, encoder.span());
     return true;
 }
 

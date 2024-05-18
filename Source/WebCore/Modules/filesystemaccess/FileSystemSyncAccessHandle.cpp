@@ -144,7 +144,7 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
     if (!requestSpaceForWrite(*options.at, buffer.length()))
         return Exception { ExceptionCode::QuotaExceededError };
 
-    int result = FileSystem::writeToFile(m_file.handle(), buffer.data(), buffer.length());
+    int result = FileSystem::writeToFile(m_file.handle(), buffer.span());
     if (result == -1)
         return Exception { ExceptionCode::InvalidStateError, "Failed to write to file"_s };
 

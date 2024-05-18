@@ -87,7 +87,7 @@ static void dumpWasmSource(const Vector<uint8_t>& source)
         return;
     }
     dataLogLn("Dumping ", source.size(), " wasm source bytes to ", WTF::makeString(span(file), (count - 1), ".wasm"_s));
-    FileSystem::writeToFile(fileHandle, source.data(), source.size());
+    FileSystem::writeToFile(fileHandle, source.span());
     FileSystem::closeFile(fileHandle);
 }
 #endif

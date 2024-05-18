@@ -453,7 +453,7 @@ JSC_DEFINE_HOST_FUNCTION(dumpAndClearSamplingProfilerSamples, (JSGlobalObject* g
 
         CString utf8String = jsonData.utf8();
 
-        FileSystem::writeToFile(fileHandle, utf8String.data(), utf8String.length());
+        FileSystem::writeToFile(fileHandle, utf8String.span());
         FileSystem::closeFile(fileHandle);
         dataLogLn("Dumped sampling profiler samples to ", tempFilePath);
     }

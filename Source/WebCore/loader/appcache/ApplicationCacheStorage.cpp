@@ -1292,7 +1292,7 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedB
     
     int64_t writtenBytes = 0;
     data.forEachSegment([&](auto segment) {
-        writtenBytes += FileSystem::writeToFile(handle, segment.data(), segment.size());
+        writtenBytes += FileSystem::writeToFile(handle, segment);
     });
     FileSystem::closeFile(handle);
     

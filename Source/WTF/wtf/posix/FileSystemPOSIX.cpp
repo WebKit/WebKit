@@ -134,10 +134,10 @@ bool flushFile(PlatformFileHandle handle)
     return !fsync(handle);
 }
 
-int64_t writeToFile(PlatformFileHandle handle, const void* data, size_t length)
+int64_t writeToFile(PlatformFileHandle handle, std::span<const uint8_t> data)
 {
     do {
-        auto bytesWritten = write(handle, data, length);
+        auto bytesWritten = write(handle, data.data(), data.size());
         if (bytesWritten >= 0)
             return bytesWritten;
     } while (errno == EINTR);

@@ -275,13 +275,13 @@ bool flushFile(PlatformFileHandle)
     return false;
 }
 
-int64_t writeToFile(PlatformFileHandle handle, const void* data, size_t length)
+int64_t writeToFile(PlatformFileHandle handle, std::span<const uint8_t> data)
 {
     if (!isHandleValid(handle))
         return -1;
 
     DWORD bytesWritten;
-    bool success = WriteFile(handle, data, length, &bytesWritten, nullptr);
+    bool success = WriteFile(handle, data.data(), data.size(), &bytesWritten, nullptr);
 
     if (!success)
         return -1;

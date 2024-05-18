@@ -372,13 +372,13 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
     return true;
 }
 
-static bool writeSandboxDataToCacheFile(const SandboxInfo& info, const Vector<char>& cacheFile)
+static bool writeSandboxDataToCacheFile(const SandboxInfo& info, const Vector<uint8_t>& cacheFile)
 {
     // To avoid locking, write the sandbox data to a temporary path including the current process' PID
     // then rename it to the final cache path.
     auto temporaryPath = makeString(info.filePath, '-', getpid());
     FileHandle file { temporaryPath, FileSystem::FileOpenMode::Truncate };
-    if (file.write(cacheFile.data(), cacheFile.size()) != safeCast<int>(cacheFile.size())) {
+    if (file.write(cacheFile.span()) != safeCast<int>(cacheFile.size())) {
         FileSystem::deleteFile(temporaryPath);
         return false;
     }
@@ -426,7 +426,7 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
 
     const size_t expectedFileSize = sizeof(cachedHeader) + cachedHeader.headerSize + (haveBuiltin ? cachedHeader.builtinSize : 0) + cachedHeader.dataSize;
 
-    Vector<char> cacheFile;
+    Vector<uint8_t> cacheFile;
     cacheFile.reserveInitialCapacity(expectedFileSize);
     cacheFile.append(std::span { bitwise_cast<uint8_t*>(&cachedHeader), sizeof(CachedSandboxHeader) });
     cacheFile.append(info.header.span());

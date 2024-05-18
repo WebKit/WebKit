@@ -104,7 +104,7 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
         }
         if (size) {
             iterateOverBufferAndWriteData([&](std::span<const uint8_t> span) {
-                FileSystem::writeToFile(handle, span.data(), span.size());
+                FileSystem::writeToFile(handle, span);
                 return true;
             });
         }

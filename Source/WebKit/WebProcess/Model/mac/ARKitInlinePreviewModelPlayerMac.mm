@@ -115,7 +115,7 @@ void ARKitInlinePreviewModelPlayerMac::createFile(WebCore::Model& modelSource)
     if (file <= 0)
         return;
 
-    FileSystem::writeToFile(file, modelSource.data()->makeContiguous()->data(), modelSource.data()->size());
+    FileSystem::writeToFile(file, modelSource.data()->makeContiguous()->span());
     FileSystem::closeFile(file);
     m_filePath = filePath;
 }

@@ -240,7 +240,7 @@ static bool writeDataToFile(const WebKit::NetworkCache::Data& fileData, Platform
 {
     bool success = true;
     fileData.apply([fd, &success](std::span<const uint8_t> span) {
-        if (writeToFile(fd, span.data(), span.size()) == -1) {
+        if (writeToFile(fd, span) == -1) {
             success = false;
             return false;
         }
@@ -364,10 +364,10 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
     }
     
-    char invalidHeader[CurrentVersionFileHeaderSize];
-    memset(invalidHeader, 0xFF, sizeof(invalidHeader));
+    std::array<uint8_t, CurrentVersionFileHeaderSize> invalidHeader;
+    memset(invalidHeader.data(), 0xFF, invalidHeader.size());
     // This header will be rewritten in CompilationClient::finalize.
-    if (writeToFile(temporaryFileHandle, invalidHeader, sizeof(invalidHeader)) == -1) {
+    if (writeToFile(temporaryFileHandle, invalidHeader) == -1) {
         WTFLogAlways("Content Rule List compiling failed: Writing header to file failed.");
         closeFile(temporaryFileHandle);
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
@@ -592,7 +592,7 @@ void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& i
         return;
 
     ContentRuleListMetaData invalidHeader = {0, 0, 0, 0, 0, 0};
-    auto bytesWritten = writeToFile(file, &invalidHeader, sizeof(invalidHeader));
+    auto bytesWritten = writeToFile(file, { reinterpret_cast<const uint8_t*>(&invalidHeader), sizeof(invalidHeader) });
     ASSERT_UNUSED(bytesWritten, bytesWritten == sizeof(invalidHeader));
     closeFile(file);
 }

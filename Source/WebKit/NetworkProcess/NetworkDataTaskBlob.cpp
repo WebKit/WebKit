@@ -465,7 +465,7 @@ void NetworkDataTaskBlob::download()
 bool NetworkDataTaskBlob::writeDownload(std::span<const uint8_t> data)
 {
     ASSERT(isDownload());
-    int bytesWritten = FileSystem::writeToFile(m_downloadFile, data.data(), data.size());
+    int bytesWritten = FileSystem::writeToFile(m_downloadFile, data);
     if (static_cast<size_t>(bytesWritten) != data.size()) {
         didFailDownload(cancelledError(m_firstRequest));
         return false;

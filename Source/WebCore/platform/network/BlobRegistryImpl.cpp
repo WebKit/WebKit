@@ -369,7 +369,7 @@ static bool writeFilePathsOrDataBuffersToFile(const Vector<std::pair<String, Ref
     for (auto& part : filePathsOrDataBuffers) {
         if (part.second) {
             int length = part.second->size();
-            if (FileSystem::writeToFile(file, part.second->data(), length) != length) {
+            if (FileSystem::writeToFile(file, part.second->span()) != length) {
                 LOG_ERROR("Failed writing a Blob to temporary file");
                 return false;
             }

@@ -5355,7 +5355,7 @@ String Internals::createTemporaryFile(const String& name, const String& contents
         return nullString();
 
     auto contentsUTF8 = contents.utf8();
-    FileSystem::writeToFile(file, contentsUTF8.data(), contentsUTF8.length());
+    FileSystem::writeToFile(file, contentsUTF8.span());
 
     FileSystem::closeFile(file);
 

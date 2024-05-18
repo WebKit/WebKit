@@ -221,7 +221,7 @@ void BackgroundFetchStoreManager::storeFetchResponseBodyChunk(const String& iden
         FileSystem::PlatformFileHandle handle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::ReadWrite);
         if (FileSystem::isHandleValid(handle)) {
             // FIXME: Cover the case of partial write.
-            auto writtenSize = FileSystem::writeToFile(handle, data->data(), data->size());
+            auto writtenSize = FileSystem::writeToFile(handle, data->span());
             if (static_cast<size_t>(writtenSize) == data->size())
                 result = StoreResult::OK;
             FileSystem::closeFile(handle);

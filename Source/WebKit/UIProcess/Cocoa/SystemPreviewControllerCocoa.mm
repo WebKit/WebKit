@@ -39,10 +39,12 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/UTIUtilities.h>
-#import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/cocoa/FoundationSPI.h>
 #import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
+
+#import <pal/ios/QuickLookSoftLink.h>
 
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
 #import "ARKitSoftLink.h"
@@ -355,7 +357,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 - (void)completeLoad
 {
     ASSERT(_fileHandle != FileSystem::invalidPlatformFileHandle);
-    size_t byteCount = FileSystem::writeToFile(_fileHandle, [_data bytes], [_data length]);
+    size_t byteCount = FileSystem::writeToFile(_fileHandle, span(_data.get()));
     FileSystem::closeFile(_fileHandle);
 
     if (byteCount != _data.get().length) {

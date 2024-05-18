@@ -178,7 +178,7 @@ void NetworkDataTaskDataURL::downloadDecodedData(Vector<uint8_t>&& data)
     downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
     downloadPtr->didCreateDestination(m_pendingDownloadLocation);
 
-    if (-1 == FileSystem::writeToFile(downloadDestinationFile, static_cast<void*>(data.data()), data.size())) {
+    if (-1 == FileSystem::writeToFile(downloadDestinationFile, data.span())) {
         FileSystem::closeFile(downloadDestinationFile);
         FileSystem::deleteFile(m_pendingDownloadLocation);
 #if USE(CURL)
