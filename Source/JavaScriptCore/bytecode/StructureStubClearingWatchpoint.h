@@ -40,7 +40,6 @@ namespace JSC {
 
 class CodeBlock;
 class StructureStubInfo;
-class WatchpointsOnStructureStubInfo;
 
 class StructureStubInfoClearingWatchpoint final : public Watchpoint {
     WTF_MAKE_NONCOPYABLE(StructureStubInfoClearingWatchpoint);
@@ -64,9 +63,9 @@ class StructureTransitionStructureStubClearingWatchpoint final : public Watchpoi
     WTF_MAKE_NONCOPYABLE(StructureTransitionStructureStubClearingWatchpoint);
     WTF_MAKE_TZONE_ALLOCATED(StructureTransitionStructureStubClearingWatchpoint);
 public:
-    StructureTransitionStructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointsOnStructureStubInfo& holder)
+    StructureTransitionStructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointSet& watchpointSet)
         : Watchpoint(Watchpoint::Type::StructureTransitionStructureStubClearing)
-        , m_holder(&holder)
+        , m_watchpointSet(watchpointSet)
         , m_key(key)
     {
     }
@@ -74,7 +73,7 @@ public:
     void fireInternal(VM&, const FireDetail&);
 
 private:
-    WatchpointsOnStructureStubInfo* m_holder;
+    Ref<WatchpointSet> m_watchpointSet;
     ObjectPropertyCondition m_key;
 };
 
@@ -86,41 +85,16 @@ class AdaptiveValueStructureStubClearingWatchpoint final : public AdaptiveInferr
     void handleFire(VM&, const FireDetail&) final;
 
 public:
-    AdaptiveValueStructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointsOnStructureStubInfo& holder)
+    AdaptiveValueStructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointSet& watchpointSet)
         : Base(key)
-        , m_holder(&holder)
+        , m_watchpointSet(watchpointSet)
     {
         RELEASE_ASSERT(key.condition().kind() == PropertyCondition::Equivalence);
     }
 
 
 private:
-    WatchpointsOnStructureStubInfo* m_holder;
-};
-
-class WatchpointsOnStructureStubInfo final {
-    WTF_MAKE_NONCOPYABLE(WatchpointsOnStructureStubInfo);
-    WTF_MAKE_TZONE_ALLOCATED(WatchpointsOnStructureStubInfo);
-public:
-    WatchpointsOnStructureStubInfo(PolymorphicAccessJITStubRoutine* stub)
-        : m_stub(stub)
-    {
-    }
-
-    using Node = std::variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>;
-
-    static void ensureReferenceAndInstallWatchpoint(VM&, std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, PolymorphicAccessJITStubRoutine*, const ObjectPropertyCondition& key);
-    static Watchpoint* ensureReferenceAndAddWatchpoint(VM&, std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, PolymorphicAccessJITStubRoutine*);
-
-    PolymorphicAccessJITStubRoutine* stub() const { return m_stub; }
-
-private:
-    Node& addWatchpoint(const ObjectPropertyCondition& key);
-
-    PolymorphicAccessJITStubRoutine* m_stub { nullptr };
-    // FIXME: use less memory for the entries in this Bag:
-    // https://bugs.webkit.org/show_bug.cgi?id=202380
-    Bag<std::variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>> m_watchpoints;
+    Ref<WatchpointSet> m_watchpointSet;
 };
 
 } // namespace JSC

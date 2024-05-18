@@ -38,7 +38,6 @@ namespace JSC {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureStubInfoClearingWatchpoint);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AdaptiveValueStructureStubClearingWatchpoint);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureTransitionStructureStubClearingWatchpoint);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(WatchpointsOnStructureStubInfo);
 
 void StructureStubInfoClearingWatchpoint::fireInternal(VM&, const FireDetail&)
 {
@@ -55,7 +54,8 @@ void StructureStubInfoClearingWatchpoint::fireInternal(VM&, const FireDetail&)
 void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
     if (!m_key || !m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
-        m_holder->stub()->invalidate();
+        StringFireDetail detail("IC has been invalidated");
+        Ref { m_watchpointSet }->fireAll(vm, detail);
         return;
     }
 
@@ -68,46 +68,10 @@ void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, co
     m_key.object()->structure()->addTransitionWatchpoint(this);
 }
 
-WatchpointsOnStructureStubInfo::Node& WatchpointsOnStructureStubInfo::addWatchpoint(const ObjectPropertyCondition& key)
+void AdaptiveValueStructureStubClearingWatchpoint::handleFire(VM& vm, const FireDetail&)
 {
-    if (!key || key.condition().kind() != PropertyCondition::Equivalence)
-        return *m_watchpoints.add(std::in_place_type<StructureTransitionStructureStubClearingWatchpoint>, key, *this);
-    ASSERT(key.condition().kind() == PropertyCondition::Equivalence);
-    return *m_watchpoints.add(std::in_place_type<AdaptiveValueStructureStubClearingWatchpoint>, key, *this);
-}
-
-void WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(VM& vm, std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, PolymorphicAccessJITStubRoutine* stub, const ObjectPropertyCondition& key)
-{
-    if (!holderRef)
-        holderRef = makeUnique<WatchpointsOnStructureStubInfo>(stub);
-    else
-        ASSERT(holderRef->m_stub == stub);
-
-    ASSERT(!!key);
-    auto& watchpointVariant = holderRef->addWatchpoint(key);
-    if (key.kind() == PropertyCondition::Equivalence) {
-        auto& adaptiveWatchpoint = std::get<AdaptiveValueStructureStubClearingWatchpoint>(watchpointVariant);
-        adaptiveWatchpoint.install(vm);
-    } else {
-        auto* structureTransitionWatchpoint = &std::get<StructureTransitionStructureStubClearingWatchpoint>(watchpointVariant);
-        key.object()->structure()->addTransitionWatchpoint(structureTransitionWatchpoint);
-    }
-}
-
-Watchpoint* WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(VM&, std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, PolymorphicAccessJITStubRoutine* stub)
-{
-    if (!holderRef)
-        holderRef = makeUnique<WatchpointsOnStructureStubInfo>(stub);
-    else {
-        ASSERT(holderRef->m_stub == stub);
-    }
-
-    return &std::get<StructureTransitionStructureStubClearingWatchpoint>(holderRef->addWatchpoint(ObjectPropertyCondition()));
-}
-
-void AdaptiveValueStructureStubClearingWatchpoint::handleFire(VM&, const FireDetail&)
-{
-    m_holder->stub()->invalidate();
+    StringFireDetail detail("IC has been invalidated");
+    Ref { m_watchpointSet }->fireAll(vm, detail);
 }
 
 } // namespace JSC

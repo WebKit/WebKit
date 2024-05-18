@@ -117,11 +117,6 @@ PolymorphicAccessJITStubRoutine::PolymorphicAccessJITStubRoutine(Type type, cons
 
 PolymorphicAccessJITStubRoutine::~PolymorphicAccessJITStubRoutine() = default;
 
-void PolymorphicAccessJITStubRoutine::setWatchpoints(std::unique_ptr<WatchpointsOnStructureStubInfo>&& watchpoints)
-{
-    m_watchpoints = WTFMove(watchpoints);
-}
-
 void PolymorphicAccessJITStubRoutine::observeZeroRefCountImpl()
 {
     if (m_isInSharedJITStubSet) {
@@ -131,7 +126,7 @@ void PolymorphicAccessJITStubRoutine::observeZeroRefCountImpl()
 
     // Now PolymorphicAccessJITStubRoutine is no longer referenced. So Watchpoints inside WatchpointSet do not matter. Let's eagerly clear them
     m_watchpointSet = nullptr;
-    m_watchpoints = nullptr;
+    m_watchpoints.clear();
     Base::observeZeroRefCountImpl();
 }
 

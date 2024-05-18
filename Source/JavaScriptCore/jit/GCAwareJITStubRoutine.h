@@ -38,9 +38,11 @@
 namespace JSC {
 
 class AccessCase;
+class AdaptiveValueStructureStubClearingWatchpoint;
 class CallLinkInfo;
 class JITStubRoutineSet;
 class OptimizingCallLinkInfo;
+class StructureTransitionStructureStubClearingWatchpoint;
 class WatchpointsOnStructureStubInfo;
 
 // Use this stub routine if you know that your code might be on stack when
@@ -96,6 +98,8 @@ public:
     friend class JITStubRoutine;
     friend class GCAwareJITStubRoutine;
 
+    using Watchpoints = Bag<std::variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>>;
+
     PolymorphicAccessJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner);
     ~PolymorphicAccessJITStubRoutine();
 
@@ -113,9 +117,7 @@ public:
 
     void addedToSharedJITStubSet();
 
-
-    const WatchpointsOnStructureStubInfo* watchpoints() const { return m_watchpoints.get(); }
-    void setWatchpoints(std::unique_ptr<WatchpointsOnStructureStubInfo>&&);
+    Watchpoints& watchpoints() { return m_watchpoints; }
     WatchpointSet& watchpointSet() { return *m_watchpointSet.get(); }
     void invalidate();
 
@@ -149,7 +151,7 @@ private:
     FixedVector<StructureID> m_weakStructures;
     RefPtr<WatchpointSet> m_watchpointSet;
     HashCountedSet<CodeBlock*> m_owners;
-    std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
+    Watchpoints m_watchpoints;
 };
 
 // Use this if you want to mark one additional object during GC if your stub

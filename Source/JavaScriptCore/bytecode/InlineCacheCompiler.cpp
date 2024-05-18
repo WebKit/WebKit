@@ -3965,6 +3965,33 @@ static Vector<WatchpointSet*, 3> collectAdditionalWatchpoints(VM& vm, AccessCase
     return result;
 }
 
+static std::variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>& addWatchpoint(PolymorphicAccessJITStubRoutine::Watchpoints& watchpoints, const ObjectPropertyCondition& key, WatchpointSet& watchpointSet)
+{
+    if (!key || key.condition().kind() != PropertyCondition::Equivalence)
+        return *watchpoints.add(std::in_place_type<StructureTransitionStructureStubClearingWatchpoint>, key, watchpointSet);
+    ASSERT(key.condition().kind() == PropertyCondition::Equivalence);
+    return *watchpoints.add(std::in_place_type<AdaptiveValueStructureStubClearingWatchpoint>, key, watchpointSet);
+}
+
+static void ensureReferenceAndInstallWatchpoint(VM& vm, PolymorphicAccessJITStubRoutine::Watchpoints& watchpoints, WatchpointSet& watchpointSet, const ObjectPropertyCondition& key)
+{
+    ASSERT(!!key);
+    auto& watchpointVariant = addWatchpoint(watchpoints, key, watchpointSet);
+    if (key.kind() == PropertyCondition::Equivalence) {
+        auto& adaptiveWatchpoint = std::get<AdaptiveValueStructureStubClearingWatchpoint>(watchpointVariant);
+        adaptiveWatchpoint.install(vm);
+    } else {
+        auto* structureTransitionWatchpoint = &std::get<StructureTransitionStructureStubClearingWatchpoint>(watchpointVariant);
+        key.object()->structure()->addTransitionWatchpoint(structureTransitionWatchpoint);
+    }
+}
+
+static void ensureReferenceAndAddWatchpoint(VM&, PolymorphicAccessJITStubRoutine::Watchpoints& watchpoints, WatchpointSet& watchpointSet, WatchpointSet& additionalWatchpointSet)
+{
+    auto* watchpoint = &std::get<StructureTransitionStructureStubClearingWatchpoint>(addWatchpoint(watchpoints, ObjectPropertyCondition(), watchpointSet));
+    additionalWatchpointSet.add(watchpoint);
+}
+
 AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSLocker&, PolymorphicAccess& poly, CodeBlock* codeBlock)
 {
     SuperSamplerScope superSamplerScope(false);
@@ -4243,7 +4270,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
     auto finishCodeGeneration = [&](Ref<PolymorphicAccessJITStubRoutine>&& stub) {
         std::unique_ptr<StructureStubInfoClearingWatchpoint> watchpoint;
-        if (stub->watchpoints()) {
+        if (!stub->watchpoints().isEmpty()) {
             watchpoint = makeUnique<StructureStubInfoClearingWatchpoint>(codeBlock, m_stubInfo);
             stub->watchpointSet().add(watchpoint.get());
         }
@@ -4623,22 +4650,17 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     auto stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm(), owner, doesCalls, cellsToMark, WTFMove(m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
 
     {
-        std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
-
+        auto& watchpoints = stub->watchpoints();
         for (auto& condition : m_conditions)
-            WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(vm(), watchpoints, stub.ptr(), condition);
+            ensureReferenceAndInstallWatchpoint(vm(), watchpoints, stub->watchpointSet(), condition);
 
         // NOTE: We currently assume that this is relatively rare. It mainly arises for accesses to
         // properties on DOM nodes. For sure we cache many DOM node accesses, but even in
         // Real Pages (TM), we appear to spend most of our time caching accesses to properties on
         // vanilla objects or exotic objects from within JSC (like Arguments, those are super popular).
         // Those common kinds of JSC object accesses don't hit this case.
-        for (WatchpointSet* set : additionalWatchpointSets) {
-            Watchpoint* watchpoint = WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(vm(), watchpoints, stub.ptr());
-            set->add(watchpoint);
-        }
-
-        stub->setWatchpoints(WTFMove(watchpoints));
+        for (WatchpointSet* set : additionalWatchpointSets)
+            ensureReferenceAndAddWatchpoint(vm(), watchpoints, stub->watchpointSet(), *set);
     }
 
     if (canBeShared) {
