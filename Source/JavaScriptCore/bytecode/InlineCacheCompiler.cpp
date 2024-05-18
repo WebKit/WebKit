@@ -891,6 +891,9 @@ ScratchRegisterAllocator InlineCacheCompiler::makeDefaultScratchAllocator(GPRReg
     allocator.lock(m_stubInfo->m_arrayProfileGPR);
     allocator.lock(extraToLock);
 
+    if (useHandlerIC())
+        allocator.lock(GPRInfo::handlerGPR);
+
     return allocator;
 }
 
@@ -1361,8 +1364,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(
     return { };
 }
 
-InlineCacheHandler::InlineCacheHandler(StructureStubInfo& stubInfo, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint)
-    : m_callTarget(stubRoutine->code().code().template retagged<JITStubRoutinePtrTag>())
+InlineCacheHandler::InlineCacheHandler(StructureStubInfo& stubInfo, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint, unsigned callLinkInfoCount)
+    : Base(callLinkInfoCount)
+    , m_callTarget(stubRoutine->code().code().template retagged<JITStubRoutinePtrTag>())
     , m_jumpTarget(CodePtr<NoPtrTag> { m_callTarget.retagged<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>())
     , m_uid(stubInfo.identifier().uid())
     , m_stubRoutine(WTFMove(stubRoutine))
@@ -1370,9 +1374,19 @@ InlineCacheHandler::InlineCacheHandler(StructureStubInfo& stubInfo, Ref<Polymorp
 {
 }
 
+Ref<InlineCacheHandler> InlineCacheHandler::create(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint, unsigned callLinkInfoCount)
+{
+
+    auto result = adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(callLinkInfoCount))) InlineCacheHandler(stubInfo, WTFMove(stubRoutine), WTFMove(watchpoint), callLinkInfoCount));
+    VM& vm = codeBlock->vm();
+    for (auto& callLinkInfo : result->span())
+        callLinkInfo.initialize(vm, codeBlock, CallLinkInfo::CallType::Call, stubInfo.codeOrigin);
+    return result;
+}
+
 Ref<InlineCacheHandler> InlineCacheHandler::createNonHandlerSlowPath(CodePtr<JITStubRoutinePtrTag> slowPath)
 {
-    auto result = adoptRef(*new InlineCacheHandler);
+    auto result = adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(0))) InlineCacheHandler);
     result->m_callTarget = slowPath;
     result->m_jumpTarget = slowPath;
     return result;
@@ -1380,7 +1394,7 @@ Ref<InlineCacheHandler> InlineCacheHandler::createNonHandlerSlowPath(CodePtr<JIT
 
 Ref<InlineCacheHandler> InlineCacheHandler::createSlowPath(VM& vm, AccessType accessType)
 {
-    auto result = adoptRef(*new InlineCacheHandler);
+    auto result = adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(0))) InlineCacheHandler);
     auto codeRef = InlineCacheCompiler::generateSlowPathCode(vm, accessType);
     result->m_callTarget = codeRef.code().template retagged<JITStubRoutinePtrTag>();
     result->m_jumpTarget = CodePtr<NoPtrTag> { codeRef.retaggedCode<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>();
@@ -2834,6 +2848,7 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
             jit.store32(CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
         if (accessCase.m_type == AccessCase::Getter || accessCase.m_type == AccessCase::Setter) {
+            ASSERT(loadedValueGPR == scratchGPR);
             ASSERT(baseGPR != loadedValueGPR);
             ASSERT(accessCase.m_type != AccessCase::Setter || valueRegsPayloadGPR != loadedValueGPR);
 
@@ -2854,21 +2869,6 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
             // shrink it after.
 
             setSpillStateForJSCall(spillState);
-
-            m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
-            auto* callLinkInfo = m_callLinkInfos[index].get();
-
-            // FIXME: If we generated a polymorphic call stub that jumped back to the getter
-            // stub, which then jumped back to the main code, then we'd have a reachability
-            // situation that the GC doesn't know about. The GC would ensure that the polymorphic
-            // call stub stayed alive, and it would ensure that the main code stayed alive, but
-            // it wouldn't know that the getter stub was alive. Ideally JIT stub routines would
-            // be GC objects, and then we'd be able to say that the polymorphic call stub has a
-            // reference to the getter stub.
-            // https://bugs.webkit.org/show_bug.cgi?id=148914
-            callLinkInfo->disallowStubs();
-
-            callLinkInfo->setUpCall(CallLinkInfo::Call);
 
             CCallHelpers::JumpList done;
 
@@ -2930,25 +2930,61 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
                         virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
             }
 
-            jit.move(loadedValueGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
-#if USE(JSVALUE32_64)
-            // We *always* know that the getter/setter, if non-null, is a cell.
-            jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
-#endif
-            auto [slowCase, dispatchLabel] = CallLinkInfo::emitFastPath(jit, callLinkInfo);
-            auto doneLocation = jit.label();
+            if (useHandlerIC()) {
+                ASSERT(loadedValueGPR != GPRInfo::handlerGPR); // Since loadedValueGPR is scratchGPR.
+                // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
+                if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
+                    jit.swap(loadedValueGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+                    jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), loadedValueGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
+                } else {
+                    jit.move(loadedValueGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+                    jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
+                }
 
-            if (accessCase.m_type == AccessCase::Getter)
-                jit.setupResults(valueRegs);
-            done.append(jit.jump());
-
-            if (!slowCase.empty()) {
-                slowCase.link(&jit);
-                CallLinkInfo::emitSlowPath(vm, jit, callLinkInfo);
+                auto [slowPaths, dispatchLabel] = CallLinkInfo::emitDataICFastPath(jit);
+                ASSERT(slowPaths.empty());
 
                 if (accessCase.m_type == AccessCase::Getter)
                     jit.setupResults(valueRegs);
                 done.append(jit.jump());
+            } else {
+                jit.move(loadedValueGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+#if USE(JSVALUE32_64)
+                // We *always* know that the getter/setter, if non-null, is a cell.
+                jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+#endif
+                m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+                auto* callLinkInfo = m_callLinkInfos[index].get();
+
+                // FIXME: If we generated a polymorphic call stub that jumped back to the getter
+                // stub, which then jumped back to the main code, then we'd have a reachability
+                // situation that the GC doesn't know about. The GC would ensure that the polymorphic
+                // call stub stayed alive, and it would ensure that the main code stayed alive, but
+                // it wouldn't know that the getter stub was alive. Ideally JIT stub routines would
+                // be GC objects, and then we'd be able to say that the polymorphic call stub has a
+                // reference to the getter stub.
+                // https://bugs.webkit.org/show_bug.cgi?id=148914
+                callLinkInfo->disallowStubs();
+                callLinkInfo->setUpCall(CallLinkInfo::Call);
+
+                auto [slowCase, dispatchLabel] = CallLinkInfo::emitFastPath(jit, callLinkInfo);
+                auto doneLocation = jit.label();
+                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                    callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
+                });
+
+                if (accessCase.m_type == AccessCase::Getter)
+                    jit.setupResults(valueRegs);
+                done.append(jit.jump());
+
+                if (!slowCase.empty()) {
+                    slowCase.link(&jit);
+                    CallLinkInfo::emitSlowPath(vm, jit, callLinkInfo);
+
+                    if (accessCase.m_type == AccessCase::Getter)
+                        jit.setupResults(valueRegs);
+                    done.append(jit.jump());
+                }
             }
 
             if (returnUndefined) {
@@ -2972,10 +3008,6 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
 
             bool callHasReturnValue = accessCase.isGetter();
             restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
-
-            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
-            });
         } else {
             ASSERT(accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomAccessorGetter || accessCase.m_type == AccessCase::CustomValueSetter || accessCase.m_type == AccessCase::CustomAccessorSetter);
             ASSERT(!doesPropertyStorageLoads); // Or we need an extra register. We rely on propertyOwnerGPR being correct here.
@@ -3597,13 +3629,6 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
 
     setSpillStateForJSCall(spillState);
 
-    m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
-    auto* callLinkInfo = m_callLinkInfos[index].get();
-
-    callLinkInfo->disallowStubs();
-
-    callLinkInfo->setUpCall(CallLinkInfo::Call);
-
     unsigned numberOfParameters;
     JSFunction* proxyInternalMethod = nullptr;
 
@@ -3668,27 +3693,55 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
     jit.move(CCallHelpers::TrustedImmPtr(proxyInternalMethod), scratchGPR);
     jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
-    jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+    if (useHandlerIC()) {
+        // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
+        if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
+            jit.swap(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+            jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), scratchGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
+        } else {
+            jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+            jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
+        }
+
+        auto [slowPaths, dispatchLabel] = CallLinkInfo::emitDataICFastPath(jit);
+        ASSERT(slowPaths.empty());
+
+        if (accessCase.m_type != AccessCase::ProxyObjectStore)
+            jit.setupResults(valueRegs);
+    } else {
+        jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
 #if USE(JSVALUE32_64)
-    // We *always* know that the proxy function, if non-null, is a cell.
-    jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+        // We *always* know that the proxy function, if non-null, is a cell.
+        jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
-    auto [slowCase, dispatchLabel] = CallLinkInfo::emitFastPath(jit, callLinkInfo);
-    auto doneLocation = jit.label();
+        m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+        auto* callLinkInfo = m_callLinkInfos[index].get();
 
-    if (accessCase.m_type != AccessCase::ProxyObjectStore)
-        jit.setupResults(valueRegs);
+        callLinkInfo->disallowStubs();
 
-    if (!slowCase.empty()) {
-        auto done = jit.jump();
+        callLinkInfo->setUpCall(CallLinkInfo::Call);
 
-        slowCase.link(&jit);
-        CallLinkInfo::emitSlowPath(vm, jit, callLinkInfo);
+        auto [slowCase, dispatchLabel] = CallLinkInfo::emitFastPath(jit, callLinkInfo);
+        auto doneLocation = jit.label();
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
+        });
+
 
         if (accessCase.m_type != AccessCase::ProxyObjectStore)
             jit.setupResults(valueRegs);
 
-        done.link(&jit);
+        if (!slowCase.empty()) {
+            auto done = jit.jump();
+
+            slowCase.link(&jit);
+            CallLinkInfo::emitSlowPath(vm, jit, callLinkInfo);
+
+            if (accessCase.m_type != AccessCase::ProxyObjectStore)
+                jit.setupResults(valueRegs);
+
+            done.link(&jit);
+        }
     }
 
     if (codeBlock->useDataIC()) {
@@ -3710,10 +3763,6 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
         dontRestore.add(valueRegs, IgnoreVectors);
     }
     restoreLiveRegistersFromStackForCall(spillState, dontRestore);
-
-    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-        callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
-    });
     succeed();
 }
 
@@ -4278,7 +4327,16 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         poly.m_list.shrink(0);
         poly.m_list.append(stub->cases().span());
 
-        auto handler = InlineCacheHandler::create(*m_stubInfo, WTFMove(stub), WTFMove(watchpoint));
+        unsigned callLinkInfoCount = 0;
+        if (useHandlerIC()) {
+            bool doesJSCalls = false;
+            for (auto& accessCase : stub->cases().span())
+                doesJSCalls |= JSC::doesJSCalls(accessCase->type());
+            if (doesJSCalls)
+                callLinkInfoCount = stub->cases().span().size();
+        }
+
+        auto handler = InlineCacheHandler::create(codeBlock, *m_stubInfo, WTFMove(stub), WTFMove(watchpoint), callLinkInfoCount);
         dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", handler->callTarget());
 
         AccessGenerationResult::Kind resultKind;
@@ -4337,7 +4395,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     std::optional<FPRReg> scratchFPR;
     bool doesCalls = false;
     bool doesJSCalls = false;
-    bool canBeShared = useHandlerIC();
     bool needsInt32PropertyCheck = false;
     bool needsStringPropertyCheck = false;
     bool needsSymbolPropertyCheck = false;
@@ -4346,7 +4403,8 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     if (!m_stubInfo->hasConstantIdentifier)
         allGuardedByStructureCheck = false;
     FixedVector<Ref<AccessCase>> keys(WTFMove(cases));
-    m_callLinkInfos.resize(keys.size());
+    if (!useHandlerIC())
+        m_callLinkInfos.resize(keys.size());
     Vector<JSCell*> cellsToMark;
     for (auto& entry : keys) {
         if (!scratchFPR && needsScratchFPR(entry->m_type))
@@ -4372,18 +4430,13 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             allGuardedByStructureCheck &= entry->guardedByStructureCheckSkippingConstantIdentifierCheck();
     }
     m_scratchFPR = scratchFPR.value_or(InvalidFPRReg);
-    m_doesCalls = doesCalls;
-    m_doesJSCalls = doesJSCalls;
-    if (doesJSCalls)
-        canBeShared = false;
 
     CCallHelpers jit(codeBlock);
     m_jit = &jit;
 
     if (useHandlerIC())
         emitDataICPrologue(*m_jit);
-
-    if (!canBeShared && ASSERT_ENABLED) {
+    else if (ASSERT_ENABLED) {
         if (codeBlock->useDataIC()) {
             jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), jit.scratchRegister());
             jit.addPtr(jit.scratchRegister(), GPRInfo::callFrameRegister, jit.scratchRegister());
@@ -4641,7 +4694,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> code = FINALIZE_CODE_FOR(codeBlock, linkBuffer, JITStubRoutinePtrTag, categoryName(m_stubInfo->accessType), "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo->codeOrigin, "with start: ", m_stubInfo->startLocation, " with return point ", successLabel, ": ", listDump(keys)).data());
 
     CodeBlock* owner = codeBlock;
-    if (canBeShared) {
+    if (useHandlerIC()) {
         ASSERT(codeBlock->useDataIC());
         owner = nullptr;
     }
@@ -4663,7 +4716,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             ensureReferenceAndAddWatchpoint(vm(), watchpoints, stub->watchpointSet(), *set);
     }
 
-    if (canBeShared) {
+    if (useHandlerIC()) {
         ASSERT(codeBlock->useDataIC());
         if (statelessType) {
             dataLogLnIf(InlineCacheCompilerInternal::verbose, "Installing ", m_stubInfo->accessType, " / ", stub->cases().first()->m_type);
@@ -4780,7 +4833,7 @@ AccessGenerationResult PolymorphicAccess::addCase(
     return addCases(locker, vm, codeBlock, stubInfo, WTFMove(newAccesses));
 }
 
-bool PolymorphicAccess::visitWeak(VM& vm) const
+bool PolymorphicAccess::visitWeak(VM& vm)
 {
     for (unsigned i = 0; i < size(); ++i) {
         if (!at(i).visitWeak(vm))
@@ -4825,13 +4878,18 @@ void InlineCacheHandler::aboutToDie()
 
 CallLinkInfo* InlineCacheHandler::callLinkInfoAt(const ConcurrentJSLocker& locker, unsigned index)
 {
+    if (index < Base::size())
+        return &span()[index];
     if (!m_stubRoutine)
         return nullptr;
     return m_stubRoutine->callLinkInfoAt(locker, index);
 }
 
-bool InlineCacheHandler::visitWeak(VM& vm) const
+bool InlineCacheHandler::visitWeak(VM& vm)
 {
+    for (auto& callLinkInfo : Base::span())
+        callLinkInfo.visitWeak(vm);
+
     if (!m_stubRoutine)
         return true;
 

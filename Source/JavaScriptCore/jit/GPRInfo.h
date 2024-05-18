@@ -443,12 +443,12 @@ public:
     static constexpr GPRReg argumentGPR4 = X86Registers::r8; // regT4
     static constexpr GPRReg argumentGPR5 = X86Registers::r9; // regT7
 
-    static constexpr GPRReg nonArgGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
+    static constexpr GPRReg nonArgGPR0 = X86Registers::r10; // regT5
     static constexpr GPRReg nonArgGPR1 = X86Registers::eax; // regT0
     static constexpr GPRReg returnValueGPR = X86Registers::eax; // regT0
     static constexpr GPRReg returnValueGPR2 = X86Registers::edx; // regT1 or regT2
-    static constexpr GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5 (regT4 on Windows)
-    static constexpr GPRReg nonPreservedNonArgumentGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
+    static constexpr GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5
+    static constexpr GPRReg nonPreservedNonArgumentGPR0 = X86Registers::r10; // regT5
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = X86Registers::eax;
 
     static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR1;

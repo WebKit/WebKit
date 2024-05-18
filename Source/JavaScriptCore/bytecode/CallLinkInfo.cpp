@@ -134,7 +134,7 @@ void CallLinkInfo::unlinkOrUpgradeImpl(VM& vm, CodeBlock* oldCodeBlock, CodeBloc
 CodeLocationLabel<JSInternalPtrTag> CallLinkInfo::doneLocationIfExists()
 {
     switch (type()) {
-    case Type::Baseline:
+    case Type::DataOnly:
         return { };
     case Type::Optimizing:
 #if ENABLE(JIT)
@@ -280,14 +280,14 @@ void CallLinkInfo::revertCallToStub()
     }
 }
 
-void BaselineCallLinkInfo::initialize(VM& vm, CodeBlock* owner, CallType callType, BytecodeIndex bytecodeIndex)
+void DataOnlyCallLinkInfo::initialize(VM& vm, CodeBlock* owner, CallType callType, CodeOrigin codeOrigin)
 {
     m_owner = owner;
-    m_type = static_cast<unsigned>(Type::Baseline);
-    ASSERT(Type::Baseline == type());
+    m_type = static_cast<unsigned>(Type::DataOnly);
+    ASSERT(Type::DataOnly == type());
     m_useDataIC = static_cast<unsigned>(UseDataIC::Yes);
     ASSERT(UseDataIC::Yes == useDataIC());
-    m_bytecodeIndex = bytecodeIndex;
+    m_codeOrigin = codeOrigin;
     m_callType = callType;
     m_mode = static_cast<unsigned>(Mode::Init);
     // If JIT is disabled, we should not support dynamically generated call IC.
@@ -326,7 +326,7 @@ void CallLinkInfo::reset(VM&)
 
 void CallLinkInfo::revertCall(VM& vm)
 {
-    if (UNLIKELY(!Options::useLLIntICs() && type() == CallLinkInfo::Type::Baseline))
+    if (UNLIKELY(!Options::useLLIntICs() && type() == CallLinkInfo::Type::DataOnly))
         setVirtualCall(vm);
     else
         reset(vm);
