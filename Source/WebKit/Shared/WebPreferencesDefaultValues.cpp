@@ -46,6 +46,10 @@
 #include <WebCore/LibWebRTCProvider.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebPreferencesDefaultValuesAdditions.h>
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(IOS_FAMILY)
@@ -75,6 +79,11 @@ bool defaultAlternateFormControlDesignEnabled()
 
 bool defaultVideoFullscreenRequiresElementFullscreen()
 {
+#if USE(APPLE_INTERNAL_SDK)
+    if (videoFullscreenRequiresElementFullscreenFromAdditions())
+        return true;
+#endif
+
     return PAL::currentUserInterfaceIdiomIsVision();
 }
 
