@@ -643,9 +643,9 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
     };
 
     Ref<MutableStyleProperties> props = styleExtractor.copyProperties(transitionProperties);
+    auto& frameView = renderer.view().frameView();
 
     if (renderer.isDocumentElementRenderer()) {
-        auto& frameView = renderer.view().frameView();
         size.setWidth(frameView.frameRect().width());
         size.setHeight(frameView.frameRect().height());
     } else if (CheckedPtr renderBox = dynamicDowncast<RenderBoxModelObject>(&renderer))
@@ -654,30 +654,21 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
     props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(size.width(), CSSUnitType::CSS_PX));
     props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(size.height(), CSSUnitType::CSS_PX));
 
-    TransformationMatrix transform;
-    RenderElement* current = &renderer;
-    RenderElement* container = nullptr;
-    while (current && !current->isRenderView()) {
-        container = current->container();
-        if (!container)
-            break;
-        LayoutSize containerOffset = current->offsetFromContainer(*container, LayoutPoint());
-        if (container->isRenderView()) {
-            auto frameView = current->view().protectedFrameView();
-            containerOffset -= toLayoutSize(frameView->scrollPositionRespectingCustomFixedPosition());
-        }
-        TransformationMatrix localTransform;
-        current->getTransformFromContainer(containerOffset, localTransform);
-        transform = localTransform * transform;
-        current = container;
-    }
-    // Apply the inverse of what will be added by the default value of 'transform-origin',
-    // since the computed transform has already included it.
-    transform.translate(size.width() / 2, size.height() / 2);
-    transform.translateRight(-size.width() / 2, -size.height() / 2);
+    if (auto transform = renderer.localToAbsoluteTransform()) {
+        // FIXME(mattwoodrow): `transform` gives absolute coords, not
+        // document. We should be accounting for page zoom to get the
+        // absolute->document conversion correct.
+        auto offset = frameView.documentToClientOffset();
+        transform->translate(offset.width(), offset.height());
 
-    Ref<CSSValue> transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(transform, renderer.style()));
-    props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
+        // Apply the inverse of what will be added by the default value of 'transform-origin',
+        // since the computed transform has already included it.
+        transform->translate(size.width() / 2, size.height() / 2);
+        transform->translateRight(-size.width() / 2, -size.height() / 2);
+
+        Ref transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(*transform, renderer.style()));
+        props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
+    }
     return props;
 }
 
