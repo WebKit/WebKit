@@ -138,6 +138,9 @@ private:
 
     void updateVerifyCapturingTimer();
     void verifyIsCapturing();
+#if PLATFORM(IOS_FAMILY)
+    void startupTimerFired();
+#endif
 
     std::optional<double> computeMinZoom() const;
     std::optional<double> computeMaxZoom(AVCaptureDeviceFormat*) const;
@@ -188,6 +191,10 @@ private:
     static constexpr Seconds verifyCaptureInterval = 30_s;
     static const uint64_t framesToDropWhenStarting = 4;
 
+#if PLATFORM(IOS_FAMILY)
+    bool m_shouldCallNotifyMutedChange { false };
+    Timer m_startupTimer;
+#endif
     Timer m_verifyCapturingTimer;
     uint64_t m_framesCount { 0 };
     uint64_t m_lastFramesCount { 0 };
