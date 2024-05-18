@@ -265,11 +265,6 @@ public:
     // O(n) operation. Use getICStatusMap() unless you really only intend to get one stub info.
     StructureStubInfo* findStubInfo(CodeOrigin);
 
-    // This is a slow function call used primarily for compiling OSR exits in the case
-    // that there had been inlining. Chances are if you want to use this, you're really
-    // looking for a CallLinkInfoMap to amortize the cost of calling this.
-    CallLinkInfo* getCallLinkInfoForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
-    
     const JITCodeMap& jitCodeMap();
 
     std::optional<CodeOrigin> findPC(void* pc);

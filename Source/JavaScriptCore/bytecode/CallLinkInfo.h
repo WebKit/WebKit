@@ -381,11 +381,6 @@ private:
     BytecodeIndex m_bytecodeIndex { };
 };
 
-inline CodeOrigin getCallLinkInfoCodeOrigin(CallLinkInfo& callLinkInfo)
-{
-    return callLinkInfo.codeOrigin();
-}
-
 struct UnlinkedCallLinkInfo {
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
 

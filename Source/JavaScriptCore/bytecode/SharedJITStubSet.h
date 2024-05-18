@@ -99,7 +99,7 @@ public:
                     if (aCases.size() != bCases.size())
                         return false;
                     for (unsigned index = 0; index < bCases.size(); ++index) {
-                        if (!AccessCase::canBeShared(*aCases[index], *bCases[index]))
+                        if (!AccessCase::canBeShared(aCases[index].get(), bCases[index].get()))
                             return false;
                     }
                     return true;
@@ -109,7 +109,7 @@ public:
         };
 
         StructureStubInfoKey m_stubInfoKey;
-        std::span<const RefPtr<AccessCase>> m_cases;
+        std::span<const Ref<AccessCase>> m_cases;
     };
 
     struct PointerTranslator {

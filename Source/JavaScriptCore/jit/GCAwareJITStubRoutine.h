@@ -100,10 +100,10 @@ public:
 
     using Watchpoints = Bag<std::variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>>;
 
-    PolymorphicAccessJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner);
+    PolymorphicAccessJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<Ref<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner);
     ~PolymorphicAccessJITStubRoutine();
 
-    const FixedVector<RefPtr<AccessCase>>& cases() const { return m_cases; }
+    const FixedVector<Ref<AccessCase>>& cases() const { return m_cases; }
     const FixedVector<StructureID>& weakStructures() const { return m_weakStructures; }
 
     unsigned hash() const
@@ -113,7 +113,7 @@ public:
         return m_hash;
     }
 
-    static unsigned computeHash(std::span<const RefPtr<AccessCase>>);
+    static unsigned computeHash(std::span<const Ref<AccessCase>>);
 
     void addedToSharedJITStubSet();
 
@@ -147,7 +147,7 @@ protected:
 
 private:
     VM& m_vm;
-    FixedVector<RefPtr<AccessCase>> m_cases;
+    FixedVector<Ref<AccessCase>> m_cases;
     FixedVector<StructureID> m_weakStructures;
     RefPtr<WatchpointSet> m_watchpointSet;
     HashCountedSet<CodeBlock*> m_owners;
@@ -161,7 +161,7 @@ public:
     using Base = PolymorphicAccessJITStubRoutine;
     friend class JITStubRoutine;
 
-    MarkingGCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&&);
+    MarkingGCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<Ref<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&&);
 
     bool visitWeakImpl(VM&);
     CallLinkInfo* callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned);
@@ -185,7 +185,7 @@ public:
     using Base = MarkingGCAwareJITStubRoutine;
     friend class JITStubRoutine;
 
-    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&&, CodeBlock*, DisposableCallSiteIndex);
+    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<Ref<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&&, CodeBlock*, DisposableCallSiteIndex);
     ~GCAwareJITStubRoutineWithExceptionHandler();
 
 
@@ -216,7 +216,7 @@ private:
 // Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
 //    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code,
 //    VM& vm,
-//    FixedVector<RefPtr<AccessCase>>&& cases,
+//    FixedVector<Ref<AccessCase>>&& cases,
 //    JSCell* owner,
 //    bool makesCalls,
 //    ...);
@@ -228,7 +228,7 @@ private:
 // way.
 
 Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
-    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, FixedVector<RefPtr<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, VM&, JSCell* owner, bool makesCalls,
+    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, FixedVector<Ref<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, VM&, JSCell* owner, bool makesCalls,
     const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers, DisposableCallSiteIndex exceptionHandlingCallSiteIndex);
 
