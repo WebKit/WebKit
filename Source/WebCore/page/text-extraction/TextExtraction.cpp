@@ -37,6 +37,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "ImageOverlay.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "RenderBox.h"
@@ -528,6 +529,9 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
             continue;
 
         if (descendant.style().opacity() < minOpacityToConsiderVisible)
+            continue;
+
+        if (RefPtr node = descendant.node(); node && ImageOverlay::isInsideOverlay(*node))
             continue;
 
         if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(descendant); textRenderer && textRenderer->hasRenderedText()) {
