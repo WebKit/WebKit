@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "CAFrameRateRangeUtilities.h"
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
@@ -79,9 +80,14 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
             [_displayLink.display addObserver:self forKeyPath:@"refreshRate" options:NSKeyValueObservingOptionNew context:displayRefreshRateObservationContext];
             _displayLink.paused = YES;
 
-            if (drawingAreaProxy && !drawingAreaProxy->page().preferences().preferPageRenderingUpdatesNear60FPSEnabled())
+            if (drawingAreaProxy && !drawingAreaProxy->page().preferences().preferPageRenderingUpdatesNear60FPSEnabled()) {
+#if HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+                [_displayLink setPreferredFrameRateRange:WebKit::highFrameRateRange()];
+                [_displayLink setHighFrameRateReason:WebKit::preferPageRenderingUpdatesNear60FPSDisabledHighFrameRateReason];
+#else
                 _displayLink.preferredFramesPerSecond = (1.0 / _displayLink.maximumRefreshRate);
-            else
+#endif
+            } else
                 _displayLink.preferredFramesPerSecond = DisplayLinkFramesPerSecond;
         }
     }
