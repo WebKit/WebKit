@@ -47,14 +47,15 @@ namespace WebKit {
 
 using namespace WebCore;
 
-class NetworkRTCUDPSocketCocoaConnections : public ThreadSafeRefCounted<NetworkRTCUDPSocketCocoaConnections> {
+class NetworkRTCUDPSocketCocoaConnections : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NetworkRTCUDPSocketCocoaConnections> {
 public:
     static Ref<NetworkRTCUDPSocketCocoaConnections> create(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& provider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain) { return adoptRef(*new NetworkRTCUDPSocketCocoaConnections(identifier, provider, address, WTFMove(connection), WTFMove(attributedBundleIdentifier), isFirstParty, isRelayDisabled, domain)); }
+
+    ~NetworkRTCUDPSocketCocoaConnections();
 
     void close();
     void setOption(int option, int value);
     void sendTo(const uint8_t*, size_t, const rtc::SocketAddress&, const rtc::PacketOptions&);
-    void setListeningPort(int);
 
     class ConnectionStateTracker : public ThreadSafeRefCounted<ConnectionStateTracker> {
     public:
@@ -72,6 +73,7 @@ private:
     std::pair<RetainPtr<nw_connection_t>, Ref<ConnectionStateTracker>> createNWConnection(const rtc::SocketAddress&);
     void setupNWConnection(nw_connection_t, ConnectionStateTracker&, const rtc::SocketAddress&);
     void configureParameters(nw_parameters_t, nw_ip_version_t);
+    void setListeningPort(int);
 
     WebCore::LibWebRTCSocketIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
@@ -116,11 +118,6 @@ void NetworkRTCUDPSocketCocoa::close()
 {
     m_connections->close();
     m_rtcProvider.takeSocket(m_identifier);
-}
-
-void NetworkRTCUDPSocketCocoa::setListeningPort(int port)
-{
-    m_connections->setListeningPort(port);
 }
 
 void NetworkRTCUDPSocketCocoa::setOption(int option, int value)
@@ -204,15 +201,15 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     nw_listener_set_queue(m_nwListener.get(), udpSocketQueue());
 
     // The callback holds a reference to the nw_listener and we clear it when going in nw_listener_state_cancelled state, which is triggered when closing the socket.
-    nw_listener_set_state_changed_handler(m_nwListener.get(), makeBlockPtr([nwListener = m_nwListener, connection = m_connection.copyRef(), protectedRTCProvider = Ref { rtcProvider }, identifier = m_identifier](nw_listener_state_t state, nw_error_t error) mutable {
+    nw_listener_set_state_changed_handler(m_nwListener.get(), makeBlockPtr([nwListener = m_nwListener, connection = m_connection.copyRef(), protectedRTCProvider = Ref { rtcProvider }, identifier = m_identifier, weakThis = ThreadSafeWeakPtr { *this }](nw_listener_state_t state, nw_error_t error) mutable {
         switch (state) {
         case nw_listener_state_invalid:
         case nw_listener_state_waiting:
             break;
         case nw_listener_state_ready:
-            protectedRTCProvider->doSocketTaskOnRTCNetworkThread(identifier, [port = nw_listener_get_port(nwListener.get())](auto& socket) mutable {
-                auto& udpSocket = static_cast<NetworkRTCUDPSocketCocoa&>(socket);
-                udpSocket.setListeningPort(port);
+            protectedRTCProvider->callOnRTCNetworkThread([weakThis, port = nw_listener_get_port(nwListener.get())] {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->setListeningPort(port);
             });
             break;
         case nw_listener_state_failed:
@@ -246,6 +243,11 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     }).get());
 
     nw_listener_start(m_nwListener.get());
+}
+
+NetworkRTCUDPSocketCocoaConnections::~NetworkRTCUDPSocketCocoaConnections()
+{
+    ASSERT(m_isClosed);
 }
 
 void NetworkRTCUDPSocketCocoaConnections::setListeningPort(int port)

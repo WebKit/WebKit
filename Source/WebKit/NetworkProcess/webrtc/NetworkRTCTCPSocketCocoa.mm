@@ -138,8 +138,16 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     nw_connection_start(m_nwConnection.get());
 }
 
+NetworkRTCTCPSocketCocoa::~NetworkRTCTCPSocketCocoa()
+{
+    ASSERT(m_isClosed);
+}
+
 void NetworkRTCTCPSocketCocoa::close()
 {
+#if ASSERT_ENABLED
+    m_isClosed = true;
+#endif
     if (m_nwConnection)
         nw_connection_cancel(m_nwConnection.get());
     m_rtcProvider.takeSocket(m_identifier);
