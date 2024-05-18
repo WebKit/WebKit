@@ -1092,6 +1092,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     [session() addOutput:m_videoOutput.get()];
 
     setSessionSizeFrameRateAndZoom();
+    m_needsTorchReconfiguration = m_needsTorchReconfiguration || torch();
 
     m_sensorOrientation = sensorOrientationFromVideoOutput();
     computeVideoFrameRotation();
@@ -1190,7 +1191,7 @@ void AVVideoCaptureSource::reconfigureIfNeeded()
     if (!m_isRunning || (!m_needsTorchReconfiguration && !m_needsWhiteBalanceReconfiguration))
         return;
 
-    beginConfiguration();
+    startApplyingConstraints();
 
     if (std::exchange(m_needsTorchReconfiguration, false))
         updateTorch();
@@ -1198,7 +1199,7 @@ void AVVideoCaptureSource::reconfigureIfNeeded()
     if (std::exchange(m_needsWhiteBalanceReconfiguration, false))
         updateWhiteBalanceMode();
 
-    commitConfiguration();
+    endApplyingConstraints();
 }
 
 void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)
