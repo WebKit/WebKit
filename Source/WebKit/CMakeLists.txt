@@ -621,6 +621,10 @@ set(WebCore_GENERATED_SERIALIZATION_IN_FILES
 
 set(WebCore_SERIALIZATION_IN_FILES
     ActivityState.serialization.in
+    DMABufColorSpace.serialization.in
+    DMABufFormat.serialization.in
+    DMABufObject.serialization.in
+    DMABufReleaseFlag.serialization.in
     DragActions.serialization.in
     InbandTextTrackPrivate.serialization.in
     IndexedDB.serialization.in

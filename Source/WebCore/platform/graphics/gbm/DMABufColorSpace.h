@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2022 Metrological Group B.V.
- * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2022-2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

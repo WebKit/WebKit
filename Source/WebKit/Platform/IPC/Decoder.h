@@ -129,7 +129,7 @@ public:
     template<typename T>
     std::optional<T> decode()
     {
-        std::optional<T> t { ArgumentCoder<std::remove_cvref_t<T>, void>::decode(*this) };
+        std::optional<T> t { ArgumentCoder<std::remove_cvref_t<T>>::decode(*this) };
         if (UNLIKELY(!t))
             markInvalid();
         return t;

@@ -2837,6 +2837,11 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/InbandTextTrackPrivate.serialization.in
 
+    platform/graphics/gbm/DMABufColorSpace.serialization.in
+    platform/graphics/gbm/DMABufFormat.serialization.in
+    platform/graphics/gbm/DMABufObject.serialization.in
+    platform/graphics/gbm/DMABufReleaseFlag.serialization.in
+
     platform/mediastream/MDNSRegisterError.serialization.in
 
     platform/network/ProtectionSpaceBase.serialization.in

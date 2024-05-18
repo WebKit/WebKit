@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2022 Metrological Group B.V.
- * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2022-2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,14 @@ struct DMABufReleaseFlag {
     {
         fd = { eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK), UnixFileDescriptor::Adopt };
     }
+
+    DMABufReleaseFlag(const UnixFileDescriptor& fd)
+        : fd(fd.duplicate())
+    { }
+
+    DMABufReleaseFlag(UnixFileDescriptor&& fd)
+        : fd(fd.duplicate())
+    { }
 
     ~DMABufReleaseFlag() = default;
 
