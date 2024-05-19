@@ -46,7 +46,7 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCPKContact, void>;
 
-    CoreIPCPKContact(CoreIPCPersonNameComponents&& name, String&& emailAddress, CoreIPCCNPhoneNumber&& phoneNumber, CoreIPCCNPostalAddress&& postalAddress, String&& supplementarySublocality)
+    CoreIPCPKContact(std::optional<CoreIPCPersonNameComponents>&& name, String&& emailAddress, std::optional<CoreIPCCNPhoneNumber>&& phoneNumber, std::optional<CoreIPCCNPostalAddress>&& postalAddress, String&& supplementarySublocality)
         : m_name(WTFMove(name))
         , m_emailAddress(WTFMove(emailAddress))
         , m_phoneNumber(WTFMove(phoneNumber))
@@ -55,10 +55,10 @@ private:
     {
     }
 
-    CoreIPCPersonNameComponents m_name;
+    std::optional<CoreIPCPersonNameComponents> m_name;
     String m_emailAddress;
-    CoreIPCCNPhoneNumber m_phoneNumber;
-    CoreIPCCNPostalAddress m_postalAddress;
+    std::optional<CoreIPCCNPhoneNumber> m_phoneNumber;
+    std::optional<CoreIPCCNPostalAddress> m_postalAddress;
     String m_supplementarySublocality;
 };
 

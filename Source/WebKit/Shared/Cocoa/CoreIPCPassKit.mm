@@ -33,26 +33,33 @@
 namespace WebKit {
 
 CoreIPCPKContact::CoreIPCPKContact(PKContact *contact)
-    : m_name(contact.name)
-    , m_emailAddress(contact.emailAddress)
-    , m_phoneNumber(contact.phoneNumber)
-    , m_postalAddress(contact.postalAddress)
+    : m_emailAddress(contact.emailAddress)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     , m_supplementarySublocality(contact.supplementarySubLocality)
 ALLOW_DEPRECATED_DECLARATIONS_END
 {
+    if (contact.name)
+        m_name = contact.name;
+    if (contact.phoneNumber)
+        m_phoneNumber = contact.phoneNumber;
+    if (contact.postalAddress)
+        m_postalAddress = contact.postalAddress;
 }
 
 RetainPtr<id> CoreIPCPKContact::toID() const
 {
     RetainPtr<PKContact> contact = adoptNS([[PAL::getPKContactClass() alloc] init]);
 
-    contact.get().name = (NSPersonNameComponents *)m_name.toID();
-    contact.get().emailAddress = (NSString *)m_emailAddress;
-    contact.get().phoneNumber = (CNPhoneNumber *)m_phoneNumber.toID();
-    contact.get().postalAddress = (CNPostalAddress *)m_postalAddress.toID();
+    if (m_name)
+        contact.get().name = (NSPersonNameComponents *)m_name->toID();
+    if (m_phoneNumber)
+        contact.get().phoneNumber = (CNPhoneNumber *)m_phoneNumber->toID();
+    if (m_postalAddress)
+        contact.get().postalAddress = (CNPostalAddress *)m_postalAddress->toID();
+
+    contact.get().emailAddress = nsStringNilIfNull(m_emailAddress);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    contact.get().supplementarySubLocality = (NSString *)m_supplementarySublocality;
+    contact.get().supplementarySubLocality = nsStringNilIfNull(m_supplementarySublocality);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     return contact;
