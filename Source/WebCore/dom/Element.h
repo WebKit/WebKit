@@ -117,6 +117,9 @@ enum class InvokeAction: uint8_t {
     TogglePopover,
     HidePopover,
     ShowPopover,
+
+    ShowModal,
+    Close,
 };
 
 struct CheckVisibilityOptions;

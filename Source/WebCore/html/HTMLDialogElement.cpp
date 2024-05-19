@@ -135,6 +135,36 @@ void HTMLDialogElement::close(const String& result)
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
+bool HTMLDialogElement::isValidInvokeAction(const InvokeAction action)
+{
+    return HTMLElement::isValidInvokeAction(action) || action == InvokeAction::ShowModal || action == InvokeAction::Close;
+}
+
+bool HTMLDialogElement::handleInvokeInternal(const HTMLFormControlElement& invoker, const InvokeAction& action)
+{
+    if (HTMLElement::handleInvokeInternal(invoker, action))
+        return true;
+
+    if (isPopoverShowing())
+        return false;
+
+    if (isOpen()) {
+        auto shouldClose = action == InvokeAction::Auto || action == InvokeAction::Close;
+        if (shouldClose) {
+            close(nullString());
+            return true;
+        }
+    } else {
+        auto shouldOpen = action == InvokeAction::Auto || action == InvokeAction::ShowModal;
+        if (shouldOpen) {
+            showModal();
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void HTMLDialogElement::queueCancelTask()
 {
     queueTaskKeepingThisNodeAlive(TaskSource::UserInteraction, [this] {
