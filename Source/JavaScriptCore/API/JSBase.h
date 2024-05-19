@@ -149,6 +149,15 @@ JS_EXPORT bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStrin
 */
 JS_EXPORT void JSGarbageCollect(JSContextRef ctx);
 
+
+/*!
+@function JSGetMemoryUsageStatistics
+@abstract Returns the current memory usage of a context.
+@param ctx The execution context to use.
+@result A JSObjectRef containing the memory usage statistics.
+*/
+JS_EXPORT JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx);
+
 #ifdef __cplusplus
 }
 #endif

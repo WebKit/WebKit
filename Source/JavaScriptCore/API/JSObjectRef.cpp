@@ -247,6 +247,26 @@ JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSVa
     return toRef(result);
 }
 
+JSObjectRef JSObjectMakeTypeError(JSContextRef ctx, JSStringRef message, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSObject* result = createTypeError(globalObject, message ? message->string() : String());
+
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        result = nullptr;
+
+    return toRef(result);
+}
+
 JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
 {
     if (!ctx) {
@@ -463,6 +483,52 @@ void JSObjectSetPropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueRef 
             jsObject->methodTable()->put(jsObject, globalObject, ident, jsValue, slot);
         }
     }
+    handleExceptionIfNeeded(scope, ctx, exception);
+}
+
+void JSObjectSetAsyncIterator(JSContextRef ctx, JSObjectRef object, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSObject* jsObject = toJS(object);
+    JSValue jsValue = toJS(globalObject, value);
+
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return;
+
+    jsObject->putDirect(vm, vm.propertyNames->asyncIteratorSymbol, jsValue, attributes);
+
+    handleExceptionIfNeeded(scope, ctx, exception);
+}
+
+void JSObjectSetIterator(JSContextRef ctx, JSObjectRef object, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSObject* jsObject = toJS(object);
+    JSValue jsValue = toJS(globalObject, value);
+
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return;
+
+    jsObject->putDirect(vm, vm.propertyNames->iteratorSymbol, jsValue, attributes);
+
     handleExceptionIfNeeded(scope, ctx, exception);
 }
 

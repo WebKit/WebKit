@@ -469,6 +469,16 @@ JS_EXPORT JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, 
 
 /*!
  @function
+ @abstract Creates a JavaScript TypeError object, as if by invoking the built-in TypeError constructor.
+ @param ctx The execution context to use.
+ @param message A JSString containing the message for the TypeError's 'message' property.
+ @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+ @result A JSObject that is an TypeError.
+ */
+JS_EXPORT JSObjectRef JSObjectMakeTypeError(JSContextRef ctx, JSStringRef message, JSValueRef* exception) JSC_API_AVAILABLE(macos(10.6), ios(7.0));
+
+/*!
+ @function
  @abstract Creates a JavaScript RegExp object, as if by invoking the built-in RegExp constructor.
  @param ctx The execution context to use.
  @param argumentCount An integer count of the number of arguments in arguments.
@@ -613,6 +623,29 @@ JS_EXPORT void JSObjectSetPropertyForKey(JSContextRef ctx, JSObjectRef object, J
  @discussion This function is the same as performing "delete object[propertyKey]" from JavaScript.
  */
 JS_EXPORT bool JSObjectDeletePropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueRef propertyKey, JSValueRef* exception) JSC_API_AVAILABLE(macos(10.15), ios(13.0));
+
+
+/*!
+ @function
+ @abstract Implement the async iterable protocol on an object.
+ @param ctx The execution context to use.
+ @param object The JSObject to implement the async iterable protocol on.
+ @param value A zero-argument function that returns an object, conforming to the async iterator protocol.
+ @param attributes A logically ORed set of JSPropertyAttributes to give to the property.
+ @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+ */
+JS_EXPORT void JSObjectSetAsyncIterator(JSContextRef ctx, JSObjectRef object, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception) JSC_API_AVAILABLE(macos(10.15), ios(13.0));
+
+/*!
+ @function
+ @abstract Implement the iterator protocol on an object.
+ @param ctx The execution context to use.
+ @param object The JSObject to implement the iterator protocol on.
+ @param value A zero-argument function that returns an object, conforming to the iterator protocol.
+ @param attributes A logically ORed set of JSPropertyAttributes to give to the property.
+ @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+ */
+JS_EXPORT void JSObjectSetIterator(JSContextRef ctx, JSObjectRef object, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception) JSC_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
 @function
