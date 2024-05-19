@@ -12,7 +12,7 @@ function runTest()
     var testTypeSpaceDiv = document.getElementById('testTypeSpace');
     var targetText = testTypeSpaceDiv.firstChild;
     window.getSelection().setPosition(targetText, 15);
-    pressKey(" ");
+    document.execCommand("InsertText", false, " ");
     var expectedContents = "The <a href=\"http://www.foo.com\">www.foo.com</a> should be underlined and there is an anchor node created for it.";
     if (expectedContents == testTypeSpaceDiv.innerHTML)
         document.getElementById('log').textContent = "PASS: the anchor for 'www.foo.com' has been created.\n"
@@ -22,18 +22,18 @@ function runTest()
     var testTypeLinkDiv = document.getElementById('testTypeLink');
     targetText = testTypeLinkDiv.firstChild;
     window.getSelection().setPosition(targetText, 4);
-    pressKey("w");
-    pressKey("w");
-    pressKey("w");
-    pressKey(".");
-    pressKey("b");
-    pressKey("a");
-    pressKey("r");
-    pressKey(".");
-    pressKey("c");
-    pressKey("o");
-    pressKey("m");
-    pressKey(" ");
+    document.execCommand("InsertText", false, "w");
+    document.execCommand("InsertText", false, "w");
+    document.execCommand("InsertText", false, "w");
+    document.execCommand("InsertText", false, ".");
+    document.execCommand("InsertText", false, "b");
+    document.execCommand("InsertText", false, "a");
+    document.execCommand("InsertText", false, "r");
+    document.execCommand("InsertText", false, ".");
+    document.execCommand("InsertText", false, "c");
+    document.execCommand("InsertText", false, "o");
+    document.execCommand("InsertText", false, "m");
+    document.execCommand("InsertText", false, " ");
     expectedContents = "The <a href=\"http://www.bar.com\">www.bar.com</a> should be underlined and there is an anchor node created for it.";
     if (expectedContents == testTypeLinkDiv.innerHTML)
         document.getElementById('log').textContent += "PASS: the anchor for 'www.bar.com' has been created."
@@ -42,19 +42,6 @@ function runTest()
 
     if (window.internals)
         internals.setAutomaticLinkDetectionEnabled(false);
-}
-
-function pressKey(key)
-{
-    if (window.KeyEvent) {
-        var ev = document.createEvent("KeyboardEvent");
-        ev.initKeyEvent("keypress", true, true, window,  0,0,0,0, 0, key.charCodeAt(0));
-        document.body.dispatchEvent(ev);
-    } else {
-        var ev = document.createEvent("TextEvent");
-        ev.initTextEvent('textInput', true, true, null, key.charAt(0));
-        document.body.dispatchEvent(ev);
-    }
 }
 </script>
 </head>

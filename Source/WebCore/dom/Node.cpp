@@ -2726,12 +2726,6 @@ void Node::defaultEventHandler(Event& event)
         }
         break;
 #endif
-    case EventType::textInput:
-        if (RefPtr textEvent = dynamicDowncast<TextEvent>(event)) {
-            if (RefPtr frame = document().frame())
-                frame->eventHandler().defaultTextInputEventHandler(*textEvent);
-        }
-        break;
 #if ENABLE(PAN_SCROLLING)
     case EventType::mousedown:
         if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->button() == MouseButton::Middle) {

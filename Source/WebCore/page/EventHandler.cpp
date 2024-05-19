@@ -4411,9 +4411,9 @@ bool EventHandler::mouseMovementExceedsThreshold(const FloatPoint& viewportLocat
     return std::abs(delta.width()) >= pointsThreshold || std::abs(delta.height()) >= pointsThreshold;
 }
 
-bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEvent, TextEventInputType inputType)
+bool EventHandler::handleTextInput(const String& text, Event* underlyingEvent, TextEventInputType inputType, DocumentFragment* pastingFragment, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
 {
-    LOG(Editing, "EventHandler %p handleTextInputEvent (text %s)", this, text.utf8().data());
+    LOG(Editing, "EventHandler %p handleTextInput (text %s)", this, text.utf8().data());
 
     // Platforms should differentiate real commands like selectAll from text input in disguise (like insertNewline),
     // and avoid dispatching text input events from keydown default handlers.
@@ -4429,11 +4429,32 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
     if (!target)
         return false;
 
-    auto event = TextEvent::create(&frame->windowProxy(), text, inputType);
-    event->setUnderlyingEvent(underlyingEvent);
+    // Default event handling for Drag and Drop will be handled by DragController
+    if (inputType == TextEventInputDrop)
+        return false;
 
-    target->dispatchEvent(event);
-    return event->defaultHandled();
+    if (inputType == TextEventInputPaste || inputType == TextEventInputRemoveBackground) {
+        auto action = inputType == TextEventInputRemoveBackground ? EditAction::RemoveBackground : EditAction::Paste;
+        if (pastingFragment) {
+#if PLATFORM(IOS_FAMILY)
+            if (frame->editor().client()->performsTwoStepPaste(pastingFragment))
+                return true;
+#endif
+            frame->editor().replaceSelectionWithFragment(*pastingFragment, Editor::SelectReplacement::No, shouldSmartReplace ? Editor::SmartReplace::Yes : Editor::SmartReplace::No, shouldMatchStyle ? Editor::MatchStyle::Yes : Editor::MatchStyle::No, action, mailBlockquoteHandling);
+        } else
+            frame->editor().replaceSelectionWithText(text, Editor::SelectReplacement::No, shouldSmartReplace ? Editor::SmartReplace::Yes : Editor::SmartReplace::No, action);
+        return true;
+    }
+
+    if (text == "\n"_s) {
+        if (is<HTMLInputElement>(target))
+            return false;
+        if (inputType == TextEventInputLineBreak)
+            return frame->editor().insertLineBreak();
+        return frame->editor().insertParagraphSeparator();
+    }
+
+    return frame->editor().insertTextWithoutSendingTextEvent(text, false, target, inputType);
 }
     
 bool EventHandler::isKeyboardOptionTab(KeyboardEvent& event)
@@ -4464,12 +4485,6 @@ bool EventHandler::tabsToLinks(KeyboardEvent* event) const
 
     bool tabsToLinksClientCallResult = page->chrome().client().keyboardUIMode() & KeyboardAccessTabsToLinks;
     return (event && eventInvertsTabsToLinksClientCallResult(*event)) ? !tabsToLinksClientCallResult : tabsToLinksClientCallResult;
-}
-
-void EventHandler::defaultTextInputEventHandler(TextEvent& event)
-{
-    if (m_frame->editor().handleTextEvent(event))
-        event.setDefaultHandled();
 }
 
 bool EventHandler::defaultKeyboardScrollEventHandler(KeyboardEvent& event, ScrollLogicalDirection direction, ScrollGranularity granularity)
