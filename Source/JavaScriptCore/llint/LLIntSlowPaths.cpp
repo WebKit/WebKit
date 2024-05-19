@@ -223,7 +223,7 @@ template<typename... Types> void slowPathLogF(const char*, const Types&...) { }
 
 #endif // LLINT_TRACING
 
-extern "C" UGPRPair llint_trace_operand(CallFrame* callFrame, const JSInstruction* pc, int fromWhere, int operand)
+extern "C" UGPRPair SYSV_ABI llint_trace_operand(CallFrame* callFrame, const JSInstruction* pc, int fromWhere, int operand)
 {
     if (!Options::traceLLIntExecution())
         LLINT_END_IMPL();
@@ -241,7 +241,7 @@ extern "C" UGPRPair llint_trace_operand(CallFrame* callFrame, const JSInstructio
     LLINT_END();
 }
 
-extern "C" UGPRPair llint_trace_value(CallFrame* callFrame, const JSInstruction* pc, int fromWhere, VirtualRegister operand)
+extern "C" UGPRPair SYSV_ABI llint_trace_value(CallFrame* callFrame, const JSInstruction* pc, int fromWhere, VirtualRegister operand)
 {
     if (!Options::traceLLIntExecution())
         LLINT_END_IMPL();
@@ -599,7 +599,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
     LLINT_RETURN_TWO(pc, callFrame);
 }
 
-extern "C" UGPRPair llint_default_call(CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
+extern "C" UGPRPair SYSV_ABI llint_default_call(CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
 {
     JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
     VM& vm = owner->vm();
@@ -614,7 +614,7 @@ extern "C" UGPRPair llint_default_call(CallFrame* calleeFrame, CallLinkInfo* cal
     return encodeResult(callTarget, nullptr);
 }
 
-extern "C" UGPRPair llint_virtual_call(CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
+extern "C" UGPRPair SYSV_ABI llint_virtual_call(CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
 {
     JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
     VM& vm = owner->vm();
@@ -2570,7 +2570,7 @@ static inline UGPRPair dispatchToNextInstructionDuringExit(ThrowScope& scope, Co
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-extern "C" UGPRPair llint_slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue result)
+extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue result)
 {
     // Since all our calling checkpoints do right now is move result into our dest we can just do that here and return.
     CodeBlock* codeBlock = callFrame->codeBlock();
@@ -2634,7 +2634,7 @@ extern "C" UGPRPair llint_slow_path_checkpoint_osr_exit_from_inlined_call(CallFr
     return dispatchToNextInstructionDuringExit(scope, codeBlock, pc);
 }
 
-extern "C" UGPRPair llint_slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue /* needed for cCall2 in CLoop */)
+extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue /* needed for cCall2 in CLoop */)
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
     VM& vm = codeBlock->vm();
@@ -2679,7 +2679,7 @@ extern "C" UGPRPair llint_slow_path_checkpoint_osr_exit(CallFrame* callFrame, En
     return dispatchToNextInstructionDuringExit(scope, codeBlock, pc);
 }
 
-extern "C" UGPRPair llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* protoFrame)
+extern "C" UGPRPair SYSV_ABI llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* protoFrame)
 {
     CallFrame* callFrame = vm->topCallFrame;
     auto scope = DECLARE_THROW_SCOPE(*vm);
@@ -2693,7 +2693,7 @@ extern "C" UGPRPair llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* pro
 }
 
 #if ENABLE(C_LOOP)
-extern "C" UGPRPair llint_stack_check_at_vm_entry(VM* vm, Register* newTopOfStack)
+extern "C" UGPRPair SYSV_ABI llint_stack_check_at_vm_entry(VM* vm, Register* newTopOfStack)
 {
     bool success = vm->ensureStackCapacityFor(newTopOfStack);
     return encodeResult(reinterpret_cast<void*>(success), 0);
@@ -2706,19 +2706,19 @@ extern "C" void llint_write_barrier_slow(CallFrame* callFrame, JSCell* cell)
     vm.writeBarrier(cell);
 }
 
-extern "C" UGPRPair llint_check_vm_entry_permission(VM*, ProtoCallFrame*)
+extern "C" UGPRPair SYSV_ABI llint_check_vm_entry_permission(VM*, ProtoCallFrame*)
 {
     Interpreter::checkVMEntryPermission();
     return encodeResult(nullptr, nullptr);
 }
 
-extern "C" void llint_dump_value(EncodedJSValue value);
-extern "C" void llint_dump_value(EncodedJSValue value)
+extern "C" void SYSV_ABI llint_dump_value(EncodedJSValue value);
+extern "C" void SYSV_ABI llint_dump_value(EncodedJSValue value)
 {
     dataLogLn(JSValue::decode(value));
 }
 
-extern "C" NO_RETURN_DUE_TO_CRASH void llint_crash()
+extern "C" NO_RETURN_DUE_TO_CRASH void SYSV_ABI llint_crash()
 {
     CRASH();
 }

@@ -33,8 +33,6 @@
 
 #define RegisterNames X86Registers
 
-#if !OS(WINDOWS)
-
 #define FOR_EACH_GP_REGISTER(macro)             \
     macro(eax, "rax"_s, 0, 0)                     \
     macro(ecx, "rcx"_s, 0, 0)                     \
@@ -52,28 +50,6 @@
     macro(r13, "r13"_s, 0, 1)                     \
     macro(r14, "r14"_s, 0, 1)                     \
     macro(r15, "r15"_s, 0, 1)
-
-#else // OS(WINDOWS)
-
-#define FOR_EACH_GP_REGISTER(macro)             \
-    macro(eax, "rax"_s, 0, 0)                     \
-    macro(ecx, "rcx"_s, 0, 0)                     \
-    macro(edx, "rdx"_s, 0, 0)                     \
-    macro(ebx, "rbx"_s, 0, 1)                     \
-    macro(esp, "rsp"_s, 0, 0)                     \
-    macro(ebp, "rbp"_s, 0, 1)                     \
-    macro(esi, "rsi"_s, 0, 1)                     \
-    macro(edi, "rdi"_s, 0, 1)                     \
-    macro(r8,  "r8"_s,  0, 0)                     \
-    macro(r9,  "r9"_s,  0, 0)                     \
-    macro(r10, "r10"_s, 0, 0)                     \
-    macro(r11, "r11"_s, 0, 0)                     \
-    macro(r12, "r12"_s, 0, 1)                     \
-    macro(r13, "r13"_s, 0, 1)                     \
-    macro(r14, "r14"_s, 0, 1)                     \
-    macro(r15, "r15"_s, 0, 1)
-
-#endif // !OS(WINDOWS)
 
 #define FOR_EACH_FP_REGISTER(macro)             \
     macro(xmm0,  "xmm0"_s,  0, 0)                  \

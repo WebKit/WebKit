@@ -48,7 +48,7 @@ Opcode g_opcodeMapWide16[numOpcodeIDs + numWasmOpcodeIDs] = { };
 Opcode g_opcodeMapWide32[numOpcodeIDs + numWasmOpcodeIDs] = { };
 
 #if !ENABLE(C_LOOP)
-extern "C" void llint_entry(void*, void*, void*);
+extern "C" void SYSV_ABI llint_entry(void*, void*, void*);
 
 #if ENABLE(WEBASSEMBLY)
 extern "C" void wasm_entry(void*, void*, void*);

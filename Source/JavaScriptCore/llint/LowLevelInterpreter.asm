@@ -290,16 +290,11 @@ if JSVALUE64
         const PB = csr7
         const numberTag = csr8
         const notCellMask = csr9
-    elsif X86_64
+    elsif X86_64 or X86_64_WIN
         const metadataTable = csr1
         const PB = csr2
         const numberTag = csr3
         const notCellMask = csr4
-    elsif X86_64_WIN
-        const metadataTable = csr3
-        const PB = csr4
-        const numberTag = csr5
-        const notCellMask = csr6
     elsif C_LOOP or C_LOOP_WIN
         const PB = csr0
         const numberTag = csr1
@@ -551,12 +546,7 @@ macro llintOpWithProfile(opcodeName, opcodeStruct, fn)
     end)
 end
 
-
-if X86_64_WIN
-    const extraTempReg = t0
-else
-    const extraTempReg = t5
-end
+const extraTempReg = t5
 
 # Constants for reasoning about value representation.
 const TagOffset = constexpr TagOffset
@@ -870,16 +860,11 @@ macro preserveCalleeSavesUsedByLLInt()
         storepairq csr6, csr7, -32[cfr]
     elsif X86
     elsif X86_WIN
-    elsif X86_64
+    elsif X86_64 or X86_64_WIN
         storep csr4, -8[cfr]
         storep csr3, -16[cfr]
         storep csr2, -24[cfr]
         storep csr1, -32[cfr]
-    elsif X86_64_WIN
-        storep csr6, -8[cfr]
-        storep csr5, -16[cfr]
-        storep csr4, -24[cfr]
-        storep csr3, -32[cfr]
     elsif RISCV64
         storep csr9, -8[cfr]
         storep csr8, -16[cfr]
@@ -899,16 +884,11 @@ macro restoreCalleeSavesUsedByLLInt()
         loadpairq -16[cfr], csr8, csr9
     elsif X86
     elsif X86_WIN
-    elsif X86_64
+    elsif X86_64 or X86_64_WIN
         loadp -32[cfr], csr1
         loadp -24[cfr], csr2
         loadp -16[cfr], csr3
         loadp -8[cfr], csr4
-    elsif X86_64_WIN
-        loadp -32[cfr], csr3
-        loadp -24[cfr], csr4
-        loadp -16[cfr], csr5
-        loadp -8[cfr], csr6
     elsif RISCV64
         loadp -32[cfr], csr6
         loadp -24[cfr], csr7
@@ -931,20 +911,12 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
             storepaird csfr2, csfr3, 96[entryFrame]
             storepaird csfr4, csfr5, 112[entryFrame]
             storepaird csfr6, csfr7, 128[entryFrame]
-        elsif X86_64
+        elsif X86_64 or X86_64_WIN
             storeq csr0, [entryFrame]
             storeq csr1, 8[entryFrame]
             storeq csr2, 16[entryFrame]
             storeq csr3, 24[entryFrame]
             storeq csr4, 32[entryFrame]
-        elsif X86_64_WIN
-            storeq csr0, [entryFrame]
-            storeq csr1, 8[entryFrame]
-            storeq csr2, 16[entryFrame]
-            storeq csr3, 24[entryFrame]
-            storeq csr4, 32[entryFrame]
-            storeq csr5, 40[entryFrame]
-            storeq csr6, 48[entryFrame]
         elsif ARMv7
             storep csr0, [entryFrame]
             storep csr1, 4[entryFrame]
@@ -1004,20 +976,12 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadpaird 96[temp], csfr2, csfr3
             loadpaird 112[temp], csfr4, csfr5
             loadpaird 128[temp], csfr6, csfr7
-        elsif X86_64
+        elsif X86_64 or X86_64_WIN
             loadq [temp], csr0
             loadq 8[temp], csr1
             loadq 16[temp], csr2
             loadq 24[temp], csr3
             loadq 32[temp], csr4
-        elsif X86_64_WIN
-            loadq [temp], csr0
-            loadq 8[temp], csr1
-            loadq 16[temp], csr2
-            loadq 24[temp], csr3
-            loadq 32[temp], csr4
-            loadq 40[temp], csr5
-            loadq 48[temp], csr6
         elsif ARMv7
             loadp [temp], csr0
             loadp 4[temp], csr1
@@ -1982,14 +1946,10 @@ else
     # The PC base is in t3, as this is what _llint_entry leaves behind through
     # initPCRelative(t3)
     macro setEntryAddressCommon(kind, index, label, map)
-        if X86_64
+        if X86_64 or X86_64_WIN
             leap (label - _%kind%_relativePCBase)[t3], t4
             move index, t5
             storep t4, [map, t5, 8]
-        elsif X86_64_WIN
-            leap (label - _%kind%_relativePCBase)[t3], t4
-            move index, t0
-            storep t4, [map, t0, 8]
         elsif X86 or X86_WIN
             leap (label - _%kind%_relativePCBase)[t3], t4
             move index, t5

@@ -1189,7 +1189,7 @@ inline Heap* WeakSet::heap() const
 }
 
 #if !ENABLE(C_LOOP)
-extern "C" void sanitizeStackForVMImpl(VM*);
+extern "C" void SYSV_ABI sanitizeStackForVMImpl(VM*);
 #endif
 
 JS_EXPORT_PRIVATE void sanitizeStackForVM(VM&);

@@ -36,15 +36,15 @@ struct ProtoCallFrame;
 
 namespace LLInt {
 
-extern "C" void logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp)  REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair llint_trace_operand(CallFrame*, const JSInstruction*, int fromWhere, int operand) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair llint_trace_value(CallFrame*, const JSInstruction*, int fromWhere, VirtualRegister operand) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair llint_default_call(CallFrame*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair llint_virtual_call(CallFrame*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" void llint_write_barrier_slow(CallFrame*, JSCell*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" void SYSV_ABI logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp)  REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_trace_operand(CallFrame*, const JSInstruction*, int fromWhere, int operand) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_trace_value(CallFrame*, const JSInstruction*, int fromWhere, VirtualRegister operand) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_default_call(CallFrame*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_virtual_call(CallFrame*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" void SYSV_ABI llint_write_barrier_slow(CallFrame*, JSCell*) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 #define LLINT_SLOW_PATH_DECL(name) \
-    extern "C" UGPRPair llint_##name(CallFrame* callFrame, const JSInstruction* pc)
+    extern "C" UGPRPair SYSV_ABI llint_##name(CallFrame* callFrame, const JSInstruction* pc)
 
 #define LLINT_SLOW_PATH_HIDDEN_DECL(name) \
     LLINT_SLOW_PATH_DECL(name) REFERENCED_FROM_ASM WTF_INTERNAL
@@ -155,13 +155,13 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_log_shadow_chicken_prologue);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_log_shadow_chicken_tail);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_out_of_line_jump_target);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_arityCheck);
-extern "C" UGPRPair llint_throw_stack_overflow_error(VM*, ProtoCallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair llint_slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue unused) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair llint_slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue callResult) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_throw_stack_overflow_error(VM*, ProtoCallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue unused) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue callResult) REFERENCED_FROM_ASM WTF_INTERNAL;
 #if ENABLE(C_LOOP)
-extern "C" UGPRPair llint_stack_check_at_vm_entry(VM*, Register*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_stack_check_at_vm_entry(VM*, Register*) REFERENCED_FROM_ASM WTF_INTERNAL;
 #endif
-extern "C" UGPRPair llint_check_vm_entry_permission(VM*, ProtoCallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" NO_RETURN_DUE_TO_CRASH void llint_crash() REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI llint_check_vm_entry_permission(VM*, ProtoCallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" NO_RETURN_DUE_TO_CRASH void SYSV_ABI llint_crash() REFERENCED_FROM_ASM WTF_INTERNAL;
 
 } } // namespace JSC::LLInt

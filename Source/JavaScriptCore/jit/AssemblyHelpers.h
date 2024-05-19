@@ -1358,8 +1358,6 @@ public:
             GPRInfo::regT13,
             GPRInfo::regT14,
             GPRInfo::regT15,
-#elif CPU(X86_64) && OS(WINDOWS)
-            // No additional registers.
 #elif CPU(X86_64)
             GPRInfo::regT6,
             GPRInfo::regT7,

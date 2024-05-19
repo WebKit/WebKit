@@ -33,13 +33,18 @@
 
 /* Macros for specifing specific calling conventions. */
 
+#if OS(WINDOWS)
+#define SYSV_ABI __attribute__((sysv_abi))
+#else
+#define SYSV_ABI
+#endif
 
 #if CPU(X86) && COMPILER(MSVC)
 #define JSC_HOST_CALL_ATTRIBUTES __fastcall
 #elif CPU(X86) && COMPILER(GCC_COMPATIBLE)
 #define JSC_HOST_CALL_ATTRIBUTES __attribute__ ((fastcall))
 #else
-#define JSC_HOST_CALL_ATTRIBUTES
+#define JSC_HOST_CALL_ATTRIBUTES SYSV_ABI
 #endif
 
 #define JSC_ANNOTATE_HOST_FUNCTION(functionId, function)
@@ -83,6 +88,8 @@
 
 #if ENABLE(JIT) && CALLING_CONVENTION_IS_STDCALL
 #define JIT_OPERATION_ATTRIBUTES CDECL
+#elif OS(WINDOWS)
+#define JIT_OPERATION_ATTRIBUTES SYSV_ABI
 #else
 #define JIT_OPERATION_ATTRIBUTES
 #endif

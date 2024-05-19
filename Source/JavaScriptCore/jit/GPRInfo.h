@@ -402,13 +402,8 @@ public:
 #endif // CPU(X86)
 
 #if CPU(X86_64)
-#if !OS(WINDOWS)
 #define NUMBER_OF_ARGUMENT_REGISTERS 6u
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 5u
-#else
-#define NUMBER_OF_ARGUMENT_REGISTERS 4u
-#define NUMBER_OF_CALLEE_SAVES_REGISTERS 7u
-#endif
 
 class GPRInfo {
 public:
@@ -425,7 +420,6 @@ public:
 
     // Temporary registers.
     static constexpr GPRReg regT0 = X86Registers::eax;
-#if !OS(WINDOWS)
     static constexpr GPRReg regT1 = X86Registers::esi;
     static constexpr GPRReg regT2 = X86Registers::edx;
     static constexpr GPRReg regT3 = X86Registers::ecx;
@@ -433,44 +427,22 @@ public:
     static constexpr GPRReg regT5 = X86Registers::r10;
     static constexpr GPRReg regT6 = X86Registers::edi;
     static constexpr GPRReg regT7 = X86Registers::r9;
-#else
-    static constexpr GPRReg regT1 = X86Registers::edx;
-    static constexpr GPRReg regT2 = X86Registers::r8;
-    static constexpr GPRReg regT3 = X86Registers::r9;
-    static constexpr GPRReg regT4 = X86Registers::r10;
-    static constexpr GPRReg regT5 = X86Registers::ecx;
-#endif
 
     static constexpr GPRReg regCS0 = X86Registers::ebx;
 
-#if !OS(WINDOWS)
     static constexpr GPRReg regCS1 = X86Registers::r12; // metadataTable in LLInt/Baseline
     static constexpr GPRReg regCS2 = X86Registers::r13; // jitDataRegister
     static constexpr GPRReg regCS3 = X86Registers::r14; // numberTagRegister
     static constexpr GPRReg regCS4 = X86Registers::r15; // notCellMaskRegister
-#else
-    static constexpr GPRReg regCS1 = X86Registers::esi;
-    static constexpr GPRReg regCS2 = X86Registers::edi;
-    static constexpr GPRReg regCS3 = X86Registers::r12; // metadataTable in LLInt/Baseline
-    static constexpr GPRReg regCS4 = X86Registers::r13; // jitDataRegister
-    static constexpr GPRReg regCS5 = X86Registers::r14; // numberTagRegister
-    static constexpr GPRReg regCS6 = X86Registers::r15; // notCellMaskRegister
-#endif
 
     // These constants provide the names for the general purpose argument & return value registers.
-#if !OS(WINDOWS)
     static constexpr GPRReg argumentGPR0 = X86Registers::edi; // regT6
     static constexpr GPRReg argumentGPR1 = X86Registers::esi; // regT1
     static constexpr GPRReg argumentGPR2 = X86Registers::edx; // regT2
     static constexpr GPRReg argumentGPR3 = X86Registers::ecx; // regT3
     static constexpr GPRReg argumentGPR4 = X86Registers::r8; // regT4
     static constexpr GPRReg argumentGPR5 = X86Registers::r9; // regT7
-#else
-    static constexpr GPRReg argumentGPR0 = X86Registers::ecx; // regT5
-    static constexpr GPRReg argumentGPR1 = X86Registers::edx; // regT1
-    static constexpr GPRReg argumentGPR2 = X86Registers::r8; // regT2
-    static constexpr GPRReg argumentGPR3 = X86Registers::r9; // regT3
-#endif
+
     static constexpr GPRReg nonArgGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
     static constexpr GPRReg nonArgGPR1 = X86Registers::eax; // regT0
     static constexpr GPRReg returnValueGPR = X86Registers::eax; // regT0
@@ -482,19 +454,11 @@ public:
     static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR1;
 
     static constexpr GPRReg wasmScratchGPR0 = X86Registers::eax;
-#if !OS(WINDOWS)
     static constexpr GPRReg wasmScratchGPR1 = X86Registers::r10;
-#else
-    static constexpr GPRReg wasmScratchCSR0 = regCS2;
-#endif
+
     static constexpr GPRReg wasmContextInstancePointer = regCS0;
-#if !OS(WINDOWS)
     static constexpr GPRReg wasmBaseMemoryPointer = regCS3;
     static constexpr GPRReg wasmBoundsCheckingSizeRegister = regCS4;
-#else
-    static constexpr GPRReg wasmBaseMemoryPointer = regCS5;
-    static constexpr GPRReg wasmBoundsCheckingSizeRegister = regCS6;
-#endif
 
     // FIXME: I believe that all uses of this are dead in the sense that it just causes the scratch
     // register allocator to select a different register and potentially spill things. It would be better
@@ -504,22 +468,14 @@ public:
     static constexpr GPRReg toRegister(unsigned index)
     {
         ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfRegisters);
-#if !OS(WINDOWS)
         constexpr GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regCS0, regCS1 };
-#else
-        constexpr GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regCS0, regCS1, regCS2, regCS3 };
-#endif
         return registerForIndex[index];
     }
     
     static GPRReg toArgumentRegister(unsigned index)
     {
         ASSERT(index < numberOfArgumentRegisters);
-#if !OS(WINDOWS)
         static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3, argumentGPR4, argumentGPR5 };
-#else
-        static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3 };
-#endif
         return registerForIndex[index];
     }
     
@@ -527,11 +483,7 @@ public:
     {
         ASSERT(reg != InvalidGPRReg);
         ASSERT(static_cast<int>(reg) < 16);
-#if !OS(WINDOWS)
         static const unsigned indexForRegister[16] = { 0, 3, 2, 8, InvalidIndex, InvalidIndex, 1, 6, 4, 7, 5, InvalidIndex, 9, InvalidIndex, InvalidIndex, InvalidIndex };
-#else
-        static const unsigned indexForRegister[16] = { 0, 5, 1, 6, InvalidIndex, InvalidIndex, 7, 8, 2, 3, 4, InvalidIndex, 9, InvalidIndex, InvalidIndex, InvalidIndex };
-#endif
         return indexForRegister[reg];
     }
 
@@ -1083,15 +1035,9 @@ public:
     preferredArgumentJSR()
     {
 #if USE(JSVALUE64)
-#if !OS(WINDOWS)
         return pickJSR<OperationType, ArgNum>(
             GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
             GPRInfo::argumentGPR3, GPRInfo::argumentGPR4, GPRInfo::argumentGPR5);
-#else
-        return pickJSR<OperationType, ArgNum>(
-            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
-            GPRInfo::argumentGPR3, GPRInfo::nonArgGPR0,   GPRInfo::nonArgGPR1);
-#endif
 #elif USE(JSVALUE32_64)
 #if CPU(ARM_THUMB2)
         // Be careful about GPRInfo::regCS0. It is used as a metadataTable register.

@@ -41,7 +41,7 @@ require "config"
 # ebp => cfr
 # esp => sp
 #
-# On x86-64 non-windows
+# On x86-64 (windows and non-windows)
 #
 # rax => t0,     r0
 # rdi =>     a0
@@ -56,27 +56,6 @@ require "config"
 # r13 =>             csr2 (callee-save, PB)
 # r14 =>             csr3 (callee-save, tagTypeNumber)
 # r15 =>             csr4 (callee-save, tagMask)
-# rsp => sp
-# rbp => cfr
-# r11 =>                  (scratch)
-#
-# On x86-64 windows
-# Arguments need to be push/pop'd on the stack in addition to being stored in
-# the registers. Also, >8 return types are returned in a weird way.
-#
-# rax => t0,     r0
-# rcx => t5, a0
-# rdx => t1, a1, r1
-#  r8 => t2, a2
-#  r9 => t3, a3
-# r10 => t4
-# rbx =>             csr0 (callee-save, wasmInstance, unused in baseline)
-# rsi =>             csr1 (callee-save)
-# rdi =>    ws1, t6, csr2 (callee-save, wasmScratch)
-# r12 =>             csr3 (callee-save, metadataTable)
-# r13 =>             csr4 (callee-save, PB)
-# r14 =>             csr5 (callee-save, numberTag, memoryBase)
-# r15 =>             csr6 (callee-save, notCellMask, boundsCheckingSize)
 # rsp => sp
 # rbp => cfr
 # r11 =>                  (scratch)
@@ -278,37 +257,35 @@ class RegisterID
             when "t0", "r0", "ws0"
                 "eax"
             when "r1"
-                "edx" # t1 = a1 when isWin, t2 = a2 otherwise
+                "edx"
             when "a0", "wa0"
-                isWin ? "ecx" : "edi"
+                "edi"
             when "t1", "a1", "wa1"
-                isWin ? "edx" : "esi"
+                "esi"
             when "t2", "a2", "wa2"
-                isWin ? "r8" : "edx"
+                "edx"
             when "t3", "a3", "wa3"
-                isWin ? "r9" : "ecx"
+                "ecx"
             when "t4", "wa4"
-                isWin ? "r10" : "r8"
+                "r8"
             when "t5", "wa5"
-                isWin ? "ecx" : "r9"
+                "r9"
             when "t6", "ws1"
-                isWin ? "edi" : "r10"
+                "r10"
             when "csr0"
                 "ebx"
             when "csr1"
-                isWin ? "esi" : "r12"
+                "r12"
             when "csr2"
-                isWin ? "edi" : "r13"
+                "r13"
             when "csr3"
-                isWin ? "r12" : "r14"
-            when "csr4"
-                isWin ? "r13" : "r15"
-            when "csr5"
-                raise "cannot use register #{name} on X86-64" unless isWin
                 "r14"
-            when "csr6"
-                raise "cannot use register #{name} on X86-64" unless isWin
+            when "csr4"
                 "r15"
+            when "csr5"
+                raise "cannot use register #{name} on X86-64"
+            when "csr6"
+                raise "cannot use register #{name} on X86-64"
             when "cfr"
                 "ebp"
             when "sp"

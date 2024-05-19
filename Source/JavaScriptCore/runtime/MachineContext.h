@@ -772,8 +772,8 @@ inline void*& llintInstructionPointer(PlatformRegisters& regs)
     static_assert(LLInt::LLIntPC == X86Registers::esi, "Wrong LLInt PC.");
     return reinterpret_cast<void*&>((uintptr_t&) regs.Esi);
 #elif CPU(X86_64)
-    static_assert(LLInt::LLIntPC == X86Registers::r10, "Wrong LLInt PC.");
-    return reinterpret_cast<void*&>((uintptr_t&) regs.R10);
+    static_assert(LLInt::LLIntPC == X86Registers::r8, "Wrong LLInt PC.");
+    return reinterpret_cast<void*&>((uintptr_t&) regs.R8);
 #else
 #error Unknown Architecture
 #endif
