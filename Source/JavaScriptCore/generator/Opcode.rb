@@ -236,12 +236,6 @@ private:
     static bool checkImpl(BytecodeGenerator* gen#{typed_reference_args}#{metadata_param})
     {
         UNUSED_PARAM(gen);
-#if OS(WINDOWS) && ENABLE(C_LOOP)
-        // FIXME: Disable wide16 optimization for Windows CLoop
-        // https://bugs.webkit.org/show_bug.cgi?id=198283
-        if (__size == OpcodeSize::Wide16)
-            return false;
-#endif
         return #{map_fields_with_size("", "__size", &:fits_check).join "\n            && "}
             && (__size == OpcodeSize::Narrow ? #{Argument.new("opcodeID", opcodeIDType, 0).fits_check(Size::Narrow)} : #{Argument.new("opcodeID", opcodeIDType, 0).fits_check(Size::Wide16)})
             && (__size == OpcodeSize::Wide16 ? #{op_wide16.fits_check(Size::Narrow)} : true)

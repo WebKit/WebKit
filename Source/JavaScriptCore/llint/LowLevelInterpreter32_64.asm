@@ -196,8 +196,6 @@ macro cCall4(function)
         push a0
         call function
         addp 16, sp
-    elsif C_LOOP or C_LOOP_WIN
-        error
     else
         error
     end

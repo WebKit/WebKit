@@ -467,11 +467,6 @@ _%label%:
         break
     end
 
-# FIXME: We cannot enable wide16 bytecode in Windows CLoop. With MSVC, as CLoop::execute gets larger code
-# size, CLoop::execute gets higher stack height requirement. This makes CLoop::execute takes 160KB stack
-# per call, causes stack overflow error easily. For now, we disable wide16 optimization for Windows CLoop.
-# https://bugs.webkit.org/show_bug.cgi?id=198283
-if not C_LOOP_WIN
 _%label%_wide16:
     prologue()
     fn(wide16)
@@ -479,7 +474,6 @@ _%label%_wide16:
         break
         break
     end
-end
 
 _%label%_wide32:
     prologue()
@@ -1083,21 +1077,15 @@ end
 
 macro defineReturnLabel(opcodeName, size)
     macro defineNarrow()
-        if not C_LOOP_WIN
-            _%opcodeName%_return_location:
-        end
+        _%opcodeName%_return_location:
     end
 
     macro defineWide16()
-        if not C_LOOP_WIN
-            _%opcodeName%_return_location_wide16:
-        end
+        _%opcodeName%_return_location_wide16:
     end
 
     macro defineWide32()
-        if not C_LOOP_WIN
-            _%opcodeName%_return_location_wide32:
-        end
+        _%opcodeName%_return_location_wide32:
     end
 
     size(defineNarrow, defineWide16, defineWide32, macro (f) f() end)
