@@ -43,6 +43,8 @@ public:
     // For DOM bindings.
     static Ref<DOMException> create(const String& message, const String& name);
 
+    virtual ~DOMException() { }
+
     using LegacyCode = uint8_t;
     LegacyCode legacyCode() const { return m_legacyCode; }
 
