@@ -477,6 +477,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, usePollingTraps, false, Normal, "use polling (instead of signalling) VM traps"_s) \
     \
     v(Bool, useMachForExceptions, true, Normal, "Use mach exceptions rather than signals to handle faults and pass thread messages. (This does nothing on platforms without mach)"_s) \
+    v(Bool, allowNonSPTagging, true, Normal, "allow use of the pacib instruction instead of just pacibsp (This can break lldb/posix signals as it puts live data below SP)"_s) \
     \
     v(Bool, useICStats, false, Normal, nullptr) \
     \

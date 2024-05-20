@@ -50,7 +50,7 @@ enum class PACKeyType {
     FOR_EACH_ADDITIONAL_WTF_PTRTAG(v) \
 
 enum PtrTag : uintptr_t {
-    NoPtrTag,
+    NoPtrTag = 0, // Note: We use the 0 tag for temporarily holding the return PC during JSC's arity fixup.
     CFunctionPtrTag,
 };
 
