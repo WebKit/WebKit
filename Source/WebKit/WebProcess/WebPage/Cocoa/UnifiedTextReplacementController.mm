@@ -219,8 +219,15 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         document->selection().setSelection({ rangeToReplace });
         document->selection().revealSelection();
 
-        auto rect = document->view()->contentsToRootView(WebCore::unionRect(WebCore::RenderObject::absoluteTextRects(rangeToReplace)));
-        m_webPage->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(session.uuid, replacement.uuid, rect);
+        auto contentsRect = WebCore::unionRect(WebCore::RenderObject::absoluteTextRects(rangeToReplace));
+
+#if PLATFORM(MAC)
+        auto convertedRect = document->view()->contentsToRootView(contentsRect);
+#else
+        auto convertedRect = document->view()->contentsToScreen(contentsRect);
+#endif
+
+        m_webPage->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(session.uuid, replacement.uuid, convertedRect);
 
         return;
     }
