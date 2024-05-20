@@ -149,6 +149,15 @@ static bool webGLEnabled(WebKitURISchemeRequest* request)
 }
 #endif
 
+#if USE(SKIA)
+static bool canvasAccelerationEnabled(WebKitURISchemeRequest* request)
+{
+    auto* webView = webkit_uri_scheme_request_get_web_view(request);
+    ASSERT(webView);
+    return webkit_settings_get_enable_2d_canvas_acceleration(webkit_web_view_get_settings(webView));
+}
+#endif
+
 static bool uiProcessContextIsEGL()
 {
 #if PLATFORM(GTK)
@@ -459,6 +468,10 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
 #if ENABLE(WEBGL)
     addTableRow(hardwareAccelerationObject, "WebGL enabled"_s, webGLEnabled(request) ? "Yes"_s : "No"_s);
+#endif
+
+#if USE(SKIA)
+    addTableRow(hardwareAccelerationObject, "2D canvas"_s, canvasAccelerationEnabled(request) ? "Accelerated"_s : "Unaccelerated"_s);
 #endif
 
     std::unique_ptr<PlatformDisplay> renderDisplay;

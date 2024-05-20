@@ -390,6 +390,13 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
+#if USE(SKIA)
+    // 2D canvas acceleration is enabled by default.
+    g_assert_true(webkit_settings_get_enable_2d_canvas_acceleration(settings));
+    webkit_settings_set_enable_2d_canvas_acceleration(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_2d_canvas_acceleration(settings));
+#endif
+
     // WebSecurity is enabled by default.
     g_assert_false(webkit_settings_get_disable_web_security(settings));
     webkit_settings_set_disable_web_security(settings, TRUE);

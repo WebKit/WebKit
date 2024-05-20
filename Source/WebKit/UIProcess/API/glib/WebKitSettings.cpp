@@ -155,6 +155,7 @@ enum {
 #if !ENABLE(2022_GLIB_API)
     PROP_ENABLE_ACCELERATED_2D_CANVAS,
 #endif
+    PROP_ENABLE_2D_CANVAS_ACCELERATION,
     PROP_ENABLE_WRITE_CONSOLE_MESSAGES_TO_STDOUT,
     PROP_ENABLE_MEDIA_STREAM,
     PROP_ENABLE_MOCK_CAPTURE_DEVICES,
@@ -356,6 +357,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 #endif
+    case PROP_ENABLE_2D_CANVAS_ACCELERATION:
+        webkit_settings_set_enable_2d_canvas_acceleration(settings, g_value_get_boolean(value));
+        break;
     case PROP_ENABLE_WRITE_CONSOLE_MESSAGES_TO_STDOUT:
         webkit_settings_set_enable_write_console_messages_to_stdout(settings, g_value_get_boolean(value));
         break;
@@ -564,6 +568,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 #endif
+    case PROP_ENABLE_2D_CANVAS_ACCELERATION:
+        g_value_set_boolean(value, webkit_settings_get_enable_2d_canvas_acceleration(settings));
+        break;
     case PROP_ENABLE_WRITE_CONSOLE_MESSAGES_TO_STDOUT:
         g_value_set_boolean(value, webkit_settings_get_enable_write_console_messages_to_stdout(settings));
         break;
@@ -1301,6 +1308,24 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             FALSE,
             static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 #endif
+
+    /**
+     * WebKitSettings:enable-2d-canvas-acceleration:
+     *
+     * Enable or disable 2D canvas acceleration.
+     * If this setting is enabled, the 2D canvas will be accelerated even if Skia CPU
+     * is used for rendering. However, the canvas can be unaccelerated even when this setting
+     * is enabled, for other reasons like its size or when willReadFrequently property is used.
+     *
+     * Since: 2.46
+     */
+    sObjProperties[PROP_ENABLE_2D_CANVAS_ACCELERATION] =
+        g_param_spec_boolean(
+            "enable-2d-canvas-acceleration",
+            _("Enable 2D canvas acceleration"),
+            _("Whether to enable 2D canvas acceleration"),
+            TRUE,
+            readWriteConstructParamFlags);
 
     /**
      * WebKitSettings:enable-write-console-messages-to-stdout:
@@ -3250,6 +3275,54 @@ void webkit_settings_set_enable_accelerated_2d_canvas(WebKitSettings* settings, 
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 }
 #endif
+
+/**
+ * webkit_settings_get_enable_2d_canvas_acceleration:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-2d-canvas-acceleration property.
+ *
+ * Returns: %TRUE if 2D canvas acceleration is enabled or %FALSE otherwise.
+ *
+ * Since: 2.46
+ */
+gboolean webkit_settings_get_enable_2d_canvas_acceleration(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+#if USE(SKIA)
+    return settings->priv->preferences->canvasUsesAcceleratedDrawing();
+#else
+    return FALSE;
+#endif
+}
+
+/**
+ * webkit_settings_set_enable_2d_canvas_acceleration:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-2d-canvas-acceleration property.
+ *
+ * Since: 2.46
+ */
+void webkit_settings_set_enable_2d_canvas_acceleration(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+#if USE(SKIA)
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->canvasUsesAcceleratedDrawing();
+    if (currentValue == enabled)
+        return;
+
+    priv->preferences->setCanvasUsesAcceleratedDrawing(enabled);
+    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_2D_CANVAS_ACCELERATION]);
+#else
+    if (enabled)
+        g_warning("2D canvas acceleration not supported, webkit_settings_set_enable_2d_canvas_acceleration does nothing");
+#endif
+}
 
 /**
  * webkit_settings_get_enable_write_console_messages_to_stdout:
