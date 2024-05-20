@@ -84,7 +84,7 @@ bool IPAddress::isLoopback() const
 {
     return WTF::switchOn(m_address,
         [] (const struct in_addr& address) {
-        return address.s_addr == INADDR_LOOPBACK;
+        return address.s_addr == htonl(INADDR_LOOPBACK);
     }, [] (const struct in6_addr& address) {
         constexpr auto in6addrLoopback = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1";
         return !memcmp(&address.s6_addr, in6addrLoopback, sizeof(address.s6_addr));
