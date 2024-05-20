@@ -199,7 +199,7 @@
 
 /* In GCC functions marked with no_sanitize_address cannot call functions that are marked with always_inline and not marked with no_sanitize_address.
  * Therefore we need to give up on the enforcement of ALWAYS_INLINE when bulding with ASAN. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368 */
-#if !defined(ALWAYS_INLINE) && COMPILER(GCC_COMPATIBLE) && defined(NDEBUG) && !COMPILER(MINGW) && !(COMPILER(GCC) && ASAN_ENABLED)
+#if !defined(ALWAYS_INLINE) && defined(NDEBUG) && !COMPILER(MINGW) && !(COMPILER(GCC) && ASAN_ENABLED)
 #define ALWAYS_INLINE inline __attribute__((__always_inline__))
 #endif
 
@@ -270,7 +270,7 @@
 
 /* LIKELY */
 
-#if !defined(LIKELY) && COMPILER(GCC_COMPATIBLE)
+#if !defined(LIKELY)
 #define LIKELY(x) __builtin_expect(!!(x), 1)
 #endif
 
@@ -280,7 +280,7 @@
 
 /* NEVER_INLINE */
 
-#if !defined(NEVER_INLINE) && COMPILER(GCC_COMPATIBLE)
+#if !defined(NEVER_INLINE)
 #define NEVER_INLINE __attribute__((__noinline__))
 #endif
 
@@ -331,7 +331,7 @@
 #endif
 
 /* RETURNS_NONNULL */
-#if !defined(RETURNS_NONNULL) && COMPILER(GCC_COMPATIBLE)
+#if !defined(RETURNS_NONNULL)
 #define RETURNS_NONNULL __attribute__((returns_nonnull))
 #endif
 
@@ -373,7 +373,7 @@
 
 /* PURE_FUNCTION */
 
-#if !defined(PURE_FUNCTION) && COMPILER(GCC_COMPATIBLE)
+#if !defined(PURE_FUNCTION)
 #define PURE_FUNCTION __attribute__((__pure__))
 #endif
 
@@ -383,7 +383,7 @@
 
 /* WK_UNUSED_INSTANCE_VARIABLE */
 
-#if !defined(WK_UNUSED_INSTANCE_VARIABLE) && COMPILER(GCC_COMPATIBLE)
+#if !defined(WK_UNUSED_INSTANCE_VARIABLE)
 #define WK_UNUSED_INSTANCE_VARIABLE __attribute__((unused))
 #endif
 
@@ -403,7 +403,7 @@
 
 /* UNUSED_TYPE_ALIAS */
 
-#if !defined(UNUSED_TYPE_ALIAS) && COMPILER(GCC_COMPATIBLE)
+#if !defined(UNUSED_TYPE_ALIAS)
 #define UNUSED_TYPE_ALIAS __attribute__((unused))
 #endif
 
@@ -434,7 +434,7 @@
 
 /* UNLIKELY */
 
-#if !defined(UNLIKELY) && COMPILER(GCC_COMPATIBLE)
+#if !defined(UNLIKELY)
 #define UNLIKELY(x) __builtin_expect(!!(x), 0)
 #endif
 
@@ -478,7 +478,7 @@
 
 /* WARN_UNUSED_RETURN */
 
-#if !defined(WARN_UNUSED_RETURN) && COMPILER(GCC_COMPATIBLE)
+#if !defined(WARN_UNUSED_RETURN)
 #define WARN_UNUSED_RETURN __attribute__((__warn_unused_result__))
 #endif
 

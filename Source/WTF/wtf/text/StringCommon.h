@@ -103,11 +103,7 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, std::span<const LChar> bLChar)
     if (length == 1)
         return *aLChar == bLChar.front();
 
-#if COMPILER(GCC_COMPATIBLE)
     switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
-#else
-    switch (fastLog2(length)) {
-#endif
     case 0:
         RELEASE_ASSERT_NOT_REACHED();
     case 1: // Length is 2.
@@ -158,11 +154,7 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, std::span<const UChar> bUChar)
     if (length == 1)
         return *aUChar == bUChar.front();
 
-#if COMPILER(GCC_COMPATIBLE)
     switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
-#else
-    switch (fastLog2(length)) {
-#endif
     case 0:
         RELEASE_ASSERT_NOT_REACHED();
     case 1: // Length is 2 (4 bytes).
@@ -983,7 +975,7 @@ inline void copyElements(uint8_t* __restrict destination, const uint16_t* __rest
 
     for (; i < length; ++i)
         destination[i] = source[i];
-#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM64) && CPU(ADDRESS64) && !ASSERT_ENABLED
+#elif CPU(ARM64) && CPU(ADDRESS64) && !ASSERT_ENABLED
     const uint8_t* const end = destination + length;
     const uintptr_t memoryAccessSize = 16;
 
@@ -1004,7 +996,7 @@ inline void copyElements(uint8_t* __restrict destination, const uint16_t* __rest
 
     while (destination != end)
         *destination++ = static_cast<uint8_t>(*source++);
-#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM_NEON) && !(CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)) && !ASSERT_ENABLED
+#elif CPU(ARM_NEON) && !(CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)) && !ASSERT_ENABLED
     const uint8_t* const end = destination + length;
     const uintptr_t memoryAccessSize = 8;
 

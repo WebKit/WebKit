@@ -85,7 +85,7 @@
  * - https://bugs.webkit.org/show_bug.cgi?id=38045
  * - http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43976
  */
-#if (CPU(ARM) || CPU(MIPS) || CPU(RISCV64)) && COMPILER(GCC_COMPATIBLE)
+#if CPU(ARM) || CPU(MIPS) || CPU(RISCV64)
 template<typename Type>
 inline bool isPointerTypeAlignmentOkay(Type* ptr)
 {
@@ -386,7 +386,7 @@ bool findBitInWord(T word, size_t& startOrResultIndex, size_t endIndex, bool val
     size_t index = startOrResultIndex;
     word >>= index;
 
-#if COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
+#if CPU(X86_64) || CPU(ARM64)
     // We should only use ctz() when we know that ctz() is implementated using
     // a fast hardware instruction. Otherwise, this will actually result in
     // worse performance.

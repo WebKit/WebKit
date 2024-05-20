@@ -27,7 +27,7 @@
 
 namespace WTF {
 
-#if defined(NDEBUG) && COMPILER(GCC_COMPATIBLE) \
+#if defined(NDEBUG) \
     && (CPU(X86_64) || CPU(X86) || CPU(ARM64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL))
 
 // We can only use the inline asm implementation on release builds because it

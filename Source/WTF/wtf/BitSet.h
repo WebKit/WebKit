@@ -407,7 +407,7 @@ ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(const F
             continue;
         size_t base = i * wordSize;
 
-#if COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
+#if CPU(X86_64) || CPU(ARM64)
         // We should only use ctz() when we know that ctz() is implementated using
         // a fast hardware instruction. Otherwise, this will actually result in
         // worse performance.
@@ -443,7 +443,7 @@ ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(size_t 
     auto iterate = [&](WordType word, size_t i) ALWAYS_INLINE_LAMBDA {
         size_t base = i * wordSize;
 
-#if COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
+#if CPU(X86_64) || CPU(ARM64)
         // We should only use ctz() when we know that ctz() is implementated using
         // a fast hardware instruction. Otherwise, this will actually result in
         // worse performance.

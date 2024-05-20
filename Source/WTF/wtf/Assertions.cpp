@@ -352,11 +352,7 @@ void WTFCrash()
 #else
     *(int *)(uintptr_t)0xbbadbeef = 0;
     // More reliable, but doesn't say BBADBEEF.
-#if COMPILER(GCC) || COMPILER(CLANG)
     __builtin_trap();
-#else
-    ((void(*)())nullptr)();
-#endif // COMPILER(GCC_COMPATIBLE)
 #endif // ASAN_ENABLED
 }
 #else

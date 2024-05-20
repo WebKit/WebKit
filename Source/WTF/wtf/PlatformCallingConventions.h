@@ -41,7 +41,7 @@
 
 #if CPU(X86) && COMPILER(MSVC)
 #define JSC_HOST_CALL_ATTRIBUTES __fastcall
-#elif CPU(X86) && COMPILER(GCC_COMPATIBLE)
+#elif CPU(X86)
 #define JSC_HOST_CALL_ATTRIBUTES __attribute__ ((fastcall))
 #else
 #define JSC_HOST_CALL_ATTRIBUTES SYSV_ABI

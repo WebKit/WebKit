@@ -257,9 +257,7 @@
 
 #endif
 
-#if COMPILER(GCC_COMPATIBLE)
 #define HAVE_COMPUTED_GOTO 1
-#endif
 
 #if (CPU(ARM64E) && OS(DARWIN)) || (COMPILER(CLANG) && defined(__ARM_FEATURE_JCVT))
 #define HAVE_FJCVTZS_INSTRUCTION 1
@@ -811,7 +809,7 @@
 #endif
 #endif
 
-#if COMPILER(GCC_COMPATIBLE) && defined(__has_attribute)
+#if defined(__has_attribute)
 #if __has_attribute(objc_direct)
 #if !defined(HAVE_NS_DIRECT_SUPPORT)
 #define HAVE_NS_DIRECT_SUPPORT 1

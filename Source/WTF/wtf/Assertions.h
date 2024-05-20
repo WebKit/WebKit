@@ -101,11 +101,7 @@
 #define VERBOSE_RELEASE_LOG ENABLE(JOURNALD_LOG)
 #endif
 
-#if COMPILER(GCC_COMPATIBLE)
 #define WTF_PRETTY_FUNCTION __PRETTY_FUNCTION__
-#else
-#define WTF_PRETTY_FUNCTION __FUNCTION__
-#endif
 
 #if COMPILER(MINGW)
 /* By default MinGW emits warnings when C99 format attributes are used, even if __USE_MINGW_ANSI_STDIO is defined */
