@@ -135,8 +135,8 @@ struct HashedUTF8CharactersTranslator {
 
         auto charactersLatin1 = spanReinterpretCast<const LChar>(characters.characters);
         if (string->is8Bit())
-            return WTF::equal(string->span8().data(), charactersLatin1);
-        return WTF::equal(string->span16().data(), charactersLatin1);
+            return WTF::equalWithLength(string->span8(), charactersLatin1, charactersLatin1.size());
+        return WTF::equalWithLength(string->span16(), charactersLatin1, charactersLatin1.size());
     }
 
     static void translate(AtomStringTable::StringEntry& location, const HashedUTF8Characters& characters, unsigned hash)

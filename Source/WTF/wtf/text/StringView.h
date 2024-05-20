@@ -777,12 +777,9 @@ inline bool equal(StringView a, const LChar* b)
         return !b;
 
     auto bSpan = span8(reinterpret_cast<const char*>(b));
-    if (a.length() != bSpan.size())
-        return false;
-
     if (a.is8Bit())
-        return equal(a.span8().data(), bSpan);
-    return equal(a.span16().data(), bSpan);
+        return equal(a.span8(), bSpan);
+    return equal(a.span16(), bSpan);
 }
 
 ALWAYS_INLINE bool equal(StringView a, ASCIILiteral b)
@@ -1261,17 +1258,18 @@ inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, 
 
 inline bool startsWith(StringView reference, StringView prefix)
 {
-    if (prefix.length() > reference.length())
+    auto prefixLength = prefix.length();
+    if (prefixLength > reference.length())
         return false;
 
     if (reference.is8Bit()) {
         if (prefix.is8Bit())
-            return equal(reference.span8().data(), prefix.span8());
-        return equal(reference.span8().data(), prefix.span16());
+            return equalWithLength(reference.span8(), prefix.span8(), prefixLength);
+        return equalWithLength(reference.span8(), prefix.span16(), prefixLength);
     }
     if (prefix.is8Bit())
-        return equal(reference.span16().data(), prefix.span8());
-    return equal(reference.span16().data(), prefix.span16());
+        return equalWithLength(reference.span16(), prefix.span8(), prefixLength);
+    return equalWithLength(reference.span16(), prefix.span16(), prefixLength);
 }
 
 inline bool startsWithIgnoringASCIICase(StringView reference, StringView prefix)
@@ -1300,12 +1298,12 @@ inline bool endsWith(StringView reference, StringView suffix)
 
     if (reference.is8Bit()) {
         if (suffix.is8Bit())
-            return equal(reference.span8().data() + startOffset, suffix.span8());
-        return equal(reference.span8().data() + startOffset, suffix.span16());
+            return equalWithLength(reference.span8().subspan(startOffset), suffix.span8(), suffixLength);
+        return equalWithLength(reference.span8().subspan(startOffset), suffix.span16(), suffixLength);
     }
     if (suffix.is8Bit())
-        return equal(reference.span16().data() + startOffset, suffix.span8());
-    return equal(reference.span16().data() + startOffset, suffix.span16());
+        return equalWithLength(reference.span16().subspan(startOffset), suffix.span8(), suffixLength);
+    return equalWithLength(reference.span16().subspan(startOffset), suffix.span16(), suffixLength);
 }
 
 inline bool endsWithIgnoringASCIICase(StringView reference, StringView suffix)
