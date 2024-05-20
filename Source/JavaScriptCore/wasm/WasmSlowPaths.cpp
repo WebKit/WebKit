@@ -193,7 +193,7 @@ static inline bool jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Insta
             tierUpCounter.setCompilationStatus(memoryMode, Wasm::LLIntTierUpCounter::CompilationStatus::Compiling);
             break;
         case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
-            // FIXME: This spinlock is bad, but this is only temporary. https://bugs.webkit.org/show_bug.cgi?id=274326
+            Thread::yield();
             continue;
         case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
             RELEASE_ASSERT(!!callee->replacement(memoryMode));
