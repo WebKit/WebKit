@@ -142,11 +142,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)loadRequest:(NSURLRequest *)request userData:(id)userData
 {
-    RefPtr<WebKit::ObjCObjectGraph> wkUserData;
-    if (userData)
-        wkUserData = WebKit::ObjCObjectGraph::create(userData);
-
-    _page->loadRequest(request, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow, wkUserData.get());
+    ASSERT(!userData);
+    _page->loadRequest(request, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow, { });
 }
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory
@@ -156,14 +153,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory userData:(id)userData
 {
+    ASSERT(!userData);
     if (![URL isFileURL] || (allowedDirectory && ![allowedDirectory isFileURL]))
         [NSException raise:NSInvalidArgumentException format:@"Attempted to load a non-file URL"];
 
-    RefPtr<WebKit::ObjCObjectGraph> wkUserData;
-    if (userData)
-        wkUserData = WebKit::ObjCObjectGraph::create(userData);
-
-    _page->loadFile(bytesAsString(bridge_cast(URL)), bytesAsString(bridge_cast(allowedDirectory)), wkUserData.get());
+    _page->loadFile(bytesAsString(bridge_cast(URL)), bytesAsString(bridge_cast(allowedDirectory)), { });
 }
 
 - (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL
@@ -173,12 +167,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL userData:(id)userData
 {
-    RefPtr<WebKit::ObjCObjectGraph> wkUserData;
-    if (userData)
-        wkUserData = WebKit::ObjCObjectGraph::create(userData);
-
+    ASSERT(!userData);
     NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
-    _page->loadData(span(data), "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
+    _page->loadData(span(data), "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), { });
 }
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
@@ -194,11 +185,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL userData:(id)userData
 {
-    RefPtr<WebKit::ObjCObjectGraph> wkUserData;
-    if (userData)
-        wkUserData = WebKit::ObjCObjectGraph::create(userData);
-
-    _page->loadData(span(data), MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
+    ASSERT(!userData);
+    _page->loadData(span(data), MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), { });
 }
 
 - (void)stopLoading

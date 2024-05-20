@@ -336,6 +336,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [_contentView isBackground];
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+- (WKBrowsingContextController *)browsingContextController
+{
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::BrowsingContextControllerSPIAccessRemoved))
+        return nil;
+    return [_contentView browsingContextController];
+}
+ALLOW_DEPRECATED_DECLARATIONS_END
+
 - (BOOL)becomeFirstResponder
 {
 #if PLATFORM(VISION)
