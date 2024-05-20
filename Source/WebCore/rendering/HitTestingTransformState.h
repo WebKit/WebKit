@@ -50,9 +50,8 @@ public:
         return adoptRef(*new HitTestingTransformState(other));
     }
 
-    enum TransformAccumulation { FlattenTransform, AccumulateTransform };
-    void translate(int x, int y, TransformAccumulation);
-    void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation);
+    void translate(int x, int y);
+    void applyTransform(const TransformationMatrix& transformFromContainer);
 
     FloatPoint mappedPoint() const;
     FloatQuad mappedQuad() const;
@@ -64,14 +63,12 @@ public:
     FloatQuad m_lastPlanarQuad;
     FloatQuad m_lastPlanarArea;
     TransformationMatrix m_accumulatedTransform;
-    bool m_accumulatingTransform;
 
 private:
     HitTestingTransformState(const FloatPoint& p, const FloatQuad& quad, const FloatQuad& area)
         : m_lastPlanarPoint(p)
         , m_lastPlanarQuad(quad)
         , m_lastPlanarArea(area)
-        , m_accumulatingTransform(false)
     {
     }
     
@@ -81,11 +78,8 @@ private:
         , m_lastPlanarQuad(other.m_lastPlanarQuad)
         , m_lastPlanarArea(other.m_lastPlanarArea)
         , m_accumulatedTransform(other.m_accumulatedTransform)
-        , m_accumulatingTransform(other.m_accumulatingTransform)
     {
     }
-    
-    void flattenWithTransform(const TransformationMatrix&);
 };
 
 } // namespace WebCore

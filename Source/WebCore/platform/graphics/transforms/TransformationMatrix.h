@@ -354,6 +354,8 @@ public:
     // Throw away the non-affine parts of the matrix (lossy!).
     WEBCORE_EXPORT void makeAffine();
 
+    WEBCORE_EXPORT void flatten();
+
     WEBCORE_EXPORT AffineTransform toAffineTransform() const;
 
     bool operator==(const TransformationMatrix& m2) const

@@ -47,24 +47,18 @@ public:
     TransformState(TransformDirection mappingDirection, const FloatPoint& p, const FloatQuad& quad)
         : m_lastPlanarPoint(p)
         , m_lastPlanarQuad(quad)
-        , m_mapPoint(true)
-        , m_mapQuad(true)
         , m_direction(mappingDirection)
     {
     }
     
     TransformState(TransformDirection mappingDirection, const FloatPoint& p)
         : m_lastPlanarPoint(p)
-        , m_mapPoint(true)
-        , m_mapQuad(false)
         , m_direction(mappingDirection)
     {
     }
     
     TransformState(TransformDirection mappingDirection, const FloatQuad& quad)
         : m_lastPlanarQuad(quad)
-        , m_mapPoint(false)
-        , m_mapQuad(true)
         , m_direction(mappingDirection)
     {
     }
@@ -75,15 +69,11 @@ public:
 
     void setQuad(const FloatQuad& quad)
     {
-        // We must be in a flattened state (no accumulated offset) when setting this quad.
-        ASSERT(m_accumulatedOffset == LayoutSize());
         m_lastPlanarQuad = quad;
     }
 
     void setSecondaryQuad(const std::optional<FloatQuad>& quad)
     {
-        // We must be in a flattened state (no accumulated offset) when setting this secondary quad.
-        ASSERT(m_accumulatedOffset == LayoutSize());
         m_lastPlanarSecondaryQuad = quad;
     }
 
@@ -100,35 +90,31 @@ public:
     void move(const LayoutSize&, TransformAccumulation = FlattenTransform);
     void applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = nullptr);
     WEBCORE_EXPORT void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = nullptr);
-    WEBCORE_EXPORT void flatten(bool* wasClamped = nullptr);
 
-    // Return the coords of the point or quad in the last flattened layer
-    FloatPoint lastPlanarPoint() const { return m_lastPlanarPoint; }
-    FloatQuad lastPlanarQuad() const { return m_lastPlanarQuad; }
-    std::optional<FloatQuad> lastPlanarSecondaryQuad() const { return m_lastPlanarSecondaryQuad; }
     bool isMappingSecondaryQuad() const { return m_lastPlanarSecondaryQuad.has_value(); }
 
     // Return the point or quad mapped through the current transform
-    FloatPoint mappedPoint(bool* wasClamped = nullptr) const;
+    FloatPoint mappedPoint() const;
     WEBCORE_EXPORT FloatQuad mappedQuad(bool* wasClamped = nullptr) const;
     WEBCORE_EXPORT std::optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
 
+    LayoutSize accumulatedOffset() const { return m_accumulatedOffset; }
     TransformationMatrix* accumulatedTransform() const { return m_accumulatedTransform.get(); }
-    std::unique_ptr<TransformationMatrix> releaseTrackedTransform() { return WTFMove(m_trackedTransform); }
+    std::unique_ptr<TransformationMatrix> releaseTrackedTransform();
     TransformDirection direction() const { return m_direction; }
 
 private:
-    void translateTransform(const LayoutSize&);
-    void translateMappedCoordinates(const LayoutSize&);
-    void flattenWithTransform(const TransformationMatrix&, bool* wasClamped);
+    void translateTransform(const LayoutSize&, TransformDirection);
     void applyAccumulatedOffset();
+
+    void flatten();
 
     bool shouldFlattenBefore(TransformAccumulation accumulate);
     bool shouldFlattenAfter(TransformAccumulation accumulate);
     
     TransformDirection inverseDirection() const;
 
-    void mapQuad(FloatQuad&, TransformDirection, bool* clamped = nullptr) const;
+    void mapQuad(FloatQuad&, TransformDirection, bool* wasClamped = nullptr) const;
     
     FloatPoint m_lastPlanarPoint;
     FloatQuad m_lastPlanarQuad;
@@ -136,11 +122,7 @@ private:
 
     // We only allocate the transform if we need to
     std::unique_ptr<TransformationMatrix> m_accumulatedTransform;
-    std::unique_ptr<TransformationMatrix> m_trackedTransform;
     LayoutSize m_accumulatedOffset;
-    bool m_accumulatingTransform { false };
-    bool m_mapPoint;
-    bool m_mapQuad;
     TransformMatrixTracking m_tracking { DoNotTrackTransformMatrix };
     TransformDirection m_direction;
 };

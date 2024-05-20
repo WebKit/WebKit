@@ -1476,26 +1476,23 @@ FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, OptionSet
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
     mapLocalToContainer(nullptr, transformState, mode | ApplyContainerFlip, wasFixed);
-    transformState.flatten();
     
-    return transformState.lastPlanarPoint();
+    return transformState.mappedPoint();
 }
 
 FloatPoint RenderObject::absoluteToLocal(const FloatPoint& containerPoint, OptionSet<MapCoordinatesMode> mode) const
 {
     TransformState transformState(TransformState::UnapplyInverseTransformDirection, containerPoint);
     mapAbsoluteToLocalPoint(mode, transformState);
-    transformState.flatten();
     
-    return transformState.lastPlanarPoint();
+    return transformState.mappedPoint();
 }
 
 FloatQuad RenderObject::absoluteToLocalQuad(const FloatQuad& quad, OptionSet<MapCoordinatesMode> mode) const
 {
     TransformState transformState(TransformState::UnapplyInverseTransformDirection, quad.boundingBox().center(), quad);
     mapAbsoluteToLocalPoint(mode, transformState);
-    transformState.flatten();
-    return transformState.lastPlanarQuad();
+    return transformState.mappedQuad();
 }
 
 void RenderObject::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
@@ -1632,18 +1629,16 @@ FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, const R
     // it will use that point as the reference point to decide which column's transform to apply in multiple-column blocks.
     TransformState transformState(TransformState::ApplyTransformDirection, localQuad.boundingBox().center(), localQuad);
     mapLocalToContainer(container, transformState, mode | ApplyContainerFlip, wasFixed);
-    transformState.flatten();
     
-    return transformState.lastPlanarQuad();
+    return transformState.mappedQuad();
 }
 
 FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, const RenderLayerModelObject* container, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
     mapLocalToContainer(container, transformState, mode | ApplyContainerFlip, wasFixed);
-    transformState.flatten();
 
-    return transformState.lastPlanarPoint();
+    return transformState.mappedPoint();
 }
 
 LayoutSize RenderObject::offsetFromContainer(RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const

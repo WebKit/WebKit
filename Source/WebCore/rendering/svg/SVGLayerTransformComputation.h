@@ -86,8 +86,6 @@ public:
             }
         }
 
-        transformState.flatten();
-
         auto transform = transformState.releaseTrackedTransform();
         if (!transform)
             return { };
