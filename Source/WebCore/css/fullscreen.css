@@ -76,6 +76,7 @@ iframe:fullscreen {
     max-width: 100vw !important;
     max-height: 100vh !important;
     border-radius: 20px !important;
+    pointer-events: auto !important;
 }
 
 *|*:not(:root):-internal-in-window-fullscreen::backdrop {
