@@ -4511,6 +4511,7 @@
    },
    {
       "emails" : [
+         "jmichaud@igalia.com",
          "justin@justinmichaud.com"
       ],
       "expertise" : "JavaScriptCore",
