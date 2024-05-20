@@ -393,7 +393,7 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
     // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
     // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
     // We should call PageClientImpl::presentingViewController() instead.
-    UIViewController *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
+    RetainPtr<UIViewController> presentingViewController = m_webPageProxy.uiClient().presentingViewController();
 
     if (!presentingViewController)
         return completionHandler();
@@ -418,7 +418,6 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
             [dataTask setDelegate:protectedThis->m_wkSystemPreviewDataTaskDelegate.get()];
             protectedThis->takeActivityToken();
             completionHandler();
-            protectedThis->m_allowPreviewCallback = nullptr;
         });
 
         protectedThis->m_downloadURL = url;
@@ -444,13 +443,18 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
         successHandler(success);
     });
     auto alert = WebKit::createUIAlertController(WEB_UI_NSSTRING(@"Open this 3D model?", "Open this 3D model?"), nil);
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"Allow (usdz QuickLook Preview)", "Allow") style:UIAlertActionStyleDefault handler:^(UIAlertAction *) {
-        m_allowPreviewCallback.get()(true);
+    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"Allow (usdz QuickLook Preview)", "Allow") style:UIAlertActionStyleDefault handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
+        if (!weakThis)
+            return;
+
+        std::exchange(weakThis->m_allowPreviewCallback, nullptr)(true);
     }];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"Cancel (usdz QuickLook Preview)", "Cancel") style:UIAlertActionStyleCancel handler:^(UIAlertAction *) {
-        m_allowPreviewCallback.get()(false);
-        m_allowPreviewCallback = nullptr;
+    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"Cancel (usdz QuickLook Preview)", "Cancel") style:UIAlertActionStyleCancel handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
+        if (!weakThis)
+            return;
+
+        std::exchange(weakThis->m_allowPreviewCallback, nullptr)(false);
     }];
 
     [alert addAction:doNotAllowAction];
