@@ -3350,3 +3350,5 @@ webkit.org/b/274226 fast/canvas/drawImage-source-rect-outside-image.html [ Image
 webkit.org/b/274226 fast/canvas/drawImage-srcRect-clipping.html [ ImageOnlyFailure ]
 webkit.org/b/274226 fast/canvas/canvas-drawImage-negative-coordinate.html [ ImageOnlyFailure ]
 webkit.org/b/274226 fast/canvas/canvas-drawImage-out-of-bounds-coordinate.html [ ImageOnlyFailure ]
+
+webkit.org/b/274368 http/tests/security/no-indexeddb-from-sandbox.html [ Crash Pass ]
