@@ -91,6 +91,11 @@ private:
         WebCore::CharacterRange range;
     };
 
+    static WebCore::CharacterRange characterRange(const WebCore::SimpleRange& scope, const WebCore::SimpleRange&);
+    static WebCore::SimpleRange resolveCharacterRange(const WebCore::SimpleRange& scope, WebCore::CharacterRange);
+    static uint64_t characterCount(const WebCore::SimpleRange&);
+    static String plainText(const WebCore::SimpleRange&);
+
     std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> findReplacementMarkerContainingRange(const WebCore::SimpleRange&) const;
     std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> findReplacementMarkerByUUID(const WebCore::SimpleRange& outerRange, const WTF::UUID& replacementUUID) const;
 

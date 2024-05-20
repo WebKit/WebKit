@@ -47,6 +47,30 @@
 
 namespace WebKit {
 
+// MARK: Static utility helper methods.
+
+WebCore::CharacterRange UnifiedTextReplacementController::characterRange(const WebCore::SimpleRange& scope, const WebCore::SimpleRange& range)
+{
+    return WebCore::characterRange(scope, range, { WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly });
+}
+
+uint64_t UnifiedTextReplacementController::characterCount(const WebCore::SimpleRange& range)
+{
+    return WebCore::characterCount(range, { WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly });
+}
+
+WebCore::SimpleRange UnifiedTextReplacementController::resolveCharacterRange(const WebCore::SimpleRange& scope, WebCore::CharacterRange range)
+{
+    return WebCore::resolveCharacterRange(scope, range, { WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly });
+}
+
+String UnifiedTextReplacementController::plainText(const WebCore::SimpleRange& range)
+{
+    return WebCore::plainText(range, { WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly });
+}
+
+// MARK: UnifiedTextReplacementController implementation.
+
 UnifiedTextReplacementController::UnifiedTextReplacementController(WebPage& webPage)
     : m_webPage(webPage)
 {
@@ -83,11 +107,11 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
     auto selectedTextRange = document->selection().selection().firstRange();
 
     auto attributedStringFromRange = WebCore::editingAttributedString(*contextRange);
-    auto selectedTextCharacterRange = WebCore::characterRange(*contextRange, *selectedTextRange);
+    auto selectedTextCharacterRange = UnifiedTextReplacementController::characterRange(*contextRange, *selectedTextRange);
 
     if (session) {
         auto attributedStringCharacterCount = attributedStringFromRange.string.length();
-        auto contextRangeCharacterCount = WebCore::characterCount(*contextRange);
+        auto contextRangeCharacterCount = UnifiedTextReplacementController::characterCount(*contextRange);
 
         // Postcondition: the selected text character range must be a valid range within the
         // attributed string formed by the context range; the length of the entire context range
@@ -140,12 +164,12 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
 
         auto locationWithOffset = replacementData.originalRange.location + additionalOffset;
 
-        auto resolvedRange = resolveCharacterRange(*sessionRange, { locationWithOffset, replacementData.originalRange.length });
+        auto resolvedRange = UnifiedTextReplacementController::resolveCharacterRange(*sessionRange, { locationWithOffset, replacementData.originalRange.length });
 
         replaceContentsOfRangeInSession(session, resolvedRange, replacementData.replacement);
 
         auto newRangeWithOffset = WebCore::CharacterRange { locationWithOffset, replacementData.replacement.length() };
-        auto newResolvedRange = resolveCharacterRange(*sessionRange, newRangeWithOffset);
+        auto newResolvedRange = UnifiedTextReplacementController::resolveCharacterRange(*sessionRange, newRangeWithOffset);
 
         auto originalString = [context.attributedText.nsAttributedString() attributedSubstringFromRange:replacementData.originalRange];
 
@@ -329,7 +353,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
 
     document->selection().clear();
 
-    auto sessionRangeCharacterCount = WebCore::characterCount(*sessionRange);
+    auto sessionRangeCharacterCount = UnifiedTextReplacementController::characterCount(*sessionRange);
 
     if (UNLIKELY(range.length + sessionRangeCharacterCount < contextTextCharacterCount)) {
         RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => the range offset by the character count delta must have a non-negative size (context range length: %u, range.length %llu, session length: %llu)", session.uuid.toString().utf8().data(), contextTextCharacterCount, range.length, sessionRangeCharacterCount);
@@ -386,7 +410,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         ASSERT(!characterRanges->isEmpty());
 
         auto replaceCharacterRange = subCharacterRange(range, characterRanges->last().range);
-        return WebCore::resolveCharacterRange(*sessionRange, replaceCharacterRange);
+        return UnifiedTextReplacementController::resolveCharacterRange(*sessionRange, replaceCharacterRange);
     }();
 
 #if PLATFORM(MAC)
@@ -401,7 +425,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    auto replacedRangeAfterReplace = WebCore::resolveCharacterRange(*sessionRangeAfterReplace, characterRangeWithDelta);
+    auto replacedRangeAfterReplace = UnifiedTextReplacementController::resolveCharacterRange(*sessionRangeAfterReplace, characterRangeWithDelta);
 
     auto finalTextIndicatorUUID = createTextIndicator(replacedRangeAfterReplace, TextIndicatorStyle::Final);
 
@@ -464,7 +488,7 @@ void UnifiedTextReplacementController::textReplacementSessionPerformEditActionFo
     markers.forEach<WebCore::DocumentMarkerController::IterationDirection::Backwards>(*sessionRange, { WebCore::DocumentMarker::Type::UnifiedTextReplacement }, [&](auto& node, auto& marker) {
         auto rangeToReplace = WebCore::makeSimpleRange(node, marker);
 
-        auto currentText = WebCore::plainText(rangeToReplace);
+        auto currentText = UnifiedTextReplacementController::plainText(rangeToReplace);
 
         auto oldData = std::get<WebCore::DocumentMarker::UnifiedTextReplacementData>(marker.data());
         auto previousText = oldData.originalText;
@@ -689,7 +713,7 @@ std::optional<WebCore::SimpleRange> UnifiedTextReplacementController::contextRan
         if (!sessionRange)
             continue;
 
-        return WebCore::resolveCharacterRange(*sessionRange, characterRanges[index].range);
+        return UnifiedTextReplacementController::resolveCharacterRange(*sessionRange, characterRanges[index].range);
     }
 
     return std::nullopt;
@@ -810,9 +834,9 @@ void UnifiedTextReplacementController::replaceContentsOfRangeInSessionInternal(c
         return;
     }
 
-    auto sessionRangeCount = WebCore::characterCount(*sessionRange);
+    auto sessionRangeCount = UnifiedTextReplacementController::characterCount(*sessionRange);
 
-    auto resolvedCharacterRange = WebCore::characterRange(*sessionRange, range);
+    auto resolvedCharacterRange = UnifiedTextReplacementController::characterRange(*sessionRange, range);
     document->selection().setSelection({ range });
 
     replacementOperation(document->editor());

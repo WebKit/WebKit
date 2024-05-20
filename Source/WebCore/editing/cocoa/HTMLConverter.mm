@@ -2399,8 +2399,11 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
     for (TextIterator it(range); !it.atEnd(); it.advance()) {
         auto node = it.node();
 
-        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(node); imageElement && includeImages == IncludeImages::Yes)
-            [string appendAttributedString:attributedStringWithAttachmentForElement(*imageElement).get()];
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(node); imageElement && includeImages == IncludeImages::Yes) {
+            RetainPtr attachmentAttributedString = attributedStringWithAttachmentForElement(*imageElement);
+            [string appendAttributedString:attachmentAttributedString.get()];
+            stringLength += [attachmentAttributedString length];
+        }
 
         auto currentTextLength = it.text().length();
         if (!currentTextLength)
