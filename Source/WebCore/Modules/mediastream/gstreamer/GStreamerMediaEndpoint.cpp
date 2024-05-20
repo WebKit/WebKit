@@ -298,7 +298,7 @@ void GStreamerMediaEndpoint::restartIce()
     // We should re-initiate negotiation with the ice-restart offer option set to true.
 }
 
-static std::optional<std::pair<RTCSdpType, String>> fetchDescription(GstElement* webrtcBin, const char* name)
+static std::optional<std::pair<RTCSdpType, String>> fetchDescription(GstElement* webrtcBin, ASCIILiteral name)
 {
     if (!webrtcBin)
         return { };
@@ -337,22 +337,22 @@ static std::optional<PeerConnectionBackend::DescriptionStates> descriptionsFromW
 {
     std::optional<RTCSdpType> currentLocalDescriptionSdpType, pendingLocalDescriptionSdpType, currentRemoteDescriptionSdpType, pendingRemoteDescriptionSdpType;
     String currentLocalDescriptionSdp, pendingLocalDescriptionSdp, currentRemoteDescriptionSdp, pendingRemoteDescriptionSdp;
-    if (auto currentLocalDescription = fetchDescription(webrtcBin, "current-local")) {
+    if (auto currentLocalDescription = fetchDescription(webrtcBin, "current-local"_s)) {
         auto [sdpType, description] = *currentLocalDescription;
         currentLocalDescriptionSdpType = sdpType;
         currentLocalDescriptionSdp = WTFMove(description);
     }
-    if (auto pendingLocalDescription = fetchDescription(webrtcBin, "pending-local")) {
+    if (auto pendingLocalDescription = fetchDescription(webrtcBin, "pending-local"_s)) {
         auto [sdpType, description] = *pendingLocalDescription;
         pendingLocalDescriptionSdpType = sdpType;
         pendingLocalDescriptionSdp = WTFMove(description);
     }
-    if (auto currentRemoteDescription = fetchDescription(webrtcBin, "current-remote")) {
+    if (auto currentRemoteDescription = fetchDescription(webrtcBin, "current-remote"_s)) {
         auto [sdpType, description] = *currentRemoteDescription;
         currentRemoteDescriptionSdpType = sdpType;
         currentRemoteDescriptionSdp = WTFMove(description);
     }
-    if (auto pendingRemoteDescription = fetchDescription(webrtcBin, "pending-remote")) {
+    if (auto pendingRemoteDescription = fetchDescription(webrtcBin, "pending-remote"_s)) {
         auto [sdpType, description] = *pendingRemoteDescription;
         pendingRemoteDescriptionSdpType = sdpType;
         pendingRemoteDescriptionSdp = WTFMove(description);
@@ -589,13 +589,13 @@ void GStreamerMediaEndpoint::setDescription(const RTCSessionDescription* descrip
     }
 
     auto type = toSessionDescriptionType(sdpType);
-    const char* typeString = descriptionType == DescriptionType::Local ? "local" : "remote";
-    GST_DEBUG_OBJECT(m_pipeline.get(), "Creating %s session for SDP %s", typeString, gst_webrtc_sdp_type_to_string(type));
+    auto typeString = descriptionType == DescriptionType::Local ? "local"_s : "remote"_s;
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Creating %s session for SDP %s", typeString.characters(), gst_webrtc_sdp_type_to_string(type));
 
     auto* data = createSetDescriptionCallData();
     data->successCallback = WTFMove(successCallback);
     data->failureCallback = WTFMove(failureCallback);
-    data->typeString = typeString;
+    data->typeString = typeString.characters();
     data->webrtcBin = m_webrtcBin;
     gst_sdp_message_copy(message.get(), &data->message.outPtr());
 
@@ -835,8 +835,8 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GStreamerMediaEndpointHolder)
 
 void GStreamerMediaEndpoint::initiate(bool isInitiator, GstStructure* rawOptions)
 {
-    const char* type = isInitiator ? "offer" : "answer";
-    GST_DEBUG_OBJECT(m_pipeline.get(), "Creating %s", type);
+    auto type = isInitiator ? "offer"_s : "answer"_s;
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Creating %s", type.characters());
     auto signalName = makeString("create-"_s, type);
     GUniquePtr<GstStructure> options(rawOptions);
     auto* holder = createGStreamerMediaEndpointHolder();
@@ -1505,7 +1505,7 @@ void GStreamerMediaEndpoint::onIceCandidate(guint sdpMLineIndex, gchararray cand
         g_object_get(m_webrtcBin.get(), "local-description", &description.outPtr(), nullptr);
         if (description && sdpMLineIndex < gst_sdp_message_medias_len(description->sdp)) {
             const auto media = gst_sdp_message_get_media(description->sdp, sdpMLineIndex);
-            mid = makeString(gst_sdp_media_get_attribute_val(media, "mid"));
+            mid = span(gst_sdp_media_get_attribute_val(media, "mid"));
         }
 
         auto descriptions = descriptionsFromWebRTCBin(m_webrtcBin.get());

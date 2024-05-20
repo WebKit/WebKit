@@ -46,14 +46,14 @@
 
 namespace WebCore {
 
-static const char* platformForUAString()
+static ASCIILiteral platformForUAString()
 {
 #if OS(MACOS)
-    return "Macintosh";
+    return "Macintosh"_s;
 #else
     if (chassisType() == WTF::ChassisType::Mobile)
-        return "Linux";
-    return "X11";
+        return "Linux"_s;
+    return "X11"_s;
 #endif
 }
 
@@ -83,9 +83,9 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform))
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsMacintoshPlatform));
     else {
-        uaString.append(platformForUAString(), "; ");
+        uaString.append(platformForUAString(), "; "_s);
 #if defined(USER_AGENT_BRANDING)
-        uaString.append(USER_AGENT_BRANDING "; ");
+        uaString.append(USER_AGENT_BRANDING "; "_s);
 #endif
         uaString.append(platformVersionForUAString());
     }

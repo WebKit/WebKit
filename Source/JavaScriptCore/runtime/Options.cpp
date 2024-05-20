@@ -407,7 +407,7 @@ bool Options::overrideAliasedOptionWithHeuristic(const char* name)
     if (!stringValue)
         return false;
 
-    auto aliasedOption = makeString(&name[4], '=', stringValue);
+    auto aliasedOption = makeString(span(&name[4]), '=', span(stringValue));
     if (Options::setOption(aliasedOption.utf8().data()))
         return true;
 

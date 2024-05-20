@@ -163,8 +163,8 @@ void SearchPopupMenuDB::deleteAllDatabaseFiles()
     closeDatabase();
 
     FileSystem::deleteFile(m_databaseFilename);
-    FileSystem::deleteFile(m_databaseFilename + "-shm");
-    FileSystem::deleteFile(m_databaseFilename + "-wal");
+    FileSystem::deleteFile(makeString(m_databaseFilename, "-shm"_s));
+    FileSystem::deleteFile(makeString(m_databaseFilename, "-wal"_s));
 }
 
 bool SearchPopupMenuDB::openDatabase()

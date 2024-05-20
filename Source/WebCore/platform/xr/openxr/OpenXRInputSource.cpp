@@ -22,9 +22,9 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
-constexpr const char* OPENXR_INPUT_HAND_PATH { "/user/hand/" };
-constexpr const char* OPENXR_INPUT_GRIP_PATH { "/input/grip/pose" };
-constexpr const char* OPENXR_INPUT_AIM_PATH { "/input/aim/pose" };
+constexpr auto OPENXR_INPUT_HAND_PATH { "/user/hand/"_s };
+constexpr auto OPENXR_INPUT_GRIP_PATH { "/input/grip/pose"_s };
+constexpr auto OPENXR_INPUT_AIM_PATH { "/input/aim/pose"_s };
 
 using namespace WebCore;
 
@@ -59,7 +59,7 @@ OpenXRInputSource::~OpenXRInputSource()
 XrResult OpenXRInputSource::initialize()
 {
     String handenessName = handenessToString(m_handeness);
-    m_subactionPathName = OPENXR_INPUT_HAND_PATH + handenessName;
+    m_subactionPathName = makeString(OPENXR_INPUT_HAND_PATH, handenessName);
     RETURN_RESULT_IF_FAILED(xrStringToPath(m_instance, m_subactionPathName.utf8().data(), &m_subactionPath), m_instance);
 
     // Initialize Action Set.
@@ -72,9 +72,9 @@ XrResult OpenXRInputSource::initialize()
     RETURN_RESULT_IF_FAILED(xrCreateActionSet(m_instance, &createInfo, &m_actionSet), m_instance);
 
     // Initialize pose actions and spaces.
-    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_POSE_INPUT, prefix + "_grip", m_gripAction), m_instance);
+    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_POSE_INPUT, makeString(prefix, "_grip"_s), m_gripAction), m_instance);
     RETURN_RESULT_IF_FAILED(createSpaceAction(m_gripAction, m_gripSpace), m_instance);
-    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_POSE_INPUT, prefix + "_pointer", m_pointerAction), m_instance);
+    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_POSE_INPUT, makeString(prefix, "_pointer"_s), m_pointerAction), m_instance);
     RETURN_RESULT_IF_FAILED(createSpaceAction(m_pointerAction, m_pointerSpace), m_instance);
 
     // Initialize button actions.
@@ -99,8 +99,8 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
 {
     for (auto& profile : openXRInputProfiles) {
         // Suggest binding for pose actions.
-        RETURN_RESULT_IF_FAILED(createBinding(profile.path, m_gripAction, m_subactionPathName + OPENXR_INPUT_GRIP_PATH, bindings), m_instance);
-        RETURN_RESULT_IF_FAILED(createBinding(profile.path, m_pointerAction, m_subactionPathName + OPENXR_INPUT_AIM_PATH, bindings), m_instance);
+        RETURN_RESULT_IF_FAILED(createBinding(profile.path, m_gripAction, makeString(m_subactionPathName, OPENXR_INPUT_GRIP_PATH), bindings), m_instance);
+        RETURN_RESULT_IF_FAILED(createBinding(profile.path, m_pointerAction, makeString(m_subactionPathName, OPENXR_INPUT_AIM_PATH), bindings), m_instance);
 
         // Suggest binding for button actions.
         const OpenXRButton* buttons;
@@ -118,15 +118,15 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
             const auto& actions = m_buttonActions.get(button.type);
             if (button.press) {
                 ASSERT(actions.press != XR_NULL_HANDLE);
-                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.press, m_subactionPathName + button.press, bindings), m_instance);
+                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.press, makeString(m_subactionPathName, span(button.press)), bindings), m_instance);
             }
             if (button.touch) {
                 ASSERT(actions.touch != XR_NULL_HANDLE);
-                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.touch, m_subactionPathName + button.touch, bindings), m_instance);
+                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.touch, makeString(m_subactionPathName, span(button.touch)), bindings), m_instance);
             }
             if (button.value) {
                 ASSERT(actions.value != XR_NULL_HANDLE);
-                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.value, m_subactionPathName + button.value, bindings), m_instance);
+                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.value, makeString(m_subactionPathName, span(button.value)), bindings), m_instance);
             }
         }
 
@@ -135,7 +135,7 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
             const auto& axis = profile.axes[i];
             auto action = m_axisActions.get(axis.type);
             ASSERT(action != XR_NULL_HANDLE);
-            RETURN_RESULT_IF_FAILED(createBinding(profile.path, action, m_subactionPathName + axis.path, bindings), m_instance);
+            RETURN_RESULT_IF_FAILED(createBinding(profile.path, action, makeString(m_subactionPathName, span(axis.path)), bindings), m_instance);
         }
     }
 
@@ -252,9 +252,9 @@ XrResult OpenXRInputSource::createButtonActions(OpenXRButtonType type, const Str
 {
     auto name = makeString(prefix, "_button_"_s, buttonTypeToString(type));
 
-    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_BOOLEAN_INPUT, name + "_press", actions.press), m_instance);
-    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_BOOLEAN_INPUT, name + "_touch", actions.touch), m_instance);
-    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_FLOAT_INPUT, name + "_value", actions.value), m_instance);
+    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_BOOLEAN_INPUT, makeString(name, "_press"_s), actions.press), m_instance);
+    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_BOOLEAN_INPUT, makeString(name, "_touch"_s), actions.touch), m_instance);
+    RETURN_RESULT_IF_FAILED(createAction(XR_ACTION_TYPE_FLOAT_INPUT, makeString(name, "_value"_s), actions.value), m_instance);
     
     return XR_SUCCESS;
 }

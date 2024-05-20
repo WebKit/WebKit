@@ -4411,7 +4411,7 @@ void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChil
         StringBuilder builder;
         for (RefPtr<Frame> frame = m_mainFrame->coreLocalFrame(); frame; frame = frame->tree().traverseNextRendered()) {
             if (RefPtr webFrame = WebFrame::fromCoreFrame(*frame))
-                builder.append(builder.isEmpty() ? "" : "\n\n", webFrame->contentsAsString());
+                builder.append(builder.isEmpty() ? ""_s : "\n\n"_s, webFrame->contentsAsString());
         }
         callback(builder.toString());
         break;

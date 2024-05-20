@@ -97,11 +97,11 @@
 static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 {
     auto rectToString = [] (auto rect) {
-        return makeString("[x: ", rect.origin.x, " y: ", rect.origin.x, " width: ", rect.size.width, " height: ", rect.size.height, "]");
+        return makeString("[x: "_s, rect.origin.x, " y: "_s, rect.origin.x, " width: "_s, rect.size.width, " height: "_s, rect.size.height, ']');
     };
 
     auto pointToString = [] (auto point) {
-        return makeString("[x: ", point.x, " y: ", point.x, "]");
+        return makeString("[x: "_s, point.x, " y: "_s, point.x, ']');
     };
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)

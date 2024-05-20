@@ -572,8 +572,8 @@ static void webkitPrintOperationPreparePrint(WebKitPrintOperation* printOperatio
     auto* connection = g_dbus_proxy_get_connection(priv->portalProxy.get());
     auto uniqueName = String::fromUTF8(g_dbus_connection_get_unique_name(connection));
     auto senderName = makeStringByReplacingAll(uniqueName.substring(1), '.', '_');
-    auto token = makeString("WebKitGTK", weakRandomNumber<uint32_t>());
-    auto requestPath = makeString("/org/freedesktop/portal/desktop/request/", senderName, "/", token);
+    auto token = makeString("WebKitGTK"_s, weakRandomNumber<uint32_t>());
+    auto requestPath = makeString("/org/freedesktop/portal/desktop/request/"_s, senderName, '/', token);
 
     RELEASE_ASSERT(!priv->signalId);
 

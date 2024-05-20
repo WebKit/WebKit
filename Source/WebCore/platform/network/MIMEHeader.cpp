@@ -105,7 +105,7 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
                 return nullptr;
             }
             mimeHeader->m_endOfPartBoundary = makeString("--"_s, mimeHeader->m_endOfPartBoundary);
-            mimeHeader->m_endOfDocumentBoundary = mimeHeader->m_endOfPartBoundary + "--";
+            mimeHeader->m_endOfDocumentBoundary = makeString(mimeHeader->m_endOfPartBoundary, "--"_s);
         }
     }
 

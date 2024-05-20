@@ -113,7 +113,7 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
         if (bytesWritten == -1 || bytesWritten != contentSize) {
             auto message = systemErrorMessage(GetLastError());
             if (message.isEmpty())
-                message = makeString("Error: writeToFile returns ", bytesWritten, ", contentLength = ", content.length());
+                message = makeString("Error: writeToFile returns "_s, bytesWritten, ", contentLength = "_s, content.length());
             MessageBox(parentWindow, message.wideCharacters().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
         }
         FileSystem::closeFile(fd);
@@ -125,7 +125,7 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
             if (errorCode == FNERR_INVALIDFILENAME)
                 message = "Error: A file name is invalid."_s;
             else
-                message = makeString("Error: ", errorCode);
+                message = makeString("Error: "_s, errorCode);
             MessageBox(parentWindow, message.wideCharacters().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
         }
     }

@@ -210,7 +210,7 @@ static GRefPtr<GstElement> findPipeline(GRefPtr<GstElement> element)
 }
 #endif // GST_DISABLE_GST_DEBUG
 
-static void dumpPipeline(const char* description, const RefPtr<Stream>& stream)
+static void dumpPipeline(ASCIILiteral description, const RefPtr<Stream>& stream)
 {
 #ifdef GST_DISABLE_GST_DEBUG
     [[maybe_unused]] fileNamePattern;
@@ -586,7 +586,7 @@ static void webKitMediaSrcLoop(void* userData)
         bool pushingFirstBuffer = !streamingMembers->hasPushedFirstBuffer;
         if (pushingFirstBuffer) {
             GST_DEBUG_OBJECT(pad, "Sending first buffer on this pad.");
-            dumpPipeline("first-frame-before", stream);
+            dumpPipeline("first-frame-before"_s, stream);
             streamingMembers->hasPushedFirstBuffer = true;
         }
 
@@ -598,11 +598,11 @@ static void webKitMediaSrcLoop(void* userData)
         GstFlowReturn result = gst_pad_push(pad, buffer.leakRef());
         if (result != GST_FLOW_OK && result != GST_FLOW_FLUSHING) {
             GST_ERROR_OBJECT(pad, "Pushing buffer returned %s", gst_flow_get_name(result));
-            dumpPipeline("pushing-buffer-failed", stream);
+            dumpPipeline("pushing-buffer-failed"_s, stream);
             gst_pad_pause_task(pad);
         } else if (pushingFirstBuffer) {
             GST_DEBUG_OBJECT(pad, "First buffer on this pad was pushed (ret = %s).", gst_flow_get_name(result));
-            dumpPipeline("first-frame-after", stream);
+            dumpPipeline("first-frame-after"_s, stream);
         }
     } else if (GST_IS_EVENT(object.get())) {
         // EOS events and other enqueued events are also sent unlocked so they can react to flushes if necessary.
@@ -657,10 +657,10 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
         // downstream chain() function, it will quickly return to the loop() function, which thanks to the
         // previous section will also quickly end.
         GST_DEBUG_OBJECT(stream->pad.get(), "Sending FLUSH_START downstream.");
-        dumpPipeline("flush-start-before", stream);
+        dumpPipeline("flush-start-before"_s, stream);
         gst_pad_push_event(stream->pad.get(), gst_event_new_flush_start());
         GST_DEBUG_OBJECT(stream->pad.get(), "FLUSH_START sent.");
-        dumpPipeline("flush-start-after", stream);
+        dumpPipeline("flush-start-after"_s, stream);
     }
 
     // Adjust segment. This is different for seeks and non-seeking flushes.
@@ -716,11 +716,11 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
         }
 
         GST_DEBUG_OBJECT(stream->pad.get(), "Sending FLUSH_STOP downstream (resetTime = %s).", boolForPrinting(isSeekingFlush));
-        dumpPipeline("flush-stop-before", stream);
+        dumpPipeline("flush-stop-before"_s, stream);
         // Since FLUSH_STOP is a synchronized event, we send it while we still hold the stream lock of the pad.
         gst_pad_push_event(stream->pad.get(), gst_event_new_flush_stop(isSeekingFlush));
         GST_DEBUG_OBJECT(stream->pad.get(), "FLUSH_STOP sent.");
-        dumpPipeline("flush-stop-after", stream);
+        dumpPipeline("flush-stop-after"_s, stream);
 
         {
             DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };

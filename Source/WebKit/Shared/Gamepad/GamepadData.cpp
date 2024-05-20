@@ -63,7 +63,7 @@ String GamepadData::loggingString() const
 {
     StringBuilder builder;
 
-    builder.append(m_axisValues.size(), " axes, ", m_buttonValues.size(), " buttons\n");
+    builder.append(m_axisValues.size(), " axes, "_s, m_buttonValues.size(), " buttons\n"_s);
 
     for (size_t i = 0; i < m_axisValues.size(); ++i)
         builder.append(" Axis "_s, i, ": "_s, m_axisValues[i]);

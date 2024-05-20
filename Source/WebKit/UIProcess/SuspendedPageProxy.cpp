@@ -305,7 +305,7 @@ bool SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, 
 
 String SuspendedPageProxy::loggingString() const
 {
-    return makeString("(0x", hex(reinterpret_cast<uintptr_t>(this)), " WebPage ID ", m_webPageID.toUInt64(), ", m_suspensionState ", static_cast<unsigned>(m_suspensionState), ')');
+    return makeString("(0x"_s, hex(reinterpret_cast<uintptr_t>(this)), " WebPage ID "_s, m_webPageID.toUInt64(), ", m_suspensionState "_s, static_cast<unsigned>(m_suspensionState), ')');
 }
 
 #endif

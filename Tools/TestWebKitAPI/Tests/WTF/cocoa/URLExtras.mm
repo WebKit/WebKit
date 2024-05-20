@@ -169,7 +169,7 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--cng"_s, // U+1EFE or U+1EFF
     };
     for (auto& host : punycodedSpoofHosts) {
-        auto url = makeString("http://", host, "/").utf8();
+        auto url = makeString("http://"_s, host, '/').utf8();
         EXPECT_STREQ(url.data(), userVisibleString(literalURL(url.data())));
     }
 }

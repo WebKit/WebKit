@@ -305,7 +305,7 @@ CurlMultipartHandle::ParseHeadersResult CurlMultipartHandle::parseHeadersIfPossi
         if (name.isEmpty())
             break;
 
-        m_headers.append(makeString(name, ": ", value, "\r\n"));
+        m_headers.append(makeString(name, ": "_s, value, "\r\n"_s));
     }
 
     m_buffer.remove(0, end - contentStartPtr);

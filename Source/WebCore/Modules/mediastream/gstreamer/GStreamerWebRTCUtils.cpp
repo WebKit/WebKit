@@ -181,7 +181,7 @@ RTCRtpSendParameters toRTCRtpSendParameters(const GstStructure* rtcParameters)
         return { };
 
     RTCRtpSendParameters parameters;
-    parameters.transactionId = makeString(gst_structure_get_string(rtcParameters, "transaction-id"));
+    parameters.transactionId = span(gst_structure_get_string(rtcParameters, "transaction-id"));
 
     auto* encodings = gst_structure_get_value(rtcParameters, "encodings");
     unsigned size = gst_value_list_get_size(encodings);
@@ -599,7 +599,7 @@ GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
                 "a-sendonly", "a-recvonly", "a-end-of-candidates", nullptr);
 
             if (const char* name = gst_structure_get_string(structure, "encoding-name")) {
-                auto encodingName = makeString(name).convertToASCIIUppercase();
+                auto encodingName = String(span(name)).convertToASCIIUppercase();
                 gst_structure_set(structure, "encoding-name", G_TYPE_STRING, encodingName.ascii().data(), nullptr);
             }
 

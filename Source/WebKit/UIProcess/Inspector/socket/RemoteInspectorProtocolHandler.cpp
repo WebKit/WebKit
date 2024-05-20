@@ -157,9 +157,9 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
             for (auto& target : client.targets().get(connectionID)) {
                 html.append(makeString(
                     "<tbody><tr>"
-                    "<td class=\"data\"><div class=\"targetname\">", target.name, "</div><div class=\"targeturl\">", target.url, "</div></td>"
-                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage(\\'", connectionID, ":", target.id, ":", target.type, "\\');\"></td>"
-                    "</tr></tbody>"
+                    "<td class=\"data\"><div class=\"targetname\">"_s, target.name, "</div><div class=\"targeturl\">"_s, target.url, "</div></td>"
+                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage(\\'"_s, connectionID, ':', target.id, ':', target.type, "\\');\"></td>"
+                    "</tr></tbody>"_s
                 ));
             }
         }
@@ -173,7 +173,7 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
 void RemoteInspectorProtocolHandler::updateTargetList()
 {
     if (!m_targetListsHtml.isEmpty()) {
-        runScript(makeString("updateTargets(`", m_targetListsHtml, "`);"));
+        runScript(makeString("updateTargets(`"_s, m_targetListsHtml, "`);"_s));
         m_targetListsHtml = { };
     }
 }

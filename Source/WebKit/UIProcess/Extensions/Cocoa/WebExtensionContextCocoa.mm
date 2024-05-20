@@ -180,7 +180,7 @@ WebExtensionContext::WebExtensionContext(Ref<WebExtension>&& extension)
     : WebExtensionContext()
 {
     m_extension = extension.ptr();
-    m_baseURL = URL { makeString("webkit-extension://", uniqueIdentifier(), '/') };
+    m_baseURL = URL { makeString("webkit-extension://"_s, uniqueIdentifier(), '/') };
     m_delegate = [[_WKWebExtensionContextDelegate alloc] initWithWebExtensionContext:*this];
     m_tabDelegateToIdentifierMap = [NSMapTable weakToStrongObjectsMapTable];
 }
@@ -258,7 +258,7 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
     m_storageDirectory = storageDirectory;
     m_extensionController = controller;
-    m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-", m_uniqueIdentifier));
+    m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-"_s, m_uniqueIdentifier));
 
     readStateFromStorage();
 
@@ -476,7 +476,7 @@ void WebExtensionContext::setBaseURL(URL&& url)
     if (!url.isValid())
         return;
 
-    m_baseURL = URL { makeString(url.protocol(), "://", url.host(), '/') };
+    m_baseURL = URL { makeString(url.protocol(), "://"_s, url.host(), '/') };
 }
 
 bool WebExtensionContext::isURLForThisExtension(const URL& url) const

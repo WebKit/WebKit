@@ -76,7 +76,7 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirectory,
 #if ENABLE(MEDIA_SESSION)
     if (auto* app = g_application_get_default()) {
         if (const char* appID = g_application_get_application_id(app)) {
-            auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2.", appID, ".Sandboxed.*");
+            auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2."_s, WTF::span(appID), ".Sandboxed.*"_s);
             m_args.append(mprisSessionID.ascii().data());
         }
     }
@@ -105,7 +105,7 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirector
         return std::nullopt;
 
 #if USE(ATSPI)
-    setSandboxedAccessibilityBusAddress(makeString("unix:path=", sandboxedAccessibilityBusPath));
+    setSandboxedAccessibilityBusAddress(makeString("unix:path="_s, WTF::span(sandboxedAccessibilityBusPath)));
 #endif
 
     m_args.appendVector(Vector<CString> {

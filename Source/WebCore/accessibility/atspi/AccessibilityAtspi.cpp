@@ -294,7 +294,7 @@ void AccessibilityAtspi::registerRoot(AccessibilityRootAtspi& rootObject, Vector
         return g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &rootObject, nullptr, nullptr);
     });
     m_rootObjects.add(&rootObject, WTFMove(registeredObjects));
-    String reference = makeString(uniqueName(), ':', path);
+    String reference = makeString(span(uniqueName()), ':', path);
     rootObject.setPath(WTFMove(path));
     completionHandler(reference);
 }

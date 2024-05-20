@@ -112,8 +112,9 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMi
 static void checkFrameworkVersion(xpc_object_t message)
 {
     auto uiProcessWebKitBundleVersion = String::fromLatin1(xpc_dictionary_get_string(message, "WebKitBundleVersion"));
-    if (!uiProcessWebKitBundleVersion.isNull() && uiProcessWebKitBundleVersion != ASCIILiteral::fromLiteralUnsafe(WEBKIT_BUNDLE_VERSION)) {
-        auto errorMessage = makeString("WebKit framework version mismatch: ", uiProcessWebKitBundleVersion, " != ", WEBKIT_BUNDLE_VERSION);
+    auto webkitBundleVersion = ASCIILiteral::fromLiteralUnsafe(WEBKIT_BUNDLE_VERSION);
+    if (!uiProcessWebKitBundleVersion.isNull() && uiProcessWebKitBundleVersion != webkitBundleVersion) {
+        auto errorMessage = makeString("WebKit framework version mismatch: "_s, uiProcessWebKitBundleVersion, " != "_s, webkitBundleVersion);
         logAndSetCrashLogMessage(errorMessage.utf8().data());
         crashDueWebKitFrameworkVersionMismatch();
     }

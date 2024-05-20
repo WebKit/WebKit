@@ -2322,7 +2322,7 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     configureElementPlatformQuirks(element);
 
     GUniquePtr<char> elementName(gst_element_get_name(element));
-    auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
+    String elementClass = WTF::span(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
     auto classifiers = elementClass.split('/');
 
     // In GStreamer 1.20 and older urisourcebin mishandles source elements with dynamic pads. This
@@ -3006,7 +3006,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     if (elementId.isEmpty())
         elementId = "media-player"_s;
 
-    const char* type = isMediaSource() ? "MSE-" : isMediaStream ? "mediastream-" : "";
+    auto type = isMediaSource() ? "MSE-"_s : isMediaStream ? "mediastream-"_s : ""_s;
 
     m_isLegacyPlaybin = !g_strcmp0(playbinName, "playbin");
 

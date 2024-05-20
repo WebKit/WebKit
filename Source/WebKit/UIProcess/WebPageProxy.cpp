@@ -13178,9 +13178,9 @@ void WebPageProxy::loadServiceWorker(const URL& url, bool usingModules, Completi
 
     CString html;
     if (usingModules)
-        html = makeString("<script>navigator.serviceWorker.register('", url.string(), "', { type: 'module' });</script>").utf8();
+        html = makeString("<script>navigator.serviceWorker.register('"_s, url.string(), "', { type: 'module' });</script>"_s).utf8();
     else
-        html = makeString("<script>navigator.serviceWorker.register('", url.string(), "');</script>").utf8();
+        html = makeString("<script>navigator.serviceWorker.register('"_s, url.string(), "');</script>"_s).utf8();
 
     loadData(html.span(), "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
 }

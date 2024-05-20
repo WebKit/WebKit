@@ -74,7 +74,7 @@ String WebCookieJar::cookiesInPartitionedCookieStorage(const WebCore::Document& 
         if (![[cookie name] length] || [cookie isHTTPOnly])
             continue;
 
-        cookiesBuilder.append(cookiesBuilder.isEmpty() ? "" : "; ", [cookie name], "=", [cookie value]);
+        cookiesBuilder.append(cookiesBuilder.isEmpty() ? ""_s : "; "_s, [cookie name], '=', [cookie value]);
     }
 
     return cookiesBuilder.toString();

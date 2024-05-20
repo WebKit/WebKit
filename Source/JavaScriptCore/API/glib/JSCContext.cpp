@@ -460,7 +460,7 @@ JSValueRef jscContextGValueToJSValue(JSCContext* context, const GValue* value, J
         break;
     }
 
-    *exception = toRef(JSC::createTypeError(globalObject, makeString("unsupported type "_s, g_type_name(G_VALUE_TYPE(value)))));
+    *exception = toRef(JSC::createTypeError(globalObject, makeString("unsupported type "_s, span(g_type_name(G_VALUE_TYPE(value))))));
     return JSValueMakeUndefined(priv->jsContext.get());
 }
 
@@ -580,7 +580,7 @@ void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType ty
     case G_TYPE_INTERFACE:
     case G_TYPE_VARIANT:
     default:
-        *exception = toRef(JSC::createTypeError(globalObject, makeString("unsupported type "_s, g_type_name(G_VALUE_TYPE(value)))));
+        *exception = toRef(JSC::createTypeError(globalObject, makeString("unsupported type "_s, span(g_type_name(G_VALUE_TYPE(value))))));
         break;
     }
 }

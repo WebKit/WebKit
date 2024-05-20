@@ -108,32 +108,32 @@ void WebKitProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
         webkit_uri_scheme_request_finish_error(request, error.get());
 }
 
-static inline const char* webkitPortName()
+static inline ASCIILiteral webkitPortName()
 {
 #if PLATFORM(GTK)
-    return "WebKitGTK";
+    return "WebKitGTK"_s;
 #elif PLATFORM(WPE)
-    return "WPE WebKit";
+    return "WPE WebKit"_s;
 #endif
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static const char* hardwareAccelerationPolicy(WebKitURISchemeRequest* request)
+static ASCIILiteral hardwareAccelerationPolicy(WebKitURISchemeRequest* request)
 {
 #if PLATFORM(WPE)
-    return "always";
+    return "always"_s;
 #elif PLATFORM(GTK)
     auto* webView = webkit_uri_scheme_request_get_web_view(request);
     ASSERT(webView);
 
     switch (webkit_settings_get_hardware_acceleration_policy(webkit_web_view_get_settings(webView))) {
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER:
-        return "never";
+        return "never"_s;
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS:
-        return "always";
+        return "always"_s;
 #if !USE(GTK4)
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
-        return "on demand";
+        return "on demand"_s;
 #endif
     }
 #endif
@@ -335,14 +335,14 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         auto eglDisplay = eglGetCurrentDisplay();
         addTableRow(jsonObject, "EGL_VERSION"_s, String::fromUTF8(eglQueryString(eglDisplay, EGL_VERSION)));
         addTableRow(jsonObject, "EGL_VENDOR"_s, String::fromUTF8(eglQueryString(eglDisplay, EGL_VENDOR)));
-        addTableRow(jsonObject, "EGL_EXTENSIONS"_s, makeString(eglQueryString(nullptr, EGL_EXTENSIONS), ' ', eglQueryString(eglDisplay, EGL_EXTENSIONS)));
+        addTableRow(jsonObject, "EGL_EXTENSIONS"_s, makeString(span(eglQueryString(nullptr, EGL_EXTENSIONS)), ' ', span(eglQueryString(eglDisplay, EGL_EXTENSIONS))));
     };
 
     auto jsonObject = JSON::Object::create();
 
     startTable("Version Information"_s);
     auto versionObject = JSON::Object::create();
-    addTableRow(versionObject, "WebKit version"_s, makeString(webkitPortName(), ' ', WEBKIT_MAJOR_VERSION, '.', WEBKIT_MINOR_VERSION, '.', WEBKIT_MICRO_VERSION, " ("_s, BUILD_REVISION, ')'));
+    addTableRow(versionObject, "WebKit version"_s, makeString(webkitPortName(), ' ', WEBKIT_MAJOR_VERSION, '.', WEBKIT_MINOR_VERSION, '.', WEBKIT_MICRO_VERSION, " ("_s, WTF::span(BUILD_REVISION), ')'));
 
 #if OS(UNIX)
     struct utsname osName;
@@ -354,7 +354,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(versionObject, "Desktop"_s, (desktopName && *desktopName) ? String::fromUTF8(desktopName) : "Unknown"_s);
 
 #if USE(CAIRO)
-    addTableRow(versionObject, "Cairo version"_s, makeString(CAIRO_VERSION_STRING, " (build) "_s, cairo_version_string(), " (runtime)"_s));
+    addTableRow(versionObject, "Cairo version"_s, makeString(WTF::span(CAIRO_VERSION_STRING), " (build) "_s, WTF::span(cairo_version_string()), " (runtime)"_s));
 #endif
 
 #if USE(GSTREAMER)
@@ -404,7 +404,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(displayObject, "Type"_s, !typeStringBuilder.isEmpty() ? typeStringBuilder.toString() : "Unknown"_s);
 #endif // PLATFORM(GTK)
 
-    const char* policy = hardwareAccelerationPolicy(request);
+    auto policy = hardwareAccelerationPolicy(request);
 
     auto rect = IntRect(screenRect(nullptr));
     addTableRow(displayObject, "Screen geometry"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
@@ -422,12 +422,12 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         if (auto* displayLink = page.process().processPool().displayLinks().existingDisplayLinkForDisplay(*displayID)) {
             auto& vblankMonitor = displayLink->vblankMonitor();
             addTableRow(displayObject, "VBlank type"_s, vblankMonitor.type() == DisplayVBlankMonitor::Type::Timer ? "Timer"_s : "DRM"_s);
-            addTableRow(displayObject, "VBlank refresh rate"_s, makeString(vblankMonitor.refreshRate(), "Hz"));
+            addTableRow(displayObject, "VBlank refresh rate"_s, makeString(vblankMonitor.refreshRate(), "Hz"_s));
         }
     }
 
 #if USE(LIBDRM)
-    if (strcmp(policy, "never")) {
+    if (policy != "never"_s) {
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
         String deviceFile, renderNode;
         auto* webView = webkit_uri_scheme_request_get_web_view(request);
@@ -455,14 +455,14 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
     auto hardwareAccelerationObject = JSON::Object::create();
     startTable("Hardware Acceleration Information"_s);
-    addTableRow(hardwareAccelerationObject, "Policy"_s, String::fromUTF8(policy));
+    addTableRow(hardwareAccelerationObject, "Policy"_s, policy);
 
 #if ENABLE(WEBGL)
     addTableRow(hardwareAccelerationObject, "WebGL enabled"_s, webGLEnabled(request) ? "Yes"_s : "No"_s);
 #endif
 
     std::unique_ptr<PlatformDisplay> renderDisplay;
-    if (strcmp(policy, "never")) {
+    if (policy != "never"_s) {
         addTableRow(jsonObject, "API"_s, String::fromUTF8(openGLAPI()));
 #if PLATFORM(GTK)
         if (usingDMABufRenderer) {
@@ -485,7 +485,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     jsonObject->setObject("Hardware Acceleration Information"_s, WTFMove(hardwareAccelerationObject));
 
 #if PLATFORM(GTK)
-    if (strcmp(policy, "never")) {
+    if (policy != "never"_s) {
         std::unique_ptr<PlatformDisplay> platformDisplay;
         if (usingDMABufRenderer) {
 #if USE(GBM)

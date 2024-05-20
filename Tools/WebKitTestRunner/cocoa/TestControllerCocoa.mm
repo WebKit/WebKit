@@ -198,9 +198,9 @@ void TestController::cocoaPlatformInitialize(const Options& options)
     if (!dumpRenderTreeTemp)
         return;
 
-    String resourceLoadStatisticsFolder = makeString(dumpRenderTreeTemp, "/ResourceLoadStatistics");
+    String resourceLoadStatisticsFolder = makeString(String::fromUTF8(dumpRenderTreeTemp), "/ResourceLoadStatistics"_s);
     [[NSFileManager defaultManager] createDirectoryAtPath:resourceLoadStatisticsFolder withIntermediateDirectories:YES attributes:nil error: nil];
-    String fullBrowsingSessionResourceLog = makeString(resourceLoadStatisticsFolder, "/full_browsing_session_resourceLog.plist");
+    String fullBrowsingSessionResourceLog = makeString(resourceLoadStatisticsFolder, "/full_browsing_session_resourceLog.plist"_s);
     NSDictionary *resourceLogPlist = @{ @"version": @(1) };
     if (![resourceLogPlist writeToFile:fullBrowsingSessionResourceLog atomically:YES])
         WTFCrash();
@@ -779,10 +779,10 @@ WKRetainPtr<WKStringRef> TestController::backgroundFetchState(WKStringRef identi
     __block bool isDone = false;
     __block String backgroundFetchState;
     [globalWebViewConfiguration().get().websiteDataStore _getBackgroundFetchState:toWTFString(identifier) completionHandler:^(NSDictionary *state) {
-        backgroundFetchState = makeString("{ ",
-            "\"downloaded\":", [[state valueForKey:@"Downloaded"] unsignedIntegerValue], ",",
-            "\"isPaused\":", [[state valueForKey:@"IsPaused"] boolValue] ? "true" : "false",
-        "}");
+        backgroundFetchState = makeString("{ "_s,
+            "\"downloaded\":"_s, [[state valueForKey:@"Downloaded"] unsignedIntegerValue], ',',
+            "\"isPaused\":"_s, [[state valueForKey:@"IsPaused"] boolValue] ? "true"_s : "false"_s,
+        '}');
         isDone = true;
     }];
     platformRunUntil(isDone, noTimeout);

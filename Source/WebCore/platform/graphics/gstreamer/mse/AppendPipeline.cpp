@@ -160,7 +160,7 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     m_demuxerDataEnteringPadProbeInformation.probeId = gst_pad_add_probe(demuxerPad.get(), GST_PAD_PROBE_TYPE_BUFFER, reinterpret_cast<GstPadProbeCallback>(appendPipelinePadProbeDebugInformation), &m_demuxerDataEnteringPadProbeInformation, nullptr);
 #endif
 
-    auto elementClass = makeString(gst_element_get_metadata(m_demux.get(), GST_ELEMENT_METADATA_KLASS));
+    String elementClass = span(gst_element_get_metadata(m_demux.get(), GST_ELEMENT_METADATA_KLASS));
     auto classifiers = elementClass.split('/');
     if (classifiers.contains("Demuxer"_s)) {
         // These signals won't outlive the lifetime of `this`.

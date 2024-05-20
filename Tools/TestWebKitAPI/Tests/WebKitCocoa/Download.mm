@@ -1185,11 +1185,11 @@ static TestWebKitAPI::HTTPServer downloadTestServer(IncludeETag includeETag = In
         case 1:
             connection.receiveHTTPRequest([includeETag, connection, terminator = WTFMove(terminator)] (Vector<char>&&) mutable {
                 auto response = makeString(
-                    "HTTP/1.1 200 OK\r\n",
-                    includeETag == IncludeETag::Yes ? "ETag: test\r\n" : "",
+                    "HTTP/1.1 200 OK\r\n"_s,
+                    includeETag == IncludeETag::Yes ? "ETag: test\r\n"_s : ""_s,
                     "Content-Length: 10000\r\n"
                     "Content-Disposition: attachment; filename=\"example.txt\"\r\n"
-                    "\r\n", longString<5000>('a')
+                    "\r\n"_s, longString<5000>('a')
                 );
                 connection.send(WTFMove(response), [connection, terminator = WTFMove(terminator)] () mutable {
                     if (terminator)
@@ -1205,7 +1205,7 @@ static TestWebKitAPI::HTTPServer downloadTestServer(IncludeETag includeETag = In
                     "ETag: test\r\n"
                     "Content-Length: 5000\r\n"
                     "Content-Range: bytes 5000-9999/10000\r\n"
-                    "\r\n", longString<5000>('b')
+                    "\r\n"_s, longString<5000>('b')
                 ));
             });
             break;
@@ -1237,7 +1237,7 @@ static TestWebKitAPI::HTTPServer simpleDownloadTestServer()
                 "ETag: test\r\n"
                 "Content-Length: 5000\r\n"
                 "Content-Disposition: attachment; filename=\"example.txt\"\r\n"
-                "\r\n", longString<5000>('a')
+                "\r\n"_s, longString<5000>('a')
             ));
         });
     }};
@@ -1754,7 +1754,7 @@ TEST(WKDownload, ResumeAfterZeroBytesReceived)
                     "HTTP/1.1 200 OK\r\n"
                     "ETag: test\r\n"
                     "Content-Length: 100\r\n"
-                    "\r\n", longString<100>('x')
+                    "\r\n"_s, longString<100>('x')
                 ));
             });
             break;
@@ -1868,7 +1868,7 @@ TEST(WKDownload, ResumeWithoutInitialDataOnDisk)
                     "ETag: test\r\n"
                     "Content-Length: 10000\r\n"
                     "Content-Disposition: attachment; filename=\"example.txt\"\r\n"
-                    "\r\n",
+                    "\r\n"_s,
                     longString<5000>('a')
                 ));
             });
@@ -1880,7 +1880,7 @@ TEST(WKDownload, ResumeWithoutInitialDataOnDisk)
                     "HTTP/1.1 200 OK\r\n"
                     "ETag: test\r\n"
                     "Content-Length: 10000\r\n"
-                    "\r\n",
+                    "\r\n"_s,
                     longString<10000>('x')
                 ));
             });
@@ -1911,7 +1911,7 @@ TEST(WKDownload, ResumeWithExtraInitialDataOnDisk)
                     "ETag: test\r\n"
                     "Content-Length: 10000\r\n"
                     "Content-Disposition: attachment; filename=\"example.txt\"\r\n"
-                    "\r\n",
+                    "\r\n"_s,
                     longString<5000>('a')
                 ));
             });
@@ -1924,7 +1924,7 @@ TEST(WKDownload, ResumeWithExtraInitialDataOnDisk)
                     "ETag: test\r\n"
                     "Content-Range: bytes 5000-9999/10000\r\n"
                     "Content-Length: 5000\r\n"
-                    "\r\n",
+                    "\r\n"_s,
                     longString<10000>('d')
                 ));
             });
@@ -2022,7 +2022,7 @@ TEST(WKDownload, UnknownContentLength)
 {
     HTTPServer server([](Connection connection) {
         connection.receiveHTTPRequest([=](Vector<char>&&) {
-            connection.send(makeString("HTTP/1.1 200 OK\r\n\r\n", longString<5000>('a')));
+            connection.send(makeString("HTTP/1.1 200 OK\r\n\r\n"_s, longString<5000>('a')));
         });
     });
     NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
@@ -2719,7 +2719,7 @@ static TestWebKitAPI::HTTPServer simplePDFTestServer()
                 "HTTP/1.1 200 OK\r\n"
                 "content-type: application/pdf\r\n"
                 "Content-Length: 5000\r\n"
-                "\r\n", longString<5000>('a')
+                "\r\n"_s, longString<5000>('a')
             ));
         });
     } };
@@ -2771,7 +2771,7 @@ static TestWebKitAPI::HTTPServer simpleUSDZTestServer()
                 "HTTP/1.1 200 OK\r\n"
                 "content-type: model/vnd.usdz+zip\r\n"
                 "Content-Length: 5000\r\n"
-                "\r\n", longString<5000>('a')
+                "\r\n"_s, longString<5000>('a')
             ));
         });
     } };

@@ -495,7 +495,7 @@ void PDFPluginBase::startByteRangeRequest(NetscapePlugInStreamLoaderClient& stre
     auto resourceRequest = documentLoader->request();
     resourceRequest.setRequester(ResourceRequestRequester::Unspecified);
     resourceRequest.setURL(m_view->mainResourceURL());
-    resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, "-"_s, position + count - 1));
+    resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, '-', position + count - 1));
     resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
 
     WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*coreFrame, streamLoaderClient, WTFMove(resourceRequest), [incrementalLoader = Ref { *m_incrementalLoader }, requestIdentifier] (RefPtr<NetscapePlugInStreamLoader>&& streamLoader) {
@@ -818,7 +818,7 @@ IntPoint PDFPluginBase::convertFromContainingViewToScrollbar(const Scrollbar& sc
 
 String PDFPluginBase::debugDescription() const
 {
-    return makeString("PDFPluginBase 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    return makeString("PDFPluginBase 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }
 
 void PDFPluginBase::willDetachRenderer()

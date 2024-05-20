@@ -546,18 +546,18 @@ String WebBackForwardList::loggingString()
 {
     StringBuilder builder;
 
-    builder.append("WebBackForwardList 0x"_s, hex(reinterpret_cast<uintptr_t>(this)), " - "_s, m_entries.size(), " entries, has current index "_s, m_currentIndex ? "YES"_s : "NO"_s, " ("_s, m_currentIndex ? *m_currentIndex : 0, ')');
+    builder.append("\nWebBackForwardList 0x"_s, hex(reinterpret_cast<uintptr_t>(this)), " - "_s, m_entries.size(), " entries, has current index "_s, m_currentIndex ? "YES"_s : "NO"_s, " ("_s, m_currentIndex ? *m_currentIndex : 0, ')');
 
     for (size_t i = 0; i < m_entries.size(); ++i) {
-        const char* prefix;
+        ASCIILiteral prefix;
         if (m_currentIndex && *m_currentIndex == i)
-            prefix = " * ";
+            prefix = " * "_s;
         else
-            prefix = " - ";
+            prefix = " - "_s;
         builder.append('\n', prefix, m_entries[i]->loggingString());
     }
 
-    return makeString("\n", builder.toString());
+    return builder.toString();
 }
 
 #endif // !LOG_DISABLED

@@ -149,7 +149,7 @@ static String effectiveApplicationId()
     // If it is not possible to obtain the executable path, generate
     // a random identifier as a fallback.
     auto uuid = WTF::UUID::createVersion4Weak();
-    return makeString("org.webkit.app-", uuid.toString());
+    return makeString("org.webkit.app-"_s, uuid.toString());
 }
 
 static void createBwrapInfo(GSubprocessLauncher* launcher, Vector<CString>& args, const char* instanceID)

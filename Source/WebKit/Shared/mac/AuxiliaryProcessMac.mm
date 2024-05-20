@@ -239,7 +239,7 @@ static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInit
             WTFLogAlways("%s: Could not set sandbox parameter: %s\n", getprogname(), safeStrerror(errno).data());
             CRASH();
         }
-        builder.append(name, ':', value, ':');
+        builder.append(span(name), ':', span(value), ':');
     }
     if (isProfilePath) {
         auto contents = fileContents(profileOrProfilePath);

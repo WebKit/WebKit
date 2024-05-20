@@ -1774,14 +1774,14 @@ CursiveFontFamily:
   webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)": '"Snell Roundhand"'
-      default: '"Apple Chancery"'
+      "PLATFORM(IOS_FAMILY)": '"Snell Roundhand"_str'
+      default: '"Apple Chancery"_str'
     WebKit:
-      "PLATFORM(COCOA) && PLATFORM(IOS_FAMILY)": '"Snell Roundhand"'
-      "PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)": '"Apple Chancery"'
-      default: '"Comic Sans MS"'
+      "PLATFORM(COCOA) && PLATFORM(IOS_FAMILY)": '"Snell Roundhand"_str'
+      "PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)": '"Apple Chancery"_str'
+      default: '"Comic Sans MS"_str'
     WebCore:
-      default: '""'
+      default: '""_str'
 
 CustomPasteboardDataEnabled:
   type: bool
@@ -2050,7 +2050,7 @@ DefaultTextEncodingName:
   status: embedder
   defaultValue:
     WebKitLegacy:
-      default: '"ISO-8859-1"'
+      default: '"ISO-8859-1"_str'
     WebKit:
       default: PAL::defaultTextEncodingNameForSystemLanguage()
     WebCore:
@@ -2439,11 +2439,11 @@ FTPDirectoryTemplatePath:
   status: embedder
   defaultValue:
     WebKitLegacy:
-      default: '""'
+      default: '""_str'
     WebKit:
-      default: '""'
+      default: '""_str'
     WebCore:
-      default: '""'
+      default: '""_str'
 
 FTPEnabled:
   type: bool
@@ -2466,12 +2466,12 @@ FantasyFontFamily:
   webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
-      default: '"Papyrus"'
+      default: '"Papyrus"_str'
     WebKit:
-      "PLATFORM(COCOA)": '"Papyrus"'
-      default: '"Impact"'
+      "PLATFORM(COCOA)": '"Papyrus"_str'
+      default: '"Impact"_str'
     WebCore:
-      default: '""'
+      default: '""_str'
 
 FasterClicksEnabled:
   type: bool
@@ -2550,12 +2550,12 @@ FixedFontFamily:
   webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
-      default: '"Courier"'
+      default: '"Courier"_str'
     WebKit:
-      "PLATFORM(COCOA)": '"Courier"'
-      default: '"Courier New"'
+      "PLATFORM(COCOA)": '"Courier"_str'
+      default: '"Courier New"_str'
     WebCore:
-      default: '""'
+      default: '""_str'
 
 FlexFormattingContextIntegrationEnabled:
   type: bool
@@ -3235,7 +3235,7 @@ InspectorWindowFrame:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: '""'
+      default: '""_str'
 
 InteractionRegionInlinePadding:
   type: double
@@ -4034,7 +4034,7 @@ MediaAudioCodecIDsAllowedInLockdownMode:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: '"aac ,zaac,qaac,caac,.mp3,mp4a"'
+      default: '"aac ,zaac,qaac,caac,.mp3,mp4a"_str'
 
 MediaCapabilitiesEnabled:
   type: bool
@@ -4085,7 +4085,7 @@ MediaCaptionFormatTypesAllowedInLockdownMode:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: '"c608,wvtt"'
+      default: '"c608,wvtt"_str'
 
 MediaCaptureRequiresSecureConnection:
   type: bool
@@ -4110,7 +4110,7 @@ MediaCodecTypesAllowedInLockdownMode:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: '"mp4a.40,avc1"'
+      default: '"mp4a.40,avc1"_str'
 
 MediaContainerTypesAllowedInLockdownMode:
   type: String
@@ -4119,7 +4119,7 @@ MediaContainerTypesAllowedInLockdownMode:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: '"video/mp4,audio/mp4,video/x-m4v,audio/x-m4a,audio/mp3,application/x-mpegURL,application/vnd.apple.mpegURL,video/mp2t,video/iso.segment,audio/aac,audio/mpeg,audio/ac3,audio/eac3,video/mpeg2,text/vtt"'
+      default: '"video/mp4,audio/mp4,video/x-m4v,audio/x-m4a,audio/mp3,application/x-mpegURL,application/vnd.apple.mpegURL,video/mp2t,video/iso.segment,audio/aac,audio/mpeg,audio/ac3,audio/eac3,video/mpeg2,text/vtt"_str'
 
 MediaContentTypesRequiringHardwareSupport:
   type: String
@@ -4128,11 +4128,11 @@ MediaContentTypesRequiringHardwareSupport:
   webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
-      default: '""'
+      default: '""_str'
     WebKit:
-      default: '""'
+      default: '""_str'
     WebCore:
-      default: '""'
+      default: '""_str'
 
 MediaControlsContextMenusEnabled:
   type: bool
@@ -4384,7 +4384,7 @@ MediaVideoCodecIDsAllowedInLockdownMode:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: '"avc1,zavc,qavc,cavc"'
+      default: '"avc1,zavc,qavc,cavc"_str'
 
 MinimumFontSize:
   type: double
@@ -4992,14 +4992,14 @@ PictographFontFamily:
   webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)": '"AppleColorEmoji"'
-      default: '"Apple Color Emoji"'
+      "PLATFORM(IOS_FAMILY)": '"AppleColorEmoji"_str'
+      default: '"Apple Color Emoji"_str'
     WebKit:
-      "PLATFORM(COCOA) && PLATFORM(IOS_FAMILY)": '"AppleColorEmoji"'
-      "PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)": '"Apple Color Emoji"'
-      default: '"Times"'
+      "PLATFORM(COCOA) && PLATFORM(IOS_FAMILY)": '"AppleColorEmoji"_str'
+      "PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)": '"Apple Color Emoji"_str'
+      default: '"Times"_str'
     WebCore:
-      default: '""'
+      default: '""_str'
 
 PictureInPictureAPIEnabled:
   type: bool
@@ -5519,11 +5519,11 @@ SansSerifFontFamily:
   webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
-      default: '"Helvetica"'
+      default: '"Helvetica"_str'
     WebKit:
-      default: '"Helvetica"'
+      default: '"Helvetica"_str'
     WebCore:
-      default: '""'
+      default: '""_str'
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 # FIXME: This should have it's own ENABLE.
@@ -5786,11 +5786,11 @@ SerifFontFamily:
   webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
-      default: '"Times"'
+      default: '"Times"_str'
     WebKit:
-      default: '"Times"'
+      default: '"Times"_str'
     WebCore:
-      default: '""'
+      default: '""_str'
 
 ServiceControlsEnabled:
   type: bool
@@ -6304,12 +6304,12 @@ StandardFontFamily:
   webcoreImplementation: custom
   defaultValue:
     WebKitLegacy:
-      default: '"Times"'
+      default: '"Times"_str'
     WebKit:
-      "PLATFORM(WATCHOS)": '"system-ui"'
-      default: '"Times"'
+      "PLATFORM(WATCHOS)": '"system-ui"_str'
+      default: '"Times"_str'
     WebCore:
-      default: '""'
+      default: '""_str'
 
 StorageAPIEnabled:
   type: bool

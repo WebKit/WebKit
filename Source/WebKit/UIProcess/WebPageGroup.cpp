@@ -83,7 +83,7 @@ static WebPageGroupData pageGroupData(const String& identifier)
     if (!identifier.isEmpty())
         data.identifier = identifier;
     else
-        data.identifier = makeString("__uniquePageGroupID-", data.pageGroupID.toUInt64());
+        data.identifier = makeString("__uniquePageGroupID-"_s, data.pageGroupID.toUInt64());
 
     return data;
 }

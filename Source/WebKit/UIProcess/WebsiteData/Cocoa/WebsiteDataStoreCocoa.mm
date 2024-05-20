@@ -153,7 +153,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     if (auto manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"]) {
         URL url { { }, manualPrevalentResource };
         if (!url.isValid())
-            url = { { }, makeString("http://", manualPrevalentResource) };
+            url = { { }, makeString("http://"_s, manualPrevalentResource) };
         if (url.isValid())
             resourceLoadStatisticsManualPrevalentResource = WebCore::RegistrableDomain { url };
     }

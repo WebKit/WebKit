@@ -150,41 +150,41 @@ TEST(StringBuilderTest, VariadicAppend)
 
     {
         StringBuilder builder;
-        builder.append(String("0123456789"_s), "abcd", 'e', "");
+        builder.append(String("0123456789"_s), "abcd"_s, 'e', ""_s);
         expectBuilderContent("0123456789abcde"_s, builder);
-        builder.append(String("A"_s), "B", 'C', "");
+        builder.append(String("A"_s), "B"_s, 'C', ""_s);
         expectBuilderContent("0123456789abcdeABC"_s, builder);
     }
 
     {
         StringBuilder builder;
-        builder.append(String("0123456789"_s), "abcd", bullseye, "");
-        expectBuilderContent(makeString("0123456789abcd", String({ &bullseye, 1 })), builder);
-        builder.append(String("A"_s), "B", 'C', "");
-        expectBuilderContent(makeString("0123456789abcd", String({ &bullseye, 1 }), "ABC"), builder);
+        builder.append(String("0123456789"_s), "abcd"_s, bullseye, ""_s);
+        expectBuilderContent(makeString("0123456789abcd"_s, String({ &bullseye, 1 })), builder);
+        builder.append(String("A"_s), "B"_s, 'C', ""_s);
+        expectBuilderContent(makeString("0123456789abcd"_s, String({ &bullseye, 1 }), "ABC"_s), builder);
     }
 
     {
         // Test where we upconvert the StringBuilder from 8-bit to 16-bit, and don't fit in the existing capacity.
         StringBuilder builder;
-        builder.append(String("0123456789"_s), "abcd", 'e', "");
+        builder.append(String("0123456789"_s), "abcd"_s, 'e', ""_s);
         expectBuilderContent("0123456789abcde"_s, builder);
         EXPECT_TRUE(builder.is8Bit());
         EXPECT_LT(builder.capacity(), builder.length() + 3);
-        builder.append(String("A"_s), "B", bullseye, "");
-        expectBuilderContent(makeString("0123456789abcdeAB", String({ &bullseye, 1 })), builder);
+        builder.append(String("A"_s), "B"_s, bullseye, ""_s);
+        expectBuilderContent(makeString("0123456789abcdeAB"_s, String({ &bullseye, 1 })), builder);
     }
 
     {
         // Test where we upconvert the StringBuilder from 8-bit to 16-bit, but would have fit in the capacity if the upconvert wasn't necessary.
         StringBuilder builder;
-        builder.append(String("0123456789"_s), "abcd", 'e', "");
+        builder.append(String("0123456789"_s), "abcd"_s, 'e', ""_s);
         expectBuilderContent("0123456789abcde"_s, builder);
         builder.reserveCapacity(32);
         EXPECT_TRUE(builder.is8Bit());
         EXPECT_GE(builder.capacity(), builder.length() + 3);
-        builder.append(String("A"_s), "B", bullseye, "");
-        expectBuilderContent(makeString("0123456789abcdeAB", String({ &bullseye, 1 })), builder);
+        builder.append(String("A"_s), "B"_s, bullseye, ""_s);
+        expectBuilderContent(makeString("0123456789abcdeAB"_s, String({ &bullseye, 1 })), builder);
     }
 }
 

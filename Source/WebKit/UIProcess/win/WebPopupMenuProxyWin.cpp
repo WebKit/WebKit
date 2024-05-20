@@ -962,7 +962,7 @@ bool WebPopupMenuProxyWin::scrollToRevealSelection()
 
 String WebPopupMenuProxyWin::debugDescription() const
 {
-    return makeString("WebPopupMenuProxyWin 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    return makeString("WebPopupMenuProxyWin 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }
 
 } // namespace WebKit

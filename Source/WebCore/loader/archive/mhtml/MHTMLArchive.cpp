@@ -164,7 +164,7 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 
     for (auto& resource : resources) {
         stringBuilder.clear();
-        stringBuilder.append(endOfResourceBoundary, "Content-Type: ", resource.mimeType);
+        stringBuilder.append(endOfResourceBoundary, "Content-Type: "_s, resource.mimeType);
 
         ASCIILiteral contentEncoding;
         if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(resource.mimeType) || MIMETypeRegistry::isSupportedNonImageMIMEType(resource.mimeType))

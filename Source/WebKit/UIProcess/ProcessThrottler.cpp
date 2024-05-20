@@ -226,7 +226,7 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
         return "Unknown"_s;
     }();
 
-    return makeString(protectedProcess()->clientName(), " ", typeString, " Assertion");
+    return makeString(protectedProcess()->clientName(), ' ', typeString, " Assertion"_s);
 }
 
 ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleState state)

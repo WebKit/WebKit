@@ -656,14 +656,14 @@ TEST(WebAuthenticationPanel, SubFrameChangeLocationHidCancel)
     [webView focus];
 
     auto port = static_cast<unsigned>(server.port());
-    auto url = makeString("http://localhost:", port);
+    auto url = makeString("http://localhost:"_s, port);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)url]]];
     Util::run(&webAuthenticationPanelRan);
     [webView evaluateJavaScript:@"theFrame.src = 'simple.html'" completionHandler:nil];
     Util::run(&webAuthenticationPanelFailed);
 
     // A bit of extra checks.
-    checkFrameInfo([delegate frame], false, (id)makeString(url, "/iFrame.html"), @"http", @"localhost", port, webView.get());
+    checkFrameInfo([delegate frame], false, (id)makeString(url, "/iFrame.html"_s), @"http", @"localhost", port, webView.get());
     checkPanel([delegate panel], @"localhost", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get()], _WKWebAuthenticationTypeGet);
 }
 
@@ -701,7 +701,7 @@ TEST(WebAuthenticationPanel, SubFrameDestructionHidCancel)
     [webView setUIDelegate:delegate.get()];
     [webView focus];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)makeString("http://localhost:", server.port())]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)makeString("http://localhost:"_s, server.port())]]];
     Util::run(&webAuthenticationPanelRan);
     [webView evaluateJavaScript:@"theFrame.parentNode.removeChild(theFrame)" completionHandler:nil];
     Util::run(&webAuthenticationPanelFailed);

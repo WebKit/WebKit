@@ -41,7 +41,7 @@ RealtimeOutgoingAudioSourceGStreamer::RealtimeOutgoingAudioSourceGStreamer(const
         GST_DEBUG_CATEGORY_INIT(webkit_webrtc_outgoing_audio_debug, "webkitwebrtcoutgoingaudio", 0, "WebKit WebRTC outgoing audio");
     });
     static Atomic<uint64_t> sourceCounter = 0;
-    gst_element_set_name(m_bin.get(), makeString("outgoing-audio-source-", sourceCounter.exchangeAdd(1)).ascii().data());
+    gst_element_set_name(m_bin.get(), makeString("outgoing-audio-source-"_s, sourceCounter.exchangeAdd(1)).ascii().data());
     m_audioconvert = makeGStreamerElement("audioconvert", nullptr);
     m_audioresample = makeGStreamerElement("audioresample", nullptr);
     m_inputCapsFilter = gst_element_factory_make("capsfilter", nullptr);
@@ -67,7 +67,7 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         return false;
     }
 
-    auto encoding = makeString(encodingName).convertToASCIILowercase();
+    auto encoding = String(WTF::span(encodingName)).convertToASCIILowercase();
     m_payloader = makeGStreamerElement(makeString("rtp"_s, encoding, "pay"_s).ascii().data(), nullptr);
     if (UNLIKELY(!m_payloader)) {
         GST_ERROR_OBJECT(m_bin.get(), "RTP payloader not found for encoding %s", encodingName);
@@ -148,7 +148,7 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     // enabled. In order to prevent caps negotiation issues with downstream, explicitely set it.
     unsigned totalFields = gst_structure_n_fields(structure.get());
     for (unsigned i = 0; i < totalFields; i++) {
-        auto fieldName = makeString(gst_structure_nth_field_name(structure.get(), i));
+        String fieldName = WTF::span(gst_structure_nth_field_name(structure.get(), i));
         if (!fieldName.startsWith("extmap-"_s))
             continue;
 

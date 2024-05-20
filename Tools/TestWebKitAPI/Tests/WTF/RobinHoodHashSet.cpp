@@ -509,23 +509,23 @@ TEST(WTF_RobinHoodHashSet, ReserveInitialCapacity)
     EXPECT_EQ(16384u, set.capacity());
 
     for (int i = 0; i < 9999; ++i)
-        set.add(makeString("foo", i));
+        set.add(makeString("foo"_s, i));
     EXPECT_EQ(9999u, set.size());
     EXPECT_EQ(16384u, set.capacity());
     EXPECT_TRUE(set.contains("foo3"_str));
 
     for (int i = 0; i < 9999; ++i)
-        set.add(makeString("excess", i));
+        set.add(makeString("excess"_s, i));
     EXPECT_EQ(9999u + 9999u, set.size());
     EXPECT_EQ(32768u, set.capacity());
 
     for (int i = 0; i < 9999; ++i)
-        EXPECT_TRUE(set.remove(makeString("foo", i)));
+        EXPECT_TRUE(set.remove(makeString("foo"_s, i)));
     EXPECT_EQ(9999u, set.size());
     EXPECT_EQ(32768u, set.capacity());
 
     for (int i = 0; i < 9999; ++i)
-        EXPECT_TRUE(set.remove(makeString("excess", i)));
+        EXPECT_TRUE(set.remove(makeString("excess"_s, i)));
     EXPECT_EQ(0u, set.size());
     EXPECT_EQ(8u, set.capacity());
 
@@ -534,12 +534,12 @@ TEST(WTF_RobinHoodHashSet, ReserveInitialCapacity)
     EXPECT_FALSE(set2.remove("foo1"_s));
 
     for (int i = 0; i < 2000; ++i)
-        set2.add(makeString("foo", i));
+        set2.add(makeString("foo"_s, i));
     EXPECT_EQ(2000u, set2.size());
     EXPECT_EQ(16384u, set2.capacity());
 
     for (int i = 0; i < 2000; ++i)
-        EXPECT_TRUE(set2.remove(makeString("foo", i)));
+        EXPECT_TRUE(set2.remove(makeString("foo"_s, i)));
     EXPECT_EQ(0u, set2.size());
     EXPECT_EQ(8u, set2.capacity());
 }

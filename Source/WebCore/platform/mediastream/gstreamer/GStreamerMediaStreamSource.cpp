@@ -154,12 +154,12 @@ public:
         String elementName;
         if (track.isAudio()) {
             m_audioTrack = AudioTrackPrivateMediaStream::create(track);
-            elementName = makeString("audiosrc", audioCounter);
+            elementName = makeString("audiosrc"_s, audioCounter);
             audioCounter++;
         } else {
             RELEASE_ASSERT(track.isVideo());
             m_videoTrack = VideoTrackPrivateMediaStream::create(track);
-            elementName = makeString("videosrc", videoCounter);
+            elementName = makeString("videosrc"_s, videoCounter);
             videoCounter++;
         }
 
@@ -462,7 +462,7 @@ public:
             m_videoRotation = videoRotation;
             m_videoMirrored = videoMirrored;
 
-            auto orientation = makeString(videoMirrored ? "flip-" : "", "rotate-", m_videoRotation);
+            auto orientation = makeString(videoMirrored ? "flip-"_s : ""_s, "rotate-"_s, m_videoRotation);
             GST_DEBUG_OBJECT(m_src.get(), "Pushing orientation tag: %s", orientation.utf8().data());
             auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
             gst_pad_push_event(pad.get(), gst_event_new_tag(gst_tag_list_new(GST_TAG_IMAGE_ORIENTATION, orientation.utf8().data(), nullptr)));
@@ -1057,24 +1057,24 @@ static GstPadProbeReturn webkitMediaStreamSrcPadProbeCb(GstPad* pad, GstPadProbe
 
 void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPrivate* track, bool onlyTrack, bool consumerIsVideoPlayer)
 {
-    const char* sourceType;
+    ASCIILiteral sourceType;
     unsigned counter;
     GstStaticPadTemplate* padTemplate;
 
     if (track->isAudio()) {
         padTemplate = &audioSrcTemplate;
-        sourceType = "audio";
+        sourceType = "audio"_s;
         counter = self->priv->audioPadCounter.exchangeAdd(1);
     } else {
         RELEASE_ASSERT(track->isVideo());
         padTemplate = &videoSrcTemplate;
-        sourceType = "video";
+        sourceType = "video"_s;
         counter = self->priv->videoPadCounter.exchangeAdd(1);
     }
 
-    GST_DEBUG_OBJECT(self, "Setup %s source for track %s, only track: %s", sourceType, track->id().utf8().data(), boolForPrinting(onlyTrack));
+    GST_DEBUG_OBJECT(self, "Setup %s source for track %s, only track: %s", sourceType.characters(), track->id().utf8().data(), boolForPrinting(onlyTrack));
 
-    auto padName = makeString(sourceType, "_src", counter);
+    auto padName = makeString(sourceType, "_src"_s, counter);
     auto source = makeUnique<InternalSource>(GST_ELEMENT_CAST(self), *track, padName, consumerIsVideoPlayer);
     auto* element = source->get();
     gst_bin_add(GST_BIN_CAST(self), element);

@@ -636,7 +636,7 @@ String MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
     for (unsigned i = 0; i < capsSize; i++) {
         auto* features = gst_caps_get_features(caps.get(), i);
         const auto* structure = gst_caps_get_structure(caps.get(), i);
-        builder.append(gst_structure_get_name(structure), "<br/>"_s);
+        builder.append(WTF::span(gst_structure_get_name(structure)), "<br/>"_s);
         if (features && (gst_caps_features_is_any(features) || !gst_caps_features_is_equal(features, GST_CAPS_FEATURES_MEMORY_SYSTEM_MEMORY))) {
             GUniquePtr<char> serializedFeature(gst_caps_features_to_string(features));
             builder.append('(', WTF::span(serializedFeature.get()), ')');
@@ -644,12 +644,12 @@ String MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
 
         gst_structure_foreach(structure, [](GQuark field, const GValue* value, gpointer builderPointer) -> gboolean {
             auto* builder = reinterpret_cast<StringBuilder*>(builderPointer);
-            builder->append(g_quark_to_string(field), ": "_s);
+            builder->append(WTF::span(g_quark_to_string(field)), ": "_s);
 
             GUniquePtr<char> serializedValue(gst_value_serialize(value));
             String valueString = WTF::span(serializedValue.get());
             if (valueString.length() > 25)
-                builder->append(valueString.substring(0, 25), "…");
+                builder->append(valueString.substring(0, 25), WTF::span("…"));
             else
                 builder->append(valueString);
             builder->append("<br/>"_s);
@@ -678,7 +678,7 @@ void GStreamerElementHarness::dumpGraph(ASCIILiteral filenamePrefix)
 
     MermaidBuilder builder;
     builder.process(*this);
-    auto path = FileSystem::pathByAppendingComponent(makeString(dumpPath), filename);
+    auto path = FileSystem::pathByAppendingComponent(String::fromUTF8(dumpPath), filename);
     FileSystem::overwriteEntireFile(path, builder.span());
 #else
     UNUSED_PARAM(filenamePrefix);

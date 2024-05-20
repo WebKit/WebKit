@@ -126,12 +126,12 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
 
     auto error = validateResponse(request, redirectResponse);
     if (!error.isNull()) {
-        handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to ", redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: ", error.localizedDescription())));
+        handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to "_s, redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: "_s, error.localizedDescription())));
         return;
     }
 
     if (m_options.redirect == FetchOptions::Redirect::Error) {
-        handler(redirectionError(redirectResponse, makeString("Not allowed to follow a redirection while loading ", redirectResponse.url().string())));
+        handler(redirectionError(redirectResponse, makeString("Not allowed to follow a redirection while loading "_s, redirectResponse.url().string())));
         return;
     }
     if (m_options.redirect == FetchOptions::Redirect::Manual) {
@@ -145,11 +145,11 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
     if (m_options.mode == FetchOptions::Mode::Cors && (!m_isSameOriginRequest || !isSameOrigin(request.url(), m_origin.get()))) {
         auto location = URL(redirectResponse.url(), redirectResponse.httpHeaderField(HTTPHeaderName::Location));
         if (m_schemeRegistry && !m_schemeRegistry->shouldTreatURLSchemeAsCORSEnabled(location.protocol())) {
-            handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to ", redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme")));
+            handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to "_s, redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme"_s)));
             return;
         }
         if (location.hasCredentials()) {
-            handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to ", redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: redirection URL ", location.string(), " has credentials")));
+            handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to "_s, redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: redirection URL "_s, location.string(), " has credentials"_s)));
             return;
         }
     }
@@ -397,7 +397,7 @@ void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, Vali
     }
 
     if (m_options.mode == FetchOptions::Mode::SameOrigin) {
-        handler(accessControlErrorForValidationHandler(makeString("Unsafe attempt to load URL ", request.url().stringCenterEllipsizedToLength(), " from origin ", m_origin->toString(), ". Domains, protocols and ports must match.\n")));
+        handler(accessControlErrorForValidationHandler(makeString("Unsafe attempt to load URL "_s, request.url().stringCenterEllipsizedToLength(), " from origin "_s, m_origin->toString(), ". Domains, protocols and ports must match.\n"_s)));
         return;
     }
 

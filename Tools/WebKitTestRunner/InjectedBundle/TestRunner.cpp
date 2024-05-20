@@ -620,7 +620,7 @@ static void cacheTestRunnerCallback(JSContextRef context, unsigned index, JSValu
     if (!JSValueIsObject(context, callback))
         return;
     if (callbackMap().contains(index)) {
-        InjectedBundle::singleton().outputText(makeString("FAIL: Tried to install a second TestRunner callback for the same event (id ", index, ")\n\n"));
+        InjectedBundle::singleton().outputText(makeString("FAIL: Tried to install a second TestRunner callback for the same event (id "_s, index, ")\n\n"_s));
         return;
     }
     JSValueProtect(context, callback);

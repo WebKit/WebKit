@@ -201,14 +201,14 @@ enum class TokenSigningParty : bool { Source, Destination };
 
 static void triggerAttributionWithSubresourceRedirect(Connection& connection, const String& attributionDestinationNonce)
 {
-    auto optionalQueryString = attributionDestinationNonce.isEmpty() ? attributionDestinationNonce : makeString("?attributionDestinationNonce=", attributionDestinationNonce);
-    auto location = makeString("/.well-known/private-click-measurement/trigger-attribution/12", optionalQueryString);
+    auto optionalQueryString = attributionDestinationNonce.isEmpty() ? attributionDestinationNonce : makeString("?attributionDestinationNonce="_s, attributionDestinationNonce);
+    auto location = makeString("/.well-known/private-click-measurement/trigger-attribution/12"_s, optionalQueryString);
     connection.receiveHTTPRequest([connection, location] (Vector<char>&& request1) {
         EXPECT_TRUE(strnstr(request1.data(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n", request1.size()));
-        auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: ", location, "\r\nContent-Length: 0\r\n\r\n");
+        auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: "_s, location, "\r\nContent-Length: 0\r\n\r\n"_s);
         connection.send(WTFMove(redirect), [connection, location] {
             connection.receiveHTTPRequest([connection, location] (Vector<char>&& request2) {
-                auto expectedHttpGetString = makeString("GET ", location, " HTTP/1.1\r\n").utf8();
+                auto expectedHttpGetString = makeString("GET "_s, location, " HTTP/1.1\r\n"_s).utf8();
                 EXPECT_TRUE(strnstr(request2.data(), expectedHttpGetString.data(), request2.size()));
                 constexpr auto response = "HTTP/1.1 200 OK\r\n"
                     "Content-Length: 0\r\n\r\n"_s;
@@ -277,8 +277,8 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
                 auto response = makeString("HTTP/1.1 200 OK\r\n"
                     "Content-Type: application/json\r\n"
-                    "Content-Length: ", 24 + keyData.length(), "\r\n\r\n"
-                    "{\"token_public_key\": \"", keyData, "\"}");
+                    "Content-Length: "_s, 24 + keyData.length(), "\r\n\r\n"
+                    "{\"token_public_key\": \""_s, keyData, "\"}"_s);
                 connection.send(WTFMove(response), [signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] {
                     connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request2) {
                         EXPECT_TRUE(strnstr(request2.data(), "POST / HTTP/1.1\r\n", request2.size()));
@@ -300,8 +300,8 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                         // Example response: { "unlinkable_token": "ABCD" }. "ABCD" should be Base64URL encoded.
                         auto response = makeString("HTTP/1.1 200 OK\r\n"
                             "Content-Type: application/json\r\n"
-                            "Content-Length: ", 24 + unlinkableToken.length(), "\r\n\r\n"
-                            "{\"unlinkable_token\": \"", unlinkableToken, "\"}");
+                            "Content-Length: "_s, 24 + unlinkableToken.length(), "\r\n\r\n"
+                            "{\"unlinkable_token\": \""_s, unlinkableToken, "\"}"_s);
                         connection.send(WTFMove(response), [signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] {
                             connection.receiveHTTPRequest([signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] (Vector<char>&& request3) {
                                 EXPECT_TRUE(strnstr(request3.data(), "GET / HTTP/1.1\r\n", request3.size()));
@@ -309,8 +309,8 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
                                 auto response = makeString("HTTP/1.1 200 OK\r\n"
                                     "Content-Type: application/json\r\n"
-                                    "Content-Length: ", 24 + keyData.length(), "\r\n\r\n"
-                                    "{\"token_public_key\": \"", keyData, "\"}");
+                                    "Content-Length: "_s, 24 + keyData.length(), "\r\n\r\n"
+                                    "{\"token_public_key\": \""_s, keyData, "\"}"_s);
                                 connection.send(WTFMove(response), [signingParty, connection, &done, unlinkableToken, token, &secKey] {
                                     connection.receiveHTTPRequest([signingParty, connection, &done, unlinkableToken, token, &secKey] (Vector<char>&& request4) {
                                         EXPECT_TRUE(strnstr(request4.data(), "POST / HTTP/1.1\r\n", request4.size()));

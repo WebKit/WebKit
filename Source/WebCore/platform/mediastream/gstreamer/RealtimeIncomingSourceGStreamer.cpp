@@ -231,9 +231,9 @@ void RealtimeIncomingSourceGStreamer::unregisterClient(int clientId)
 void RealtimeIncomingSourceGStreamer::unregisterClientLocked(int clientId)
 {
     GST_DEBUG_OBJECT(m_bin.get(), "Unregistering client %d", clientId);
-    auto name = makeString("sink-", clientId);
+    auto name = makeString("sink-"_s, clientId);
     auto sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), name.ascii().data()));
-    auto queue = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("queue-", clientId).ascii().data()));
+    auto queue = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("queue-"_s, clientId).ascii().data()));
 
     auto ghostSinkPad = adoptGRef(gst_element_get_static_pad(m_bin.get(), name.ascii().data()));
     auto padName = makeString("src_"_s, clientId);
@@ -263,7 +263,7 @@ void RealtimeIncomingSourceGStreamer::unregisterClientLocked(int clientId)
 void RealtimeIncomingSourceGStreamer::handleUpstreamEvent(GRefPtr<GstEvent>&& event, int clientId)
 {
     GST_DEBUG_OBJECT(m_bin.get(), "Handling %" GST_PTR_FORMAT, event.get());
-    auto sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("sink-", clientId).ascii().data()));
+    auto sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("sink-"_s, clientId).ascii().data()));
     auto pad = adoptGRef(gst_element_get_static_pad(sink.get(), "sink"));
     gst_pad_push_event(pad.get(), event.leakRef());
 }
@@ -271,7 +271,7 @@ void RealtimeIncomingSourceGStreamer::handleUpstreamEvent(GRefPtr<GstEvent>&& ev
 bool RealtimeIncomingSourceGStreamer::handleUpstreamQuery(GstQuery* query, int clientId)
 {
     GST_DEBUG_OBJECT(m_bin.get(), "Handling %" GST_PTR_FORMAT, query);
-    auto sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("sink-", clientId).ascii().data()));
+    auto sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("sink-"_s, clientId).ascii().data()));
     auto pad = adoptGRef(gst_element_get_static_pad(sink.get(), "sink"));
     return gst_pad_peer_query(pad.get(), query);
 }

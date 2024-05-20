@@ -444,7 +444,7 @@ void CurlHandle::appendRequestHeader(const String& name, const String& value)
         // Insert the ; to tell curl that this header has an empty value.
         header = makeString(name, ';');
     } else {
-        header = makeString(name, ": ", value);
+        header = makeString(name, ": "_s, value);
     }
 
     appendRequestHeader(WTFMove(header));

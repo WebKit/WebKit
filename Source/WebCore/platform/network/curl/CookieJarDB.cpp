@@ -41,8 +41,6 @@
 
 namespace WebCore {
 
-#define CORRUPT_MARKER_SUFFIX "-corrupted"
-
 // At least 50 cookies per domain (RFC6265 6.1. Limits)
 #define MAX_COOKIE_PER_DOMAIN 80
 
@@ -227,7 +225,7 @@ String CookieJarDB::getCorruptionMarkerPath() const
 {
     ASSERT(!isOnMemory());
 
-    return m_databasePath + CORRUPT_MARKER_SUFFIX;
+    return makeString(m_databasePath, "-corrupted"_s);
 }
 
 void CookieJarDB::flagDatabaseCorruption()
@@ -309,8 +307,8 @@ void CookieJarDB::deleteAllDatabaseFiles()
 
     FileSystem::deleteFile(m_databasePath);
     FileSystem::deleteFile(getCorruptionMarkerPath());
-    FileSystem::deleteFile(m_databasePath + "-shm");
-    FileSystem::deleteFile(m_databasePath + "-wal");
+    FileSystem::deleteFile(makeString(m_databasePath, "-shm"_s));
+    FileSystem::deleteFile(makeString(m_databasePath, "-wal"_s));
 }
 
 bool CookieJarDB::isEnabled() const

@@ -71,7 +71,7 @@ CaptureSourceOrError GStreamerVideoCaptureSource::create(String&& deviceID, Medi
 {
     auto device = GStreamerVideoCaptureDeviceManager::singleton().gstreamerDeviceWithUID(deviceID);
     if (!device) {
-        auto errorMessage = makeString("GStreamerVideoCaptureSource::create(): GStreamer did not find the device: ", deviceID, '.');
+        auto errorMessage = makeString("GStreamerVideoCaptureSource::create(): GStreamer did not find the device: "_s, deviceID, '.');
         return CaptureSourceOrError({ WTFMove(errorMessage), MediaAccessDenialReason::HardwareError });
     }
 

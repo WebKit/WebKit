@@ -328,7 +328,7 @@ static String keyIdentifierFromEvent(WPARAM wparam, WebEventType type)
     case VK_DELETE:
         return "U+007F"_s; // Standard says that DEL becomes U+007F.
     default:
-        return makeString("U+", hex(toASCIIUpper(keyCode), 4));
+        return makeString("U+"_s, hex(toASCIIUpper(keyCode), 4));
     }
 }
 

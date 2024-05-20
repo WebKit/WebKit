@@ -655,11 +655,11 @@ void Cache::dumpContentsToFile()
                 "{}\n"
                 "],\n"
                 "\"totals\": {\n"
-                "\"capacity\": ", capacity, ",\n"
-                "\"count\": ", totals.count, ",\n"
-                "\"bodySize\": ", totals.bodySize, ",\n"
-                "\"averageWorth\": ", totals.count ? totals.worth / totals.count : 0, "\n"
-                "}\n}\n"
+                "\"capacity\": "_s, capacity, ",\n"
+                "\"count\": "_s, totals.count, ",\n"
+                "\"bodySize\": "_s, totals.bodySize, ",\n"
+                "\"averageWorth\": "_s, totals.count ? totals.worth / totals.count : 0, "\n"
+                "}\n}\n"_s
             ).utf8();
             writeToFile(fd, writeData.span());
             closeFile(fd);

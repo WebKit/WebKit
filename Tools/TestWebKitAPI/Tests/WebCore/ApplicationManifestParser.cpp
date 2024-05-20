@@ -95,19 +95,19 @@ public:
 
     ApplicationManifest parseTopLevelProperty(const String& key, const String& value)
     {
-        String manifestContent = "{ \"" + key + "\" : " + value + " }";
+        auto manifestContent = makeString("{ \""_s, key, "\" : "_s, value, " }"_s);
         return parseString(manifestContent);
     }
 
     ApplicationManifest parseIconFirstTopLevelProperty(const String& key, const String& value)
     {
-        String manifestContent = "{ \"icons\": [{\"" + key + "\": " + value + ", \"src\": \"icon/example.png\" }]}";
+        auto manifestContent = makeString("{ \"icons\": [{\""_s, key, "\": "_s, value, ", \"src\": \"icon/example.png\" }]}"_s);
         return parseString(manifestContent);
     }
 
     ApplicationManifest parseIconFirstTopLevelPropertyForSrc(const String& key, const String& value)
     {
-        String manifestContent = "{ \"icons\": [{\"" + key + "\": " + value + " }]}";
+        auto manifestContent = makeString("{ \"icons\": [{\""_s, key, "\": "_s, value, " }]}"_s);
         return parseString(manifestContent);
     }
 
@@ -206,7 +206,7 @@ public:
 
     void testScope(const String& rawJSON, const String& startURL, const String& expectedValue, bool expectedIsDefaultScope)
     {
-        String manifestContent = "{ \"scope\" : " + rawJSON + ", \"start_url\" : \"" + startURL + "\" }";
+        auto manifestContent = makeString("{ \"scope\" : "_s, rawJSON, ", \"start_url\" : \""_s, startURL, "\" }"_s);
         auto manifest = parseString(manifestContent);
         auto value = manifest.scope;
         EXPECT_STREQ(expectedValue.utf8().data(), value.string().utf8().data());
@@ -323,7 +323,7 @@ public:
 
     void testId(const String& rawJSON, const URL& startURL, const String& expectedValue)
     {
-        String manifestContent = "{ \"id\" : \"" + rawJSON + "\", \"start_url\" : \"" + startURL.string() + "\" }";
+        auto manifestContent = makeString("{ \"id\" : \""_s, rawJSON, "\", \"start_url\" : \""_s, startURL.string(), "\" }"_s);
         auto manifest = parseString(manifestContent);
         auto value = manifest.id;
         EXPECT_STREQ(expectedValue.utf8().data(), value.string().utf8().data());

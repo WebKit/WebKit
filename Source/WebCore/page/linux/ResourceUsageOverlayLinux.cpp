@@ -52,11 +52,11 @@ static String cpuUsageString(float cpuUsage)
 static String formatByteNumber(size_t number)
 {
     if (number >= 1024 * 1048576)
-        return makeString(FormattedNumber::fixedWidth(number / (1024. * 1048576), 3), " GB");
+        return makeString(FormattedNumber::fixedWidth(number / (1024. * 1048576), 3), " GB"_s);
     if (number >= 1048576)
-        return makeString(FormattedNumber::fixedWidth(number / 1048576., 2), " MB");
+        return makeString(FormattedNumber::fixedWidth(number / 1048576., 2), " MB"_s);
     if (number >= 1024)
-        return makeString(FormattedNumber::fixedWidth(number / 1024, 1), " kB");
+        return makeString(FormattedNumber::fixedWidth(number / 1024, 1), " kB"_s);
     return String::number(number);
 }
 

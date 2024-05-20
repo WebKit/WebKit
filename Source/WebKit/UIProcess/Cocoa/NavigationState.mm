@@ -429,7 +429,7 @@ static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& actio
         if (!sourceFrameID || !weakPage)
             return;
 
-        weakPage->addConsoleMessage(*sourceFrameID, MessageSource::Network, MessageLevel::Error, makeString("Can't handle MarketplaceKit link ", url.string().utf8().data(), " due to error: "_s, error));
+        weakPage->addConsoleMessage(*sourceFrameID, MessageSource::Network, MessageLevel::Error, makeString("Can't handle MarketplaceKit link "_s, url.string(), " due to error: "_s, error));
     };
 
     if (!action->shouldOpenExternalSchemes() || !action->isProcessingUserGesture() || action->isRedirect() || action->data().requesterTopOrigin.isNull()) {

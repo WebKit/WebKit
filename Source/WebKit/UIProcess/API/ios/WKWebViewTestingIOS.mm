@@ -221,17 +221,17 @@ static String allowListedClassToString(UIView *view)
     if (allowedClasses.contains(classString))
         return classString;
 
-    return makeString("<class not in allowed list of classes>");
+    return "<class not in allowed list of classes>"_s;
 }
 
 static void dumpUIView(TextStream& ts, UIView *view)
 {
     auto rectToString = [] (auto rect) {
-        return makeString("[x: ", rect.origin.x, " y: ", rect.origin.y, " width: ", rect.size.width, " height: ", rect.size.height, "]");
+        return makeString("[x: "_s, rect.origin.x, " y: "_s, rect.origin.y, " width: "_s, rect.size.width, " height: "_s, rect.size.height, ']');
     };
 
     auto pointToString = [] (auto point) {
-        return makeString("[x: ", point.x, " y: ", point.x, "]");
+        return makeString("[x: "_s, point.x, " y: "_s, point.x, ']');
     };
 
 

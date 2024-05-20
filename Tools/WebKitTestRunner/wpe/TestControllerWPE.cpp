@@ -162,11 +162,11 @@ WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
         reinterpret_cast<Vector<unsigned char>*>(output)->append(std::span { data, length });
         return CAIRO_STATUS_SUCCESS;
     }, &output);
-    auto uri = makeString("data:image/png;base64,", base64Encoded(output.data(), output.size()));
+    auto uri = makeString("data:image/png;base64,"_s, base64Encoded(output.data(), output.size()));
 #elif USE(SKIA)
     sk_sp<SkImage> image(mainWebView()->windowSnapshotImage());
     auto data = SkPngEncoder::Encode(nullptr, image.get(), { });
-    auto uri = makeString("data:image/png;base64,", base64Encoded(data->data(), data->size()));
+    auto uri = makeString("data:image/png;base64,"_s, base64Encoded(data->data(), data->size()));
 #endif
     return adoptWK(WKStringCreateWithUTF8CString(uri.utf8().data()));
 }

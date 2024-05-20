@@ -320,7 +320,7 @@ private:
     {
         // Post on the console as well to be consistent with the inspector.
         if (response.httpStatusCode() >= 400) {
-            String errorMessage = makeString("Failed to load resource: the server responded with a status of ", response.httpStatusCode(), " (", response.httpStatusText(), ')');
+            String errorMessage = makeString("Failed to load resource: the server responded with a status of "_s, response.httpStatusCode(), " ("_s, response.httpStatusText(), ')');
             webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, response.url().string());
         }
     }
@@ -330,7 +330,7 @@ private:
         // Post on the console as well to be consistent with the inspector.
         if (!error.isCancellation()) {
             auto errorDescription = error.localizedDescription();
-            auto errorMessage = makeString("Failed to load resource", errorDescription.isEmpty() ? "" : ": ", errorDescription);
+            auto errorMessage = makeString("Failed to load resource"_s, errorDescription.isEmpty() ? ""_s : ": "_s, errorDescription);
             webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, error.failingURL().string());
         }
     }

@@ -158,7 +158,7 @@ void TestInvocation::loadTestInCrossOriginIframe()
         "<script>"
         "    testRunner.dumpChildFramesAsText()"
         "</script>"
-        "<iframe src=\"", m_urlString.utf8().data(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"));
+        "<iframe src=\""_s, m_urlString.utf8().span(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"_s));
     WKPageLoadHTMLString(TestController::singleton().mainWebView()->page(), htmlString.get(), baseURL.get());
 }
 
@@ -221,9 +221,9 @@ void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
     char buffer[1024] = { };
 #if PLATFORM(COCOA)
     pid_t pid = WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page());
-    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName(), static_cast<long>(pid));
+    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName().characters(), static_cast<long>(pid));
 #else
-    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s\n", TestController::webProcessName());
+    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s\n", TestController::webProcessName().characters());
 #endif
 
     dump(errorMessage, buffer, true);

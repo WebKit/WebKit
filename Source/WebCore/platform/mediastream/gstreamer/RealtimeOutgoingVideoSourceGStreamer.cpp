@@ -53,7 +53,7 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const
     registerWebKitGStreamerElements();
 
     static Atomic<uint64_t> sourceCounter = 0;
-    gst_element_set_name(m_bin.get(), makeString("outgoing-video-source-", sourceCounter.exchangeAdd(1)).ascii().data());
+    gst_element_set_name(m_bin.get(), makeString("outgoing-video-source-"_s, sourceCounter.exchangeAdd(1)).ascii().data());
 
     m_stats.reset(gst_structure_new_empty("webrtc-outgoing-video-stats"));
     startUpdatingStats();
@@ -117,7 +117,7 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         return false;
     }
 
-    auto encoding = makeString(encodingName).convertToASCIILowercase();
+    auto encoding = String(WTF::span(encodingName)).convertToASCIILowercase();
     m_payloader = makeGStreamerElement(makeString("rtp"_s, encoding, "pay"_s).ascii().data(), nullptr);
     if (UNLIKELY(!m_payloader)) {
         GST_ERROR_OBJECT(m_bin.get(), "RTP payloader not found for encoding %s", encodingName);

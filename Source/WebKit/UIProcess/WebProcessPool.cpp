@@ -1097,7 +1097,7 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
     if (m_memorySamplerEnabled) {
         SandboxExtension::Handle sampleLogSandboxHandle;        
         WallTime now = WallTime::now();
-        auto sampleLogFilePath = makeString("WebProcess", static_cast<unsigned long long>(now.secondsSinceEpoch().seconds()), "pid", process.processID());
+        auto sampleLogFilePath = makeString("WebProcess"_s, now.secondsSinceEpoch().secondsAs<uint64_t>(), "pid"_s, process.processID());
         if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::Type::ReadWrite)) {
             sampleLogSandboxHandle = WTFMove(handleAndFilePath->first);
             sampleLogFilePath = WTFMove(handleAndFilePath->second);
@@ -1617,7 +1617,7 @@ void WebProcessPool::startMemorySampler(const double interval)
         // For WebProcess
         SandboxExtension::Handle sampleLogSandboxHandle;
         WallTime now = WallTime::now();
-        auto sampleLogFilePath = makeString("WebProcess", static_cast<unsigned long long>(now.secondsSinceEpoch().seconds()));
+        auto sampleLogFilePath = makeString("WebProcess"_s, now.secondsSinceEpoch().secondsAs<uint64_t>());
         if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::Type::ReadWrite)) {
             sampleLogSandboxHandle = WTFMove(handleAndFilePath->first);
             sampleLogFilePath = WTFMove(handleAndFilePath->second);

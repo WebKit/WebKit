@@ -255,7 +255,7 @@ void LocalAuthenticator::makeCredential()
     ASSERT(creationOptions.rp.id);
     auto existingCredentials = getExistingCredentials(*creationOptions.rp.id);
     if (!existingCredentials) {
-        receiveException({ ExceptionCode::UnknownError, makeString("Couldn't get existing credentials") });
+        receiveException({ ExceptionCode::UnknownError, "Couldn't get existing credentials"_s });
         return;
     }
     m_existingCredentials = WTFMove(*existingCredentials);
@@ -295,7 +295,7 @@ void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext
         accessControl = adoptCF(SecAccessControlCreateWithFlags(NULL, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, kSecAccessControlPrivateKeyUsage | kSecAccessControlUserPresence, &errorRef));
         auto retainError = adoptCF(errorRef);
         if (errorRef) {
-            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't create access control: ", String(((NSError*)errorRef).localizedDescription)) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't create access control: "_s, String(((NSError*)errorRef).localizedDescription)) });
             return;
         }
     }
@@ -489,7 +489,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         publicKeyDataRef = adoptCF(SecKeyCopyExternalRepresentation(publicKey.get(), &errorRef));
         auto retainError = adoptCF(errorRef);
         if (errorRef) {
-            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't export the public key: ", String(((NSError*)errorRef).localizedDescription)) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't export the public key: "_s, String(((NSError*)errorRef).localizedDescription)) });
             return;
         }
         ASSERT(((NSData *)publicKeyDataRef.get()).length == (1 + 2 * ES256FieldElementLength)); // 04 | X | Y
@@ -710,7 +710,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         CFTypeRef privateKeyRef = nullptr;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &privateKeyRef);
         if (status) {
-            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't get the private key reference: ", status) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't get the private key reference: "_s, status) });
             RELEASE_LOG_ERROR(WebAuthn, "Couldn't get the private key reference: %d", status);
             return;
         }
@@ -725,7 +725,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         auto retainError = adoptCF(errorRef);
         if (errorRef) {
             RELEASE_LOG_ERROR(WebAuthn, "Couldn't generate signature: %@", ((NSError*)errorRef).localizedDescription);
-            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't generate the signature: ", String(((NSError*)errorRef).localizedDescription)) });
+            receiveException({ ExceptionCode::UnknownError, makeString("Couldn't generate the signature: "_s, String(((NSError*)errorRef).localizedDescription)) });
             return;
         }
     }

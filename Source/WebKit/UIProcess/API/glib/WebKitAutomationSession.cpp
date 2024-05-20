@@ -30,6 +30,7 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 #if ENABLE(2022_GLIB_API)
 #include "WebKitNetworkSession.h"
@@ -431,9 +432,9 @@ String webkitAutomationSessionGetBrowserVersion(WebKitAutomationSession* session
         return String::number(major);
 
     if (!micro)
-        return makeString(String::number(major), ".", String::number(minor));
+        return makeString(major, '.', minor);
 
-    return makeString(String::number(major), ".", String::number(minor), ".", String::number(micro));
+    return makeString(major, '.', minor, '.', micro);
 }
 
 /**

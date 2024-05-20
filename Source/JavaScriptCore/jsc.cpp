@@ -1395,7 +1395,7 @@ static bool fetchModuleFromLocalFileSystem(const URL& fileURL, Vector& buffer)
     // These also appear to turn off handling forward slashes as
     // directory separators as it disables all string parsing on names.
     fileName = makeStringByReplacingAll(fileName, '/', '\\');
-    auto pathName = makeString("\\\\?\\", fileName).wideCharacters();
+    auto pathName = makeString("\\\\?\\"_s, fileName).wideCharacters();
     struct _stat status { };
     if (_wstat(pathName.data(), &status))
         return false;

@@ -60,7 +60,7 @@ unsigned inspectorLevelForPage(WebPageProxy* page)
 
 String defaultInspectorPageGroupIdentifierForPage(WebPageProxy* page)
 {
-    return makeString("__WebInspectorPageGroupLevel", inspectorLevelForPage(page), "__");
+    return makeString("__WebInspectorPageGroupLevel"_s, inspectorLevelForPage(page), "__"_s);
 }
 
 void trackInspectorPage(WebPageProxy* inspectorPage, WebPageProxy* inspectedPage)

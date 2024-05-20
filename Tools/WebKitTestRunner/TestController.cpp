@@ -665,17 +665,17 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
         auto randomNumber = cryptographicallyRandomNumber<uint32_t>();
 
-        WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ApplicationCache", pathSeparator, randomNumber)).get());
-        WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Cache", pathSeparator, randomNumber)).get());
-        WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "CacheStorage", pathSeparator, randomNumber)).get());
-        WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Databases", pathSeparator, "IndexedDB", pathSeparator, randomNumber)).get());
-        WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "LocalStorage", pathSeparator, randomNumber)).get());
-        WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "MediaKeys", pathSeparator, randomNumber)).get());
-        WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ResourceLoadStatistics", pathSeparator, randomNumber)).get());
-        WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ServiceWorkers", pathSeparator, randomNumber)).get());
-        WKWebsiteDataStoreConfigurationSetGeneralStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Default", pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ApplicationCache"_s, pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Cache"_s, pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "CacheStorage"_s, pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Databases"_s, pathSeparator, "IndexedDB"_s, pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "LocalStorage"_s, pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "MediaKeys"_s, pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ResourceLoadStatistics"_s, pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ServiceWorkers"_s, pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetGeneralStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Default"_s, pathSeparator, randomNumber)).get());
 #if PLATFORM(WIN)
-        WKWebsiteDataStoreConfigurationSetCookieStorageFile(configuration, toWK(makeString(temporaryFolder, pathSeparator, "cookies", pathSeparator, randomNumber, pathSeparator, "cookiejar.db")).get());
+        WKWebsiteDataStoreConfigurationSetCookieStorageFile(configuration, toWK(makeString(temporaryFolder, pathSeparator, "cookies"_s, pathSeparator, randomNumber, pathSeparator, "cookiejar.db"_s)).get());
 #endif
         WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(configuration, 400 * 1024);
         WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration, true);
@@ -803,9 +803,9 @@ static String originUserVisibleName(WKSecurityOriginRef origin)
         return emptyString();
 
     if (int port = WKSecurityOriginGetPort(origin))
-        return makeString(protocol, "://", host, ':', port);
+        return makeString(protocol, "://"_s, host, ':', port);
 
-    return makeString(protocol, "://", host);
+    return makeString(protocol, "://"_s, host);
 }
 
 bool TestController::grantNotificationPermission(WKStringRef originString)
@@ -1331,12 +1331,12 @@ void TestController::findAndDumpWebKitProcessIdentifiers()
 #if PLATFORM(COCOA)
     auto page = TestController::singleton().mainWebView()->page();
     dumpResponse(makeString(
-        TestController::webProcessName(), ": "
+        TestController::webProcessName(), ": "_s
         , WKPageGetProcessIdentifier(page), '\n'
-        , TestController::networkProcessName(), ": "
+        , TestController::networkProcessName(), ": "_s
         , WKWebsiteDataStoreGetNetworkProcessIdentifier(websiteDataStore()), '\n'
 #if ENABLE(GPU_PROCESS)
-        , TestController::gpuProcessName(), ": "
+        , TestController::gpuProcessName(), ": "_s
         , WKPageGetGPUProcessIdentifier(page), '\n'
 #endif
     ));
@@ -1392,47 +1392,47 @@ void TestController::reattachPageToWebProcess()
     runUntil(m_doneResetting, noTimeout);
 }
 
-const char* TestController::webProcessName()
+ASCIILiteral TestController::webProcessName()
 {
     // FIXME: Find a way to not hardcode the process name.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    return "com.apple.WebKit.WebContent";
+    return "com.apple.WebKit.WebContent"_s;
 #elif PLATFORM(COCOA)
-    return "com.apple.WebKit.WebContent.Development";
+    return "com.apple.WebKit.WebContent.Development"_s;
 #elif PLATFORM(GTK)
-    return "WebKitWebProcess";
+    return "WebKitWebProcess"_s;
 #elif PLATFORM(WPE)
-    return "WPEWebProcess";
+    return "WPEWebProcess"_s;
 #else
-    return "WebProcess";
+    return "WebProcess"_s;
 #endif
 }
 
-const char* TestController::networkProcessName()
+ASCIILiteral TestController::networkProcessName()
 {
     // FIXME: Find a way to not hardcode the process name.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    return "com.apple.WebKit.Networking";
+    return "com.apple.WebKit.Networking"_s;
 #elif PLATFORM(COCOA)
-    return "com.apple.WebKit.Networking.Development";
+    return "com.apple.WebKit.Networking.Development"_s;
 #elif PLATFORM(GTK)
-    return "WebKitNetworkProcess";
+    return "WebKitNetworkProcess"_s;
 #elif PLATFORM(WPE)
-    return "WPENetworkProcess";
+    return "WPENetworkProcess"_s;
 #else
-    return "NetworkProcess";
+    return "NetworkProcess"_s;
 #endif
 }
 
-const char* TestController::gpuProcessName()
+ASCIILiteral TestController::gpuProcessName()
 {
     // FIXME: Find a way to not hardcode the process name.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    return "com.apple.WebKit.GPU";
+    return "com.apple.WebKit.GPU"_s;
 #elif PLATFORM(COCOA)
-    return "com.apple.WebKit.GPU.Development";
+    return "com.apple.WebKit.GPU.Development"_s;
 #else
-    return "GPUProcess";
+    return "GPUProcess"_s;
 #endif
 }
 
@@ -2394,8 +2394,8 @@ static const char* terminationReasonToString(WKProcessTerminationReason reason)
 
 void TestController::networkProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
 {
-    fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", networkProcessName(), static_cast<long>(processID), terminationReasonToString(reason));
-    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(processID));
+    fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", networkProcessName().characters(), static_cast<long>(processID), terminationReasonToString(reason));
+    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName().characters(), static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
         exitProcess(1);
 }
@@ -2410,8 +2410,8 @@ void TestController::serviceWorkerProcessDidCrash(WKProcessID processID, WKProce
 
 void TestController::gpuProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
 {
-    fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", gpuProcessName(), static_cast<long>(processID), terminationReasonToString(reason));
-    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", gpuProcessName(), static_cast<long>(processID));
+    fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", gpuProcessName().characters(), static_cast<long>(processID), terminationReasonToString(reason));
+    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", gpuProcessName().characters(), static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
         exitProcess(1);
 }
@@ -2556,30 +2556,30 @@ void TestController::didReceiveServerRedirectForProvisionalNavigation(WKPageRef 
     return;
 }
 
-static const char* toString(WKProtectionSpaceAuthenticationScheme scheme)
+static ASCIILiteral toString(WKProtectionSpaceAuthenticationScheme scheme)
 {
     switch (scheme) {
     case kWKProtectionSpaceAuthenticationSchemeDefault:
-        return "ProtectionSpaceAuthenticationSchemeDefault";
+        return "ProtectionSpaceAuthenticationSchemeDefault"_s;
     case kWKProtectionSpaceAuthenticationSchemeHTTPBasic:
-        return "ProtectionSpaceAuthenticationSchemeHTTPBasic";
+        return "ProtectionSpaceAuthenticationSchemeHTTPBasic"_s;
     case kWKProtectionSpaceAuthenticationSchemeHTMLForm:
-        return "ProtectionSpaceAuthenticationSchemeHTMLForm";
+        return "ProtectionSpaceAuthenticationSchemeHTMLForm"_s;
     case kWKProtectionSpaceAuthenticationSchemeNTLM:
-        return "ProtectionSpaceAuthenticationSchemeNTLM";
+        return "ProtectionSpaceAuthenticationSchemeNTLM"_s;
     case kWKProtectionSpaceAuthenticationSchemeNegotiate:
-        return "ProtectionSpaceAuthenticationSchemeNegotiate";
+        return "ProtectionSpaceAuthenticationSchemeNegotiate"_s;
     case kWKProtectionSpaceAuthenticationSchemeClientCertificateRequested:
-        return "ProtectionSpaceAuthenticationSchemeClientCertificateRequested";
+        return "ProtectionSpaceAuthenticationSchemeClientCertificateRequested"_s;
     case kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
-        return "ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested";
+        return "ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested"_s;
     case kWKProtectionSpaceAuthenticationSchemeOAuth:
-        return "ProtectionSpaceAuthenticationSchemeOAuth";
+        return "ProtectionSpaceAuthenticationSchemeOAuth"_s;
     case kWKProtectionSpaceAuthenticationSchemeUnknown:
-        return "ProtectionSpaceAuthenticationSchemeUnknown";
+        return "ProtectionSpaceAuthenticationSchemeUnknown"_s;
     }
     ASSERT_NOT_REACHED();
-    return "ProtectionSpaceAuthenticationSchemeUnknown";
+    return "ProtectionSpaceAuthenticationSchemeUnknown"_s;
 }
 
 bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef page, WKProtectionSpaceRef protectionSpace)
@@ -2619,7 +2619,7 @@ void TestController::didFailProvisionalNavigation(WKPageRef page, WKErrorRef err
     auto errorDomain = toWTFString(adoptWK(WKErrorCopyDomain(error)));
     auto errorDescription = toWTFString(adoptWK(WKErrorCopyLocalizedDescription(error)));
     int errorCode = WKErrorGetErrorCode(error);
-    auto errorMessage = makeString("Failed: ", errorDescription, " (errorDomain=", errorDomain, ", code=", errorCode, ") for URL ", failingURLString);
+    auto errorMessage = makeString("Failed: "_s, errorDescription, " (errorDomain="_s, errorDomain, ", code="_s, errorCode, ") for URL "_s, failingURLString);
     printf("%s\n", errorMessage.utf8().data());
 }
 
@@ -2653,11 +2653,11 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
     auto host = toWTFString(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
     int port = WKProtectionSpaceGetPort(protectionSpace);
     StringBuilder message;
-    message.append(host, ':', port, " - didReceiveAuthenticationChallenge - ", toString(authenticationScheme), " - ");
+    message.append(host, ':', port, " - didReceiveAuthenticationChallenge - "_s, toString(authenticationScheme), " - "_s);
     if (!m_handlesAuthenticationChallenges)
         message.append("Simulating cancelled authentication sheet\n"_s);
     else
-        message.append("Responding with " + m_authenticationUsername + ":" + m_authenticationPassword + "\n");
+        message.append("Responding with "_s, m_authenticationUsername, ':', m_authenticationPassword, '\n');
     m_currentInvocation->outputText(message.toString());
 
     if (!m_handlesAuthenticationChallenges) {
@@ -2729,9 +2729,9 @@ WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef
 void TestController::downloadDidFinish(WKDownloadRef)
 {
     if (m_shouldLogDownloadSize)
-        m_currentInvocation->outputText(makeString("Download size: ", m_downloadTotalBytesWritten.value_or(0), ".\n"));
+        m_currentInvocation->outputText(makeString("Download size: "_s, m_downloadTotalBytesWritten.value_or(0), ".\n"_s));
     if (m_shouldLogDownloadExpectedSize)
-        m_currentInvocation->outputText(makeString("Download expected size: ", m_downloadTotalBytesExpectedToWrite.value_or(0), ".\n"));
+        m_currentInvocation->outputText(makeString("Download expected size: "_s, m_downloadTotalBytesExpectedToWrite.value_or(0), ".\n"_s));
     if (m_shouldLogDownloadCallbacks)
         m_currentInvocation->outputText("Download completed.\n"_s);
     m_currentInvocation->notifyDownloadDone();
@@ -2741,7 +2741,7 @@ bool TestController::downloadDidReceiveServerRedirectToURL(WKDownloadRef, WKURLR
 {
     auto url = adoptWK(WKURLRequestCopyURL(request));
     if (m_shouldLogDownloadCallbacks)
-        m_currentInvocation->outputText(makeString("Download was redirected to \"", toWTFString(adoptWK(WKURLCopyString(url.get()))), "\".\n"));
+        m_currentInvocation->outputText(makeString("Download was redirected to \""_s, toWTFString(adoptWK(WKURLCopyString(url.get()))), "\".\n"_s));
     return true;
 }
 
@@ -2754,14 +2754,14 @@ void TestController::downloadDidFail(WKDownloadRef, WKErrorRef error)
         auto description = toWTFString(adoptWK(WKErrorCopyLocalizedDescription(error)));
         int code = WKErrorGetErrorCode(error);
 
-        m_currentInvocation->outputText(makeString("Failed: ", domain, ", code=", code, ", description=", description, "\n"));
+        m_currentInvocation->outputText(makeString("Failed: "_s, domain, ", code="_s, code, ", description="_s, description, '\n'));
     }
     m_currentInvocation->notifyDownloadDone();
 }
 
 void TestController::receivedServiceWorkerConsoleMessage(const String& message)
 {
-    m_currentInvocation->outputText(makeString("Received ServiceWorker Console Message: ", message, "\n"));
+    m_currentInvocation->outputText(makeString("Received ServiceWorker Console Message: "_s, message, '\n'));
 }
 
 void TestController::downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
@@ -2788,13 +2788,13 @@ void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
     // ensure we only print the crashed message once.
     if (!m_didPrintWebProcessCrashedMessage) {
         pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
-        fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", webProcessName(), static_cast<long>(pid), terminationReasonToString(reason));
+        fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", webProcessName().characters(), static_cast<long>(pid), terminationReasonToString(reason));
         if (reason == kWKProcessTerminationReasonRequestedByClient) {
             fflush(stderr);
             return;
         }
 
-        fprintf(stderr, "#CRASHED - %s (pid %ld)\n", webProcessName(), static_cast<long>(pid));
+        fprintf(stderr, "#CRASHED - %s (pid %ld)\n", webProcessName().characters(), static_cast<long>(pid));
         fflush(stderr);
         m_didPrintWebProcessCrashedMessage = true;
     }
@@ -3007,7 +3007,7 @@ void TestController::handleCheckOfUserMediaPermissionForOrigin(WKFrameRef frame,
 bool TestController::handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef origin, WKFrameInfoRef frame)
 {
     auto frameOrigin = adoptWK(WKFrameInfoCopySecurityOrigin(frame));
-    m_currentInvocation->outputText(makeString("Received device orientation & motion access request for top level origin \"", originUserVisibleName(origin), "\", with frame origin \"", originUserVisibleName(frameOrigin.get()), "\".\n"));
+    m_currentInvocation->outputText(makeString("Received device orientation & motion access request for top level origin \""_s, originUserVisibleName(origin), "\", with frame origin \""_s, originUserVisibleName(frameOrigin.get()), "\".\n"_s));
     return m_shouldAllowDeviceOrientationAndMotionAccess;
 }
 
@@ -3178,28 +3178,28 @@ static String string(WKURLRequestRef request, WKPageRef page)
     auto url = adoptWK(WKURLRequestCopyURL(request));
     auto firstParty = adoptWK(WKURLRequestCopyFirstPartyForCookies(request));
     auto httpMethod = adoptWK(WKURLRequestCopyHTTPMethod(request));
-    return makeString("<NSURLRequest URL ", pathSuitableForTestResult(url.get(), page),
-        ", main document URL ", pathSuitableForTestResult(firstParty.get(), page),
-        ", http method ", WKStringIsEmpty(httpMethod.get()) ? "(none)" : "", toWTFString(httpMethod.get()), '>');
+    return makeString("<NSURLRequest URL "_s, pathSuitableForTestResult(url.get(), page),
+        ", main document URL "_s, pathSuitableForTestResult(firstParty.get(), page),
+        ", http method "_s, WKStringIsEmpty(httpMethod.get()) ? "(none)"_s : ""_s, toWTFString(httpMethod.get()), '>');
 }
 
-static const char* navigationTypeToString(WKFrameNavigationType type)
+static ASCIILiteral navigationTypeToString(WKFrameNavigationType type)
 {
     switch (type) {
     case kWKFrameNavigationTypeLinkClicked:
-        return "link clicked";
+        return "link clicked"_s;
     case kWKFrameNavigationTypeFormSubmitted:
-        return "form submitted";
+        return "form submitted"_s;
     case kWKFrameNavigationTypeBackForward:
-        return "back/forward";
+        return "back/forward"_s;
     case kWKFrameNavigationTypeReload:
-        return "reload";
+        return "reload"_s;
     case kWKFrameNavigationTypeFormResubmitted:
-        return "form resubmitted";
+        return "form resubmitted"_s;
     case kWKFrameNavigationTypeOther:
-        return "other";
+        return "other"_s;
     }
-    return "illegal value";
+    return "illegal value"_s;
 }
 
 void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener)
@@ -3230,9 +3230,9 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
 
     auto request = adoptWK(WKNavigationActionCopyRequest(navigationAction));
     if (auto targetFrame = adoptWK(WKNavigationActionCopyTargetFrameInfo(navigationAction)); targetFrame && m_dumpPolicyDelegateCallbacks) {
-        m_currentInvocation->outputText(makeString(" - decidePolicyForNavigationAction\n", string(request.get(), page),
-            " is main frame - ", targetFrame && WKFrameInfoGetIsMainFrame(targetFrame.get()) ? "yes" : "no",
-            " should open URLs externally - ", WKNavigationActionGetShouldOpenExternalSchemes(navigationAction) ? "yes" : "no", '\n'));
+        m_currentInvocation->outputText(makeString(" - decidePolicyForNavigationAction\n"_s, string(request.get(), page),
+            " is main frame - "_s, targetFrame && WKFrameInfoGetIsMainFrame(targetFrame.get()) ? "yes"_s : "no"_s,
+            " should open URLs externally - "_s, WKNavigationActionGetShouldOpenExternalSchemes(navigationAction) ? "yes"_s : "no"_s, '\n'));
     }
 
     if (m_policyDelegateEnabled) {
@@ -3292,7 +3292,7 @@ void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef n
 
     if (m_policyDelegateEnabled) {
         if (responseIsAttachment)
-            m_currentInvocation->outputText(makeString("Policy delegate: resource is an attachment, suggested file name \'", toWTFString(adoptWK(WKURLResponseCopySuggestedFilename(response.get())).get()), "'\n"));
+            m_currentInvocation->outputText(makeString("Policy delegate: resource is an attachment, suggested file name \'"_s, toWTFString(adoptWK(WKURLResponseCopySuggestedFilename(response.get())).get()), "'\n"_s));
     }
 
     if (m_shouldDecideResponsePolicyAfterDelay)
@@ -3321,8 +3321,8 @@ void TestController::didNavigateWithNavigationData(WKNavigationDataRef navigatio
     auto method = toWTFString(adoptWK(WKURLRequestCopyHTTPMethod(request.get())));
 
     // FIXME: Determine whether the navigation was successful / a client redirect rather than hard-coding the message here.
-    m_currentInvocation->outputText(makeString("WebView navigated to url \"", urlString, "\" with title \"", title, "\" with HTTP equivalent method \"", method,
-        "\".  The navigation was successful and was not a client redirect.\n"));
+    m_currentInvocation->outputText(makeString("WebView navigated to url \""_s, urlString, "\" with title \""_s, title, "\" with HTTP equivalent method \""_s, method,
+        "\".  The navigation was successful and was not a client redirect.\n"_s));
 }
 
 void TestController::didPerformClientRedirect(WKContextRef, WKPageRef, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void* clientInfo)
@@ -3341,7 +3341,7 @@ void TestController::didPerformClientRedirect(WKURLRef sourceURL, WKURLRef desti
     auto source = toWTFString(adoptWK(WKURLCopyString(sourceURL)));
     auto destination = toWTFString(adoptWK(WKURLCopyString(destinationURL)));
 
-    m_currentInvocation->outputText(makeString("WebView performed a client redirect from \"", source, "\" to \"", destination, "\".\n"));
+    m_currentInvocation->outputText(makeString("WebView performed a client redirect from \""_s, source, "\" to \""_s, destination, "\".\n"_s));
 }
 
 void TestController::didPerformServerRedirect(WKContextRef, WKPageRef, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void* clientInfo)
@@ -3360,7 +3360,7 @@ void TestController::didPerformServerRedirect(WKURLRef sourceURL, WKURLRef desti
     auto source = toWTFString(adoptWK(WKURLCopyString(sourceURL)));
     auto destination = toWTFString(adoptWK(WKURLCopyString(destinationURL)));
 
-    m_currentInvocation->outputText(makeString("WebView performed a server redirect from \"", source, "\" to \"", destination, "\".\n"));
+    m_currentInvocation->outputText(makeString("WebView performed a server redirect from \""_s, source, "\" to \""_s, destination, "\".\n"_s));
 }
 
 void TestController::didUpdateHistoryTitle(WKContextRef, WKPageRef, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void* clientInfo)
@@ -3377,7 +3377,7 @@ void TestController::didUpdateHistoryTitle(WKStringRef title, WKURLRef URL, WKFr
         return;
 
     auto urlString = toWTFString(adoptWK(WKURLCopyString(URL)));
-    m_currentInvocation->outputText(makeString("WebView updated the title for history URL \"", urlString, "\" to \"", toWTFString(title), "\".\n"));
+    m_currentInvocation->outputText(makeString("WebView updated the title for history URL \""_s, urlString, "\" to \""_s, toWTFString(title), "\".\n"_s));
 }
 
 void TestController::setNavigationGesturesEnabled(bool value)

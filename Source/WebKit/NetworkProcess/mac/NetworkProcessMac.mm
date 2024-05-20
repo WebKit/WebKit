@@ -76,7 +76,7 @@ void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParam
 {
     auto webKitBundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
 
-    sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebKit.NetworkProcess.sb"));
+    sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebKit.NetworkProcess.sb"_s));
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 }

@@ -342,7 +342,7 @@ void WebAutomationSession::createBrowsingContext(std::optional<Inspector::Protoc
 {
     ASSERT(m_client);
     if (!m_client)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session could not request a new browsing context.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session could not request a new browsing context."_s);
 
     uint16_t options = 0;
 
@@ -351,7 +351,7 @@ void WebAutomationSession::createBrowsingContext(std::optional<Inspector::Protoc
 
     m_client->requestNewPageWithOptions(*this, static_cast<API::AutomationSessionBrowsingContextOptions>(options), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebPageProxy* page) {
         if (!page)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session failed to create a new browsing context.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session failed to create a new browsing context."_s);
 
         // WebDriver allows running commands in a browsing context which has not done any loads yet. Force WebProcess to be created so it can receive messages.
         page->launchInitialProcessIfNecessary();
@@ -401,11 +401,11 @@ void WebAutomationSession::setWindowFrameOfBrowsingContext(const Inspector::Prot
     if (origin) {
         x = origin->getDouble("x"_s);
         if (!x)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'x' parameter was not found or invalid.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'x' parameter was not found or invalid."_s);
 
         y = origin->getDouble("y"_s);
         if (!y)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'y' parameter was not found or invalid.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'y' parameter was not found or invalid."_s);
     }
 
     std::optional<double> width;
@@ -413,17 +413,17 @@ void WebAutomationSession::setWindowFrameOfBrowsingContext(const Inspector::Prot
     if (size) {
         width = size->getDouble("width"_s);
         if (!width)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'width' parameter was not found or invalid.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'width' parameter was not found or invalid."_s);
 
         height = size->getDouble("height"_s);
         if (!height)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'height' parameter was not found or invalid.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'height' parameter was not found or invalid."_s);
 
         if (width.value() < 0)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'width' parameter had an invalid value.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'width' parameter had an invalid value."_s);
 
         if (height.value() < 0)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'height' parameter had an invalid value.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'height' parameter had an invalid value."_s);
     }
 
     auto page = webPageProxyForHandle(handle);
@@ -899,7 +899,7 @@ static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<Str
     if (components.size() != 2)
         return false;
 
-    auto wildcardedMIMEType = makeString(components[0], "/*");
+    auto wildcardedMIMEType = makeString(components[0], "/*"_s);
     if (allowedMIMETypes.contains(wildcardedMIMEType))
         return true;
 
@@ -990,7 +990,7 @@ void WebAutomationSession::didEvaluateJavaScriptFunction(uint64_t callbackID, co
 void WebAutomationSession::resolveChildFrameHandle(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, std::optional<int>&& optionalOrdinal, const String& optionalName, const Inspector::Protocol::Automation::NodeHandle& optionalNodeHandle, Ref<ResolveChildFrameHandleCallback>&& callback)
 {
     if (!optionalOrdinal && !optionalName && !optionalNodeHandle)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "Command must specify a child frame by ordinal, name, or element handle.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "Command must specify a child frame by ordinal, name, or element handle."_s);
 
     auto page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
@@ -1079,7 +1079,7 @@ void WebAutomationSession::computeElementLayout(const Inspector::Protocol::Autom
 
     std::optional<CoordinateSystem> coordinateSystem = protocolStringToCoordinateSystem(coordinateSystemValue);
     if (!coordinateSystem)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'coordinateSystem' is invalid.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'coordinateSystem' is invalid."_s);
 
     WTF::CompletionHandler<void(std::optional<String>, WebCore::FloatRect, std::optional<WebCore::IntPoint>, bool)> completionHandler = [callback](std::optional<String> errorType, WebCore::FloatRect rect, std::optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured) mutable {
         if (errorType) {
@@ -1295,12 +1295,12 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::setFilesToSelectF
     newFileList.reserveInitialCapacity(filenames->length());
 
     if (fileContents && fileContents->length() != filenames->length())
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameters 'filenames' and 'fileContents' must have equal length.");
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameters 'filenames' and 'fileContents' must have equal length."_s);
 
     for (size_t i = 0; i < filenames->length(); ++i) {
         auto filename = filenames->get(i)->asString();
         if (!filename)
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameter 'filenames' contains a non-string value.");
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameter 'filenames' contains a non-string value."_s);
 
         if (!fileContents) {
             newFileList.append(filename);
@@ -1309,11 +1309,11 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::setFilesToSelectF
 
         auto fileData = fileContents->get(i)->asString();
         if (!fileData)
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameter 'fileContents' contains a non-string value.");
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameter 'fileContents' contains a non-string value."_s);
 
         std::optional<String> localFilePath = platformGenerateLocalFilePathForRemoteFile(filename, fileData);
         if (!localFilePath)
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote file could not be saved to a local temporary directory.");
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote file could not be saved to a local temporary directory."_s);
 
         newFileList.append(localFilePath.value());
     }
@@ -1339,7 +1339,7 @@ void WebAutomationSession::setFilesForInputFileUpload(const Inspector::Protocol:
     for (size_t i = 0; i < filenames->length(); ++i) {
         auto filename = filenames->get(i)->asString();
         if (!filename)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameter 'filenames' contains a non-string value.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameter 'filenames' contains a non-string value."_s);
 
         newFileList.append(filename);
     }
@@ -1469,15 +1469,15 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
 
     cookie.name = cookieObject->getString("name"_s);
     if (!cookie.name)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'name' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'name' was not found."_s);
 
     cookie.value = cookieObject->getString("value"_s);
     if (!cookie.value)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'value' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'value' was not found."_s);
 
     auto domain = cookieObject->getString("domain"_s);
     if (!domain)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'domain' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'domain' was not found."_s);
 
     // Inherit the domain/host from the main frame's URL if it is not explicitly set.
     if (domain.isEmpty())
@@ -1487,39 +1487,39 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
 
     cookie.path = cookieObject->getString("path"_s);
     if (!cookie.path)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'path' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'path' was not found."_s);
 
     auto expires = cookieObject->getDouble("expires"_s);
     if (!expires)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'expires' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'expires' was not found."_s);
 
     cookie.expires = *expires * 1000.0;
 
     auto secure = cookieObject->getBoolean("secure"_s);
     if (!secure)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'secure' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'secure' was not found."_s);
 
     cookie.secure = *secure;
 
     auto session = cookieObject->getBoolean("session"_s);
     if (!session)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'session' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'session' was not found."_s);
 
     cookie.session = *session;
 
     auto httpOnly = cookieObject->getBoolean("httpOnly"_s);
     if (!httpOnly)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'httpOnly' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'httpOnly' was not found."_s);
 
     cookie.httpOnly = *httpOnly;
 
     auto sameSite = cookieObject->getString("sameSite"_s);
     if (!sameSite)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'sameSite' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'sameSite' was not found."_s);
 
     auto parsedSameSite = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::CookieSameSitePolicy>(sameSite);
     if (!parsedSameSite)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'sameSite' has an unknown value.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'sameSite' has an unknown value."_s);
 
     cookie.sameSite = toWebCoreSameSitePolicy(*parsedSameSite);
 
@@ -1563,19 +1563,19 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::setSessionPermiss
     for (auto it = permissions->begin(); it != permissions->end(); ++it) {
         auto permission = it->get().asObject();
         if (!permission)
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permissions' is invalid.");
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permissions' is invalid."_s);
 
         auto permissionName = permission->getString("permission"_s);
         if (!permissionName)
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permission' is missing or invalid.");
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permission' is missing or invalid."_s);
 
         auto parsedPermissionName = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::SessionPermission>(permissionName);
         if (!parsedPermissionName)
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permission' has an unknown value.");
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permission' has an unknown value."_s);
 
         auto permissionValue = permission->getBoolean("value"_s);
         if (!permissionValue)
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'value' is missing or invalid.");
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'value' is missing or invalid."_s);
 
         switch (parsedPermissionName.value()) {
         case Inspector::Protocol::Automation::SessionPermission::GetUserMedia:
@@ -1611,25 +1611,25 @@ Inspector::Protocol::ErrorStringOr<String /* authenticatorId */> WebAutomationSe
 #if ENABLE(WEB_AUTHN)
     auto protocol = authenticator->getString("protocol"_s);
     if (!protocol)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'protocol' is missing or invalid.");
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'protocol' is missing or invalid."_s);
     auto transport = authenticator->getString("transport"_s);
     if (!transport)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'transport' is missing or invalid.");
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'transport' is missing or invalid."_s);
     auto parsedTransport = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::AuthenticatorTransport>(transport);
     if (!parsedTransport)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'transport' has an unknown value.");
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'transport' has an unknown value."_s);
     auto hasResidentKey = authenticator->getBoolean("hasResidentKey"_s);
     if (!hasResidentKey)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'hasResidentKey' is missing or invalid.");
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'hasResidentKey' is missing or invalid."_s);
     auto hasUserVerification = authenticator->getBoolean("hasUserVerification"_s);
     if (!hasUserVerification)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'hasUserVerification' is missing or invalid.");
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'hasUserVerification' is missing or invalid."_s);
     auto isUserConsenting = authenticator->getBoolean("isUserConsenting"_s);
     if (!isUserConsenting)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'isUserConsenting' is missing or invalid.");
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'isUserConsenting' is missing or invalid."_s);
     auto isUserVerified = authenticator->getBoolean("isUserVerified"_s);
     if (!isUserVerified)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'isUserVerified' is missing or invalid.");
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'isUserVerified' is missing or invalid."_s);
 
     auto page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
@@ -1643,7 +1643,7 @@ Inspector::Protocol::ErrorStringOr<String /* authenticatorId */> WebAutomationSe
         .isUserVerified = *isUserVerified,
     });
 #else
-    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented."_s);
 #endif // ENABLE(WEB_AUTHN)
 }
 
@@ -1654,36 +1654,36 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::removeVirtualAuth
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
     if (!page->websiteDataStore().virtualAuthenticatorManager().removeAuthenticator(authenticatorId))
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "No such authenticator exists.");
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "No such authenticator exists."_s);
     return { };
 #else
-    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented."_s);
 #endif // ENABLE(WEB_AUTHN)
 }
 
 Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::addVirtualAuthenticatorCredential(const String& browsingContextHandle, const String& authenticatorId, Ref<JSON::Object>&& credential)
 {
-    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented."_s);
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::VirtualAuthenticatorCredential>> /* credentials */> WebAutomationSession::getVirtualAuthenticatorCredentials(const String& browsingContextHandle, const String& authenticatorId)
 {
-    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented."_s);
 }
 
 Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::removeVirtualAuthenticatorCredential(const String& browsingContextHandle, const String& authenticatorId, const String& credentialId)
 {
-    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented."_s);
 }
 
 Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::removeAllVirtualAuthenticatorCredentials(const String& browsingContextHandle, const String& authenticatorId)
 {
-    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented."_s);
 }
 
 Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::setVirtualAuthenticatorUserVerified(const String& browsingContextHandle, const String& authenticatorId, bool isUserVerified)
 {
-    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented."_s);
 }
 
 Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::generateTestReport(const String& browsingContextHandle, const String& message, const String& group)
@@ -1918,13 +1918,13 @@ void WebAutomationSession::performMouseInteraction(const Inspector::Protocol::Au
 
     auto x = requestedPosition->getDouble("x"_s);
     if (!x)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'x' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'x' was not found."_s);
 
     auto floatX = static_cast<float>(*x);
 
     auto y = requestedPosition->getDouble("y"_s);
     if (!y)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'y' was not found.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'y' was not found."_s);
 
     auto floatY = static_cast<float>(*y);
 
@@ -1932,11 +1932,11 @@ void WebAutomationSession::performMouseInteraction(const Inspector::Protocol::Au
     for (auto it = keyModifierStrings->begin(); it != keyModifierStrings->end(); ++it) {
         auto modifierString = it->get().asString();
         if (!modifierString)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'modifiers' is invalid.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'modifiers' is invalid."_s);
 
         auto parsedModifier = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::KeyModifier>(modifierString);
         if (!parsedModifier)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "A modifier in the 'modifiers' array is invalid.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "A modifier in the 'modifiers' array is invalid."_s);
 
         keyModifiers.add(protocolModifierToWebEventModifier(parsedModifier.value()));
     }
@@ -1986,7 +1986,7 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
     if (!interactions->length())
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'interactions' was not found or empty.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'interactions' was not found or empty."_s);
 
     // Validate all of the parameters before performing any interactions with the browsing context under test.
     Vector<WTF::Function<void()>> actionsToPerform;
@@ -1995,20 +1995,20 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
     for (const auto& interactionValue : interactions.get()) {
         auto interactionObject = interactionValue->asObject();
         if (!interactionObject)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter was invalid.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter was invalid."_s);
 
         auto interactionTypeString = interactionObject->getString("type"_s);
         if (!interactionTypeString)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter is missing the 'type' key.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter is missing the 'type' key."_s);
         auto interactionType = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::KeyboardInteractionType>(interactionTypeString);
         if (!interactionType)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'type' key.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'type' key."_s);
 
         auto virtualKeyString = interactionObject->getString("key"_s);
         if (!!virtualKeyString) {
             std::optional<VirtualKey> virtualKey = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::VirtualKey>(virtualKeyString);
             if (!virtualKey)
-                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'key' value.");
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'key' value."_s);
 
             actionsToPerform.append([this, page, interactionType, virtualKey] {
                 platformSimulateKeyboardInteraction(*page, interactionType.value(), virtualKey.value());
@@ -2021,7 +2021,7 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
             case Inspector::Protocol::Automation::KeyboardInteractionType::KeyPress:
             case Inspector::Protocol::Automation::KeyboardInteractionType::KeyRelease:
                 // 'KeyPress' and 'KeyRelease' are meant for a virtual key and are not supported for a string (sequence of codepoints).
-                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'key' value.");
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'key' value."_s);
 
             case Inspector::Protocol::Automation::KeyboardInteractionType::InsertByKey:
                 actionsToPerform.append([this, page, keySequence] {
@@ -2032,12 +2032,12 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
         }
 
         if (!virtualKeyString && !keySequence)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "An interaction in the 'interactions' parameter is missing both 'key' and 'text'. One must be provided.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "An interaction in the 'interactions' parameter is missing both 'key' and 'text'. One must be provided."_s);
     }
 
     ASSERT(actionsToPerform.size());
     if (!actionsToPerform.size())
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "No actions to perform.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "No actions to perform."_s);
 
     auto keyboardEventsFlushedCallback = [protectedThis = Ref { *this }, callback = WTFMove(callback), page = Ref { *page }](std::optional<AutomationCommandError> error) {
         if (error)
@@ -2157,25 +2157,25 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
     // Parse and validate Automation protocol arguments. By this point, the driver has
     // already performed the steps in §17.3 Processing Actions Requests.
     if (!inputSources->length())
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'inputSources' was not found or empty.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'inputSources' was not found or empty."_s);
 
     HashSet<String> sourceIdSet;
     for (const auto& inputSourceValue : inputSources.get()) {
         auto inputSourceObject = inputSourceValue->asObject();
         if (!inputSourceObject)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter was invalid.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter was invalid."_s);
 
         auto sourceId = inputSourceObject->getString("sourceId"_s);
         if (!sourceId)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter is missing a 'sourceId'.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter is missing a 'sourceId'."_s);
 
         auto sourceType = inputSourceObject->getString("sourceType"_s);
         if (!sourceType)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter is missing a 'sourceType'.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter is missing a 'sourceType'."_s);
 
         auto parsedInputSourceType = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::InputSourceType>(sourceType);
         if (!parsedInputSourceType)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter has an invalid 'sourceType'.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter has an invalid 'sourceType'."_s);
 
         SimulatedInputSourceType inputSourceType = simulatedInputSourceTypeFromProtocolSourceType(*parsedInputSourceType);
 
@@ -2191,24 +2191,24 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
 #endif
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
         if (inputSourceType == SimulatedInputSourceType::Mouse)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Mouse input sources are not yet supported.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Mouse input sources are not yet supported."_s);
         if (inputSourceType == SimulatedInputSourceType::Pen)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Pen input sources are not yet supported.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Pen input sources are not yet supported."_s);
 #endif
 #if !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         if (inputSourceType == SimulatedInputSourceType::Touch)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Touch input sources are not yet supported.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Touch input sources are not yet supported."_s);
 #endif
 #if !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         if (inputSourceType == SimulatedInputSourceType::Keyboard)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Keyboard input sources are not yet supported.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Keyboard input sources are not yet supported."_s);
 #endif
 #if !ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
         if (inputSourceType == SimulatedInputSourceType::Wheel)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Wheel input sources are not yet supported.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Wheel input sources are not yet supported."_s);
 #endif
         if (sourceIdSet.contains(sourceId))
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Two input sources with the same sourceId were specified.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Two input sources with the same sourceId were specified."_s);
 
         sourceIdSet.add(sourceId);
         m_inputSources.ensure(sourceId, [inputSourceType] {
@@ -2219,16 +2219,16 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
     Vector<SimulatedInputKeyFrame> keyFrames;
 
     if (!steps->length())
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'steps' was not found or empty.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'steps' was not found or empty."_s);
 
     for (const auto& stepValue : steps.get()) {
         auto stepObject = stepValue->asObject();
         if (!stepObject)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "A step in the 'steps' parameter was not an object.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "A step in the 'steps' parameter was not an object."_s);
 
         auto stepStates = stepObject->getArray("states"_s);
         if (!stepStates)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "A step is missing the 'states' property.");
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "A step is missing the 'states' property."_s);
 
         Vector<SimulatedInputKeyFrame::StateEntry> entries;
         entries.reserveCapacity(stepStates->length());
@@ -2236,14 +2236,14 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
         for (const auto& stateValue : *stepStates) {
             auto stateObject = stateValue->asObject();
             if (!stateObject)
-                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered a non-object step state.");
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered a non-object step state."_s);
 
             auto sourceId = stateObject->getString("sourceId"_s);
             if (!sourceId)
-                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Step state lacks required 'sourceId' property.");
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Step state lacks required 'sourceId' property."_s);
 
             if (!m_inputSources.contains(sourceId))
-                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Unknown 'sourceId' specified.");
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Unknown 'sourceId' specified."_s);
 
             Ref inputSource = *m_inputSources.get(sourceId);
             SimulatedInputSourceState sourceState { };
@@ -2252,12 +2252,12 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             if (!!pressedCharKeyString) {
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
                 if (WTF::numGraphemeClusters(pressedCharKeyString) != 1)
-                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Invalid 'pressedCharKey'.");
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Invalid 'pressedCharKey'."_s);
                 sourceState.pressedCharKeys.add(pressedCharKeyString);
 #else
                 auto charKey = pressedCharKey(pressedCharKeyString);
                 if (!charKey)
-                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Invalid 'pressedCharKey'.");
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Invalid 'pressedCharKey'."_s);
                 sourceState.pressedCharKeys.add(*charKey);
 #endif
             }
@@ -2268,11 +2268,11 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
                 for (auto it = pressedVirtualKeysArray->begin(); it != pressedVirtualKeysArray->end(); ++it) {
                     auto pressedVirtualKeyString = (*it)->asString();
                     if (!pressedVirtualKeyString)
-                        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered a non-string virtual key value.");
+                        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered a non-string virtual key value."_s);
 
                     std::optional<VirtualKey> parsedVirtualKey = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::VirtualKey>(pressedVirtualKeyString);
                     if (!parsedVirtualKey)
-                        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered an unknown virtual key value.");
+                        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered an unknown virtual key value."_s);
                     else
                         pressedVirtualKeys.add(normalizedVirtualKey(parsedVirtualKey.value()), parsedVirtualKey.value());
                 }
@@ -2293,7 +2293,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             if (sourceState.origin && sourceState.origin.value() == Inspector::Protocol::Automation::MouseMoveOrigin::Element) {
                 auto nodeHandleString = stateObject->getString("nodeHandle"_s);
                 if (!nodeHandleString)
-                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Node handle not provided for 'Element' origin");
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Node handle not provided for 'Element' origin"_s);
                 sourceState.nodeHandle = nodeHandleString;
             }
 
@@ -2323,7 +2323,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
     Ref inputDispatcher = inputDispatcherForPage(*page);
     if (inputDispatcher->isActive()) {
         ASSERT_NOT_REACHED();
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "A previous interaction is still underway.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "A previous interaction is still underway."_s);
     }
 
     // Delegate the rest of §17.4 Dispatching Actions to the dispatcher.

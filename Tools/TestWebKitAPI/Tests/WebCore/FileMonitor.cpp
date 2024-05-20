@@ -101,7 +101,7 @@ static void resetTestState()
 
 static String createCommand(const String& path, const String& payload)
 {
-    return makeString("echo \"", payload, "\" > ", path);
+    return makeString("echo \""_s, payload, "\" > "_s, path);
 }
 
 static String readContentsOfFile(const String& path)
@@ -240,7 +240,7 @@ TEST_F(FileMonitorTest, DetectDeletion)
     });
 
     testQueue->dispatch([this] () mutable {
-        auto rc = system(makeString("rm -f ", tempFilePath()).utf8().data());
+        auto rc = system(makeString("rm -f "_s, tempFilePath()).utf8().data());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -293,7 +293,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
     resetTestState();
 
     testQueue->dispatch([this] () mutable {
-        auto rc = system(makeString("rm -f ", tempFilePath()).utf8().data());
+        auto rc = system(makeString("rm -f "_s, tempFilePath()).utf8().data());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -328,7 +328,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
     });
 
     testQueue->dispatch([this] () mutable {
-        auto rc = system(makeString("rm -f ", tempFilePath()).utf8().data());
+        auto rc = system(makeString("rm -f "_s, tempFilePath()).utf8().data());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;

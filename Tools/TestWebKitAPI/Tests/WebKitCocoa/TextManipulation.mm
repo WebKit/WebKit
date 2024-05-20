@@ -2241,7 +2241,7 @@ TEST(TextManipulation, CompleteTextManipulationShouldBatchItemCallback)
     EXPECT_EQ(items.count, 2000UL);
     for (unsigned i = 0; i < 2000; ++i) {
         EXPECT_EQ(items[i].tokens.count, 1UL);
-        EXPECT_WK_STREQ(makeString("hello ", i), items[i].tokens[0].content.UTF8String);
+        EXPECT_WK_STREQ(makeString("hello "_s, i), items[i].tokens[0].content.UTF8String);
     }
 }
 

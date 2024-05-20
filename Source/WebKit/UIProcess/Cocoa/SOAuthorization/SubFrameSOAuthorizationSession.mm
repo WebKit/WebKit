@@ -192,7 +192,7 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXF
     if (!contentSecurityPolicy.overridesXFrameOptions()) {
         String xFrameOptions = response.httpHeaderField(HTTPHeaderName::XFrameOptions);
         if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(WTFMove(frameAncestorOrigins), xFrameOptions, response.url())) {
-            String errorMessage = makeString("Refused to display '", response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '", xFrameOptions, "'.");
+            String errorMessage = makeString("Refused to display '"_s, response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '"_s, xFrameOptions, "'."_s);
             AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions: %s", errorMessage.utf8().data());
 
             return true;

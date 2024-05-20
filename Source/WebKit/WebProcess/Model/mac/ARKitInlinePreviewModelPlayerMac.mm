@@ -185,7 +185,7 @@ void ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL(const URL& 
 
         if (uuid != expectedUUID) {
             LOG(ModelElement, "ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL() UUID mismatch, received %s but expected %s.", uuid.utf8().data(), expectedUUID.utf8().data());
-            strongClient->didFailLoading(*strongSelf, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, makeString("ARKitInlinePreviewModelPlayer::createPreviewsForModelWithURL() UUID mismatch, received ", uuid, " but expected ", expectedUUID, ".") });
+            strongClient->didFailLoading(*strongSelf, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, makeString("ARKitInlinePreviewModelPlayer::createPreviewsForModelWithURL() UUID mismatch, received "_s, uuid, " but expected "_s, expectedUUID, '.') });
             return;
         }
 
