@@ -318,6 +318,7 @@ void PresentationContextIOSurface::present()
         computeDescriptor.dispatchType = MTLDispatchTypeSerial;
 
         id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoderWithDescriptor:computeDescriptor];
+        m_device->getQueue().setEncoderForBuffer(commandBuffer, computeEncoder);
         [computeEncoder setComputePipelineState:m_computePipelineState];
         id<MTLTexture> inputTexture = texturePtr->texture();
         [computeEncoder setTexture:inputTexture atIndex:0];
@@ -329,7 +330,7 @@ void PresentationContextIOSurface::present()
         threadgroupCount.height = (inputTexture.height + threadgroupSize.height - 1) / threadgroupSize.height;
         threadgroupCount.depth = 1;
         [computeEncoder dispatchThreadgroups:threadgroupCount threadsPerThreadgroup:threadgroupSize];
-        [computeEncoder endEncoding];
+        m_device->getQueue().endEncoding(computeEncoder, commandBuffer);
         m_device->getQueue().commitMTLCommandBuffer(commandBuffer);
     }
 

@@ -61,7 +61,7 @@ Queue::~Queue()
     // It's actually fine, though, because we can just drop any pending copies on the floor.
     // If the queue is being destroyed, this is unobservable.
     if (m_blitCommandEncoder)
-        [m_blitCommandEncoder endEncoding];
+        endEncoding(m_blitCommandEncoder, m_commandBuffer);
 }
 
 void Queue::ensureBlitCommandEncoder()
@@ -75,16 +75,27 @@ void Queue::ensureBlitCommandEncoder()
     m_commandBuffer = blitCommandBufferWithSharedEvent.first;
     m_commandBufferEvent = blitCommandBufferWithSharedEvent.second;
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
+    setEncoderForBuffer(m_commandBuffer, m_blitCommandEncoder);
 }
 
 void Queue::finalizeBlitCommandEncoder()
 {
     if (m_blitCommandEncoder) {
-        [m_blitCommandEncoder endEncoding];
+        endEncoding(m_blitCommandEncoder, m_commandBuffer);
         commitMTLCommandBuffer(m_commandBuffer);
         m_blitCommandEncoder = nil;
         m_commandBuffer = nil;
     }
+}
+
+void Queue::endEncoding(id<MTLCommandEncoder> commandEncoder, id<MTLCommandBuffer> commandBuffer) const
+{
+    id<MTLCommandEncoder> currentEncoder = encoderForBuffer(commandBuffer);
+    if (currentEncoder != commandEncoder)
+        return;
+
+    [currentEncoder endEncoding];
+    [m_openCommandEncoders removeObjectForKey:commandBuffer];
 }
 
 id<MTLCommandEncoder> Queue::encoderForBuffer(id<MTLCommandBuffer> commandBuffer) const
@@ -100,6 +111,7 @@ void Queue::setEncoderForBuffer(id<MTLCommandBuffer> commandBuffer, id<MTLComman
     if (!commandBuffer)
         return;
 
+    endEncoding(encoderForBuffer(commandBuffer), commandBuffer);
     if (!commandEncoder)
         [m_openCommandEncoders removeObjectForKey:commandBuffer];
     else

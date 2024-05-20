@@ -81,6 +81,7 @@ public:
     id<MTLCommandEncoder> encoderForBuffer(id<MTLCommandBuffer>) const;
     void clearTextureViewIfNeeded(TextureView&);
     static bool writeWillCompletelyClear(WGPUTextureDimension, uint32_t widthForMetal, uint32_t logicalSizeWidth, uint32_t heightForMetal, uint32_t logicalSizeHeight, uint32_t depthForMetal, uint32_t logicalSizeDepthOrArrayLayers);
+    void endEncoding(id<MTLCommandEncoder>, id<MTLCommandBuffer>) const;
 
 private:
     Queue(id<MTLCommandQueue>, Device&);

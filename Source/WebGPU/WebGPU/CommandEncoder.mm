@@ -229,13 +229,12 @@ void CommandEncoder::endEncoding(id<MTLCommandEncoder> encoder)
 {
     id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
     if (existingEncoder != encoder) {
-        [existingEncoder endEncoding];
+        m_device->getQueue().endEncoding(existingEncoder, m_commandBuffer);
         setExistingEncoder(nil);
         return;
     }
 
-    if (encoderIsCurrent(m_existingCommandEncoder))
-        [m_existingCommandEncoder endEncoding];
+    m_device->getQueue().endEncoding(m_existingCommandEncoder, m_commandBuffer);
     setExistingEncoder(nil);
     m_blitCommandEncoder = nil;
 }
@@ -372,6 +371,7 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
             mtlAttachment.depthPlane = textureAndClearColor.depthPlane;
         }
         clearRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:clearDescriptor];
+        setExistingEncoder(clearRenderCommandEncoder);
     }
 
     auto [pso, depthStencil] = createSimplePso(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear, device);
@@ -380,7 +380,8 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
         [clearRenderCommandEncoder setDepthStencilState:depthStencil];
     [clearRenderCommandEncoder setCullMode:MTLCullModeNone];
     [clearRenderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1 instanceCount:1 baseInstance:0];
-    [clearRenderCommandEncoder endEncoding];
+    m_device->getQueue().endEncoding(clearRenderCommandEncoder, m_commandBuffer);
+    setExistingEncoder(nil);
 }
 
 static bool isMultisampleTexture(id<MTLTexture> texture)
