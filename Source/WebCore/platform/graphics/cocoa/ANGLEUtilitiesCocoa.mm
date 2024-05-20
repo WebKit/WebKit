@@ -138,14 +138,14 @@ RetainPtr<MTLRasterizationRateMap> newRasterizationRateMap(GCGLDisplay display, 
     RetainPtr<MTLRasterizationRateMapDescriptor> descriptor = adoptNS([MTLRasterizationRateMapDescriptor new]);
     id<MTLRasterizationRateMapDescriptorSPI> descriptor_spi = (id<MTLRasterizationRateMapDescriptorSPI>)descriptor.get();
         descriptor_spi.skipSampleValidationAndApplySampleAtTileGranularity = YES;
-    descriptor_spi.mutability = MTLMutabilityDefault;
+    descriptor_spi.mutability = MTLMutabilityMutable;
     descriptor_spi.minFactor  = 0.01;
 
-    auto mtlScreenSize = MTLSizeMake(screenSize.width(), screenSize.height(), 0);
-    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorLeft = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:mtlScreenSize];
-    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorRight = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:mtlScreenSize];
+    constexpr MTLSize maxSampleCount { 256, 256, 1 };
+    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorLeft = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:maxSampleCount];
+    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorRight = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:maxSampleCount];
 
-    if (horizontalSamplesLeft.size() > mtlScreenSize.width || horizontalSamplesRight.size() > mtlScreenSize.width || verticalSamples.size() > mtlScreenSize.height || !layerDescriptorLeft.get() || !layerDescriptorRight.get())
+    if (horizontalSamplesLeft.size() > maxSampleCount.width || horizontalSamplesRight.size() > maxSampleCount.width || verticalSamples.size() > maxSampleCount.height || !layerDescriptorLeft.get() || !layerDescriptorRight.get())
         return nullptr;
 
     memcpy([layerDescriptorLeft horizontalSampleStorage], horizontalSamplesLeft.data(), horizontalSamplesLeft.size_bytes());
@@ -156,7 +156,7 @@ RetainPtr<MTLRasterizationRateMap> newRasterizationRateMap(GCGLDisplay display, 
     memcpy([layerDescriptorRight verticalSampleStorage], verticalSamples.data(), verticalSamples.size_bytes());
     [layerDescriptorRight setSampleCount:MTLSizeMake(horizontalSamplesRight.size(), verticalSamples.size(), 0)];
 
-    [descriptor setScreenSize:mtlScreenSize];
+    [descriptor setScreenSize:MTLSizeMake(screenSize.width(), screenSize.height(), 0)];
     [descriptor layers][0] = layerDescriptorLeft.get();
     [descriptor layers][1] = layerDescriptorRight.get();
 

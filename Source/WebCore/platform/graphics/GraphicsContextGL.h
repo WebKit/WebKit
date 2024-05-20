@@ -56,10 +56,6 @@
 template<typename... Types>
 struct GCGLSpanTuple;
 
-namespace PlatformXR {
-enum class Layout : uint8_t;
-}
-
 namespace WebCore {
 class ImageBuffer;
 class PixelBuffer;

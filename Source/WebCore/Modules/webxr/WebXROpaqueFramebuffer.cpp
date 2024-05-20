@@ -192,19 +192,9 @@ bool WebXROpaqueFramebuffer::supportsDynamicViewportScaling() const
     return true;
 }
 
-IntSize WebXROpaqueFramebuffer::displayFramebufferSize() const
-{
-    return m_framebufferSize;
-}
-
 IntSize WebXROpaqueFramebuffer::drawFramebufferSize() const
 {
-    switch (m_displayLayout) {
-    case PlatformXR::Layout::Layered:
-        return { 2*m_framebufferSize.width(), m_framebufferSize.height() };
-    default:
-        return m_framebufferSize;
-    }
+    return m_framebufferSize;
 }
 
 IntRect WebXROpaqueFramebuffer::drawViewport(PlatformXR::Eye eye) const

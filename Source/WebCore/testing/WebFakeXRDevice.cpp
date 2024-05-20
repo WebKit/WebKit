@@ -159,10 +159,10 @@ void SimulatedXRDevice::frameTimerFired()
 
     for (auto& layer : m_layers) {
 #if PLATFORM(COCOA)
+        PlatformXR::FrameData::LayerSetupData layerSetupData;
+        layerSetupData.physicalSize[0] = { static_cast<uint16_t>(layer.value.width()), static_cast<uint16_t>(layer.value.height()) };
         data.layers.add(layer.key, PlatformXR::FrameData::LayerData {
-            .layerSetup = PlatformXR::FrameData::LayerSetupData {
-                .framebufferSize { static_cast<uint16_t>(layer.value.width()), static_cast<uint16_t>(layer.value.height()) }
-            },
+            .layerSetup = layerSetupData,
             .colorTexture = { MachSendRight(), false }
         });
 #else

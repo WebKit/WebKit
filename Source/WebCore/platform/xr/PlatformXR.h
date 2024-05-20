@@ -259,14 +259,18 @@ struct FrameData {
     };
 
 #if PLATFORM(COCOA)
+    struct RateMapDescription {
+        WebCore::IntSize screenSize;
+        std::array<std::span<const float>, 2> horizontalSamples;
+        // Vertical samples is shared by both horizontalSamples
+        std::span<const float> verticalSamples;
+    };
+
     static constexpr auto LayerSetupSizeMax = std::numeric_limits<uint16_t>::max();
     struct LayerSetupData {
         std::array<std::array<uint16_t, 2>, 2> physicalSize;
         std::array<WebCore::IntRect, 2> viewports;
-        std::array<std::span<const float>, 2> horizontalSamples;
-        std::span<const float> verticalSamples;
-        WebCore::IntSize screenSize;
-        std::array<uint16_t, 2> framebufferSize;
+        RateMapDescription foveationRateMapDesc;
         MachSendRight completionSyncEvent;
     };
 

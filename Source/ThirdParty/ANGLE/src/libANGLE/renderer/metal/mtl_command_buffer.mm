@@ -1800,26 +1800,9 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
     return setStencilRefVals(ref, ref);
 }
 
-RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &intialViewport,
+RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewport,
                                                         id<MTLRasterizationRateMap> map)
 {
-    auto viewport = intialViewport;
-    if (map)
-    {
-        auto adjustedOrigin =
-            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(viewport.originX, (int)viewport.originY)
-                                       forLayer:0];
-        auto adjustedSize =
-            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(viewport.width, viewport.height)
-                                       forLayer:0];
-
-        viewport.originX      = std::max<double>(0, adjustedOrigin.x);
-        viewport.originY      = std::max<double>(0, adjustedOrigin.y);
-        MTLSize screenSize = [map screenSize];
-        viewport.width  = std::min<double>(screenSize.width, ceilf(adjustedSize.x));
-        viewport.height = std::min<double>(screenSize.height, ceilf(adjustedSize.y));
-    }
-
     if (mStateCache.viewport.valid() && mStateCache.viewport.value() == viewport)
     {
         return *this;
@@ -1868,11 +1851,11 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect 
                                                                     clampedRect.height)
                                        forLayer:0];
 
-        clampedRect.x      = (NSUInteger)floorf(adjustedOrigin.x);
-        clampedRect.y      = (NSUInteger)floorf(adjustedOrigin.y);
+        clampedRect.x      = (NSUInteger)roundf(adjustedOrigin.x);
+        clampedRect.y      = (NSUInteger)roundf(adjustedOrigin.y);
         MTLSize screenSize = [map screenSize];
-        clampedRect.width  = std::min<NSUInteger>(screenSize.width, ceilf(adjustedSize.x));
-        clampedRect.height = std::min<NSUInteger>(screenSize.height, ceilf(adjustedSize.y));
+        clampedRect.width  = std::min<NSUInteger>(screenSize.width, roundf(adjustedSize.x));
+        clampedRect.height = std::min<NSUInteger>(screenSize.height, roundf(adjustedSize.y));
     }
 
     mCommands.push(CmdType::SetScissorRect).push(clampedRect);
