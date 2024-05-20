@@ -299,12 +299,12 @@ void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithUUI
 
 void PageClientImplCocoa::unifiedTextReplacementActiveWillChange()
 {
-    [m_webView willChangeValueForKey:@"_unifiedTextReplacementActive"];
+    [m_webView willChangeValueForKey:unifiedTextReplacementActiveKey];
 }
 
 void PageClientImplCocoa::unifiedTextReplacementActiveDidChange()
 {
-    [m_webView didChangeValueForKey:@"_unifiedTextReplacementActive"];
+    [m_webView didChangeValueForKey:unifiedTextReplacementActiveKey];
 }
 #endif
 

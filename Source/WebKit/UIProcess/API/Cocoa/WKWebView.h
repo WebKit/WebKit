@@ -661,6 +661,10 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 */
 @property (nonatomic, getter=isInspectable) BOOL inspectable NS_SWIFT_NAME(isInspectable) WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebViewAdditions.h>
+#endif
+
 @end
 
 #if !TARGET_OS_IPHONE
