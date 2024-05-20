@@ -610,9 +610,22 @@ TEST(IPCSerialization, Basic)
     auto components = personNameComponentsForTesting();
     runTestNS({ components.get().phoneticRepresentation });
     runTestNS({ components.get() });
+    components.get().namePrefix = nil;
+    runTestNS({ components.get() });
+    components.get().givenName = nil;
+    runTestNS({ components.get() });
+    components.get().middleName = nil;
+    runTestNS({ components.get() });
+    components.get().familyName = nil;
+    runTestNS({ components.get() });
+    components.get().nickname = nil;
+    runTestNS({ components.get() });
 
 #if USE(PASSKIT) && !PLATFORM(WATCHOS)
     // CNPhoneNumber
+    // Digits must be non-null at init-time, but countryCode can be null.
+    // However, Contacts will calculate a default country code if you pass in a null one,
+    // so testing encode/decode of such an instance is pointless.
     RetainPtr<CNPhoneNumber> phoneNumber = [PAL::getCNPhoneNumberClass() phoneNumberWithDigits:@"4085551234" countryCode:@"us"];
     runTestNS({ phoneNumber.get() });
 
@@ -640,6 +653,16 @@ TEST(IPCSerialization, Basic)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     contact.get().supplementarySubLocality = @"City 17";
 ALLOW_DEPRECATED_DECLARATIONS_END
+    runTestNS({ contact.get() });
+    contact.get().name = nil;
+    runTestNS({ contact.get() });
+    contact.get().postalAddress = nil;
+    runTestNS({ contact.get() });
+    contact.get().phoneNumber = nil;
+    runTestNS({ contact.get() });
+    contact.get().emailAddress = nil;
+    runTestNS({ contact.get() });
+    contact.get().supplementarySubLocality = nil;
     runTestNS({ contact.get() });
 #endif // USE(PASSKIT) && !PLATFORM(WATCHOS)
 

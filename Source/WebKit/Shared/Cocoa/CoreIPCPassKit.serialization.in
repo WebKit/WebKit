@@ -25,10 +25,10 @@
 webkit_platform_headers: "CoreIPCPassKit.h"
 
 [CustomHeader, WebKitPlatform] class WebKit::CoreIPCPKContact {
-    WebKit::CoreIPCPersonNameComponents m_name;
+    std::optional<WebKit::CoreIPCPersonNameComponents> m_name;
     String m_emailAddress;
-    WebKit::CoreIPCCNPhoneNumber m_phoneNumber;
-    WebKit::CoreIPCCNPostalAddress m_postalAddress;
+    std::optional<WebKit::CoreIPCCNPhoneNumber> m_phoneNumber;
+    std::optional<WebKit::CoreIPCCNPostalAddress> m_postalAddress;
     String m_supplementarySublocality;
 }
 
