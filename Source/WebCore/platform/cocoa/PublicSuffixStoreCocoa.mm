@@ -27,36 +27,34 @@
 #import "PublicSuffixStore.h"
 
 #import <pal/spi/cf/CFNetworkSPI.h>
-#import <wtf/URLHelpers.h>
 #import <wtf/cocoa/NSURLExtras.h>
-#import <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-static bool isPublicSuffixCF(StringView domain)
+static bool isPublicSuffixCF(const String& domain)
 {
-    if (auto host = WTF::URLHelpers::mapHostName(domain.toStringWithoutCopying(), nullptr))
-        return !host->isNull() ? _CFHostIsDomainTopLevel(host->createCFString().get()) : _CFHostIsDomainTopLevel(domain.createCFStringWithoutCopying().get());
-    return false;
+    NSString *host = WTF::decodeHostName(domain);
+    return host && _CFHostIsDomainTopLevel((__bridge CFStringRef)host);
 }
 
 bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
 {
+    auto domainString = domain.toStringWithoutCopying();
     {
         Locker locker { m_publicSuffixCacheLock };
-        if (m_publicSuffixCache && m_publicSuffixCache->contains<ASCIICaseInsensitiveStringViewHashTranslator>(domain))
+        if (m_publicSuffixCache && m_publicSuffixCache->contains(domainString))
             return true;
     }
 
-    return isPublicSuffixCF(domain);
+    return isPublicSuffixCF(domainString);
 }
 
-String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView host) const
+String PublicSuffixStore::platformTopPrivatelyControlledDomain(const String& host) const
 {
     size_t separatorPosition;
     for (unsigned labelStart = 0; (separatorPosition = host.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {
         if (isPublicSuffix(host.substring(separatorPosition + 1)))
-            return host.substring(labelStart).toString();
+            return host.substring(labelStart);
     }
 
     return { };
@@ -64,27 +62,28 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView host) 
 
 void PublicSuffixStore::enablePublicSuffixCache(CanAcceptCustomPublicSuffix canAcceptCustomPublicSuffix)
 {
-    ASSERT(isMainThread());
-
-    m_canAcceptCustomPublicSuffix = canAcceptCustomPublicSuffix == CanAcceptCustomPublicSuffix::Yes;
-
     Locker locker { m_publicSuffixCacheLock };
     ASSERT(!m_publicSuffixCache);
+
+    m_canAcceptCustomPublicSuffix = (canAcceptCustomPublicSuffix == CanAcceptCustomPublicSuffix::Yes);
     m_publicSuffixCache = HashSet<String, ASCIICaseInsensitiveHash> { };
 }
 
 void PublicSuffixStore::addPublicSuffix(const String& publicSuffix)
 {
-    ASSERT(isMainThread());
     if (publicSuffix.isEmpty())
+        return;
+
+    Locker locker { m_publicSuffixCacheLock };
+
+    if (!m_publicSuffixCache)
         return;
 
     if (LIKELY(!m_canAcceptCustomPublicSuffix))
         RELEASE_ASSERT(isPublicSuffixCF(publicSuffix));
 
-    Locker locker { m_publicSuffixCacheLock };
-    ASSERT(m_publicSuffixCache);
-    m_publicSuffixCache->add(crossThreadCopy(publicSuffix));
+    if (m_publicSuffixCache)
+        m_publicSuffixCache->add(crossThreadCopy(publicSuffix));
 }
 
 } // namespace WebCore

@@ -39,7 +39,7 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
     return soup_tld_domain_is_public_suffix(domain.convertToASCIILowercase().utf8().data());
 }
 
-static String permissiveTopPrivateDomain(StringView domain)
+static String permissiveTopPrivateDomain(const String& domain)
 {
     auto position = domain.length();
     bool foundDot = false;
@@ -50,15 +50,15 @@ static String permissiveTopPrivateDomain(StringView domain)
     while (position-- > 0) {
         if (domain[position] == '.') {
             if (foundDot)
-                return domain.substring(position + 1).toString();
+                return domain.substring(position + 1);
             foundDot = true;
         }
     }
 
-    return foundDot ? domain.toString() : String();
+    return foundDot ? domain : String();
 }
 
-String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain) const
+String PublicSuffixStore::platformTopPrivatelyControlledDomain(const String& domain) const
 {
     CString domainUTF8 = domain.utf8();
 
@@ -84,7 +84,7 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain
         return String();
 
     if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_IS_IP_ADDRESS))
-        return domain.toString();
+        return domain;
 
     ASSERT_NOT_REACHED();
     return String();

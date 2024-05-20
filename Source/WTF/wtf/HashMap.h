@@ -168,9 +168,9 @@ public:
     MappedTakeType take(iterator);
     MappedTakeType takeFirst();
 
-    // Alternate versions of find() / contains() / get() / remove() that find the object
-    // by hashing and comparing with some other type, to avoid the cost of type conversion.
-    // HashTranslator must have the following function members:
+    // An alternate version of find() that finds the object by hashing and comparing
+    // with some other type, to avoid the cost of type conversion. HashTranslator
+    // must have the following function members:
     //   static unsigned hash(const T&);
     //   static bool equal(const ValueType&, const T&);
     template<typename HashTranslator, typename T> iterator find(const T&);
@@ -180,14 +180,13 @@ public:
     template<typename HashTranslator, typename T> MappedPeekType inlineGet(const T&) const;
     template<typename HashTranslator, typename T> bool remove(const T&);
 
-    // Alternate versions of add() / ensure() that find the object by hashing and comparing
+    // An alternate version of add() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion if the object is already
     // in the table. HashTranslator must have the following function members:
     //   static unsigned hash(const T&);
     //   static bool equal(const ValueType&, const T&);
     //   static translate(ValueType&, const T&, unsigned hashCode);
     template<typename HashTranslator, typename K, typename V> AddResult add(K&&, V&&);
-    template<typename HashTranslator, typename K, typename Functor> AddResult ensure(K&&, Functor&&);
 
     // Overloads for smart pointer keys that take the raw pointer type as the parameter.
     template<typename K = KeyType> typename std::enable_if<IsSmartPtr<K>::value, iterator>::type find(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>*);
@@ -266,17 +265,6 @@ struct HashMapTranslatorAdapter {
     {
         Translator::translate(location.key, key, hashCode);
         location.value = std::forward<V>(mapped);
-    }
-};
-
-template<typename ValueTraits, typename Translator>
-struct HashMapEnsureTranslatorAdapter {
-    template<typename T> static unsigned hash(const T& key) { return Translator::hash(key); }
-    template<typename T, typename U> static bool equal(const T& a, const U& b) { return Translator::equal(a, b); }
-    template<typename T, typename U, typename Functor> static void translate(T& location, U&& key, Functor&& functor, unsigned hashCode)
-    {
-        Translator::translate(location.key, key, hashCode);
-        location.value = functor();
     }
 };
 
@@ -449,13 +437,6 @@ template<typename HashTranslator, typename K, typename V>
 auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>::add(K&& key, V&& value) -> AddResult
 {
     return m_impl.template addPassingHashCode<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(std::forward<K>(key), std::forward<V>(value));
-}
-
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg>
-template<typename HashTranslator, typename K, typename Functor>
-auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>::ensure(K&& key, Functor&& functor) -> AddResult
-{
-    return m_impl.template addPassingHashCode<HashMapEnsureTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(std::forward<K>(key), std::forward<Functor>(functor));
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg>
