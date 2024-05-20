@@ -289,6 +289,9 @@
 /* Title for Cancel button label in button bar */
 "Cancel button label in button bar" = "Cancel";
 
+/* Cancel USDZ file */
+"Cancel (usdz QuickLook Preview)" = "Cancel";
+
 /* Capitalize context menu item */
 "Capitalize" = "Capitalize";
 
@@ -435,6 +438,9 @@
 
 /* Undo action name */
 "Dictation (Undo action name)" = "Dictation";
+
+/* Display USDZ file */
+"Allow (usdz QuickLook Preview)" = "Allow";
 
 /* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
@@ -1311,6 +1317,9 @@
 
 /* Title for Show Text action button */
 "Show Text" = "Show Text";
+
+/* Open 3D object in a new window? */
+"Open this 3D model?" = "Open this 3D model?";
 
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";
