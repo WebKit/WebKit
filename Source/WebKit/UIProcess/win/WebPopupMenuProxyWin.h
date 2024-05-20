@@ -65,8 +65,6 @@ public:
 private:
     WebPopupMenuProxyWin(WebView*, WebPopupMenuProxy::Client&);
 
-    WebCore::Scrollbar* scrollbar() const { return m_scrollbar.get(); }
-
     // ScrollableArea
     WebCore::ScrollPosition scrollPosition() const override;
     void setScrollOffset(const WebCore::IntPoint&) override;

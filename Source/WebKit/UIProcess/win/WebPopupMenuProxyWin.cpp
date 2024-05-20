@@ -522,16 +522,16 @@ LRESULT WebPopupMenuProxyWin::onMouseActivate(HWND hWnd, UINT message, WPARAM, L
 LRESULT WebPopupMenuProxyWin::onSize(HWND hWnd, UINT message, WPARAM, LPARAM lParam, bool& handled)
 {
     handled = true;
-    if (!scrollbar())
+    if (!m_scrollbar)
         return 0;
 
     IntSize size(LOWORD(lParam), HIWORD(lParam));
     scrollbar()->setFrameRect(IntRect(size.width() - scrollbar()->width(), 0, scrollbar()->width(), size.height()));
 
     int visibleItems = this->visibleItems();
-    scrollbar()->setEnabled(visibleItems < m_items.size());
-    scrollbar()->setSteps(1, std::max(1, visibleItems - 1));
-    scrollbar()->setProportion(visibleItems, m_items.size());
+    m_scrollbar->setEnabled(visibleItems < m_items.size());
+    m_scrollbar->setSteps(1, std::max(1, visibleItems - 1));
+    m_scrollbar->setProportion(visibleItems, m_items.size());
     return 0;
 }
 
@@ -631,13 +631,13 @@ LRESULT WebPopupMenuProxyWin::onMouseMove(HWND hWnd, UINT message, WPARAM wParam
     handled = true;
 
     IntPoint mousePoint(MAKEPOINTS(lParam));
-    if (scrollbar()) {
-        IntRect scrollBarRect = scrollbar()->frameRect();
+    if (m_scrollbar) {
+        IntRect scrollBarRect = m_scrollbar->frameRect();
         if (scrollbarCapturingMouse() || scrollBarRect.contains(mousePoint)) {
             // Put the point into coordinates relative to the scroll bar
             mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
             PlatformMouseEvent event(hWnd, message, wParam, makeScaledPoint(mousePoint, m_scaleFactor));
-            scrollbar()->mouseMoved(event);
+            m_scrollbar->mouseMoved(event);
             return 0;
         }
     }
@@ -672,13 +672,13 @@ LRESULT WebPopupMenuProxyWin::onLButtonDown(HWND hWnd, UINT message, WPARAM wPar
     handled = true;
 
     IntPoint mousePoint(MAKEPOINTS(lParam));
-    if (scrollbar()) {
-        IntRect scrollBarRect = scrollbar()->frameRect();
+    if (m_scrollbar) {
+        IntRect scrollBarRect = m_scrollbar->frameRect();
         if (scrollBarRect.contains(mousePoint)) {
             // Put the point into coordinates relative to the scroll bar
             mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
             PlatformMouseEvent event(hWnd, message, wParam, makeScaledPoint(mousePoint, m_scaleFactor));
-            scrollbar()->mouseDown(event);
+            m_scrollbar->mouseDown(event);
             setScrollbarCapturingMouse(true);
             return 0;
         }
@@ -703,14 +703,14 @@ LRESULT WebPopupMenuProxyWin::onLButtonUp(HWND hWnd, UINT message, WPARAM wParam
     handled = true;
 
     IntPoint mousePoint(MAKEPOINTS(lParam));
-    if (scrollbar()) {
-        IntRect scrollBarRect = scrollbar()->frameRect();
+    if (m_scrollbar) {
+        IntRect scrollBarRect = m_scrollbar->frameRect();
         if (scrollbarCapturingMouse() || scrollBarRect.contains(mousePoint)) {
             setScrollbarCapturingMouse(false);
             // Put the point into coordinates relative to the scroll bar
             mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
             PlatformMouseEvent event(hWnd, message, wParam, makeScaledPoint(mousePoint, m_scaleFactor));
-            scrollbar()->mouseUp(event);
+            m_scrollbar->mouseUp(event);
             // FIXME: This is a hack to work around Scrollbar not invalidating correctly when it doesn't have a parent widget
             RECT r = scrollBarRect;
             ::InvalidateRect(m_popup, &r, TRUE);
@@ -739,7 +739,7 @@ LRESULT WebPopupMenuProxyWin::onMouseWheel(HWND hWnd, UINT message, WPARAM wPara
 {
     handled = true;
 
-    if (!scrollbar())
+    if (!m_scrollbar)
         return 0;
 
     int i = 0;
