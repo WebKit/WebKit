@@ -68,7 +68,7 @@ class CodeOrigin
     end
 
     def debugDirective
-        $emitWinAsm ? nil : "\".loc #{@sourceFile.fileNumber} #{lineNumber}\\n\""
+        "\".loc #{@sourceFile.fileNumber} #{lineNumber}\\n\""
     end
 
     def to_s

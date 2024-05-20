@@ -1257,9 +1257,6 @@ class LocalLabel < NoChildren
     
     def self.unique(comment)
         newName = "_#{comment}"
-        if $emitWinAsm and newName.length > 90
-            newName = newName[0...45] + "___" + newName[-45..-1]
-        end
         if $labelMapping[newName]
             while $labelMapping[newName = "_#{@@uniqueNameCounter}_#{comment}"]
                 @@uniqueNameCounter += 1
