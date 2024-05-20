@@ -108,6 +108,9 @@ void Queue::setEncoderForBuffer(id<MTLCommandBuffer> commandBuffer, id<MTLComman
 
 std::pair<id<MTLCommandBuffer>, id<MTLSharedEvent>> Queue::commandBufferWithDescriptor(MTLCommandBufferDescriptor* descriptor)
 {
+    if (!isValid())
+        return std::make_pair(nil, nil);
+
     constexpr auto maxCommandBufferCount = 64;
     if (m_createdNotCommittedBuffers.count >= maxCommandBufferCount) {
         id<MTLCommandBuffer> buffer = [m_createdNotCommittedBuffers objectAtIndex:0];
