@@ -100,7 +100,7 @@ public:
     void setVertexBuffer(uint32_t slot, const Buffer*, uint64_t offset, uint64_t size);
     void setLabel(String&&);
 
-    bool isValid() const { return m_indirectCommandBuffer; }
+    bool isValid() const;
     void replayCommands(RenderPassEncoder&);
 
     static constexpr auto startIndexForFragmentDynamicOffsets = 3;

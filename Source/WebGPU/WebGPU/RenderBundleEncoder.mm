@@ -639,7 +639,8 @@ void RenderBundleEncoder::endCurrentICB()
     RELEASE_ASSERT(!commandCount || !!m_icbDescriptor.commandTypes);
 
     m_icbDescriptor.maxVertexBufferBindCount = m_device->maxBuffersPlusVertexBuffersForVertexStage() + 1;
-    m_vertexBuffers.grow(m_icbDescriptor.maxVertexBufferBindCount);
+    if (m_vertexBuffers.size() < m_icbDescriptor.maxVertexBufferBindCount)
+        m_vertexBuffers.grow(m_icbDescriptor.maxVertexBufferBindCount);
     if (m_fragmentBuffers.size() < m_icbDescriptor.maxFragmentBufferBindCount)
         m_fragmentBuffers.grow(m_icbDescriptor.maxFragmentBufferBindCount);
     if (m_vertexDynamicOffset && !m_dynamicOffsetsVertexBuffer) {
@@ -730,9 +731,14 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
     return renderBundle;
 }
 
+bool RenderBundleEncoder::isValid() const
+{
+    return !!m_icbDescriptor;
+}
+
 void RenderBundleEncoder::replayCommands(RenderPassEncoder& renderPassEncoder)
 {
-    if (!renderPassEncoder.renderCommandEncoder())
+    if (!renderPassEncoder.renderCommandEncoder() || !isValid())
         return;
 
     m_renderPassEncoder = &renderPassEncoder;
