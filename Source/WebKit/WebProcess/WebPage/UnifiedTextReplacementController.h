@@ -48,6 +48,7 @@ class Editor;
 namespace WebKit {
 
 enum class WebUnifiedTextReplacementSessionDataReplacementType : uint8_t;
+enum class TextIndicatorStyle : uint8_t;
 
 enum class RemoveAllMarkersForSession : uint8_t { No, Yes };
 
@@ -85,15 +86,22 @@ public:
     void removeTransparentMarkersForSession(const WTF::UUID&, RemoveAllMarkersForSession);
 
 private:
+    struct TextIndicatorCharacterRange {
+        WTF::UUID uuid;
+        WebCore::CharacterRange range;
+    };
+
     std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> findReplacementMarkerContainingRange(const WebCore::SimpleRange&) const;
     std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> findReplacementMarkerByUUID(const WebCore::SimpleRange& outerRange, const WTF::UUID& replacementUUID) const;
 
-    void replaceContentsOfRangeInSessionInternal(const WTF::UUID&, const WebCore::SimpleRange&, WTF::Function<void(WebCore::Editor&)>&&);
-    void replaceContentsOfRangeInSession(const WTF::UUID&, const WebCore::SimpleRange&, const String&);
-    void replaceContentsOfRangeInSession(const WTF::UUID&, const WebCore::SimpleRange&, WebCore::DocumentFragment&);
+    void replaceContentsOfRangeInSessionInternal(const WebUnifiedTextReplacementSessionData&, const WebCore::SimpleRange&, WTF::Function<void(WebCore::Editor&)>&&);
+    void replaceContentsOfRangeInSession(const WebUnifiedTextReplacementSessionData&, const WebCore::SimpleRange&, const String&);
+    void replaceContentsOfRangeInSession(const WebUnifiedTextReplacementSessionData&, const WebCore::SimpleRange&, WebCore::DocumentFragment&);
 
     void textReplacementSessionPerformEditActionForPlainText(WebCore::Document&, const WebUnifiedTextReplacementSessionData&, WebTextReplacementData::EditAction);
     void textReplacementSessionPerformEditActionForRichText(WebCore::Document&, const WebUnifiedTextReplacementSessionData&, WebTextReplacementData::EditAction);
+
+    WTF::UUID createTextIndicator(const WebCore::SimpleRange&, TextIndicatorStyle);
 
     template<WebUnifiedTextReplacementSessionData::ReplacementType Type>
     void didEndTextReplacementSession(const WebUnifiedTextReplacementSessionData&, bool accepted);
@@ -102,15 +110,13 @@ private:
 
     WeakPtr<WebPage> m_webPage;
 
-    using TextIndicatorCharacterRange = std::pair<WTF::UUID, WebCore::CharacterRange>;
-    Vector<std::pair<WTF::UUID, Vector<TextIndicatorCharacterRange>>> m_textIndicatorCharacterRangesForSessions;
-
     // FIXME: Unify these states into a single `State` struct.
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_contextRanges;
     HashMap<WTF::UUID, WebUnifiedTextReplacementSessionData::ReplacementType> m_replacementTypes;
     HashMap<WTF::UUID, int> m_replacementLocationOffsets;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_originalDocumentNodes;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_replacedDocumentNodes;
+    HashMap<WTF::UUID, Vector<TextIndicatorCharacterRange>> m_textIndicatorCharacterRanges;
 };
 
 } // namespace WebKit
