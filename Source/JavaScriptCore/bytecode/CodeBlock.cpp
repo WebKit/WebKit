@@ -441,7 +441,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     };
 
     auto link_callLinkInfo = [&](const auto& instruction, auto bytecode, auto& metadata) {
-        metadata.m_callLinkInfo.initialize(vm, this, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index());
+        metadata.m_callLinkInfo.initialize(vm, this, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), CodeOrigin { instruction.index() });
     };
 
 #define LINK_FIELD(__field) \
@@ -1622,7 +1622,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm, CollectionScope)
     if (JITCode::couldBeInterpreted(jitType())) {
         finalizeLLIntInlineCaches();
         // If the CodeBlock is DFG or FTL, CallLinkInfo in metadata is not related.
-        forEachLLIntOrBaselineCallLinkInfo([&](BaselineCallLinkInfo& callLinkInfo) {
+        forEachLLIntOrBaselineCallLinkInfo([&](DataOnlyCallLinkInfo& callLinkInfo) {
             callLinkInfo.visitWeak(vm);
         });
     }
@@ -1691,7 +1691,7 @@ void CodeBlock::destroy(JSCell* cell)
 void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
 {
     if (JITCode::couldBeInterpreted(jitType())) {
-        forEachLLIntOrBaselineCallLinkInfo([&](BaselineCallLinkInfo& callLinkInfo) {
+        forEachLLIntOrBaselineCallLinkInfo([&](DataOnlyCallLinkInfo& callLinkInfo) {
             result.add(callLinkInfo.codeOrigin(), ICStatus()).iterator->value.callLinkInfo = &callLinkInfo;
         });
     }

@@ -140,7 +140,7 @@ public:
     DECLARE_VISIT_AGGREGATE;
 
     // If this returns false then we are requesting a reset of the owning StructureStubInfo.
-    bool visitWeak(VM&) const;
+    bool visitWeak(VM&);
 
     // This returns true if it has marked everything it will ever marked. This can be used as an
     // optimization to then avoid calling this method again during the fixpoint.
@@ -157,18 +157,17 @@ private:
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
 };
 
-class InlineCacheHandler final : public RefCounted<InlineCacheHandler> {
+class InlineCacheHandler final : public RefCounted<InlineCacheHandler>, public TrailingArray<InlineCacheHandler, DataOnlyCallLinkInfo> {
     WTF_MAKE_NONCOPYABLE(InlineCacheHandler);
     friend class InlineCacheCompiler;
 public:
+    using Base = TrailingArray<InlineCacheHandler, DataOnlyCallLinkInfo>;
+
     static ptrdiff_t offsetOfCallTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_callTarget); }
     static ptrdiff_t offsetOfJumpTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_jumpTarget); }
     static ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(InlineCacheHandler, m_next); }
 
-    static Ref<InlineCacheHandler> create(StructureStubInfo& stubInfo, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint)
-    {
-        return adoptRef(*new InlineCacheHandler(stubInfo, WTFMove(stubRoutine), WTFMove(watchpoint)));
-    }
+    static Ref<InlineCacheHandler> create(CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount);
 
     CodePtr<JITStubRoutinePtrTag> callTarget() const { return m_callTarget; }
     CodePtr<JITStubRoutinePtrTag> jumpTarget() const { return m_jumpTarget; }
@@ -186,7 +185,7 @@ public:
     CallLinkInfo* callLinkInfoAt(const ConcurrentJSLocker&, unsigned index);
 
     // If this returns false then we are requesting a reset of the owning StructureStubInfo.
-    bool visitWeak(VM&) const;
+    bool visitWeak(VM&);
 
     void dump(PrintStream&) const;
 
@@ -196,10 +195,14 @@ public:
     void removeOwner(CodeBlock*);
 
     static ptrdiff_t offsetOfUid() { return OBJECT_OFFSETOF(InlineCacheHandler, m_uid); }
+    static ptrdiff_t offsetOfCallLinkInfos() { return Base::offsetOfData(); }
 
 private:
-    InlineCacheHandler() = default;
-    InlineCacheHandler(StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&);
+    InlineCacheHandler()
+        : Base(0)
+    { }
+
+    InlineCacheHandler(StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount);
 
     static Ref<InlineCacheHandler> createSlowPath(VM&, AccessType);
 
@@ -358,8 +361,6 @@ private:
     bool m_calculatedRegistersForCallAndExceptionHandling : 1 { false };
     bool m_needsToRestoreRegistersIfException : 1 { false };
     bool m_calculatedCallSiteIndex : 1 { false };
-    bool m_doesJSCalls : 1 { false };
-    bool m_doesCalls : 1 { false };
     Vector<StructureID, 4> m_weakStructures;
     Vector<ObjectPropertyCondition, 64> m_conditions;
     Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16> m_callLinkInfos;

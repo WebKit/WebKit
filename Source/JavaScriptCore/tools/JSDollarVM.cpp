@@ -1342,8 +1342,8 @@ public:
         {
             DollarVMAssertScope assertScope;
             Ref<DOMJIT::CallDOMGetterSnippet> snippet = DOMJIT::CallDOMGetterSnippet::create();
-            static_assert(GPRInfo::numberOfRegisters >= 4, "Number of registers should be larger or equal to 4.");
-            unsigned numGPScratchRegisters = GPRInfo::numberOfRegisters - 4;
+            static_assert(GPRInfo::numberOfRegisters >= 5, "Number of registers should be larger or equal to 4.");
+            unsigned numGPScratchRegisters = GPRInfo::numberOfRegisters - 5;
             snippet->numGPScratchRegisters = numGPScratchRegisters;
             snippet->numFPScratchRegisters = 3;
             snippet->requireGlobalObject = true;
