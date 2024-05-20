@@ -1597,7 +1597,7 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
         EXPECT_NOT_NULL(error.userInfo[@"errorRecoveryMethod"]);
         EXPECT_WK_STREQ(@"HTTPSOnlyHTTPFallback", error.userInfo[@"errorRecoveryMethod"]);
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
-        EXPECT_WK_STREQ(@"https://site.example/secure", error.userInfo[@"NSErrorFailingURLStringKey"]);
+        EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
     };
 
@@ -1686,7 +1686,7 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
         EXPECT_NOT_NULL(error.userInfo[@"errorRecoveryMethod"]);
         EXPECT_WK_STREQ(@"HTTPSOnlyHTTPFallback", error.userInfo[@"errorRecoveryMethod"]);
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
-        EXPECT_WK_STREQ(@"https://site2.example/secure", error.userInfo[@"NSErrorFailingURLStringKey"]);
+        EXPECT_WK_STREQ(@"https://site2.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
     };
 
@@ -1768,7 +1768,7 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
         EXPECT_NOT_NULL(error.userInfo[@"errorRecoveryMethod"]);
         EXPECT_WK_STREQ(@"HTTPSOnlyHTTPFallback", error.userInfo[@"errorRecoveryMethod"]);
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
-        EXPECT_WK_STREQ(@"https://site.example/secure", error.userInfo[@"NSErrorFailingURLStringKey"]);
+        EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
     };
 
@@ -1788,7 +1788,7 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
-        EXPECT_WK_STREQ(@"https://site2.example/secure2", error.userInfo[@"NSErrorFailingURLStringKey"]);
+        EXPECT_WK_STREQ(@"https://site2.example/secure2", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
     };
 
