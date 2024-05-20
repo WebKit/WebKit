@@ -965,7 +965,7 @@ sub determineXcodeSDKPlatformName {
     if (checkForArgumentAndRemoveFromARGVGettingValue("--sdk", \$sdk)) {
         $xcodeSDK = lc $sdk;
         $xcodeSDKPlatformName ||= $sdk;
-        $xcodeSDKPlatformName =~ s/\.internal$//;
+        $xcodeSDKPlatformName =~ s/(\d+\.[\d\.]+)?(\.internal)?$//;
         die "Couldn't determine platform name from Xcode SDK" unless isValidXcodeSDKPlatformName($xcodeSDKPlatformName);
         return;
     }
