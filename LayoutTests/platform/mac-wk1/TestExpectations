@@ -2801,3 +2801,5 @@ imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-fr
 [ release ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
 
 webkit.org/b/260883 inspector/timeline/timeline-recording.html [ Skip ]
+
+webkit.org/b/274409 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-src.https.sub.html [ Pass Failure ]
