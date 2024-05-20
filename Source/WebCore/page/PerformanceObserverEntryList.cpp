@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-Ref<PerformanceObserverEntryList> PerformanceObserverEntryList::create(Vector<RefPtr<PerformanceEntry>>&& entries)
+Ref<PerformanceObserverEntryList> PerformanceObserverEntryList::create(Vector<Ref<PerformanceEntry>>&& entries)
 {
     return adoptRef(*new PerformanceObserverEntryList(WTFMove(entries)));
 }
 
-PerformanceObserverEntryList::PerformanceObserverEntryList(Vector<RefPtr<PerformanceEntry>>&& entries)
+PerformanceObserverEntryList::PerformanceObserverEntryList(Vector<Ref<PerformanceEntry>>&& entries)
     : m_entries(WTFMove(entries))
 {
     ASSERT(!m_entries.isEmpty());
@@ -43,14 +43,14 @@ PerformanceObserverEntryList::PerformanceObserverEntryList(Vector<RefPtr<Perform
     std::stable_sort(m_entries.begin(), m_entries.end(), PerformanceEntry::startTimeCompareLessThan);
 }
 
-Vector<RefPtr<PerformanceEntry>> PerformanceObserverEntryList::getEntriesByType(const String& entryType) const
+Vector<Ref<PerformanceEntry>> PerformanceObserverEntryList::getEntriesByType(const String& entryType) const
 {
     return getEntriesByName(String(), entryType);
 }
 
-Vector<RefPtr<PerformanceEntry>> PerformanceObserverEntryList::getEntriesByName(const String& name, const String& entryType) const
+Vector<Ref<PerformanceEntry>> PerformanceObserverEntryList::getEntriesByName(const String& name, const String& entryType) const
 {
-    Vector<RefPtr<PerformanceEntry>> entries;
+    Vector<Ref<PerformanceEntry>> entries;
 
     // PerformanceObservers can only be registered for valid types.
     // So if the incoming entryType is an unknown type, there will be no matches.

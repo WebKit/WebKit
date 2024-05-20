@@ -88,17 +88,17 @@ static void clearPerformanceEntries(PerformanceEntryMap& map, const String& name
 
 static void addPerformanceEntry(PerformanceEntryMap& map, const String& name, PerformanceEntry& entry)
 {
-    auto& performanceEntryList = map.ensure(name, [] { return Vector<RefPtr<PerformanceEntry>>(); }).iterator->value;
-    performanceEntryList.append(&entry);
+    auto& performanceEntryList = map.ensure(name, [] { return Vector<Ref<PerformanceEntry>>(); }).iterator->value;
+    performanceEntryList.append(entry);
 }
 
 ExceptionOr<Ref<PerformanceMark>> PerformanceUserTiming::mark(JSC::JSGlobalObject& globalObject, const String& markName, std::optional<PerformanceMarkOptions>&& markOptions)
 {
-    Ref context = *m_performance.scriptExecutionContext();
+    Ref context = *m_performance->scriptExecutionContext();
 
     std::optional<MonotonicTime> timestamp;
     if (markOptions && markOptions->startTime)
-        timestamp = m_performance.monotonicTimeFromRelativeTime(*markOptions->startTime);
+        timestamp = m_performance->monotonicTimeFromRelativeTime(*markOptions->startTime);
 
     RefPtr document = dynamicDowncast<Document>(context);
     InspectorInstrumentation::performanceMark(context.get(), markName, timestamp, document ? document->protectedFrame().get() : nullptr);
@@ -134,8 +134,8 @@ ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const String& 
                 return 0.0;
 
             // PerformanceTiming should always be non-null for the Document ScriptExecutionContext.
-            ASSERT(m_performance.timing());
-            auto timing = m_performance.timing();
+            ASSERT(m_performance->timing());
+            auto timing = m_performance->timing();
             auto startTime = timing->navigationStart();
             auto endTime = ((*timing).*(*function))();
             if (!endTime)
@@ -167,7 +167,7 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(const String
             return end.releaseException();
         endTime = end.returnValue();
     } else
-        endTime = m_performance.now();
+        endTime = m_performance->now();
 
     double startTime;
     if (!startMark.isNull()) {
@@ -203,7 +203,7 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGloba
             return duration.releaseException();
         endTime = start.returnValue() + duration.returnValue();
     } else
-        endTime = m_performance.now();
+        endTime = m_performance->now();
 
     double startTime;
     if (measureOptions.start) {
@@ -275,30 +275,30 @@ void PerformanceUserTiming::clearMeasures(const String& measureName)
     clearPerformanceEntries(m_measuresMap, measureName);
 }
 
-static Vector<RefPtr<PerformanceEntry>> convertToEntrySequence(const PerformanceEntryMap& map)
+static Vector<Ref<PerformanceEntry>> convertToEntrySequence(const PerformanceEntryMap& map)
 {
-    Vector<RefPtr<PerformanceEntry>> entries;
+    Vector<Ref<PerformanceEntry>> entries;
     for (auto& entry : map.values())
         entries.appendVector(entry);
     return entries;
 }
 
-Vector<RefPtr<PerformanceEntry>> PerformanceUserTiming::getMarks() const
+Vector<Ref<PerformanceEntry>> PerformanceUserTiming::getMarks() const
 {
     return convertToEntrySequence(m_marksMap);
 }
 
-Vector<RefPtr<PerformanceEntry>> PerformanceUserTiming::getMarks(const String& name) const
+Vector<Ref<PerformanceEntry>> PerformanceUserTiming::getMarks(const String& name) const
 {
     return m_marksMap.get(name);
 }
 
-Vector<RefPtr<PerformanceEntry>> PerformanceUserTiming::getMeasures() const
+Vector<Ref<PerformanceEntry>> PerformanceUserTiming::getMeasures() const
 {
     return convertToEntrySequence(m_measuresMap);
 }
 
-Vector<RefPtr<PerformanceEntry>> PerformanceUserTiming::getMeasures(const String& name) const
+Vector<Ref<PerformanceEntry>> PerformanceUserTiming::getMeasures(const String& name) const
 {
     return m_measuresMap.get(name);
 }
