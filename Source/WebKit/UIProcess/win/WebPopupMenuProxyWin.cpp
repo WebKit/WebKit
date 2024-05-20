@@ -526,7 +526,7 @@ LRESULT WebPopupMenuProxyWin::onSize(HWND hWnd, UINT message, WPARAM, LPARAM lPa
         return 0;
 
     IntSize size(LOWORD(lParam), HIWORD(lParam));
-    scrollbar()->setFrameRect(IntRect(size.width() - scrollbar()->width(), 0, scrollbar()->width(), size.height()));
+    m_scrollbar->setFrameRect(IntRect(size.width() - m_scrollbar->width(), 0, m_scrollbar->width(), size.height()));
 
     int visibleItems = this->visibleItems();
     m_scrollbar->setEnabled(visibleItems < m_items.size());
