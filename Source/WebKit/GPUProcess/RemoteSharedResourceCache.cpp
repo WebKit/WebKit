@@ -28,17 +28,27 @@
 #if ENABLE(GPU_PROCESS)
 #include "RemoteSharedResourceCache.h"
 
+#if HAVE(IOSURFACE)
+#include <WebCore/IOSurfacePool.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
 constexpr Seconds defaultRemoteSharedResourceCacheTimeout = 15_s;
 
-Ref<RemoteSharedResourceCache> RemoteSharedResourceCache::create()
+Ref<RemoteSharedResourceCache> RemoteSharedResourceCache::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
 {
-    return adoptRef(*new RemoteSharedResourceCache());
+    return adoptRef(*new RemoteSharedResourceCache(gpuConnectionToWebProcess));
 }
 
-RemoteSharedResourceCache::RemoteSharedResourceCache() = default;
+RemoteSharedResourceCache::RemoteSharedResourceCache(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+    : m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
+#if HAVE(IOSURFACE)
+    , m_ioSurfacePool(IOSurfacePool::create())
+#endif
+{
+}
 
 RemoteSharedResourceCache::~RemoteSharedResourceCache() = default;
 
@@ -55,6 +65,13 @@ RefPtr<ImageBuffer> RemoteSharedResourceCache::takeSerializedImageBuffer(Renderi
 void RemoteSharedResourceCache::releaseSerializedImageBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
     m_serializedImageBuffers.remove({ { identifier, 0 }, 0 });
+}
+
+void RemoteSharedResourceCache::lowMemoryHandler()
+{
+#if HAVE(IOSURFACE)
+    m_ioSurfacePool->discardAllSurfaces();
+#endif
 }
 
 } // namespace WebKit

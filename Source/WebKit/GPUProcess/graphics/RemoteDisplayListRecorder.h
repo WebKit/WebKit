@@ -52,6 +52,7 @@ public:
         instance->startListeningForIPC();
         return instance;
     }
+    ~RemoteDisplayListRecorder();
 
     void stopListeningForIPC();
 
@@ -169,6 +170,7 @@ private:
     Ref<WebCore::ImageBuffer> m_imageBuffer;
     WebCore::RenderingResourceIdentifier m_imageBufferIdentifier;
     RefPtr<RemoteRenderingBackend> m_renderingBackend;
+    Ref<RemoteSharedResourceCache> m_sharedResourceCache;
     std::unique_ptr<WebCore::ControlFactory> m_controlFactory;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     std::unique_ptr<SharedVideoFrameReader> m_sharedVideoFrameReader;

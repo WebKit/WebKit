@@ -97,6 +97,7 @@ public:
     void stopListeningForIPC();
 
     RemoteResourceCache& remoteResourceCache() { return m_remoteResourceCache; }
+    RemoteSharedResourceCache& sharedResourceCache() { return m_sharedResourceCache; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -105,13 +106,6 @@ public:
 
     IPC::StreamServerConnection& streamConnection() const { return m_streamConnection.get(); }
 
-    void lowMemoryHandler(WTF::Critical, WTF::Synchronous);
-
-#if HAVE(IOSURFACE)
-    WebCore::IOSurfacePool& ioSurfacePool() const { return m_ioSurfacePool; }
-#endif
-
-    const WebCore::ProcessIdentity& resourceOwner() const { return m_resourceOwner; }
 
     GPUConnectionToWebProcess& gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
@@ -123,7 +117,7 @@ public:
     RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier);
     RefPtr<WebCore::ImageBuffer> takeImageBuffer(WebCore::RenderingResourceIdentifier);
 
-    RefPtr<WebCore::ImageBuffer> allocateImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, const WebCore::ImageBufferCreationContext&, WebCore::RenderingResourceIdentifier);
+    RefPtr<WebCore::ImageBuffer> allocateImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::ImageBufferCreationContext, WebCore::RenderingResourceIdentifier);
 
     void terminateWebProcess(ASCIILiteral message);
 
@@ -199,9 +193,6 @@ private:
     WebCore::ProcessIdentity m_resourceOwner;
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;
-#if HAVE(IOSURFACE)
-    Ref<WebCore::IOSurfacePool> m_ioSurfacePool;
-#endif
 
     HashMap<WebCore::RenderingResourceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder>> m_remoteDisplayLists WTF_GUARDED_BY_CAPABILITY(workQueue());
     HashMap<WebCore::RenderingResourceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteImageBuffer>> m_remoteImageBuffers WTF_GUARDED_BY_CAPABILITY(workQueue());

@@ -186,7 +186,7 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
         creationContext.dynamicContentScalingResourceCache = ensureDynamicContentScalingResourceCache();
 #endif
 
-        m_frontBuffer = m_backend->allocateImageBuffer(m_logicalSize, m_renderingMode, WebCore::RenderingPurpose::LayerBacking, m_resolutionScale, m_colorSpace, m_pixelFormat, creationContext, WebCore::RenderingResourceIdentifier::generate());
+        m_frontBuffer = m_backend->allocateImageBuffer(m_logicalSize, m_renderingMode, WebCore::RenderingPurpose::LayerBacking, m_resolutionScale, m_colorSpace, m_pixelFormat, WTFMove(creationContext), WebCore::RenderingResourceIdentifier::generate());
         m_frontBufferIsCleared = true;
     }
 

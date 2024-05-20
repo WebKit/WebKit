@@ -159,6 +159,7 @@ protected:
     RefPtr<GCGLContext> m_context WTF_GUARDED_BY_CAPABILITY(workQueue());
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
+    Ref<RemoteSharedResourceCache> m_sharedResourceCache;
 #if ENABLE(VIDEO)
     Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
 #if PLATFORM(COCOA)
@@ -167,7 +168,6 @@ protected:
 #endif
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
-    const WebCore::ProcessIdentity m_resourceOwner;
     HashMap<uint32_t, PlatformGLObject, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_objectNames;
 };
 

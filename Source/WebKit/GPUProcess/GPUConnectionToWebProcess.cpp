@@ -367,7 +367,7 @@ Ref<LibWebRTCCodecsProxy> GPUConnectionToWebProcess::protectedLibWebRTCCodecsPro
 Ref<RemoteSharedResourceCache> GPUConnectionToWebProcess::sharedResourceCache()
 {
     if (!m_sharedResourceCache)
-        m_sharedResourceCache = RemoteSharedResourceCache::create();
+        m_sharedResourceCache = RemoteSharedResourceCache::create(*this);
     return *m_sharedResourceCache;
 }
 
@@ -553,8 +553,8 @@ void GPUConnectionToWebProcess::terminateWebProcess()
 
 void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
 {
-    for (auto& remoteRenderingBackend : m_remoteRenderingBackendMap.values())
-        remoteRenderingBackend->lowMemoryHandler(critical, synchronous);
+    if (m_sharedResourceCache)
+        m_sharedResourceCache->lowMemoryHandler();
 #if ENABLE(VIDEO)
     protectedVideoFrameObjectHeap()->lowMemoryHandler();
 #endif

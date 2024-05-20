@@ -124,8 +124,8 @@ void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveR
         if (!bitmap)
             return std::nullopt;
         auto handle = bitmap->createHandle();
-        if (m_backend->resourceOwner())
-            handle->setOwnershipOfMemory(m_backend->resourceOwner(), WebCore::MemoryLedger::Graphics);
+        if (m_backend->sharedResourceCache().resourceOwner())
+            handle->setOwnershipOfMemory(m_backend->sharedResourceCache().resourceOwner(), WebCore::MemoryLedger::Graphics);
         auto context = bitmap->createGraphicsContext();
         if (!context)
             return std::nullopt;
@@ -147,8 +147,8 @@ void RemoteImageBuffer::filteredNativeImage(Ref<WebCore::Filter> filter, Complet
         if (!bitmap)
             return std::nullopt;
         auto handle = bitmap->createHandle();
-        if (m_backend->resourceOwner())
-            handle->setOwnershipOfMemory(m_backend->resourceOwner(), WebCore::MemoryLedger::Graphics);
+        if (m_backend->sharedResourceCache().resourceOwner())
+            handle->setOwnershipOfMemory(m_backend->sharedResourceCache().resourceOwner(), WebCore::MemoryLedger::Graphics);
         auto context = bitmap->createGraphicsContext();
         if (!context)
             return std::nullopt;
