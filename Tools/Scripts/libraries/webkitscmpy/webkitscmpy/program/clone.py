@@ -309,40 +309,57 @@ class Clone(Command):
                 sys.stderr.write('Completed clone, but failed to set parent, continuing...\n')
                 result += 1
 
-        if prefix:
-            raw_clone.title = '{} {}'.format(prefix, raw_issue.title)
-            raw_clone.commit_changes()
+        def modify_radar(
+            cloned=cloned, raw_clone=raw_clone,
+            raw_issue=raw_issue,
+            prefix=prefix, milestone=milestone,
+            category=category, event=event, tentpole=tentpole,
+            action=lambda: None,
+        ):
+            if prefix:
+                raw_clone.title = '{} {}'.format(prefix, raw_issue.title)
+                action()
+
+            try:
+                raw_clone.priority = raw_issue.priority
+                raw_clone.resolution = raw_issue.resolution
+                action()
+            except rdar.radarclient().exceptions.UnsuccessfulResponseException:
+                sys.stderr.write('Completed clone, but failed to set priority and resolution\n')
+                return 1
+
+            try:
+                raw_clone.milestone = milestone
+                raw_clone.category = category
+                raw_clone.event = event
+                raw_clone.tentpole = tentpole
+                action()
+            except rdar.radarclient().exceptions.UnsuccessfulResponseException:
+                sys.stderr.write('Completed clone, but failed to set milestone, category, event and tentpole\n')
+                return 1
+
+            try:
+                raw_clone.state = 'Analyze'
+                if raw_clone.resolution:
+                    raw_clone.substate = 'Prepare'
+                else:
+                    raw_clone.substate = 'Investigate'
+                    sys.stderr.write('{} does not have a resolution\n'.format(issue.link))
+                    sys.stderr.write('Placing {} in {}\n'.format(cloned.link, raw_clone.substate))
+                action()
+            except rdar.radarclient().exceptions.UnsuccessfulResponseException:
+                sys.stderr.write("Completed clone and set milestone, but failed to move to 'Integrate'\n")
+                return 1
+            return 0
 
         try:
-            raw_clone.priority = raw_issue.priority
-            raw_clone.resolution = raw_issue.resolution
+            modify_rc = modify_radar()
             raw_clone.commit_changes()
         except rdar.radarclient().exceptions.UnsuccessfulResponseException:
-            sys.stderr.write('Completed clone, but failed to set priority and resolution\n')
-            return 1
-
-        try:
-            raw_clone.milestone = milestone
-            raw_clone.category = category
-            raw_clone.event = event
-            raw_clone.tentpole = tentpole
-            raw_clone.commit_changes()
-        except rdar.radarclient().exceptions.UnsuccessfulResponseException:
-            sys.stderr.write('Completed clone, but failed to set milestone, category, event and tentpole\n')
-            return 1
-
-        try:
-            raw_clone.state = 'Analyze'
-            if raw_clone.resolution:
-                raw_clone.substate = 'Prepare'
-            else:
-                raw_clone.substate = 'Investigate'
-                sys.stderr.write('{} does not have a resolution\n'.format(issue.link))
-                sys.stderr.write('Placing {} in {}\n'.format(cloned.link, raw_clone.substate))
-            raw_clone.commit_changes()
-        except rdar.radarclient().exceptions.UnsuccessfulResponseException:
-            sys.stderr.write("Completed clone and set milestone, but failed to move to 'Integrate'\n")
-            return 1
+            modify_rc = modify_radar(action=lambda raw_clone=raw_clone: raw_clone.commit_changes())
+            if modify_rc:
+                return modify_rc
+        result += modify_rc
 
         print('Moved clone to {} and into {}{}'.format(
             raw_clone.milestone.name,
