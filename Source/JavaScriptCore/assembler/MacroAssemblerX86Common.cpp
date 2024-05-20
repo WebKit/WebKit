@@ -546,7 +546,6 @@ extern "C" __declspec(naked) void ctiMasmProbeTrampoline()
 #endif // CPU(X86)
 
 #if CPU(X86_64)
-#if COMPILER(GCC_COMPATIBLE)
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"
@@ -740,7 +739,9 @@ asm (
     "popq %rcx" "\n"
     "popq %rbp" "\n"
     "ret" "\n"
+#if !COMPILER(MSVC)
     ".previous" "\n"
+#endif
 );
 
 // And now, the slower version that saves the full width of vectors in xmm registers.
@@ -938,9 +939,10 @@ asm (
     "popq %rcx" "\n"
     "popq %rbp" "\n"
     "ret" "\n"
+#if !COMPILER(MSVC)
     ".previous" "\n"
+#endif
 );
-#endif // COMPILER(GCC_COMPATIBLE)
 #endif // CPU(X86_64)
 
 // What code is emitted for the probe?
@@ -984,7 +986,7 @@ asm (
 
 void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth savedFPWidth)
 {
-#if CPU(X86_64) && COMPILER(GCC_COMPATIBLE)
+#if CPU(X86_64)
     // Extra push so that the total number of pushes pad out to 32-bytes, and the
     // stack pointer remains 32 byte aligned as required by the ABI.
     push(RegisterID::eax);

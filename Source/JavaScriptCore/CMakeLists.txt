@@ -1438,18 +1438,6 @@ add_custom_command(
     COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector" --framework JavaScriptCore ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     VERBATIM)
 
-if (WTF_CPU_X86_64)
-    if (MSVC AND NOT ENABLE_C_LOOP)
-        add_custom_command(
-            OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj
-            MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/jit/JITStubsMSVC64.asm
-            COMMAND ml64 -nologo -c -Fo ${JavaScriptCore_DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj ${JAVASCRIPTCORE_DIR}/jit/JITStubsMSVC64.asm
-            VERBATIM)
-
-        list(APPEND JavaScriptCore_SOURCES ${JavaScriptCore_DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj)
-    endif ()
-endif ()
-
 set(JavaScriptCore_INTERFACE_LIBRARIES JavaScriptCore)
 set(JavaScriptCore_INTERFACE_INCLUDE_DIRECTORIES
     ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
