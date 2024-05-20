@@ -67,6 +67,7 @@
 #include "AuthenticatorManager.h"
 #include "BrowsingContextGroup.h"
 #include "Connection.h"
+#include "CoroutineUtilities.h"
 #include "DidFilterKnownLinkDecoration.h"
 #include "DownloadManager.h"
 #include "DownloadProxy.h"
@@ -402,6 +403,7 @@
 
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 #define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
+#define MESSAGE_CHECK_URL_COROUTINE(process, url) MESSAGE_CHECK_BASE_COROUTINE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_COMPLETION(process, assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process->connection(), completion)
 
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i] WebPageProxy::" fmt, this, internals().identifier.toUInt64(), internals().webPageID.toUInt64(), m_process->processID(), ##__VA_ARGS__)
@@ -6939,6 +6941,13 @@ static bool frameSandboxAllowsOpeningExternalCustomProtocols(SandboxFlags sandbo
 
 void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, NavigationActionData&& navigationActionData, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
+    callCoroutine([this, protectedThis = Ref { *this }, process = WTFMove(process), frame = Ref { frame }, navigationActionData = WTFMove(navigationActionData), completionHandler = WTFMove(completionHandler)] () mutable -> Lazy<void> {
+        completionHandler(co_await awaitableDecidePolicyForNavigationAction(WTFMove(process), frame, WTFMove(navigationActionData)));
+    });
+}
+
+Lazy<PolicyDecision> WebPageProxy::awaitableDecidePolicyForNavigationAction(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, NavigationActionData&& navigationActionData)
+{
     auto frameInfo = navigationActionData.frameInfo;
     auto navigationID = navigationActionData.navigationID;
     auto originatingFrameInfoData = navigationActionData.originatingFrameInfoData;
@@ -6952,19 +6961,18 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
     Ref protectedPageClient { pageClient() };
 
-    auto transaction = internals().pageLoadState.transaction();
+    auto transaction = std::optional(internals().pageLoadState.transaction());
 
     bool fromAPI = request.url() == internals().pageLoadState.pendingAPIRequestURL();
     if (navigationID && !fromAPI)
-        internals().pageLoadState.clearPendingAPIRequest(transaction);
+        internals().pageLoadState.clearPendingAPIRequest(*transaction);
 
     if (!checkURLReceivedFromCurrentOrPreviousWebProcess(process, request.url())) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "Ignoring request to load this main resource because it is outside the sandbox");
-        completionHandler(PolicyDecision { isNavigatingToAppBoundDomain() });
-        return;
+        co_return PolicyDecision { isNavigatingToAppBoundDomain() };
     }
 
-    MESSAGE_CHECK_URL(process, originalRequest.url());
+    MESSAGE_CHECK_URL_COROUTINE(process, originalRequest.url());
 
     RefPtr<API::Navigation> navigation;
     if (navigationID)
@@ -7029,7 +7037,10 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 #if ENABLE(CONTENT_FILTERING)
     if (frame.didHandleContentFilterUnblockNavigation(request)) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "Ignoring request to load this main resource because it was handled by content filter");
-        return receivedPolicyDecision(PolicyAction::Ignore, RefPtr { m_navigationState->navigation(navigationID) }.get(), nullptr, WTFMove(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, std::nullopt, WTFMove(completionHandler));
+        CompletionHandler<void(CompletionHandler<void(PolicyDecision&&)>&&)> completionHandler { [this, protectedThis = Ref { *this }, navigationAction = WTFMove(navigationAction), navigationID] (CompletionHandler<void(PolicyDecision&&)>&& completionHandler) mutable {
+            receivedPolicyDecision(PolicyAction::Ignore, RefPtr { m_navigationState->navigation(navigationID) }.get(), nullptr, WTFMove(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, { }, WTFMove(completionHandler));
+        } };
+        co_return co_await AwaitableTaskWithCompletionHandler<PolicyDecision>(WTFMove(completionHandler));
     }
 #endif
 
@@ -7047,7 +7058,10 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                 MessageSource::Security,
                 "Ignoring request to load this main resource because it has a custom protocol and comes from a sandboxed iframe"_s
             };
-            return receivedPolicyDecision(PolicyAction::Ignore, RefPtr { m_navigationState->navigation(navigationID) }.get(), nullptr, WTFMove(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, WTFMove(errorMessage), WTFMove(completionHandler));
+            CompletionHandler<void(CompletionHandler<void(PolicyDecision&&)>&&)> completionHandler { [this, protectedThis = Ref { *this }, navigationAction = WTFMove(navigationAction), navigationID] (CompletionHandler<void(PolicyDecision&&)>&& completionHandler) mutable {
+                receivedPolicyDecision(PolicyAction::Ignore, RefPtr { m_navigationState->navigation(navigationID) }.get(), nullptr, WTFMove(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, { }, WTFMove(completionHandler));
+            } };
+            co_return co_await AwaitableTaskWithCompletionHandler<PolicyDecision>(WTFMove(completionHandler));
         }
         message = PolicyDecisionConsoleMessage {
             MessageLevel::Warning,
@@ -7074,6 +7088,15 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         sendCachedLinkDecorationFilteringData();
 #endif
 
+    transaction = std::nullopt;
+    CompletionHandler<void(CompletionHandler<void(PolicyDecision&&)>&&)> completionHandler { [this, protectedThis = Ref { *this }, navigationAction = WTFMove(navigationAction), frame = Ref { frame }, process = WTFMove(process), navigation = WTFMove(navigation), frameInfo = WTFMove(frameInfo), shouldExpectSafeBrowsingResult, shouldExpectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, request = WTFMove(request), originalRequest = WTFMove(originalRequest), originatingFrame = WTFMove(originatingFrame), message = WTFMove(message)] (CompletionHandler<void(PolicyDecision&&)>&& completionHandler) mutable {
+        continueDecidePolicyForNavigationAction(WTFMove(navigationAction), frame, WTFMove(process), WTFMove(navigation), WTFMove(frameInfo), shouldExpectSafeBrowsingResult, shouldExpectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, WTFMove(request), WTFMove(originalRequest), WTFMove(originatingFrame), WTFMove(message), WTFMove(completionHandler));
+    } };
+    co_return co_await AwaitableTaskWithCompletionHandler<PolicyDecision>(WTFMove(completionHandler));
+}
+
+void WebPageProxy::continueDecidePolicyForNavigationAction(Ref<API::NavigationAction>&& navigationAction, WebFrameProxy& frame, Ref<WebProcessProxy>&& process, RefPtr<API::Navigation>&& navigation, FrameInfoData&& frameInfo, ShouldExpectSafeBrowsingResult shouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult shouldExpectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData, WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& originalRequest, RefPtr<WebFrameProxy>&& originatingFrame, std::optional<PolicyDecisionConsoleMessage>&& message, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+{
     Ref listener = frame.setUpPolicyListenerProxy([
         this,
         protectedThis = Ref { *this },
@@ -7085,7 +7108,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         message = WTFMove(message),
         frameInfo,
         requestURL = request.url(),
-        protectedPageClient
+        protectedPageClient = Ref { pageClient() }
     ] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isAppBoundDomain, WasNavigationIntercepted wasNavigationIntercepted) mutable {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: listener called: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64  ", policyAction=%u, safeBrowsingWarning=%d, isAppBoundDomain=%d, wasNavigationIntercepted=%d", frame->frameID().object().toUInt64(), frame->isMainFrame(), navigation ? navigation->navigationID() : 0, (unsigned)policyAction, !!safeBrowsingWarning, !!isAppBoundDomain, wasNavigationIntercepted == WasNavigationIntercepted::Yes);
 
