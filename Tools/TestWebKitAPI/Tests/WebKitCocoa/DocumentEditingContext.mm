@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS_FAMILY) && HAVE(UI_WK_DOCUMENT_CONTEXT)
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
 
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
@@ -1653,4 +1653,4 @@ TEST(DocumentEditingContext, RequestAnnotationsForTextChecking)
 
 #endif // ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
 
-#endif // PLATFORM(IOS_FAMILY) && HAVE(UI_WK_DOCUMENT_CONTEXT)
+#endif // HAVE(UI_WK_DOCUMENT_CONTEXT)

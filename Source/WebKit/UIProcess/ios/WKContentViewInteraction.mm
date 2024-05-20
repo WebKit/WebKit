@@ -10233,6 +10233,490 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return dragItems;
 }
 
+- (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(UITextPlaceholder *))completionHandler
+{
+    _page->insertTextPlaceholder(WebCore::IntSize { size }, [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ElementContext>& placeholder) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf || ![strongSelf webView] || !placeholder) {
+            completionHandler(nil);
+            return;
+        }
+        WebCore::ElementContext placeholderToUse { *placeholder };
+        placeholderToUse.boundingRect = [strongSelf convertRect:placeholderToUse.boundingRect fromView:[strongSelf webView]];
+        completionHandler(adoptNS([[WKTextPlaceholder alloc] initWithElementContext:placeholderToUse]).get());
+    });
+}
+
+- (void)removeTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler
+{
+    // FIXME: Implement support for willInsertText. See <https://bugs.webkit.org/show_bug.cgi?id=208747>.
+    if (RetainPtr wkTextPlaceholder = dynamic_objc_cast<WKTextPlaceholder>(placeholder))
+        _page->removeTextPlaceholder([wkTextPlaceholder elementContext], makeBlockPtr(completionHandler));
+    else
+        completionHandler();
+}
+
+static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingItems(NSArray<NSItemProvider *> *itemProviders)
+{
+    Vector<WebCore::IntSize> sizes;
+    for (NSItemProvider *item in itemProviders) {
+        if (!WebCore::MIMETypeRegistry::isSupportedImageMIMEType(WebCore::MIMETypeFromUTI(item.web_fileUploadContentTypes.firstObject)))
+            return { };
+
+        WebCore::IntSize presentationSize(item.preferredPresentationSize);
+        if (presentationSize.isEmpty())
+            return { };
+
+        sizes.append(WTFMove(presentationSize));
+    }
+    return sizes;
+}
+
+- (BOOL)_handleDropByInsertingImagePlaceholders:(NSArray<NSItemProvider *> *)itemProviders session:(id<UIDropSession>)session
+{
+    if (!self.webView._editable)
+        return NO;
+
+    if (_dragDropInteractionState.dragSession())
+        return NO;
+
+    if (session.items.count != itemProviders.count)
+        return NO;
+
+    auto imagePlaceholderSizes = sizesOfPlaceholderElementsToInsertWhenDroppingItems(itemProviders);
+    if (imagePlaceholderSizes.isEmpty())
+        return NO;
+
+    RELEASE_LOG(DragAndDrop, "Inserting dropped image placeholders for session: %p", session);
+
+    _page->insertDroppedImagePlaceholders(imagePlaceholderSizes, [protectedSelf = retainPtr(self), dragItems = retainPtr(session.items)] (auto& placeholderRects, auto data) {
+        auto& state = protectedSelf->_dragDropInteractionState;
+        if (!data || !protectedSelf->_dropAnimationCount) {
+            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing text indicator data.");
+            return;
+        }
+
+        auto snapshotWithoutSelection = data->contentImageWithoutSelection;
+        if (!snapshotWithoutSelection) {
+            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing unselected content image.");
+            return;
+        }
+
+        auto unselectedSnapshotImage = snapshotWithoutSelection->nativeImage();
+        if (!unselectedSnapshotImage) {
+            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: could not decode unselected content image.");
+            return;
+        }
+
+        auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage->platformImage().get() scale:protectedSelf->_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
+        auto snapshotView = adoptNS([[UIImageView alloc] initWithImage:unselectedContentImageForEditDrag.get()]);
+        [snapshotView setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
+        [protectedSelf addSubview:snapshotView.get()];
+        protectedSelf->_unselectedContentSnapshot = WTFMove(snapshotView);
+        state.deliverDelayedDropPreview(protectedSelf.get(), [protectedSelf unobscuredContentRect], dragItems.get(), placeholderRects);
+    });
+
+    return YES;
+}
+
+#pragma mark - UIDragInteractionDelegate
+
+- (BOOL)_dragInteraction:(UIDragInteraction *)interaction shouldDelayCompetingGestureRecognizer:(UIGestureRecognizer *)competingGestureRecognizer
+{
+    if (_highlightLongPressGestureRecognizer == competingGestureRecognizer) {
+        // Since 3D touch still recognizes alongside the drag lift, and also requires the highlight long press
+        // gesture to be active to support cancelling when `touchstart` is prevented, we should also allow the
+        // highlight long press to recognize simultaneously, and manually cancel it when the drag lift is
+        // recognized (see _dragInteraction:prepareForSession:completion:).
+        return NO;
+    }
+    return [competingGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]];
+}
+
+- (NSInteger)_dragInteraction:(UIDragInteraction *)interaction dataOwnerForSession:(id<UIDragSession>)session
+{
+    id<WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
+    NSInteger dataOwner = 0;
+    if ([uiDelegate respondsToSelector:@selector(_webView:dataOwnerForDragSession:)])
+        dataOwner = [uiDelegate _webView:self.webView dataOwnerForDragSession:session];
+    return dataOwner;
+}
+
+- (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion
+{
+    if (!_dragDropInteractionState.shouldRequestAdditionalItemForDragSession(session)) {
+        completion(@[ ]);
+        return;
+    }
+
+    _dragDropInteractionState.dragSessionWillRequestAdditionalItem(completion);
+    _page->requestAdditionalItemsForDragSession(WebCore::roundedIntPoint(point), WebCore::roundedIntPoint(point), self._allowedDragSourceActions);
+}
+
+- (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id<UIDragSession>)session completion:(dispatch_block_t)completion
+{
+    RELEASE_LOG(DragAndDrop, "Preparing for drag session: %p", session);
+    if (self.currentDragOrDropSession) {
+        // FIXME: Support multiple simultaneous drag sessions in the future.
+        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (a current drag session already exists)", session);
+        completion();
+        return;
+    }
+
+    [self cleanUpDragSourceSessionState];
+
+    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] (WebKit::ProceedWithTextSelectionInImage proceedWithTextSelectionInImage) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf || proceedWithTextSelectionInImage == WebKit::ProceedWithTextSelectionInImage::Yes) {
+            completion();
+            return;
+        }
+
+        auto dragOrigin = [session locationInView:strongSelf.get()];
+        strongSelf->_dragDropInteractionState.prepareForDragSession(session.get(), completion.get());
+        strongSelf->_page->requestDragStart(WebCore::roundedIntPoint(dragOrigin), WebCore::roundedIntPoint([strongSelf convertPoint:dragOrigin toView:[strongSelf window]]), [strongSelf _allowedDragSourceActions]);
+        RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%.0f, %.0f}", session.get(), dragOrigin.x, dragOrigin.y);
+    };
+
+#if ENABLE(IMAGE_ANALYSIS)
+    [self _doAfterPendingImageAnalysis:prepareForSession];
+#else
+    prepareForSession(WebKit::ProceedWithTextSelectionInImage::No);
+#endif
+}
+
+- (NSArray<UIDragItem *> *)dragInteraction:(UIDragInteraction *)interaction itemsForBeginningSession:(id<UIDragSession>)session
+{
+    ASSERT(interaction == _dragInteraction);
+    RELEASE_LOG(DragAndDrop, "Drag items requested for session: %p", session);
+    if (_dragDropInteractionState.dragSession() != session) {
+        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (delegate session does not match %p)", session, _dragDropInteractionState.dragSession());
+        return @[ ];
+    }
+
+    if (!_dragDropInteractionState.hasStagedDragSource()) {
+        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (missing staged drag source)", session);
+        return @[ ];
+    }
+
+    auto stagedDragSource = _dragDropInteractionState.stagedDragSource();
+    auto *registrationLists = [[WebItemProviderPasteboard sharedInstance] takeRegistrationLists];
+    NSArray *dragItems = [self _itemsForBeginningOrAddingToSessionWithRegistrationLists:registrationLists stagedDragSource:stagedDragSource];
+    if (![dragItems count])
+        _page->dragCancelled();
+    else
+        [self _cancelLongPressGestureRecognizer];
+
+    RELEASE_LOG(DragAndDrop, "Drag session: %p starting with %tu items", session, [dragItems count]);
+    _dragDropInteractionState.clearStagedDragSource([dragItems count] ? WebKit::DragDropInteractionState::DidBecomeActive::Yes : WebKit::DragDropInteractionState::DidBecomeActive::No);
+
+    return dragItems;
+}
+
+- (UITargetedDragPreview *)dragInteraction:(UIDragInteraction *)interaction previewForLiftingItem:(UIDragItem *)item session:(id<UIDragSession>)session
+{
+    id<WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:previewForLiftingItem:session:)]) {
+        UITargetedDragPreview *overriddenPreview = [uiDelegate _webView:self.webView previewForLiftingItem:item session:session];
+        if (overriddenPreview)
+            return overriddenPreview;
+    }
+    return _dragDropInteractionState.previewForLifting(item, self, self.containerForDragPreviews, std::exchange(_positionInformationLinkIndicator, { }));
+}
+
+- (void)dragInteraction:(UIDragInteraction *)interaction willAnimateLiftWithAnimator:(id<UIDragAnimating>)animator session:(id<UIDragSession>)session
+{
+    RELEASE_LOG(DragAndDrop, "Drag session willAnimateLiftWithAnimator: %p", session);
+    if (_dragDropInteractionState.anyActiveDragSourceContainsSelection()) {
+        [self cancelActiveTextInteractionGestures];
+        if (!_shouldRestoreEditMenuAfterDrop) {
+            // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of hiding interaction assistant controls.
+            [_textInteractionWrapper willStartScrollingOverflow];
+            _shouldRestoreEditMenuAfterDrop = YES;
+        }
+    }
+
+    auto positionForDragEnd = WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd());
+    RetainPtr<WKContentView> protectedSelf(self);
+    [animator addCompletion:[session, positionForDragEnd, protectedSelf, page = _page] (UIViewAnimatingPosition finalPosition) {
+#if RELEASE_LOG_DISABLED
+        UNUSED_PARAM(session);
+#endif
+        if (finalPosition == UIViewAnimatingPositionStart) {
+            RELEASE_LOG(DragAndDrop, "Drag session ended at start: %p", session);
+            // The lift was canceled, so -dropInteraction:sessionDidEnd: will never be invoked. This is the last chance to clean up.
+            [protectedSelf cleanUpDragSourceSessionState];
+            page->dragEnded(positionForDragEnd, positionForDragEnd, { });
+        }
+#if !RELEASE_LOG_DISABLED
+        else
+            RELEASE_LOG(DragAndDrop, "Drag session did not end at start: %p", session);
+#endif
+    }];
+}
+
+- (void)dragInteraction:(UIDragInteraction *)interaction sessionWillBegin:(id<UIDragSession>)session
+{
+    RELEASE_LOG(DragAndDrop, "Drag session beginning: %p", session);
+    id<WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:dataInteraction:sessionWillBegin:)])
+        [uiDelegate _webView:self.webView dataInteraction:interaction sessionWillBegin:session];
+
+    [_actionSheetAssistant cleanupSheet];
+    _dragDropInteractionState.dragSessionWillBegin();
+    _page->didStartDrag();
+}
+
+- (void)dragInteraction:(UIDragInteraction *)interaction session:(id<UIDragSession>)session didEndWithOperation:(UIDropOperation)operation
+{
+    RELEASE_LOG(DragAndDrop, "Drag session ended: %p (with operation: %tu, performing operation: %d, began dragging: %d)", session, operation, _dragDropInteractionState.isPerformingDrop(), _dragDropInteractionState.didBeginDragging());
+
+    [self _restoreEditMenuIfNeeded];
+
+    id<WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:dataInteraction:session:didEndWithOperation:)])
+        [uiDelegate _webView:self.webView dataInteraction:interaction session:session didEndWithOperation:operation];
+
+    if (_dragDropInteractionState.isPerformingDrop())
+        return;
+
+    [self cleanUpDragSourceSessionState];
+    _page->dragEnded(WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd()), WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd()), coreDragOperationForUIDropOperation(operation));
+}
+
+- (UITargetedDragPreview *)dragInteraction:(UIDragInteraction *)interaction previewForCancellingItem:(UIDragItem *)item withDefault:(UITargetedDragPreview *)defaultPreview
+{
+    id<WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:previewForCancellingItem:withDefault:)]) {
+        UITargetedDragPreview *overriddenPreview = [uiDelegate _webView:self.webView previewForCancellingItem:item withDefault:defaultPreview];
+        if (overriddenPreview)
+            return overriddenPreview;
+    }
+    return _dragDropInteractionState.previewForCancelling(item, self, self.unscaledView);
+}
+
+- (void)dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item willAnimateCancelWithAnimator:(id<UIDragAnimating>)animator
+{
+    _isAnimatingDragCancel = YES;
+    RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator");
+    auto previewView = _dragDropInteractionState.takePreviewViewForDragCancel();
+    [previewView setAlpha:0];
+    [animator addCompletion:[protectedSelf = retainPtr(self), previewView = WTFMove(previewView), page = _page] (UIViewAnimatingPosition finalPosition) {
+        RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
+        [previewView setAlpha:1];
+        page->dragCancelled();
+        page->callAfterNextPresentationUpdate([previewView = WTFMove(previewView), protectedSelf = WTFMove(protectedSelf)] {
+            [previewView removeFromSuperview];
+            protectedSelf->_isAnimatingDragCancel = NO;
+        });
+    }];
+}
+
+- (void)dragInteraction:(UIDragInteraction *)interaction sessionDidTransferItems:(id<UIDragSession>)session
+{
+    [existingLocalDragSessionContext(session) cleanUpTemporaryDirectories];
+}
+
+#if USE(BROWSERENGINEKIT)
+
+#pragma mark - BEDragInteractionDelegate
+
+- (void)dragInteraction:(BEDragInteraction *)interaction prepareDragSession:(id<UIDragSession>)session completion:(BOOL(^)(void))completion
+{
+    [self _dragInteraction:interaction prepareForSession:session completion:[completion = makeBlockPtr(completion)] {
+        completion();
+    }];
+}
+
+- (void)dragInteraction:(BEDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session forTouchAtPoint:(CGPoint)point completion:(BOOL(^)(NSArray<UIDragItem *> *))completion
+{
+    [self _dragInteraction:interaction itemsForAddingToSession:session withTouchAtPoint:point completion:[completion = makeBlockPtr(completion)](NSArray<UIDragItem *> *items) {
+        completion(items);
+    }];
+}
+
+#endif // USE(BROWSERENGINEKIT)
+
+#pragma mark - UIDropInteractionDelegate
+
+- (NSInteger)_dropInteraction:(UIDropInteraction *)interaction dataOwnerForSession:(id<UIDropSession>)session
+{
+    id<WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
+    NSInteger dataOwner = 0;
+    if ([uiDelegate respondsToSelector:@selector(_webView:dataOwnerForDropSession:)])
+        dataOwner = [uiDelegate _webView:self.webView dataOwnerForDropSession:session];
+    return dataOwner;
+}
+
+- (BOOL)dropInteraction:(UIDropInteraction *)interaction canHandleSession:(id<UIDropSession>)session
+{
+    // FIXME: Support multiple simultaneous drop sessions in the future.
+    id<UIDragDropSession> dragOrDropSession = self.currentDragOrDropSession;
+    RELEASE_LOG(DragAndDrop, "Can handle drag session: %p with local session: %p existing session: %p?", session, session.localDragSession, dragOrDropSession);
+
+    return !dragOrDropSession || session.localDragSession == dragOrDropSession;
+}
+
+- (void)dropInteraction:(UIDropInteraction *)interaction sessionDidEnter:(id<UIDropSession>)session
+{
+    RELEASE_LOG(DragAndDrop, "Drop session entered: %p with %tu items", session, session.items.count);
+    auto dragData = [self dragDataForDropSession:session dragDestinationAction:[self _dragDestinationActionForDropSession:session]];
+
+    _dragDropInteractionState.dropSessionDidEnterOrUpdate(session, dragData);
+
+    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session) dropSession:session];
+    _page->dragEntered(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
+}
+
+- (UIDropProposal *)dropInteraction:(UIDropInteraction *)interaction sessionDidUpdate:(id<UIDropSession>)session
+{
+    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session) dropSession:session];
+
+    auto dragData = [self dragDataForDropSession:session dragDestinationAction:[self _dragDestinationActionForDropSession:session]];
+    _page->dragUpdated(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
+    _dragDropInteractionState.dropSessionDidEnterOrUpdate(session, dragData);
+
+    auto delegate = self.webViewUIDelegate;
+    auto operation = dropOperationForWebCoreDragOperation(_page->currentDragOperation());
+    if ([delegate respondsToSelector:@selector(_webView:willUpdateDataInteractionOperationToOperation:forSession:)])
+        operation = static_cast<UIDropOperation>([delegate _webView:self.webView willUpdateDataInteractionOperationToOperation:operation forSession:session]);
+
+    auto proposal = adoptNS([[UIDropProposal alloc] initWithDropOperation:static_cast<UIDropOperation>(operation)]);
+    auto dragHandlingMethod = _page->currentDragHandlingMethod();
+    if (dragHandlingMethod == WebCore::DragHandlingMethod::EditPlainText || dragHandlingMethod == WebCore::DragHandlingMethod::EditRichText) {
+        // When dragging near the top or bottom edges of an editable element, enabling precision drop mode may result in the drag session hit-testing outside of the editable
+        // element, causing the drag to no longer be accepted. This in turn disables precision drop mode, which causes the drag session to hit-test inside of the editable
+        // element again, which enables precision mode, thus continuing the cycle. To avoid precision mode thrashing, we forbid precision mode when dragging near the top or
+        // bottom of the editable element.
+        auto minimumDistanceFromVerticalEdgeForPreciseDrop = 25 / self.webView.scrollView.zoomScale;
+        [proposal setPrecise:CGRectContainsPoint(CGRectInset(_page->currentDragCaretEditableElementRect(), 0, minimumDistanceFromVerticalEdgeForPreciseDrop), [session locationInView:self])];
+    } else
+        [proposal setPrecise:NO];
+
+    if ([delegate respondsToSelector:@selector(_webView:willUpdateDropProposalToProposal:forSession:)])
+        proposal = [delegate _webView:self.webView willUpdateDropProposalToProposal:proposal.get() forSession:session];
+
+    return proposal.autorelease();
+}
+
+- (void)dropInteraction:(UIDropInteraction *)interaction sessionDidExit:(id<UIDropSession>)session
+{
+    RELEASE_LOG(DragAndDrop, "Drop session exited: %p with %tu items", session, session.items.count);
+    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session) dropSession:session];
+
+    auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
+    _page->dragExited(dragData);
+    _page->resetCurrentDragInformation();
+
+    _dragDropInteractionState.dropSessionDidExit();
+}
+
+- (void)dropInteraction:(UIDropInteraction *)interaction performDrop:(id<UIDropSession>)session
+{
+    NSArray <NSItemProvider *> *itemProviders = extractItemProvidersFromDropSession(session);
+    id<WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:performDataInteractionOperationWithItemProviders:)]) {
+        if ([uiDelegate _webView:self.webView performDataInteractionOperationWithItemProviders:itemProviders])
+            return;
+    }
+
+    if ([uiDelegate respondsToSelector:@selector(_webView:willPerformDropWithSession:)]) {
+        itemProviders = extractItemProvidersFromDragItems([uiDelegate _webView:self.webView willPerformDropWithSession:session]);
+        if (!itemProviders.count)
+            return;
+    }
+
+    _dragDropInteractionState.dropSessionWillPerformDrop();
+
+    [[WebItemProviderPasteboard sharedInstance] setItemProviders:itemProviders dropSession:session];
+    [[WebItemProviderPasteboard sharedInstance] incrementPendingOperationCount];
+    auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
+    BOOL shouldSnapshotView = ![self _handleDropByInsertingImagePlaceholders:itemProviders session:session];
+
+    RELEASE_LOG(DragAndDrop, "Loading data from %tu item providers for session: %p", itemProviders.count, session);
+    // Always loading content from the item provider ensures that the web process will be allowed to call back in to the UI
+    // process to access pasteboard contents at a later time. Ideally, we only need to do this work if we're over a file input
+    // or the page prevented default on `dragover`, but without this, dropping into a normal editable areas will fail due to
+    // item providers not loading any data.
+    RetainPtr<WKContentView> retainedSelf(self);
+    [[WebItemProviderPasteboard sharedInstance] doAfterLoadingProvidedContentIntoFileURLs:[retainedSelf, capturedDragData = WTFMove(dragData), shouldSnapshotView] (NSArray *fileURLs) mutable {
+        RELEASE_LOG(DragAndDrop, "Loaded data into %tu files", fileURLs.count);
+        Vector<String> filenames;
+        for (NSURL *fileURL in fileURLs)
+            filenames.append([fileURL path]);
+        capturedDragData.setFileNames(filenames);
+
+        WebKit::SandboxExtensionHandle sandboxExtensionHandle;
+        Vector<WebKit::SandboxExtensionHandle> sandboxExtensionForUpload;
+        auto dragPasteboardName = WebCore::Pasteboard::nameOfDragPasteboard();
+        retainedSelf->_page->createSandboxExtensionsIfNeeded(filenames, sandboxExtensionHandle, sandboxExtensionForUpload);
+        retainedSelf->_page->performDragOperation(capturedDragData, dragPasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
+        if (shouldSnapshotView) {
+            retainedSelf->_visibleContentViewSnapshot = [retainedSelf snapshotViewAfterScreenUpdates:NO];
+            [retainedSelf->_visibleContentViewSnapshot setFrame:[retainedSelf bounds]];
+            [retainedSelf addSubview:retainedSelf->_visibleContentViewSnapshot.get()];
+        }
+    }];
+}
+
+- (void)dropInteraction:(UIDropInteraction *)interaction item:(UIDragItem *)item willAnimateDropWithAnimator:(id<UIDragAnimating>)animator
+{
+    _dropAnimationCount++;
+    [animator addCompletion:[strongSelf = retainPtr(self)] (UIViewAnimatingPosition) {
+        if (!--strongSelf->_dropAnimationCount)
+            [std::exchange(strongSelf->_unselectedContentSnapshot, nil) removeFromSuperview];
+    }];
+}
+
+- (void)dropInteraction:(UIDropInteraction *)interaction concludeDrop:(id<UIDropSession>)session
+{
+    [self _removeContainerForDropPreviews];
+    [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
+    [std::exchange(_unselectedContentSnapshot, nil) removeFromSuperview];
+    _page->didConcludeDrop();
+}
+
+- (UITargetedDragPreview *)dropInteraction:(UIDropInteraction *)interaction previewForDroppingItem:(UIDragItem *)item withDefault:(UITargetedDragPreview *)defaultPreview
+{
+    if (auto preview = _dragDropInteractionState.finalDropPreview(item))
+        return preview;
+
+    _dragDropInteractionState.addDefaultDropPreview(item, defaultPreview);
+
+    CGRect caretRect = _page->currentDragCaretRect();
+    if (CGRectIsEmpty(caretRect))
+        return nil;
+
+    UIView *textEffectsWindow = self.textEffectsWindow;
+    auto caretRectInWindowCoordinates = [self convertRect:caretRect toCoordinateSpace:textEffectsWindow];
+    auto caretCenterInWindowCoordinates = CGPointMake(CGRectGetMidX(caretRectInWindowCoordinates), CGRectGetMidY(caretRectInWindowCoordinates));
+    auto targetPreviewCenterInWindowCoordinates = CGPointMake(caretCenterInWindowCoordinates.x + defaultPreview.size.width / 2, caretCenterInWindowCoordinates.y + defaultPreview.size.height / 2);
+    auto target = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:textEffectsWindow center:targetPreviewCenterInWindowCoordinates transform:CGAffineTransformIdentity]);
+    return [defaultPreview retargetedPreviewWithTarget:target.get()];
+}
+
+- (void)dropInteraction:(UIDropInteraction *)interaction sessionDidEnd:(id<UIDropSession>)session
+{
+    RELEASE_LOG(DragAndDrop, "Drop session ended: %p (performing operation: %d, began dragging: %d)", session, _dragDropInteractionState.isPerformingDrop(), _dragDropInteractionState.didBeginDragging());
+    if (_dragDropInteractionState.isPerformingDrop()) {
+        // In the case where we are performing a drop, wait until after the drop is handled in the web process to reset drag and drop interaction state.
+        return;
+    }
+
+    if (_dragDropInteractionState.didBeginDragging()) {
+        // In the case where the content view is a source of drag items, wait until -dragInteraction:session:didEndWithOperation: to reset drag and drop interaction state.
+        return;
+    }
+
+    CGPoint global;
+    CGPoint client;
+    [self computeClientAndGlobalPointsForDropSession:session outClientPoint:&client outGlobalPoint:&global];
+    [self cleanUpDragSourceSessionState];
+    _page->dragEnded(WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), { });
+}
+
+#endif // ENABLE(DRAG_SUPPORT)
+
 - (void)cancelActiveTextInteractionGestures
 {
     [self.textInteractionLoupeGestureRecognizer _wk_cancel];
@@ -10270,6 +10754,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 }
 
 #if USE(UICONTEXTMENU)
+
 static RetainPtr<UIImage> uiImageForImage(WebCore::Image* image)
 {
     if (!image)
@@ -10555,490 +11040,6 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 }
 
 #endif // HAVE(UI_WK_DOCUMENT_CONTEXT)
-
-- (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(UITextPlaceholder *))completionHandler
-{
-    _page->insertTextPlaceholder(WebCore::IntSize { size }, [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ElementContext>& placeholder) {
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf || ![strongSelf webView] || !placeholder) {
-            completionHandler(nil);
-            return;
-        }
-        WebCore::ElementContext placeholderToUse { *placeholder };
-        placeholderToUse.boundingRect = [strongSelf convertRect:placeholderToUse.boundingRect fromView:[strongSelf webView]];
-        completionHandler(adoptNS([[WKTextPlaceholder alloc] initWithElementContext:placeholderToUse]).get());
-    });
-}
-
-- (void)removeTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler
-{
-    // FIXME: Implement support for willInsertText. See <https://bugs.webkit.org/show_bug.cgi?id=208747>.
-    if (RetainPtr wkTextPlaceholder = dynamic_objc_cast<WKTextPlaceholder>(placeholder))
-        _page->removeTextPlaceholder([wkTextPlaceholder elementContext], makeBlockPtr(completionHandler));
-    else
-        completionHandler();
-}
-
-static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingItems(NSArray<NSItemProvider *> *itemProviders)
-{
-    Vector<WebCore::IntSize> sizes;
-    for (NSItemProvider *item in itemProviders) {
-        if (!WebCore::MIMETypeRegistry::isSupportedImageMIMEType(WebCore::MIMETypeFromUTI(item.web_fileUploadContentTypes.firstObject)))
-            return { };
-
-        WebCore::IntSize presentationSize(item.preferredPresentationSize);
-        if (presentationSize.isEmpty())
-            return { };
-
-        sizes.append(WTFMove(presentationSize));
-    }
-    return sizes;
-}
-
-- (BOOL)_handleDropByInsertingImagePlaceholders:(NSArray<NSItemProvider *> *)itemProviders session:(id <UIDropSession>)session
-{
-    if (!self.webView._editable)
-        return NO;
-
-    if (_dragDropInteractionState.dragSession())
-        return NO;
-
-    if (session.items.count != itemProviders.count)
-        return NO;
-
-    auto imagePlaceholderSizes = sizesOfPlaceholderElementsToInsertWhenDroppingItems(itemProviders);
-    if (imagePlaceholderSizes.isEmpty())
-        return NO;
-
-    RELEASE_LOG(DragAndDrop, "Inserting dropped image placeholders for session: %p", session);
-
-    _page->insertDroppedImagePlaceholders(imagePlaceholderSizes, [protectedSelf = retainPtr(self), dragItems = retainPtr(session.items)] (auto& placeholderRects, auto data) {
-        auto& state = protectedSelf->_dragDropInteractionState;
-        if (!data || !protectedSelf->_dropAnimationCount) {
-            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing text indicator data.");
-            return;
-        }
-
-        auto snapshotWithoutSelection = data->contentImageWithoutSelection;
-        if (!snapshotWithoutSelection) {
-            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing unselected content image.");
-            return;
-        }
-
-        auto unselectedSnapshotImage = snapshotWithoutSelection->nativeImage();
-        if (!unselectedSnapshotImage) {
-            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: could not decode unselected content image.");
-            return;
-        }
-
-        auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage->platformImage().get() scale:protectedSelf->_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
-        auto snapshotView = adoptNS([[UIImageView alloc] initWithImage:unselectedContentImageForEditDrag.get()]);
-        [snapshotView setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
-        [protectedSelf addSubview:snapshotView.get()];
-        protectedSelf->_unselectedContentSnapshot = WTFMove(snapshotView);
-        state.deliverDelayedDropPreview(protectedSelf.get(), [protectedSelf unobscuredContentRect], dragItems.get(), placeholderRects);
-    });
-
-    return YES;
-}
-
-#pragma mark - UIDragInteractionDelegate
-
-- (BOOL)_dragInteraction:(UIDragInteraction *)interaction shouldDelayCompetingGestureRecognizer:(UIGestureRecognizer *)competingGestureRecognizer
-{
-    if (_highlightLongPressGestureRecognizer == competingGestureRecognizer) {
-        // Since 3D touch still recognizes alongside the drag lift, and also requires the highlight long press
-        // gesture to be active to support cancelling when `touchstart` is prevented, we should also allow the
-        // highlight long press to recognize simultaneously, and manually cancel it when the drag lift is
-        // recognized (see _dragInteraction:prepareForSession:completion:).
-        return NO;
-    }
-    return [competingGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]];
-}
-
-- (NSInteger)_dragInteraction:(UIDragInteraction *)interaction dataOwnerForSession:(id <UIDragSession>)session
-{
-    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
-    NSInteger dataOwner = 0;
-    if ([uiDelegate respondsToSelector:@selector(_webView:dataOwnerForDragSession:)])
-        dataOwner = [uiDelegate _webView:self.webView dataOwnerForDragSession:session];
-    return dataOwner;
-}
-
-- (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id <UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion
-{
-    if (!_dragDropInteractionState.shouldRequestAdditionalItemForDragSession(session)) {
-        completion(@[ ]);
-        return;
-    }
-
-    _dragDropInteractionState.dragSessionWillRequestAdditionalItem(completion);
-    _page->requestAdditionalItemsForDragSession(WebCore::roundedIntPoint(point), WebCore::roundedIntPoint(point), self._allowedDragSourceActions);
-}
-
-- (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id <UIDragSession>)session completion:(dispatch_block_t)completion
-{
-    RELEASE_LOG(DragAndDrop, "Preparing for drag session: %p", session);
-    if (self.currentDragOrDropSession) {
-        // FIXME: Support multiple simultaneous drag sessions in the future.
-        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (a current drag session already exists)", session);
-        completion();
-        return;
-    }
-
-    [self cleanUpDragSourceSessionState];
-
-    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] (WebKit::ProceedWithTextSelectionInImage proceedWithTextSelectionInImage) {
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf || proceedWithTextSelectionInImage == WebKit::ProceedWithTextSelectionInImage::Yes) {
-            completion();
-            return;
-        }
-
-        auto dragOrigin = [session locationInView:strongSelf.get()];
-        strongSelf->_dragDropInteractionState.prepareForDragSession(session.get(), completion.get());
-        strongSelf->_page->requestDragStart(WebCore::roundedIntPoint(dragOrigin), WebCore::roundedIntPoint([strongSelf convertPoint:dragOrigin toView:[strongSelf window]]), [strongSelf _allowedDragSourceActions]);
-        RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%.0f, %.0f}", session.get(), dragOrigin.x, dragOrigin.y);
-    };
-
-#if ENABLE(IMAGE_ANALYSIS)
-    [self _doAfterPendingImageAnalysis:prepareForSession];
-#else
-    prepareForSession(WebKit::ProceedWithTextSelectionInImage::No);
-#endif
-}
-
-- (NSArray<UIDragItem *> *)dragInteraction:(UIDragInteraction *)interaction itemsForBeginningSession:(id <UIDragSession>)session
-{
-    ASSERT(interaction == _dragInteraction);
-    RELEASE_LOG(DragAndDrop, "Drag items requested for session: %p", session);
-    if (_dragDropInteractionState.dragSession() != session) {
-        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (delegate session does not match %p)", session, _dragDropInteractionState.dragSession());
-        return @[ ];
-    }
-
-    if (!_dragDropInteractionState.hasStagedDragSource()) {
-        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (missing staged drag source)", session);
-        return @[ ];
-    }
-
-    auto stagedDragSource = _dragDropInteractionState.stagedDragSource();
-    auto *registrationLists = [[WebItemProviderPasteboard sharedInstance] takeRegistrationLists];
-    NSArray *dragItems = [self _itemsForBeginningOrAddingToSessionWithRegistrationLists:registrationLists stagedDragSource:stagedDragSource];
-    if (![dragItems count])
-        _page->dragCancelled();
-    else
-        [self _cancelLongPressGestureRecognizer];
-
-    RELEASE_LOG(DragAndDrop, "Drag session: %p starting with %tu items", session, [dragItems count]);
-    _dragDropInteractionState.clearStagedDragSource([dragItems count] ? WebKit::DragDropInteractionState::DidBecomeActive::Yes : WebKit::DragDropInteractionState::DidBecomeActive::No);
-
-    return dragItems;
-}
-
-- (UITargetedDragPreview *)dragInteraction:(UIDragInteraction *)interaction previewForLiftingItem:(UIDragItem *)item session:(id <UIDragSession>)session
-{
-    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:previewForLiftingItem:session:)]) {
-        UITargetedDragPreview *overriddenPreview = [uiDelegate _webView:self.webView previewForLiftingItem:item session:session];
-        if (overriddenPreview)
-            return overriddenPreview;
-    }
-    return _dragDropInteractionState.previewForLifting(item, self, self.containerForDragPreviews, std::exchange(_positionInformationLinkIndicator, { }));
-}
-
-- (void)dragInteraction:(UIDragInteraction *)interaction willAnimateLiftWithAnimator:(id <UIDragAnimating>)animator session:(id <UIDragSession>)session
-{
-    RELEASE_LOG(DragAndDrop, "Drag session willAnimateLiftWithAnimator: %p", session);
-    if (_dragDropInteractionState.anyActiveDragSourceContainsSelection()) {
-        [self cancelActiveTextInteractionGestures];
-        if (!_shouldRestoreEditMenuAfterDrop) {
-            // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of hiding interaction assistant controls.
-            [_textInteractionWrapper willStartScrollingOverflow];
-            _shouldRestoreEditMenuAfterDrop = YES;
-        }
-    }
-
-    auto positionForDragEnd = WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd());
-    RetainPtr<WKContentView> protectedSelf(self);
-    [animator addCompletion:[session, positionForDragEnd, protectedSelf, page = _page] (UIViewAnimatingPosition finalPosition) {
-#if RELEASE_LOG_DISABLED
-        UNUSED_PARAM(session);
-#endif
-        if (finalPosition == UIViewAnimatingPositionStart) {
-            RELEASE_LOG(DragAndDrop, "Drag session ended at start: %p", session);
-            // The lift was canceled, so -dropInteraction:sessionDidEnd: will never be invoked. This is the last chance to clean up.
-            [protectedSelf cleanUpDragSourceSessionState];
-            page->dragEnded(positionForDragEnd, positionForDragEnd, { });
-        }
-#if !RELEASE_LOG_DISABLED
-        else
-            RELEASE_LOG(DragAndDrop, "Drag session did not end at start: %p", session);
-#endif
-    }];
-}
-
-- (void)dragInteraction:(UIDragInteraction *)interaction sessionWillBegin:(id <UIDragSession>)session
-{
-    RELEASE_LOG(DragAndDrop, "Drag session beginning: %p", session);
-    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:dataInteraction:sessionWillBegin:)])
-        [uiDelegate _webView:self.webView dataInteraction:interaction sessionWillBegin:session];
-
-    [_actionSheetAssistant cleanupSheet];
-    _dragDropInteractionState.dragSessionWillBegin();
-    _page->didStartDrag();
-}
-
-- (void)dragInteraction:(UIDragInteraction *)interaction session:(id <UIDragSession>)session didEndWithOperation:(UIDropOperation)operation
-{
-    RELEASE_LOG(DragAndDrop, "Drag session ended: %p (with operation: %tu, performing operation: %d, began dragging: %d)", session, operation, _dragDropInteractionState.isPerformingDrop(), _dragDropInteractionState.didBeginDragging());
-
-    [self _restoreEditMenuIfNeeded];
-
-    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:dataInteraction:session:didEndWithOperation:)])
-        [uiDelegate _webView:self.webView dataInteraction:interaction session:session didEndWithOperation:operation];
-
-    if (_dragDropInteractionState.isPerformingDrop())
-        return;
-
-    [self cleanUpDragSourceSessionState];
-    _page->dragEnded(WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd()), WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd()), coreDragOperationForUIDropOperation(operation));
-}
-
-- (UITargetedDragPreview *)dragInteraction:(UIDragInteraction *)interaction previewForCancellingItem:(UIDragItem *)item withDefault:(UITargetedDragPreview *)defaultPreview
-{
-    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:previewForCancellingItem:withDefault:)]) {
-        UITargetedDragPreview *overriddenPreview = [uiDelegate _webView:self.webView previewForCancellingItem:item withDefault:defaultPreview];
-        if (overriddenPreview)
-            return overriddenPreview;
-    }
-    return _dragDropInteractionState.previewForCancelling(item, self, self.unscaledView);
-}
-
-- (void)dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item willAnimateCancelWithAnimator:(id <UIDragAnimating>)animator
-{
-    _isAnimatingDragCancel = YES;
-    RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator");
-    auto previewView = _dragDropInteractionState.takePreviewViewForDragCancel();
-    [previewView setAlpha:0];
-    [animator addCompletion:[protectedSelf = retainPtr(self), previewView = WTFMove(previewView), page = _page] (UIViewAnimatingPosition finalPosition) {
-        RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
-        [previewView setAlpha:1];
-        page->dragCancelled();
-        page->callAfterNextPresentationUpdate([previewView = WTFMove(previewView), protectedSelf = WTFMove(protectedSelf)] {
-            [previewView removeFromSuperview];
-            protectedSelf->_isAnimatingDragCancel = NO;
-        });
-    }];
-}
-
-- (void)dragInteraction:(UIDragInteraction *)interaction sessionDidTransferItems:(id <UIDragSession>)session
-{
-    [existingLocalDragSessionContext(session) cleanUpTemporaryDirectories];
-}
-
-#if USE(BROWSERENGINEKIT)
-
-#pragma mark - BEDragInteractionDelegate
-
-- (void)dragInteraction:(BEDragInteraction *)interaction prepareDragSession:(id<UIDragSession>)session completion:(BOOL(^)(void))completion
-{
-    [self _dragInteraction:interaction prepareForSession:session completion:[completion = makeBlockPtr(completion)] {
-        completion();
-    }];
-}
-
-- (void)dragInteraction:(BEDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session forTouchAtPoint:(CGPoint)point completion:(BOOL(^)(NSArray<UIDragItem *> *))completion
-{
-    [self _dragInteraction:interaction itemsForAddingToSession:session withTouchAtPoint:point completion:[completion = makeBlockPtr(completion)](NSArray<UIDragItem *> *items) {
-        completion(items);
-    }];
-}
-
-#endif // USE(BROWSERENGINEKIT)
-
-#pragma mark - UIDropInteractionDelegate
-
-- (NSInteger)_dropInteraction:(UIDropInteraction *)interaction dataOwnerForSession:(id <UIDropSession>)session
-{
-    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
-    NSInteger dataOwner = 0;
-    if ([uiDelegate respondsToSelector:@selector(_webView:dataOwnerForDropSession:)])
-        dataOwner = [uiDelegate _webView:self.webView dataOwnerForDropSession:session];
-    return dataOwner;
-}
-
-- (BOOL)dropInteraction:(UIDropInteraction *)interaction canHandleSession:(id<UIDropSession>)session
-{
-    // FIXME: Support multiple simultaneous drop sessions in the future.
-    id <UIDragDropSession> dragOrDropSession = self.currentDragOrDropSession;
-    RELEASE_LOG(DragAndDrop, "Can handle drag session: %p with local session: %p existing session: %p?", session, session.localDragSession, dragOrDropSession);
-
-    return !dragOrDropSession || session.localDragSession == dragOrDropSession;
-}
-
-- (void)dropInteraction:(UIDropInteraction *)interaction sessionDidEnter:(id <UIDropSession>)session
-{
-    RELEASE_LOG(DragAndDrop, "Drop session entered: %p with %tu items", session, session.items.count);
-    auto dragData = [self dragDataForDropSession:session dragDestinationAction:[self _dragDestinationActionForDropSession:session]];
-
-    _dragDropInteractionState.dropSessionDidEnterOrUpdate(session, dragData);
-
-    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session) dropSession:session];
-    _page->dragEntered(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
-}
-
-- (UIDropProposal *)dropInteraction:(UIDropInteraction *)interaction sessionDidUpdate:(id <UIDropSession>)session
-{
-    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session) dropSession:session];
-
-    auto dragData = [self dragDataForDropSession:session dragDestinationAction:[self _dragDestinationActionForDropSession:session]];
-    _page->dragUpdated(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
-    _dragDropInteractionState.dropSessionDidEnterOrUpdate(session, dragData);
-
-    auto delegate = self.webViewUIDelegate;
-    auto operation = dropOperationForWebCoreDragOperation(_page->currentDragOperation());
-    if ([delegate respondsToSelector:@selector(_webView:willUpdateDataInteractionOperationToOperation:forSession:)])
-        operation = static_cast<UIDropOperation>([delegate _webView:self.webView willUpdateDataInteractionOperationToOperation:operation forSession:session]);
-
-    auto proposal = adoptNS([[UIDropProposal alloc] initWithDropOperation:static_cast<UIDropOperation>(operation)]);
-    auto dragHandlingMethod = _page->currentDragHandlingMethod();
-    if (dragHandlingMethod == WebCore::DragHandlingMethod::EditPlainText || dragHandlingMethod == WebCore::DragHandlingMethod::EditRichText) {
-        // When dragging near the top or bottom edges of an editable element, enabling precision drop mode may result in the drag session hit-testing outside of the editable
-        // element, causing the drag to no longer be accepted. This in turn disables precision drop mode, which causes the drag session to hit-test inside of the editable
-        // element again, which enables precision mode, thus continuing the cycle. To avoid precision mode thrashing, we forbid precision mode when dragging near the top or
-        // bottom of the editable element.
-        auto minimumDistanceFromVerticalEdgeForPreciseDrop = 25 / self.webView.scrollView.zoomScale;
-        [proposal setPrecise:CGRectContainsPoint(CGRectInset(_page->currentDragCaretEditableElementRect(), 0, minimumDistanceFromVerticalEdgeForPreciseDrop), [session locationInView:self])];
-    } else
-        [proposal setPrecise:NO];
-
-    if ([delegate respondsToSelector:@selector(_webView:willUpdateDropProposalToProposal:forSession:)])
-        proposal = [delegate _webView:self.webView willUpdateDropProposalToProposal:proposal.get() forSession:session];
-
-    return proposal.autorelease();
-}
-
-- (void)dropInteraction:(UIDropInteraction *)interaction sessionDidExit:(id <UIDropSession>)session
-{
-    RELEASE_LOG(DragAndDrop, "Drop session exited: %p with %tu items", session, session.items.count);
-    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session) dropSession:session];
-
-    auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
-    _page->dragExited(dragData);
-    _page->resetCurrentDragInformation();
-
-    _dragDropInteractionState.dropSessionDidExit();
-}
-
-- (void)dropInteraction:(UIDropInteraction *)interaction performDrop:(id <UIDropSession>)session
-{
-    NSArray <NSItemProvider *> *itemProviders = extractItemProvidersFromDropSession(session);
-    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:performDataInteractionOperationWithItemProviders:)]) {
-        if ([uiDelegate _webView:self.webView performDataInteractionOperationWithItemProviders:itemProviders])
-            return;
-    }
-
-    if ([uiDelegate respondsToSelector:@selector(_webView:willPerformDropWithSession:)]) {
-        itemProviders = extractItemProvidersFromDragItems([uiDelegate _webView:self.webView willPerformDropWithSession:session]);
-        if (!itemProviders.count)
-            return;
-    }
-
-    _dragDropInteractionState.dropSessionWillPerformDrop();
-
-    [[WebItemProviderPasteboard sharedInstance] setItemProviders:itemProviders dropSession:session];
-    [[WebItemProviderPasteboard sharedInstance] incrementPendingOperationCount];
-    auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
-    BOOL shouldSnapshotView = ![self _handleDropByInsertingImagePlaceholders:itemProviders session:session];
-
-    RELEASE_LOG(DragAndDrop, "Loading data from %tu item providers for session: %p", itemProviders.count, session);
-    // Always loading content from the item provider ensures that the web process will be allowed to call back in to the UI
-    // process to access pasteboard contents at a later time. Ideally, we only need to do this work if we're over a file input
-    // or the page prevented default on `dragover`, but without this, dropping into a normal editable areas will fail due to
-    // item providers not loading any data.
-    RetainPtr<WKContentView> retainedSelf(self);
-    [[WebItemProviderPasteboard sharedInstance] doAfterLoadingProvidedContentIntoFileURLs:[retainedSelf, capturedDragData = WTFMove(dragData), shouldSnapshotView] (NSArray *fileURLs) mutable {
-        RELEASE_LOG(DragAndDrop, "Loaded data into %tu files", fileURLs.count);
-        Vector<String> filenames;
-        for (NSURL *fileURL in fileURLs)
-            filenames.append([fileURL path]);
-        capturedDragData.setFileNames(filenames);
-
-        WebKit::SandboxExtensionHandle sandboxExtensionHandle;
-        Vector<WebKit::SandboxExtensionHandle> sandboxExtensionForUpload;
-        auto dragPasteboardName = WebCore::Pasteboard::nameOfDragPasteboard();
-        retainedSelf->_page->createSandboxExtensionsIfNeeded(filenames, sandboxExtensionHandle, sandboxExtensionForUpload);
-        retainedSelf->_page->performDragOperation(capturedDragData, dragPasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
-        if (shouldSnapshotView) {
-            retainedSelf->_visibleContentViewSnapshot = [retainedSelf snapshotViewAfterScreenUpdates:NO];
-            [retainedSelf->_visibleContentViewSnapshot setFrame:[retainedSelf bounds]];
-            [retainedSelf addSubview:retainedSelf->_visibleContentViewSnapshot.get()];
-        }
-    }];
-}
-
-- (void)dropInteraction:(UIDropInteraction *)interaction item:(UIDragItem *)item willAnimateDropWithAnimator:(id <UIDragAnimating>)animator
-{
-    _dropAnimationCount++;
-    [animator addCompletion:[strongSelf = retainPtr(self)] (UIViewAnimatingPosition) {
-        if (!--strongSelf->_dropAnimationCount)
-            [std::exchange(strongSelf->_unselectedContentSnapshot, nil) removeFromSuperview];
-    }];
-}
-
-- (void)dropInteraction:(UIDropInteraction *)interaction concludeDrop:(id <UIDropSession>)session
-{
-    [self _removeContainerForDropPreviews];
-    [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
-    [std::exchange(_unselectedContentSnapshot, nil) removeFromSuperview];
-    _page->didConcludeDrop();
-}
-
-- (UITargetedDragPreview *)dropInteraction:(UIDropInteraction *)interaction previewForDroppingItem:(UIDragItem *)item withDefault:(UITargetedDragPreview *)defaultPreview
-{
-    if (auto preview = _dragDropInteractionState.finalDropPreview(item))
-        return preview;
-
-    _dragDropInteractionState.addDefaultDropPreview(item, defaultPreview);
-
-    CGRect caretRect = _page->currentDragCaretRect();
-    if (CGRectIsEmpty(caretRect))
-        return nil;
-
-    UIView *textEffectsWindow = self.textEffectsWindow;
-    auto caretRectInWindowCoordinates = [self convertRect:caretRect toCoordinateSpace:textEffectsWindow];
-    auto caretCenterInWindowCoordinates = CGPointMake(CGRectGetMidX(caretRectInWindowCoordinates), CGRectGetMidY(caretRectInWindowCoordinates));
-    auto targetPreviewCenterInWindowCoordinates = CGPointMake(caretCenterInWindowCoordinates.x + defaultPreview.size.width / 2, caretCenterInWindowCoordinates.y + defaultPreview.size.height / 2);
-    auto target = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:textEffectsWindow center:targetPreviewCenterInWindowCoordinates transform:CGAffineTransformIdentity]);
-    return [defaultPreview retargetedPreviewWithTarget:target.get()];
-}
-
-- (void)dropInteraction:(UIDropInteraction *)interaction sessionDidEnd:(id <UIDropSession>)session
-{
-    RELEASE_LOG(DragAndDrop, "Drop session ended: %p (performing operation: %d, began dragging: %d)", session, _dragDropInteractionState.isPerformingDrop(), _dragDropInteractionState.didBeginDragging());
-    if (_dragDropInteractionState.isPerformingDrop()) {
-        // In the case where we are performing a drop, wait until after the drop is handled in the web process to reset drag and drop interaction state.
-        return;
-    }
-
-    if (_dragDropInteractionState.didBeginDragging()) {
-        // In the case where the content view is a source of drag items, wait until -dragInteraction:session:didEndWithOperation: to reset drag and drop interaction state.
-        return;
-    }
-
-    CGPoint global;
-    CGPoint client;
-    [self computeClientAndGlobalPointsForDropSession:session outClientPoint:&client outGlobalPoint:&global];
-    [self cleanUpDragSourceSessionState];
-    _page->dragEnded(WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), { });
-}
-
-#endif
 
 #if HAVE(PEPPER_UI_CORE)
 
