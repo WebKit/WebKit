@@ -608,7 +608,7 @@ void HTMLAnchorElement::handleClick(Event& event)
 
     SystemPreviewInfo systemPreviewInfo;
 #if USE(SYSTEM_PREVIEW)
-    systemPreviewInfo.isPreview = isSystemPreviewLink() && document->settings().systemPreviewEnabled() && UserGestureIndicator::processingUserGesture();
+    systemPreviewInfo.isPreview = isSystemPreviewLink() && document->settings().systemPreviewEnabled();
 
     if (systemPreviewInfo.isPreview) {
         systemPreviewInfo.element.elementIdentifier = identifier();
