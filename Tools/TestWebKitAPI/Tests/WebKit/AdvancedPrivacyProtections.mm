@@ -614,7 +614,12 @@ TEST(AdvancedPrivacyProtections, LinkPreconnectUsesEnhancedPrivacy)
 
 #if PLATFORM(MAC)
     auto logMessages = [webView collectLogsForNewConnections];
-    EXPECT_EQ([logMessages count], 2U);
+    if ([logMessages.firstObject containsString:@"CFNetwork"]) {
+        // The old HTTP stack in CFNetwork creates one connection per TCP/QUIC connection, but the new HTTP stack creates one connection per task.
+        // This path can be removed when this test stops running on macOS 14 / iOS 17 or below.
+        EXPECT_EQ([logMessages count], 2U);
+    } else
+        EXPECT_EQ([logMessages count], 4U);
     for (NSString *message : logMessages)
         EXPECT_TRUE([message containsString:@"enhanced privacy"]);
 #endif
