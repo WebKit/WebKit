@@ -250,6 +250,12 @@ namespace WTF {
         {
             return equalIgnoringASCIICaseCommon(a, b);
         }
+
+        static void translate(String& location, StringView view, unsigned hash)
+        {
+            location = view.toString();
+            location.impl()->setHash(hash);
+        }
     };
 
     struct HashTranslatorASCIILiteral {

@@ -66,6 +66,7 @@ namespace WTF {
 class SymbolImpl;
 class SymbolRegistry;
 
+struct ASCIICaseInsensitiveStringViewHashTranslator;
 struct HashedUTF8CharactersTranslator;
 struct HashTranslatorASCIILiteral;
 struct LCharBufferTranslator;
@@ -185,6 +186,7 @@ class StringImpl : private StringImplShape {
     friend class SymbolImpl;
     friend class ExternalStringImpl;
 
+    friend struct WTF::ASCIICaseInsensitiveStringViewHashTranslator;
     friend struct WTF::HashedUTF8CharactersTranslator;
     friend struct WTF::HashTranslatorASCIILiteral;
     friend struct WTF::LCharBufferTranslator;

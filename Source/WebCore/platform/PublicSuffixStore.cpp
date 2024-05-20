@@ -28,8 +28,11 @@
 
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+constexpr auto maxHostTopPrivatelyControlledDomainCache = 128;
 
 PublicSuffixStore& PublicSuffixStore::singleton()
 {
@@ -71,30 +74,31 @@ String PublicSuffixStore::publicSuffix(const URL& url) const
     return { };
 }
 
-String PublicSuffixStore::topPrivatelyControlledDomain(const String& host) const
+String PublicSuffixStore::topPrivatelyControlledDomain(StringView host) const
 {
     // FIXME: if host is a URL, we could drop these checks.
     if (host.isEmpty())
         return { };
 
     if (!host.containsOnlyASCII())
-        return host;
+        return host.toString();
 
     Locker locker { m_HostTopPrivatelyControlledDomainCacheLock };
-    auto hostCopy = crossThreadCopy(host);
-    auto result = m_hostTopPrivatelyControlledDomainCache.ensure(hostCopy, [&] {
-        const auto lowercaseHost = hostCopy.convertToASCIILowercase();
+    auto addResult = m_hostTopPrivatelyControlledDomainCache.ensure<ASCIICaseInsensitiveStringViewHashTranslator>(host, [&] {
+        const auto lowercaseHost = host.convertToASCIILowercase();
         if (lowercaseHost == "localhost"_s || URL::hostIsIPAddress(lowercaseHost))
             return lowercaseHost;
 
         return platformTopPrivatelyControlledDomain(lowercaseHost);
-    }).iterator->value.isolatedCopy();
+    });
 
-    constexpr auto maxHostTopPrivatelyControlledDomainCache = 128;
-    if (m_hostTopPrivatelyControlledDomainCache.size() > maxHostTopPrivatelyControlledDomainCache)
-        m_hostTopPrivatelyControlledDomainCache.remove(m_hostTopPrivatelyControlledDomainCache.random());
+    auto domain = addResult.iterator->value.isolatedCopy();
+    if (!addResult.isNewEntry) {
+        if (m_hostTopPrivatelyControlledDomainCache.size() > maxHostTopPrivatelyControlledDomainCache)
+            m_hostTopPrivatelyControlledDomainCache.remove(m_hostTopPrivatelyControlledDomainCache.random());
+    }
 
-    return result;
+    return domain;
 }
 
 } // namespace WebCore

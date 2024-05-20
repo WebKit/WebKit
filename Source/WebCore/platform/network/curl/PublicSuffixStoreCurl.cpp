@@ -50,7 +50,7 @@ static String topPrivatelyControlledDomainInternal(const psl_ctx_t* psl, const c
     return String();
 }
 
-String PublicSuffixStore::platformTopPrivatelyControlledDomain(const String& domain) const
+String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain) const
 {
     if (platformIsPublicSuffix(domain))
         return String();
