@@ -70,10 +70,6 @@ GLContext* PlatformDisplay::skiaGLContext()
         // The PlayStation OpenGL implementation does not dispatch to the context bound to
         //  the current thread so Skia cannot use OpenGL with coordinated graphics
 #if !(PLATFORM(PLAYSTATION) && USE(COORDINATED_GRAPHICS))
-        const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
-        if (enableCPURendering && strcmp(enableCPURendering, "0"))
-            return;
-
         auto skiaGLContext = GLContext::createOffscreen(*this);
         if (!skiaGLContext || !skiaGLContext->makeContextCurrent())
             return;

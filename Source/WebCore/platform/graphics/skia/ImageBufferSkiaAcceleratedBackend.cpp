@@ -32,6 +32,7 @@
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
+#include "ProcessCapabilities.h"
 #include <skia/core/SkBitmap.h>
 #include <skia/core/SkPixmap.h>
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
@@ -46,6 +47,10 @@ std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBac
 {
     IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())
+        return nullptr;
+
+    // We always want to accelerate the canvas when Accelerated2DCanvas setting is true, even if skia CPU is enabled.
+    if (parameters.purpose != RenderingPurpose::Canvas && !ProcessCapabilities::canUseAcceleratedBuffers())
         return nullptr;
 
     auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
