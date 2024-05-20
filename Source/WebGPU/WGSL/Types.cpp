@@ -450,8 +450,12 @@ Packing Type::packing() const
     } else if (auto* vectorType = std::get_if<Types::Vector>(this)) {
         if (vectorType->size == 3)
             return Packing::PackedVec3;
-    } else if (auto* arrayType = std::get_if<Types::Array>(this))
-        return arrayType->element->packing();
+    } else if (auto* arrayType = std::get_if<Types::Array>(this)) {
+        auto elementPacking = arrayType->element->packing();
+        if (elementPacking & Packing::Packed)
+            elementPacking = static_cast<Packing>(elementPacking | Packing::PArray);
+        return elementPacking;
+    }
 
     return Packing::Unpacked;
 }

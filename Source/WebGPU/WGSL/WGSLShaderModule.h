@@ -96,6 +96,7 @@ public:
 
     bool usesAtomicCompareExchange() const { return m_usesAtomicCompareExchange; }
     void setUsesAtomicCompareExchange() { m_usesAtomicCompareExchange = true; }
+
     bool usesFragDepth() const { return m_usesFragDepth; }
     void setUsesFragDepth() { m_usesFragDepth = true; }
 
@@ -128,6 +129,10 @@ public:
 
     bool usesExtractBits() const { return m_usesExtractBits; }
     void setUsesExtractBits() { m_usesExtractBits = true; }
+
+    bool usesPackedVec3() const { return m_usesPackedVec3; }
+    void setUsesPackedVec3() { m_usesPackedVec3 = true; }
+    void clearUsesPackedVec3() { m_usesPackedVec3 = false; }
 
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
@@ -275,6 +280,7 @@ private:
     bool m_usesDot4I8Packed { false };
     bool m_usesDot4U8Packed { false };
     bool m_usesExtractBits { false };
+    bool m_usesPackedVec3 { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;

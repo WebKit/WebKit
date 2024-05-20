@@ -186,6 +186,28 @@ void FunctionDefinitionWriter::write()
 
 void FunctionDefinitionWriter::emitNecessaryHelpers()
 {
+    if (m_shaderModule.usesPackedVec3()) {
+        m_shaderModule.clearUsesPackedVec3();
+        m_stringBuilder.append(
+            m_indent, "template<typename T>\n"_s,
+            m_indent, "struct PackedVec3 {\n"_s
+        );
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(
+                m_indent, "packed_vec<T, 3> vec3;\n"_s,
+                m_indent, "uint8_t __padding[sizeof(T)];\n"_s,
+                m_indent, "\n"_s,
+                m_indent, "PackedVec3() : vec3() { }\n"_s,
+                m_indent, "\n"_s,
+                m_indent, "PackedVec3(packed_vec<T, 3> v) : vec3(v) { }\n"_s,
+                m_indent, "\n"_s,
+                m_indent, "operator packed_vec<T, 3>() { return vec3; }\n"_s
+            );
+        }
+        m_stringBuilder.append(m_indent, "};\n\n"_s);
+    }
+
     if (m_shaderModule.usesExternalTextures()) {
         m_shaderModule.clearUsesExternalTextures();
         m_stringBuilder.append("struct texture_external {\n"_s);
@@ -217,6 +239,21 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             m_stringBuilder.append(m_indent, "return packed;\n"_s);
         }
         m_stringBuilder.append(m_indent, "}\n\n"_s);
+
+        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
+            m_indent, "array<PackedVec3<T>, N> __pack(array<vec<T, 3>, N> unpacked)\n"_s,
+            m_indent, "{\n"_s);
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "array<PackedVec3<T>, N> packed;\n"_s,
+                m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
+            {
+                IndentationScope scope(m_indent);
+                m_stringBuilder.append(m_indent, "packed[i] = PackedVec3<T>(unpacked[i]);\n"_s);
+            }
+            m_stringBuilder.append(m_indent, "return packed;\n"_s);
+        }
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesUnpackArray()) {
@@ -231,6 +268,21 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             {
                 IndentationScope scope(m_indent);
                 m_stringBuilder.append(m_indent, "unpacked[i] = __unpack(packed[i]);\n"_s);
+            }
+            m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
+        }
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
+
+        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
+            m_indent, "array<vec<T, 3>, N> __unpack(array<PackedVec3<T>, N> packed)\n"_s,
+            m_indent, "{\n"_s);
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "array<vec<T, 3>, N> unpacked;\n"_s,
+                m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
+            {
+                IndentationScope scope(m_indent);
+                m_stringBuilder.append(m_indent, "unpacked[i] = vec<T, 3>(packed[i]);\n"_s);
             }
             m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
         }
@@ -573,7 +625,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, packedName, " packed;\n"_s);
         for (auto& member : structure.members()) {
             auto& name = member.name();
-            if (member.type().inferredType()->packing() == Packing::PackedStruct)
+            if (member.type().inferredType()->packing() & (Packing::PStruct | Packing::PArray))
                 m_stringBuilder.append(m_indent, "packed."_s, name, " = __pack(unpacked."_s, name, ");\n"_s);
             else
                 m_stringBuilder.append(m_indent, "packed."_s, name, " = unpacked."_s, name, ";\n"_s);
@@ -588,7 +640,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, unpackedName, " unpacked;\n"_s);
         for (auto& member : structure.members()) {
             auto& name = member.name();
-            if (member.type().inferredType()->packing() == Packing::PackedStruct)
+            if (member.type().inferredType()->packing() & (Packing::PStruct | Packing::PArray))
                 m_stringBuilder.append(m_indent, "unpacked."_s, name, " = __unpack(packed."_s, name, ");\n"_s);
             else
                 m_stringBuilder.append(m_indent, "unpacked."_s, name, " = packed."_s, name, ";\n"_s);
@@ -926,7 +978,13 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Array& array) {
             m_stringBuilder.append("array<"_s);
-            visit(array.element);
+            auto* vector = std::get_if<Types::Vector>(array.element);
+            if (vector && vector->size == 3 && m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource) {
+                m_stringBuilder.append("PackedVec3<"_s);
+                visit(vector->element);
+                m_stringBuilder.append(">"_s);
+            } else
+                visit(array.element);
             m_stringBuilder.append(", "_s);
             WTF::switchOn(array.size,
                 [&](unsigned size) { m_stringBuilder.append(size); },

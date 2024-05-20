@@ -392,7 +392,7 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
         else if (std::holds_alternative<Types::Array>(*type)) {
             // array of vec3 can be implicitly converted
             if (packing & Packing::Vec3)
-                return expectedPacking;
+                m_shaderModule.setUsesPackedVec3();
             if (packing & Packing::Packed) {
                 operation = "__unpack"_s;
                 m_shaderModule.setUsesUnpackArray();
