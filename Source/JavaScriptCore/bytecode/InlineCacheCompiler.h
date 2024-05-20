@@ -120,21 +120,22 @@ class PolymorphicAccess {
 public:
     friend class InlineCacheCompiler;
 
+    using ListType = Vector<Ref<AccessCase>, 16>;
+
     PolymorphicAccess();
     ~PolymorphicAccess();
 
     // When this fails (returns GaveUp), this will leave the old stub intact but you should not try
     // to call this method again for that PolymorphicAccess instance.
-    AccessGenerationResult addCases(
-        const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, Vector<RefPtr<AccessCase>, 2>);
+    AccessGenerationResult addCases(const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, ListType&&);
 
     AccessGenerationResult addCase(
         const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, Ref<AccessCase>);
 
     bool isEmpty() const { return m_list.isEmpty(); }
     unsigned size() const { return m_list.size(); }
-    const AccessCase& at(unsigned i) const { return *m_list[i]; }
-    const AccessCase& operator[](unsigned i) const { return *m_list[i]; }
+    const AccessCase& at(unsigned i) const { return m_list[i].get(); }
+    const AccessCase& operator[](unsigned i) const { return m_list[i].get(); }
 
     DECLARE_VISIT_AGGREGATE;
 
@@ -151,8 +152,6 @@ private:
     friend class AccessCase;
     friend class CodeBlock;
     friend class InlineCacheCompiler;
-
-    typedef Vector<RefPtr<AccessCase>, 2> ListType;
 
     ListType m_list;
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;

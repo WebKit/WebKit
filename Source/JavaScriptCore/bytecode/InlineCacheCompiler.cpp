@@ -4004,7 +4004,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     // to be unmutated. For sure, we want it to hang onto any data structures that may be referenced
     // from the code of the current stub (aka previous).
     Vector<WatchpointSet*, 8> additionalWatchpointSets;
-    Vector<RefPtr<AccessCase>, 16> cases;
+    Vector<Ref<AccessCase>, 16> cases;
     cases.reserveInitialCapacity(poly.m_list.size());
     unsigned srcIndex = 0;
     for (auto& someCase : poly.m_list) {
@@ -4012,7 +4012,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             if (!someCase->couldStillSucceed())
                 return;
 
-            auto sets = collectAdditionalWatchpoints(vm(), *someCase);
+            auto sets = collectAdditionalWatchpoints(vm(), someCase.get());
             for (auto* set : sets) {
                 if (!set->isStillValid())
                     return;
@@ -4031,7 +4031,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             // If we can generate a binary switch, then A->canReplace(B) == B->canReplace(A). So,
             // it doesn't matter that we only do the check in one direction.
             for (unsigned j = srcIndex + 1; j < poly.m_list.size(); ++j) {
-                if (poly.m_list[j]->canReplace(*someCase))
+                if (poly.m_list[j]->canReplace(someCase.get()))
                     return;
             }
 
@@ -4345,7 +4345,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     bool allGuardedByStructureCheck = true;
     if (!m_stubInfo->hasConstantIdentifier)
         allGuardedByStructureCheck = false;
-    FixedVector<RefPtr<AccessCase>> keys(WTFMove(cases));
+    FixedVector<Ref<AccessCase>> keys(WTFMove(cases));
     m_callLinkInfos.resize(keys.size());
     Vector<JSCell*> cellsToMark;
     for (auto& entry : keys) {
@@ -4422,7 +4422,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     fallThrough.link(&jit);
                     fallThrough.shrink(0);
                     if (keys[i]->requiresInt32PropertyCheck())
-                        generateWithGuard(i, *keys[i], fallThrough);
+                        generateWithGuard(i, keys[i].get(), fallThrough);
                 }
 
                 if (needsStringPropertyCheck || needsSymbolPropertyCheck || acceptValueProperty) {
@@ -4455,7 +4455,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     fallThrough.link(&jit);
                     fallThrough.shrink(0);
                     if (keys[i]->requiresIdentifierNameMatch() && !keys[i]->uid()->isSymbol())
-                        generateWithGuard(i, *keys[i], fallThrough);
+                        generateWithGuard(i, keys[i].get(), fallThrough);
                 }
 
                 if (needsSymbolPropertyCheck || acceptValueProperty) {
@@ -4484,7 +4484,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     fallThrough.link(&jit);
                     fallThrough.shrink(0);
                     if (keys[i]->requiresIdentifierNameMatch() && keys[i]->uid()->isSymbol())
-                        generateWithGuard(i, *keys[i], fallThrough);
+                        generateWithGuard(i, keys[i].get(), fallThrough);
                 }
 
                 if (acceptValueProperty) {
@@ -4501,7 +4501,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     fallThrough.link(&jit);
                     fallThrough.shrink(0);
                     if (!keys[i]->requiresIdentifierNameMatch() && !keys[i]->requiresInt32PropertyCheck())
-                        generateWithGuard(i, *keys[i], fallThrough);
+                        generateWithGuard(i, keys[i].get(), fallThrough);
                 }
             }
         } else {
@@ -4510,7 +4510,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             for (unsigned i = keys.size(); i--;) {
                 fallThrough.link(&jit);
                 fallThrough.shrink(0);
-                generateWithGuard(i, *keys[i], fallThrough);
+                generateWithGuard(i, keys[i].get(), fallThrough);
             }
         }
 
@@ -4528,7 +4528,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
         BinarySwitch binarySwitch(m_scratchGPR, caseValues.span(), BinarySwitch::Int32);
         while (binarySwitch.advance(jit))
-            generate(binarySwitch.caseIndex(), *keys[binarySwitch.caseIndex()]);
+            generate(binarySwitch.caseIndex(), keys[binarySwitch.caseIndex()].get());
         m_failAndRepatch.append(binarySwitch.fallThrough());
     }
 
@@ -4681,7 +4681,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 PolymorphicAccess::PolymorphicAccess() = default;
 PolymorphicAccess::~PolymorphicAccess() = default;
 
-AccessGenerationResult PolymorphicAccess::addCases(const GCSafeConcurrentJSLocker&, VM& vm, CodeBlock*, StructureStubInfo& stubInfo, Vector<RefPtr<AccessCase>, 2> originalCasesToAdd)
+AccessGenerationResult PolymorphicAccess::addCases(const GCSafeConcurrentJSLocker&, VM& vm, CodeBlock*, StructureStubInfo& stubInfo, ListType&& originalCasesToAdd)
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -4697,14 +4697,14 @@ AccessGenerationResult PolymorphicAccess::addCases(const GCSafeConcurrentJSLocke
     //   add more things after failure.
 
     // First ensure that the originalCasesToAdd doesn't contain duplicates.
-    Vector<RefPtr<AccessCase>> casesToAdd;
+    ListType casesToAdd;
     for (unsigned i = 0; i < originalCasesToAdd.size(); ++i) {
-        RefPtr<AccessCase> myCase = WTFMove(originalCasesToAdd[i]);
+        Ref<AccessCase> myCase = WTFMove(originalCasesToAdd[i]);
 
         // Add it only if it is not replaced by the subsequent cases in the list.
         bool found = false;
         for (unsigned j = i + 1; j < originalCasesToAdd.size(); ++j) {
-            if (originalCasesToAdd[j]->canReplace(*myCase)) {
+            if (originalCasesToAdd[j]->canReplace(myCase.get())) {
                 found = true;
                 break;
             }
@@ -4763,7 +4763,7 @@ AccessGenerationResult PolymorphicAccess::addCases(const GCSafeConcurrentJSLocke
     // Now add things to the new list. Note that at this point, we will still have old cases that
     // may be replaced by the new ones. That's fine. We will sort that out when we regenerate.
     for (auto& caseToAdd : casesToAdd) {
-        collectAdditionalWatchpoints(vm, *caseToAdd);
+        collectAdditionalWatchpoints(vm, caseToAdd.get());
         m_list.append(WTFMove(caseToAdd));
     }
 
@@ -4775,7 +4775,7 @@ AccessGenerationResult PolymorphicAccess::addCases(const GCSafeConcurrentJSLocke
 AccessGenerationResult PolymorphicAccess::addCase(
     const GCSafeConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, Ref<AccessCase> newAccess)
 {
-    Vector<RefPtr<AccessCase>, 2> newAccesses;
+    ListType newAccesses;
     newAccesses.append(WTFMove(newAccess));
     return addCases(locker, vm, codeBlock, stubInfo, WTFMove(newAccesses));
 }
@@ -4813,7 +4813,7 @@ void PolymorphicAccess::dump(PrintStream& out) const
     out.print(RawPointer(this), ":["_s);
     CommaPrinter comma;
     for (auto& entry : m_list)
-        out.print(comma, *entry);
+        out.print(comma, entry.get());
     out.print("]"_s);
 }
 

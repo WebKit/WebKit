@@ -1751,42 +1751,6 @@ StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
     return result;
 }
 
-CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex index)
-{
-    if (JITCode::couldBeInterpreted(jitType())) {
-        auto& instruction = instructions().at(index);
-        switch (instruction->opcodeID()) {
-#define CASE(Op) \
-        case Op::opcodeID: \
-            return &instruction->as<Op>().metadata(this).m_callLinkInfo; \
-            break;
-
-        FOR_EACH_OPCODE_WITH_CALL_LINK_INFO(CASE)
-
-#undef CASE
-        default:
-            break;
-        }
-    }
-
-#if ENABLE(DFG_JIT)
-    if (JSC::JITCode::isOptimizingJIT(jitType())) {
-        DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-        for (auto* callLinkInfo : dfgCommon->m_callLinkInfos) {
-            if (callLinkInfo->codeOrigin() == CodeOrigin(index))
-                return callLinkInfo;
-        }
-        if (auto* jitData = dfgJITData()) {
-            for (auto& callLinkInfo : jitData->callLinkInfos()) {
-                if (callLinkInfo.codeOrigin() == CodeOrigin(index))
-                    return &callLinkInfo;
-            }
-        }
-    }
-#endif
-    return nullptr;
-}
-
 void CodeBlock::resetBaselineJITData()
 {
     RELEASE_ASSERT(!JITCode::isJIT(jitType()));
