@@ -26,38 +26,98 @@
 #pragma once
 
 #include "Color.h"
+#include "StyleBuilderState.h"
 #include "StyleColor.h"
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
 
-namespace Style {
-enum class ForVisitedLink : bool;
-}
-
 enum class CSSUnresolvedLightDarkAppearance : bool;
 
-struct CSSUnresolvedColorResolutionContext {
-    CSSUnresolvedColorResolutionContext();
-    ~CSSUnresolvedColorResolutionContext();
-
-    Style::ForVisitedLink forVisitedLink;
+class CSSUnresolvedColorResolutionDelegate {
+public:
+    virtual ~CSSUnresolvedColorResolutionDelegate();
 
     // Colors to use that usually get resolved dynamically using Document & RenderStyle.
-    Color currentColor;              // For CSSValueCurrentcolor
-    Color internalDocumentTextColor; // For CSSValueInternalDocumentTextColor
-    Color webkitLink;                // For CSSValueWebkitLink [Style::ForVisitedLink::No]
-    Color webkitLinkVisited;         // For CSSValueWebkitLink [Style::ForVisitedLink::Yes]
-    Color webkitActiveLink;          // For CSSValueWebkitActivelink
-    Color webkitFocusRingColor;      // For CSSValueWebkitFocusRingColor
+    virtual Color currentColor() const { return { }; }              // For CSSValueCurrentcolor
+    virtual Color internalDocumentTextColor() const { return { }; } // For CSSValueInternalDocumentTextColor
+    virtual Color webkitLink() const { return { }; }                // For CSSValueWebkitLink [Style::ForVisitedLink::No]
+    virtual Color webkitLinkVisited() const { return { }; }         // For CSSValueWebkitLink [Style::ForVisitedLink::Yes]
+    virtual Color webkitActiveLink() const { return { }; }          // For CSSValueWebkitActivelink
+    virtual Color webkitFocusRingColor() const { return { }; }      // For CSSValueWebkitFocusRingColor
+};
+
+struct CSSUnresolvedColorResolutionContext {
+    // Delegate for lazily computing color values.
+    std::unique_ptr<CSSUnresolvedColorResolutionDelegate> delegate = nullptr;
+
+    // Whether links should be resolved to the visited style.
+    Style::ForVisitedLink forVisitedLink = Style::ForVisitedLink::No;
 
     // Options to pass when resolving any other keyword with StyleColor::colorFromKeyword()
-    OptionSet<StyleColorOptions> keywordOptions;
+    OptionSet<StyleColorOptions> keywordOptions = { };
 
     // Appearance used to select from a light-dark() color function.
     // If unset, light-dark() colors will return the invalid Color.
-    std::optional<CSSUnresolvedLightDarkAppearance> appearance;
+    std::optional<CSSUnresolvedLightDarkAppearance> appearance = std::nullopt;
+
+    // Colors are resolved:
+    //   1. Checking if the color is set below, and if it is, returning it.
+    //   2. If a delegate has been set, calling the associated delegate function,
+    //      storing the result below, and returning that color.
+    //   3. Returning the invalid `Color` value.
+    mutable std::optional<Color> resolvedCurrentColor = std::nullopt;
+    mutable std::optional<Color> resolvedInternalDocumentTextColor = std::nullopt;
+    mutable std::optional<Color> resolvedWebkitLink = std::nullopt;
+    mutable std::optional<Color> resolvedWebkitLinkVisited = std::nullopt;
+    mutable std::optional<Color> resolvedWebkitActiveLink = std::nullopt;
+    mutable std::optional<Color> resolvedWebkitFocusRingColor = std::nullopt;
+
+    Color currentColor() const
+    {
+        return resolveColor(resolvedCurrentColor, &CSSUnresolvedColorResolutionDelegate::currentColor);
+    }
+
+    Color internalDocumentTextColor() const
+    {
+        return resolveColor(resolvedInternalDocumentTextColor, &CSSUnresolvedColorResolutionDelegate::internalDocumentTextColor);
+    }
+
+    Color webkitLink() const
+    {
+        return resolveColor(resolvedWebkitLink, &CSSUnresolvedColorResolutionDelegate::webkitLink);
+    }
+
+    Color webkitLinkVisited() const
+    {
+        return resolveColor(resolvedWebkitLinkVisited, &CSSUnresolvedColorResolutionDelegate::webkitLinkVisited);
+    }
+
+    Color webkitActiveLink() const
+    {
+        return resolveColor(resolvedWebkitActiveLink, &CSSUnresolvedColorResolutionDelegate::webkitActiveLink);
+    }
+
+    Color webkitFocusRingColor() const
+    {
+        return resolveColor(resolvedWebkitFocusRingColor, &CSSUnresolvedColorResolutionDelegate::webkitFocusRingColor);
+    }
+
+private:
+    Color resolveColor(std::optional<Color>& existing, Color (CSSUnresolvedColorResolutionDelegate::*resolver)() const) const
+    {
+        if (existing)
+            return *existing;
+
+        if (delegate) {
+            auto resolved = ((*delegate).*resolver)();
+            existing = resolved;
+            return resolved;
+        }
+
+        return { };
+    }
 };
 
 } // namespace WebCore

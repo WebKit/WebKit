@@ -26,15 +26,8 @@
 #include "config.h"
 #include "CSSUnresolvedColorResolutionContext.h"
 
-#include "StyleBuilderState.h"
-
 namespace WebCore {
 
-CSSUnresolvedColorResolutionContext::CSSUnresolvedColorResolutionContext()
-    : forVisitedLink { Style::ForVisitedLink::No }
-{
-}
-
-CSSUnresolvedColorResolutionContext::~CSSUnresolvedColorResolutionContext() = default;
+CSSUnresolvedColorResolutionDelegate::~CSSUnresolvedColorResolutionDelegate() = default;
 
 } // namespace WebCore

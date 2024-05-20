@@ -402,7 +402,9 @@ private:
     void realizeSavesLoop();
 
     void setStrokeStyle(CanvasStyle);
+    void setStrokeStyle(std::optional<CanvasStyle>);
     void setFillStyle(CanvasStyle);
+    void setFillStyle(std::optional<CanvasStyle>);
 
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(CachedImage&, RenderElement*, bool repeatX, bool repeatY);
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLImageElement&, bool repeatX, bool repeatY);

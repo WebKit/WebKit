@@ -52,15 +52,15 @@ Color createColor(const CSSUnresolvedColorKeyword& unresolved, const CSSUnresolv
 {
     switch (unresolved.valueID) {
     case CSSValueInternalDocumentTextColor:
-        return context.internalDocumentTextColor;
+        return context.internalDocumentTextColor();
     case CSSValueWebkitLink:
-        return context.forVisitedLink == Style::ForVisitedLink::Yes ? context.webkitLinkVisited : context.webkitLink;
+        return context.forVisitedLink == Style::ForVisitedLink::Yes ? context.webkitLinkVisited() : context.webkitLink();
     case CSSValueWebkitActivelink:
-        return context.webkitActiveLink;
+        return context.webkitActiveLink();
     case CSSValueWebkitFocusRingColor:
-        return context.webkitFocusRingColor;
+        return context.webkitFocusRingColor();
     case CSSValueCurrentcolor:
-        return context.currentColor;
+        return context.currentColor();
     default:
         return StyleColor::colorFromKeyword(unresolved.valueID, context.keywordOptions);
     }
