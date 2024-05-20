@@ -58,10 +58,10 @@ static String getSystemSoftwareVersion()
     return "0.00"_s;
 }
 
-static constexpr const char* versionForUAString()
+static constexpr ASCIILiteral versionForUAString()
 {
     // https://bugs.webkit.org/show_bug.cgi?id=180365
-    return "605.1.15";
+    return "605.1.15"_s;
 }
 
 static String standardUserAgentStatic()
@@ -85,11 +85,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     if (applicationName.isEmpty())
         return standardUserAgentStatic();
 
-    String finalApplicationVersion = applicationVersion;
-    if (finalApplicationVersion.isEmpty())
-        finalApplicationVersion = String::fromUTF8(versionForUAString());
-
-    return makeString(standardUserAgentStatic(), ' ', applicationName, '/', finalApplicationVersion);
+    return makeString(standardUserAgentStatic(), ' ', applicationName, '/', applicationVersion.isEmpty() ? versionForUAString() : applicationVersion);
 }
 
 String standardUserAgentForURL(const URL&)
