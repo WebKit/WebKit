@@ -1668,8 +1668,6 @@ webkit.org/b/273476 fast/text/thai-joiner.html [ Failure ]
 
 webkit.org/b/273477 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 
-webkit.org/b/273479 imported/blink/svg/filters/feColorMatrix-subregion.html [ ImageOnlyFailure ]
-
 webkit.org/b/273480 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html [ Failure ]
 
 webkit.org/b/273481 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.html [ Failure ]
