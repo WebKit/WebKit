@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,11 +62,13 @@ public:
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
     bool frameIsCompleteAtIndex(size_t) const final;
     ImageOrientation frameOrientationAtIndex(size_t) const final;
-    std::optional<IntSize> densityCorrectedSizeAtIndex(size_t) const final;
+    std::optional<IntSize> frameDensityCorrectedSizeAtIndex(size_t) const final;
 
     Seconds frameDurationAtIndex(size_t) const final;
     bool frameHasAlphaAtIndex(size_t) const final;
     unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
+
+    bool fetchFrameMetaDataAtIndex(size_t, SubsamplingLevel, const DecodingOptions&, ImageFrame&) const final;
 
     PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
 
@@ -77,12 +79,13 @@ public:
     static String decodeUTI(CGImageSourceRef, const SharedBuffer&);
 
 private:
+    bool hasAlpha() const;
     String decodeUTI(const SharedBuffer&) const;
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     bool shouldUseQuickLookForFullscreen() const;
 #endif
-    
+
     bool m_isAllDataReceived { false };
     std::atomic<bool> m_isXBitmapImage { false };
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };

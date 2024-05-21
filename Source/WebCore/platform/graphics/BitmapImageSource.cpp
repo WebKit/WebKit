@@ -443,20 +443,9 @@ void BitmapImageSource::cacheMetadataAtIndex(unsigned index, SubsamplingLevel su
     if (index >= m_frames.size())
         return;
 
-    ImageFrame& frame = m_frames[index];
+    auto& frame = m_frames[index];
 
-    if (frame.m_decodingOptions.hasSizeForDrawing()) {
-        ASSERT(frame.hasNativeImage());
-        frame.m_size = frame.nativeImage()->size();
-    } else
-        frame.m_size = m_decoder->frameSizeAtIndex(index, subsamplingLevel);
-
-    frame.m_densityCorrectedSize = m_decoder->densityCorrectedSizeAtIndex(index);
-    frame.m_subsamplingLevel = subsamplingLevel;
-    frame.m_decodingOptions = options;
-    frame.m_hasAlpha = m_decoder->frameHasAlphaAtIndex(index);
-    frame.m_orientation = m_decoder->frameOrientationAtIndex(index);
-    frame.m_decodingStatus = m_decoder->frameIsCompleteAtIndex(index) ? DecodingStatus::Complete : DecodingStatus::Partial;
+    m_decoder->fetchFrameMetaDataAtIndex(index, subsamplingLevel, options, frame);
 
     if (repetitionCount())
         frame.m_duration = m_decoder->frameDurationAtIndex(index);
