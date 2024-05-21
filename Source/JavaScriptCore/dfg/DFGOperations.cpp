@@ -2300,8 +2300,9 @@ JSC_DEFINE_JIT_OPERATION(operationCreateClonedArgumentsDuringExit, JSCell*, (VM*
     
     unsigned length = argumentCount - 1;
     JSGlobalObject* globalObject = codeBlock->globalObject();
-    ClonedArguments* result = ClonedArguments::createEmpty(vm, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
-    
+    ClonedArguments* result = ClonedArguments::createEmpty(globalObject, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
+    RELEASE_ASSERT(!scope.exception() && result);
+
     Register* arguments =
         callFrame->registers() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0) +
         CallFrame::argumentOffset(0);

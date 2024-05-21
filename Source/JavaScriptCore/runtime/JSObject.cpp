@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@
 #include "config.h"
 #include "JSObject.h"
 
+#include "AllocationFailureMode.h"
 #include "CatchScope.h"
 #include "CustomGetterSetter.h"
 #include "Exception.h"
@@ -1266,12 +1267,19 @@ ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
     return newButterfly->contiguous();
 }
 
-Butterfly* JSObject::createArrayStorageButterfly(VM& vm, JSObject* intendedOwner, Structure* structure, unsigned length, unsigned vectorLength, Butterfly* oldButterfly)
+static Butterfly* createArrayStorageButterflyImpl(VM& vm, JSObject* intendedOwner, Structure* structure, unsigned length, unsigned vectorLength, Butterfly* oldButterfly, AllocationFailureMode mode)
 {
     Butterfly* newButterfly = Butterfly::createOrGrowArrayRight(
         oldButterfly, vm, intendedOwner, structure, structure->outOfLineCapacity(), false, 0,
         ArrayStorage::sizeFor(vectorLength));
-    RELEASE_ASSERT(newButterfly);
+    if (UNLIKELY(!newButterfly)) {
+        if (mode == AllocationFailureMode::Assert)
+            RELEASE_ASSERT(newButterfly, length, vectorLength, oldButterfly);
+        else {
+            ASSERT(mode == AllocationFailureMode::ReturnNull);
+            return nullptr;
+        }
+    }
 
     ArrayStorage* result = newButterfly->arrayStorage();
     result->setLength(length);
@@ -1284,6 +1292,17 @@ Butterfly* JSObject::createArrayStorageButterfly(VM& vm, JSObject* intendedOwner
 
     return newButterfly;
 }
+
+Butterfly* JSObject::createArrayStorageButterfly(VM& vm, JSObject* intendedOwner, Structure* structure, unsigned length, unsigned vectorLength, Butterfly* oldButterfly)
+{
+    return createArrayStorageButterflyImpl(vm, intendedOwner, structure, length, vectorLength, oldButterfly, AllocationFailureMode::Assert);
+}
+
+Butterfly* JSObject::tryCreateArrayStorageButterfly(VM& vm, JSObject* intendedOwner, Structure* structure, unsigned length, unsigned vectorLength, Butterfly* oldButterfly)
+{
+    return createArrayStorageButterflyImpl(vm, intendedOwner, structure, length, vectorLength, oldButterfly, AllocationFailureMode::ReturnNull);
+}
+
 
 ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vectorLength)
 {
