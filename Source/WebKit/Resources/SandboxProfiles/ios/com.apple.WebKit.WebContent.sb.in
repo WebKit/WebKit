@@ -663,6 +663,7 @@
         "kern.osversion"
         "kern.secure_kernel" ;; Needed by XPC bundle resolution
         "kern.version"
+        "kern.willshutdown" ;; <rdar://122511261>
         "sysctl.name2oid"
         "vm.footprint_suspend")
     (sysctl-name-prefix "net.routetable") ;; <rdar://problem/57665153>

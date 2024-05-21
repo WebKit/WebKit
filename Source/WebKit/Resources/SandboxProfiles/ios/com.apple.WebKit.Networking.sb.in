@@ -557,6 +557,7 @@
         "kern.osversion"
         "kern.secure_kernel"
         "kern.version"
+        "kern.willshutdown" ;; <rdar://122511261>
         "vm.footprint_suspend"
         "vm.malloc_ranges") ;; <rdar://problem/105161083>
     (sysctl-name-prefix "kern.proc.pid.")
