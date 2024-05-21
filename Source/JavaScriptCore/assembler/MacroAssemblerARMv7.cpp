@@ -39,8 +39,6 @@ JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);
 
 using namespace ARMRegisters;
 
-#if COMPILER(GCC_COMPATIBLE)
-
 // The following are offsets for Probe::State fields accessed
 // by the ctiMasmProbeTrampoline stub.
 
@@ -364,7 +362,6 @@ asm (
     "pop       { pc }" "\n"
     ".previous" "\n"
 );
-#endif // COMPILER(GCC_COMPATIBLE)
 
 void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth)
 {

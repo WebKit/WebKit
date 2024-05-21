@@ -4446,13 +4446,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationExceptionFuzz, void, (JSGlobalObject*
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(scope);
-#if COMPILER(GCC_COMPATIBLE)
     void* returnPC = __builtin_return_address(0);
     // FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
     // sometimes gives us a signed pointer, and sometimes does not.
     returnPC = removeCodePtrTag(returnPC);
     doExceptionFuzzing(globalObject, scope, "JITOperations", returnPC);
-#endif // COMPILER(GCC_COMPATIBLE)
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationExceptionFuzzWithCallFrame, void, (VM* vmPointer))
@@ -4462,13 +4460,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationExceptionFuzzWithCallFrame, void, (VM
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(scope);
-#if COMPILER(GCC_COMPATIBLE)
     void* returnPC = __builtin_return_address(0);
     // FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
     // sometimes gives us a signed pointer, and sometimes does not.
     returnPC = removeCodePtrTag(returnPC);
     doExceptionFuzzing(callFrame->lexicalGlobalObject(vm), scope, "JITOperations", returnPC);
-#endif // COMPILER(GCC_COMPATIBLE)
 }
 
 JSC_DEFINE_JIT_OPERATION(operationValueAdd, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))

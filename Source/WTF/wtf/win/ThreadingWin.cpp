@@ -124,10 +124,6 @@ typedef struct tagTHREADNAME_INFO {
 
 void Thread::initializeCurrentThreadInternal(const char* szThreadName)
 {
-#if COMPILER(MINGW)
-    // FIXME: Implement thread name setting with MingW.
-    UNUSED_PARAM(szThreadName);
-#else
     THREADNAME_INFO info;
     info.dwType = 0x1000;
     info.szName = Thread::normalizeThreadName(szThreadName);
@@ -137,7 +133,7 @@ void Thread::initializeCurrentThreadInternal(const char* szThreadName)
     __try {
         RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), reinterpret_cast<ULONG_PTR*>(&info));
     } __except(EXCEPTION_CONTINUE_EXECUTION) { }
-#endif
+
     initializeCurrentThreadEvenIfNonWTFCreated();
 }
 

@@ -257,9 +257,7 @@ private:
     int32_t m_month : 5; // Starts with 1.
     int32_t m_day : 6; // Starts with 1.
 };
-#if COMPILER(GCC_COMPATIBLE)
 static_assert(sizeof(PlainDate) == sizeof(int32_t));
-#endif
 
 using TimeZone = std::variant<TimeZoneID, int64_t>;
 

@@ -38,7 +38,7 @@ void clearArrayMemset(WriteBarrier<Unknown>* base, unsigned count)
 
 void clearArrayMemset(double* base, unsigned count)
 {
-#if CPU(X86_64) && COMPILER(GCC_COMPATIBLE)
+#if CPU(X86_64)
     uint64_t pnan = bitwise_cast<uint64_t>(PNaN);
     asm volatile (
         "rep stosq\n\t"

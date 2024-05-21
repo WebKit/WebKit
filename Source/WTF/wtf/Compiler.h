@@ -116,21 +116,6 @@
 #error "Building release without compiler optimizations: WebKit will be slow. Set -DRELEASE_WITHOUT_OPTIMIZATIONS if this is intended."
 #endif
 
-/* COMPILER(MINGW) - MinGW GCC */
-
-#if defined(__MINGW32__)
-#define WTF_COMPILER_MINGW 1
-#include <_mingw.h>
-#endif
-
-/* COMPILER(MINGW64) - mingw-w64 GCC - used as additional check to exclude mingw.org specific functions */
-
-/* Note: This section must come after the MinGW section since we check COMPILER(MINGW) here. */
-
-#if COMPILER(MINGW) && defined(__MINGW64_VERSION_MAJOR) /* best way to check for mingw-w64 vs mingw.org */
-#define WTF_COMPILER_MINGW64 1
-#endif
-
 /* COMPILER(MSVC) - Microsoft Visual C++ */
 
 #if defined(_MSC_VER)
@@ -199,35 +184,20 @@
 
 /* In GCC functions marked with no_sanitize_address cannot call functions that are marked with always_inline and not marked with no_sanitize_address.
  * Therefore we need to give up on the enforcement of ALWAYS_INLINE when bulding with ASAN. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368 */
-#if !defined(ALWAYS_INLINE) && defined(NDEBUG) && !COMPILER(MINGW) && !(COMPILER(GCC) && ASAN_ENABLED)
+#if !defined(ALWAYS_INLINE) && defined(NDEBUG) && !(COMPILER(GCC) && ASAN_ENABLED)
 #define ALWAYS_INLINE inline __attribute__((__always_inline__))
-#endif
-
-#if !defined(ALWAYS_INLINE) && COMPILER(MSVC) && defined(NDEBUG)
-#define ALWAYS_INLINE __forceinline
 #endif
 
 #if !defined(ALWAYS_INLINE)
 #define ALWAYS_INLINE inline
 #endif
 
-#if COMPILER(MSVC)
-#define ALWAYS_INLINE_EXCEPT_MSVC inline
-#else
-#define ALWAYS_INLINE_EXCEPT_MSVC ALWAYS_INLINE
-#endif
-
-
 /* ALWAYS_INLINE_LAMBDA */
 
 /* In GCC functions marked with no_sanitize_address cannot call functions that are marked with always_inline and not marked with no_sanitize_address.
  * Therefore we need to give up on the enforcement of ALWAYS_INLINE_LAMBDA when bulding with ASAN. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368 */
-#if !defined(ALWAYS_INLINE_LAMBDA) && (COMPILER(GCC) || COMPILER(CLANG)) && defined(NDEBUG) && !COMPILER(MINGW) && !(COMPILER(GCC) && ASAN_ENABLED)
+#if !defined(ALWAYS_INLINE_LAMBDA) && defined(NDEBUG) && !(COMPILER(GCC) && ASAN_ENABLED)
 #define ALWAYS_INLINE_LAMBDA __attribute__((__always_inline__))
-#endif
-
-#if !defined(ALWAYS_INLINE_LAMBDA) && COMPILER(MSVC) && defined(NDEBUG)
-#define ALWAYS_INLINE_LAMBDA [[msvc::forceinline]]
 #endif
 
 #if !defined(ALWAYS_INLINE_LAMBDA)
@@ -274,36 +244,16 @@
 #define LIKELY(x) __builtin_expect(!!(x), 1)
 #endif
 
-#if !defined(LIKELY)
-#define LIKELY(x) (x)
-#endif
-
 /* NEVER_INLINE */
 
 #if !defined(NEVER_INLINE)
 #define NEVER_INLINE __attribute__((__noinline__))
 #endif
 
-#if !defined(NEVER_INLINE) && COMPILER(MSVC)
-#define NEVER_INLINE __declspec(noinline)
-#endif
-
-#if !defined(NEVER_INLINE)
-#define NEVER_INLINE
-#endif
-
 /* NO_RETURN */
 
-#if !defined(NO_RETURN) && (COMPILER(GCC) || COMPILER(CLANG))
-#define NO_RETURN __attribute((__noreturn__))
-#endif
-
-#if !defined(NO_RETURN) && COMPILER(MSVC)
-#define NO_RETURN __declspec(noreturn)
-#endif
-
 #if !defined(NO_RETURN)
-#define NO_RETURN
+#define NO_RETURN __attribute((__noreturn__))
 #endif
 
 /* NOT_TAIL_CALLED */
@@ -335,18 +285,10 @@
 #define RETURNS_NONNULL __attribute__((returns_nonnull))
 #endif
 
-#if !defined(RETURNS_NONNULL)
-#define RETURNS_NONNULL
-#endif
-
 /* NO_RETURN_WITH_VALUE */
 
-#if !defined(NO_RETURN_WITH_VALUE) && (COMPILER(GCC) || COMPILER(CLANG))
-#define NO_RETURN_WITH_VALUE NO_RETURN
-#endif
-
 #if !defined(NO_RETURN_WITH_VALUE)
-#define NO_RETURN_WITH_VALUE
+#define NO_RETURN_WITH_VALUE NO_RETURN
 #endif
 
 /* OBJC_CLASS */
@@ -377,28 +319,16 @@
 #define PURE_FUNCTION __attribute__((__pure__))
 #endif
 
-#if !defined(PURE_FUNCTION)
-#define PURE_FUNCTION
-#endif
-
 /* WK_UNUSED_INSTANCE_VARIABLE */
 
 #if !defined(WK_UNUSED_INSTANCE_VARIABLE)
 #define WK_UNUSED_INSTANCE_VARIABLE __attribute__((unused))
 #endif
 
-#if !defined(WK_UNUSED_INSTANCE_VARIABLE)
-#define WK_UNUSED_INSTANCE_VARIABLE
-#endif
-
 /* UNUSED_FUNCTION */
 
-#if !defined(UNUSED_FUNCTION) && (COMPILER(GCC) || COMPILER(CLANG))
-#define UNUSED_FUNCTION __attribute__((unused))
-#endif
-
 #if !defined(UNUSED_FUNCTION)
-#define UNUSED_FUNCTION
+#define UNUSED_FUNCTION __attribute__((unused))
 #endif
 
 /* UNUSED_TYPE_ALIAS */
@@ -407,18 +337,10 @@
 #define UNUSED_TYPE_ALIAS __attribute__((unused))
 #endif
 
-#if !defined(UNUSED_TYPE_ALIAS)
-#define UNUSED_TYPE_ALIAS
-#endif
-
 /* REFERENCED_FROM_ASM */
 
-#if !defined(REFERENCED_FROM_ASM) && (COMPILER(GCC) || COMPILER(CLANG))
-#define REFERENCED_FROM_ASM __attribute__((__used__))
-#endif
-
 #if !defined(REFERENCED_FROM_ASM)
-#define REFERENCED_FROM_ASM
+#define REFERENCED_FROM_ASM __attribute__((__used__))
 #endif
 
 /* NO_REORDER */
@@ -438,18 +360,10 @@
 #define UNLIKELY(x) __builtin_expect(!!(x), 0)
 #endif
 
-#if !defined(UNLIKELY)
-#define UNLIKELY(x) (x)
-#endif
-
 /* UNUSED_LABEL */
 
 /* Keep the compiler from complaining for a local label that is defined but not referenced. */
 /* Helpful when mixing hand-written and autogenerated code. */
-
-#if !defined(UNUSED_LABEL) && COMPILER(MSVC)
-#define UNUSED_LABEL(label) if (false) goto label
-#endif
 
 #if !defined(UNUSED_LABEL)
 #define UNUSED_LABEL(label) UNUSED_PARAM(&& label)
@@ -468,22 +382,14 @@
 
 /* UNUSED_VARIADIC_PARAMS */
 
-#if !defined(UNUSED_VARIADIC_PARAMS) && (COMPILER(GCC) || COMPILER(CLANG))
-#define UNUSED_VARIADIC_PARAMS __attribute__((unused))
-#endif
-
 #if !defined(UNUSED_VARIADIC_PARAMS)
-#define UNUSED_VARIADIC_PARAMS
+#define UNUSED_VARIADIC_PARAMS __attribute__((unused))
 #endif
 
 /* WARN_UNUSED_RETURN */
 
 #if !defined(WARN_UNUSED_RETURN)
 #define WARN_UNUSED_RETURN __attribute__((__warn_unused_result__))
-#endif
-
-#if !defined(WARN_UNUSED_RETURN)
-#define WARN_UNUSED_RETURN
 #endif
 
 /* DEBUGGER_ANNOTATION_MARKER */
@@ -497,10 +403,6 @@
 #define DEBUGGER_ANNOTATION_MARKER(name)
 #endif
 
-#if !defined(__has_include) && COMPILER(MSVC)
-#define __has_include(path) 0
-#endif
-
 /* IGNORE_WARNINGS */
 
 /* Can't use WTF_CONCAT() and STRINGIZE() because they are defined in
@@ -512,7 +414,6 @@
 
 #define _COMPILER_WARNING_NAME(warning) "-W" warning
 
-#if COMPILER(GCC) || COMPILER(CLANG)
 #define IGNORE_WARNINGS_BEGIN_COND(cond, compiler, warning) \
     _Pragma(_COMPILER_STRINGIZE(compiler diagnostic push)) \
     _COMPILER_CONCAT(IGNORE_WARNINGS_BEGIN_IMPL_, cond)(compiler, warning)
@@ -543,7 +444,6 @@
 #define IGNORE_WARNINGS_BEGIN_IMPL(compiler, warning) \
     _IGNORE_WARNINGS_BEGIN_IMPL(compiler, _COMPILER_WARNING_NAME(warning))
 
-#endif /* COMPILER(GCC) || COMPILER(CLANG) */
 
 #if COMPILER(GCC)
 #define IGNORE_GCC_WARNINGS_BEGIN(warning) IGNORE_WARNINGS_BEGIN_IMPL(GCC, warning)
@@ -561,13 +461,8 @@
 #define IGNORE_CLANG_WARNINGS_END
 #endif
 
-#if COMPILER(GCC) || COMPILER(CLANG)
 #define IGNORE_WARNINGS_BEGIN(warning) IGNORE_WARNINGS_BEGIN_IMPL(GCC, warning)
 #define IGNORE_WARNINGS_END IGNORE_WARNINGS_END_IMPL(GCC)
-#else
-#define IGNORE_WARNINGS_BEGIN(warning)
-#define IGNORE_WARNINGS_END
-#endif
 
 /* IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_BEGIN() - whether the compiler supports suppressing static analysis warnings. */
 /* https://clang.llvm.org/docs/AttributeReference.html#suppress */

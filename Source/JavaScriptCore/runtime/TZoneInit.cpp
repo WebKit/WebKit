@@ -30,8 +30,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInitialization.h>
 
-using namespace JSC;
-
 void TZoneInit([[maybe_unused]] const char** darwinEnvp)
 {
 #if USE(TZONE_MALLOC)

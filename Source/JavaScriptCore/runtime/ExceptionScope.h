@@ -40,7 +40,7 @@ class Exception;
 
 #if ENABLE(C_LOOP)
 #define EXCEPTION_SCOPE_POSITION_FOR_ASAN(vm__) (vm__).currentCLoopStackPointer()
-#elif ASAN_ENABLED && COMPILER(GCC_COMPATIBLE)
+#elif ASAN_ENABLED
 #define EXCEPTION_SCOPE_POSITION_FOR_ASAN(vm__) currentStackPointer()
 #else
 #define EXCEPTION_SCOPE_POSITION_FOR_ASAN(vm__) nullptr

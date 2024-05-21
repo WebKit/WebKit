@@ -53,7 +53,7 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, const T* src, size_t bytes)
             bitwise_cast<volatile uint64_t*>(dst)[i] = bitwise_cast<volatile uint64_t*>(src)[i];
     };
 
-#if COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
+#if CPU(X86_64) || CPU(ARM64)
     if (bytes <= smallCutoff)
         slowPathForwardMemcpy();
     else if (isARM64() || bytes <= mediumCutoff) {
@@ -136,7 +136,7 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, const T* src, size_t bytes)
     }
 #else
     slowPathForwardMemcpy();
-#endif // COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
+#endif // CPU(X86_64) || CPU(ARM64)
 #else
     memcpy(dst, src, bytes);
 #endif // USE(JSVALUE64)
@@ -165,7 +165,7 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, const T* src, size_t bytes)
             bitwise_cast<volatile uint64_t*>(dst)[i] = bitwise_cast<volatile uint64_t*>(src)[i];
     };
 
-#if COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
+#if CPU(X86_64) || CPU(ARM64)
     if (bytes <= smallCutoff)
         slowPathBackwardsMemmove();
     else {
@@ -239,7 +239,7 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, const T* src, size_t bytes)
     }
 #else
     slowPathBackwardsMemmove();
-#endif // COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
+#endif // CPU(X86_64) || CPU(ARM64)
 #else
     memmove(dst, src, bytes);
 #endif // USE(JSVALUE64)
@@ -251,7 +251,6 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
     static_assert(sizeof(T) == sizeof(JSValue));
     RELEASE_ASSERT(bytes % 8 == 0);
 #if USE(JSVALUE64)
-#if COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
 #if CPU(X86_64)
     uint64_t zero = 0;
     size_t count = bytes / 8;
@@ -291,12 +290,11 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
         :
         : "d0", "d1", "memory", "cc"
     );
-#endif // CPU(X86_64)
 #else
     size_t count = bytes / 8;
     for (size_t i = 0; i < count; ++i)
         bitwise_cast<volatile uint64_t*>(dst)[i] = 0;
-#endif // COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
+#endif
 #else
     memset(reinterpret_cast<char*>(dst), 0, bytes);
 #endif // USE(JSVALUE64)

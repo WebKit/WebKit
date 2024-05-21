@@ -992,8 +992,8 @@ private:
 #endif
 };
 /* This check is for normal Release builds; ASSERT_ENABLED changes the size. */
-#if defined(NDEBUG) && !defined(ASSERT_ENABLED) && COMPILER(GCC_COMPATIBLE)
-static_assert(sizeof(CodeBlock) <= 224, "Keep it small for memory saving");
+#if !ASSERT_ENABLED
+static_assert(sizeof(CodeBlock) <= 232, "Keep it small for memory saving");
 #endif
 
 template <typename ExecutableType>

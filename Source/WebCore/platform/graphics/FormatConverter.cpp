@@ -1705,7 +1705,7 @@ struct SupportsConversionFromDomElements {
 
 // Visual Studio crashes with a C1063 Fatal Error if everything is inlined.
 template<GraphicsContextGL::DataFormat SrcFormat, GraphicsContextGL::DataFormat DstFormat, GraphicsContextGL::AlphaOp alphaOp>
-ALWAYS_INLINE_EXCEPT_MSVC void FormatConverter::convert()
+ALWAYS_INLINE void FormatConverter::convert()
 {
     // Many instantiations of this template function will never be entered, so we
     // try to return immediately in these cases to avoid generating useless code.
