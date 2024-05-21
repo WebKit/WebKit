@@ -84,6 +84,7 @@ private:
     void ensureOnMainThread(Function<void(ScriptExecutionContext&)>&&);
     void ensureOnContextThread(Function<void(CookieStore&)>&&);
 
+    RefPtr<CookieStore> protectedCookieStore() const { return m_cookieStore.get(); }
     WeakPtr<CookieStore, WeakPtrImplWithEventTargetData> m_cookieStore;
     ScriptExecutionContextIdentifier m_contextIdentifier;
 };
@@ -98,7 +99,7 @@ void CookieStore::MainThreadBridge::ensureOnMainThread(Function<void(ScriptExecu
 {
     ASSERT(m_cookieStore);
 
-    RefPtr context = m_cookieStore->scriptExecutionContext();
+    RefPtr context = protectedCookieStore()->scriptExecutionContext();
     if (!context)
         return;
     ASSERT(context->isContextThread());
@@ -133,7 +134,7 @@ void CookieStore::MainThreadBridge::get(CookieStoreGetOptions&& options, Functio
             return;
         }
 
-        auto& cookieJar = page->cookieJar();
+        Ref cookieJar = page->cookieJar();
         auto resultHandler = [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] (std::optional<Vector<Cookie>>&& cookies) mutable {
             ensureOnContextThread([completionHandler = WTFMove(completionHandler), cookies = crossThreadCopy(WTFMove(cookies))](CookieStore& cookieStore) mutable {
                 if (!cookies)
@@ -143,7 +144,7 @@ void CookieStore::MainThreadBridge::get(CookieStoreGetOptions&& options, Functio
             });
         };
 
-        cookieJar.getCookiesAsync(document, document->url(), options, WTFMove(resultHandler));
+        cookieJar->getCookiesAsync(document, document->url(), options, WTFMove(resultHandler));
     };
 
     ensureOnMainThread(WTFMove(getCookies));
@@ -272,7 +273,7 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
         promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem(WTFMove(cookies[0])));
     };
 
-    m_mainThreadBridge->get(WTFMove(options), WTFMove(completionHandler));
+    protectedMainThreadBridge()->get(WTFMove(options), WTFMove(completionHandler));
 }
 
 void CookieStore::getAll(String&& name, Ref<DeferredPromise>&& promise)
@@ -331,7 +332,7 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
         }));
     };
 
-    m_mainThreadBridge->getAll(WTFMove(options), WTFMove(url), WTFMove(completionHandler));
+    protectedMainThreadBridge()->getAll(WTFMove(options), WTFMove(url), WTFMove(completionHandler));
 }
 
 void CookieStore::set(String&& name, String&& value, Ref<DeferredPromise>&& promise)
@@ -431,7 +432,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             promise->resolve();
     };
 
-    m_mainThreadBridge->set(WTFMove(options), WTFMove(cookie), WTFMove(completionHandler));
+    protectedMainThreadBridge()->set(WTFMove(options), WTFMove(cookie), WTFMove(completionHandler));
 }
 
 void CookieStore::remove(String&& name, Ref<DeferredPromise>&& promise)
@@ -567,18 +568,23 @@ void CookieStore::eventListenersDidChange()
         return;
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    auto& cookieJar = page->cookieJar();
+    Ref cookieJar = page->cookieJar();
     auto host = document->url().host().toString();
     if (m_hasChangeEventListener)
-        cookieJar.addChangeListener(host, *this);
+        cookieJar->addChangeListener(host, *this);
     else
-        cookieJar.removeChangeListener(host, *this);
+        cookieJar->removeChangeListener(host, *this);
 #endif
 }
 
 RefPtr<DeferredPromise> CookieStore::takePromise(uint64_t promiseIdentifier)
 {
     return m_promises.take(promiseIdentifier);
+}
+
+Ref<CookieStore::MainThreadBridge> CookieStore::protectedMainThreadBridge() const
+{
+    return m_mainThreadBridge;
 }
 
 }
