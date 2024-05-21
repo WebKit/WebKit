@@ -26,7 +26,6 @@
 #include "GStreamerRegistryScanner.h"
 #include "ImageGStreamer.h"
 #include "MediaSampleGStreamer.h"
-#include "NotImplemented.h"
 #include "RuntimeApplicationChecks.h"
 #include "VideoFrameGStreamer.h"
 #include <gst/base/gsttypefindhelper.h>
@@ -39,13 +38,25 @@ GST_DEBUG_CATEGORY(webkit_image_decoder_debug);
 #define GST_CAT_DEFAULT webkit_image_decoder_debug
 
 static Lock s_decoderLock;
-static Vector<RefPtr<ImageDecoderGStreamer>> s_imageDecoders;
+static Vector<WeakPtr<ImageDecoderGStreamer>> s_imageDecoders;
+
+static void ensureDebugCategoryIsInitialized()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_image_decoder_debug, "webkitimagedecoder", 0, "WebKit image decoder");
+    });
+}
 
 void teardownGStreamerImageDecoders()
 {
+    ensureDebugCategoryIsInitialized();
     Locker lock { s_decoderLock };
-    for (auto& decoder : s_imageDecoders)
-        decoder->tearDown();
+    GST_DEBUG("Tearing down %zu image decoders", s_imageDecoders.size());
+    for (auto& weakDecoder : s_imageDecoders) {
+        if (RefPtr decoder = weakDecoder.get())
+            decoder->tearDown();
+    }
     s_imageDecoders.clear();
 }
 
@@ -60,12 +71,11 @@ public:
     {
         if (!m_image)
             return nullptr;
-        return m_image->image().nativeImage()->platformImage();
+        return m_image->image();
     }
     void dropImage()
     {
         m_image = nullptr;
-        m_frame = nullptr;
     }
 
     SampleFlags flags() const override
@@ -76,8 +86,8 @@ public:
 private:
     ImageDecoderGStreamerSample(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize)
         : MediaSampleGStreamer(WTFMove(sample), presentationSize, { })
+        , m_frame(VideoFrameGStreamer::createWrappedSample(this->sample()))
     {
-        m_frame = VideoFrameGStreamer::create(GRefPtr(platformSample().sample.gstSample), presentationSize);
         m_image = m_frame->convertToImage();
     }
 
@@ -101,7 +111,7 @@ RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuff
     RefPtr decoder = adoptRef(*new ImageDecoderGStreamer(data, mimeType, alphaOption, gammaAndColorProfileOption));
     {
         Locker lock { s_decoderLock };
-        s_imageDecoders.append(decoder);
+        s_imageDecoders.append(WeakPtr { *decoder });
     }
     return decoder;
 }
@@ -109,11 +119,7 @@ RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuff
 ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
     : m_mimeType(mimeType)
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        GST_DEBUG_CATEGORY_INIT(webkit_image_decoder_debug, "webkitimagedecoder", 0, "WebKit image decoder");
-    });
-
+    ensureDebugCategoryIsInitialized();
     static Atomic<uint32_t> decoderId;
     GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", makeString("image-decoder-parser-"_s, decoderId.exchangeAdd(1)).utf8().data());
     m_parserHarness = GStreamerElementHarness::create(WTFMove(parsebin), [](auto&, auto&&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
