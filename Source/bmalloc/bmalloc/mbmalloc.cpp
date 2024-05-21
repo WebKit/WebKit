@@ -28,8 +28,6 @@
 #include "BExport.h"
 #include "GigacageConfig.h"
 
-#if BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-
 namespace WebConfig {
 
 // FIXME: Other than OS(DARWIN) || PLATFORM(PLAYSTATION), CeilingOnPageSize is
@@ -40,16 +38,6 @@ constexpr size_t ConfigSizeToProtect = 16 * bmalloc::Sizes::kB;
 alignas(ConfigAlignment) BEXPORT Slot g_config[ConfigSizeToProtect / sizeof(Slot)];
 
 } // namespace WebConfig
-
-#else // !BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-
-namespace Gigacage {
-
-Config g_gigacageConfig;
-
-} // namespace Gigacage
-
-#endif // BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
 extern "C" {
 

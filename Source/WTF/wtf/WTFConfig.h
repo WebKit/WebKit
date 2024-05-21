@@ -42,7 +42,6 @@ constexpr size_t reservedBytesForGigacageConfig = 0;
 #include <bmalloc/GigacageConfig.h>
 #endif
 
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 namespace WebConfig {
 
 using Slot = uint64_t;
@@ -59,7 +58,6 @@ enum ReservedConfigByteOffset {
 static_assert(NumberOfReservedConfigBytes <= sizeof(Slot) * additionalReservedSlots);
 
 } // namespace WebConfig
-#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
 namespace WTF {
 
@@ -102,8 +100,6 @@ struct Config {
     uint64_t spaceForExtensions[1];
 };
 
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-
 constexpr size_t startSlotOfWTFConfig = Gigacage::reservedSlotsForGigacageConfig;
 constexpr size_t startOffsetOfWTFConfig = startSlotOfWTFConfig * sizeof(WebConfig::Slot);
 
@@ -117,14 +113,6 @@ static_assert(roundUpToMultipleOf<alignmentOfWTFConfig>(startOffsetOfWTFConfig) 
 WTF_EXPORT_PRIVATE void setPermissionsOfConfigPage();
 
 #define g_wtfConfig (*bitwise_cast<WTF::Config*>(&WebConfig::g_config[WTF::startSlotOfWTFConfig]))
-
-#else // not ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-
-inline void setPermissionsOfConfigPage() { }
-
-extern "C" WTF_EXPORT_PRIVATE Config g_wtfConfig;
-
-#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
 constexpr size_t offsetOfWTFConfigLowestAccessibleAddress = offsetof(WTF::Config, lowestAccessibleAddress);
 
@@ -141,7 +129,3 @@ ALWAYS_INLINE Config::AssertNotFrozenScope::~AssertNotFrozenScope()
 };
 
 } // namespace WTF
-
-#if !ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-using WTF::g_wtfConfig;
-#endif

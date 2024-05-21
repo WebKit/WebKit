@@ -115,23 +115,12 @@ struct Config {
 #endif
 };
 
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-
 constexpr size_t alignmentOfJSCConfig = std::alignment_of<JSC::Config>::value;
 
 static_assert(WTF::offsetOfWTFConfigExtension + sizeof(JSC::Config) <= WTF::ConfigSizeToProtect);
 static_assert(roundUpToMultipleOf<alignmentOfJSCConfig>(WTF::offsetOfWTFConfigExtension) == WTF::offsetOfWTFConfigExtension);
 
 #define g_jscConfig (*bitwise_cast<JSC::Config*>(&g_wtfConfig.spaceForExtensions))
-
-#else // not ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-
-extern "C" JS_EXPORT_PRIVATE Config g_jscConfig;
-#if OS(WINDOWS) && ENABLE(WEBASSEMBLY)
-extern "C" JS_EXPORT_PRIVATE WTF::Config g_wtfConfigForLLInt;
-#endif
-
-#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
 constexpr size_t offsetOfJSCConfigInitializeHasBeenCalled = offsetof(JSC::Config, initializeHasBeenCalled);
 constexpr size_t offsetOfJSCConfigGateMap = offsetof(JSC::Config, llint.gateMap);
@@ -144,7 +133,3 @@ ALWAYS_INLINE PURE_FUNCTION uintptr_t startOfStructureHeap()
 }
 
 } // namespace JSC
-
-#if !ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-using JSC::g_jscConfig;
-#endif

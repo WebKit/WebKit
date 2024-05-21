@@ -384,7 +384,7 @@ File.open(outputFlnm, "w") {
             # There could be multiple backends we are generating for, but the C_LOOP is
             # always by itself so this check to turn off $enableDebugAnnotations won't
             # affect the generation for any other backend.
-            if backend == "C_LOOP" || backend == "C_LOOP_WIN"
+            if backend == "C_LOOP"
                 $enableDebugAnnotations = false
                 $preferredCommentStartColumn = 60
                 $emitELFDebugDirectives = false

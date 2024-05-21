@@ -274,7 +274,7 @@ if (WIN32)
 
     if (NOT ENABLE_JIT)
         if (ENABLE_C_LOOP)
-            set(OFFLINE_ASM_BACKEND "C_LOOP_WIN")
+            set(OFFLINE_ASM_BACKEND "C_LOOP")
         endif ()
     endif ()
 else ()

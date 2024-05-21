@@ -598,7 +598,7 @@ end
 // This is the interpreted analogue to createJSToWasmWrapper
 if JSVALUE64 and (ARM64 or ARM64E or X86_64)
 op(js_to_wasm_wrapper_entry, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+    if not WEBASSEMBLY or C_LOOP
         error
     end
 
@@ -1177,7 +1177,7 @@ op(wasm_function_prologue_trampoline, macro ()
 end)
 
 op(wasm_function_prologue, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+    if not WEBASSEMBLY or C_LOOP
         error
     end
 
@@ -1186,7 +1186,7 @@ op(wasm_function_prologue, macro ()
 end)
 
 op(wasm_function_prologue_simd, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+    if not WEBASSEMBLY or C_LOOP
         error
     end
 

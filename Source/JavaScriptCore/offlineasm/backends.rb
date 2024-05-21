@@ -43,7 +43,6 @@ BACKENDS =
      "ARM64E",
      "RISCV64",
      "C_LOOP",
-     "C_LOOP_WIN"
     ]
 
 # Keep the set of working backends separate from the set of backends that might be
@@ -60,7 +59,6 @@ WORKING_BACKENDS =
      "ARM64E",
      "RISCV64",
      "C_LOOP",
-     "C_LOOP_WIN"
     ]
 
 BACKEND_PATTERN = Regexp.new('\\A(' + BACKENDS.join(')|(') + ')\\Z')
