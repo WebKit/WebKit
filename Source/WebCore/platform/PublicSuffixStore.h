@@ -53,7 +53,7 @@ private:
     PublicSuffixStore() = default;
 
     bool platformIsPublicSuffix(StringView domain) const;
-    String platformTopPrivatelyControlledDomain(const String& host) const;
+    String platformTopPrivatelyControlledDomain(StringView host) const;
 
     mutable Lock m_HostTopPrivatelyControlledDomainCacheLock;
     mutable HashMap<String, String, ASCIICaseInsensitiveHash> m_hostTopPrivatelyControlledDomainCache WTF_GUARDED_BY_LOCK(m_HostTopPrivatelyControlledDomainCacheLock);
