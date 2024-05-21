@@ -383,7 +383,7 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 
 #if USE(AUDIO_SESSION)
     if (m_audioSessionProxy) {
-        gpuProcess().audioSessionManager().removeProxy(*m_audioSessionProxy);
+        protectedGPUProcess()->audioSessionManager().removeProxy(*m_audioSessionProxy);
         m_audioSessionProxy = nullptr;
     }
 #endif
@@ -746,7 +746,7 @@ void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, Ren
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
     if (it == m_remoteRenderingBackendMap.end())
         return;
-    auto* renderingBackend = it->value.get();
+    RefPtr renderingBackend = it->value.get();
 
     IPC::StreamServerConnectionParameters params;
 #if ENABLE(IPC_TESTING_API)

@@ -47,15 +47,25 @@ RemoteTextDetector::RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector
 
 RemoteTextDetector::~RemoteTextDetector() = default;
 
+Ref<WebCore::ShapeDetection::TextDetector> RemoteTextDetector::protectedBacking()
+{
+    return backing();
+}
+
+Ref<RemoteRenderingBackend> RemoteTextDetector::protectedBackend()
+{
+    return m_backend.get();
+}
+
 void RemoteTextDetector::detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&& completionHandler)
 {
-    auto imageBuffer = m_backend->imageBuffer(renderingResourceIdentifier);
+    auto imageBuffer = protectedBackend()->imageBuffer(renderingResourceIdentifier);
     if (!imageBuffer) {
         completionHandler({ });
         return;
     }
 
-    m_backing->detect(*imageBuffer, WTFMove(completionHandler));
+    protectedBacking()->detect(*imageBuffer, WTFMove(completionHandler));
 }
 
 } // namespace WebKit
