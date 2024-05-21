@@ -2702,16 +2702,7 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
         return;
 
     case AccessCase::Load:
-    case AccessCase::GetGetter:
-    case AccessCase::Getter:
-    case AccessCase::Setter:
-    case AccessCase::CustomValueGetter:
-    case AccessCase::CustomAccessorGetter:
-    case AccessCase::CustomValueSetter:
-    case AccessCase::CustomAccessorSetter:
-    case AccessCase::IntrinsicGetter: {
-        GPRReg valueRegsPayloadGPR = valueRegs.payloadGPR();
-
+    case AccessCase::GetGetter: {
         Structure* currStructure = accessCase.structure();
         if (auto* object = accessCase.tryGetAlternateBase())
             currStructure = object->structure();
@@ -2719,17 +2710,7 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
         if (isValidOffset(accessCase.m_offset))
             currStructure->startWatchingPropertyForReplacements(vm, accessCase.offset());
 
-        bool doesPropertyStorageLoads = accessCase.m_type == AccessCase::Load
-            || accessCase.m_type == AccessCase::GetGetter
-            || accessCase.m_type == AccessCase::Getter
-            || accessCase.m_type == AccessCase::Setter
-            || accessCase.m_type == AccessCase::IntrinsicGetter;
-
-        bool takesPropertyOwnerAsCFunctionArgument = accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomValueSetter;
-
-        GPRReg receiverGPR = baseGPR;
-        GPRReg propertyOwnerGPR;
-
+        GPRReg propertyOwnerGPR = baseGPR;
         if (accessCase.polyProtoAccessChain()) {
             // This isn't pretty, but we know we got here via generateWithGuard,
             // and it left the baseForAccess inside scratchGPR. We could re-derive the base,
@@ -2738,66 +2719,52 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
         } else if (auto* object = accessCase.tryGetAlternateBase()) {
             jit.move(CCallHelpers::TrustedImmPtr(object), scratchGPR);
             propertyOwnerGPR = scratchGPR;
-        } else if (accessCase.viaGlobalProxy() && doesPropertyStorageLoads) {
+        } else if (accessCase.viaGlobalProxy()) {
             // We only need this when loading an inline or out of line property. For customs accessors,
             // we can invoke with a receiver value that is a JSGlobalProxy. For custom values, we unbox to the
             // JSGlobalProxy's target. For getters/setters, we'll also invoke them with the JSGlobalProxy as |this|,
             // but we need to load the actual GetterSetter cell from the JSGlobalProxy's target.
-
-            if (accessCase.m_type == AccessCase::Getter || accessCase.m_type == AccessCase::Setter || accessCase.m_type == AccessCase::IntrinsicGetter)
-                propertyOwnerGPR = scratchGPR;
-            else
-                propertyOwnerGPR = valueRegsPayloadGPR;
-
-            jit.loadPtr(
-                CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), propertyOwnerGPR);
-        } else if (accessCase.viaGlobalProxy() && takesPropertyOwnerAsCFunctionArgument) {
+            jit.loadPtr(CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), scratchGPR);
             propertyOwnerGPR = scratchGPR;
-            jit.loadPtr(
-                CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), propertyOwnerGPR);
-        } else
-            propertyOwnerGPR = receiverGPR;
-
-        GPRReg loadedValueGPR = InvalidGPRReg;
-        if (doesPropertyStorageLoads) {
-            if (accessCase.m_type == AccessCase::Load || accessCase.m_type == AccessCase::GetGetter)
-                loadedValueGPR = valueRegsPayloadGPR;
-            else
-                loadedValueGPR = scratchGPR;
-
-            ASSERT((accessCase.m_type != AccessCase::Getter && accessCase.m_type != AccessCase::Setter && accessCase.m_type != AccessCase::IntrinsicGetter) || loadedValueGPR != baseGPR);
-            ASSERT(accessCase.m_type != AccessCase::Setter || loadedValueGPR != valueRegsPayloadGPR);
-
-            GPRReg storageGPR;
-            if (isInlineOffset(accessCase.m_offset))
-                storageGPR = propertyOwnerGPR;
-            else {
-                jit.loadPtr(
-                    CCallHelpers::Address(propertyOwnerGPR, JSObject::butterflyOffset()),
-                    loadedValueGPR);
-                storageGPR = loadedValueGPR;
-            }
-
-#if USE(JSVALUE64)
-            jit.load64(
-                CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset)), loadedValueGPR);
-#else
-            if (accessCase.m_type == AccessCase::Load || accessCase.m_type == AccessCase::GetGetter) {
-                jit.loadValue(
-                    CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset)),
-                    JSValueRegs { valueRegs.tagGPR(), loadedValueGPR });
-
-            } else {
-                jit.load32(
-                    CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset) + PayloadOffset),
-                    loadedValueGPR);
-            }
-#endif
         }
 
-        if (accessCase.m_type == AccessCase::Load || accessCase.m_type == AccessCase::GetGetter) {
-            succeed();
-            return;
+        GPRReg storageGPR = propertyOwnerGPR;
+        if (!isInlineOffset(accessCase.m_offset)) {
+            jit.loadPtr(CCallHelpers::Address(propertyOwnerGPR, JSObject::butterflyOffset()), scratchGPR);
+            storageGPR = scratchGPR;
+        }
+
+        jit.loadValue(CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset)), valueRegs);
+        succeed();
+        return;
+    }
+
+    case AccessCase::CustomValueGetter:
+    case AccessCase::CustomAccessorGetter:
+    case AccessCase::CustomValueSetter:
+    case AccessCase::CustomAccessorSetter: {
+        Structure* currStructure = accessCase.structure();
+        if (auto* object = accessCase.tryGetAlternateBase())
+            currStructure = object->structure();
+
+        if (isValidOffset(accessCase.m_offset))
+            currStructure->startWatchingPropertyForReplacements(vm, accessCase.offset());
+
+        GPRReg baseForCustom = baseGPR != thisGPR ? thisGPR : baseGPR; // Check if it is a super access;
+        if (accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomValueSetter) {
+            baseForCustom = baseGPR;
+            if (accessCase.polyProtoAccessChain()) {
+                // This isn't pretty, but we know we got here via generateWithGuard,
+                // and it left the baseForAccess inside scratchGPR. We could re-derive the base,
+                // but it'd require emitting the same code to load the base twice.
+                baseForCustom = scratchGPR;
+            } else if (auto* object = accessCase.tryGetAlternateBase()) {
+                jit.move(CCallHelpers::TrustedImmPtr(object), scratchGPR);
+                baseForCustom = scratchGPR;
+            } else if (accessCase.viaGlobalProxy()) {
+                jit.loadPtr(CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), scratchGPR);
+                baseForCustom = scratchGPR;
+            }
         }
 
         if (accessCase.m_type == AccessCase::CustomAccessorGetter && accessCase.as<GetterSetterAccessCase>().domAttribute()) {
@@ -2811,35 +2778,17 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
             }
 
             if (Options::useDOMJIT() && access.domAttribute()->domJIT) {
-                emitDOMJITGetter(access, access.domAttribute()->domJIT, receiverGPR);
+                emitDOMJITGetter(access, access.domAttribute()->domJIT, baseGPR);
                 return;
             }
-        }
-
-        if (accessCase.m_type == AccessCase::IntrinsicGetter) {
-            jit.loadPtr(CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfGetter()), loadedValueGPR);
-            m_failAndIgnore.append(jit.branchPtr(CCallHelpers::NotEqual, loadedValueGPR, CCallHelpers::TrustedImmPtr(accessCase.as<IntrinsicGetterAccessCase>().intrinsicFunction())));
-            emitIntrinsicGetter(accessCase.as<IntrinsicGetterAccessCase>());
-            return;
         }
 
         // Stuff for custom getters/setters.
         CCallHelpers::Call operationCall;
 
-
         // This also does the necessary calculations of whether or not we're an
         // exception handling call site.
         InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall();
-
-        auto restoreLiveRegistersFromStackForCall = [&](InlineCacheCompiler::SpillState& spillState, bool callHasReturnValue) {
-            RegisterSet dontRestore;
-            if (callHasReturnValue) {
-                // This is the result value. We don't want to overwrite the result with what we stored to the stack.
-                // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
-                dontRestore.add(valueRegs, IgnoreVectors);
-            }
-            this->restoreLiveRegistersFromStackForCall(spillState, dontRestore);
-        };
 
         if (codeBlock->useDataIC()) {
             callSiteIndexForExceptionHandlingOrOriginal();
@@ -2847,246 +2796,285 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
         } else
             jit.store32(CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
-        if (accessCase.m_type == AccessCase::Getter || accessCase.m_type == AccessCase::Setter) {
-            ASSERT(loadedValueGPR == scratchGPR);
-            ASSERT(baseGPR != loadedValueGPR);
-            ASSERT(accessCase.m_type != AccessCase::Setter || valueRegsPayloadGPR != loadedValueGPR);
+        // We do not need to keep globalObject alive since
+        // 1. if it is CustomValue, the owner CodeBlock (even if JSGlobalObject* is one of CodeBlock that is inlined and held by DFG CodeBlock) must keep it alive.
+        // 2. if it is CustomAccessor, structure should hold it.
+        JSGlobalObject* globalObject = currStructure->globalObject();
 
-            JSGlobalObject* globalObject = m_globalObject;
+        // Need to make room for the C call so any of our stack spillage isn't overwritten. It's
+        // hard to track if someone did spillage or not, so we just assume that we always need
+        // to make some space here.
+        jit.makeSpaceOnStackForCCall();
 
-            // Create a JS call using a JS call inline cache. Assume that:
-            //
-            // - SP is aligned and represents the extent of the calling compiler's stack usage.
-            //
-            // - FP is set correctly (i.e. it points to the caller's call frame header).
-            //
-            // - SP - FP is an aligned difference.
-            //
-            // - Any byte between FP (exclusive) and SP (inclusive) could be live in the calling
-            //   code.
-            //
-            // Therefore, we temporarily grow the stack for the purpose of the call and then
-            // shrink it after.
+        jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
-            setSpillStateForJSCall(spillState);
-
-            CCallHelpers::JumpList done;
-
-            // There is a "this" argument.
-            unsigned numberOfParameters = 1;
-            // ... and a value argument if we're calling a setter.
-            if (accessCase.m_type == AccessCase::Setter)
-                numberOfParameters++;
-
-            // Get the accessor; if there ain't one then the result is jsUndefined().
-            // Note that GetterSetter always has cells for both. If it is not set (like, getter exits, but setter is not set), Null{Getter,Setter}Function is stored.
-            std::optional<CCallHelpers::Jump> returnUndefined;
-            if (accessCase.m_type == AccessCase::Setter) {
-                jit.loadPtr(
-                    CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfSetter()),
-                    loadedValueGPR);
-                if (ecmaMode.isStrict()) {
-                    CCallHelpers::Jump shouldNotThrowError = jit.branchIfNotType(loadedValueGPR, NullSetterFunctionType);
-                    // We replace setter with this AccessCase's JSGlobalObject::nullSetterStrictFunction, which will throw an error with the right JSGlobalObject.
-                    jit.move(CCallHelpers::TrustedImmPtr(globalObject->nullSetterStrictFunction()), loadedValueGPR);
-                    shouldNotThrowError.link(&jit);
-                }
-            } else {
-                jit.loadPtr(
-                    CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfGetter()),
-                    loadedValueGPR);
-                returnUndefined = jit.branchIfType(loadedValueGPR, NullSetterFunctionType);
-            }
-
-            unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + roundArgumentCountToAlignFrame(numberOfParameters);
-            ASSERT(!(numberOfRegsForCall % stackAlignmentRegisters()));
-            unsigned numberOfBytesForCall = numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
-
-            unsigned alignedNumberOfBytesForCall = WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
-
-            jit.subPtr(
-                CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall),
-                CCallHelpers::stackPointerRegister);
-
-            CCallHelpers::Address calleeFrame = CCallHelpers::Address(
-                CCallHelpers::stackPointerRegister,
-                -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
-
-            jit.store32(
-                CCallHelpers::TrustedImm32(numberOfParameters),
-                calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + PayloadOffset));
-
-            jit.storeCell(
-                loadedValueGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
-
-            jit.storeCell(
-                thisGPR,
-                calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
-
-            if (accessCase.m_type == AccessCase::Setter) {
-                jit.storeValue(
-                    valueRegs,
-                    calleeFrame.withOffset(
-                        virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
-            }
-
-            if (useHandlerIC()) {
-                ASSERT(loadedValueGPR != GPRInfo::handlerGPR); // Since loadedValueGPR is scratchGPR.
-                // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
-                if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
-                    jit.swap(loadedValueGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
-                    jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), loadedValueGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
-                } else {
-                    jit.move(loadedValueGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
-                    jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
-                }
-
-                auto [slowPaths, dispatchLabel] = CallLinkInfo::emitDataICFastPath(jit);
-                ASSERT(slowPaths.empty());
-
-                if (accessCase.m_type == AccessCase::Getter)
-                    jit.setupResults(valueRegs);
-                done.append(jit.jump());
-            } else {
-                jit.move(loadedValueGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
-#if USE(JSVALUE32_64)
-                // We *always* know that the getter/setter, if non-null, is a cell.
-                jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
-#endif
-                m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
-                auto* callLinkInfo = m_callLinkInfos[index].get();
-
-                // FIXME: If we generated a polymorphic call stub that jumped back to the getter
-                // stub, which then jumped back to the main code, then we'd have a reachability
-                // situation that the GC doesn't know about. The GC would ensure that the polymorphic
-                // call stub stayed alive, and it would ensure that the main code stayed alive, but
-                // it wouldn't know that the getter stub was alive. Ideally JIT stub routines would
-                // be GC objects, and then we'd be able to say that the polymorphic call stub has a
-                // reference to the getter stub.
-                // https://bugs.webkit.org/show_bug.cgi?id=148914
-                callLinkInfo->disallowStubs();
-                callLinkInfo->setUpCall(CallLinkInfo::Call);
-
-                auto [slowCase, dispatchLabel] = CallLinkInfo::emitFastPath(jit, callLinkInfo);
-                auto doneLocation = jit.label();
-                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
-                });
-
-                if (accessCase.m_type == AccessCase::Getter)
-                    jit.setupResults(valueRegs);
-                done.append(jit.jump());
-
-                if (!slowCase.empty()) {
-                    slowCase.link(&jit);
-                    CallLinkInfo::emitSlowPath(vm, jit, callLinkInfo);
-
-                    if (accessCase.m_type == AccessCase::Getter)
-                        jit.setupResults(valueRegs);
-                    done.append(jit.jump());
-                }
-            }
-
-            if (returnUndefined) {
-                ASSERT(accessCase.m_type == AccessCase::Getter);
-                returnUndefined.value().link(&jit);
-                jit.moveTrustedValue(jsUndefined(), valueRegs);
-            }
-            done.link(&jit);
-
-            if (codeBlock->useDataIC()) {
-                jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
-                if (useHandlerIC())
-                    jit.addPtr(CCallHelpers::TrustedImm32(-(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall + m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
-                else
-                    jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
-                jit.addPtr(m_scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-            } else {
-                int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - m_preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
-                jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-            }
-
-            bool callHasReturnValue = accessCase.isGetter();
-            restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
-        } else {
-            ASSERT(accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomAccessorGetter || accessCase.m_type == AccessCase::CustomValueSetter || accessCase.m_type == AccessCase::CustomAccessorSetter);
-            ASSERT(!doesPropertyStorageLoads); // Or we need an extra register. We rely on propertyOwnerGPR being correct here.
-
-            // We do not need to keep globalObject alive since
-            // 1. if it is CustomValue, the owner CodeBlock (even if JSGlobalObject* is one of CodeBlock that is inlined and held by DFG CodeBlock) must keep it alive.
-            // 2. if it is CustomAccessor, structure should hold it.
-            JSGlobalObject* globalObject = currStructure->globalObject();
-
-            // Need to make room for the C call so any of our stack spillage isn't overwritten. It's
-            // hard to track if someone did spillage or not, so we just assume that we always need
-            // to make some space here.
-            jit.makeSpaceOnStackForCCall();
-
-            // Check if it is a super access
-            GPRReg receiverForCustomGetGPR = baseGPR != thisGPR ? thisGPR : receiverGPR;
-
-            // getter: EncodedJSValue (*GetValueFunc)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
-            // setter: bool (*PutValueFunc)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value, PropertyName);
-            // Custom values are passed the slotBase (the property holder), custom accessors are passed the thisValue (receiver).
-            GPRReg baseForCustom = takesPropertyOwnerAsCFunctionArgument ? propertyOwnerGPR : receiverForCustomGetGPR;
-            // We do not need to keep globalObject alive since the owner CodeBlock (even if JSGlobalObject* is one of CodeBlock that is inlined and held by DFG CodeBlock)
-            // must keep it alive.
-            if (accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomAccessorGetter) {
-                RELEASE_ASSERT(accessCase.m_identifier);
-                if (Options::useJITCage()) {
-                    jit.setupArguments<GetValueFuncWithPtr>(
-                        CCallHelpers::TrustedImmPtr(globalObject),
-                        CCallHelpers::CellValue(baseForCustom),
-                        CCallHelpers::TrustedImmPtr(accessCase.uid()),
-                        CCallHelpers::TrustedImmPtr(accessCase.as<GetterSetterAccessCase>().m_customAccessor.taggedPtr()));
-                } else {
-                    jit.setupArguments<GetValueFunc>(
-                        CCallHelpers::TrustedImmPtr(globalObject),
-                        CCallHelpers::CellValue(baseForCustom),
-                        CCallHelpers::TrustedImmPtr(accessCase.uid()));
-                }
-            } else {
-                if (Options::useJITCage()) {
-                    jit.setupArguments<PutValueFuncWithPtr>(
-                        CCallHelpers::TrustedImmPtr(globalObject),
-                        CCallHelpers::CellValue(baseForCustom),
-                        valueRegs,
-                        CCallHelpers::TrustedImmPtr(accessCase.uid()),
-                        CCallHelpers::TrustedImmPtr(accessCase.as<GetterSetterAccessCase>().m_customAccessor.taggedPtr()));
-                } else {
-                    jit.setupArguments<PutValueFunc>(
-                        CCallHelpers::TrustedImmPtr(globalObject),
-                        CCallHelpers::CellValue(baseForCustom),
-                        valueRegs,
-                        CCallHelpers::TrustedImmPtr(accessCase.uid()));
-                }
-            }
-            jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
-
-            auto type = accessCase.m_type;
-            auto customAccessor = accessCase.as<GetterSetterAccessCase>().m_customAccessor;
+        // getter: EncodedJSValue (*GetValueFunc)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
+        // setter: bool (*PutValueFunc)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value, PropertyName);
+        // Custom values are passed the slotBase (the property holder), custom accessors are passed the thisValue (receiver).
+        // We do not need to keep globalObject alive since the owner CodeBlock (even if JSGlobalObject* is one of CodeBlock that is inlined and held by DFG CodeBlock)
+        // must keep it alive.
+        auto customAccessor = accessCase.as<GetterSetterAccessCase>().m_customAccessor;
+        bool isGetter = accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomAccessorGetter;
+        if (isGetter) {
+            RELEASE_ASSERT(accessCase.m_identifier);
             if (Options::useJITCage()) {
-                if (type == AccessCase::CustomValueGetter || type == AccessCase::CustomAccessorGetter)
-                    jit.callOperation<OperationPtrTag>(vmEntryCustomGetter);
-                else
-                    jit.callOperation<OperationPtrTag>(vmEntryCustomSetter);
-            } else
+                jit.setupArguments<GetValueFuncWithPtr>(
+                    CCallHelpers::TrustedImmPtr(globalObject),
+                    CCallHelpers::CellValue(baseForCustom),
+                    CCallHelpers::TrustedImmPtr(accessCase.uid()),
+                    CCallHelpers::TrustedImmPtr(customAccessor.taggedPtr()));
+                jit.callOperation<OperationPtrTag>(vmEntryCustomGetter);
+            } else {
+                jit.setupArguments<GetValueFunc>(
+                    CCallHelpers::TrustedImmPtr(globalObject),
+                    CCallHelpers::CellValue(baseForCustom),
+                    CCallHelpers::TrustedImmPtr(accessCase.uid()));
                 jit.callOperation<CustomAccessorPtrTag>(customAccessor);
-
-            if (accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomAccessorGetter)
-                jit.setupResults(valueRegs);
-            jit.reclaimSpaceOnStackForCCall();
-
-            CCallHelpers::Jump noException =
-            jit.emitExceptionCheck(vm, CCallHelpers::InvertedExceptionCheck);
-
-            restoreLiveRegistersFromStackForCallWithThrownException(spillState);
-            emitExplicitExceptionHandler();
-
-            noException.link(&jit);
-            bool callHasReturnValue = accessCase.isGetter();
-            restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
+            }
+            jit.setupResults(valueRegs);
+        } else {
+            if (Options::useJITCage()) {
+                jit.setupArguments<PutValueFuncWithPtr>(
+                    CCallHelpers::TrustedImmPtr(globalObject),
+                    CCallHelpers::CellValue(baseForCustom),
+                    valueRegs,
+                    CCallHelpers::TrustedImmPtr(accessCase.uid()),
+                    CCallHelpers::TrustedImmPtr(customAccessor.taggedPtr()));
+                jit.callOperation<OperationPtrTag>(vmEntryCustomSetter);
+            } else {
+                jit.setupArguments<PutValueFunc>(
+                    CCallHelpers::TrustedImmPtr(globalObject),
+                    CCallHelpers::CellValue(baseForCustom),
+                    valueRegs,
+                    CCallHelpers::TrustedImmPtr(accessCase.uid()));
+                jit.callOperation<CustomAccessorPtrTag>(customAccessor);
+            }
         }
+
+        jit.reclaimSpaceOnStackForCCall();
+
+        CCallHelpers::Jump noException = jit.emitExceptionCheck(vm, CCallHelpers::InvertedExceptionCheck);
+
+        restoreLiveRegistersFromStackForCallWithThrownException(spillState);
+        emitExplicitExceptionHandler();
+
+        noException.link(&jit);
+        RegisterSet dontRestore;
+        if (isGetter) {
+            // This is the result value. We don't want to overwrite the result with what we stored to the stack.
+            // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
+            dontRestore.add(valueRegs, IgnoreVectors);
+        }
+        restoreLiveRegistersFromStackForCall(spillState, dontRestore);
+        succeed();
+        return;
+    }
+
+    case AccessCase::Getter:
+    case AccessCase::Setter:
+    case AccessCase::IntrinsicGetter: {
+        Structure* currStructure = accessCase.structure();
+        if (auto* object = accessCase.tryGetAlternateBase())
+            currStructure = object->structure();
+
+        if (isValidOffset(accessCase.m_offset))
+            currStructure->startWatchingPropertyForReplacements(vm, accessCase.offset());
+
+        {
+            GPRReg propertyOwnerGPR = baseGPR;
+            if (accessCase.polyProtoAccessChain()) {
+                // This isn't pretty, but we know we got here via generateWithGuard,
+                // and it left the baseForAccess inside scratchGPR. We could re-derive the base,
+                // but it'd require emitting the same code to load the base twice.
+                propertyOwnerGPR = scratchGPR;
+            } else if (auto* object = accessCase.tryGetAlternateBase()) {
+                jit.move(CCallHelpers::TrustedImmPtr(object), scratchGPR);
+                propertyOwnerGPR = scratchGPR;
+            } else if (accessCase.viaGlobalProxy()) {
+                // We only need this when loading an inline or out of line property. For customs accessors,
+                // we can invoke with a receiver value that is a JSGlobalProxy. For custom values, we unbox to the
+                // JSGlobalProxy's target. For getters/setters, we'll also invoke them with the JSGlobalProxy as |this|,
+                // but we need to load the actual GetterSetter cell from the JSGlobalProxy's target.
+                jit.loadPtr(CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), scratchGPR);
+                propertyOwnerGPR = scratchGPR;
+            }
+
+            GPRReg storageGPR = propertyOwnerGPR;
+            if (!isInlineOffset(accessCase.m_offset)) {
+                jit.loadPtr(CCallHelpers::Address(propertyOwnerGPR, JSObject::butterflyOffset()), scratchGPR);
+                storageGPR = scratchGPR;
+            }
+
+#if USE(JSVALUE64)
+            jit.load64(CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset)), scratchGPR);
+#else
+            jit.load32(CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset) + PayloadOffset), scratchGPR);
+#endif
+        }
+
+        if (accessCase.m_type == AccessCase::IntrinsicGetter) {
+            jit.loadPtr(CCallHelpers::Address(scratchGPR, GetterSetter::offsetOfGetter()), scratchGPR);
+            m_failAndIgnore.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(accessCase.as<IntrinsicGetterAccessCase>().intrinsicFunction())));
+            emitIntrinsicGetter(accessCase.as<IntrinsicGetterAccessCase>());
+            return;
+        }
+
+        bool isGetter = accessCase.m_type == AccessCase::Getter;
+
+        // This also does the necessary calculations of whether or not we're an
+        // exception handling call site.
+        InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall();
+
+        if (codeBlock->useDataIC()) {
+            callSiteIndexForExceptionHandlingOrOriginal();
+            jit.transfer32(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+        } else
+            jit.store32(CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+
+        ASSERT(baseGPR != scratchGPR);
+
+        JSGlobalObject* globalObject = m_globalObject;
+
+        // Create a JS call using a JS call inline cache. Assume that:
+        //
+        // - SP is aligned and represents the extent of the calling compiler's stack usage.
+        //
+        // - FP is set correctly (i.e. it points to the caller's call frame header).
+        //
+        // - SP - FP is an aligned difference.
+        //
+        // - Any byte between FP (exclusive) and SP (inclusive) could be live in the calling
+        //   code.
+        //
+        // Therefore, we temporarily grow the stack for the purpose of the call and then
+        // shrink it after.
+
+        setSpillStateForJSCall(spillState);
+
+        CCallHelpers::JumpList done;
+
+        // There is a "this" argument.
+        // ... and a value argument if we're calling a setter.
+        unsigned numberOfParameters = isGetter ? 1 : 2;
+
+        // Get the accessor; if there ain't one then the result is jsUndefined().
+        // Note that GetterSetter always has cells for both. If it is not set (like, getter exits, but setter is not set), Null{Getter,Setter}Function is stored.
+        std::optional<CCallHelpers::Jump> returnUndefined;
+        if (isGetter) {
+            jit.loadPtr(CCallHelpers::Address(scratchGPR, GetterSetter::offsetOfGetter()), scratchGPR);
+            returnUndefined = jit.branchIfType(scratchGPR, NullSetterFunctionType);
+        } else {
+            jit.loadPtr(CCallHelpers::Address(scratchGPR, GetterSetter::offsetOfSetter()), scratchGPR);
+            if (ecmaMode.isStrict()) {
+                CCallHelpers::Jump shouldNotThrowError = jit.branchIfNotType(scratchGPR, NullSetterFunctionType);
+                // We replace setter with this AccessCase's JSGlobalObject::nullSetterStrictFunction, which will throw an error with the right JSGlobalObject.
+                jit.move(CCallHelpers::TrustedImmPtr(globalObject->nullSetterStrictFunction()), scratchGPR);
+                shouldNotThrowError.link(&jit);
+            }
+        }
+
+        unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + roundArgumentCountToAlignFrame(numberOfParameters);
+        ASSERT(!(numberOfRegsForCall % stackAlignmentRegisters()));
+        unsigned numberOfBytesForCall = numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
+
+        unsigned alignedNumberOfBytesForCall = WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
+
+        jit.subPtr(CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall), CCallHelpers::stackPointerRegister);
+
+        CCallHelpers::Address calleeFrame = CCallHelpers::Address(CCallHelpers::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
+
+        jit.store32(CCallHelpers::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + PayloadOffset));
+
+        jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
+
+        jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
+
+        if (!isGetter)
+            jit.storeValue(valueRegs, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
+
+        if (useHandlerIC()) {
+            ASSERT(scratchGPR != GPRInfo::handlerGPR);
+            // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
+            if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
+                jit.swap(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+                jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), scratchGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
+            } else {
+                jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+                jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
+            }
+
+            auto [slowPaths, dispatchLabel] = CallLinkInfo::emitDataICFastPath(jit);
+            ASSERT(slowPaths.empty());
+
+            if (isGetter)
+                jit.setupResults(valueRegs);
+            done.append(jit.jump());
+        } else {
+            jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+#if USE(JSVALUE32_64)
+            // We *always* know that the getter/setter, if non-null, is a cell.
+            jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+#endif
+            m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+            auto* callLinkInfo = m_callLinkInfos[index].get();
+
+            // FIXME: If we generated a polymorphic call stub that jumped back to the getter
+            // stub, which then jumped back to the main code, then we'd have a reachability
+            // situation that the GC doesn't know about. The GC would ensure that the polymorphic
+            // call stub stayed alive, and it would ensure that the main code stayed alive, but
+            // it wouldn't know that the getter stub was alive. Ideally JIT stub routines would
+            // be GC objects, and then we'd be able to say that the polymorphic call stub has a
+            // reference to the getter stub.
+            // https://bugs.webkit.org/show_bug.cgi?id=148914
+            callLinkInfo->disallowStubs();
+            callLinkInfo->setUpCall(CallLinkInfo::Call);
+
+            auto [slowCase, dispatchLabel] = CallLinkInfo::emitFastPath(jit, callLinkInfo);
+            auto doneLocation = jit.label();
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
+            });
+
+            if (isGetter)
+                jit.setupResults(valueRegs);
+            done.append(jit.jump());
+
+            if (!slowCase.empty()) {
+                slowCase.link(&jit);
+                CallLinkInfo::emitSlowPath(vm, jit, callLinkInfo);
+
+                if (isGetter)
+                    jit.setupResults(valueRegs);
+                done.append(jit.jump());
+            }
+        }
+
+        if (isGetter) {
+            ASSERT(returnUndefined);
+            returnUndefined.value().link(&jit);
+            jit.moveTrustedValue(jsUndefined(), valueRegs);
+        }
+        done.link(&jit);
+
+        if (codeBlock->useDataIC()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), scratchGPR);
+            if (useHandlerIC())
+                jit.addPtr(CCallHelpers::TrustedImm32(-(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall + m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), scratchGPR);
+            else
+                jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), scratchGPR);
+            jit.addPtr(scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+        } else {
+            int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - m_preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
+            jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+        }
+
+        RegisterSet dontRestore;
+        if (isGetter) {
+            // This is the result value. We don't want to overwrite the result with what we stored to the stack.
+            // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
+            dontRestore.add(valueRegs, IgnoreVectors);
+        }
+        restoreLiveRegistersFromStackForCall(spillState, dontRestore);
         succeed();
         return;
     }
