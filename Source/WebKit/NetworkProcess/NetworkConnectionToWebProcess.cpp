@@ -202,6 +202,11 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
     unregisterSharedWorkerConnection();
 }
 
+Ref<NetworkProcess> NetworkConnectionToWebProcess::protectedNetworkProcess()
+{
+    return networkProcess();
+}
+
 void NetworkConnectionToWebProcess::hasUploadStateChanged(bool hasUpload)
 {
     CONNECTION_RELEASE_LOG(Loading, "hasUploadStateChanged: (hasUpload=%d)", hasUpload);
