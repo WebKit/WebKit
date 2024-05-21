@@ -3347,10 +3347,5 @@ resize-observer/contain-instrinsic-size-should-not-leak-nodes.html [ Failure Pas
 
 fast/css/view-transitions-nested-transparency-layers.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/274226 fast/canvas/drawImage-source-rect-outside-image.html [ ImageOnlyFailure ]
-webkit.org/b/274226 fast/canvas/drawImage-srcRect-clipping.html [ ImageOnlyFailure ]
-webkit.org/b/274226 fast/canvas/canvas-drawImage-negative-coordinate.html [ ImageOnlyFailure ]
-webkit.org/b/274226 fast/canvas/canvas-drawImage-out-of-bounds-coordinate.html [ ImageOnlyFailure ]
-
 webkit.org/b/274368 http/tests/security/no-indexeddb-from-sandbox.html [ Crash Pass ]
 webkit.org/b/274368 http/tests/security/no-javascript-location-percent-escaped.html [ Crash Pass ]

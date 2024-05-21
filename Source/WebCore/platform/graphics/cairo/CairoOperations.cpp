@@ -867,12 +867,71 @@ void drawPattern(GraphicsContextCairo& platformContext, cairo_surface_t* surface
     drawPatternToCairoContext(platformContext.cr(), surface, size, tileRect, patternTransform, phase, spacing, toCairoOperator(options.compositeOperator(), options.blendMode()), options.interpolationQuality(), destRect);
 }
 
-void drawSurface(GraphicsContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& originalSrcRect, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState, OrientationSizing orientationSizing)
+static IntRect calculateSubsurfaceRect(FloatRect& dest, FloatRect& src, const IntSize& surface, FloatSize& padding)
+{
+    // When the source rectangle is outside the source image, the source rectangle must be clipped
+    // to the source image and the destination rectangle must be clipped in the same proportion.
+    auto calc1d = [](float& dest1, float& destSize, float& src1, float& srcSize, float surfaceWidth, float& padding) -> std::tuple<int, int> {
+        ASSERT(destSize > 0);
+        ASSERT(srcSize > 0);
+        ASSERT(surfaceWidth > 0);
+        // Cairo subsurfaces don't support floating point boundaries well, so we expand the rectangle.
+        int expanded1, expanded2;
+        float dest2 = dest1 + destSize;
+        float src2 = src1 + srcSize;
+        if (src2 <= 0 || src1 >= surfaceWidth)
+            return { };
+        if (src1 < 0) {
+            dest1 += -src1 * destSize / srcSize;
+            src1 = 0;
+            expanded1 = 0;
+        } else {
+            expanded1 = floor(src1);
+            padding = src1 - expanded1;
+        }
+        if (src2 < surfaceWidth)
+            expanded2 = ceil(src2);
+        else {
+            dest2 -= (src2 - surfaceWidth) * destSize / srcSize;
+            src2 = surfaceWidth;
+            expanded2 = surfaceWidth;
+        }
+        destSize = dest2 - dest1;
+        srcSize = src2 - src1;
+        ASSERT(destSize > 0);
+        ASSERT(srcSize > 0);
+        return { expanded1, expanded2 - expanded1 };
+    };
+    float xDestLocation = dest.x();
+    float xDestSize = dest.width();
+    float xSrcLocation = src.x();
+    float xSrcSize = src.width();
+    float xPadding = padding.width();
+    auto [xExpandedLocation, xExpandedSize] = calc1d(xDestLocation, xDestSize, xSrcLocation, xSrcSize, surface.width(), xPadding);
+
+    float yDestLocation = dest.y();
+    float yDestSize = dest.height();
+    float ySrcLocation = src.y();
+    float ySrcSize = src.height();
+    float yPadding = padding.height();
+    auto [yExpandedLocation, yExpandedSize] = calc1d(yDestLocation, yDestSize, ySrcLocation, ySrcSize, surface.height(), yPadding);
+
+    dest.setLocation({ xDestLocation, yDestLocation });
+    dest.setSize({ xDestSize, yDestSize });
+    src.setLocation({ xSrcLocation, ySrcLocation });
+    src.setSize({ xSrcSize, ySrcSize });
+    padding.setWidth(xPadding);
+    padding.setHeight(yPadding);
+    return { xExpandedLocation, yExpandedLocation, xExpandedSize, yExpandedSize };
+}
+
+void drawSurface(GraphicsContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& originalDestRect, const FloatRect& originalSrcRect, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState, OrientationSizing orientationSizing)
 {
     // Avoid invalid cairo matrix with small values.
-    if (std::abs(destRect.width()) < 0.5f || std::abs(destRect.height()) < 0.5f)
+    if (std::abs(originalDestRect.width()) < 0.5f || std::abs(originalDestRect.height()) < 0.5f)
         return;
 
+    FloatRect destRect = originalDestRect;
     FloatRect srcRect = originalSrcRect;
 
     // We need to account for negative source dimensions by flipping the rectangle.
@@ -886,23 +945,20 @@ void drawSurface(GraphicsContextCairo& platformContext, cairo_surface_t* surface
     }
 
     RefPtr<cairo_surface_t> patternSurface = surface;
-    float leftPadding = 0;
-    float topPadding = 0;
+    FloatSize padding;
     auto surfaceSize = cairoSurfaceSize(surface);
+    if (surfaceSize.isEmpty())
+        return;
     bool didUseWidthAsHeight = orientationSizing == OrientationSizing::WidthAsHeight;
-    bool differentSize = srcRect.size() != (didUseWidthAsHeight ? surfaceSize.transposedSize() : surfaceSize);
+    if (didUseWidthAsHeight)
+        surfaceSize =  surfaceSize.transposedSize();
+    bool differentSize = srcRect.size() != surfaceSize;
     if (srcRect.x() || srcRect.y() || differentSize) {
-        // Cairo subsurfaces don't support floating point boundaries well, so we expand the rectangle.
-        IntRect expandedSrcRect(enclosingIntRect(srcRect));
-        expandedSrcRect.intersect({ { }, cairoSurfaceSize(surface) });
-
+        IntRect subsurfaceRect = calculateSubsurfaceRect(destRect, srcRect, surfaceSize, padding);
         // We use a subsurface here so that we don't end up sampling outside the originalSrcRect rectangle.
         // See https://bugs.webkit.org/show_bug.cgi?id=58309
-        patternSurface = adoptRef(cairo_surface_create_for_rectangle(surface, expandedSrcRect.x(),
-            expandedSrcRect.y(), expandedSrcRect.width(), expandedSrcRect.height()));
-
-        leftPadding = static_cast<float>(expandedSrcRect.x()) - floorf(srcRect.x());
-        topPadding = static_cast<float>(expandedSrcRect.y()) - floorf(srcRect.y());
+        patternSurface = adoptRef(cairo_surface_create_for_rectangle(surface, subsurfaceRect.x(),
+            subsurfaceRect.y(), subsurfaceRect.width(), subsurfaceRect.height()));
     }
 
     RefPtr<cairo_pattern_t> pattern = adoptRef(cairo_pattern_create_for_surface(patternSurface.get()));
@@ -937,7 +993,7 @@ void drawSurface(GraphicsContextCairo& platformContext, cairo_surface_t* surface
         scaleX = std::abs(srcRect.width() / destRect.width());
         scaleY = std::abs(srcRect.height() / destRect.height());
     }
-    cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, leftPadding, topPadding };
+    cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, padding.width(), padding.height() };
     cairo_pattern_set_matrix(pattern.get(), &matrix);
 
     ShadowBlur shadow({ shadowState.blur, shadowState.blur }, shadowState.offset, shadowState.color, shadowState.ignoreTransforms);
