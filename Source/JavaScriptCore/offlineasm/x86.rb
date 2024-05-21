@@ -26,21 +26,6 @@ require "config"
 
 # GPR conventions, to match the baseline JIT:
 #
-#
-# On x86-32 bits (windows and non-windows)
-# a0, a1, a2, a3 are only there for ease-of-use of offlineasm; they are not
-# actually considered as such by the ABI and we need to push/pop our arguments
-# on the stack. a0 and a1 are ecx and edx to follow fastcall.
-#
-# eax => t0, a2, r0
-# edx => t1, a1, r1
-# ecx => t2, a0
-# ebx => t3, a3     (callee-save)
-# esi => t4         (callee-save)
-# edi => t5         (callee-save)
-# ebp => cfr
-# esp => sp
-#
 # On x86-64 (windows and non-windows)
 #
 # rax => t0,     r0
@@ -62,10 +47,6 @@ require "config"
 
 def isX64
     case $activeBackend
-    when "X86"
-        false
-    when "X86_WIN"
-        false
     when "X86_64"
         true
     when "X86_64_WIN"
@@ -77,10 +58,6 @@ end
 
 def isWin
     case $activeBackend
-    when "X86"
-        false
-    when "X86_WIN"
-        true
     when "X86_64"
         false
     when "X86_64_WIN"
@@ -1078,16 +1055,6 @@ class Instruction
         ]).lower($activeBackend)
     end
 
-    def lowerX86
-        raise unless $activeBackend == "X86"
-        lowerX86Common
-    end
-
-    def lowerX86_WIN
-        raise unless $activeBackend == "X86_WIN" 
-        lowerX86Common
-    end
-    
     def lowerX86_64
         raise unless $activeBackend == "X86_64"
         lowerX86Common

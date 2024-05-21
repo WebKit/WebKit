@@ -36,8 +36,6 @@ end
 
 BACKENDS =
     [
-     "X86",
-     "X86_WIN",
      "X86_64",
      "X86_64_WIN",
      "ARMv7",
@@ -55,8 +53,6 @@ BACKENDS =
 # the future while not actually supporting the backend yet.
 WORKING_BACKENDS =
     [
-     "X86",
-     "X86_WIN",
      "X86_64",
      "X86_64_WIN",
      "ARMv7",

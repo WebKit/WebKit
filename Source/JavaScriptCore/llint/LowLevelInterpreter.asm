@@ -83,13 +83,6 @@
 #
 #  - a0, a1, a2 and a3 are the platform's customary argument registers, and
 #  thus are pairwise distinct registers. Be mindful that:
-#    + On X86, there are no argument registers. a0 and a1 are edx and
-#    ecx following the fastcall convention, but you should still use the stack
-#    to pass your arguments. The cCall2 and cCall4 macros do this for you.
-#    + On X86_64_WIN, you should allocate space on the stack for the arguments,
-#    and the return convention is weird for > 8 bytes types. The only place we
-#    use > 8 bytes return values is on a cCall, and cCall2 and cCall4 handle
-#    this for you.
 #
 #  - The only registers guaranteed to be caller-saved are r0, r1, a0, a1 and a2, and
 #  you should be mindful of that in functions that are called directly from C.
@@ -116,11 +109,10 @@
 #  work if swapped with e.g. t3, while code using r0 (or r1) should not. There
 #  *may* be legacy code relying on this.
 #
-#  - On all platforms other than X86, t0 can only be a0 and t2 can only be a2.
+#  - On all platforms, t0 can only be a0 and t2 can only be a2.
 #
-#  - On all platforms other than X86 and X86_64, a2 is not a return register.
-#  a2 is r0 on X86 (because we have so few registers) and r1 on X86_64 (because
-#  the ABI enforces it).
+#  - On all platforms other than X86_64, a2 is not a return register.
+#  a2 is r1 on X86_64 (because the ABI enforces it).
 #
 # The following floating-point registers are available:
 #
@@ -770,8 +762,6 @@ if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     const CalleeSaveRegisterCount = 0
 elsif ARMv7
     const CalleeSaveRegisterCount = 5 + 2 * 2 // 5 32-bit GPRs + 2 64-bit FPRs
-elsif X86 or X86_WIN
-    const CalleeSaveRegisterCount = 3
 end
 
 const CalleeRegisterSaveSize = CalleeSaveRegisterCount * MachineRegisterSize
@@ -789,14 +779,6 @@ macro pushCalleeSaves()
     elsif ARMv7
         emit "vpush.64 {d14, d15}"
         emit "push {r4-r6, r8-r9}"
-    elsif X86
-        emit "push %esi"
-        emit "push %edi"
-        emit "push %ebx"
-    elsif X86_WIN
-        emit "push esi"
-        emit "push edi"
-        emit "push ebx"
     end
 end
 
@@ -805,14 +787,6 @@ macro popCalleeSaves()
     elsif ARMv7
         emit "pop {r4-r6, r8-r9}"
         emit "vpop.64 {d14, d15}"
-    elsif X86
-        emit "pop %ebx"
-        emit "pop %edi"
-        emit "pop %esi"
-    elsif X86_WIN
-        emit "pop ebx"
-        emit "pop edi"
-        emit "pop esi"
     end
 end
 
@@ -820,7 +794,7 @@ macro preserveCallerPCAndCFR()
     if C_LOOP or C_LOOP_WIN or ARMv7
         push lr
         push cfr
-    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
+    elsif X86_64 or X86_64_WIN
         push cfr
     elsif ARM64 or ARM64E or RISCV64
         push cfr, lr
@@ -835,7 +809,7 @@ macro restoreCallerPCAndCFR()
     if C_LOOP or C_LOOP_WIN or ARMv7
         pop cfr
         pop lr
-    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
+    elsif X86_64 or X86_64_WIN
         pop cfr
     elsif ARM64 or ARM64E or RISCV64
         pop lr, cfr
@@ -852,8 +826,6 @@ macro preserveCalleeSavesUsedByLLInt()
     elsif ARM64 or ARM64E
         storepairq csr8, csr9, -16[cfr]
         storepairq csr6, csr7, -32[cfr]
-    elsif X86
-    elsif X86_WIN
     elsif X86_64 or X86_64_WIN
         storep csr4, -8[cfr]
         storep csr3, -16[cfr]
@@ -876,8 +848,6 @@ macro restoreCalleeSavesUsedByLLInt()
     elsif ARM64 or ARM64E
         loadpairq -32[cfr], csr6, csr7
         loadpairq -16[cfr], csr8, csr9
-    elsif X86
-    elsif X86_WIN
     elsif X86_64 or X86_64_WIN
         loadp -32[cfr], csr1
         loadp -24[cfr], csr2
@@ -1017,7 +987,7 @@ macro preserveReturnAddressAfterCall(destinationRegister)
     if C_LOOP or C_LOOP_WIN or ARMv7 or ARM64 or ARM64E or RISCV64
         # In C_LOOP or C_LOOP_WIN case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
-    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
+    elsif X86_64 or X86_64_WIN
         pop destinationRegister
     else
         error
@@ -1026,7 +996,7 @@ end
 
 macro functionPrologue()
     tagReturnAddress sp
-    if X86 or X86_WIN or X86_64 or X86_64_WIN
+    if X86_64 or X86_64_WIN
         push cfr
     elsif ARM64 or ARM64E or RISCV64
         push cfr, lr
@@ -1038,7 +1008,7 @@ macro functionPrologue()
 end
 
 macro functionEpilogue()
-    if X86 or X86_WIN or X86_64 or X86_64_WIN
+    if X86_64 or X86_64_WIN
         pop cfr
     elsif ARM64 or ARM64E or RISCV64
         pop lr, cfr
@@ -1780,15 +1750,6 @@ if not (C_LOOP or C_LOOP_WIN)
     global _sanitizeStackForVMImpl
     _sanitizeStackForVMImpl:
         tagReturnAddress sp
-        # We need three non-aliased caller-save registers. We are guaranteed
-        # this for a0, a1 and a2 on all architectures. Beware also that
-        # offlineasm might use temporary registers when lowering complex
-        # instructions on some platforms, which might be callee-save. To avoid
-        # this, we use the simplest instructions so we never need a temporary
-        # and hence don't clobber any callee-save registers.
-        if X86 or X86_WIN
-            loadp 4[sp], a0
-        end
         const address = a1
         const scratch = a2
 
@@ -1834,10 +1795,6 @@ if not (C_LOOP or C_LOOP_WIN)
     global _vmEntryRecord
     _vmEntryRecord:
         tagReturnAddress sp
-        if X86 or X86_WIN
-            loadp 4[sp], a0
-        end
-
         vmEntryRecord(a0, r0)
         ret
 end
@@ -1919,7 +1876,7 @@ if C_LOOP or C_LOOP_WIN
         crash()
 else
     macro initPCRelative(kind, pcBase)
-        if X86_64 or X86_64_WIN or X86 or X86_WIN
+        if X86_64 or X86_64_WIN
             call _%kind%_relativePCBase
         _%kind%_relativePCBase:
             pop pcBase
@@ -1938,10 +1895,6 @@ else
             leap (label - _%kind%_relativePCBase)[t3], t4
             move index, t5
             storep t4, [map, t5, 8]
-        elsif X86 or X86_WIN
-            leap (label - _%kind%_relativePCBase)[t3], t4
-            move index, t5
-            storep t4, [map, t5, 4]
         elsif ARM64 or RISCV64
             pcrtoaddr label, t3
             move index, t4
@@ -1984,11 +1937,6 @@ macro entry(kind, initialize)
     _%kind%_entry:
         functionPrologue()
         pushCalleeSaves()
-        if X86 or X86_WIN
-            loadp 20[sp], a0
-            loadp 24[sp], a1
-            loadp 28[sp], a2
-        end
 
         initPCRelative(kind, t3)
 
