@@ -1669,7 +1669,6 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
     if (masksToBounds()) {
         ASSERT(accumulation == TransformState::FlattenTransform);
         // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
-        state.flatten();
         state.setQuad(clipRectForSelf);
         if (state.isMappingSecondaryQuad())
             state.setSecondaryQuad(FloatQuad { clipRectForSelf });
