@@ -431,13 +431,15 @@ void Navigation::updateForNavigation(Ref<HistoryItem>&& item, NavigationNavigati
         return;
 
     RefPtr oldCurrentEntry = currentEntry();
-    ASSERT(oldCurrentEntry);
+    if (!oldCurrentEntry)
+        return;
 
     Vector<Ref<NavigationHistoryEntry>> disposedEntries;
 
     if (navigationType == NavigationNavigationType::Traverse) {
         m_currentEntryIndex = getEntryIndexOfHistoryItem(m_entries, item);
-        ASSERT(m_currentEntryIndex);
+        if (!m_currentEntryIndex)
+            return;
     } else if (navigationType == NavigationNavigationType::Push) {
         m_currentEntryIndex = *m_currentEntryIndex + 1;
         for (size_t i = *m_currentEntryIndex; i < m_entries.size(); i++)

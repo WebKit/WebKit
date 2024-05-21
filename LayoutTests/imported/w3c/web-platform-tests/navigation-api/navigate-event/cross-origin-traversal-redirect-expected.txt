@@ -1,4 +1,6 @@
 
 
-PASS A traversal that redirects from same-origin to cross-origin fires the navigate event
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT A traversal that redirects from same-origin to cross-origin fires the navigate event Test timed out
 

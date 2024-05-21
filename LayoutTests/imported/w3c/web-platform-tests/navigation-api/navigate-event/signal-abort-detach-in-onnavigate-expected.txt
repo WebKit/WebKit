@@ -1,4 +1,5 @@
 
+Harness Error (TIMEOUT), message = null
 
-FAIL window detach inside a navigate event signals event.signal promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'promise.then')"
+TIMEOUT window detach inside a navigate event signals event.signal Test timed out
 

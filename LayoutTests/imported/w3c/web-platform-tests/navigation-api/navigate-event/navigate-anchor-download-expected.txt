@@ -1,6 +1,6 @@
 
-PASS <a> fires navigate and populates downloadRequest with ''
-PASS <a> fires navigate and populates downloadRequest with 'filename'
-PASS <area> fires navigate and populates downloadRequest with ''
-PASS <area> fires navigate and populates downloadRequest with 'filename'
+FAIL <a> fires navigate and populates downloadRequest with '' assert_true: expected true got false
+FAIL <a> fires navigate and populates downloadRequest with 'filename' assert_true: expected true got false
+FAIL <area> fires navigate and populates downloadRequest with '' assert_true: expected true got false
+FAIL <area> fires navigate and populates downloadRequest with 'filename' assert_true: expected true got false
 

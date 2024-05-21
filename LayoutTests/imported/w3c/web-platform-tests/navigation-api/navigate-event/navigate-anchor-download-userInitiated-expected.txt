@@ -1,4 +1,4 @@
 Click me
 
-PASS <a download> click fires navigate event
+FAIL <a download> click fires navigate event assert_true: expected true got false
 
