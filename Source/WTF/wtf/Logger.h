@@ -126,6 +126,7 @@ WTF_EXPORT_PRIVATE extern Lock loggerObserverLock;
 class Logger : public ThreadSafeRefCounted<Logger> {
     WTF_MAKE_NONCOPYABLE(Logger);
 public:
+    virtual ~Logger() { }
 
     class Observer {
     public:
