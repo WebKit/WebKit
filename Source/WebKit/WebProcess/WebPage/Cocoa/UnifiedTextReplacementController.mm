@@ -332,9 +332,9 @@ void UnifiedTextReplacementController::removeTransparentMarkersForUUID(const Web
         return;
     }
 
-    document->markers().filterMarkers(range, [&](const WebCore::DocumentMarker& marker) {
+    document->markers().removeMarkers({ WebCore::DocumentMarker::Type::TransparentContent }, [&](const WebCore::DocumentMarker& marker) {
         return std::get<WebCore::DocumentMarker::TransparentContentData>(marker.data()).uuid == uuid ? WebCore::FilterMarkerResult::Remove : WebCore::FilterMarkerResult::Keep;
-    }, { WebCore::DocumentMarker::Type::TransparentContent });
+    });
 }
 
 void UnifiedTextReplacementController::removeTransparentMarkersForSession(const WTF::UUID& uuid, RemoveAllMarkersForSession removeAll)

@@ -79,6 +79,7 @@ public:
     WEBCORE_EXPORT void filterMarkers(const SimpleRange&, const Function<FilterMarkerResult(const DocumentMarker&)>& filterFunction, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
     WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers());
+    WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarker::Type>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction);
     void removeMarkers(Node&, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers());
     void repaintMarkers(OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers());
     void shiftMarkers(Node&, unsigned startOffset, int delta);
@@ -115,7 +116,6 @@ private:
     using MarkerMap = HashMap<Ref<Node>, std::unique_ptr<Vector<RenderedDocumentMarker>>>;
 
     bool possiblyHasMarkers(OptionSet<DocumentMarker::Type>) const;
-    void removeMarkers(OptionSet<DocumentMarker::Type>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction);
     OptionSet<DocumentMarker::Type> removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarker::Type>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction = nullptr);
 
     void forEachOfTypes(OptionSet<DocumentMarker::Type>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
