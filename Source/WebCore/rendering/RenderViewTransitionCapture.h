@@ -37,7 +37,7 @@ public:
     virtual ~RenderViewTransitionCapture();
 
     void setImage(RefPtr<ImageBuffer>);
-    void setSize(const LayoutSize&, const LayoutRect& overflowRect);
+    bool setSize(const LayoutSize&, const LayoutRect& overflowRect);
 
     void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) override;
 

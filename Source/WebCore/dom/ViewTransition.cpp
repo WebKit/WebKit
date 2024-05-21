@@ -685,6 +685,7 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
 ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
 {
     Ref resolver = protectedDocument()->styleScope().resolver();
+    bool changed = false;
 
     for (auto& [name, capturedElement] : m_namedElements.map()) {
         RefPtr<MutableStyleProperties> properties;
@@ -701,11 +702,15 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
             if (RefPtr documentElement = document()->documentElement()) {
                 Styleable styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name });
                 if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(styleable.renderer())) {
-                    viewTransitionCapture->setSize(boxSize, overflowRect);
+                    if (viewTransitionCapture->setSize(boxSize, overflowRect))
+                        viewTransitionCapture->setNeedsLayout();
 
                     RefPtr<ImageBuffer> image;
-                    if (RefPtr frame = document()->frame(); !viewTransitionCapture->canUseExistingLayers())
+                    if (RefPtr frame = document()->frame(); !viewTransitionCapture->canUseExistingLayers()) {
                         image = snapshotElementVisualOverflowClippedToViewport(*frame, *renderer, overflowRect);
+                        changed = true;
+                    } else if (CheckedPtr layer = renderer->layer())
+                        layer->setNeedsCompositingGeometryUpdate();
                     viewTransitionCapture->setImage(image);
                 }
             }
@@ -717,12 +722,14 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
             if (!capturedElement->groupStyleProperties) {
                 capturedElement->groupStyleProperties = properties;
                 resolver->setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, *properties);
+                changed = true;
             } else
-                capturedElement->groupStyleProperties->mergeAndOverrideOnConflict(*properties);
+                changed |= capturedElement->groupStyleProperties->mergeAndOverrideOnConflict(*properties);
         }
     }
 
-    protectedDocument()->styleScope().didChangeStyleSheetContents();
+    if (changed)
+        protectedDocument()->styleScope().didChangeStyleSheetContents();
     return { };
 }
 

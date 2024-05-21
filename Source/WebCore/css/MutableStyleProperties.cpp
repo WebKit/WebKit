@@ -275,10 +275,12 @@ bool MutableStyleProperties::addParsedProperty(const CSSProperty& property)
     return setProperty(property);
 }
 
-void MutableStyleProperties::mergeAndOverrideOnConflict(const StyleProperties& other)
+bool MutableStyleProperties::mergeAndOverrideOnConflict(const StyleProperties& other)
 {
+    bool changed = false;
     for (auto property : other)
-        addParsedProperty(property.toCSSProperty());
+        changed |= addParsedProperty(property.toCSSProperty());
+    return changed;
 }
 
 void MutableStyleProperties::clear()

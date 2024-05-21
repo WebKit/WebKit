@@ -48,10 +48,13 @@ void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage)
     m_oldImage = oldImage;
 }
 
-void RenderViewTransitionCapture::setSize(const LayoutSize& size, const LayoutRect& overflowRect)
+bool RenderViewTransitionCapture::setSize(const LayoutSize& size, const LayoutRect& overflowRect)
 {
+    if (m_overflowRect == overflowRect && intrinsicSize() == size)
+        return false;
     setIntrinsicSize(size);
     m_overflowRect = overflowRect;
+    return true;
 }
 
 void RenderViewTransitionCapture::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
