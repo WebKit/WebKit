@@ -2540,3 +2540,5 @@ imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/current-
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-navigations-in-multiple-windows.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-replace-cross-origin.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-navigate-parent.html [ Failure ]
+
+webkit.org/b/274485 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Skip ]
