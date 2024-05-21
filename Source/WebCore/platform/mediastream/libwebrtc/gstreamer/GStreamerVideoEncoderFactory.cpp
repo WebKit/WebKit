@@ -118,7 +118,7 @@ public:
     GstElement* makeElement(const gchar* factoryName)
     {
         static Atomic<uint32_t> elementId;
-        auto name = makeString(Name(), "-enc-", factoryName, "-", elementId.exchangeAdd(1));
+        auto name = makeString(span(Name()), "-enc-"_s, span(factoryName), "-"_s, elementId.exchangeAdd(1));
         auto* elem = makeGStreamerElement(factoryName, name.utf8().data());
         return elem;
     }
