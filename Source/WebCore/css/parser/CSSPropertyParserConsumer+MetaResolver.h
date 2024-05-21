@@ -47,7 +47,7 @@ struct MetaResolver : Base {
 
     static ResultType resolve(const typename MetaConsumeResult<Ts...>::type& consumeResult, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
     {
-        return WTF::switchOn(consumeResult, [&](auto value) -> ResultType {
+        return WTF::switchOn(consumeResult, [&](auto& value) -> ResultType {
             return Base::resolve(value, symbolTable, options);
         });
     }
