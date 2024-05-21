@@ -534,11 +534,11 @@ void RenderMathMLToken::updateMathVariantGlyph()
             return;
     }
 
-    const auto& tokenElement = element();
+    const Ref tokenElement = element();
     if (auto codePoint = MathMLTokenElement::convertToSingleCodePoint(element().textContent())) {
         MathMLElement::MathVariant mathvariant = mathMLStyle().mathVariant();
         if (mathvariant == MathMLElement::MathVariant::None)
-            mathvariant = tokenElement.hasTagName(MathMLNames::miTag) ? MathMLElement::MathVariant::Italic : MathMLElement::MathVariant::Normal;
+            mathvariant = tokenElement->hasTagName(MathMLNames::miTag) ? MathMLElement::MathVariant::Italic : MathMLElement::MathVariant::Normal;
         char32_t transformedCodePoint = mathVariant(codePoint.value(), mathvariant);
         if (transformedCodePoint != codePoint.value()) {
             m_mathVariantCodePoint = mathVariant(codePoint.value(), mathvariant);

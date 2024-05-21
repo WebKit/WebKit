@@ -74,8 +74,8 @@ RenderBox& RenderMathMLFraction::denominator() const
 
 LayoutUnit RenderMathMLFraction::defaultLineThickness() const
 {
-    const auto& primaryFont = style().fontCascade().primaryFont();
-    if (const auto* mathData = primaryFont.mathData())
+    const Ref primaryFont = style().fontCascade().primaryFont();
+    if (RefPtr mathData = primaryFont->mathData())
         return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::FractionRuleThickness));
     return ruleThicknessFallback();
 }
@@ -101,10 +101,9 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::fractionParameter
     LayoutUnit numeratorGapMin, denominatorGapMin, numeratorMinShiftUp, denominatorMinShiftDown;
 
     // We try and read constants to draw the fraction from the OpenType MATH and use fallback values otherwise.
-    const auto& primaryFont = style().fontCascade().primaryFont();
-    const auto* mathData = style().fontCascade().primaryFont().mathData();
     bool display = style().mathStyle() == MathStyle::Normal;
-    if (mathData) {
+    const Ref primaryFont = style().fontCascade().primaryFont();
+    if (RefPtr mathData = primaryFont->mathData()) {
         numeratorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionNumDisplayStyleGapMin : OpenTypeMathData::FractionNumeratorGapMin);
         denominatorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionDenomDisplayStyleGapMin : OpenTypeMathData::FractionDenominatorGapMin);
         numeratorMinShiftUp = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionNumeratorDisplayStyleShiftUp : OpenTypeMathData::FractionNumeratorShiftUp);
@@ -140,10 +139,9 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::stackParameters()
     LayoutUnit gapMin;
     
     // We try and read constants to draw the stack from the OpenType MATH and use fallback values otherwise.
-    const auto& primaryFont = style().fontCascade().primaryFont();
-    const auto* mathData = style().fontCascade().primaryFont().mathData();
     bool display = style().mathStyle() == MathStyle::Normal;
-    if (mathData) {
+    const Ref primaryFont = style().fontCascade().primaryFont();
+    if (RefPtr mathData = primaryFont->mathData()) {
         gapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackDisplayStyleGapMin : OpenTypeMathData::StackGapMin);
         parameters.numeratorShiftUp = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackTopDisplayStyleShiftUp : OpenTypeMathData::StackTopShiftUp);
         parameters.denominatorShiftDown = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackBottomDisplayStyleShiftDown : OpenTypeMathData::StackBottomShiftDown);

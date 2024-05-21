@@ -56,16 +56,16 @@ void RenderMathMLSpace::computePreferredLogicalWidths()
 
 LayoutUnit RenderMathMLSpace::spaceWidth() const
 {
-    auto& spaceElement = element();
+    Ref spaceElement = element();
     // FIXME: Negative width values are not supported yet.
-    return std::max<LayoutUnit>(0, toUserUnits(spaceElement.width(), style(), 0));
+    return std::max<LayoutUnit>(0, toUserUnits(spaceElement->width(), style(), 0));
 }
 
 void RenderMathMLSpace::getSpaceHeightAndDepth(LayoutUnit& height, LayoutUnit& depth) const
 {
-    auto& spaceElement = element();
-    height = toUserUnits(spaceElement.height(), style(), 0);
-    depth = toUserUnits(spaceElement.depth(), style(), 0);
+    Ref spaceElement = element();
+    height = toUserUnits(spaceElement->height(), style(), 0);
+    depth = toUserUnits(spaceElement->depth(), style(), 0);
 
     // If the total height is negative, set vertical dimensions to 0.
     if (height + depth < 0) {
