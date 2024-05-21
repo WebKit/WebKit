@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <concepts>
 #include <wtf/CompletionHandler.h>
 
 #if __has_include(<coroutine>)
