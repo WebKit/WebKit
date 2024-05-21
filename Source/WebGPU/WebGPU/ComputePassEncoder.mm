@@ -161,7 +161,7 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
         makeInvalid(error);
         return;
     }
-    [m_computeCommandEncoder setComputePipelineState:m_pipeline->computePipelineState()];
+    [computeCommandEncoder() setComputePipelineState:m_pipeline->computePipelineState()];
 
     EntryMapContainer usagesForResource;
     if (indirectBuffer)
@@ -180,7 +180,7 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
             makeInvalid(error);
             return;
         }
-        [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:bindGroupIndex];
+        [computeCommandEncoder() setBuffer:group.computeArgumentBuffer() offset:0 atIndex:bindGroupIndex];
     }
 
     for (auto& kvp : m_bindGroupResources) {
@@ -228,7 +228,7 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
         }
     }
 
-    [m_computeCommandEncoder setBytes:&m_computeDynamicOffsets[0] length:m_computeDynamicOffsets.size() * sizeof(m_computeDynamicOffsets[0]) atIndex:m_device->maxBuffersForComputeStage()];
+    [computeCommandEncoder() setBytes:&m_computeDynamicOffsets[0] length:m_computeDynamicOffsets.size() * sizeof(m_computeDynamicOffsets[0]) atIndex:m_device->maxBuffersForComputeStage()];
 
     m_bindGroupDynamicOffsets.clear();
 }
@@ -246,7 +246,7 @@ void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
     if (!(x * y * z))
         return;
 
-    [m_computeCommandEncoder dispatchThreadgroups:MTLSizeMake(x, y, z) threadsPerThreadgroup:m_threadsPerThreadgroup];
+    [computeCommandEncoder() dispatchThreadgroups:MTLSizeMake(x, y, z) threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
 id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buffer& indirectBuffer, uint64_t indirectOffset)
@@ -272,10 +272,10 @@ id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buf
     }
 
     static id<MTLBuffer> dispatchCallBuffer = [device newBufferWithLength:sizeof(MTLDispatchThreadgroupsIndirectArguments) options:MTLResourceStorageModePrivate];
-    [m_computeCommandEncoder setComputePipelineState:computePipelineState];
-    [m_computeCommandEncoder setBuffer:indirectBuffer.buffer() offset:indirectOffset atIndex:0];
-    [m_computeCommandEncoder setBuffer:dispatchCallBuffer offset:0 atIndex:1];
-    [m_computeCommandEncoder dispatchThreads:MTLSizeMake(3, 1, 1) threadsPerThreadgroup:MTLSizeMake(3, 1, 1)];
+    [computeCommandEncoder() setComputePipelineState:computePipelineState];
+    [computeCommandEncoder() setBuffer:indirectBuffer.buffer() offset:indirectOffset atIndex:0];
+    [computeCommandEncoder() setBuffer:dispatchCallBuffer offset:0 atIndex:1];
+    [computeCommandEncoder() dispatchThreads:MTLSizeMake(3, 1, 1) threadsPerThreadgroup:MTLSizeMake(3, 1, 1)];
     return dispatchCallBuffer;
 }
 
@@ -298,7 +298,7 @@ void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t
 
     if (id<MTLBuffer> dispatchBuffer = runPredispatchIndirectCallValidation(indirectBuffer, indirectOffset)) {
         executePreDispatchCommands(&indirectBuffer);
-        [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:dispatchBuffer indirectBufferOffset:0 threadsPerThreadgroup:m_threadsPerThreadgroup];
+        [computeCommandEncoder() dispatchThreadgroupsWithIndirectBuffer:dispatchBuffer indirectBufferOffset:0 threadsPerThreadgroup:m_threadsPerThreadgroup];
     } else
         makeInvalid(@"GPUComputePassEncoder.dispatchWorkgroupsIndirect: Unable to validate dispatch size");
 }
@@ -432,7 +432,7 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
     Vector<const BindableResources*> resourceList;
     for (const auto& resource : group.resources()) {
         if (resource.renderStages == BindGroup::MTLRenderStageCompute && resource.mtlResources.size())
-            [m_computeCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
+            [computeCommandEncoder() useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
 
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
         resourceList.append(&resource);
@@ -465,6 +465,16 @@ void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
 void ComputePassEncoder::setLabel(String&& label)
 {
     m_computeCommandEncoder.label = label;
+}
+
+bool ComputePassEncoder::isValid() const
+{
+    return m_computeCommandEncoder;
+}
+
+id<MTLComputeCommandEncoder> ComputePassEncoder::computeCommandEncoder() const
+{
+    return m_parentEncoder->submitWillBeInvalid() ? nil : m_computeCommandEncoder;
 }
 
 #undef RETURN_IF_FINISHED

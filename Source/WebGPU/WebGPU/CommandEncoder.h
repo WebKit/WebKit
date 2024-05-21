@@ -104,6 +104,7 @@ public:
     void setLastError(NSString*);
     void waitForCommandBufferCompletion();
     bool encoderIsCurrent(id<MTLCommandEncoder>) const;
+    bool submitWillBeInvalid() const;
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, id<MTLSharedEvent>, Device&);

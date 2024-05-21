@@ -75,7 +75,8 @@ public:
 
     Device& device() const { return m_device; }
 
-    bool isValid() const { return m_computeCommandEncoder; }
+    bool isValid() const;
+    id<MTLComputeCommandEncoder> computeCommandEncoder() const;
 
 private:
     ComputePassEncoder(id<MTLComputeCommandEncoder>, const WGPUComputePassDescriptor&, CommandEncoder&, Device&);

@@ -1214,6 +1214,11 @@ void CommandEncoder::makeInvalid(NSString* errorString)
         m_cachedCommandBuffer.get()->makeInvalid(errorString);
 }
 
+bool CommandEncoder::submitWillBeInvalid() const
+{
+    return m_makeSubmitInvalid;
+}
+
 void CommandEncoder::makeSubmitInvalid(NSString* errorString)
 {
     m_makeSubmitInvalid = true;
