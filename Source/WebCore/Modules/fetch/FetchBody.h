@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Canon Inc.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -47,6 +48,7 @@ class FetchBody {
 public:
     void arrayBuffer(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void blob(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void bytes(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void json(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void text(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void formData(FetchBodyOwner&, Ref<DeferredPromise>&&);

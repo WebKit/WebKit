@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -341,6 +341,8 @@ public:
 void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBufferFromSpan(Ref<DeferredPromise>&&, std::span<const uint8_t>);
+void fulfillPromiseWithUint8Array(Ref<DeferredPromise>&&, Uint8Array*);
+void fulfillPromiseWithUint8ArrayFromSpan(Ref<DeferredPromise>&&, std::span<const uint8_t>);
 WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::CatchScope&);
 
 enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };

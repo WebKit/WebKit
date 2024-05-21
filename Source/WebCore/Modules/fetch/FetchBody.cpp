@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Canon Inc.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -109,6 +110,12 @@ void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
 void FetchBody::blob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
     m_consumer.setType(FetchBodyConsumer::Type::Blob);
+    consume(owner, WTFMove(promise));
+}
+
+void FetchBody::bytes(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
+{
+    m_consumer.setType(FetchBodyConsumer::Type::Bytes);
     consume(owner, WTFMove(promise));
 }
 
