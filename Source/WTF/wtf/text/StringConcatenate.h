@@ -220,7 +220,7 @@ public:
     }
 
 private:
-    StringImpl* const m_string;
+    SUPPRESS_UNCOUNTED_MEMBER StringImpl* const m_string;
 };
 
 template<> class StringTypeAdapter<AtomStringImpl*, void> : public StringTypeAdapter<StringImpl*, void> {
@@ -263,7 +263,7 @@ public:
     }
 
 private:
-    StringImpl& m_string;
+    SUPPRESS_UNCOUNTED_MEMBER StringImpl& m_string;
 };
 
 template<> class StringTypeAdapter<AtomStringImpl&, void> : public StringTypeAdapter<StringImpl&, void> {

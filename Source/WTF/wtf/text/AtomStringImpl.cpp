@@ -181,7 +181,7 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(HashTranslatorCharBuffer<UChar>& buff
 }
 
 struct SubstringLocation {
-    StringImpl* baseString;
+    SUPPRESS_UNCOUNTED_MEMBER StringImpl* baseString;
     unsigned start;
     unsigned length;
 };

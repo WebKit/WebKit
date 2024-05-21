@@ -31,14 +31,26 @@ namespace WTF {
 
 // It represents that the string impl is uniqued in some ways.
 // When the given 2 string impls are both uniqued string impls, we can compare it just using pointer comparison.
-class UniquedStringImpl : public StringImpl {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR UniquedStringImpl : public StringImpl {
 private:
     UniquedStringImpl() = delete;
 protected:
-    UniquedStringImpl(CreateSymbolTag, std::span<const LChar> characters) : StringImpl(CreateSymbol, characters) { }
-    UniquedStringImpl(CreateSymbolTag, std::span<const UChar> characters) : StringImpl(CreateSymbol, characters) { }
-    UniquedStringImpl(CreateSymbolTag) : StringImpl(CreateSymbol) { }
+    inline UniquedStringImpl(CreateSymbolTag, std::span<const LChar>);
+    inline UniquedStringImpl(CreateSymbolTag, std::span<const UChar>);
+    inline UniquedStringImpl(CreateSymbolTag);
 };
+
+inline UniquedStringImpl::UniquedStringImpl(CreateSymbolTag, std::span<const LChar> characters)
+    : StringImpl(CreateSymbol, characters)
+{ }
+
+inline UniquedStringImpl::UniquedStringImpl(CreateSymbolTag, std::span<const UChar> characters)
+    : StringImpl(CreateSymbol, characters)
+{ }
+
+inline UniquedStringImpl::UniquedStringImpl(CreateSymbolTag)
+    : StringImpl(CreateSymbol)
+{ }
 
 #if ASSERT_ENABLED
 // UniquedStringImpls created from StaticStringImpl will ASSERT
