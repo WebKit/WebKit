@@ -256,7 +256,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             auto oldState = m_lazyImageLoadState;
 #endif
             if (m_lazyImageLoadState == LazyImageLoadState::None && imageElement) {
-                if (imageElement->isLazyLoadable() && document->settings().lazyImageLoadingEnabled() && !canReuseFromListOfAvailableImages(request, document)) {
+                if (imageElement->isLazyLoadable() && !canReuseFromListOfAvailableImages(request, document)) {
                     m_lazyImageLoadState = LazyImageLoadState::Deferred;
                     request.setIgnoreForRequestCount(true);
                 }

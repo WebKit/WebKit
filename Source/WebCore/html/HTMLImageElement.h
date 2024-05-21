@@ -154,8 +154,8 @@ public:
 
     bool usesSrcsetOrPicture() const;
 
-    const AtomString& loadingForBindings() const;
-    void setLoadingForBindings(const AtomString&);
+    const AtomString& loading() const;
+    void setLoading(const AtomString&);
 
     bool isLazyLoadable() const;
     static bool hasLazyLoadableAttributeValue(StringView);

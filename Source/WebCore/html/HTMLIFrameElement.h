@@ -45,8 +45,8 @@ public:
 
     const PermissionsPolicy& permissionsPolicy() const;
 
-    const AtomString& loadingForBindings() const;
-    void setLoadingForBindings(const AtomString&);
+    const AtomString& loading() const;
+    void setLoading(const AtomString&);
 
     LazyLoadFrameObserver& lazyLoadFrameObserver();
 

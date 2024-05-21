@@ -1004,13 +1004,13 @@ void HTMLImageElement::setSrcsetForBindings(const AtomString& value)
     setAttributeWithoutSynchronization(srcsetAttr, value);
 }
 
-const AtomString& HTMLImageElement::loadingForBindings() const
+const AtomString& HTMLImageElement::loading() const
 {
     auto& attributeValue = attributeWithoutSynchronization(HTMLNames::loadingAttr);
     return hasLazyLoadableAttributeValue(attributeValue) ? lazyAtom() : eagerAtom();
 }
 
-void HTMLImageElement::setLoadingForBindings(const AtomString& value)
+void HTMLImageElement::setLoading(const AtomString& value)
 {
     setAttributeWithoutSynchronization(loadingAttr, value);
 }

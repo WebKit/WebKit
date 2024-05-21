@@ -180,12 +180,12 @@ const PermissionsPolicy& HTMLIFrameElement::permissionsPolicy() const
     return *m_permissionsPolicy;
 }
 
-const AtomString& HTMLIFrameElement::loadingForBindings() const
+const AtomString& HTMLIFrameElement::loading() const
 {
     return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::loadingAttr), "lazy"_s) ? lazyAtom() : eagerAtom();
 }
 
-void HTMLIFrameElement::setLoadingForBindings(const AtomString& value)
+void HTMLIFrameElement::setLoading(const AtomString& value)
 {
     setAttributeWithoutSynchronization(loadingAttr, value);
 }
@@ -203,7 +203,7 @@ static bool isFrameLazyLoadable(const Document& document, const URL& url, const 
 
 bool HTMLIFrameElement::shouldLoadFrameLazily()
 {
-    if (!m_lazyLoadFrameObserver && document().settings().lazyIframeLoadingEnabled() && !document().quirks().shouldDisableLazyIframeLoadingQuirk()) {
+    if (!m_lazyLoadFrameObserver && !document().quirks().shouldDisableLazyIframeLoadingQuirk()) {
         URL completeURL = document().completeURL(frameURL());
         if (isFrameLazyLoadable(document(), completeURL, attributeWithoutSynchronization(HTMLNames::loadingAttr))) {
             auto currentReferrerPolicy = referrerPolicy();

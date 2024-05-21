@@ -3580,34 +3580,6 @@ LayoutViewportHeightExpansionFactor:
     WebCore:
       default: 0
 
-LazyIframeLoadingEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "Lazy iframe loading"
-  humanReadableDescription: "Enable lazy iframe loading support"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-LazyImageLoadingEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "Lazy image loading"
-  humanReadableDescription: "Enable lazy image loading support"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
 LegacyEncryptedMediaAPIEnabled:
   type: bool
   status: embedder

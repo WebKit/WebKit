@@ -226,11 +226,9 @@ private:
                 m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
                 break;
             }
-            if (document->settings().lazyImageLoadingEnabled()) {
-                if (match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull()) {
-                    m_lazyloadAttribute = attributeValue.toString();
-                    break;
-                }
+            if (match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull()) {
+                m_lazyloadAttribute = attributeValue.toString();
+                break;
             }
             processImageAndScriptAttribute(attributeName, attributeValue);
             break;
