@@ -7319,3 +7319,7 @@ imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/current-
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-navigations-in-multiple-windows.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-replace-cross-origin.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-navigate-parent.html [ Failure ]
+
+# webkit.org/b/274488 REGRESSION (278902@main): [ iOS ] editing/selection/ios/selection-handles-in-iframe.html and fast/images/text-recognition/iOS.. are timing out 
+editing/selection/ios/selection-handles-in-iframe.html [ Timeout ]
+fast/images/text-recognition/ios/select-word-in-image-overlay-inside-link.html [ Timeout ]
