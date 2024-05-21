@@ -646,7 +646,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
     if (isCompressed && (widthMismatch || multipleOfBlockSize)) {
 
         auto maxY = std::max<size_t>(blockHeight, heightForMetal) / blockHeight;
-        auto newBytesPerImage = newBytesPerRow * std::max<size_t>(blockHeight, logicalSize.height) / blockHeight;
+        auto newBytesPerImage = newBytesPerRow * std::max<size_t>(blockHeight, logicalSize.height / blockHeight);
         auto maxZ = std::max<size_t>(1, size.depthOrArrayLayers);
         newData.resize(newBytesPerImage * maxZ);
         memset(&newData[0], 0, newData.size());
