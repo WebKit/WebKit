@@ -1,0 +1,6 @@
+
+
+FAIL rows=1 doesnt include scrollbar thickness assert_equals: expected 146 but got 161
+PASS rows=1 overflow scroll includes scrollbar thickness
+FAIL cols=3 includes scrollbar thickness assert_greater_than: expected a number greater than 42 but got 42
+
