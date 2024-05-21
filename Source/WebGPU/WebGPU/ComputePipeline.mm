@@ -87,7 +87,7 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
     BufferBindingSizesForPipeline minimumBufferSizes;
     auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPointName, label, descriptor.compute.constantCount, descriptor.compute.constants, minimumBufferSizes, &error);
     if (!libraryCreationResult || &pipelineLayout.device() != this)
-        return returnInvalidComputePipeline(*this, isAsync, error.description ?: @"Compute library failed creation");
+        return returnInvalidComputePipeline(*this, isAsync, error.localizedDescription ?: @"Compute library failed creation");
 
     auto library = libraryCreationResult->library;
     const auto& wgslConstantValues = libraryCreationResult->wgslConstantValues;

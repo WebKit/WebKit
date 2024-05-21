@@ -1323,7 +1323,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         NSError *error = nil;
         auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexEntryPoint, label, descriptor.vertex.constantCount, descriptor.vertex.constants, minimumBufferSizes, &error);
         if (!libraryCreationResult)
-            return returnInvalidRenderPipeline(*this, isAsync, error.description ?: @"Vertex library failed creation");
+            return returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Vertex library failed creation");
 
         const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
         if (!pipelineLayout) {
@@ -1366,7 +1366,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         NSError *error = nil;
         auto libraryCreationResult = createLibrary(m_device, *fragmentModule, pipelineLayout, fragmentEntryPoint, label, fragmentDescriptor.constantCount, fragmentDescriptor.constants, minimumBufferSizes, &error);
         if (!libraryCreationResult)
-            return returnInvalidRenderPipeline(*this, isAsync, error.description ?: @"Fragment library could not be created");
+            return returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Fragment library could not be created");
 
         const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
         if (!pipelineLayout) {
@@ -1538,7 +1538,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     NSError *error = nil;
     id<MTLRenderPipelineState> renderPipelineState = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
     if (error || !renderPipelineState)
-        return returnInvalidRenderPipeline(*this, isAsync, error.description);
+        return returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription);
 
     if (!pipelineLayout) {
         auto generatedPipelineLayout = generatePipelineLayout(bindGroupEntries);
