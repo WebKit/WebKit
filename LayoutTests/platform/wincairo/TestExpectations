@@ -1255,6 +1255,8 @@ storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
 
 webkit.org/b/210046 storage/indexeddb/value-cursor-cycle.html [ Pass Failure ]
 
+webkit.org/b/210517 storage/indexeddb/result-request-cycle.html [ Pass Failure ]
+
 # WPT diff failures that need more investigation
 imported/w3c/web-platform-tests/cookies/domain/domain-attribute-host-with-leading-period.sub.https.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
@@ -1975,7 +1977,6 @@ fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
 fast/events/ime-composition-events-001.html [ Failure ]
 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 fast/events/input-event-insert-replacement.html [ Skip ] # UIScript
-fast/events/key-events-in-input-button.html [ Failure ]
 fast/events/keyboardevent-code.html [ Failure ]
 fast/events/keydown-numpad-keys.html [ Failure ]
 fast/events/mouseover-button.html [ Failure ]
@@ -3352,3 +3353,4 @@ webkit.org/b/274226 fast/canvas/canvas-drawImage-negative-coordinate.html [ Imag
 webkit.org/b/274226 fast/canvas/canvas-drawImage-out-of-bounds-coordinate.html [ ImageOnlyFailure ]
 
 webkit.org/b/274368 http/tests/security/no-indexeddb-from-sandbox.html [ Crash Pass ]
+webkit.org/b/274368 http/tests/security/no-javascript-location-percent-escaped.html [ Crash Pass ]
