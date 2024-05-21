@@ -1,0 +1,3 @@
+
+FAIL Create a close watcher without user activation; create a close watcher with user activation promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: CloseWatcher"
+

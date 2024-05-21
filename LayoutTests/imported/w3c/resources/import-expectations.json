@@ -32,7 +32,7 @@
     "web-platform-tests/clear-site-data": "import",
     "web-platform-tests/client-hints": "skip",
     "web-platform-tests/clipboard-apis": "import",
-    "web-platform-tests/close-watcher": "skip",
+    "web-platform-tests/close-watcher": "import",
     "web-platform-tests/common": "import",
     "web-platform-tests/compat": "import",
     "web-platform-tests/compression": "import",

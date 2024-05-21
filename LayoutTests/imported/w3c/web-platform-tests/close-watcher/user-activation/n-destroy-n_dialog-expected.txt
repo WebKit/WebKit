@@ -1,0 +1,3 @@
+
+FAIL Create a close watcher without user activation; destroy the close watcher; create a close watcher without user activation assert_array_equals: expected property 0 to be "watcher2 cancel[cancelable=false]" but got "watcher2 cancel[cancelable=true]" (expected array ["watcher2 cancel[cancelable=false]", "watcher2 close"] got ["watcher2 cancel[cancelable=true]", "watcher2 close"])
+

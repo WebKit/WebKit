@@ -1,0 +1,9 @@
+
+
+FAIL detaching the iframe during the cancel event promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new i.contentWindow.CloseWatcher()')"
+FAIL detaching the iframe during the close event promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new i.contentWindow.CloseWatcher()')"
+FAIL detaching the iframe then calling destroy() promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new i.contentWindow.CloseWatcher()')"
+FAIL detaching the iframe then calling close() promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new i.contentWindow.CloseWatcher()')"
+FAIL detaching the iframe then calling requestClose() promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new i.contentWindow.CloseWatcher()')"
+FAIL detaching the iframe then constructing a CloseWatcher assert_throws_dom: function "() => new iCloseWatcher()" threw object "TypeError: undefined is not a constructor (evaluating 'new iCloseWatcher()')" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+

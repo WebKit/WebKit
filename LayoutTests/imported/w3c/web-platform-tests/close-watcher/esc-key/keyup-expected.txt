@@ -1,0 +1,3 @@
+
+FAIL A keyup listener can NOT prevent the Esc keypress from being interpreted as a close request promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: CloseWatcher"
+

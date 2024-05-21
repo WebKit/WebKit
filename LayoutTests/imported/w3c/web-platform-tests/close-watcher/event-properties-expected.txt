@@ -1,0 +1,3 @@
+
+FAIL cancel and close event properties are correct promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: CloseWatcher"
+

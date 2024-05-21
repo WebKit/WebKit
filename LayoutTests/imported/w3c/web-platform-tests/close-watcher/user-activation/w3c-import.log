@@ -1,0 +1,51 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/README.md
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/n-activate-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/n-activate.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/n-closerequest-n.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/n-destroy-n.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/n.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nn-CloseWatcher.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nn-activate-CloseWatcher.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nn-activate-dialog.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nn-dialog.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nnn-CloseWatcher-dialog-popover.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nnn-CloseWatcher.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nnn-dialog.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nnn-popovers.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/ny-activate-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/ny.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nyn-popovers.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nyn.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nynn-destroy.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nynn.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nyyn-CloseWatcher.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nyyn-dialog.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nyyyn-CloseWatcher.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/nyyyn-dialog.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/y.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/yn-activate.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/yn.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/ynn-CloseWatcher.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/ynn-dialog.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/yy.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/yyn.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/yyy-CloseWatcher-dialog-popover.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/yyy-activate-CloseWatcher-dialog-popover.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/yyy-popovers.html
+/LayoutTests/imported/w3c/web-platform-tests/close-watcher/user-activation/yyy.html

@@ -1,0 +1,9 @@
+
+FAIL requestClose() with no user activation Can't find variable: CloseWatcher
+FAIL destroy() then requestClose() Can't find variable: CloseWatcher
+FAIL close() then requestClose() Can't find variable: CloseWatcher
+FAIL requestClose() then destroy() Can't find variable: CloseWatcher
+FAIL close() then destroy() Can't find variable: CloseWatcher
+FAIL destroy() then close request promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: CloseWatcher"
+FAIL Close request then destroy() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: CloseWatcher"
+
