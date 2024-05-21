@@ -86,12 +86,12 @@ public:
         struct Translator {
             static unsigned hash(const Searcher& searcher)
             {
-                return PolymorphicAccessJITStubRoutine::computeHash(searcher.m_cases);
+                return searcher.m_hash;
             }
 
             static bool equal(const Hash::Key a, const Searcher& b)
             {
-                if (a.m_stubInfoKey == b.m_stubInfoKey) {
+                if (a.m_stubInfoKey == b.m_stubInfoKey && Hash::hash(a) == b.m_hash) {
                     // FIXME: The ordering of cases does not matter for sharing capabilities.
                     // We can potentially increase success rate by making this comparison / hashing non ordering sensitive.
                     const auto& aCases = a.m_wrapped->cases();
@@ -108,8 +108,16 @@ public:
             }
         };
 
+        Searcher(StructureStubInfoKey&& stubInfoKey, std::span<const Ref<AccessCase>>&& span)
+            : m_stubInfoKey(WTFMove(stubInfoKey))
+            , m_cases(WTFMove(span))
+            , m_hash(PolymorphicAccessJITStubRoutine::computeHash(m_cases))
+        {
+        }
+
         StructureStubInfoKey m_stubInfoKey;
         std::span<const Ref<AccessCase>> m_cases;
+        unsigned m_hash { 0 };
     };
 
     struct PointerTranslator {

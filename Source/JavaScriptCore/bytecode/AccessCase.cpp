@@ -1535,8 +1535,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case IndexedProxyObjectLoad: {
-        // Getter / Setter / ProxyObjectHas / ProxyObjectLoad / ProxyObjectStore / IndexedProxyObjectLoad rely on CodeBlock, which makes sharing impossible.
-        return false;
+        return true;
     }
 
     case IntrinsicGetter: {
