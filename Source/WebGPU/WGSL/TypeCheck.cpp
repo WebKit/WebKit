@@ -1229,131 +1229,136 @@ void TypeChecker::visit(AST::CallExpression& call)
     auto& target = call.target();
     bool isNamedType = is<AST::IdentifierExpression>(target);
     bool isParameterizedType = is<AST::ElaboratedTypeExpression>(target);
-    if (isNamedType || isParameterizedType) {
-        Vector<const Type*> typeArguments;
-        String targetName = [&]() -> String {
-            if (isNamedType)
-                return downcast<AST::IdentifierExpression>(target).identifier();
-            auto& elaborated = downcast<AST::ElaboratedTypeExpression>(target);
-            for (auto& argument : elaborated.arguments())
-                typeArguments.append(resolve(argument));
-            return elaborated.base();
-        }();
+    bool isArrayType = is<AST::ArrayTypeExpression>(target);
 
-        auto* targetBinding = isNamedType ? readVariable(targetName) : nullptr;
-        if (targetBinding) {
-            target.m_inferredType = targetBinding->type;
-            if (targetBinding->kind == Binding::Type) {
-                if (auto* structType = std::get_if<Types::Struct>(targetBinding->type)) {
-                    if (!targetBinding->type->isConstructible()) {
-                        typeError(call.span(), "struct is not constructible"_s);
-                        return;
-                    }
+    Vector<const Type*> typeArguments;
+    String targetName = [&]() -> String {
+        if (isNamedType)
+            return downcast<AST::IdentifierExpression>(target).identifier();
+        if (isArrayType)
+            return "array"_s;
+        auto& elaborated = downcast<AST::ElaboratedTypeExpression>(target);
+        for (auto& argument : elaborated.arguments())
+            typeArguments.append(resolve(argument));
+        return elaborated.base();
+    }();
 
-                    if (UNLIKELY(m_discardResult == DiscardResult::Yes)) {
-                        typeError(call.span(), "value constructor evaluated but not used"_s);
-                        return;
-                    }
-
-                    auto numberOfArguments = call.arguments().size();
-                    auto numberOfFields = structType->fields.size();
-                    if (numberOfArguments && numberOfArguments != numberOfFields) {
-                        auto errorKind = numberOfArguments < numberOfFields ? "few"_s : "many"_s;
-                        typeError(call.span(), "struct initializer has too "_s, errorKind, " inputs: expected "_s, numberOfFields, ", found "_s, numberOfArguments);
-                        return;
-                    }
-
-                    HashMap<String, ConstantValue> constantFields;
-                    bool isConstant = true;
-                    for (unsigned i = 0; i < numberOfArguments; ++i) {
-                        auto& argument = call.arguments()[i];
-                        auto& member = structType->structure.members()[i];
-                        auto* fieldType = structType->fields.get(member.name());
-                        auto* argumentType = infer(argument, m_evaluation);
-                        if (!unify(fieldType, argumentType)) {
-                            typeError(argument.span(), "type in struct initializer does not match struct member type: expected '"_s, *fieldType, "', found '"_s, *argumentType, '\'');
-                            return;
-                        }
-                        argument.m_inferredType = fieldType;
-                        auto& value = argument.m_constantValue;
-                        if (value.has_value() && convertValue(argument.span(), argument.inferredType(), value)) {
-                            constantFields.set(member.name(), *value);
-                            continue;
-                        }
-                        isConstant = false;
-                    }
-                    if (isConstant) {
-                        if (numberOfArguments)
-                            setConstantValue(call, targetBinding->type, ConstantStruct { WTFMove(constantFields) });
-                        else
-                            setConstantValue(call, targetBinding->type, zeroValue(targetBinding->type));
-                    }
-                    inferred(targetBinding->type);
+    auto* targetBinding = readVariable(targetName);
+    if (targetBinding) {
+        target.m_inferredType = targetBinding->type;
+        if (targetBinding->kind == Binding::Type) {
+            if (auto* structType = std::get_if<Types::Struct>(targetBinding->type)) {
+                if (!targetBinding->type->isConstructible()) {
+                    typeError(call.span(), "struct is not constructible"_s);
                     return;
                 }
 
-                if (auto* vectorType = std::get_if<Types::Vector>(targetBinding->type)) {
-                    typeArguments.append(vectorType->element);
-                    switch (vectorType->size) {
-                    case 2:
-                        targetName = "vec2"_s;
-                        break;
-                    case 3:
-                        targetName = "vec3"_s;
-                        break;
-                    case 4:
-                        targetName = "vec4"_s;
-                        break;
-                    default:
-                        RELEASE_ASSERT_NOT_REACHED();
-                    }
+                if (UNLIKELY(m_discardResult == DiscardResult::Yes)) {
+                    typeError(call.span(), "value constructor evaluated but not used"_s);
+                    return;
                 }
 
-                if (auto* matrixType = std::get_if<Types::Matrix>(targetBinding->type)) {
-                    typeArguments.append(matrixType->element);
-                    targetName = makeString("mat"_s, matrixType->columns, 'x', matrixType->rows);
-                }
-
-                if (std::holds_alternative<Types::Primitive>(*targetBinding->type))
-                    targetName = targetBinding->type->toString();
-            }
-
-            if (targetBinding->kind == Binding::Function) {
-                auto& functionType = std::get<Types::Function>(*targetBinding->type);
                 auto numberOfArguments = call.arguments().size();
-                auto numberOfParameters = functionType.parameters.size();
-                if (UNLIKELY(m_evaluation < Evaluation::Runtime)) {
-                    typeError(call.span(), "cannot call function from "_s, evaluationToString(m_evaluation), " context"_s);
+                auto numberOfFields = structType->fields.size();
+                if (numberOfArguments && numberOfArguments != numberOfFields) {
+                    auto errorKind = numberOfArguments < numberOfFields ? "few"_s : "many"_s;
+                    typeError(call.span(), "struct initializer has too "_s, errorKind, " inputs: expected "_s, numberOfFields, ", found "_s, numberOfArguments);
                     return;
                 }
 
-                if (UNLIKELY(numberOfArguments != numberOfParameters)) {
-                    auto errorKind = numberOfArguments < numberOfParameters ? "few"_s : "many"_s;
-                    typeError(call.span(), "funtion call has too "_s, errorKind, " arguments: expected "_s, numberOfParameters, ", found "_s, numberOfArguments);
-                    return;
-                }
-
-                if (m_discardResult == DiscardResult::Yes && functionType.mustUse)
-                    typeError(InferBottom::No, call.span(), "ignoring return value of function '"_s, targetName, "' annotated with @must_use"_s);
-
+                HashMap<String, ConstantValue> constantFields;
+                bool isConstant = true;
                 for (unsigned i = 0; i < numberOfArguments; ++i) {
                     auto& argument = call.arguments()[i];
-                    auto* parameterType = functionType.parameters[i];
+                    auto& member = structType->structure.members()[i];
+                    auto* fieldType = structType->fields.get(member.name());
                     auto* argumentType = infer(argument, m_evaluation);
-                    if (!unify(parameterType, argumentType)) {
-                        typeError(argument.span(), "type in function call does not match parameter type: expected '"_s, *parameterType, "', found '"_s, *argumentType, '\'');
+                    if (!unify(fieldType, argumentType)) {
+                        typeError(argument.span(), "type in struct initializer does not match struct member type: expected '"_s, *fieldType, "', found '"_s, *argumentType, '\'');
                         return;
                     }
-                    argument.m_inferredType = parameterType;
+                    argument.m_inferredType = fieldType;
                     auto& value = argument.m_constantValue;
-                    if (value.has_value())
-                        convertValue(argument.span(), argument.inferredType(), value);
+                    if (value.has_value() && convertValue(argument.span(), argument.inferredType(), value)) {
+                        constantFields.set(member.name(), *value);
+                        continue;
+                    }
+                    isConstant = false;
                 }
-                inferred(functionType.result);
+                if (isConstant) {
+                    if (numberOfArguments)
+                        setConstantValue(call, targetBinding->type, ConstantStruct { WTFMove(constantFields) });
+                    else
+                        setConstantValue(call, targetBinding->type, zeroValue(targetBinding->type));
+                }
+                inferred(targetBinding->type);
                 return;
             }
-        }
 
+            if (auto* vectorType = std::get_if<Types::Vector>(targetBinding->type)) {
+                typeArguments.append(vectorType->element);
+                switch (vectorType->size) {
+                case 2:
+                    targetName = "vec2"_s;
+                    break;
+                case 3:
+                    targetName = "vec3"_s;
+                    break;
+                case 4:
+                    targetName = "vec4"_s;
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            }
+
+            if (auto* matrixType = std::get_if<Types::Matrix>(targetBinding->type)) {
+                typeArguments.append(matrixType->element);
+                targetName = makeString("mat"_s, matrixType->columns, 'x', matrixType->rows);
+            }
+
+            if (std::holds_alternative<Types::Primitive>(*targetBinding->type))
+                targetName = targetBinding->type->toString();
+        } else if (targetBinding->kind == Binding::Function) {
+            auto& functionType = std::get<Types::Function>(*targetBinding->type);
+            auto numberOfArguments = call.arguments().size();
+            auto numberOfParameters = functionType.parameters.size();
+            if (UNLIKELY(m_evaluation < Evaluation::Runtime)) {
+                typeError(call.span(), "cannot call function from "_s, evaluationToString(m_evaluation), " context"_s);
+                return;
+            }
+
+            if (UNLIKELY(numberOfArguments != numberOfParameters)) {
+                auto errorKind = numberOfArguments < numberOfParameters ? "few"_s : "many"_s;
+                typeError(call.span(), "funtion call has too "_s, errorKind, " arguments: expected "_s, numberOfParameters, ", found "_s, numberOfArguments);
+                return;
+            }
+
+            if (m_discardResult == DiscardResult::Yes && functionType.mustUse)
+                typeError(InferBottom::No, call.span(), "ignoring return value of function '"_s, targetName, "' annotated with @must_use"_s);
+
+            for (unsigned i = 0; i < numberOfArguments; ++i) {
+                auto& argument = call.arguments()[i];
+                auto* parameterType = functionType.parameters[i];
+                auto* argumentType = infer(argument, m_evaluation);
+                if (!unify(parameterType, argumentType)) {
+                    typeError(argument.span(), "type in function call does not match parameter type: expected '"_s, *parameterType, "', found '"_s, *argumentType, '\'');
+                    return;
+                }
+                argument.m_inferredType = parameterType;
+                auto& value = argument.m_constantValue;
+                if (value.has_value())
+                    convertValue(argument.span(), argument.inferredType(), value);
+            }
+            inferred(functionType.result);
+            return;
+        } else {
+            typeError(target.span(), "cannot call value of type '"_s, *targetBinding->type, '\'');
+            return;
+        }
+    }
+
+    if (isNamedType || isParameterizedType) {
         auto* result = chooseOverload("initializer"_s, call.span(), &call, targetName, call.arguments(), typeArguments);
         if (result) {
             // FIXME: this will go away once we track used intrinsics properly
@@ -1389,130 +1394,125 @@ void TypeChecker::visit(AST::CallExpression& call)
             return;
         }
 
-        if (targetBinding)
-            typeError(target.span(), "cannot call value of type '"_s, *targetBinding->type, '\'');
-        else
-            typeError(target.span(), "unresolved call target '"_s, targetName, '\'');
+        typeError(target.span(), "unresolved call target '"_s, targetName, '\'');
         return;
     }
 
-    if (auto* array = dynamicDowncast<AST::ArrayTypeExpression>(target)) {
-        const Type* elementType = nullptr;
-        unsigned elementCount;
+    RELEASE_ASSERT(isArrayType);
+    auto& array = uncheckedDowncast<AST::ArrayTypeExpression>(target);
+    const Type* elementType = nullptr;
+    unsigned elementCount;
 
-        if (array->maybeElementType()) {
-            if (!array->maybeElementCount()) {
-                typeError(call.span(), "cannot construct a runtime-sized array"_s);
+    if (array.maybeElementType()) {
+        if (!array.maybeElementCount()) {
+            typeError(call.span(), "cannot construct a runtime-sized array"_s);
+            return;
+        }
+        elementType = resolve(*array.maybeElementType());
+        auto* elementCountType = infer(*array.maybeElementCount(), m_evaluation);
+
+        if (isBottom(elementType) || isBottom(elementCountType)) {
+            inferred(m_types.bottomType());
+            return;
+        }
+
+        if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) {
+            typeError(array.span(), "array count must be an i32 or u32 value, found '"_s, *elementCountType, '\'');
+            return;
+        }
+
+        if (!elementType->isConstructible()) {
+            typeError(array.span(), '\'', *elementType, "' cannot be used as an element type of an array"_s);
+            return;
+        }
+
+        auto constantValue = array.maybeElementCount()->constantValue();
+        if (!constantValue) {
+            typeError(call.span(), "array must have constant size in order to be constructed"_s);
+            return;
+        }
+
+        auto intElementCount = constantValue->integerValue();
+        if (intElementCount < 1) {
+            typeError(call.span(), "array count must be greater than 0"_s);
+            return;
+        }
+
+        if (intElementCount > std::numeric_limits<uint16_t>::max()) {
+            typeError(call.span(), "array count ("_s, intElementCount, ") must be less than 65536"_s);
+            return;
+        }
+        elementCount = static_cast<unsigned>(intElementCount);
+
+        unsigned numberOfArguments = call.arguments().size();
+        if (numberOfArguments && numberOfArguments != elementCount) {
+            auto errorKind = call.arguments().size() < elementCount ? "few"_s : "many"_s;
+            typeError(call.span(), "array constructor has too "_s, errorKind, " elements: expected "_s, elementCount, ", found "_s, call.arguments().size());
+            return;
+        }
+        for (auto& argument : call.arguments()) {
+            auto* argumentType = infer(argument, m_evaluation);
+            if (!unify(elementType, argumentType)) {
+                typeError(argument.span(), '\'', *argumentType, "' cannot be used to construct an array of '"_s, *elementType, '\'');
                 return;
             }
-            elementType = resolve(*array->maybeElementType());
-            auto* elementCountType = infer(*array->maybeElementCount(), m_evaluation);
+            argument.m_inferredType = elementType;
+        }
+    } else {
+        ASSERT(!array.maybeElementCount());
+        elementCount = call.arguments().size();
+        if (!elementCount) {
+            typeError(call.span(), "cannot infer array element type from constructor"_s);
+            return;
+        }
+        for (auto& argument : call.arguments()) {
+            auto* argumentType = infer(argument, m_evaluation);
+            if (auto* reference = std::get_if<Types::Reference>(argumentType))
+                argumentType = reference->element;
 
-            if (isBottom(elementType) || isBottom(elementCountType)) {
-                inferred(m_types.bottomType());
-                return;
-            }
+            if (!elementType) {
+                elementType = argumentType;
 
-            if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) {
-                typeError(array->span(), "array count must be an i32 or u32 value, found '"_s, *elementCountType, '\'');
-                return;
-            }
-
-            if (!elementType->isConstructible()) {
-                typeError(array->span(), '\'', *elementType, "' cannot be used as an element type of an array"_s);
-                return;
-            }
-
-            auto constantValue = array->maybeElementCount()->constantValue();
-            if (!constantValue) {
-                typeError(call.span(), "array must have constant size in order to be constructed"_s);
-                return;
-            }
-
-            auto intElementCount = constantValue->integerValue();
-            if (intElementCount < 1) {
-                typeError(call.span(), "array count must be greater than 0"_s);
-                return;
-            }
-
-            if (intElementCount > std::numeric_limits<uint16_t>::max()) {
-                typeError(call.span(), "array count ("_s, intElementCount, ") must be less than 65536"_s);
-                return;
-            }
-            elementCount = static_cast<unsigned>(intElementCount);
-
-            unsigned numberOfArguments = call.arguments().size();
-            if (numberOfArguments && numberOfArguments != elementCount) {
-                auto errorKind = call.arguments().size() < elementCount ? "few"_s : "many"_s;
-                typeError(call.span(), "array constructor has too "_s, errorKind, " elements: expected "_s, elementCount, ", found "_s, call.arguments().size());
-                return;
-            }
-            for (auto& argument : call.arguments()) {
-                auto* argumentType = infer(argument, m_evaluation);
-                if (!unify(elementType, argumentType)) {
-                    typeError(argument.span(), '\'', *argumentType, "' cannot be used to construct an array of '"_s, *elementType, '\'');
+                if (!elementType->isConstructible()) {
+                    typeError(array.span(), '\'', *elementType, "' cannot be used as an element type of an array"_s);
                     return;
                 }
-                argument.m_inferredType = elementType;
+
+                continue;
             }
-        } else {
-            ASSERT(!array->maybeElementCount());
-            elementCount = call.arguments().size();
-            if (!elementCount) {
-                typeError(call.span(), "cannot infer array element type from constructor"_s);
-                return;
+            if (unify(elementType, argumentType))
+                continue;
+            if (unify(argumentType, elementType)) {
+                elementType = argumentType;
+                continue;
             }
-            for (auto& argument : call.arguments()) {
-                auto* argumentType = infer(argument, m_evaluation);
-                if (auto* reference = std::get_if<Types::Reference>(argumentType))
-                    argumentType = reference->element;
-
-                if (!elementType) {
-                    elementType = argumentType;
-
-                    if (!elementType->isConstructible()) {
-                        typeError(array->span(), '\'', *elementType, "' cannot be used as an element type of an array"_s);
-                        return;
-                    }
-
-                    continue;
-                }
-                if (unify(elementType, argumentType))
-                    continue;
-                if (unify(argumentType, elementType)) {
-                    elementType = argumentType;
-                    continue;
-                }
-                typeError(argument.span(), "cannot infer common array element type from constructor arguments"_s);
-                return;
-            }
-            for (auto& argument : call.arguments())
-                argument.m_inferredType = elementType;
+            typeError(argument.span(), "cannot infer common array element type from constructor arguments"_s);
+            return;
         }
-        auto* result = m_types.arrayType(elementType, { elementCount });
-        inferred(result);
-
-        unsigned argumentCount = call.arguments().size();
-        FixedVector<ConstantValue> arguments(argumentCount);
-        bool isConstant = true;
-        for (unsigned i = 0; i < argumentCount; ++i) {
-            auto& argument = call.arguments()[i];
-            auto& value = argument.m_constantValue;
-            if (!value.has_value() || !convertValue(argument.span(), argument.inferredType(), value))
-                isConstant = false;
-            else
-                arguments[i] = *value;
-        }
-        if (isConstant) {
-            if (argumentCount)
-                setConstantValue(call, result, ConstantArray(WTFMove(arguments)));
-            else
-                setConstantValue(call, result, zeroValue(result));
-        }
-        return;
+        for (auto& argument : call.arguments())
+            argument.m_inferredType = elementType;
     }
 
-    RELEASE_ASSERT_NOT_REACHED();
+    auto* result = m_types.arrayType(elementType, { elementCount });
+    inferred(result);
+
+    unsigned argumentCount = call.arguments().size();
+    FixedVector<ConstantValue> arguments(argumentCount);
+    bool isConstant = true;
+    for (unsigned i = 0; i < argumentCount; ++i) {
+        auto& argument = call.arguments()[i];
+        auto& value = argument.m_constantValue;
+        if (!value.has_value() || !convertValue(argument.span(), argument.inferredType(), value))
+            isConstant = false;
+        else
+            arguments[i] = *value;
+    }
+    if (isConstant) {
+        if (argumentCount)
+            setConstantValue(call, result, ConstantArray(WTFMove(arguments)));
+        else
+            setConstantValue(call, result, zeroValue(result));
+    }
 }
 
 void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& typeArguments)
