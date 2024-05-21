@@ -2938,6 +2938,8 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/letter-spacing/
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-hyphens-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-shaping-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-017.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-013.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-014.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-022.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-023.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-003.html [ ImageOnlyFailure ]

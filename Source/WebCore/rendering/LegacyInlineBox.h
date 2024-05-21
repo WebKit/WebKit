@@ -242,6 +242,10 @@ public:
     bool knownToHaveNoOverflow() const { return m_bitfields.knownToHaveNoOverflow(); }
     void clearKnownToHaveNoOverflow();
 
+    // For LegacyInlineTextBox
+    bool isInGlyphDisplayListCache() const { return m_bitfields.isInGlyphDisplayListCache(); }
+    void setIsInGlyphDisplayListCache(bool inCache = true) { m_bitfields.setIsInGlyphDisplayListCache(inCache); }
+
 private:
     LegacyInlineBox* m_nextOnLine { nullptr }; // The next element on the same line as us.
     LegacyInlineBox* m_previousOnLine { nullptr }; // The previous element on the same line as us.
@@ -339,10 +343,6 @@ protected:
     bool endsWithBreak() const { return m_bitfields.endsWithBreak(); }
     void setEndsWithBreak(bool endsWithBreak) { m_bitfields.setEndsWithBreak(endsWithBreak); }
 
-    // For LegacyInlineTextBox
-    bool isInGlyphDisplayListCache() const { return m_bitfields.isInGlyphDisplayListCache(); }
-    void setIsInGlyphDisplayListCache(bool inCache = true) { m_bitfields.setIsInGlyphDisplayListCache(inCache); }
-    
     // For LegacyInlineFlowBox and LegacyInlineTextBox
     bool extracted() const { return m_bitfields.extracted(); }
 

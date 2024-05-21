@@ -107,11 +107,11 @@ public:
 
     static GlyphDisplayListCache& singleton();
 
-    DisplayList::DisplayList* get(const LegacyInlineTextBox& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun);
-    DisplayList::DisplayList* get(const InlineDisplay::Box& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun);
+    DisplayList::DisplayList* get(const LegacyInlineTextBox&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);
+    DisplayList::DisplayList* get(const InlineDisplay::Box&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);
 
-    DisplayList::DisplayList* getIfExists(const LegacyInlineTextBox& run) { return getIfExists(&run); }
-    DisplayList::DisplayList* getIfExists(const InlineDisplay::Box& run) { return getIfExists(&run); }
+    DisplayList::DisplayList* getIfExists(const LegacyInlineTextBox&);
+    DisplayList::DisplayList* getIfExists(const InlineDisplay::Box&);
 
     void remove(const LegacyInlineTextBox& run) { remove(&run); }
     void remove(const InlineDisplay::Box& run) { remove(&run); }
@@ -119,15 +119,22 @@ public:
     void clear();
     unsigned size() const;
 
+    void setForceUseGlyphDisplayListForTesting(bool flag)
+    {
+        m_forceUseGlyphDisplayListForTesting = flag;
+    }
+
 private:
     static bool canShareDisplayList(const DisplayList::DisplayList&);
 
-    template <typename LayoutRun> DisplayList::DisplayList* getDisplayList(const LayoutRun*, const FontCascade&, GraphicsContext&, const TextRun&);
-    DisplayList::DisplayList* getIfExists(const void* run);
+    template<typename LayoutRun> DisplayList::DisplayList* getDisplayList(const LayoutRun&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);
+    template<typename LayoutRun> DisplayList::DisplayList* getIfExistsImpl(const LayoutRun&);
     void remove(const void* run);
 
     HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
+    HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForFrequentlyPaintedLayoutRun;
     HashSet<SingleThreadWeakRef<GlyphDisplayListCacheEntry>> m_entries;
+    bool m_forceUseGlyphDisplayListForTesting { false };
 };
 
 } // namespace WebCore

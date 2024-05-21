@@ -214,20 +214,14 @@ void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, c
     paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, start, end, m_style, m_shadow, m_shadowColorFilter);
 }
 
-static bool forceUseGlyphDisplayListForTesting = false;
-
 bool TextPainter::shouldUseGlyphDisplayList(const PaintInfo& paintInfo)
 {
-#if USE(GLYPH_DISPLAY_LIST_CACHE)
-    return !paintInfo.context().paintingDisabled() && paintInfo.enclosingSelfPaintingLayer() && (paintInfo.enclosingSelfPaintingLayer()->paintingFrequently() || forceUseGlyphDisplayListForTesting);
-#else
-    return !paintInfo.context().paintingDisabled() && paintInfo.enclosingSelfPaintingLayer() && forceUseGlyphDisplayListForTesting;
-#endif
+    return !paintInfo.context().paintingDisabled() && paintInfo.enclosingSelfPaintingLayer();
 }
 
 void TextPainter::setForceUseGlyphDisplayListForTesting(bool enabled)
 {
-    forceUseGlyphDisplayListForTesting = enabled;
+    GlyphDisplayListCache::singleton().setForceUseGlyphDisplayListForTesting(enabled);
 }
 
 void TextPainter::clearGlyphDisplayListCacheForTesting()
