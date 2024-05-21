@@ -209,38 +209,28 @@ function notify_entitlements()
         plistbuddy Add :com.apple.private.darwin-notification.introspect:5 string com.apple.accessibility.cache.ax
         plistbuddy Add :com.apple.private.darwin-notification.introspect:6 string com.apple.accessibility.cache.enhance.text.legibility
         plistbuddy Add :com.apple.private.darwin-notification.introspect:7 string com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:8 string com.apple.accessibility.cache.guided.access
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:9 string com.apple.accessibility.cache.guided.access.via.mdm
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:10 string com.apple.accessibility.cache.hearing.aid.paired
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:11 string com.apple.accessibility.cache.invert.colors
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:12 string com.apple.accessibility.cache.invert.colorscom.apple.WebKit.WebContent
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:13 string com.apple.accessibility.cache.reduce.motion
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:14 string com.apple.accessibility.cache.reduce.motioncom.apple.WebKit.WebContent
-        com.apple.accessibility.cache.speech.settings.disabled.by.mc
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:15 string plistbuddy Add :com.apple.private.darwin-notification.introspect:11 string com.apple.accessibility.cache.switch.control
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:16 string com.apple.accessibility.cache.vot
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:17 string com.apple.accessibility.cache.zoom
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:18 string com.apple.language.changed
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:19 string  com.apple.mediaaccessibility.audibleMediaSettingsChanged
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:20 string com.apple.mediaaccessibility.captionAppearanceSettingsChanged
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:21 string com.apple.powerlog.state_changed
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:22 string com.apple.system.logging.prefschanged
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:23 string com.apple.system.lowpowermode
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:24 string com.apple.system.timezone
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:25 string com.apple.zoomwindow
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:26 string org.WebKit.lowMemory
-        plistbuddy Add :com.apple.private.darwin-notification.introspect:27 string org.WebKit.lowMemory.begin
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:8 string com.apple.accessibility.cache.guided.access.via.mdm
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:9 string com.apple.accessibility.cache.invert.colors
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:10 string com.apple.accessibility.cache.invert.colorscom.apple.WebKit.WebContent
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:11 string com.apple.accessibility.cache.vot
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:12 string com.apple.accessibility.cache.zoom
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:13 string com.apple.language.changed
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:14 string com.apple.mediaaccessibility.captionAppearanceSettingsChanged
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:15 string com.apple.powerlog.state_changed
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:16 string com.apple.system.logging.prefschanged
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:17 string com.apple.system.lowpowermode
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:18 string com.apple.system.timezone
+        plistbuddy Add :com.apple.private.darwin-notification.introspect:19 string com.apple.zoomwindow
         if [[ "${WK_PLATFORM_NAME}" == macosx ]]
         then
-            plistbuddy Add :com.apple.private.darwin-notification.introspect:28 string com.apple.system.DirectoryService.InvalidateCache
-            plistbuddy Add :com.apple.private.darwin-notification.introspect:29 string com.apple.system.DirectoryService.InvalidateCache.group
-            plistbuddy Add :com.apple.private.darwin-notification.introspect:30 string com.apple.system.DirectoryService.InvalidateCache.host
-            plistbuddy Add :com.apple.private.darwin-notification.introspect:31 string com.apple.system.DirectoryService.InvalidateCache.service
-            plistbuddy Add :com.apple.private.darwin-notification.introspect:32 string com.apple.system.DirectoryService.InvalidateCache.user
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:20 string com.apple.system.DirectoryService.InvalidateCache
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:21 string com.apple.system.DirectoryService.InvalidateCache.group
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:22 string com.apple.system.DirectoryService.InvalidateCache.host
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:23 string com.apple.system.DirectoryService.InvalidateCache.service
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:24 string com.apple.system.DirectoryService.InvalidateCache.user
         else
-            plistbuddy Add :com.apple.private.darwin-notification.introspect:28 string com.apple.mobile.usermanagerd.foregrounduser_changed
-            plistbuddy Add :com.apple.private.darwin-notification.introspect:29 string com.apple.mobile.keybagd.lock_status
-            plistbuddy Add :com.apple.private.darwin-notification.introspect:30 string com.apple.mobile.keybagd.user_changed
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:20 string com.apple.mobile.usermanagerd.foregrounduser_changed
+            plistbuddy Add :com.apple.private.darwin-notification.introspect:21 string com.apple.mobile.keybagd.user_changed
         fi
     fi
 }
