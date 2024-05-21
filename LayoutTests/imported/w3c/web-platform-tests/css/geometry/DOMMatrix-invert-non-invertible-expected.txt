@@ -1,0 +1,6 @@
+Test DOMMatrix.inverse()/invertSelf() for non-invertible matrix
+
+
+PASS invertSelf()
+PASS inverse()
+

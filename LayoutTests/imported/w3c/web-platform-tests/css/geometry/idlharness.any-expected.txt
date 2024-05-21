@@ -1,5 +1,6 @@
 
-PASS Test driver
+PASS idl_test setup
+PASS idl_test validation
 PASS DOMPointReadOnly interface: existence and properties of interface object
 PASS DOMPointReadOnly interface object length
 PASS DOMPointReadOnly interface object name
@@ -28,7 +29,11 @@ PASS DOMPointReadOnly interface: default toJSON operation on new DOMPointReadOnl
 PASS DOMPoint interface: existence and properties of interface object
 PASS DOMPoint interface object length
 PASS DOMPoint interface object name
-PASS DOMPoint interface: legacy window alias
+FAIL DOMPoint interface: legacy window alias assert_equals: self.SVGPoint should be the same value as self.DOMPoint expected function "function DOMPoint() {
+    [native code]
+}" but got function "function SVGPoint() {
+    [native code]
+}"
 PASS DOMPoint interface: existence and properties of interface prototype object
 PASS DOMPoint interface: existence and properties of interface prototype object's "constructor" property
 PASS DOMPoint interface: existence and properties of interface prototype object's @@unscopables property
@@ -88,7 +93,11 @@ PASS DOMRectReadOnly interface: default toJSON operation on new DOMRectReadOnly(
 PASS DOMRect interface: existence and properties of interface object
 PASS DOMRect interface object length
 PASS DOMRect interface object name
-PASS DOMRect interface: legacy window alias
+FAIL DOMRect interface: legacy window alias assert_equals: self.SVGRect should be the same value as self.DOMRect expected function "function DOMRect() {
+    [native code]
+}" but got function "function SVGRect() {
+    [native code]
+}"
 PASS DOMRect interface: existence and properties of interface prototype object
 PASS DOMRect interface: existence and properties of interface prototype object's "constructor" property
 PASS DOMRect interface: existence and properties of interface prototype object's @@unscopables property
@@ -118,6 +127,18 @@ PASS DOMRectReadOnly interface: new DOMRect() must inherit property "left" with 
 PASS DOMRectReadOnly interface: new DOMRect() must inherit property "toJSON()" with the proper type
 PASS DOMRectReadOnly interface: default toJSON operation on new DOMRect()
 PASS DOMRectList interface: existence and properties of interface object
+PASS DOMRectList interface object length
+PASS DOMRectList interface object name
+PASS DOMRectList interface: existence and properties of interface prototype object
+PASS DOMRectList interface: existence and properties of interface prototype object's "constructor" property
+PASS DOMRectList interface: existence and properties of interface prototype object's @@unscopables property
+PASS DOMRectList interface: attribute length
+PASS DOMRectList interface: operation item(unsigned long)
+PASS DOMRectList must be primary interface of [object DOMRectList]
+PASS Stringification of [object DOMRectList]
+PASS DOMRectList interface: [object DOMRectList] must inherit property "length" with the proper type
+PASS DOMRectList interface: [object DOMRectList] must inherit property "item(unsigned long)" with the proper type
+PASS DOMRectList interface: calling item(unsigned long) on [object DOMRectList] with too few arguments must throw TypeError
 PASS DOMQuad interface: existence and properties of interface object
 PASS DOMQuad interface object length
 PASS DOMQuad interface object name
@@ -194,7 +215,7 @@ PASS DOMMatrixReadOnly interface: operation inverse()
 PASS DOMMatrixReadOnly interface: operation transformPoint(optional DOMPointInit)
 PASS DOMMatrixReadOnly interface: operation toFloat32Array()
 PASS DOMMatrixReadOnly interface: operation toFloat64Array()
-PASS DOMMatrixReadOnly interface: member
+PASS DOMMatrixReadOnly interface: stringifier
 PASS DOMMatrixReadOnly interface: operation toJSON()
 PASS DOMMatrixReadOnly must be primary interface of new DOMMatrixReadOnly()
 PASS Stringification of new DOMMatrixReadOnly()
@@ -255,7 +276,6 @@ PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property 
 PASS DOMMatrixReadOnly interface: calling transformPoint(optional DOMPointInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat32Array()" with the proper type
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat64Array()" with the proper type
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must not have property ""
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toJSON()" with the proper type
 PASS DOMMatrixReadOnly interface: default toJSON operation on new DOMMatrixReadOnly()
 PASS DOMMatrixReadOnly must be primary interface of DOMMatrixReadOnly.fromMatrix({is2D: false})
@@ -263,7 +283,11 @@ PASS Stringification of DOMMatrixReadOnly.fromMatrix({is2D: false})
 PASS DOMMatrix interface: existence and properties of interface object
 PASS DOMMatrix interface object length
 PASS DOMMatrix interface object name
-PASS DOMMatrix interface: legacy window alias
+FAIL DOMMatrix interface: legacy window alias assert_equals: self.SVGMatrix should be the same value as self.DOMMatrix expected function "function DOMMatrix() {
+    [native code]
+}" but got function "function SVGMatrix() {
+    [native code]
+}"
 PASS DOMMatrix interface: existence and properties of interface prototype object
 PASS DOMMatrix interface: existence and properties of interface prototype object's "constructor" property
 PASS DOMMatrix interface: existence and properties of interface prototype object's @@unscopables property
@@ -303,7 +327,7 @@ PASS DOMMatrix interface: operation rotateAxisAngleSelf(optional unrestricted do
 PASS DOMMatrix interface: operation skewXSelf(optional unrestricted double)
 PASS DOMMatrix interface: operation skewYSelf(optional unrestricted double)
 PASS DOMMatrix interface: operation invertSelf()
-PASS DOMMatrix interface: member setMatrixValue
+PASS DOMMatrix interface: operation setMatrixValue(DOMString)
 PASS DOMMatrix must be primary interface of new DOMMatrix()
 PASS Stringification of new DOMMatrix()
 PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromMatrix(optional DOMMatrixInit)" with the proper type
@@ -355,7 +379,8 @@ PASS DOMMatrix interface: calling skewXSelf(optional unrestricted double) on new
 PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewYSelf(optional unrestricted double)" with the proper type
 PASS DOMMatrix interface: calling skewYSelf(optional unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError
 PASS DOMMatrix interface: new DOMMatrix() must inherit property "invertSelf()" with the proper type
-PASS DOMMatrix interface: new DOMMatrix() must not have property "setMatrixValue"
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "setMatrixValue(DOMString)" with the proper type
+PASS DOMMatrix interface: calling setMatrixValue(DOMString) on new DOMMatrix() with too few arguments must throw TypeError
 PASS DOMMatrix must be primary interface of DOMMatrix.fromMatrix({is2D: false})
 PASS Stringification of DOMMatrix.fromMatrix({is2D: false})
 

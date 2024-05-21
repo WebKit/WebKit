@@ -20,6 +20,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-a-f-alias.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-css-string.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-invert-invertible.html
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-invert-non-invertible.html
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-invert-preserves-2d.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-newobject.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix-stringifier.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html
@@ -37,7 +40,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/WebKitCSSMatrix.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/WebKitCSSMatrix.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/historical.html
-/LayoutTests/imported/w3c/web-platform-tests/css/geometry/idlharness.html
-/LayoutTests/imported/w3c/web-platform-tests/css/geometry/idlharness.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/css/geometry/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/spec-examples.html
 /LayoutTests/imported/w3c/web-platform-tests/css/geometry/structured-serialization.html
