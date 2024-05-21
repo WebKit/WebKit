@@ -64,14 +64,19 @@ struct ExceptionOperationResult<void> : public ExceptionOperationResultBase {
 template<typename OperationType>
 concept OperationHasResult = FunctionTraits<OperationType>::hasResult && !std::is_same_v<typename FunctionTraits<OperationType>::ResultType, ExceptionOperationResult<void>>;
 
+// Note we need this because e.g. `requires (!OperationHasResult<int>)` will pass the requirement as the SFINAE in `OperationHasResult<int>`
+// means the concept returns false and the `!` makes it true.
+template<typename OperationType>
+concept OperationIsVoid = !FunctionTraits<OperationType>::hasResult || std::is_same_v<typename FunctionTraits<OperationType>::ResultType, ExceptionOperationResult<void>>;
+
 template<typename T>
 concept isExceptionOperationResult = std::is_base_of_v<ExceptionOperationResultBase, T>;
 
-// Note: We always return an exception in a register if the operation's return type is void on all platforms.
+// Note: We always return an exception in a register if the operation's return type is void on all platforms (assuming it throws).
 template<typename T>
 using OperationReturnType = std::conditional_t<(std::is_same_v<T, void> || canMakeExceptionOperationResult<T>), ExceptionOperationResult<T>, T>;
 
-// This class exists so we can cast ExceptionOperationImplicitResult<From> to ExceptionOperationResult<To> implicity while ExceptionOperationResult remains POD.
+// This class exists so we can cast ExceptionOperationImplicitResult<From> to ExceptionOperationResult<To> implicitly while ExceptionOperationResult remains POD.
 // FIXME: we could use __atribute__((trivial_abi)) when we no longer support MSVC.
 template<typename From>
 struct ExceptionOperationImplicitResult {

@@ -332,7 +332,14 @@ public:
         {
         }
 
-        inline constexpr Reg operator*() const { return Reg::fromIndex(*m_iter); }
+        inline constexpr Reg reg() const { return Reg::fromIndex(*m_iter); }
+        inline constexpr Reg operator*() const { return reg(); }
+
+        inline constexpr bool isGPR() const { return reg().isGPR(); }
+        inline constexpr bool isFPR() const { return reg().isFPR(); }
+
+        inline constexpr GPRReg gpr() const { return reg().gpr(); }
+        inline constexpr FPRReg fpr() const { return reg().fpr(); }
 
         iterator& operator++()
         {

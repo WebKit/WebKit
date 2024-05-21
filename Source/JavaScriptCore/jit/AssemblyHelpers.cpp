@@ -373,13 +373,17 @@ AssemblyHelpers::Jump AssemblyHelpers::emitExceptionCheck(VM& vm, ExceptionCheck
     Jump result;
     if (exceptionReg != InvalidGPRReg) {
 #if ASSERT_ENABLED
+        JIT_COMMENT(*this, "Exception validation");
         Jump ok = branchPtr(Equal, AbsoluteAddress(vm.addressOfException()), exceptionReg);
         breakpoint();
         ok.link(this);
 #endif
+        JIT_COMMENT(*this, "Exception check from operation result register");
         result = branchTestPtr(kind == NormalExceptionCheck ? NonZero : Zero, exceptionReg);
-    } else
+    } else {
+        JIT_COMMENT(*this, "Exception check from vm");
         result = branchTestPtr(kind == NormalExceptionCheck ? NonZero : Zero, AbsoluteAddress(vm.addressOfException()));
+    }
 
     if (width == NormalJumpWidth)
         return result;
