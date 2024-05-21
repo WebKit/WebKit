@@ -29,7 +29,6 @@
 #include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -38,7 +37,7 @@ class ImageDecoderGStreamerSample;
 
 void teardownGStreamerImageDecoders();
 
-class ImageDecoderGStreamer final : public ImageDecoder, public CanMakeWeakPtr<ImageDecoderGStreamer> {
+class ImageDecoderGStreamer final : public ImageDecoder {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ImageDecoderGStreamer);
 public:

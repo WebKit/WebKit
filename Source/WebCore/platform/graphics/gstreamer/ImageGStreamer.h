@@ -21,20 +21,23 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "BitmapImage.h"
 #include "FloatRect.h"
 #include "GStreamerCommon.h"
-#include "PlatformImage.h"
 
+#include <gst/gst.h>
 #include <gst/video/video-frame.h>
 
-#include <wtf/Forward.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 class IntSize;
 
 class ImageGStreamer : public RefCounted<ImageGStreamer> {
 public:
-    static Ref<ImageGStreamer> create(GRefPtr<GstSample>&& sample)
+    static Ref<ImageGStreamer> createImage(GRefPtr<GstSample>&& sample)
     {
         return adoptRef(*new ImageGStreamer(WTFMove(sample)));
     }
@@ -42,7 +45,11 @@ public:
 
     operator bool() const { return !!m_image; }
 
-    PlatformImagePtr image() const { return m_image; }
+    BitmapImage& image()
+    {
+        ASSERT(m_image);
+        return *m_image.get();
+    }
 
     void setCropRect(FloatRect rect) { m_cropRect = rect; }
     FloatRect rect()
@@ -50,7 +57,7 @@ public:
         ASSERT(m_image);
         if (!m_cropRect.isEmpty())
             return FloatRect(m_cropRect);
-        return FloatRect(0, 0, m_size.width(), m_size.height());
+        return FloatRect(0, 0, m_image->size().width(), m_image->size().height());
     }
 
     bool hasAlpha() const { return m_hasAlpha; }
@@ -58,13 +65,12 @@ public:
 private:
     ImageGStreamer(GRefPtr<GstSample>&&);
     GRefPtr<GstSample> m_sample;
-    PlatformImagePtr m_image;
+    RefPtr<BitmapImage> m_image;
     FloatRect m_cropRect;
 #if USE(CAIRO)
     GstVideoFrame m_videoFrame;
     bool m_frameMapped { false };
 #endif
-    FloatSize m_size;
     bool m_hasAlpha { false };
 };
 
