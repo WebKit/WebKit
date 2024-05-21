@@ -66,7 +66,7 @@ Queue::~Queue()
 
 void Queue::ensureBlitCommandEncoder()
 {
-    if (m_blitCommandEncoder)
+    if (m_blitCommandEncoder && m_blitCommandEncoder == encoderForBuffer(m_commandBuffer))
         return;
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
