@@ -1,4 +1,5 @@
 
 
 PASS Checking invalid rect
+PASS Checking invalid copyTo rect
 

@@ -12,6 +12,7 @@ promise_test(async (t) => {
     myImage.src = 'data:';
     await new Promise(resolve => myImage.onerror = resolve);
     const videoFrame = new VideoFrame(myImage, {timestamp: 0});
+    t.add_cleanup(() => videoFrame.close());
     return promise_rejects_js(t, TypeError,
         videoFrame.copyTo(new ArrayBuffer(72), { rect: {
             y: -2,
@@ -19,7 +20,39 @@ promise_test(async (t) => {
             height: 18
         }})
      );
-  }, "Checking invalid rect");
+}, "Checking invalid rect");
+
+function tryCopy(videoFrame, buffer, overrideRect)
+{
+    const rect = { x: 0, y: 0, width: 1, height: 1 };
+    for (const property in overrideRect)
+        rect[property] = overrideRect[property];
+    return videoFrame.copyTo(buffer, { rect });
+}
+
+promise_test(async (t) => {
+    const data = new ArrayBuffer(4);
+    const videoFrame = new VideoFrame(data, {timestamp: 1, codedHeight: 1, codedWidth: 1, format: 'BGRA'});
+    t.add_cleanup(() => videoFrame.close());
+
+    const output = new Uint32Array(0x8000);
+    const buffer = output.buffer;
+
+    await tryCopy(videoFrame, buffer, { });
+
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { x: -1 }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { x: NaN }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { x: Infinity }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { y: -1 }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { y: NaN }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { y: Infinity }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { width: -1 }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { width: NaN }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { width: Infinity }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { height: -1 }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { height: Infinity }));
+    await promise_rejects_js(t, TypeError, tryCopy(videoFrame, buffer, { height: NaN }));
+}, "Checking invalid copyTo rect");
 </script>
 </body>
 </html>
