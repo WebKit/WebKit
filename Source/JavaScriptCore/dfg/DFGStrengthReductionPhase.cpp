@@ -1249,7 +1249,7 @@ private:
             // FIXME: Support wasm IC.
             // DirectCall to wasm function has suboptimal implementation. We avoid using DirectCall if we know that function is a wasm function.
             // https://bugs.webkit.org/show_bug.cgi?id=220339
-            if (executable->intrinsic() == WasmFunctionIntrinsic) {
+            if (executable->intrinsic() == WasmFunctionIntrinsic && !Options::forceICFailure()) {
                 if (m_node->op() != Call) // FIXME: We should support tail-call.
                     break;
                 if (!function)

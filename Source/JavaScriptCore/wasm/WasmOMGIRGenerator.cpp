@@ -114,6 +114,7 @@ public:
     using ExpressionType = Variable*;
     using ResultList = Vector<ExpressionType, 8>;
     using CallType = CallLinkInfo::CallType;
+    using CallPatchpointData = std::tuple<B3::PatchpointValue*, Box<PatchpointExceptionHandle>, RefPtr<B3::StackmapGenerator>>;
 
     static constexpr bool tierSupportsSIMD = true;
 
@@ -696,8 +697,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
     PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, Value* jsCalleeAnchor, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&, CallType = CallType::Call);
-    B3::PatchpointValue* createCallPatchpoint(BasicBlock*, Value* jsCalleeAnchor, B3::Type, const CallInformation&, const Vector<ExpressionType>& tmpArgs, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
-    B3::PatchpointValue* createTailCallPatchpoint(BasicBlock*, const Vector<ArgumentLocation>&, const Vector<ExpressionType>& tmpArgs, const Checked<int32_t>& tailCallStackOffsetFromFP, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
+    auto createCallPatchpoint(BasicBlock*, Value* jsCalleeAnchor, B3::Type, const CallInformation&, const Vector<ExpressionType>& tmpArgs) -> CallPatchpointData;
+    auto createTailCallPatchpoint(BasicBlock*, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const Vector<ExpressionType>& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData;
 
     PartialResult WARN_UNUSED_RETURN emitInlineDirectCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
 
@@ -1657,8 +1658,8 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
 
     const auto& callingConvention = wasmCallingConvention();
     CallInformation wasmCalleeInfo = callingConvention.callInformationFor(signature, CallRole::Caller);
+    CallInformation wasmCalleeInfoAsCallee = callingConvention.callInformationFor(signature, CallRole::Callee);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCalleeInfo.headerAndArgumentStackSizeInBytes);
-    const Vector<ArgumentLocation>& locations = wasmCalleeInfo.params;
 
     m_proc.requestCallArgAreaSizeInBytes(calleeStackSize);
 
@@ -1667,53 +1668,50 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
 
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
         const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
-        CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
-        Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfo.headerAndArgumentStackSizeInBytes);
-        Checked<int32_t> tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;
-        m_tailCallStackOffsetFromFP = std::min(m_tailCallStackOffsetFromFP, tailCallStackOffsetFromFP);
+        CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
 
-        createTailCallPatchpoint(m_currentBlock, locations, args, tailCallStackOffsetFromFP,
-            scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>([=, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
-                patchpoint->append(calleeCode, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0));
-                patchpoint->setGenerator([this, tailCallStackOffsetFromFP, handle](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                    AllowMacroScratchRegisterUsage allowScratch(jit);
-                    prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-                    if (handle)
-                        handle->generate(jit, params, this);
-
-                    // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
-                    CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-                    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
-                    jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
-                    jit.farJump(params[0].gpr(), WasmEntryPtrTag);
-                });
-            }));
+        auto [patchpoint, _, prepareForCall] = createTailCallPatchpoint(m_currentBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { { calleeCode, ValueRep(GPRInfo::wasmScratchGPR0) } });
+        unsigned patchArgsIndex = patchpoint->reps().size();
+        patchpoint->append(calleeCode, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0));
+        patchArgsIndex += m_proc.resultCount(patchpoint->type());
+        patchpoint->setGenerator([prepareForCall = prepareForCall, patchArgsIndex](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            prepareForCall->run(jit, params);
+            // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
+            CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
+            jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
+            jit.farJump(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
+        });
         return { };
     }
 
     m_makesCalls = true;
 
     B3::Type returnType = toB3ResultType(&signature);
-    Value* callResult = createCallPatchpoint(m_currentBlock, jsCalleeAnchor, returnType, wasmCalleeInfo, args,
-        scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>([=, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
-            // We need to clobber all potential pinned registers since we might be leaving the instance.
-            // We pessimistically assume we're always calling something that is bounds checking so
-            // because the wasm->wasm thunk unconditionally overrides the size registers.
-            // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
-            // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
-            patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters());
+    auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, jsCalleeAnchor, returnType, wasmCalleeInfo, args);
+    // We need to clobber all potential pinned registers since we might be leaving the instance.
+    // We pessimistically assume we're always calling something that is bounds checking so
+    // because the wasm->wasm thunk unconditionally overrides the size registers.
+    // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
+    // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
+    patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters());
 
-            patchpoint->append(calleeCode, ValueRep::SomeRegister);
-            patchpoint->append(boxedCalleeCallee, ValueRep::SomeRegister);
-            patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                AllowMacroScratchRegisterUsage allowScratch(jit);
-                if (handle)
-                    handle->generate(jit, params, this);
+    unsigned patchArgsIndex = patchpoint->reps().size();
+    patchpoint->append(calleeCode, ValueRep::SomeRegister);
+    patchpoint->append(boxedCalleeCallee, ValueRep::SomeRegister);
+    patchArgsIndex += m_proc.resultCount(patchpoint->type());
+    patchpoint->setGenerator([this, handle = handle, prepareForCall = prepareForCall, patchArgsIndex](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        if (prepareForCall)
+            prepareForCall->run(jit, params);
+        if (handle)
+            handle->generate(jit, params, this);
 
-                jit.storeWasmCalleeCallee(params[params.proc().resultCount(returnType) + 1].gpr());
-                jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
-            });
-        }));
+        jit.storeWasmCalleeCallee(params[patchArgsIndex + 1].gpr());
+        jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
+    });
+    auto callResult = patchpoint;
 
     switch (returnType.kind()) {
     case B3::Void: {
@@ -4654,7 +4652,7 @@ auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
 }
 
 
-B3::PatchpointValue* OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnchor, B3::Type returnType, const CallInformation& wasmCalleeInfo, const Vector<ExpressionType>& tmpArgs, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor)
+auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnchor, B3::Type returnType, const CallInformation& wasmCalleeInfo, const Vector<ExpressionType>& tmpArgs) -> CallPatchpointData
 {
     Vector<B3::ConstrainedValue> constrainedPatchArgs;
     for (unsigned i = 0; i < tmpArgs.size(); ++i)
@@ -4669,7 +4667,6 @@ B3::PatchpointValue* OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Val
     patchpoint->effects.readsPinned = true;
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
-    patchpointFunctor(patchpoint, exceptionHandle);
     patchpoint->appendVector(constrainedPatchArgs);
 
     *exceptionHandle = preparePatchpointForExceptions(block, patchpoint);
@@ -4682,11 +4679,16 @@ B3::PatchpointValue* OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Val
         patchpoint->resultConstraints = WTFMove(resultConstraints);
     }
     block->append(patchpoint);
-    return patchpoint;
+    return { patchpoint, exceptionHandle, nullptr };
 }
 
-B3::PatchpointValue* OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, const Vector<ArgumentLocation>& constrainedArgLocations, const Vector<ExpressionType>& tmpArgs, const Checked<int32_t>& tailCallStackOffsetFromFP, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor)
+auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const Vector<ExpressionType>& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData
 {
+    // First slot here is the last argument to the caller, a.k.a the first stack slot that belongs to the caller.
+    const Checked<int32_t> offsetOfFirstSlotFromFP = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfoAsCallee.headerAndArgumentStackSizeInBytes);
+    const Checked<int32_t> offsetOfNewFPFromFirstSlot = checkedProduct<int32_t>(-1, WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCalleeInfoAsCallee.headerAndArgumentStackSizeInBytes));
+    const Checked<int32_t> newFPOffsetFromFP = checkedSum<int32_t>(offsetOfFirstSlotFromFP + offsetOfNewFPFromFirstSlot);
+    m_tailCallStackOffsetFromFP = std::min(m_tailCallStackOffsetFromFP, newFPOffsetFromFP);
     //    Layout of stack right before tail call F -> G
     //
     //
@@ -4725,8 +4727,8 @@ B3::PatchpointValue* OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block,
     //
     //  See https://leaningtech.com/fantastic-tail-calls-and-how-to-implement-them/ for a more in-depth explanation.
 
-    auto shuffleStackArg = [this, block, tailCallStackOffsetFromFP](Value* value, int32_t offsetFromSP) {
-        Checked<int32_t> offsetFromFP = tailCallStackOffsetFromFP + offsetFromSP;
+    auto shuffleStackArg = [this, block, newFPOffsetFromFP](Value* value, int32_t offsetFromSP) {
+        Checked<int32_t> offsetFromFP = newFPOffsetFromFP + offsetFromSP;
 
         if (offsetFromFP < 0) {
             Air::StackSlot* stackSlot = m_proc.addStackSlot(sizeof(Register));
@@ -4745,13 +4747,13 @@ B3::PatchpointValue* OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block,
     Value* previousFramePointer = block->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), framePointer());
 
     Vector<B3::ConstrainedValue> constrainedArguments;
-    for (unsigned i = 0; i < tmpArgs.size(); ++i) {
-        RELEASE_ASSERT(!tmpArgs[i]->type().isVector());
-        if (constrainedArgLocations[i].location.isStackArgument()) {
-            shuffleStackArg(get(block, tmpArgs[i]), constrainedArgLocations[i].location.offsetFromSP());
+    for (unsigned i = 0; i < tmpArgSourceLocations.size(); ++i) {
+        RELEASE_ASSERT(!tmpArgSourceLocations[i]->type().isVector());
+        if (wasmCalleeInfoAsCallee.params[i].location.isStackArgument()) {
+            shuffleStackArg(get(block, tmpArgSourceLocations[i]), wasmCalleeInfoAsCallee.params[i].location.offsetFromSP());
             continue;
         }
-        constrainedArguments.append(B3::ConstrainedValue(get(block, tmpArgs[i]), constrainedArgLocations[i]));
+        constrainedArguments.append(B3::ConstrainedValue(get(block, tmpArgSourceLocations[i]), wasmCalleeInfoAsCallee.params[i]));
     }
     constrainedArguments.append(B3::ConstrainedValue(previousFramePointer, ValueRep(MacroAssembler::framePointerRegister)));
 
@@ -4766,12 +4768,17 @@ B3::PatchpointValue* OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block,
     clobbers.exclude(RegisterSetBuilder::stackRegisters());
     patchpoint->clobber(clobbers);
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
-
-    patchpointFunctor(patchpoint, nullptr);
+    patchpoint->appendVector(WTFMove(patchArgs));
     patchpoint->appendVector(WTFMove(constrainedArguments));
 
     block->append(patchpoint);
-    return patchpoint;
+
+    auto prepareForCall = createSharedTask<B3::StackmapGeneratorFunction>([wasmCalleeInfoAsCallee, wasmCallerInfoAsCallee, newFPOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        ASSERT(newFPOffsetFromFP >= 0 || params.code().frameSize() >= static_cast<uint32_t>(-newFPOffsetFromFP));
+        prepareForTailCall(jit, params, newFPOffsetFromFP);
+    });
+
+    return { patchpoint, nullptr, WTFMove(prepareForCall) };
 }
 
 bool OMGIRGenerator::canInline() const
@@ -4854,7 +4861,11 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     const auto& callingConvention = wasmCallingConvention();
     Checked<int32_t> tailCallStackOffsetFromFP;
     CallInformation wasmCalleeInfo = callingConvention.callInformationFor(signature, CallRole::Caller);
+    CallInformation wasmCalleeInfoAsCallee = callingConvention.callInformationFor(signature, CallRole::Callee);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCalleeInfo.headerAndArgumentStackSizeInBytes);
+    const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
+    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+    CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
 
     B3::Type returnType;
     Value* jumpDestination = nullptr;
@@ -4898,17 +4909,18 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     m_proc.requestCallArgAreaSizeInBytes(calleeStackSize);
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
-
-        auto emitCallToImport = [&, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
+        auto emitCallToImport = [&, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle, RefPtr<B3::StackmapGenerator> prepareForCall) -> void {
+            unsigned patchArgsIndex = patchpoint->reps().size();
             patchpoint->append(jumpDestination, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0));
             // We need to clobber all potential pinned registers since we might be leaving the instance.
             // We pessimistically assume we could be calling to something that is bounds checking.
             // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
             patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters());
-            patchpoint->setGenerator([this, handle, returnType, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            patchArgsIndex += m_proc.resultCount(patchpoint->type());
+            patchpoint->setGenerator([this, patchArgsIndex, handle, isTailCall, tailCallStackOffsetFromFP, prepareForCall](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-                if (isTailCall)
-                    prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
+                if (prepareForCall)
+                    prepareForCall->run(jit, params);
                 if (handle)
                     handle->generate(jit, params, this);
                 if (isTailCall) {
@@ -4916,9 +4928,9 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
                     CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
                     jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
                     jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
-                    jit.farJump(params[0].gpr(), WasmEntryPtrTag);
+                    jit.farJump(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
                 } else
-                    jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
+                    jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
             });
         };
 
@@ -4931,14 +4943,16 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
         jumpDestination = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfImportFunctionStub(functionIndex)));
 
         if (isTailCall) {
-            createTailCallPatchpoint(m_currentBlock, wasmCalleeInfo.params, args, tailCallStackOffsetFromFP, scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitCallToImport));
+            auto [patchpoint, handle, prepareForCall] = createTailCallPatchpoint(m_currentBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { });
+            emitCallToImport(patchpoint, handle, prepareForCall);
             return { };
         }
 
-        Value* result = createCallPatchpoint(m_currentBlock, nullptr, returnType, wasmCalleeInfo, args, scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitCallToImport));
+        auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, nullptr, returnType, wasmCalleeInfo, args);
+        emitCallToImport(patchpoint, handle, prepareForCall);
 
         if (returnType != B3::Void)
-            fillResults(result);
+            fillResults(patchpoint);
 
         // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
         restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
@@ -4949,11 +4963,11 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
 
     Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
 
-    auto emitUnlinkedWasmToWasmCall = [&, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
-        patchpoint->setGenerator([this, handle, unlinkedWasmToWasmCalls, functionIndex, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    auto emitUnlinkedWasmToWasmCall = [&, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle, RefPtr<B3::StackmapGenerator> prepareForCall) -> void {
+        patchpoint->setGenerator([this, handle, unlinkedWasmToWasmCalls, functionIndex, isTailCall, tailCallStackOffsetFromFP, prepareForCall](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            if (isTailCall)
-                prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
+            if (prepareForCall)
+                prepareForCall->run(jit, params);
             if (handle)
                 handle->generate(jit, params, this);
             if (isTailCall) {
@@ -4973,8 +4987,8 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     };
 
     if (isTailCall) {
-        createTailCallPatchpoint(m_currentBlock, wasmCalleeInfo.params, args, tailCallStackOffsetFromFP,
-            scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitUnlinkedWasmToWasmCall));
+        auto [patchpoint, handle, prepareForCall] = createTailCallPatchpoint(m_currentBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { });
+        emitUnlinkedWasmToWasmCall(patchpoint, handle, prepareForCall);
         return { };
     }
 
@@ -4982,9 +4996,9 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
         && functionIndex - m_numImportFunctions != m_functionIndex
         && m_info.functionWasmSizeImportSpace(functionIndex) < Options::maximumWasmCalleeSizeForInlining()
         && isAnyOMG(m_compilationMode)
-        && canInline()) {
+        && canInline()
+        && !m_info.callCanClobberInstance(functionIndex)) {
         dataLogLnIf(WasmOMGIRGeneratorInternal::verboseInlining, " inlining call to ", functionIndex - m_numImportFunctions, " from ", m_functionIndex, " depth ", m_inlineDepth);
-        RELEASE_ASSERT(!m_info.callCanClobberInstance(functionIndex));
         m_inlineRoot->m_inlinedBytes += m_info.functionWasmSizeImportSpace(functionIndex);
 
         return emitInlineDirectCall(functionIndex - m_numImportFunctions, signature, args, results);
@@ -4994,14 +5008,14 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     // 1. It is not tail-call. So this does not clobber the arguments of this function.
     // 2. We are not changing instance. Thus, |this| of this function's arguments are the same and OK.
 
-    PatchpointValue* callResult = createCallPatchpoint(m_currentBlock, nullptr, returnType, wasmCalleeInfo, args,
-        scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitUnlinkedWasmToWasmCall));
+    auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, nullptr, returnType, wasmCalleeInfo, args);
+    emitUnlinkedWasmToWasmCall(patchpoint, handle, prepareForCall);
     // We need to clobber the size register since the LLInt always bounds checks
     if (useSignalingMemory() || m_info.memory.isShared())
-        callResult->clobberLate(RegisterSetBuilder { GPRInfo::wasmBoundsCheckingSizeRegister });
+        patchpoint->clobberLate(RegisterSetBuilder { GPRInfo::wasmBoundsCheckingSizeRegister });
 
 
-    fillResults(callResult);
+    fillResults(patchpoint);
 
     if (m_info.callCanClobberInstance(functionIndex))
         restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);

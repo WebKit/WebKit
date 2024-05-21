@@ -89,6 +89,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     jit.emitFunctionPrologue();
     GPRReg scratchGPR = GPRInfo::nonPreservedNonArgumentGPR0;
+    JIT_COMMENT(jit, "Store callee from ptr: ", RawPointer(&callee), " value, ", RawPointer(CalleeBits::boxNativeCallee(&callee)));
     jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(&callee)), scratchGPR);
     static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
     if constexpr (is32Bit()) {

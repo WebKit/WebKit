@@ -825,18 +825,20 @@ void Options::notifyOptionsChanged()
         if (Options::forceAllFunctionsToUseSIMD() && !Options::useWebAssemblySIMD())
             Options::forceAllFunctionsToUseSIMD() = false;
 
-        if (Options::useWebAssemblySIMD() && !(Options::useWasmLLInt() || Options::useWasmIPInt())) {
-            // The LLInt is responsible for discovering if functions use SIMD.
-            // If we can't run using it, then we should be conservative.
-            Options::forceAllFunctionsToUseSIMD() = true;
-        }
-
         if (Options::useWebAssemblyTailCalls()) {
             // The single-pass BBQ JIT doesn't support these features currently, so we should use a different
             // BBQ backend if any of them are enabled. We should remove these limitations as support for each
             // is added.
             // FIXME: Add WASM tail calls support to single-pass BBQ JIT. https://bugs.webkit.org/show_bug.cgi?id=253192
             Options::useBBQJIT() = false;
+            Options::useWasmLLInt() = true;
+            Options::wasmLLIntTiersUpToBBQ() = false;
+        }
+
+        if (Options::useWebAssemblySIMD() && !(Options::useWasmLLInt() || Options::useWasmIPInt())) {
+            // The LLInt is responsible for discovering if functions use SIMD.
+            // If we can't run using it, then we should be conservative.
+            Options::forceAllFunctionsToUseSIMD() = true;
         }
     }
 
