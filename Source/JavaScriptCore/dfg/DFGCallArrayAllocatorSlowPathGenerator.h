@@ -55,7 +55,11 @@ private:
     void generateInternal(SpeculativeJIT* jit) final
     {
         linkFrom(jit);
-        jit->callOperationWithSilentSpill(m_plans.span(), m_function, m_resultGPR, SpeculativeJIT::TrustedImmPtr(&jit->vm()), m_structure, m_size, m_storageGPR);
+        for (unsigned i = 0; i < m_plans.size(); ++i)
+            jit->silentSpill(m_plans[i]);
+        jit->callOperation(m_function, m_resultGPR, SpeculativeJIT::TrustedImmPtr(&jit->vm()), m_structure, m_size, m_storageGPR);
+        for (unsigned i = m_plans.size(); i--;)
+            jit->silentFill(m_plans[i]);
         jit->loadPtr(MacroAssembler::Address(m_resultGPR, JSObject::butterflyOffset()), m_storageGPR);
         jumpTo(jit);
     }
@@ -90,7 +94,8 @@ private:
     void generateInternal(SpeculativeJIT* jit) final
     {
         linkFrom(jit);
-        jit->silentSpill(m_plans);
+        for (unsigned i = 0; i < m_plans.size(); ++i)
+            jit->silentSpill(m_plans[i]);
         GPRReg scratchGPR = AssemblyHelpers::selectScratchGPR(m_sizeGPR, m_storageGPR);
         if (m_contiguousStructure.get() != m_arrayStorageOrContiguousStructure.get()) {
             MacroAssembler::Jump bigLength = jit->branch32(MacroAssembler::AboveOrEqual, m_sizeGPR, MacroAssembler::TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH));
@@ -101,15 +106,9 @@ private:
             done.link(jit);
         } else
             jit->move(SpeculativeJIT::TrustedImmPtr(m_contiguousStructure), scratchGPR);
-        jit->setupArguments<decltype(m_function)>(m_globalObject, scratchGPR, m_sizeGPR, m_storageGPR);
-        jit->appendCall(m_function);
-        std::optional<GPRReg> exception = jit->tryHandleOrGetExceptionUnderSilentSpill<decltype(m_function)>(m_plans, m_resultGPR);
-        jit->setupResults(m_resultGPR);
-        jit->silentFill(m_plans);
-
-        if (exception)
-            jit->exceptionCheck(*exception);
-
+        jit->callOperation(m_function, m_resultGPR, m_globalObject, scratchGPR, m_sizeGPR, m_storageGPR);
+        for (unsigned i = m_plans.size(); i--;)
+            jit->silentFill(m_plans[i]);
         jumpTo(jit);
     }
 
@@ -144,7 +143,11 @@ private:
     void generateInternal(SpeculativeJIT* jit) final
     {
         linkFrom(jit);
-        jit->callOperationWithSilentSpill(m_plans, m_function, m_resultGPR, m_globalObject, m_structureGPR, m_sizeGPR, m_storageGPR);
+        for (unsigned i = 0; i < m_plans.size(); ++i)
+            jit->silentSpill(m_plans[i]);
+        jit->callOperation(m_function, m_resultGPR, m_globalObject, m_structureGPR, m_sizeGPR, m_storageGPR);
+        for (unsigned i = m_plans.size(); i--;)
+            jit->silentFill(m_plans[i]);
         jumpTo(jit);
     }
 

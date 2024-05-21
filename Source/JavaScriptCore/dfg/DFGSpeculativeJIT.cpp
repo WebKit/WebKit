@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -318,7 +318,6 @@ void SpeculativeJIT::exceptionCheck(GPRReg exceptionReg)
     HandlerInfo* exceptionHandler;
     bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_currentNode->origin.forExit, opCatchOrigin, exceptionHandler);
     if (willCatchException) {
-        RELEASE_ASSERT(!m_underSilentSpill);
         unsigned streamIndex = m_outOfLineStreamIndex ? *m_outOfLineStreamIndex : m_stream.size();
         Jump hadException = emitNonPatchableExceptionCheck(vm(), exceptionReg);
         // We assume here that this is called after callOperation()/appendCall() is called.
@@ -675,7 +674,6 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
         auto sizeMarker = markSlowPathIfNeeded(currentNode);
 
         slowPathLambda.generator();
-        ASSERT(!m_underSilentSpill);
         m_outOfLineStreamIndex = std::nullopt;
         if (UNLIKELY(sizeMarker))
             vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_graph.m_plan);
@@ -878,9 +876,8 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForFPR(VirtualRegister spil
     return SilentRegisterSavePlan(spillAction, fillAction, node, source);
 }
     
-void SpeculativeJIT::silentSpillImpl(const SilentRegisterSavePlan& plan)
+void SpeculativeJIT::silentSpill(const SilentRegisterSavePlan& plan)
 {
-    ASSERT(m_underSilentSpill);
     switch (plan.spillAction()) {
     case DoNothingForSpill:
         break;
@@ -906,9 +903,8 @@ void SpeculativeJIT::silentSpillImpl(const SilentRegisterSavePlan& plan)
     }
 }
     
-void SpeculativeJIT::silentFillImpl(const SilentRegisterSavePlan& plan)
+void SpeculativeJIT::silentFill(const SilentRegisterSavePlan& plan)
 {
-    ASSERT(m_underSilentSpill);
     switch (plan.fillAction()) {
     case DoNothingForFill:
         break;
@@ -2268,7 +2264,9 @@ void SpeculativeJIT::compileToLowerCase(Node* node)
     jump().linkTo(loopStart, this);
     
     slowPath.link(this);
-    callOperationWithSilentSpill(operationToLowerCase, lengthGPR, LinkableConstant::globalObject(*this, node), stringGPR, indexGPR);
+    silentSpillAllRegisters(lengthGPR);
+    callOperation(operationToLowerCase, lengthGPR, LinkableConstant::globalObject(*this, node), stringGPR, indexGPR);
+    silentFillAllRegisters();
     auto done = jump();
 
     loopDone.link(this);
@@ -4432,11 +4430,12 @@ void SpeculativeJIT::compileGetByValForObjectWithString(Node* node, const Scoped
     speculateString(m_graph.varArgChild(node, 1), arg2GPR);
 
     if (canUseFlush == CanUseFlush::No)
-        callOperationWithSilentSpill(operationGetByValObjectString, resultRegs, LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR);
-    else {
+        silentSpillAllRegisters(resultRegs);
+    else
         flushRegisters();
-        callOperation(operationGetByValObjectString, resultRegs, LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR);
-    }
+    callOperation(operationGetByValObjectString, resultRegs, LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR);
+    if (canUseFlush == CanUseFlush::No)
+        silentFillAllRegisters();
 
     jsValueResult(resultRegs, node);
 }
@@ -4457,11 +4456,12 @@ void SpeculativeJIT::compileGetByValForObjectWithSymbol(Node* node, const Scoped
     speculateSymbol(m_graph.varArgChild(node, 1), arg2GPR);
 
     if (canUseFlush == CanUseFlush::No)
-        callOperationWithSilentSpill(operationGetByValObjectSymbol, resultRegs, LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR);
-    else {
+        silentSpillAllRegisters(resultRegs);
+    else
         flushRegisters();
-        callOperation(operationGetByValObjectSymbol, resultRegs, LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR);
-    }
+    callOperation(operationGetByValObjectSymbol, resultRegs, LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR);
+    if (canUseFlush == CanUseFlush::No)
+        silentFillAllRegisters();
 
     jsValueResult(resultRegs, node);
 }
@@ -5256,6 +5256,7 @@ void SpeculativeJIT::emitUntypedOrAnyBigIntBitOp(Node* node)
     gen.endJumpList().append(jump());
 
     gen.slowPathJumpList().link(this);
+    silentSpillAllRegisters(resultRegs);
 
     if (leftOperand.isConst()) {
         leftRegs = resultRegs;
@@ -5265,7 +5266,9 @@ void SpeculativeJIT::emitUntypedOrAnyBigIntBitOp(Node* node)
         moveValue(rightChild->asJSValue(), rightRegs);
     }
 
-    callOperationWithSilentSpill(snippetSlowPathFunction, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+    callOperation(snippetSlowPathFunction, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+
+    silentFillAllRegisters();
 
     gen.endJumpList().link(this);
     jsValueResult(resultRegs, node);
@@ -5469,6 +5472,7 @@ void SpeculativeJIT::emitUntypedOrBigIntRightShiftBitOp(Node* node)
     gen.endJumpList().append(jump());
 
     gen.slowPathJumpList().link(this);
+    silentSpillAllRegisters(resultRegs);
 
     if (leftOperand.isConst()) {
         leftRegs = resultRegs;
@@ -5478,7 +5482,9 @@ void SpeculativeJIT::emitUntypedOrBigIntRightShiftBitOp(Node* node)
         moveValue(rightChild->asJSValue(), rightRegs);
     }
 
-    callOperationWithSilentSpill(snippetSlowPathFunction, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+    callOperation(snippetSlowPathFunction, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+
+    silentFillAllRegisters();
 
     gen.endJumpList().link(this);
     jsValueResult(resultRegs, node);
@@ -5827,6 +5833,8 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
             auto slowPathStart = label();
 #endif
 
+            silentSpill(savePlans);
+
             auto innerLeftRegs = leftRegs;
             auto innerRightRegs = rightRegs;
             if (Generator::isLeftOperandValidConstant(leftOperand)) {
@@ -5838,10 +5846,11 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
             }
 
             if (addICGenerationState->shouldSlowPathRepatch)
-                addICGenerationState->slowPathCall = callOperationWithSilentSpill(savePlans, repatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), innerLeftRegs, innerRightRegs, TrustedImmPtr(mathIC));
+                addICGenerationState->slowPathCall = callOperation(repatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), innerLeftRegs, innerRightRegs, TrustedImmPtr(mathIC));
             else
-                addICGenerationState->slowPathCall = callOperationWithSilentSpill(savePlans, nonRepatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), innerLeftRegs, innerRightRegs);
+                addICGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), innerLeftRegs, innerRightRegs);
 
+            silentFill(savePlans);
             jump().linkTo(done, this);
 
             addLinkTask([=] (LinkBuffer& linkBuffer) {
@@ -6455,11 +6464,14 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
             auto slowPathStart = label();
 #endif
 
-            if (icGenerationState->shouldSlowPathRepatch)
-                icGenerationState->slowPathCall = callOperationWithSilentSpill(savePlans, repatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), childRegs, TrustedImmPtr(mathIC));
-            else
-                icGenerationState->slowPathCall = callOperationWithSilentSpill(savePlans, nonRepatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), childRegs);
+            silentSpill(savePlans);
 
+            if (icGenerationState->shouldSlowPathRepatch)
+                icGenerationState->slowPathCall = callOperation(repatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), childRegs, TrustedImmPtr(mathIC));
+            else
+                icGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, LinkableConstant::globalObject(*this, node), childRegs);
+
+            silentFill(savePlans);
             jump().linkTo(done, this);
 
             addLinkTask([=] (LinkBuffer& linkBuffer) {
@@ -6827,6 +6839,7 @@ void SpeculativeJIT::compileValueDiv(Node* node)
     gen.endJumpList().append(jump());
 
     gen.slowPathJumpList().link(this);
+    silentSpillAllRegisters(resultRegs);
 
     if (leftOperand.isConst()) {
         leftRegs = resultRegs;
@@ -6837,7 +6850,9 @@ void SpeculativeJIT::compileValueDiv(Node* node)
         moveValue(rightChild->asJSValue(), rightRegs);
     }
 
-    callOperationWithSilentSpill(operationValueDiv, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+    callOperation(operationValueDiv, resultRegs, LinkableConstant::globalObject(*this, node), leftRegs, rightRegs);
+
+    silentFillAllRegisters();
 
     gen.endJumpList().link(this);
     jsValueResult(resultRegs, node);
@@ -9186,13 +9201,6 @@ void SpeculativeJIT::compileNewFunction(Node* node)
     
     SpeculateCellOperand scope(this, node->child1());
     GPRReg scopeGPR = scope.gpr();
-
-    JIT_COMMENT(*this, "scopeGPR: ", gprName(scopeGPR));
-
-    probeDebug([=] (Probe::Context& context) {
-        auto* scope = context.gpr<JSCell*>(scopeGPR);
-        RELEASE_ASSERT(scope->inherits<JSScope>());
-    });
 
     FunctionExecutable* executable = node->castOperand<FunctionExecutable*>();
 
@@ -13405,7 +13413,9 @@ void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRR
         data, cases, 0, 0, cases.size(), string, lengthGPR, tempGPR, 0, false);
     
     slowCases.link(this);
-    callOperationWithSilentSpill(operationSwitchString, string, LinkableConstant::globalObject(*this, node), static_cast<size_t>(data->switchTableIndex), TrustedImmPtr(&unlinkedTable), string);
+    silentSpillAllRegisters(string);
+    callOperation(operationSwitchString, string, LinkableConstant::globalObject(*this, node), static_cast<size_t>(data->switchTableIndex), TrustedImmPtr(&unlinkedTable), string);
+    silentFillAllRegisters();
     farJump(string, JSSwitchPtrTag);
 }
 
@@ -14972,7 +14982,9 @@ void SpeculativeJIT::compileGetPropertyEnumerator(Node* node)
         doneCases.append(jump());
 
         slowCases.link(this);
-        callOperationWithSilentSpill(operationGetPropertyEnumeratorCell, scratch1GPR, LinkableConstant::globalObject(*this, node), baseRegs.payloadGPR());
+        silentSpillAllRegisters(scratch1GPR);
+        callOperation(operationGetPropertyEnumeratorCell, scratch1GPR, LinkableConstant::globalObject(*this, node), baseRegs.payloadGPR());
+        silentFillAllRegisters();
 
         doneCases.link(this);
         cellResult(scratch1GPR, node);
@@ -16773,7 +16785,9 @@ void SpeculativeJIT::genericJSValuePeepholeBranch(Node* node, Node* branchNode, 
 
             slowPath.link(this);
 
-            callOperationWithSilentSpill(helperFunction, resultGPR, LinkableConstant::globalObject(*this, node), arg1Regs, arg2Regs);
+            silentSpillAllRegisters(resultGPR);
+            callOperation(helperFunction, resultGPR, LinkableConstant::globalObject(*this, node), arg1Regs, arg2Regs);
+            silentFillAllRegisters();
 
             branchTest32(callResultCondition, resultGPR, taken);
         }

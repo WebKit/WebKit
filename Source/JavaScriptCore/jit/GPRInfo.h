@@ -929,13 +929,6 @@ class NoOverlapImpl {
         return noOverlapImpl(used | mask, args...);
     }
 
-    // NoResultTag case, this happens from templates
-    template<typename... Args>
-    static constexpr bool noOverlapImpl(uint64_t used, NoResultTag, Args... args)
-    {
-        return noOverlapImpl(used, args...);
-    }
-
 public:
     // Entry point
     template <typename... Args>

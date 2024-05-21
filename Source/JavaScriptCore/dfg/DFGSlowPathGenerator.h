@@ -183,8 +183,10 @@ protected:
     void setUp(SpeculativeJIT* jit)
     {
         this->linkFrom(jit);
-        if (m_spillMode == NeedToSpill)
-            jit->silentSpill(m_plans);
+        if (m_spillMode == NeedToSpill) {
+            for (unsigned i = 0; i < m_plans.size(); ++i)
+                jit->silentSpill(m_plans[i]);
+        }
     }
     
     void recordCall(MacroAssembler::Call call)
@@ -194,24 +196,16 @@ protected:
     
     void tearDown(SpeculativeJIT* jit)
     {
-        std::optional<GPRReg> exception;
-
-        if (m_exceptionCheckRequirement == ExceptionCheckRequirement::CheckNeeded) {
-            if (m_spillMode == NeedToSpill)
-                exception = jit->tryHandleOrGetExceptionUnderSilentSpill<FunctionType>(m_plans, this->m_result);
-            else
-                jit->exceptionCheck(CCallHelpers::operationExceptionRegister<typename FunctionTraits<FunctionType>::ResultType>());
-        }
+        if (m_exceptionCheckRequirement == ExceptionCheckRequirement::CheckNeeded)
+            jit->exceptionCheck(CCallHelpers::operationExceptionRegister<typename FunctionTraits<FunctionType>::ResultType>());
 
         if constexpr (!std::is_same_v<ResultType, NoResultTag>)
             jit->setupResults(extractResult(this->m_result));
 
-        if (m_spillMode == NeedToSpill)
-            jit->silentFill(m_plans);
-
-        if (m_exceptionCheckRequirement == ExceptionCheckRequirement::CheckNeeded && exception)
-            jit->exceptionCheck(*exception);
-
+        if (m_spillMode == NeedToSpill) {
+            for (unsigned i = m_plans.size(); i--;)
+                jit->silentFill(m_plans[i]);
+        }
         this->jumpTo(jit);
     }
 

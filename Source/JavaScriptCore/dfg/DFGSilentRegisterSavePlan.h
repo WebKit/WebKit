@@ -76,6 +76,8 @@ public:
     SilentRegisterSavePlan()
         : m_spillAction(DoNothingForSpill)
         , m_fillAction(DoNothingForFill)
+        , m_register(-1)
+        , m_node(nullptr)
     {
     }
     
@@ -108,15 +110,14 @@ public:
     
     Node* node() const { return m_node; }
     
-    Reg reg() const { return m_register; }
-    GPRReg gpr() const { return m_register.gpr(); }
-    FPRReg fpr() const { return m_register.fpr(); }
+    GPRReg gpr() const { return static_cast<GPRReg>(m_register); }
+    FPRReg fpr() const { return static_cast<FPRReg>(m_register); }
     
 private:
     int8_t m_spillAction;
     int8_t m_fillAction;
-    Reg m_register;
-    Node* m_node { nullptr };
+    int8_t m_register;
+    Node* m_node;
 };
 
 } } // namespace JSC::DFG
