@@ -37,6 +37,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKMain.h>
 #import <WebKit/WKNavigationActionPrivate.h>
+#import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPage.h>
 #import <WebKit/WKPageInjectedBundleClient.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -606,6 +607,9 @@ TEST(PrivateClickMeasurement, SKAdNetwork)
     Vector<String> consoleMessages;
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *navigationAction, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(_WKNavigationActionPolicyAllowWithoutTryingAppLink);
+    };
     setupSKAdNetworkTest(consoleMessages, delegate.get());
     while (consoleMessages.isEmpty())
         Util::spinRunLoop();
