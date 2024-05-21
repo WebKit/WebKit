@@ -54,9 +54,9 @@ Ref<MathMLRowElement> MathMLRowElement::create(const QualifiedName& tagName, Doc
 
 void MathMLRowElement::childrenChanged(const ChildChange& change)
 {
-    for (auto child = firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(moTag))
-            static_cast<MathMLOperatorElement*>(child)->setOperatorFormDirty();
+            static_cast<MathMLOperatorElement*>(child.get())->setOperatorFormDirty();
     }
 
     MathMLPresentationElement::childrenChanged(change);
