@@ -291,7 +291,14 @@ static constexpr OptionSet<ActivityState> pageInitialActivityState()
     return { ActivityState::IsVisible, ActivityState::IsInWindow };
 }
 
-static Ref<Frame> createMainFrame(Page& page, PageConfiguration::ClientCreatorForMainFrame&& clientCreator, RefPtr<Frame> mainFrameOpener, FrameIdentifier identifier)
+// FIXME: workaround for GCC bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115135
+#if COMPILER(GCC) && CPU(ARM64)
+#define GCC_MAYBE_NO_INLINE NEVER_INLINE
+#else
+#define GCC_MAYBE_NO_INLINE
+#endif
+
+GCC_MAYBE_NO_INLINE static Ref<Frame> createMainFrame(Page& page, PageConfiguration::ClientCreatorForMainFrame&& clientCreator, RefPtr<Frame> mainFrameOpener, FrameIdentifier identifier)
 {
     page.relaxAdoptionRequirement();
     return switchOn(WTFMove(clientCreator), [&] (CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)>&& localFrameClientCreator) -> Ref<Frame> {
