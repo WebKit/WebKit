@@ -871,7 +871,10 @@ static GRefPtr<GtkPrinter> printerFromSettingsOrDefault(GtkPrintSettings* settin
  * operation finishes. If an error occurs while printing the signal
  * #WebKitPrintOperation::failed is emitted before #WebKitPrintOperation::finished.
  *
- * Deprecated: 2.46. This function does nothing if the app is sandboxed.
+ * If the app is running in a sandbox, this function only works if printing to
+ * a file that is in a location accessible to the sandbox, usually acquired
+ * through the File Chooser portal. This function will not work for physical
+ * printers when running in a sandbox.
  */
 void webkit_print_operation_print(WebKitPrintOperation* printOperation)
 {
