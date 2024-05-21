@@ -348,8 +348,8 @@ class BitBucket(Scm):
             relative_to_absolute = defaultdict(lambda: defaultdict(list))
 
             for diff in json_diff.get('diffs', []):
-                destination = diff.get('destination', {}).get('toString')
-                source = diff.get('source', {}).get('toString')
+                destination = (diff.get('destination') or {}).get('toString')
+                source = (diff.get('source') or {}).get('toString')
 
                 count = -1
                 for hunk in diff.get('hunks', []):
@@ -370,11 +370,11 @@ class BitBucket(Scm):
                                 absolute_to_relative['source'][source][source_pos] = count
 
                             if dest_pos:
-                                relative_to_absolute[source][count] = {'to': dest_pos}
+                                relative_to_absolute[destination][count] = {'to': dest_pos}
                             elif source_pos:
                                 relative_to_absolute[source][count] = {'from': source_pos}
                             if segment.get('type'):
-                                relative_to_absolute[source][count]['type'] = segment['type']
+                                relative_to_absolute[source or destination][count]['type'] = segment['type']
 
             return absolute_to_relative, relative_to_absolute
 
@@ -555,8 +555,11 @@ class BitBucket(Scm):
     def json_to_diff(cls, data):
         output = ''
         for diff in data.get('diffs', []):
-            output += '--- a/{}\n'.format(diff['source']['toString'])
-            output += '+++ b/{}\n'.format(diff['destination']['toString'])
+            source = (diff.get('source') or {}).get('toString')
+            destination = (diff.get('destination') or {}).get('toString')
+
+            output += '--- {}\n'.format(('a/' + source) if source else '/dev/null')
+            output += '+++ {}\n'.format(('b/' + destination) if destination else '/dev/null')
             for hunk in diff.get('hunks', []):
                 output += '@@ -{},{} +{},{} @@\n'.format(
                     hunk['sourceLine'], hunk['sourceSpan'],
