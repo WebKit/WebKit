@@ -916,6 +916,7 @@ header: <WebCore/ElementTargetingTypes.h>
     WebCore::FloatRect boundsInClientCoordinates
     WebCore::PositionType positionType
     Vector<WebCore::FrameIdentifier> childFrameIdentifiers
+    HashSet<URL> mediaAndLinkURLs;
     bool isNearbyTarget
     bool isPseudoElement
     bool isInShadowTree

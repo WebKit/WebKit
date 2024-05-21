@@ -475,9 +475,11 @@ TEST(ElementTargeting, RequestTargetedElementsBySearchableText)
     NSString *searchableText = [targetFromHitTest searchableText];
     EXPECT_GT(searchableText.length, 0U);
     EXPECT_TRUE([@"Image of a sunset over the 4th floor of Infinite Loop 2" containsString:searchableText]);
+    EXPECT_WK_STREQ("sunset-in-cupertino-200px.png", [[[targetFromHitTest mediaAndLinkURLs] anyObject] lastPathComponent]);
 
     RetainPtr targetFromSearchText = [[webView targetedElementInfoWithText:searchableText] firstObject];
     EXPECT_TRUE([targetFromSearchText isSameElement:targetFromHitTest.get()]);
+    EXPECT_WK_STREQ("sunset-in-cupertino-200px.png", [[[targetFromSearchText mediaAndLinkURLs] anyObject] lastPathComponent]);
 }
 
 TEST(ElementTargeting, AdjustVisibilityAfterRecreatingElement)

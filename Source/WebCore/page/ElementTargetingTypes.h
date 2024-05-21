@@ -32,6 +32,7 @@
 #include "RectEdges.h"
 #include "RenderStyleConstants.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include <wtf/URLHash.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -63,6 +64,7 @@ struct TargetedElementInfo {
     FloatRect boundsInClientCoordinates;
     PositionType positionType { PositionType::Static };
     Vector<FrameIdentifier> childFrameIdentifiers;
+    HashSet<URL> mediaAndLinkURLs;
     bool isNearbyTarget { true };
     bool isPseudoElement { false };
     bool isInShadowTree { false };

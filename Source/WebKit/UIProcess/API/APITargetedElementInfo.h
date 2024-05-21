@@ -64,6 +64,8 @@ public:
     bool isInShadowTree() const { return m_info.isInShadowTree; }
     bool hasAudibleMedia() const { return m_info.hasAudibleMedia; }
 
+    const HashSet<WTF::URL>& mediaAndLinkURLs() const { return m_info.mediaAndLinkURLs; }
+
     void childFrames(CompletionHandler<void(Vector<Ref<FrameTreeNode>>&&)>&&) const;
 
     bool isSameElement(const TargetedElementInfo&) const;

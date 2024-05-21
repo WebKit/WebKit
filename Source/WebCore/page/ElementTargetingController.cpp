@@ -40,8 +40,10 @@
 #include "ElementTargetingTypes.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HitTestRequest.h"
@@ -57,6 +59,7 @@
 #include "RenderView.h"
 #include "ShadowRoot.h"
 #include "SimpleRange.h"
+#include "StyleImage.h"
 #include "TextExtraction.h"
 #include "TextIterator.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -590,6 +593,62 @@ static bool hasAudibleMedia(const Element& element)
     return false;
 }
 
+static URL urlForElement(const Element& element)
+{
+    if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(element))
+        return anchor->href();
+
+    if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
+        return image->currentURL();
+
+    if (RefPtr media = dynamicDowncast<HTMLMediaElement>(element))
+        return media->currentSrc();
+
+    if (CheckedPtr renderer = element.renderer()) {
+        if (auto& style = renderer->style(); style.hasBackgroundImage()) {
+            if (RefPtr image = style.backgroundLayers().image())
+                return image->reresolvedURL(element.document());
+        }
+    }
+
+    return { };
+}
+
+static void collectMediaAndLinkURLsRecursive(const Element& element, HashSet<URL>& urls)
+{
+    auto addURLForElement = [&urls](const Element& element) {
+        if (auto url = urlForElement(element); !url.isEmpty() && !url.protocolIsData() && !url.protocolIsBlob())
+            urls.add(WTFMove(url));
+    };
+
+    addURLForElement(element);
+
+    for (auto& descendant : descendantsOfType<Element>(element)) {
+        addURLForElement(descendant);
+
+        auto frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(descendant);
+        if (!frameOwner)
+            continue;
+
+        RefPtr contentDocument = frameOwner->contentDocument();
+        if (!contentDocument)
+            continue;
+
+        RefPtr documentElement = contentDocument->documentElement();
+        if (!documentElement)
+            continue;
+
+        collectMediaAndLinkURLsRecursive(*documentElement, urls);
+    }
+}
+
+static HashSet<URL> collectMediaAndLinkURLs(const Element& element)
+{
+    HashSet<URL> urls;
+    collectMediaAndLinkURLsRecursive(element, urls);
+    return urls;
+}
+
 enum class IsNearbyTarget : bool { No, Yes };
 static TargetedElementInfo targetedElementInfo(Element& element, IsNearbyTarget isNearbyTarget, ElementSelectorCache& cache)
 {
@@ -606,6 +665,7 @@ static TargetedElementInfo targetedElementInfo(Element& element, IsNearbyTarget 
         .boundsInClientCoordinates = computeClientRect(*renderer),
         .positionType = renderer->style().position(),
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
+        .mediaAndLinkURLs = collectMediaAndLinkURLs(element),
         .isNearbyTarget = isNearbyTarget == IsNearbyTarget::Yes,
         .isPseudoElement = element.isPseudoElement(),
         .isInShadowTree = element.isInShadowTree(),

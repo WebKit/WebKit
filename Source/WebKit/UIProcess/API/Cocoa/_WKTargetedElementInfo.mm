@@ -153,6 +153,14 @@
     return _info->isNearbyTarget();
 }
 
+- (NSSet<NSURL *> *)mediaAndLinkURLs
+{
+    RetainPtr result = adoptNS([NSMutableSet<NSURL *> new]);
+    for (auto& url : _info->mediaAndLinkURLs())
+        [result addObject:(NSURL *)url];
+    return result.autorelease();
+}
+
 - (BOOL)isPseudoElement
 {
     return _info->isPseudoElement();
