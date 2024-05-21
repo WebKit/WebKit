@@ -702,10 +702,10 @@ AutomaticLiveResizeEnabled:
   humanReadableDescription: "Automatically synchronize web view resize with painting"
   webcoreBinding: none
   exposed: [ WebKit ]
+  condition: PLATFORM(IOS_FAMILY)
   defaultValue:
     WebKit:
-      "PLATFORM(VISION)": true
-      default: false
+      default: WebKit::defaultAutomaticLiveResizeEnabled()
 
 BackgroundFetchAPIEnabled:
   type: bool

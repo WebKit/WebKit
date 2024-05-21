@@ -109,6 +109,18 @@ bool defaultWriteRichTextDataWhenCopyingOrDragging()
     return !isAsyncTextInputFeatureFlagEnabled();
 }
 
+bool defaultAutomaticLiveResizeEnabled()
+{
+#if PLATFORM(VISION)
+    return true;
+#elif USE(BROWSERENGINEKIT)
+    static bool enabled = PAL::deviceHasIPadCapability() && os_feature_enabled(UIKit, async_text_input_ipad);
+    return enabled;
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

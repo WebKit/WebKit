@@ -1006,10 +1006,6 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 
 #if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
 
-@interface UIWindowScene ()
-@property (nonatomic, readonly, getter=_isInLiveResize) BOOL _inLiveResize;
-@end
-
 extern NSNotificationName const _UIWindowSceneDidBeginLiveResizeNotification;
 extern NSNotificationName const _UIWindowSceneDidEndLiveResizeNotification;
 
