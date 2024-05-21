@@ -1,5 +1,7 @@
 [pull]
         rebase = true
+[commit]
+        gpgsign = false
 [webkitscmpy]
         pull-request = append
         history = disabled
