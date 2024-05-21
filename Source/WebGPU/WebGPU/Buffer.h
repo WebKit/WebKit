@@ -101,6 +101,7 @@ private:
     bool validateGetMappedRange(size_t offset, size_t rangeSize) const;
     NSString* errorValidatingMapAsync(WGPUMapModeFlags, size_t offset, size_t rangeSize) const;
     bool validateUnmap() const;
+    void setState(State);
 
     id<MTLBuffer> m_buffer { nil };
 

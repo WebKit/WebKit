@@ -171,7 +171,7 @@ void Buffer::destroy()
         unmap();
     }
 
-    m_state = State::Destroyed;
+    setState(State::Destroyed);
     if (m_commandEncoder)
         m_commandEncoder.get()->makeSubmitInvalid();
 
@@ -293,13 +293,13 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
         return;
     }
 
-    m_state = State::MappingPending;
+    setState(State::MappingPending);
 
     m_mapMode = mode;
 
     m_device->getQueue().onSubmittedWorkDone([protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
         if (protectedThis->m_state == State::MappingPending) {
-            protectedThis->m_state = State::Mapped;
+            protectedThis->setState(State::Mapped);
             if (protectedThis->m_commandEncoder)
                 protectedThis->m_commandEncoder->incrementBufferMapCount();
 
@@ -333,6 +333,12 @@ bool Buffer::validateUnmap() const
 {
     return true;
 }
+
+void Buffer::setState(State state)
+{
+    if (m_state != State::Destroyed)
+        m_state = state;
+}
   
 void Buffer::unmap()
 {
@@ -351,7 +357,7 @@ void Buffer::unmap()
     }
 #endif
 
-    m_state = State::Unmapped;
+    setState(State::Unmapped);
     m_mappedRanges = MappedRanges();
 }
 
