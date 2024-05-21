@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,8 @@ private:
     UniqueRef<RTCSctpTransportBackend> m_backend;
     Ref<RTCDtlsTransport> m_transport;
     RTCSctpTransportState m_state { RTCSctpTransportState::Connecting };
-    double m_maxMessageSize { std::numeric_limits<double>::max() };
+    // https://w3c.github.io/webrtc-pc/#dfn-update-the-data-max-message-size
+    double m_maxMessageSize { std::numeric_limits<double>::infinity() };
     std::optional<unsigned short> m_maxChannels;
 };
 
