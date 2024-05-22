@@ -564,6 +564,15 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
 
     for (unsigned i = 0, size = rules->size(); i < size; ++i) {
         const auto& ruleData = rules->data()[i];
+        const auto* selector = ruleData.selector();
+        ASSERT(selector);
+        // RuleData is actually an interface for a single CSSSelector
+        // The key is the triplet CSSSelector* + selectorIndex + selectorListIndex
+        // CSSSelector* is the actual identifier (from this triplet)
+        auto alreadyProcessed = m_processedSelector.contains(selector);
+        if (alreadyProcessed)
+            continue;
+        m_processedSelector.add(selector);
 
         if (UNLIKELY(!ruleData.isEnabled()))
             continue;
