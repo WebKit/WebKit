@@ -490,8 +490,13 @@ static WebBackForwardListItem* itemSkippingBackForwardItemsAddedByJSWithoutUserG
     // Yahoo -> Yahoo#a (no userInteraction) -> Google -> Google#a (no user interaction) -> Google#b (no user interaction)
     // If we're on Google and navigate back, we don't want to skip anything and load Yahoo#a.
     // However, if we're on Yahoo and navigate forward, we do want to skip items and end up on Google#b.
-    if (direction == NavigationDirection::Backward && !backForwardList.currentItem()->wasCreatedByJSWithoutUserInteraction())
+    if (direction == NavigationDirection::Backward && !backForwardList.currentItem()->wasCreatedByJSWithoutUserInteraction() && !backForwardList.currentItem()->isRootChildFrameItem())
         return item;
+
+    while (item && item->isRootChildFrameItem()) {
+        itemIndex += delta;
+        item = backForwardList.itemAtIndex(itemIndex);
+    }
 
     // For example:
     // Yahoo -> Yahoo#a (no userInteraction) -> Google -> Google#a (no user interaction) -> Google#b (no user interaction)
@@ -513,8 +518,10 @@ static WebBackForwardListItem* itemSkippingBackForwardItemsAddedByJSWithoutUserG
     if (direction == NavigationDirection::Backward) {
         // If going backwards, skip over next item with user iteraction since this is the one the user
         // thinks they're on.
-        --itemIndex;
-        item = backForwardList.itemAtIndex(itemIndex);
+        do {
+            --itemIndex;
+            item = backForwardList.itemAtIndex(itemIndex);
+        } while (item && item->isRootChildFrameItem());
         if (!item)
             return originalItem;
         RELEASE_LOG(Loading, "UI Navigation is skipping a WebBackForwardListItem that has user interaction because we started on an item that didn't have interaction");

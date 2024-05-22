@@ -759,16 +759,18 @@ void Page::setOpenedByDOM()
     m_openedByDOM = true;
 }
 
-void Page::goToItem(LocalFrame& localMainFrame, HistoryItem& item, FrameLoadType type, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
+void Page::goToItem(Frame& mainFrame, HistoryItem& item, FrameLoadType type, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
 {
     // stopAllLoaders may end up running onload handlers, which could cause further history traversals that may lead to the passed in HistoryItem
     // being deref()-ed. Make sure we can still use it with HistoryController::goToItem later.
     Ref protectedItem { item };
 
-    ASSERT(localMainFrame.isMainFrame());
-    if (localMainFrame.checkedHistory()->shouldStopLoadingForHistoryItem(item))
-        localMainFrame.checkedLoader()->stopAllLoadersAndCheckCompleteness();
-    localMainFrame.checkedHistory()->goToItem(item, type, shouldTreatAsContinuingLoad);
+    ASSERT(mainFrame.isMainFrame());
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame)) {
+        if (localMainFrame->checkedHistory()->shouldStopLoadingForHistoryItem(item))
+            localMainFrame->checkedLoader()->stopAllLoadersAndCheckCompleteness();
+    }
+    mainFrame.checkedHistory()->goToItem(item, type, shouldTreatAsContinuingLoad);
 }
 
 void Page::setGroupName(const String& name)

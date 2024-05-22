@@ -89,6 +89,9 @@ public:
     WebBackForwardCacheEntry* backForwardCacheEntry() const { return m_backForwardCacheEntry.get(); }
     SuspendedPageProxy* suspendedPage() const;
 
+    void setIsRootChildFrameItem(bool rootChildFrameItem) { m_isRootChildFrameItem = rootChildFrameItem; }
+    bool isRootChildFrameItem() const { return m_isRootChildFrameItem; }
+
 #if !LOG_DISABLED
     String loggingString();
 #endif
@@ -109,6 +112,7 @@ private:
     WebPageProxyIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
     std::unique_ptr<WebBackForwardCacheEntry> m_backForwardCacheEntry;
+    bool m_isRootChildFrameItem { false };
 };
 
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;

@@ -28,6 +28,7 @@
 #include "WebBackForwardListCounts.h"
 #include <WebCore/BackForwardClient.h>
 #include <WebCore/BackForwardItemIdentifier.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 
 namespace WebKit {
@@ -49,7 +50,7 @@ public:
 private:
     WebBackForwardListProxy(WebPage&);
 
-    void addItem(Ref<WebCore::HistoryItem>&&) override;
+    void addItem(WebCore::FrameIdentifier, Ref<WebCore::HistoryItem>&&) override;
 
     void goToItem(WebCore::HistoryItem&) override;
         

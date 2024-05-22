@@ -134,9 +134,9 @@ bool BackForwardController::goForward()
     return true;
 }
 
-void BackForwardController::addItem(Ref<HistoryItem>&& item)
+void BackForwardController::addItem(FrameIdentifier targetFrameID, Ref<HistoryItem>&& item)
 {
-    protectedClient()->addItem(WTFMove(item));
+    protectedClient()->addItem(targetFrameID, WTFMove(item));
 }
 
 void BackForwardController::setCurrentItem(HistoryItem& item)

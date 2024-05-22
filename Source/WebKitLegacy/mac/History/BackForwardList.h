@@ -28,6 +28,7 @@
 #pragma once
 
 #include <WebCore/BackForwardClient.h>
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -43,7 +44,7 @@ public:
 
     WebView *webView() { return m_webView; }
 
-    void addItem(Ref<WebCore::HistoryItem>&&) override;
+    void addItem(WebCore::FrameIdentifier, Ref<WebCore::HistoryItem>&&) override;
     void goBack();
     void goForward();
     void goToItem(WebCore::HistoryItem&) override;

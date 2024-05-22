@@ -104,7 +104,7 @@ namespace WebCore {
 class UserMessageHandlerDescriptor;
 
 class EmptyBackForwardClient final : public BackForwardClient {
-    void addItem(Ref<HistoryItem>&&) final { }
+    void addItem(FrameIdentifier, Ref<HistoryItem>&&) final { }
     void goToItem(HistoryItem&) final { }
     RefPtr<HistoryItem> itemAtIndex(int) final { return nullptr; }
     unsigned backListCount() const final { return 0; }

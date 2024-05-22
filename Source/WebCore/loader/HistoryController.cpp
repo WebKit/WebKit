@@ -319,14 +319,13 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType type, Sh
     // <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
     // Ultimately, history item navigations should go through the policy delegate. That's covered in:
     // <rdar://problem/3979539> back/forward cache navigations should consult policy delegate
-    RefPtr frame = dynamicDowncast<LocalFrame>(m_frame.ptr());
-    if (!frame)
-        return;
-    RefPtr page = frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return;
-    if (!frame->checkedLoader()->client().shouldGoToHistoryItem(targetItem))
-        return;
+    if (RefPtr frame = dynamicDowncast<LocalFrame>(m_frame.ptr())) {
+        if (!frame->checkedLoader()->client().shouldGoToHistoryItem(targetItem))
+            return;
+    }
     if (m_defersLoading) {
         m_deferredItem = &targetItem;
         m_deferredFrameLoadType = type;
@@ -856,7 +855,7 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
     Ref topItem = mainFrame->checkedHistory()->createItemTree(page->historyItemClient(), *frame, doClip);
     LOG(History, "HistoryController %p updateBackForwardListClippedAtTarget: Adding backforward item %p in frame %p (main frame %d) %s", this, topItem.ptr(), frame.get(), frame->isMainFrame(), frame->loader().documentLoader()->url().string().utf8().data());
 
-    page->backForward().addItem(WTFMove(topItem));
+    page->backForward().addItem(frame->frameID(), WTFMove(topItem));
 }
 
 void HistoryController::updateCurrentItem()
@@ -923,7 +922,7 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
 
     LOG(History, "HistoryController %p pushState: Adding top item %p, setting url of current item %p to %s, scrollRestoration is %s", this, topItem.ptr(), m_currentItem.get(), urlString.ascii().data(), topItem->shouldRestoreScrollPosition() ? "auto" : "manual");
 
-    page->backForward().addItem(WTFMove(topItem));
+    page->backForward().addItem(frame->frameID(), WTFMove(topItem));
 
     if (page->usesEphemeralSession())
         return;
