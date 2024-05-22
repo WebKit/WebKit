@@ -144,6 +144,7 @@ private:
     std::unique_ptr<MarkerData> m_markerData;
     std::unique_ptr<FillStrokeData> m_fillStrokeData;
     SingleThreadWeakPtr<LegacyRenderSVGResourceContainer> m_linkedResource;
+    bool m_inLayoutForDifferentRoot { false };
 };
 
 } // namespace WebCore
