@@ -214,8 +214,9 @@
 #include "AccessibilityRootAtspi.h"
 #endif
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(WEBXR)
+#if ENABLE(WEBXR)
 #include "NavigatorWebXR.h"
+#include "WebXRSession.h"
 #include "WebXRSystem.h"
 #endif
 
@@ -2722,20 +2723,6 @@ void Page::setMuted(MediaProducerMutedStateFlags muted)
     });
 }
 
-bool Page::shouldBlockLayerTreeFreezingForVideo()
-{
-    bool shouldBlockLayerTreeFreezingForVideo = false;
-    forEachMediaElement([&shouldBlockLayerTreeFreezingForVideo] (HTMLMediaElement& element) {
-        // FIXME: Consider only returning true when `element.readyState >=
-        // HTMLMediaElementEnums::HAVE_METADATA` and forcing an update to the layer tree
-        // freeze state when an element's readyState gets to HAVE_METADATA in
-        // `HTMLMediaElement::setReadyState`
-        if (element.isVideo())
-            shouldBlockLayerTreeFreezingForVideo = true;
-    });
-    return shouldBlockLayerTreeFreezingForVideo;
-}
-
 void Page::stopMediaCapture(MediaProducerMediaCaptureKind kind)
 {
     UNUSED_PARAM(kind);
@@ -4069,11 +4056,21 @@ void Page::applicationWillResignActive()
 void Page::applicationDidEnterBackground()
 {
     m_webRTCProvider->setActive(false);
+
+#if ENABLE(WEBXR)
+    if (auto session = this->activeImmersiveXRSession())
+        session->applicationDidEnterBackground();
+#endif
 }
 
 void Page::applicationWillEnterForeground()
 {
     m_webRTCProvider->setActive(true);
+
+#if ENABLE(WEBXR)
+    if (auto session = this->activeImmersiveXRSession())
+        session->applicationWillEnterForeground();
+#endif
 }
 
 void Page::applicationDidBecomeActive()
@@ -4774,8 +4771,15 @@ void Page::setAccessibilityRootObject(AccessibilityRootAtspi* rootObject)
 }
 #endif // USE(ATSPI)
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(WEBXR)
+#if ENABLE(WEBXR)
+#if PLATFORM(IOS_FAMILY)
 bool Page::hasActiveImmersiveSession() const
+{
+    return !!activeImmersiveXRSession();
+}
+#endif // PLATFORM(IOS_FAMILY)
+
+RefPtr<WebXRSession> Page::activeImmersiveXRSession() const
 {
     for (RefPtr frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
@@ -4787,13 +4791,13 @@ bool Page::hasActiveImmersiveSession() const
         if (!navigator)
             continue;
 
-        auto* xrSystem = NavigatorWebXR::xrIfExists(*navigator);
-        if (xrSystem && xrSystem->hasActiveImmersiveSession())
-            return true;
+        if (auto xrSystem = NavigatorWebXR::xrIfExists(*navigator))
+            return xrSystem->activeImmersiveSession();
     }
-    return false;
+
+    return nullptr;
 }
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(WEBXR)
+#endif //  ENABLE(WEBXR)
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
 void Page::setDefaultSpatialTrackingLabel(const String& label)

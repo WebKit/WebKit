@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebXRReferenceSpace.h"
+#include "Page.h"
 #include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebXRBoundedReferenceSpace.h"
@@ -509,6 +510,24 @@ void WebXRSession::applyPendingRenderState()
     }
 }
 
+void WebXRSession::minimalUpdateRendering()
+{
+    // Spec is unclear about this, but we have to execute any scheduled video frame updates for
+    // videos to work in WebXR if the page is backgrounded
+    if (!m_shouldServiceRequestVideoFrameCallbacks)
+        return;
+
+    RefPtr sessionDocument = downcast<Document>(scriptExecutionContext());
+    if (!sessionDocument)
+        return;
+
+    if (auto* page = sessionDocument->page()) {
+        page->forEachDocument([&] (Document& document) {
+            document.serviceRequestVideoFrameCallbacks();
+        });
+    }
+}
+
 // https://immersive-web.github.io/webxr/#should-be-rendered
 bool WebXRSession::frameShouldBeRendered() const
 {
@@ -597,6 +616,7 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
                 m_inputSources->update(now, m_frameData.inputSources);
 
             tracePoint(WebXRSessionFrameCallbacksStart);
+            minimalUpdateRendering();
             // 6.5.For each entry in session’s list of currently running animation frame callbacks, in order:
             for (auto& callback : callbacks) {
                 //  6.6.If the entry’s cancelled boolean is true, continue to the next entry.

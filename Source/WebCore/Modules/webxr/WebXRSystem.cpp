@@ -609,9 +609,9 @@ void WebXRSystem::sessionEnded(WebXRSession& session)
     m_inlineSessions.remove(session);
 }
 
-bool WebXRSystem::hasActiveImmersiveSession() const
+RefPtr<WebXRSession> WebXRSystem::activeImmersiveSession() const
 {
-    return !!m_activeImmersiveSession;
+    return m_activeImmersiveSession;
 }
 
 class InlineRequestAnimationFrameCallback final: public RequestAnimationFrameCallback {

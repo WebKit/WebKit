@@ -174,6 +174,10 @@ class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 class WindowEventLoop;
 
+#if ENABLE(WEBXR)
+class WebXRSession;
+#endif
+
 struct AXTreeData;
 struct ApplePayAMSUIRequest;
 struct SimpleRange;
@@ -894,7 +898,6 @@ public:
     void playbackControlsMediaEngineChanged();
 #endif
     WEBCORE_EXPORT void setMuted(MediaProducerMutedStateFlags);
-    WEBCORE_EXPORT bool shouldBlockLayerTreeFreezingForVideo();
 
     WEBCORE_EXPORT void stopMediaCapture(MediaProducerMediaCaptureKind);
 
@@ -1180,6 +1183,10 @@ private:
 #if ENABLE(IMAGE_ANALYSIS)
     void resetTextRecognitionResults();
     void updateElementsWithTextRecognitionResults();
+#endif
+
+#if ENABLE(WEBXR)
+    RefPtr<WebXRSession> activeImmersiveXRSession() const;
 #endif
 
     std::optional<PageIdentifier> m_identifier;
