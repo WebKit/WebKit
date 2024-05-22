@@ -327,6 +327,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
         return type.value_or(JSC::ScriptFetchParameters::Type::JavaScript);
     };
 
+    auto specifier = moduleName->value(jsGlobalObject);
     // If SourceOrigin and/or CachedScriptFetcher is null, we import the module with the default fetcher.
     // SourceOrigin can be null if the source code is not coupled with the script file.
     // The examples,
@@ -362,7 +363,8 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
         auto type = getTypeFromAssertions();
         RETURN_IF_EXCEPTION(scope, reject(scope));
 
-        parameters = ModuleFetchParameters::create(type, emptyString(), /* isTopLevelModule */ true);
+        URL moduleURL = globalObject.importMap().resolve(specifier, baseURL);
+        parameters = ModuleFetchParameters::create(type, globalObject.importMap().integrityForURL(moduleURL), /* isTopLevelModule */ true);
 
         if (sourceOrigin.fetcher()) {
             scriptFetcher = sourceOrigin.fetcher();
@@ -385,7 +387,6 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     ASSERT(scriptFetcher);
     ASSERT(parameters);
 
-    auto specifier = moduleName->value(jsGlobalObject);
     RETURN_IF_EXCEPTION(scope, reject(scope));
     RELEASE_AND_RETURN(scope, JSC::importModule(jsGlobalObject, JSC::Identifier::fromString(vm, specifier), JSC::jsString(vm, baseURL.string()), JSC::JSScriptFetchParameters::create(vm, parameters.releaseNonNull()), JSC::JSScriptFetcher::create(vm, WTFMove(scriptFetcher))));
 }
@@ -495,14 +496,16 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             return;
         }
 
-        if (auto* parameters = loader.parameters()) {
-            String integrity = parameters->integrity();
-            if (!integrity.isEmpty()) {
-                if (!matchIntegrityMetadata(cachedScript, integrity)) {
-                    m_context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script "_s, integrityMismatchDescription(cachedScript, integrity)));
-                    rejectWithFetchError(*m_context, WTFMove(promise), ExceptionCode::TypeError, "Cannot load script due to integrity mismatch"_s);
-                    return;
-                }
+        String integrity = downcast<Document>(*m_context).globalObject()->importMap().integrityForURL(sourceURL);
+
+        if (auto* parameters = loader.parameters())
+            integrity = parameters->integrity();
+
+        if (!integrity.isEmpty()) {
+            if (!matchIntegrityMetadata(cachedScript, integrity)) {
+                m_context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script "_s, integrityMismatchDescription(cachedScript, integrity)));
+                rejectWithFetchError(*m_context, WTFMove(promise), ExceptionCode::TypeError, "Cannot load script due to integrity mismatch"_s);
+                return;
             }
         }
 

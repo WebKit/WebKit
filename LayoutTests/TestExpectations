@@ -6126,6 +6126,11 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/js
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload.html [ Skip ]
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload-link-header.html [ Skip ]
 
+imported/w3c/web-platform-tests/import-maps/dynamic-integrity.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/import-maps/static-integrity.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/import-maps/no-referencing-script-integrity.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/import-maps/nonimport-integrity.html [ DumpJSConsoleLogInStdErr ]
+
 # These tests have been timing out since their import.
 imported/w3c/web-platform-tests/import-maps/data-driven [ Skip ]
 

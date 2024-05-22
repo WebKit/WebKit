@@ -346,7 +346,10 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         }
 
         m_isExternalScript = true;
-        Ref script = LoadableModuleScript::create(nonce, element->attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriorityHint(), crossOriginMode,
+        AtomString integrity = element->attributeWithoutSynchronization(HTMLNames::integrityAttr);
+        if (integrity.isNull())
+            integrity = AtomString { document->globalObject()->importMap().integrityForURL(moduleScriptRootURL) };
+        Ref script = LoadableModuleScript::create(nonce, integrity, referrerPolicy(), fetchPriorityHint(), crossOriginMode,
             scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
         m_loadableScript = script.copyRef();
         if (RefPtr frame = element->document().frame())
