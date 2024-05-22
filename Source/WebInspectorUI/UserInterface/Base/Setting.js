@@ -241,6 +241,7 @@ WI.settings = {
     experimentalEnableNetworkEmulatedCondition: new WI.Setting("experimental-enable-network-emulated-condition", false),
     experimentalGroupSourceMapErrors: new WI.Setting("experimental-group-source-map-errors", true),
     experimentalLimitSourceCodeHighlighting: new WI.Setting("engineering-limit-source-code-highlighting", false),
+    experimentalUseFuzzyMatchingForCSSCodeCompletion: new WI.Setting("experimental-use-fuzzy-matching-for-css-code-completion", true),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),

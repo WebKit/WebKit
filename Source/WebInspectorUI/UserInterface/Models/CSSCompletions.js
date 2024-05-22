@@ -133,15 +133,8 @@ WI.CSSCompletions = class CSSCompletions
 
     static getCompletionText(completion)
     {
-        console.assert(typeof completion === "string" || completion instanceof WI.QueryResult, completion);
-
-        if (typeof completion === "string")
-            return completion;
-
-        if (completion instanceof WI.QueryResult)
-            return completion.value;
-
-        return "";
+        // FIXME <https://webkit.org/b/273721>: Make callers use the more generic WI.Completions.getCompletionText instead.
+        return WI.Completions.getCompletionText(completion);
     }
 
     // Public

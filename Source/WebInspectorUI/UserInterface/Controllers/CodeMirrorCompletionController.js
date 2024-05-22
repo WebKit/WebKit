@@ -93,7 +93,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             return;
         }
 
-        this._completions = completions;
+        this._completions = completions.map(WI.Completions.getCompletionText);
 
         if (typeof implicitSuffix === "string")
             this._implicitSuffix = implicitSuffix;
@@ -106,11 +106,11 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         var bounds = new WI.Rect(firstCharCoords.left, firstCharCoords.top, lastCharCoords.right - firstCharCoords.left, firstCharCoords.bottom - firstCharCoords.top);
 
         // Try to restore the previous selected index, otherwise just select the first.
-        var index = this._currentCompletion ? completions.indexOf(this._currentCompletion) : 0;
+        let index = this._currentCompletion ? this._completions.indexOf(this._currentCompletion) : 0;
         if (index === -1)
             index = 0;
 
-        if (this._forced || completions.length > 1 || completions[index] !== this._prefix) {
+        if (this._forced || this._completions.length > 1 || this._completions[index] !== this._prefix) {
             // Update and show the suggestion list.
             this._suggestionsView.update(completions, index);
             this._suggestionsView.show(bounds);
@@ -125,7 +125,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             return;
         }
 
-        this._applyCompletionHint(completions[index]);
+        this._applyCompletionHint(this._completions[index]);
 
         this._resolveUpdatePromise(WI.CodeMirrorCompletionController.UpdatePromise.CompletionsFound);
     }
@@ -305,7 +305,8 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             var cursor = {line: this._lineNumber, ch: this._endOffset};
             var currentText = this._codeMirror.getRange(from, cursor);
 
-            this._createCompletionHintMarker(cursor, replacementText.replace(currentText, ""));
+            if (replacementText.startsWith(currentText))
+                this._createCompletionHintMarker(cursor, replacementText.replace(currentText, ""));
         }
 
         this._ignoreChange = true;
@@ -584,12 +585,10 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             if (!functionName)
                 return [];
 
-            let functionCompletions = WI.CSSKeywordCompletions.forFunction(functionName).startsWith(this._prefix);
-
-            if (this._delegate && this._delegate.completionControllerCSSFunctionValuesNeeded)
-                functionCompletions = this._delegate.completionControllerCSSFunctionValuesNeeded(this, functionName, functionCompletions);
-
-            return functionCompletions;
+            if (WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion.value)
+                return WI.CSSKeywordCompletions.forFunction(functionName).executeQuery(this._prefix);
+            else
+                return WI.CSSKeywordCompletions.forFunction(functionName).startsWith(this._prefix);
         }
 
         // Scan backwards looking for the current property.
@@ -618,7 +617,11 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             if (this._implicitSuffix === suffix)
                 this._implicitSuffix = "";
 
-            let completions = WI.CSSKeywordCompletions.forProperty(propertyName).startsWith(this._prefix);
+            let completions;
+            if (WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion.value)
+                completions = WI.CSSKeywordCompletions.forProperty(propertyName).executeQuery(this._prefix);
+            else
+                completions = WI.CSSKeywordCompletions.forProperty(propertyName).startsWith(this._prefix);
 
             if (suffix.startsWith("("))
                 completions = completions.map((x) => x.replace(/\(\)$/, ""));
@@ -629,6 +632,8 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         this._implicitSuffix = suffix !== ":" ? ": " : "";
 
         // Complete property names.
+        if (WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion.value)
+            return WI.cssManager.propertyNameCompletions.executeQuery(this._prefix);
         return WI.cssManager.propertyNameCompletions.startsWith(this._prefix);
     }
 
