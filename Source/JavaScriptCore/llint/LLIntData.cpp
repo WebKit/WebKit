@@ -27,7 +27,9 @@
 #include "LLIntData.h"
 
 #include "ArithProfile.h"
+#include "BaselineJITCode.h"
 #include "CodeBlock.h"
+#include "DFGJITCode.h"
 #include "JSCConfig.h"
 #include "LLIntCLoop.h"
 #include "LLIntEntrypoint.h"
@@ -367,6 +369,12 @@ void Data::performAssertions(VM& vm)
         ASSERT(arithProfile.lhsObservedType().isOnlyInt32());
         ASSERT(arithProfile.rhsObservedType().isOnlyNumber());
     }
+
+#if ENABLE(DFG_JIT)
+    // We share the same layout for particular fields in all JITData to make our data IC assume this.
+    RELEASE_ASSERT(BaselineJITData::offsetOfGlobalObject() == DFG::JITData::offsetOfGlobalObject());
+    RELEASE_ASSERT(BaselineJITData::offsetOfStackOffset() == DFG::JITData::offsetOfStackOffset());
+#endif
 }
 IGNORE_WARNINGS_END
 

@@ -85,10 +85,6 @@ static bool attemptToWatch(CodeBlock* codeBlock, WatchpointSet& set, CodeBlockJe
 
 bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode)
 {
-    // We share the same layout for particular fields in all JITData to make our data IC assume this.
-    ASSERT(BaselineJITData::offsetOfGlobalObject() == JITData::offsetOfGlobalObject());
-    ASSERT(BaselineJITData::offsetOfStackOffset() == JITData::offsetOfStackOffset());
-
     m_globalObject = codeBlock->globalObject();
     m_stackOffset = codeBlock->stackPointerOffset() * sizeof(Register);
 

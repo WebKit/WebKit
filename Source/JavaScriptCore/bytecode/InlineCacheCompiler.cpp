@@ -1418,7 +1418,6 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
     accessCase.checkConsistency(*m_stubInfo);
 
-    JSGlobalObject* globalObject = m_globalObject;
     CCallHelpers& jit = *m_jit;
     JIT_COMMENT(jit, "Begin generateWithGuard");
     VM& vm = m_vm;
@@ -1465,9 +1464,28 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
                     }
                 } else {
                     if (structure->hasMonoProto()) {
-                        JSValue prototype = structure->prototypeForLookup(globalObject);
-                        RELEASE_ASSERT(prototype.isObject());
-                        jit.move(CCallHelpers::TrustedImmPtr(asObject(prototype)), baseForAccessGPR);
+                        if (!useHandlerIC() || structure->isObject()) {
+                            JSValue prototype = structure->prototypeForLookup(m_globalObject);
+                            RELEASE_ASSERT(prototype.isObject());
+                            jit.move(CCallHelpers::TrustedImmPtr(asObject(prototype)), baseForAccessGPR);
+                        } else {
+                            ASSERT(useHandlerIC());
+                            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), baseForAccessGPR);
+                            switch (structure->typeInfo().type()) {
+                            case StringType:
+                                jit.loadPtr(CCallHelpers::Address(baseForAccessGPR, JSGlobalObject::offsetOfStringPrototype()), baseForAccessGPR);
+                                break;
+                            case HeapBigIntType:
+                                jit.loadPtr(CCallHelpers::Address(baseForAccessGPR, JSGlobalObject::offsetOfBigIntPrototype()), baseForAccessGPR);
+                                break;
+                            case SymbolType:
+                                jit.loadPtr(CCallHelpers::Address(baseForAccessGPR, JSGlobalObject::offsetOfSymbolPrototype()), baseForAccessGPR);
+                                break;
+                            default:
+                                RELEASE_ASSERT_NOT_REACHED();
+                                break;
+                            }
+                        }
                     } else {
                         RELEASE_ASSERT(structure->isObject()); // Primitives must have a stored prototype. We use prototypeForLookup for them.
 #if USE(JSVALUE64)
@@ -2933,8 +2951,6 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
 
         ASSERT(baseGPR != scratchGPR);
 
-        JSGlobalObject* globalObject = m_globalObject;
-
         // Create a JS call using a JS call inline cache. Assume that:
         //
         // - SP is aligned and represents the extent of the calling compiler's stack usage.
@@ -2968,7 +2984,11 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
             if (ecmaMode.isStrict()) {
                 CCallHelpers::Jump shouldNotThrowError = jit.branchIfNotType(scratchGPR, NullSetterFunctionType);
                 // We replace setter with this AccessCase's JSGlobalObject::nullSetterStrictFunction, which will throw an error with the right JSGlobalObject.
-                jit.move(CCallHelpers::TrustedImmPtr(globalObject->nullSetterStrictFunction()), scratchGPR);
+                if (useHandlerIC()) {
+                    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchGPR);
+                    jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfNullSetterStrictFunction()), scratchGPR);
+                } else
+                    jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->nullSetterStrictFunction()), scratchGPR);
                 shouldNotThrowError.link(&jit);
             }
         }
@@ -3602,8 +3622,6 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
     GPRReg scratchGPR = m_scratchGPR;
     GPRReg thisGPR = m_stubInfo->thisValueIsInExtraGPR() ? m_stubInfo->thisGPR() : baseGPR;
 
-    JSGlobalObject* globalObject = m_globalObject;
-
     jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
     fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(ProxyObjectType)));
 
@@ -3618,24 +3636,19 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
     setSpillStateForJSCall(spillState);
 
     unsigned numberOfParameters;
-    JSFunction* proxyInternalMethod = nullptr;
 
     switch (accessCase.m_type) {
     case AccessCase::ProxyObjectHas:
         numberOfParameters = 2;
-        proxyInternalMethod = globalObject->performProxyObjectHasFunction();
         break;
     case AccessCase::ProxyObjectLoad:
         numberOfParameters = 3;
-        proxyInternalMethod = globalObject->performProxyObjectGetFunction();
         break;
     case AccessCase::IndexedProxyObjectLoad:
         numberOfParameters = 3;
-        proxyInternalMethod = globalObject->performProxyObjectGetByValFunction();
         break;
     case AccessCase::ProxyObjectStore:
         numberOfParameters = 4;
-        proxyInternalMethod = ecmaMode.isStrict() ? globalObject->performProxyObjectSetStrictFunction() : globalObject->performProxyObjectSetSloppyFunction();
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -3677,8 +3690,46 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
         break;
     }
 
-    ASSERT(proxyInternalMethod);
-    jit.move(CCallHelpers::TrustedImmPtr(proxyInternalMethod), scratchGPR);
+    switch (accessCase.m_type) {
+    case AccessCase::ProxyObjectHas: {
+        if (useHandlerIC()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectHasFunction()), scratchGPR);
+        } else
+            jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->performProxyObjectHasFunction()), scratchGPR);
+        break;
+    }
+    case AccessCase::ProxyObjectLoad: {
+        if (useHandlerIC()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectGetFunction()), scratchGPR);
+        } else
+            jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->performProxyObjectGetFunction()), scratchGPR);
+        break;
+    }
+    case AccessCase::IndexedProxyObjectLoad: {
+        if (useHandlerIC()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectGetByValFunction()), scratchGPR);
+        } else
+            jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->performProxyObjectGetByValFunction()), scratchGPR);
+        break;
+    }
+    case AccessCase::ProxyObjectStore: {
+        if (useHandlerIC()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchGPR);
+            if (ecmaMode.isStrict())
+                jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectSetStrictFunction()), scratchGPR);
+            else
+                jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectSetSloppyFunction()), scratchGPR);
+        } else
+            jit.move(CCallHelpers::TrustedImmPtr(ecmaMode.isStrict() ? m_globalObject->performProxyObjectSetStrictFunction() : m_globalObject->performProxyObjectSetSloppyFunction()), scratchGPR);
+        break;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
     if (useHandlerIC()) {
