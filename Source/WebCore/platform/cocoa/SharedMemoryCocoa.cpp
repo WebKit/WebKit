@@ -165,7 +165,7 @@ RefPtr<SharedMemory> SharedMemory::wrapMap(std::span<const uint8_t> data, Protec
 {
     ASSERT(!data.empty());
 
-    auto sendRight = makeMemoryEntry(data.size(), toVMAddress(static_cast<void*>(const_cast<uint8_t*>(data.data()))), protection, MACH_PORT_NULL);
+    auto sendRight = makeMemoryEntry(data.size(), toVMAddress(const_cast<uint8_t*>(data.data())), protection, MACH_PORT_NULL);
     if (!sendRight)
         return nullptr;
 

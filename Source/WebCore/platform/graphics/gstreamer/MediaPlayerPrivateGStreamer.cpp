@@ -4428,7 +4428,7 @@ void MediaPlayerPrivateGStreamer::initializationDataEncountered(InitData&& initD
 
         GST_DEBUG("scheduling initializationDataEncountered %s event of size %zu", initData.payloadContainerType().utf8().data(),
             initData.payload()->size());
-        GST_MEMDUMP("init datas", reinterpret_cast<const uint8_t*>(initData.payload()->makeContiguous()->span().data()), initData.payload()->size());
+        GST_MEMDUMP("init datas", initData.payload()->makeContiguous()->span().data(), initData.payload()->size());
         if (player)
             player->initializationDataEncountered(initData.payloadContainerType(), initData.payload()->tryCreateArrayBuffer());
     });
