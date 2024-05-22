@@ -38,7 +38,6 @@
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sysexits.h>
-#import <wtf/BlockPtr.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/text/WTFString.h>
@@ -112,12 +111,10 @@ void GPUProcess::setScreenProperties(const WebCore::ScreenProperties& screenProp
 
 void GPUProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle)
 {
-    auto cacheInvalidationHandler = [handle = WTFMove(handle)] () mutable {
-        AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
-    };
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), makeBlockPtr(WTFMove(cacheInvalidationHandler)).get());
+    AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
 }
-#endif // PLATFORM(MAC)
+
+#endif
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
 void GPUProcess::enablePowerLogging(SandboxExtension::Handle&& handle)
