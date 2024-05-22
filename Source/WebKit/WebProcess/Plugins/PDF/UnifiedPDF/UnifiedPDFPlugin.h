@@ -377,7 +377,7 @@ private:
     void stopTrackingSelection();
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
     RetainPtr<PDFSelection> protectedCurrentSelection() const;
-    void repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason, const Vector<WebCore::FloatRect>& additionalDocumentRectsToRepaint = { });
+    void repaintOnSelectionChange(ActiveStateChangeReason, PDFSelection* previousSelection = nil);
 
     String selectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
@@ -399,8 +399,6 @@ private:
 
     enum class FirstPageOnly : bool { No, Yes };
     PDFPageCoverage pageCoverageForSelection(PDFSelection *, FirstPageOnly = FirstPageOnly::No) const;
-
-    Vector<WebCore::FloatRect> boundsForSelection(PDFSelection *, CoordinateSpace) const;
 
     bool showDefinitionForSelection(PDFSelection *);
     std::pair<String, RetainPtr<PDFSelection>> textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint&, WebHitTestResultData&) override;
@@ -519,7 +517,6 @@ private:
 
     void setNeedsRepaintForAnnotation(PDFAnnotation *, RepaintRequirements);
     void setNeedsRepaintInDocumentRect(RepaintRequirements, const WebCore::FloatRect&);
-    void setNeedsRepaintInDocumentRects(RepaintRequirements, const Vector<WebCore::FloatRect>&);
 
     // "Up" is inside-out.
     template <typename T>
