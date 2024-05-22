@@ -76,6 +76,10 @@ ImageFrameAnimator* BitmapImageSource::frameAnimator() const
     if (m_frameAnimator)
         return m_frameAnimator.get();
 
+    // Number of frames can only be known for sure when loadimg the image is complete.
+    if (encodedDataStatus() != EncodedDataStatus::Complete)
+        return nullptr;
+
     if (!isAnimated())
         return nullptr;
 
