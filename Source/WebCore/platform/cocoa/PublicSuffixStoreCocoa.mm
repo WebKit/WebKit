@@ -42,8 +42,11 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
     auto domainString = domain.toStringWithoutCopying();
     {
         Locker locker { m_publicSuffixCacheLock };
-        if (m_publicSuffixCache && m_publicSuffixCache->contains(domainString))
-            return true;
+        if (m_publicSuffixCache) {
+            auto publicSuffix = PublicSuffix::fromRawString(String { domainString });
+            if (m_publicSuffixCache->contains(publicSuffix))
+                return true;
+        }
     }
 
     return isPublicSuffixCF(domainString);
@@ -60,24 +63,21 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView host) 
     return { };
 }
 
-void PublicSuffixStore::enablePublicSuffixCache(CanAcceptCustomPublicSuffix canAcceptCustomPublicSuffix)
+void PublicSuffixStore::enablePublicSuffixCache()
 {
     RELEASE_ASSERT(isMainThread());
-
-    m_canAcceptCustomPublicSuffix = canAcceptCustomPublicSuffix == CanAcceptCustomPublicSuffix::Yes;
 
     Locker locker { m_publicSuffixCacheLock };
     ASSERT(!m_publicSuffixCache);
-    m_publicSuffixCache = HashSet<String, ASCIICaseInsensitiveHash> { };
+    m_publicSuffixCache = HashSet<PublicSuffix> { };
 }
 
-void PublicSuffixStore::addPublicSuffix(const String& publicSuffix)
+void PublicSuffixStore::addPublicSuffix(const PublicSuffix& publicSuffix)
 {
-    if (publicSuffix.isEmpty())
-        return;
-
     RELEASE_ASSERT(isMainThread());
-    RELEASE_ASSERT(m_canAcceptCustomPublicSuffix || isPublicSuffixCF(publicSuffix));
+
+    if (!publicSuffix.isValid())
+        return;
 
     Locker locker { m_publicSuffixCacheLock };
     ASSERT(m_publicSuffixCache);

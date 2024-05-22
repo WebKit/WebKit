@@ -52,7 +52,7 @@ bool PublicSuffixStore::isPublicSuffix(StringView domain) const
     return platformIsPublicSuffix(domain);
 }
 
-String PublicSuffixStore::publicSuffix(const URL& url) const
+PublicSuffix PublicSuffixStore::publicSuffix(const URL& url) const
 {
     if (!url.isValid())
         return { };
@@ -65,7 +65,7 @@ String PublicSuffixStore::publicSuffix(const URL& url) const
     for (unsigned labelStart = 0; (separatorPosition = host.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {
         auto candidate = host.substring(separatorPosition + 1);
         if (isPublicSuffix(candidate))
-            return candidate.toString();
+            return PublicSuffix::fromRawString(candidate.toString());
     }
 
     return { };

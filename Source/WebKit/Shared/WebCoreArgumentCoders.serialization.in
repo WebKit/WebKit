@@ -8155,3 +8155,7 @@ using WebCore::IDBKeyPath = std::variant<String, Vector<String>>;
 using WebCore::ServiceWorkerOrClientData = std::variant<WebCore::ServiceWorkerData, WebCore::ServiceWorkerClientData>
 using WebCore::MediaPlayer::VideoFullscreenMode = uint32_t
 enum class WebCore::CrossOriginMode : bool
+
+[CreateUsing=fromRawString] class WebCore::PublicSuffix {
+    String string();
+};

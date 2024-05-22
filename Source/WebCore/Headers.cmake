@@ -1759,6 +1759,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ProcessIdentity.h
     platform/ProcessQualified.h
     platform/PromisedAttachmentInfo.h
+    platform/PublicSuffix.h
     platform/PublicSuffixStore.h
     platform/RectEdges.h
     platform/ReferrerPolicy.h
