@@ -86,8 +86,10 @@ LayoutUnit RenderTextControlMultiLine::preferredContentLogicalWidth(float charWi
 {
     float width = ceilf(charWidth * textAreaElement().cols());
 
+    auto overflow = style().isHorizontalWritingMode() ? style().overflowY() : style().overflowX();
+
     // We are able to have a vertical scrollbar if the overflow style is scroll or auto
-    if ((style().overflowY() == Overflow::Scroll) || (style().overflowY() == Overflow::Auto))
+    if ((overflow == Overflow::Scroll) || (overflow == Overflow::Auto))
         width += scrollbarThickness();
 
     return LayoutUnit(width);

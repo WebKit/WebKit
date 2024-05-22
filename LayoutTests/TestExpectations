@@ -1662,9 +1662,6 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-s
 # Timeout
 imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-crash.html [ Skip ]
 
-# Textarea vertical writing mode bug
-webkit.org/b/274332 imported/w3c/web-platform-tests/html/rendering/widgets/textarea-scrollbar-sizing-002.html [ Skip ]
-
 # CSS Grid Baseline tests
 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-justify-baseline-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-002-b.html [ ImageOnlyFailure ]
