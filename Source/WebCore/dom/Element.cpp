@@ -1987,10 +1987,8 @@ static ExceptionOr<String> trustedTypesCompliantAttributeValue(const String attr
 
 ALWAYS_INLINE unsigned Element::validateAttributeIndex(unsigned index, const QualifiedName& qname) const
 {
-    if (index == ElementData::attributeNotFound)
-        return index;
-
-    ASSERT(elementData());
+    if (!elementData())
+        return ElementData::attributeNotFound;
 
     if ((index < elementData()->length()) && (elementData()->attributeAt(index).name() == qname))
         return index;
@@ -2064,11 +2062,24 @@ ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const T
     return { };
 }
 
-void Element::setAttribute(const QualifiedName& name, const AtomString& value)
+ExceptionOr<void> Element::setAttribute(const QualifiedName& name, const AtomString& value, bool enforceTrustedTypes)
 {
     synchronizeAttribute(name);
-    unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
-    setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::No);
+    if (enforceTrustedTypes && document().scriptExecutionContext()->settingsValues().trustedTypesEnabled) {
+        auto attributeTypeAndSink = trustedTypeForAttribute(nodeName(), name.localName().convertToASCIILowercase(), this->namespaceURI(), name.namespaceURI());
+        auto attributeValue = trustedTypesCompliantAttributeValue(attributeTypeAndSink.attributeType, value, this, attributeTypeAndSink.sink);
+
+        if (attributeValue.hasException())
+            return attributeValue.releaseException();
+
+        unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
+        setAttributeInternal(index, name, AtomString(attributeValue.releaseReturnValue()), InSynchronizationOfLazyAttribute::No);
+    } else {
+        unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
+        setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::No);
+    }
+
+    return { };
 }
 
 void Element::setAttributeWithoutOverwriting(const QualifiedName& name, const AtomString& value)

@@ -65,7 +65,7 @@ protected:
 
 private:
     String nodeValue() const final;
-    void setNodeValue(const String&) final;
+    ExceptionOr<void> setNodeValue(const String&) final;
     void notifyParentAfterChange(const ContainerNode::ChildChange&);
 
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.

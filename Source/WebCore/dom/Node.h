@@ -143,7 +143,7 @@ public:
     inline bool hasTagName(const SVGQualifiedName&) const;
     virtual String nodeName() const = 0;
     virtual String nodeValue() const;
-    virtual void setNodeValue(const String&);
+    virtual ExceptionOr<void> setNodeValue(const String&);
     NodeType nodeType() const { return nodeTypeFromBitFields(m_typeBitFields); }
     virtual size_t approximateMemoryCost() const { return sizeof(*this); }
     ContainerNode* parentNode() const;
@@ -208,7 +208,7 @@ public:
     WEBCORE_EXPORT const AtomString& lookupNamespaceURI(const AtomString& prefix) const;
 
     WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
-    WEBCORE_EXPORT void setTextContent(String&&);
+    WEBCORE_EXPORT ExceptionOr<void> setTextContent(String&&);
     
     Node* lastDescendant() const;
     Node* firstDescendant() const;
