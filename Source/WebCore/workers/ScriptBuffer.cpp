@@ -43,7 +43,7 @@ static std::optional<ShareableResource::Handle> tryConvertToShareableResourceHan
         return std::nullopt;
 
     auto& segment = script.buffer()->begin()->segment;
-    auto sharedMemory = SharedMemory::wrapMap(const_cast<uint8_t*>(segment->data()), segment->size(), SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = SharedMemory::wrapMap(segment->span(), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return std::nullopt;
 

@@ -723,9 +723,8 @@ SharedBufferDataView::SharedBufferDataView(const SharedBufferDataView& other, si
 
 Ref<SharedBuffer> SharedBufferDataView::createSharedBuffer() const
 {
-    const Ref<const DataSegment> segment = m_segment;
     return SharedBuffer::create(DataSegment::Provider {
-        [segment, data = data()]() { return data; },
+        [segment = m_segment, data = span().data()]() { return data; },
         [size = size()]() { return size; }
     });
 }

@@ -77,7 +77,6 @@ class SharedMemoryHandle;
 // To modify or combine the data, allocate a new DataSegment.
 class DataSegment : public ThreadSafeRefCounted<DataSegment> {
 public:
-    WEBCORE_EXPORT const uint8_t* data() const;
     WEBCORE_EXPORT size_t size() const;
     std::span<const uint8_t> span() const { return std::span { data(), size() }; }
 
@@ -115,6 +114,8 @@ private:
 #if USE(FOUNDATION)
     void iterate(CFDataRef, const Function<void(std::span<const uint8_t>)>& apply) const;
 #endif
+
+    WEBCORE_EXPORT const uint8_t* data() const;
 
     explicit DataSegment(Vector<uint8_t>&& data)
         : m_immutableData(WTFMove(data)) { }
@@ -306,9 +307,7 @@ public:
 
     WEBCORE_EXPORT static Ref<SharedBuffer> create(Ref<FragmentedSharedBuffer>&&);
 
-    WEBCORE_EXPORT const uint8_t* data() const;
     WEBCORE_EXPORT const uint8_t& operator[](size_t) const;
-    const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
     std::span<const uint8_t> span() const { return std::span(data(), size()); }
     WTF::Persistence::Decoder decoder() const;
 
@@ -339,6 +338,7 @@ private:
     WEBCORE_EXPORT explicit SharedBuffer(Ref<FragmentedSharedBuffer>&&);
 
     WEBCORE_EXPORT static RefPtr<SharedBuffer> createFromReadingFile(const String& filePath);
+    WEBCORE_EXPORT const uint8_t* data() const;
 };
 
 class SharedBufferBuilder {
@@ -410,9 +410,7 @@ public:
     WEBCORE_EXPORT SharedBufferDataView(Ref<const DataSegment>&&, size_t positionWithinSegment, std::optional<size_t> newSize = std::nullopt);
     WEBCORE_EXPORT SharedBufferDataView(const SharedBufferDataView&, size_t newSize);
     size_t size() const { return m_size; }
-    const uint8_t* data() const { return m_segment->data() + m_positionWithinSegment; }
-    const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
-    std::span<const uint8_t> span() const { return { data(), size() }; }
+    std::span<const uint8_t> span() const { return { m_segment->span().subspan(m_positionWithinSegment, size()) }; }
 
     WEBCORE_EXPORT Ref<SharedBuffer> createSharedBuffer() const;
 #if USE(FOUNDATION)

@@ -148,7 +148,7 @@ template<> void getData(const WebKit::NetworkCache::Data& data, const Function<b
 }
 template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(std::span<const uint8_t>)>& function)
 {
-    function({ data.data(), data.size() });
+    function(data.span());
 }
 
 static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const WebKit::NetworkCache::Data& fileData)

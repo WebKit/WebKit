@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioStreamDescription& description, size_t magicCookieSize, const void* magicCookie)
+RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioStreamDescription& description, std::span<const uint8_t> magicCookie)
 {
     auto basicDescription = std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
     CMFormatDescriptionRef format = nullptr;
-    auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, basicDescription, 0, nullptr, magicCookieSize, magicCookie, nullptr, &format);
+    auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, basicDescription, 0, nullptr, magicCookie.size(), magicCookie.data(), nullptr, &format);
     if (error) {
         LOG_ERROR("createAudioFormatDescription failed with %d", static_cast<int>(error));
         return nullptr;

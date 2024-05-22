@@ -1375,8 +1375,7 @@ void DocumentLoader::dataReceived(const SharedBuffer& buffer)
         return;
 #endif
 
-    ASSERT(buffer.data());
-    ASSERT(buffer.size());
+    ASSERT(!buffer.span().empty());
     ASSERT(!m_response.isNull());
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.

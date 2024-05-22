@@ -325,7 +325,7 @@ public:
         unsigned readOffset = m_bufferLength - m_info.src->bytes_in_buffer;
 
         m_info.src->bytes_in_buffer += newByteCount;
-        m_info.src->next_input_byte = (JOCTET*)(data.data()) + readOffset;
+        m_info.src->next_input_byte = (JOCTET*)data.span().subspan(readOffset).data();
 
         // If we still have bytes to skip, try to skip those now.
         if (m_bytesToSkip)
@@ -721,7 +721,8 @@ void JPEGImageDecoder::setICCProfile(RefPtr<SharedBuffer>&& buffer)
     if (!buffer)
         return;
 
-    auto iccProfile = LCMSProfilePtr(cmsOpenProfileFromMem(buffer->data(), buffer->size()));
+    auto span = buffer->span();
+    auto iccProfile = LCMSProfilePtr(cmsOpenProfileFromMem(span.data(), span.size()));
     if (!iccProfile)
         return;
 

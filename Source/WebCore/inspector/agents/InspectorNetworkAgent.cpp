@@ -632,7 +632,7 @@ void InspectorNetworkAgent::didReceiveData(ResourceLoaderIdentifier identifier, 
         // Often the data is text and we would have a decoder, but for non-text we won't have a decoder.
         // Sync XHRs may not have a cached resource, while non-sync XHRs usually transfer data over on completion.
         if (m_loadingXHRSynchronously && resourceData && !resourceData->hasBufferedData() && !resourceData->cachedResource())
-            m_resourcesData->setResourceContent(requestId, base64EncodeToString(data->data(), data->size()), true);
+            m_resourcesData->setResourceContent(requestId, base64EncodeToString(data->span()), true);
     }
 
     m_frontendDispatcher->dataReceived(requestId, timestamp(), expectedDataLength, encodedDataLength);

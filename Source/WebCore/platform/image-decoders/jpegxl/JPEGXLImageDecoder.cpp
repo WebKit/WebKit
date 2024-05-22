@@ -248,9 +248,9 @@ void JPEGXLImageDecoder::decode(Query query, size_t frameIndex, bool allDataRece
 
     m_lastQuery = query;
 
-    m_data->data();
+    auto dataSpan = m_data->span().subspan(m_readOffset);
     size_t dataSize = m_data->size();
-    if (JxlDecoderSetInput(m_decoder.get(), m_data->data() + m_readOffset, dataSize - m_readOffset) != JXL_DEC_SUCCESS) {
+    if (JxlDecoderSetInput(m_decoder.get(), dataSpan.data(), dataSpan.size()) != JXL_DEC_SUCCESS) {
         setFailed();
         return;
     }

@@ -138,8 +138,8 @@ static std::pair<unsigned, unsigned> extractKeyidsLocationFromCencInitData(const
     if (initData.isEmpty() || initData.size() > std::numeric_limits<unsigned>::max())
         return keyIdsMap;
 
-    auto* data = initData.data();
-    unsigned initDataSize = initData.size();
+    auto data = initData.span();
+    unsigned initDataSize = data.size();
     unsigned index = 0;
     unsigned psshSize = 0;
 
@@ -203,7 +203,7 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
     // Check if initData is a valid CENC initData.
     if (!keyIdCount || !index)
         return SharedBuffer::create();
-    auto* data = initData.data();
+    auto data = initData.span();
 
     auto object = JSON::Object::create();
     auto keyIdsArray = JSON::Array::create();
@@ -220,8 +220,7 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
     }
 
     object->setArray("kids"_s, WTFMove(keyIdsArray));
-    CString jsonData = object->toJSONString().utf8();
-    return SharedBuffer::create(jsonData.span());
+    return SharedBuffer::create(object->toJSONString().utf8().span());
 }
 
 static Ref<SharedBuffer> extractKeyIdFromWebMInitData(const SharedBuffer& initData)
@@ -239,7 +238,7 @@ static Ref<SharedBuffer> extractKeyIdFromWebMInitData(const SharedBuffer& initDa
     // The format is a JSON object containing the following members:
     // "kids"
     // An array of key IDs. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.
-    keyIdsArray->pushString(base64URLEncodeToString(initData.data(), initData.size()));
+    keyIdsArray->pushString(base64URLEncodeToString(initData.span()));
 
     object->setArray("kids"_s, WTFMove(keyIdsArray));
     return SharedBuffer::create(object->toJSONString().utf8().span());

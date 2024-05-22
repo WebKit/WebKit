@@ -110,7 +110,7 @@ RefPtr<WebCore::SharedMemory> Data::tryCreateSharedMemory() const
     if (isNull() || !isMap())
         return nullptr;
 
-    return WebCore::SharedMemory::wrapMap(const_cast<uint8_t*>(data()), m_size, WebCore::SharedMemory::Protection::ReadOnly);
+    return WebCore::SharedMemory::wrapMap(span(), WebCore::SharedMemory::Protection::ReadOnly);
 }
 
 }

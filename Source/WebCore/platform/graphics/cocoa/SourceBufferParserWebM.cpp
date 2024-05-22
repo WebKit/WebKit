@@ -1087,11 +1087,11 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
         PARSER_LOG_ERROR_IF_POSSIBLE("VideoTrackData::consumeFrameData failed to create contiguous data block");
         return Skip(&reader, bytesRemaining);
     }
-    const uint8_t* blockBufferData = contiguousBuffer->data();
+    auto segmentHeaderData = contiguousBuffer->span().first(segmentHeaderLength);
 
     bool isKey = false;
     if (codec() == CodecType::VP9) {
-        if (!m_headerParser.ParseUncompressedHeader(blockBufferData, segmentHeaderLength))
+        if (!m_headerParser.ParseUncompressedHeader(segmentHeaderData.data(), segmentHeaderData.size()))
             return Skip(&reader, bytesRemaining);
 
         if (m_headerParser.key()) {
@@ -1099,7 +1099,7 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
             setFormatDescription(createVideoInfoFromVP9HeaderParser(m_headerParser, track().video.value().colour));
         }
     } else if (codec() == CodecType::VP8) {
-        auto header = parseVP8FrameHeader({ blockBufferData, segmentHeaderLength });
+        auto header = parseVP8FrameHeader(segmentHeaderData);
         if (header && header->keyframe) {
             isKey = true;
             setFormatDescription(createVideoInfoFromVP8Header(*header, track().video.value().colour));

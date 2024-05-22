@@ -99,7 +99,7 @@ public:
 #if USE(UNIX_DOMAIN_SOCKETS)
     WEBCORE_EXPORT static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
 #elif OS(DARWIN)
-    WEBCORE_EXPORT static RefPtr<SharedMemory> wrapMap(void*, size_t, Protection);
+    WEBCORE_EXPORT static RefPtr<SharedMemory> wrapMap(std::span<const uint8_t>, Protection);
 #endif
 
     WEBCORE_EXPORT ~SharedMemory();

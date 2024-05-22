@@ -331,7 +331,7 @@ void NetworkDataTaskBlob::readData(const BlobDataItem& item)
     if (bytesToRead > m_totalRemainingSize)
         bytesToRead = m_totalRemainingSize;
 
-    std::span data { item.data()->data() + item.offset() + m_currentItemReadSize, static_cast<size_t>(bytesToRead) };
+    auto data = item.data()->span().subspan(item.offset() + m_currentItemReadSize, static_cast<size_t>(bytesToRead));
     m_currentItemReadSize = 0;
 
     consumeData(data);

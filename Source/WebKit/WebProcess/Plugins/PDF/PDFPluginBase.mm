@@ -369,7 +369,8 @@ void PDFPluginBase::streamDidReceiveData(const SharedBuffer& buffer)
             m_data = adoptCF(CFDataCreateMutable(0, 0));
 
         ensureDataBufferLength(m_streamedBytes + buffer.size());
-        memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, buffer.data(), buffer.size());
+        auto bufferSpan = buffer.span();
+        memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, bufferSpan.data(), bufferSpan.size());
         m_streamedBytes += buffer.size();
 
         // Keep our ranges-lookup-table compact by continuously updating its first range

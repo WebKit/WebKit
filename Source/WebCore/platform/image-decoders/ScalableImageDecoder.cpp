@@ -64,11 +64,11 @@ static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const 
     unsigned bytesExtracted = 0;
     for (const auto& element : sharedBuffer) {
         if (bytesExtracted + element.segment->size() <= bufferLength) {
-            memcpy(buffer + bytesExtracted, element.segment->data(), element.segment->size());
+            memcpy(buffer + bytesExtracted, element.segment->span().data(), element.segment->size());
             bytesExtracted += element.segment->size();
         } else {
             ASSERT(bufferLength - bytesExtracted < element.segment->size());
-            memcpy(buffer + bytesExtracted, element.segment->data(), bufferLength - bytesExtracted);
+            memcpy(buffer + bytesExtracted, element.segment->span().data(), bufferLength - bytesExtracted);
             bytesExtracted = bufferLength;
             break;
         }

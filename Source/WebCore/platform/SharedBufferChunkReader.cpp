@@ -39,7 +39,7 @@ namespace WebCore {
 SharedBufferChunkReader::SharedBufferChunkReader(FragmentedSharedBuffer* buffer, const Vector<char>& separator)
     : m_iteratorCurrent(buffer->begin())
     , m_iteratorEnd(buffer->end())
-    , m_segment(m_iteratorCurrent != m_iteratorEnd ? m_iteratorCurrent->segment->data() : nullptr)
+    , m_segment(m_iteratorCurrent != m_iteratorEnd ? m_iteratorCurrent->segment->span().data() : nullptr)
     , m_separator(separator)
 {
 }
@@ -47,7 +47,7 @@ SharedBufferChunkReader::SharedBufferChunkReader(FragmentedSharedBuffer* buffer,
 SharedBufferChunkReader::SharedBufferChunkReader(FragmentedSharedBuffer* buffer, const char* separator)
     : m_iteratorCurrent(buffer->begin())
     , m_iteratorEnd(buffer->end())
-    , m_segment(m_iteratorCurrent != m_iteratorEnd ? m_iteratorCurrent->segment->data() : nullptr)
+    , m_segment(m_iteratorCurrent != m_iteratorEnd ? m_iteratorCurrent->segment->span().data() : nullptr)
 {
     setSeparator(separator);
 }
@@ -99,7 +99,7 @@ bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSepa
                 chunk.append(std::span { reinterpret_cast<const uint8_t*>(m_separator.data()), m_separatorIndex });
             return !chunk.isEmpty();
         }
-        m_segment = m_iteratorCurrent->segment->data();
+        m_segment = m_iteratorCurrent->segment->span().data();
     }
 
     ASSERT_NOT_REACHED();

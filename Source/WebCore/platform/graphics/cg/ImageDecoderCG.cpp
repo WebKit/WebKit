@@ -618,9 +618,9 @@ String ImageDecoderCG::decodeUTI(CGImageSourceRef imageSource, const SharedBuffe
     static constexpr auto avifBrand = FourCC("avif");
     static constexpr auto avisBrand = FourCC("avis");
 
-    auto boxUnsigned = [&data](unsigned index) -> unsigned {
-        static constexpr bool isLittleEndian = false;
-        const unsigned* boxBytes = reinterpret_cast<const unsigned*>(data.data());
+    auto boxUnsigned = [span = data.span()](unsigned index) -> unsigned {
+        constexpr bool isLittleEndian = false;
+        const unsigned* boxBytes = reinterpret_cast<const unsigned*>(span.data());
         // Numbers in the file are BigEndian.
         return flipBytesIfLittleEndian(boxBytes[index], isLittleEndian);
     };

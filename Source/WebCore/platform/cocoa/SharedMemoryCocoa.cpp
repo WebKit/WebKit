@@ -161,16 +161,16 @@ static MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, SharedMemo
     return MachSendRight::adopt(port);
 }
 
-RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, Protection protection)
+RefPtr<SharedMemory> SharedMemory::wrapMap(std::span<const uint8_t> data, Protection protection)
 {
-    ASSERT(size);
+    ASSERT(!data.empty());
 
-    auto sendRight = makeMemoryEntry(size, toVMAddress(data), protection, MACH_PORT_NULL);
+    auto sendRight = makeMemoryEntry(data.size(), toVMAddress(static_cast<void*>(const_cast<uint8_t*>(data.data()))), protection, MACH_PORT_NULL);
     if (!sendRight)
         return nullptr;
 
     Ref sharedMemory = adoptRef(*new SharedMemory);
-    sharedMemory->m_size = size;
+    sharedMemory->m_size = data.size();
     sharedMemory->m_data = nullptr;
     sharedMemory->m_sendRight = WTFMove(sendRight);
     sharedMemory->m_protection = protection;

@@ -113,7 +113,7 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
     auto object = JSON::Object::create();
     auto kidsArray = JSON::Array::create();
     for (auto& buffer : keyIDBuffer.value())
-        kidsArray->pushString(base64URLEncodeToString(buffer->data(), buffer->size()));
+        kidsArray->pushString(base64URLEncodeToString(buffer->span()));
     object->setArray("kids"_s, WTFMove(kidsArray));
 
     return SharedBuffer::create(object->toJSONString().utf8().span());
@@ -194,7 +194,7 @@ std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDsCenc(con
 #if USE(GSTREAMER)
 bool isPlayReadySanitizedInitializationData(const SharedBuffer& buffer)
 {
-    const char* protectionData = buffer.dataAsCharPtr();
+    auto* protectionData = reinterpret_cast<const char*>(buffer.span().data());
     size_t protectionDataLength = buffer.size();
 
     // The protection data starts with a 10-byte PlayReady version

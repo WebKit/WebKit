@@ -21,6 +21,7 @@
 #include "config.h"
 #include "GStreamerEMEUtilities.h"
 
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>
 
 #if ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
@@ -80,7 +81,8 @@ RefPtr<SharedBuffer> InitData::extractCencIfNeeded(RefPtr<SharedBuffer>&& unpars
     GMarkupParseContextUserData userData;
     GUniquePtr<GMarkupParseContext> markupParseContext(g_markup_parse_context_new(&markupParser, (GMarkupParseFlags) 0, &userData, nullptr));
 
-    if (g_markup_parse_context_parse(markupParseContext.get(), payload->dataAsCharPtr(), payload->size(), nullptr)) {
+    auto payloadData = spanReinterpretCast<const char>(payload->span());
+    if (g_markup_parse_context_parse(markupParseContext.get(), payloadData.data(), payloadData.size(), nullptr)) {
         if (userData.pssh)
             payload = WTFMove(userData.pssh);
         else

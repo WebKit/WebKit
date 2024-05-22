@@ -92,7 +92,7 @@ const uint8_t* SharedBufferReference::data() const
 #endif
     if (!m_buffer || !m_buffer->isContiguous())
         return nullptr;
-    return downcast<SharedBuffer>(m_buffer.get())->data();
+    return downcast<SharedBuffer>(m_buffer.get())->span().data();
 }
 
 RefPtr<WebCore::SharedMemory> SharedBufferReference::sharedCopy() const

@@ -59,13 +59,14 @@ static RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const Audi
     AudioStreamBasicDescription asbd { };
     asbd.mFormatID = info.codecName.value;
     UInt32 size = sizeof(asbd);
-    auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, info.cookieData->size(), info.cookieData->data(), &size, &asbd);
+    auto cookieDataSpan = info.cookieData->span();
+    auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, cookieDataSpan.size(), cookieDataSpan.data(), &size, &asbd);
     if (error) {
         RELEASE_LOG_ERROR(Media, "createAudioFormatDescription failed with error %d (%.4s)", error, (char *)&error);
         return nullptr;
     }
 
-    return createAudioFormatDescription(CAAudioStreamDescription(asbd), info.cookieData->size(), info.cookieData->data());
+    return createAudioFormatDescription(CAAudioStreamDescription(asbd), cookieDataSpan);
 }
 
 #endif
@@ -285,7 +286,8 @@ PacketDurationParser::PacketDurationParser(const AudioInfo& info)
     AudioStreamBasicDescription asbd { };
     asbd.mFormatID = info.codecName.value;
     UInt32 size = sizeof(asbd);
-    auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, info.cookieData->size(), info.cookieData->data(), &size, &asbd);
+    auto cookieDataSpan = info.cookieData->span();
+    auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, cookieDataSpan.size(), cookieDataSpan.data(), &size, &asbd);
     if (error || !info.rate) {
         RELEASE_LOG_ERROR(Media, "createAudioFormatDescription failed with error %d (%.4s)", (int)error, (char*)&error);
         return;
@@ -297,7 +299,7 @@ PacketDurationParser::PacketDurationParser(const AudioInfo& info)
     switch (m_audioFormatID) {
 #if ENABLE(VORBIS)
     case kAudioFormatVorbis: {
-        AudioFormatInfo formatInfo = { asbd, info.cookieData->data(), (UInt32)info.cookieData->size() };
+        AudioFormatInfo formatInfo = { asbd, cookieDataSpan.data(), (UInt32)cookieDataSpan.size() };
         UInt32 propertySize = sizeof(AudioFormatVorbisModeInfo);
         m_vorbisModeInfo = std::make_unique<AudioFormatVorbisModeInfo>();
         if (PAL::AudioFormatGetProperty(kAudioFormatProperty_VorbisModeInfo, sizeof(formatInfo), &formatInfo, &propertySize, m_vorbisModeInfo.get()) != noErr || !m_vorbisModeInfo->mModeCount) {
