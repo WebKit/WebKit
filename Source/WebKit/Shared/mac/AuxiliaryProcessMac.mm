@@ -658,6 +658,14 @@ static String getHomeDirectory()
     return String::fromUTF8(pwd.pw_dir);
 }
 
+static void closeOpenDirectoryConnections()
+{
+    if (mbr_close_connectionsPtr())
+        mbr_close_connectionsPtr()();
+    if (lookup_close_connectionsPtr())
+        lookup_close_connectionsPtr()();
+}
+
 static void populateSandboxInitializationParameters(SandboxInitializationParameters& sandboxParameters)
 {
     RELEASE_ASSERT(!sandboxParameters.userDirectorySuffix().isNull());
@@ -702,10 +710,9 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
 #else
 #error "Unknown architecture."
 #endif
-    if (mbr_close_connectionsPtr())
-        mbr_close_connectionsPtr()();
-    if (lookup_close_connectionsPtr())
-        lookup_close_connectionsPtr()();
+
+    closeOpenDirectoryConnections();
+
     if (HIS_XPC_ResetMessageConnectionPtr())
         HIS_XPC_ResetMessageConnectionPtr()();
 }
@@ -816,6 +823,8 @@ void AuxiliaryProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& 
     getHomeDirectory();
 
     sandboxExtension->revoke();
+
+    closeOpenDirectoryConnections();
 }
 #endif // PLATFORM(MAC)
 
