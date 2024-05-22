@@ -1,4 +1,4 @@
 
 
-FAIL window.open() fires navigate event in target window but not source assert_true: expected true got false
+PASS window.open() fires navigate event in target window but not source
 

@@ -1,4 +1,4 @@
 
 
-FAIL submitting a <form> element that navigates same-document targeting a cross-origin window assert_true: cancelable expected true got false
+PASS submitting a <form> element that navigates same-document targeting a cross-origin window
 

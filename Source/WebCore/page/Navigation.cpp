@@ -594,7 +594,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
     bool isSameDocument = destination->sameDocument();
     bool isTraversal = navigationType == NavigationNavigationType::Traverse;
     bool canIntercept = documentCanHaveURLRewritten(*document, destination->url()) && (!isTraversal || isSameDocument);
-    bool canBeCanceled = document->isTopDocument() && isSameDocument; // FIXME: and user involvement is not browser-ui or navigation's relevant global object has transient activation.
+    bool canBeCanceled = !isTraversal || (document->isTopDocument() && isSameDocument); // FIXME: and user involvement is not browser-ui or navigation's relevant global object has transient activation.
     bool hashChange = equalIgnoringFragmentIdentifier(document->url(), destination->url()) && !equalRespectingNullity(document->url().fragmentIdentifier(),  destination->url().fragmentIdentifier());
     auto info = apiMethodTracker ? apiMethodTracker->info : JSC::jsUndefined();
 

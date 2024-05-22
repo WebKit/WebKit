@@ -1,4 +1,4 @@
 
 
-FAIL using location.href to navigate same-document targeting a cross-origin window assert_true: cancelable expected true got false
+PASS using location.href to navigate same-document targeting a cross-origin window
 
