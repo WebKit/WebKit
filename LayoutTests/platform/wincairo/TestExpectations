@@ -889,6 +889,8 @@ http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ S
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Skip ] # Failure
 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ] # Failure
 
+webkit.org/b/274368 [ Release ] http/tests/security/navigate-when-restoring-cached-page.html [ Skip ] # Makes a subsequent test crash
+
 webkit.org/b/255748 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Skip ] # Crash
 webkit.org/b/255748 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ] # Crash
 
@@ -3346,6 +3348,3 @@ http/tests/loading/reusing-cached-stylesheet-from-different-domain.html [ ImageO
 resize-observer/contain-instrinsic-size-should-not-leak-nodes.html [ Failure Pass ]
 
 fast/css/view-transitions-nested-transparency-layers.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/274368 http/tests/security/no-indexeddb-from-sandbox.html [ Crash Pass ]
-webkit.org/b/274368 http/tests/security/no-javascript-location-percent-escaped.html [ Crash Pass ]
