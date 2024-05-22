@@ -410,7 +410,6 @@ PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
 PASS -webkit-mask-source-type
 PASS -webkit-nbsp-mode
-PASS -webkit-overflow-scrolling
 PASS -webkit-rtl-ordering
 PASS -webkit-ruby-position
 PASS -webkit-text-combine
@@ -423,4 +422,3 @@ PASS -webkit-touch-callout
 PASS -webkit-user-drag
 PASS -webkit-user-modify
 PASS -webkit-user-select
-

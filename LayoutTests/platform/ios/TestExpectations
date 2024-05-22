@@ -7302,11 +7302,6 @@ webkit.org/b/273905 svg/filters/filter-on-root-tile-boundary.html [ Pass ImageOn
 
 webkit.org/b/273984 http/tests/site-isolation/window-open-with-name-cross-site.html [ Timeout ]
 
-# webkit.org/b/274175 REGRESSION (276847@main): [ iOS Debug ] 3X fast/viewport/ios/viewport-fit tests are consistent failures 
-fast/viewport/ios/viewport-fit-auto.html [ Failure ]
-fast/viewport/ios/viewport-fit-contain.html [ Failure ]
-fast/viewport/ios/viewport-fit-cover.html [ Failure ]
-
 # webkit.org/b/274219 (REGRESSION (278786@main): [ MacOS iOS ] 3X http/wpt/webauthn tests are consistent failures)
 http/wpt/webauthn/idl.https.html [ Failure ]
 
