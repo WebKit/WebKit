@@ -54,52 +54,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     RefPtr<WebKit::WebProcessPool> _processPool;
 
-    WeakObjCPtr<id <WKProcessGroupDelegate>> _delegate;
-
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<WKGeolocationProviderIOS> _geolocationProvider;
 #endif // PLATFORM(IOS_FAMILY)
-}
-
-static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, const void* clientInfo)
-{
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto processGroup = (__bridge WKProcessGroup *)clientInfo;
-ALLOW_DEPRECATED_DECLARATIONS_END
-    auto delegate = processGroup->_delegate.get();
-
-    if ([delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)])
-        [delegate processGroup:processGroup didCreateConnectionToWebProcessPlugIn:wrapper(*WebKit::toImpl(connectionRef))];
-}
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef contextRef)
-ALLOW_DEPRECATED_DECLARATIONS_END
-{
-    WKContextConnectionClientV0 connectionClient;
-    memset(&connectionClient, 0, sizeof(connectionClient));
-
-    connectionClient.base.version = 0;
-    connectionClient.base.clientInfo = (__bridge CFTypeRef)processGroup;
-    connectionClient.didCreateConnection = didCreateConnection;
-
-    WKContextSetConnectionClient(contextRef, &connectionClient.base);
-}
-
-static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo)
-{
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto processGroup = (__bridge WKProcessGroup *)clientInfo;
-ALLOW_DEPRECATED_DECLARATIONS_END
-    auto delegate = processGroup->_delegate.get();
-
-    if ([delegate respondsToSelector:@selector(processGroupWillCreateConnectionToWebProcessPlugIn:)]) {
-        RetainPtr<id> initializationUserData = [delegate processGroupWillCreateConnectionToWebProcessPlugIn:processGroup];
-
-        return toAPI(&WebKit::ObjCObjectGraph::create(initializationUserData.get()).leakRef());
-    }
-
-    return 0;
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -111,7 +68,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     injectedBundleClient.base.version = 1;
     injectedBundleClient.base.clientInfo = (__bridge void*)processGroup;
-    injectedBundleClient.getInjectedBundleInitializationUserData = getInjectedBundleInitializationUserData;
 
     WKContextSetInjectedBundleClient(contextRef, &injectedBundleClient.base);
 }
@@ -205,7 +161,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _processPool = WebKit::WebProcessPool::create(configuration);
 
-    setUpConnectionClient(self, toAPI(_processPool.get()));
     setUpInjectedBundleClient(self, toAPI(_processPool.get()));
     setUpHistoryClient(self, toAPI(_processPool.get()));
 
@@ -223,27 +178,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _processPool = WebKit::WebProcessPool::create(configuration);
 
-    setUpConnectionClient(self, toAPI(_processPool.get()));
     setUpInjectedBundleClient(self, toAPI(_processPool.get()));
     setUpHistoryClient(self, toAPI(_processPool.get()));
 
     return self;
-}
-
-- (id <WKProcessGroupDelegate>)delegate
-{
-    return _delegate.getAutoreleased();
-}
-
-- (void)setDelegate:(id <WKProcessGroupDelegate>)delegate
-{
-    _delegate = delegate;
-
-    // If the client can observe when the connection to the WebProcess injected bundle is established, then
-    // delaying the launch of the WebProcess until something is loaded in the web view may not be safe.
-    // As a result, we disable the feature by default and let the client opt-in via WKWebViewConfiguration.
-    if ([delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)])
-        _processPool->setDelaysWebProcessLaunchDefaultValue(false);
 }
 
 @end
