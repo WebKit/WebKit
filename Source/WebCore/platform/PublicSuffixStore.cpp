@@ -71,19 +71,18 @@ String PublicSuffixStore::publicSuffix(const URL& url) const
     return { };
 }
 
-String PublicSuffixStore::topPrivatelyControlledDomain(const String& host) const
+String PublicSuffixStore::topPrivatelyControlledDomain(StringView host) const
 {
     // FIXME: if host is a URL, we could drop these checks.
     if (host.isEmpty())
         return { };
 
     if (!host.containsOnlyASCII())
-        return host;
+        return host.toString();
 
     Locker locker { m_HostTopPrivatelyControlledDomainCacheLock };
-    auto hostCopy = crossThreadCopy(host);
-    auto result = m_hostTopPrivatelyControlledDomainCache.ensure(hostCopy, [&] {
-        const auto lowercaseHost = hostCopy.convertToASCIILowercase();
+    auto result = m_hostTopPrivatelyControlledDomainCache.ensure<ASCIICaseInsensitiveStringViewHashTranslator>(host, [&] {
+        const auto lowercaseHost = host.convertToASCIILowercase();
         if (lowercaseHost == "localhost"_s || URL::hostIsIPAddress(lowercaseHost))
             return lowercaseHost;
 

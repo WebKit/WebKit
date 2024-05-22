@@ -1215,6 +1215,30 @@ TEST(WTF_HashMap, Clear_Reenter)
     EXPECT_TRUE(map.isEmpty());
 }
 
+TEST(WTF_HashMap, Ensure_Translator)
+{
+    HashMap<String, unsigned> map;
+    auto addResult = map.ensure<StringViewHashTranslator>(StringView { "foo"_s }, [] { return 1u; });
+    EXPECT_TRUE(addResult.isNewEntry);
+    EXPECT_TRUE(map.contains<StringViewHashTranslator>(StringView { "foo"_s }));
+    EXPECT_EQ(map.size(), 1u);
+    unsigned existingValue = map.get<StringViewHashTranslator>(StringView { "foo"_s });
+    EXPECT_EQ(existingValue, 1u);
+    existingValue = map.get<StringViewHashTranslator>("foo"_str);
+    EXPECT_EQ(existingValue, 1u);
+    addResult = map.ensure<StringViewHashTranslator>(StringView { "foo"_s }, [] {
+        EXPECT_TRUE(false);
+        return 2u;
+    });
+    EXPECT_FALSE(addResult.isNewEntry);
+    EXPECT_EQ(map.size(), 1u);
+    existingValue = map.get<StringViewHashTranslator>("foo"_str);
+    EXPECT_EQ(existingValue, 1u);
+    bool didRemove = map.remove<StringViewHashTranslator>(StringView { "foo"_s });
+    EXPECT_TRUE(didRemove);
+    EXPECT_EQ(map.size(), 0u);
+}
+
 TEST(WTF_HashMap, GetOptional)
 {
     {

@@ -4108,8 +4108,8 @@ const URL& Document::urlForBindings() const
 
         auto areSameSiteIgnoringPublicSuffix = [](StringView domain, StringView otherDomain) {
             auto& publicSuffixStore = PublicSuffixStore::singleton();
-            auto domainString = publicSuffixStore.topPrivatelyControlledDomain(domain.toStringWithoutCopying());
-            auto otherDomainString = publicSuffixStore.topPrivatelyControlledDomain(otherDomain.toStringWithoutCopying());
+            auto domainString = publicSuffixStore.topPrivatelyControlledDomain(domain);
+            auto otherDomainString = publicSuffixStore.topPrivatelyControlledDomain(otherDomain);
             auto substringToSeparator = [](const String& string) -> String {
                 auto indexOfFirstSeparator = string.find('.');
                 if (indexOfFirstSeparator == notFound)
