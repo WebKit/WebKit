@@ -1567,7 +1567,7 @@ sub builtDylibPathForName
         return "$configurationProductDir/$libraryName.framework/Versions/A/$libraryName";
     }
     if (isWPE()) {
-        return "$configurationProductDir/lib/libWPEWebKit-1.0.so";
+        return "$configurationProductDir/lib/libWPEWebKit-2.0.so";
     }
 
     die "Unsupported platform, can't determine built library locations.\nTry `build-webkit --help` for more information.\n";

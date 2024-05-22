@@ -150,18 +150,49 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming"]),
 
     ([
-      # The WPEQtView class can't rely on the readability/parameter_name rule,
-      # because omitting parameter names for QML signals leads to runtime
-      # errors.
-      os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt', 'WPEQtView.h'),
-    ],
-    ["-readability/parameter_name"]),
+        # The WPEQtViewBackend class needs to enforce a certain include order to the gbm.h/epoxy constraints.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtViewBackend.h')],
+     ["-build/include_order"]),
 
     ([
-     # The WPE QT wrapper lib is not part of Webkit and therefore don't need to statically
-     # link the WTF framework. Instead it uses the standard alloc mechanism.
-     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt')],
-     ["-runtime/wtf_make_unique"]),
+        # The WPEQtViewLoadRequest class uses Qt naming conventions (d_ptr).
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtViewLoadRequest.h'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtViewLoadRequest.h')],
+     ["-readability/naming/underscores"]),
+
+    ([
+        # The WPEQtView class can't rely on the readability/parameter_name rule,
+        # because omitting parameter names for QML signals leads to runtime
+        # errors.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtView.h'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtView.h')],
+     ["-readability/parameter_name", "-readability/naming/acronym"]),
+
+    ([
+        # The WPEViewQtQuick / WPEDisplayQtQuick follow GLib API conventions.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEViewQtQuick.h'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEDisplayQtQuick.h')],
+     ["-build/header_guard", "-readability/naming/underscores", "-readability/parameter_name", "-whitespace/declaration", "-whitespace/parens"]),
+
+    ([
+        # The WPEViewQtQuick / WPEDisplayQtQuick follow GLib API conventions.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEViewQtQuick.cpp'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEDisplayQtQuick.cpp')],
+     ["-build/include_order", "-whitespace/parens"]),
+
+    ([
+        # The WPEQtView class needs to include moc_*.cpp files at the end of the file.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtView.cpp')],
+     ["-build/include_order", "-runtime/wtf_make_unique", "-readability/naming/acronym"]),
+
+    ([
+        # The WPE QT wrapper lib is not part of Webkit and therefore don't need to statically
+        # link the WTF framework. Instead it uses the standard alloc mechanism.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6'),
+        os.path.join('Tools', 'MiniBrowser', 'wpe', 'qt5', 'main.cpp'),
+        os.path.join('Tools', 'MiniBrowser', 'wpe', 'qt6', 'main.cpp')],
+     ["-runtime/wtf_make_unique", "-readability/naming/underscores", "-readability/naming/acronym"]),
 
     ([
       # The GTK+ and WPE APIs use upper case, underscore separated, words in

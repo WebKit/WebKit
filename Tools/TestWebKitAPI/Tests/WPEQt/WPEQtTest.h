@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018, 2019 Igalia S.L.
+ * Copyright (C) 2018, 2019, 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,9 +19,16 @@
 
 #pragma once
 
+#include <QtCore/qglobal.h>
+
 // WPEQt has to be included before the remaining Qt headers, because of epoxy.
-#include <wpe/qt/WPEQtView.h>
-#include <wpe/qt/WPEQtViewLoadRequest.h>
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#include <wpe/qt6/WPEQtView.h>
+#include <wpe/qt6/WPEQtViewLoadRequest.h>
+#else
+#include <wpe/qt5/WPEQtView.h>
+#include <wpe/qt5/WPEQtViewLoadRequest.h>
+#endif
 
 #include <QEventLoop>
 #include <QQmlApplicationEngine>

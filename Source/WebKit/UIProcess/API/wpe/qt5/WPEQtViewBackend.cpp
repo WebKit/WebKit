@@ -18,6 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "config.h"
 #include "WPEQtViewBackend.h"
 
 #include "WPEQtView.h"
@@ -177,10 +178,10 @@ GLuint WPEQtViewBackend::texture(QOpenGLContext* context)
     glFunctions->glUniform1i(m_textureUniform, 0);
 
     static const GLfloat vertices[4][2] = {
-        { -1.0, 1.0  },
-        {  1.0, 1.0  },
+        { -1.0, 1.0 },
+        { 1.0, 1.0 },
         { -1.0, -1.0 },
-        {  1.0, -1.0 },
+        { 1.0, -1.0 },
     };
 
     static const GLfloat texturePos[4][2] = {

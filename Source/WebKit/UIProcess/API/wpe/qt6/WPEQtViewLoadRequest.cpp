@@ -18,6 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "config.h"
 #include "WPEQtViewLoadRequest.h"
 
 #include "WPEQtView.h"
@@ -87,3 +88,5 @@ QString WPEQtViewLoadRequest::errorString() const
     Q_D(const WPEQtViewLoadRequest);
     return d->m_errorString;
 }
+
+#include "moc_WPEQtViewLoadRequest.cpp"
