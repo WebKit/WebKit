@@ -236,18 +236,18 @@ static void processRemoteTracks(RTCRtpTransceiver& transceiver, PeerConnectionBa
     transceiver.setFiredDirection(state.firedDirection);
 }
 
-void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<DescriptionStates>&& descriptionStates, std::optional<TransceiverStates>&& transceiverStates, std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend)
+void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<DescriptionStates>&& descriptionStates, std::optional<TransceiverStates>&& transceiverStates, std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend, std::optional<double> maxMessageSize)
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT(m_setDescriptionCallback);
-    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), transceiverStates = WTFMove(transceiverStates), sctpBackend = WTFMove(sctpBackend)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), transceiverStates = WTFMove(transceiverStates), sctpBackend = WTFMove(sctpBackend), maxMessageSize]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
         m_peerConnection.updateTransceiversAfterSuccessfulLocalDescription();
-        m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
+        m_peerConnection.updateSctpBackend(WTFMove(sctpBackend), maxMessageSize);
 
         if (descriptionStates) {
             m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));
@@ -321,13 +321,13 @@ void PeerConnectionBackend::setRemoteDescription(const RTCSessionDescription& se
     doSetRemoteDescription(sessionDescription);
 }
 
-void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<DescriptionStates>&& descriptionStates, std::optional<TransceiverStates>&& transceiverStates, std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend)
+void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<DescriptionStates>&& descriptionStates, std::optional<TransceiverStates>&& transceiverStates, std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend, std::optional<double> maxMessageSize)
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description succeeded");
     ASSERT(m_setDescriptionCallback);
 
-    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), transceiverStates = WTFMove(transceiverStates), sctpBackend = WTFMove(sctpBackend), events = WTFMove(m_pendingTrackEvents)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), transceiverStates = WTFMove(transceiverStates), sctpBackend = WTFMove(sctpBackend), maxMessageSize, events = WTFMove(m_pendingTrackEvents)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -344,7 +344,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
         }
 
         m_peerConnection.updateTransceiversAfterSuccessfulRemoteDescription();
-        m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
+        m_peerConnection.updateSctpBackend(WTFMove(sctpBackend), maxMessageSize);
 
         if (descriptionStates) {
             m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));

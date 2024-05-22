@@ -1,7 +1,7 @@
 
 PASS Determine the local side send limitation (canSendSize) by offering a max-message-size of 0
-FAIL Remote offer SDP missing max-message-size attribute assert_equals: Missing SDP attribute and a canSendSize of 0 should give an maxMessageSize of 65536 expected 65536 but got Infinity
-FAIL max-message-size with a (non-zero) value provided by the remote peer assert_equals: maxMessageSize should be the value provided by the remote peer (as long as it is less than canSendSize) expected 1 but got Infinity
-FAIL Renegotiate max-message-size with various values provided by the remote peer assert_equals: maxMessageSize should be the value provided by the remote peer (as long as it is less than canSendSize) expected 1 but got Infinity
+PASS Remote offer SDP missing max-message-size attribute
+PASS max-message-size with a (non-zero) value provided by the remote peer
+PASS Renegotiate max-message-size with various values provided by the remote peer
 PASS max-message-size with a (non-zero) value larger than canSendSize provided by the remote peer
 

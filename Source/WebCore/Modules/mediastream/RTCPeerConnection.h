@@ -191,7 +191,7 @@ public:
     void updateDescriptions(PeerConnectionBackend::DescriptionStates&&);
     void updateTransceiversAfterSuccessfulLocalDescription();
     void updateTransceiversAfterSuccessfulRemoteDescription();
-    void updateSctpBackend(std::unique_ptr<RTCSctpTransportBackend>&&);
+    void updateSctpBackend(std::unique_ptr<RTCSctpTransportBackend>&&, std::optional<double>);
 
     void processIceTransportStateChange(RTCIceTransport&);
     void processIceTransportChanges();

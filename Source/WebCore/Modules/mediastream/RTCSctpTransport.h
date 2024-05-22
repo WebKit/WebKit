@@ -46,10 +46,10 @@ public:
 
     RTCDtlsTransport& transport() { return m_transport.get(); }
     RTCSctpTransportState state() const { return m_state; }
-    double maxMessageSize() const { return m_maxMessageSize; }
+    double maxMessageSize() const { return m_maxMessageSize.value_or(std::numeric_limits<double>::infinity()); }
     std::optional<unsigned short>  maxChannels() const { return m_maxChannels; }
 
-    void update() { }
+    void updateMaxMessageSize(std::optional<double>);
 
     const RTCSctpTransportBackend& backend() const { return m_backend.get(); }
 
@@ -73,8 +73,7 @@ private:
     UniqueRef<RTCSctpTransportBackend> m_backend;
     Ref<RTCDtlsTransport> m_transport;
     RTCSctpTransportState m_state { RTCSctpTransportState::Connecting };
-    // https://w3c.github.io/webrtc-pc/#dfn-update-the-data-max-message-size
-    double m_maxMessageSize { std::numeric_limits<double>::infinity() };
+    std::optional<double> m_maxMessageSize;
     std::optional<unsigned short> m_maxChannels;
 };
 
