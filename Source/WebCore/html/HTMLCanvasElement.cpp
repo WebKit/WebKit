@@ -230,16 +230,16 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         if (m_context->isPlaceholder())
             return Exception { ExceptionCode::InvalidStateError };
 
-        if (auto* context = dynamicDowncast<CanvasRenderingContext2D>(*m_context)) {
+        if (RefPtr context = dynamicDowncast<CanvasRenderingContext2D>(*m_context)) {
             if (!is2dType(contextId))
                 return std::optional<RenderingContext> { std::nullopt };
-            return std::optional<RenderingContext> { RefPtr { context } };
+            return std::optional<RenderingContext> { WTFMove(context) };
         }
 
-        if (auto* context = dynamicDowncast<ImageBitmapRenderingContext>(*m_context)) {
+        if (RefPtr context = dynamicDowncast<ImageBitmapRenderingContext>(*m_context)) {
             if (!isBitmapRendererType(contextId))
                 return std::optional<RenderingContext> { std::nullopt };
-            return std::optional<RenderingContext> { RefPtr { context } };
+            return std::optional<RenderingContext> { WTFMove(context) };
         }
 
 #if ENABLE(WEBGL)
@@ -249,13 +249,13 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
             auto version = toWebGLVersion(contextId);
             if ((version == WebGLVersion::WebGL1) != m_context->isWebGL1())
                 return std::optional<RenderingContext> { std::nullopt };
-            if (auto* context = dynamicDowncast<WebGLRenderingContext>(*m_context))
-                return std::optional<RenderingContext> { RefPtr { context } };
+            if (RefPtr context = dynamicDowncast<WebGLRenderingContext>(*m_context))
+                return std::optional<RenderingContext> { WTFMove(context) };
             return std::optional<RenderingContext> { RefPtr { &downcast<WebGL2RenderingContext>(*m_context) } };
         }
 #endif
 
-        if (auto* context = dynamicDowncast<GPUCanvasContext>(m_context.get())) {
+        if (RefPtr context = dynamicDowncast<GPUCanvasContext>(m_context.get())) {
             if (!isWebGPUType(contextId))
                 return { std::nullopt };
             return { context };
@@ -266,30 +266,33 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     }
 
     if (is2dType(contextId)) {
-        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        Ref vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
         RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
-        auto context = createContext2d(contextId, WTFMove(settings));
+        RefPtr context = createContext2d(contextId, WTFMove(settings));
         if (!context)
             return std::optional<RenderingContext> { std::nullopt };
-        return std::optional<RenderingContext> { RefPtr<CanvasRenderingContext2D> { context } };
+        return std::optional<RenderingContext> { WTFMove(context) };
     }
 
     if (isBitmapRendererType(contextId)) {
-        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        Ref vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         auto settings = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
         RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
-        auto context = createContextBitmapRenderer(contextId, WTFMove(settings));
+        RefPtr context = createContextBitmapRenderer(contextId, WTFMove(settings));
         if (!context)
             return std::optional<RenderingContext> { std::nullopt };
-        return std::optional<RenderingContext> { RefPtr<ImageBitmapRenderingContext> { context } };
+        return std::optional<RenderingContext> { WTFMove(context) };
     }
 
 #if ENABLE(WEBGL)
     if (isWebGLType(contextId)) {
-        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        Ref vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
         RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
@@ -306,7 +309,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
 
     if (isWebGPUType(contextId)) {
         GPU* gpu = nullptr;
-        if (auto* window = document().domWindow()) {
+        if (RefPtr window = document().domWindow()) {
             // FIXME: Should we be instead getting this through jsDynamicCast<JSDOMWindow*>(state)->wrapped().navigator().gpu()?
             gpu = window->navigator().gpu();
         }
@@ -425,10 +428,11 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(WebGLVersion ty
 #if ENABLE(WEBXR)
     // https://immersive-web.github.io/webxr/#xr-compatible
     if (attrs.xrCompatible) {
-        if (auto* window = document().domWindow())
+        if (RefPtr window = document().domWindow()) {
             // FIXME: how to make this sync without blocking the main thread?
             // For reference: https://immersive-web.github.io/webxr/#ref-for-dom-webglcontextattributes-xrcompatible
             NavigatorWebXR::xr(window->navigator()).ensureImmersiveXRDeviceIsSelected([]() { });
+        }
     }
 #endif
 
@@ -652,7 +656,7 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 
         if (shouldPaint) {
             if (hasCreatedImageBuffer()) {
-                if (ImageBuffer* imageBuffer = buffer())
+                if (RefPtr imageBuffer = buffer())
                     context.drawImageBuffer(*imageBuffer, snappedIntRect(r), { context.compositeOperation() });
             }
         }
@@ -959,8 +963,7 @@ void HTMLCanvasElement::eventListenersDidChange()
 void HTMLCanvasElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     ActiveDOMObject::didMoveToNewDocument(newDocument);
-    auto* context = renderingContext();
-    if (context) {
+    if (RefPtr context = renderingContext()) {
         oldDocument.removeCanvasNeedingPreparationForDisplayOrFlush(*context);
         newDocument.addCanvasNeedingPreparationForDisplayOrFlush(*context);
     }
