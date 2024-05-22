@@ -128,6 +128,16 @@ bool URL::hasLocalScheme() const
         || protocolIsData();
 }
 
+bool URL::hasFetchScheme() const
+{
+    // https://fetch.spec.whatwg.org/#fetch-scheme
+    return protocolIsInHTTPFamily()
+        || protocolIsAbout()
+        || protocolIsBlob()
+        || protocolIsData()
+        || protocolIsFile();
+}
+
 unsigned URL::pathStart() const
 {
     unsigned start = m_hostEnd + m_portLength;

@@ -457,6 +457,8 @@ private:
     void updateNavigationAPIEntries();
     void updateRequestAndAddExtraFields(Frame&, ResourceRequest&, IsMainResource, FrameLoadType, ShouldUpdateAppInitiatedValue, IsServiceWorkerNavigationLoad, WillOpenInNewWindow, Document*);
 
+    bool dispatchNavigateEvent(const URL& newURL, const NavigationAction&, NavigationHistoryBehavior, bool isSameDocument);
+
     WeakRef<LocalFrame> m_frame;
     UniqueRef<LocalFrameLoaderClient> m_client;
 

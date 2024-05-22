@@ -1,3 +1,6 @@
-FAIL: Timed out waiting for notifyDone to be called
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: oh no!
 
+Harness Error (FAIL), message = Unhandled rejection: oh no!
+
+FAIL navigation.transition.finished must not trigger unhandled rejections null is not an object (evaluating 'navigation.transition.finished')
 

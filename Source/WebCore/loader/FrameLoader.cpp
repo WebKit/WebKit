@@ -1196,17 +1196,8 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
     }
 }
 
-static NavigationNavigationType determineNavigationType(FrameLoadType loadType, const URL& newURL, const URL& oldURL, NavigationHistoryBehavior historyHandling)
+static NavigationNavigationType determineNavigationType(FrameLoadType loadType, NavigationHistoryBehavior historyHandling)
 {
-    // Step 9-10: https://html.spec.whatwg.org/multipage/browsing-the-web.html#beginning-navigation
-    // FIXME: and initiatorOriginSnapshot is same origin with targetNavigable's active document's origin,
-    if (historyHandling == NavigationHistoryBehavior::Auto && newURL == oldURL)
-        return NavigationNavigationType::Replace;
-
-    // FIXME: Only *initial* about:blank.
-    if (newURL.protocolIsJavaScript() || oldURL.isAboutBlank())
-        return NavigationNavigationType::Replace;
-
     if (historyHandling == NavigationHistoryBehavior::Push)
         return NavigationNavigationType::Push;
     if (historyHandling == NavigationHistoryBehavior::Replace)
@@ -1237,18 +1228,6 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
     // Update the data source's request with the new URL to fake the URL change
     URL oldURL = document->url();
 
-    auto navigationType = determineNavigationType(m_loadType, url, oldURL, historyHandling);
-    if (document->settings().navigationAPIEnabled()) {
-        if (RefPtr domWindow = document->domWindow()) {
-            // FIXME: This is likely not the ideal location for the navigate event and should happen earlier.
-            // The Traversal event was handled earlier.
-            if (navigationType != NavigationNavigationType::Traverse) {
-                if (!domWindow->protectedNavigation()->dispatchPushReplaceReloadNavigateEvent(url, navigationType, true))
-                    return;
-            }
-        }
-    }
-
     document->setURL(url);
     setOutgoingReferrer(url);
     protectedDocumentLoader()->replaceRequestURLForSameDocumentNavigation(url);
@@ -1276,6 +1255,7 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
 
     m_frame->checkedHistory()->updateForSameDocumentNavigation();
 
+    auto navigationType = determineNavigationType(m_loadType, historyHandling);
     if (document->settings().navigationAPIEnabled() && document->domWindow() && m_frame->checkedHistory()->currentItem())
         document->protectedWindow()->navigation().updateForNavigation(*m_frame->checkedHistory()->currentItem(), navigationType);
 
@@ -1569,6 +1549,10 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     // exactly the same so pages with '#' links and DHTML side effects
     // work properly.
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, newLoadType, newURL)) {
+
+        if (!dispatchNavigateEvent(newURL, action, frameLoadRequest.navigationHistoryBehavior(), true))
+            return;
+
         oldDocumentLoader->setTriggeringAction(WTFMove(action));
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
@@ -1578,6 +1562,11 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
             continueFragmentScrollAfterNavigationPolicy(request, requesterOrigin.ptr(), navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad, historyHandling);
         }, PolicyDecisionMode::Synchronous);
         return;
+    }
+
+    if (frameLoadRequest.requesterSecurityOrigin().isSameOriginDomain(frame->document()->securityOrigin())) {
+        if (!dispatchNavigateEvent(newURL, action, frameLoadRequest.navigationHistoryBehavior(), false))
+            return;
     }
 
     // Must grab this now, since this load may stop the previous load and clear this flag.
@@ -1781,6 +1770,10 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     const String& httpMethod = loader->request().httpMethod();
 
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, policyChecker().loadType(), newURL)) {
+
+        if (!dispatchNavigateEvent(newURL, loader->triggeringAction(), NavigationHistoryBehavior::Auto, true))
+            return;
+
         RefPtr oldDocumentLoader = m_documentLoader;
         NavigationAction action { frame->protectedDocument().releaseNonNull(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission };
         oldDocumentLoader->setTriggeringAction(WTFMove(action));
@@ -4158,6 +4151,28 @@ RefPtr<Frame> FrameLoader::findFrameForNavigation(const AtomString& name, Docume
         return nullptr;
 
     return frame;
+}
+
+bool FrameLoader::dispatchNavigateEvent(const URL& newURL, const NavigationAction& action, NavigationHistoryBehavior historyHandling, bool isSameDocument)
+{
+    RefPtr document = m_frame->document();
+    if (!document || !document->settings().navigationAPIEnabled())
+        return true;
+    RefPtr window = document->protectedWindow();
+    if (!window)
+        return true;
+    // Download events are handled later in PolicyChecker::checkNavigationPolicy().
+    if (!action.downloadAttribute().isNull())
+        return true;
+    if (!isSameDocument && !newURL.hasFetchScheme())
+        return true;
+
+    auto navigationType = determineNavigationType(m_loadType, historyHandling);
+    // Traversals are handled earlier, in loadItem().
+    if (navigationType == NavigationNavigationType::Traverse)
+        return true;
+
+    return window->protectedNavigation()->dispatchPushReplaceReloadNavigateEvent(newURL, navigationType, isSameDocument);
 }
 
 void FrameLoader::loadSameDocumentItem(HistoryItem& item)
