@@ -21,5 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-in-worker.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice-overflow.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice.any.js
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-stream-byob-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-stream-sync-xhr-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-stream.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-text.any.js

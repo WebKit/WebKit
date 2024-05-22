@@ -620,7 +620,6 @@
         "shadow-dom/untriaged/shadow-trees/shadow-root-001-ref.html",
         "shadow-dom/untriaged/shadow-trees/shadow-root-002-ref.html",
         "shadow-dom/untriaged/styles/not-apply-in-shadow-root-001-ref.html",
-        "web-platform-tests/FileAPI/BlobURL/support/file_test3.html",
         "web-platform-tests/FileAPI/support/document-domain-setter.sub.html",
         "web-platform-tests/FileAPI/support/empty-document.html",
         "web-platform-tests/FileAPI/support/incumbent.sub.html",

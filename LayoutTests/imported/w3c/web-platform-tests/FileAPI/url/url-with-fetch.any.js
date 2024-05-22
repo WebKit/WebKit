@@ -1,25 +1,5 @@
 // META: script=resources/fetch-tests.js
-
-async function garbageCollect() {
-  if (typeof TestUtils !== 'undefined' && TestUtils.gc) {
-    await TestUtils.gc();
-  } else if (self.gc) {
-    await self.gc();
-  } else if (self.GCController) {
-    // Present in some WebKit development environments
-    await GCController.collect();
-  } else {
-    var gcRec = function (n) {
-      if (n < 1)
-        return {};
-      var temp = {i: "ab" + i + (i / 100000)};
-      temp += "foo";
-      gcRec(n-1);
-    };
-    for (var i = 0; i < 1000; i++)
-      gcRec(10);
-  }
-}
+// META: script=/common/gc.js
 
 function fetch_should_succeed(test, request) {
   return fetch(request).then(response => response.text());

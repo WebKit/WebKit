@@ -1,4 +1,0 @@
-
-PASS Aborting before read
-PASS Aborting after read
-
