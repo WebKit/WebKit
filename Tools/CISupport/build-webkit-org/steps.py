@@ -671,8 +671,8 @@ class DownloadBuiltProduct(shell.ShellCommandNewStyle):
     name = "download-built-product"
     description = ["downloading built product"]
     descriptionDone = ["downloaded built product"]
-    haltOnFailure = False
-    flunkOnFailure = False
+    haltOnFailure = True
+    flunkOnFailure = True
 
     @defer.inlineCallbacks
     def run(self):
