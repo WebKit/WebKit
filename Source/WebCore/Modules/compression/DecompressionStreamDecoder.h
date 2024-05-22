@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,7 @@ private:
     bool didInflateFinish(int) const;
     bool didInflateContainExtraBytes(int) const;
 
-    ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompressZlib(std::span<const uint8_t>);
+    ExceptionOr<Ref<JSC::ArrayBuffer>> decompressZlib(std::span<const uint8_t>);
     ExceptionOr<bool> initialize();
 
     explicit DecompressionStreamDecoder(unsigned char format)
@@ -89,11 +89,11 @@ private:
 
     bool m_usingAppleCompressionFramework { false };
 
-    inline ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompress(std::span<const uint8_t>);
+    inline ExceptionOr<Ref<JSC::ArrayBuffer>> decompress(std::span<const uint8_t>);
 
 #if PLATFORM(COCOA)
     compression_stream m_stream;
-    ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompressAppleCompressionFramework(std::span<const uint8_t>);
+    ExceptionOr<Ref<JSC::ArrayBuffer>> decompressAppleCompressionFramework(std::span<const uint8_t>);
     ExceptionOr<bool> initializeAppleCompressionFramework();
 #endif
 

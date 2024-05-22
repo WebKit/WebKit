@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,11 +88,8 @@ RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFo
     if (bufferSize != arrayBuffer->byteLength())
         return nullptr;
 
-    auto data = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, bufferSize);
-    if (!data)
-        return nullptr;
-
-    return create(format, size, data.releaseNonNull());
+    Ref data = Uint8ClampedArray::create(WTFMove(arrayBuffer));
+    return create(format, size, WTFMove(data));
 }
 
 ByteArrayPixelBuffer::ByteArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data)

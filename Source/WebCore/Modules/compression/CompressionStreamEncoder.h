@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,7 @@ public:
 private:
     bool didDeflateFinish(int) const;
 
-    ExceptionOr<RefPtr<JSC::ArrayBuffer>> compress(std::span<const uint8_t>);
+    ExceptionOr<Ref<JSC::ArrayBuffer>> compress(std::span<const uint8_t>);
     ExceptionOr<bool> initialize();
 
     explicit CompressionStreamEncoder(unsigned char format)

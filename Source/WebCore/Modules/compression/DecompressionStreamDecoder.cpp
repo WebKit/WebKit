@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,11 +38,11 @@ ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::decode(const BufferS
     if (compressedDataCheck.hasException())
         return compressedDataCheck.releaseException();
 
-    auto compressedData = compressedDataCheck.returnValue();
+    Ref compressedData = compressedDataCheck.releaseReturnValue();
     if (!compressedData->byteLength())
         return nullptr;
     
-    return Uint8Array::tryCreate(static_cast<uint8_t *>(compressedData->data()), compressedData->byteLength());
+    return RefPtr { Uint8Array::create(WTFMove(compressedData)) };
 }
 
 ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::flush()
@@ -53,14 +53,14 @@ ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::flush()
     if (compressedDataCheck.hasException())
         return compressedDataCheck.releaseException();
     
-    auto compressedData = compressedDataCheck.returnValue();
+    Ref compressedData = compressedDataCheck.releaseReturnValue();
     if (!compressedData->byteLength())
         return nullptr;
-    
-    return Uint8Array::tryCreate(static_cast<uint8_t *>(compressedData->data()), compressedData->byteLength());
+
+    return RefPtr { Uint8Array::create(WTFMove(compressedData)) };
 }
 
-inline ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompress(std::span<const uint8_t> input)
+inline ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompress(std::span<const uint8_t> input)
 {
     return decompressZlib(input);
 }
@@ -113,7 +113,7 @@ bool DecompressionStreamDecoder::didInflateContainExtraBytes(int result) const
     return (result == Z_STREAM_END && m_zstream.avail_in) || (result == Z_BUF_ERROR && m_didFinish);
 }
 
-ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(std::span<const uint8_t> input)
+ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(std::span<const uint8_t> input)
 {
     size_t allocateSize = startingAllocationSize;
     auto storage = SharedBufferBuilder();
@@ -165,11 +165,11 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib
         storage.append(output);
     }
 
-    auto decompressedData = storage.takeAsArrayBuffer();
+    RefPtr decompressedData = storage.takeAsArrayBuffer();
     if (!decompressedData)
         return Exception { ExceptionCode::OutOfMemoryError };
 
-    return decompressedData;
+    return decompressedData.releaseNonNull();
 }
 
 #if PLATFORM(COCOA)
@@ -184,7 +184,7 @@ ExceptionOr<bool> DecompressionStreamDecoder::initializeAppleCompressionFramewor
     return true;
 }
 
-ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCompressionFramework(std::span<const uint8_t> input)
+ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCompressionFramework(std::span<const uint8_t> input)
 {
     size_t allocateSize = startingAllocationSize;
     auto storage = SharedBufferBuilder();
@@ -237,11 +237,11 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppl
         storage.append(output);
     }
 
-    auto decompressedData = storage.takeAsArrayBuffer();
+    RefPtr decompressedData = storage.takeAsArrayBuffer();
     if (!decompressedData)
         return Exception { ExceptionCode::OutOfMemoryError };
 
-    return decompressedData;
+    return decompressedData.releaseNonNull();
 }
 #endif
 

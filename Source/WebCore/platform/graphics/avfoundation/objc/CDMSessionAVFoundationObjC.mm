@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,8 +111,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ALWAYS_LOG(LOGIDENTIFIER);
 
     auto keyRequestBuffer = ArrayBuffer::create([keyRequest bytes], [keyRequest length]);
-    unsigned byteLength = keyRequestBuffer->byteLength();
-    return Uint8Array::tryCreate(WTFMove(keyRequestBuffer), 0, byteLength);
+    return Uint8Array::create(WTFMove(keyRequestBuffer));
 }
 
 void CDMSessionAVFoundationObjC::releaseKeys()

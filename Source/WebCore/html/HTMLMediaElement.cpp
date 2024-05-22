@@ -3190,10 +3190,8 @@ void HTMLMediaElement::mediaPlayerKeyNeeded(const SharedBuffer& initData)
 
     WebKitMediaKeyNeededEvent::Init init;
 
-    if (auto initDataBuffer = initData.tryCreateArrayBuffer()) {
-        auto byteLength = initDataBuffer->byteLength();
-        init.initData = Uint8Array::tryCreate(initDataBuffer.releaseNonNull(), 0, byteLength);
-    }
+    if (auto initDataBuffer = initData.tryCreateArrayBuffer())
+        init.initData = Uint8Array::create(initDataBuffer.releaseNonNull());
 
     Ref event = WebKitMediaKeyNeededEvent::create(eventNames().webkitneedkeyEvent, init);
     scheduleEvent(WTFMove(event));

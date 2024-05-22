@@ -379,8 +379,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
         return;
     case Type::Bytes: {
         RefPtr buffer = takeAsArrayBuffer();
-        auto byteLength = buffer ? buffer->byteLength() : 0;
-        RefPtr view = buffer ? Uint8Array::tryCreate(buffer.releaseNonNull(), 0, byteLength) : nullptr;
+        RefPtr view = buffer ? RefPtr { Uint8Array::create(buffer.releaseNonNull()) } : nullptr;
         fulfillPromiseWithUint8Array(WTFMove(promise), view.get());
         return;
     }

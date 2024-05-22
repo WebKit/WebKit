@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +40,11 @@ ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::encode(const BufferSou
     if (compressedDataCheck.hasException())
         return compressedDataCheck.releaseException();
 
-    auto compressedData = compressedDataCheck.returnValue();
+    Ref compressedData = compressedDataCheck.releaseReturnValue();
     if (!compressedData->byteLength())
         return nullptr;
-    
-    return Uint8Array::tryCreate(static_cast<uint8_t *>(compressedData->data()), compressedData->byteLength());
+
+    return RefPtr { Uint8Array::create(WTFMove(compressedData)) };
 }
 
 ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::flush()
@@ -54,12 +54,12 @@ ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::flush()
     auto compressedDataCheck = compress({ });
     if (compressedDataCheck.hasException())
         return compressedDataCheck.releaseException();
-    
-    auto compressedData = compressedDataCheck.returnValue();
+
+    Ref compressedData = compressedDataCheck.releaseReturnValue();
     if (!compressedData->byteLength())
         return nullptr;
-    
-    return Uint8Array::tryCreate(static_cast<uint8_t *>(compressedData->data()), compressedData->byteLength());
+
+    return RefPtr { Uint8Array::create(WTFMove(compressedData)) };
 }
 
 ExceptionOr<bool> CompressionStreamEncoder::initialize() 
@@ -108,7 +108,7 @@ static bool didDeflateFail(int result)
     return result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR;
 }
 
-ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(std::span<const uint8_t> input)
+ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(std::span<const uint8_t> input)
 {
     size_t allocateSize = std::max(input.size(), startingAllocationSize);
     auto storage = SharedBufferBuilder();
@@ -158,10 +158,10 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(std::sp
         storage.append(output);
     }
 
-    auto compressedData = storage.takeAsArrayBuffer();
+    RefPtr compressedData = storage.takeAsArrayBuffer();
     if (!compressedData)
         return Exception { ExceptionCode::OutOfMemoryError };
 
-    return compressedData;
+    return compressedData.releaseNonNull();
 }
 } // namespace WebCore
