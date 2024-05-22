@@ -321,9 +321,7 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
 
 void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment, Ref<API::Attachment>&& toAttachment)
 {
-    fromAttachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
-        toAttachment->setFileWrapper(fileWrapper);
-    });
+    fromAttachment->cloneFileWrapperTo(toAttachment);
 }
 
 static RefPtr<WebCore::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::FloatSize& fittingSize)
