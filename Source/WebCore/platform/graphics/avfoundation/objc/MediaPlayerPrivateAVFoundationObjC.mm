@@ -669,6 +669,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
         [m_videoLayer setPIPModeEnabled:(player->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
 #endif
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
+#endif
     setNeedsRenderingModeChanged();
 }
 
@@ -688,6 +691,9 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
     m_videoLayer = nil;
     m_haveBeenAskedToCreateLayer = false;
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
+#endif
     setNeedsRenderingModeChanged();
 }
 
@@ -4085,24 +4091,28 @@ void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
         return;
 
     if (!m_spatialTrackingLabel.isNull()) {
+        INFO_LOG(LOGIDENTIFIER, "Explicitly set STSLabel: ", m_spatialTrackingLabel);
         [m_avPlayer _setSTSLabel:m_spatialTrackingLabel];
         return;
     }
 
     if (m_videoLayer) {
         // Let AVPlayer manage setting the spatial tracking label in its AVPlayerLayer itself;
+        INFO_LOG(LOGIDENTIFIER, "No videoLayer, set STSLabel: nil");
         [m_avPlayer _setSTSLabel:nil];
         return;
     }
 
     if (!m_defaultSpatialTrackingLabel.isNull()) {
         // If a default spatial tracking label was explicitly set, use it.
+        INFO_LOG(LOGIDENTIFIER, "Default STSLabel: ", m_defaultSpatialTrackingLabel);
         [m_avPlayer _setSTSLabel:m_defaultSpatialTrackingLabel];
         return;
     }
 
     // If there is no AVPlayerLayer, and no default spatial tracking label is available, use the session's spatial tracking label.
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    INFO_LOG(LOGIDENTIFIER, "AVAudioSession label: ", session.spatialTrackingLabel);
     [m_avPlayer _setSTSLabel:session.spatialTrackingLabel];
 }
 #endif
