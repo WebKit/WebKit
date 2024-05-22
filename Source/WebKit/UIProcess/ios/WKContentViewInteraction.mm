@@ -48,6 +48,7 @@
 #import "TextCheckerState.h"
 #import "TextInputSPI.h"
 #import "TextRecognitionUpdateResult.h"
+#import "UIGamepadProvider.h"
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "WKActionSheetAssistant.h"
@@ -1885,6 +1886,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [strongSelf stopDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::BecomeFirstResponder];
         });
 
+#if ENABLE(GAMEPAD)
+        WebKit::UIGamepadProvider::singleton().viewBecameActive(*_page);
+#endif
+
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 
         if ([self canShowNonEmptySelectionView] || (!_suppressSelectionAssistantReasons && _activeTextInteractionCount))
@@ -1985,6 +1990,10 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (superDidResign) {
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
+
+#if ENABLE(GAMEPAD)
+        WebKit::UIGamepadProvider::singleton().viewBecameInactive(*_page);
+#endif
 
         _isHandlingActiveKeyEvent = NO;
         _isHandlingActivePressesEvent = NO;
