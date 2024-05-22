@@ -140,7 +140,7 @@
 #undef Function
 #endif
 
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
 #include <crtdbg.h>
 #include <mmsystem.h>
 #include <windows.h>
@@ -2813,11 +2813,6 @@ JSC_DEFINE_HOST_FUNCTION(functionQuit, (JSGlobalObject* globalObject, CallFrame*
     vm.codeCache()->write();
 
     jscExit(EXIT_SUCCESS);
-
-#if COMPILER(MSVC) && !COMPILER(CLANG)
-    // Without this, Visual Studio will complain that this method does not return a value.
-    return JSValue::encode(jsUndefined());
-#endif
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionFalse, (JSGlobalObject*, CallFrame*))
@@ -4366,7 +4361,7 @@ int jscmain(int argc, char** argv)
         enableSuperSampler();
 
     bool gigacageDisableRequested = false;
-#if GIGACAGE_ENABLED && !COMPILER(MSVC)
+#if GIGACAGE_ENABLED && !OS(WINDOWS)
     if (char* gigacageEnabled = getenv("GIGACAGE_ENABLED")) {
         if (!strcasecmp(gigacageEnabled, "no") || !strcasecmp(gigacageEnabled, "false") || !strcasecmp(gigacageEnabled, "0"))
             gigacageDisableRequested = true;

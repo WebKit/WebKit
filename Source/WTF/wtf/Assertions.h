@@ -280,9 +280,7 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 
 #endif // CPU(ARM64)
 
-#if COMPILER(MSVC)
-#define WTFBreakpointTrap()  __debugbreak()
-#elif ASAN_ENABLED
+#if ASAN_ENABLED
 #define WTFBreakpointTrap()  __builtin_trap()
 #elif CPU(X86_64) || CPU(X86)
 #define WTFBreakpointTrap()  asm volatile (WTF_FATAL_CRASH_INST)

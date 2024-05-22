@@ -71,7 +71,7 @@ constexpr double sqrtOfTwoDouble = M_SQRT2;
 constexpr float sqrtOfTwoFloat = static_cast<float>(M_SQRT2);
 #endif
 
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
 
 // Work around a bug in Win, where atan2(+-infinity, +-infinity) yields NaN instead of specific values.
 extern "C" inline double wtf_atan2(double x, double y)
@@ -98,7 +98,7 @@ extern "C" inline double wtf_atan2(double x, double y)
 
 #define atan2(x, y) wtf_atan2(x, y)
 
-#endif // COMPILER(MSVC)
+#endif // OS(WINDOWS)
 
 constexpr double radiansPerDegreeDouble = piDouble / 180.0;
 constexpr double degreesPerRadianDouble = 180.0 / piDouble;

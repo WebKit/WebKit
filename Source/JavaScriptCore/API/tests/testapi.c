@@ -71,10 +71,6 @@
 #include "PingPongStackOverflowTest.h"
 #include "TypedArrayCTest.h"
 
-#if COMPILER(MSVC)
-#pragma warning(disable:4204)
-#endif
-
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(const char*);
 #endif

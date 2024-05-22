@@ -34,11 +34,6 @@
 #include "WasmOpcodeOrigin.h"
 #include <wtf/TZoneMallocInlines.h>
 
-#if COMPILER(MSVC)
-// See https://msdn.microsoft.com/en-us/library/4wz07268.aspx
-#pragma warning(disable: 4333)
-#endif
-
 namespace JSC {
 
 namespace {

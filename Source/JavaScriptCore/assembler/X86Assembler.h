@@ -43,24 +43,18 @@ inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(sign
 
 namespace RegisterNames {
 
-#if COMPILER(MSVC)
-#define JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE
-#else
-#define JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE : int8_t
-#endif
-
 #define REGISTER_ID(id, name, res, cs) id,
 
-typedef enum JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE {
+typedef enum : int8_t {
     FOR_EACH_GP_REGISTER(REGISTER_ID)
     InvalidGPRReg = -1,
 } RegisterID;
 
-typedef enum JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE {
+typedef enum : int8_t {
     FOR_EACH_SP_REGISTER(REGISTER_ID)                                                     
 } SPRegisterID;
 
-typedef enum JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE {
+typedef enum : int8_t {
     FOR_EACH_FP_REGISTER(REGISTER_ID)
     InvalidFPRReg = -1,
 } XMMRegisterID;

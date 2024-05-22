@@ -1002,7 +1002,7 @@ void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth sav
 #endif
         move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), RegisterID::eax);
 
-#if COMPILER(MSVC) || CPU(X86)
+#if CPU(X86)
     push(RegisterID::ecx);
     move(TrustedImmPtr(reinterpret_cast<void*>(Probe::executeJSCJITProbe)), RegisterID::ecx);
 #endif
@@ -1021,15 +1021,11 @@ MacroAssemblerX86Common::CPUID MacroAssemblerX86Common::getCPUID(unsigned level)
 MacroAssemblerX86Common::CPUID MacroAssemblerX86Common::getCPUIDEx(unsigned level, unsigned count)
 {
     CPUID result { };
-#if COMPILER(MSVC)
-    __cpuidex(bitwise_cast<int*>(result.data()), level, count);
-#else
     __asm__ (
         "cpuid\n"
         : "=a"(result[0]), "=b"(result[1]), "=c"(result[2]), "=d"(result[3])
         : "0"(level), "2"(count)
     );
-#endif
     return result;
 }
 

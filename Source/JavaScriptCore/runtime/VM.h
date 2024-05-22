@@ -243,10 +243,6 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VM);
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 4200) // Disable "zero-sized array in struct/union" warning
-#endif
 struct ScratchBuffer {
     ScratchBuffer()
     {
@@ -276,9 +272,6 @@ struct ScratchBuffer {
     } u;
     void* m_buffer[0];
 };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 
 class ActiveScratchBufferScope {
 public:

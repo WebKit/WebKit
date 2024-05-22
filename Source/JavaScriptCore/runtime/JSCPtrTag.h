@@ -117,16 +117,7 @@ using PtrTag = WTF::PtrTag;
         } \
     };
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable:4307)
-#endif
-
 FOR_EACH_JSC_PTRTAG(JSC_DECLARE_PTRTAG)
-
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 
 #if CPU(ARM64E)
 JS_EXPORT_PRIVATE PtrTagCallerType callerType(PtrTag);
@@ -261,15 +252,6 @@ const char* ptrTagName(PtrTag);
 } // namespace JSC
 namespace WTF {
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable:4307)
-#endif
-
 FOR_EACH_JSC_PTRTAG(JSC_DECLARE_PTRTAG_TRAIT)
-
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 
 } // namespace WTF

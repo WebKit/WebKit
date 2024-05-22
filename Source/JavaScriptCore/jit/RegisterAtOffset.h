@@ -77,9 +77,9 @@ public:
     void dump(PrintStream& out) const;
 
 private:
-    unsigned m_regIndex : 7 = Reg().index();
-    bool m_width : 1 = false;
-    ptrdiff_t m_offsetBits : (sizeof(ptrdiff_t) * CHAR_BIT - 7 - 1) = 0;
+    unsigned m_regIndex : 7 { Reg().index() };
+    unsigned m_width : 1 { false };
+    ptrdiff_t m_offsetBits : (sizeof(ptrdiff_t) * CHAR_BIT - 7 - 1) { 0 };
 };
 
 } // namespace JSC

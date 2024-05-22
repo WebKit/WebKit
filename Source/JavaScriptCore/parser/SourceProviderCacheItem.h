@@ -53,11 +53,6 @@ struct SourceProviderCacheItemCreationParameters {
     bool isBodyArrowExpression : 1 { false };
 };
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 4200) // Disable "zero-sized array in struct/union" warning
-#endif
-
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);
 class SourceProviderCacheItem {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);
@@ -156,9 +151,5 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
         m_variables[i] = pointer;
     }
 }
-
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 
 } // namespace JSC

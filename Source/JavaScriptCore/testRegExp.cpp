@@ -32,7 +32,7 @@
 #include <wtf/WTFProcess.h>
 #include <wtf/text/StringBuilder.h>
 
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
 #include <crtdbg.h>
 #include <mmsystem.h>
 #include <windows.h>

@@ -30,11 +30,6 @@
 #include "IdentifierInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable:4307)
-#endif
-
 namespace JSC {
 namespace Symbols {
 
@@ -182,7 +177,3 @@ SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(const String& string) const
 }
 
 } // namespace JSC
-
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif

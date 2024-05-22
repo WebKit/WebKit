@@ -53,12 +53,6 @@
 #endif
 #endif
 
-#if !COMPILER(MSVC)
-#include <limits.h>
-#include <sched.h>
-#include <sys/time.h>
-#endif
-
 #if !OS(DARWIN) && OS(UNIX)
 
 #include <semaphore.h>
