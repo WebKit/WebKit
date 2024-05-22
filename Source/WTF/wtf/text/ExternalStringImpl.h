@@ -34,7 +34,7 @@ class ExternalStringImpl;
 
 using ExternalStringImplFreeFunction = Function<void(ExternalStringImpl*, void*, unsigned)>;
 
-class ExternalStringImpl final : public StringImpl {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR ExternalStringImpl final : public StringImpl {
 public:
     WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(std::span<const LChar> characters, ExternalStringImplFreeFunction&&);
     WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(std::span<const UChar> characters, ExternalStringImplFreeFunction&&);
@@ -45,13 +45,15 @@ private:
     ExternalStringImpl(std::span<const LChar> characters, ExternalStringImplFreeFunction&&);
     ExternalStringImpl(std::span<const UChar> characters, ExternalStringImplFreeFunction&&);
 
-    ALWAYS_INLINE void freeExternalBuffer(void* buffer, unsigned bufferSize)
-    {
-        m_free(this, buffer, bufferSize);
-    }
+    inline void freeExternalBuffer(void* buffer, unsigned bufferSize);
 
     ExternalStringImplFreeFunction m_free;
 };
+
+ALWAYS_INLINE void ExternalStringImpl::freeExternalBuffer(void* buffer, unsigned bufferSize)
+{
+    m_free(this, buffer, bufferSize);
+}
 
 } // namespace WTF
 
