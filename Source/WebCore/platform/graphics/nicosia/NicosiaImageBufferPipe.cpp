@@ -142,7 +142,9 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
 
             auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
             layerBuffer->setExtraFlags(TextureMapperFlags::ShouldBlend);
+#if PLATFORM(GTK) || PLATFORM(WPE)
             layerBuffer->setFence(WTFMove(fence));
+#endif
             downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
 
         });
