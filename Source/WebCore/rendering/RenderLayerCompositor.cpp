@@ -3216,6 +3216,9 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer& layer, const RenderLa
     if (!compositingAncestor)
         return false;
 
+    if (layer.renderer().capturedInViewTransition())
+        return false;
+
     // If the compositingAncestor clips, that will be taken care of by clipsCompositingDescendants(),
     // so we only care about clipping between its first child that is our ancestor (the computeClipRoot),
     // and layer. The exception is when the compositingAncestor isolates composited blending children,
