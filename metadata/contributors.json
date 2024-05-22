@@ -2028,6 +2028,16 @@
    },
    {
       "emails" : [
+         "darryl@dpogue.ca"
+      ],
+      "github" : "dpogue",
+      "name" : "Darryl Pogue",
+      "nicks" : [
+         "dpogue"
+      ]
+   },
+   {
+      "emails" : [
          "dbarton@mathscribe.com"
       ],
       "expertise" : "MathML",
