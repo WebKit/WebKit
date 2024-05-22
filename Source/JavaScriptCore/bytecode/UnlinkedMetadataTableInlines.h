@@ -60,13 +60,6 @@ ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable(EmptyTag)
 {
 }
 
-ALWAYS_INLINE UnlinkedMetadataTable::~UnlinkedMetadataTable()
-{
-    ASSERT(!m_isLinked);
-    if (m_hasMetadata)
-        MetadataTableMalloc::free(m_rawBuffer);
-}
-
 ALWAYS_INLINE unsigned UnlinkedMetadataTable::addEntry(OpcodeID opcodeID)
 {
     ASSERT(!m_isFinalized && opcodeID < s_offsetTableEntries - 1);
