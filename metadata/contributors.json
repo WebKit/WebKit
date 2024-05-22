@@ -8027,12 +8027,13 @@
          "yijia_huang@apple.com",
          "hyjorc1@gmail.com"
       ],
+      "expertise" : "JavaScriptCore",
       "github" : "hyjorc1",
       "name" : "Yijia Huang",
       "nicks" : [
          "yijia"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
