@@ -1172,15 +1172,17 @@ void MediaPlayerPrivateMediaSourceAVFObjC::configureLayerOrVideoRenderer(WebSamp
 MediaPlayerPrivateMediaSourceAVFObjC::AcceleratedVideoMode MediaPlayerPrivateMediaSourceAVFObjC::acceleratedVideoMode() const
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    RefPtr player = m_player.get();
-    if (player && player->isInFullscreenOrPictureInPicture()) {
-        if (m_videoTarget)
-            return AcceleratedVideoMode::VideoRenderer;
-        return AcceleratedVideoMode::StagedLayer;
-    }
+    if (!m_usingLinearMediaPlayer) {
+        RefPtr player = m_player.get();
+        if (player && player->isInFullscreenOrPictureInPicture()) {
+            if (m_videoTarget)
+                return AcceleratedVideoMode::VideoRenderer;
+            return AcceleratedVideoMode::StagedLayer;
+        }
 
-    if (m_videoTarget)
-        return AcceleratedVideoMode::StagedVideoRenderer;
+        if (m_videoTarget)
+            return AcceleratedVideoMode::StagedVideoRenderer;
+    }
 #endif // ENABLE(LINEAR_MEDIA_PLAYER)
 
     return AcceleratedVideoMode::Layer;
@@ -1801,6 +1803,8 @@ WebSampleBufferVideoRendering *MediaPlayerPrivateMediaSourceAVFObjC::layerOrVide
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoTarget(const PlatformVideoTarget& videoTarget)
 {
     ALWAYS_LOG(LOGIDENTIFIER, !!videoTarget);
+    if (!!videoTarget)
+        m_usingLinearMediaPlayer = true;
     m_videoTarget = videoTarget;
     updateDisplayLayerAndDecompressionSession();
 }
@@ -1808,8 +1812,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setVideoTarget(const PlatformVideoTar
 
 void MediaPlayerPrivateMediaSourceAVFObjC::isInFullscreenOrPictureInPictureChanged(bool isInFullscreenOrPictureInPicture)
 {
+#if ENABLE(LINEAR_MEDIA_PLAYER)
     ALWAYS_LOG(LOGIDENTIFIER, isInFullscreenOrPictureInPicture);
+    if (!m_usingLinearMediaPlayer)
+        return;
     updateDisplayLayerAndDecompressionSession();
+#else
+    UNUSED_PARAM(isInFullscreenOrPictureInPicture);
+#endif
 }
 
 } // namespace WebCore
