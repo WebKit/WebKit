@@ -606,6 +606,7 @@ public:
     WEBCORE_EXPORT void forEach(Function<void(MediaConstraintType, const MediaConstraint&)>&&) const;
     void filter(const Function<bool(MediaConstraintType, const MediaConstraint&)>&) const;
     bool isEmpty() const;
+    WEBCORE_EXPORT bool isValid() const;
     WEBCORE_EXPORT size_t size() const;
 
     WEBCORE_EXPORT void set(MediaConstraintType, std::optional<IntConstraint>&&);

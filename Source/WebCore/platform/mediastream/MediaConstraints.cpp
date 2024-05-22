@@ -556,6 +556,47 @@ bool MediaTrackConstraintSetMap::isEmpty() const
     return !size();
 }
 
+bool MediaTrackConstraintSetMap::isValid() const
+{
+    bool isValid = true;
+    if (isEmpty())
+        return true;
+    forEach([&isValid] (MediaConstraintType constraintType, const MediaConstraint& constraint) {
+        switch (constraintType) {
+        case MediaConstraintType::Width:
+        case MediaConstraintType::Height:
+        case MediaConstraintType::SampleRate:
+        case MediaConstraintType::SampleSize:
+            isValid &= (constraint.dataType() == MediaConstraint::DataType::Integer);
+            break;
+        case MediaConstraintType::AspectRatio:
+        case MediaConstraintType::FrameRate:
+        case MediaConstraintType::Volume:
+        case MediaConstraintType::Zoom:
+        case MediaConstraintType::FocusDistance:
+            isValid &= (constraint.dataType() == MediaConstraint::DataType::Double);
+            break;
+        case MediaConstraintType::FacingMode:
+        case MediaConstraintType::DeviceId:
+        case MediaConstraintType::GroupId:
+        case MediaConstraintType::WhiteBalanceMode:
+            isValid &= (constraint.dataType() == MediaConstraint::DataType::String);
+            break;
+        case MediaConstraintType::EchoCancellation:
+        case MediaConstraintType::DisplaySurface:
+        case MediaConstraintType::LogicalSurface:
+        case MediaConstraintType::Torch:
+        case MediaConstraintType::BackgroundBlur:
+            isValid &= (constraint.dataType() == MediaConstraint::DataType::Boolean);
+            break;
+        case MediaConstraintType::Unknown:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    });
+    return isValid;
+}
+
 static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoConstraints, bool addFrameRateConstraint, bool addWidthConstraint, bool addHeightConstraint)
 {
     if (addFrameRateConstraint) {
