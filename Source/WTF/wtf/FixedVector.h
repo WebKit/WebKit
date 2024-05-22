@@ -117,16 +117,16 @@ public:
         return *this;
     }
 
-private:
-    FixedVector(std::unique_ptr<Storage>&& storage)
-        :  m_storage { WTFMove(storage) }
-    { }
-
-public:
     template<typename... Args>
     static FixedVector createWithSizeAndConstructorArguments(size_t size, Args&&... args)
     {
         return FixedVector<T> { size ? Storage::createWithSizeAndConstructorArguments(size, std::forward<Args>(args)...).moveToUniquePtr() : std::unique_ptr<Storage> { nullptr } };
+    }
+
+    template<std::invocable<size_t> Generator>
+    static FixedVector createWithSizeFromGenerator(size_t size, Generator&& generator)
+    {
+        return FixedVector<T> { Storage::createWithSizeFromGenerator(size, std::forward<Generator>(generator)) };
     }
 
     size_t size() const { return m_storage ? m_storage->size() : 0; }
@@ -207,6 +207,10 @@ public:
 
 private:
     friend class JSC::LLIntOffsetsExtractor;
+
+    FixedVector(std::unique_ptr<Storage>&& storage)
+        :  m_storage { WTFMove(storage) }
+    { }
 
     std::unique_ptr<Storage> m_storage;
 };
