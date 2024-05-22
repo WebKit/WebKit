@@ -262,7 +262,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
     }, nil));
     auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(makeVector(publicKey.get()));
 
-    auto keyData = base64URLEncodeToString(wrappedKeyBytes.data(), wrappedKeyBytes.size());
+    auto keyData = base64URLEncodeToString(wrappedKeyBytes);
     // The server.
     HTTPServer server([signingParty, &done, connectionCount = signingParty == TokenSigningParty::Source ? 1 : 0, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &secKey] (Connection connection) mutable {
         switch (++connectionCount) {
@@ -295,7 +295,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                         const struct ccrsabssa_ciphersuite *ciphersuite = &ccrsabssa_ciphersuite_rsa4096_sha384;
                         auto blindedSignature = adoptNS([[NSMutableData alloc] initWithLength:modulusNBytes]);
                         ccrsabssa_sign_blinded_message(ciphersuite, rsaPrivateKey, blindedMessage->data(), blindedMessage->size(), static_cast<uint8_t *>([blindedSignature mutableBytes]), [blindedSignature length], rng);
-                        auto unlinkableToken = base64URLEncodeToString([blindedSignature bytes], [blindedSignature length]);
+                        auto unlinkableToken = base64URLEncodeToString(span(blindedSignature.get()));
 
                         // Example response: { "unlinkable_token": "ABCD" }. "ABCD" should be Base64URL encoded.
                         auto response = makeString("HTTP/1.1 200 OK\r\n"

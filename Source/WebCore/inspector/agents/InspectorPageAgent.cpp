@@ -83,6 +83,10 @@
 #include "LegacyWebArchive.h"
 #endif
 
+#if USE(CF)
+#include <wtf/cf/VectorCF.h>
+#endif
+
 
 namespace WebCore {
 
@@ -1229,7 +1233,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
         return makeUnexpected("Could not create web archive for main frame"_s);
 
     RetainPtr<CFDataRef> buffer = archive->rawDataRepresentation();
-    return base64EncodeToString(CFDataGetBytePtr(buffer.get()), CFDataGetLength(buffer.get()));
+    return base64EncodeToString(span(buffer.get()));
 }
 #endif
 

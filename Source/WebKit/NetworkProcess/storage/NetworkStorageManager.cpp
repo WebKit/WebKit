@@ -87,8 +87,7 @@ static String encode(const String& string, FileSystem::Salt salt)
     auto utf8String = string.utf8();
     crypto->addBytes(utf8String.span());
     crypto->addBytes(salt);
-    auto hash = crypto->computeHash();
-    return base64URLEncodeToString(hash.data(), hash.size());
+    return base64URLEncodeToString(crypto->computeHash());
 }
 
 static String originDirectoryPath(const String& rootPath, const WebCore::ClientOrigin& origin, FileSystem::Salt salt)

@@ -561,7 +561,7 @@ void Connection::webSocketHandshake(CompletionHandler<void()>&& connectionHandle
             sha1.addBytes(webSocketKeyGUID);
             SHA1::Digest hash;
             sha1.computeHash(hash);
-            return base64EncodeToString(hash.data(), SHA1::hashSize);
+            return base64EncodeToString(hash);
         };
 
         connection.send(HTTPResponse(101, {

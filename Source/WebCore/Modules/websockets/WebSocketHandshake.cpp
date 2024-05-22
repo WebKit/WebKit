@@ -107,7 +107,7 @@ String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocket
     sha1.addBytes(webSocketKeyGUID);
     SHA1::Digest hash;
     sha1.computeHash(hash);
-    return base64EncodeToString(hash.data(), SHA1::hashSize);
+    return base64EncodeToString(hash);
 }
 
 WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated)

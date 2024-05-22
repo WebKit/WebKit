@@ -215,7 +215,7 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
     // "kids"
     // An array of key IDs. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.
     for (unsigned i = 0; i < keyIdCount; i++) {
-        keyIdsArray->pushString(base64URLEncodeToString(&data[index], ClearKey::KeyIDSizeInBytes));
+        keyIdsArray->pushString(base64URLEncodeToString(data.subspan(index, ClearKey::KeyIDSizeInBytes)));
         index += ClearKey::KeyIDSizeInBytes;
     }
 
@@ -567,7 +567,7 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
             auto array = JSON::Array::create();
             for (const auto& key : m_keyStore.values()) {
                 ASSERT(key->id().size() <= std::numeric_limits<unsigned>::max());
-                array->pushString(base64URLEncodeToString(key->id().data(), key->id().size()));
+                array->pushString(base64URLEncodeToString(key->id().span()));
             }
             rootObject->setArray("kids"_s, WTFMove(array));
         }

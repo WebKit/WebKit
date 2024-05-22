@@ -236,13 +236,13 @@ String RenderThemeAdwaita::mediaControlsBase64StringForIconNameAndType(const Str
     auto data = adoptGRef(g_resources_lookup_data(path.latin1().data(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     if (!data)
         return emptyString();
-    return base64EncodeToString(g_bytes_get_data(data.get(), nullptr), g_bytes_get_size(data.get()));
+    return base64EncodeToString({ static_cast<const uint8_t*>(g_bytes_get_data(data.get(), nullptr)), g_bytes_get_size(data.get()) });
 #elif PLATFORM(WIN)
     auto path = webKitBundlePath(iconName, iconType, "media-controls"_s);
     auto data = FileSystem::readEntireFile(path);
     if (!data)
         return { };
-    return base64EncodeToString(data->data(), data->size());
+    return base64EncodeToString(data->span());
 #else
     return { };
 #endif

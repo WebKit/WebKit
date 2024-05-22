@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PrivateClickMeasurement.h"
 
+#import <wtf/cocoa/SpanCocoa.h>
+
 #import <pal/cocoa/CryptoKitPrivateSoftLink.h>
 
 namespace WebCore {
@@ -68,7 +70,7 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateUnlinkableToken
     if (!unlinkableToken.waitingToken)
         return makeString("Did not get a "_s, contextForLogMessage, " unlinkable token waiting token."_s);
 
-    unlinkableToken.valueBase64URL = base64URLEncodeToString([unlinkableToken.waitingToken blindedMessage].bytes, [unlinkableToken.waitingToken blindedMessage].length);
+    unlinkableToken.valueBase64URL = base64URLEncodeToString(span([unlinkableToken.waitingToken blindedMessage]));
     return std::nullopt;
 #else
     UNUSED_PARAM(serverPublicKeyBase64URL);
@@ -117,9 +119,9 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateSecretToken(con
             return makeString("Did not get a "_s, contextForLogMessage, " unlinkable token ready token."_s);
     }
 
-    secretToken.tokenBase64URL = base64URLEncodeToString([unlinkableToken.readyToken tokenContent].bytes, [unlinkableToken.readyToken tokenContent].length);
-    secretToken.keyIDBase64URL = base64URLEncodeToString([unlinkableToken.readyToken keyId].bytes, [unlinkableToken.readyToken keyId].length);
-    secretToken.signatureBase64URL = base64URLEncodeToString([unlinkableToken.readyToken signature].bytes, [unlinkableToken.readyToken signature].length);
+    secretToken.tokenBase64URL = base64URLEncodeToString(span([unlinkableToken.readyToken tokenContent]));
+    secretToken.keyIDBase64URL = base64URLEncodeToString(span([unlinkableToken.readyToken keyId]));
+    secretToken.signatureBase64URL = base64URLEncodeToString(span([unlinkableToken.readyToken signature]));
 
     return std::nullopt;
 #else

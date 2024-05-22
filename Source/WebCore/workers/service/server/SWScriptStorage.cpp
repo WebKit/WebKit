@@ -54,8 +54,7 @@ String SWScriptStorage::sha2Hash(const String& input) const
     crypto->addBytes(m_salt);
     auto inputUTF8 = input.utf8();
     crypto->addBytes(inputUTF8.span());
-    auto hash = crypto->computeHash();
-    return base64URLEncodeToString(hash.data(), hash.size());
+    return base64URLEncodeToString(crypto->computeHash());
 }
 
 String SWScriptStorage::sha2Hash(const URL& input) const

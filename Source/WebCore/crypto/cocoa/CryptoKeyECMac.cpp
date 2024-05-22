@@ -276,10 +276,10 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk, UseCryptoKit useCryp
         }
         if (UNLIKELY((result.size() != publicKeySize) && (result.size() != privateKeySize)))
             return false;
-        jwk.x = base64URLEncodeToString(result.data() + 1, keySizeInBytes);
-        jwk.y = base64URLEncodeToString(result.data() + keySizeInBytes + 1, keySizeInBytes);
+        jwk.x = base64URLEncodeToString(result.subspan(1, keySizeInBytes));
+        jwk.y = base64URLEncodeToString(result.subspan(keySizeInBytes + 1, keySizeInBytes));
         if (result.size() > publicKeySize)
-            jwk.d = base64URLEncodeToString(result.data() + publicKeySize, keySizeInBytes);
+            jwk.d = base64URLEncodeToString(result.subspan(publicKeySize, keySizeInBytes));
         return true;
     }
 #else
@@ -314,10 +314,10 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk, UseCryptoKit useCryp
 
     if (UNLIKELY((size != publicKeySize) && (size != privateKeySize)))
         return false;
-    jwk.x = base64URLEncodeToString(result.data() + 1, keySizeInBytes);
-    jwk.y = base64URLEncodeToString(result.data() + keySizeInBytes + 1, keySizeInBytes);
+    jwk.x = base64URLEncodeToString(result.subspan(1, keySizeInBytes));
+    jwk.y = base64URLEncodeToString(result.subspan(keySizeInBytes + 1, keySizeInBytes));
     if (size > publicKeySize)
-        jwk.d = base64URLEncodeToString(result.data() + publicKeySize, keySizeInBytes);
+        jwk.d = base64URLEncodeToString(result.subspan(publicKeySize, keySizeInBytes));
     return true;
 }
 

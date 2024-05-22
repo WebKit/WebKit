@@ -104,7 +104,7 @@ static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDes
     HashSet<String> result;
     for (auto& credentialDescriptor : credentialDescriptors) {
         if (emptyTransportsOrContain(credentialDescriptor.transports, AuthenticatorTransport::Internal) && credentialDescriptor.type == PublicKeyCredentialType::PublicKey && credentialDescriptor.id.length() == credentialIdLength)
-            result.add(base64EncodeToString(credentialDescriptor.id.data(), credentialDescriptor.id.length()));
+            result.add(base64EncodeToString(credentialDescriptor.id.span()));
     }
     return result;
 }
@@ -265,7 +265,7 @@ void LocalAuthenticator::makeCredential()
         if (notFound != m_existingCredentials.findIf([&excludeCredentialIds] (auto& credential) {
             auto* rawId = credential->rawId();
             ASSERT(rawId);
-            return excludeCredentialIds.contains(base64EncodeToString(rawId->data(), rawId->byteLength()));
+            return excludeCredentialIds.contains(base64EncodeToString(rawId->span()));
         })) {
             receiveException({ ExceptionCode::InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
             return;
@@ -624,7 +624,7 @@ void LocalAuthenticator::getAssertion()
         if (allowCredentialIds.isEmpty())
             return credential.copyRef();
         auto* rawId = credential->rawId();
-        if (allowCredentialIds.contains(base64EncodeToString(rawId->data(), rawId->byteLength())))
+        if (allowCredentialIds.contains(base64EncodeToString(rawId->span())))
             return credential.copyRef();
         return nullptr;
     });

@@ -38,7 +38,7 @@ ExceptionOr<String> Base64Utilities::btoa(const String& stringToEncode)
     if (!stringToEncode.containsOnlyLatin1())
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    return base64EncodeToString(stringToEncode.latin1());
+    return base64EncodeToString(stringToEncode.latin1().span());
 }
 
 ExceptionOr<String> Base64Utilities::atob(const String& encodedString)

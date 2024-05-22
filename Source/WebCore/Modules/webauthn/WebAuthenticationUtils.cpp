@@ -169,7 +169,7 @@ Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& ch
         object->setString("type"_s, "webauthn.get"_s);
         break;
     }
-    object->setString("challenge"_s, base64URLEncodeToString(challenge.data(), challenge.length()));
+    object->setString("challenge"_s, base64URLEncodeToString(challenge.span()));
     object->setString("origin"_s, origin.toRawString());
     
     if (!topOrigin.isNull())

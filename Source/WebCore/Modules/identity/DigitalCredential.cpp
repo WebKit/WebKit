@@ -40,7 +40,7 @@ Ref<DigitalCredential> DigitalCredential::create(Ref<Uint8Array>&& data, Identit
 DigitalCredential::~DigitalCredential() = default;
 
 DigitalCredential::DigitalCredential(Ref<Uint8Array>&& data, IdentityCredentialProtocol protocol)
-    : BasicCredential(base64URLEncodeToString(data->data(), data->byteLength()), Type::DigitalCredential, Discovery::CredentialStore)
+    : BasicCredential(base64URLEncodeToString(data->span()), Type::DigitalCredential, Discovery::CredentialStore)
     , m_protocol(protocol)
     , m_data(WTFMove(data))
 {

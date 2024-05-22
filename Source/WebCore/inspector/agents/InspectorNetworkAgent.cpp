@@ -1052,7 +1052,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorNetworkAgent::getSerializedC
 
     WTF::Persistence::Encoder encoder;
     WTF::Persistence::Coder<WebCore::CertificateInfo>::encodeForPersistence(encoder, certificate.value());
-    return base64EncodeToString(encoder.buffer(), encoder.bufferSize());
+    return base64EncodeToString(encoder.span());
 }
 
 WebSocket* InspectorNetworkAgent::webSocketForRequestId(const Inspector::Protocol::Network::RequestId& requestId)

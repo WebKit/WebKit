@@ -94,8 +94,7 @@ String encodeSecurityOriginForFileName(FileSystem::Salt salt, const SecurityOrig
     auto originString = origin.toString().utf8();
     crypto->addBytes(originString.span());
     crypto->addBytes(salt);
-    auto hash = crypto->computeHash();
-    return base64URLEncodeToString(hash.data(), hash.size());
+    return base64URLEncodeToString(crypto->computeHash());
 }
 
 } // namespace StorageUtilities
