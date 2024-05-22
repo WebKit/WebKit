@@ -27,6 +27,7 @@
 #include "config.h"
 #include "NicosiaImageBufferPipe.h"
 
+#include "GLFence.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include "NicosiaPlatformLayer.h"
@@ -39,6 +40,12 @@
 #endif
 
 #if USE(SKIA)
+#include "GLContext.h"
+#include "PlatformDisplay.h"
+#include <skia/gpu/GrBackendSurface.h>
+#include <skia/gpu/ganesh/SkImageGanesh.h>
+#include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
+
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkPixmap.h>
 IGNORE_CLANG_WARNINGS_END
@@ -62,60 +69,85 @@ NicosiaImageBufferPipeSource::~NicosiaImageBufferPipeSource()
 
 void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
 {
-    auto clone = buffer.clone();
-    if (!clone)
+    auto nativeImage = ImageBuffer::sinkIntoNativeImage(buffer.clone());
+    if (!nativeImage)
         return;
 
-    Locker locker { m_imageBufferLock };
+    Locker locker { m_imageLock };
+    if (!m_image) {
+        std::unique_ptr<GLFence> fence;
+        unsigned textureID = 0;
+#if USE(SKIA)
+        auto image = nativeImage->platformImage();
+        if (image->isTextureBacked()) {
+            auto& display = PlatformDisplay::sharedDisplayForCompositing();
+            if (!display.skiaGLContext()->makeContextCurrent())
+                return;
 
-    if (!m_imageBuffer) {
-        auto proxyOperation = [this] (TextureMapperPlatformLayerProxy& proxy) mutable {
-            return downcast<TextureMapperPlatformLayerProxyGL>(proxy).scheduleUpdateOnCompositorThread([this] () mutable {
-                auto& proxy = m_nicosiaLayer->proxy();
-                Locker locker { proxy.lock() };
+            auto* grContext = display.skiaGrContext();
+            RELEASE_ASSERT(grContext);
+            grContext->flushAndSubmit(GLFence::isSupported() ? GrSyncCpu::kNo : GrSyncCpu::kYes);
 
-                if (!proxy.isActive())
+            GrBackendTexture backendTexture;
+            if (SkImages::GetBackendTextureFromImage(image, &backendTexture, false)) {
+                GrGLTextureInfo textureInfo;
+                if (GrBackendTextures::GetGLTextureInfo(backendTexture, &textureInfo))
+                    textureID = textureInfo.fID;
+            }
+
+            if (!textureID)
+                return;
+
+            fence = GLFence::create();
+        }
+#endif
+
+        downcast<TextureMapperPlatformLayerProxyGL>(m_nicosiaLayer->proxy()).scheduleUpdateOnCompositorThread([this, textureID, fence = WTFMove(fence)] () mutable {
+            auto& proxy = m_nicosiaLayer->proxy();
+            Locker locker { proxy.lock() };
+            if (!proxy.isActive())
+                return;
+
+            RefPtr<BitmapTexture> texture;
+            {
+                Locker locker { m_imageLock };
+                if (!m_image)
                     return;
 
-                RefPtr<BitmapTexture> texture;
-                {
-                    Locker locker { m_imageBufferLock };
+                auto nativeImage = WTFMove(m_image);
 
-                    if (!m_imageBuffer)
-                        return;
+                auto size = nativeImage->size();
+                OptionSet<BitmapTexture::Flags> flags;
+                if (nativeImage->hasAlpha())
+                    flags.add(BitmapTexture::Flags::SupportsAlpha);
+                texture = BitmapTexture::create(size, flags);
 
-                    auto nativeImage = ImageBuffer::sinkIntoNativeImage(WTFMove(m_imageBuffer));
-                    if (!nativeImage)
-                        return;
-
-                    auto size = nativeImage->size();
-                    OptionSet<BitmapTexture::Flags> flags;
-                    if (nativeImage->hasAlpha())
-                        flags.add(BitmapTexture::Flags::SupportsAlpha);
-                    texture = BitmapTexture::create(size, flags);
 #if USE(CAIRO)
-                    auto* surface = nativeImage->platformImage().get();
-                    auto* imageData = cairo_image_surface_get_data(surface);
-                    texture->updateContents(imageData, IntRect(IntPoint(), size), IntPoint(), cairo_image_surface_get_stride(surface));
+                auto* surface = nativeImage->platformImage().get();
+                auto* imageData = cairo_image_surface_get_data(surface);
+                texture->updateContents(imageData, IntRect(IntPoint(), size), IntPoint(), cairo_image_surface_get_stride(surface));
 #elif USE(SKIA)
-                    auto* image = nativeImage->platformImage().get();
-                    // FIXME: support accelerated offscreen canvas.
-                    RELEASE_ASSERT(!image->isTextureBacked());
+                auto image = nativeImage->platformImage();
+                if (image->isTextureBacked()) {
+                    fence->wait(WebCore::GLFence::FlushCommands::No);
+                    texture->copyFromExternalTexture(textureID);
+                    fence = GLFence::create();
+                } else {
                     SkPixmap pixmap;
                     if (image->peekPixels(&pixmap))
                         texture->updateContents(pixmap.addr(), IntRect(IntPoint(), size), IntPoint(), image->imageInfo().minRowBytes());
-#endif
                 }
+#endif
+            }
 
-                auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
-                layerBuffer->setExtraFlags(TextureMapperFlags::ShouldBlend);
-                downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
-            });
-        };
-        proxyOperation(m_nicosiaLayer->proxy());
+            auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
+            layerBuffer->setExtraFlags(TextureMapperFlags::ShouldBlend);
+            layerBuffer->setFence(WTFMove(fence));
+            downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
+
+        });
     }
-
-    m_imageBuffer = WTFMove(clone);
+    m_image = WTFMove(nativeImage);
 }
 
 void NicosiaImageBufferPipeSource::swapBuffersIfNeeded()
