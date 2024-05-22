@@ -138,8 +138,8 @@ bool defaultAppleMailPaginationQuirkEnabled()
 
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
-#if PLATFORM(MAC)
-    // FIXME: Enable GPU process audio capture when <rdar://problem/29448368> is fixed.
+#if HAVE(REQUIRE_MICROPHONE_CAPTURE_IN_UIPROCESS)
+    // Newer versions can capture microphone in GPUProcess.
     if (!WebCore::MacApplication::isSafari())
         return false;
 #endif
