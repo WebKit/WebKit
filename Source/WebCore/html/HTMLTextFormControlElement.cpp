@@ -908,6 +908,9 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
         }
     }
 
+    if (parentStyle.fieldSizing() == FieldSizing::Content)
+        textBlockStyle.setLogicalMinWidth(Length { caretWidth(), LengthType::Fixed });
+
 #if PLATFORM(IOS_FAMILY)
     if (textBlockStyle.textSecurity() != TextSecurity::None && !textBlockStyle.isLeftToRightDirection()) {
         // Preserve the alignment but force the direction to LTR so that the last-typed, unmasked character
