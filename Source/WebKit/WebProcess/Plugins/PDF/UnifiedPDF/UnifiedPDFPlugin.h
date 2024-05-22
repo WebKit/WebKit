@@ -483,6 +483,8 @@ private:
     PDFDocumentLayout::PageIndex pageForScrollSnapIdentifier(WebCore::ElementIdentifier) const;
     void determineCurrentlySnappedPage();
 
+    std::optional<PDFLayoutRow> visibleRow() const;
+
     WebCore::FloatSize centeringOffset() const;
 
     struct ScrollAnchoringInfo {

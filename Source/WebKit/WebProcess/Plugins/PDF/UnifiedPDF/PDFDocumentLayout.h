@@ -43,6 +43,8 @@ namespace WebKit {
 
 enum class ShouldUpdateAutoSizeScale : bool { No, Yes };
 
+struct PDFLayoutRow;
+
 class PDFDocumentLayout {
 public:
     using PageIndex = size_t; // This is a zero-based index.
@@ -62,6 +64,10 @@ public:
     bool hasLaidOutPDFDocument() const { return !m_pageGeometry.isEmpty(); }
 
     size_t pageCount() const;
+    size_t rowCount() const;
+    PDFLayoutRow rowForPageIndex(PageIndex) const;
+    Vector<PDFLayoutRow> rows() const;
+    unsigned rowIndexForPageIndex(PageIndex) const;
 
     static constexpr WebCore::FloatSize documentMargin { 6, 8 };
     static constexpr WebCore::FloatSize pageMargin { 4, 6 };
@@ -69,17 +75,22 @@ public:
     bool isLeftPageIndex(PageIndex) const;
     bool isRightPageIndex(PageIndex) const;
     bool isLastPageIndex(PageIndex) const;
+    PageIndex lastPageIndex() const;
+    bool isFirstPageOfRow(PageIndex) const;
 
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
-    std::optional<unsigned> indexForPage(RetainPtr<PDFPage>) const;
-    PDFDocumentLayout::PageIndex nearestPageIndexForDocumentPoint(WebCore::FloatPoint) const;
+    std::optional<PageIndex> indexForPage(RetainPtr<PDFPage>) const;
+    PageIndex nearestPageIndexForDocumentPoint(WebCore::FloatPoint, std::optional<PDFLayoutRow>) const;
     // For the given Y offset, return a page index and page point for the page at this offset. Returns the leftmost
     // page if two-up and both pages intersect that offset, otherwise the right page if only it intersects the offset.
     // The point is centered horizontally in the given page.
-    std::pair<PDFDocumentLayout::PageIndex, WebCore::FloatPoint> pageIndexAndPagePointForDocumentYOffset(float) const;
+    std::pair<PageIndex, WebCore::FloatPoint> pageIndexAndPagePointForDocumentYOffset(float) const;
 
     // This is not scaled by scale().
     WebCore::FloatRect layoutBoundsForPageAtIndex(PageIndex) const;
+    // Bounds of the pages in the row, including document margins. Not scaled.
+    WebCore::FloatRect layoutBoundsForRow(PDFLayoutRow) const;
+
     // Returns 0, 90, 180, 270.
     WebCore::IntDegrees rotationForPageAtIndex(PageIndex) const;
 
@@ -98,8 +109,18 @@ public:
 
     void setDisplayMode(DisplayMode displayMode) { m_displayMode = displayMode; }
     DisplayMode displayMode() const { return m_displayMode; }
-    bool isSinglePageDisplayMode() const { return m_displayMode == DisplayMode::SinglePageDiscrete || m_displayMode == DisplayMode::SinglePageContinuous; }
-    bool isTwoUpDisplayMode() const { return m_displayMode == DisplayMode::TwoUpDiscrete || m_displayMode == DisplayMode::TwoUpContinuous; }
+
+    constexpr static bool isSinglePageDisplayMode(DisplayMode mode) { return mode == DisplayMode::SinglePageDiscrete || mode == DisplayMode::SinglePageContinuous; }
+    constexpr static bool isTwoUpDisplayMode(DisplayMode mode) { return mode == DisplayMode::TwoUpDiscrete || mode == DisplayMode::TwoUpContinuous; }
+
+    constexpr static bool isScrollingDisplayMode(DisplayMode mode) { return mode == DisplayMode::SinglePageContinuous || mode == DisplayMode::TwoUpContinuous; }
+    constexpr static bool isDiscreteDisplayMode(DisplayMode mode) { return mode == DisplayMode::SinglePageDiscrete || mode == DisplayMode::TwoUpDiscrete; }
+
+    bool isSinglePageDisplayMode() const { return isSinglePageDisplayMode(m_displayMode); }
+    bool isTwoUpDisplayMode() const { return isTwoUpDisplayMode(m_displayMode); }
+
+    bool isScrollingDisplayMode() const { return isScrollingDisplayMode(m_displayMode); }
+    bool isDiscreteDisplayMode() const { return isDiscreteDisplayMode(m_displayMode); }
 
     unsigned pagesPerRow() const { return isSinglePageDisplayMode() ? 1 : 2; }
 
@@ -123,6 +144,12 @@ private:
     WebCore::FloatRect m_documentBounds;
     float m_scale { 1 };
     DisplayMode m_displayMode { DisplayMode::SinglePageContinuous };
+};
+
+struct PDFLayoutRow {
+    Vector<PDFDocumentLayout::PageIndex, 2> pages;
+    unsigned numPages() const { return pages.size(); }
+    bool containsPage(PDFDocumentLayout::PageIndex pageIndex) const { return pages.contains(pageIndex); }
 };
 
 } // namespace WebKit

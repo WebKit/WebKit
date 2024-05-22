@@ -1959,6 +1959,17 @@ void UnifiedPDFPlugin::determineCurrentlySnappedPage()
     }
 }
 
+std::optional<PDFLayoutRow> UnifiedPDFPlugin::visibleRow() const
+{
+    if (!isInDiscreteDisplayMode())
+        return { };
+
+    if (m_currentlySnappedPage)
+        return m_documentLayout.rowForPageIndex(*m_currentlySnappedPage);
+
+    return { };
+}
+
 bool UnifiedPDFPlugin::shouldDisplayPage(PDFDocumentLayout::PageIndex pageIndex)
 {
     if (!isInDiscreteDisplayMode())
@@ -1966,8 +1977,8 @@ bool UnifiedPDFPlugin::shouldDisplayPage(PDFDocumentLayout::PageIndex pageIndex)
 
     if (!m_currentlySnappedPage)
         return true;
-    auto currentlySnappedPage = *m_currentlySnappedPage;
 
+    auto currentlySnappedPage = *m_currentlySnappedPage;
     if (pageIndex == currentlySnappedPage)
         return true;
 
@@ -2011,7 +2022,7 @@ std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForDocume
 PDFDocumentLayout::PageIndex UnifiedPDFPlugin::indexForCurrentPageInView() const
 {
     auto centerInDocumentSpace = convertDown(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, FloatPoint { flooredIntPoint(size() / 2) });
-    return m_documentLayout.nearestPageIndexForDocumentPoint(centerInDocumentSpace);
+    return m_documentLayout.nearestPageIndexForDocumentPoint(centerInDocumentSpace, visibleRow());
 }
 
 RetainPtr<PDFAnnotation> UnifiedPDFPlugin::annotationForRootViewPoint(const IntPoint& point) const
@@ -2264,7 +2275,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     });
 
     auto pointInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInView());
-    auto pageIndex = m_documentLayout.nearestPageIndexForDocumentPoint(pointInDocumentSpace);
+    auto pageIndex = m_documentLayout.nearestPageIndexForDocumentPoint(pointInDocumentSpace, visibleRow());
 
     if (!shouldDisplayPage(pageIndex)) {
         notifyCursorChanged(toWebCoreCursorType({ }));
@@ -2803,7 +2814,8 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
 
     auto contextMenuEventPluginPoint = convertFromRootViewToPlugin(contextMenuEventRootViewPoint);
     auto contextMenuEventDocumentPoint = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, contextMenuEventPluginPoint);
-    menuItems.appendVector(navigationContextMenuItemsForPageAtIndex(m_documentLayout.nearestPageIndexForDocumentPoint(contextMenuEventDocumentPoint)));
+    auto pageIndex = m_documentLayout.nearestPageIndexForDocumentPoint(contextMenuEventDocumentPoint, visibleRow());
+    menuItems.appendVector(navigationContextMenuItemsForPageAtIndex(pageIndex));
 
     auto contextMenuPoint = frameView->contentsToScreen(IntRect(frameView->windowToContents(contextMenuEventRootViewPoint), IntSize())).location();
 
@@ -3436,7 +3448,7 @@ void UnifiedPDFPlugin::continueAutoscroll()
     scrollWithDelta(scrollDelta);
 
     auto lastKnownMousePositionInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInPluginSpace);
-    auto pageIndex = m_documentLayout.nearestPageIndexForDocumentPoint(lastKnownMousePositionInDocumentSpace);
+    auto pageIndex = m_documentLayout.nearestPageIndexForDocumentPoint(lastKnownMousePositionInDocumentSpace, visibleRow());
     auto lastKnownMousePositionInPageSpace = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, lastKnownMousePositionInDocumentSpace, pageIndex);
 
     continueTrackingSelection(pageIndex, lastKnownMousePositionInPageSpace, IsDraggingSelection::Yes);

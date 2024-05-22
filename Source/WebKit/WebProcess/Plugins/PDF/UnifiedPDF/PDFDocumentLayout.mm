@@ -51,12 +51,27 @@ bool PDFDocumentLayout::isLeftPageIndex(PageIndex pageIndex) const
 
 bool PDFDocumentLayout::isRightPageIndex(PageIndex pageIndex) const
 {
+    ASSERT(isTwoUpDisplayMode());
     return pageIndex % 2;
 }
 
 bool PDFDocumentLayout::isLastPageIndex(PageIndex pageIndex) const
 {
-    return pageIndex == pageCount() - 1;
+    return pageIndex == lastPageIndex();
+}
+
+auto PDFDocumentLayout::lastPageIndex() const -> PageIndex
+{
+    ASSERT(pageCount());
+    if (!pageCount())
+        return 0;
+
+    return pageCount() - 1;
+}
+
+bool PDFDocumentLayout::isFirstPageOfRow(PageIndex pageIndex) const
+{
+    return isTwoUpDisplayMode() ? isLeftPageIndex(pageIndex) : true;
 }
 
 RetainPtr<PDFPage> PDFDocumentLayout::pageAtIndex(PageIndex index) const
@@ -64,16 +79,16 @@ RetainPtr<PDFPage> PDFDocumentLayout::pageAtIndex(PageIndex index) const
     return [m_pdfDocument pageAtIndex:index];
 }
 
-std::optional<unsigned> PDFDocumentLayout::indexForPage(RetainPtr<PDFPage> page) const
+auto PDFDocumentLayout::indexForPage(RetainPtr<PDFPage> page) const -> std::optional<PageIndex>
 {
-    for (unsigned pageIndex = 0; pageIndex < [m_pdfDocument pageCount]; ++pageIndex) {
+    for (PageIndex pageIndex = 0; pageIndex < [m_pdfDocument pageCount]; ++pageIndex) {
         if (page == [m_pdfDocument pageAtIndex:pageIndex])
             return pageIndex;
     }
     return std::nullopt;
 }
 
-PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint(FloatPoint documentSpacePoint) const
+PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint(FloatPoint documentSpacePoint, std::optional<PDFLayoutRow> visibleRow) const
 {
     auto pageCount = this->pageCount();
     ASSERT(pageCount);
@@ -123,6 +138,9 @@ PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint
         };
 
         for (PageIndex index = 0; index < pageCount; index += pagesPerRow()) {
+            if (visibleRow && !visibleRow->containsPage(index))
+                continue;
+
             auto [leftPageLayoutBounds, rightPageLayoutBounds] = layoutBoundsForPairedPages(index);
 
             if (documentSpacePoint.y() < leftPageLayoutBounds.maxY() || (rightPageLayoutBounds && documentSpacePoint.y() < rightPageLayoutBounds->maxY())) {
@@ -166,20 +184,20 @@ PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint
     return pageCount - 1;
 }
 
-std::pair<PDFDocumentLayout::PageIndex, WebCore::FloatPoint> PDFDocumentLayout::pageIndexAndPagePointForDocumentYOffset(float documentYOffset) const
+auto PDFDocumentLayout::pageIndexAndPagePointForDocumentYOffset(float documentYOffset) const -> std::pair<PageIndex, WebCore::FloatPoint>
 {
     auto pageCount = this->pageCount();
 
-    auto resultWithPageHorizontalCenterPoint = [&](PDFDocumentLayout::PageIndex pageIndex, float documentYOffset) {
+    auto resultWithPageHorizontalCenterPoint = [&](PageIndex pageIndex, float documentYOffset) {
         auto pageBounds = layoutBoundsForPageAtIndex(pageIndex);
         auto pagePoint = documentToPDFPage(FloatPoint { pageBounds.center().x(), documentYOffset }, pageIndex);
         return std::make_pair(pageIndex, pagePoint);
     };
 
     switch (displayMode()) {
-    case PDFDocumentLayout::DisplayMode::TwoUpDiscrete:
-    case PDFDocumentLayout::DisplayMode::TwoUpContinuous:
-        for (PDFDocumentLayout::PageIndex index = 0; index < pageCount; ++index) {
+    case DisplayMode::TwoUpDiscrete:
+    case DisplayMode::TwoUpContinuous:
+        for (PageIndex index = 0; index < pageCount; ++index) {
             if (index == pageCount - 1)
                 return resultWithPageHorizontalCenterPoint(index, documentYOffset);
 
@@ -187,7 +205,7 @@ std::pair<PDFDocumentLayout::PageIndex, WebCore::FloatPoint> PDFDocumentLayout::
                 continue;
 
             // Handle side by side pages with different sizes.
-            std::optional<PDFDocumentLayout::PageIndex> targetPageIndex = [&](PDFDocumentLayout::PageIndex index) -> std::optional<PDFDocumentLayout::PageIndex> {
+            std::optional<PageIndex> targetPageIndex = [&](PageIndex index) -> std::optional<PageIndex> {
                 auto leftPageBounds = layoutBoundsForPageAtIndex(index);
                 if (documentYOffset >= leftPageBounds.y() && documentYOffset < leftPageBounds.maxY())
                     return index;
@@ -209,9 +227,9 @@ std::pair<PDFDocumentLayout::PageIndex, WebCore::FloatPoint> PDFDocumentLayout::
             return resultWithPageHorizontalCenterPoint(*targetPageIndex, documentYOffset);
         }
         break;
-    case PDFDocumentLayout::DisplayMode::SinglePageDiscrete:
-    case PDFDocumentLayout::DisplayMode::SinglePageContinuous: {
-        for (PDFDocumentLayout::PageIndex index = 0; index < pageCount; ++index) {
+    case DisplayMode::SinglePageDiscrete:
+    case DisplayMode::SinglePageContinuous: {
+        for (PageIndex index = 0; index < pageCount; ++index) {
             auto pageBounds = layoutBoundsForPageAtIndex(index);
             if (documentYOffset <= pageBounds.maxY() || index == pageCount - 1)
                 return resultWithPageHorizontalCenterPoint(index, documentYOffset);
@@ -248,7 +266,7 @@ void PDFDocumentLayout::updateLayout(IntSize pluginSize, ShouldUpdateAutoSizeSca
 
     float maxRowWidth = 0;
     float currentRowWidth = 0;
-    bool isTwoUpLayout = m_displayMode == DisplayMode::TwoUpDiscrete || m_displayMode == DisplayMode::TwoUpContinuous;
+    bool isTwoUpLayout = isTwoUpDisplayMode();
 
     for (PageIndex i = 0; i < pageCount; ++i) {
         auto page = pageAtIndex(i);
@@ -397,12 +415,89 @@ size_t PDFDocumentLayout::pageCount() const
     return [m_pdfDocument pageCount];
 }
 
+size_t PDFDocumentLayout::rowCount() const
+{
+    if (!m_pdfDocument)
+        return 0;
+
+    if (isTwoUpDisplayMode())
+        return std::round(pageCount() / 2);
+
+    return pageCount();
+}
+
+Vector<PDFLayoutRow> PDFDocumentLayout::rows() const
+{
+    if (!m_pdfDocument)
+        return { };
+
+    Vector<PDFLayoutRow> rows;
+    rows.reserveInitialCapacity(rowCount());
+
+    auto pageCount = this->pageCount();
+
+    if (isSinglePageDisplayMode()) {
+        for (PageIndex i = 0; i < pageCount; ++i)
+            rows.append(PDFLayoutRow { { i } });
+
+        return rows;
+    }
+
+    // Two-up mode.
+    auto numFullRows = pageCount / 2;
+    for (unsigned rowIndex = 0; rowIndex < numFullRows; ++rowIndex) {
+        PageIndex leftPageIndex = rowIndex * 2;
+        rows.append(PDFLayoutRow { { leftPageIndex, leftPageIndex + 1 } });
+    }
+
+    if (pageCount % 2)
+        rows.append(PDFLayoutRow { { lastPageIndex() } });
+
+    return rows;
+}
+
+PDFLayoutRow PDFDocumentLayout::rowForPageIndex(PageIndex index) const
+{
+    if (!m_pdfDocument)
+        return { };
+
+    if (isTwoUpDisplayMode()) {
+        if (isLeftPageIndex(index) && index < lastPageIndex())
+            return { { index, index + 1 } };
+
+        if (isRightPageIndex(index)) {
+            ASSERT(index);
+            return { { index - 1, index } };
+        }
+    }
+
+    return { { index } };
+}
+
+unsigned PDFDocumentLayout::rowIndexForPageIndex(PageIndex index) const
+{
+    if (isSinglePageDisplayMode())
+        return index;
+
+    return index / 2;
+}
+
 FloatRect PDFDocumentLayout::layoutBoundsForPageAtIndex(PageIndex index) const
 {
     if (index >= m_pageGeometry.size())
         return { };
 
     return m_pageGeometry[index].layoutBounds;
+}
+
+FloatRect PDFDocumentLayout::layoutBoundsForRow(PDFLayoutRow layoutRow) const
+{
+    auto bounds = layoutBoundsForPageAtIndex(layoutRow.pages[0]);
+    if (layoutRow.numPages() == 2)
+        bounds.unite(layoutBoundsForPageAtIndex(layoutRow.pages[1]));
+
+    bounds.inflate(PDFDocumentLayout::documentMargin);
+    return bounds;
 }
 
 IntDegrees PDFDocumentLayout::rotationForPageAtIndex(PageIndex index) const
