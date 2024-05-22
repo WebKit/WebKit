@@ -148,6 +148,12 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
 
     document->selection().clear();
 
+    auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
+    if (!sessionRange) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     // The tracking of the additional replacement location offset needs to be scoped to a particular instance
     // of this class, instead of just this function, because the function may need to be called multiple times.
     // This ensures that subsequent calls of this function should effectively be treated as just more iterations
@@ -156,17 +162,17 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
     auto& additionalOffset = m_replacementLocationOffsets.add(session.uuid, 0).iterator->value;
 
     for (const auto& replacementData : replacements) {
-        auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
-        if (!sessionRange) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-
         auto locationWithOffset = replacementData.originalRange.location + additionalOffset;
 
         auto resolvedRange = UnifiedTextReplacementController::resolveCharacterRange(*sessionRange, { locationWithOffset, replacementData.originalRange.length });
 
         replaceContentsOfRangeInSession(session.uuid, resolvedRange, replacementData.replacement);
+
+        sessionRange = contextRangeForSessionWithUUID(session.uuid);
+        if (!sessionRange) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
 
         auto newRangeWithOffset = WebCore::CharacterRange { locationWithOffset, replacementData.replacement.length() };
         auto newResolvedRange = UnifiedTextReplacementController::resolveCharacterRange(*sessionRange, newRangeWithOffset);
@@ -179,15 +185,8 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
         additionalOffset += static_cast<int>(replacementData.replacement.length()) - static_cast<int>(replacementData.originalRange.length);
     }
 
-    if (finished) {
-        auto sessionRange = contextRangeForSessionWithUUID(session.uuid);
-        if (!sessionRange) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-
+    if (finished)
         document->selection().setSelection({ *sessionRange });
-    }
 }
 
 void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement(const WebUnifiedTextReplacementSessionData& session, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
