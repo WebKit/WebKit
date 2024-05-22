@@ -11,14 +11,9 @@
             return document.querySelector("#foo");
         }
 
-        function inputElement()
+        function plainText()
         {
             return document.querySelector("#bar");
-        }
-
-        function textareaElement()
-        {
-            return document.querySelector("#baz");
         }
 
         function beginTest()
@@ -27,20 +22,12 @@
                 return;
 
             testRunner.dumpAsText();
-
-            debug("Typing into contenteditable div element");
             contentEditable().focus();
             eventSender.keyDown("a", []);
 
-            debug("Typing into input element");
             expectedTargetID = "bar";
-            inputElement().focus();
+            plainText().focus();
             eventSender.keyDown("b", []);
-
-            debug("Typing into textarea element");
-            expectedTargetID = "baz";
-            textareaElement().focus();
-            eventSender.keyDown("c", []);
         }
 
         function checkInputEvent(event)
@@ -70,29 +57,12 @@
             shouldBe("event.composed", "true");
             shouldBe("event.isComposing", "false");
         }
-
-        function checkTextInputEvent(event)
-        {
-            debug("Fired `textInput`!");
-            shouldBeDefined("event.__lookupGetter__('data')");
-            shouldBe("event.target.id", "expectedTargetID");
-            shouldBe("event.bubbles", "true");
-            shouldBe("event.cancelable", "true");
-            shouldBe("event.composed", "true");
-        }
-
     </script>
 </head>
 
 <body onload=beginTest()>
     <div id="foo" contenteditable oninput=checkInputEvent(event) onbeforeinput=checkBeforeInputEvent(event)></div>
     <input id="bar" oninput=checkInputEvent(event) onbeforeinput=checkBeforeInputEvent(event)></input>
-    <textarea id="baz" oninput=checkInputEvent(event) onbeforeinput=checkBeforeInputEvent(event)></textarea>
-    <script>
-        document.querySelector("#foo").addEventListener("textInput", checkTextInputEvent, false);
-        document.querySelector("#bar").addEventListener("textInput", checkTextInputEvent, false);
-        document.querySelector("#baz").addEventListener("textInput", checkTextInputEvent, false);
-    </script>
     <script src="../../resources/js-test-post.js"></script>
 </body>
 

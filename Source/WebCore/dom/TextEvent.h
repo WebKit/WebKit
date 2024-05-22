@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "DictationAlternative.h"
 #include "TextEventInputType.h"
 #include "UIEvent.h"
 
@@ -40,7 +41,10 @@ namespace WebCore {
     public:
         static Ref<TextEvent> create(RefPtr<WindowProxy>&&, const String& data, TextEventInputType = TextEventInputKeyboard);
         static Ref<TextEvent> createForBindings();
+        static Ref<TextEvent> createForPlainTextPaste(RefPtr<WindowProxy>&&, const String& data, bool shouldSmartReplace);
+        static Ref<TextEvent> createForFragmentPaste(RefPtr<WindowProxy>&&, RefPtr<DocumentFragment>&& data, TextEventInputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
         static Ref<TextEvent> createForDrop(RefPtr<WindowProxy>&&, const String& data);
+        static Ref<TextEvent> createForDictation(RefPtr<WindowProxy>&&, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
         virtual ~TextEvent();
     
@@ -53,18 +57,34 @@ namespace WebCore {
         bool isBackTab() const { return m_inputType == TextEventInputBackTab; }
         bool isPaste() const { return m_inputType == TextEventInputPaste; }
         bool isDrop() const { return m_inputType == TextEventInputDrop; }
+        bool isDictation() const { return m_inputType == TextEventInputDictation; }
+        bool isAutocompletion() const { return m_inputType == TextEventInputAutocompletion; }
         bool isKeyboard() const { return m_inputType == TextEventInputKeyboard; }
         bool isRemoveBackground() const { return m_inputType == TextEventInputRemoveBackground; }
+
+        bool shouldSmartReplace() const { return m_shouldSmartReplace; }
+        bool shouldMatchStyle() const { return m_shouldMatchStyle; }
+        MailBlockquoteHandling mailBlockquoteHandling() const { return m_mailBlockquoteHandling; }
+        DocumentFragment* pastingFragment() const { return m_pastingFragment.get(); }
+        const Vector<DictationAlternative>& dictationAlternatives() const { return m_dictationAlternatives; }
 
     private:
         TextEvent();
 
         TextEvent(RefPtr<WindowProxy>&&, const String& data, TextEventInputType = TextEventInputKeyboard);
+        TextEvent(RefPtr<WindowProxy>&&, const String& data, RefPtr<DocumentFragment>&&, TextEventInputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
+        TextEvent(RefPtr<WindowProxy>&&, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
         bool isTextEvent() const override;
 
         TextEventInputType m_inputType;
         String m_data;
+
+        RefPtr<DocumentFragment> m_pastingFragment;
+        bool m_shouldSmartReplace;
+        bool m_shouldMatchStyle;
+        MailBlockquoteHandling m_mailBlockquoteHandling;
+        Vector<DictationAlternative> m_dictationAlternatives;
     };
 
 } // namespace WebCore

@@ -22,6 +22,8 @@ function pastingTextInputHandler(evt)
 {
     shouldBe("event.data", toStringLiteral(expectedTextEventData));
     textInputCount++;
+    if (willCancelTextInput)
+        evt.preventDefault();
 }
 
 var testSourceRoot = document.createElement("div");
@@ -110,6 +112,15 @@ var proceedingTestCases = [
     [copyRichText, pasteToTargetEditable, targetEditableShouldHave, "<b>Rich</b>Hello", ""],
 ];
 
+var cancelingTestCases = [
+    [copyPlainText, pasteToTargetTextarea, targetTextareaShouldHave, "", "PlainHello"],
+    [copyPlainText, pasteToTargetInput, targetInputShouldHave, "", "PlainHello"],
+    [copyPlainText, pasteToTargetEditable, targetEditableShouldHave, "", ""],
+    [copyRichText, pasteToTargetTextarea, targetTextareaShouldHave, "", "RichHello"],
+    [copyRichText, pasteToTargetInput, targetInputShouldHave, "", "RichHello"],
+    [copyRichText, pasteToTargetEditable, targetEditableShouldHave, "", ""],
+];
+
 function runSingleTest(caseData)
 {
     var copy = caseData[0];
@@ -125,9 +136,16 @@ function runSingleTest(caseData)
 }
 
 textInputCount = 0;
+willCancelTextInput = false;
 for (var i = 0; i < proceedingTestCases.length; ++i)
     runSingleTest(proceedingTestCases[i]);
 shouldBe("textInputCount", "proceedingTestCases.length");
+
+textInputCount = 0;
+willCancelTextInput = true;
+for (var i = 0; i < cancelingTestCases.length; ++i)
+    runSingleTest(cancelingTestCases[i]);
+shouldBe("textInputCount", "cancelingTestCases.length");
 
 // Hides dataset to make dump clean.
 testTargetRoot.style.display = "none";

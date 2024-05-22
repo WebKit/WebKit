@@ -2,6 +2,12 @@
 <head>
     <script src="../../resources/js-test-pre.js"></script>
     <script>
+    function sendText(element, text) {
+        var event = document.createEvent('TextEvent');
+        event.initTextEvent('textInput', true, true, document.defaultView, text);
+        element.dispatchEvent(event);
+    }
+
     function test() {
         var tf = document.getElementById('tf');
 
@@ -15,7 +21,7 @@
         }
 
         tf.focus();
-        document.execCommand('InsertText', false, 'input value');
+        sendText(tf, 'input value');
         tf.blur();
 
         debug('Should fire change event when type does not change.');
@@ -23,7 +29,7 @@
 
         didFireOnChange = false;
         tf.focus();
-        document.execCommand('InsertText', false, 'new input value');
+        sendText(tf, 'new input value');
         tf.setAttribute('type', 'password');
         tf.blur();
 

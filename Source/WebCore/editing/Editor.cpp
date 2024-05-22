@@ -152,13 +152,6 @@ static bool dispatchBeforeInputEvent(Element& element, const AtomString& inputTy
     return !event->defaultPrevented();
 }
 
-static void dispatchTextInputEvent(Element& element, const String& text)
-{
-    auto event = TextEvent::create(element.document().windowProxy(), text);
-    event->preventDefault();
-    element.dispatchEvent(event);
-}
-
 static void dispatchInputEvent(Element& element, const AtomString& inputType, IsInputMethodComposing isInputMethodComposing, const String& data = { },
     RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { })
 {
@@ -307,16 +300,16 @@ void TemporarySelectionChange::setSelection(const VisibleSelection& selection, I
 
 // When an event handler has moved the selection outside of a text control
 // we should use the target control's selection for this editing operation.
-VisibleSelection Editor::selectionForCommand(EventTarget* eventTarget)
+VisibleSelection Editor::selectionForCommand(Event* event)
 {
     auto selection = document().selection().selection();
-    if (!eventTarget)
+    if (!event)
         return selection;
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
-    if (RefPtr target = dynamicDowncast<HTMLTextFormControlElement>(eventTarget); target && target->isTextField()) {
+    if (RefPtr target = dynamicDowncast<HTMLTextFormControlElement>(event->target()); target && target->isTextField()) {
         auto start = selection.start();
-        if (start.isNull() || eventTarget != enclosingTextFormControl(start)) {
+        if (start.isNull() || event->target() != enclosingTextFormControl(start)) {
             if (auto range = target->selection())
                 return { *range, Affinity::Downstream, selection.isDirectional() };
         }
@@ -359,6 +352,38 @@ void Editor::didDispatchInputMethodKeydown(KeyboardEvent& event)
 {
     if (auto* client = this->client())
         client->didDispatchInputMethodKeydown(event);
+}
+
+bool Editor::handleTextEvent(TextEvent& event)
+{
+    LOG(Editing, "Editor %p handleTextEvent (data %s)", this, event.data().utf8().data());
+
+    // Default event handling for Drag and Drop will be handled by DragController
+    // so we leave the event for it.
+    if (event.isDrop())
+        return false;
+
+    if (event.isPaste() || event.isRemoveBackground()) {
+        auto action = event.isRemoveBackground() ? EditAction::RemoveBackground : EditAction::Paste;
+        if (event.pastingFragment()) {
+#if PLATFORM(IOS_FAMILY)
+            if (client()->performsTwoStepPaste(event.pastingFragment()))
+                return true;
+#endif
+            replaceSelectionWithFragment(*event.pastingFragment(), SelectReplacement::No, event.shouldSmartReplace() ? SmartReplace::Yes : SmartReplace::No, event.shouldMatchStyle() ? MatchStyle::Yes : MatchStyle::No, action, event.mailBlockquoteHandling());
+        } else
+            replaceSelectionWithText(event.data(), SelectReplacement::No, event.shouldSmartReplace() ? SmartReplace::Yes : SmartReplace::No, action);
+        return true;
+    }
+
+    String data = event.data();
+    if (data == "\n"_s) {
+        if (event.isLineBreak())
+            return insertLineBreak();
+        return insertParagraphSeparator();
+    }
+
+    return insertTextWithoutSendingTextEvent(data, false, &event);
 }
 
 bool Editor::canEdit() const
@@ -617,7 +642,7 @@ void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
     Ref document = protectedDocument();
     if (auto* page = document->page())
         sanitizedText = page->applyLinkDecorationFiltering(sanitizedText, LinkDecorationFilteringTrigger::Paste);
-    document->frame()->eventHandler().handleTextInput(WTFMove(sanitizedText), nullptr, TextEventInputPaste, nullptr, smartReplace);
+    target->dispatchEvent(TextEvent::createForPlainTextPaste(document->windowProxy(), WTFMove(sanitizedText), smartReplace));
 }
 
 void Editor::pasteAsFragment(Ref<DocumentFragment>&& pastingFragment, bool smartReplace, bool matchStyle, MailBlockquoteHandling respectsMailBlockquote, EditAction action)
@@ -628,7 +653,7 @@ void Editor::pasteAsFragment(Ref<DocumentFragment>&& pastingFragment, bool smart
 
     ASSERT(action == EditAction::RemoveBackground || action == EditAction::Paste);
     auto type = action == EditAction::RemoveBackground ? TextEventInputRemoveBackground : TextEventInputPaste;
-    document().frame()->eventHandler().handleTextInput(emptyString(), nullptr, type, &pastingFragment.get(), smartReplace, matchStyle, respectsMailBlockquote);
+    target->dispatchEvent(TextEvent::createForFragmentPaste(document().windowProxy(), WTFMove(pastingFragment), type, smartReplace, matchStyle, respectsMailBlockquote));
 }
 
 void Editor::pasteAsPlainTextBypassingDHTML()
@@ -1156,14 +1181,6 @@ static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element>
     return continueWithDefaultBehavior;
 }
 
-static void dispatchTextInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const String& data)
-{
-    if (startRoot)
-        dispatchTextInputEvent(*startRoot, data);
-    if (endRoot && endRoot != startRoot)
-        dispatchTextInputEvent(*endRoot, data);
-}
-
 static void dispatchInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomString& inputTypeName, IsInputMethodComposing isInputMethodComposing,
     const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { })
 {
@@ -1202,19 +1219,8 @@ void Editor::appliedEditing(CompositeEditCommand& command)
     ASSERT(command.composition());
     Ref composition = *command.composition();
     VisibleSelection newSelection(command.endingSelection());
-    auto startRoot = composition->startingRootEditableElement();
-    auto endRoot = composition->endingRootEditableElement();
-    auto inputType = command.inputEventTypeName();
-    auto data = command.inputEventData();
 
-    // https://w3c.github.io/uievents/event-algo.html#fire%20key%20input%20events
-    // and https://w3c.github.io/uievents/event-algo.html#handle%20native%20paste
-    // limit textInput to being fired only when the input type is insertText,
-    // insertParagraph, insertLineBreak, or insertFromPaste.
-    if (inputType == "insertText"_s || inputType == "insertParagraph"_s || inputType == "insertLineBreak"_s || inputType == "insertFromPaste"_s)
-        dispatchTextInputEvents(startRoot, endRoot, data);
-
-    notifyTextFromControls(startRoot, endRoot);
+    notifyTextFromControls(composition->startingRootEditableElement(), composition->endingRootEditableElement());
 
     if (command.isTopLevelCommand()) {
         // Don't clear the typing style with this selection change. We do those things elsewhere if necessary.
@@ -1226,8 +1232,10 @@ void Editor::appliedEditing(CompositeEditCommand& command)
     }
 
     auto isInputMethodComposing = command.isInputMethodComposing() ? IsInputMethodComposing::Yes : IsInputMethodComposing::No;
-    if (command.shouldDispatchInputEvents())
-        dispatchInputEvents(startRoot, endRoot, inputType, isInputMethodComposing, data, command.inputEventDataTransfer());
+    if (command.shouldDispatchInputEvents()) {
+        dispatchInputEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement(), command.inputEventTypeName(), isInputMethodComposing,
+            command.inputEventData(), command.inputEventDataTransfer());
+    }
 
     if (command.isTopLevelCommand()) {
         updateEditorUINowIfScheduled();
@@ -1343,12 +1351,12 @@ void Editor::clear()
 
 bool Editor::insertText(const String& text, Event* triggeringEvent, TextEventInputType inputType)
 {
-    return document().frame()->eventHandler().handleTextInput(text, triggeringEvent, inputType);
+    return document().frame()->eventHandler().handleTextInputEvent(text, triggeringEvent, inputType);
 }
 
 bool Editor::insertTextForConfirmedComposition(const String& text)
 {
-    return document().frame()->eventHandler().handleTextInput(text, 0, TextEventInputComposition);
+    return document().frame()->eventHandler().handleTextInputEvent(text, 0, TextEventInputComposition);
 }
 
 bool Editor::insertDictatedText(const String& text, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent)
@@ -1356,15 +1364,12 @@ bool Editor::insertDictatedText(const String& text, const Vector<DictationAltern
     return m_alternativeTextController->insertDictatedText(text, dictationAlternatives, triggeringEvent);
 }
 
-bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectInsertedText, EventTarget* eventTarget, TextEventInputType inputType, const Vector<DictationAlternative>* dictationAlternatives)
+bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectInsertedText, TextEvent* triggeringEvent)
 {
     if (text.isEmpty())
         return false;
 
-    // Get the selection to use for the event that triggered this insertText.
-    // If the event handler changed the selection, we may want to use a different
-    // selection that is contained in the event target.
-    VisibleSelection selection = selectionForCommand(eventTarget);
+    VisibleSelection selection = selectionForCommand(triggeringEvent);
     if (!selection.isContentEditable())
         return false;
 
@@ -1385,22 +1390,26 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
 
     bool autocorrectionWasApplied = shouldConsiderApplyingAutocorrection && didApplyAutocorrection(document(), *m_alternativeTextController);
 
+    // Get the selection to use for the event that triggered this insertText.
+    // If the event handler changed the selection, we may want to use a different selection
+    // that is contained in the event target.
+    selection = selectionForCommand(triggeringEvent);
     if (selection.isContentEditable()) {
         if (auto selectionStart = selection.start().protectedDeprecatedNode()) {
             Ref<Document> document(selectionStart->document());
 
             // Insert the text
-            if (dictationAlternatives)
-                DictationCommand::insertText(document.copyRef(), text, *dictationAlternatives, selection);
+            if (triggeringEvent && triggeringEvent->isDictation())
+                DictationCommand::insertText(document.copyRef(), text, triggeringEvent->dictationAlternatives(), selection);
             else {
                 auto options = OptionSet { TypingCommand::Option::RetainAutocorrectionIndicator };
                 if (selectInsertedText)
                     options.add(TypingCommand::Option::SelectInsertedText);
-                if (inputType == TextEventInputAutocompletion)
+                if (triggeringEvent && triggeringEvent->isAutocompletion())
                     options.add(TypingCommand::Option::IsAutocompletion);
                 if (shouldRemoveAutocorrectionIndicator(shouldConsiderApplyingAutocorrection, autocorrectionWasApplied, options.contains(TypingCommand::Option::IsAutocompletion)))
                     options.remove(TypingCommand::Option::RetainAutocorrectionIndicator);
-                TypingCommand::insertText(document.copyRef(), text, selection, options, inputType == TextEventInputComposition ? TypingCommand::TextCompositionType::Final : TypingCommand::TextCompositionType::None);
+                TypingCommand::insertText(document.copyRef(), text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionType::Final : TypingCommand::TextCompositionType::None);
             }
 
             // Reveal the current selection. Note that focus may have changed after insertion.
@@ -2242,10 +2251,8 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
 
     insertTextForConfirmedComposition(text);
 
-    if (RefPtr target = document->focusedElement()) {
-        dispatchTextInputEvent(*target, text);
+    if (RefPtr target = document->focusedElement())
         target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document->windowProxy(), text));
-    }
 
     if (mode == CancelComposition) {
         // An open typing command that disagrees about current selection would cause issues with typing later on.

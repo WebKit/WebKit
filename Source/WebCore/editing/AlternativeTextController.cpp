@@ -709,7 +709,13 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
         target = eventTargetElementForDocument(document.ptr());
     if (!target)
         return false;
-    return document->frame()->editor().insertTextWithoutSendingTextEvent(text, false, target.get(), TextEventInputDictation, &dictationAlternatives);
+
+    Ref windowProxy = document->frame()->windowProxy();
+    auto event = TextEvent::createForDictation(windowProxy.ptr(), text, dictationAlternatives);
+    event->setUnderlyingEvent(triggeringEvent);
+
+    target->dispatchEvent(event);
+    return event->defaultHandled();
 }
 
 void AlternativeTextController::removeDictationAlternativesForMarker(const DocumentMarker& marker)

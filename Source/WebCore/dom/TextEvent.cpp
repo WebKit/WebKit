@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextEvent.h"
 
+#include "DocumentFragment.h"
 #include "Editor.h"
 #include "EventNames.h"
 #include <wtf/IsoMallocInlines.h>
@@ -45,13 +46,31 @@ Ref<TextEvent> TextEvent::create(RefPtr<WindowProxy>&& view, const String& data,
     return adoptRef(*new TextEvent(WTFMove(view), data, inputType));
 }
 
+Ref<TextEvent> TextEvent::createForPlainTextPaste(RefPtr<WindowProxy>&& view, const String& data, bool shouldSmartReplace)
+{
+    return adoptRef(*new TextEvent(WTFMove(view), data, nullptr, TextEventInputPaste, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
+}
+
+Ref<TextEvent> TextEvent::createForFragmentPaste(RefPtr<WindowProxy>&& view, RefPtr<DocumentFragment>&& data, TextEventInputType inputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+{
+    return adoptRef(*new TextEvent(WTFMove(view), emptyString(), WTFMove(data), inputType, shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
+}
+
 Ref<TextEvent> TextEvent::createForDrop(RefPtr<WindowProxy>&& view, const String& data)
 {
     return adoptRef(*new TextEvent(WTFMove(view), data, TextEventInputDrop));
 }
 
+Ref<TextEvent> TextEvent::createForDictation(RefPtr<WindowProxy>&& view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
+{
+    return adoptRef(*new TextEvent(WTFMove(view), data, dictationAlternatives));
+}
+
 TextEvent::TextEvent()
     : UIEvent(EventInterfaceType::TextEvent)
+    , m_shouldSmartReplace(false)
+    , m_shouldMatchStyle(false)
+    , m_mailBlockquoteHandling(MailBlockquoteHandling::RespectBlockquote)
 {
 }
 
@@ -59,6 +78,31 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, TextEventIn
     : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
     , m_inputType(inputType)
     , m_data(data)
+    , m_shouldSmartReplace(false)
+    , m_shouldMatchStyle(false)
+    , m_mailBlockquoteHandling(MailBlockquoteHandling::RespectBlockquote)
+{
+}
+
+TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<DocumentFragment>&& pastingFragment, TextEventInputType inputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
+    , m_inputType(inputType)
+    , m_data(data)
+    , m_pastingFragment(WTFMove(pastingFragment))
+    , m_shouldSmartReplace(shouldSmartReplace)
+    , m_shouldMatchStyle(shouldMatchStyle)
+    , m_mailBlockquoteHandling(mailBlockquoteHandling)
+{
+}
+
+TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
+    : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
+    , m_inputType(TextEventInputDictation)
+    , m_data(data)
+    , m_shouldSmartReplace(false)
+    , m_shouldMatchStyle(false)
+    , m_mailBlockquoteHandling(MailBlockquoteHandling::RespectBlockquote)
+    , m_dictationAlternatives(dictationAlternatives)
 {
 }
 
@@ -74,6 +118,12 @@ void TextEvent::initTextEvent(const AtomString& type, bool canBubble, bool cance
     m_inputType = TextEventInputKeyboard;
 
     m_data = data;
+
+    m_pastingFragment = nullptr;
+    m_shouldSmartReplace = false;
+    m_shouldMatchStyle = false;
+    m_mailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote;
+    m_dictationAlternatives = { };
 }
 
 bool TextEvent::isTextEvent() const

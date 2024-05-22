@@ -1111,7 +1111,6 @@ webkit.org/b/173419 fast/events/page-visibility-onvisibilitychange.html [ Timeou
 webkit.org/b/173419 fast/events/page-visibility-transition-test.html [ Timeout ]
 webkit.org/b/173419 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure Timeout ]
 webkit.org/b/173419 fast/events/shadow-event-path-2.html [ Failure ]
-webkit.org/b/173419 fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Failure ]
 webkit.org/b/173419 fast/events/special-key-events-in-input-text.html [ Failure ]
 webkit.org/b/173419 fast/events/standalone-image-drag-to-editable.html [ Timeout ]
 webkit.org/b/173419 fast/events/webkit-media-key-events-constructor.html [ Failure ]
@@ -1132,9 +1131,6 @@ webkit.org/b/173419 fast/events/wheel/wheelevent-basic.html [ Failure Timeout ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-mousewheel-interaction.html [ Timeout Pass ]
-
-# keypress event doesn’t always get fired as expected; possibly related to webkit.org/b/173419
-imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional.html [ Failure ]
 
 webkit.org/b/212202 fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-iframe.html [ Failure ]
 

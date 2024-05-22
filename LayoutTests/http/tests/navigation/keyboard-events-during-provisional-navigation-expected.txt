@@ -23,8 +23,8 @@ CONSOLE MESSAGE: Active element after pressing tab: [object HTMLInputElement].
 CONSOLE MESSAGE: Pressing "a".
 CONSOLE MESSAGE: keydownevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: keypressevent dispatched (isTrusted: true).
-CONSOLE MESSAGE: beforeinputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: textInputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: beforeinputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: inputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: keyupevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: Setting marked text to "b".
@@ -35,9 +35,9 @@ CONSOLE MESSAGE: inputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: Inserting text "c".
 CONSOLE MESSAGE: beforeinputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: inputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: textInputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: beforeinputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: inputevent dispatched (isTrusted: true).
-CONSOLE MESSAGE: textInputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: compositionendevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: Pasting text "d".
 CONSOLE MESSAGE: pasteevent dispatched (isTrusted: true).
