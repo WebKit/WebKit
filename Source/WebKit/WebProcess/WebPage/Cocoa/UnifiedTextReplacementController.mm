@@ -409,7 +409,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
     // the above check ensures that the full range length expression will never underflow.
 
     auto characterCountDelta = sessionRangeCharacterCount - contextTextCharacterCount;
-    auto resolvedRange = resolveCharacterRange(*sessionRange, { range.location, range.length + characterCountDelta });
+    auto resolvedRange = UnifiedTextReplacementController::resolveCharacterRange(*sessionRange, { range.location, range.length + characterCountDelta });
 
     if (!m_originalDocumentNodes.contains(session.uuid)) {
         auto contents = m_contextRanges.get(session.uuid)->cloneContents();

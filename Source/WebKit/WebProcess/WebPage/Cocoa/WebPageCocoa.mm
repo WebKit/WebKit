@@ -1189,7 +1189,20 @@ std::optional<SimpleRange> WebPage::autocorrectionContextRange()
             endPosition = nextPosition;
     }
 
-    return makeSimpleRange(contextStartPosition, endPosition);
+    // Strip trailing newlines.
+
+    auto finalRange = makeSimpleRange(contextStartPosition, endPosition);
+    if (!finalRange)
+        return std::nullopt;
+
+    auto text = WebCore::plainText(*finalRange);
+    while (text.endsWith('\n')) {
+        endPosition = WebCore::positionOfNextBoundaryOfGranularity(endPosition, WebCore::TextGranularity::CharacterGranularity, WebCore::SelectionDirection::Backward);
+        finalRange = makeSimpleRange(contextStartPosition, endPosition);
+        text = WebCore::plainText(*finalRange);
+    }
+
+    return finalRange;
 }
 
 } // namespace WebKit
