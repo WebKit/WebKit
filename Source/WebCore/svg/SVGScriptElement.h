@@ -47,6 +47,7 @@ private:
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
     void childrenChanged(const ChildChange&) final;
+    void finishParsingChildren() final;
 
     bool isURLAttribute(const Attribute& attribute) const final { return attribute.name() == AtomString { sourceAttributeValue() }; }
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;

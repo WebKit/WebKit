@@ -58,6 +58,7 @@
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include "TextNodeTraversal.h"
+#include "TrustedType.h"
 #include <JavaScriptCore/ImportMap.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
@@ -93,6 +94,11 @@ void ScriptElement::childrenChanged(const ContainerNode::ChildChange& childChang
 {
     if (m_parserInserted == ParserInserted::No && childChange.isInsertion() && element().isConnected())
         prepareScript(); // FIXME: Provide a real starting line number here.
+}
+
+void ScriptElement::finishParsingChildren()
+{
+    m_trustedScriptText = scriptContent();
 }
 
 void ScriptElement::handleSourceAttribute(const String& sourceURL)
@@ -170,7 +176,15 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     if (wasParserInserted && !hasAsyncAttribute())
         m_forceAsync = true;
 
-    auto sourceText = scriptContent();
+    String sourceText = scriptContent();
+    Ref context = *element().scriptExecutionContext();
+    if (context->settingsValues().trustedTypesEnabled && sourceText != m_trustedScriptText) {
+        auto trustedText = trustedTypeCompliantString(TrustedType::TrustedScript, context, sourceText, is<HTMLScriptElement>(element()) ? "HTMLScriptElement text"_s : "SVGScriptElement text"_s);
+        if (trustedText.hasException())
+            return false;
+        sourceText = trustedText.releaseReturnValue();
+    }
+
     if (!hasSourceAttribute() && sourceText.isEmpty())
         return false;
 
@@ -599,6 +613,11 @@ bool ScriptElement::ignoresLoadRequest() const
 String ScriptElement::scriptContent() const
 {
     return TextNodeTraversal::childTextContent(protectedElement());
+}
+
+void ScriptElement::setTrustedScriptText(const String& text)
+{
+    m_trustedScriptText = text;
 }
 
 void ScriptElement::ref() const

@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-
-Harness Error (TIMEOUT), message = null
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS Assign String to SVGScriptElement.innerHTML.
 PASS Assign TrustedHTML to SVGScriptElement.innerHTML.
-TIMEOUT Assign TrustedHTML to SVGScriptElement.innerHTML and execute it. Test timed out
-NOTRUN Modify SVGScriptElement via DOM manipulation.
+PASS Assign TrustedHTML to SVGScriptElement.innerHTML and execute it.
+PASS Modify SVGScriptElement via DOM manipulation.
 
