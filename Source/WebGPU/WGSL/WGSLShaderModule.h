@@ -79,6 +79,14 @@ public:
     void setUsesUnpackArray() { m_usesUnpackArray = true; }
     void clearUsesUnpackArray() { m_usesUnpackArray = false; }
 
+    bool usesPackVector() const { return m_usesPackVector; }
+    void setUsesPackVector() { m_usesPackVector = true; }
+    void clearUsesPackVector() { m_usesPackVector = false; }
+
+    bool usesUnpackVector() const { return m_usesUnpackVector; }
+    void setUsesUnpackVector() { m_usesUnpackVector = true; }
+    void clearUsesUnpackVector() { m_usesUnpackVector = false; }
+
     bool usesWorkgroupUniformLoad() const { return m_usesWorkgroupUniformLoad; }
     void setUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = true; }
 
@@ -263,6 +271,8 @@ private:
     bool m_usesExternalTextures { false };
     bool m_usesPackArray { false };
     bool m_usesUnpackArray { false };
+    bool m_usesPackVector { false };
+    bool m_usesUnpackVector { false };
     bool m_usesWorkgroupUniformLoad { false };
     bool m_usesDivision { false };
     bool m_usesModulo { false };

@@ -130,11 +130,14 @@ private:
     void serializeConstant(const Type*, ConstantValue);
     void serializeBinaryExpression(AST::Expression&, AST::BinaryOperation, AST::Expression&);
     void visitStatements(AST::Statement::List&);
+    bool shouldPackType() const;
 
     StringBuilder& m_stringBuilder;
     ShaderModule& m_shaderModule;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructureRole> m_structRole;
+    std::optional<AST::VariableRole> m_variableRole;
+    std::optional<AST::ParameterRole> m_parameterRole;
     std::optional<ShaderStage> m_entryPointStage;
     AST::Function* m_currentFunction { nullptr };
     unsigned m_functionConstantIndex { 0 };
@@ -187,7 +190,6 @@ void FunctionDefinitionWriter::write()
 void FunctionDefinitionWriter::emitNecessaryHelpers()
 {
     if (m_shaderModule.usesPackedVec3()) {
-        m_shaderModule.clearUsesPackedVec3();
         m_stringBuilder.append(
             m_indent, "template<typename T>\n"_s,
             m_indent, "struct PackedVec3 {\n"_s
@@ -202,7 +204,9 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
                 m_indent, "\n"_s,
                 m_indent, "PackedVec3(packed_vec<T, 3> v) : vec3(v) { }\n"_s,
                 m_indent, "\n"_s,
-                m_indent, "operator packed_vec<T, 3>() { return vec3; }\n"_s
+                m_indent, "operator packed_vec<T, 3>() { return vec3; }\n"_s,
+                m_indent, "\n"_s,
+                m_indent, "operator float3() { return as_type<vec<float, 3>>(vec<T, 3>(vec3)); }\n"_s
             );
         }
         m_stringBuilder.append(m_indent, "};\n\n"_s);
@@ -240,20 +244,22 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
         m_stringBuilder.append(m_indent, "}\n\n"_s);
 
-        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
-            m_indent, "array<PackedVec3<T>, N> __pack(array<vec<T, 3>, N> unpacked)\n"_s,
-            m_indent, "{\n"_s);
-        {
-            IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "array<PackedVec3<T>, N> packed;\n"_s,
-                m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
+        if (m_shaderModule.usesPackedVec3()) {
+            m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
+                m_indent, "array<PackedVec3<T>, N> __pack(array<vec<T, 3>, N> unpacked)\n"_s,
+                m_indent, "{\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "packed[i] = PackedVec3<T>(unpacked[i]);\n"_s);
+                m_stringBuilder.append(m_indent, "array<PackedVec3<T>, N> packed;\n"_s,
+                    m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
+                {
+                    IndentationScope scope(m_indent);
+                    m_stringBuilder.append(m_indent, "packed[i] = PackedVec3<T>(unpacked[i]);\n"_s);
+                }
+                m_stringBuilder.append(m_indent, "return packed;\n"_s);
             }
-            m_stringBuilder.append(m_indent, "return packed;\n"_s);
+            m_stringBuilder.append(m_indent, "}\n\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
 
     if (m_shaderModule.usesUnpackArray()) {
@@ -273,20 +279,39 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
         m_stringBuilder.append(m_indent, "}\n\n"_s);
 
-        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
-            m_indent, "array<vec<T, 3>, N> __unpack(array<PackedVec3<T>, N> packed)\n"_s,
-            m_indent, "{\n"_s);
-        {
-            IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "array<vec<T, 3>, N> unpacked;\n"_s,
-                m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
+        if (m_shaderModule.usesPackedVec3()) {
+            m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
+                m_indent, "array<vec<T, 3>, N> __unpack(array<PackedVec3<T>, N> packed)\n"_s,
+                m_indent, "{\n"_s);
             {
                 IndentationScope scope(m_indent);
-                m_stringBuilder.append(m_indent, "unpacked[i] = vec<T, 3>(packed[i]);\n"_s);
+                m_stringBuilder.append(m_indent, "array<vec<T, 3>, N> unpacked;\n"_s,
+                    m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
+                {
+                    IndentationScope scope(m_indent);
+                    m_stringBuilder.append(m_indent, "unpacked[i] = vec<T, 3>(packed[i]);\n"_s);
+                }
+                m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
             }
-            m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
+            m_stringBuilder.append(m_indent, "}\n\n"_s);
         }
-        m_stringBuilder.append(m_indent, "}\n\n"_s);
+    }
+
+    if (m_shaderModule.usesPackVector()) {
+        m_shaderModule.clearUsesPackVector();
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+            m_indent, "packed_vec<T, 3> __pack(vec<T, 3> unpacked) { return unpacked; }\n\n"_s);
+    }
+
+    if (m_shaderModule.usesUnpackVector()) {
+        m_shaderModule.clearUsesUnpackVector();
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+            m_indent, "vec<T, 3> __unpack(packed_vec<T, 3> packed) { return packed; }\n\n"_s);
+
+        if (m_shaderModule.usesPackedVec3()) {
+            m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+                m_indent, "vec<T, 3> __unpack(PackedVec3<T> packed) { return packed; }\n\n"_s);
+        }
     }
 
     if (m_shaderModule.usesWorkgroupUniformLoad()) {
@@ -485,6 +510,8 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
         m_stringBuilder.append(m_indent, "}\n"_s);
     }
+
+    m_shaderModule.clearUsesPackedVec3();
 }
 
 void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
@@ -513,6 +540,7 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
             m_stringBuilder.append(", "_s);
         switch (parameter.role()) {
         case AST::ParameterRole::UserDefined:
+        case AST::ParameterRole::PackedResource:
             checkErrorAndVisit(parameter);
             break;
         case AST::ParameterRole::StageIn:
@@ -650,17 +678,28 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
     m_stringBuilder.append(m_indent, "}\n\n"_s);
 }
 
+bool FunctionDefinitionWriter::shouldPackType() const
+{
+    if (m_structRole.has_value() && (*m_structRole == AST::StructureRole::PackedResource || *m_structRole == AST::StructureRole::BindGroup))
+        return true;
+    if (m_variableRole.has_value() && *m_variableRole == AST::VariableRole::PackedResource)
+        return true;
+    if (m_parameterRole.has_value() && (*m_parameterRole == AST::ParameterRole::PackedResource))
+        return true;
+    return false;
+}
+
 bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
 {
-    if (!m_structRole.has_value())
+    if (!shouldPackType())
         return false;
-    if (*m_structRole != AST::StructureRole::PackedResource)
-        return false;
+
     // The only vectors that need to be packed are the vectors with 3 elements,
     // because their size differs between Metal and WGSL (4 * element size vs
     // 3 * element size, respectively)
     if (vector.size != 3)
         return false;
+
     auto& primitive = std::get<Types::Primitive>(*vector.element);
     switch (primitive.kind) {
     case Types::Primitive::AbstractInt:
@@ -719,6 +758,8 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
 {
     if (variable.flavor() == AST::VariableFlavor::Const)
         return;
+
+    auto variableRoleScope = SetForScope(m_variableRole, std::optional<AST::VariableRole> { variable.role() });
 
     const Type* type = variable.storeType();
     if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
@@ -979,7 +1020,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         [&](const Array& array) {
             m_stringBuilder.append("array<"_s);
             auto* vector = std::get_if<Types::Vector>(array.element);
-            if (vector && vector->size == 3 && m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource) {
+            if (vector && vector->size == 3 && shouldPackType()) {
                 m_stringBuilder.append("PackedVec3<"_s);
                 visit(vector->element);
                 m_stringBuilder.append(">"_s);
@@ -996,7 +1037,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
-            if (m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource && structure.structure.role() == AST::StructureRole::UserDefinedResource)
+            if (shouldPackType() && type->isConstructible() && structure.structure.role() == AST::StructureRole::UserDefinedResource)
                 m_stringBuilder.append("::PackedType"_s);
         },
         [&](const PrimitiveStruct& structure) {
@@ -1134,6 +1175,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
 
 void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 {
+    auto parameterRoleScope = SetForScope(m_parameterRole, parameter.role());
     visit(parameter.typeName().inferredType());
     m_stringBuilder.append(' ', parameter.name());
     for (auto& attribute : parameter.attributes()) {

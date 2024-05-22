@@ -47,6 +47,11 @@ enum class VariableFlavor : uint8_t {
     Var,
 };
 
+enum class VariableRole : uint8_t {
+    UserDefined,
+    PackedResource,
+};
+
 class Variable final : public Declaration {
     WGSL_AST_BUILDER_NODE(Variable);
     friend AttributeValidator;
@@ -60,6 +65,10 @@ public:
     NodeKind kind() const override;
     VariableFlavor flavor() const { return m_flavor; };
     VariableFlavor& flavor() { return m_flavor; };
+
+    VariableRole role() const { return m_role; }
+    VariableRole& role() { return m_role; }
+
     Identifier& name() override { return m_name; }
     Identifier& originalName() { return m_originalName; }
     Attribute::List& attributes() { return m_attributes; }
@@ -85,7 +94,7 @@ private:
         : Variable(span, flavor, WTFMove(name), { }, type, initializer, { })
     { }
 
-    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr qualifier, Expression::Ptr type, Expression::Ptr initializer, Attribute::List&& attributes)
+    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr qualifier, Expression::Ptr type, Expression::Ptr initializer, Attribute::List&& attributes, VariableRole role = VariableRole::UserDefined)
         : Declaration(span)
         , m_name(WTFMove(name))
         , m_originalName(m_name)
@@ -94,6 +103,7 @@ private:
         , m_type(type)
         , m_initializer(initializer)
         , m_flavor(flavor)
+        , m_role(role)
     {
         ASSERT(m_type || m_initializer);
     }
@@ -107,6 +117,7 @@ private:
     Expression::Ptr m_type;
     Expression::Ptr m_initializer;
     VariableFlavor m_flavor;
+    VariableRole m_role;
     Expression::Ptr m_referenceType { nullptr };
 
     // Computed properties

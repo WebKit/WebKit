@@ -172,6 +172,7 @@ private:
     AST::Expression* m_bufferLengthReferenceType { nullptr };
     AST::Function* m_currentFunction { nullptr };
     HashMap<std::pair<unsigned, unsigned>, unsigned> m_globalsUsingDynamicOffset;
+    HashSet<AST::Expression*> m_doNotUnpack;
 };
 
 std::optional<Error> RewriteGlobalVariables::run()
@@ -212,12 +213,13 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
             }
             ASSERT(type);
 
+            auto parameterRole = global.declaration->role() == AST::VariableRole::PackedResource ? AST::ParameterRole::PackedResource : AST::ParameterRole::UserDefined;
             m_shaderModule.append(callee.target->parameters(), m_shaderModule.astBuilder().construct<AST::Parameter>(
                 SourceSpan::empty(),
                 AST::Identifier::make(read),
                 *type,
                 AST::Attribute::List { },
-                AST::ParameterRole::UserDefined
+                parameterRole
             ));
         }
 
@@ -250,6 +252,7 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
                 );
                 global.m_inferredType = it->value.declaration->storeType();
                 m_shaderModule.append(call->arguments(), global);
+                m_doNotUnpack.add(&global);
             }
         }
 
@@ -355,15 +358,13 @@ void RewriteGlobalVariables::visit(AST::AssignmentStatement& statement)
     ASSERT(lhsPacking != Packing::Either);
     if (lhsPacking == Packing::PackedVec3)
         lhsPacking = Packing::Either;
-    else
-        lhsPacking = static_cast<Packing>(lhsPacking | Packing::Vec3);
     pack(lhsPacking, statement.rhs());
 }
 
 void RewriteGlobalVariables::visit(AST::VariableStatement& statement)
 {
     if (auto* initializer = statement.variable().maybeInitializer())
-        pack(static_cast<Packing>(Packing::Unpacked | Packing::Vec3), *initializer);
+        pack(static_cast<Packing>(Packing::Unpacked), *initializer);
 }
 
 void RewriteGlobalVariables::visit(AST::PhonyAssignmentStatement& statement)
@@ -378,6 +379,9 @@ void RewriteGlobalVariables::visit(AST::Expression& expression)
 
 Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& expression)
 {
+    if (m_doNotUnpack.contains(&expression))
+        return expectedPacking;
+
     const auto& visitAndReplace = [&](auto& expression) -> Packing {
         auto packing = getPacking(expression);
         if (expectedPacking & packing)
@@ -387,9 +391,11 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
         if (auto* referenceType = std::get_if<Types::Reference>(type))
             type = referenceType->element;
         ASCIILiteral operation;
-        if (std::holds_alternative<Types::Struct>(*type))
+        if (std::holds_alternative<Types::Struct>(*type)) {
+            if (!type->isConstructible())
+                return packing;
             operation = packing & Packing::Packed ? "__unpack"_s : "__pack"_s;
-        else if (std::holds_alternative<Types::Array>(*type)) {
+        } else if (std::holds_alternative<Types::Array>(*type)) {
             // array of vec3 can be implicitly converted
             if (packing & Packing::Vec3)
                 m_shaderModule.setUsesPackedVec3();
@@ -401,26 +407,12 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
                 m_shaderModule.setUsesPackArray();
             }
         } else {
-            ASSERT(std::holds_alternative<Types::Vector>(*type));
-            auto& vector = std::get<Types::Vector>(*type);
-            ASSERT(std::holds_alternative<Types::Primitive>(*vector.element));
-            switch (std::get<Types::Primitive>(*vector.element).kind) {
-            case Types::Primitive::AbstractInt:
-            case Types::Primitive::I32:
-                operation = packing & Packing::Packed ? "int3"_s : "packed_int3"_s;
-                break;
-            case Types::Primitive::U32:
-                operation = packing & Packing::Packed ? "uint3"_s : "packed_uint3"_s;
-                break;
-            case Types::Primitive::AbstractFloat:
-            case Types::Primitive::F32:
-                operation = packing & Packing::Packed ? "float3"_s : "packed_float3"_s;
-                break;
-            case Types::Primitive::F16:
-                operation = packing & Packing::Packed ? "half3"_s : "packed_half3"_s;
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
+            if (packing & Packing::Packed) {
+                operation = "__unpack"_s;
+                m_shaderModule.setUsesUnpackVector();
+            } else {
+                operation = "__pack"_s;
+                m_shaderModule.setUsesPackVector();
             }
         }
         RELEASE_ASSERT(!operation.isNull());
@@ -762,13 +754,19 @@ void RewriteGlobalVariables::packStructResource(AST::Variable& global, const Typ
     auto& namedTypeName = downcast<AST::IdentifierExpression>(*global.maybeTypeName());
     m_shaderModule.replace(namedTypeName, packedType);
     updateReference(global, packedType);
+    m_shaderModule.replace(&global.role(), AST::VariableRole::PackedResource);
 }
 
 void RewriteGlobalVariables::packArrayResource(AST::Variable& global, const Types::Array* arrayType)
 {
     const Type* packedArrayType = packArrayType(arrayType);
-    if (!packedArrayType)
+    if (!packedArrayType) {
+        if (arrayType->element->packing() & Packing::Vec3) {
+            m_shaderModule.setUsesPackedVec3();
+            m_shaderModule.replace(&global.role(), AST::VariableRole::PackedResource);
+        }
         return;
+    }
 
     const Type* packedStructType = std::get<Types::Array>(*packedArrayType).element;
     auto& packedType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
@@ -787,6 +785,7 @@ void RewriteGlobalVariables::packArrayResource(AST::Variable& global, const Type
 
     m_shaderModule.replace(arrayTypeName, packedArrayTypeName);
     updateReference(global, packedArrayTypeName);
+    m_shaderModule.replace(&global.role(), AST::VariableRole::PackedResource);
 }
 
 void RewriteGlobalVariables::updateReference(AST::Variable& global, AST::Expression& packedType)
@@ -1806,7 +1805,8 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
                 nullptr,
                 global->declaration->maybeReferenceType(),
                 initializer,
-                AST::Attribute::List { }
+                AST::Attribute::List { },
+                AST::VariableRole::PackedResource
             );
 
             auto& variableStatement = m_shaderModule.astBuilder().construct<AST::VariableStatement>(SourceSpan::empty(), variable);
