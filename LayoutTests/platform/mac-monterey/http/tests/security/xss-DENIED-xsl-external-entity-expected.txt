@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: Unsafe attempt to load URL http://localhost:8000/security/resources/target.xml from origin http://127.0.0.1:8000. Domains, protocols and ports must match.
-
-CONSOLE MESSAGE: Failure to process entity ent
-
-CONSOLE MESSAGE: Entity 'ent' not defined
-
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
