@@ -317,7 +317,7 @@ ICOImageDecoder::ImageType ICOImageDecoder::imageTypeAtIndex(size_t index)
     const uint32_t imageOffset = m_dirEntries[index].m_imageOffset;
     if ((imageOffset > m_data->size()) || ((m_data->size() - imageOffset) < 4))
         return Unknown;
-    return equalSpans(m_data->span().subspan(imageOffset, 4), "\x89PNG"_span) ? PNG : BMP;
+    return equalSpans(m_data->span().subspan(imageOffset, 4), std::span { "\x89PNG" }) ? PNG : BMP;
 }
 
 }
