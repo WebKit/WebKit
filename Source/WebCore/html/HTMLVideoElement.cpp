@@ -558,6 +558,14 @@ auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
     return toPresentationMode(fullscreenMode());
 }
 
+auto HTMLVideoElement::webkitPresentationModeForBindings() const -> VideoPresentationMode
+{
+    auto mode = webkitPresentationMode();
+    if (mode == HTMLVideoElement::VideoPresentationMode::InWindow)
+        return HTMLVideoElement::VideoPresentationMode::Inline;
+    return mode;
+}
+
 void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& size)
 {
     if (RefPtr player = this->player())

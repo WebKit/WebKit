@@ -62,8 +62,8 @@
     VideoPlaybackQuality getVideoPlaybackQuality();
 
     [Conditional=VIDEO_PRESENTATION_MODE, EnabledBySetting=VideoPresentationModeAPIEnabled] boolean webkitSupportsPresentationMode(VideoPresentationMode mode);
-    [Conditional=VIDEO_PRESENTATION_MODE, EnabledBySetting=VideoPresentationModeAPIEnabled] readonly attribute VideoPresentationMode webkitPresentationMode;
+    [ImplementedAs=webkitPresentationModeForBindings, Conditional=VIDEO_PRESENTATION_MODE, EnabledBySetting=VideoPresentationModeAPIEnabled] readonly attribute VideoPresentationMode webkitPresentationMode;
     [Conditional=VIDEO_PRESENTATION_MODE, EnabledBySetting=VideoPresentationModeAPIEnabled] undefined webkitSetPresentationMode(VideoPresentationMode mode);
 };
 
-[Conditional=VIDEO_PRESENTATION_MODE] enum VideoPresentationMode { "inline", "fullscreen", "picture-in-picture", "in-window" };
+[Conditional=VIDEO_PRESENTATION_MODE] enum VideoPresentationMode { "inline", "fullscreen", "picture-in-picture" };

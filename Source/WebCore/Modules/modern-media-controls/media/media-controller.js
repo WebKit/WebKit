@@ -105,7 +105,7 @@ class MediaController
         if (!this.media)
             return false;
 
-        return this.media.webkitSupportsPresentationMode ? this.media.webkitPresentationMode === "fullscreen" || this.media.webkitPresentationMode === "in-window" : this.media.webkitDisplayingFullscreen;
+        return this.media.webkitSupportsPresentationMode ? this.media.webkitPresentationMode === "fullscreen" || (this.host && this.host.inWindowFullscreen) : this.media.webkitDisplayingFullscreen;
     }
 
     get layoutTraits()
@@ -334,7 +334,7 @@ class MediaController
         this.controls = new ControlsClass;
         this.controls.delegate = this;
 
-        if (this.media.webkitPresentationMode === "in-window")
+        if (this.host && this.host.inWindowFullscreen)
             this._stopPropagationOnClickEvents();
 
         if (this.controls.autoHideController && this.shadowRoot.host && this.shadowRoot.host.dataset.autoHideDelay)

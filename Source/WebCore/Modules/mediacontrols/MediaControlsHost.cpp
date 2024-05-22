@@ -287,6 +287,19 @@ bool MediaControlsHost::supportsSeeking() const
     return m_mediaElement && m_mediaElement->supportsSeeking();
 }
 
+bool MediaControlsHost::inWindowFullscreen() const
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (!m_mediaElement)
+        return false;
+
+    auto& mediaElement = *m_mediaElement;
+    if (is<HTMLVideoElement>(mediaElement))
+        return downcast<HTMLVideoElement>(mediaElement).webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::InWindow;
+#endif
+    return false;
+}
+
 String MediaControlsHost::externalDeviceDisplayName() const
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
