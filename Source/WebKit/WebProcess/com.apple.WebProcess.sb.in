@@ -2055,6 +2055,7 @@
         "com.apple.accessibility.cache.vot"
         "com.apple.accessibility.cache.zoom"
         "com.apple.language.changed"
+        "com.apple.mediaaccessibility.audibleMediaSettingsChanged"
         "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"
         "com.apple.powerlog.state_changed"
         "com.apple.system.DirectoryService.InvalidateCache"

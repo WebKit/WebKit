@@ -727,9 +727,11 @@ void WebProcessPool::registerNotificationObservers()
         "com.apple.accessibility.cache.vot"_s,
         "com.apple.accessibility.cache.zoom"_s,
         "com.apple.language.changed"_s,
+        "com.apple.mediaaccessibility.audibleMediaSettingsChanged"_s,
         "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"_s,
 #if !PLATFORM(MAC)
         "com.apple.mobile.usermanagerd.foregrounduser_changed"_s,
+        "com.apple.mobile.keybagd.lock_status"_s,
         "com.apple.mobile.keybagd.user_changed"_s,
 #endif
         "com.apple.powerlog.state_changed"_s,
