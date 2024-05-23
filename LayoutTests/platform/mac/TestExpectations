@@ -1999,8 +1999,8 @@ webkit.org/b/225882 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 webkit.org/b/226050 imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-commit.any.html [ Pass Failure ]
 
-# rdar://80340581 ([ Monterey ] http/tests/preload/onload_event.html is a flaky failure)
-http/tests/preload/onload_event.html [ Pass Failure ]
+#webkit.org/b/231328 http/tests/preload/onload_event.html [ Pass Failure ] # uncomment when below is resolved
+webkit.org/b/274591 http/tests/preload/onload_event.html [ Failure ] # delete this and uncomment above when this is resolved
 
 webkit.org/b/271732 [ Ventura+ ] http/tests/workers/service/openwindow-from-notification-click.html [ Pass Failure Crash ]
 
