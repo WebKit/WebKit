@@ -154,7 +154,7 @@ std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObje
     if (jsValue.isEmpty())
         return jsValue;
 
-    auto span = decoder.buffer().subspan(startingBufferOffset, decoder.currentBufferOffset() - startingBufferOffset);
+    auto span = decoder.span().subspan(startingBufferOffset, decoder.currentBufferOffset() - startingBufferOffset);
     putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(globalObject, array, currentIndex, jsValue, span);
 
     std::tuple<Elements...>* dummyArguments = nullptr;
