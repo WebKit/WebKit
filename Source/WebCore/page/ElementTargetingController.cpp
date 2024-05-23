@@ -1305,7 +1305,8 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
     }
 
     if (RefPtr loader = document.loader(); loader && !m_didCollectInitialAdjustments) {
-        m_visibilityAdjustmentSelectors.appendVector(loader->visibilityAdjustmentSelectors().map([](auto& selectors) -> std::pair<ElementIdentifier, TargetedElementSelectors> {
+        m_initialVisibilityAdjustmentSelectors = loader->visibilityAdjustmentSelectors();
+        m_visibilityAdjustmentSelectors.appendVector(m_initialVisibilityAdjustmentSelectors.map([](auto& selectors) -> std::pair<ElementIdentifier, TargetedElementSelectors> {
             return { { }, selectors };
         }));
         m_startTimeForSelectorBasedVisibilityAdjustment = ApproximateTime::now();
@@ -1513,6 +1514,7 @@ void ElementTargetingController::reset()
     m_viewportSizeForVisibilityAdjustment = { };
     m_adjustedElements = { };
     m_visibilityAdjustmentSelectors = { };
+    m_initialVisibilityAdjustmentSelectors = { };
     m_didCollectInitialAdjustments = false;
     m_additionalAdjustmentCount = 0;
     m_selectorBasedVisibilityAdjustmentTimer.stop();
@@ -1539,11 +1541,11 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<Targete
     if (!document)
         return false;
 
-    Vector<Ref<Element>> elementsToReset;
+    HashSet<Ref<Element>> elementsToReset;
     if (identifiers.isEmpty()) {
         elementsToReset.reserveInitialCapacity(m_adjustedElements.computeSize());
         for (auto& element : m_adjustedElements)
-            elementsToReset.append(element);
+            elementsToReset.add(element);
         m_adjustedElements.clear();
     } else {
         elementsToReset.reserveInitialCapacity(identifiers.size());
@@ -1558,17 +1560,22 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<Targete
             if (!m_adjustedElements.remove(*element))
                 continue;
 
-            elementsToReset.append(element.releaseNonNull());
+            elementsToReset.add(element.releaseNonNull());
         }
     }
 
     if (RefPtr loader = document->loader(); loader && !identifiers.isEmpty()) {
-        m_visibilityAdjustmentSelectors = loader->visibilityAdjustmentSelectors().map([](auto& selectors) -> std::pair<ElementIdentifier, TargetedElementSelectors> {
+        m_initialVisibilityAdjustmentSelectors.removeAllMatching([&](auto& selectors) {
+            auto foundElement = findElementFromSelectors(selectors).element;
+            return foundElement && elementsToReset.contains(*foundElement);
+        });
+        m_visibilityAdjustmentSelectors = m_initialVisibilityAdjustmentSelectors.map([](auto& selectors) -> std::pair<ElementIdentifier, TargetedElementSelectors> {
             return { { }, selectors };
         });
     } else {
         // There are no initial adjustments after resetting.
         m_visibilityAdjustmentSelectors = { };
+        m_initialVisibilityAdjustmentSelectors = { };
     }
     m_additionalAdjustmentCount = 0;
     m_didCollectInitialAdjustments = true;

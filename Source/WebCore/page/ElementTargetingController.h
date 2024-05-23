@@ -90,6 +90,7 @@ private:
     ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
     Timer m_selectorBasedVisibilityAdjustmentTimer;
     Vector<std::pair<ElementIdentifier, TargetedElementSelectors>> m_visibilityAdjustmentSelectors;
+    Vector<TargetedElementSelectors> m_initialVisibilityAdjustmentSelectors;
     Region m_adjustmentClientRegion;
     Region m_repeatedAdjustmentClientRegion;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_adjustedElements;

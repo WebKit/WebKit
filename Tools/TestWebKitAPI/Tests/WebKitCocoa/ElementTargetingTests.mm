@@ -374,6 +374,12 @@ TEST(ElementTargeting, RequestElementsFromSelectors)
     EXPECT_EQ(1U, [targets count]);
     EXPECT_WK_STREQ("DIV.absolute.bottom-right", [target selectorsIncludingShadowHosts].firstObject.firstObject);
     EXPECT_TRUE([target isInVisibilityAdjustmentSubtree]);
+
+    didAdjustVisibility = false;
+
+    [webView resetVisibilityAdjustmentsForTargets:targets.get()];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE(didAdjustVisibility);
 }
 
 TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
