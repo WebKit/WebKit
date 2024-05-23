@@ -5395,6 +5395,7 @@ imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-003.html [ Ima
 # IPC test failing in Debug mode due to assert.
 [ Debug ] ipc/send-invalid-message.html [ Skip ]
 webkit.org/b/272000 [ Debug ] ipc/send-filter.html [ Crash ]
+webkit.org/b/272000 [ Debug ] ipc/send-gradient.html [ Crash ]
 
 # mac-only IPC test
 ipc/webpageproxy-correctionpanel-no-crash.html [ Skip ]

@@ -387,7 +387,10 @@ void RemoteRenderingBackend::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decom
 void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient)
 {
     ASSERT(!RunLoop::isMain());
-    m_remoteResourceCache.cacheGradient(WTFMove(gradient));
+    if (gradient->hasValidRenderingResourceIdentifier())
+        m_remoteResourceCache.cacheGradient(WTFMove(gradient));
+    else
+        LOG_WITH_STREAM(DisplayLists, stream << "Received a Gradient without a valid resource identifier");
 }
 
 void RemoteRenderingBackend::cacheFilter(Ref<Filter>&& filter)
