@@ -44,10 +44,11 @@ struct WGPURenderBundleEncoderImpl {
 
 @interface RenderBundleICBWithResources : NSObject
 
-- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer pipeline:(const WebGPU::RenderPipeline*)pipeline NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb containerBuffer:(id<MTLBuffer>)containerBuffer pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer pipeline:(const WebGPU::RenderPipeline*)pipeline NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly, nonatomic) id<MTLIndirectCommandBuffer> indirectCommandBuffer;
+@property (readonly, nonatomic) id<MTLBuffer> indirectCommandBufferContainer;
 @property (readonly, nonatomic) id<MTLRenderPipelineState> currentPipelineState;
 @property (readonly, nonatomic) id<MTLDepthStencilState> depthStencilState;
 @property (readonly, nonatomic) MTLCullMode cullMode;
@@ -60,6 +61,7 @@ struct WGPURenderBundleEncoderImpl {
 @property (readonly, nonatomic) const WebGPU::RenderPipeline* pipeline;
 
 - (Vector<WebGPU::BindableResources>*)resources;
+- (HashMap<uint64_t, WebGPU::IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>*)minVertexCountForDrawCommand;
 @end
 
 namespace WebGPU {
@@ -88,16 +90,16 @@ public:
 
     void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
     void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance);
-    void drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
-    void drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
+    void drawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
+    void drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
     Ref<RenderBundle> finish(const WGPURenderBundleDescriptor&);
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
     void setBindGroup(uint32_t groupIndex, const BindGroup&, std::optional<Vector<uint32_t>>&& dynamicOffsets);
-    void setIndexBuffer(const Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
+    void setIndexBuffer(Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
     void setPipeline(const RenderPipeline&);
-    void setVertexBuffer(uint32_t slot, const Buffer*, uint64_t offset, uint64_t size);
+    void setVertexBuffer(uint32_t slot, Buffer*, uint64_t offset, uint64_t size);
     void setLabel(String&&);
 
     bool isValid() const;
@@ -133,6 +135,8 @@ private:
     uint32_t maxVertexBufferIndex() const;
     uint32_t maxBindGroupIndex() const;
     void recordCommand(WTF::Function<bool(void)>&&);
+    void storeVertexBufferCountsForValidation(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes);
+    uint32_t computeMininumVertexCount() const;
 
     const Ref<Device> m_device;
     WeakPtr<Buffer> m_indexBuffer;
@@ -174,6 +178,7 @@ private:
     using BindGroupDynamicOffsetsContainer = HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     std::optional<BindGroupDynamicOffsetsContainer> m_bindGroupDynamicOffsets;
     HashMap<uint32_t, WeakPtr<BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroups;
+    HashMap<uint64_t, IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_minVertexCountForDrawCommand;
     NSMutableArray<RenderBundleICBWithResources*> *m_icbArray;
     id<MTLBuffer> m_dynamicOffsetsVertexBuffer { nil };
     id<MTLBuffer> m_dynamicOffsetsFragmentBuffer { nil };

@@ -102,6 +102,9 @@ public:
     static double quantizedDepthValue(double, WGPUTextureFormat);
     NSString* errorValidatingPipeline(const RenderPipeline&) const;
 
+    static std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer*, const Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, Device&, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder>);
+    static id<MTLBuffer> clampIndirectBufferToValidValues(const Buffer&, uint64_t indirectOffset, uint32_t minVertexCount, Device&, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder>);
+
 private:
     RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, uint64_t maxDrawCount, Device&);
     RenderPassEncoder(CommandEncoder&, Device&, NSString*);
@@ -121,6 +124,10 @@ private:
     bool issuedDrawCall() const;
     void incrementDrawCount(uint32_t = 1);
     bool occlusionQueryIsDestroyed() const;
+    bool clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes);
+    uint32_t computeMininumVertexCount() const;
+    std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(const Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount);
+    id<MTLBuffer> clampIndirectBufferToValidValues(const Buffer&, uint64_t indirectOffset, uint32_t minVertexCount);
 
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
@@ -157,6 +164,7 @@ private:
     id<MTLBuffer> m_visibilityResultBuffer { nil };
     uint32_t m_renderTargetWidth { 0 };
     uint32_t m_renderTargetHeight { 0 };
+    uint32_t m_rasterSampleCount { 1 };
     NSMutableDictionary<NSNumber*, TextureAndClearColor*> *m_attachmentsToClear { nil };
     NSMutableDictionary<NSNumber*, TextureAndClearColor*> *m_allColorAttachments { nil };
     id<MTLTexture> m_depthStencilAttachmentToClear { nil };

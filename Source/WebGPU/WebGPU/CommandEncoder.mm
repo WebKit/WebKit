@@ -711,7 +711,7 @@ void CommandEncoder::decrementBufferMapCount()
         m_cachedCommandBuffer->setBufferMapCount(m_bufferMapCount);
 }
 
-void CommandEncoder::copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)
+void CommandEncoder::copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, Buffer& destination, uint64_t destinationOffset, uint64_t size)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-copybuffertobuffer
     if (!prepareTheEncoderState()) {
@@ -726,6 +726,7 @@ void CommandEncoder::copyBufferToBuffer(const Buffer& source, uint64_t sourceOff
 
     source.setCommandEncoder(*this);
     destination.setCommandEncoder(*this);
+    destination.indirectBufferInvalidated();
     if (!size || source.isDestroyed() || destination.isDestroyed())
         return;
 
@@ -1261,6 +1262,7 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     auto& apiDestinationBuffer = fromAPI(destination.buffer);
     sourceTexture.setCommandEncoder(*this);
     apiDestinationBuffer.setCommandEncoder(*this);
+    apiDestinationBuffer.indirectBufferInvalidated();
     if (sourceTexture.isDestroyed() || apiDestinationBuffer.isDestroyed())
         return;
 
@@ -1673,7 +1675,7 @@ bool CommandEncoder::validateClearBuffer(const Buffer& buffer, uint64_t offset, 
     return true;
 }
 
-void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t size)
+void CommandEncoder::clearBuffer(Buffer& buffer, uint64_t offset, uint64_t size)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-clearbuffer
 
@@ -1697,6 +1699,7 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
     }
 
     buffer.setCommandEncoder(*this);
+    buffer.indirectBufferInvalidated();
     auto range = NSMakeRange(static_cast<NSUInteger>(offset), static_cast<NSUInteger>(size));
     if (buffer.isDestroyed() || !size || NSMaxRange(range) > buffer.buffer().length)
         return;

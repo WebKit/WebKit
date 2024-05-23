@@ -110,7 +110,7 @@ private:
         if (![captureManager startCaptureWithDescriptor:captureDescriptor error:&error])
             WTFLogAlways("Failed to start GPU frame capture at path %@, error %@", captureDescriptor.outputURL.absoluteString, error);
         else
-            WTFLogAlways("Success starting GPU frame capture at path %@", captureDescriptor.outputURL.absoluteString);
+            WTFLogAlways("Success starting GPU frame capture at path %@ - frame count = %d", captureDescriptor.outputURL.absoluteString, maxSubmitCallsToCapture);
     }
 
     static bool captureFirstFrame;
@@ -485,6 +485,367 @@ void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&
 void Device::setLabel(String&&)
 {
     // Because MTLDevices are process-global, we can't set the label on it, because 2 contexts' labels would fight each other.
+}
+
+id<MTLBuffer> Device::dispatchCallBuffer()
+{
+    if (!m_device)
+        return nil;
+
+    if (!m_dispatchCallBuffer)
+        m_dispatchCallBuffer = [m_device newBufferWithLength:sizeof(MTLDispatchThreadgroupsIndirectArguments) options:MTLResourceStorageModePrivate];
+    return m_dispatchCallBuffer;
+}
+
+id<MTLComputePipelineState> Device::dispatchCallPipelineState(id<MTLFunction> function)
+{
+    if (!m_device)
+        return nil;
+
+    if (!m_dispatchCallPipelineState) {
+        NSError* error = nil;
+        m_dispatchCallPipelineState = [m_device newComputePipelineStateWithFunction:function error:&error];
+        if (error)
+            WTFLogAlways("Metal code failure: %@", error);
+    }
+    return m_dispatchCallPipelineState;
+}
+
+id<MTLRenderPipelineState> Device::copyIndexIndirectArgsPipeline(NSUInteger rasterSampleCount)
+{
+    if (!m_device)
+        return nil;
+
+    id<MTLRenderPipelineState> result = rasterSampleCount > 1 ? m_copyIndexedIndirectArgsPSOMS : m_copyIndexedIndirectArgsPSO;
+    if (result)
+        return result;
+
+    static id<MTLFunction> function = nil;
+    NSError *error = nil;
+    if (!function) {
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+    using namespace metal;
+    [[vertex]] void vs(device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(0)]], constant const MTLDrawIndexedPrimitivesIndirectArguments& indirectArguments [[buffer(1)]]) {
+        indexedOutput.indexCount = indirectArguments.indexCount;
+        indexedOutput.instanceCount = indirectArguments.instanceCount;
+        indexedOutput.indexStart = indirectArguments.indexStart;
+        indexedOutput.baseVertex = indirectArguments.baseVertex;
+        indexedOutput.baseInstance = indirectArguments.baseInstance;
+    })" /* NOLINT */ options:options error:&error];
+        if (error) {
+            WTFLogAlways("%@", error);
+            return nil;
+        }
+
+        function = [library newFunctionWithName:@"vs"];
+    }
+
+    MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+    mtlRenderPipelineDescriptor.vertexFunction = function;
+    mtlRenderPipelineDescriptor.rasterizationEnabled = false;
+    mtlRenderPipelineDescriptor.rasterSampleCount = rasterSampleCount;
+    mtlRenderPipelineDescriptor.fragmentFunction = nil;
+    mtlRenderPipelineDescriptor.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
+
+    if (rasterSampleCount > 1)
+        result = m_copyIndexedIndirectArgsPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    else
+        result = m_copyIndexedIndirectArgsPSO = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+
+    if (error) {
+        WTFLogAlways("%@", error);
+        return nil;
+    }
+    return result;
+}
+
+id<MTLRenderPipelineState> Device::indexBufferClampPipeline(MTLIndexType indexType, NSUInteger rasterSampleCount)
+{
+    if (!m_device)
+        return nil;
+
+    bool isUint16 = indexType == MTLIndexTypeUInt16;
+    id<MTLRenderPipelineState> result = isUint16 ? (rasterSampleCount > 1 ? m_indexBufferClampUshortPSOMS : m_indexBufferClampUshortPSO) : (rasterSampleCount > 1 ? m_indexBufferClampUintPSOMS : m_indexBufferClampUintPSO);
+    if (result)
+        return result;
+
+    static id<MTLFunction> function = nil;
+    static id<MTLFunction> functionUshort = nil;
+    NSError *error = nil;
+    if (!function) {
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+    using namespace metal;
+    [[vertex]] void vsUshort(device const ushort* indexBuffer [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], const constant uint* vertexCount [[buffer(2)]], uint indexId [[vertex_id]]) {
+        ushort plusOneValue = 1 + indexBuffer[indexId]; // plusOne to handle primitive restarts
+        if (plusOneValue + indexedOutput.baseVertex > vertexCount[0] + 1)
+            indexedOutput.indexCount = 0u;
+    }
+    [[vertex]] void vsUint(device const uint* indexBuffer [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], const constant uint* vertexCount [[buffer(2)]], uint indexId [[vertex_id]]) {
+        uint plusOneValue = 1 + indexBuffer[indexId]; // plusOne to handle primitive restarts
+        if (plusOneValue + indexedOutput.baseVertex > vertexCount[0] + 1)
+            indexedOutput.indexCount = 0u;
+    })" /* NOLINT */ options:options error:&error];
+        if (error) {
+            WTFLogAlways("%@", error);
+            return nil;
+        }
+
+        function = [library newFunctionWithName:@"vsUint"];
+        functionUshort = [library newFunctionWithName:@"vsUshort"];
+    }
+
+    MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+    mtlRenderPipelineDescriptor.vertexFunction = isUint16 ? functionUshort : function;
+    mtlRenderPipelineDescriptor.rasterizationEnabled = false;
+    mtlRenderPipelineDescriptor.rasterSampleCount = rasterSampleCount;
+    mtlRenderPipelineDescriptor.fragmentFunction = nil;
+    mtlRenderPipelineDescriptor.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
+
+    if (isUint16) {
+        if (rasterSampleCount > 1)
+            result = m_indexBufferClampUshortPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+        else
+            result = m_indexBufferClampUshortPSO = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    } else {
+        if (rasterSampleCount > 1)
+            result = m_indexBufferClampUintPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+        else
+            result = m_indexBufferClampUintPSO = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    }
+
+    if (error) {
+        WTFLogAlways("%@", error);
+        return nil;
+    }
+    return result;
+}
+
+id<MTLRenderPipelineState> Device::indexedIndirectBufferClampPipeline(NSUInteger rasterSampleCount)
+{
+    if (!m_device)
+        return nil;
+
+    id<MTLRenderPipelineState> result = rasterSampleCount > 1 ? m_indexedIndirectBufferClampPSOMS : m_indexedIndirectBufferClampPSO;
+    if (result)
+        return result;
+
+    static id<MTLFunction> function = nil;
+    NSError *error = nil;
+    if (!function) {
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+    using namespace metal;
+    [[vertex]] void vs(device const MTLDrawIndexedPrimitivesIndirectArguments& input [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], device MTLDrawPrimitivesIndirectArguments& output [[buffer(2)]], const constant uint* indexBufferCount [[buffer(3)]]) {
+        indexedOutput.indexCount = metal::select(input.indexCount, 0u, input.indexCount + input.indexStart > indexBufferCount[0]);
+        indexedOutput.instanceCount = input.instanceCount;
+        indexedOutput.indexStart = metal::select(input.indexStart, 0u, input.indexCount + input.indexStart > indexBufferCount[0]);
+        indexedOutput.baseVertex = input.baseVertex;
+        indexedOutput.baseInstance = input.baseInstance;
+
+        output.vertexCount = metal::select(input.indexCount, 0u, input.indexCount + input.indexStart > indexBufferCount[0]);
+        output.instanceCount = 1;
+        output.vertexStart = input.indexStart;
+        output.baseInstance = 0;
+    })" /* NOLINT */ options:options error:&error];
+        if (error) {
+            WTFLogAlways("%@", error);
+            return nil;
+        }
+
+        function = [library newFunctionWithName:@"vs"];
+    }
+
+    MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+    mtlRenderPipelineDescriptor.vertexFunction = function;
+    mtlRenderPipelineDescriptor.rasterizationEnabled = false;
+    mtlRenderPipelineDescriptor.rasterSampleCount = rasterSampleCount;
+    mtlRenderPipelineDescriptor.fragmentFunction = nil;
+    mtlRenderPipelineDescriptor.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
+
+    if (rasterSampleCount > 1)
+        result = m_indexedIndirectBufferClampPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    else
+        result = m_indexedIndirectBufferClampPSO = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+
+    if (error) {
+        WTFLogAlways("%@", error);
+        return nil;
+    }
+    return result;
+}
+
+id<MTLRenderPipelineState> Device::indirectBufferClampPipeline(NSUInteger rasterSampleCount)
+{
+    if (!m_device)
+        return nil;
+
+    id<MTLRenderPipelineState> result = rasterSampleCount > 1 ? m_indirectBufferClampPSOMS : m_indirectBufferClampPSO;
+    if (result)
+        return result;
+
+    static id<MTLFunction> function = nil;
+    NSError *error = nil;
+    if (!function) {
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+    using namespace metal;
+    [[vertex]] void vs(device const MTLDrawPrimitivesIndirectArguments& input [[buffer(0)]], device MTLDrawPrimitivesIndirectArguments& output [[buffer(1)]], const constant uint* minVertexCount [[buffer(2)]]) {
+        output.vertexCount = metal::select(input.vertexCount, 0u, input.vertexCount + input.vertexStart > minVertexCount[0]);
+        output.instanceCount = input.instanceCount;
+        output.vertexStart = input.vertexStart;
+        output.baseInstance = input.baseInstance;
+    })" /* NOLINT */ options:options error:&error];
+        if (error) {
+            WTFLogAlways("%@", error);
+            return nil;
+        }
+
+        function = [library newFunctionWithName:@"vs"];
+    }
+
+    MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+    mtlRenderPipelineDescriptor.vertexFunction = function;
+    mtlRenderPipelineDescriptor.rasterizationEnabled = false;
+    mtlRenderPipelineDescriptor.rasterSampleCount = rasterSampleCount;
+    mtlRenderPipelineDescriptor.fragmentFunction = nil;
+    mtlRenderPipelineDescriptor.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
+
+    if (rasterSampleCount > 1)
+        result = m_indirectBufferClampPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    else
+        result = m_indirectBufferClampPSO = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+
+    if (error) {
+        WTFLogAlways("%@", error);
+        return nil;
+    }
+    return result;
+}
+
+id<MTLRenderPipelineState> Device::icbCommandClampPipeline(MTLIndexType indexType, NSUInteger rasterSampleCount)
+{
+    if (!m_device)
+        return nil;
+
+    bool isUint16 = indexType == MTLIndexTypeUInt16;
+    id<MTLRenderPipelineState> result = isUint16 ? (rasterSampleCount > 1 ? m_icbCommandClampUshortPSOMS : m_icbCommandClampUshortPSO) : (rasterSampleCount > 1 ? m_icbCommandClampUintPSOMS : m_icbCommandClampUintPSO);
+    if (result)
+        return result;
+
+    static id<MTLFunction> function = nil;
+    static id<MTLFunction> functionUshort = nil;
+    NSError *error = nil;
+    if (!function) {
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+    using namespace metal;
+    struct ICBContainer {
+        command_buffer commandBuffer [[ id(0) ]];
+    };
+    struct IndexDataUshort {
+        uint64_t renderCommand { 0 };
+        uint32_t minVertexCount { UINT32_MAX };
+        device ushort* indexBuffer;
+        uint32_t indexCount { 0 };
+        uint32_t instanceCount { 0 };
+        uint32_t firstIndex { 0 };
+        int32_t baseVertex { 0 };
+        uint32_t firstInstance { 0 };
+    };
+    struct IndexDataUint {
+        uint64_t renderCommand { 0 };
+        uint32_t minVertexCount { UINT32_MAX };
+        device uint* indexBuffer;
+        uint32_t indexCount { 0 };
+        uint32_t instanceCount { 0 };
+        uint32_t firstIndex { 0 };
+        int32_t baseVertex { 0 };
+        uint32_t firstInstance { 0 };
+        primitive_type primitiveType { primitive_type::triangle };
+    };
+
+    [[vertex]] void vs(device const IndexDataUint* indexData [[buffer(0)]],
+        device ICBContainer *icb_container [[buffer(2)]],
+        uint indexId [[vertex_id]]) {
+
+        IndexDataUint& data = *indexData;
+        if (data.indexBuffer[indexId] > data.minVertexCount) {
+            render_command cmd(icb_container->commandBuffer, data.renderCommand);
+            cmd.draw_indexed_primitives(data.primitiveType,
+                0u,
+                data.indexBuffer,
+                data.instanceCount,
+                data.baseVertex,
+                data.baseInstance);
+        }
+    }
+
+    [[vertex]] void vsUshort(device const IndexDataUshort* indexData [[buffer(0)]],
+        device ICBContainer *icb_container [[buffer(2)]],
+        uint indexId [[vertex_id]]) {
+
+        IndexDataUshort& data = *indexData;
+        if (data.indexBuffer[indexId] > data.minVertexCount) {
+            render_command cmd(icb_container->commandBuffer, data.renderCommand);
+            cmd.draw_indexed_primitives(data.primitiveType,
+                0u,
+                data.indexBuffer,
+                data.instanceCount,
+                data.baseVertex,
+                data.baseInstance);
+        }
+
+    })" /* NOLINT */ options:options error:&error];
+        if (error) {
+            WTFLogAlways("%@", error);
+            return nil;
+        }
+
+        function = [library newFunctionWithName:@"vs"];
+        functionUshort = [library newFunctionWithName:@"vsUshort"];
+    }
+
+    MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+    mtlRenderPipelineDescriptor.vertexFunction = isUint16 ? functionUshort : function;
+    mtlRenderPipelineDescriptor.rasterizationEnabled = false;
+    mtlRenderPipelineDescriptor.rasterSampleCount = rasterSampleCount;
+    mtlRenderPipelineDescriptor.fragmentFunction = nil;
+    mtlRenderPipelineDescriptor.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
+
+    if (isUint16) {
+        if (rasterSampleCount > 1)
+            result = m_icbCommandClampUshortPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+        else
+            result = m_icbCommandClampUshortPSO = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    } else {
+        if (rasterSampleCount > 1)
+            result = m_icbCommandClampUintPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+        else
+            result = m_icbCommandClampUintPSO = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    }
+
+    if (error) {
+        WTFLogAlways("%@", error);
+        return nil;
+    }
+    return result;
 }
 
 } // namespace WebGPU

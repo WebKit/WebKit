@@ -52,6 +52,7 @@ if (!m_renderCommandEncoder || !m_parentEncoder->isValid() || !m_parentEncoder->
     return; \
 }
 
+constexpr uint32_t invalidVertexCount = UINT32_MAX;
 
 RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, uint64_t maxDrawCount, Device& device)
     : m_renderCommandEncoder(renderCommandEncoder)
@@ -90,7 +91,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         auto& texture = fromAPI(attachment.view);
         texture.setPreviouslyCleared();
         addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
-
+        m_rasterSampleCount = texture.sampleCount();
         if (attachment.resolveTarget) {
             auto& texture = fromAPI(attachment.resolveTarget);
             texture.setCommandEncoder(parentEncoder);
@@ -125,6 +126,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         if (textureView.width() && !m_renderTargetWidth) {
             m_renderTargetWidth = depthTexture.width;
             m_renderTargetHeight = depthTexture.height;
+            m_rasterSampleCount = textureView.sampleCount();
         }
 
         m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : quantizedDepthValue(attachment->depthClearValue, textureView.format());
@@ -291,9 +293,12 @@ void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture,
 
 void RenderPassEncoder::addResourceToActiveResources(const BindGroupEntryUsageData::Resource& resource, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> resourceUsage)
 {
-    WTF::switchOn(resource, [&](const RefPtr<const Buffer>& buffer) {
-        if (buffer.get())
+    WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
+        if (buffer.get()) {
+            if (resourceUsage.contains(BindGroupEntryUsage::Storage))
+                buffer->indirectBufferInvalidated();
             addResourceToActiveResources(buffer.get(), buffer->buffer(), resourceUsage);
+        }
         }, [&](const RefPtr<const TextureView>& textureView) {
             if (textureView.get())
                 addResourceToActiveResources(*textureView.get(), resourceUsage);
@@ -527,21 +532,143 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
         baseInstance:firstInstance];
 }
 
+uint32_t RenderPassEncoder::computeMininumVertexCount() const
+{
+    if (!m_pipeline)
+        return 0;
+
+    uint32_t minVertexCount = invalidVertexCount;
+    auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
+    for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
+        auto it = m_vertexBuffers.find(bufferIndex);
+        RELEASE_ASSERT(it != m_vertexBuffers.end());
+        auto bufferSize = it->value.buffer.length;
+        auto stride = bufferData.stepMode == WGPUVertexStepMode_Vertex ? bufferData.stride : 1;
+        if (!stride)
+            continue;
+        auto elementCount = bufferSize / stride;
+        minVertexCount = std::min<uint32_t>(minVertexCount, elementCount);
+    }
+    return minVertexCount;
+}
+
+bool RenderPassEncoder::clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes)
+{
+    id<MTLBuffer> indexBuffer = m_indexBuffer.get() ? m_indexBuffer->buffer() : nil;
+    if (!indexCount || !indexBuffer || baseVertex < 0 || m_indexBuffer->isDestroyed())
+        return false;
+
+    uint32_t minVertexCount = computeMininumVertexCount();
+    if (minVertexCount == invalidVertexCount)
+        return false;
+
+    uint32_t indexSizeInBytes = indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t);
+    uint32_t firstIndex = indexBufferOffsetInBytes / indexSizeInBytes;
+    if (!minVertexCount || indexBufferOffsetInBytes >= indexBuffer.length || !m_indexBuffer->indirectBufferRequiresRecomputation(firstIndex, indexCount, minVertexCount, indexType))
+        return false;
+
+    NSUInteger indexCountInBytes = static_cast<NSUInteger>(indexSizeInBytes) * indexCount;
+    if (indexCountInBytes + indexBufferOffsetInBytes > indexBuffer.length)
+        return false;
+    id<MTLBuffer> indexedIndirectBuffer = m_indexBuffer->indirectIndexedBuffer();
+    MTLDrawIndexedPrimitivesIndirectArguments indirectArguments {
+        .indexCount = indexCount,
+        .instanceCount = instanceCount,
+        .indexStart = firstIndex,
+        .baseVertex = baseVertex,
+        .baseInstance = firstInstance
+    };
+
+    [m_renderCommandEncoder setRenderPipelineState:m_device->copyIndexIndirectArgsPipeline(m_rasterSampleCount)];
+    [m_renderCommandEncoder setVertexBuffer:indexedIndirectBuffer offset:0 atIndex:0];
+    [m_renderCommandEncoder setVertexBytes:&indirectArguments length:sizeof(indirectArguments) atIndex:1];
+    [m_renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
+    [m_renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+
+    [m_renderCommandEncoder setRenderPipelineState:m_device->indexBufferClampPipeline(indexType, m_rasterSampleCount)];
+    [m_renderCommandEncoder setVertexBuffer:indexBuffer offset:indexBufferOffsetInBytes atIndex:0];
+    [m_renderCommandEncoder setVertexBuffer:indexedIndirectBuffer offset:0 atIndex:1];
+    [m_renderCommandEncoder setVertexBytes:&minVertexCount length:sizeof(minVertexCount) atIndex:2];
+    [m_renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:indexCount];
+
+    [m_renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+    m_indexBuffer->indirectBufferRecomputed(firstIndex, indexCount, minVertexCount, indexType);
+
+    return true;
+}
+
+std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferToValidValues(Buffer* apiIndexBuffer, const Buffer& indexedIndirectBuffer, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, Device& device, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder> renderCommandEncoder)
+{
+    if (minVertexCount == invalidVertexCount)
+        return std::make_pair(indexedIndirectBuffer.buffer(), indirectOffset);
+
+    id<MTLBuffer> indexBuffer = apiIndexBuffer ? apiIndexBuffer->buffer() : nil;
+    if (!indexBuffer || apiIndexBuffer->isDestroyed())
+        return std::make_pair(nil, 0ull);
+
+    id<MTLBuffer> indirectBuffer = indexedIndirectBuffer.indirectBuffer();
+    if (!indirectBuffer || !minVertexCount || indexBufferOffsetInBytes >= indexBuffer.length)
+        return std::make_pair(nil, 0ull);
+
+    [renderCommandEncoder setRenderPipelineState:device.indexedIndirectBufferClampPipeline(rasterSampleCount)];
+    uint32_t indexBufferCount = static_cast<uint32_t>(indexBuffer.length / (indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t)));
+    [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.buffer() offset:indirectOffset atIndex:0];
+    [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.indirectIndexedBuffer() offset:0 atIndex:1];
+    [renderCommandEncoder setVertexBuffer:indirectBuffer offset:0 atIndex:2];
+    [renderCommandEncoder setVertexBytes:&indexBufferCount length:sizeof(indexBufferCount) atIndex:3];
+    [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
+    [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+
+    [renderCommandEncoder setRenderPipelineState:device.indexBufferClampPipeline(indexType, rasterSampleCount)];
+    [renderCommandEncoder setVertexBuffer:indexBuffer offset:indexBufferOffsetInBytes atIndex:0];
+    [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.indirectIndexedBuffer() offset:0 atIndex:1];
+    [renderCommandEncoder setVertexBytes:&minVertexCount length:sizeof(minVertexCount) atIndex:2];
+    [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.indirectIndexedBuffer() offset:0 atIndex:3];
+    [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint indirectBuffer:indirectBuffer indirectBufferOffset:0];
+    [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+
+    return std::make_pair(indexedIndirectBuffer.indirectIndexedBuffer(), 0ull);
+}
+
+std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferToValidValues(const Buffer& indexedIndirectBuffer, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount)
+{
+    return clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indexedIndirectBuffer, indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, m_device.get(), m_rasterSampleCount, m_renderCommandEncoder);
+}
+
+id<MTLBuffer> RenderPassEncoder::clampIndirectBufferToValidValues(const Buffer& indirectBuffer, uint64_t indirectOffset, uint32_t minVertexCount, Device& device, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder> renderCommandEncoder)
+{
+    if (!minVertexCount || indirectBuffer.isDestroyed())
+        return nil;
+
+    id<MTLRenderPipelineState> renderPipelineState = device.indirectBufferClampPipeline(rasterSampleCount);
+    [renderCommandEncoder setRenderPipelineState:renderPipelineState];
+    [renderCommandEncoder setVertexBuffer:indirectBuffer.buffer() offset:indirectOffset atIndex:0];
+    [renderCommandEncoder setVertexBuffer:indirectBuffer.indirectBuffer() offset:0 atIndex:1];
+    [renderCommandEncoder setVertexBytes:&minVertexCount length:sizeof(minVertexCount) atIndex:2];
+    [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
+    [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+
+    return indirectBuffer.indirectBuffer();
+}
+
+id<MTLBuffer> RenderPassEncoder::clampIndirectBufferToValidValues(const Buffer& indirectBuffer, uint64_t indirectOffset, uint32_t minVertexCount)
+{
+    return clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, minVertexCount, m_device.get(), m_rasterSampleCount, m_renderCommandEncoder);
+}
+
 void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
     RETURN_IF_FINISHED();
 
     auto indexSizeInBytes = (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
-    if (!executePreDrawCommands())
-        return;
-
     auto firstIndexOffsetInBytes = firstIndex * indexSizeInBytes;
+    auto indexBufferOffsetInBytes = m_indexBufferOffset + firstIndexOffsetInBytes;
+
     if (NSString* error = errorValidatingDrawIndexed()) {
         makeInvalid(error);
         return;
     }
 
-    id<MTLBuffer> indexBuffer = m_indexBuffer.get() ? m_indexBuffer->buffer() : nil;
     if (firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize) {
         makeInvalid(@"Values to drawIndexed are invalid");
         return;
@@ -550,9 +677,19 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
     if (!runIndexBufferValidation(firstInstance, instanceCount))
         return;
 
-    if (!instanceCount || !indexCount)
+    bool useIndirectCall = clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes);
+    if (!executePreDrawCommands())
         return;
-    [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:(m_indexBufferOffset + firstIndexOffsetInBytes) instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
+
+    if (!instanceCount || !indexCount || m_indexBuffer->isDestroyed())
+        return;
+
+    id<MTLBuffer> indexBuffer = m_indexBuffer.get() ? m_indexBuffer->buffer() : nil;
+    if (useIndirectCall) {
+        id<MTLBuffer> indirectBuffer = m_indexBuffer->indirectIndexedBuffer();
+        [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:0 indirectBuffer:indirectBuffer indirectBufferOffset:0];
+    } else
+        [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:indexBufferOffsetInBytes instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
 }
 
 void RenderPassEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
@@ -585,9 +722,13 @@ void RenderPassEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64
         return;
     }
 
-    if (!executePreDrawCommands(&indirectBuffer))
+    auto result = clampIndirectIndexBufferToValidValues(indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, computeMininumVertexCount());
+    id<MTLBuffer> mtlIndirectBuffer = result.first;
+    uint64_t modifiedIndirectOffset = result.second;
+    if (!executePreDrawCommands(&indirectBuffer) || m_indexBuffer->isDestroyed())
         return;
-    [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
+
+    [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
 }
 
 void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
@@ -610,9 +751,11 @@ void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indi
         return;
     }
 
-    if (!executePreDrawCommands(&indirectBuffer))
+    id<MTLBuffer> mtlIndirectBuffer = clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, computeMininumVertexCount());
+    if (!executePreDrawCommands(&indirectBuffer) || !mtlIndirectBuffer || indirectBuffer.isDestroyed())
         return;
-    [renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
+
+    [renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:mtlIndirectBuffer indirectBufferOffset:0];
 }
 
 void RenderPassEncoder::endPass()
@@ -667,7 +810,7 @@ void RenderPassEncoder::endPass()
 
 void RenderPassEncoder::setCommandEncoder(const BindGroupEntryUsageData::Resource& resource)
 {
-    WTF::switchOn(resource, [&](const RefPtr<const Buffer>& buffer) {
+    WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
         if (buffer)
             buffer->setCommandEncoder(m_parentEncoder);
         }, [&](const RefPtr<const TextureView>& textureView) {
@@ -703,6 +846,22 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
         incrementDrawCount(renderBundle.drawCount());
 
         for (RenderBundleICBWithResources* icb in renderBundle.renderBundlesResources()) {
+            auto& hashMap = *icb.minVertexCountForDrawCommand;
+            for (auto& [commandIndex, data] : hashMap) {
+                auto* indexBuffer = data.indexBuffer.get();
+                if (!indexBuffer || !indexBuffer->indirectBufferRequiresRecomputation(data.indexData.firstIndex, data.indexData.indexCount, data.indexData.minVertexCount, data.indexType))
+                    continue;
+
+                id<MTLRenderPipelineState> renderPipelineState = m_device->icbCommandClampPipeline(data.indexType, m_rasterSampleCount);
+                [m_renderCommandEncoder setRenderPipelineState:renderPipelineState];
+                [m_renderCommandEncoder setVertexBytes:&data.indexData length:sizeof(data.indexData) atIndex:0];
+                [m_renderCommandEncoder setVertexBuffer:icb.indirectCommandBufferContainer offset:0 atIndex:1];
+
+                [m_renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:data.indexData.indexCount];
+                [m_renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
+                m_indexBuffer->indirectBufferRecomputed(data.indexData.firstIndex, data.indexData.indexCount, data.indexData.minVertexCount, data.indexType);
+            }
+
             if (id<MTLDepthStencilState> depthStencilState = icb.depthStencilState)
                 [renderCommandEncoder() setDepthStencilState:depthStencilState];
             [renderCommandEncoder() setCullMode:icb.cullMode];

@@ -143,6 +143,10 @@ Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsageFlags 
     , m_mappingRange(initialMappingRange)
     , m_device(device)
 {
+    if (m_usage & WGPUBufferUsage_Indirect)
+        m_indirectBuffer = device.safeCreateBuffer(sizeof(MTLDrawPrimitivesIndirectArguments), MTLStorageModePrivate);
+    if (m_usage & (WGPUBufferUsage_Indirect | WGPUBufferUsage_Index))
+        m_indirectIndexedBuffer = device.safeCreateBuffer(sizeof(MTLDrawIndexedPrimitivesIndirectArguments), MTLStorageModePrivate);
 }
 
 Buffer::Buffer(Device& device)
@@ -386,29 +390,41 @@ bool Buffer::isDestroyed() const
     return state() == State::Destroyed;
 }
 
-void Buffer::recomputeMaxIndexValues() const
-{
-    if (!(m_usage & WGPUBufferUsage_Index))
-        return;
-
-    NSUInteger lengthInBytes = m_buffer.length;
-    auto bufferPtr = static_cast<uint8_t*>(m_buffer.contents);
-    RELEASE_ASSERT(bufferPtr);
-    m_max16BitIndex = 0;
-    m_max32BitIndex = 0;
-    uint8_t* bufferEnd = bufferPtr + lengthInBytes;
-    for (; (bufferPtr += sizeof(uint32_t)) <= bufferEnd; bufferPtr += sizeof(uint32_t)) {
-        m_max32BitIndex = std::max(*reinterpret_cast<uint32_t*>(bufferPtr), m_max32BitIndex);
-        m_max16BitIndex = std::max(*(reinterpret_cast<uint16_t*>(bufferPtr) + 1), std::max(*reinterpret_cast<uint16_t*>(bufferPtr), m_max16BitIndex));
-    }
-    if (bufferPtr + sizeof(uint16_t) <= bufferEnd)
-        m_max16BitIndex = std::max(*reinterpret_cast<uint16_t*>(bufferPtr), m_max16BitIndex);
-}
-
 uint32_t Buffer::maxIndex(MTLIndexType indexType) const
 {
     ASSERT(m_usage & WGPUBufferUsage_Index);
     return indexType == MTLIndexTypeUInt16 ? m_max16BitIndex : m_max32BitIndex;
+}
+
+id<MTLBuffer> Buffer::indirectBuffer() const
+{
+    return m_indirectBuffer;
+}
+
+id<MTLBuffer> Buffer::indirectIndexedBuffer() const
+{
+    return m_indirectIndexedBuffer;
+}
+
+bool Buffer::indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, MTLIndexType indexType) const
+{
+    auto rangeBegin = m_indirectCache.lastBaseIndex;
+    auto rangeEnd = m_indirectCache.lastBaseIndex + m_indirectCache.indexCount;
+    auto newRangeEnd = baseIndex + indexCount;
+    return baseIndex < rangeBegin || newRangeEnd > rangeEnd || minVertexCount > m_indirectCache.minVertexCount || m_indirectCache.indexType != indexType;
+}
+
+void Buffer::indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, MTLIndexType indexType)
+{
+    m_indirectCache.lastBaseIndex = baseIndex;
+    m_indirectCache.indexCount = indexCount;
+    m_indirectCache.minVertexCount = minVertexCount;
+    m_indirectCache.indexType = indexType;
+}
+
+void Buffer::indirectBufferInvalidated()
+{
+    indirectBufferRecomputed(0, 0, 0, MTLIndexTypeUInt16);
 }
 
 } // namespace WebGPU

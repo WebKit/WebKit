@@ -178,7 +178,7 @@ NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindi
     for (const auto& resourceVector : bindGroup.resources()) {
         for (const auto& resource : resourceVector.resourceUsages) {
             auto bindingIndex = resource.binding;
-            auto* buffer = get_if<RefPtr<const Buffer>>(&resource.resource);
+            auto* buffer = get_if<RefPtr<Buffer>>(&resource.resource);
             if (!buffer)
                 continue;
 

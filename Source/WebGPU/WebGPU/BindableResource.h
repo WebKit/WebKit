@@ -29,6 +29,7 @@
 #import <wtf/OptionSet.h>
 #import <wtf/RefPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebGPU {
 
@@ -58,7 +59,7 @@ static constexpr auto isTextureBindGroupEntryUsage(OptionSet<BindGroupEntryUsage
 struct BindGroupEntryUsageData {
     OptionSet<BindGroupEntryUsage> usage { BindGroupEntryUsage::Undefined };
     uint32_t binding { 0 };
-    using Resource = std::variant<RefPtr<const Buffer>, RefPtr<const TextureView>, RefPtr<const ExternalTexture>>;
+    using Resource = std::variant<RefPtr<Buffer>, RefPtr<const TextureView>, RefPtr<const ExternalTexture>>;
     Resource resource;
     static constexpr uint32_t invalidBindingIndex = INT_MAX;
     static constexpr BindGroupEntryUsage invalidBindGroupUsage = static_cast<BindGroupEntryUsage>(std::numeric_limits<std::underlying_type<BindGroupEntryUsage>::type>::max());
@@ -69,6 +70,25 @@ struct BindableResources {
     Vector<BindGroupEntryUsageData> resourceUsages;
     MTLResourceUsage usage;
     MTLRenderStages renderStages;
+};
+
+struct IndexData {
+    uint64_t renderCommand { 0 };
+    uint32_t minVertexCount { UINT32_MAX };
+    uint64_t bufferGpuAddress { 0 };
+    uint32_t indexCount { 0 };
+    uint32_t instanceCount { 0 };
+    uint32_t firstIndex { 0 };
+    int32_t baseVertex { 0 };
+    uint32_t firstInstance { 0 };
+    MTLPrimitiveType primitiveType { MTLPrimitiveTypeTriangle };
+};
+
+struct IndexBufferAndIndexData {
+    WeakPtr<Buffer> indexBuffer;
+    MTLIndexType indexType { MTLIndexTypeUInt16 };
+    NSUInteger indexBufferOffsetInBytes { 0 };
+    IndexData indexData;
 };
 
 } // namespace WebGPU

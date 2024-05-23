@@ -137,9 +137,12 @@ static bool addResourceToActiveResources(const TextureView& texture, OptionSet<B
 
 static bool addResourceToActiveResources(const BindGroupEntryUsageData::Resource& resource, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> resourceUsage, BindGroupId bindGroup, EntryMapContainer& usagesForResource)
 {
-    return WTF::switchOn(resource, [&](const RefPtr<const Buffer>& buffer) {
-        if (buffer.get())
+    return WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
+        if (buffer.get()) {
+            if (resourceUsage.contains(BindGroupEntryUsage::Storage))
+                buffer->indirectBufferInvalidated();
             return addResourceToActiveResources(buffer.get(), buffer->buffer(), resourceUsage, usagesForResource, bindGroup);
+        }
         return true;
     }, [&](const RefPtr<const TextureView>& textureView) {
         if (textureView.get())
@@ -251,27 +254,26 @@ void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
 
 id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    static id<MTLComputePipelineState> computePipelineState = nil;
+    static id<MTLFunction> function = nil;
     id<MTLDevice> device = m_device->device();
-    if (!computePipelineState) {
+    if (!function) {
         auto dimensionMax = m_device->limits().maxComputeWorkgroupsPerDimension;
-        NSError *error = nil;
         MTLCompileOptions* options = [MTLCompileOptions new];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         options.fastMathEnabled = YES;
         ALLOW_DEPRECATED_DECLARATIONS_END
+        NSError *error = nil;
         id<MTLLibrary> library = [device newLibraryWithSource:[NSString stringWithFormat:@"[[kernel]] void cs(device const uint* indirectBuffer, device uint* dispatchCallBuffer, uint index [[thread_position_in_grid]]) { dispatchCallBuffer[index] = metal::select(indirectBuffer[index], 0u, indirectBuffer[index] > %u); }", dimensionMax] options:options error:&error];
         if (error)
             return nil;
 
-        id<MTLFunction> function = [library newFunctionWithName:@"cs"];
-        computePipelineState = [device newComputePipelineStateWithFunction:function error:&error];
-
+        function = [library newFunctionWithName:@"cs"];
         if (error)
             return nil;
     }
 
-    static id<MTLBuffer> dispatchCallBuffer = [device newBufferWithLength:sizeof(MTLDispatchThreadgroupsIndirectArguments) options:MTLResourceStorageModePrivate];
+    id<MTLComputePipelineState> computePipelineState = m_device->dispatchCallPipelineState(function);
+    id<MTLBuffer> dispatchCallBuffer = m_device->dispatchCallBuffer();
     [computeCommandEncoder() setComputePipelineState:computePipelineState];
     [computeCommandEncoder() setBuffer:indirectBuffer.buffer() offset:indirectOffset atIndex:0];
     [computeCommandEncoder() setBuffer:dispatchCallBuffer offset:0 atIndex:1];
@@ -393,7 +395,7 @@ void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
 
 static void setCommandEncoder(const BindGroupEntryUsageData::Resource& resource, CommandEncoder& parentEncoder)
 {
-    WTF::switchOn(resource, [&](const RefPtr<const Buffer>& buffer) {
+    WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
         if (buffer)
             buffer->setCommandEncoder(parentEncoder);
         }, [&](const RefPtr<const TextureView>& textureView) {
