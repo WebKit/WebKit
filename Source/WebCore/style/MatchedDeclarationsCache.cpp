@@ -108,9 +108,17 @@ bool MatchedDeclarationsCache::Entry::isUsableAfterHighPriorityProperties(const 
 
 unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, const StyleCustomPropertyData& inheritedCustomProperties)
 {
-    if (!matchResult.isCacheable)
+    if (matchResult.isCompletelyNonCacheable)
         return 0;
 
+    if (matchResult.userAgentDeclarations.isEmpty() && matchResult.userDeclarations.isEmpty()) {
+        bool allNonCacheable = std::ranges::all_of(matchResult.authorDeclarations, [](auto& matchedProperties) {
+            return matchedProperties.isCacheable != IsCacheable::Yes;
+        });
+        // No point of caching if we are not applying any properties.
+        if (allNonCacheable)
+            return 0;
+    }
     return WTF::computeHash(matchResult, &inheritedCustomProperties);
 }
 
@@ -124,7 +132,7 @@ const MatchedDeclarationsCache::Entry* MatchedDeclarationsCache::find(unsigned h
         return nullptr;
 
     auto& entry = it->value;
-    if (matchResult != entry.matchResult)
+    if (!matchResult.cacheablePropertiesEqual(entry.matchResult))
         return nullptr;
 
     if (&entry.parentRenderStyle->inheritedCustomProperties() != &inheritedCustomProperties)

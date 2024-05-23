@@ -654,7 +654,7 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
             // Link status is treated like an inherited property. We need to explicitly restore it.
             style.setInsideLink(linkStatus);
 
-            if (!hasExplicitlyInherited) {
+            if (!hasExplicitlyInherited && matchResult.nonCacheablePropertyIds.isEmpty()) {
                 if (cacheEntry->userAgentAppearanceStyle && elementTypeHasAppearanceFromUAStyle(element))
                     state.setUserAgentAppearanceStyle(RenderStyle::clonePtr(*cacheEntry->userAgentAppearanceStyle));
 
@@ -673,6 +673,8 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
         }
         if (hasExplicitlyInherited)
             includedProperties.add(PropertyCascade::PropertyType::ExplicitlyInherited);
+        if (!matchResult.nonCacheablePropertyIds.isEmpty())
+            includedProperties.add(PropertyCascade::PropertyType::NonCacheable);
     }
 
     if (elementTypeHasAppearanceFromUAStyle(element)) {
