@@ -25,12 +25,19 @@
 
 #pragma once
 
+#include <wtf/UUID.h>
+
 namespace WebKit {
 
 enum class TextIndicatorStyle : uint8_t {
     Initial,
     Source,
     Final
+};
+
+struct TextIndicatorStyleData {
+    TextIndicatorStyle style;
+    WTF::UUID remainingRangeUUID { WTF::UUID::emptyValue };
 };
 
 } // namespace WebKit

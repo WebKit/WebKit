@@ -81,7 +81,7 @@ public:
     std::optional<WebCore::SimpleRange> contextRangeForSessionWithUUID(const WTF::UUID&) const;
     std::optional<WebCore::SimpleRange> contextRangeForSessionOrRangeWithUUID(const WTF::UUID&) const;
 
-    void removeTransparentMarkersForUUID(const WebCore::SimpleRange&, const WTF::UUID&);
+    void removeTransparentMarkersForUUID(const WTF::UUID&);
     void removeTransparentMarkersForSession(const WTF::UUID&, RemoveAllMarkersForSession);
 
 private:
@@ -109,6 +109,7 @@ private:
 
     using TextIndicatorCharacterRange = std::pair<WTF::UUID, WebCore::CharacterRange>;
     Vector<std::pair<WTF::UUID, Vector<TextIndicatorCharacterRange>>> m_textIndicatorCharacterRangesForSessions;
+    Vector<std::pair<WTF::UUID, std::pair<WTF::UUID, WebCore::SimpleRange>>> m_remainingRangesForSessions;
 
     // FIXME: Unify these states into a single `State` struct.
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_contextRanges;

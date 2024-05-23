@@ -705,7 +705,7 @@ public:
     virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    virtual void addTextIndicatorStyleForID(const WTF::UUID&, WebKit::TextIndicatorStyle) = 0;
+    virtual void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyleData&) = 0;
     virtual void removeTextIndicatorStyleForID(const WTF::UUID&) = 0;
 #endif
     virtual void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) { }

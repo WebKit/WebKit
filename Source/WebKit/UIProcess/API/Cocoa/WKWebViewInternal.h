@@ -399,7 +399,7 @@ struct PerWebProcessState {
 - (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
 
 - (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebKit::WebTextReplacementDataState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
-- (void)_addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
+- (void)_addTextIndicatorStyleForID:(NSUUID *)uuid withData:(const WebKit::TextIndicatorStyleData&)styleData;
 - (void)_removeTextIndicatorStyleForID:(NSUUID *)uuid;
 
 - (BOOL)_wantsCompleteUnifiedTextReplacementBehavior;

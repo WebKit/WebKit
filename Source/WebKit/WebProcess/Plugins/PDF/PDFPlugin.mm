@@ -89,6 +89,7 @@
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/TextIndicator.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <WebCore/WheelEventTestMonitor.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>

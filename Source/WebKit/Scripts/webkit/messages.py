@@ -1079,6 +1079,7 @@ def headers_for_type(type):
         'WebKit::TapIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::TextCheckerRequestID': ['"IdentifierTypes.h"'],
         'WebKit::TextIndicatorStyle': ['"TextIndicatorStyle.h"'],
+        'WebKit::TextIndicatorStyleData': ['"TextIndicatorStyle.h"'],
         'WebKit::WebEventType': ['"WebEvent.h"'],
         'WebKit::WebExtensionContextInstallReason': ['"WebExtensionContext.h"'],
         'WebKit::WebExtensionCookieFilterParameters': ['"WebExtensionCookieParameters.h"'],

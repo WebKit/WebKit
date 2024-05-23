@@ -1210,13 +1210,13 @@ void WebPageProxy::enableTextIndicatorStyleForElementWithID(const String& elemen
     send(Messages::WebPage::EnableTextIndicatorStyleForElementWithID(elementID, uuid));
 }
 
-void WebPageProxy::addTextIndicatorStyleForID(const WTF::UUID& uuid, const TextIndicatorStyle styleType, const WebCore::TextIndicatorData& data)
+void WebPageProxy::addTextIndicatorStyleForID(const WTF::UUID& uuid, const TextIndicatorStyleData& styleData, const WebCore::TextIndicatorData& indicatorData)
 {
     MESSAGE_CHECK(uuid.isValid());
 
-    internals().textIndicatorDataForChunk.add(uuid, data);
+    internals().textIndicatorDataForChunk.add(uuid, indicatorData);
 
-    protectedPageClient()->addTextIndicatorStyleForID(uuid, styleType);
+    protectedPageClient()->addTextIndicatorStyleForID(uuid, styleData);
 }
 
 void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)

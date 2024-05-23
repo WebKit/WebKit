@@ -1789,15 +1789,15 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-- (void)_addTextIndicatorStyleForID:(NSUUID *)nsUUID withStyleType:(WKTextIndicatorStyleType)styleType
+- (void)_addTextIndicatorStyleForID:(NSUUID *)nsUUID withData:(const WebKit::TextIndicatorStyleData&)data
 {
 #if PLATFORM(IOS_FAMILY)
-    [_contentView addTextIndicatorStyleForID:nsUUID withStyleType:styleType];
+    [_contentView addTextIndicatorStyleForID:nsUUID withStyleType:toWKTextIndicatorStyleType(data.style)];
 #elif PLATFORM(MAC)
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
-    _impl->addTextIndicatorStyleForID(*uuid, styleType);
+    _impl->addTextIndicatorStyleForID(*uuid, data);
 #endif
 }
 - (void)_removeTextIndicatorStyleForID:(NSUUID *)nsUUID
@@ -2818,7 +2818,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextIndicatorStyleForID:nsUUID.get() withStyleType:WKTextIndicatorStyleTypeInitial];
 #elif PLATFORM(MAC) && ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
-    _impl->addTextIndicatorStyleForID(*uuid, WKTextIndicatorStyleTypeInitial);
+    _impl->addTextIndicatorStyleForID(*uuid, { WebKit::TextIndicatorStyle::Initial, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
 #else // ENABLE(UNIFIED_TEXT_REPLACEMENT)
@@ -2840,7 +2840,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextIndicatorStyleForID:nsUUID.get() withStyleType:WKTextIndicatorStyleTypeFinal];
 #elif PLATFORM(MAC) && ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
-    _impl->addTextIndicatorStyleForID(*uuid, WKTextIndicatorStyleTypeFinal);
+    _impl->addTextIndicatorStyleForID(*uuid, { WebKit::TextIndicatorStyle::Final, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
 #else // ENABLE(UNIFIED_TEXT_REPLACEMENT)
@@ -3812,6 +3812,19 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
         findOptions.add(WebKit::FindOptions::DetermineMatchIndex);
 
     return findOptions;
+}
+
+static inline WKTextIndicatorStyleType toWKTextIndicatorStyleType(WebKit::TextIndicatorStyle style)
+{
+
+    switch (style) {
+    case WebKit::TextIndicatorStyle::Initial:
+        return WKTextIndicatorStyleTypeInitial;
+    case WebKit::TextIndicatorStyle::Source:
+        return WKTextIndicatorStyleTypeSource;
+    case WebKit::TextIndicatorStyle::Final:
+        return WKTextIndicatorStyleTypeFinal;
+    }
 }
 
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount

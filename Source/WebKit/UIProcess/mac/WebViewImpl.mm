@@ -4613,7 +4613,7 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
 }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, WKTextIndicatorStyleType styleType)
+void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, const WebKit::TextIndicatorStyleData& data)
 {
     if (!m_page->preferences().textIndicatorStylingEnabled())
         return;
@@ -4624,7 +4624,7 @@ void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, WKTextIndicatorStyl
     if (!m_textIndicatorStyleManager)
         m_textIndicatorStyleManager = adoptNS([[WKTextIndicatorStyleManager alloc] initWithWebViewImpl:*this]);
 
-    [m_textIndicatorStyleManager addTextIndicatorStyleForID:uuid withStyleType:styleType];
+    [m_textIndicatorStyleManager addTextIndicatorStyleForID:uuid withData:data];
 }
 
 void WebViewImpl::removeTextIndicatorStyleForID(WTF::UUID uuid)

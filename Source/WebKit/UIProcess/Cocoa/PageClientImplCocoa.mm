@@ -157,9 +157,9 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 #endif // ENABLE(APP_HIGHLIGHTS)
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void PageClientImplCocoa::addTextIndicatorStyleForID(const WTF::UUID& uuid, WebKit::TextIndicatorStyle styleType)
+void PageClientImplCocoa::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKit::TextIndicatorStyleData& data)
 {
-    [m_webView _addTextIndicatorStyleForID:uuid withStyleType:(WKTextIndicatorStyleType)styleType];
+    [m_webView _addTextIndicatorStyleForID:uuid withData:data];
 }
 
 void PageClientImplCocoa::removeTextIndicatorStyleForID(const WTF::UUID& uuid)

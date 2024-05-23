@@ -405,6 +405,7 @@ struct LoadParameters;
 struct PlatformFontInfo;
 struct PrintInfo;
 struct ProvisionalFrameCreationParameters;
+struct TextIndicatorStyleData;
 struct TextInputContext;
 struct UserMessage;
 struct WebAutocorrectionData;
@@ -1747,7 +1748,7 @@ public:
 
     void enableTextIndicatorStyleAfterElementWithID(const String&, const WTF::UUID&);
     void enableTextIndicatorStyleForElementWithID(const String&, const WTF::UUID&);
-    void addTextIndicatorStyleForID(const WTF::UUID&, WebKit::TextIndicatorStyle, const WebCore::TextIndicatorData&);
+    void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyleData&, const WebCore::TextIndicatorData&);
     void removeTextIndicatorStyleForID(const WTF::UUID&);
     void createTextIndicatorForRange(const WebCore::SimpleRange&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
     void createTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);

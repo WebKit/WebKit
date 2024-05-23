@@ -9138,9 +9138,9 @@ void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& comp
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
-void WebPage::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKit::TextIndicatorStyle styleType, const WebCore::TextIndicatorData& data)
+void WebPage::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKit::TextIndicatorStyleData& styleData, const WebCore::TextIndicatorData& indicatorData)
 {
-    send(Messages::WebPageProxy::AddTextIndicatorStyleForID(uuid, styleType, data));
+    send(Messages::WebPageProxy::AddTextIndicatorStyleForID(uuid, styleData, indicatorData));
 }
 
 void WebPage::removeTextIndicatorStyleForID(const WTF::UUID& uuid)

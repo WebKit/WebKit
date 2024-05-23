@@ -69,4 +69,11 @@ header: "TextIndicatorStyle.h"
     Source,
     Final,
 };
+
+header: "TextIndicatorStyle.h"
+[CustomHeader] struct WebKit::TextIndicatorStyleData {
+    WebKit::TextIndicatorStyle style;
+    WTF::UUID remainingRangeUUID;
+};
+
 #endif

@@ -40,7 +40,7 @@ class WebViewImpl;
 + (BOOL)supportsTextIndicatorStyle;
 
 - (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)view;
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
+- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withData:(const WebKit::TextIndicatorStyleData&)data;
 - (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
 
 - (BOOL)hasActiveTextIndicatorStyle;
