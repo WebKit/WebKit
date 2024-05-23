@@ -84,9 +84,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBitmap);
 
 static inline RenderingMode bufferRenderingMode(ScriptExecutionContext& scriptExecutionContext)
 {
-    // FIXME: We want to use Accelerated mode by default with skia, but we need to add support for having
-    // per thread skiaGLContexts for that. See https://bugs.webkit.org/show_bug.cgi?id=273316.
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || USE(SKIA)
     static RenderingMode defaultRenderingMode = RenderingMode::Accelerated;
 #else
     static RenderingMode defaultRenderingMode = RenderingMode::Unaccelerated;

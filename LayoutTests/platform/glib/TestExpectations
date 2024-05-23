@@ -1407,7 +1407,7 @@ webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/shadow
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.transparent.1.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.transparent.2.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Slow ]
+webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Slow Failure ]
 
 webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/2d.conformance.requirements.missingargs.html [ Crash ]
 webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.conformance.requirements.missingargs.html [ Crash ]
@@ -1505,6 +1505,7 @@ webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/element/shadows/
 webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.enable.blur.html [ Failure ]
 webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.enable.x.html [ Failure ]
 webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.enable.y.html [ Failure ]
+webkit.org/b/273239 [ Release ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Failure ]
 webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.composite.1.html [ Failure ]
 webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.composite.1.worker.html [ Failure ]
 webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.composite.2.html [ Failure ]
@@ -1515,6 +1516,14 @@ webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadow
 webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.x.worker.html [ Failure ]
 webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.y.html [ Failure ]
 webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.y.worker.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.alpha.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.alpha.worker.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.basic.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.basic.worker.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.scale.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.scale.worker.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.transparent.2.html [ Failure ]
+webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.transparent.2.worker.html [ Failure ]
 
 # Minor reftest image differences introduced with skia.
 http/tests/css/css-masking/mask-external-svg-fragment.html [ ImageOnlyFailure ]
