@@ -70,6 +70,25 @@
     return self;
 }
 
+- (instancetype)initWithSelectors:(NSArray<NSSet<NSString *> *> *)nsSelectorsForElement
+{
+    if (!(self = [self init]))
+        return nil;
+
+    WebCore::TargetedElementSelectors selectorsForElement;
+    selectorsForElement.reserveInitialCapacity(nsSelectorsForElement.count);
+    for (NSSet<NSString *> *nsSelectors in nsSelectorsForElement) {
+        HashSet<String> selectors;
+        selectors.reserveInitialCapacity(nsSelectors.count);
+        for (NSString *selector in nsSelectors)
+            selectors.add(selector);
+        selectorsForElement.append(WTFMove(selectors));
+    }
+
+    _request->setSelectors(WTFMove(selectorsForElement));
+    return self;
+}
+
 - (BOOL)canIncludeNearbyElements
 {
     return _request->canIncludeNearbyElements();
@@ -88,16 +107,6 @@
 - (void)setShouldIgnorePointerEventsNone:(BOOL)value
 {
     _request->setShouldIgnorePointerEventsNone(value);
-}
-
-- (NSString *)searchText
-{
-    return _request->searchText();
-}
-
-- (CGPoint)point
-{
-    return _request->point();
 }
 
 @end

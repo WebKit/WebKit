@@ -898,7 +898,7 @@ header: <WebCore/ElementTargetingTypes.h>
 
 header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedElementRequest {
-    std::variant<WebCore::FloatPoint, String> data
+    std::variant<WebCore::FloatPoint, String, WebCore::TargetedElementSelectors> data
     bool canIncludeNearbyElements
     bool shouldIgnorePointerEventsNone
 };
@@ -920,6 +920,7 @@ header: <WebCore/ElementTargetingTypes.h>
     bool isNearbyTarget
     bool isPseudoElement
     bool isInShadowTree
+    bool isInVisibilityAdjustmentSubtree
     bool hasAudibleMedia
 };
 

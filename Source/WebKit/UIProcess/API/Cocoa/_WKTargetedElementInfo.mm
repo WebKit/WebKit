@@ -153,6 +153,11 @@
     return _info->isNearbyTarget();
 }
 
+- (BOOL)isInVisibilityAdjustmentSubtree
+{
+    return _info->isInVisibilityAdjustmentSubtree();
+}
+
 - (NSSet<NSURL *> *)mediaAndLinkURLs
 {
     RetainPtr result = adoptNS([NSMutableSet<NSURL *> new]);

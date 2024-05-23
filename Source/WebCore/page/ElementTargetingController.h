@@ -65,13 +65,22 @@ public:
 private:
     void cleanUpAdjustmentClientRects();
 
-    void applyVisibilityAdjustmentFromSelectors(Document&);
+    void applyVisibilityAdjustmentFromSelectors();
+
+    struct FindElementFromSelectorsResult {
+        RefPtr<Element> element;
+        String lastSelectorIncludingPseudo;
+    };
+    FindElementFromSelectorsResult findElementFromSelectors(const TargetedElementSelectors&);
+
+    RefPtr<Document> mainDocument() const;
 
     void dispatchVisibilityAdjustmentStateDidChange();
     void selectorBasedVisibilityAdjustmentTimerFired();
 
     std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(FloatPoint location, bool shouldIgnorePointerEventsNone);
     std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(const String& searchText);
+    std::pair<Vector<Ref<Node>>, RefPtr<Element>> findNodes(const TargetedElementSelectors&);
 
     Vector<TargetedElementInfo> extractTargets(Vector<Ref<Node>>&&, RefPtr<Element>&& innerElement, bool canIncludeNearbyElements);
 

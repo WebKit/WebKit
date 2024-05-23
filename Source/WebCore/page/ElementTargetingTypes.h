@@ -47,7 +47,7 @@ struct TargetedElementAdjustment {
 };
 
 struct TargetedElementRequest {
-    std::variant<FloatPoint, String> data;
+    std::variant<FloatPoint, String, TargetedElementSelectors> data;
     bool canIncludeNearbyElements { true };
     bool shouldIgnorePointerEventsNone { true };
 };
@@ -68,6 +68,7 @@ struct TargetedElementInfo {
     bool isNearbyTarget { true };
     bool isPseudoElement { false };
     bool isInShadowTree { false };
+    bool isInVisibilityAdjustmentSubtree { false };
     bool hasAudibleMedia { false };
 };
 
