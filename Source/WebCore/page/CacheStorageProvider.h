@@ -43,7 +43,7 @@ public:
         }
 
         Ref<OpenPromise> open(const ClientOrigin&, const String&) final { return OpenPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
-        void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&&) final { }
+        Ref<RemovePromise> remove(DOMCacheIdentifier) final { return RemovePromise::createAndReject(DOMCacheEngine::Error::Stopped); }
         void retrieveCaches(const ClientOrigin&, uint64_t, DOMCacheEngine::CacheInfosCallback&&) final { }
         void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::CrossThreadRecordsCallback&&) final { }
         void batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&) final { }

@@ -60,9 +60,11 @@ auto WebCacheStorageConnection::open(const WebCore::ClientOrigin& origin, const 
     });
 }
 
-void WebCacheStorageConnection::remove(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)
+auto WebCacheStorageConnection::remove(WebCore::DOMCacheIdentifier cacheIdentifier) -> Ref<RemovePromise>
 {
-    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStorageRemoveCache(cacheIdentifier), WTFMove(callback));
+    return connection().sendWithPromisedReply(Messages::NetworkStorageManager::CacheStorageRemoveCache(cacheIdentifier))->whenSettled(RunLoop::current(), [](auto&& result) {
+        return result ? RemovePromise::createAndSettle(WTFMove(result.value())) : RemovePromise::createAndReject(WebCore::DOMCacheEngine::Error::Internal);
+    });
 }
 
 void WebCacheStorageConnection::retrieveCaches(const WebCore::ClientOrigin& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& callback)

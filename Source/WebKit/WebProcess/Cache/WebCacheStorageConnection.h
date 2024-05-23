@@ -56,7 +56,7 @@ private:
 
     // WebCore::CacheStorageConnection
     Ref<OpenPromise> open(const WebCore::ClientOrigin&, const String& cacheName) final;
-    void remove(WebCore::DOMCacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&&) final;
+    Ref<RemovePromise> remove(WebCore::DOMCacheIdentifier) final;
     void retrieveCaches(const WebCore::ClientOrigin&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&) final;
 
     void retrieveRecords(WebCore::DOMCacheIdentifier, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&) final;

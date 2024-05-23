@@ -47,7 +47,7 @@ private:
 
     // WebCore::CacheStorageConnection.
     Ref<OpenPromise> open(const ClientOrigin&, const String& cacheName) final;
-    void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&&) final;
+    Ref<RemovePromise> remove(DOMCacheIdentifier) final;
     void retrieveCaches(const ClientOrigin&, uint64_t updateCounter, DOMCacheEngine::CacheInfosCallback&&) final;
 
     void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::CrossThreadRecordsCallback&&) final;
@@ -59,7 +59,6 @@ private:
     void lockStorage(const ClientOrigin&) final;
     void unlockStorage(const ClientOrigin&) final;
 
-    void removeCompleted(uint64_t requestIdentifier, const DOMCacheEngine::RemoveCacheIdentifierOrError&);
     void retrieveCachesCompleted(uint64_t requestIdentifier, DOMCacheEngine::CacheInfosOrError&&);
     void retrieveRecordsCompleted(uint64_t requestIdentifier, DOMCacheEngine::CrossThreadRecordsOrError&&);
     void deleteRecordsCompleted(uint64_t requestIdentifier, DOMCacheEngine::RecordIdentifiersOrError&&);
@@ -69,7 +68,6 @@ private:
 
     Ref<CacheStorageConnection> m_mainThreadConnection;
 
-    HashMap<uint64_t, DOMCacheEngine::RemoveCacheIdentifierCallback> m_removeCachePendingRequests;
     HashMap<uint64_t, DOMCacheEngine::CacheInfosCallback> m_retrieveCachesPendingRequests;
     HashMap<uint64_t, DOMCacheEngine::CrossThreadRecordsCallback> m_retrieveRecordsPendingRequests;
     HashMap<uint64_t, DOMCacheEngine::RecordIdentifiersCallback> m_batchDeleteAndPutPendingRequests;

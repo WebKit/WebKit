@@ -43,7 +43,8 @@ public:
 
     using OpenPromise = NativePromise<DOMCacheEngine::CacheIdentifierOperationResult, DOMCacheEngine::Error>;
     virtual Ref<OpenPromise> open(const ClientOrigin&, const String& cacheName) = 0;
-    virtual void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&&) = 0;
+    using RemovePromise = NativePromise<bool, DOMCacheEngine::Error>;
+    virtual Ref<RemovePromise> remove(DOMCacheIdentifier) = 0;
     virtual void retrieveCaches(const ClientOrigin&, uint64_t updateCounter, DOMCacheEngine::CacheInfosCallback&&) = 0;
 
     virtual void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::CrossThreadRecordsCallback&&) = 0;

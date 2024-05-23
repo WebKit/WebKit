@@ -55,7 +55,7 @@ public:
 
 private:
     Ref<OpenPromise> open(const ClientOrigin&, const String&) final { return OpenPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
-    void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    Ref<RemovePromise> remove(DOMCacheIdentifier) final { return RemovePromise::createAndReject(DOMCacheEngine::Error::Stopped); }
     void retrieveCaches(const ClientOrigin&, uint64_t, DOMCacheEngine::CacheInfosCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
     void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::CrossThreadRecordsCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
     void batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
@@ -99,24 +99,11 @@ auto WorkerCacheStorageConnection::open(const ClientOrigin& origin, const String
     });
 }
 
-void WorkerCacheStorageConnection::remove(DOMCacheIdentifier cacheIdentifier, RemoveCacheIdentifierCallback&& callback)
+auto WorkerCacheStorageConnection::remove(DOMCacheIdentifier cacheIdentifier) -> Ref<RemovePromise>
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
-    m_removeCachePendingRequests.add(requestIdentifier, WTFMove(callback));
-
-    callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier] () mutable {
-        mainThreadConnection->remove(cacheIdentifier, [workerThread = WTFMove(workerThread), requestIdentifier] (const auto& result) mutable {
-            workerThread->runLoop().postTaskForMode([requestIdentifier, result] (auto& scope) mutable {
-                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().removeCompleted(requestIdentifier, result);
-            }, WorkerRunLoop::defaultMode());
-        });
+    return invokeAsync(RunLoop::main(), [mainThreadConnection = m_mainThreadConnection, cacheIdentifier] {
+        return mainThreadConnection->remove(cacheIdentifier);
     });
-}
-
-void WorkerCacheStorageConnection::removeCompleted(uint64_t requestIdentifier, const RemoveCacheIdentifierOrError& result)
-{
-    if (auto callback = m_removeCachePendingRequests.take(requestIdentifier))
-        callback(result);
 }
 
 void WorkerCacheStorageConnection::retrieveCaches(const ClientOrigin& origin, uint64_t updateCounter, CacheInfosCallback&& callback)
@@ -235,10 +222,6 @@ void WorkerCacheStorageConnection::unlockStorage(const ClientOrigin& origin)
 
 void WorkerCacheStorageConnection::clearPendingRequests()
 {
-    auto removeCachePendingRequests = WTFMove(m_removeCachePendingRequests);
-    for (auto& callback : removeCachePendingRequests.values())
-        callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
-
     auto retrieveCachesPendingRequests = WTFMove(m_retrieveCachesPendingRequests);
     for (auto& callback : retrieveCachesPendingRequests.values())
         callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
