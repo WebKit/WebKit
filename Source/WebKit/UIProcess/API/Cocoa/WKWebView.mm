@@ -1788,6 +1788,18 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 #endif
 
+static inline WKTextIndicatorStyleType toWKTextIndicatorStyleType(WebKit::TextIndicatorStyle style)
+{
+    switch (style) {
+    case WebKit::TextIndicatorStyle::Initial:
+        return WKTextIndicatorStyleTypeInitial;
+    case WebKit::TextIndicatorStyle::Source:
+        return WKTextIndicatorStyleTypeSource;
+    case WebKit::TextIndicatorStyle::Final:
+        return WKTextIndicatorStyleTypeFinal;
+    }
+}
+
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 - (void)_addTextIndicatorStyleForID:(NSUUID *)nsUUID withData:(const WebKit::TextIndicatorStyleData&)data
 {
@@ -3812,19 +3824,6 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
         findOptions.add(WebKit::FindOptions::DetermineMatchIndex);
 
     return findOptions;
-}
-
-static inline WKTextIndicatorStyleType toWKTextIndicatorStyleType(WebKit::TextIndicatorStyle style)
-{
-
-    switch (style) {
-    case WebKit::TextIndicatorStyle::Initial:
-        return WKTextIndicatorStyleTypeInitial;
-    case WebKit::TextIndicatorStyle::Source:
-        return WKTextIndicatorStyleTypeSource;
-    case WebKit::TextIndicatorStyle::Final:
-        return WKTextIndicatorStyleTypeFinal;
-    }
 }
 
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
