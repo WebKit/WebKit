@@ -123,7 +123,7 @@ void Encoder::wrapForTesting(UniqueRef<Encoder>&& original)
 
     original->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::Yes);
 
-    *this << std::span(original->buffer(), original->bufferSize());
+    *this << original->span();
 
     Vector<Attachment> attachments = original->releaseAttachments();
     reserve(attachments.size());
@@ -169,12 +169,12 @@ OptionSet<MessageFlags>& Encoder::messageFlags()
 {
     // FIXME: We should probably pass an OptionSet<MessageFlags> into the Encoder constructor instead of encoding defaultMessageFlags then using this to change it later.
     static_assert(sizeof(OptionSet<MessageFlags>::StorageType) == 1, "Encoder uses the first byte of the buffer for message flags.");
-    return *reinterpret_cast<OptionSet<MessageFlags>*>(buffer());
+    return *reinterpret_cast<OptionSet<MessageFlags>*>(m_buffer);
 }
 
 const OptionSet<MessageFlags>& Encoder::messageFlags() const
 {
-    return *reinterpret_cast<OptionSet<MessageFlags>*>(buffer());
+    return *reinterpret_cast<OptionSet<MessageFlags>*>(m_buffer);
 }
 
 uint8_t* Encoder::grow(size_t alignment, size_t size)

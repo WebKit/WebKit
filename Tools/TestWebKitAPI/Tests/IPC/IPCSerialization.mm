@@ -77,7 +77,7 @@ private:
 
 bool SerializationTestSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
 {
-    auto decoder = IPC::Decoder::create({ encoder->buffer(), encoder->bufferSize() }, encoder->releaseAttachments());
+    auto decoder = IPC::Decoder::create(encoder->span(), encoder->releaseAttachments());
     ASSERT(decoder);
 
     completionHandler(decoder.get());

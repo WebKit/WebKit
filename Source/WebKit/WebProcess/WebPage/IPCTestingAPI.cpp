@@ -3043,7 +3043,7 @@ void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<I
     RELEASE_ASSERT(m_jsIPC);
     Ref protectOwnerOfThis = *m_jsIPC;
 
-    auto decoder = IPC::Decoder::create({ encoder.buffer(), encoder.bufferSize() }, { });
+    auto decoder = IPC::Decoder::create(encoder.span(), { });
     RunLoop::main().dispatch([this, protectOwnerOfThis = WTFMove(protectOwnerOfThis), decoder = WTFMove(decoder)] {
         auto* globalObject = m_globalObject.get();
         if (!globalObject)

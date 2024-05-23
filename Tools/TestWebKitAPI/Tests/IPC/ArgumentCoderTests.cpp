@@ -65,16 +65,16 @@ public:
     void SetUp() override
     {
         m_encoder = makeUnique<IPC::Encoder>(EncoderDecoderTest::name(), 0);
-        ASSERT_EQ(m_encoder->bufferSize(), headerSize());
+        ASSERT_EQ(m_encoder->span().size(), headerSize());
     }
 
     IPC::Encoder& encoder() const { return *m_encoder; }
     size_t headerSize() const { return 16; }
-    size_t encoderSize() const { return m_encoder->bufferSize(); }
+    size_t encoderSize() const { return m_encoder->span().size(); }
 
     std::unique_ptr<IPC::Decoder> createDecoder() const
     {
-        return IPC::Decoder::create({ m_encoder->buffer(), m_encoder->bufferSize() }, { });
+        return IPC::Decoder::create(m_encoder->span(), { });
     }
 
 private:

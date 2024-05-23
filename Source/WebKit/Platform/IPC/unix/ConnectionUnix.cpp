@@ -407,7 +407,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
     size_t messageSizeWithBodyInline = sizeof(MessageInfo) + (outputMessage.attachments().size() * sizeof(AttachmentInfo)) + outputMessage.bodySize();
     if (messageSizeWithBodyInline > messageMaxSize && outputMessage.bodySize()) {
-        RefPtr<WebCore::SharedMemory> oolMessageBody = WebCore::SharedMemory::allocate(outputMessage.bodySize());
+        RefPtr oolMessageBody = WebCore::SharedMemory::allocate(outputMessage.bodySize());
         if (!oolMessageBody)
             return false;
 
@@ -417,7 +417,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
         outputMessage.messageInfo().setBodyOutOfLine();
 
-        memcpy(oolMessageBody->data(), outputMessage.body(), outputMessage.bodySize());
+        memcpySpan(oolMessageBody->mutableSpan(), outputMessage.body());
 
         outputMessage.appendAttachment(handle->releaseHandle());
     }
@@ -485,7 +485,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
     }
 
     if (!messageInfo.isBodyOutOfLine() && outputMessage.bodySize()) {
-        iov[iovLength].iov_base = reinterpret_cast<void*>(outputMessage.body());
+        iov[iovLength].iov_base = reinterpret_cast<void*>(outputMessage.body().data());
         iov[iovLength].iov_len = outputMessage.bodySize();
         ++iovLength;
     }

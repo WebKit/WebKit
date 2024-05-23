@@ -587,9 +587,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
 {
     if (message.encoder->messageName() == IPC::MessageName::WebPage_LoadRequestWaitingForProcessLaunch) {
-        auto buffer = message.encoder->buffer();
-        auto bufferSize = message.encoder->bufferSize();
-        auto decoder = IPC::Decoder::create({ buffer, bufferSize }, { });
+        auto decoder = IPC::Decoder::create(message.encoder->span(), { });
         ASSERT(decoder);
         if (!decoder)
             return false;
@@ -607,9 +605,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
             ASSERT_NOT_REACHED();
         return false;
     } else if (message.encoder->messageName() == IPC::MessageName::WebPage_GoToBackForwardItemWaitingForProcessLaunch) {
-        auto buffer = message.encoder->buffer();
-        auto bufferSize = message.encoder->bufferSize();
-        auto decoder = IPC::Decoder::create({ buffer, bufferSize }, { });
+        auto decoder = IPC::Decoder::create(message.encoder->span(), { });
         ASSERT(decoder);
         if (!decoder)
             return false;

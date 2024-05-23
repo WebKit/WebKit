@@ -270,7 +270,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     auto numberOfPortDescriptors = attachments.size();
 
     bool messageBodyIsOOL = false;
-    auto messageSize = MachMessage::messageSize(encoder->bufferSize(), numberOfPortDescriptors, messageBodyIsOOL);
+    auto messageSize = MachMessage::messageSize(encoder->span().size(), numberOfPortDescriptors, messageBodyIsOOL);
     if (UNLIKELY(messageSize.hasOverflowed()))
         return false;
 
@@ -316,8 +316,9 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
         if (messageBodyIsOOL) {
             auto* descriptor = getDescriptorAndAdvance(messageData, sizeof(mach_msg_ool_descriptor_t));
-            descriptor->out_of_line.address = encoder->buffer();
-            descriptor->out_of_line.size = encoder->bufferSize();
+            auto buffer = encoder->span();
+            descriptor->out_of_line.address = const_cast<uint8_t*>(buffer.data());
+            descriptor->out_of_line.size = buffer.size();
             descriptor->out_of_line.copy = MACH_MSG_VIRTUAL_COPY;
             descriptor->out_of_line.deallocate = false;
             descriptor->out_of_line.type = MACH_MSG_OOL_DESCRIPTOR;
@@ -325,8 +326,10 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     }
 
     // Copy the data if it is not being sent out-of-line.
-    if (!messageBodyIsOOL)
-        memcpy(messageData, encoder->buffer(), encoder->bufferSize());
+    if (!messageBodyIsOOL) {
+        auto buffer = encoder->span();
+        memcpy(messageData, buffer.data(), buffer.size());
+    }
 
     return sendMessage(WTFMove(message));
 }
