@@ -354,6 +354,11 @@ public:
     // Throw away the non-affine parts of the matrix (lossy!).
     WEBCORE_EXPORT void makeAffine();
 
+    // Sets the 3rd row and column to (0, 0, 1, 0).
+    // Should produce the same results as mapping points into 2d before
+    // applying the next matrix.
+    WEBCORE_EXPORT void flatten();
+
     WEBCORE_EXPORT AffineTransform toAffineTransform() const;
 
     bool operator==(const TransformationMatrix& m2) const

@@ -1481,6 +1481,19 @@ FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, OptionSet
     return transformState.lastPlanarPoint();
 }
 
+std::unique_ptr<TransformationMatrix> RenderObject::viewTransitionTransform() const
+{
+    // Compute the accumulated local to absolute TransformationMatrix, using the
+    // 'TrackSVGCTMMatrix' option. This computes a single matrix, applying flatten()
+    // to the matrix at 3d rendering context boundaries.
+    TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint { });
+    transformState.setTransformMatrixTracking(TransformState::TrackSVGCTMMatrix);
+    OptionSet<MapCoordinatesMode> mode { UseTransforms, ApplyContainerFlip };
+    mapLocalToContainer(nullptr, transformState, mode, nullptr);
+    transformState.flatten();
+    return transformState.releaseTrackedTransform();
+}
+
 FloatPoint RenderObject::absoluteToLocal(const FloatPoint& containerPoint, OptionSet<MapCoordinatesMode> mode) const
 {
     TransformState transformState(TransformState::UnapplyInverseTransformDirection, containerPoint);
