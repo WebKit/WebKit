@@ -348,6 +348,9 @@
         "subtests": {
             "/webkit/WebKitWebProcessExtension/page-id": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/264505"}}
+            },
+            "/webkit/WebKitWebProcessExtension/user-messages": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/274584"}}
             }
         }
     },
