@@ -5316,10 +5316,7 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsBackgroundBlur();
 };
 
-[Nested] class WebCore::RealtimeMediaSource::Type : uint8_t {
-    Audio,
-    Video,
-};
+[Nested] enum class WebCore::RealtimeMediaSource::Type : bool;
 
 enum class WebCore::VideoFacingMode : uint8_t {
     Unknown,
