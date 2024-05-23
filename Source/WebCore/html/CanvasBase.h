@@ -74,6 +74,12 @@ public:
 
 class CanvasBase {
 public:
+    enum class Type : uint8_t {
+        HTML,
+        Offscreen,
+        CustomPaint,
+    };
+
     virtual ~CanvasBase();
 
     virtual void refCanvasBase() const = 0;
@@ -109,7 +115,7 @@ public:
     virtual SecurityOrigin* securityOrigin() const { return nullptr; }
     ScriptExecutionContext* scriptExecutionContext() const { return canvasBaseScriptExecutionContext();  }
 
-    virtual CanvasRenderingContext* renderingContext() const = 0;
+    CanvasRenderingContext* renderingContext() const { return m_renderingContext.get(); }
 
     virtual const CSSParserContext& cssParserContext() const = 0;
 
@@ -118,7 +124,7 @@ public:
     bool hasObserver(CanvasObserver&) const;
     void notifyObserversCanvasChanged(const FloatRect&);
     void notifyObserversCanvasResized();
-    void notifyObserversCanvasDestroyed(); // Must be called in destruction before clearing m_context.
+    void notifyObserversCanvasDestroyed(); // Must be called in destruction before clearing renderingContext().
     void addDisplayBufferObserver(CanvasDisplayBufferObserver&);
     void removeDisplayBufferObserver(CanvasDisplayBufferObserver&);
     void notifyObserversCanvasDisplayBufferPrepared();
@@ -126,8 +132,8 @@ public:
 
     HashSet<Element*> cssCanvasClients() const;
 
-    virtual GraphicsContext* drawingContext() const;
-    virtual GraphicsContext* existingDrawingContext() const;
+    GraphicsContext* drawingContext() const;
+    GraphicsContext* existingDrawingContext() const;
 
     // !rect means caller knows the full canvas is invalidated previously.
     void didDraw(const std::optional<FloatRect>& rect) { return didDraw(rect, ShouldApplyPostProcessingToDirtyRect::Yes); }
@@ -153,26 +159,32 @@ public:
     void setNoiseInjectionSalt(NoiseInjectionHashSalt salt) { m_canvasNoiseHashSalt = salt; }
     bool havePendingCanvasNoiseInjection() const { return m_canvasNoiseInjection.haveDirtyRects(); }
 
+    bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
+
 protected:
-    explicit CanvasBase(IntSize, const std::optional<NoiseInjectionHashSalt>&);
+    explicit CanvasBase(Type, IntSize, const std::optional<NoiseInjectionHashSalt>&);
 
     virtual ScriptExecutionContext* canvasBaseScriptExecutionContext() const = 0;
 
     virtual void setSize(const IntSize&);
 
     RefPtr<ImageBuffer> setImageBuffer(RefPtr<ImageBuffer>&&) const;
-    virtual bool hasCreatedImageBuffer() const { return false; }
 
     RefPtr<ImageBuffer> allocateImageBuffer() const;
     String lastFillText() const { return m_lastFillText; }
     void addCanvasNeedingPreparationForDisplayOrFlush();
     void removeCanvasNeedingPreparationForDisplayOrFlush();
 
+    void setRenderingContext(std::unique_ptr<CanvasRenderingContext>&&);
+    void setHasCreatedImageBuffer(bool flag) const { m_hasCreatedImageBuffer = flag; }
+
 private:
     bool shouldInjectNoiseBeforeReadback() const;
     virtual void createImageBuffer() const { }
     bool shouldAccelerate(uint64_t area) const;
 
+private:
+    std::unique_ptr<CanvasRenderingContext> m_renderingContext;
     mutable IntSize m_size;
     mutable RefPtr<ImageBuffer> m_imageBuffer;
     mutable std::atomic<size_t> m_imageBufferMemoryCost { 0 };
@@ -182,7 +194,10 @@ private:
 
     CanvasNoiseInjection m_canvasNoiseInjection;
     Markable<NoiseInjectionHashSalt, IntegralMarkableTraits<NoiseInjectionHashSalt, std::numeric_limits<int64_t>::max()>> m_canvasNoiseHashSalt;
+    Type m_type { Type::HTML };
     bool m_originClean { true };
+    bool m_isDrawable { true };
+    mutable bool m_hasCreatedImageBuffer { false }; // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
 #if ASSERT_ENABLED
     bool m_didNotifyObserversCanvasDestroyed { false };
 #endif

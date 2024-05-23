@@ -41,8 +41,6 @@ public:
     CustomPaintCanvas& canvas() const { return downcast<CustomPaintCanvas>(canvasBase()); }
 
 private:
-    bool isPaint() const override { return true; }
-
     PaintRenderingContext2D(CanvasBase&);
 };
 

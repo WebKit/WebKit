@@ -116,6 +116,11 @@ std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBas
     return std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, WTFMove(attributes)));
 }
 
+WebGL2RenderingContext::WebGL2RenderingContext(CanvasBase& canvas, WebGLContextAttributes&& attributes)
+    : WebGLRenderingContextBase(Type::WebGL2RenderingContext, canvas, WTFMove(attributes))
+{
+}
+
 WebGL2RenderingContext::~WebGL2RenderingContext()
 {
     // Remove all references to WebGLObjects so if they are the last reference

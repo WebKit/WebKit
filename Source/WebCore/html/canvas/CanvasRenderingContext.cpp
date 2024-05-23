@@ -63,8 +63,9 @@ Lock& CanvasRenderingContext::instancesLock()
     return s_instancesLock;
 }
 
-CanvasRenderingContext::CanvasRenderingContext(CanvasBase& canvas)
-    : m_canvas(canvas)
+CanvasRenderingContext::CanvasRenderingContext(Type type, CanvasBase& canvas)
+    : m_type(type)
+    , m_canvas(canvas)
 {
     Locker locker { instancesLock() };
     instances().add(this);

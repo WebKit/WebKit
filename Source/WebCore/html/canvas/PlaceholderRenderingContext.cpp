@@ -39,7 +39,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(PlaceholderRenderingContext);
 
 PlaceholderRenderingContext::PlaceholderRenderingContext(CanvasBase& canvas)
-    : CanvasRenderingContext(canvas)
+    : CanvasRenderingContext(Type::PlaceholderRenderingContext, canvas)
 {
     m_imageBufferPipe = ImageBufferPipe::create();
 }

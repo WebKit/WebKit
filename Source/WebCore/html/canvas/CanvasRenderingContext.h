@@ -57,6 +57,17 @@ class CanvasRenderingContext : public ScriptWrappable, public CanMakeWeakPtr<Can
 public:
     virtual ~CanvasRenderingContext();
 
+    enum class Type : uint8_t {
+        CanvasRenderingContext2D,
+        OffscreenCanvasRenderingContext2D,
+        PaintRenderingContext2D,
+        ImageBitmapRenderingContext,
+        PlaceholderRenderingContext,
+        WebGLRenderingContext,
+        WebGL2RenderingContext,
+        GPUCanvasContext,
+    };
+
     static HashSet<CanvasRenderingContext*>& instances() WTF_REQUIRES_LOCK(instancesLock());
     static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
@@ -65,18 +76,19 @@ public:
 
     CanvasBase& canvasBase() const { return m_canvas; }
 
-    virtual bool is2dBase() const { return false; }
-    virtual bool is2d() const { return false; }
-    virtual bool isWebGL1() const { return false; }
-    virtual bool isWebGL2() const { return false; }
+    bool is2d() const { return m_type == Type::CanvasRenderingContext2D; }
+    bool isOffscreen2d() const { return m_type == Type::OffscreenCanvasRenderingContext2D; }
+    bool isPaint() const { return m_type == Type::PaintRenderingContext2D; }
+    bool is2dBase() const { return is2d() || isOffscreen2d() || isPaint(); }
+    bool isBitmapRenderer() const { return m_type == Type::ImageBitmapRenderingContext; }
+    bool isPlaceholder() const { return m_type == Type::PlaceholderRenderingContext; }
+    bool isWebGL1() const { return m_type == Type::WebGLRenderingContext; }
+    bool isWebGL2() const { return m_type == Type::WebGL2RenderingContext; }
     bool isWebGL() const { return isWebGL1() || isWebGL2(); }
-    virtual bool isWebGPU() const { return false; }
+    bool isWebGPU() const { return m_type == Type::GPUCanvasContext; }
+
     virtual bool isGPUBased() const { return false; }
     virtual bool isAccelerated() const { return false; }
-    virtual bool isBitmapRenderer() const { return false; }
-    virtual bool isPlaceholder() const { return false; }
-    virtual bool isOffscreen2d() const { return false; }
-    virtual bool isPaint() const { return false; }
 
     virtual void clearAccumulatedDirtyRect() { }
 
@@ -118,7 +130,7 @@ public:
     bool isInPreparationForDisplayOrFlush() const { return m_isInPreparationForDisplayOrFlush; }
 
 protected:
-    explicit CanvasRenderingContext(CanvasBase&);
+    explicit CanvasRenderingContext(Type, CanvasBase&);
     bool taintsOrigin(const CanvasPattern*);
     bool taintsOrigin(const CanvasBase*);
     bool taintsOrigin(const CachedImage*);
@@ -136,6 +148,7 @@ protected:
     void checkOrigin(const URL&);
     void checkOrigin(const CSSStyleImageValue&);
 
+    Type m_type { Type::CanvasRenderingContext2D };
     bool m_isInPreparationForDisplayOrFlush { false };
     bool m_hasActiveInspectorCanvasCallTracer { false };
 

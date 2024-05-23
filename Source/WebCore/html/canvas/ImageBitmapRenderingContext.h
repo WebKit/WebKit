@@ -66,7 +66,6 @@ public:
 private:
     ImageBitmapRenderingContext(CanvasBase&, ImageBitmapRenderingContextSettings&&);
 
-    bool isBitmapRenderer() const final { return true; }
     bool isAccelerated() const override;
 
     void setOutputBitmap(RefPtr<ImageBitmap>);

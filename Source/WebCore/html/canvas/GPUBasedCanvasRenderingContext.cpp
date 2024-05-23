@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-GPUBasedCanvasRenderingContext::GPUBasedCanvasRenderingContext(CanvasBase& canvas)
-    : CanvasRenderingContext(canvas)
+GPUBasedCanvasRenderingContext::GPUBasedCanvasRenderingContext(Type type, CanvasBase& canvas)
+    : CanvasRenderingContext(type, canvas)
     , ActiveDOMObject(canvas.scriptExecutionContext())
 {
 }

@@ -41,8 +41,6 @@ public:
 
     ~WebGLRenderingContext();
 
-    bool isWebGL1() const final { return true; }
-
     std::optional<WebGLExtensionAny> getExtension(const String&) final;
     std::optional<Vector<String>> getSupportedExtensions() final;
 
@@ -63,7 +61,7 @@ protected:
     WebGLBindingPoint<WebGLTimerQueryEXT, GraphicsContextGL::TIME_ELAPSED_EXT> m_activeQuery;
 
 private:
-    using WebGLRenderingContextBase::WebGLRenderingContextBase;
+    WebGLRenderingContext(CanvasBase&, WebGLContextAttributes&&);
 };
 
 WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContext>*);

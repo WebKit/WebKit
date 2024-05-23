@@ -487,7 +487,7 @@ public:
 
     WeakPtr<WebGLRenderingContextBase> createRefForContextObject();
 protected:
-    WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes&&);
+    WebGLRenderingContextBase(Type, CanvasBase&, WebGLContextAttributes&&);
 
     friend class EXTDisjointTimerQuery;
     friend class EXTDisjointTimerQueryWebGL2;

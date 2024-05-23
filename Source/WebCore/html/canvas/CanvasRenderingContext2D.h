@@ -56,7 +56,6 @@ public:
 private:
     CanvasRenderingContext2D(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
-    bool is2d() const final { return true; }
     const FontProxy* fontProxy() final;
 
     std::optional<FilterOperations> setFilterStringWithoutUpdatingStyle(const String&) override;

@@ -80,7 +80,7 @@ std::unique_ptr<CanvasRenderingContext2D> CanvasRenderingContext2D::create(Canva
 }
 
 CanvasRenderingContext2D::CanvasRenderingContext2D(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings, bool usesCSSCompatibilityParseMode)
-    : CanvasRenderingContext2DBase(canvas, WTFMove(settings), usesCSSCompatibilityParseMode)
+    : CanvasRenderingContext2DBase(Type::CanvasRenderingContext2D, canvas, WTFMove(settings), usesCSSCompatibilityParseMode)
 {
 }
 

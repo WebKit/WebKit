@@ -260,9 +260,7 @@ public:
     bool isTransformFeedbackActiveAndNotPaused();
 
 private:
-    using WebGLRenderingContextBase::WebGLRenderingContextBase;
-
-    bool isWebGL2() const final { return true; }
+    WebGL2RenderingContext(CanvasBase&, WebGLContextAttributes&&);
 
     void initializeContextState() final;
 

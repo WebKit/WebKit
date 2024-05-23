@@ -57,9 +57,8 @@ public:
 
     RefPtr<PaintRenderingContext2D> getContext();
 
-    CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
-    GraphicsContext* drawingContext() const final;
-    GraphicsContext* existingDrawingContext() const final;
+    GraphicsContext* drawingContext() const;
+    GraphicsContext* existingDrawingContext() const;
 
     void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final { }
 
@@ -85,7 +84,6 @@ private:
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void replayDisplayListImpl(GraphicsContext& target) const;
 
-    std::unique_ptr<CanvasRenderingContext> m_context;
     mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
     mutable RefPtr<Image> m_copiedImage;
 

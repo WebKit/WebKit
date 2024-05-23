@@ -73,8 +73,6 @@ public:
     ExceptionOr<RefPtr<GPUTexture>> getCurrentTexture() override;
     ExceptionOr<RefPtr<ImageBitmap>> getCurrentTextureAsImageBitmap(ImageBuffer&, bool originClean) override;
 
-    bool isWebGPU() const override { return true; }
-
 private:
     explicit GPUCanvasContextCocoa(CanvasBase&, GPU&);
 

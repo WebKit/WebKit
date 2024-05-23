@@ -44,8 +44,6 @@ public:
     const RefPtr<ImageBufferPipe>& imageBufferPipe() const { return m_imageBufferPipe; }
 
 private:
-    bool isPlaceholder() const final { return true; }
-
     bool isAccelerated() const final { return !!m_imageBufferPipe; }
     bool isGPUBased() const final { return !!m_imageBufferPipe; }
     void setContentsToLayer(GraphicsLayer&);

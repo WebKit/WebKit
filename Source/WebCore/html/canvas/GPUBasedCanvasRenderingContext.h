@@ -45,7 +45,7 @@ public:
 
     virtual void reshape(int width, int height, int oldWidth, int oldHeight) = 0;
 protected:
-    explicit GPUBasedCanvasRenderingContext(CanvasBase&);
+    explicit GPUBasedCanvasRenderingContext(Type, CanvasBase&);
 
     HTMLCanvasElement* htmlCanvas() const;
     void markCanvasChanged();

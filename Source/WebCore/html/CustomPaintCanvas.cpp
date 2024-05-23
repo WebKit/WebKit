@@ -44,7 +44,7 @@ Ref<CustomPaintCanvas> CustomPaintCanvas::create(ScriptExecutionContext& context
 }
 
 CustomPaintCanvas::CustomPaintCanvas(ScriptExecutionContext& context, unsigned width, unsigned height)
-    : CanvasBase(IntSize(width, height), context.noiseInjectionHashSalt())
+    : CanvasBase(Type::CustomPaint, IntSize(width, height), context.noiseInjectionHashSalt())
     , ContextDestructionObserver(&context)
 {
 }
@@ -53,17 +53,17 @@ CustomPaintCanvas::~CustomPaintCanvas()
 {
     notifyObserversCanvasDestroyed();
 
-    m_context = nullptr; // Ensure this goes away before the ImageBuffer.
+    setRenderingContext(nullptr); // Ensure this goes away before the ImageBuffer.
     setImageBuffer(nullptr);
 }
 
 RefPtr<PaintRenderingContext2D> CustomPaintCanvas::getContext()
 {
-    if (m_context)
-        return &downcast<PaintRenderingContext2D>(*m_context);
+    if (renderingContext())
+        return &downcast<PaintRenderingContext2D>(*renderingContext());
 
-    m_context = PaintRenderingContext2D::create(*this);
-    return static_cast<PaintRenderingContext2D*>(m_context.get());
+    setRenderingContext(PaintRenderingContext2D::create(*this));
+    return static_cast<PaintRenderingContext2D*>(renderingContext());
 }
 
 void CustomPaintCanvas::replayDisplayList(GraphicsContext& target)

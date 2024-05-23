@@ -29,6 +29,7 @@
 #include "ByteArrayPixelBuffer.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
+#include "CustomPaintCanvas.h"
 #include "Document.h"
 #include "Element.h"
 #include "GraphicsClient.h"
@@ -53,9 +54,10 @@ namespace WebCore {
 constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Low;
 static std::optional<size_t> maxCanvasAreaForTesting;
 
-CanvasBase::CanvasBase(IntSize size, const std::optional<NoiseInjectionHashSalt>& noiseHashSalt)
+CanvasBase::CanvasBase(Type type, IntSize size, const std::optional<NoiseInjectionHashSalt>& noiseHashSalt)
     : m_size(size)
     , m_canvasNoiseHashSalt(noiseHashSalt)
+    , m_type(type)
 {
 }
 
@@ -69,24 +71,43 @@ CanvasBase::~CanvasBase()
 
 GraphicsContext* CanvasBase::drawingContext() const
 {
-    auto* context = renderingContext();
-    if (context && !context->is2d() && !context->isOffscreen2d())
+    switch (m_type) {
+    case Type::HTML:
+    case Type::Offscreen: {
+        if (!m_isDrawable)
+            return nullptr;
+        if (auto* imageBuffer = buffer(); LIKELY(imageBuffer))
+            return &imageBuffer->context();
         return nullptr;
-
-    return buffer() ? &m_imageBuffer->context() : nullptr;
+    }
+    case Type::CustomPaint:
+        return downcast<CustomPaintCanvas>(*this).drawingContext();
+    }
+    return nullptr;
 }
 
 GraphicsContext* CanvasBase::existingDrawingContext() const
 {
-    if (!hasCreatedImageBuffer())
+    switch (m_type) {
+    case Type::HTML:
+    case Type::Offscreen: {
+        if (!m_isDrawable)
+            return nullptr;
+        if (!hasCreatedImageBuffer())
+            return nullptr;
+        if (LIKELY(m_imageBuffer))
+            return &m_imageBuffer->context();
         return nullptr;
-
-    return drawingContext();
+    }
+    case Type::CustomPaint:
+        return downcast<CustomPaintCanvas>(*this).existingDrawingContext();
+    }
+    return nullptr;
 }
 
 ImageBuffer* CanvasBase::buffer() const
 {
-    if (!hasCreatedImageBuffer())
+    if (UNLIKELY(!hasCreatedImageBuffer()))
         createImageBuffer();
     return m_imageBuffer.get();
 }
@@ -383,6 +404,12 @@ void CanvasBase::resetGraphicsContextState() const
         m_contextStateSaver->restore();
         m_contextStateSaver->save();
     }
+}
+
+void CanvasBase::setRenderingContext(std::unique_ptr<CanvasRenderingContext>&& context)
+{
+    m_renderingContext = WTFMove(context);
+    m_isDrawable = !m_renderingContext || m_renderingContext->is2d() || m_renderingContext->isOffscreen2d();
 }
 
 WebCoreOpaqueRoot root(CanvasBase* canvas)

@@ -93,7 +93,7 @@ class CanvasRenderingContext2DBase : public CanvasRenderingContext, public Canva
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
     friend class CanvasFilterTargetSwitcher;
 protected:
-    CanvasRenderingContext2DBase(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
+    CanvasRenderingContext2DBase(Type, CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
 public:
     virtual ~CanvasRenderingContext2DBase();
@@ -386,7 +386,6 @@ private:
     void applyShadow();
     bool shouldDrawShadows() const;
 
-    bool is2dBase() const final { return true; }
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
 

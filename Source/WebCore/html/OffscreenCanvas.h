@@ -133,8 +133,6 @@ public:
 
     void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
 
-    CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
-
     const CSSParserContext& cssParserContext() const final;
 
     ExceptionOr<std::optional<OffscreenRenderingContext>> getContext(JSC::JSGlobalObject&, RenderingContextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
@@ -145,8 +143,6 @@ public:
 
     Image* copiedImage() const final;
     void clearCopiedImage() const final;
-
-    bool hasCreatedImageBuffer() const final { return m_hasCreatedImageBuffer; }
 
     SecurityOrigin* securityOrigin() const final;
 
@@ -186,11 +182,8 @@ private:
     void reset();
     void scheduleCommitToPlaceholderCanvas();
 
-    std::unique_ptr<CanvasRenderingContext> m_context;
     RefPtr<OffscreenCanvasPlaceholderData> m_placeholderData;
     mutable RefPtr<Image> m_copiedImage;
-    // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
-    mutable bool m_hasCreatedImageBuffer { false };
     bool m_detached { false };
     bool m_hasScheduledCommit { false };
 

@@ -117,6 +117,11 @@ std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase&
     return std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, WTFMove(attributes)));
 }
 
+WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, WebGLContextAttributes&& attributes)
+    : WebGLRenderingContextBase(Type::WebGLRenderingContext, canvas, WTFMove(attributes))
+{
+}
+
 WebGLRenderingContext::~WebGLRenderingContext()
 {
     m_activeQuery = nullptr;

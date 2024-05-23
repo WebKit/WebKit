@@ -468,8 +468,8 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     return renderingContext;
 }
 
-WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLContextAttributes&& attributes)
-    : GPUBasedCanvasRenderingContext(canvas)
+WebGLRenderingContextBase::WebGLRenderingContextBase(Type type, CanvasBase& canvas, WebGLContextAttributes&& attributes)
+    : GPUBasedCanvasRenderingContext(type, canvas)
     , m_generatedImageCache(4)
     , m_attributes(WTFMove(attributes))
     , m_creationAttributes(m_attributes)
