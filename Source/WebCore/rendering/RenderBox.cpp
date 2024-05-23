@@ -2221,6 +2221,17 @@ LayoutRect RenderBox::clipRect(const LayoutPoint& location, RenderFragmentContai
     return clipRect;
 }
 
+static LayoutUnit portionOfMarginNotConsumedByFloat(LayoutUnit childMargin, LayoutUnit contentSide, LayoutUnit offset)
+{
+    if (childMargin <= 0)
+        return 0;
+
+    LayoutUnit contentSideWithMargin = contentSide + childMargin;
+    if (offset > contentSideWithMargin)
+        return childMargin;
+    return offset - contentSide;
+}
+
 LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStart, LayoutUnit childMarginEnd, const RenderBlock& cb, RenderFragmentContainer* fragment) const
 {    
     RenderFragmentContainer* containingBlockFragment = nullptr;
@@ -2232,34 +2243,17 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
     }
 
     LayoutUnit logicalHeight = cb.logicalHeightForChild(*this);
-    LayoutUnit result = cb.availableLogicalWidthForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight) - childMarginStart - childMarginEnd;
+    LayoutUnit width = cb.availableLogicalWidthForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight) - std::max<LayoutUnit>(0, childMarginStart) - std::max<LayoutUnit>(0, childMarginEnd);
 
     // We need to see if margins on either the start side or the end side can contain the floats in question. If they can,
     // then just using the line width is inaccurate. In the case where a float completely fits, we don't need to use the line
     // offset at all, but can instead push all the way to the content edge of the containing block. In the case where the float
     // doesn't fit, we can use the line offset, but we need to grow it by the margin to reflect the fact that the margin was
     // "consumed" by the float. Negative margins aren't consumed by the float, and so we ignore them.
-    if (childMarginStart > 0) {
-        LayoutUnit startContentSide = cb.startOffsetForContent(containingBlockFragment);
-        LayoutUnit startContentSideWithMargin = startContentSide + childMarginStart;
-        LayoutUnit startOffset = cb.startOffsetForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight);
-        if (startOffset > startContentSideWithMargin)
-            result += childMarginStart;
-        else
-            result += startOffset - startContentSide;
-    }
-    
-    if (childMarginEnd > 0) {
-        LayoutUnit endContentSide = cb.endOffsetForContent(containingBlockFragment);
-        LayoutUnit endContentSideWithMargin = endContentSide + childMarginEnd;
-        LayoutUnit endOffset = cb.endOffsetForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight);
-        if (endOffset > endContentSideWithMargin)
-            result += childMarginEnd;
-        else
-            result += endOffset - endContentSide;
-    }
+    width += portionOfMarginNotConsumedByFloat(childMarginStart, cb.startOffsetForContent(), cb.startOffsetForLine(logicalTopPosition, false));
+    width += portionOfMarginNotConsumedByFloat(childMarginEnd, cb.endOffsetForContent(), cb.endOffsetForLine(logicalTopPosition, false));
 
-    return result;
+    return width;
 }
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
@@ -2984,6 +2978,18 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
             marginStartLength = Length(0, LengthType::Fixed);
         if (marginEndLength.isAuto())
             marginEndLength = Length(0, LengthType::Fixed);
+    }
+
+    LayoutUnit marginStartWidth = minimumValueForLength(marginStartLength, containerWidth);
+    LayoutUnit marginEndWidth = minimumValueForLength(marginEndLength, containerWidth);
+
+    LayoutUnit availableWidth = containerWidth;
+    if (avoidsFloats() && containingBlock.containsFloats()) {
+        availableWidth = containingBlockAvailableLineWidthInFragment(0);
+        if (shrinkToAvoidFloats() && availableWidth < containerWidth) {
+            marginStart = std::max<LayoutUnit>(0, marginStartWidth);
+            marginEnd = std::max<LayoutUnit>(0, marginEndWidth);
+        }
     }
 
     auto handleMarginAuto = [&] {
