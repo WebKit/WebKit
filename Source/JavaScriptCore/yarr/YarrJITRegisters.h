@@ -71,9 +71,6 @@ public:
     static constexpr GPRReg unicodeAndSubpatternIdTemp = ARM64Registers::x5;
     static constexpr GPRReg initialStart = ARM64Registers::x11;
 
-#define UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP 1
-    static constexpr GPRReg firstCharacterAdditionalReadSize = ARM64Registers::x12;
-
     static constexpr GPRReg leadingSurrogateTag = ARM64Registers::x13;
     static constexpr GPRReg trailingSurrogateTag = ARM64Registers::x14;
     static constexpr GPRReg endOfStringAddress = ARM64Registers::x15;
