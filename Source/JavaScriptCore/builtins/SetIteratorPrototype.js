@@ -25,15 +25,15 @@
 
 // We keep this function small very carefully to encourage inlining.
 @linkTimeConstant
-function setIteratorNext(setStorage, entry, kind)
+function setIteratorNext(storage, entry, kind)
 {
     "use strict";
     var value;
-    var tableKeyEntry = @setEntryNext(setStorage, entry);
+    var tableKeyEntry = @setEntryNext(storage, entry);
     var done = tableKeyEntry.length === 0;
     if (!done) {
         var newTable = tableKeyEntry[0];
-        if (newTable !== setStorage)
+        if (newTable !== storage)
             @putSetIteratorInternalField(this, @setIteratorFieldStorage, newTable);
         @putSetIteratorInternalField(this, @setIteratorFieldEntry, tableKeyEntry[2] + 1);
         value = tableKeyEntry[1];
@@ -51,8 +51,8 @@ function next()
     if (!@isSetIterator(this))
         @throwTypeError("%SetIteratorPrototype%.next requires that |this| be a Set Iterator instance");
 
-    var setStorage = @getSetIteratorInternalField(this, @setIteratorFieldStorage);
+    var storage = @getSetIteratorInternalField(this, @setIteratorFieldStorage);
     var entry = @getSetIteratorInternalField(this, @setIteratorFieldEntry);
     var kind = @getSetIteratorInternalField(this, @setIteratorFieldKind);
-    return @setIteratorNext.@call(this, setStorage, entry, kind);
+    return @setIteratorNext.@call(this, storage, entry, kind);
 }

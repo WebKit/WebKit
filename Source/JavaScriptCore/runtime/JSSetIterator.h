@@ -68,10 +68,11 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static JSSetIterator* create(VM& vm, Structure* structure, JSSet* iteratedObject, IterationKind kind)
+    static JSSetIterator* create(JSGlobalObject* globalObject, Structure* structure, JSSet* iteratedObject, IterationKind kind)
     {
+        VM& vm = getVM(globalObject);
         JSSetIterator* instance = new (NotNull, allocateCell<JSSetIterator>(vm)) JSSetIterator(vm, structure);
-        instance->finishCreation(vm, iteratedObject, kind);
+        instance->finishCreation(globalObject, iteratedObject, kind);
         return instance;
     }
 
@@ -129,7 +130,7 @@ private:
     {
     }
 
-    JS_EXPORT_PRIVATE void finishCreation(VM&, JSSet*, IterationKind);
+    JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*, JSSet*, IterationKind);
     void finishCreation(VM&);
     JS_EXPORT_PRIVATE JSValue createPair(JSGlobalObject*, JSValue, JSValue);
     DECLARE_VISIT_CHILDREN;

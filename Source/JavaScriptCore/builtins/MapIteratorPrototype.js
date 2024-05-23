@@ -25,15 +25,15 @@
 
 // We keep this function small very carefully to encourage inlining.
 @linkTimeConstant
-function mapIteratorNext(mapStorage, entry, kind)
+function mapIteratorNext(storage, entry, kind)
 {
     "use strict";
     var value;
-    var tableKeyValueEntry = @mapEntryNext(mapStorage, entry);
+    var tableKeyValueEntry = @mapEntryNext(storage, entry);
     var done = tableKeyValueEntry.length === 0;
     if (!done) {
         var newTable = tableKeyValueEntry[0];
-        if (newTable !== mapStorage)
+        if (newTable !== storage)
             @putMapIteratorInternalField(this, @mapIteratorFieldStorage, newTable);
         @putMapIteratorInternalField(this, @mapIteratorFieldEntry, tableKeyValueEntry[3] + 1);
         var key = tableKeyValueEntry[1];
@@ -54,8 +54,8 @@ function next()
     if (!@isMapIterator(this))
         @throwTypeError("%MapIteratorPrototype%.next requires that |this| be an Map Iterator instance");
 
-    var mapStorage = @getMapIteratorInternalField(this, @mapIteratorFieldStorage);
+    var storage = @getMapIteratorInternalField(this, @mapIteratorFieldStorage);
     var entry = @getMapIteratorInternalField(this, @mapIteratorFieldEntry);
     var kind = @getMapIteratorInternalField(this, @mapIteratorFieldKind);
-    return @mapIteratorNext.@call(this, mapStorage, entry, kind);
+    return @mapIteratorNext.@call(this, storage, entry, kind);
 }

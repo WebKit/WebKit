@@ -69,6 +69,7 @@ struct SetTraits {
     static void deleteValueData(Handle, VM&, JSValue) { }
 };
 
+
 // Note that only ChainTable stores the real JSValues and the others are used as unsigned integer number wrapped in JSValue.
 //
 // ################ Non-Obsolete Table ################
@@ -901,6 +902,24 @@ public:
     {
         if (Handle table = transitOrNull(globalObject))
             table.clear(globalObject);
+    }
+
+    // This should be only used for creating iterators. So,
+    // Instead of using a dummy head table, let's directly
+    // initialize the null table.
+    JSCell* transitOrInitialize(JSGlobalObject* globalObject)
+    {
+        VM& vm = getVM(globalObject);
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        Handle table = m_storage.get();
+        if (Storage* storage = table.transitOrNull())
+            return storage;
+
+        Storage* storage = Handle::tryCreate(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        m_storage.set(getVM(globalObject), this, storage);
+        return storage;
     }
 
     JSCell* transitOrSentinel(VM& vm)

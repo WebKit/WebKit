@@ -68,10 +68,11 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static JSMapIterator* create(VM& vm, Structure* structure, JSMap* iteratedObject, IterationKind kind)
+    static JSMapIterator* create(JSGlobalObject* globalObject, Structure* structure, JSMap* iteratedObject, IterationKind kind)
     {
+        VM& vm = getVM(globalObject);
         JSMapIterator* instance = new (NotNull, allocateCell<JSMapIterator>(vm)) JSMapIterator(vm, structure);
-        instance->finishCreation(vm, iteratedObject, kind);
+        instance->finishCreation(globalObject, iteratedObject, kind);
         return instance;
     }
 
@@ -142,7 +143,7 @@ private:
     {
     }
 
-    JS_EXPORT_PRIVATE void finishCreation(VM&, JSMap*, IterationKind);
+    JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*, JSMap*, IterationKind);
     void finishCreation(VM&);
     DECLARE_VISIT_CHILDREN;
 };

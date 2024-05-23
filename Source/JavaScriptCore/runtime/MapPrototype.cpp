@@ -31,6 +31,7 @@
 #include "JSCInlines.h"
 #include "JSMapInlines.h"
 #include "JSMapIterator.h"
+#include "runtime/JSCJSValue.h"
 
 namespace JSC {
 
@@ -162,11 +163,13 @@ JSC_DEFINE_HOST_FUNCTION(mapProtoFuncSet, (JSGlobalObject* globalObject, CallFra
 inline JSValue createMapIteratorObject(JSGlobalObject* globalObject, CallFrame* callFrame, IterationKind kind)
 {
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue thisValue = callFrame->thisValue();
     JSMap* map = getMap(globalObject, thisValue);
-    if (!map)
-        return jsUndefined();
-    return JSMapIterator::create(vm, globalObject->mapIteratorStructure(), map, kind);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSMapIterator::create(globalObject, globalObject->mapIteratorStructure(), map, kind));
 }
 
 JSC_DEFINE_HOST_FUNCTION(mapProtoFuncValues, (JSGlobalObject* globalObject, CallFrame* callFrame))
