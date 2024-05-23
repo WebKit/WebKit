@@ -83,7 +83,7 @@ public:
     virtual void willRepaintAllTiles(TiledBacking&, TileGridIdentifier) = 0;
     virtual void willRemoveGrid(TiledBacking&, TileGridIdentifier) = 0;
     virtual void coverageRectDidChange(TiledBacking&, const FloatRect&) = 0;
-    virtual void tilingScaleFactorDidChange(TiledBacking&, float) = 0;
+    virtual void tilingScaleFactorDidChange(TiledBacking&, float oldScaleFactor, float newScaleFactor) = 0;
 };
 
 
@@ -104,6 +104,8 @@ public:
     virtual void setCoverageRect(const FloatRect&) = 0;
     virtual FloatRect coverageRect() const = 0;
     virtual bool tilesWouldChangeForCoverageRect(const FloatRect&) const = 0;
+
+    virtual bool containsCoverageRect(Vector<TileIndex>) const = 0;
 
     virtual void setTiledScrollingIndicatorPosition(const FloatPoint&) = 0;
     virtual void setTopContentInset(float) = 0;

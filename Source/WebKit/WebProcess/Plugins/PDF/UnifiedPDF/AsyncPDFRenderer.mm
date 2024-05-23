@@ -163,7 +163,7 @@ bool AsyncPDFRenderer::renderInfoIsValidForTile(const TileForGrid& tileInfo, con
     return renderInfo.equivalentForPainting(currentRenderInfo);
 }
 
-void AsyncPDFRenderer::willRepaintTile(TiledBacking&, TileGridIdentifier gridIdentifier, TileIndex tileIndex, const FloatRect& tileRect, const FloatRect& tileDirtyRect)
+void AsyncPDFRenderer::willRepaintTile(TiledBacking& tiledBacking, TileGridIdentifier gridIdentifier, TileIndex tileIndex, const FloatRect& tileRect, const FloatRect& tileDirtyRect)
 {
     auto tileInfo = TileForGrid { gridIdentifier, tileIndex };
 
@@ -186,14 +186,18 @@ void AsyncPDFRenderer::willRepaintTile(TiledBacking&, TileGridIdentifier gridIde
     if (haveValidTile(tileInfo))
         return;
 
-    m_rendereredTiles.remove(tileInfo);
+    auto tileRender = m_rendereredTiles.take(tileInfo);
+
+    if (!m_staleTileState)
+        m_staleTileState = StaleTileState(tiledBacking.tilingScaleFactor());
+    m_staleTileState->staleTiles().add(tileInfo, tileRender);
 
     // Currently we always do full tile paints when the grid changes.
     UNUSED_PARAM(tileDirtyRect);
     enqueueTilePaintIfNecessary(tileInfo, tileRect);
 }
 
-void AsyncPDFRenderer::willRemoveTile(TiledBacking&, TileGridIdentifier gridIdentifier, TileIndex tileIndex)
+void AsyncPDFRenderer::willRemoveTile(TiledBacking& tiledBacking, TileGridIdentifier gridIdentifier, TileIndex tileIndex)
 {
     auto tileInfo = TileForGrid { gridIdentifier, tileIndex };
 
@@ -201,11 +205,21 @@ void AsyncPDFRenderer::willRemoveTile(TiledBacking&, TileGridIdentifier gridIden
 
     m_requestWorkQueue.remove(tileInfo);
     m_currentValidTileRenders.remove(tileInfo);
-    m_rendereredTiles.remove(tileInfo);
+
+    auto tileRender = m_rendereredTiles.take(tileInfo);
+
+    if (!m_staleTileState)
+        m_staleTileState = StaleTileState(tiledBacking.tilingScaleFactor());
+    m_staleTileState->staleTiles().add(tileInfo, tileRender);
+
 }
 
-void AsyncPDFRenderer::willRepaintAllTiles(TiledBacking&, TileGridIdentifier)
+void AsyncPDFRenderer::willRepaintAllTiles(TiledBacking& tiledBacking, TileGridIdentifier)
 {
+    if (!m_staleTileState)
+        m_staleTileState = StaleTileState(tiledBacking.tilingScaleFactor());
+    m_staleTileState->setStaleTiles(m_rendereredTiles);
+
     clearRequestsAndCachedTiles();
 }
 
@@ -238,8 +252,9 @@ void AsyncPDFRenderer::coverageRectDidChange(TiledBacking&, const FloatRect& cov
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::coverageRectDidChange " << coverageRect << " " << pageCoverage << " - preview scale " << pagePreviewScale << " - have " << m_pagePreviews.size() << " page previews and " << m_enqueuedPagePreviews.size() << " enqueued");
 }
 
-void AsyncPDFRenderer::tilingScaleFactorDidChange(TiledBacking&, float)
+void AsyncPDFRenderer::tilingScaleFactorDidChange(TiledBacking&, float oldScaleFactor, float)
 {
+    m_staleTileState = StaleTileState(oldScaleFactor);
 }
 
 void AsyncPDFRenderer::willRemoveGrid(WebCore::TiledBacking&, TileGridIdentifier gridIdentifier)
@@ -572,30 +587,40 @@ bool AsyncPDFRenderer::paintTilesForPage(GraphicsContext& context, float documen
 
     bool paintedATile = false;
 
-    auto tilingScaleFactor = 1.0f;
-    if (auto* tiledBacking = m_pdfContentsLayer->tiledBacking())
-        tilingScaleFactor = tiledBacking->tilingScaleFactor();
-
-    // This scale takes us from "painting" coordinates into the coordinate system of the tile grid,
-    // so we can paint tiles directly.
-    auto scaleTransform = tileToPaintingTransform(tilingScaleFactor);
-    {
+    auto paintTilesIntersectingWithPageBounds = [&pageBoundsInPaintingCoordinates, &paintedATile](GraphicsContext& context, HashMap<TileForGrid, RenderedTile>& tiles, float tilingScaleFactor) {
+        auto scaleTransform = tileToPaintingTransform(tilingScaleFactor);
         auto stateSaver = GraphicsContextStateSaver(context);
         context.concatCTM(scaleTransform);
 
-        for (auto& keyValuePair : m_rendereredTiles) {
-            auto& renderedTile = keyValuePair.value;
-
+        for (auto& [tileInfo, renderedTile] : tiles) {
             auto tileClipInPaintingCoordinates = scaleTransform.mapRect(renderedTile.tileInfo.tileRect);
             if (!pageBoundsInPaintingCoordinates.intersects(tileClipInPaintingCoordinates))
                 continue;
 
-            LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintTilesForPage " << pageBoundsInPaintingCoordinates  << " - painting tile for " << keyValuePair.key << " with clip " << renderedTile.tileInfo.tileRect << " tiling scale " << tilingScaleFactor);
-
+            LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintTilesForPage " << pageBoundsInPaintingCoordinates  << " - painting tile for " << tileInfo << " with clip " << renderedTile.tileInfo.tileRect << " tiling scale " << tilingScaleFactor);
             context.drawImageBuffer(*renderedTile.buffer, renderedTile.tileInfo.tileRect.location());
             paintedATile = true;
         }
+    };
+
+    auto* tiledBacking = m_pdfContentsLayer->tiledBacking();
+    if (m_staleTileState && tiledBacking) {
+        Vector<TileIndex> renderedTileIndices;
+        for (auto& [tileInfo, renderedTile] : m_rendereredTiles)
+            renderedTileIndices.append(tileInfo.tileIndex);
+
+        if (tiledBacking->containsCoverageRect(renderedTileIndices))
+            m_staleTileState.reset();
     }
+
+    if (!m_staleTileState) {
+        auto tilingScaleFactor = 1.0f;
+        if (tiledBacking)
+            tilingScaleFactor = tiledBacking->tilingScaleFactor();
+
+        paintTilesIntersectingWithPageBounds(context, m_rendereredTiles, tilingScaleFactor);
+    } else
+        paintTilesIntersectingWithPageBounds(context, m_staleTileState->staleTiles(), m_staleTileState->tilingScaleFactor());
 
     return paintedATile;
 }
@@ -666,6 +691,11 @@ void AsyncPDFRenderer::pdfContentChangedInRect(float pageScaleFactor, const Floa
     auto pagePreviewScale = plugin->scaleForPagePreviews();
     for (auto& pageInfo : pageCoverage)
         generatePreviewImageForPage(pageInfo.pageIndex, pagePreviewScale);
+}
+
+AsyncPDFRenderer::StaleTileState::StaleTileState(float scaleFactor)
+    : m_scaleFactor(scaleFactor)
+{
 }
 
 TextStream& operator<<(TextStream& ts, const TileForGrid& tileInfo)
