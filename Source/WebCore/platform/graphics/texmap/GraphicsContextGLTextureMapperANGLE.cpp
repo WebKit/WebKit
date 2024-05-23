@@ -314,6 +314,7 @@ void GraphicsContextGLTextureMapperANGLE::swapCompositorTexture()
 #if USE(NICOSIA)
     std::swap(m_textureID, m_compositorTextureID);
 #endif
+    m_isCompositorTextureInitialized = true;
 
     if (m_preserveDrawingBufferTexture) {
         // The context requires the use of an intermediate texture in order to implement preserveDrawingBuffer:true without antialiasing.
@@ -353,6 +354,8 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     GL_BindTexture(textureTarget, m_texture);
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+
+    m_isCompositorTextureInitialized = false;
 
     return true;
 }
