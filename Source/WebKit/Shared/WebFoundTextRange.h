@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ArgumentCoders.h"
-#include <WebCore/FrameIdentifier.h>
 #include <wtf/HashTraits.h>
 #include <wtf/text/WTFString.h>
 
@@ -35,7 +34,7 @@ namespace WebKit {
 struct WebFoundTextRange {
     uint64_t location { 0 };
     uint64_t length { 0 };
-    WebCore::FrameIdentifier frameIdentifier;
+    AtomString frameIdentifier;
     uint64_t order { 0 };
 
     bool operator==(const WebFoundTextRange& other) const;
@@ -54,7 +53,7 @@ struct WebFoundTextRangeHash {
 template<> struct HashTraits<WebKit::WebFoundTextRange> : GenericHashTraits<WebKit::WebFoundTextRange> {
     static WebKit::WebFoundTextRange emptyValue() { return { }; }
 
-    static void constructDeletedValue(WebKit::WebFoundTextRange& slot) { new (NotNull, &slot.frameIdentifier) WebCore::FrameIdentifier { HashTableDeletedValue }; }
+    static void constructDeletedValue(WebKit::WebFoundTextRange& slot) { new (NotNull, &slot.frameIdentifier) AtomString { HashTableDeletedValue }; }
     static bool isDeletedValue(const WebKit::WebFoundTextRange& range) { return range.frameIdentifier.isHashTableDeletedValue(); }
 };
 

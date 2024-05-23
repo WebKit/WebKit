@@ -117,7 +117,6 @@
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FontAttributeChanges.h>
-#import <WebCore/FrameIdentifier.h>
 #import <WebCore/InputMode.h>
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/KeyboardScroll.h>
@@ -553,7 +552,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @property (nonatomic) NSUInteger location;
 @property (nonatomic) NSUInteger length;
-@property (nonatomic) WebCore::FrameIdentifier frameIdentifier;
+@property (nonatomic, copy) NSString *frameIdentifier;
 @property (nonatomic) NSUInteger order;
 
 + (WKFoundTextRange *)foundTextRangeWithWebFoundTextRange:(WebKit::WebFoundTextRange)range;
@@ -14684,6 +14683,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)dealloc
 {
+    [_frameIdentifier release];
     [super dealloc];
 }
 

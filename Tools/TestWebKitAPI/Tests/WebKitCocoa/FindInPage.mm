@@ -704,6 +704,35 @@ TEST(WebKit, FindInteraction)
     EXPECT_NULL([webView findInteraction]);
 }
 
+TEST(WebKit, FindAndHighlightDifferentWebViews)
+{
+    auto createAndSetUpWebView = []() {
+        auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+        [webView setFindInteractionEnabled:YES];
+        [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<p>Test</p><iframe src='data:text/html,<p>Test</p>'></iframe>"]];
+        return webView;
+    };
+
+    auto webViewForSearch = createAndSetUpWebView();
+    auto ranges = textRangesForQueryString(webViewForSearch.get(), @"Test");
+
+    auto webViewForHighlight = createAndSetUpWebView();
+
+    __block bool retrievedRect = false;
+    [webViewForHighlight _requestRectForFoundTextRange:[ranges objectAtIndex:0] completionHandler:^(CGRect rect) {
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(8, 8, 27, 19)));
+        retrievedRect = true;
+    }];
+    TestWebKitAPI::Util::run(&retrievedRect);
+
+    retrievedRect = false;
+    [webViewForHighlight _requestRectForFoundTextRange:[ranges objectAtIndex:1] completionHandler:^(CGRect rect) {
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(18, 54, 27, 19)));
+        retrievedRect = true;
+    }];
+    TestWebKitAPI::Util::run(&retrievedRect);
+}
+
 TEST(WebKit, RequestRectForFoundTextRange)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
