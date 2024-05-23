@@ -232,7 +232,7 @@ void JIT::privateCompileMainPass()
 #if ASSERT_ENABLED
         if (opcodeID != op_catch) {
             loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-            ASSERT(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+            static_assert(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
             loadPairPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT2, regT1);
             m_consistencyCheckCalls.append(nearCall());
         }
@@ -666,7 +666,7 @@ void JIT::emitMaterializeMetadataAndConstantPoolRegisters()
 void JIT::emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers& jit)
 {
     jit.loadPtr(addressFor(CallFrameSlot::codeBlock), s_constantsGPR);
-    ASSERT(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+    static_assert(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
     jit.loadPairPtr(Address(s_constantsGPR, CodeBlock::offsetOfJITData()), s_constantsGPR, s_metadataGPR);
 }
 
@@ -699,7 +699,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
         jit.subPtr(TrustedImm32(delta), expectedStackPointerGPR);
 
     jit.loadPtr(addressFor(CallFrameSlot::codeBlock), expectedConstantsGPR);
-    ASSERT(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+    static_assert(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
     jit.loadPairPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfJITData()), expectedConstantsGPR, expectedMetadataGPR);
 
     auto stackPointerOK = jit.branchPtr(Equal, expectedStackPointerGPR, stackPointerRegister);

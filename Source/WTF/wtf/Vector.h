@@ -363,7 +363,7 @@ public:
 
     T* buffer() { return m_buffer; }
     const T* buffer() const { return m_buffer; }
-    static ptrdiff_t bufferMemoryOffset() { return OBJECT_OFFSETOF(VectorBufferBase, m_buffer); }
+    static constexpr ptrdiff_t bufferMemoryOffset() { return OBJECT_OFFSETOF(VectorBufferBase, m_buffer); }
     size_t capacity() const { return m_capacity; }
 
     MallocPtr<T, Malloc> releaseBuffer()
@@ -796,7 +796,7 @@ public:
 
     size_t size() const { return m_size; }
     size_t sizeInBytes() const { return static_cast<size_t>(m_size) * sizeof(T); }
-    static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
+    static constexpr ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
     size_t capacity() const { return Base::capacity(); }
     bool isEmpty() const { return !size(); }
     std::span<const T> span() const { return { data(), size() }; }
@@ -830,7 +830,7 @@ public:
 
     T* data() { return Base::buffer(); }
     const T* data() const { return Base::buffer(); }
-    static ptrdiff_t dataMemoryOffset() { return Base::bufferMemoryOffset(); }
+    static constexpr ptrdiff_t dataMemoryOffset() { return Base::bufferMemoryOffset(); }
 
     iterator begin() { return data(); }
     iterator end() { return begin() + m_size; }

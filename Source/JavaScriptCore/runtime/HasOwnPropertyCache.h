@@ -41,9 +41,9 @@ public:
     static const uint32_t mask = size - 1;
 
     struct Entry {
-        static ptrdiff_t offsetOfStructureID() { return OBJECT_OFFSETOF(Entry, structureID); }
-        static ptrdiff_t offsetOfImpl() { return OBJECT_OFFSETOF(Entry, impl); }
-        static ptrdiff_t offsetOfResult() { return OBJECT_OFFSETOF(Entry, result); }
+        static constexpr ptrdiff_t offsetOfStructureID() { return OBJECT_OFFSETOF(Entry, structureID); }
+        static constexpr ptrdiff_t offsetOfImpl() { return OBJECT_OFFSETOF(Entry, impl); }
+        static constexpr ptrdiff_t offsetOfResult() { return OBJECT_OFFSETOF(Entry, result); }
 
         RefPtr<UniquedStringImpl> impl;
         StructureID structureID;

@@ -84,8 +84,8 @@ public:
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
-    static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(ScopedArgumentsTable, m_length); }
-    static ptrdiff_t offsetOfArguments() { return OBJECT_OFFSETOF(ScopedArgumentsTable, m_arguments); }
+    static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(ScopedArgumentsTable, m_length); }
+    static constexpr ptrdiff_t offsetOfArguments() { return OBJECT_OFFSETOF(ScopedArgumentsTable, m_arguments); }
 
     typedef CagedUniquePtr<Gigacage::Primitive, ScopeOffset> ArgumentsPtr;
 

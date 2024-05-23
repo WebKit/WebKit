@@ -176,8 +176,8 @@ public:
     void fill(uint32_t, v128_t, uint32_t);
     void copy(JSWebAssemblyArray&, uint32_t, uint32_t, uint32_t);
 
-    static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyArray, m_size); }
-    static ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSWebAssemblyArray, m_payload8) + FixedVector<uint8_t>::offsetOfStorage(); }
+    static constexpr ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyArray, m_size); }
+    static constexpr ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSWebAssemblyArray, m_payload8) + FixedVector<uint8_t>::offsetOfStorage(); }
     static ptrdiff_t offsetOfElements(Wasm::StorageType type)
     {
         if (type.is<Wasm::PackedType>()) {

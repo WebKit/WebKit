@@ -60,7 +60,7 @@ public:
         return constructor();
     }
         
-    static ptrdiff_t offsetOfNativeFunctionFor(CodeSpecializationKind kind)
+    static constexpr ptrdiff_t offsetOfNativeFunctionFor(CodeSpecializationKind kind)
     {
         if (kind == CodeForCall)
             return OBJECT_OFFSETOF(NativeExecutable, m_function);

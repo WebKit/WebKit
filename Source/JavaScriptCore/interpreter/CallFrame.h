@@ -203,13 +203,13 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
         JS_EXPORT_PRIVATE SourceOrigin callerSourceOrigin(VM&);
 
-        static ptrdiff_t callerFrameOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame); }
+        static constexpr ptrdiff_t callerFrameOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame); }
 
         void* rawReturnPCForInspection() const { return callerFrameAndPC().returnPC; }
         void* returnPCForInspection() const { return removeCodePtrTag(callerFrameAndPC().returnPC); }
         bool hasReturnPC() const { return !!callerFrameAndPC().returnPC; }
         void clearReturnPC() { callerFrameAndPC().returnPC = nullptr; }
-        static ptrdiff_t returnPCOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, returnPC); }
+        static constexpr ptrdiff_t returnPCOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, returnPC); }
 
         bool callSiteBitsAreBytecodeOffset() const;
         bool callSiteBitsAreCodeOriginIndex() const;

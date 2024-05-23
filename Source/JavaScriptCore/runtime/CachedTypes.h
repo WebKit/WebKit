@@ -52,17 +52,17 @@ struct CachedFunctionExecutableMetadata {
 };
 
 struct CachedFunctionExecutableOffsets {
-    static ptrdiff_t codeBlockForCallOffset();
-    static ptrdiff_t codeBlockForConstructOffset();
-    static ptrdiff_t metadataOffset();
+    static constexpr ptrdiff_t codeBlockForCallOffset();
+    static constexpr ptrdiff_t codeBlockForConstructOffset();
+    static constexpr ptrdiff_t metadataOffset();
 };
 
 struct CachedWriteBarrierOffsets {
-    static ptrdiff_t ptrOffset();
+    static constexpr ptrdiff_t ptrOffset();
 };
 
 struct CachedPtrOffsets {
-    static ptrdiff_t offsetOffset();
+    static constexpr ptrdiff_t offsetOffset();
 };
 
 class VariableLengthObjectBase {

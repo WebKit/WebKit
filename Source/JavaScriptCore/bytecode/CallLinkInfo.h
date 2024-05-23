@@ -235,7 +235,7 @@ public:
         return static_cast<CallType>(m_callType);
     }
 
-    static ptrdiff_t offsetOfMaxArgumentCountIncludingThisForVarargs()
+    static constexpr ptrdiff_t offsetOfMaxArgumentCountIncludingThisForVarargs()
     {
         return OBJECT_OFFSETOF(CallLinkInfo, m_maxArgumentCountIncludingThisForVarargs);
     }
@@ -251,28 +251,28 @@ public:
             m_maxArgumentCountIncludingThisForVarargs = std::min<unsigned>(argumentCountIncludingThisForVarargs, maxProfiledArgumentCountIncludingThisForVarargs);
     }
 
-    static ptrdiff_t offsetOfSlowPathCount()
+    static constexpr ptrdiff_t offsetOfSlowPathCount()
     {
         return OBJECT_OFFSETOF(CallLinkInfo, m_slowPathCount);
     }
 
-    static ptrdiff_t offsetOfCallee()
+    static constexpr ptrdiff_t offsetOfCallee()
     {
         return OBJECT_OFFSETOF(CallLinkInfo, m_callee);
     }
 
-    static ptrdiff_t offsetOfCodeBlock()
+    static constexpr ptrdiff_t offsetOfCodeBlock()
     {
         return OBJECT_OFFSETOF(CallLinkInfo, u) + OBJECT_OFFSETOF(UnionType, dataIC.m_codeBlock);
     }
 
-    static ptrdiff_t offsetOfMonomorphicCallDestination()
+    static constexpr ptrdiff_t offsetOfMonomorphicCallDestination()
     {
         return OBJECT_OFFSETOF(CallLinkInfo, u) + OBJECT_OFFSETOF(UnionType, dataIC.m_monomorphicCallDestination);
     }
 
 #if ENABLE(JIT)
-    static ptrdiff_t offsetOfStub()
+    static constexpr ptrdiff_t offsetOfStub()
     {
         return OBJECT_OFFSETOF(CallLinkInfo, m_stub);
     }
@@ -444,8 +444,8 @@ public:
         m_slowPathStart = slowPathStart;
     }
 
-    static ptrdiff_t offsetOfTarget() { return OBJECT_OFFSETOF(DirectCallLinkInfo, m_target); };
-    static ptrdiff_t offsetOfCodeBlock() { return OBJECT_OFFSETOF(DirectCallLinkInfo, m_codeBlock); };
+    static constexpr ptrdiff_t offsetOfTarget() { return OBJECT_OFFSETOF(DirectCallLinkInfo, m_target); };
+    static constexpr ptrdiff_t offsetOfCodeBlock() { return OBJECT_OFFSETOF(DirectCallLinkInfo, m_codeBlock); };
 
     JSCell* owner() const { return m_owner; }
 
@@ -520,7 +520,7 @@ public:
 
     void initializeFromDFGUnlinkedCallLinkInfo(VM&, const DFG::UnlinkedCallLinkInfo&, CodeBlock*);
 
-    static ptrdiff_t offsetOfSlowPathCallDestination()
+    static constexpr ptrdiff_t offsetOfSlowPathCallDestination()
     {
         return OBJECT_OFFSETOF(OptimizingCallLinkInfo, m_slowPathCallDestination);
     }

@@ -14044,7 +14044,7 @@ IGNORE_CLANG_WARNINGS_END
         else
             RELEASE_ASSERT_NOT_REACHED();
 
-        ASSERT(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead() == HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>::offsetOfHead());
+        static_assert(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead() == HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>::offsetOfHead());
         setJSValue(m_out.loadPtr(map, m_heaps.HashMapImpl_head));
     }
 
@@ -14058,8 +14058,8 @@ IGNORE_CLANG_WARNINGS_END
 
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(loopStart);
 
-        ASSERT(HashMapBucket<HashMapBucketDataKey>::offsetOfNext() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext());
-        ASSERT(HashMapBucket<HashMapBucketDataKey>::offsetOfKey() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey());
+        static_assert(HashMapBucket<HashMapBucketDataKey>::offsetOfNext() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext());
+        static_assert(HashMapBucket<HashMapBucketDataKey>::offsetOfKey() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey());
         LValue mapBucketPrev = lowCell(m_node->child1());
         ValueFromBlock mapBucketStart = m_out.anchor(m_out.loadPtr(mapBucketPrev, m_heaps.HashMapBucket_next));
         m_out.jump(loopStart);

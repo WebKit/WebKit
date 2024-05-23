@@ -380,8 +380,8 @@ public:
     static constexpr const int64_t notInt52 = static_cast<int64_t>(1) << numberOfInt52Bits;
     static constexpr const unsigned int52ShiftAmount = 12;
     
-    static ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSValue, u.asBits.payload); }
-    static ptrdiff_t offsetOfTag() { return OBJECT_OFFSETOF(JSValue, u.asBits.tag); }
+    static constexpr ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSValue, u.asBits.payload); }
+    static constexpr ptrdiff_t offsetOfTag() { return OBJECT_OFFSETOF(JSValue, u.asBits.tag); }
 
 #if USE(JSVALUE32_64)
     /*

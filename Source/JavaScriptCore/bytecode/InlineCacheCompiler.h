@@ -163,9 +163,9 @@ class InlineCacheHandler final : public RefCounted<InlineCacheHandler>, public T
 public:
     using Base = TrailingArray<InlineCacheHandler, DataOnlyCallLinkInfo>;
 
-    static ptrdiff_t offsetOfCallTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_callTarget); }
-    static ptrdiff_t offsetOfJumpTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_jumpTarget); }
-    static ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(InlineCacheHandler, m_next); }
+    static constexpr ptrdiff_t offsetOfCallTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_callTarget); }
+    static constexpr ptrdiff_t offsetOfJumpTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_jumpTarget); }
+    static constexpr ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(InlineCacheHandler, m_next); }
 
     static Ref<InlineCacheHandler> create(CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount);
 
@@ -194,8 +194,8 @@ public:
     void addOwner(CodeBlock*);
     void removeOwner(CodeBlock*);
 
-    static ptrdiff_t offsetOfUid() { return OBJECT_OFFSETOF(InlineCacheHandler, m_uid); }
-    static ptrdiff_t offsetOfCallLinkInfos() { return Base::offsetOfData(); }
+    static constexpr ptrdiff_t offsetOfUid() { return OBJECT_OFFSETOF(InlineCacheHandler, m_uid); }
+    static constexpr ptrdiff_t offsetOfCallLinkInfos() { return Base::offsetOfData(); }
 
 private:
     InlineCacheHandler()

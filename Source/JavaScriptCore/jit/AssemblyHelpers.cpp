@@ -946,9 +946,9 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     // and extracting interval information use less instructions.
 
     // Assert that we can use loadPairPtr for the interval bounds and nextInterval/secret.
-    ASSERT(FreeList::offsetOfIntervalEnd() - FreeList::offsetOfIntervalStart() == sizeof(uintptr_t));
-    ASSERT(FreeList::offsetOfNextInterval() - FreeList::offsetOfIntervalEnd() == sizeof(uintptr_t));
-    ASSERT(FreeList::offsetOfSecret() - FreeList::offsetOfNextInterval() == sizeof(uintptr_t));
+    static_assert(FreeList::offsetOfIntervalEnd() - FreeList::offsetOfIntervalStart() == sizeof(uintptr_t));
+    static_assert(FreeList::offsetOfNextInterval() - FreeList::offsetOfIntervalEnd() == sizeof(uintptr_t));
+    static_assert(FreeList::offsetOfSecret() - FreeList::offsetOfNextInterval() == sizeof(uintptr_t));
 
     // Bump allocation (fast path)
     loadPairPtr(allocatorGPR, TrustedImm32(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()), resultGPR, scratchGPR);

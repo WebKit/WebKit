@@ -53,9 +53,9 @@ public:
     void clear();
 
     const JSValue& jsValue();
-    static ptrdiff_t offsetOfJSValue() { return OBJECT_OFFSETOF(WeakImpl, m_jsValue); }
+    static constexpr ptrdiff_t offsetOfJSValue() { return OBJECT_OFFSETOF(WeakImpl, m_jsValue); }
     WeakHandleOwner* weakHandleOwner();
-    static ptrdiff_t offsetOfWeakHandleOwner() { return OBJECT_OFFSETOF(WeakImpl, m_weakHandleOwner); }
+    static constexpr ptrdiff_t offsetOfWeakHandleOwner() { return OBJECT_OFFSETOF(WeakImpl, m_weakHandleOwner); }
     void* context();
 
     static WeakImpl* asWeakImpl(JSValue*);

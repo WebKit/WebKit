@@ -52,7 +52,7 @@ Instance::Instance(VM& vm, JSGlobalObject* globalObject, Ref<Module>&& module)
     , m_passiveDataSegments(m_module->moduleInformation().dataSegmentsCount())
     , m_tags(m_module->moduleInformation().exceptionIndexSpaceSize())
 {
-    ASSERT(static_cast<ptrdiff_t>(Instance::offsetOfCachedMemory() + sizeof(void*)) == Instance::offsetOfCachedBoundsCheckingSize());
+    static_assert(static_cast<ptrdiff_t>(Instance::offsetOfCachedMemory() + sizeof(void*)) == Instance::offsetOfCachedBoundsCheckingSize());
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
         new (importFunctionInfo(i)) ImportFunctionInfo();
     m_globals = bitwise_cast<Global::Value*>(bitwise_cast<char*>(this) + offsetOfGlobalPtr(m_numImportFunctions, m_module->moduleInformation().tableCount(), 0));

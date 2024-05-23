@@ -188,7 +188,7 @@ public:
         swap(m_storage, other.m_storage);
     }
 
-    static ptrdiff_t offsetOfStorage() { return OBJECT_OFFSETOF(FixedVector, m_storage); }
+    static constexpr ptrdiff_t offsetOfStorage() { return OBJECT_OFFSETOF(FixedVector, m_storage); }
 
     Storage* storage() { return m_storage.get(); }
 

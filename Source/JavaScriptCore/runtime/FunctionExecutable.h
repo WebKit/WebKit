@@ -280,7 +280,7 @@ public:
     static inline ptrdiff_t offsetOfCodeBlockForCall() { return OBJECT_OFFSETOF(FunctionExecutable, m_codeBlockForCall); }
     static inline ptrdiff_t offsetOfCodeBlockForConstruct() { return OBJECT_OFFSETOF(FunctionExecutable, m_codeBlockForConstruct); }
 
-    static ptrdiff_t offsetOfCodeBlockFor(CodeSpecializationKind kind)
+    static constexpr ptrdiff_t offsetOfCodeBlockFor(CodeSpecializationKind kind)
     {
         switch (kind) {
         case CodeForCall:

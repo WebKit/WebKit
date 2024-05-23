@@ -39,7 +39,7 @@ struct SpecialPropertyCacheEntry {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     ~SpecialPropertyCacheEntry();
 
-    static ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(SpecialPropertyCacheEntry, m_value); }
+    static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(SpecialPropertyCacheEntry, m_value); }
 
     Bag<CachedSpecialPropertyAdaptiveStructureWatchpoint> m_missWatchpoints;
     std::unique_ptr<CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint> m_equivalenceWatchpoint;
@@ -50,7 +50,7 @@ struct SpecialPropertyCache {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     SpecialPropertyCacheEntry m_cache[numberOfCachedSpecialPropertyKeys];
 
-    static ptrdiff_t offsetOfCache(CachedSpecialPropertyKey key)
+    static constexpr ptrdiff_t offsetOfCache(CachedSpecialPropertyKey key)
     {
         return OBJECT_OFFSETOF(SpecialPropertyCache, m_cache) + sizeof(SpecialPropertyCacheEntry) * static_cast<unsigned>(key);
     }

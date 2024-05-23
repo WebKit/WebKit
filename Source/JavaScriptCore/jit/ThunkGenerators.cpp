@@ -365,7 +365,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, CallMode m
     jit.jump().linkTo(loop, &jit);
 
     found.link(&jit);
-    ASSERT((CallSlot::offsetOfTarget() + sizeof(void*)) == static_cast<size_t>(CallSlot::offsetOfCodeBlock()));
+    static_assert((CallSlot::offsetOfTarget() + sizeof(void*)) == static_cast<size_t>(CallSlot::offsetOfCodeBlock()));
     jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(GPRInfo::regT5, CallSlot::offsetOfCount()));
     jit.loadPairPtr(CCallHelpers::Address(GPRInfo::regT5, CallSlot::offsetOfTarget()), GPRInfo::regT4, GPRInfo::regT5);
 

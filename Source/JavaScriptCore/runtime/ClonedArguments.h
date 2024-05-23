@@ -85,7 +85,7 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     static Structure* createSlowPutStructure(VM&, JSGlobalObject*, JSValue prototype);
 
-    static ptrdiff_t offsetOfCallee()
+    static constexpr ptrdiff_t offsetOfCallee()
     {
         return OBJECT_OFFSETOF(ClonedArguments, m_callee);
     }

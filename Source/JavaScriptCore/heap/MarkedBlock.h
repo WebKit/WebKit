@@ -258,7 +258,7 @@ public:
         Header(VM&, Handle&);
         ~Header();
 
-        static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(Header, m_vm); }
+        static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(Header, m_vm); }
         
     private:
         friend class LLIntOffsetsExtractor;

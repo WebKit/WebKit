@@ -145,7 +145,7 @@ public:
     PageCount maximum() const { return m_maximum; }
     MemorySharingMode sharingMode() const { return m_sharingMode; }
     MemoryMode mode() const { return m_mode; }
-    static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(BufferMemoryHandle, m_size); }
+    static constexpr ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(BufferMemoryHandle, m_size); }
     Lock& lock() { return m_lock; }
 
     void updateSize(size_t size, std::memory_order order = std::memory_order_seq_cst)

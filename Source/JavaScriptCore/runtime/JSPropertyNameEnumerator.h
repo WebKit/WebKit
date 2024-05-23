@@ -79,13 +79,13 @@ public:
     uint32_t cachedInlineCapacity() const { return m_cachedInlineCapacity; }
     uint32_t sizeOfPropertyNames() const { return endGenericPropertyIndex(); }
     uint32_t flags() const { return m_flags; }
-    static ptrdiff_t cachedStructureIDOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedStructureID); }
-    static ptrdiff_t indexedLengthOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_indexedLength); }
-    static ptrdiff_t endStructurePropertyIndexOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_endStructurePropertyIndex); }
-    static ptrdiff_t endGenericPropertyIndexOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_endGenericPropertyIndex); }
-    static ptrdiff_t cachedInlineCapacityOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedInlineCapacity); }
-    static ptrdiff_t flagsOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_flags); }
-    static ptrdiff_t cachedPropertyNamesVectorOffset()
+    static constexpr ptrdiff_t cachedStructureIDOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedStructureID); }
+    static constexpr ptrdiff_t indexedLengthOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_indexedLength); }
+    static constexpr ptrdiff_t endStructurePropertyIndexOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_endStructurePropertyIndex); }
+    static constexpr ptrdiff_t endGenericPropertyIndexOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_endGenericPropertyIndex); }
+    static constexpr ptrdiff_t cachedInlineCapacityOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedInlineCapacity); }
+    static constexpr ptrdiff_t flagsOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_flags); }
+    static constexpr ptrdiff_t cachedPropertyNamesVectorOffset()
     {
         return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_propertyNames);
     }

@@ -110,12 +110,12 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static ptrdiff_t offsetOfGetter()
+    static constexpr ptrdiff_t offsetOfGetter()
     {
         return OBJECT_OFFSETOF(GetterSetter, m_getter);
     }
 
-    static ptrdiff_t offsetOfSetter()
+    static constexpr ptrdiff_t offsetOfSetter()
     {
         return OBJECT_OFFSETOF(GetterSetter, m_setter);
     }

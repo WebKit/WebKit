@@ -313,7 +313,7 @@ public:
 
     const QualifiedName& tagQName() const { return m_tagName; }
 #if ENABLE(JIT)
-    static ptrdiff_t tagQNameMemoryOffset() { return OBJECT_OFFSETOF(Element, m_tagName); }
+    static constexpr ptrdiff_t tagQNameMemoryOffset() { return OBJECT_OFFSETOF(Element, m_tagName); }
 #endif
     String tagName() const { return nodeName(); }
     bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
@@ -368,7 +368,7 @@ public:
     void stripScriptingAttributes(Vector<Attribute>&) const;
 
     const ElementData* elementData() const { return m_elementData.get(); }
-    static ptrdiff_t elementDataMemoryOffset() { return OBJECT_OFFSETOF(Element, m_elementData); }
+    static constexpr ptrdiff_t elementDataMemoryOffset() { return OBJECT_OFFSETOF(Element, m_elementData); }
     inline UniqueElementData& ensureUniqueElementData();
 
     void synchronizeAllAttributes() const;

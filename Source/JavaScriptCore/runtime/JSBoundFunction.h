@@ -92,13 +92,13 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
     
-    static ptrdiff_t offsetOfTargetFunction() { return OBJECT_OFFSETOF(JSBoundFunction, m_targetFunction); }
-    static ptrdiff_t offsetOfBoundThis() { return OBJECT_OFFSETOF(JSBoundFunction, m_boundThis); }
-    static ptrdiff_t offsetOfBoundArgs() { return OBJECT_OFFSETOF(JSBoundFunction, m_boundArgs); }
-    static ptrdiff_t offsetOfBoundArgsLength() { return OBJECT_OFFSETOF(JSBoundFunction, m_boundArgsLength); }
-    static ptrdiff_t offsetOfNameMayBeNull() { return OBJECT_OFFSETOF(JSBoundFunction, m_nameMayBeNull); }
-    static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSBoundFunction, m_length); }
-    static ptrdiff_t offsetOfCanConstruct() { return OBJECT_OFFSETOF(JSBoundFunction, m_canConstruct); }
+    static constexpr ptrdiff_t offsetOfTargetFunction() { return OBJECT_OFFSETOF(JSBoundFunction, m_targetFunction); }
+    static constexpr ptrdiff_t offsetOfBoundThis() { return OBJECT_OFFSETOF(JSBoundFunction, m_boundThis); }
+    static constexpr ptrdiff_t offsetOfBoundArgs() { return OBJECT_OFFSETOF(JSBoundFunction, m_boundArgs); }
+    static constexpr ptrdiff_t offsetOfBoundArgsLength() { return OBJECT_OFFSETOF(JSBoundFunction, m_boundArgsLength); }
+    static constexpr ptrdiff_t offsetOfNameMayBeNull() { return OBJECT_OFFSETOF(JSBoundFunction, m_nameMayBeNull); }
+    static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSBoundFunction, m_length); }
+    static constexpr ptrdiff_t offsetOfCanConstruct() { return OBJECT_OFFSETOF(JSBoundFunction, m_canConstruct); }
 
     template<typename Functor>
     void forEachBoundArg(const Functor& func)

@@ -51,7 +51,7 @@ public:
     bool containsAll(SpaceSplitStringData&);
 
     unsigned size() const { return m_size; }
-    static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(SpaceSplitStringData, m_size); }
+    static constexpr ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(SpaceSplitStringData, m_size); }
 
     const AtomString& operator[](unsigned i)
     {
@@ -80,7 +80,7 @@ public:
 
     const AtomString& keyString() const { return m_keyString; }
 
-    static ptrdiff_t tokensMemoryOffset() { return sizeof(SpaceSplitStringData); }
+    static constexpr ptrdiff_t tokensMemoryOffset() { return sizeof(SpaceSplitStringData); }
 
 private:
     static Ref<SpaceSplitStringData> create(const AtomString&, unsigned tokenCount);

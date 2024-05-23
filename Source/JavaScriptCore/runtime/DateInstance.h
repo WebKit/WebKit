@@ -75,8 +75,8 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static ptrdiff_t offsetOfInternalNumber() { return OBJECT_OFFSETOF(DateInstance, m_internalNumber); }
-    static ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(DateInstance, m_data); }
+    static constexpr ptrdiff_t offsetOfInternalNumber() { return OBJECT_OFFSETOF(DateInstance, m_internalNumber); }
+    static constexpr ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(DateInstance, m_data); }
 
 private:
     JS_EXPORT_PRIVATE DateInstance(VM&, Structure*);

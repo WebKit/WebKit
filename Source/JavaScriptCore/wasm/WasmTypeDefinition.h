@@ -699,9 +699,9 @@ public:
     bool isSubRTT(const RTT& other) const;
     static size_t allocatedRTTSize(Checked<DisplayCount> count) { return sizeof(RTT) + count * sizeof(TypeIndex); }
 
-    static ptrdiff_t offsetOfKind() { return OBJECT_OFFSETOF(RTT, m_kind); }
-    static ptrdiff_t offsetOfDisplaySize() { return OBJECT_OFFSETOF(RTT, m_displaySize); }
-    static ptrdiff_t offsetOfPayload() { return sizeof(RTT); }
+    static constexpr ptrdiff_t offsetOfKind() { return OBJECT_OFFSETOF(RTT, m_kind); }
+    static constexpr ptrdiff_t offsetOfDisplaySize() { return OBJECT_OFFSETOF(RTT, m_displaySize); }
+    static constexpr ptrdiff_t offsetOfPayload() { return sizeof(RTT); }
 
 private:
     // Payload starts past end of this object.

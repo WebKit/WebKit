@@ -220,8 +220,8 @@ public:
     StructureID* addressOfLastSeenStructureID() { return &m_lastSeenStructureID; }
     ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
 
-    static ptrdiff_t offsetOfArrayProfileFlags() { return OBJECT_OFFSETOF(ArrayProfile, m_arrayProfileFlags); }
-    static ptrdiff_t offsetOfLastSeenStructureID() { return OBJECT_OFFSETOF(ArrayProfile, m_lastSeenStructureID); }
+    static constexpr ptrdiff_t offsetOfArrayProfileFlags() { return OBJECT_OFFSETOF(ArrayProfile, m_arrayProfileFlags); }
+    static constexpr ptrdiff_t offsetOfLastSeenStructureID() { return OBJECT_OFFSETOF(ArrayProfile, m_lastSeenStructureID); }
 
     void setOutOfBounds() { m_arrayProfileFlags.add(ArrayProfileFlag::OutOfBounds); }
     

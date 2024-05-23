@@ -158,23 +158,24 @@ public:
             m_data.value.clear();
     }
 
-    static ptrdiff_t offsetOfKey()
+    static constexpr ptrdiff_t offsetOfKey()
     {
         return OBJECT_OFFSETOF(HashMapBucket, m_data) + OBJECT_OFFSETOF(Data, key);
     }
 
     template <typename T = Data>
-    static typename std::enable_if<std::is_same<T, HashMapBucketDataKeyValue>::value, ptrdiff_t>::type offsetOfValue()
+    requires (std::is_same_v<T, HashMapBucketDataKeyValue>)
+    static constexpr ptrdiff_t offsetOfValue()
     {
         return OBJECT_OFFSETOF(HashMapBucket, m_data) + OBJECT_OFFSETOF(Data, value);
     }
 
-    static ptrdiff_t offsetOfNext()
+    static constexpr ptrdiff_t offsetOfNext()
     {
         return OBJECT_OFFSETOF(HashMapBucket, m_next);
     }
 
-    static ptrdiff_t offsetOfPrev()
+    static constexpr ptrdiff_t offsetOfPrev()
     {
         return OBJECT_OFFSETOF(HashMapBucket, m_prev);
     }
@@ -316,32 +317,32 @@ public:
         return m_capacity * sizeof(HashMapBucketType*);
     }
 
-    static ptrdiff_t offsetOfHead()
+    static constexpr ptrdiff_t offsetOfHead()
     {
         return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_head);
     }
 
-    static ptrdiff_t offsetOfTail()
+    static constexpr ptrdiff_t offsetOfTail()
     {
         return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_tail);
     }
 
-    static ptrdiff_t offsetOfBuffer()
+    static constexpr ptrdiff_t offsetOfBuffer()
     {
         return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_buffer);
     }
 
-    static ptrdiff_t offsetOfKeyCount()
+    static constexpr ptrdiff_t offsetOfKeyCount()
     {
         return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_keyCount);
     }
 
-    static ptrdiff_t offsetOfDeleteCount()
+    static constexpr ptrdiff_t offsetOfDeleteCount()
     {
         return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_deleteCount);
     }
 
-    static ptrdiff_t offsetOfCapacity()
+    static constexpr ptrdiff_t offsetOfCapacity()
     {
         return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_capacity);
     }

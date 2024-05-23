@@ -155,7 +155,7 @@ public:
         m_codePtr.dumpWithName("CodeRef"_s, out);
     }
 
-    static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(MacroAssemblerCodeRef, m_codePtr); }
+    static constexpr ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(MacroAssemblerCodeRef, m_codePtr); }
 
 private:
     template<PtrTag otherTag>

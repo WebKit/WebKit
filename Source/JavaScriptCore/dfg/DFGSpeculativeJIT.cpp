@@ -9837,7 +9837,7 @@ void SpeculativeJIT::compileSpread(Node* node)
         add32(TrustedImm32(JSImmutableButterfly::offsetOfData()), scratch1GPR);
 
         emitAllocateVariableSizedCell<JSImmutableButterfly>(vm(), resultGPR, TrustedImmPtr(m_graph.registerStructure(vm().immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get())), scratch1GPR, scratch1GPR, scratch2GPR, slowPath, SlowAllocationResult::UndefinedBehavior);
-        ASSERT(JSImmutableButterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == JSImmutableButterfly::offsetOfVectorLength());
+        static_assert(JSImmutableButterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == JSImmutableButterfly::offsetOfVectorLength());
         storePair32(lengthGPR, lengthGPR, resultGPR, TrustedImm32(JSImmutableButterfly::offsetOfPublicLength()));
 
         loadPtr(Address(argument, JSObject::butterflyOffset()), scratch1GPR);
@@ -11983,8 +11983,8 @@ void SpeculativeJIT::compileNewMap(Node* node)
 
 #if CPU(ARM64)
     ASSERT(JSValue::encode(JSValue()) == 0);
-    ASSERT(JSMap::BucketType::offsetOfNext() + 8 == JSMap::BucketType::offsetOfPrev());
-    ASSERT(JSMap::BucketType::offsetOfKey() + 8 == JSMap::BucketType::offsetOfValue());
+    static_assert(JSMap::BucketType::offsetOfNext() + sizeof(void*) == JSMap::BucketType::offsetOfPrev());
+    static_assert(JSMap::BucketType::offsetOfKey() + sizeof(void*) == JSMap::BucketType::offsetOfValue());
     storePairPtr(ARM64Registers::zr, ARM64Registers::zr, Address(headGPR, JSMap::BucketType::offsetOfNext()));
     storePairPtr(ARM64Registers::zr, ARM64Registers::zr, Address(headGPR, JSMap::BucketType::offsetOfKey()));
 #else
@@ -12000,9 +12000,9 @@ void SpeculativeJIT::compileNewMap(Node* node)
 
 #if CPU(ARM64)
     ASSERT(JSValue::encode(JSValue()) == 0);
-    ASSERT(JSMap::offsetOfHead() + 8 == JSMap::offsetOfTail());
-    ASSERT(JSMap::offsetOfBuffer() + 8 == JSMap::offsetOfKeyCount());
-    ASSERT(JSMap::offsetOfKeyCount() + 4 == JSMap::offsetOfDeleteCount());
+    static_assert(JSMap::offsetOfHead() + sizeof(void*) == JSMap::offsetOfTail());
+    static_assert(JSMap::offsetOfBuffer() + sizeof(void*) == JSMap::offsetOfKeyCount());
+    static_assert(JSMap::offsetOfKeyCount() + sizeof(uint32_t) == JSMap::offsetOfDeleteCount());
     storePairPtr(headGPR, headGPR, Address(resultGPR, JSMap::offsetOfHead()));
     storePairPtr(ARM64Registers::zr, ARM64Registers::zr, Address(resultGPR, JSMap::offsetOfBuffer()));
     store32(ARM64Registers::zr, Address(resultGPR, JSMap::offsetOfCapacity()));
@@ -12039,7 +12039,7 @@ void SpeculativeJIT::compileNewSet(Node* node)
     emitAllocateJSCell(headGPR, JITAllocator::constant(allocatorValue), scratch1GPR, TrustedImmPtr(m_graph.registerStructure(vm().hashMapBucketSetStructure.get())), scratch2GPR, slowPath, SlowAllocationResult::UndefinedBehavior);
 
 #if CPU(ARM64)
-    ASSERT(JSSet::BucketType::offsetOfNext() + 8 == JSSet::BucketType::offsetOfPrev());
+    static_assert(JSSet::BucketType::offsetOfNext() + sizeof(void*) == JSSet::BucketType::offsetOfPrev());
     storePairPtr(ARM64Registers::zr, ARM64Registers::zr, Address(headGPR, JSSet::BucketType::offsetOfNext()));
 #else
     storePtr(TrustedImmPtr(nullptr), Address(headGPR, JSSet::BucketType::offsetOfNext()));
@@ -12053,9 +12053,9 @@ void SpeculativeJIT::compileNewSet(Node* node)
 
 #if CPU(ARM64)
     ASSERT(JSValue::encode(JSValue()) == 0);
-    ASSERT(JSSet::offsetOfHead() + 8 == JSSet::offsetOfTail());
-    ASSERT(JSSet::offsetOfBuffer() + 8 == JSSet::offsetOfKeyCount());
-    ASSERT(JSSet::offsetOfKeyCount() + 4 == JSSet::offsetOfDeleteCount());
+    static_assert(JSSet::offsetOfHead() + sizeof(void*) == JSSet::offsetOfTail());
+    static_assert(JSSet::offsetOfBuffer() + sizeof(void*) == JSSet::offsetOfKeyCount());
+    static_assert(JSSet::offsetOfKeyCount() + sizeof(uint32_t) == JSSet::offsetOfDeleteCount());
     storePairPtr(headGPR, headGPR, Address(resultGPR, JSSet::offsetOfHead()));
     storePairPtr(ARM64Registers::zr, ARM64Registers::zr, Address(resultGPR, JSSet::offsetOfBuffer()));
     store32(ARM64Registers::zr, Address(resultGPR, JSSet::offsetOfCapacity()));
@@ -14372,7 +14372,7 @@ void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeG
     emitAllocateVariableSized(
         storageResultGPR, vm().auxiliarySpace(), scratch2, scratch1, scratch3, slowCases);
     addPtr(TrustedImm32(sizeof(IndexingHeader)), storageResultGPR);
-    ASSERT(Butterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == Butterfly::offsetOfVectorLength());
+    static_assert(Butterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == Butterfly::offsetOfVectorLength());
     storePair32(sizeGPR, sizeGPR, storageResultGPR, TrustedImm32(Butterfly::offsetOfPublicLength()));
 }
 
@@ -14442,7 +14442,7 @@ void SpeculativeJIT::compileGetMapBucketHead(Node* node)
     else
         RELEASE_ASSERT_NOT_REACHED();
 
-    ASSERT(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead() == HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>::offsetOfHead());
+    static_assert(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead() == HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>::offsetOfHead());
     loadPtr(Address(mapGPR, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead()), bucketGPR);
     cellResult(bucketGPR, node);
 }
@@ -14455,8 +14455,8 @@ void SpeculativeJIT::compileGetMapBucketNext(Node* node)
     GPRReg bucketGPR = bucket.gpr();
     GPRReg resultGPR = result.gpr();
 
-    ASSERT(HashMapBucket<HashMapBucketDataKey>::offsetOfNext() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext());
-    ASSERT(HashMapBucket<HashMapBucketDataKey>::offsetOfKey() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey());
+    static_assert(HashMapBucket<HashMapBucketDataKey>::offsetOfNext() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext());
+    static_assert(HashMapBucket<HashMapBucketDataKey>::offsetOfKey() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey());
     loadPtr(Address(bucketGPR, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext()), resultGPR);
 
     Label loop = label();
@@ -16021,8 +16021,8 @@ void SpeculativeJIT::compileWeakMapGet(Node* node)
         else
             speculateWeakSetObject(node->child1(), weakMapGPR);
 
-        ASSERT(WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfCapacity() == WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::offsetOfCapacity());
-        ASSERT(WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer() == WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::offsetOfBuffer());
+        static_assert(WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfCapacity() == WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::offsetOfCapacity());
+        static_assert(WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer() == WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::offsetOfBuffer());
         load32(Address(weakMapGPR, WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfCapacity()), maskGPR);
         loadPtr(Address(weakMapGPR, WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer()), bufferGPR);
     }

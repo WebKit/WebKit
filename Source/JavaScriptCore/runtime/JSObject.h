@@ -1033,7 +1033,7 @@ public:
         
     static size_t offsetOfInlineStorage();
         
-    static ptrdiff_t butterflyOffset()
+    static constexpr ptrdiff_t butterflyOffset()
     {
         return OBJECT_OFFSETOF(JSObject, m_butterfly);
     }

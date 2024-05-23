@@ -385,8 +385,8 @@ public:
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
 
-    static ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmCallee); }
-    static ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmFunctionPrologue); }
+    static constexpr ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmCallee); }
+    static constexpr ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmFunctionPrologue); }
     static constexpr ptrdiff_t offsetOfMetadataStorage() { return offsetOfData(); }
 
 private:

@@ -227,17 +227,17 @@ public:
         return WTF::atomicCompareExchangeStrong(&m_cellState, oldState, newState);
     }
 
-    static ptrdiff_t structureIDOffset()
+    static constexpr ptrdiff_t structureIDOffset()
     {
         return OBJECT_OFFSETOF(JSCell, m_structureID);
     }
 
-    static ptrdiff_t typeInfoFlagsOffset()
+    static constexpr ptrdiff_t typeInfoFlagsOffset()
     {
         return OBJECT_OFFSETOF(JSCell, m_flags);
     }
 
-    static ptrdiff_t typeInfoTypeOffset()
+    static constexpr ptrdiff_t typeInfoTypeOffset()
     {
         return OBJECT_OFFSETOF(JSCell, m_type);
     }
@@ -245,12 +245,12 @@ public:
     // DO NOT store to this field. Always use a CAS loop, since some bits are flipped using CAS
     // from other threads due to the internal lock. One exception: you don't need the CAS if the
     // object has not escaped yet.
-    static ptrdiff_t indexingTypeAndMiscOffset()
+    static constexpr ptrdiff_t indexingTypeAndMiscOffset()
     {
         return OBJECT_OFFSETOF(JSCell, m_indexingTypeAndMisc);
     }
 
-    static ptrdiff_t cellStateOffset()
+    static constexpr ptrdiff_t cellStateOffset()
     {
         return OBJECT_OFFSETOF(JSCell, m_cellState);
     }

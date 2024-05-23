@@ -877,24 +877,24 @@ public:
     void setIsITML();
 
     RegExpGlobalData& regExpGlobalData() { return m_regExpGlobalData; }
-    static ptrdiff_t regExpGlobalDataOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_regExpGlobalData); }
+    static constexpr ptrdiff_t regExpGlobalDataOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_regExpGlobalData); }
 
-    static ptrdiff_t offsetOfGlobalThis() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalThis); }
-    static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSGlobalObject, m_vm); }
-    static ptrdiff_t offsetOfGlobalLexicalEnvironment() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalEnvironment); }
-    static ptrdiff_t offsetOfGlobalLexicalBindingEpoch() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
-    static ptrdiff_t offsetOfVarInjectionWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpointSet); }
-    static ptrdiff_t offsetOfVarReadOnlyWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varReadOnlyWatchpointSet); }
-    static ptrdiff_t offsetOfFunctionProtoHasInstanceSymbolFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_functionProtoHasInstanceSymbolFunction); }
-    static ptrdiff_t offsetOfPerformProxyObjectHasFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectHasFunction); }
-    static ptrdiff_t offsetOfPerformProxyObjectGetFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectGetFunction); }
-    static ptrdiff_t offsetOfPerformProxyObjectGetByValFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectGetByValFunction); }
-    static ptrdiff_t offsetOfPerformProxyObjectSetStrictFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectSetStrictFunction); }
-    static ptrdiff_t offsetOfPerformProxyObjectSetSloppyFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectSetSloppyFunction); }
-    static ptrdiff_t offsetOfNullSetterStrictFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_nullSetterStrictFunction); }
-    static ptrdiff_t offsetOfStringPrototype() { return OBJECT_OFFSETOF(JSGlobalObject, m_stringPrototype); }
-    static ptrdiff_t offsetOfBigIntPrototype() { return OBJECT_OFFSETOF(JSGlobalObject, m_bigIntPrototype); }
-    static ptrdiff_t offsetOfSymbolPrototype() { return OBJECT_OFFSETOF(JSGlobalObject, m_symbolPrototype); }
+    static constexpr ptrdiff_t offsetOfGlobalThis() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalThis); }
+    static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSGlobalObject, m_vm); }
+    static constexpr ptrdiff_t offsetOfGlobalLexicalEnvironment() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalEnvironment); }
+    static constexpr ptrdiff_t offsetOfGlobalLexicalBindingEpoch() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
+    static constexpr ptrdiff_t offsetOfVarInjectionWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpointSet); }
+    static constexpr ptrdiff_t offsetOfVarReadOnlyWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varReadOnlyWatchpointSet); }
+    static constexpr ptrdiff_t offsetOfFunctionProtoHasInstanceSymbolFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_functionProtoHasInstanceSymbolFunction); }
+    static constexpr ptrdiff_t offsetOfPerformProxyObjectHasFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectHasFunction); }
+    static constexpr ptrdiff_t offsetOfPerformProxyObjectGetFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectGetFunction); }
+    static constexpr ptrdiff_t offsetOfPerformProxyObjectGetByValFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectGetByValFunction); }
+    static constexpr ptrdiff_t offsetOfPerformProxyObjectSetStrictFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectSetStrictFunction); }
+    static constexpr ptrdiff_t offsetOfPerformProxyObjectSetSloppyFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectSetSloppyFunction); }
+    static constexpr ptrdiff_t offsetOfNullSetterStrictFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_nullSetterStrictFunction); }
+    static constexpr ptrdiff_t offsetOfStringPrototype() { return OBJECT_OFFSETOF(JSGlobalObject, m_stringPrototype); }
+    static constexpr ptrdiff_t offsetOfBigIntPrototype() { return OBJECT_OFFSETOF(JSGlobalObject, m_bigIntPrototype); }
+    static constexpr ptrdiff_t offsetOfSymbolPrototype() { return OBJECT_OFFSETOF(JSGlobalObject, m_symbolPrototype); }
 
 #if ENABLE(REMOTE_INSPECTOR)
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
@@ -904,7 +904,7 @@ public:
 
     void bumpGlobalLexicalBindingEpoch(VM&);
     unsigned globalLexicalBindingEpoch() const { return m_globalLexicalBindingEpoch; }
-    static ptrdiff_t globalLexicalBindingEpochOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
+    static constexpr ptrdiff_t globalLexicalBindingEpochOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
     unsigned* addressOfGlobalLexicalBindingEpoch() { return &m_globalLexicalBindingEpoch; }
 
     JS_EXPORT_PRIVATE void setConsoleClient(WeakPtr<ConsoleClient>&&);
@@ -1056,7 +1056,7 @@ public:
 
     inline std::unique_ptr<OpaqueJSClassContextData>& contextData(OpaqueJSClass*);
 
-    static ptrdiff_t weakRandomOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_weakRandom); }
+    static constexpr ptrdiff_t weakRandomOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_weakRandom); }
     double weakRandomNumber() { return m_weakRandom.get(); }
     unsigned weakRandomInteger() { return m_weakRandom.getUint32(); }
     WeakRandom& weakRandom() { return m_weakRandom; }

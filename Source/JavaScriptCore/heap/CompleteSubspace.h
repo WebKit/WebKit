@@ -45,7 +45,7 @@ public:
     void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
     void* reallocatePreciseAllocationNonVirtual(VM&, HeapCell*, size_t, GCDeferralContext*, AllocationFailureMode);
     
-    static ptrdiff_t offsetOfAllocatorForSizeStep() { return OBJECT_OFFSETOF(CompleteSubspace, m_allocatorForSizeStep); }
+    static constexpr ptrdiff_t offsetOfAllocatorForSizeStep() { return OBJECT_OFFSETOF(CompleteSubspace, m_allocatorForSizeStep); }
     
     Allocator* allocatorForSizeStep() { return &m_allocatorForSizeStep[0]; }
 

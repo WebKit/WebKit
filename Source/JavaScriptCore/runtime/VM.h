@@ -689,37 +689,37 @@ public:
     MacroAssemblerCodeRef<JSEntryPtrTag> getCTIThrowExceptionFromCallSlowPath();
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> getCTIVirtualCall(CallMode);
 
-    static ptrdiff_t exceptionOffset()
+    static constexpr ptrdiff_t exceptionOffset()
     {
         return OBJECT_OFFSETOF(VM, m_exception);
     }
 
-    static ptrdiff_t callFrameForCatchOffset()
+    static constexpr ptrdiff_t callFrameForCatchOffset()
     {
         return OBJECT_OFFSETOF(VM, callFrameForCatch);
     }
 
-    static ptrdiff_t topEntryFrameOffset()
+    static constexpr ptrdiff_t topEntryFrameOffset()
     {
         return OBJECT_OFFSETOF(VM, topEntryFrame);
     }
 
-    static ptrdiff_t offsetOfEncodedHostCallReturnValue()
+    static constexpr ptrdiff_t offsetOfEncodedHostCallReturnValue()
     {
         return OBJECT_OFFSETOF(VM, encodedHostCallReturnValue);
     }
 
-    static ptrdiff_t offsetOfHeapBarrierThreshold()
+    static constexpr ptrdiff_t offsetOfHeapBarrierThreshold()
     {
         return OBJECT_OFFSETOF(VM, heap) + OBJECT_OFFSETOF(Heap, m_barrierThreshold);
     }
 
-    static ptrdiff_t offsetOfHeapMutatorShouldBeFenced()
+    static constexpr ptrdiff_t offsetOfHeapMutatorShouldBeFenced()
     {
         return OBJECT_OFFSETOF(VM, heap) + OBJECT_OFFSETOF(Heap, m_mutatorShouldBeFenced);
     }
 
-    static ptrdiff_t offsetOfSoftStackLimit()
+    static constexpr ptrdiff_t offsetOfSoftStackLimit()
     {
         return OBJECT_OFFSETOF(VM, m_softStackLimit);
     }

@@ -4179,13 +4179,13 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, co
             }
 
 #if USE(JSVALUE64)
-            ASSERT(static_cast<ptrdiff_t>(FuncRefTable::Function::offsetOfInstance() + sizeof(void*)) == FuncRefTable::Function::offsetOfValue());
+            static_assert(static_cast<ptrdiff_t>(FuncRefTable::Function::offsetOfInstance() + sizeof(void*)) == FuncRefTable::Function::offsetOfValue());
             m_jit.loadPairPtr(calleeSignatureIndex, TrustedImm32(FuncRefTable::Function::offsetOfInstance()), calleeInstance, jsCalleeAnchor);
 #else
             m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfInstance()), calleeInstance);
             m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfValue()), jsCalleeAnchor);
 #endif
-            ASSERT(static_cast<ptrdiff_t>(WasmToWasmImportableFunction::offsetOfSignatureIndex() + sizeof(void*)) == WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation());
+            static_assert(static_cast<ptrdiff_t>(WasmToWasmImportableFunction::offsetOfSignatureIndex() + sizeof(void*)) == WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation());
 
             // Save the table entry in calleeRTT if needed for the subtype check.
             bool needsSubtypeCheck = Options::useWebAssemblyGC() && !originalSignature.isFinalType();

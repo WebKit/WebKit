@@ -356,15 +356,15 @@ private:
     void rewireStubAsJumpInAccess(CodeBlock*, InlineCacheHandler&);
 
 public:
-    static ptrdiff_t offsetOfByIdSelfOffset() { return OBJECT_OFFSETOF(StructureStubInfo, byIdSelfOffset); }
-    static ptrdiff_t offsetOfInlineAccessBaseStructureID() { return OBJECT_OFFSETOF(StructureStubInfo, m_inlineAccessBaseStructureID); }
-    static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(StructureStubInfo, m_codePtr); }
-    static ptrdiff_t offsetOfDoneLocation() { return OBJECT_OFFSETOF(StructureStubInfo, doneLocation); }
-    static ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(StructureStubInfo, slowPathStartLocation); }
-    static ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(StructureStubInfo, m_slowOperation); }
-    static ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(StructureStubInfo, countdown); }
-    static ptrdiff_t offsetOfCallSiteIndex() { return OBJECT_OFFSETOF(StructureStubInfo, callSiteIndex); }
-    static ptrdiff_t offsetOfHandler() { return OBJECT_OFFSETOF(StructureStubInfo, m_handler); }
+    static constexpr ptrdiff_t offsetOfByIdSelfOffset() { return OBJECT_OFFSETOF(StructureStubInfo, byIdSelfOffset); }
+    static constexpr ptrdiff_t offsetOfInlineAccessBaseStructureID() { return OBJECT_OFFSETOF(StructureStubInfo, m_inlineAccessBaseStructureID); }
+    static constexpr ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(StructureStubInfo, m_codePtr); }
+    static constexpr ptrdiff_t offsetOfDoneLocation() { return OBJECT_OFFSETOF(StructureStubInfo, doneLocation); }
+    static constexpr ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(StructureStubInfo, slowPathStartLocation); }
+    static constexpr ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(StructureStubInfo, m_slowOperation); }
+    static constexpr ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(StructureStubInfo, countdown); }
+    static constexpr ptrdiff_t offsetOfCallSiteIndex() { return OBJECT_OFFSETOF(StructureStubInfo, callSiteIndex); }
+    static constexpr ptrdiff_t offsetOfHandler() { return OBJECT_OFFSETOF(StructureStubInfo, m_handler); }
 
     void resetStubAsJumpInAccess(CodeBlock*);
 

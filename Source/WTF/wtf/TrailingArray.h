@@ -166,7 +166,7 @@ public:
         std::fill(begin(), end(), val);
     }
 
-    static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(Derived, m_size); }
+    static constexpr ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(Derived, m_size); }
     static constexpr ptrdiff_t offsetOfData()
     {
         return WTF::roundUpToMultipleOf<alignof(T)>(sizeof(Derived));

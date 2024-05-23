@@ -64,10 +64,10 @@ public:
     JS_EXPORT_PRIVATE ~Instance();
 
     JSWebAssemblyInstance* owner() const { return m_owner; }
-    static ptrdiff_t offsetOfOwner() { return OBJECT_OFFSETOF(Instance, m_owner); }
-    static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(Instance, m_vm); }
-    static ptrdiff_t offsetOfSoftStackLimit() { return OBJECT_OFFSETOF(Instance, m_softStackLimit); }
-    static ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(Instance, m_globalObject); }
+    static constexpr ptrdiff_t offsetOfOwner() { return OBJECT_OFFSETOF(Instance, m_owner); }
+    static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(Instance, m_vm); }
+    static constexpr ptrdiff_t offsetOfSoftStackLimit() { return OBJECT_OFFSETOF(Instance, m_softStackLimit); }
+    static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(Instance, m_globalObject); }
 
     void updateSoftStackLimit(void* softStackLimit) { m_softStackLimit = softStackLimit; }
 
@@ -201,11 +201,11 @@ public:
         return &Wasm::Global::fromBinding(*pointer);
     }
 
-    static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Instance, m_memory); }
-    static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(Instance, m_globals); }
-    static ptrdiff_t offsetOfCachedMemory() { return OBJECT_OFFSETOF(Instance, m_cachedMemory); }
-    static ptrdiff_t offsetOfCachedBoundsCheckingSize() { return OBJECT_OFFSETOF(Instance, m_cachedBoundsCheckingSize); }
-    static ptrdiff_t offsetOfTemporaryCallFrame() { return OBJECT_OFFSETOF(Instance, m_temporaryCallFrame); }
+    static constexpr ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Instance, m_memory); }
+    static constexpr ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(Instance, m_globals); }
+    static constexpr ptrdiff_t offsetOfCachedMemory() { return OBJECT_OFFSETOF(Instance, m_cachedMemory); }
+    static constexpr ptrdiff_t offsetOfCachedBoundsCheckingSize() { return OBJECT_OFFSETOF(Instance, m_cachedBoundsCheckingSize); }
+    static constexpr ptrdiff_t offsetOfTemporaryCallFrame() { return OBJECT_OFFSETOF(Instance, m_temporaryCallFrame); }
 
     // Tail accessors.
     static constexpr size_t offsetOfTail() { return WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(Instance)); }

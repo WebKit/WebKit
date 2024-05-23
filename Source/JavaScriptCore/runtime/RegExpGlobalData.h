@@ -52,7 +52,7 @@ public:
     MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset);
     void recordMatch(VM&, JSGlobalObject*, RegExp*, JSString*, const MatchResult&);
 
-    static ptrdiff_t offsetOfCachedResult() { return OBJECT_OFFSETOF(RegExpGlobalData, m_cachedResult); }
+    static constexpr ptrdiff_t offsetOfCachedResult() { return OBJECT_OFFSETOF(RegExpGlobalData, m_cachedResult); }
 
     const Vector<int>& ovector() const { return m_ovector; }
 

@@ -65,7 +65,7 @@ public:
         return m_functionForConstruct;
     }
 
-    static ptrdiff_t offsetOfNativeFunctionFor(CodeSpecializationKind kind)
+    static constexpr ptrdiff_t offsetOfNativeFunctionFor(CodeSpecializationKind kind)
     {
         if (kind == CodeForCall)
             return OBJECT_OFFSETOF(InternalFunction, m_functionForCall);
@@ -73,7 +73,7 @@ public:
         return OBJECT_OFFSETOF(InternalFunction, m_functionForConstruct);
     }
 
-    static ptrdiff_t offsetOfGlobalObject()
+    static constexpr ptrdiff_t offsetOfGlobalObject()
     {
         return OBJECT_OFFSETOF(InternalFunction, m_globalObject);
     }

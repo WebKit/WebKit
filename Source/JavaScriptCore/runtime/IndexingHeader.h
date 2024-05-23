@@ -41,11 +41,11 @@ public:
     // there is no risk of overflow.
     static constexpr unsigned maximumLength = 0x10000000;
     
-    static ptrdiff_t offsetOfIndexingHeader() { return -static_cast<ptrdiff_t>(sizeof(IndexingHeader)); }
+    static constexpr ptrdiff_t offsetOfIndexingHeader() { return -static_cast<ptrdiff_t>(sizeof(IndexingHeader)); }
     
-    static ptrdiff_t offsetOfArrayBuffer() { return OBJECT_OFFSETOF(IndexingHeader, u.typedArray.buffer); }
-    static ptrdiff_t offsetOfPublicLength() { return OBJECT_OFFSETOF(IndexingHeader, u.lengths.publicLength); }
-    static ptrdiff_t offsetOfVectorLength() { return OBJECT_OFFSETOF(IndexingHeader, u.lengths.vectorLength); }
+    static constexpr ptrdiff_t offsetOfArrayBuffer() { return OBJECT_OFFSETOF(IndexingHeader, u.typedArray.buffer); }
+    static constexpr ptrdiff_t offsetOfPublicLength() { return OBJECT_OFFSETOF(IndexingHeader, u.lengths.publicLength); }
+    static constexpr ptrdiff_t offsetOfVectorLength() { return OBJECT_OFFSETOF(IndexingHeader, u.lengths.vectorLength); }
     
     IndexingHeader()
     {

@@ -246,7 +246,7 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_fiber); }
+    static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_fiber); }
 
     DECLARE_EXPORT_INFO;
 
@@ -362,9 +362,9 @@ public:
             m_length = length;
         }
 
-        static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
-        static ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
-        static ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(CompactFibers, m_fiber1Upper); }
+        static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
+        static constexpr ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
+        static constexpr ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(CompactFibers, m_fiber1Upper); }
 
     private:
         friend class LLIntOffsetsExtractor;
@@ -403,9 +403,9 @@ public:
             m_length = length;
         }
 
-        static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
-        static ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(CompactFibers, m_fiber1); }
-        static ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(CompactFibers, m_fiber2); }
+        static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
+        static constexpr ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(CompactFibers, m_fiber1); }
+        static constexpr ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(CompactFibers, m_fiber2); }
 
     private:
         friend class LLIntOffsetsExtractor;
@@ -581,11 +581,11 @@ private:
     }
 
 public:
-    static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfLength(); } // 32byte width.
-    static ptrdiff_t offsetOfFlags() { return offsetOfValue(); }
-    static ptrdiff_t offsetOfFiber0() { return offsetOfValue(); }
-    static ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber1(); }
-    static ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber2(); }
+    static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfLength(); } // 32byte width.
+    static constexpr ptrdiff_t offsetOfFlags() { return offsetOfValue(); }
+    static constexpr ptrdiff_t offsetOfFiber0() { return offsetOfValue(); }
+    static constexpr ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber1(); }
+    static constexpr ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber2(); }
 
     static constexpr unsigned s_maxInternalRopeLength = 3;
 

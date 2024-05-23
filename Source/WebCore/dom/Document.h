@@ -494,7 +494,7 @@ public:
     
     Element* documentElement() const { return m_documentElement.get(); }
     inline RefPtr<Element> protectedDocumentElement() const; // Defined in DocumentInlines.h.
-    static ptrdiff_t documentElementMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentElement); }
+    static constexpr ptrdiff_t documentElementMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentElement); }
 
     WEBCORE_EXPORT Element* activeElement();
     WEBCORE_EXPORT bool hasFocus() const;
@@ -633,7 +633,7 @@ public:
     bool hasSVGRootNode() const;
     virtual bool isFrameSet() const { return false; }
 
-    static ptrdiff_t documentClassesMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentClasses); }
+    static constexpr ptrdiff_t documentClassesMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentClasses); }
     static auto isHTMLDocumentClassFlag() { return enumToUnderlyingType(DocumentClass::HTML); }
 
     bool isSrcdocDocument() const { return m_isSrcdocDocument; }
@@ -876,7 +876,7 @@ public:
 
     void setCompatibilityMode(DocumentCompatibilityMode);
     void lockCompatibilityMode() { m_compatibilityModeLocked = true; }
-    static ptrdiff_t compatibilityModeMemoryOffset() { return OBJECT_OFFSETOF(Document, m_compatibilityMode); }
+    static constexpr ptrdiff_t compatibilityModeMemoryOffset() { return OBJECT_OFFSETOF(Document, m_compatibilityMode); }
 
     WEBCORE_EXPORT String compatMode() const;
 

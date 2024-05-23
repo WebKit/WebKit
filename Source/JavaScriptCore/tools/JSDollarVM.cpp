@@ -1081,7 +1081,7 @@ public:
         return m_value;
     }
 
-    static ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(DOMJITNode, m_value); }
+    static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(DOMJITNode, m_value); }
 
 private:
     int32_t m_value { 42 };

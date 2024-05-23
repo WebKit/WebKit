@@ -301,7 +301,7 @@ public:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> adopt(StringBuffer<LChar>&&);
 
     unsigned length() const { return m_length; }
-    static ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }
+    static constexpr ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }
     bool isEmpty() const { return !m_length; }
 
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
