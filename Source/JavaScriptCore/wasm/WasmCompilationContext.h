@@ -55,6 +55,7 @@ class Procedure { };
 namespace Wasm {
 
 class BBQDisassembler;
+class CalleeGroup;
 class MemoryInformation;
 class OptimizingJITCallee;
 class TierUpCount;
