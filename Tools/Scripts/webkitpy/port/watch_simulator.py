@@ -41,7 +41,7 @@ class WatchSimulatorPort(WatchPort):
 
     DEVICE_MANAGER = SimulatedDeviceManager
 
-    DEFAULT_DEVICE_TYPES = [DeviceType(hardware_family='Apple Watch', hardware_type='Series 5 - 44mm')]
+    DEFAULT_DEVICE_TYPES = [DeviceType(hardware_family='Apple Watch', hardware_type='Series 9 - 45mm')]
     SDK = apple_additions().get_sdk('watchsimulator') if apple_additions() else 'watchsimulator'
 
     def architecture(self):
@@ -50,8 +50,8 @@ class WatchSimulatorPort(WatchPort):
             return 'arm64_32'
         return self.DEFAULT_ARCHITECTURE
 
-    # This supports the mapping of a port name such as watchos-simulator-5 to the construction of a port
-    # using watchOS 5.
+    # This supports the mapping of a port name such as watchos-simulator-9 to the construction of a port
+    # using watchOS 9.
     @staticmethod
     def _version_from_name(name):
         if len(name.split('-')) > 2 and name.split('-')[2].isdigit():
