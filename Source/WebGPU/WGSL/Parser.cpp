@@ -830,6 +830,11 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
         if (!result.isNewEntry)
             FAIL(makeString("duplicate member '"_s, member.get().name(), "' in struct '"_s, name, '\''));
         members.append(member);
+
+        // https://www.w3.org/TR/WGSL/#limits
+        static constexpr unsigned maximumNumberOfStructMembers = 1023;
+        if (UNLIKELY(members.size() > maximumNumberOfStructMembers))
+            FAIL(makeString("struct cannot have more than "_s, String::number(maximumNumberOfStructMembers), " members"_s));
         if (current().type == TokenType::Comma)
             consume();
         else

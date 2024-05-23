@@ -29,6 +29,7 @@
 #include "ASTStringDumper.h"
 #include "ASTStructure.h"
 #include "TypeStore.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/StringHash.h>
@@ -322,10 +323,13 @@ unsigned Type::size() const
             return matrix.columns * WTF::roundUpToMultipleOf(rowAlignment, rowSize);
         },
         [&](const Array& array) -> unsigned {
-            unsigned size = 1;
+            CheckedUint32 size = 1;
             if (auto* constantSize = std::get_if<unsigned>(&array.size))
                 size = *constantSize;
-            return size * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
+            size *= WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
+            if (size.hasOverflowed())
+                return std::numeric_limits<unsigned>::max();
+            return size.value();
         },
         [&](const Struct& structure) -> unsigned {
             return structure.structure.size();

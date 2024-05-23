@@ -30,6 +30,7 @@
 #include "ASTVisitor.h"
 #include "Constraints.h"
 #include "WGSLShaderModule.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WGSL {
@@ -284,9 +285,9 @@ void AttributeValidator::visit(AST::Structure& structure)
 
     structure.m_hasSizeOrAlignmentAttributes = std::exchange(m_hasSizeOrAlignmentAttributes, false);
 
-    unsigned previousSize = 0;
+    CheckedUint32 previousSize = 0;
     unsigned alignment = 0;
-    unsigned size = 0;
+    CheckedUint32 size = 0;
     AST::StructureMember* previousMember = nullptr;
     for (auto& member : structure.members()) {
         auto* type = member.type().inferredType();
@@ -303,19 +304,20 @@ void AttributeValidator::visit(AST::Structure& structure)
             member.m_size = fieldSize;
         }
 
-        auto offset = WTF::roundUpToMultipleOf(*fieldAlignment, size);
+        unsigned currentSize = UNLIKELY(size.hasOverflowed()) ? std::numeric_limits<unsigned>::max() : size.value();
+        unsigned offset = UNLIKELY(size.hasOverflowed()) ? currentSize : WTF::roundUpToMultipleOf(*fieldAlignment, currentSize);
         member.m_offset = offset;
 
         alignment = std::max(alignment, *fieldAlignment);
-        size = offset + *fieldSize;
+        size = UNLIKELY(size.hasOverflowed()) ? currentSize : offset + *fieldSize;
 
         if (previousMember)
             previousMember->m_padding = offset - previousSize;
 
         previousMember = &member;
-        previousSize = offset + typeSize;
+        previousSize = UNLIKELY(size.hasOverflowed()) ? currentSize : offset + typeSize;
     }
-    auto finalSize = WTF::roundUpToMultipleOf(alignment, size);
+    auto finalSize = UNLIKELY(size.hasOverflowed()) ? std::numeric_limits<unsigned>::max() : WTF::roundUpToMultipleOf(alignment, size.value());
     previousMember->m_padding = finalSize - previousSize;
     structure.m_alignment = alignment;
     structure.m_size = finalSize;
