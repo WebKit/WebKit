@@ -506,6 +506,9 @@ class Radar(Base, ContextStack):
         class UnsuccessfulResponseException(Exception):
             pass
 
+        class RadarAccessDeniedResponseException(Exception):
+            pass
+
     class RetryPolicy(object):
         pass
 
