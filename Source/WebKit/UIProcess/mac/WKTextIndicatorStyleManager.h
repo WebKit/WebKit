@@ -29,7 +29,7 @@
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
-#import "WKTextIndicatorStyleType.h"
+#import "TextIndicatorStyle.h"
 
 namespace WebKit {
 class WebViewImpl;
