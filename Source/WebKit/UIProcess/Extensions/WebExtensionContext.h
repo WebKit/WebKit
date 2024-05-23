@@ -589,6 +589,8 @@ private:
 
     void performTasksAfterBackgroundContentLoads();
 
+    void reportWebViewConfigurationErrorIfNeeded(const WebExtensionTab&) const;
+
 #if ENABLE(INSPECTOR_EXTENSIONS)
     URL inspectorBackgroundPageURL() const;
 

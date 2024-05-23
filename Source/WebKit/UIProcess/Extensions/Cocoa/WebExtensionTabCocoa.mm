@@ -360,7 +360,6 @@ NSArray *WebExtensionTab::webViews() const
     for (WKWebView *webView in webViews) {
         THROW_UNLESS([webView isKindOfClass:WKWebView.class], @"Object in array returned by webViewsForWebExtensionContext: is not a WKWebView");
         THROW_UNLESS(webView.configuration._webExtensionController, @"WKWebView returned by webViewsForWebExtensionContext: is not configured with a _WKWebExtensionController");
-        THROW_UNLESS(webView.configuration._webExtensionController == extensionContext()->extensionController()->wrapper(), @"WKWebView returned by webViewsForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context");
     }
 
     if (auto *mainWebView = [m_delegate mainWebViewForWebExtensionContext:m_extensionContext->wrapper()])

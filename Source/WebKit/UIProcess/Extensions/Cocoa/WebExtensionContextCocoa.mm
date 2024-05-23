@@ -1798,11 +1798,15 @@ Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *del
     ASSERT(delegate);
 
     if (NSNumber *tabIdentifier = [m_tabDelegateToIdentifierMap objectForKey:delegate]) {
-        if (RefPtr tab = getTab(WebExtensionTabIdentifier(tabIdentifier.unsignedLongLongValue)))
-            return tab.releaseNonNull();
+        if (RefPtr tab = getTab(WebExtensionTabIdentifier(tabIdentifier.unsignedLongLongValue))) {
+            Ref result = tab.releaseNonNull();
+            reportWebViewConfigurationErrorIfNeeded(result);
+            return result;
+        }
     }
 
     Ref tab = adoptRef(*new WebExtensionTab(*this, delegate));
+    reportWebViewConfigurationErrorIfNeeded(tab);
 
     auto tabIdentifier = tab->identifier();
     m_tabMap.set(tabIdentifier, tab);
@@ -2007,6 +2011,8 @@ WebExtensionContext::WindowVector WebExtensionContext::openWindows(IgnoreExtensi
 WebExtensionContext::TabVector WebExtensionContext::openTabs(IgnoreExtensionAccess ignoreExtensionAccess) const
 {
     return WTF::compactMap(m_tabMap, [&](auto& entry) -> std::optional<Ref<WebExtensionTab>> {
+        if (!entry.value->isOpen())
+            return std::nullopt;
         if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !entry.value->extensionHasAccess())
             return std::nullopt;
         return entry.value;
@@ -3488,6 +3494,20 @@ void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventLi
     }
 
     wakeUpBackgroundContentIfNecessary(WTFMove(completionHandler));
+}
+
+void WebExtensionContext::reportWebViewConfigurationErrorIfNeeded(const WebExtensionTab& tab) const
+{
+    if (!extensionController())
+        return;
+
+    for (WKWebView *webView in tab.webViews()) {
+        if (webView.configuration._webExtensionController != extensionController()->wrapper()) {
+            RELEASE_LOG_ERROR(Extensions, "WKWebView is not configured with the same _WKWebExtensionController as the extension context; please file a bug.");
+            WTFReportBacktrace();
+            ASSERT_NOT_REACHED();
+        }
+    }
 }
 
 bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WKNavigationAction *navigationAction)
