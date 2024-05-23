@@ -10110,9 +10110,6 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         return;
     }
 
-    auto numberOfAdditionalTypes = info.additionalTypes.size();
-    ASSERT(numberOfAdditionalTypes == info.additionalData.size());
-
     RELEASE_LOG(DragAndDrop, "Drag session: %p preparing to drag with attachment identifier: %s", session.get(), info.attachmentIdentifier.utf8().data());
 
     NSString *utiType = nil;
@@ -10126,11 +10123,9 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     [registrationList setPreferredPresentationStyle:WebPreferredPresentationStyleAttachment];
     if ([fileName length])
         [registrationList setSuggestedName:fileName];
-    if (numberOfAdditionalTypes == info.additionalData.size() && numberOfAdditionalTypes) {
-        for (size_t index = 0; index < numberOfAdditionalTypes; ++index) {
-            auto nsData = info.additionalData[index]->createNSData();
-            [registrationList addData:nsData.get() forType:info.additionalTypes[index]];
-        }
+    for (size_t index = 0; index < info.additionalTypesAndData.size(); ++index) {
+        auto nsData = info.additionalTypesAndData[index].second->createNSData();
+        [registrationList addData:nsData.get() forType:info.additionalTypesAndData[index].first];
     }
 
     [registrationList addPromisedType:utiType fileCallback:[session = WTFMove(session), weakSelf = WeakObjCPtr<WKContentView>(self), info] (WebItemProviderFileCallback callback) {
@@ -11598,8 +11593,6 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
 static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& page, const WebCore::PromisedAttachmentInfo& info)
 {
-    auto numberOfAdditionalTypes = info.additionalTypes.size();
-    ASSERT(numberOfAdditionalTypes == info.additionalData.size());
 
     auto attachment = page.attachmentForIdentifier(info.attachmentIdentifier);
     if (!attachment)
@@ -11619,14 +11612,12 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     if ([fileName length])
         [item setSuggestedName:fileName];
 
-    if (numberOfAdditionalTypes == info.additionalData.size() && numberOfAdditionalTypes) {
-        for (size_t index = 0; index < numberOfAdditionalTypes; ++index) {
-            auto nsData = info.additionalData[index]->createNSData();
-            [item registerDataRepresentationForTypeIdentifier:info.additionalTypes[index] visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[nsData](void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
-                completionHandler(nsData.get(), nil);
-                return nil;
-            }];
-        }
+    for (size_t index = 0; index < info.additionalTypesAndData.size(); ++index) {
+        auto nsData = info.additionalTypesAndData[index].second->createNSData();
+        [item registerDataRepresentationForTypeIdentifier:info.additionalTypesAndData[index].first visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[nsData](void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
+            completionHandler(nsData.get(), nil);
+            return nil;
+        }];
     }
 
     [item registerDataRepresentationForTypeIdentifier:utiType visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[attachment](void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {

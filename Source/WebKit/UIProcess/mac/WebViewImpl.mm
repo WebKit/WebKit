@@ -4273,12 +4273,9 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::Hand
 
         [m_view beginDraggingSessionWithItems:@[draggingItem.get()] event:m_lastMouseDownEvent.get() source:(id <NSDraggingSource>)m_view.getAutoreleased()];
 
-        ASSERT(info.additionalTypes.size() == info.additionalData.size());
-        if (info.additionalTypes.size() == info.additionalData.size()) {
-            for (size_t index = 0; index < info.additionalTypes.size(); ++index) {
-                auto nsData = info.additionalData[index]->createNSData();
-                [pasteboard setData:nsData.get() forType:info.additionalTypes[index]];
-            }
+        for (size_t index = 0; index < info.additionalTypesAndData.size(); ++index) {
+            auto nsData = info.additionalTypesAndData[index].second->createNSData();
+            [pasteboard setData:nsData.get() forType:info.additionalTypesAndData[index].first];
         }
         m_page->didStartDrag();
         return;

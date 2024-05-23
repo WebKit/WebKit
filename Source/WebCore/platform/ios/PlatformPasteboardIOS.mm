@@ -472,9 +472,8 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     [representationsToRegister addData:[webIOSPastePboardType dataUsingEncoding:NSUTF8StringEncoding] forType:webIOSPastePboardType];
 #endif
 
-    ASSERT(content.clientTypes.size() == content.clientData.size());
-    for (size_t i = 0, size = content.clientTypes.size(); i < size; ++i)
-        [representationsToRegister addData:content.clientData[i]->makeContiguous()->createNSData().get() forType:content.clientTypes[i]];
+    for (size_t i = 0, size = content.clientTypesAndData.size(); i < size; ++i)
+        [representationsToRegister addData:content.clientTypesAndData[i].second->makeContiguous()->createNSData().get() forType:content.clientTypesAndData[i].first];
 
     if (content.dataInWebArchiveFormat) {
         auto webArchiveData = content.dataInWebArchiveFormat->createNSData();
@@ -516,11 +515,8 @@ void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
 {
     auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
 
-    auto& types = pasteboardImage.clientTypes;
-    auto& data = pasteboardImage.clientData;
-    ASSERT(types.size() == data.size());
-    for (size_t i = 0, size = types.size(); i < size; ++i)
-        [representationsToRegister addData:data[i]->createNSData().get() forType:types[i]];
+    for (size_t i = 0, size = pasteboardImage.clientTypesAndData.size(); i < size; ++i)
+        [representationsToRegister addData:pasteboardImage.clientTypesAndData[i].second->createNSData().get() forType:pasteboardImage.clientTypesAndData[i].first];
 
     if (pasteboardImage.resourceData && !pasteboardImage.resourceMIMEType.isEmpty()) {
         auto utiOrMIMEType = pasteboardImage.resourceMIMEType;

@@ -96,19 +96,17 @@ String Editor::selectionInHTMLFormat()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData)
+void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<std::pair<String, RefPtr<SharedBuffer>>>& outTypesAndData)
 {
     auto elementRange = makeRangeSelectingNode(element);
-    client()->getClientPasteboardData(elementRange, outTypes, outData);
+    client()->getClientPasteboardData(elementRange, outTypesAndData);
 
-    outTypes.append(PasteboardCustomData::cocoaType());
-    outData.append(PasteboardCustomData { element.document().originIdentifierForPasteboard(), { } }.createSharedBuffer());
+    outTypesAndData.append(std::make_pair(PasteboardCustomData::cocoaType(), PasteboardCustomData { element.document().originIdentifierForPasteboard(), { } }.createSharedBuffer()));
 
     if (elementRange) {
         if (auto archive = LegacyWebArchive::create(*elementRange)) {
             if (auto data = archive->rawDataRepresentation()) {
-                outTypes.append(WebArchivePboardType);
-                outData.append(SharedBuffer::create(data.get()));
+                outTypesAndData.append(std::make_pair(WebArchivePboardType, SharedBuffer::create(data.get())));
             }
         }
     }
@@ -186,7 +184,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     if (!pasteboard.isStatic()) {
         content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
         populateRichTextDataIfNeeded(content, document);
-        client()->getClientPasteboardData(selectedRange(), content.clientTypes, content.clientData);
+        client()->getClientPasteboardData(selectedRange(), content.clientTypesAndData);
     }
     content.dataInHTMLFormat = selectionInHTMLFormat();
     content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
@@ -205,7 +203,7 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
     populateRichTextDataIfNeeded(webContent, document);
     webContent.dataInHTMLFormat = selectionInHTMLFormat();
     webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
-    client()->getClientPasteboardData(selectedRange(), webContent.clientTypes, webContent.clientData);
+    client()->getClientPasteboardData(selectedRange(), webContent.clientTypesAndData);
 
     pasteboardWriterData.setWebContent(WTFMove(webContent));
 }
