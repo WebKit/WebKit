@@ -223,7 +223,7 @@ static PixelFormat toPixelFormat(GPUTextureFormat textureFormat)
 }
 
 using ImageDataCallback = Function<void(std::span<const uint8_t>, size_t)>;
-static void getImageBytesFromImageBuffer(ImageBuffer* imageBuffer, const auto& destination, ImageDataCallback&& callback)
+static void getImageBytesFromImageBuffer(const RefPtr<ImageBuffer>& imageBuffer, const auto& destination, ImageDataCallback&& callback)
 {
     if (!imageBuffer)
         return callback({ }, 0);
@@ -331,11 +331,11 @@ static void imageBytesForSource(const auto& source, const auto& destination, Ima
 #endif
 #endif
     }, [&](const RefPtr<HTMLCanvasElement>& canvasElement) -> ResultType {
-        return getImageBytesFromImageBuffer(canvasElement->buffer(), destination, WTFMove(callback));
+        return getImageBytesFromImageBuffer(canvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No), destination, WTFMove(callback));
     }
 #if ENABLE(OFFSCREEN_CANVAS)
     , [&](const RefPtr<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
-        return getImageBytesFromImageBuffer(offscreenCanvasElement->buffer(), destination, WTFMove(callback));
+        return getImageBytesFromImageBuffer(offscreenCanvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No), destination, WTFMove(callback));
     }
 #endif
     );

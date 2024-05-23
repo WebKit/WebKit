@@ -95,7 +95,7 @@ public:
 
     virtual AffineTransform baseTransform() const;
 
-    void makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
+    RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
 
     size_t memoryCost() const;
 #if ENABLE(RESOURCE_USAGE)

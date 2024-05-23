@@ -225,8 +225,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         if (!canvas->width() || !canvas->height())
             return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
 
-        canvas->makeRenderingResultsAvailable();
-        RefPtr imageBuffer = canvas->buffer();
+        RefPtr imageBuffer = canvas->makeRenderingResultsAvailable();
         if (!imageBuffer)
             return Exception { ExceptionCode::InvalidStateError,  "Input canvas has no image buffer"_s };
 

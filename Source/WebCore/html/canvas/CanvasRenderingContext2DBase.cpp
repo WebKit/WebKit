@@ -1780,14 +1780,11 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
         return { };
 
     Ref protectedCanvas { sourceCanvas };
-    // FIXME: Do this through platform-independent GraphicsContext API.
-    RefPtr buffer = sourceCanvas.buffer();
-    if (!buffer)
-        return { };
-
     checkOrigin(&sourceCanvas);
 
-    sourceCanvas.makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No);
+    RefPtr buffer = sourceCanvas.makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No);
+    if (!buffer)
+        return { };
 
     bool repaintEntireCanvas = false;
     if (rectContainsCanvas(normalizedDstRect)) {
@@ -2535,8 +2532,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     if (auto imageData = makeImageDataIfContentsCached(imageDataRect, computedColorSpace))
         return imageData.releaseNonNull();
 
-    canvasBase().makeRenderingResultsAvailable();
-    RefPtr buffer = canvasBase().buffer();
+    RefPtr<ImageBuffer> buffer = canvasBase().makeRenderingResultsAvailable();
     if (!buffer) {
         auto imageData = ImageData::createUninitialized(imageDataRect.width(), imageDataRect.height(), m_settings.colorSpace, settings);
         if (!imageData.hasException())

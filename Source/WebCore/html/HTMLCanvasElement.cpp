@@ -704,7 +704,7 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType,
     if (!originClean())
         return Exception { ExceptionCode::SecurityError };
 
-    if (size().isEmpty() || !buffer())
+    if (size().isEmpty())
         return UncachedString { "data:,"_s };
     if (document().settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasRead(document());
@@ -724,10 +724,10 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType,
         canvasBaseScriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Info, consoleMessage);
         return UncachedString { url };
     }
-
-    makeRenderingResultsAvailable();
-
-    return UncachedString { buffer()->toDataURL(encodingMIMEType, quality) };
+    RefPtr buffer = makeRenderingResultsAvailable();
+    if (!buffer)
+        return UncachedString { "data:,"_s };
+    return UncachedString { buffer->toDataURL(encodingMIMEType, quality) };
 }
 
 ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType)
@@ -740,7 +740,7 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const 
     if (!originClean())
         return Exception { ExceptionCode::SecurityError };
 
-    if (size().isEmpty() || !buffer()) {
+    if (size().isEmpty()) {
         callback->scheduleCallback(document(), nullptr);
         return { };
     }
@@ -761,10 +761,13 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const 
     }
 #endif
 
-    makeRenderingResultsAvailable();
-
+    RefPtr buffer = makeRenderingResultsAvailable();
+    if (!buffer) {
+        callback->scheduleCallback(document(), nullptr);
+        return { };
+    }
     RefPtr<Blob> blob;
-    Vector<uint8_t> blobData = buffer()->toData(encodingMIMEType, quality);
+    Vector<uint8_t> blobData = buffer->toData(encodingMIMEType, quality);
     if (!blobData.isEmpty())
         blob = Blob::create(&document(), WTFMove(blobData), encodingMIMEType);
     callback->scheduleCallback(document(), WTFMove(blob));
@@ -819,13 +822,12 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
     }
 #endif
 
-    RefPtr imageBuffer = buffer();
-    if (!imageBuffer)
-        return nullptr;
     if (document().settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasRead(document());
 
-    makeRenderingResultsAvailable();
+    RefPtr imageBuffer = makeRenderingResultsAvailable();
+    if (!imageBuffer)
+        return nullptr;
 
     // FIXME: This can likely be optimized quite a bit, especially in the cases where
     // the ImageBuffer is backed by GPU memory already and/or is in the GPU process by
@@ -910,10 +912,10 @@ void HTMLCanvasElement::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
 
 Image* HTMLCanvasElement::copiedImage() const
 {
-    if (!m_copiedImage && buffer()) {
-        if (m_context)
-            m_context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
-        m_copiedImage = BitmapImage::create(buffer()->copyNativeImage());
+    if (!m_copiedImage) {
+        RefPtr buffer = const_cast<HTMLCanvasElement*>(this)->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No);
+        if (buffer)
+            m_copiedImage = BitmapImage::create(buffer->copyNativeImage());
     }
     return m_copiedImage.get();
 }
