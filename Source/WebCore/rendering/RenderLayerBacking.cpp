@@ -3997,6 +3997,9 @@ void RenderLayerBacking::verifyNotPainting()
 
 bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& animation, const BlendingKeyframes& keyframes)
 {
+    if (renderer().capturedInViewTransition())
+        return false;
+
     bool shouldApplyAnimationsToTargetRenderer = renderer().isRenderBox() || renderer().isSVGLayerAwareRenderer();
 
     bool hasOpacity = keyframes.containsProperty(CSSPropertyOpacity);
