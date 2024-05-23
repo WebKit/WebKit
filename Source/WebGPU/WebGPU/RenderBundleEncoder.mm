@@ -1076,8 +1076,8 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, const Buffer* optionalB
         }
 
         m_requiresMetalWorkaround = false;
-        recordCommand([slot, optionalBuffer, offset, size, protectedThis = Ref { *this }] {
-            protectedThis->setVertexBuffer(slot, optionalBuffer, offset, size);
+        recordCommand([slot, optionalBuffer = RefPtr { optionalBuffer }, offset, size, protectedThis = Ref { *this }] {
+            protectedThis->setVertexBuffer(slot, optionalBuffer.get(), offset, size);
             return false;
         });
     }
