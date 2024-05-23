@@ -164,7 +164,7 @@ public:
     using MacroAssemblerBase::and32;
     using MacroAssemblerBase::branchAdd32;
     using MacroAssemblerBase::branchMul32;
-#if CPU(ARM64) || CPU(ARM_THUMB2) || CPU(X86_64) || CPU(MIPS) || CPU(RISCV64)
+#if CPU(ARM64) || CPU(ARM_THUMB2) || CPU(X86_64) || CPU(RISCV64)
     using MacroAssemblerBase::branchPtr;
 #endif
 #if CPU(X86_64)
@@ -1843,7 +1843,7 @@ public:
     }
 #endif
 
-#if !CPU(X86) && !CPU(X86_64) && !CPU(ARM64)
+#if !CPU(X86_64) && !CPU(ARM64)
     // We should implement this the right way eventually, but for now, it's fine because it arises so
     // infrequently.
     void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
@@ -1873,7 +1873,7 @@ public:
     {
         add64(TrustedImm32(address.offset), address.base, dest);
     }
-#endif // CPU(X86_64) || CPU(ARM64)
+#endif // CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 
 #if CPU(X86_64)
     bool shouldBlind(Imm32 imm)
@@ -2131,11 +2131,11 @@ public:
     void store32(Imm32 imm, Address dest)
     {
         if (shouldBlind(imm)) {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
             BlindedImm32 blind = xorBlindConstant(imm);
             store32(blind.value1, dest);
             xor32(blind.value2, dest);
-#else // CPU(X86) || CPU(X86_64)
+#else // CPU(X86_64)
             if (haveScratchRegisterForBlinding()) {
                 loadXorBlindedConstant(xorBlindConstant(imm), scratchRegisterForBlinding());
                 store32(scratchRegisterForBlinding(), dest);
@@ -2147,7 +2147,7 @@ public:
                     nop();
                 store32(imm.asTrustedImm32(), dest);
             }
-#endif // CPU(X86) || CPU(X86_64)
+#endif // CPU(X86_64)
         } else
             store32(imm.asTrustedImm32(), dest);
     }

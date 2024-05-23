@@ -94,8 +94,6 @@ void CCallHelpers::emitCTIThunkPrologue(bool returnAddressAlreadyTagged)
     push(X86Registers::ebp); // return address pushed by the call instruction
 #elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
     pushPair(framePointerRegister, linkRegister);
-#elif CPU(MIPS)
-    pushPair(framePointerRegister, returnAddressRegister);
 #else
 #   error "Not implemented on platform"
 #endif
@@ -114,8 +112,6 @@ void CCallHelpers::emitCTIThunkEpilogue()
     pop(X86Registers::ebp); // Return address left on stack
 #elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
     popPair(framePointerRegister, linkRegister);
-#elif CPU(MIPS)
-    popPair(framePointerRegister, returnAddressRegister);
 #else
 #   error "Not implemented on platform"
 #endif

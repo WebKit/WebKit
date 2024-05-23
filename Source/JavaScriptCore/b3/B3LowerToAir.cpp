@@ -104,7 +104,7 @@ public:
         , m_procedure(procedure)
         , m_code(procedure.code())
         , m_blockInsertionSet(m_code)
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
         , m_eax(X86Registers::eax)
         , m_ecx(X86Registers::ecx)
         , m_edx(X86Registers::edx)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
+#if ENABLE(ASSEMBLER) && CPU(X86_64)
 
 #include "X86Assembler.h"
 #include "AbstractMacroAssembler.h"
@@ -39,7 +39,6 @@ class MacroAssemblerX86Common : public AbstractMacroAssembler<Assembler> {
 public:
     static constexpr size_t nearJumpRange = 2 * GB;
 
-#if CPU(X86_64)
     // Use this directly only if you're not generating code with it.
     static constexpr X86Registers::RegisterID s_scratchRegister = X86Registers::r11;
 
@@ -50,8 +49,7 @@ public:
         RELEASE_ASSERT(m_allowScratchRegister);
         return s_scratchRegister;
     }
-#endif
-    
+
 protected:
     static constexpr int DoubleConditionBitInvert = 0x10;
     static constexpr int DoubleConditionBitSpecial = 0x20;
@@ -433,12 +431,10 @@ public:
         zeroExtend16To32(dst, dst);
     }
 
-#if CPU(X86_64)
     void byteSwap64(RegisterID dst)
     {
         m_assembler.bswapq_r(dst);
     }
-#endif
 
     // Only used for testing purposes.
     void illegalInstruction()
@@ -1520,39 +1516,11 @@ public:
 
     void store8(RegisterID src, BaseIndex address)
     {
-#if CPU(X86)
-        // On 32-bit x86 we can only store from the first 4 registers;
-        // esp..edi are mapped to the 'h' registers!
-        if (src >= 4) {
-            // Pick a temporary register.
-            RegisterID temp = getUnusedRegister(address);
-
-            // Swap to the temporary register to perform the store.
-            swap(src, temp);
-            m_assembler.movb_rm(temp, address.offset, address.base, address.index, address.scale);
-            swap(src, temp);
-            return;
-        }
-#endif
         m_assembler.movb_rm(src, address.offset, address.base, address.index, address.scale);
     }
     
     void store8(RegisterID src, Address address)
     {
-#if CPU(X86)
-        // On 32-bit x86 we can only store from the first 4 registers;
-        // esp..edi are mapped to the 'h' registers!
-        if (src >= 4) {
-            // Pick a temporary register.
-            RegisterID temp = getUnusedRegister(address);
-
-            // Swap to the temporary register to perform the store.
-            swap(src, temp);
-            m_assembler.movb_rm(temp, address.offset, address.base);
-            swap(src, temp);
-            return;
-        }
-#endif
         m_assembler.movb_rm(src, address.offset, address.base);
     }
 
@@ -1590,12 +1558,8 @@ public:
 
     void loadDouble(TrustedImmPtr address, FPRegisterID dest)
     {
-#if CPU(X86)
-        m_assembler.movsd_mr(address.asPtr(), dest);
-#else
         move(address, scratchRegister());
         loadDouble(Address(scratchRegister()), dest);
-#endif
     }
 
     void loadDouble(Address address, FPRegisterID dest)
@@ -1616,12 +1580,8 @@ public:
 
     void loadFloat(TrustedImmPtr address, FPRegisterID dest)
     {
-#if CPU(X86)
-        m_assembler.movss_mr(address.asPtr(), dest);
-#else
         move(address, scratchRegister());
         loadFloat(Address(scratchRegister()), dest);
-#endif
     }
 
     void loadFloat(Address address, FPRegisterID dest)
@@ -2375,7 +2335,6 @@ public:
             m_assembler.cvttsd2si_rr(src, dest);
 
         // If the result is zero, it might have been -0.0, and the double comparison won't catch this!
-#if CPU(X86_64)
         if (negZeroCheck) {
             Jump valueIsNonZero = branchTest32(NonZero, dest);
             if (supportsAVX())
@@ -2385,10 +2344,6 @@ public:
             failureCases.append(branchTest32(NonZero, scratchRegister(), TrustedImm32(1)));
             valueIsNonZero.link(this);
         }
-#else
-        if (negZeroCheck)
-            failureCases.append(branchTest32(Zero, dest));
-#endif
 
         // Convert the integer result back to float & compare to the original value - if not equal or unordered (NaN) then jump.
         convertInt32ToDouble(dest, fpTemp);
@@ -2504,7 +2459,6 @@ public:
             m_assembler.movl_i32r(imm.m_value, dest);
     }
 
-#if CPU(X86_64)
     void move(RegisterID src, RegisterID dest)
     {
         // Note: on 64-bit this is is a full register move; perhaps it would be
@@ -2695,97 +2649,6 @@ public:
     {
         m_assembler.movl_i32r(src.m_value, dest);
     }
-#else
-    void move(RegisterID src, RegisterID dest)
-    {
-        if (src != dest)
-            m_assembler.movl_rr(src, dest);
-    }
-
-    void move(TrustedImmPtr imm, RegisterID dest)
-    {
-        if (!imm.m_value)
-            m_assembler.xorl_rr(dest, dest);
-        else
-            m_assembler.movl_i32r(imm.asIntptr(), dest);
-    }
-
-    // Only here for templates!
-    void move(TrustedImm64, RegisterID)
-    {
-        UNREACHABLE_FOR_PLATFORM();
-    }
-
-    void moveConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
-    {
-        if (cond & DoubleConditionBitInvert) {
-            if (supportsAVX())
-                m_assembler.vucomisd_rr(left, right);
-            else
-                m_assembler.ucomisd_rr(left, right);
-        } else {
-            if (supportsAVX())
-                m_assembler.vucomisd_rr(right, left);
-            else
-                m_assembler.ucomisd_rr(right, left);
-        }
-
-        if (cond == DoubleEqualAndOrdered) {
-            if (left == right) {
-                m_assembler.cmovnpl_rr(src, dest);
-                return;
-            }
-
-            Jump isUnordered(m_assembler.jp());
-            m_assembler.cmovel_rr(src, dest);
-            isUnordered.link(this);
-            return;
-        }
-
-        if (cond == DoubleNotEqualOrUnordered) {
-            if (left == right) {
-                m_assembler.cmovpl_rr(src, dest);
-                return;
-            }
-
-            m_assembler.cmovpl_rr(src, dest);
-            m_assembler.cmovnel_rr(src, dest);
-            return;
-        }
-
-        ASSERT(!(cond & DoubleConditionBitSpecial));
-        m_assembler.cmovl_rr(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits), src, dest);
-    }
-
-    void swap(RegisterID reg1, RegisterID reg2)
-    {
-        if (reg1 != reg2)
-            m_assembler.xchgl_rr(reg1, reg2);
-    }
-
-    void swapDouble(FPRegisterID reg1, FPRegisterID reg2)
-    {
-        if (reg1 == reg2)
-            return;
-
-        // FIXME: This is kinda a hack since we don't use xmm7 as a temp.
-        ASSERT(reg1 != FPRegisterID::xmm7);
-        ASSERT(reg2 != FPRegisterID::xmm7);
-        moveDouble(reg1, FPRegisterID::xmm7);
-        moveDouble(reg2, reg1);
-        moveDouble(FPRegisterID::xmm7, reg2);
-    }
-
-    void signExtend32ToPtr(RegisterID src, RegisterID dest)
-    {
-        move(src, dest);
-    }
-
-    void zeroExtend32ToWord(RegisterID src, RegisterID dest)
-    {
-        move(src, dest);
-    }
-#endif
 
     void swap32(RegisterID src, RegisterID dest)
     {
@@ -4516,28 +4379,13 @@ protected:
 
     void set32(X86Assembler::Condition cond, RegisterID dest)
     {
-#if CPU(X86)
-        // On 32-bit x86 we can only set the first 4 registers;
-        // esp..edi are mapped to the 'h' registers!
-        if (dest >= 4) {
-            m_assembler.xchgl_rr(dest, X86Registers::eax);
-            m_assembler.setCC_r(cond, X86Registers::eax);
-            m_assembler.movzbl_rr(X86Registers::eax, X86Registers::eax);
-            m_assembler.xchgl_rr(dest, X86Registers::eax);
-            return;
-        }
-#endif
         m_assembler.setCC_r(cond, dest);
         m_assembler.movzbl_rr(dest, dest);
     }
 
     void cmov(X86Assembler::Condition cond, RegisterID src, RegisterID dest)
     {
-#if CPU(X86_64)
         m_assembler.cmovq_rr(cond, src, dest);
-#else
-        m_assembler.cmovl_rr(cond, src, dest);
-#endif
     }
 
     static bool supportsLZCNT()
@@ -4707,7 +4555,6 @@ private:
         m_assembler.movl_rr(src, dest);
     }
 
-#if CPU(X86_64)
     void moveConditionallyAfterFloatingPointCompare(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
     {
         if (cond == DoubleEqualAndOrdered) {
@@ -4736,7 +4583,6 @@ private:
         ASSERT(!(cond & DoubleConditionBitSpecial));
         cmov(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits), src, dest);
     }
-#endif
 
     using CPUID = std::array<unsigned, 4>;
     static CPUID getCPUID(unsigned level);
@@ -4756,4 +4602,4 @@ private:
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
+#endif // ENABLE(ASSEMBLER) && CPU(X86_64)

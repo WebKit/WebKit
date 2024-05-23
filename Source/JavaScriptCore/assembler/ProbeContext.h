@@ -131,7 +131,7 @@ T CPUState::fpr(FPRegisterID id) const
 
 inline void*& CPUState::pc()
 {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
     return *reinterpret_cast<void**>(&spr(X86Registers::eip));
 #elif CPU(ARM64)
     return *reinterpret_cast<void**>(&spr(ARM64Registers::pc));
@@ -146,7 +146,7 @@ inline void*& CPUState::pc()
 
 inline void*& CPUState::fp()
 {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
     return *reinterpret_cast<void**>(&gpr(X86Registers::ebp));
 #elif CPU(ARM64)
     return *reinterpret_cast<void**>(&gpr(ARM64Registers::fp));
@@ -161,7 +161,7 @@ inline void*& CPUState::fp()
 
 inline void*& CPUState::sp()
 {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
     return *reinterpret_cast<void**>(&gpr(X86Registers::esp));
 #elif CPU(ARM64)
     return *reinterpret_cast<void**>(&gpr(ARM64Registers::sp));

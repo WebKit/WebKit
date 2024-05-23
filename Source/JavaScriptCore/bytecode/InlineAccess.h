@@ -47,8 +47,6 @@ public:
     {
 #if CPU(X86_64)
         return 26;
-#elif CPU(X86)
-        return 27;
 #elif CPU(ARM64)
         return 40;
 #elif CPU(ARM_THUMB2)
@@ -65,8 +63,6 @@ public:
     {
 #if CPU(X86_64)
         return 26;
-#elif CPU(X86)
-        return 27;
 #elif CPU(ARM64)
         return 40;
 #elif CPU(ARM_THUMB2)
@@ -83,8 +79,6 @@ public:
     {
 #if CPU(X86_64)
         size_t size = 43;
-#elif CPU(X86)
-        size_t size = 27;
 #elif CPU(ARM64)
         size_t size = 44;
 #elif CPU(ARM_THUMB2)

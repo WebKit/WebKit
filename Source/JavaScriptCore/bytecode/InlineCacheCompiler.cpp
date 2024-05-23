@@ -4633,7 +4633,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         // patch things if the countdown reaches zero. We increment the slow path count here to ensure
         // that the slow path does not try to patch.
         if (codeBlock->useDataIC()) {
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64) || CPU(ARM64)
             jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCountdown()));
 #else
             jit.load8(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCountdown()), m_scratchGPR);
@@ -4641,7 +4641,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             jit.store8(m_scratchGPR, CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCountdown()));
 #endif
         } else {
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64) || CPU(ARM64)
             jit.move(CCallHelpers::TrustedImmPtr(&m_stubInfo->countdown), m_scratchGPR);
             jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(m_scratchGPR));
 #else

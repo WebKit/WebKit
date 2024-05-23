@@ -69,7 +69,7 @@ public:
 #endif
     static constexpr FPRReg wasmScratchFPR = FPRInfo::nonPreservedNonArgumentFPR0;
 
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
     static constexpr GPRReg shiftRCX = X86Registers::ecx;
 #else
     static constexpr GPRReg shiftRCX = InvalidGPRReg;

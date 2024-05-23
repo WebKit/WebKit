@@ -1036,54 +1036,6 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
-#elif CPU(X86) && COMPILER(GCC_COMPATIBLE) && OS(LINUX) && defined(__PIC__)
-#define defineUnaryDoubleOpWrapper(function) \
-    asm( \
-        ".text\n" \
-        ".globl " SYMBOL_STRING(function##Thunk) "\n" \
-        HIDE_SYMBOL(function##Thunk) "\n" \
-        SYMBOL_STRING(function##Thunk) ":" "\n" \
-        "pushl %ebx\n" \
-        "subl $20, %esp\n" \
-        "movsd %xmm0, (%esp) \n" \
-        "call __x86.get_pc_thunk.bx\n" \
-        "addl $_GLOBAL_OFFSET_TABLE_, %ebx\n" \
-        "call " GLOBAL_REFERENCE(function) "\n" \
-        "fstpl (%esp) \n" \
-        "movsd (%esp), %xmm0 \n" \
-        "addl $20, %esp\n" \
-        "popl %ebx\n" \
-        "ret\n" \
-        ".previous\n" \
-    );\
-    extern "C" { \
-        MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
-        JSC_ANNOTATE_JIT_OPERATION(function##Thunk); \
-    } \
-    static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
-
-#elif CPU(X86) && COMPILER(GCC_COMPATIBLE) && (OS(DARWIN) || OS(LINUX))
-#define defineUnaryDoubleOpWrapper(function) \
-    asm( \
-        ".text\n" \
-        ".globl " SYMBOL_STRING(function##Thunk) "\n" \
-        HIDE_SYMBOL(function##Thunk) "\n" \
-        SYMBOL_STRING(function##Thunk) ":" "\n" \
-        "subl $20, %esp\n" \
-        "movsd %xmm0, (%esp) \n" \
-        "call " GLOBAL_REFERENCE(function) "\n" \
-        "fstpl (%esp) \n" \
-        "movsd (%esp), %xmm0 \n" \
-        "addl $20, %esp\n" \
-        "ret\n" \
-        ".previous\n" \
-    );\
-    extern "C" { \
-        MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
-        JSC_ANNOTATE_JIT_OPERATION(function##Thunk); \
-    } \
-    static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
-
 #elif CPU(ARM_THUMB2) && COMPILER(GCC_COMPATIBLE) && OS(DARWIN)
 
 #define defineUnaryDoubleOpWrapper(function) \
@@ -1125,33 +1077,6 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
         JSC_ANNOTATE_JIT_OPERATION(function##Thunk); \
     } \
-    static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
-
-#elif CPU(X86) && COMPILER(MSVC) && OS(WINDOWS)
-
-// MSVC does not accept floor, etc, to be called directly from inline assembly, so we need to wrap these functions.
-static double (_cdecl *floorFunction)(double) = floor;
-static double (_cdecl *ceilFunction)(double) = ceil;
-static double (_cdecl *truncFunction)(double) = trunc;
-static double (_cdecl *expFunction)(double) = exp;
-static double (_cdecl *logFunction)(double) = log;
-static double (_cdecl *jsRoundFunction)(double) = jsRound;
-
-#define defineUnaryDoubleOpWrapper(function) \
-    extern "C" __declspec(naked) MathThunkCallingConvention function##Thunk(MathThunkCallingConvention) \
-    { \
-        __asm \
-        { \
-        __asm sub esp, 20 \
-        __asm movsd mmword ptr [esp], xmm0  \
-        __asm call function##Function \
-        __asm fstp qword ptr [esp] \
-        __asm movsd xmm0, mmword ptr [esp] \
-        __asm add esp, 20 \
-        __asm ret \
-        } \
-    } \
-    JSC_ANNOTATE_JIT_OPERATION(function##Thunk); \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
 #else

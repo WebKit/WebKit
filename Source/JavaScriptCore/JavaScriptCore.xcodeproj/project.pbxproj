@@ -1438,7 +1438,6 @@
 		95CA6AD328809E010062D5EC /* ImplementationVisibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 95CA6AD228809E010062D5EC /* ImplementationVisibility.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		960097A60EBABB58007A7297 /* LabelScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 960097A50EBABB58007A7297 /* LabelScope.h */; };
 		9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9688CB130ED12B4E001D649F /* AssemblerBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9688CB160ED12B4E001D6491 /* X86Registers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9688CB140ED12B4E001D6491 /* X86Registers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9688CB160ED12B4E001D6492 /* X86_64Registers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9688CB140ED12B4E001D6492 /* X86_64Registers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9688CB160ED12B4E001D6499 /* RegisterInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 9688CB140ED12B4E001D6499 /* RegisterInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9688CB140ED12B4E001D649F /* X86Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4755,7 +4754,6 @@
 		95CA6AD228809E010062D5EC /* ImplementationVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImplementationVisibility.h; sourceTree = "<group>"; };
 		960097A50EBABB58007A7297 /* LabelScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelScope.h; sourceTree = "<group>"; };
 		9688CB130ED12B4E001D649F /* AssemblerBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerBuffer.h; sourceTree = "<group>"; };
-		9688CB140ED12B4E001D6491 /* X86Registers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = X86Registers.h; sourceTree = "<group>"; };
 		9688CB140ED12B4E001D6492 /* X86_64Registers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = X86_64Registers.h; sourceTree = "<group>"; };
 		9688CB140ED12B4E001D6499 /* RegisterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterInfo.h; sourceTree = "<group>"; };
 		9688CB140ED12B4E001D649F /* X86Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = X86Assembler.h; sourceTree = "<group>"; };
@@ -9369,7 +9367,6 @@
 				FE533CA01F217C310016A1FE /* testmasm.cpp */,
 				9688CB140ED12B4E001D6492 /* X86_64Registers.h */,
 				9688CB140ED12B4E001D649F /* X86Assembler.h */,
-				9688CB140ED12B4E001D6491 /* X86Registers.h */,
 			);
 			path = assembler;
 			sourceTree = "<group>";
@@ -11952,7 +11949,6 @@
 				0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */,
 				9688CB160ED12B4E001D6492 /* X86_64Registers.h in Headers */,
 				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
-				9688CB160ED12B4E001D6491 /* X86Registers.h in Headers */,
 				9959E92E1BD17FA4001AA413 /* xxd.pl in Headers */,
 				451539B912DC994500EF7AC4 /* Yarr.h in Headers */,
 				E3282BBB1FE930AF00EDAF71 /* YarrErrorCode.h in Headers */,

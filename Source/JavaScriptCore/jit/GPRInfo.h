@@ -341,66 +341,6 @@ private:
 };
 #endif // USE(JSVALUE32_64)
 
-#if CPU(X86)
-#define NUMBER_OF_ARGUMENT_REGISTERS 0u
-#define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
-
-class GPRInfo {
-public:
-    typedef GPRReg RegisterType;
-    static constexpr unsigned numberOfRegisters = 6;
-    static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
-
-    // Temporary registers.
-    static constexpr GPRReg regT0 = X86Registers::eax;
-    static constexpr GPRReg regT1 = X86Registers::edx;
-    static constexpr GPRReg regT2 = X86Registers::ecx;
-    static constexpr GPRReg regT3 = X86Registers::ebx; // Callee-save
-    static constexpr GPRReg regT4 = X86Registers::esi; // Callee-save
-    static constexpr GPRReg regT5 = X86Registers::edi; // Callee-save
-    static constexpr GPRReg callFrameRegister = X86Registers::ebp;
-    // These constants provide the names for the general purpose argument & return value registers.
-    static constexpr GPRReg argumentGPR0 = X86Registers::ecx; // regT2
-    static constexpr GPRReg argumentGPR1 = X86Registers::edx; // regT1
-    static constexpr GPRReg argumentGPR2 = X86Registers::eax; // regT0
-    static constexpr GPRReg argumentGPR3 = X86Registers::ebx; // regT3
-    static constexpr GPRReg nonArgGPR0 = X86Registers::esi; // regT4
-    static constexpr GPRReg returnValueGPR = X86Registers::eax; // regT0
-    static constexpr GPRReg returnValueGPR2 = X86Registers::edx; // regT1
-    static constexpr GPRReg nonPreservedNonReturnGPR = X86Registers::ecx;
-
-    static constexpr GPRReg toRegister(unsigned index)
-    {
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfRegisters);
-        constexpr GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5 };
-        return registerForIndex[index];
-    }
-
-    static GPRReg toArgumentRegister(unsigned)
-    {
-        ASSERT_NOT_REACHED();
-        return InvalidGPRReg;
-    }
-
-    static unsigned toIndex(GPRReg reg)
-    {
-        ASSERT(reg != InvalidGPRReg);
-        ASSERT(static_cast<int>(reg) < 8);
-        static const unsigned indexForRegister[8] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 4, 5 };
-        return indexForRegister[reg];
-    }
-
-    static ASCIILiteral debugName(GPRReg reg)
-    {
-        ASSERT(reg != InvalidGPRReg);
-        return MacroAssembler::gprName(reg);
-    }
-
-    static constexpr unsigned InvalidIndex = 0xffffffff;
-};
-
-#endif // CPU(X86)
-
 #if CPU(X86_64)
 #define NUMBER_OF_ARGUMENT_REGISTERS 6u
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 5u

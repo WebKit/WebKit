@@ -1667,7 +1667,7 @@ void testShuffleShiftDouble()
     CHECK(things[3] == 3);
 }
 
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
 void testX86VMULSD()
 {
     B3::Procedure proc;
@@ -1858,7 +1858,7 @@ void testX86VMULSDBaseIndexNeedRex()
     uint64_t index = 16;
     CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 2, index, pureNaN()) == 2.4 * 4.2);
 }
-#endif // #if CPU(X86) || CPU(X86_64)
+#endif // #if CPU(X86_64)
 
 #if CPU(ARM64)
 void testInvalidateCachedTempRegisters()
@@ -2684,7 +2684,7 @@ void run(const char* filter)
     RUN(testShuffleSwapDouble());
     RUN(testShuffleShiftDouble());
 
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
     RUN(testX86VMULSD());
     RUN(testX86VMULSDDestRex());
     RUN(testX86VMULSDOp1DestRex());
