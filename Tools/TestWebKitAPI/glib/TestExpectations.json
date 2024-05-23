@@ -49,7 +49,7 @@
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/256557"}}
             },
             "/webkit/WebKitAccessibility/text/state-changed": {
-                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/256557"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
             },
             "/webkit/WebKitAccessibility/selection/menulist": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
@@ -62,6 +62,21 @@
             },
             "/webkit/WebKitAccessibility/value/basic": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/accessible/list-markers": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/accessible/state": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/accessible/ignored-objects": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/document/load-events": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/hyperlink/basic": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/273682"}}
             }
         }
     },
