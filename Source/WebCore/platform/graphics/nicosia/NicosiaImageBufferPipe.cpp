@@ -75,7 +75,9 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
 
     Locker locker { m_imageLock };
     if (!m_image) {
+#if PLATFORM(GTK) || PLATFORM(WPE)
         std::unique_ptr<GLFence> fence;
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
         unsigned textureID = 0;
 #if USE(SKIA)
         auto image = nativeImage->platformImage();
@@ -98,7 +100,9 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
             if (!textureID)
                 return;
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
             fence = GLFence::create();
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
         }
 #endif
 
@@ -129,9 +133,13 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
 #elif USE(SKIA)
                 auto image = nativeImage->platformImage();
                 if (image->isTextureBacked()) {
+#if PLATFORM(GTK) || PLATFORM(WPE)
                     fence->wait(WebCore::GLFence::FlushCommands::No);
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
                     texture->copyFromExternalTexture(textureID);
+#if PLATFORM(GTK) || PLATFORM(WPE)
                     fence = GLFence::create();
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
                 } else {
                     SkPixmap pixmap;
                     if (image->peekPixels(&pixmap))
