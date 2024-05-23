@@ -128,11 +128,13 @@ void CSSFontFaceSrcResourceValue::customSetReplacementURLForSubresources(const H
     auto replacementURLString = replacementURLStrings.get(m_location.resolvedURL.string());
     if (!replacementURLString.isNull())
         m_replacementURLString = replacementURLString;
+    m_shouldUseResolvedURLInCSSText = true;
 }
 
 void CSSFontFaceSrcResourceValue::customClearReplacementURLForSubresources()
 {
     m_replacementURLString = { };
+    m_shouldUseResolvedURLInCSSText = false;
 }
 
 bool CSSFontFaceSrcResourceValue::customMayDependOnBaseURL() const
@@ -145,8 +147,12 @@ String CSSFontFaceSrcResourceValue::customCSSText() const
     StringBuilder builder;
     if (!m_replacementURLString.isEmpty())
         builder.append(serializeURL(m_replacementURLString));
-    else
-        builder.append(serializeURL(m_location.specifiedURLString));
+    else {
+        if (m_shouldUseResolvedURLInCSSText)
+            builder.append(serializeURL(m_location.resolvedURL.string()));
+        else
+            builder.append(serializeURL(m_location.specifiedURLString));
+    }
     if (!m_format.isEmpty())
         builder.append(" format("_s, serializeString(m_format), ')');
     if (!m_technologies.isEmpty()) {

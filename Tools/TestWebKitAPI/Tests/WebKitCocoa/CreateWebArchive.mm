@@ -2118,6 +2118,76 @@ TEST(WebArchive, SaveResourcesExcludeCrossOriginAttribute)
     Util::run(&saved);
 }
 
+static const char* htmlDataBytesForUnsavedSubresources = R"TESTRESOURCE(
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("Ahem-10000A.ttf") format("truetype"), url("Ahem-10000A-backup.ttf") format("truetype")
+}
+div {
+    width: 100%;
+    font-family: "WebFont";
+}
+</style>
+<div id="div">Hello</div>
+<script>
+    div = document.getElementById("div");
+    computedFontFamily = getComputedStyle(div).getPropertyValue("font-family");
+    document.fonts.ready.then(() => { window.webkit.messageHandlers.testHandler.postMessage("done"); });
+</script>
+)TESTRESOURCE";
+
+TEST(WebArchive, SaveResourcesStyleWithUnloadedResources)
+{
+    RetainPtr directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SaveResourcesTest"] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:directoryURL.get() error:nil];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
+    RetainPtr htmlData = [NSData dataWithBytes:htmlDataBytesForUnsavedSubresources length:strlen(htmlDataBytesForUnsavedSubresources)];
+    RetainPtr fontData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"Ahem-10000A" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"]];
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSData *data = nil;
+        NSString *mimeType = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
+            mimeType = @"text/html";
+            data = htmlData.get();
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/Ahem-10000A.ttf"]) {
+            mimeType = @"font/ttf";
+            data = fontData.get();
+        }
+        RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
+
+        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
+        EXPECT_TRUE([savedMainResource containsString:@"host_files/Ahem-10000A.ttf"]);
+        EXPECT_FALSE([savedMainResource containsString:@"host_files/Ahem-10000A-backup.ttf"]);
+        EXPECT_TRUE([savedMainResource containsString:@"webarchivetest://host/Ahem-10000A-backup.ttf"]);
+
+        saved = true;
+    }];
+    Util::run(&saved);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
