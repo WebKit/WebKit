@@ -71,7 +71,8 @@ public:
 private:
     LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&, VideoDecoder::PostTaskCallback&&);
     int32_t Decoded(webrtc::VideoFrame&) final;
-    CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType);
+    CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType) WTF_REQUIRES_LOCK(m_pixelBufferPoolLock);
+    CVPixelBufferRef createPixelBuffer(size_t width, size_t height, webrtc::BufferType);
 
     VideoDecoder::OutputCallback m_outputCallback;
     VideoDecoder::PostTaskCallback m_postTaskCallback;
@@ -81,7 +82,8 @@ private:
     bool m_isClosed { false };
     bool m_useIOSurface { false };
     ProcessIdentity m_resourceOwner;
-    RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
+    RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
+    Lock m_pixelBufferPoolLock;
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };
     OSType m_pixelBufferPoolType;
@@ -200,42 +202,51 @@ CVPixelBufferPoolRef LibWebRTCVPXInternalVideoDecoder::pixelBufferPool(size_t wi
     return m_pixelBufferPool.get();
 }
 
+CVPixelBufferRef LibWebRTCVPXInternalVideoDecoder::createPixelBuffer(size_t width, size_t height, webrtc::BufferType bufferType)
+{
+    OSType pixelBufferType;
+    switch (bufferType) {
+    case webrtc::BufferType::I420:
+        pixelBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+        break;
+    case webrtc::BufferType::I010:
+        pixelBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+        break;
+    default:
+        return nullptr;
+    }
+
+    CVPixelBufferRef pixelBuffer = nullptr;
+    CVReturn status = kCVReturnError;
+
+    {
+        Locker locker(m_pixelBufferPoolLock);
+        if (auto bufferPool = pixelBufferPool(width, height, pixelBufferType))
+            status = CVPixelBufferPoolCreatePixelBuffer(nullptr, bufferPool, &pixelBuffer);
+    }
+
+    if (status != kCVReturnSuccess || !pixelBuffer) {
+        RELEASE_LOG_ERROR(Media, "Failed creating a pixel buffer for converting a VPX frame with error %d", status);
+        return nullptr;
+    }
+
+    if (m_resourceOwner) {
+        if (auto surface = CVPixelBufferGetIOSurface(pixelBuffer))
+            IOSurface::setOwnershipIdentity(surface, m_resourceOwner);
+    }
+
+    return pixelBuffer;
+}
+
 int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
 {
     m_postTaskCallback([protectedThis = Ref { *this }, colorSpace = VideoFrameLibWebRTC::colorSpaceFromFrame(frame), buffer = frame.video_frame_buffer(), timestamp = m_timestamp, duration = m_duration]() mutable {
         if (protectedThis->m_isClosed)
             return;
 
-        auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, WTFMove(colorSpace), WTFMove(buffer), [protectedThis](auto& buffer) {
-            return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [protectedThis](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
-                OSType pixelBufferType;
-                switch (bufferType) {
-                case webrtc::BufferType::I420:
-                    pixelBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
-                    break;
-                case webrtc::BufferType::I010:
-                    pixelBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
-                    break;
-                default:
-                    return nullptr;
-                }
-
-                CVPixelBufferRef pixelBuffer = nullptr;
-                CVReturn status = kCVReturnError;
-                if (auto bufferPool = protectedThis->pixelBufferPool(width, height, pixelBufferType))
-                    status = CVPixelBufferPoolCreatePixelBuffer(nullptr, bufferPool, &pixelBuffer);
-
-                if (status != kCVReturnSuccess || !pixelBuffer) {
-                    RELEASE_LOG_ERROR(Media, "Failed creating a pixel buffer for converting a VPX frame with error %d", status);
-                    return nullptr;
-                }
-
-                if (protectedThis->m_resourceOwner) {
-                    if (auto surface = CVPixelBufferGetIOSurface(pixelBuffer))
-                        IOSurface::setOwnershipIdentity(surface, protectedThis->m_resourceOwner);
-                }
-
-                return pixelBuffer;
+        auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, WTFMove(colorSpace), WTFMove(buffer), [protectedThis] (auto& buffer) {
+            return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [protectedThis] (size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
+                return protectedThis->createPixelBuffer(width, height, bufferType);
             }));
         });
 
