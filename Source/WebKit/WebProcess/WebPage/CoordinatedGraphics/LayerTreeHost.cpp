@@ -126,6 +126,8 @@ void LayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
 
 void LayerTreeHost::scheduleLayerFlush()
 {
+    ASSERT(isMainRunLoop());
+
     if (!m_layerFlushSchedulingEnabled)
         return;
 
@@ -143,11 +145,15 @@ void LayerTreeHost::scheduleLayerFlush()
 
 void LayerTreeHost::cancelPendingLayerFlush()
 {
+    ASSERT(isMainRunLoop());
+
     m_layerFlushTimer.stop();
 }
 
 void LayerTreeHost::layerFlushTimerFired()
 {
+    ASSERT(isMainRunLoop());
+
     if (m_isSuspended)
         return;
 
@@ -181,11 +187,15 @@ void LayerTreeHost::layerFlushTimerFired()
 
 void LayerTreeHost::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
+    ASSERT(isMainRunLoop());
+
     m_coordinator.setRootCompositingLayer(graphicsLayer);
 }
 
 void LayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* viewOverlayRootLayer)
 {
+    ASSERT(isMainRunLoop());
+
     m_viewOverlayRootLayer = viewOverlayRootLayer;
     m_coordinator.setViewOverlayRootLayer(viewOverlayRootLayer);
 }
@@ -348,6 +358,8 @@ RefPtr<DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonitor(Platfor
 
 void LayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
 {
+    ASSERT(isMainRunLoop());
+
     // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
     if (m_viewOverlayRootLayer)
         m_viewOverlayRootLayer->flushCompositingState(visibleContentRect);
@@ -355,6 +367,8 @@ void LayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
 
 void LayerTreeHost::commitSceneState(const RefPtr<Nicosia::Scene>& state)
 {
+    ASSERT(isMainRunLoop());
+
     m_isWaitingForRenderer = true;
     m_compositor->updateSceneState(state, ++m_compositionRequestID);
 }
@@ -392,6 +406,8 @@ void LayerTreeHost::didDestroyGLContext()
 
 void LayerTreeHost::resize(const IntSize& size)
 {
+    ASSERT(m_compositor->compositingRunLoop().isCurrent());
+
     m_surface->clientResize(size);
 }
 
@@ -406,11 +422,15 @@ void LayerTreeHost::willRenderFrame()
 
 void LayerTreeHost::clearIfNeeded()
 {
+    ASSERT(m_compositor->compositingRunLoop().isCurrent());
+
     m_surface->clearIfNeeded();
 }
 
 void LayerTreeHost::didRenderFrame(uint32_t compositionResponseID)
 {
+    ASSERT(m_compositor->compositingRunLoop().isCurrent());
+
     m_surface->didRenderFrame();
 #if HAVE(DISPLAY_LINK)
     m_compositionResponseID = compositionResponseID;
@@ -431,12 +451,14 @@ void LayerTreeHost::didRenderFrameTimerFired()
 }
 #endif
 
+#if !HAVE(DISPLAY_LINK)
 void LayerTreeHost::displayDidRefresh(PlatformDisplayID displayID)
 {
+    ASSERT(m_compositor->compositingRunLoop().isCurrent());
+
     WebProcess::singleton().eventDispatcher().notifyScrollingTreesDisplayDidRefresh(displayID);
 }
 
-#if !HAVE(DISPLAY_LINK)
 void LayerTreeHost::requestDisplayRefreshMonitorUpdate()
 {
     // Flush layers to cause a repaint. If m_isWaitingForRenderer was true at this point, the layer

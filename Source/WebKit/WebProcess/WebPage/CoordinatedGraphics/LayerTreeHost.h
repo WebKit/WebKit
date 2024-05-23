@@ -141,9 +141,10 @@ private:
     void willRenderFrame() override;
     void clearIfNeeded() override;
     void didRenderFrame(uint32_t) override;
-    void displayDidRefresh(WebCore::PlatformDisplayID) override;
 
 #if !HAVE(DISPLAY_LINK)
+    void displayDidRefresh(WebCore::PlatformDisplayID) override;
+
     // ThreadedDisplayRefreshMonitor::Client
     void requestDisplayRefreshMonitorUpdate() override;
     void handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled) override;

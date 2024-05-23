@@ -58,7 +58,9 @@ public:
         virtual void willRenderFrame() = 0;
         virtual void clearIfNeeded() = 0;
         virtual void didRenderFrame(uint32_t) = 0;
+#if !HAVE(DISPLAY_LINK)
         virtual void displayDidRefresh(WebCore::PlatformDisplayID) = 0;
+#endif
     };
 
 #if HAVE(DISPLAY_LINK)
