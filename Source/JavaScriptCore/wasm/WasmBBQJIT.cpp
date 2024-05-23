@@ -4254,6 +4254,11 @@ ALWAYS_INLINE void BBQJIT::didParseOpcode()
 
 // SIMD
 
+bool BBQJIT::usesSIMD()
+{
+    return m_usesSIMD;
+}
+
 void BBQJIT::dump(const ControlStack&, const Stack*) { }
 void BBQJIT::didFinishParsingLocals() { }
 void BBQJIT::didPopValueFromStack(ExpressionType, String) { }

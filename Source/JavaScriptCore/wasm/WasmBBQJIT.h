@@ -1796,6 +1796,8 @@ public:
 
     // SIMD
 
+    bool usesSIMD();
+
     void notifyFunctionUsesSIMD();
 
     PartialResult addSIMDLoad(ExpressionType, uint32_t, ExpressionType&);
