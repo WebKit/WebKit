@@ -71,6 +71,7 @@ const GlobalObjectMethodTable* JSShadowRealmGlobalScopeBase::globalObjectMethodT
         nullptr,
 #endif
         &deriveShadowRealmGlobalObject,
+        &codeForEval,
     };
     return &table;
 };
@@ -151,6 +152,11 @@ void JSShadowRealmGlobalScopeBase::reportViolationForUnsafeEval(JSC::JSGlobalObj
 {
     auto incubating = jsCast<JSShadowRealmGlobalScopeBase*>(globalObject)->incubatingRealm();
     incubating->globalObjectMethodTable()->reportViolationForUnsafeEval(incubating, msg);
+}
+
+String JSShadowRealmGlobalScopeBase::codeForEval(JSC::JSGlobalObject* globalObject, JSC::JSValue value)
+{
+    return JSGlobalObject::codeForEval(globalObject, value);
 }
 
 void JSShadowRealmGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC::Microtask>&& task)

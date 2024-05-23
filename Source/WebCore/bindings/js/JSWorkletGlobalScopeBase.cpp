@@ -69,6 +69,7 @@ const GlobalObjectMethodTable* JSWorkletGlobalScopeBase::globalObjectMethodTable
         nullptr,
 #endif
         deriveShadowRealmGlobalObject,
+        codeForEval,
     };
     return &table;
 };
@@ -117,6 +118,11 @@ JSC::ScriptExecutionStatus JSWorkletGlobalScopeBase::scriptExecutionStatus(JSC::
 void JSWorkletGlobalScopeBase::reportViolationForUnsafeEval(JSC::JSGlobalObject* globalObject, JSC::JSString* source)
 {
     return JSGlobalObject::reportViolationForUnsafeEval(globalObject, source);
+}
+
+String JSWorkletGlobalScopeBase::codeForEval(JSC::JSGlobalObject* globalObject, JSC::JSValue value)
+{
+    return JSGlobalObject::codeForEval(globalObject, value);
 }
 
 bool JSWorkletGlobalScopeBase::supportsRichSourceInfo(const JSGlobalObject* object)

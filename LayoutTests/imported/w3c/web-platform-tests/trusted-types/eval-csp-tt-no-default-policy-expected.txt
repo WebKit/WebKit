@@ -1,6 +1,8 @@
 
-FAIL eval of TrustedScript works. assert_equals: expected (number) 2 but got (object) object "1+1"
+PASS eval of TrustedScript works.
+PASS indirect eval of TrustedScript works.
 FAIL eval of string fails. assert_throws_js: function "_ => eval('1+1')" did not throw
+FAIL indirect eval of string fails. assert_throws_js: function "_ => eval?.('1+1')" did not throw
 PASS eval of !TrustedScript and !string works.
 PASS Function constructor of TrustedScript works.
 FAIL Function constructor of string fails. assert_throws_js: function "_ => new Function('return 1+1')()" did not throw

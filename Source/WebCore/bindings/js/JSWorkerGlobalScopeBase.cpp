@@ -32,6 +32,7 @@
 #include "EventLoop.h"
 #include "JSDOMGuardedObject.h"
 #include "JSMicrotaskCallback.h"
+#include "JSTrustedScript.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/GlobalObjectMethodTable.h>
@@ -73,6 +74,7 @@ const GlobalObjectMethodTable* JSWorkerGlobalScopeBase::globalObjectMethodTable(
         nullptr,
 #endif
         deriveShadowRealmGlobalObject,
+        codeForEval,
     };
     return &table;
 };
@@ -142,6 +144,16 @@ JSC::ScriptExecutionStatus JSWorkerGlobalScopeBase::scriptExecutionStatus(JSC::J
 void JSWorkerGlobalScopeBase::reportViolationForUnsafeEval(JSC::JSGlobalObject* globalObject, JSC::JSString* source)
 {
     return JSGlobalObject::reportViolationForUnsafeEval(globalObject, source);
+}
+
+String JSWorkerGlobalScopeBase::codeForEval(JSC::JSGlobalObject* globalObject, JSC::JSValue value)
+{
+    VM& vm = globalObject->vm();
+
+    if (auto* script = JSTrustedScript::toWrapped(vm, value))
+        return script->toString();
+
+    return nullString();
 }
 
 void JSWorkerGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC::Microtask>&& task)

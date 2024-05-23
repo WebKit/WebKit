@@ -476,11 +476,18 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue x = callFrame->argument(0);
-    if (!x.isString())
+    JSString* codeString = nullptr;
+    if (LIKELY(x.isString()))
+        codeString = asString(x);
+    else if (Options::useTrustedTypes()) {
+        auto code = globalObject->globalObjectMethodTable()->codeForEval(globalObject, x);
+        if (!code.isNull())
+            codeString = jsString(vm, code);
+    }
+
+    if (!codeString)
         return JSValue::encode(x);
 
-
-    auto codeString = asString(x);
     if (!globalObject->evalEnabled()) {
         globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, codeString);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));

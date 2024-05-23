@@ -3270,6 +3270,7 @@ webkit.org/b/271223 fast/events/wheel/redispatched-wheel-event.html [ Skip ] # T
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-report-only.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-no-unsafe-eval.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting.html [ Skip ]
 
 # testRunner.dontForceRepaint
 compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ Skip ]

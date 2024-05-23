@@ -59,6 +59,7 @@ public:
     static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
     static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
     static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, JSC::JSString*);
+    static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
 
 protected:
     JSWorkletGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkletGlobalScope>&&);

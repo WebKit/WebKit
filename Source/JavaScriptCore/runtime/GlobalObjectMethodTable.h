@@ -70,6 +70,7 @@ struct GlobalObjectMethodTable {
     JSPromise* (*compileStreaming)(JSGlobalObject*, JSValue);
     JSPromise* (*instantiateStreaming)(JSGlobalObject*, JSValue, JSObject*);
     JSGlobalObject* (*deriveShadowRealmGlobalObject)(JSGlobalObject*);
+    String (*codeForEval)(JSGlobalObject*, JSValue);
 };
 
 } // namespace JSC
