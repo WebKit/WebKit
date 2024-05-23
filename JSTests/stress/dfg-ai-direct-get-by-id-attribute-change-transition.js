@@ -27,7 +27,7 @@ function createObject() {
 function getStructureID(object) {
     const desc = describe(object);
 
-    return desc.match(/StructureID: (\d+)/)[1];
+    return desc.match(/Structure 0x([a-f0-9]+)/)[1];
 }
 
 function main() {
