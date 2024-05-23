@@ -1,0 +1,63 @@
+
+PASS :placement:stmt="continuing_break_if"
+PASS :placement:stmt="continuing_empty"
+PASS :placement:stmt="continuing_break_if_parens"
+PASS :placement:stmt="continuing_discard"
+PASS :placement:stmt="continuing_continue_nested"
+PASS :placement:stmt="continuing_continue"
+PASS :placement:stmt="continuing_break"
+PASS :placement:stmt="continuing_for"
+PASS :placement:stmt="continuing_for_break"
+PASS :placement:stmt="continuing_while"
+PASS :placement:stmt="continuing_while_break"
+FAIL :placement:stmt="continuing_semicolon" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    9:44: error: Not a valid statement
+
+    ---- shader ----
+
+    fn b() -> i32 {
+      return 1;
+    }
+
+    @fragment
+    fn frag() -> @location(0) vec4f {
+      var a = 0;
+      loop { if a == 4 { break; } continuing { ; } }
+      return vec4f(1);
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    9:43: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :placement:stmt="continuing_functionn_call"
+PASS :placement:stmt="continuing_let"
+PASS :placement:stmt="continuing_var"
+PASS :placement:stmt="continuing_const"
+PASS :placement:stmt="continuing_block"
+PASS :placement:stmt="continuing_const_assert"
+PASS :placement:stmt="continuing_loop"
+PASS :placement:stmt="continuing_if"
+PASS :placement:stmt="continuing_switch"
+PASS :placement:stmt="continuing_switch_break"
+PASS :placement:stmt="continuing_loop_nested_continuing"
+PASS :placement:stmt="continuing_inc"
+PASS :placement:stmt="continuing_dec"
+PASS :placement:stmt="while"
+PASS :placement:stmt="for"
+PASS :placement:stmt="switch_case"
+PASS :placement:stmt="switch"
+PASS :placement:stmt="continuing"
+PASS :placement:stmt="return"
+PASS :placement:stmt="if_body"
+PASS :placement:stmt="if"
+PASS :placement:stmt="if_else"
+PASS :placement:stmt="continuing_continuing"
+PASS :placement:stmt="no_body"
+PASS :placement:stmt="return_in_continue"
+PASS :placement:stmt="return_if_nested_in_continue"
+PASS :placement:stmt="return_for_nested_in_continue"
+

@@ -1,1 +1,6 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :sampled_2d_coords:
+PASS :sampled_3d_coords:
+PASS :sampled_array_2d_coords:
+PASS :sampled_array_3d_coords:
+

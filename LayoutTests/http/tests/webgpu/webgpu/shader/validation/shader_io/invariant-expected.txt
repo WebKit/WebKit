@@ -1,1 +1,40 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :parsing:attr="invariant"
+PASS :parsing:attr="comment"
+PASS :parsing:attr="split_line"
+PASS :parsing:attr="empty_parens"
+PASS :parsing:attr="value"
+PASS :parsing:attr="missing_right_paren"
+PASS :parsing:attr="missing_left_paren"
+PASS :parsing:attr="duplicate"
+PASS :valid_only_with_vertex_position_builtin:name="vertex_index";stage="vertex";io="in";type="u32";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="vertex_index";stage="vertex";io="in";type="u32";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="instance_index";stage="vertex";io="in";type="u32";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="instance_index";stage="vertex";io="in";type="u32";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="position";stage="vertex";io="out";type="vec4%3Cf32%3E";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="position";stage="vertex";io="out";type="vec4%3Cf32%3E";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="position";stage="fragment";io="in";type="vec4%3Cf32%3E";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="position";stage="fragment";io="in";type="vec4%3Cf32%3E";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="front_facing";stage="fragment";io="in";type="bool";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="front_facing";stage="fragment";io="in";type="bool";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="frag_depth";stage="fragment";io="out";type="f32";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="frag_depth";stage="fragment";io="out";type="f32";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="local_invocation_id";stage="compute";io="in";type="vec3%3Cu32%3E";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="local_invocation_id";stage="compute";io="in";type="vec3%3Cu32%3E";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="local_invocation_index";stage="compute";io="in";type="u32";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="local_invocation_index";stage="compute";io="in";type="u32";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="global_invocation_id";stage="compute";io="in";type="vec3%3Cu32%3E";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="global_invocation_id";stage="compute";io="in";type="vec3%3Cu32%3E";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="workgroup_id";stage="compute";io="in";type="vec3%3Cu32%3E";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="workgroup_id";stage="compute";io="in";type="vec3%3Cu32%3E";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="num_workgroups";stage="compute";io="in";type="vec3%3Cu32%3E";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="num_workgroups";stage="compute";io="in";type="vec3%3Cu32%3E";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="sample_index";stage="fragment";io="in";type="u32";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="sample_index";stage="fragment";io="in";type="u32";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="sample_mask";stage="fragment";io="in";type="u32";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="sample_mask";stage="fragment";io="in";type="u32";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="sample_mask";stage="fragment";io="out";type="u32";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="sample_mask";stage="fragment";io="out";type="u32";use_struct=false
+PASS :not_valid_on_user_defined_io:use_invariant=true
+PASS :not_valid_on_user_defined_io:use_invariant=false
+

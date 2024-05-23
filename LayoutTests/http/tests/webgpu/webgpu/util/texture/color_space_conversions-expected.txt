@@ -1,0 +1,17 @@
+
+PASS :util_matches_2d_canvas:srcColorSpace="srgb";dstColorSpace="display-p3"
+FAIL :util_matches_2d_canvas:srcColorSpace="display-p3";dstColorSpace="srgb" assert_unreached:
+  - EXPECTATION FAILED: Color space conversion had unexpected results:
+     between 5,0,0 and 5,0,0 inclusive:
+                                coords ==   X,Y,Z:                             5,0,0
+      act. texel bytes (little-endian) ==      0x:                       8d 00 85 ff
+                           act. colors == R,G,B,A: 0.552941,0.00000,0.521569,1.00000
+                           exp. colors == R,G,B,A: 0.552941,0.00000,0.517647,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     141,0,133,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     141,0,132,255
+             tolerance ± 0 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                                    0,0,1,0
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:24:10
+    @http://127.0.0.1:8000/webgpu/webgpu/util/texture/color_space_conversions.spec.js:102:25
+ Reached unreachable code
+

@@ -65,6 +65,29 @@ PASS :color,component_count:format="rgb10a2uint"
 PASS :color,component_count:format="rgb10a2unorm"
 PASS :color,component_count,blend:format="r8unorm"
 PASS :color,component_count,blend:format="rg8unorm"
-PASS :color,component_count,blend:format="rgba8unorm"
+FAIL :color,component_count,blend:format="rgba8unorm" assert_unreached:
+  - INFO: subcase: output=[0,1,0,0.498];colorSrcFactor="one";colorDstFactor="one-minus-src-alpha";alphaSrcFactor="one";alphaDstFactor="zero"
+    OK
+  - EXPECTATION FAILED: subcase: output=[0,1,0,0.498];colorSrcFactor="dst-alpha";colorDstFactor="zero";alphaSrcFactor="one";alphaDstFactor="zero"
+    Array had unexpected contents at indices 1 through 3.
+     Starting at index 0:
+       actual == 0x: 00 00 00 00
+       failed ->        xx    xx
+     expected ==     00 ff 00 7f
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:589:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:756:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/render_pipeline/pipeline_output_targets.spec.js:446:22
+  - INFO: subcase: output=[0,1,0,0.498];colorSrcFactor="src-alpha";colorDstFactor="one-minus-src-alpha";alphaSrcFactor="one";alphaDstFactor="zero"
+    OK
+  - INFO: subcase: output=[0,1,0,0.498];colorSrcFactor="dst-alpha";colorDstFactor="zero";alphaSrcFactor="one";alphaDstFactor="zero"
+    OK
+  - INFO: subcase: output=[0,1,0,0.498];colorSrcFactor="dst-alpha";colorDstFactor="zero";alphaSrcFactor="zero";alphaDstFactor="src"
+    OK
+  - INFO: subcase: output=[0,1,0,0.498];colorSrcFactor="one-minus-dst-alpha";colorDstFactor="dst-alpha";alphaSrcFactor="zero";alphaDstFactor="dst-alpha"
+    OK
+ Reached unreachable code
 PASS :color,component_count,blend:format="bgra8unorm"
 

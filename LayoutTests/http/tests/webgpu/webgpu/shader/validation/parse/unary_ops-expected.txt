@@ -1,0 +1,8 @@
+
+PASS :all:stmt="not_bool_literal"
+PASS :all:stmt="not_bool_expr"
+PASS :all:stmt="not_not_bool_literal"
+PASS :all:stmt="not_not_bool_expr"
+PASS :all:stmt="not_int_literal"
+PASS :all:stmt="not_int_expr"
+

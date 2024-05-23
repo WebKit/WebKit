@@ -1,0 +1,338 @@
+
+FAIL :types:type="bool";wgsize=[1,1] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: deadbeef
+       failed ->           xx
+     expected ==     00000001
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:20: no matching overload for initializer u32(void)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="bool";wgsize=[3,7] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 20.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:20: no matching overload for initializer u32(void)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="bool";wgsize=[1,128] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 127.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:20: no matching overload for initializer u32(void)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="bool";wgsize=[16,16] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 255.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 00000001 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:20: no matching overload for initializer u32(void)
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="u32";wgsize=[1,1] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: deadbeef
+       failed ->           xx
+     expected ==     0000002a
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'u32'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="u32";wgsize=[3,7] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 20.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'u32'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="u32";wgsize=[1,128] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 127.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'u32'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="u32";wgsize=[16,16] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 255.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a 0000002a ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'u32'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="vec4u";wgsize=[1,1] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef
+       failed ->           xx       xx       xx       xx
+     expected ==     0000002a 00000001 ffffffff 00000309
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'vec4<u32>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="vec4u";wgsize=[3,7] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 83.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'vec4<u32>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="vec4u";wgsize=[1,128] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 511.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'vec4<u32>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="vec4u";wgsize=[16,16] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 1023.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'vec4<u32>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="mat3x2f";wgsize=[1,1] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 5.
+     Starting at index 0:
+       actual ==  -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18
+       failed ->          xx         xx         xx         xx         xx         xx
+     expected ==       42.00      1.000   6.554e+4     -42.00     -1.000  -6.554e+4
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'mat3x2<f32>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="mat3x2f";wgsize=[3,7] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 125.
+     Starting at index 0:
+       actual ==  -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 ...
+       failed ->          xx         xx         xx         xx         xx         xx         xx         xx         xx         xx ...
+     expected ==       42.00      1.000   6.554e+4     -42.00     -1.000  -6.554e+4      42.00      1.000   6.554e+4     -42.00 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'mat3x2<f32>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="mat3x2f";wgsize=[1,128] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 767.
+     Starting at index 0:
+       actual ==  -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 ...
+       failed ->          xx         xx         xx         xx         xx         xx         xx         xx         xx         xx ...
+     expected ==       42.00      1.000   6.554e+4     -42.00     -1.000  -6.554e+4      42.00      1.000   6.554e+4     -42.00 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'mat3x2<f32>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="mat3x2f";wgsize=[16,16] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 1535.
+     Starting at index 0:
+       actual ==  -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 -6.260e+18 ...
+       failed ->          xx         xx         xx         xx         xx         xx         xx         xx         xx         xx ...
+     expected ==       42.00      1.000   6.554e+4     -42.00     -1.000  -6.554e+4      42.00      1.000   6.554e+4     -42.00 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'mat3x2<f32>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="array%3Cu32,%204%3E";wgsize=[1,1] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef
+       failed ->           xx       xx       xx       xx
+     expected ==     0000002a 00000001 ffffffff 00000309
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'array<u32, 4>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="array%3Cu32,%204%3E";wgsize=[3,7] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 83.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'array<u32, 4>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="array%3Cu32,%204%3E";wgsize=[1,128] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 511.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'array<u32, 4>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="array%3Cu32,%204%3E";wgsize=[16,16] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 1023.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'array<u32, 4>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="SimpleStruct";wgsize=[1,1] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef
+       failed ->           xx       xx       xx       xx
+     expected ==     0000002a 00000001 ffffffff 00000309
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'SimpleStruct'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="SimpleStruct";wgsize=[3,7] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 83.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'SimpleStruct'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="SimpleStruct";wgsize=[1,128] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 511.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'SimpleStruct'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="SimpleStruct";wgsize=[16,16] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 1023.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 0000002a 00000001 ffffffff 00000309 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    13:18: cannot assign value of type 'void' to 'SimpleStruct'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="ComplexStruct";wgsize=[1,1] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 23.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 00000001 ffffffff 00000309 0000002a ffffffff 00000309 0000002a 00000001 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    24:18: cannot assign value of type 'void' to 'ComplexStruct'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="ComplexStruct";wgsize=[3,7] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 503.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 00000001 ffffffff 00000309 0000002a ffffffff 00000309 0000002a 00000001 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    24:18: cannot assign value of type 'void' to 'ComplexStruct'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="ComplexStruct";wgsize=[1,128] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3071.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 00000001 ffffffff 00000309 0000002a ffffffff 00000309 0000002a 00000001 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    24:18: cannot assign value of type 'void' to 'ComplexStruct'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :types:type="ComplexStruct";wgsize=[16,16] assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 6143.
+     Starting at index 0:
+       actual == 0x: deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef deadbeef ...
+       failed ->           xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx       xx ...
+     expected ==     0000002a 00000001 ffffffff 00000309 00000001 ffffffff 00000309 0000002a ffffffff 00000309 0000002a 00000001 ...
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    24:18: cannot assign value of type 'void' to 'ComplexStruct'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+

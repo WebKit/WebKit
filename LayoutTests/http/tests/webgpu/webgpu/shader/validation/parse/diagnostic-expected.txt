@@ -1,0 +1,2832 @@
+
+FAIL :valid_params:severity="off";rule="derivative_uniformity";type="attribute" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(off, derivative_uniformity) fn foo() { }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :valid_params:severity="off";rule="derivative_uniformity";type="directive"
+FAIL :valid_params:severity="info";rule="derivative_uniformity";type="attribute" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(info, derivative_uniformity) fn foo() { }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :valid_params:severity="info";rule="derivative_uniformity";type="directive"
+FAIL :valid_params:severity="warning";rule="derivative_uniformity";type="attribute" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(warning, derivative_uniformity) fn foo() { }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :valid_params:severity="warning";rule="derivative_uniformity";type="directive"
+FAIL :valid_params:severity="error";rule="derivative_uniformity";type="attribute" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(error, derivative_uniformity) fn foo() { }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :valid_params:severity="error";rule="derivative_uniformity";type="directive"
+PASS :invalid_severity:severity="none";type="attribute"
+PASS :invalid_severity:severity="none";type="directive"
+PASS :invalid_severity:severity="warn";type="attribute"
+PASS :invalid_severity:severity="warn";type="directive"
+PASS :invalid_severity:severity="goose";type="attribute"
+PASS :invalid_severity:severity="goose";type="directive"
+PASS :invalid_severity:severity="fatal";type="attribute"
+PASS :invalid_severity:severity="fatal";type="directive"
+PASS :invalid_severity:severity="severe";type="attribute"
+PASS :invalid_severity:severity="severe";type="directive"
+FAIL :warning_unknown_rule:type="attribute";rule="unknown" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :warning_unknown_rule:type="attribute";rule="blahblahblah" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :warning_unknown_rule:type="attribute";rule="derivative_uniform" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :warning_unknown_rule:type="directive";rule="unknown" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:80:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:121:25
+ Reached unreachable code
+FAIL :warning_unknown_rule:type="directive";rule="blahblahblah" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:80:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:121:25
+ Reached unreachable code
+FAIL :warning_unknown_rule:type="directive";rule="derivative_uniform" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:80:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:121:25
+ Reached unreachable code
+PASS :valid_locations:type="attribute";location="module"
+FAIL :valid_locations:type="attribute";location="function" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(info, derivative_uniformity) fn foo() { }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="compound" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="if_stmt" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) if true { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="if_then" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:20: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { if true @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:19: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="if_else" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:29: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { if true { } else @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:28: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="switch_stmt" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) switch 0 { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="switch_body" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(info, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="switch_default" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:31: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { default @diagnostic(info, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:30: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="switch_case" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(info, derivative_uniformity) { } default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="loop_stmt" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) loop { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="loop_body" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:17: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { loop @diagnostic(info, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:16: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="loop_continuing" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { loop { continuing @diagnostic(info, derivative_uniformity) { break if true; } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="while_stmt" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) while true { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="while_body" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:23: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { while true @diagnostic(info, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:22: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="for_stmt" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) for (var i = 0; i < 10; i++) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid_locations:type="attribute";location="for_body" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:41: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { for (var i = 0; i < 10; i++) @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:40: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :valid_locations:type="directive";location="module"
+PASS :valid_locations:type="directive";location="function"
+PASS :valid_locations:type="directive";location="compound"
+PASS :valid_locations:type="directive";location="if_stmt"
+PASS :valid_locations:type="directive";location="if_then"
+PASS :valid_locations:type="directive";location="if_else"
+PASS :valid_locations:type="directive";location="switch_stmt"
+PASS :valid_locations:type="directive";location="switch_body"
+PASS :valid_locations:type="directive";location="switch_default"
+PASS :valid_locations:type="directive";location="switch_case"
+PASS :valid_locations:type="directive";location="loop_stmt"
+PASS :valid_locations:type="directive";location="loop_body"
+PASS :valid_locations:type="directive";location="loop_continuing"
+PASS :valid_locations:type="directive";location="while_stmt"
+PASS :valid_locations:type="directive";location="while_body"
+PASS :valid_locations:type="directive";location="for_stmt"
+PASS :valid_locations:type="directive";location="for_body"
+PASS :invalid_locations:type="attribute";location="module_var"
+PASS :invalid_locations:type="attribute";location="module_const"
+PASS :invalid_locations:type="attribute";location="module_override"
+PASS :invalid_locations:type="attribute";location="struct"
+PASS :invalid_locations:type="attribute";location="struct_member"
+PASS :invalid_locations:type="attribute";location="function_params"
+PASS :invalid_locations:type="attribute";location="function_var"
+PASS :invalid_locations:type="attribute";location="function_let"
+PASS :invalid_locations:type="attribute";location="function_const"
+PASS :invalid_locations:type="attribute";location="pre_else"
+PASS :invalid_locations:type="attribute";location="pre_default"
+PASS :invalid_locations:type="attribute";location="pre_case"
+PASS :invalid_locations:type="attribute";location="pre_continuing"
+PASS :invalid_locations:type="attribute";location="pre_for_params"
+PASS :invalid_locations:type="directive";location="module_var"
+PASS :invalid_locations:type="directive";location="module_const"
+PASS :invalid_locations:type="directive";location="module_override"
+PASS :invalid_locations:type="directive";location="struct"
+PASS :invalid_locations:type="directive";location="struct_member"
+PASS :invalid_locations:type="directive";location="function_params"
+PASS :invalid_locations:type="directive";location="function_var"
+PASS :invalid_locations:type="directive";location="function_let"
+PASS :invalid_locations:type="directive";location="function_const"
+PASS :invalid_locations:type="directive";location="pre_else"
+PASS :invalid_locations:type="directive";location="pre_default"
+PASS :invalid_locations:type="directive";location="pre_case"
+PASS :invalid_locations:type="directive";location="pre_continuing"
+PASS :invalid_locations:type="directive";location="pre_for_params"
+PASS :conflicting_directive:s1="off";s2="off"
+FAIL :conflicting_directive:s1="off";s2="info" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(off, derivative_uniformity);
+    diagnostic(info, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :conflicting_directive:s1="off";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(off, derivative_uniformity);
+    diagnostic(warning, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :conflicting_directive:s1="off";s2="error" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(off, derivative_uniformity);
+    diagnostic(error, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :conflicting_directive:s1="info";s2="off" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(info, derivative_uniformity);
+    diagnostic(off, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :conflicting_directive:s1="info";s2="info"
+FAIL :conflicting_directive:s1="info";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(info, derivative_uniformity);
+    diagnostic(warning, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :conflicting_directive:s1="info";s2="error" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(info, derivative_uniformity);
+    diagnostic(error, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :conflicting_directive:s1="warning";s2="off" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(warning, derivative_uniformity);
+    diagnostic(off, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :conflicting_directive:s1="warning";s2="info" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(warning, derivative_uniformity);
+    diagnostic(info, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :conflicting_directive:s1="warning";s2="warning"
+FAIL :conflicting_directive:s1="warning";s2="error" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(warning, derivative_uniformity);
+    diagnostic(error, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :conflicting_directive:s1="error";s2="off" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(error, derivative_uniformity);
+    diagnostic(off, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :conflicting_directive:s1="error";s2="info" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(error, derivative_uniformity);
+    diagnostic(info, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :conflicting_directive:s1="error";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    diagnostic(error, derivative_uniformity);
+    diagnostic(warning, derivative_uniformity);
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:161:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :conflicting_directive:s1="error";s2="error"
+FAIL :conflicting_attribute_same_location:loc="function";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) fn foo() { }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="function";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="function";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="function";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="function";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="function";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) fn foo() { }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="function";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="function";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="function";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="function";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="function";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) fn foo() { }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="function";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="function";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="function";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="function";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="function";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) fn foo() { }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="compound";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="compound";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="compound";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="compound";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="compound";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="compound";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="compound";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="compound";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="compound";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="compound";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="compound";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="compound";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="compound";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="compound";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="compound";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="compound";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="if_stmt";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) if true { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="if_stmt";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) if true { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="if_stmt";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) if true { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="if_stmt";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="if_stmt";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) if true { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="if_then";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:20: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { if true @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:19: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="if_then";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="if_then";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="if_then";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="if_then";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="if_then";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:20: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { if true @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:19: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="if_then";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="if_then";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="if_then";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="if_then";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="if_then";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:20: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { if true @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:19: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="if_then";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="if_then";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="if_then";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="if_then";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="if_then";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:20: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { if true @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:19: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="if_else";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:29: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { if true { } else @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:28: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="if_else";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="if_else";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="if_else";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="if_else";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="if_else";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:29: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { if true { } else @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:28: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="if_else";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="if_else";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="if_else";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="if_else";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="if_else";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:29: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { if true { } else @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:28: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="if_else";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="if_else";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="if_else";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="if_else";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="if_else";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:29: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { if true { } else @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:28: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="switch_stmt";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) switch 0 { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="switch_stmt";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) switch 0 { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="switch_stmt";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) switch 0 { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="switch_stmt";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="switch_stmt";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) switch 0 { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="switch_body";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="switch_body";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="switch_body";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="switch_body";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="switch_body";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="switch_default";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:31: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { default @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:30: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="switch_default";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:31: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { default @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:30: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="switch_default";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:31: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { default @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:30: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="switch_default";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="switch_default";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:31: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { default @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:30: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="switch_case";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="switch_case";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="switch_case";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) { } default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="switch_case";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="switch_case";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) { } default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="loop_stmt";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) loop { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="loop_stmt";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) loop { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="loop_stmt";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) loop { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="loop_stmt";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="loop_stmt";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) loop { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="loop_body";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:17: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { loop @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:16: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="loop_body";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:17: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { loop @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:16: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="loop_body";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:17: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { loop @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:16: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="loop_body";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="loop_body";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:17: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { loop @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:16: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="loop_continuing";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { loop { continuing @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { break if true; } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="loop_continuing";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { loop { continuing @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) { break if true; } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="loop_continuing";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { loop { continuing @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) { break if true; } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="loop_continuing";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="loop_continuing";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { loop { continuing @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) { break if true; } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="while_stmt";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) while true { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="while_stmt";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) while true { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="while_stmt";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) while true { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="while_stmt";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="while_stmt";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) while true { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="while_body";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:23: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { while true @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:22: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="while_body";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="while_body";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="while_body";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="while_body";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="while_body";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:23: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { while true @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:22: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="while_body";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="while_body";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="while_body";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="while_body";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="while_body";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:23: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { while true @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:22: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="while_body";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="while_body";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="while_body";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="while_body";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="while_body";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:23: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { while true @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:22: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="for_stmt";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) for (var i = 0; i < 10; i++) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="for_stmt";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) for (var i = 0; i < 10; i++) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="for_stmt";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) for (var i = 0; i < 10; i++) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="for_stmt";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="for_stmt";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) for (var i = 0; i < 10; i++) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_same_location:loc="for_body";s1="off";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:41: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { for (var i = 0; i < 10; i++) @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:40: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="for_body";s1="off";s2="info"
+PASS :conflicting_attribute_same_location:loc="for_body";s1="off";s2="warning"
+PASS :conflicting_attribute_same_location:loc="for_body";s1="off";s2="error"
+PASS :conflicting_attribute_same_location:loc="for_body";s1="info";s2="off"
+FAIL :conflicting_attribute_same_location:loc="for_body";s1="info";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:41: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { for (var i = 0; i < 10; i++) @diagnostic(info, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:40: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="for_body";s1="info";s2="warning"
+PASS :conflicting_attribute_same_location:loc="for_body";s1="info";s2="error"
+PASS :conflicting_attribute_same_location:loc="for_body";s1="warning";s2="off"
+PASS :conflicting_attribute_same_location:loc="for_body";s1="warning";s2="info"
+FAIL :conflicting_attribute_same_location:loc="for_body";s1="warning";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:41: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { for (var i = 0; i < 10; i++) @diagnostic(warning, derivative_uniformity) @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:40: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :conflicting_attribute_same_location:loc="for_body";s1="warning";s2="error"
+PASS :conflicting_attribute_same_location:loc="for_body";s1="error";s2="off"
+PASS :conflicting_attribute_same_location:loc="for_body";s1="error";s2="info"
+PASS :conflicting_attribute_same_location:loc="for_body";s1="error";s2="warning"
+FAIL :conflicting_attribute_same_location:loc="for_body";s1="error";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:41: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { for (var i = 0; i < 10; i++) @diagnostic(error, derivative_uniformity) @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:40: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="off";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(off, derivative_uniformity) fn foo() { @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="off";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(off, derivative_uniformity) fn foo() { @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="off";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(off, derivative_uniformity) fn foo() { @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="info";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(info, derivative_uniformity) fn foo() { @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="info";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(info, derivative_uniformity) fn foo() { @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="info";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(info, derivative_uniformity) fn foo() { @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="warning";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(warning, derivative_uniformity) fn foo() { @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="warning";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(warning, derivative_uniformity) fn foo() { @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="warning";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(warning, derivative_uniformity) fn foo() { @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="error";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(error, derivative_uniformity) fn foo() { @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="error";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(error, derivative_uniformity) fn foo() { @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="compound";s1="error";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:1: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    @diagnostic(error, derivative_uniformity) fn foo() { @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:0: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="off";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) if true @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="off";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) if true @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="off";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) if true @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="info";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) if true @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="info";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) if true @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="info";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) if true @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="warning";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) if true @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="warning";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) if true @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="warning";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) if true @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="error";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) if true @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="error";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) if true @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="error";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) if true @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="off";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) switch 0 @diagnostic(info, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="off";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) switch 0 @diagnostic(warning, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="off";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) switch 0 @diagnostic(error, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="info";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) switch 0 @diagnostic(off, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="info";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) switch 0 @diagnostic(warning, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="info";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) switch 0 @diagnostic(error, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="warning";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) switch 0 @diagnostic(off, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="warning";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) switch 0 @diagnostic(info, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="warning";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) switch 0 @diagnostic(error, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="error";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) switch 0 @diagnostic(off, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="error";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) switch 0 @diagnostic(info, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="error";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) switch 0 @diagnostic(warning, derivative_uniformity) { default { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="off";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(off, derivative_uniformity) { default @diagnostic(info, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="off";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(off, derivative_uniformity) { default @diagnostic(warning, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="off";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(off, derivative_uniformity) { default @diagnostic(error, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="info";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(info, derivative_uniformity) { default @diagnostic(off, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="info";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(info, derivative_uniformity) { default @diagnostic(warning, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="info";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(info, derivative_uniformity) { default @diagnostic(error, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="warning";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(warning, derivative_uniformity) { default @diagnostic(off, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="warning";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(warning, derivative_uniformity) { default @diagnostic(info, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="warning";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(warning, derivative_uniformity) { default @diagnostic(error, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="error";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(error, derivative_uniformity) { default @diagnostic(off, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="error";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(error, derivative_uniformity) { default @diagnostic(info, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_body";s1="error";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected a Identifier, but got a diagnostic
+
+    ---- shader ----
+    fn foo() { switch 0 @diagnostic(error, derivative_uniformity) { default @diagnostic(warning, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected a Identifier, but got a diagnostic
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="off";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(off, derivative_uniformity) { } default @diagnostic(info, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="off";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(off, derivative_uniformity) { } default @diagnostic(warning, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="off";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(off, derivative_uniformity) { } default @diagnostic(error, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="info";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(info, derivative_uniformity) { } default @diagnostic(off, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="info";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(info, derivative_uniformity) { } default @diagnostic(warning, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="info";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(info, derivative_uniformity) { } default @diagnostic(error, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="warning";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(warning, derivative_uniformity) { } default @diagnostic(off, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="warning";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(warning, derivative_uniformity) { } default @diagnostic(info, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="warning";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(warning, derivative_uniformity) { } default @diagnostic(error, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="error";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(error, derivative_uniformity) { } default @diagnostic(off, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="error";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(error, derivative_uniformity) { } default @diagnostic(info, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="switch_case";s1="error";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:30: error: Expected a {, but got a @
+
+    ---- shader ----
+    fn foo() { switch 0 { case 0 @diagnostic(error, derivative_uniformity) { } default @diagnostic(warning, derivative_uniformity) { } } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:29: Expected a {, but got a @
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="off";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) loop @diagnostic(info, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="off";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) loop @diagnostic(warning, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="off";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) loop @diagnostic(error, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="info";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) loop @diagnostic(off, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="info";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) loop @diagnostic(warning, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="info";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) loop @diagnostic(error, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="warning";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) loop @diagnostic(off, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="warning";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) loop @diagnostic(info, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="warning";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) loop @diagnostic(error, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="error";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) loop @diagnostic(off, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="error";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) loop @diagnostic(info, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="error";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) loop @diagnostic(warning, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="off";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) while true @diagnostic(info, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="off";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) while true @diagnostic(warning, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="off";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) while true @diagnostic(error, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="info";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) while true @diagnostic(off, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="info";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) while true @diagnostic(warning, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="info";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) while true @diagnostic(error, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="warning";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) while true @diagnostic(off, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="warning";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) while true @diagnostic(info, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="warning";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) while true @diagnostic(error, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="error";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) while true @diagnostic(off, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="error";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) while true @diagnostic(info, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="error";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) while true @diagnostic(warning, derivative_uniformity) { break; } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="off";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="off";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="off";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(off, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="info";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="info";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="info";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(info, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="warning";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="warning";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="warning";s2="error" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(warning, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(error, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="error";s2="off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(off, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="error";s2="info" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(info, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="error";s2="warning" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:12: error: Not a valid statement
+
+    ---- shader ----
+    fn foo() { @diagnostic(error, derivative_uniformity) for (var i = 0; i < 10; i++) @diagnostic(warning, derivative_uniformity) { } }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:11: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :after_other_directives:directive="enable%20f16"
+PASS :after_other_directives:directive="requires%20readonly_and_readwrite_storage_textures"
+FAIL :diagnostic_scoping:case="override_global_off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    11:7: error: Not a valid statement
+
+    ---- shader ----
+
+        diagnostic(error, derivative_uniformity);
+
+    @group(0) @binding(0) var t : texture_1d<f32>;
+    @group(0) @binding(1) var s : sampler;
+    var<private> non_uniform_cond : bool;
+    var<private> non_uniform_coord : f32;
+    var<private> non_uniform_val : u32;
+    @fragment fn main() {
+
+          @diagnostic(off, derivative_uniformity)
+          if non_uniform_cond {
+            _ = textureSample(t,s,0.0);
+          }
+    }
+    ;
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    11:6: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :diagnostic_scoping:case="override_global_on"
+FAIL :diagnostic_scoping:case="override_global_warn" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+    11:7: error: Not a valid statement
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    11:6: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_scoping:case="global_if_nothing_else_warn" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:80:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:457:27
+ Reached unreachable code
+FAIL :diagnostic_scoping:case="deepest_nesting_warn" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+    9:7: error: Not a valid statement
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    9:6: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_scoping:case="deepest_nesting_off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    9:7: error: Not a valid statement
+
+    ---- shader ----
+
+    @group(0) @binding(0) var t : texture_1d<f32>;
+    @group(0) @binding(1) var s : sampler;
+    var<private> non_uniform_cond : bool;
+    var<private> non_uniform_coord : f32;
+    var<private> non_uniform_val : u32;
+    @fragment fn main() {
+
+          @diagnostic(error, derivative_uniformity)
+          if non_uniform_cond {
+            @diagnostic(off, derivative_uniformity)
+            if non_uniform_cond {
+              _ = textureSample(t,s,0.0);
+            }
+          }
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    9:6: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :diagnostic_scoping:case="deepest_nesting_error"
+FAIL :diagnostic_scoping:case="other_nest_unaffected" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+    11:7: error: Not a valid statement
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    11:6: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :diagnostic_scoping:case="deeper_nest_no_effect"
+PASS :diagnostic_scoping:case="call_unaffected_error"
+FAIL :diagnostic_scoping:case="call_unaffected_warn" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+    12:7: error: Not a valid statement
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    12:6: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_scoping:case="call_unaffected_off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    12:7: error: Not a valid statement
+
+    ---- shader ----
+
+        diagnostic(off, derivative_uniformity);
+        fn foo() { _ = textureSample(t,s,0.0); }
+
+    @group(0) @binding(0) var t : texture_1d<f32>;
+    @group(0) @binding(1) var s : sampler;
+    var<private> non_uniform_cond : bool;
+    var<private> non_uniform_coord : f32;
+    var<private> non_uniform_val : u32;
+    @fragment fn main() {
+
+          @diagnostic(error, derivative_uniformity)
+          if non_uniform_cond {
+            foo();
+          }
+    }
+
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    12:6: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :diagnostic_scoping:case="if_condition_error"
+FAIL :diagnostic_scoping:case="if_condition_warn" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+    10:9: error: Not a valid statement
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    10:8: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_scoping:case="if_condition_off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    10:9: error: Not a valid statement
+
+    ---- shader ----
+
+    @group(0) @binding(0) var t : texture_1d<f32>;
+    @group(0) @binding(1) var s : sampler;
+    var<private> non_uniform_cond : bool;
+    var<private> non_uniform_coord : f32;
+    var<private> non_uniform_val : u32;
+    @fragment fn main() {
+
+          if non_uniform_cond {
+            @diagnostic(off, derivative_uniformity)
+            if textureSample(t,s,non_uniform_coord).x > 0.0
+              @diagnostic(error, derivative_uniformity) {
+            }
+          }
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    10:8: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :diagnostic_scoping:case="switch_error"
+FAIL :diagnostic_scoping:case="switch_warn" assert_unreached:
+  - VALIDATION FAILED: Missing expected 'warning' message.
+    9:9: error: Not a valid statement
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    9:8: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_scoping:case="switch_off" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    9:9: error: Not a valid statement
+
+    ---- shader ----
+
+    @group(0) @binding(0) var t : texture_1d<f32>;
+    @group(0) @binding(1) var s : sampler;
+    var<private> non_uniform_cond : bool;
+    var<private> non_uniform_coord : f32;
+    var<private> non_uniform_val : u32;
+    @fragment fn main() {
+
+            @diagnostic(off, derivative_uniformity)
+            switch non_uniform_val {
+              case 0 @diagnostic(error, derivative_uniformity){
+              }
+              default {
+                _ = textureSample(t,s,0.0);
+              }
+            }
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    9:8: Not a valid statement
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+

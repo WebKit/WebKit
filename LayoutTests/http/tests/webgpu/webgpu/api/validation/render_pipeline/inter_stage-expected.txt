@@ -9,7 +9,8 @@ PASS :location,mismatch:isAsync=true;outputs=["%40location(0)%20__:%20f32"];inpu
 PASS :location,mismatch:isAsync=true;outputs=["%40location(1)%20__:%20f32"];inputs=["%40location(0)%20__:%20f32"]
 PASS :location,mismatch:isAsync=true;outputs=["%40location(0)%20__:%20f32","%40location(1)%20__:%20f32"];inputs=["%40location(1)%20__:%20f32","%40location(0)%20__:%20f32"]
 PASS :location,mismatch:isAsync=true;outputs=["%40location(1)%20__:%20f32","%40location(0)%20__:%20f32"];inputs=["%40location(0)%20__:%20f32","%40location(1)%20__:%20f32"]
-PASS :location,superset:
+PASS :location,superset:isAsync=false
+PASS :location,superset:isAsync=true
 PASS :location,subset:isAsync=false
 PASS :location,subset:isAsync=true
 PASS :type:isAsync=false;output="f32";input="f32"

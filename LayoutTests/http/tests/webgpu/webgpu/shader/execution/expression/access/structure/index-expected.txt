@@ -1,0 +1,432 @@
+
+PASS :buffer:member_types=["u32"];inputSource="uniform"
+PASS :buffer:member_types=["u32"];inputSource="storage"
+PASS :buffer:member_types=["vec3f"];inputSource="uniform"
+PASS :buffer:member_types=["vec3f"];inputSource="storage"
+PASS :buffer:member_types=["i32","u32"];inputSource="uniform"
+PASS :buffer:member_types=["i32","u32"];inputSource="storage"
+FAIL :buffer:member_types=["i32","f16","vec4i","mat3x2f"];inputSource="uniform" assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=1
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 1.0 (0x3c00)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :buffer:member_types=["i32","f16","vec4i","mat3x2f"];inputSource="storage" assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=1
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 1.0 (0x3c00)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :buffer:member_types=["i32","u32","f32","f16","vec3f","vec4i"];inputSource="uniform" assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=3
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 3.0 (0x4200)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - INFO: subcase: member_index=5
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :buffer:member_types=["i32","u32","f32","f16","vec3f","vec4i"];inputSource="storage" assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=3
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 3.0 (0x4200)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - INFO: subcase: member_index=5
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :buffer_align:
+PASS :buffer_size:
+PASS :buffer_pointer:member_types=["u32"];inputSource="uniform"
+PASS :buffer_pointer:member_types=["u32"];inputSource="storage"
+PASS :buffer_pointer:member_types=["vec3f"];inputSource="uniform"
+PASS :buffer_pointer:member_types=["vec3f"];inputSource="storage"
+PASS :buffer_pointer:member_types=["i32","u32"];inputSource="uniform"
+PASS :buffer_pointer:member_types=["i32","u32"];inputSource="storage"
+FAIL :buffer_pointer:member_types=["i32","f16","vec4i","mat3x2f"];inputSource="uniform" assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=1
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 1.0 (0x3c00)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :buffer_pointer:member_types=["i32","f16","vec4i","mat3x2f"];inputSource="storage" assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=1
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 1.0 (0x3c00)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :buffer_pointer:member_types=["i32","u32","f32","f16","vec3f","vec4i"];inputSource="uniform" assert_unreached:
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - EXPECTATION FAILED: subcase: member_index=3
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 3.0 (0x4200)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - INFO: subcase: member_index=5
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :buffer_pointer:member_types=["i32","u32","f32","f16","vec3f","vec4i"];inputSource="storage" assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=3
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 3.0 (0x4200)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - INFO: subcase: member_index=5
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :let:member_types=["bool"]
+PASS :let:member_types=["u32"]
+PASS :let:member_types=["vec3f"]
+PASS :let:member_types=["i32","u32"]
+FAIL :let:member_types=["i32","f16","vec4i","mat3x2f"] assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=1
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 1.0 (0x3c00)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :let:member_types=["bool","u32","f16","vec3f","vec2i"] assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=2
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 2.0 (0x4000)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :let:member_types=["i32","u32","f32","f16","vec3f","vec4i"] assert_unreached:
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - EXPECTATION FAILED: subcase: member_index=3
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 3.0 (0x4200)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - INFO: subcase: member_index=5
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :param:member_types=["bool"]
+PASS :param:member_types=["u32"]
+PASS :param:member_types=["vec3f"]
+PASS :param:member_types=["i32","u32"]
+FAIL :param:member_types=["i32","f16","vec4i","mat3x2f"] assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=1
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 1.0 (0x3c00)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :param:member_types=["bool","u32","f16","vec3f","vec2i"] assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=2
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 2.0 (0x4000)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :param:member_types=["i32","u32","f32","f16","vec3f","vec4i"] assert_unreached:
+  - INFO: subcase: member_index=0
+    OK
+  - EXPECTATION FAILED: subcase: member_index=3
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 3.0 (0x4200)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - INFO: subcase: member_index=5
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :const:member_types=["bool"]
+PASS :const:member_types=["u32"]
+PASS :const:member_types=["vec3f"]
+PASS :const:member_types=["i32","u32"]
+FAIL :const:member_types=["i32","f16","vec4i","mat3x2f"] assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=1
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 1.0 (0x3c00)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :const:member_types=["bool","u32","f16","vec3f","vec2i"] assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=2
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 2.0 (0x4000)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :const:member_types=["i32","u32","f32","f16","vec3f","vec4i"] assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=3
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 3.0 (0x4200)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - INFO: subcase: member_index=5
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :const_nested:member_types=["bool"]
+PASS :const_nested:member_types=["u32"]
+PASS :const_nested:member_types=["vec3f"]
+PASS :const_nested:member_types=["i32","u32"]
+FAIL :const_nested:member_types=["i32","f16","vec4i","mat3x2f"] assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=1
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 1.0 (0x3c00)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :const_nested:member_types=["bool","u32","f16","vec3f","vec2i"] assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=2
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 2.0 (0x4000)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :const_nested:member_types=["i32","u32","f32","f16","vec3f","vec4i"] assert_unreached:
+  - EXPECTATION FAILED: subcase: member_index=3
+    result 0:)
+      returned: 0.0 (0x0000 subnormal)
+      expected: 3.0 (0x4200)
+      at (elided: below max severity)
+  - INFO: subcase: member_index=0
+    OK
+  - INFO: subcase: member_index=1
+    OK
+  - INFO: subcase: member_index=2
+    OK
+  - INFO: subcase: member_index=3
+    OK
+  - INFO: subcase: member_index=4
+    OK
+  - INFO: subcase: member_index=5
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: Storage buffer size is not multiple of 4
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+

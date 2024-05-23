@@ -1,5 +1,28 @@
 
-PASS :default:
+FAIL :default: assert_unreached:
+  - EXPECTATION FAILED: subcase: args=[]
+    Expected maxInterStageShaderComponents == default: 64 != 60
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:316:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:50:13
+  - EXPECTATION FAILED: subcase: args=["_undef_"]
+    Expected maxInterStageShaderComponents == default: 64 != 60
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:316:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:50:13
+  - EXPECTATION FAILED: subcase: args=[{}]
+    Expected maxInterStageShaderComponents == default: 64 != 60
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: args=[{"requiredFeatures":[],"requiredLimits":{}}]
+    Expected maxInterStageShaderComponents == default: 64 != 60
+      at (elided: only 2 shown)
+  - INFO: subcase: args=[]
+    OK
+  - INFO: subcase: args=["_undef_"]
+    OK
+  - INFO: subcase: args=[{}]
+    OK
+  - INFO: subcase: args=[{"requiredFeatures":[],"requiredLimits":{}}]
+    OK
+ Reached unreachable code
 PASS :invalid:
 PASS :stale:
 PASS :features,unknown:
@@ -37,7 +60,16 @@ PASS :limits,supported:limit="maxVertexBuffers"
 PASS :limits,supported:limit="maxBufferSize"
 PASS :limits,supported:limit="maxVertexAttributes"
 PASS :limits,supported:limit="maxVertexBufferArrayStride"
-PASS :limits,supported:limit="maxInterStageShaderComponents"
+FAIL :limits,supported:limit="maxInterStageShaderComponents" assert_unreached:
+  - EXPECTATION FAILED: subcase: limitValue="default"
+    Devices reported limit should match the required limit
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:316:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:263:11
+  - INFO: subcase: limitValue="default"
+    OK
+  - INFO: subcase: limitValue="adapter"
+    OK
+ Reached unreachable code
 PASS :limits,supported:limit="maxInterStageShaderVariables"
 PASS :limits,supported:limit="maxColorAttachments"
 PASS :limits,supported:limit="maxColorAttachmentBytesPerSample"
@@ -133,7 +165,20 @@ PASS :limit,worse_than_default:limit="maxVertexBuffers"
 PASS :limit,worse_than_default:limit="maxBufferSize"
 PASS :limit,worse_than_default:limit="maxVertexAttributes"
 PASS :limit,worse_than_default:limit="maxVertexBufferArrayStride"
-PASS :limit,worse_than_default:limit="maxInterStageShaderComponents"
+FAIL :limit,worse_than_default:limit="maxInterStageShaderComponents" assert_unreached:
+  - EXPECTATION FAILED: subcase: mul=1;add=-1
+    Devices reported limit should match the default limit
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:316:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:427:13
+  - EXPECTATION FAILED: subcase: mul=1;add=-100
+    Devices reported limit should match the default limit
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:316:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js:427:13
+  - INFO: subcase: mul=1;add=-1
+    OK
+  - INFO: subcase: mul=1;add=-100
+    OK
+ Reached unreachable code
 PASS :limit,worse_than_default:limit="maxInterStageShaderVariables"
 PASS :limit,worse_than_default:limit="maxColorAttachments"
 PASS :limit,worse_than_default:limit="maxColorAttachmentBytesPerSample"

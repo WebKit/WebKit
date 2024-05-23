@@ -1,0 +1,12 @@
+
+PASS :phony_assign_call_basic:preventValueOptimizations=true
+PASS :phony_assign_call_basic:preventValueOptimizations=false
+PASS :phony_assign_call_must_use:preventValueOptimizations=true
+PASS :phony_assign_call_must_use:preventValueOptimizations=false
+PASS :phony_assign_call_nested:preventValueOptimizations=true
+PASS :phony_assign_call_nested:preventValueOptimizations=false
+PASS :phony_assign_call_nested_must_use:preventValueOptimizations=true
+PASS :phony_assign_call_nested_must_use:preventValueOptimizations=false
+PASS :phony_assign_call_builtin:preventValueOptimizations=true
+PASS :phony_assign_call_builtin:preventValueOptimizations=false
+

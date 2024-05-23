@@ -1,0 +1,24 @@
+
+PASS :args:arg="good_u32"
+PASS :args:arg="good_aint"
+PASS :args:arg="bad_0args"
+PASS :args:arg="bad_2args"
+PASS :args:arg="bad_i32"
+PASS :args:arg="bad_f32"
+PASS :args:arg="bad_f16"
+PASS :args:arg="bad_bool"
+PASS :args:arg="bad_vec2u"
+PASS :args:arg="bad_vec3u"
+PASS :args:arg="bad_vec4u"
+PASS :args:arg="bad_array"
+PASS :args:arg="bad_struct"
+PASS :return:type="vec4u"
+PASS :return:type="vec4i"
+PASS :return:type="vec4f"
+PASS :return:type="vec4h"
+PASS :return:type="vec3f"
+PASS :return:type="vec2f"
+PASS :return:type="f32"
+PASS :must_use:use=true
+PASS :must_use:use=false
+

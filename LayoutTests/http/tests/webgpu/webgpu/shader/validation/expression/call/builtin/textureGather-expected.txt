@@ -1,0 +1,2224 @@
+
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="bool"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec2%3Cbool%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec3%3Cbool%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec4%3Cbool%3E"
+FAIL :component_argument:textureType="texture_2d%3Cf32%3E";componentType="abstract-int" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-1;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(-1, t, s, vec2(0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - VALIDATION FAILED: subcase: value=-1;offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(-1, t, s, vec2(0.0f, 0.0f), vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=0;offset=true
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=1;offset=true
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=2;offset=true
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - INFO: subcase: value=3;offset=true
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4, t, s, vec2(0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: value=4;offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4, t, s, vec2(0.0f, 0.0f), vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: value=-1;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=-1;offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-1;offset=false
+    OK
+  - INFO: subcase: value=-1;offset=true
+    OK
+  - INFO: subcase: value=4;offset=false
+    OK
+  - INFO: subcase: value=4;offset=true
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="abstract-float"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="f32"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="f16"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec2%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec3%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec4%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec2%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec2%3Cf32%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec2%3Cf16%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec3%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec3%3Cf32%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec3%3Cf16%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec4%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec4%3Cf32%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec4%3Cf16%3E"
+FAIL :component_argument:textureType="texture_2d%3Cf32%3E";componentType="i32" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-1;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(-1), t, s, vec2(0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - VALIDATION FAILED: subcase: value=-1;offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(-1), t, s, vec2(0.0f, 0.0f), vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=0;offset=true
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=1;offset=true
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=2;offset=true
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - INFO: subcase: value=3;offset=true
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(4), t, s, vec2(0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: value=4;offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(4), t, s, vec2(0.0f, 0.0f), vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: value=-1;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=-1;offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-1;offset=false
+    OK
+  - INFO: subcase: value=-1;offset=true
+    OK
+  - INFO: subcase: value=4;offset=false
+    OK
+  - INFO: subcase: value=4;offset=true
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec2%3Ci32%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec3%3Ci32%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec4%3Ci32%3E"
+FAIL :component_argument:textureType="texture_2d%3Cf32%3E";componentType="u32" assert_unreached:
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=0;offset=true
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=1;offset=true
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=2;offset=true
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - INFO: subcase: value=3;offset=true
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4u, t, s, vec2(0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - VALIDATION FAILED: subcase: value=4;offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4u, t, s, vec2(0.0f, 0.0f), vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=4;offset=false
+    OK
+  - INFO: subcase: value=4;offset=true
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec2%3Cu32%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec3%3Cu32%3E"
+PASS :component_argument:textureType="texture_2d%3Cf32%3E";componentType="vec4%3Cu32%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="bool"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec2%3Cbool%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec3%3Cbool%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec4%3Cbool%3E"
+FAIL :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="abstract-int" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-1;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(-1, t, s, vec2(0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - VALIDATION FAILED: subcase: value=-1;offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(-1, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=0;offset=true
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=1;offset=true
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=2;offset=true
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - INFO: subcase: value=3;offset=true
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4, t, s, vec2(0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: value=4;offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: value=-1;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=-1;offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-1;offset=false
+    OK
+  - INFO: subcase: value=-1;offset=true
+    OK
+  - INFO: subcase: value=4;offset=false
+    OK
+  - INFO: subcase: value=4;offset=true
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="abstract-float"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="f32"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="f16"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec2%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec3%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec4%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec2%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec2%3Cf32%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec2%3Cf16%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec3%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec3%3Cf32%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec3%3Cf16%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec4%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec4%3Cf32%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec4%3Cf16%3E"
+FAIL :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="i32" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-1;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(-1), t, s, vec2(0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - VALIDATION FAILED: subcase: value=-1;offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(-1), t, s, vec2(0.0f, 0.0f), 0, vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=0;offset=true
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=1;offset=true
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=2;offset=true
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - INFO: subcase: value=3;offset=true
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(4), t, s, vec2(0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - VALIDATION FAILED: subcase: value=4;offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(4), t, s, vec2(0.0f, 0.0f), 0, vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: value=-1;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=-1;offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-1;offset=false
+    OK
+  - INFO: subcase: value=-1;offset=true
+    OK
+  - INFO: subcase: value=4;offset=false
+    OK
+  - INFO: subcase: value=4;offset=true
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec2%3Ci32%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec3%3Ci32%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec4%3Ci32%3E"
+FAIL :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="u32" assert_unreached:
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=0;offset=true
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=1;offset=true
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=2;offset=true
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - INFO: subcase: value=3;offset=true
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4u, t, s, vec2(0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - VALIDATION FAILED: subcase: value=4;offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4u, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=4;offset=false
+    OK
+  - INFO: subcase: value=4;offset=true
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec2%3Cu32%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec3%3Cu32%3E"
+PASS :component_argument:textureType="texture_2d_array%3Cf32%3E";componentType="vec4%3Cu32%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="bool"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec2%3Cbool%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec3%3Cbool%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec4%3Cbool%3E"
+FAIL :component_argument:textureType="texture_cube%3Cf32%3E";componentType="abstract-int" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-1;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(-1, t, s, vec3(0.0f, 0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4, t, s, vec3(0.0f, 0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - EXPECTATION FAILED: subcase: value=-1;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-1;offset=false
+    OK
+  - INFO: subcase: value=4;offset=false
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="abstract-float"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="f32"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="f16"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec2%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec3%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec4%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec2%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec2%3Cf32%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec2%3Cf16%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec3%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec3%3Cf32%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec3%3Cf16%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec4%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec4%3Cf32%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec4%3Cf16%3E"
+FAIL :component_argument:textureType="texture_cube%3Cf32%3E";componentType="i32" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-1;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(-1), t, s, vec3(0.0f, 0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(4), t, s, vec3(0.0f, 0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - EXPECTATION FAILED: subcase: value=-1;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-1;offset=false
+    OK
+  - INFO: subcase: value=4;offset=false
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec2%3Ci32%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec3%3Ci32%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec4%3Ci32%3E"
+FAIL :component_argument:textureType="texture_cube%3Cf32%3E";componentType="u32" assert_unreached:
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4u, t, s, vec3(0.0f, 0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=4;offset=false
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec2%3Cu32%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec3%3Cu32%3E"
+PASS :component_argument:textureType="texture_cube%3Cf32%3E";componentType="vec4%3Cu32%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="bool"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec2%3Cbool%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec3%3Cbool%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec4%3Cbool%3E"
+FAIL :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="abstract-int" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-1;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(-1, t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4, t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - EXPECTATION FAILED: subcase: value=-1;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-1;offset=false
+    OK
+  - INFO: subcase: value=4;offset=false
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="abstract-float"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="f32"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="f16"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec2%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec3%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec4%3Cabstract-int%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec2%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec2%3Cf32%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec2%3Cf16%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec3%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec3%3Cf32%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec3%3Cf16%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec4%3Cabstract-float%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec4%3Cf32%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec4%3Cf16%3E"
+FAIL :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="i32" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-1;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(-1), t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(i32(4), t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - EXPECTATION FAILED: subcase: value=-1;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-1;offset=false
+    OK
+  - INFO: subcase: value=4;offset=false
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec2%3Ci32%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec3%3Ci32%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec4%3Ci32%3E"
+FAIL :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="u32" assert_unreached:
+  - INFO: subcase: value=0;offset=false
+    OK
+  - INFO: subcase: value=1;offset=false
+    OK
+  - INFO: subcase: value=2;offset=false
+    OK
+  - INFO: subcase: value=3;offset=false
+    OK
+  - VALIDATION FAILED: subcase: value=4;offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(4u, t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:111:24
+  - EXPECTATION FAILED: subcase: value=4;offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=4;offset=false
+    OK
+ Reached unreachable code
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec2%3Cu32%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec3%3Cu32%3E"
+PASS :component_argument:textureType="texture_cube_array%3Cf32%3E";componentType="vec4%3Cu32%3E"
+PASS :component_argument,non_const:textureType="texture_2d%3Cf32%3E";varType="c"
+FAIL :component_argument,non_const:textureType="texture_2d%3Cf32%3E";varType="u" assert_unreached:
+  - VALIDATION FAILED: subcase: offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(u), t, s, vec2(0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - VALIDATION FAILED: subcase: offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(u), t, s, vec2(0.0f, 0.0f), vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - EXPECTATION FAILED: subcase: offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: offset=false
+    OK
+  - INFO: subcase: offset=true
+    OK
+ Reached unreachable code
+FAIL :component_argument,non_const:textureType="texture_2d%3Cf32%3E";varType="l" assert_unreached:
+  - VALIDATION FAILED: subcase: offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(l), t, s, vec2(0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - VALIDATION FAILED: subcase: offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(l), t, s, vec2(0.0f, 0.0f), vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - EXPECTATION FAILED: subcase: offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: offset=false
+    OK
+  - INFO: subcase: offset=true
+    OK
+ Reached unreachable code
+PASS :component_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="c"
+FAIL :component_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="u" assert_unreached:
+  - VALIDATION FAILED: subcase: offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(u), t, s, vec2(0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - VALIDATION FAILED: subcase: offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(u), t, s, vec2(0.0f, 0.0f), 0, vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - EXPECTATION FAILED: subcase: offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: offset=false
+    OK
+  - INFO: subcase: offset=true
+    OK
+ Reached unreachable code
+FAIL :component_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="l" assert_unreached:
+  - VALIDATION FAILED: subcase: offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(l), t, s, vec2(0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - VALIDATION FAILED: subcase: offset=true
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(l), t, s, vec2(0.0f, 0.0f), 0, vec2(i32(0), i32(0)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - EXPECTATION FAILED: subcase: offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: offset=true
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: offset=false
+    OK
+  - INFO: subcase: offset=true
+    OK
+ Reached unreachable code
+PASS :component_argument,non_const:textureType="texture_cube%3Cf32%3E";varType="c"
+FAIL :component_argument,non_const:textureType="texture_cube%3Cf32%3E";varType="u" assert_unreached:
+  - VALIDATION FAILED: subcase: offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(u), t, s, vec3(0.0f, 0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - EXPECTATION FAILED: subcase: offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: offset=false
+    OK
+ Reached unreachable code
+FAIL :component_argument,non_const:textureType="texture_cube%3Cf32%3E";varType="l" assert_unreached:
+  - VALIDATION FAILED: subcase: offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(l), t, s, vec3(0.0f, 0.0f, 0.0f));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - EXPECTATION FAILED: subcase: offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: offset=false
+    OK
+ Reached unreachable code
+PASS :component_argument,non_const:textureType="texture_cube_array%3Cf32%3E";varType="c"
+FAIL :component_argument,non_const:textureType="texture_cube_array%3Cf32%3E";varType="u" assert_unreached:
+  - VALIDATION FAILED: subcase: offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube_array<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(u), t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - EXPECTATION FAILED: subcase: offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: offset=false
+    OK
+ Reached unreachable code
+FAIL :component_argument,non_const:textureType="texture_cube_array%3Cf32%3E";varType="l" assert_unreached:
+  - VALIDATION FAILED: subcase: offset=false
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube_array<f32>;
+    @group(0) @binding(2) var<uniform> u: u32;
+
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = 1;
+      let v = textureGather(u32(l), t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:156:24
+  - EXPECTATION FAILED: subcase: offset=false
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: offset=false
+    OK
+ Reached unreachable code
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="bool"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="f32"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="f16"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="i32"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="u32"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="bool"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="f32"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="f16"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="i32"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="u32"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="bool"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="f32"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="f16"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="i32"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="u32"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="bool"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="f32"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="f16"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="i32"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="u32"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="bool"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="f32"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="f16"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="i32"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="u32"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_2d";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="bool"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="f32"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="f16"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="i32"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="u32"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_2d_array";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="bool"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="f32"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="f16"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="i32"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="u32"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_cube";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="bool"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="f32"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="f16"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="i32"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="u32"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_depth_cube_array";coordType="vec4%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="bool"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="abstract-int"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="abstract-float"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="f32"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="f16"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="i32"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="u32"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="bool"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="abstract-int"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="abstract-float"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="f32"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="f16"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="i32"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="u32"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="bool"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec2%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec3%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec4%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="abstract-int"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="abstract-float"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="f32"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="f16"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec2%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec3%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec4%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec2%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec2%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec2%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec3%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec3%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec3%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec4%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec4%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec4%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="i32"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec2%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec3%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec4%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="u32"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec2%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec3%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_depth_2d_array";arrayIndexType="vec4%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="bool"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec2%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec3%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec4%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="abstract-int"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="abstract-float"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="f32"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="f16"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec2%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec3%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec4%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec2%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec2%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec2%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec3%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec3%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec3%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec4%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec4%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec4%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="i32"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec2%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec3%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec4%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="u32"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec2%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec3%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_depth_cube_array";arrayIndexType="vec4%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="bool"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="abstract-int"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="abstract-float"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="f32"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="f16"
+FAIL :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(-9, -9));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - INFO: subcase: value=-8
+    OK
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(8, 8));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="i32"
+FAIL :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(i32(-9), i32(-9)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2(i32(8), i32(8)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Ci32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Ci32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="u32"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="bool"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="abstract-int"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="abstract-float"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="f32"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="f16"
+FAIL :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(-9, -9));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(8, 8));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="i32"
+FAIL :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(-9), i32(-9)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2(i32(8), i32(8)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Ci32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Ci32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="u32"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cu32%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="bool"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec2%3Cbool%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec3%3Cbool%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec4%3Cbool%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="abstract-int"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="abstract-float"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="f32"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="f16"
+FAIL :offset_argument:textureType="texture_depth_2d";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2(-9, -9));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2(8, 8));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec3%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec4%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec2%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec2%3Cf32%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec2%3Cf16%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec3%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec3%3Cf32%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec3%3Cf16%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec4%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec4%3Cf32%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec4%3Cf16%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="i32"
+FAIL :offset_argument:textureType="texture_depth_2d";offsetType="vec2%3Ci32%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2(i32(-9), i32(-9)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2(i32(8), i32(8)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec3%3Ci32%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec4%3Ci32%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="u32"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec2%3Cu32%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec3%3Cu32%3E"
+PASS :offset_argument:textureType="texture_depth_2d";offsetType="vec4%3Cu32%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="bool"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec2%3Cbool%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec3%3Cbool%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec4%3Cbool%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="abstract-int"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="abstract-float"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="f32"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="f16"
+FAIL :offset_argument:textureType="texture_depth_2d_array";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d_array;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2(-9, -9));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d_array;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2(8, 8));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec3%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec4%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec2%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec2%3Cf32%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec2%3Cf16%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec3%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec3%3Cf32%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec3%3Cf16%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec4%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec4%3Cf32%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec4%3Cf16%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="i32"
+FAIL :offset_argument:textureType="texture_depth_2d_array";offsetType="vec2%3Ci32%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d_array;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2(i32(-9), i32(-9)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d_array;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2(i32(8), i32(8)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:295:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec3%3Ci32%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec4%3Ci32%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="u32"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec2%3Cu32%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec3%3Cu32%3E"
+PASS :offset_argument:textureType="texture_depth_2d_array";offsetType="vec4%3Cu32%3E"
+PASS :offset_argument,non_const:textureType="texture_2d%3Cf32%3E";varType="c"
+FAIL :offset_argument,non_const:textureType="texture_2d%3Cf32%3E";varType="u" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2<i32>(u));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:334:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :offset_argument,non_const:textureType="texture_2d%3Cf32%3E";varType="l" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), vec2<i32>(l));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:334:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="c"
+FAIL :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="u" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(u));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:334:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="l" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureGather(0, t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(l));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:334:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_depth_2d";varType="c"
+FAIL :offset_argument,non_const:textureType="texture_depth_2d";varType="u" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2<i32>(u));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:334:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :offset_argument,non_const:textureType="texture_depth_2d";varType="l" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), vec2<i32>(l));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:334:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_depth_2d_array";varType="c"
+FAIL :offset_argument,non_const:textureType="texture_depth_2d_array";varType="u" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d_array;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(u));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:334:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :offset_argument,non_const:textureType="texture_depth_2d_array";varType="l" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_depth_2d_array;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureGather(t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(l));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureGather.spec.js:334:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+

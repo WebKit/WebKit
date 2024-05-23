@@ -1,0 +1,66 @@
+
+PASS :sampling_while_testing:format="stencil8";depthReadOnly="_undef_";stencilReadOnly=true
+PASS :sampling_while_testing:format="stencil8";depthReadOnly="_undef_";stencilReadOnly=false
+PASS :sampling_while_testing:format="depth16unorm";depthReadOnly=true;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth16unorm";depthReadOnly=false;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth32float";depthReadOnly=true;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth32float";depthReadOnly=false;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth24plus";depthReadOnly=true;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth24plus";depthReadOnly=false;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=true;stencilReadOnly=true
+FAIL :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=true;stencilReadOnly=false assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 260 through 264.
+     Starting at index 259:
+       actual == 0x: 00 00 00 00 00 00 00
+       failed ->        xx          xx
+     expected ==     00 01 00 00 00 01 00
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:589:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:756:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/texture/readonly_depth_stencil.spec.js:328:22
+ Reached unreachable code
+FAIL :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=false;stencilReadOnly=true assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 260 through 516.
+     Starting at index 259:
+       actual == 0x: 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
+       failed ->        xx                                                                                                    ...
+     expected ==     00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:589:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:756:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/texture/readonly_depth_stencil.spec.js:328:22
+ Reached unreachable code
+PASS :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=false;stencilReadOnly=false
+PASS :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=true;stencilReadOnly=true
+FAIL :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=true;stencilReadOnly=false assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 260 through 264.
+     Starting at index 259:
+       actual == 0x: 00 00 00 00 00 00 00
+       failed ->        xx          xx
+     expected ==     00 01 00 00 00 01 00
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:589:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:756:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/texture/readonly_depth_stencil.spec.js:328:22
+ Reached unreachable code
+FAIL :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=false;stencilReadOnly=true assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 260 through 516.
+     Starting at index 259:
+       actual == 0x: 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
+       failed ->        xx                                                                                                    ...
+     expected ==     00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:589:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:756:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/memory_sync/texture/readonly_depth_stencil.spec.js:328:22
+ Reached unreachable code
+PASS :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=false;stencilReadOnly=false
+

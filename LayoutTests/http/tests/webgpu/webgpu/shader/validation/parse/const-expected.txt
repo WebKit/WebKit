@@ -1,0 +1,11 @@
+
+PASS :placement:scope="private-var"
+PASS :placement:scope="storage-var"
+PASS :placement:scope="struct-member"
+PASS :placement:scope="fn-decl"
+PASS :placement:scope="fn-param"
+PASS :placement:scope="fn-var"
+PASS :placement:scope="fn-return"
+PASS :placement:scope="while-stmt"
+PASS :placement:scope="_undef_"
+

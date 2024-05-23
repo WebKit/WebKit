@@ -1,0 +1,18 @@
+
+PASS :i32_complement:inputSource="const";vectorize="_undef_"
+PASS :i32_complement:inputSource="const";vectorize=2
+PASS :i32_complement:inputSource="const";vectorize=3
+PASS :i32_complement:inputSource="const";vectorize=4
+PASS :i32_complement:inputSource="uniform";vectorize="_undef_"
+PASS :i32_complement:inputSource="uniform";vectorize=2
+PASS :i32_complement:inputSource="uniform";vectorize=3
+PASS :i32_complement:inputSource="uniform";vectorize=4
+PASS :i32_complement:inputSource="storage_r";vectorize="_undef_"
+PASS :i32_complement:inputSource="storage_r";vectorize=2
+PASS :i32_complement:inputSource="storage_r";vectorize=3
+PASS :i32_complement:inputSource="storage_r";vectorize=4
+PASS :i32_complement:inputSource="storage_rw";vectorize="_undef_"
+PASS :i32_complement:inputSource="storage_rw";vectorize=2
+PASS :i32_complement:inputSource="storage_rw";vectorize=3
+PASS :i32_complement:inputSource="storage_rw";vectorize=4
+

@@ -588,7 +588,19 @@ PASS :binding_point_on_function_var:group="%40group(0)";binding="%40binding(0)"
 FAIL :binding_collisions:a_group=0;b_group=0;a_binding=0;b_binding=0;b_use="same" assert_unreached:
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:24:10
+
+    ---- shader ----
+
+        @group(0) @binding(0) var<uniform> a : vec4f;
+        @group(0) @binding(0) var<uniform> b : vec4f;
+
+        @fragment
+        fn main1() {
+          _ = a;
+
+          _ = b;
+        }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:513:24
   - EXPECTATION FAILED: Expected validation error
@@ -602,7 +614,19 @@ PASS :binding_collisions:a_group=0;b_group=0;a_binding=1;b_binding=0;b_use="diff
 FAIL :binding_collisions:a_group=0;b_group=0;a_binding=1;b_binding=1;b_use="same" assert_unreached:
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:24:10
+
+    ---- shader ----
+
+        @group(0) @binding(1) var<uniform> a : vec4f;
+        @group(0) @binding(1) var<uniform> b : vec4f;
+
+        @fragment
+        fn main1() {
+          _ = a;
+
+          _ = b;
+        }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:513:24
   - EXPECTATION FAILED: Expected validation error
@@ -628,7 +652,19 @@ PASS :binding_collisions:a_group=1;b_group=0;a_binding=1;b_binding=1;b_use="diff
 FAIL :binding_collisions:a_group=1;b_group=1;a_binding=0;b_binding=0;b_use="same" assert_unreached:
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:24:10
+
+    ---- shader ----
+
+        @group(1) @binding(0) var<uniform> a : vec4f;
+        @group(1) @binding(0) var<uniform> b : vec4f;
+
+        @fragment
+        fn main1() {
+          _ = a;
+
+          _ = b;
+        }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:513:24
   - EXPECTATION FAILED: Expected validation error
@@ -642,7 +678,19 @@ PASS :binding_collisions:a_group=1;b_group=1;a_binding=1;b_binding=0;b_use="diff
 FAIL :binding_collisions:a_group=1;b_group=1;a_binding=1;b_binding=1;b_use="same" assert_unreached:
   - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
-    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:24:10
+
+    ---- shader ----
+
+        @group(1) @binding(1) var<uniform> a : vec4f;
+        @group(1) @binding(1) var<uniform> b : vec4f;
+
+        @fragment
+        fn main1() {
+          _ = a;
+
+          _ = b;
+        }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
     expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/var.spec.js:513:24
   - EXPECTATION FAILED: Expected validation error

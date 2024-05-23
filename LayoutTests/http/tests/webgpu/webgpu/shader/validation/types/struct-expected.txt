@@ -1,0 +1,18 @@
+
+PASS :no_direct_recursion:target="i32"
+PASS :no_direct_recursion:target="S"
+PASS :no_indirect_recursion:target="i32"
+PASS :no_indirect_recursion:target="S"
+PASS :no_indirect_recursion_via_array_element:target="i32"
+PASS :no_indirect_recursion_via_array_element:target="S"
+PASS :no_indirect_recursion_via_array_size:target="S1"
+PASS :no_indirect_recursion_via_array_size:target="S2"
+PASS :no_indirect_recursion_via_struct_attribute:target="S1";attribute="align"
+PASS :no_indirect_recursion_via_struct_attribute:target="S1";attribute="location"
+PASS :no_indirect_recursion_via_struct_attribute:target="S1";attribute="size"
+PASS :no_indirect_recursion_via_struct_attribute:target="S2";attribute="align"
+PASS :no_indirect_recursion_via_struct_attribute:target="S2";attribute="location"
+PASS :no_indirect_recursion_via_struct_attribute:target="S2";attribute="size"
+PASS :no_indirect_recursion_via_struct_member_nested_in_alias:target="i32"
+PASS :no_indirect_recursion_via_struct_member_nested_in_alias:target="A"
+
