@@ -1,5 +1,4 @@
 
-
 PASS setup
 PASS stylesheet takes effect
 PASS accent-color
@@ -19,6 +18,7 @@ PASS animation-timeline
 PASS animation-timing-function
 PASS appearance
 PASS aspect-ratio
+PASS backdrop-filter
 PASS backface-visibility
 PASS background-attachment
 PASS background-blend-mode
