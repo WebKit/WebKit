@@ -181,33 +181,14 @@ using GstMappedBuffer = GstBufferMapper<GstMapInfo, gst_buffer_map, gst_buffer_u
 class GstMappedOwnedBuffer : public GstMappedBuffer, public ThreadSafeRefCounted<GstMappedOwnedBuffer> {
 
 public:
-    static RefPtr<GstMappedOwnedBuffer> create(GRefPtr<GstBuffer>&& buffer)
-    {
-        auto* mappedBuffer = new GstMappedOwnedBuffer(WTFMove(buffer));
-        if (!mappedBuffer->isValid()) {
-            delete mappedBuffer;
-            return nullptr;
-        }
-
-        return adoptRef(mappedBuffer);
-    }
-
-    static RefPtr<GstMappedOwnedBuffer> create(const GRefPtr<GstBuffer>& buffer)
-    {
-        return create(GRefPtr(buffer));
-    }
+    static RefPtr<GstMappedOwnedBuffer> create(GRefPtr<GstBuffer>&&);
+    static RefPtr<GstMappedOwnedBuffer> create(const GRefPtr<GstBuffer>&);
 
     // This GstBuffer is [ transfer none ], meaning the reference
     // count is increased during the life of this object.
-    static RefPtr<GstMappedOwnedBuffer> create(GstBuffer* buffer)
-    {
-        return create(GRefPtr(buffer));
-    }
+    static RefPtr<GstMappedOwnedBuffer> create(GstBuffer*);
 
-    virtual ~GstMappedOwnedBuffer()
-    {
-        unmapEarly();
-    }
+    virtual ~GstMappedOwnedBuffer();
 
     Ref<SharedBuffer> createSharedBuffer();
 
@@ -223,80 +204,24 @@ class GstMappedFrame {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GstMappedFrame);
 public:
-    GstMappedFrame(GstBuffer* buffer, GstVideoInfo* info, GstMapFlags flags)
-    {
-        gst_video_frame_map(&m_frame, info, buffer, flags);
-    }
+    GstMappedFrame(GstBuffer*, GstVideoInfo*, GstMapFlags);
+    GstMappedFrame(const GRefPtr<GstSample>&, GstMapFlags);
 
-    GstMappedFrame(const GRefPtr<GstSample>& sample, GstMapFlags flags)
-    {
-        GstVideoInfo info;
-        if (!gst_video_info_from_caps(&info, gst_sample_get_caps(sample.get())))
-            return;
+    ~GstMappedFrame();
 
-        gst_video_frame_map(&m_frame, &info, gst_sample_get_buffer(sample.get()), flags);
-    }
+    GstVideoFrame* get();
 
-    ~GstMappedFrame()
-    {
-        // FIXME: Make this un-conditional when the minimum GStreamer dependency version is >= 1.22.
-        if (m_frame.buffer)
-            gst_video_frame_unmap(&m_frame);
-    }
+    uint8_t* componentData(int) const;
+    int componentStride(int) const;
 
-    GstVideoFrame* get()
-    {
-        RELEASE_ASSERT(isValid());
-        return &m_frame;
-    }
+    GstVideoInfo* info();
 
-    uint8_t* ComponentData(int comp) const
-    {
-        RELEASE_ASSERT(isValid());
-        return GST_VIDEO_FRAME_COMP_DATA(&m_frame, comp);
-    }
+    int width() const;
+    int height() const;
 
-    int ComponentStride(int stride) const
-    {
-        RELEASE_ASSERT(isValid());
-        return GST_VIDEO_FRAME_COMP_STRIDE(&m_frame, stride);
-    }
-
-    GstVideoInfo* info()
-    {
-        RELEASE_ASSERT(isValid());
-        return &m_frame.info;
-    }
-
-    int width() const
-    {
-        RELEASE_ASSERT(isValid());
-        return GST_VIDEO_FRAME_WIDTH(&m_frame);
-    }
-
-    int height() const
-    {
-        RELEASE_ASSERT(isValid());
-        return GST_VIDEO_FRAME_HEIGHT(&m_frame);
-    }
-
-    int format() const
-    {
-        RELEASE_ASSERT(isValid());
-        return GST_VIDEO_FRAME_FORMAT(&m_frame);
-    }
-
-    void* planeData(uint32_t planeIndex) const
-    {
-        RELEASE_ASSERT(isValid());
-        return GST_VIDEO_FRAME_PLANE_DATA(&m_frame, planeIndex);
-    }
-
-    int planeStride(uint32_t planeIndex) const
-    {
-        RELEASE_ASSERT(isValid());
-        return GST_VIDEO_FRAME_PLANE_STRIDE(&m_frame, planeIndex);
-    }
+    int format() const;
+    void* planeData(uint32_t) const;
+    int planeStride(uint32_t) const;
 
     bool isValid() const { return m_frame.buffer; }
     explicit operator bool() const { return m_frame.buffer; }
@@ -309,52 +234,12 @@ private:
 class GstMappedAudioBuffer {
     WTF_MAKE_NONCOPYABLE(GstMappedAudioBuffer);
 public:
+    GstMappedAudioBuffer(GstBuffer*, GstAudioInfo, GstMapFlags);
+    GstMappedAudioBuffer(GRefPtr<GstSample>, GstMapFlags);
+    ~GstMappedAudioBuffer();
 
-    GstMappedAudioBuffer(GstBuffer* buffer, GstAudioInfo info, GstMapFlags flags)
-    {
-        m_isValid = gst_audio_buffer_map(&m_buffer, &info, buffer, flags);
-    }
-
-    GstMappedAudioBuffer(GRefPtr<GstSample> sample, GstMapFlags flags)
-    {
-        GstAudioInfo info;
-
-        if (!gst_audio_info_from_caps(&info, gst_sample_get_caps(sample.get()))) {
-            m_isValid = false;
-            return;
-        }
-
-        m_isValid = gst_audio_buffer_map(&m_buffer, &info, gst_sample_get_buffer(sample.get()), flags);
-    }
-
-    GstAudioBuffer* get()
-    {
-        if (!m_isValid) {
-            GST_INFO("Invalid buffer, returning NULL");
-
-            return nullptr;
-        }
-
-        return &m_buffer;
-    }
-
-    GstAudioInfo* info()
-    {
-        if (!m_isValid) {
-            GST_INFO("Invalid frame, returning NULL");
-
-            return nullptr;
-        }
-
-        return &m_buffer.info;
-    }
-
-    ~GstMappedAudioBuffer()
-    {
-        if (m_isValid)
-            gst_audio_buffer_unmap(&m_buffer);
-        m_isValid = false;
-    }
+    GstAudioBuffer* get();
+    GstAudioInfo* info();
 
     explicit operator bool() const { return m_isValid; }
 
@@ -362,7 +247,6 @@ private:
     GstAudioBuffer m_buffer;
     bool m_isValid { false };
 };
-
 
 void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { });
 void disconnectSimpleBusMessageCallback(GstElement*);

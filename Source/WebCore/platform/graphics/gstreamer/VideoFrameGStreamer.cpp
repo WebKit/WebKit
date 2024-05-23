@@ -466,12 +466,12 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
         auto widthUV = GST_VIDEO_FRAME_COMP_WIDTH(inputFrame.get(), 1);
         PlaneLayout planeLayoutUV { spanPlaneLayoutUV.destinationOffset, spanPlaneLayoutUV.destinationStride ? spanPlaneLayoutUV.destinationStride : widthUV };
 
-        auto planeY = inputFrame.ComponentData(0);
-        auto bytesPerRowY = inputFrame.ComponentStride(0);
+        auto planeY = inputFrame.componentData(0);
+        auto bytesPerRowY = inputFrame.componentStride(0);
         copyPlane(destination.data(), planeY, bytesPerRowY, spanPlaneLayoutY);
 
-        auto planeUV = inputFrame.ComponentData(1);
-        auto bytesPerRowUV = inputFrame.ComponentStride(1);
+        auto planeUV = inputFrame.componentData(1);
+        auto bytesPerRowUV = inputFrame.componentStride(1);
         copyPlane(destination.data(), planeUV, bytesPerRowUV, spanPlaneLayoutUV);
 
         Vector<PlaneLayout> planeLayouts;
@@ -485,8 +485,8 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
         auto spanPlaneLayoutY = computedPlaneLayout[0];
         auto widthY = GST_VIDEO_FRAME_COMP_WIDTH(inputFrame.get(), 0);
         PlaneLayout planeLayoutY { spanPlaneLayoutY.destinationOffset, spanPlaneLayoutY.destinationStride ? spanPlaneLayoutY.destinationStride : widthY };
-        auto planeY = inputFrame.ComponentData(0);
-        auto bytesPerRowY = inputFrame.ComponentStride(0);
+        auto planeY = inputFrame.componentData(0);
+        auto bytesPerRowY = inputFrame.componentStride(0);
         copyPlane(destination.data(), planeY, bytesPerRowY, spanPlaneLayoutY);
 
         auto spanPlaneLayoutU = computedPlaneLayout[1];
@@ -496,12 +496,12 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
         auto spanPlaneLayoutV = computedPlaneLayout[2];
         PlaneLayout planeLayoutV { spanPlaneLayoutV.destinationOffset, spanPlaneLayoutV.destinationStride ? spanPlaneLayoutV.destinationStride : widthUV / 2 };
 
-        auto planeU = inputFrame.ComponentData(1);
-        auto bytesPerRowU = inputFrame.ComponentStride(1);
+        auto planeU = inputFrame.componentData(1);
+        auto bytesPerRowU = inputFrame.componentStride(1);
         copyPlane(destination.data(), planeU, bytesPerRowU, spanPlaneLayoutU);
 
-        auto planeV = inputFrame.ComponentData(2);
-        auto bytesPerRowV = inputFrame.ComponentStride(2);
+        auto planeV = inputFrame.componentData(2);
+        auto bytesPerRowV = inputFrame.componentStride(2);
         copyPlane(destination.data(), planeV, bytesPerRowV, spanPlaneLayoutV);
 
         Vector<PlaneLayout> planeLayouts;
@@ -513,8 +513,8 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
             auto spanPlaneLayoutA = computedPlaneLayout[3];
             auto widthA = GST_VIDEO_FRAME_COMP_WIDTH(inputFrame.get(), 3);
             PlaneLayout planeLayoutA { spanPlaneLayoutA.destinationOffset, spanPlaneLayoutA.destinationStride ? spanPlaneLayoutA.destinationStride : widthA };
-            auto planeA = inputFrame.ComponentData(3);
-            auto bytesPerRowA = inputFrame.ComponentStride(3);
+            auto planeA = inputFrame.componentData(3);
+            auto bytesPerRowA = inputFrame.componentStride(3);
             copyPlane(destination.data(), planeA, bytesPerRowA, spanPlaneLayoutA);
             planeLayouts.append(planeLayoutA);
         }
@@ -529,7 +529,7 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
             planeLayout = computedPlaneLayout[0];
         GstMappedBuffer mappedBuffer(inputBuffer, GST_MAP_READ);
         auto plane = mappedBuffer.data();
-        auto bytesPerRow = inputFrame.ComponentStride(0);
+        auto bytesPerRow = inputFrame.componentStride(0);
         copyPlane(destination.data(), plane, bytesPerRow, planeLayout);
         Vector<PlaneLayout> planeLayouts;
         planeLayouts.append({ planeLayout.destinationOffset, planeLayout.destinationStride ? planeLayout.destinationStride : 4 * inputFrame.width() });

@@ -546,6 +546,158 @@ uint64_t toGstUnsigned64Time(const MediaTime& mediaTime)
     return time.timeValue();
 }
 
+RefPtr<GstMappedOwnedBuffer> GstMappedOwnedBuffer::create(GRefPtr<GstBuffer>&& buffer)
+{
+    auto* mappedBuffer = new GstMappedOwnedBuffer(WTFMove(buffer));
+    if (!mappedBuffer->isValid()) {
+        delete mappedBuffer;
+        return nullptr;
+    }
+
+    return adoptRef(mappedBuffer);
+}
+
+RefPtr<GstMappedOwnedBuffer> GstMappedOwnedBuffer::create(const GRefPtr<GstBuffer>& buffer)
+{
+    return GstMappedOwnedBuffer::create(GRefPtr(buffer));
+}
+
+// This GstBuffer is [ transfer none ], meaning the reference
+// count is increased during the life of this object.
+RefPtr<GstMappedOwnedBuffer> GstMappedOwnedBuffer::create(GstBuffer* buffer)
+{
+    return GstMappedOwnedBuffer::create(GRefPtr(buffer));
+}
+
+GstMappedOwnedBuffer::~GstMappedOwnedBuffer()
+{
+    unmapEarly();
+}
+
+Ref<SharedBuffer> GstMappedOwnedBuffer::createSharedBuffer()
+{
+    return SharedBuffer::create(*this);
+}
+
+GstMappedFrame::GstMappedFrame(GstBuffer* buffer, GstVideoInfo* info, GstMapFlags flags)
+{
+    gst_video_frame_map(&m_frame, info, buffer, flags);
+}
+
+GstMappedFrame::GstMappedFrame(const GRefPtr<GstSample>& sample, GstMapFlags flags)
+{
+    GstVideoInfo info;
+    if (!gst_video_info_from_caps(&info, gst_sample_get_caps(sample.get())))
+        return;
+
+    gst_video_frame_map(&m_frame, &info, gst_sample_get_buffer(sample.get()), flags);
+}
+
+GstMappedFrame::~GstMappedFrame()
+{
+    // FIXME: Make this un-conditional when the minimum GStreamer dependency version is >= 1.22.
+    if (m_frame.buffer)
+        gst_video_frame_unmap(&m_frame);
+}
+
+GstVideoFrame* GstMappedFrame::get()
+{
+    RELEASE_ASSERT(isValid());
+    return &m_frame;
+}
+
+uint8_t* GstMappedFrame::componentData(int comp) const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_COMP_DATA(&m_frame, comp);
+}
+
+int GstMappedFrame::componentStride(int stride) const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_COMP_STRIDE(&m_frame, stride);
+}
+
+GstVideoInfo* GstMappedFrame::info()
+{
+    RELEASE_ASSERT(isValid());
+    return &m_frame.info;
+}
+
+int GstMappedFrame::width() const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_WIDTH(&m_frame);
+}
+
+int GstMappedFrame::height() const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_HEIGHT(&m_frame);
+}
+
+int GstMappedFrame::format() const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_FORMAT(&m_frame);
+}
+
+void* GstMappedFrame::planeData(uint32_t planeIndex) const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_PLANE_DATA(&m_frame, planeIndex);
+}
+
+int GstMappedFrame::planeStride(uint32_t planeIndex) const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_PLANE_STRIDE(&m_frame, planeIndex);
+}
+
+GstMappedAudioBuffer::GstMappedAudioBuffer(GstBuffer* buffer, GstAudioInfo info, GstMapFlags flags)
+{
+    m_isValid = gst_audio_buffer_map(&m_buffer, &info, buffer, flags);
+}
+
+GstMappedAudioBuffer::GstMappedAudioBuffer(GRefPtr<GstSample> sample, GstMapFlags flags)
+{
+    GstAudioInfo info;
+
+    if (!gst_audio_info_from_caps(&info, gst_sample_get_caps(sample.get())))
+        return;
+
+    m_isValid = gst_audio_buffer_map(&m_buffer, &info, gst_sample_get_buffer(sample.get()), flags);
+}
+
+GstMappedAudioBuffer::~GstMappedAudioBuffer()
+{
+    if (!m_isValid)
+        return;
+
+    gst_audio_buffer_unmap(&m_buffer);
+    m_isValid = false;
+}
+
+GstAudioBuffer* GstMappedAudioBuffer::get()
+{
+    if (!m_isValid) {
+        GST_INFO("Invalid buffer, returning NULL");
+        return nullptr;
+    }
+
+    return &m_buffer;
+}
+
+GstAudioInfo* GstMappedAudioBuffer::info()
+{
+    if (!m_isValid) {
+        GST_INFO("Invalid frame, returning NULL");
+        return nullptr;
+    }
+
+    return &m_buffer.info;
+}
+
 static GQuark customMessageHandlerQuark()
 {
     static GQuark quark = g_quark_from_static_string("pipeline-custom-message-handler");
@@ -625,11 +777,6 @@ template<>
 Vector<uint8_t> GstMappedBuffer::createVector() const
 {
     return std::span<const uint8_t> { data(), size() };
-}
-
-Ref<SharedBuffer> GstMappedOwnedBuffer::createSharedBuffer()
-{
-    return SharedBuffer::create(*this);
 }
 
 bool isGStreamerPluginAvailable(const char* name)
