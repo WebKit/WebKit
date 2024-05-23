@@ -232,12 +232,33 @@ void ProcessLauncher::launchProcess()
     if (!process.get())
         g_error("Unable to spawn a new child process: %s", error->message);
 
+    // Here we ought to set m_processID to the pid of the WebKit auxiliary
+    // process in the pid namespace of the UI process, but this is probably
+    // impossible to do correctly for Flatpak. Until we're able to fix this, set
+    // it to 0 always to ensure that Flatpak users do not get worse behavior
+    // than non-Flatpak users. This will prevent us from accidentally adding
+    // more functionality that works for developers but doesn't work for users.
+    // m_processID is optional and there should (hopefully) be no code in WebKit
+    // that depends on it without checking whether it is 0.
+    //
+    // We have a similar problem outside Flatpak: we want the pid of the WebKit
+    // auxiliary process, but we have the pid of the bwrap process. We need to
+    // add code to get the right pid from bwrap's info-fd, using a JSON parser.
+    // This should probably not be very hard, fortunately.
+    //
+    // Needless to say, setting an incorrect process ID here has unfortunate
+    // consequences.
+    //
+    // https://webkit.org/b/262794
+#if 0
     const char* processIdStr = g_subprocess_get_identifier(process.get());
     if (!processIdStr)
         g_error("Spawned process died immediately. This should not happen.");
 
     m_processID = g_ascii_strtoll(processIdStr, nullptr, 0);
     RELEASE_ASSERT(m_processID);
+#endif
+    RELEASE_ASSERT(!m_processID);
 
     // We've finished launching the process, message back to the main run loop.
     RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = socketPair.server] {

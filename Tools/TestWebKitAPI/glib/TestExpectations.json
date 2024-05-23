@@ -185,7 +185,7 @@
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/121970"}}
             },
             "WebKit.FocusedFrameAfterCrash": {
-                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205336"}}
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS", "FAILURE"], "bug": "webkit.org/b/205336"}}
             },
             "WebKit.GeolocationWatchMultiprocess": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
