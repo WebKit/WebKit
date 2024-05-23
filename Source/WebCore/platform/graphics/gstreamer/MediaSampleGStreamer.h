@@ -54,6 +54,8 @@ public:
     PlatformSample::Type platformSampleType() const override { return PlatformSample::GStreamerSampleType; }
     void dump(PrintStream&) const override;
 
+    const GRefPtr<GstSample>& sample() const { return m_sample; }
+
 protected:
     MediaSampleGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, TrackID);
     virtual ~MediaSampleGStreamer() = default;

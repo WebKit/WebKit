@@ -26,7 +26,6 @@
 #include "GStreamerRegistryScanner.h"
 #include "ImageGStreamer.h"
 #include "MediaSampleGStreamer.h"
-#include "NotImplemented.h"
 #include "RuntimeApplicationChecks.h"
 #include "VideoFrameGStreamer.h"
 #include <gst/base/gsttypefindhelper.h>
@@ -40,6 +39,14 @@ GST_DEBUG_CATEGORY(webkit_image_decoder_debug);
 
 static Lock s_decoderLock;
 static Vector<RefPtr<ImageDecoderGStreamer>> s_imageDecoders;
+
+static void ensureDebugCategoryIsInitialized()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_image_decoder_debug, "webkitimagedecoder", 0, "WebKit image decoder");
+    });
+}
 
 void teardownGStreamerImageDecoders()
 {
@@ -60,7 +67,7 @@ public:
     {
         if (!m_image)
             return nullptr;
-        return m_image->image().nativeImage()->platformImage();
+        return m_image->image();
     }
     void dropImage()
     {
@@ -76,8 +83,8 @@ public:
 private:
     ImageDecoderGStreamerSample(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize)
         : MediaSampleGStreamer(WTFMove(sample), presentationSize, { })
+        , m_frame(VideoFrameGStreamer::createWrappedSample(this->sample()))
     {
-        m_frame = VideoFrameGStreamer::create(GRefPtr(platformSample().sample.gstSample), presentationSize);
         m_image = m_frame->convertToImage();
     }
 
@@ -109,11 +116,7 @@ RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuff
 ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
     : m_mimeType(mimeType)
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        GST_DEBUG_CATEGORY_INIT(webkit_image_decoder_debug, "webkitimagedecoder", 0, "WebKit image decoder");
-    });
-
+    ensureDebugCategoryIsInitialized();
     static Atomic<uint32_t> decoderId;
     GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", makeString("image-decoder-parser-"_s, decoderId.exchangeAdd(1)).utf8().data());
     m_parserHarness = GStreamerElementHarness::create(WTFMove(parsebin), [](auto&, auto&&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
