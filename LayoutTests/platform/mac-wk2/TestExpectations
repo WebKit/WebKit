@@ -337,12 +337,12 @@ fast/images/text-recognition [ Pass ]
 fast/images/text-recognition/ios [ Skip ]
 fast/images/text-recognition/mac [ Pass ]
 
-# rdar://76434263 ([ Monterey wk2 ] 4 http/wpt/mediarecorder/ layout-tests are flakey timing out)
+# rdar://76434263 ([ MacOS wk2 ] 4 http/wpt/mediarecorder/ layout-tests are flakey timing out)
 http/wpt/mediarecorder/mute-tracks.html [ Pass Failure Timeout ]
 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure Timeout ]
 http/wpt/mediarecorder/video-rotation.html [ Pass Failure Timeout ]
 
-# On Monterey+, CFNetwork does full NSURLSession partitioning based on first-party domains and ITP session partitioning is thus disabled.
+# On Ventura+, CFNetwork does full NSURLSession partitioning based on first-party domains and ITP session partitioning is thus disabled.
 http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.py [ Skip ]
 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Skip ]
 
@@ -350,7 +350,7 @@ http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with
 http/tests/websocket/tests/hybi/interleaved-fragments.html [ Pass Failure Timeout ]
 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure Timeout ]
 
-# rdar://77084155 (REGRESSION: [ Monterey WK2 ] WebGL textures tests are consistently timing out)
+# rdar://77084155 (REGRESSION: [ MacOS WK2 ] WebGL textures tests are consistently timing out)
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ]
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ]
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
@@ -1257,7 +1257,7 @@ webkit.org/b/223292 [ arm64 ] fast/table/multiple-captions-crash4.html [ Pass Im
 
 webkit.org/b/223293 media/media-fullscreen-return-to-inline.html [ Pass Failure Timeout ]
 
-# webkit.org/b/223385 Two imported webrtc tests are flakey text failing on Release for Monterey+ and iOS 14
+# webkit.org/b/223385 Two imported webrtc tests are flakey text failing on Release 
 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass Failure ]
 
 webkit.org/b/223462 [ Debug arm64 ] imported/w3c/web-platform-tests/mediacapture-streams/GUM-optional-constraint.https.html [ Pass Crash ]
@@ -1306,10 +1306,7 @@ webkit.org/b/227467 [ arm64 Release ] fast/css/sticky/sticky-left.html [ Pass Im
 
 webkit.org/b/227504 [ Debug ] accessibility/table-title.html [ Pass Timeout ]
 
-# rdar://80333935 (REGRESSION: [ Monterey wk2 arm64 ] fast/animation/request-animation-frame-throttling-lowPowerMode.html failing)
-[ arm64 ] fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure ]
-
-# Behavior of navigator-language-ru changed in Monterey
+# Behavior of navigator-language-ru changed in MacOS
 fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
 
 webkit.org/b/227805 [ Debug ] fast/canvas/canvas-composite-image.html [ Pass Crash ]
@@ -1405,7 +1402,7 @@ webkit.org/b/239095 http/wpt/cache-storage/cache-storage-networkprocess-crash.ht
 
 webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Failure ]
 
-# [ Monterey wk2 debug ] WebGL conformance tests are a flaky time out
+# WebGL conformance tests are a flaky time out
 webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/1.0.3/conformance/textures/texture-size-cube-maps.html [ Pass Timeout ]
@@ -1424,7 +1421,7 @@ webkit.org/b/239386 webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/te
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/uniforms/uniform-values-per-program.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]
 
-# [ Monterey wk2 ] WebGL conformance tests are a flaky time out
+# WebGL conformance tests are a flaky time out
 webkit.org/b/239388 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]

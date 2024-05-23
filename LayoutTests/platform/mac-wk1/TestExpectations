@@ -1907,7 +1907,7 @@ webkit.org/b/195098 pointerevents/mouse/over-enter-out-leave.html [ Failure ]
 webkit.org/b/195098 pointerevents/mouse/pointer-capture.html [ Failure ]
 webkit.org/b/195098 pointerevents/mouse/pointer-events-before-mouse-events.html [ Failure ]
 
-webkit.org/b/244304 [ Monterey+ ] pointer-lock/pointermove-movement-delta.html [ Pass Timeout ]
+webkit.org/b/244304 pointer-lock/pointermove-movement-delta.html [ Pass Timeout ]
 
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]
@@ -2169,8 +2169,8 @@ webkit.org/b/215778 fast/overflow/horizontal-scroll-after-back.html [ Pass Timeo
 
 webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 
-# rdar://problem/66487888 [ Monterey+ ] media/media-source/media-source-webm.html is a constant failure
-[ Monterey+ ] media/media-source/media-source-webm.html [ Failure ]
+# rdar://problem/66487888 media/media-source/media-source-webm.html is a constant failure
+media/media-source/media-source-webm.html [ Failure ]
 
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-45.html [ Slow ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-15.html [ Slow ]
@@ -2194,7 +2194,7 @@ webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure
 webkit.org/b/221347 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html [ Pass Failure ]
 
 
-webkit.org/b/221717 [ Monterey+ ] http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Timeout ]
+webkit.org/b/221717 http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Timeout ]
 
 webkit.org/b/223104 compositing/visibility/iframe-visibility-hidden.html [ Pass ImageOnlyFailure ]
 
@@ -2233,7 +2233,7 @@ webkit.org/b/228042 [ Release ] media/modern-media-controls/volume-support/volum
 
 webkit.org/b/228091 [ Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Timeout Failure ]
 
-webkit.org/b/228796 [ Monterey+ ] webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
+webkit.org/b/228796 webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
 
 webkit.org/b/227136 media/video-pause-immediately.html [ Pass Failure ]
 
@@ -2463,19 +2463,19 @@ imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/b
 [ Ventura+ ] media/track/track-in-band-cues-added-once.html  [ Crash ]
 [ Ventura+ ] media/track/track-in-band.html  [ Crash ]
 [ Ventura+ ] media/track/track-long-captions-file.html  [ Crash ]
-[ Monterey+ ] imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.html [ Pass Failure ]
+imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.html [ Pass Failure ]
 [ Ventura+ ] http/wpt/webaudio/audioworklet-addModule-cors.sub.https.html
-[ Monterey+ ] http/wpt/fetch/fetch-metadata-websocket.html [ Failure ]
-[ Monterey+ ] http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https.html [ Pass Failure ]
-[ Monterey+ ] http/tests/media/hls/hls-webvtt-seek-backwards.html [ Timeout Crash ]
+http/wpt/fetch/fetch-metadata-websocket.html [ Failure ]
+http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https.html [ Pass Failure ]
+http/tests/media/hls/hls-webvtt-seek-backwards.html [ Timeout Crash ]
 [ Ventura+ ] http/tests/media/hls/hls-webvtt-default.html [ Crash ]
 [ Ventura+ ] http/tests/inspector/network/resource-timing.html [ Failure ]
-[ Monterey+ ] http/tests/inspector/network/resource-security-certificate.html [ Pass Failure ]
+http/tests/inspector/network/resource-security-certificate.html [ Pass Failure ]
 [ Ventura+ ] http/tests/inspector/network/getSerializedCertificate.html [ Failure ]
 [ Ventura+ arm64 ] fast/writing-mode/english-bt-text-with-spelling-marker.html [ ImageOnlyFailure ]
-[ Monterey+ ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
+css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 [ Ventura+ ] compositing/fixed-with-main-thread-scrolling.html [ ImageOnlyFailure ]
-[ Monterey+ Debug x86_64 ] editing/execCommand/delete-non-editable-range-crash.html [ Pass Timeout ]
+[ Debug x86_64 ] editing/execCommand/delete-non-editable-range-crash.html [ Pass Timeout ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=249544
 # Generic Permissions API is not supported in WK1
@@ -2507,12 +2507,12 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-margin
 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-shared-stylesheet.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-root.html [ ImageOnlyFailure ]
 
-webkit.org/b/260679 [ Monterey+ ] imported/w3c/web-platform-tests/css/css-backgrounds/bg-color-with-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/260679 imported/w3c/web-platform-tests/css/css-backgrounds/bg-color-with-gradient.html [ ImageOnlyFailure ]
 
-webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-display-none.html [ Failure ]
-webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-quirks-mode.html [ Failure ]
-webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-standards-mode.html [ Failure ]
-webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Failure ]
+webkit.org/b/255228 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-display-none.html [ Failure ]
+webkit.org/b/255228 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-quirks-mode.html [ Failure ]
+webkit.org/b/255228 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-standards-mode.html [ Failure ]
+webkit.org/b/255228 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Failure ]
 
 # Discrete wheel events don't trigger scroll snapping on the root in WK1
 webkit.org/b/255498 css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainframe.html [ Skip ]
@@ -2620,19 +2620,19 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pa
 fast/forms/select/select-show-picker.html [ Skip ]
 
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
-[ Monterey+ ] http/tests/media/fairplay/legacy-fairplay-hls.html [ Pass Failure ]
+http/tests/media/fairplay/legacy-fairplay-hls.html [ Pass Failure ]
 
 # webkit.org/b/261308 Batch mark expectations for flaky imported/w3c/web-platform-tests
-[ Monterey+ ] imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
-[ Monterey+ ] imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-002.html [ Pass ImageOnlyFailure ]
-[ Monterey+ ] imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-003.html [ Pass ImageOnlyFailure ]
-[ Monterey+ ] imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-custom-timing-function.html [ Pass ImageOnlyFailure ]
-[ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-002.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-003.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-custom-timing-function.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/261427 [ Ventura+ ] media/track/track-in-band-mode.html [ Pass Crash ]
 
-webkit.org/b/261618 [ Monterey+ Debug ] imported/w3c/web-platform-tests/preload/link-header-preload-non-html.html [ Pass Crash ]
+webkit.org/b/261618 [ Debug ] imported/w3c/web-platform-tests/preload/link-header-preload-non-html.html [ Pass Crash ]
 
 webkit.org/b/262130 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-cross-frame.html [ Pass Failure ]
 
@@ -2695,7 +2695,7 @@ fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-grayscale-001.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-sepia.html [ ImageOnlyFailure ]
 
-webkit.org/b/270274 [ Monterey+ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ]
+webkit.org/b/270274 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ]
 
 webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/removed-element-is-removed-from-top-layer.html [ ImageOnlyFailure ]
 webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-correct-order-remove-readd.html [ ImageOnlyFailure ]
