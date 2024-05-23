@@ -139,11 +139,18 @@ def main(args):
     make_command = ['make', 'analyze', 'SDKROOT={}'.format(args.sdkroot)]
     if args.analyzer_path:
         make_command.extend(['CC={}'.format(analyzer_path), 'CPLUSPLUS={}'.format(analyzer_path)])
+    if args.preprocessor_additions:
+        make_command.extend(['GCC_PREPROCESSOR_ADDITIONS={}'.format(args.preprocessor_additions)])
 
     commands = [
         make_command,
         [generate_static_analysis_archive_path, '--count', '--output-root', output_dir, '--id-string', 'WebKit Build'],
     ]
+
+    if args.dry_run:
+        for command in commands:
+            print('\n' + ' '.join(command))
+        return 0
 
     # FIXME: Handle Ctrl-C interrupts gracefully so subprocess jobs actually stop.
     for command in commands:
@@ -178,6 +185,10 @@ def parse_args():
                         help='SDKROOT to use (default: macosx).')
     parser.add_argument('--scan-build-path', dest='scan_build_path_arg', default=None,
                         help='Path to scan-build for OpenSource.')
+    parser.add_argument('--preprocessor-additions', default=None,
+                        help='Additional preprocessor macros.')
+    parser.add_argument('--dry-run', default=False,
+                        action='store_true', help='Output the command instead of executing it.')
 
     args = parser.parse_args()
 
