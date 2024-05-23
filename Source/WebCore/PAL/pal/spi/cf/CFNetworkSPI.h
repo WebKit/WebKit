@@ -62,9 +62,7 @@
 
 #else // !USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(CFNETWORK_HOSTOVERRIDE)
 #include <Network/Network.h>
-#endif
 
 #if HAVE(PRECONNECT_PING) && defined(__OBJC__)
 
@@ -92,21 +90,32 @@ typedef enum {
 #endif
 #endif // HAVE(LOGGING_PRIVACY_LEVEL)
 
-#if HAVE(NW_PROXY_CONFIG) || HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
-
 #if OS_OBJECT_USE_OBJC
+OS_OBJECT_DECL(nw_array);
+OS_OBJECT_DECL(nw_object);
 OS_OBJECT_DECL(nw_context);
 OS_OBJECT_DECL(nw_endpoint);
+OS_OBJECT_DECL(nw_resolver);
+OS_OBJECT_DECL(nw_parameters);
 OS_OBJECT_DECL(nw_proxy_config);
 #else
+struct nw_array;
+typedef struct nw_array *nw_array_t;
+struct nw_object;
+typedef struct nw_object *nw_object_t;
 struct nw_context;
 typedef struct nw_context *nw_context_t;
 struct nw_endpoint;
 typedef struct nw_endpoint *nw_endpoint_t;
+struct nw_resolver;
+typedef struct nw_resolver *nw_resolver_t;
+struct nw_parameters;
+typedef struct nw_parameters *nw_parameters_t;
 struct nw_proxy_config;
 typedef struct nw_proxy_config *nw_proxy_config_t;
 #endif // OS_OBJECT_USE_OBJC
 
+#if HAVE(NW_PROXY_CONFIG) || HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 typedef void (^nw_context_tracker_lookup_callback_t)(nw_endpoint_t endpoint, const char **tracker_name, const char **tracker_owner, bool *can_block);
 
 #ifdef __cplusplus
@@ -118,6 +127,26 @@ void nw_proxy_config_get_identifier(nw_proxy_config_t, uuid_t out_identifier);
 }
 #endif
 #endif // HAVE(NW_PROXY_CONFIG) || HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+typedef enum {
+    nw_resolver_status_invalid = 0,
+    nw_resolver_status_in_progress = 1,
+    nw_resolver_status_complete = 2,
+} nw_resolver_status_t;
+nw_resolver_t nw_resolver_create_with_endpoint(nw_endpoint_t, nw_parameters_t);
+typedef void (^nw_resolver_update_block_t) (nw_resolver_status_t, nw_array_t);
+bool nw_resolver_set_update_handler(nw_resolver_t, dispatch_queue_t, nw_resolver_update_block_t);
+void nw_context_set_privacy_level(nw_context_t, nw_context_privacy_level_t);
+void nw_parameters_set_context(nw_parameters_t, nw_context_t);
+nw_context_t nw_context_create(const char *);
+size_t nw_array_get_count(nw_array_t);
+nw_object_t nw_array_get_object_at_index(nw_array_t, size_t);
+#ifdef __cplusplus
+}
+#endif
 
 typedef CF_ENUM(int64_t, _TimingDataOptions)
 {
