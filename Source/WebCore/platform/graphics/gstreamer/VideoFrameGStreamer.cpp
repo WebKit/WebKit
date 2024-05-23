@@ -24,6 +24,8 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "BitmapImage.h"
+#include "GLContext.h"
 #include "GStreamerCommon.h"
 #include "GraphicsContext.h"
 #include "ImageGStreamer.h"
@@ -73,7 +75,7 @@ static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sam
     if (!convertedSample)
         return nullptr;
 
-    return ImageGStreamer::createImage(WTFMove(convertedSample));
+    return ImageGStreamer::create(WTFMove(convertedSample));
 }
 
 RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
@@ -448,7 +450,7 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
     callback({ });
 }
 
-void VideoFrame::paintInContext(GraphicsContext & context, const FloatRect& destination, const ImageOrientation& destinationImageOrientation, bool shouldDiscardAlpha)
+void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& destination, const ImageOrientation& destinationImageOrientation, bool shouldDiscardAlpha)
 {
     auto image = convertSampleToImage(downcast<VideoFrameGStreamer>(*this).sample());
     if (!image)
@@ -457,7 +459,11 @@ void VideoFrame::paintInContext(GraphicsContext & context, const FloatRect& dest
     auto imageRect = image->rect();
     auto source = destinationImageOrientation.usesWidthAsHeight() ? FloatRect(imageRect.location(), imageRect.size().transposedSize()) : imageRect;
     auto compositeOperator = !shouldDiscardAlpha && image->hasAlpha() ? CompositeOperator::SourceOver : CompositeOperator::Copy;
-    context.drawImage(image->image(), destination, source, { compositeOperator, destinationImageOrientation });
+    auto platformImage = image->image();
+    auto bitmapImage = BitmapImage::create(WTFMove(platformImage));
+    if (!bitmapImage)
+        return;
+    context.drawImage(*bitmapImage.get(), destination, source, { compositeOperator, destinationImageOrientation });
 }
 
 uint32_t VideoFrameGStreamer::pixelFormat() const
