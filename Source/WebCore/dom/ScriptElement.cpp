@@ -94,11 +94,15 @@ void ScriptElement::childrenChanged(const ContainerNode::ChildChange& childChang
 {
     if (m_parserInserted == ParserInserted::No && childChange.isInsertion() && element().isConnected())
         prepareScript(); // FIXME: Provide a real starting line number here.
+
+    if (childChange.source == ContainerNode::ChildChange::Source::API)
+        m_childrenChangedByAPI = true;
 }
 
 void ScriptElement::finishParsingChildren()
 {
-    m_trustedScriptText = scriptContent();
+    if (!m_childrenChangedByAPI)
+        m_trustedScriptText = scriptContent();
 }
 
 void ScriptElement::handleSourceAttribute(const String& sourceURL)

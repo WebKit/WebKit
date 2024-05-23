@@ -144,6 +144,7 @@ private:
     bool m_willExecuteWhenDocumentFinishedParsing : 1 { false };
     bool m_forceAsync : 1;
     bool m_willExecuteInOrder : 1 { false };
+    bool m_childrenChangedByAPI : 1 { false };
     ScriptType m_scriptType : bitWidthOfScriptType { ScriptType::Classic };
     String m_characterEncoding;
     String m_fallbackCharacterEncoding;
