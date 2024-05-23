@@ -78,14 +78,12 @@ EncodedJSValue JSGenericArrayBufferConstructor<sharingMode>::constructImpl(JSGlo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, arrayBufferStructureWithSharingMode<sharingMode>, newTarget, callFrame->jsCallee());
-    RETURN_IF_EXCEPTION(scope, { });
-
-    size_t length = 0;
+    double lengthDouble = 0;
     std::optional<size_t> maxByteLength;
-    if (callFrame->argumentCount()) {
-        length = callFrame->uncheckedArgument(0).toTypedArrayIndex(globalObject, "length"_s);
+
+    bool hasArguments = callFrame->argumentCount();
+    if (hasArguments) {
+        lengthDouble = callFrame->uncheckedArgument(0).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
         if (Options::useResizableArrayBuffer()) {
@@ -104,8 +102,22 @@ EncodedJSValue JSGenericArrayBufferConstructor<sharingMode>::constructImpl(JSGlo
     // https://tc39.es/proposal-resizablearraybuffer/#sec-allocatesharedarraybuffer
     RefPtr<ArrayBuffer> buffer;
     if (maxByteLength) {
-        if (maxByteLength.value() < length)
+        if (maxByteLength.value() < lengthDouble)
             return throwVMRangeError(globalObject, scope, "ArrayBuffer length exceeds maxByteLength option"_s);
+    }
+
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, arrayBufferStructureWithSharingMode<sharingMode>, newTarget, callFrame->jsCallee());
+    RETURN_IF_EXCEPTION(scope, { });
+
+    size_t length = 0;
+    if (hasArguments) {
+        JSValue lengthDoubleValue = JSValue(JSValue::EncodeAsDouble, lengthDouble);
+        length = lengthDoubleValue.toTypedArrayIndex(globalObject, "length"_s);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    if (maxByteLength) {
         if constexpr (sharingMode == ArrayBufferSharingMode::Shared) {
             buffer = ArrayBuffer::tryCreateShared(vm, length, 1, maxByteLength.value());
             if (!buffer)

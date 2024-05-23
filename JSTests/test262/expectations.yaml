@@ -9,9 +9,6 @@ test/annexB/language/eval-code/direct/script-decl-lex-no-collision.js:
   default: "SyntaxError: Can't create duplicate variable: 'test262Fn'"
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«function arguments() {}», «[object Arguments]») to be true'
-test/built-ins/ArrayBuffer/options-maxbytelength-compared-before-object-creation.js:
-  default: 'Test262Error: Expected a RangeError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a RangeError but got a Test262Error'
 test/built-ins/AsyncFromSyncIteratorPrototype/next/for-await-iterator-next-rejected-promise-close.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
@@ -138,9 +135,6 @@ test/built-ins/RegExp/prototype/Symbol.replace/get-unicode-error.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/SharedArrayBuffer/options-maxbytelength-compared-before-object-creation.js:
-  default: 'Test262Error: Expected a RangeError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a RangeError but got a Test262Error'
 test/built-ins/Temporal/Duration/compare/argument-duration-out-of-range.js:
   default: 'Test262Error: string with days > max is out of range (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: string with days > max is out of range (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
