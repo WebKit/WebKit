@@ -164,7 +164,7 @@ private:
     void rejectFinishedPromise(NavigationAPIMethodTracker*, Exception&&, JSC::JSValue exceptionObject);
     void abortOngoingNavigation(NavigateEvent&);
     void promoteUpcomingAPIMethodTracker(const String& destinationKey);
-    void notifyCommittedToEntry(NavigationAPIMethodTracker*, NavigationHistoryEntry*);
+    void notifyCommittedToEntry(NavigationAPIMethodTracker*, NavigationHistoryEntry*, NavigationNavigationType);
     Result apiMethodTrackerDerivedResult(const NavigationAPIMethodTracker&);
 
     std::optional<size_t> m_currentEntryIndex;

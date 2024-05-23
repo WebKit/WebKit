@@ -1,4 +1,4 @@
 
 
-FAIL reload() variant with only info undefined is not an object (evaluating 'i.contentWindow.navigation.currentEntry.getState().key')
+FAIL reload() variant with only info assert_true: expected true got false
 

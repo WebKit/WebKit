@@ -412,11 +412,12 @@ void Navigation::rejectFinishedPromise(NavigationAPIMethodTracker* apiMethodTrac
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#notify-about-the-committed-to-entry
-void Navigation::notifyCommittedToEntry(NavigationAPIMethodTracker* apiMethodTracker, NavigationHistoryEntry* entry)
+void Navigation::notifyCommittedToEntry(NavigationAPIMethodTracker* apiMethodTracker, NavigationHistoryEntry* entry, NavigationNavigationType navigationType)
 {
     ASSERT(entry);
     apiMethodTracker->committedToEntry = entry;
-    // FIXME: 2. If apiMethodTracker's serialized state is not null, then set nhe's session history entry's navigation API state to apiMethodTracker's serialized state.
+    if (navigationType != NavigationNavigationType::Traverse)
+        apiMethodTracker->committedToEntry->setState(WTFMove(apiMethodTracker->serializedState));
 
     if (apiMethodTracker->finishedBeforeCommit)
         resolveFinishedPromise(apiMethodTracker);
@@ -452,7 +453,7 @@ void Navigation::updateForNavigation(Ref<HistoryItem>&& item, NavigationNavigati
         m_entries[*m_currentEntryIndex] = NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), WTFMove(item));
 
     if (m_ongoingAPIMethodTracker)
-        notifyCommittedToEntry(m_ongoingAPIMethodTracker.get(), currentEntry());
+        notifyCommittedToEntry(m_ongoingAPIMethodTracker.get(), currentEntry(), navigationType);
 
     auto currentEntryChangeEvent = NavigationCurrentEntryChangeEvent::create(eventNames().currententrychangeEvent, {
         { false, false, false }, navigationType, oldCurrentEntry
