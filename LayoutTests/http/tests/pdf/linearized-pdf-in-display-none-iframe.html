@@ -1,31 +1,33 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true ] -->
 <html>
 <head>
-    <meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-50">
     <style>
         iframe {
+            display: none;
             width: 700px;
             height: 500px;
             border: 1px solid black;
         }
     </style>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
         
         function testComplete()
         {
-            const pdfFadeInDelay = 250;
             requestAnimationFrame(() => {
                 setTimeout(() => {
                     if (window.testRunner)
                         testRunner.notifyDone();
-                }, pdfFadeInDelay);
+                }, 0);
             });
         }
     </script>
 </head>
 <body>
+    <p>This test should not crash</p>
     <iframe onload="testComplete()" src="/resources/network-simulator.py?test=pdf-load&path=/pdf/resources/linearized.pdf&chunksize=1024&chunkdelay=16"></iframe>
 </body>
 </html>

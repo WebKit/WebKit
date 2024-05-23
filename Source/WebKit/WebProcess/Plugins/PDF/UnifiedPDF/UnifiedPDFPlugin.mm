@@ -595,11 +595,12 @@ void UnifiedPDFPlugin::incrementalLoadingRepaintTimerFired()
 
 void UnifiedPDFPlugin::repaintForIncrementalLoad()
 {
-    auto coverageRect = FloatRect { { }, m_documentLayout.contentsSize() };
+    if (!m_pdfDocument)
+        return;
 
+    auto coverageRect = FloatRect { { }, m_documentLayout.contentsSize() };
     if (auto* tiledBacking = m_contentsLayer->tiledBacking()) {
         coverageRect = tiledBacking->coverageRect();
-
         coverageRect = convertDown(CoordinateSpace::Contents, CoordinateSpace::PDFDocumentLayout, coverageRect);
     }
 
