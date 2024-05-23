@@ -648,6 +648,8 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         var matchingWords = [];
 
         var prefix = this._prefix;
+        let prefixLowerCase = prefix.toLowerCase();
+        let caseSensitiveMatching = WI.settings.experimentalShowCaseSensitiveAutocomplete.value;
 
         var localState = mainToken.state.localState ? mainToken.state.localState : mainToken.state;
 
@@ -688,8 +690,11 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
                     continue;
                 if (declaringVariable && !allowedKeywordsWhenDeclaringVariable.has(keyword))
                     continue;
-                if (!keyword.startsWith(prefix))
+
+                let startsWithPrefix = caseSensitiveMatching ? keyword.startsWith(prefix) : keyword.toLowerCase().startsWith(prefixLowerCase);
+                if (!startsWithPrefix)
                     continue;
+
                 matchingWords.push(keyword);
             }
         }
@@ -703,9 +708,14 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
                     // Otherwise the currently typed text will always match and that isn't useful.
                     if (declaringVariable && variable.name === prefix)
                         continue;
+                    if (matchingWords.includes(variable.name))
+                        continue;
 
-                    if (variable.name.startsWith(prefix) && !matchingWords.includes(variable.name))
-                        matchingWords.push(variable.name);
+                    let startsWithPrefix = caseSensitiveMatching ? variable.name.startsWith(prefix) : variable.name.toLowerCase().startsWith(prefixLowerCase);
+                    if (!startsWithPrefix)
+                        continue;
+
+                    matchingWords.push(variable.name);
                 }
             }
 

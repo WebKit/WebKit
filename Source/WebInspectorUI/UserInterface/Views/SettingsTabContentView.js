@@ -409,6 +409,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         
         let consoleGroup = experimentalSettingsView.addGroup(WI.UIString("Console:"));
         consoleGroup.addSetting(WI.settings.experimentalGroupSourceMapErrors, WI.UIString("Group source map network errors"));
+        consoleGroup.addSetting(WI.settings.experimentalShowCaseSensitiveAutocomplete, WI.UIString("Use case sensitive autocomplete"));
         
         experimentalSettingsView.addSeparator();
 

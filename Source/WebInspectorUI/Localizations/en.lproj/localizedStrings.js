@@ -1853,6 +1853,7 @@ localizedStrings["Update Font"] = "Update Font";
 localizedStrings["Update Image"] = "Update Image";
 localizedStrings["Update Local Override"] = "Update Local Override";
 localizedStrings["Usage: %s"] = "Usage: %s";
+localizedStrings["Use case sensitive autocomplete"] = "Use case sensitive autocomplete";
 localizedStrings["Use default media styles"] = "Use default media styles";
 localizedStrings["Use fuzzy matching for CSS code completion"] = "Use fuzzy matching for CSS code completion";
 localizedStrings["Use mock capture devices"] = "Use mock capture devices";
