@@ -371,6 +371,61 @@ void AudioSessionIOS::handleMutedStateChange()
 {
 }
 
+void AudioSessionIOS::updateSpatialExperience()
+{
+#if PLATFORM(VISION)
+    AVAudioSessionSoundStageSize size = [&] {
+        switch (m_soundStageSize) {
+        case AudioSession::SoundStageSize::Automatic:
+            return AVAudioSessionSoundStageSizeAutomatic;
+        case AudioSession::SoundStageSize::Small:
+            return AVAudioSessionSoundStageSizeSmall;
+        case AudioSession::SoundStageSize::Medium:
+            return AVAudioSessionSoundStageSizeMedium;
+        case AudioSession::SoundStageSize::Large:
+            return AVAudioSessionSoundStageSizeLarge;
+        };
+    }();
+    NSError *error = nil;
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    if (m_sceneIdentifier.length()) {
+        [session setIntendedSpatialExperience:AVAudioSessionSpatialExperienceHeadTracked options:@{
+            @"AVAudioSessionSpatialExperienceOptionSoundStageSize" : @(size),
+            @"AVAudioSessionSpatialExperienceOptionAnchoringStrategy" : @(AVAudioSessionAnchoringStrategyScene),
+            @"AVAudioSessionSpatialExperienceOptionSceneIdentifier" : (NSString *)m_sceneIdentifier
+        } error:&error];
+    } else {
+        [session setIntendedSpatialExperience:AVAudioSessionSpatialExperienceHeadTracked options:@{
+            @"AVAudioSessionSpatialExperienceOptionSoundStageSize" : @(size),
+            @"AVAudioSessionSpatialExperienceOptionAnchoringStrategy" : @(AVAudioSessionAnchoringStrategyAutomatic)
+        } error:&error];
+    }
+
+    if (error)
+        ALWAYS_LOG(error.localizedDescription.UTF8String);
+#endif
+}
+
+void AudioSessionIOS::setSceneIdentifier(const String& sceneIdentifier)
+{
+    if (m_sceneIdentifier == sceneIdentifier)
+        return;
+    m_sceneIdentifier = sceneIdentifier;
+    ALWAYS_LOG(LOGIDENTIFIER, sceneIdentifier);
+
+    updateSpatialExperience();
+}
+
+void AudioSessionIOS::setSoundStageSize(SoundStageSize size)
+{
+    if (m_soundStageSize == size)
+        return;
+    m_soundStageSize = size;
+    ALWAYS_LOG(LOGIDENTIFIER, size);
+
+    updateSpatialExperience();
+}
+
 }
 
 #endif // USE(AUDIO_SESSION) && PLATFORM(IOS_FAMILY)

@@ -178,6 +178,8 @@ private:
     void setVolume(double) final;
     void setPlayingOnSecondScreen(bool) final;
     void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final { }
+    AudioSessionSoundStageSize soundStageSize() const final { return AudioSessionSoundStageSize::Automatic; }
+    void setSoundStageSize(AudioSessionSoundStageSize) final { }
 
     // PlaybackSessionModelClient
     void durationChanged(double) override;

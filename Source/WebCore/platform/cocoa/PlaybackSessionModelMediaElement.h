@@ -112,6 +112,8 @@ public:
     bool isPictureInPictureSupported() const final;
     bool isPictureInPictureActive() const final;
     bool isInWindowFullscreenActive() const final;
+    AudioSessionSoundStageSize soundStageSize() const final { return m_soundStageSize; }
+    void setSoundStageSize(AudioSessionSoundStageSize size) final { m_soundStageSize = size; }
 
 private:
     WEBCORE_EXPORT PlaybackSessionModelMediaElement();
@@ -130,6 +132,7 @@ private:
     HashSet<CheckedPtr<PlaybackSessionModelClient>> m_clients;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
+    AudioSessionSoundStageSize m_soundStageSize;
 
     double playbackStartedTime() const;
     void updateMediaSelectionOptions();

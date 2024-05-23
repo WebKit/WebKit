@@ -101,6 +101,12 @@ private:
     void endInterruptionForTesting() final;
     void clearInterruptionFlagForTesting() final { m_isInterruptedForTesting = false; }
 
+    void setSceneIdentifier(const String&) final;
+    const String& sceneIdentifier() const final { return configuration().sceneIdentifier; }
+
+    void setSoundStageSize(SoundStageSize) final;
+    SoundStageSize soundStageSize() const final { return configuration().soundStageSize; }
+
     const RemoteAudioSessionConfiguration& configuration() const;
     RemoteAudioSessionConfiguration& configuration();
     void initializeConfigurationIfNecessary();

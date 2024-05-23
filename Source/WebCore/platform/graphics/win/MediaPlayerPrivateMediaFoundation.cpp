@@ -255,7 +255,7 @@ bool MediaPlayerPrivateMediaFoundation::hasAudio() const
     return m_hasAudio;
 }
 
-void MediaPlayerPrivateMediaFoundation::setPageIsVisible(bool visible, String&&)
+void MediaPlayerPrivateMediaFoundation::setPageIsVisible(bool visible)
 {
     m_visible = visible;
 }

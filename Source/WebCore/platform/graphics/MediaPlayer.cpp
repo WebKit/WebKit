@@ -131,7 +131,7 @@ public:
     bool hasVideo() const final { return false; }
     bool hasAudio() const final { return false; }
 
-    void setPageIsVisible(bool, String&&) final { }
+    void setPageIsVisible(bool) final { }
 
     void seekToTarget(const SeekTarget&) final { }
     bool seeking() const final { return false; }
@@ -1092,10 +1092,10 @@ void MediaPlayer::setPresentationSize(const IntSize& size)
     m_private->setPresentationSize(size);
 }
 
-void MediaPlayer::setPageIsVisible(bool visible, String&& sceneIdentifier)
+void MediaPlayer::setPageIsVisible(bool visible)
 {
     m_pageIsVisible = visible;
-    m_private->setPageIsVisible(visible, WTFMove(sceneIdentifier));
+    m_private->setPageIsVisible(visible);
 }
 
 void MediaPlayer::setVisibleForCanvas(bool visible)

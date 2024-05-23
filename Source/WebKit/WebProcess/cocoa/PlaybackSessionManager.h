@@ -49,6 +49,7 @@ class MessageReceiver;
 
 namespace WebCore {
 class Node;
+enum class AudioSessionSoundStageSize : uint8_t;
 }
 
 namespace WebKit {
@@ -184,10 +185,13 @@ private:
     void setVolume(PlaybackSessionContextIdentifier, double volume);
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool value);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
+    void setSoundStageSize(PlaybackSessionContextIdentifier, WebCore::AudioSessionSoundStageSize);
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
 #endif
+
+    void forEachModel(Function<void(WebCore::PlaybackSessionModel&)>&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }

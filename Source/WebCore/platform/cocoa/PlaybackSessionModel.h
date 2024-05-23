@@ -53,6 +53,8 @@ class TimeRanges;
 class PlaybackSessionModelClient;
 struct MediaSelectionOption;
 
+enum class AudioSessionSoundStageSize : uint8_t;
+
 enum class PlaybackSessionModelExternalPlaybackTargetType : uint8_t {
     TargetTypeNone,
     TargetTypeAirPlay,
@@ -134,6 +136,8 @@ public:
     virtual bool isPictureInPictureSupported() const = 0;
     virtual bool isPictureInPictureActive() const = 0;
     virtual bool isInWindowFullscreenActive() const { return false; }
+    virtual AudioSessionSoundStageSize soundStageSize() const = 0;
+    virtual void setSoundStageSize(AudioSessionSoundStageSize) = 0;
 
 #if !RELEASE_LOG_DISABLED
     virtual const void* logIdentifier() const { return nullptr; }

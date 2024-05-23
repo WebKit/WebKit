@@ -79,6 +79,13 @@ enum class AudioSessionMode : uint8_t {
     MoviePlayback,
 };
 
+enum class AudioSessionSoundStageSize : uint8_t {
+    Automatic,
+    Small,
+    Medium,
+    Large,
+};
+
 class AudioSession;
 class AudioSessionRoutingArbitrationClient;
 class AudioSessionInterruptionObserver;
@@ -161,6 +168,13 @@ public:
 
     bool isInterrupted() const { return m_isInterrupted; }
 
+    virtual void setSceneIdentifier(const String&) { }
+    virtual const String& sceneIdentifier() const { return nullString(); }
+
+    using SoundStageSize = AudioSessionSoundStageSize;
+    virtual void setSoundStageSize(SoundStageSize) { }
+    virtual SoundStageSize soundStageSize() const { return SoundStageSize::Automatic; }
+
 protected:
     friend class NeverDestroyed<AudioSession>;
     AudioSession();
@@ -219,6 +233,7 @@ WEBCORE_EXPORT String convertEnumerationToString(AudioSession::CategoryType);
 WEBCORE_EXPORT String convertEnumerationToString(AudioSession::Mode);
 WEBCORE_EXPORT String convertEnumerationToString(AudioSessionRoutingArbitrationClient::RoutingArbitrationError);
 WEBCORE_EXPORT String convertEnumerationToString(AudioSessionRoutingArbitrationClient::DefaultRouteChanged);
+WEBCORE_EXPORT String convertEnumerationToString(AudioSession::SoundStageSize);
 
 } // namespace WebCore
 
@@ -264,6 +279,14 @@ struct LogArgument<WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteCh
     static String toString(const WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged changed)
     {
         return convertEnumerationToString(changed);
+    }
+};
+
+template <>
+struct LogArgument<WebCore::AudioSession::SoundStageSize> {
+    static String toString(const WebCore::AudioSession::SoundStageSize size)
+    {
+        return convertEnumerationToString(size);
     }
 };
 

@@ -400,7 +400,7 @@ public:
 #endif
     void cancelLoad();
 
-    void setPageIsVisible(bool, String&& sceneIdentifier = ""_s);
+    void setPageIsVisible(bool);
     void setVisibleForCanvas(bool);
     bool isVisibleForCanvas() const { return m_visibleForCanvas; }
 

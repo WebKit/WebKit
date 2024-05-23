@@ -117,6 +117,16 @@ void PlaybackSessionModelContext::removeNowPlayingMetadataObserver(const WebCore
         m_manager->removeNowPlayingMetadataObserver(m_contextId, nowPlayingInfo);
 }
 
+void PlaybackSessionModelContext::setSoundStageSize(WebCore::AudioSessionSoundStageSize size)
+{
+    if (m_soundStageSize == size)
+        return;
+
+    m_soundStageSize = size;
+    if (m_manager)
+        m_manager->setSoundStageSize(m_contextId, size);
+}
+
 void PlaybackSessionModelContext::play()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
@@ -879,6 +889,12 @@ void PlaybackSessionManagerProxy::removeNowPlayingMetadataObserver(PlaybackSessi
 {
     if (RefPtr page = m_page.get())
         page->removeNowPlayingMetadataObserver(nowPlayingInfo);
+}
+
+void PlaybackSessionManagerProxy::setSoundStageSize(PlaybackSessionContextIdentifier contextId, WebCore::AudioSessionSoundStageSize size)
+{
+    if (m_page)
+        m_page->send(Messages::PlaybackSessionManager::SetSoundStageSize(contextId, size));
 }
 
 bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()

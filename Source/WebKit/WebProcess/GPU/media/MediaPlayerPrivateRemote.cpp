@@ -704,7 +704,7 @@ void MediaPlayerPrivateRemote::prepareForRendering()
     connection().send(Messages::RemoteMediaPlayerProxy::PrepareForRendering(), m_id);
 }
 
-void MediaPlayerPrivateRemote::setPageIsVisible(bool visible, String&& sceneIdentifier)
+void MediaPlayerPrivateRemote::setPageIsVisible(bool visible)
 {
     if (m_pageIsVisible == visible)
         return;
@@ -712,7 +712,7 @@ void MediaPlayerPrivateRemote::setPageIsVisible(bool visible, String&& sceneIden
     ALWAYS_LOG(LOGIDENTIFIER, visible);
 
     m_pageIsVisible = visible;
-    connection().send(Messages::RemoteMediaPlayerProxy::SetPageIsVisible(visible, WTFMove(sceneIdentifier)), m_id);
+    connection().send(Messages::RemoteMediaPlayerProxy::SetPageIsVisible(visible), m_id);
 }
 
 void MediaPlayerPrivateRemote::setShouldMaintainAspectRatio(bool maintainRatio)

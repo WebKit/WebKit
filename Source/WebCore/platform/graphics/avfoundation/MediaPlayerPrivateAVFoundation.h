@@ -183,7 +183,7 @@ protected:
     FloatSize naturalSize() const override;
     bool hasVideo() const override { return m_cachedHasVideo; }
     bool hasAudio() const override { return m_cachedHasAudio; }
-    void setPageIsVisible(bool, String&& sceneIdentifier) final;
+    void setPageIsVisible(bool) final;
     MediaTime duration() const override;
     MediaTime currentTime() const override = 0;
     void seekToTarget(const SeekTarget&) final;

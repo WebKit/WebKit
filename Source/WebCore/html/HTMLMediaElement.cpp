@@ -6737,10 +6737,8 @@ void HTMLMediaElement::visibilityStateChanged()
 
     updateSleepDisabling();
     mediaSession().visibilityChanged();
-    if (RefPtr player = m_player) {
-        auto page = document().page();
-        player->setPageIsVisible(!m_elementIsHidden, page ? page->sceneIdentifier() : ""_s);
-    }
+    if (RefPtr player = m_player)
+        player->setPageIsVisible(!m_elementIsHidden);
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     updateSpatialTrackingLabel();
@@ -7733,7 +7731,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     player->setShouldDisableHDR(shouldDisableHDR());
     player->setMuted(effectiveMuted());
     RefPtr page = document().page();
-    player->setPageIsVisible(!m_elementIsHidden, page ? page->sceneIdentifier() : ""_s);
+    player->setPageIsVisible(!m_elementIsHidden);
     player->setVisibleInViewport(isVisibleInViewport());
     schedulePlaybackControlsManagerUpdate();
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)

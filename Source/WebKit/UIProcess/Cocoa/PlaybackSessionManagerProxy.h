@@ -144,6 +144,9 @@ private:
     bool isPictureInPictureActive() const final { return m_pictureInPictureActive; }
     bool isInWindowFullscreenActive() const final { return m_isInWindowFullscreenActive; }
 
+    WebCore::AudioSessionSoundStageSize soundStageSize() const final { return m_soundStageSize; }
+    void setSoundStageSize(WebCore::AudioSessionSoundStageSize) final;
+
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void* identifier) { m_logIdentifier = identifier; }
     const void* logIdentifier() const final { return m_logIdentifier; }
@@ -183,6 +186,7 @@ private:
     bool m_pictureInPictureActive { false };
     bool m_isInWindowFullscreenActive { false };
     WebCore::VideoReceiverEndpoint m_videoReceiverEndpoint;
+    WebCore::AudioSessionSoundStageSize m_soundStageSize { 0 };
 
 #if !RELEASE_LOG_DISABLED
     const void* m_logIdentifier { nullptr };
@@ -280,6 +284,7 @@ private:
 #endif
     void addNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
     void removeNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
+    void setSoundStageSize(PlaybackSessionContextIdentifier, WebCore::AudioSessionSoundStageSize);
 
     void uncacheVideoReceiverEndpoint(PlaybackSessionContextIdentifier);
 

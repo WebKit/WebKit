@@ -59,6 +59,7 @@ public:
 
     void updateCategory();
     void updatePreferredBufferSizeForProcess();
+    void updateSpatialExperience();
 
     bool tryToSetActiveForProcess(RemoteAudioSessionProxy&, bool);
 

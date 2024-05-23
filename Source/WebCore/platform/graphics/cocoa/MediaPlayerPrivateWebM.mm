@@ -314,7 +314,7 @@ bool MediaPlayerPrivateWebM::timeIsProgressing() const
     return m_isPlaying && [m_synchronizer rate];
 }
 
-void MediaPlayerPrivateWebM::setPageIsVisible(bool visible, String&&)
+void MediaPlayerPrivateWebM::setPageIsVisible(bool visible)
 {
     if (m_visible == visible)
         return;

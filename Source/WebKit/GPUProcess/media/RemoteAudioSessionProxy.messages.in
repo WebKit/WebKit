@@ -36,6 +36,9 @@ messages -> RemoteAudioSessionProxy NotRefCounted {
 
     BeginInterruptionRemote()
     EndInterruptionRemote(WebCore::AudioSession::MayResume flags)
+
+    SetSceneIdentifier(String sceneIdentifier)
+    SetSoundStageSize(enum:uint8_t WebCore::AudioSession::SoundStageSize size)
 }
 
 #endif

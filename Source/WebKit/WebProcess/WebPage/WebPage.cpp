@@ -5191,6 +5191,7 @@ void WebPage::videoControlsManagerDidChange()
 #if PLATFORM(IOS_FAMILY)
 void WebPage::setSceneIdentifier(String&& sceneIdentifier)
 {
+    AudioSession::sharedSession().setSceneIdentifier(sceneIdentifier);
     m_page->setSceneIdentifier(WTFMove(sceneIdentifier));
 }
 

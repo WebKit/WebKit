@@ -4678,6 +4678,13 @@ enum class WebCore::AudioSessionMode : uint8_t {
     MoviePlayback,
 };
 
+enum class WebCore::AudioSessionSoundStageSize : uint8_t {
+    Automatic,
+    Small,
+    Medium,
+    Large,
+};
+
 [Nested] enum class WebCore::AudioSession::MayResume : bool;
 
 enum class WebCore::AudioSessionRoutingArbitrationError : uint8_t {

@@ -579,12 +579,32 @@ void PlaybackSessionManager::sendRemoteCommand(PlaybackSessionContextIdentifier 
     ensureModel(contextId).sendRemoteCommand(command, argument);
 }
 
+void PlaybackSessionManager::setSoundStageSize(PlaybackSessionContextIdentifier contextId, WebCore::AudioSessionSoundStageSize size)
+{
+    ensureModel(contextId).setSoundStageSize(size);
+    auto maxSize = size;
+    forEachModel([&] (auto& model) {
+        if (model.soundStageSize() > maxSize)
+            maxSize = model.soundStageSize();
+    });
+    AudioSession::sharedSession().setSoundStageSize(maxSize);
+}
+
 #if HAVE(SPATIAL_TRACKING_LABEL)
 void PlaybackSessionManager::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
 {
     ensureModel(contextId).setSpatialTrackingLabel(label);
 }
 #endif
+
+void PlaybackSessionManager::forEachModel(Function<void(PlaybackSessionModel&)>&& callback)
+{
+    for (auto& [model, interface] : m_contextMap.values()) {
+        UNUSED_PARAM(interface);
+        if (model)
+            callback(*model);
+    }
+}
 
 #if !RELEASE_LOG_DISABLED
 void PlaybackSessionManager::sendLogIdentifierForMediaElement(HTMLMediaElement& mediaElement)
