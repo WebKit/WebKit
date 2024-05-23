@@ -156,9 +156,15 @@ SecurityOrigin* Geolocation::securityOrigin() const
     return scriptExecutionContext()->securityOrigin();
 }
 
+RefPtr<SecurityOrigin> Geolocation::protectedSecurityOrigin() const
+{
+    return securityOrigin();
+}
+
 Page* Geolocation::page() const
 {
-    return document() ? document()->page() : nullptr;
+    RefPtr document = this->document();
+    return document ? document->page() : nullptr;
 }
     
 void Geolocation::suspend(ReasonForSuspension reason)
@@ -227,7 +233,7 @@ void Geolocation::resumeTimerFired()
     }
 
     if (m_errorWaitingForResume) {
-        handleError(*m_errorWaitingForResume);
+        handleError(m_errorWaitingForResume.releaseNonNull());
         m_errorWaitingForResume = nullptr;
     }
 }
@@ -240,9 +246,9 @@ void Geolocation::resetAllGeolocationPermission()
     }
 
     if (m_allowGeolocation == InProgress) {
-        Page* page = this->page();
+        RefPtr page = this->page();
         if (page)
-            GeolocationController::from(page)->cancelPermissionRequest(*this);
+            GeolocationController::from(page.get())->cancelPermissionRequest(*this);
 
         // This return is not technically correct as GeolocationController::cancelPermissionRequest() should have cleared the active request.
         // Neither iOS nor OS X supports cancelPermissionRequest() (https://bugs.webkit.org/show_bug.cgi?id=89524), so we workaround that and let ongoing requests complete. :(
@@ -270,9 +276,9 @@ void Geolocation::resetAllGeolocationPermission()
 
 void Geolocation::stop()
 {
-    Page* page = this->page();
+    RefPtr page = this->page();
     if (page && m_allowGeolocation == InProgress)
-        GeolocationController::from(page)->cancelPermissionRequest(*this);
+        GeolocationController::from(page.get())->cancelPermissionRequest(*this);
     // The frame may be moving to a new page and we want to get the permissions from the new page's client.
     resetIsAllowed();
     cancelAllRequests();
@@ -284,18 +290,19 @@ void Geolocation::stop()
 
 GeolocationPosition* Geolocation::lastPosition()
 {
-    Page* page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return nullptr;
 
-    m_lastPosition = createGeolocationPosition(GeolocationController::from(page)->lastPosition());
+    m_lastPosition = createGeolocationPosition(GeolocationController::from(page.get())->lastPosition());
 
     return m_lastPosition.get();
 }
 
 void Geolocation::getCurrentPosition(Ref<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, PositionOptions&& options)
 {
-    if (!document() || !document()->isFullyActive()) {
+    RefPtr document = this->document();
+    if (!document || !document->isFullyActive()) {
         if (errorCallback && errorCallback->scriptExecutionContext()) {
             errorCallback->scriptExecutionContext()->eventLoop().queueTask(TaskSource::Geolocation, [errorCallback] {
                 errorCallback->handleEvent(GeolocationPositionError::create(GeolocationPositionError::POSITION_UNAVAILABLE, "Document is not fully active"_s));
@@ -345,18 +352,19 @@ static void logError(const String& target, const bool isSecure, const bool isMix
     
 bool Geolocation::shouldBlockGeolocationRequests()
 {
-    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Geolocation, *document(), LogPermissionsPolicyFailure::Yes))
+    RefPtr document = this->document();
+    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Geolocation, *document, LogPermissionsPolicyFailure::Yes))
         return true;
 
-    bool isSecure = SecurityOrigin::isSecure(document()->url()) || document()->isSecureContext();
-    bool hasMixedContent = !document()->foundMixedContent().isEmpty();
+    bool isSecure = SecurityOrigin::isSecure(document->url()) || document->isSecureContext();
+    bool hasMixedContent = !document->foundMixedContent().isEmpty();
     bool isLocalOrigin = securityOrigin()->isLocal();
-    if (document()->canAccessResource(ScriptExecutionContext::ResourceType::Geolocation) != ScriptExecutionContext::HasResourceAccess::No) {
+    if (document->canAccessResource(ScriptExecutionContext::ResourceType::Geolocation) != ScriptExecutionContext::HasResourceAccess::No) {
         if (isLocalOrigin || (isSecure && !hasMixedContent))
             return false;
     }
 
-    logError(securityOrigin()->toString(), isSecure, hasMixedContent, document());
+    logError(protectedSecurityOrigin()->toString(), isSecure, hasMixedContent, document.get());
     return true;
 }
 
