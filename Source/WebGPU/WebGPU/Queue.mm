@@ -263,12 +263,6 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
     ++m_submittedCommandBufferCount;
 }
 
-static void invalidateCommandBuffers(Vector<std::reference_wrapper<CommandBuffer>>&& commands, auto&& makeInvalidFunc)
-{
-    for (auto commandBuffer : commands)
-        makeInvalidFunc(commandBuffer.get());
-}
-
 void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
 {
     auto device = m_device.get();
@@ -278,31 +272,21 @@ void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
     if (NSString* error = errorValidatingSubmit(commands)) {
         device->generateAValidationError(error ?: @"Validation failure.");
-        return invalidateCommandBuffers(WTFMove(commands), ^(CommandBuffer& command) {
-            command.makeInvalid(command.lastError() ?: error);
-        });
+        return;
     }
 
     finalizeBlitCommandEncoder();
 
-    NSMutableSet<id<MTLCommandBuffer>> *commandBuffersToSubmit = [NSMutableSet setWithCapacity:commands.size()];
-    NSString* validationError = nil;
+    NSMutableArray<id<MTLCommandBuffer>> *commandBuffersToSubmit = [NSMutableArray arrayWithCapacity:commands.size()];
     for (auto commandBuffer : commands) {
         auto& command = commandBuffer.get();
-        if (id<MTLCommandBuffer> mtlBuffer = command.commandBuffer(); mtlBuffer && ![commandBuffersToSubmit containsObject:mtlBuffer])
+        if (id<MTLCommandBuffer> mtlBuffer = command.commandBuffer())
             [commandBuffersToSubmit addObject:mtlBuffer];
         else {
-            validationError = command.lastError() ?: @"Command buffer appears twice.";
-            break;
+            device->generateAValidationError(command.lastError() ?: @"Command buffer appears twice.");
+            return;
         }
-    }
-
-    invalidateCommandBuffers(WTFMove(commands), ^(CommandBuffer& command) {
-        validationError ? command.makeInvalid(command.lastError() ?: validationError) : command.makeInvalidDueToCommit(@"command buffer was submitted");
-    });
-    if (validationError) {
-        device->generateAValidationError(@"Command buffer appears twice.");
-        return;
+        command.makeInvalidDueToCommit(@"command buffer was submitted");
     }
 
     for (id<MTLCommandBuffer> commandBuffer in commandBuffersToSubmit)
