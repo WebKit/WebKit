@@ -239,7 +239,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
 
     print("Archiving built product from directory: %s" % _configurationBuildDirectory)
 
-    if platform in ['ios', 'tvos', 'visionos' 'watchos']:
+    if platform in ['ios', 'tvos', 'visionos', 'watchos']:
         combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-{}'.format(platform))
         removeDirectoryIfExists(combinedDirectory)
         os.makedirs(combinedDirectory)
