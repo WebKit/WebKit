@@ -273,11 +273,10 @@ inline CapabilityLevel canCompile(Node* node)
     case IsCellWithType:
     case MapHash:
     case NormalizeMapKey:
-    case GetMapBucket:
-    case GetMapBucketHead:
-    case GetMapBucketNext:
-    case LoadKeyFromMapBucket:
-    case LoadValueFromMapBucket:
+    case GetMapValueRaw:
+    case GetMapValue:
+    case GetMapEntryNext:
+    case GetMapStorage:
     case ExtractValueFromWeakMapGet:
     case SetAdd:
     case MapSet:

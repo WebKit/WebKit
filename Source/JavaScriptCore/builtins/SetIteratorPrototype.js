@@ -25,19 +25,22 @@
 
 // We keep this function small very carefully to encourage inlining.
 @linkTimeConstant
-function setIteratorNext(bucket, kind)
+function setIteratorNext(setStorage, entry, kind)
 {
     "use strict";
     var value;
-
-    bucket = @setBucketNext(bucket);
-    @putSetIteratorInternalField(this, @setIteratorFieldSetBucket, bucket);
-    var done = bucket === @sentinelSetBucket;
+    var tableKeyEntry = @setEntryNext(setStorage, entry);
+    var done = tableKeyEntry.length === 0;
     if (!done) {
-        value = @setBucketKey(bucket);
+        var newTable = tableKeyEntry[0];
+        if (newTable !== setStorage)
+            @putSetIteratorInternalField(this, @setIteratorFieldStorage, newTable);
+        @putSetIteratorInternalField(this, @setIteratorFieldEntry, tableKeyEntry[2] + 1);
+        value = tableKeyEntry[1];
         if (kind === @iterationKindEntries)
             value = [ value, value ]
-    }
+    } else
+        @putSetIteratorInternalField(this, @setIteratorFieldStorage, @orderedHashTableSentinel);
     return { value, done };
 }
 
@@ -48,7 +51,8 @@ function next()
     if (!@isSetIterator(this))
         @throwTypeError("%SetIteratorPrototype%.next requires that |this| be a Set Iterator instance");
 
-    var bucket = @getSetIteratorInternalField(this, @setIteratorFieldSetBucket);
+    var setStorage = @getSetIteratorInternalField(this, @setIteratorFieldStorage);
+    var entry = @getSetIteratorInternalField(this, @setIteratorFieldEntry);
     var kind = @getSetIteratorInternalField(this, @setIteratorFieldKind);
-    return @setIteratorNext.@call(this, bucket, kind);
+    return @setIteratorNext.@call(this, setStorage, entry, kind);
 }

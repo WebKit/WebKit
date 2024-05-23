@@ -36,13 +36,10 @@ class JSGlobalObject;
     JSC_FOREACH_BUILTIN_LINK_TIME_CONSTANT(v) \
     v(throwTypeErrorFunction, nullptr) \
     v(importModule, nullptr) \
-    v(mapBucketHead, nullptr) \
-    v(mapBucketNext, nullptr) \
-    v(mapBucketKey, nullptr) \
-    v(mapBucketValue, nullptr) \
-    v(setBucketHead, nullptr) \
-    v(setBucketNext, nullptr) \
-    v(setBucketKey, nullptr) \
+    v(mapEntryNext, nullptr) \
+    v(mapStorage, nullptr) \
+    v(setEntryNext, nullptr) \
+    v(setStorage, nullptr) \
     v(setClone, nullptr) \
     v(setPrototypeDirect, nullptr) \
     v(setPrototypeDirectOrThrow, nullptr) \

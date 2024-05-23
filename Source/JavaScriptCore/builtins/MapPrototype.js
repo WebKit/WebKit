@@ -34,12 +34,15 @@ function forEach(callback /*, thisArg */)
         @throwTypeError("Map.prototype.forEach callback must be a function");
 
     var thisArg = @argument(1);
-    var bucket = @mapBucketHead(this);
+    var storage = @mapStorage(this);
+    var entry = 0;
 
     do {
-        bucket = @mapBucketNext(bucket);
-        if (bucket === @sentinelMapBucket)
+        var tableKeyValueEntry = @mapEntryNext(storage, entry);
+        if (tableKeyValueEntry.length === 0)
             break;
-        callback.@call(thisArg, @mapBucketValue(bucket), @mapBucketKey(bucket), this);
+        storage = tableKeyValueEntry[0];
+        entry = tableKeyValueEntry[3] + 1;
+        callback.@call(thisArg, tableKeyValueEntry[2], tableKeyValueEntry[1], this);
     } while (true);
 }

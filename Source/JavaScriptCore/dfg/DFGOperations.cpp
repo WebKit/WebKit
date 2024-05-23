@@ -4155,28 +4155,81 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMapHashHeapBigInt, UCPUStrictInt32, (
     OPERATION_RETURN(scope, toUCPUStrictInt32(jsMapHash(input)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationJSMapFindBucket, JSCell*, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash))
+JSC_DEFINE_JIT_OPERATION(operationJSGetMapValueRaw, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSMap::BucketType** bucket = jsCast<JSMap*>(map)->findBucket(globalObject, JSValue::decode(key), hash);
-    if (!bucket)
-        OPERATION_RETURN(scope, vm.sentinelMapBucket());
-    OPERATION_RETURN(scope, *bucket);
+    JSValue result = jsCast<JSMap*>(map)->getOrEmpty(globalObject, JSValue::decode(key), hash);
+    OPERATION_RETURN(scope, JSValue::encode(result));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationJSSetFindBucket, JSCell*, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash))
+JSC_DEFINE_JIT_OPERATION(operationJSGetSetValueRaw, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSSet::BucketType** bucket = jsCast<JSSet*>(map)->findBucket(globalObject, JSValue::decode(key), hash);
-    if (!bucket)
-        OPERATION_RETURN(scope, vm.sentinelSetBucket());
-    OPERATION_RETURN(scope, *bucket);
+    OPERATION_RETURN(scope, JSValue::encode(jsCast<JSSet*>(map)->getOrEmpty(globalObject, JSValue::decode(key), hash)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationJSGetMapEntryNext, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell, int32_t index))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (cell == vm.orderedHashTableSentinel())
+        OPERATION_RETURN(scope, JSValue::encode(createEmptyTuple(globalObject)));
+
+    JSMap::Handle table = jsCast<JSMap::Storage*>(cell);
+    uint32_t entry = static_cast<uint32_t>(index);
+
+    // TODO: extract for mapPrivateFuncMapEntryNext
+    auto [newTable, nextKey, nextValue, nextEntry] = table.getTableKeyValueEntry(vm, entry);
+    if (nextKey.isEmpty())
+        OPERATION_RETURN(scope, JSValue::encode(createEmptyTuple(globalObject)));
+    OPERATION_RETURN(scope, JSValue::encode(createTuple(globalObject, JSValue(newTable.storage()), nextKey, nextValue, nextEntry)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationJSGetSetEntryNext, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell, int32_t index))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (cell == vm.orderedHashTableSentinel())
+        OPERATION_RETURN(scope, JSValue::encode(createEmptyTuple(globalObject)));
+
+    JSSet::Handle table = jsCast<JSSet::Storage*>(cell);
+    uint32_t entry = static_cast<uint32_t>(index);
+
+    // TODO: extract for setPrivateFuncSetEntryNext
+    auto [newTable, nextKey, nextValue, nextEntry] = table.getTableKeyValueEntry(vm, entry);
+    if (nextKey.isEmpty())
+        OPERATION_RETURN(scope, JSValue::encode(createEmptyTuple(globalObject)));
+    OPERATION_RETURN(scope, JSValue::encode(createTuple(globalObject, JSValue(newTable.storage()), nextKey, nextEntry)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationJSGetMapStorage, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsCast<JSMap*>(cell)->transitOrSentinel(vm)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationJSGetSetStorage, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsCast<JSSet*>(cell)->transitOrSentinel(vm)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationSetAdd, JSCell*, (JSGlobalObject* globalObject, JSCell* set, EncodedJSValue key, int32_t hash))
@@ -4185,10 +4238,7 @@ JSC_DEFINE_JIT_OPERATION(operationSetAdd, JSCell*, (JSGlobalObject* globalObject
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* bucket = jsCast<JSSet*>(set)->addNormalized(globalObject, JSValue::decode(key), JSValue(), hash);
-    if (!bucket)
-        OPERATION_RETURN(scope, vm.sentinelSetBucket());
-    OPERATION_RETURN(scope, bucket);
+    OPERATION_RETURN(scope, jsCast<JSSet*>(set)->addNormalized(globalObject, JSValue::decode(key), JSValue(), hash));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationMapSet, JSCell*, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, EncodedJSValue value, int32_t hash))
@@ -4197,10 +4247,7 @@ JSC_DEFINE_JIT_OPERATION(operationMapSet, JSCell*, (JSGlobalObject* globalObject
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* bucket = jsCast<JSMap*>(map)->addNormalized(globalObject, JSValue::decode(key), JSValue::decode(value), hash);
-    if (!bucket)
-        OPERATION_RETURN(scope, vm.sentinelMapBucket());
-    OPERATION_RETURN(scope, bucket);
+    OPERATION_RETURN(scope, jsCast<JSMap*>(map)->addNormalized(globalObject, JSValue::decode(key), JSValue::decode(value), hash));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationSetDelete, size_t, (JSGlobalObject* globalObject, JSCell* set, EncodedJSValue key, int32_t hash))

@@ -143,18 +143,15 @@ namespace JSC {
     macro(JSMapValuesIntrinsic) \
     macro(JSMapKeysIntrinsic) \
     macro(JSMapEntriesIntrinsic) \
-    macro(JSMapBucketHeadIntrinsic) \
-    macro(JSMapBucketNextIntrinsic) \
-    macro(JSMapBucketKeyIntrinsic) \
-    macro(JSMapBucketValueIntrinsic) \
+    macro(JSMapEntryNextIntrinsic) \
+    macro(JSMapStorageIntrinsic) \
+    macro(JSSetStorageIntrinsic) \
     macro(JSSetHasIntrinsic) \
     macro(JSSetAddIntrinsic) \
     macro(JSSetDeleteIntrinsic) \
     macro(JSSetValuesIntrinsic) \
     macro(JSSetEntriesIntrinsic) \
-    macro(JSSetBucketHeadIntrinsic) \
-    macro(JSSetBucketNextIntrinsic) \
-    macro(JSSetBucketKeyIntrinsic) \
+    macro(JSSetEntryNextIntrinsic) \
     macro(JSWeakMapGetIntrinsic) \
     macro(JSWeakMapHasIntrinsic) \
     macro(JSWeakMapSetIntrinsic) \

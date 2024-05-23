@@ -54,9 +54,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(MapConstructor, InternalFunction);
 
-JSC_DECLARE_HOST_FUNCTION(mapPrivateFuncMapBucketHead);
-JSC_DECLARE_HOST_FUNCTION(mapPrivateFuncMapBucketNext);
-JSC_DECLARE_HOST_FUNCTION(mapPrivateFuncMapBucketKey);
-JSC_DECLARE_HOST_FUNCTION(mapPrivateFuncMapBucketValue);
+JSC_DECLARE_HOST_FUNCTION(mapPrivateFuncMapEntryNext);
+JSC_DECLARE_HOST_FUNCTION(mapPrivateFuncMapStorage);
 
 } // namespace JSC

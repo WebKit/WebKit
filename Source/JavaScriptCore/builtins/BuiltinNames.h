@@ -145,13 +145,10 @@ namespace JSC {
     macro(replaceAllUsingStringSearch) \
     macro(makeTypeError) \
     macro(AggregateError) \
-    macro(mapBucketHead) \
-    macro(mapBucketNext) \
-    macro(mapBucketKey) \
-    macro(mapBucketValue) \
-    macro(setBucketHead) \
-    macro(setBucketNext) \
-    macro(setBucketKey) \
+    macro(mapEntryNext) \
+    macro(mapStorage) \
+    macro(setEntryNext) \
+    macro(setStorage) \
     macro(setClone) \
     macro(setPrototypeDirect) \
     macro(setPrototypeDirectOrThrow) \

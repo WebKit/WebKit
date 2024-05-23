@@ -230,6 +230,22 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("MapBucketNextLoc");
         return;
 
+    case MapStorageLoc:
+        out.print("MapStorageLoc");
+        return;
+
+    case MapEntryLoc:
+        out.print("MapEntryLoc");
+        return;
+
+    case MapEntryValueLoc:
+        out.print("MapEntryValueLoc");
+        return;
+
+    case MapEntryNextLoc:
+        out.print("MapEntryNextLoc");
+        return;
+
     case WeakMapGetLoc:
         out.print("WeakMapGetLoc");
         return;

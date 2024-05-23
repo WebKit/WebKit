@@ -2083,44 +2083,30 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node));
         return;
 
-    case GetMapBucket: {
+    case GetMapValueRaw:
+    case GetMapValue: {
         Edge& mapEdge = node->child1();
         Edge& keyEdge = node->child2();
         AbstractHeapKind heap = (mapEdge.useKind() == MapObjectUse) ? JSMapFields : JSSetFields;
         read(heap);
-        def(HeapLocation(MapBucketLoc, heap, mapEdge, keyEdge), LazyNode(node));
+        def(HeapLocation(MapEntryValueLoc, heap, mapEdge, keyEdge), LazyNode(node));
         return;
     }
 
-    case GetMapBucketHead: {
+    case GetMapStorage: {
         Edge& mapEdge = node->child1();
         AbstractHeapKind heap = (mapEdge.useKind() == MapObjectUse) ? JSMapFields : JSSetFields;
         read(heap);
-        def(HeapLocation(MapBucketHeadLoc, heap, mapEdge), LazyNode(node));
+        def(HeapLocation(MapStorageLoc, heap, mapEdge), LazyNode(node));
         return;
     }
 
-    case GetMapBucketNext: {
+    case GetMapEntryNext: {
+        Edge& mapEdge = node->child1();
+        Edge& entryEdge = node->child2();
         AbstractHeapKind heap = (node->bucketOwnerType() == BucketOwnerType::Map) ? JSMapFields : JSSetFields;
         read(heap);
-        Edge& bucketEdge = node->child1();
-        def(HeapLocation(MapBucketNextLoc, heap, bucketEdge), LazyNode(node));
-        return;
-    }
-
-    case LoadKeyFromMapBucket: {
-        AbstractHeapKind heap = (node->bucketOwnerType() == BucketOwnerType::Map) ? JSMapFields : JSSetFields;
-        read(heap);
-        Edge& bucketEdge = node->child1();
-        def(HeapLocation(MapBucketKeyLoc, heap, bucketEdge), LazyNode(node));
-        return;
-    }
-
-    case LoadValueFromMapBucket: {
-        AbstractHeapKind heap = (node->bucketOwnerType() == BucketOwnerType::Map) ? JSMapFields : JSSetFields;
-        read(heap);
-        Edge& bucketEdge = node->child1();
-        def(HeapLocation(MapBucketValueLoc, heap, bucketEdge), LazyNode(node));
+        def(HeapLocation(MapEntryNextLoc, heap, mapEdge, entryEdge), LazyNode(node));
         return;
     }
 
@@ -2137,7 +2123,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         Edge& mapEdge = node->child1();
         Edge& keyEdge = node->child2();
         write(JSSetFields);
-        def(HeapLocation(MapBucketLoc, JSSetFields, mapEdge, keyEdge), LazyNode(node));
+        def(HeapLocation(MapEntryLoc, JSSetFields, mapEdge, keyEdge), LazyNode(node));
         return;
     }
 
@@ -2145,7 +2131,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         Edge& mapEdge = graph.varArgChild(node, 0);
         Edge& keyEdge = graph.varArgChild(node, 1);
         write(JSMapFields);
-        def(HeapLocation(MapBucketLoc, JSMapFields, mapEdge, keyEdge), LazyNode(node));
+        def(HeapLocation(MapEntryLoc, JSMapFields, mapEdge, keyEdge), LazyNode(node));
         return;
     }
 

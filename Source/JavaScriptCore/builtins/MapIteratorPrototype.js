@@ -25,33 +25,37 @@
 
 // We keep this function small very carefully to encourage inlining.
 @linkTimeConstant
-function mapIteratorNext(bucket, kind)
+function mapIteratorNext(mapStorage, entry, kind)
 {
     "use strict";
     var value;
-
-    bucket = @mapBucketNext(bucket);
-    @putMapIteratorInternalField(this, @mapIteratorFieldMapBucket, bucket);
-    var done = bucket === @sentinelMapBucket;
+    var tableKeyValueEntry = @mapEntryNext(mapStorage, entry);
+    var done = tableKeyValueEntry.length === 0;
     if (!done) {
-        var key = @mapBucketKey(bucket);
-        value = @mapBucketValue(bucket);
+        var newTable = tableKeyValueEntry[0];
+        if (newTable !== mapStorage)
+            @putMapIteratorInternalField(this, @mapIteratorFieldStorage, newTable);
+        @putMapIteratorInternalField(this, @mapIteratorFieldEntry, tableKeyValueEntry[3] + 1);
+        var key = tableKeyValueEntry[1];
+        value = tableKeyValueEntry[2];
         if (kind === @iterationKindEntries)
             value = [ key, value ]
         else if (kind === @iterationKindKey)
             value = key;
-    }
+    } else
+        @putMapIteratorInternalField(this, @mapIteratorFieldStorage, @orderedHashTableSentinel);
     return { value, done };
 }
 
-function next()
+function next()   
 {
     "use strict";
 
     if (!@isMapIterator(this))
         @throwTypeError("%MapIteratorPrototype%.next requires that |this| be an Map Iterator instance");
 
-    var bucket = @getMapIteratorInternalField(this, @mapIteratorFieldMapBucket);
+    var mapStorage = @getMapIteratorInternalField(this, @mapIteratorFieldStorage);
+    var entry = @getMapIteratorInternalField(this, @mapIteratorFieldEntry);
     var kind = @getMapIteratorInternalField(this, @mapIteratorFieldKind);
-    return @mapIteratorNext.@call(this, bucket, kind);
+    return @mapIteratorNext.@call(this, mapStorage, entry, kind);
 }

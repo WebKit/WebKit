@@ -57,7 +57,6 @@
 #include "GetterSetterInlines.h"
 #include "GigacageAlignedMemoryAllocator.h"
 #include "HasOwnPropertyCache.h"
-#include "HashMapImplInlines.h"
 #include "Heap.h"
 #include "HeapProfiler.h"
 #include "IncrementalSweeper.h"
@@ -329,8 +328,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 
     // Eagerly initialize constant cells since the concurrent compiler can access them.
     if (Options::useJIT()) {
-        sentinelMapBucket();
-        sentinelSetBucket();
+        orderedHashTableSentinel();
         emptyPropertyNameEnumerator();
         ensureMegamorphicCache();
     }
@@ -1490,19 +1488,11 @@ Ref<Waiter> VM::syncWaiter()
     return m_syncWaiter;
 }
 
-JSCell* VM::sentinelSetBucketSlow()
+JSCell* VM::orderedHashTableSentinelSlow()
 {
-    ASSERT(!m_sentinelSetBucket);
-    auto* sentinel = JSSet::BucketType::createSentinel(*this);
-    m_sentinelSetBucket.setWithoutWriteBarrier(sentinel);
-    return sentinel;
-}
-
-JSCell* VM::sentinelMapBucketSlow()
-{
-    ASSERT(!m_sentinelMapBucket);
-    auto* sentinel = JSMap::BucketType::createSentinel(*this);
-    m_sentinelMapBucket.setWithoutWriteBarrier(sentinel);
+    ASSERT(!m_orderedHashTableSentinel);
+    Symbol* sentinel = OrderedHashMap::createSentinel(*this);
+    m_orderedHashTableSentinel.setWithoutWriteBarrier(sentinel);
     return sentinel;
 }
 
@@ -1673,8 +1663,7 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(bigIntStructure);
 
     visitor.append(m_emptyPropertyNameEnumerator);
-    visitor.append(m_sentinelSetBucket);
-    visitor.append(m_sentinelMapBucket);
+    visitor.append(m_orderedHashTableSentinel);
     visitor.append(m_fastCanConstructBoundExecutable);
     visitor.append(m_slowCanConstructBoundExecutable);
     visitor.append(lastCachedString);

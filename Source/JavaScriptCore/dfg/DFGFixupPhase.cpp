@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DFGFixupPhase.h"
+#include "dfg/DFGUseKind.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -2723,7 +2724,9 @@ private:
             break;
         }
 
-        case GetMapBucket:
+        case GetMapValueRaw:
+        case GetMapValue:
+            // hash table
             if (node->child1().useKind() == MapObjectUse)
                 fixEdge<MapObjectUse>(node->child1());
             else if (node->child1().useKind() == SetObjectUse)
@@ -2731,6 +2734,7 @@ private:
             else
                 RELEASE_ASSERT_NOT_REACHED();
 
+            // key
 #if USE(JSVALUE64)
             if (node->child2()->shouldSpeculateBoolean())
                 fixEdge<BooleanUse>(node->child2());
@@ -2756,22 +2760,24 @@ private:
             fixEdge<UntypedUse>(node->child2());
 #endif // USE(JSVALUE64)
 
+            // hash value
             fixEdge<Int32Use>(node->child3());
             break;
 
-        case GetMapBucketHead:
+        case GetMapEntryNext:
+            // Hash table
+            fixEdge<CellUse>(node->child1());
+            // Entry Index
+            fixEdge<Int32Use>(node->child2());
+            break;
+
+        case GetMapStorage:
             if (node->child1().useKind() == MapObjectUse)
                 fixEdge<MapObjectUse>(node->child1());
             else if (node->child1().useKind() == SetObjectUse)
                 fixEdge<SetObjectUse>(node->child1());
             else
                 RELEASE_ASSERT_NOT_REACHED();
-            break;
-
-        case GetMapBucketNext:
-        case LoadKeyFromMapBucket:
-        case LoadValueFromMapBucket:
-            fixEdge<CellUse>(node->child1());
             break;
 
         case MapHash: {

@@ -44,8 +44,9 @@ JSMapIterator* JSMapIterator::createWithInitialValues(VM& vm, Structure* structu
 void JSMapIterator::finishCreation(VM& vm, JSMap* iteratedObject, IterationKind kind)
 {
     Base::finishCreation(vm);
-    internalField(Field::MapBucket).set(vm, this, iteratedObject->head());
-    internalField(Field::IteratedObject).set(vm, this, iteratedObject);
+    setEntry(vm, 0);
+    setIteratedObject(vm, iteratedObject);
+    setStorage(vm, iteratedObject->transitOrSentinel(vm));
     internalField(Field::Kind).set(vm, this, jsNumber(static_cast<int32_t>(kind)));
 }
 
@@ -66,14 +67,5 @@ void JSMapIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 }
 
 DEFINE_VISIT_CHILDREN(JSMapIterator);
-
-JSValue JSMapIterator::createPair(JSGlobalObject* globalObject, JSValue key, JSValue value)
-{
-    MarkedArgumentBuffer args;
-    args.append(key);
-    args.append(value);
-    ASSERT(!args.hasOverflowed());
-    return constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), args);
-}
 
 }

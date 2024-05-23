@@ -69,10 +69,12 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        if constexpr (Type == HashTableType::Key)
-            return vm.setBucketSpace<mode>();
-        else
-            return vm.mapBucketSpace<mode>();
+        UNUSED_VARIABLE(vm);
+        // if constexpr (Type == HashTableType::Key)
+        //     return vm.setBucketSpace<mode>();
+        // else
+        //     return vm.mapBucketSpace<mode>();
+        return nullptr;
     }
 
     static const ClassInfo* info()

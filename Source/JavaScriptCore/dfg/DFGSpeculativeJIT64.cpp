@@ -5232,175 +5232,20 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GetMapBucket: {
-        SpeculateCellOperand map(this, node->child1());
-        JSValueOperand key(this, node->child2(), ManualOperandSpeculation);
-        SpeculateInt32Operand hash(this, node->child3());
-        GPRTemporary mask(this);
-        GPRTemporary index(this);
-        GPRTemporary buffer(this);
-        GPRTemporary bucket(this);
-        GPRTemporary result(this);
-
-        GPRReg hashGPR = hash.gpr();
-        GPRReg mapGPR = map.gpr();
-        GPRReg maskGPR = mask.gpr();
-        GPRReg indexGPR = index.gpr();
-        GPRReg bufferGPR = buffer.gpr();
-        GPRReg bucketGPR = bucket.gpr();
-        GPRReg keyGPR = key.gpr();
-        GPRReg resultGPR = result.gpr();
-
-        if (node->child1().useKind() == MapObjectUse)
-            speculateMapObject(node->child1(), mapGPR);
-        else if (node->child1().useKind() == SetObjectUse)
-            speculateSetObject(node->child1(), mapGPR);
-        else
-            RELEASE_ASSERT_NOT_REACHED();
-
-        if (node->child2().useKind() != UntypedUse)
-            speculate(node, node->child2());
-
-        JumpList notPresentInTable;
-
-        loadPtr(Address(mapGPR, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfBuffer()), bufferGPR);
-        notPresentInTable.append(branchTestPtr(Zero, bufferGPR));
-        load32(Address(mapGPR, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfCapacity()), maskGPR);
-        sub32(TrustedImm32(1), maskGPR);
-        move(hashGPR, indexGPR);
-
-        Label loop = label();
-        JumpList done;
-        JumpList slowPathCases;
-        JumpList loopAround;
-
-        and32(maskGPR, indexGPR);
-        loadPtr(BaseIndex(bufferGPR, indexGPR, TimesEight), bucketGPR);
-        move(bucketGPR, resultGPR);
-
-        notPresentInTable.append(branchPtr(Equal,
-            bucketGPR, TrustedImmPtr(bitwise_cast<size_t>(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::emptyValue()))));
-        loopAround.append(branchPtr(Equal,
-            bucketGPR, TrustedImmPtr(bitwise_cast<size_t>(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::deletedValue()))));
-
-        load64(Address(bucketGPR, HashMapBucket<HashMapBucketDataKey>::offsetOfKey()), bucketGPR);
-
-        // Perform Object.is()
-        switch (node->child2().useKind()) {
-        case BooleanUse:
-#if USE(BIGINT32)
-        case BigInt32Use:
-#endif
-        case Int32Use:
-        case SymbolUse:
-        case ObjectUse: {
-            done.append(branch64(Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
-            // Otherwise, loop around.
-            break;
-        }
-        case CellUse: {
-            // if (bucket.isString()) {
-            //     if (key.isString())
-            //         => slow path
-            // } else if (bucket.isHeapBigInt()) {
-            //     if (key.isHeapBigInt())
-            //         => slow path
-            // }
-            done.append(branch64(Equal, bucketGPR, keyGPR));
-            loopAround.append(branchIfNotCell(JSValueRegs(bucketGPR)));
-
-            auto bucketIsString = branchIfString(bucketGPR);
-            loopAround.append(branchIfNotHeapBigInt(bucketGPR));
-
-            // bucket is HeapBigInt.
-            slowPathCases.append(branchIfHeapBigInt(keyGPR));
-            loopAround.append(jump());
-
-            // bucket is String.
-            bucketIsString.link(this);
-            loopAround.append(branchIfNotString(keyGPR));
-            slowPathCases.append(jump());
-            break;
-        }
-        case StringUse: {
-            done.append(branch64(Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
-            loopAround.append(branchIfNotCell(JSValueRegs(bucketGPR)));
-            loopAround.append(branchIfNotString(bucketGPR));
-            slowPathCases.append(jump());
-            break;
-        }
-        case HeapBigIntUse: {
-            done.append(branch64(Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
-            loopAround.append(branchIfNotCell(JSValueRegs(bucketGPR)));
-            loopAround.append(branchIfNotHeapBigInt(bucketGPR));
-            slowPathCases.append(jump());
-            break;
-        }
-        case UntypedUse: { 
-            done.append(branch64(Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
-            // The input key and bucket's key are already normalized. So if 64-bit compare fails and one is not a cell, they're definitely not equal.
-            loopAround.append(branchIfNotCell(JSValueRegs(bucketGPR)));
-            // first is a cell here.
-            loopAround.append(branchIfNotCell(JSValueRegs(keyGPR)));
-            // Both are cells here.
-            auto bucketIsString = branchIfString(bucketGPR);
-            // bucket is not String.
-            loopAround.append(branchIfNotHeapBigInt(bucketGPR));
-            // bucket is HeapBigInt.
-            slowPathCases.append(branchIfHeapBigInt(keyGPR));
-            loopAround.append(jump());
-            // bucket is String.
-            bucketIsString.link(this);
-            loopAround.append(branchIfNotString(keyGPR));
-            slowPathCases.append(jump());
-            break;
-        }
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
-            
-        if (!loopAround.empty())
-            loopAround.link(this);
-
-        add32(TrustedImm32(1), indexGPR);
-        jump().linkTo(loop, this);
-
-        if (!slowPathCases.empty()) {
-            slowPathCases.link(this);
-            silentSpillAllRegisters(indexGPR);
-            if (node->child1().useKind() == MapObjectUse)
-                callOperation(operationJSMapFindBucket, resultGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyGPR, hashGPR);
-            else
-                callOperation(operationJSSetFindBucket, resultGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyGPR, hashGPR);
-            silentFillAllRegisters();
-            done.append(jump());
-        }
-
-        notPresentInTable.link(this);
-        if (node->child1().useKind() == MapObjectUse)
-            loadLinkableConstant(LinkableConstant(*this, vm().sentinelMapBucket()), resultGPR);
-        else
-            loadLinkableConstant(LinkableConstant(*this, vm().sentinelSetBucket()), resultGPR);
-        done.link(this);
-        cellResult(resultGPR, node);
-        break;
-    }
-
-    case GetMapBucketHead:
-        compileGetMapBucketHead(node);
+    case GetMapValueRaw:
+        compileGetMapValueRaw(node, scopedLambda<void(JSValueRegs)>([](JSValueRegs) { }));
         break;
 
-    case GetMapBucketNext:
-        compileGetMapBucketNext(node);
+    case GetMapValue:
+        compileGetMapValue(node);
         break;
 
-    case LoadKeyFromMapBucket:
-        compileLoadKeyFromMapBucket(node);
+    case GetMapStorage:
+        compileGetMapStorage(node);
         break;
 
-    case LoadValueFromMapBucket:
-        compileLoadValueFromMapBucket(node);
+    case GetMapEntryNext:
+        compileGetMapEntryNext(node);
         break;
 
     case ExtractValueFromWeakMapGet:

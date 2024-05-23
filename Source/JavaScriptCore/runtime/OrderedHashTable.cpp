@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "JSMap.h"
+#include "config.h"
+#include "OrderedHashTable.h"
 
 namespace JSC {
 
-inline Structure* JSMap::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+template<typename Traits>
+template<typename Visitor>
+void OrderedHashTable<Traits>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(JSMapType, StructureFlags), info());
+    OrderedHashTable<Traits>* thisObject = jsCast<OrderedHashTable<Traits>*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+
+    visitor.append(thisObject->m_storage);
 }
 
-ALWAYS_INLINE void JSMap::set(JSGlobalObject* globalObject, JSValue key, JSValue value)
-{
-    add(globalObject, key, value);
-}
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<typename Traits>, OrderedHashTable<Traits>);
+
+// Explicit instantiation for specific Traits types
+template class OrderedHashTable<MapTraits>;
+template class OrderedHashTable<SetTraits>;
 
 } // namespace JSC

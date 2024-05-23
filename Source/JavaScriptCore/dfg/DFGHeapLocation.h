@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 
 enum LocationKind {
     InvalidLocationKind,
-    
+
     ArrayLengthLoc,
     ArrayMaskLoc,
     VectorLengthLoc,
@@ -79,6 +79,10 @@ enum LocationKind {
     MapBucketValueLoc,
     MapBucketKeyLoc,
     MapBucketNextLoc,
+    MapStorageLoc,
+    MapEntryLoc,
+    MapEntryValueLoc,
+    MapEntryNextLoc,
     WeakMapGetLoc,
     InternalFieldObjectLoc,
     DOMStateLoc,

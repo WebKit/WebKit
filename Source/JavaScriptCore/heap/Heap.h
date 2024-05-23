@@ -234,7 +234,6 @@ class Heap;
     v(javaScriptCallFrameSpace, javaScriptCallFrameHeapCellType, Inspector::JSJavaScriptCallFrame) \
     v(jsModuleRecordSpace, jsModuleRecordHeapCellType, JSModuleRecord) \
     v(syntheticModuleRecordSpace, syntheticModuleRecordHeapCellType, SyntheticModuleRecord) \
-    v(mapBucketSpace, cellHeapCellType, JSMap::BucketType) \
     v(mapIteratorSpace, cellHeapCellType, JSMapIterator) \
     v(mapSpace, cellHeapCellType, JSMap) \
     v(moduleNamespaceObjectSpace, moduleNamespaceObjectHeapCellType, JSModuleNamespaceObject) \
@@ -245,7 +244,6 @@ class Heap;
     v(scopedArgumentsTableSpace, destructibleCellHeapCellType, ScopedArgumentsTable) \
     v(scriptFetchParametersSpace, destructibleCellHeapCellType, JSScriptFetchParameters) \
     v(scriptFetcherSpace, destructibleCellHeapCellType, JSScriptFetcher) \
-    v(setBucketSpace, cellHeapCellType, JSSet::BucketType) \
     v(setIteratorSpace, cellHeapCellType, JSSetIterator) \
     v(setSpace, cellHeapCellType, JSSet) \
     v(shadowRealmSpace, cellHeapCellType, ShadowRealmObject) \

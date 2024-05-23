@@ -28,7 +28,6 @@
 
 #include "BuiltinNames.h"
 #include "GetterSetter.h"
-#include "HashMapImplInlines.h"
 #include "JSCInlines.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
@@ -134,7 +133,7 @@ JSC_DEFINE_HOST_FUNCTION(setProtoFuncClear, (JSGlobalObject* globalObject, CallF
     JSSet* set = getSet(globalObject, callFrame->thisValue());
     if (!set)
         return JSValue::encode(jsUndefined());
-    set->clear(globalObject->vm());
+    set->clear(globalObject);
     return JSValue::encode(jsUndefined());
 }
 
@@ -159,7 +158,7 @@ JSC_DEFINE_HOST_FUNCTION(setProtoFuncSize, (JSGlobalObject* globalObject, CallFr
     JSSet* set = getSet(globalObject, callFrame->thisValue());
     if (!set)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsNumber(set->size()));
+    return JSValue::encode(jsNumber(set->size(globalObject)));
 }
 
 inline JSValue createSetIteratorObject(JSGlobalObject* globalObject, CallFrame* callFrame, IterationKind kind)

@@ -555,8 +555,7 @@ public:
 
     WriteBarrier<JSPropertyNameEnumerator> m_emptyPropertyNameEnumerator;
 
-    WriteBarrier<JSCell> m_sentinelSetBucket;
-    WriteBarrier<JSCell> m_sentinelMapBucket;
+    WriteBarrier<JSCell> m_orderedHashTableSentinel;
 
     WriteBarrier<NativeExecutable> m_fastCanConstructBoundExecutable;
     WriteBarrier<NativeExecutable> m_slowCanConstructBoundExecutable;
@@ -596,18 +595,11 @@ public:
 
     WriteBarrier<JSBigInt> heapBigIntConstantOne;
 
-    JSCell* sentinelSetBucket()
+    JSCell* orderedHashTableSentinel()
     {
-        if (LIKELY(m_sentinelSetBucket))
-            return m_sentinelSetBucket.get();
-        return sentinelSetBucketSlow();
-    }
-
-    JSCell* sentinelMapBucket()
-    {
-        if (LIKELY(m_sentinelMapBucket))
-            return m_sentinelMapBucket.get();
-        return sentinelMapBucketSlow();
+        if (LIKELY(m_orderedHashTableSentinel))
+            return m_orderedHashTableSentinel.get();
+        return orderedHashTableSentinelSlow();
     }
 
     JSPropertyNameEnumerator* emptyPropertyNameEnumerator()
@@ -1021,8 +1013,7 @@ private:
     static VM*& sharedInstanceInternal();
     void createNativeThunk();
 
-    JS_EXPORT_PRIVATE JSCell* sentinelSetBucketSlow();
-    JS_EXPORT_PRIVATE JSCell* sentinelMapBucketSlow();
+    JS_EXPORT_PRIVATE JSCell* orderedHashTableSentinelSlow();
     JSPropertyNameEnumerator* emptyPropertyNameEnumeratorSlow();
 
     void updateStackLimits();

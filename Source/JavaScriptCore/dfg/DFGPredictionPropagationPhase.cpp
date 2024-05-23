@@ -1047,8 +1047,8 @@ private:
         case GetClosureVar:
         case GetInternalField:
         case GetFromArguments:
-        case LoadKeyFromMapBucket:
-        case LoadValueFromMapBucket:
+        case GetMapValueRaw:
+        case GetMapValue:
         case ToObject:
         case CallNumberConstructor:
         case CallObjectConstructor:
@@ -1117,12 +1117,13 @@ private:
             setPrediction(SpecInt32Only);
             break;
 
-        case GetMapBucket:
-        case GetMapBucketHead:
-        case GetMapBucketNext:
+        case GetMapStorage:
+            setPrediction(SpecCellOther);
+            break;
+
         case SetAdd:
         case MapSet:
-            setPrediction(SpecCellOther);
+            setPrediction(SpecArray);
             break;
 
         case GetRestLength:
@@ -1290,7 +1291,8 @@ private:
         case NewInternalFieldObject:
             setPrediction(speculationFromStructure(m_currentNode->structure().get()));
             break;
-            
+
+        case GetMapEntryNext:
         case ArraySlice:
         case NewArrayWithSpread:
         case NewArray:

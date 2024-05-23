@@ -131,43 +131,29 @@ JSC_DEFINE_HOST_FUNCTION(constructMap, (JSGlobalObject* globalObject, CallFrame*
     return JSValue::encode(map);
 }
 
-JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapBucketHead, (JSGlobalObject*, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapEntryNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argument(0).isCell() && (callFrame->argument(1).isUInt32AsAnyInt()));
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    if (cell == vm.orderedHashTableSentinel())
+        return JSValue::encode(createEmptyTuple(globalObject));
+
+    JSMap::Handle table = jsCast<JSMap::Storage*>(cell);
+    uint32_t entry = callFrame->uncheckedArgument(1).asUInt32AsAnyInt();
+
+    auto [newTable, nextKey, nextValue, nextEntry] = table.getTableKeyValueEntry(globalObject->vm(), entry);
+    if (nextKey.isEmpty())
+        return JSValue::encode(createEmptyTuple(globalObject));
+    return JSValue::encode(createTuple(globalObject, JSValue(newTable.storage()), nextKey, nextValue, nextEntry));
+}
+
+JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapStorage, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(jsDynamicCast<JSMap*>(callFrame->argument(0)));
     JSMap* map = jsCast<JSMap*>(callFrame->uncheckedArgument(0));
-    auto* head = map->head();
-    ASSERT(head);
-    return JSValue::encode(head);
-}
-
-JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapBucketNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    ASSERT(jsDynamicCast<JSMap::BucketType*>(callFrame->argument(0)));
-    auto* bucket = jsCast<JSMap::BucketType*>(callFrame->uncheckedArgument(0));
-    ASSERT(bucket);
-    bucket = bucket->next();
-    while (bucket) {
-        if (!bucket->deleted())
-            return JSValue::encode(bucket);
-        bucket = bucket->next();
-    }
-    return JSValue::encode(globalObject->vm().sentinelMapBucket());
-}
-
-JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapBucketKey, (JSGlobalObject*, CallFrame* callFrame))
-{
-    ASSERT(jsDynamicCast<JSMap::BucketType*>(callFrame->argument(0)));
-    auto* bucket = jsCast<JSMap::BucketType*>(callFrame->uncheckedArgument(0));
-    ASSERT(bucket);
-    return JSValue::encode(bucket->key());
-}
-
-JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapBucketValue, (JSGlobalObject*, CallFrame* callFrame))
-{
-    ASSERT(jsDynamicCast<JSMap::BucketType*>(callFrame->argument(0)));
-    auto* bucket = jsCast<JSMap::BucketType*>(callFrame->uncheckedArgument(0));
-    ASSERT(bucket);
-    return JSValue::encode(bucket->value());
+    return JSValue::encode(map->transitOrSentinel(getVM(globalObject)));
 }
 
 }

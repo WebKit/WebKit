@@ -1545,37 +1545,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case LoadKeyFromMapBucket:
-    case LoadValueFromMapBucket:
-    case ExtractValueFromWeakMapGet:
+    case GetMapValue:
         makeHeapTopForNode(node);
         break;
 
-    case GetMapBucket:
-    case GetMapBucketHead:
-        if (node->child1().useKind() == MapObjectUse)
-            setForNode(node, m_vm.hashMapBucketMapStructure.get());
-        else {
-            ASSERT(node->child1().useKind() == SetObjectUse);
-            setForNode(node, m_vm.hashMapBucketSetStructure.get());
-        }
-        break;
-
-    case GetMapBucketNext:
-        if (node->bucketOwnerType() == BucketOwnerType::Map)
-            setForNode(node, m_vm.hashMapBucketMapStructure.get());
-        else {
-            ASSERT(node->bucketOwnerType() == BucketOwnerType::Set);
-            setForNode(node, m_vm.hashMapBucketSetStructure.get());
-        }
-        break;
-
     case SetAdd:
-        setForNode(node, m_vm.hashMapBucketSetStructure.get());
+    case MapSet:
+    case GetMapEntryNext:
+        setTypeForNode(node, SpecArray);
         break;
 
-    case MapSet:
-        setForNode(node, m_vm.hashMapBucketMapStructure.get());
+    case GetMapStorage:
+        setTypeForNode(node, SpecCellOther);
+        break;
+
+    case ExtractValueFromWeakMapGet:
+        makeHeapTopForNode(node);
         break;
 
     case MapOrSetDelete:
@@ -1586,6 +1571,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case WeakMapSet:
         break;
 
+    case GetMapValueRaw:
     case WeakMapGet:
         makeBytecodeTopForNode(node);
         break;

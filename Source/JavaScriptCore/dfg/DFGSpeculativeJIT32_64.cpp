@@ -3834,47 +3834,20 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GetMapBucket: {
-        SpeculateCellOperand map(this, node->child1());
-        JSValueOperand key(this, node->child2());
-        SpeculateInt32Operand hash(this, node->child3());
-
-        GPRReg mapGPR = map.gpr();
-        JSValueRegs keyRegs = key.jsValueRegs();
-        GPRReg hashGPR = hash.gpr();
-
-        if (node->child1().useKind() == MapObjectUse)
-            speculateMapObject(node->child1(), mapGPR);
-        else if (node->child1().useKind() == SetObjectUse)
-            speculateSetObject(node->child1(), mapGPR);
-        else
-            RELEASE_ASSERT_NOT_REACHED();
-
-        flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        if (node->child1().useKind() == MapObjectUse)
-            callOperation(operationJSMapFindBucket, resultGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyRegs, hashGPR);
-        else
-            callOperation(operationJSSetFindBucket, resultGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyRegs, hashGPR);
-        cellResult(resultGPR, node);
-        break;
-    }
-
-    case GetMapBucketHead:
-        compileGetMapBucketHead(node);
+    case GetMapValueRaw:
+        compileGetMapValueRaw(node, scopedLambda<void(JSValueRegs)>([](JSValueRegs) { }));
         break;
 
-    case GetMapBucketNext:
-        compileGetMapBucketNext(node);
+    case GetMapValue:
+        compileGetMapValue(node);
         break;
 
-    case LoadKeyFromMapBucket:
-        compileLoadKeyFromMapBucket(node);
+    case GetMapStorage:
+        compileGetMapStorage(node);
         break;
 
-    case LoadValueFromMapBucket:
-        compileLoadValueFromMapBucket(node);
+    case GetMapEntryNext:
+        compileGetMapEntryNext(node);
         break;
 
     case ExtractValueFromWeakMapGet:

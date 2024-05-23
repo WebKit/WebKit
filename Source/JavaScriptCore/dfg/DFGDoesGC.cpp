@@ -167,10 +167,9 @@ bool doesGC(Graph& graph, Node* node)
     case SuperSamplerEnd:
     case CPUIntrinsic:
     case NormalizeMapKey: // HeapBigInt => BigInt32 conversion does not involve GC.
-    case GetMapBucketHead:
-    case GetMapBucketNext:
-    case LoadKeyFromMapBucket:
-    case LoadValueFromMapBucket:
+    case GetMapStorage:
+    case GetMapValueRaw:
+    case GetMapValue:
     case ExtractValueFromWeakMapGet:
     case Unreachable:
     case ExtractOSREntryLocal:
@@ -310,7 +309,6 @@ bool doesGC(Graph& graph, Node* node)
     case GetByValWithThis:
     case GetByValWithThisMegamorphic:
     case GetDynamicVar:
-    case GetMapBucket:
     case HasIndexedProperty:
     case HasOwnProperty:
     case InById:
@@ -437,6 +435,7 @@ bool doesGC(Graph& graph, Node* node)
     case ParseInt: // We might resolve a rope even though we don't clobber anything.
     case SetAdd:
     case MapSet:
+    case GetMapEntryNext:
     case MapOrSetDelete:
     case ValueBitAnd:
     case ValueBitOr:
