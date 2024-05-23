@@ -89,7 +89,7 @@
     "TestWebKitWebContext": {
         "subtests": {
             "/webkit/WebKitWebContext/memory-pressure": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/274345"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/274345"}}
             }
         }
     },
