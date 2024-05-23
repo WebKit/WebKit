@@ -393,7 +393,10 @@ void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient)
 void RemoteRenderingBackend::cacheFilter(Ref<Filter>&& filter)
 {
     ASSERT(!RunLoop::isMain());
-    m_remoteResourceCache.cacheFilter(WTFMove(filter));
+    if (filter->hasValidRenderingResourceIdentifier())
+        m_remoteResourceCache.cacheFilter(WTFMove(filter));
+    else
+        LOG_WITH_STREAM(DisplayLists, stream << "Received a Filter without a valid resource identifier");
 }
 
 void RemoteRenderingBackend::releaseAllDrawingResources()
