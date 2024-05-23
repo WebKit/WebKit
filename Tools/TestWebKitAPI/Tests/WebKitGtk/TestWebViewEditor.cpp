@@ -130,7 +130,7 @@ public:
         loadURI("about:blank");
         waitUntilLoadFinished();
 
-        g_signal_connect(m_webView, "permission-request", G_CALLBACK(+[](WebKitWebView*, WebKitPermissionRequest* request, gpointer userData) {
+        g_signal_connect(m_webView, "permission-request", G_CALLBACK(+[](WebKitWebView*, WebKitPermissionRequest* request, gpointer userData) -> gboolean {
             if (!WEBKIT_IS_CLIPBOARD_PERMISSION_REQUEST(request))
                 return FALSE;
 
