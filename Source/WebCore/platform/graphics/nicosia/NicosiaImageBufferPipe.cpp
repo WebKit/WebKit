@@ -106,7 +106,11 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
         }
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
         downcast<TextureMapperPlatformLayerProxyGL>(m_nicosiaLayer->proxy()).scheduleUpdateOnCompositorThread([this, textureID, fence = WTFMove(fence)] () mutable {
+#else
+        downcast<TextureMapperPlatformLayerProxyGL>(m_nicosiaLayer->proxy()).scheduleUpdateOnCompositorThread([this, textureID] () mutable {
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
             auto& proxy = m_nicosiaLayer->proxy();
             Locker locker { proxy.lock() };
             if (!proxy.isActive())
