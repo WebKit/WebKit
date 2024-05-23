@@ -822,9 +822,9 @@ void AuxiliaryProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& 
 
     getHomeDirectory();
 
-    sandboxExtension->revoke();
-
     closeOpenDirectoryConnections();
+
+    sandboxExtension->revoke();
 }
 #endif // PLATFORM(MAC)
 
