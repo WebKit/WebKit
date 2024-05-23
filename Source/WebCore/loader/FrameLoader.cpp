@@ -1550,7 +1550,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     // work properly.
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, newLoadType, newURL)) {
 
-        if (!dispatchNavigateEvent(newURL, action, frameLoadRequest.navigationHistoryBehavior(), true))
+        if (!dispatchNavigateEvent(newURL, newLoadType, action, frameLoadRequest.navigationHistoryBehavior(), true))
             return;
 
         oldDocumentLoader->setTriggeringAction(WTFMove(action));
@@ -1565,7 +1565,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     }
 
     if (frameLoadRequest.requesterSecurityOrigin().isSameOriginDomain(frame->document()->securityOrigin())) {
-        if (!dispatchNavigateEvent(newURL, action, frameLoadRequest.navigationHistoryBehavior(), false))
+        if (!dispatchNavigateEvent(newURL, newLoadType, action, frameLoadRequest.navigationHistoryBehavior(), false))
             return;
     }
 
@@ -1771,7 +1771,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, policyChecker().loadType(), newURL)) {
 
-        if (!dispatchNavigateEvent(newURL, loader->triggeringAction(), NavigationHistoryBehavior::Auto, true))
+        if (!dispatchNavigateEvent(newURL, type, loader->triggeringAction(), NavigationHistoryBehavior::Auto, true))
             return;
 
         RefPtr oldDocumentLoader = m_documentLoader;
@@ -4153,7 +4153,7 @@ RefPtr<Frame> FrameLoader::findFrameForNavigation(const AtomString& name, Docume
     return frame;
 }
 
-bool FrameLoader::dispatchNavigateEvent(const URL& newURL, const NavigationAction& action, NavigationHistoryBehavior historyHandling, bool isSameDocument)
+bool FrameLoader::dispatchNavigateEvent(const URL& newURL, FrameLoadType loadType, const NavigationAction& action, NavigationHistoryBehavior historyHandling, bool isSameDocument)
 {
     RefPtr document = m_frame->document();
     if (!document || !document->settings().navigationAPIEnabled())
@@ -4167,7 +4167,7 @@ bool FrameLoader::dispatchNavigateEvent(const URL& newURL, const NavigationActio
     if (!isSameDocument && !newURL.hasFetchScheme())
         return true;
 
-    auto navigationType = determineNavigationType(m_loadType, historyHandling);
+    auto navigationType = determineNavigationType(loadType, historyHandling);
     // Traversals are handled earlier, in loadItem().
     if (navigationType == NavigationNavigationType::Traverse)
         return true;

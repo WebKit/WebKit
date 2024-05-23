@@ -1,4 +1,4 @@
 
 
-FAIL <meta> refresh fires navigate event assert_equals: expected "reload" but got "push"
+PASS <meta> refresh fires navigate event
 
