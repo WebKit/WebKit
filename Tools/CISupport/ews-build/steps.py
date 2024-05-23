@@ -5285,7 +5285,7 @@ class ExtractBuiltProduct(shell.ShellCommandNewStyle):
         super().__init__(logEnviron=False, **kwargs)
 
 
-class RunAPITests(shell.TestNewStyle, AddToLogMixin):
+class RunAPITests(shell.TestNewStyle, AddToLogMixin, ShellMixin):
     name = 'run-api-tests'
     description = ['api tests running']
     descriptionDone = ['api-tests']
@@ -5304,9 +5304,10 @@ class RunAPITests(shell.TestNewStyle, AddToLogMixin):
     MSG_FOR_EXCESSIVE_LOGS_API_TEST = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS_API_TESTS}'
 
     def __init__(self, **kwargs):
-        super().__init__(logEnviron=False, **kwargs)
+        super().__init__(logEnviron=False, timeout=3600, **kwargs)
         self.failing_tests_filtered = []
         self.preexisting_failures_in_results_db = []
+        self.steps_to_add = []
 
     @defer.inlineCallbacks
     def run(self):
@@ -5323,6 +5324,7 @@ class RunAPITests(shell.TestNewStyle, AddToLogMixin):
                            '--json-output={0}'.format(self.jsonFileName)]
         else:
             self.command = self.command + customBuildFlag(platform, self.getProperty('fullPlatform'))
+        self.command = self.shell_command(' '.join(self.command) + ' > logs.txt 2>&1 ; grep "Ran " logs.txt')
 
         rc = yield super().run()
 
@@ -5331,21 +5333,34 @@ class RunAPITests(shell.TestNewStyle, AddToLogMixin):
 
         yield self.analyze_failures_using_results_db()
 
+        self.steps_to_add += [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
+
         if rc in [SUCCESS, WARNINGS]:
             message = 'Passed API tests'
             self.descriptionDone = message
             if self.name != RunAPITestsWithoutChange.name:
                 self.build.results = SUCCESS
-                self.build.buildFinished([message], SUCCESS)
+                self.setProperty('build_summary', message)
         elif (self.name != RunAPITestsWithoutChange.name and self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
             # This means all the tests which failed in this run were also failing or flaky in results database
             message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
             self.descriptionDone = message
             self.build.results = SUCCESS
-            self.build.buildFinished([message], SUCCESS)
+            self.setProperty('build_summary', message)
         else:
             self.doOnFailure()
 
+        self.build.addStepsAfterCurrentStep(self.steps_to_add)
         defer.returnValue(rc)
 
     def parseOutputLine(self, line):
@@ -5392,11 +5407,11 @@ class RunAPITests(shell.TestNewStyle, AddToLogMixin):
             self.setProperty(f'results-db_{self.suffix}_pre_existing', sorted(self.preexisting_failures_in_results_db))
 
     def doOnFailure(self):
-        self.build.addStepsAfterCurrentStep([
+        self.steps_to_add += [
             ValidateChange(verifyBugClosed=False, addURLs=False),
             KillOldProcesses(),
             ReRunAPITests(),
-        ])
+        ]
 
     def parse_api_failures_from_string(self, string):
         if not string:
@@ -5464,19 +5479,17 @@ class ReRunAPITests(RunAPITests):
     suffix = 'second_run'
 
     def doOnFailure(self):
-        steps_to_add = [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+        self.steps_to_add = [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
         platform = self.getProperty('platform')
         if platform == 'wpe':
-            steps_to_add.append(InstallWpeDependencies())
+            self.steps_to_add.append(InstallWpeDependencies())
         elif platform == 'gtk':
-            steps_to_add.append(InstallGtkDependencies())
-        steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
-        steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
-        steps_to_add.append(KillOldProcesses())
-        steps_to_add.append(RunAPITestsWithoutChange())
-        steps_to_add.append(AnalyzeAPITestsResults())
-        # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
-        self.build.addStepsAfterCurrentStep(steps_to_add)
+            self.steps_to_add.append(InstallGtkDependencies())
+        self.steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
+        self.steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
+        self.steps_to_add.append(KillOldProcesses())
+        self.steps_to_add.append(RunAPITestsWithoutChange())
+        self.steps_to_add.append(AnalyzeAPITestsResults())
 
 
 class RunAPITestsWithoutChange(RunAPITests):
@@ -5859,7 +5872,7 @@ class SetBuildSummary(buildstep.BuildStep):
         previous_build_summary = self.getProperty('build_summary', '')
         if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE in previous_build_summary:
             self.build.results = FAILURE
-        elif 'Committed ' in previous_build_summary and '@' in previous_build_summary:
+        elif any(s in previous_build_summary for s in ('Committed ', '@', 'Passed', 'Ignored pre-existing failure')):
             self.build.results = SUCCESS
         self.build.buildFinished([build_summary], self.build.results)
         return defer.succeed(None)

@@ -166,7 +166,7 @@ class TestFactory(Factory):
             self.addStep(self.APITestClass())
         if self.willTriggerCrashLogSubmission:
             self.addStep(TriggerCrashLogSubmission())
-        if self.LayoutTestClass:
+        if self.LayoutTestClass or self.APITestClass:
             self.addStep(SetBuildSummary())
 
 

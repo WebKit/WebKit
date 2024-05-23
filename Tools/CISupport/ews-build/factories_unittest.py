@@ -570,7 +570,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
-            'run-api-tests'
+            'run-api-tests',
+            'set-build-summary'
         ],
         'API-Tests-macOS-EWS': [
             'configure-build',
@@ -586,7 +587,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
-            'run-api-tests'
+            'run-api-tests',
+            'set-build-summary'
         ],
         'API-Tests-GTK-EWS': [
             'configure-build',
@@ -603,7 +605,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
-            'run-api-tests'
+            'run-api-tests',
+            'set-build-summary'
         ],
         'API-Tests-WPE-EWS': [
             'configure-build',
@@ -620,7 +623,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
-            'run-api-tests'
+            'run-api-tests',
+            'set-build-summary'
         ],
         'Services-EWS': [
             'configure-build',
