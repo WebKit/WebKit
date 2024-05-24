@@ -402,9 +402,10 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (needsContentHint) {
         if (auto* renderImage = dynamicDowncast<RenderImage>(regionRenderer)) {
             isPhoto = [&]() -> bool {
+#if ENABLE(VIDEO)
                 if (is<RenderVideo>(renderImage))
                     return true;
-
+#endif
                 if (!renderImage->cachedImage())
                     return false;
 

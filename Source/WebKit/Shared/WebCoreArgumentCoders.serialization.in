@@ -8013,8 +8013,8 @@ class WebCore::SerializedPlatformDataCueValue {
     RetainPtr<NSLocale> locale;
     std::variant<std::nullptr_t, RetainPtr<NSString>, RetainPtr<NSDate>, RetainPtr<NSNumber>, RetainPtr<NSData>> value;
 #endif
-#endif
 };
+#endif
 
 header: <WebCore/SharedBuffer.h>
 [RefCounted, CustomHeader, CreateUsing=fromIPCData] class WebCore::FragmentedSharedBuffer {
@@ -8073,10 +8073,13 @@ using WebCore::DOMCacheEngine::RecordIdentifiersOrError = Expected<Vector<uint64
 using WebCore::DOMCacheEngine::CrossThreadRecordsOrError = Expected<Vector<WebCore::DOMCacheEngine::CrossThreadRecord>, WebCore::DOMCacheEngine::Error>
 using WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError = Expected<bool, WebCore::DOMCacheEngine::Error>
 
-using WebCore::MediaPlayerEnums::VideoFullscreenMode = uint32_t
 using WebCore::SVGFilterExpression = Vector<WebCore::SVGFilterExpressionTerm>;
 using WebCore::SandboxFlags = int
+#if ENABLE(VIDEO)
+using WebCore::MediaPlayerEnums::VideoFullscreenMode = uint32_t
+using WebCore::MediaPlayer::VideoFullscreenMode = uint32_t
 using WebCore::TrackID = uint64_t
+#endif
 using WebCore::EpochTimeStamp = uint64_t
 using WebCore::SharedMemory::Handle = WebCore::SharedMemoryHandle
 using WebCore::ServiceWorkerOrClientIdentifier = std::variant<WebCore::ServiceWorkerIdentifier, WebCore::ScriptExecutionContextIdentifier>
@@ -8112,6 +8115,7 @@ using WebCore::PageOverlay::PageOverlayID = uint64_t
     SVG_MEETORSLICE_SLICE
 }
 
+#if ENABLE(VIDEO)
 enum class WebCore::PlatformMediaError : uint8_t {
     AppendError,
     ClientDisconnected,
@@ -8126,6 +8130,7 @@ enum class WebCore::PlatformMediaError : uint8_t {
     NotSupportedError,
     NetworkError,
 };
+#endif
 
 #if USE(CG)
 using WebCore::DashArray = Vector<CGFloat>;
@@ -8157,7 +8162,6 @@ using Inspector::ExtensionTabID = String
 using WebCore::ArgumentWireBytesMap = HashMap<String, Vector<uint8_t>>
 using WebCore::IDBKeyPath = std::variant<String, Vector<String>>;
 using WebCore::ServiceWorkerOrClientData = std::variant<WebCore::ServiceWorkerData, WebCore::ServiceWorkerClientData>
-using WebCore::MediaPlayer::VideoFullscreenMode = uint32_t
 enum class WebCore::CrossOriginMode : bool
 
 [CreateUsing=fromRawString] class WebCore::PublicSuffix {

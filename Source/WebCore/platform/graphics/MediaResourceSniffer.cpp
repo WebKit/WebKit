@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MediaResourceSniffer.h"
 
+#if ENABLE(VIDEO)
+
 #include "MIMESniffer.h"
 #include "ResourceRequest.h"
 #include <limits.h>
@@ -106,3 +108,5 @@ void MediaResourceSniffer::loadFinished(PlatformMediaResource&, const NetworkLoa
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(VIDEO)
