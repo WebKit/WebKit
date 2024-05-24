@@ -34,13 +34,13 @@ namespace {
 
 void testBmallocAllocate()
 {
-    void* mem = bmalloc_try_allocate(100);
+    void* mem = bmalloc_try_allocate(100, pas_non_compact_allocation_mode);
     CHECK(mem);
 }
 
 void testBmallocDeallocate()
 {
-    void* mem = bmalloc_try_allocate(100);
+    void* mem = bmalloc_try_allocate(100, pas_non_compact_allocation_mode);
     CHECK(mem);
     bmalloc_deallocate(mem);
 }

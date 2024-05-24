@@ -74,9 +74,9 @@ namespace {
 constexpr bool verbose = false;
 
 const pas_heap_config* selectedHeapConfig;
-void* (*selectedAllocateCommonPrimitive)(size_t size);
-void* (*selectedAllocate)(pas_heap_ref* heapRef);
-void* (*selectedAllocateArray)(pas_heap_ref* heapRef, size_t count, size_t alignment);
+void* (*selectedAllocateCommonPrimitive)(size_t size, pas_allocation_mode allocation_mode);
+void* (*selectedAllocate)(pas_heap_ref* heapRef, pas_allocation_mode allocation_mode);
+void* (*selectedAllocateArray)(pas_heap_ref* heapRef, size_t count, size_t alignment, pas_allocation_mode allocation_mode);
 void (*selectedShrink)(void* ptr, size_t newSize);
 void (*selectedDeallocate)(void* ptr);
 pas_heap* selectedCommonPrimitiveHeap;
@@ -92,9 +92,9 @@ pas_heap_ref* createIsoHeapRefForSize(size_t size)
 #if PAS_ENABLE_BMALLOC
 pas_primitive_heap_ref gigacageHeapRef;
 
-void* gigacageAllocate(size_t size)
+void* gigacageAllocate(size_t size, pas_allocation_mode allocation_mode)
 {
-    return bmalloc_allocate_auxiliary(&gigacageHeapRef, size);
+    return bmalloc_allocate_auxiliary(&gigacageHeapRef, size, allocation_mode);
 }
 
 pas_heap_ref* createBmallocHeapRefForSize(size_t size)
@@ -490,7 +490,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
 
         if (heapIndex == isolatedHeaps.size()) {
             logOptionalObject(threadIndex, size);
-            void* ptr = selectedAllocateCommonPrimitive(size);
+            void* ptr = selectedAllocateCommonPrimitive(size, pas_non_compact_allocation_mode);
             addObject(threadIndex, ptr, size);
             return;
         }
@@ -508,9 +508,9 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
         logOptionalObject(threadIndex, size);
         void* ptr;
         if (count <= 1)
-            ptr = selectedAllocate(heap);
+            ptr = selectedAllocate(heap, pas_non_compact_allocation_mode);
         else
-            ptr = selectedAllocateArray(heap, count, 1);
+            ptr = selectedAllocateArray(heap, count, 1, pas_non_compact_allocation_mode);
         addObject(threadIndex, ptr, size);
     };
     
@@ -1051,6 +1051,15 @@ void addIsoTests()
 #endif // PAS_ENABLE_ISO
 }
 
+#if PAS_ENABLE_JIT
+// Wrapper to make jit_heap_try_allocate conform with the expected
+// allocate-common-primitive function signature.
+void* jit_heap_test_try_allocate(size_t size, pas_allocation_mode)
+{
+    return jit_heap_try_allocate(size);
+}
+#endif
+
 void addAllTests()
 {
     addIsoTests();
@@ -1195,7 +1204,7 @@ void addAllTests()
             "jit",
             [] () {
                 selectedHeapConfig = &jit_heap_config;
-                selectedAllocateCommonPrimitive = jit_heap_try_allocate;
+                selectedAllocateCommonPrimitive = jit_heap_test_try_allocate;;
                 selectedAllocate = nullptr;
                 selectedAllocateArray = nullptr;
                 selectedDeallocate = jit_heap_deallocate;
@@ -1219,7 +1228,7 @@ void addAllTests()
             "jit-with-shrink",
             [] () {
                 selectedHeapConfig = &jit_heap_config;
-                selectedAllocateCommonPrimitive = jit_heap_try_allocate;
+                selectedAllocateCommonPrimitive = jit_heap_test_try_allocate;;
                 selectedAllocate = nullptr;
                 selectedAllocateArray = nullptr;
                 selectedShrink = jit_heap_shrink;

@@ -46,19 +46,19 @@ void destructor(void* value)
     PAS_UNUSED_PARAM(value);
     for (pthread_key_t key : keys)
         pthread_setspecific(key, "infinite loop");
-    iso_deallocate(iso_allocate_common_primitive(666));
+    iso_deallocate(iso_allocate_common_primitive(666, pas_non_compact_allocation_mode));
     iso_deallocate(iso_reallocate_common_primitive(
-                       iso_allocate_common_primitive(666), 1337, pas_reallocate_free_if_successful));
-    iso_deallocate(iso_allocate(&isoHeap));
-    iso_deallocate(iso_allocate_array_by_count(&isoHeap, 100, 1));
-    iso_deallocate(iso_allocate_array_by_count(&isoHeap, 100, 64));
+                       iso_allocate_common_primitive(666, pas_non_compact_allocation_mode), 1337, pas_reallocate_free_if_successful, pas_non_compact_allocation_mode));
+    iso_deallocate(iso_allocate(&isoHeap, pas_non_compact_allocation_mode));
+    iso_deallocate(iso_allocate_array_by_count(&isoHeap, 100, 1, pas_non_compact_allocation_mode));
+    iso_deallocate(iso_allocate_array_by_count(&isoHeap, 100, 64, pas_non_compact_allocation_mode));
     iso_deallocate(iso_reallocate_array_by_count(
-                       iso_allocate(&isoHeap), &isoHeap, 200, pas_reallocate_free_if_successful));
-    iso_deallocate(iso_allocate_primitive(&isoPrimitiveHeap, 666));
-    iso_deallocate(iso_allocate_primitive_with_alignment(&isoPrimitiveHeap, 128, 64));
+                       iso_allocate(&isoHeap, pas_non_compact_allocation_mode), &isoHeap, 200, pas_reallocate_free_if_successful, pas_non_compact_allocation_mode));
+    iso_deallocate(iso_allocate_primitive(&isoPrimitiveHeap, 666, pas_non_compact_allocation_mode));
+    iso_deallocate(iso_allocate_primitive_with_alignment(&isoPrimitiveHeap, 128, 64, pas_non_compact_allocation_mode));
     iso_deallocate(iso_reallocate_primitive(
-                       iso_allocate_primitive(&isoPrimitiveHeap, 666), &isoPrimitiveHeap, 1337,
-                       pas_reallocate_free_if_successful));
+                       iso_allocate_primitive(&isoPrimitiveHeap, 666, pas_non_compact_allocation_mode), &isoPrimitiveHeap, 1337,
+                       pas_reallocate_free_if_successful, pas_non_compact_allocation_mode));
 }
 
 void testTSD(unsigned numKeysBeforeAllocation,
@@ -104,7 +104,7 @@ void testTSD(unsigned numKeysBeforeAllocation,
                 initializeJSCKeys();
             initializeKeys(numKeysBeforeAllocation);
             for (unsigned i = numAllocations; i--;)
-                iso_deallocate(iso_allocate_common_primitive(allocationSize));
+                iso_deallocate(iso_allocate_common_primitive(allocationSize, pas_non_compact_allocation_mode));
             if (initializeJSCKeysAfterAllocation)
                 initializeJSCKeys();
             initializeKeys(numKeysAfterAllocation);

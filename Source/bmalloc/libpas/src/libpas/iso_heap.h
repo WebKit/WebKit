@@ -29,60 +29,70 @@
 #include "iso_heap_ref.h"
 #include "pas_primitive_heap_ref.h"
 #include "pas_reallocate_free_mode.h"
+#include "pas_allocation_mode.h"
 
 #if PAS_ENABLE_ISO
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_API void* iso_try_allocate_common_primitive(size_t size);
+PAS_API void* iso_try_allocate_common_primitive(size_t size, pas_allocation_mode allocation_mode);
 PAS_API void* iso_try_allocate_common_primitive_with_alignment(size_t size,
-                                                               size_t alignment);
+                                                               size_t alignment,
+                                                               pas_allocation_mode allocation_mode);
 
-PAS_API void* iso_try_allocate_common_primitive_zeroed(size_t size);
+PAS_API void* iso_try_allocate_common_primitive_zeroed(size_t size, pas_allocation_mode allocation_mode);
 
-PAS_API void* iso_allocate_common_primitive(size_t size);
+PAS_API void* iso_allocate_common_primitive(size_t size, pas_allocation_mode allocation_mode);
 PAS_API void* iso_allocate_common_primitive_with_alignment(size_t size,
-                                                           size_t alignment);
+                                                           size_t alignment,
+                                                           pas_allocation_mode allocation_mode);
 
-PAS_API void* iso_allocate_common_primitive_zeroed(size_t size);
+PAS_API void* iso_allocate_common_primitive_zeroed(size_t size, pas_allocation_mode allocation_mode);
 
 PAS_API void* iso_try_reallocate_common_primitive(void* old_ptr, size_t new_size,
-                                                  pas_reallocate_free_mode free_mode);
+                                                  pas_reallocate_free_mode free_mode,
+                                                  pas_allocation_mode allocation_mode);
 
 PAS_API void* iso_reallocate_common_primitive(void* old_ptr, size_t new_size,
-                                              pas_reallocate_free_mode free_mode);
+                                              pas_reallocate_free_mode free_mode,
+                                              pas_allocation_mode allocation_mode);
 
-PAS_API void* iso_try_allocate_dynamic_primitive(const void* key, size_t size);
+PAS_API void* iso_try_allocate_dynamic_primitive(const void* key, size_t size, pas_allocation_mode allocation_mode);
 PAS_API void* iso_try_allocate_dynamic_primitive_with_alignment(const void* key,
                                                                 size_t size,
-                                                                size_t alignment);
+                                                                size_t alignment,
+                                                                pas_allocation_mode allocation_mode);
 
 PAS_API void* iso_try_allocate_dynamic_primitive_zeroed(const void* key,
-                                                        size_t size);
+                                                        size_t size,
+                                                        pas_allocation_mode allocation_mode);
 
 PAS_API void* iso_try_reallocate_dynamic_primitive(void* old_ptr,
                                                    const void* key,
                                                    size_t new_size,
-                                                   pas_reallocate_free_mode free_mode);
+                                                   pas_reallocate_free_mode free_mode,
+                                                   pas_allocation_mode allocation_mode);
 
 PAS_API void iso_heap_ref_construct(pas_heap_ref* heap_ref,
                                     pas_simple_type type);
 
-PAS_API void* iso_try_allocate(pas_heap_ref* heap_ref);
-PAS_API void* iso_allocate(pas_heap_ref* heap_ref);
+PAS_API void* iso_try_allocate(pas_heap_ref* heap_ref, pas_allocation_mode pas_allocation_mode);
+PAS_API void* iso_allocate(pas_heap_ref* heap_ref, pas_allocation_mode pas_allocation_mode);
 
-PAS_API void* iso_try_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment);
-PAS_API void* iso_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment);
+PAS_API void* iso_try_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode);
+PAS_API void* iso_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode);
 
-PAS_API void* iso_try_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment);
-PAS_API void* iso_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment);
+PAS_API void* iso_try_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode);
+PAS_API void* iso_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode);
 
 PAS_API void* iso_try_reallocate_array_by_count(void* old_ptr, pas_heap_ref* heap_ref,
                                                 size_t new_count,
-                                                pas_reallocate_free_mode free_mode);
+                                                pas_reallocate_free_mode free_mode,
+                                                pas_allocation_mode allocation_mode);
 PAS_API void* iso_reallocate_array_by_count(void* old_ptr, pas_heap_ref* heap_ref,
                                             size_t new_count,
-                                            pas_reallocate_free_mode free_mode);
+                                            pas_reallocate_free_mode free_mode,
+                                            pas_allocation_mode allocation_mode);
 
 PAS_API pas_heap* iso_heap_ref_get_heap(pas_heap_ref* heap_ref);
 
@@ -90,34 +100,42 @@ PAS_API void iso_primitive_heap_ref_construct(pas_primitive_heap_ref* heap_ref,
                                               pas_simple_type type);
 
 PAS_API void* iso_try_allocate_primitive(pas_primitive_heap_ref* heap_ref,
-                                         size_t size);
+                                         size_t size,
+                                         pas_allocation_mode allocation_mode);
 PAS_API void* iso_allocate_primitive(pas_primitive_heap_ref* heap_ref,
-                                     size_t size);
+                                     size_t size,
+                                     pas_allocation_mode allocation_mode);
 
 PAS_API void* iso_try_allocate_primitive_zeroed(pas_primitive_heap_ref* heap_ref,
-                                                size_t size);
+                                                size_t size,
+                                                pas_allocation_mode allocation_mode);
 PAS_API void* iso_allocate_primitive_zeroed(pas_primitive_heap_ref* heap_ref,
-                                            size_t size);
+                                            size_t size,
+                                            pas_allocation_mode allocation_mode);
 
 PAS_API void* iso_try_allocate_primitive_with_alignment(pas_primitive_heap_ref* heap_ref,
                                                         size_t size,
-                                                        size_t alignment);
+                                                        size_t alignment,
+                                                        pas_allocation_mode allocation_mode);
 PAS_API void* iso_allocate_primitive_with_alignment(pas_primitive_heap_ref* heap_ref,
                                                     size_t size,
-                                                    size_t alignment);
+                                                    size_t alignment,
+                                                    pas_allocation_mode allocation_mode);
 
 PAS_API void* iso_try_reallocate_primitive(void* old_ptr,
                                            pas_primitive_heap_ref* heap_ref,
                                            size_t new_size,
-                                           pas_reallocate_free_mode free_mode);
+                                           pas_reallocate_free_mode free_mode,
+                                           pas_allocation_mode allocation_mode);
 PAS_API void* iso_reallocate_primitive(void* old_ptr,
                                        pas_primitive_heap_ref* heap_ref,
                                        size_t new_size,
-                                       pas_reallocate_free_mode free_mode);
+                                       pas_reallocate_free_mode free_mode,
+                                       pas_allocation_mode allocation_mode);
 
 PAS_API pas_heap* iso_primitive_heap_ref_get_heap(pas_primitive_heap_ref* heap_ref);
 
-PAS_API void* iso_try_allocate_for_flex(const void* cls, size_t size);
+PAS_API void* iso_try_allocate_for_flex(const void* cls, size_t size, pas_allocation_mode allocation_mode);
 
 PAS_API bool iso_has_object(void*);
 PAS_API size_t iso_get_allocation_size(void*);

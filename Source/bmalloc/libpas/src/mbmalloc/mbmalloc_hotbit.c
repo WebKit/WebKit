@@ -35,17 +35,17 @@
 
 void* mbmalloc(size_t size)
 {
-    return hotbit_try_allocate(size);
+    return hotbit_try_allocate(size, pas_non_compact_allocation_mode);
 }
 
 void* mbmemalign(size_t alignment, size_t size)
 {
-    return hotbit_try_allocate_with_alignment(size, alignment);
+    return hotbit_try_allocate_with_alignment(size, alignment, pas_non_compact_allocation_mode);
 }
 
 void* mbrealloc(void* p, size_t ignored_old_size, size_t new_size)
 {
-    return hotbit_try_reallocate(p, new_size, pas_reallocate_free_if_successful);
+    return hotbit_try_reallocate(p, new_size, pas_reallocate_free_if_successful, pas_non_compact_allocation_mode);
 }
 
 void mbfree(void* p, size_t ignored_size)

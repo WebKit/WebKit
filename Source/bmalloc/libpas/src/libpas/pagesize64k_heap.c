@@ -73,19 +73,19 @@ PAS_CREATE_TRY_ALLOCATE_ARRAY(
     &iso_allocator_counts,
     pas_allocation_result_crash_on_error);
 
-void* pagesize64k_allocate_common_primitive(size_t size)
+void* pagesize64k_allocate_common_primitive(size_t size, pas_allocation_mode allocation_mode)
 {
-    return (void*)test_allocate_common_primitive(size, 1).begin;
+    return (void*)test_allocate_common_primitive(size, 1, allocation_mode).begin;
 }
 
-void* pagesize64k_allocate(pas_heap_ref* heap_ref)
+void* pagesize64k_allocate(pas_heap_ref* heap_ref, pas_allocation_mode allocation_mode)
 {
-    return (void*)test_allocate_impl(heap_ref).begin;
+    return (void*)test_allocate_impl(heap_ref, allocation_mode).begin;
 }
 
-void* pagesize64k_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* pagesize64k_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode)
 {
-    return (void*)test_allocate_array_impl_by_count(heap_ref, count, alignment).begin;
+    return (void*)test_allocate_array_impl_by_count(heap_ref, count, alignment, allocation_mode).begin;
 }
 
 void pagesize64k_deallocate(void* ptr)
