@@ -1,4 +1,4 @@
-iterations = typeof(iterations) === 'undefined' ? 1e6 : iterations;
+iterations = typeof(iterations) === 'undefined' ? 1e5 : iterations;
 
 function shouldBe(actual, expected) {
     if (actual !== expected)

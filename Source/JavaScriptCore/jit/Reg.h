@@ -205,8 +205,9 @@ private:
 
     static constexpr uint8_t deleted() { return invalid() - 1; }
 
-    unsigned m_index : 7;
+    uint8_t m_index : 7;
 };
+static_assert(sizeof(Reg) == 1);
 
 struct RegHash {
     static unsigned hash(const Reg& key) { return key.hash(); }
