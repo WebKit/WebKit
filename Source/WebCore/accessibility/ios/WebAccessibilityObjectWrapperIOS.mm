@@ -868,9 +868,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         break;
     }
 
-    if ([self accessibilityIsInNonNativeTextControl])
-        traits |= [self _accessibilityTextEntryTraits];
-
     if (self.axBackingObject->isAttachmentElement())
         traits |= [self _axUpdatesFrequentlyTrait];
     
@@ -962,6 +959,9 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         return ![self accessibilityElementCount];
     case AccessibilityRole::Video:
         return [self accessibilityIsWebInteractiveVideo];
+
+    // Links can sometimes be elements (when they only contain static text or don't contain anything).
+    // They should not be elements when containing text and other types.
     case AccessibilityRole::WebCoreLink:
     case AccessibilityRole::Link:
         // Links can sometimes be elements (when they only contain static text or don't contain anything).
@@ -2717,16 +2717,6 @@ static RenderObject* rendererForView(WAKView* view)
     return Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
         return object.roleValue() == AccessibilityRole::Deletion;
     }) != nullptr;
-}
-
-- (BOOL)accessibilityIsInNonNativeTextControl
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-
-    return !!Accessibility::findAncestor(*self.axBackingObject, true, [] (const auto& object) {
-        return object.isNonNativeTextControl();
-    });
 }
 
 - (BOOL)accessibilityIsFirstItemInSuggestion

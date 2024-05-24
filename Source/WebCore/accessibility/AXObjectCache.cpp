@@ -2534,7 +2534,6 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == contenteditableAttr) {
         if (auto* axObject = get(*element))
             axObject->updateRole();
-        postNotification(element, AXContentEditableAttributeChanged);
     }
     else if (attrName == disabledAttr)
         postNotification(element, AXDisabledStateChanged);
@@ -4401,9 +4400,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
             break;
         case AXColumnSpanChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::ColumnIndexRange });
-            break;
-        case AXContentEditableAttributeChanged:
-            tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::IsNonNativeTextControl });
             break;
         case AXDisabledStateChanged:
             tree->updatePropertiesForSelfAndDescendants(notification.first.get(), { { AXPropertyName::CanSetFocusAttribute, AXPropertyName::IsEnabled } });

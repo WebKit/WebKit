@@ -363,7 +363,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
             setProperty(AXPropertyName::TextInputMarkedTextMarkerRange, std::pair<AXID, CharacterRange>(range.start().objectID(), *characterRange));
 
         bool isNonNativeTextControl = object.isNonNativeTextControl();
-        setProperty(AXPropertyName::IsNonNativeTextControl, isNonNativeTextControl);
         setProperty(AXPropertyName::CanBeMultilineTextField, canBeMultilineTextField(object, isNonNativeTextControl));
     }
 
@@ -1595,6 +1594,12 @@ int AXIsolatedObject::lineForPosition(const VisiblePosition& position) const
 }
 
 bool AXIsolatedObject::isMockObject() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool AXIsolatedObject::isNonNativeTextControl() const
 {
     ASSERT_NOT_REACHED();
     return false;

@@ -156,7 +156,6 @@ enum class AXPropertyName : uint16_t {
     IsMeter,
     IsMultiSelectable,
     IsNonLayerSVGObject,
-    IsNonNativeTextControl,
     IsPlugin,
     IsPressed,
     IsRequired,

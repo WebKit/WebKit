@@ -416,8 +416,6 @@ public:
     bool isFirstItemInSuggestion() const;
     bool isLastItemInSuggestion() const;
     
-    bool isInNonNativeTextControl() const;
-
     bool isMarkAnnotation() const;
 private:
     AccessibilityUIElement(PlatformUIElement);
