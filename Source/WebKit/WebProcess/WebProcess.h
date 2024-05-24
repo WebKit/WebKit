@@ -452,7 +452,7 @@ private:
     WebProcess();
     ~WebProcess();
 
-    void initializeWebProcess(WebProcessCreationParameters&&);
+    void initializeWebProcess(WebProcessCreationParameters&&, CompletionHandler<void(WebCore::ProcessIdentity)>&&);
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void setWebsiteDataStoreParameters(WebProcessDataStoreParameters&&);
     void platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&);

@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebProcess LegacyReceiver NotRefCounted {
-    InitializeWebProcess(struct WebKit::WebProcessCreationParameters processCreationParameters)
+    InitializeWebProcess(struct WebKit::WebProcessCreationParameters processCreationParameters) -> (WebCore::ProcessIdentity processIdentity)
     SetWebsiteDataStoreParameters(struct WebKit::WebProcessDataStoreParameters parameters)
 
     CreateWebPage(WebCore::PageIdentifier newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)

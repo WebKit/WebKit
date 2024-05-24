@@ -32,6 +32,7 @@
 #include "APIUIClient.h"
 #include "AuthenticatorManager.h"
 #include "DownloadProxyMap.h"
+#include "GPUProcessConnectionParameters.h"
 #include "GoToBackForwardItemParameters.h"
 #include "LoadParameters.h"
 #include "Logging.h"
@@ -461,6 +462,14 @@ void WebProcessProxy::updateRegistrationWithDataStore()
         else
             dataStore->unregisterProcess(*this);
     }
+}
+
+void WebProcessProxy::initializeWebProcess(WebProcessCreationParameters&& parameters)
+{
+    sendWithAsyncReply(Messages::WebProcess::InitializeWebProcess(WTFMove(parameters)), [weakThis = WeakPtr { *this }] (ProcessIdentity processIdentity) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->m_processIdentity = WTFMove(processIdentity);
+    }, 0);
 }
 
 void WebProcessProxy::initializePreferencesForGPUAndNetworkProcesses(const WebPageProxy& page)
@@ -1063,13 +1072,21 @@ void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(Network
 
 #if ENABLE(GPU_PROCESS)
 
-void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& connectionIdentifier, WebKit::GPUProcessConnectionParameters&& parameters)
+void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& connectionIdentifier)
 {
+    WebKit::GPUProcessConnectionParameters parameters;
+#if PLATFORM(COCOA)
+    ASSERT(m_processIdentity);
+#endif
+    parameters.webProcessIdentity = m_processIdentity;
     auto& gpuPreferences = preferencesForGPUProcess();
     ASSERT(gpuPreferences);
     if (gpuPreferences)
         parameters.preferences = *gpuPreferences;
-
+#if ENABLE(IPC_TESTING_API)
+    parameters.ignoreInvalidMessageForTesting = ignoreInvalidMessageForTesting();
+#endif
+    parameters.isLockdownModeEnabled = lockdownMode() == WebProcessProxy::LockdownMode::Enabled;
     protectedProcessPool()->createGPUProcessConnection(*this, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
 
