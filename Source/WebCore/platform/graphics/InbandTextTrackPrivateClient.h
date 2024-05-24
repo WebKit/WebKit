@@ -48,7 +48,7 @@ public:
 
     constexpr Type type() const final { return Type::Text; }
 
-    virtual void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned) = 0;
+    virtual void addDataCue(const MediaTime& start, const MediaTime& end, std::span<const uint8_t>) = 0;
 
 #if ENABLE(DATACUE_VALUE)
     virtual void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&) = 0;

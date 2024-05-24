@@ -71,7 +71,7 @@ private:
     void languageChanged(const AtomString&) override;
     void willRemove() override;
 
-    void addDataCue(const MediaTime&, const MediaTime&, const void*, unsigned) override { ASSERT_NOT_REACHED(); }
+    void addDataCue(const MediaTime&, const MediaTime&, std::span<const uint8_t>) override { ASSERT_NOT_REACHED(); }
 
 #if ENABLE(DATACUE_VALUE)
     void addDataCue(const MediaTime&, const MediaTime&, Ref<SerializedPlatformDataCue>&&, const String&) override { ASSERT_NOT_REACHED(); }

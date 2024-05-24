@@ -2261,7 +2261,7 @@ void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegtsSection* section
         gsize size;
         const void* bytes = g_bytes_get_data(data.get(), &size);
 
-        track->addDataCue(currentTime(), currentTime(), bytes, size);
+        track->addDataCue(currentTime(), currentTime(), { static_cast<const uint8_t*>(bytes), size });
     }
 }
 #endif
