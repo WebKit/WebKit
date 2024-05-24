@@ -29,7 +29,7 @@ class SVGFEDropShadowElement final : public SVGFilterPrimitiveStandardAttributes
     WTF_MAKE_ISO_ALLOCATED(SVGFEDropShadowElement);
 public:
     static Ref<SVGFEDropShadowElement> create(const QualifiedName&, Document&);
-    
+
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
     String in1() const { return m_in1->currentValue(); }
@@ -48,7 +48,8 @@ private:
     SVGFEDropShadowElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDropShadowElement, SVGFilterPrimitiveStandardAttributes>;
-
+    friend PropertyRegistry;
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
@@ -64,5 +65,5 @@ private:
     Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this, 2) };
     Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this, 2) };
 };
-    
+
 } // namespace WebCore

@@ -62,6 +62,19 @@ Ref<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedNa
     return adoptRef(*new SVGLinearGradientElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGLinearGradientElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::x1Attr)
+        return m_x1.ptr();
+    if (name == SVGNames::y1Attr)
+        return m_y1.ptr();
+    if (name == SVGNames::x2Attr)
+        return m_x2.ptr();
+    if (name == SVGNames::y2Attr)
+        return m_y2.ptr();
+    return SVGGradientElement::propertyForAttribute(name);
+}
+
 void SVGLinearGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;

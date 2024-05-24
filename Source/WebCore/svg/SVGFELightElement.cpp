@@ -69,6 +69,31 @@ SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElem
     return nullptr;
 }
 
+SVGAnimatedProperty* SVGFELightElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::azimuthAttr)
+        return m_azimuth.ptr();
+    if (name == SVGNames::elevationAttr)
+        return m_elevation.ptr();
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (name == SVGNames::zAttr)
+        return m_z.ptr();
+    if (name == SVGNames::pointsAtXAttr)
+        return m_pointsAtX.ptr();
+    if (name == SVGNames::pointsAtYAttr)
+        return m_pointsAtY.ptr();
+    if (name == SVGNames::pointsAtZAttr)
+        return m_pointsAtZ.ptr();
+    if (name == SVGNames::specularExponentAttr)
+        return m_specularExponent.ptr();
+    if (name == SVGNames::limitingConeAngleAttr)
+        return m_limitingConeAngle.ptr();
+    return SVGElement::propertyForAttribute(name);
+}
+
 void SVGFELightElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {

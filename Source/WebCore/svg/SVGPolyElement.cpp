@@ -42,6 +42,12 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
         PropertyRegistry::registerProperty<SVGNames::pointsAttr, &SVGPolyElement::m_points>();
     });
 }
+SVGAnimatedProperty* SVGPolyElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::pointsAttr)
+        return m_points.ptr();
+    return SVGGeometryElement::propertyForAttribute(name);
+}
 
 void SVGPolyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {

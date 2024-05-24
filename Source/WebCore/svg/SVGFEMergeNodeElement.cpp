@@ -36,11 +36,18 @@ inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     ASSERT(hasTagName(SVGNames::feMergeNodeTag));
-    
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEMergeNodeElement::m_in1>();
     });
+}
+
+SVGAnimatedProperty* SVGFEMergeNodeElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::inAttr)
+        return m_in1.ptr();
+    return SVGElement::propertyForAttribute(name);
 }
 
 Ref<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& tagName, Document& document)

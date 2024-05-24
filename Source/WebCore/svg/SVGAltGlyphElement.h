@@ -44,7 +44,9 @@ private:
     SVGAltGlyphElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAltGlyphElement, SVGTextPositioningElement, SVGURIReference>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;
 };

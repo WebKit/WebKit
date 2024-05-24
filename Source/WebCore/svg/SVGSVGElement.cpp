@@ -45,6 +45,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGLength.h"
 #include "SVGMatrix.h"
+#include "SVGNames.h"
 #include "SVGNumber.h"
 #include "SVGPoint.h"
 #include "SVGRect.h"
@@ -54,6 +55,8 @@
 #include "StaticNodeList.h"
 #include "TreeScopeInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "svg/SVGFitToViewBox.h"
+#include "svg/SVGGraphicsElement.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -75,6 +78,22 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& docu
         PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGSVGElement::m_width>();
         PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGSVGElement::m_height>();
     });
+}
+
+
+SVGAnimatedProperty* SVGSVGElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (name == SVGNames::widthAttr)
+        return m_x.ptr();
+    if (name == SVGNames::heightAttr)
+        return m_height.ptr();
+    if (auto* property = SVGGraphicsElement::propertyForAttribute(name))
+        return property;
+    return SVGFitToViewBox::propertyForAttribute(name);
 }
 
 Ref<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document& document)

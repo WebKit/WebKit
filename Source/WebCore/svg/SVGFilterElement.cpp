@@ -63,6 +63,21 @@ Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGFilterElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGFilterElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (name == SVGNames::widthAttr)
+        return m_width.ptr();
+    if (name == SVGNames::heightAttr)
+        return m_height.ptr();
+    if (auto* property = SVGURIReference::propertyForAttribute(name))
+        return property;
+    return SVGElement::propertyForAttribute(name);
+}
+
 void SVGFilterElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;

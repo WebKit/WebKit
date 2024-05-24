@@ -35,7 +35,9 @@ private:
     SVGSymbolElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSymbolElement, SVGGraphicsElement, SVGFitToViewBox>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 

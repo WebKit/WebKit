@@ -36,7 +36,7 @@ inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagNa
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     ASSERT(hasTagName(SVGNames::feDropShadowTag));
-    
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEDropShadowElement::m_in1>();
@@ -56,6 +56,17 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
     Ref { m_stdDeviationX }->setBaseValInternal(x);
     Ref { m_stdDeviationY }->setBaseValInternal(y);
     updateSVGRendererForElementChange();
+}
+
+SVGAnimatedProperty* SVGFEDropShadowElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::inAttr)
+        return m_in1.ptr();
+    if (name == SVGNames::dxAttr)
+        return m_dx.ptr();
+    if (name == SVGNames::dyAttr)
+        return m_dy.ptr();
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
 }
 
 void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -157,7 +168,7 @@ RefPtr<FilterEffect> SVGFEDropShadowElement::createFilterEffect(const FilterEffe
 
     auto& style = renderer->style();
     const SVGRenderStyle& svgStyle = style.svgStyle();
-    
+
     Color color = style.colorWithColorFilter(svgStyle.floodColor());
     float opacity = svgStyle.floodOpacity();
 

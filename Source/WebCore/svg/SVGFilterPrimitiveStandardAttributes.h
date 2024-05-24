@@ -38,6 +38,7 @@ class SVGFilterPrimitiveStandardAttributes : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGFilterPrimitiveStandardAttributes);
 public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFilterPrimitiveStandardAttributes, SVGElement>;
+    friend PropertyRegistry;
 
     const SVGLengthValue& x() const { return m_x->currentValue(); }
     const SVGLengthValue& y() const { return m_y->currentValue(); }
@@ -66,6 +67,7 @@ public:
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;

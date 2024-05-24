@@ -56,6 +56,19 @@ Ref<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName
     return adoptRef(*new SVGForeignObjectElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGForeignObjectElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (name == SVGNames::widthAttr)
+        return m_width.ptr();
+    if (name == SVGNames::heightAttr)
+        return m_height.ptr();
+    return SVGGraphicsElement::propertyForAttribute(name);
+}
+
 void SVGForeignObjectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;

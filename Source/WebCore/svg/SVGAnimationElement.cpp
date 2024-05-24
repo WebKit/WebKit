@@ -57,6 +57,13 @@ SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document&
 {
 }
 
+SVGAnimatedProperty* SVGAnimationElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (auto* property = SVGSMILElement::propertyForAttribute(name))
+        return property;
+    return SVGTests::propertyForAttribute(name);
+}
+
 static Vector<float> parseKeyTimes(StringView value, bool verifyOrder)
 {
     auto keyTimes = value.split(';');
@@ -246,8 +253,8 @@ ExceptionOr<float> SVGAnimationElement::getSimpleDuration() const
     if (!simpleDuration.isFinite())
         return Exception { ExceptionCode::NotSupportedError, "The simple duration is not determined on the given element."_s };
     return narrowPrecisionToFloat(simpleDuration.value());
-}    
-    
+}
+
 void SVGAnimationElement::beginElement()
 {
     beginElementAt(0);
@@ -318,17 +325,17 @@ void SVGAnimationElement::setAttributeType(const AtomString& attributeType)
 }
 
 String SVGAnimationElement::toValue() const
-{    
+{
     return attributeWithoutSynchronization(SVGNames::toAttr);
 }
 
 String SVGAnimationElement::byValue() const
-{    
+{
     return attributeWithoutSynchronization(SVGNames::byAttr);
 }
 
 String SVGAnimationElement::fromValue() const
-{    
+{
     return attributeWithoutSynchronization(SVGNames::fromAttr);
 }
 
@@ -438,16 +445,16 @@ float SVGAnimationElement::calculatePercentFromKeyPoints(float percent) const
 
     unsigned index = calculateKeyTimesIndex(percent);
     float fromKeyPoint = m_keyPoints[index];
-    
+
     if (calcMode() == CalcMode::Discrete)
         return fromKeyPoint;
-    
+
     ASSERT(index + 1 < keyTimes.size());
     float fromPercent = keyTimes[index];
     float toPercent = keyTimes[index + 1];
     float toKeyPoint = m_keyPoints[index + 1];
     float keyPointPercent = (percent - fromPercent) / (toPercent - fromPercent);
-    
+
     if (calcMode() == CalcMode::Spline) {
         ASSERT(m_keySplines.size() == m_keyPoints.size() - 1);
         keyPointPercent = calculatePercentForSpline(keyPointPercent, index);
@@ -463,7 +470,7 @@ float SVGAnimationElement::calculatePercentForFromTo(float percent) const
 
     return percent;
 }
-    
+
 void SVGAnimationElement::currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const
 {
     ASSERT(!m_keyPoints.isEmpty());
@@ -474,7 +481,7 @@ void SVGAnimationElement::currentValuesFromKeyPoints(float percent, float& effec
     from = m_values[index];
     to = m_values[index + 1];
 }
-    
+
 void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to)
 {
     unsigned valuesCount = m_values.size();
@@ -496,7 +503,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     }
     if (!m_keyPoints.isEmpty() && calcMode != CalcMode::Paced)
         return currentValuesFromKeyPoints(percent, effectivePercent, from, to);
-    
+
     const auto& keyTimes = this->keyTimes();
     unsigned keyTimesCount = keyTimes.size();
     ASSERT(!keyTimesCount || valuesCount == keyTimesCount);
@@ -504,25 +511,25 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
 
     unsigned index = calculateKeyTimesIndex(percent);
     if (calcMode == CalcMode::Discrete) {
-        if (!keyTimesCount) 
+        if (!keyTimesCount)
             index = static_cast<unsigned>(percent * valuesCount);
         from = m_values[index];
         to = m_values[index];
         effectivePercent = 0;
         return;
     }
-    
+
     float fromPercent;
     float toPercent;
     if (keyTimesCount) {
         fromPercent = keyTimes[index];
         toPercent = keyTimes[index + 1];
-    } else {        
+    } else {
         index = static_cast<unsigned>(floorf(percent * (valuesCount - 1)));
         fromPercent =  static_cast<float>(index) / (valuesCount - 1);
         toPercent =  static_cast<float>(index + 1) / (valuesCount - 1);
     }
-    
+
     if (index == valuesCount - 1)
         --index;
     from = m_values[index];
@@ -535,7 +542,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
         effectivePercent = calculatePercentForSpline(effectivePercent, index);
     }
 }
-    
+
 void SVGAnimationElement::startedActiveInterval()
 {
     m_animationValid = false;
@@ -593,7 +600,7 @@ void SVGAnimationElement::startedActiveInterval()
 }
 
 void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount)
-{    
+{
     if (!m_animationValid)
         return;
 

@@ -27,6 +27,7 @@
 #include "NodeName.h"
 #include "RenderSVGEllipse.h"
 #include "SVGElementInlines.h"
+#include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -50,6 +51,19 @@ inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Docume
 Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGEllipseElement(tagName, document));
+}
+
+SVGAnimatedProperty* SVGEllipseElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::cxAttr)
+        return m_cx.ptr();
+    if (name == SVGNames::cyAttr)
+        return m_cy.ptr();
+    if (name == SVGNames::rxAttr)
+        return m_rx.ptr();
+    if (name == SVGNames::ryAttr)
+        return m_ry.ptr();
+    return SVGGeometryElement::propertyForAttribute(name);
 }
 
 void SVGEllipseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

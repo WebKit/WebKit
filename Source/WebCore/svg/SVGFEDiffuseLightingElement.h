@@ -52,7 +52,9 @@ private:
     SVGFEDiffuseLightingElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDiffuseLightingElement, SVGFilterPrimitiveStandardAttributes>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override { return nullptr; }; // FIXME: implement
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 

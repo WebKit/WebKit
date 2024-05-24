@@ -46,7 +46,9 @@ private:
     SVGClipPathElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGClipPathElement, SVGGraphicsElement>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
     void childrenChanged(const ChildChange&) final;

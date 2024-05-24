@@ -112,6 +112,15 @@ void SVGFEImageElement::buildPendingResource()
     updateSVGRendererForElementChange();
 }
 
+SVGAnimatedProperty* SVGFEImageElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::preserveAspectRatioAttr)
+        return m_preserveAspectRatio.ptr();
+    if (auto* property = SVGURIReference::propertyForAttribute(name))
+        return property;
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
+}
+
 void SVGFEImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::preserveAspectRatioAttr)

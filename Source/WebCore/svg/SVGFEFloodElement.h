@@ -34,6 +34,7 @@ private:
     SVGFEFloodElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEFloodElement, SVGFilterPrimitiveStandardAttributes>;
+    friend PropertyRegistry;
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName& attrName) override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;

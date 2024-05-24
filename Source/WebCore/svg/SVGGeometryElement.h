@@ -41,6 +41,7 @@ public:
     bool isPointInStroke(DOMPointInit&&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGeometryElement, SVGGraphicsElement>;
+    friend PropertyRegistry;
 
     float pathLength() const { return m_pathLength->currentValue(); }
     SVGAnimatedNumber& pathLengthAnimated() { return m_pathLength; }
@@ -48,6 +49,7 @@ public:
 protected:
     SVGGeometryElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 

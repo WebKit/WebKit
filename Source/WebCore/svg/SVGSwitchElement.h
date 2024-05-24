@@ -34,6 +34,7 @@ private:
     SVGSwitchElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSwitchElement, SVGGraphicsElement>;
+    friend PropertyRegistry;
 
     bool isValid() const final { return SVGTests::isValid(); }
 

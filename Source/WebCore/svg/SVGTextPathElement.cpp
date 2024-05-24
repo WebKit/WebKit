@@ -66,6 +66,19 @@ void SVGTextPathElement::clearResourceReferences()
     removeElementReference();
 }
 
+SVGAnimatedProperty* SVGTextPathElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::startOffsetAttr)
+        return m_startOffset.ptr();
+    if (name == SVGNames::methodAttr)
+        return m_method.ptr();
+    if (name == SVGNames::spacingAttr)
+        return m_spacing.ptr();
+    if (auto* property = SVGURIReference::propertyForAttribute(name))
+        return property;
+    return SVGTextContentElement::propertyForAttribute(name);
+}
+
 void SVGTextPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;

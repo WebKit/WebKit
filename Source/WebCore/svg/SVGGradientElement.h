@@ -82,6 +82,7 @@ public:
     GradientColorStops buildStops();
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGradientElement, SVGElement, SVGURIReference>;
+    friend PropertyRegistry;
 
     SVGSpreadMethodType spreadMethod() const { return m_spreadMethod->currentValue<SVGSpreadMethodType>(); }
     SVGUnitTypes::SVGUnitType gradientUnits() const { return m_gradientUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
@@ -94,6 +95,7 @@ public:
 protected:
     SVGGradientElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override { return nullptr; }; // FIXME: implement
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 

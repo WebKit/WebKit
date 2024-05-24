@@ -58,6 +58,16 @@ void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
     updateSVGRendererForElementChange();
 }
 
+SVGAnimatedProperty* SVGFEGaussianBlurElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::inAttr)
+        return m_in1.ptr();
+    // FIXME: stdDeviationAttr
+    if (name == SVGNames::edgeModeAttr)
+        return m_edgeMode.ptr();
+    return SVGFilterPrimitiveStandardAttributes::propertyForAttribute(name);
+}
+
 void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {

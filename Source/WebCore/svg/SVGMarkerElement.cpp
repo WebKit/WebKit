@@ -62,6 +62,24 @@ AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float 
     return SVGFitToViewBox::viewBoxToViewTransform(viewBox(), preserveAspectRatio(), viewWidth, viewHeight);
 }
 
+SVGAnimatedProperty* SVGMarkerElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::refXAttr)
+        return m_refX.ptr();
+    if (name == SVGNames::refYAttr)
+        return m_refY.ptr();
+    if (name == SVGNames::markerWidthAttr)
+        return m_markerWidth.ptr();
+    if (name == SVGNames::markerHeightAttr)
+        return m_markerHeight.ptr();
+    if (name == SVGNames::markerUnitsAttr)
+        return m_markerUnits.ptr();
+    // FIXME: orientAttr
+    if (auto* property = SVGFitToViewBox::propertyForAttribute(name))
+        return property;
+    return SVGElement::propertyForAttribute(name);
+}
+
 void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
@@ -123,7 +141,7 @@ void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
             invalidateMarkerResource();
         return;
     }
-    
+
     if (SVGFitToViewBox::isKnownAttribute(attrName)) {
         updateSVGRendererForElementChange();
         return;

@@ -52,22 +52,35 @@ Ref<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGLineElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGLineElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::x1Attr)
+        return m_x1.ptr();
+    if (name == SVGNames::x2Attr)
+        return m_x2.ptr();
+    if (name == SVGNames::y1Attr)
+        return m_y1.ptr();
+    if (name == SVGNames::y2Attr)
+        return m_y2.ptr();
+    return SVGGeometryElement::propertyForAttribute(name);
+}
+
 void SVGLineElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
 
     switch (name.nodeName()) {
     case AttributeNames::x1Attr:
-        Ref { m_x1 }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_x1 } -> setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
         break;
     case AttributeNames::y1Attr:
-        Ref { m_y1 }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_y1 } -> setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
         break;
     case AttributeNames::x2Attr:
-        Ref { m_x2 }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_x2 } -> setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
         break;
     case AttributeNames::y2Attr:
-        Ref { m_y2 }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_y2 } -> setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
         break;
     default:
         break;

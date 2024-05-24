@@ -58,6 +58,15 @@ SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document& d
     });
 }
 
+SVGAnimatedProperty* SVGGraphicsElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::transformAttr)
+        return m_transform.ptr();
+    if (auto* property = SVGTests::propertyForAttribute(name))
+        return property;
+    return SVGElement::propertyForAttribute(name);
+}
+
 SVGGraphicsElement::~SVGGraphicsElement() = default;
 
 Ref<SVGMatrix> SVGGraphicsElement::getCTMForBindings()

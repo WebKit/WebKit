@@ -24,7 +24,7 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
- 
+
 template<>
 struct SVGPropertyTraits<ChannelSelectorType> {
     static unsigned highestEnumValue() { return enumToUnderlyingType(ChannelSelectorType::CHANNEL_A); }
@@ -85,7 +85,9 @@ private:
     SVGFEDisplacementMapElement(const QualifiedName& tagName, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDisplacementMapElement, SVGFilterPrimitiveStandardAttributes>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override { return nullptr; }; // FIXME: implement
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 

@@ -72,6 +72,31 @@ Ref<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGPatternElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGPatternElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (name == SVGNames::widthsAttr)
+        return m_width.ptr();
+    if (name == SVGNames::heightAttr)
+        return m_height.ptr();
+    if (name == SVGNames::patternUnitsAttr)
+        return m_patternUnits.ptr();
+    if (name == SVGNames::patternContentUnitsAttr)
+        return m_patternContentUnits.ptr();
+    if (name == SVGNames::patternTransformAttr)
+        return m_patternTransform.ptr();
+    if (auto* property = SVGFitToViewBox::propertyForAttribute(name))
+        return property;
+    if (auto* property = SVGTests::propertyForAttribute(name))
+        return property;
+    if (auto* property = SVGURIReference::propertyForAttribute(name))
+        return property;
+    return SVGElement::propertyForAttribute(name);
+}
+
 void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;

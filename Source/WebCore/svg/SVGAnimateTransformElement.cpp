@@ -54,6 +54,8 @@ bool SVGAnimateTransformElement::hasValidAttributeType() const
     return SVGAnimateElementBase::hasValidAttributeType();
 }
 
+
+
 void SVGAnimateTransformElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::typeAttr) {

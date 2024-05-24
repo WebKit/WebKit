@@ -37,7 +37,9 @@ private:
     SVGFEMergeNodeElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeNodeElement, SVGElement>;
+    friend PropertyRegistry;
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
 

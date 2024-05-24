@@ -29,8 +29,10 @@
 #include "LegacyRenderSVGShape.h"
 #include "RenderSVGShape.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGNames.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
+#include "svg/SVGGraphicsElement.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -62,6 +64,13 @@ float SVGGeometryElement::getTotalLength() const
 
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+SVGAnimatedProperty* SVGGeometryElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (name == SVGNames::pathLengthAttr)
+        return m_pathLength.ptr();
+    return SVGGraphicsElement::propertyForAttribute(name);
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) const

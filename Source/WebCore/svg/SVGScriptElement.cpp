@@ -44,6 +44,13 @@ Ref<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGScriptElement(tagName, document, insertedByParser, false));
 }
 
+SVGAnimatedProperty* SVGScriptElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (auto* property = SVGURIReference::propertyForAttribute(name))
+        return property;
+    return SVGElement::propertyForAttribute(name);
+}
+
 void SVGScriptElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGURIReference::parseAttribute(name, newValue);

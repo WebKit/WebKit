@@ -50,6 +50,13 @@ SVGMPathElement::~SVGMPathElement()
     clearResourceReferences();
 }
 
+SVGAnimatedProperty* SVGMPathElement::propertyForAttribute(const QualifiedName& name)
+{
+    if (auto* property = SVGURIReference::propertyForAttribute(name))
+        return property;
+    return SVGElement::propertyForAttribute(name);
+}
+
 void SVGMPathElement::buildPendingResource()
 {
     clearResourceReferences();

@@ -83,6 +83,7 @@ public:
     static SVGTextContentElement* elementFromRenderer(RenderObject*);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextContentElement, SVGGraphicsElement>;
+    friend PropertyRegistry;
 
     const SVGLengthValue& specifiedTextLength() const { return m_specifiedTextLength; }
     const SVGLengthValue& textLength() const { return m_textLength->currentValue(); }
@@ -96,6 +97,7 @@ protected:
 
     bool isValid() const override { return SVGTests::isValid(); }
 
+    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
