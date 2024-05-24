@@ -775,10 +775,9 @@ nothing to commit, working tree clean
 
     def __enter__(self):
         from mock import patch
+        from shutil import which
 
-        # TODO: Use shutil directly when Python 2.7 is removed
-        from whichcraft import which
-        self.patches.append(patch('whichcraft.which', lambda cmd: dict(git=self.executable).get(cmd, which(cmd))))
+        self.patches.append(patch('shutil.which', lambda cmd: dict(git=self.executable).get(cmd, which(cmd))))
         return super(Git, self).__enter__()
 
     @property

@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,6 +23,7 @@
 import os
 import platform
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -119,8 +120,6 @@ class FilteredCommand(Command):
 
     @classmethod
     def pager(cls, args, repository, file=None, **kwargs):
-        from whichcraft import which
-
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -143,7 +142,7 @@ class FilteredCommand(Command):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            more = subprocess.Popen([which('more')] + (['-F', '-R'] if platform.system() == 'Darwin' else []), stdin=child.stdout)
+            more = subprocess.Popen([shutil.which('more')] + (['-F', '-R'] if platform.system() == 'Darwin' else []), stdin=child.stdout)
 
             try:
                 while more.poll() is None and not child.poll():

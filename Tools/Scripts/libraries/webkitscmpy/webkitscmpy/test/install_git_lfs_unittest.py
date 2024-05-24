@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -80,13 +80,13 @@ class TestInstallGitLFS(testing.PathTestCase):
                 'https://github.com/git-lfs/git-lfs/releases/download/v3.4.0/git-lfs-darwin-amd64-v3.4.0.zip',
             )
 
-        with patch('platform.system', lambda: 'Darwin'), patch('platform.machine', lambda: 'arm64'), patch('whichcraft.which', lambda name: '/bin/{}'.format(name)):
+        with patch('platform.system', lambda: 'Darwin'), patch('platform.machine', lambda: 'arm64'), patch('shutil.which', lambda name: '/bin/{}'.format(name)):
             self.assertEqual(
                 program.InstallGitLFS.url(),
                 'https://github.com/git-lfs/git-lfs/releases/download/v3.4.0/git-lfs-darwin-arm64-v3.4.0.zip',
             )
 
-        with patch('platform.system', lambda: 'Darwin'), patch('platform.machine', lambda: 'arm64'), patch('whichcraft.which', lambda name: None):
+        with patch('platform.system', lambda: 'Darwin'), patch('platform.machine', lambda: 'arm64'), patch('shutil.which', lambda name: None):
             self.assertEqual(
                 program.InstallGitLFS.url(),
                 'https://github.com/git-lfs/git-lfs/releases/download/v3.4.0/git-lfs-darwin-arm64-v3.4.0.zip',

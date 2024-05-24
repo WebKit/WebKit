@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -48,7 +48,9 @@ from webkitcorepy.null_context import NullContext
 from webkitcorepy.filtered_call import filtered_call
 from webkitcorepy.partial_proxy import PartialProxy
 
-version = Version(0, 17, 0)
+version = Version(1, 0, 0)
+if sys.version_info < (3, 0):
+    raise ImportError('webkitcorepy no longer supports Python 2')
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -97,7 +99,6 @@ AutoInstall.register(Package('tblib', Version(1, 7, 0)))
 AutoInstall.register(Package('urllib3', Version(1, 26, 17)))
 
 AutoInstall.register(Package('wheel', Version(0, 35, 1)))
-AutoInstall.register(Package('whichcraft', Version(0, 6, 1)))
 AutoInstall.register(Package('cffi', Version(1, 15, 1)))
 
 if sys.version_info > (3, 0):
