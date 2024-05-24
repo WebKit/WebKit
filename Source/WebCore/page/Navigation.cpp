@@ -711,6 +711,12 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         }
     } else if (apiMethodTracker)
         cleanupAPIMethodTracker(apiMethodTracker.get());
+    else {
+        // FIXME: This situation isn't clear, we've made it through the event doing nothing so
+        // to avoid incorrectly being aborted we clear this.
+        // To reproduce see `inspector/runtime/execution-context-in-scriptless-page.html`.
+        m_ongoingNavigateEvent = nullptr;
+    }
 
     // FIXME: Step 35 Clean up after running script
 
