@@ -787,7 +787,7 @@ inline bool equal(StringView a, const LChar* b)
 
 ALWAYS_INLINE bool equal(StringView a, ASCIILiteral b)
 {
-    return equal(a, b.characters8());
+    return equal(a, b.span8().data());
 }
 
 inline bool equalIgnoringASCIICase(StringView a, StringView b)

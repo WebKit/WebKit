@@ -165,14 +165,6 @@ private:
     unsigned m_length;
 };
 
-template<> class StringTypeAdapter<ASCIILiteral, void> : public StringTypeAdapter<const LChar*, void> {
-public:
-    StringTypeAdapter(ASCIILiteral characters)
-        : StringTypeAdapter<const LChar*, void> { characters.characters8() }
-    {
-    }
-};
-
 template<typename CharacterType, size_t Extent> class StringTypeAdapter<std::span<CharacterType, Extent>, void> {
 public:
     StringTypeAdapter(std::span<CharacterType, Extent> span)
@@ -194,6 +186,14 @@ public:
 private:
     const CharacterType* m_characters;
     unsigned m_length;
+};
+
+template<> class StringTypeAdapter<ASCIILiteral, void> : public StringTypeAdapter<std::span<const LChar>, void> {
+public:
+    StringTypeAdapter(ASCIILiteral characters)
+        : StringTypeAdapter<std::span<const LChar>, void> { characters.span8() }
+    {
+    }
 };
 
 template<typename CharacterType, size_t InlineCapacity> class StringTypeAdapter<Vector<CharacterType, InlineCapacity>, void> : public StringTypeAdapter<std::span<const CharacterType>> {

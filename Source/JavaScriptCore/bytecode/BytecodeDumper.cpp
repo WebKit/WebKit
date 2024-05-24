@@ -398,7 +398,7 @@ void BytecodeDumper::dumpExceptionHandlers()
         unsigned i = 0;
         do {
             const auto& handler = this->block()->exceptionHandler(i);
-            this->m_out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] tryDepth: [%4d] exceptionIndexOrDelegateTarget: [%4d] } %s\n", i + 1, handler.m_start, handler.m_end, handler.m_target, handler.m_tryDepth, handler.m_exceptionIndexOrDelegateTarget, handler.typeName().characters8());
+            this->m_out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] tryDepth: [%4d] exceptionIndexOrDelegateTarget: [%4d] } %s\n", i + 1, handler.m_start, handler.m_end, handler.m_target, handler.m_tryDepth, handler.m_exceptionIndexOrDelegateTarget, handler.typeName().characters());
             ++i;
         } while (i < count);
     }

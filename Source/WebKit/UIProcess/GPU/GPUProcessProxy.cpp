@@ -287,21 +287,21 @@ static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& 
             // Needed for rdar://108282689:
             auto appleCameraUserClientExtensionHandle = SandboxExtension::createHandleForMachLookup(appleCameraUserClientPath, std::nullopt);
             if (!appleCameraUserClientExtensionHandle) {
-                RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientPath.characters8());
+                RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientPath.characters());
                 return false;
             }
             extensions.append(WTFMove(*appleCameraUserClientExtensionHandle));
 
             auto appleCameraUserClientIOKitClientClassExtensionHandle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitClientClass, std::nullopt);
             if (!appleCameraUserClientIOKitClientClassExtensionHandle) {
-                RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientIOKitClientClass.characters8());
+                RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientIOKitClientClass.characters());
                 return false;
             }
             extensions.append(WTFMove(*appleCameraUserClientIOKitClientClassExtensionHandle));
 
             auto appleCameraUserClientIOKitServiceClassExtensionHandle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitServiceClass, std::nullopt);
             if (!appleCameraUserClientIOKitServiceClassExtensionHandle) {
-                RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientIOKitServiceClass.characters8());
+                RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientIOKitServiceClass.characters());
                 return false;
             }
             extensions.append(WTFMove(*appleCameraUserClientIOKitServiceClassExtensionHandle));
