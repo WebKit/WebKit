@@ -171,9 +171,18 @@ void PolymorphicCallStubRoutine::clearCallNodesFor(CallLinkInfo*)
 bool PolymorphicCallStubRoutine::visitWeakImpl(VM& vm)
 {
     bool isStillLive = true;
-    forEachDependentCell([&](JSCell* cell) {
-        isStillLive &= vm.heap.isMarked(cell);
-    });
+    for (unsigned i = 0, size = std::size(trailingSpan()) - 1; i < size; ++i) {
+        auto& slot = trailingSpan()[i];
+        if (!slot.m_calleeOrExecutable) {
+            isStillLive = false;
+            continue;
+        }
+        if (!vm.heap.isMarked(slot.m_calleeOrExecutable)) {
+            slot = CallSlot();
+            isStillLive = false;
+            continue;
+        }
+    }
     return isStillLive;
 }
 
