@@ -28,5 +28,5 @@
     JSGenerateToJSObject,
 ] dictionary ApplePaySessionError {
     DOMString code; // FIXME: use an enum instead
-    record<DOMString, DOMString> info;
+    record<DOMString, DOMString> info = [];
 };

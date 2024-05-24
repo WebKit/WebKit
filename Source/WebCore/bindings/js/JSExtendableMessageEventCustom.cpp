@@ -50,7 +50,7 @@ JSC::EncodedJSValue constructJSExtendableMessageEvent(JSC::JSGlobalObject* lexic
     auto eventInitDict = convert<IDLDictionary<ExtendableMessageEvent::Init>>(*lexicalGlobalObject, callFrame.argument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    auto object = ExtendableMessageEvent::create(*lexicalGlobalObject, WTFMove(type), WTFMove(eventInitDict));
+    auto object = ExtendableMessageEvent::create(*lexicalGlobalObject, type.releaseReturnValue(), eventInitDict.releaseReturnValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     return JSValue::encode(object.strongWrapper.get());

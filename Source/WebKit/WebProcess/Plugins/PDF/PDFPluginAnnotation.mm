@@ -76,8 +76,8 @@ void PDFPluginAnnotation::attach(Element* parent)
     if (!element->hasClass())
         element->setAttributeWithoutSynchronization(classAttr, "annotation"_s);
     element->setAttributeWithoutSynchronization(x_apple_pdf_annotationAttr, "true"_s);
-    element->addEventListener(eventNames().changeEvent, *m_eventListener, false);
-    element->addEventListener(eventNames().blurEvent, *m_eventListener, false);
+    element->addEventListener(eventNames().changeEvent, *m_eventListener, { { .capture = false } });
+    element->addEventListener(eventNames().blurEvent, *m_eventListener, { { .capture = false } });
 
     updateGeometry();
 
@@ -94,8 +94,8 @@ void PDFPluginAnnotation::commit()
 
 PDFPluginAnnotation::~PDFPluginAnnotation()
 {
-    m_element->removeEventListener(eventNames().changeEvent, *m_eventListener, false);
-    m_element->removeEventListener(eventNames().blurEvent, *m_eventListener, false);
+    m_element->removeEventListener(eventNames().changeEvent, *m_eventListener, { .capture = false });
+    m_element->removeEventListener(eventNames().blurEvent, *m_eventListener, { .capture = false });
 
     m_eventListener->setAnnotation(0);
 

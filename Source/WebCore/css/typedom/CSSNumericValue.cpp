@@ -321,12 +321,14 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::max(FixedVector<CSSNumberish>
 Ref<CSSNumericValue> CSSNumericValue::rectifyNumberish(CSSNumberish&& numberish)
 {
     // https://drafts.css-houdini.org/css-typed-om/#rectify-a-numberish-value
-    return WTF::switchOn(numberish, [](RefPtr<CSSNumericValue>& value) {
-        RELEASE_ASSERT(!!value);
-        return Ref<CSSNumericValue> { *value };
-    }, [](double value) {
-        return Ref<CSSNumericValue> { CSSNumericFactory::number(value) };
-    });
+    return WTF::switchOn(WTFMove(numberish),
+        [](Ref<CSSNumericValue>&& value) {
+            return value;
+        },
+        [](double value) {
+            return Ref<CSSNumericValue> { CSSNumericFactory::number(value) };
+        }
+    );
 }
 
 bool CSSNumericValue::equals(FixedVector<CSSNumberish>&& values)

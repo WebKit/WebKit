@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://www.w3.org/TR/webtransport/#dictdef-webtransporthash
 [
     EnabledBySetting=WebTransportEnabled,
 ] dictionary WebTransportHash {

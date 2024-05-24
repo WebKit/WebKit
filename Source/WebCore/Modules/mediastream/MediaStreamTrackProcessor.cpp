@@ -46,7 +46,7 @@ ExceptionOr<Ref<MediaStreamTrackProcessor>> MediaStreamTrackProcessor::create(Sc
     if (init.track->ended())
         return Exception { ExceptionCode::TypeError, "Track is ended"_s };
 
-    return adoptRef(*new MediaStreamTrackProcessor(context, *init.track, init.maxBufferSize));
+    return adoptRef(*new MediaStreamTrackProcessor(context, WTFMove(init.track), init.maxBufferSize.value_or(1)));
 }
 
 MediaStreamTrackProcessor::MediaStreamTrackProcessor(ScriptExecutionContext& context, Ref<MediaStreamTrack>&& track, unsigned short maxVideoFramesCount)

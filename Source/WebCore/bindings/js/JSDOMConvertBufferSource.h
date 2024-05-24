@@ -117,151 +117,49 @@ inline RefPtr<JSC::ArrayBufferView> toUnsharedArrayBufferView(JSC::VM& vm, JSC::
 namespace Detail {
 
 enum class BufferSourceConverterAllowSharedMode { Allow, Disallow };
+
 template<typename BufferSourceType, BufferSourceConverterAllowSharedMode mode>
 struct BufferSourceConverter {
     using WrapperType = typename Converter<BufferSourceType>::WrapperType;
-    using ReturnType = typename Converter<BufferSourceType>::ReturnType;
+    using Result = ConversionResult<BufferSourceType>;
 
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
         auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        ReturnType object { };
-        if constexpr (mode == BufferSourceConverterAllowSharedMode::Allow)
-            object = WrapperType::toWrappedAllowShared(vm, value);
-        else
-            object = WrapperType::toWrapped(vm, value);
-        if (UNLIKELY(!object))
-            exceptionThrower(lexicalGlobalObject, scope);
-        return object;
+        if constexpr (mode == BufferSourceConverterAllowSharedMode::Allow) {
+            RefPtr object = WrapperType::toWrappedAllowShared(vm, value);
+            if (UNLIKELY(!object)) {
+                exceptionThrower(lexicalGlobalObject, scope);
+                return Result::exception();
+            }
+            return Result { object.releaseNonNull() };
+        } else {
+            RefPtr object = WrapperType::toWrapped(vm, value);
+            if (UNLIKELY(!object)) {
+                exceptionThrower(lexicalGlobalObject, scope);
+                return Result::exception();
+            }
+            return Result { object.releaseNonNull() };
+        }
+
     }
 };
 
-}
-
-template<> struct Converter<IDLArrayBuffer> : DefaultConverter<IDLArrayBuffer> {
-    using WrapperType = JSC::JSArrayBuffer;
-    using ReturnType = JSC::ArrayBuffer*;
+template<typename IDL, typename Wrapper>
+struct TypedArrayConverter : DefaultConverter<IDL> {
+    using WrapperType = Wrapper;
 
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static ConversionResult<IDL> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        return Detail::BufferSourceConverter<IDLArrayBuffer, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
+        return Detail::BufferSourceConverter<IDL, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
     }
 };
 
-template<> struct JSConverter<IDLArrayBuffer> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLDataView> : DefaultConverter<IDLDataView> {
-    using WrapperType = JSC::JSDataView;
-    using ReturnType = RefPtr<JSC::DataView>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLDataView, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLDataView> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLInt8Array> : DefaultConverter<IDLInt8Array> {
-    using WrapperType = JSC::JSInt8Array;
-    using ReturnType = RefPtr<JSC::Int8Array>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLInt8Array, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLInt8Array> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLInt16Array> : DefaultConverter<IDLInt16Array> {
-    using WrapperType = JSC::JSInt16Array;
-    using ReturnType = RefPtr<JSC::Int16Array>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLInt16Array, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLInt16Array> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLInt32Array> : DefaultConverter<IDLInt32Array> {
-    using WrapperType = JSC::JSInt32Array;
-    using ReturnType = RefPtr<JSC::Int32Array>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLInt32Array, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLInt32Array> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLUint8Array> : DefaultConverter<IDLUint8Array> {
-    using WrapperType = JSC::JSUint8Array;
-    using ReturnType = RefPtr<JSC::Uint8Array>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLUint8Array, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLUint8Array> {
+template<typename IDL>
+struct JSTypedArrayConverter {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;
 
@@ -278,192 +176,48 @@ template<> struct JSConverter<IDLUint8Array> {
     }
 };
 
-template<> struct Converter<IDLUint16Array> : DefaultConverter<IDLUint16Array> {
-    using WrapperType = JSC::JSUint16Array;
-    using ReturnType = RefPtr<JSC::Uint16Array>;
+}
 
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLUint16Array, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
+template<> struct Converter<IDLArrayBuffer> : Detail::TypedArrayConverter<IDLArrayBuffer, JSC::JSArrayBuffer> { };
+template<> struct Converter<IDLDataView> : Detail::TypedArrayConverter<IDLDataView, JSC::JSDataView> { };
+template<> struct Converter<IDLInt8Array> : Detail::TypedArrayConverter<IDLInt8Array, JSC::JSInt8Array> { };
+template<> struct Converter<IDLInt16Array> : Detail::TypedArrayConverter<IDLInt16Array, JSC::JSInt16Array> { };
+template<> struct Converter<IDLInt32Array> : Detail::TypedArrayConverter<IDLInt32Array, JSC::JSInt32Array> { };
+template<> struct Converter<IDLUint8Array> : Detail::TypedArrayConverter<IDLUint8Array, JSC::JSUint8Array> { };
+template<> struct Converter<IDLUint16Array> : Detail::TypedArrayConverter<IDLUint16Array, JSC::JSUint16Array> { };
+template<> struct Converter<IDLUint32Array> : Detail::TypedArrayConverter<IDLUint32Array, JSC::JSUint32Array> { };
+template<> struct Converter<IDLUint8ClampedArray> : Detail::TypedArrayConverter<IDLUint8ClampedArray, JSC::JSUint8ClampedArray> { };
+template<> struct Converter<IDLFloat32Array> : Detail::TypedArrayConverter<IDLFloat32Array, JSC::JSFloat32Array> { };
+template<> struct Converter<IDLFloat64Array> : Detail::TypedArrayConverter<IDLFloat64Array, JSC::JSFloat64Array> { };
+template<> struct Converter<IDLBigInt64Array> : Detail::TypedArrayConverter<IDLBigInt64Array, JSC::JSBigInt64Array> { };
+template<> struct Converter<IDLBigUint64Array> : Detail::TypedArrayConverter<IDLBigUint64Array, JSC::JSBigUint64Array> { };
+template<> struct Converter<IDLArrayBufferView> : Detail::TypedArrayConverter<IDLArrayBufferView, JSC::JSArrayBufferView> { };
 
-template<> struct JSConverter<IDLUint16Array> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
+template<> struct JSConverter<IDLArrayBuffer> : Detail::JSTypedArrayConverter<IDLArrayBuffer> { };
+template<> struct JSConverter<IDLDataView> : Detail::JSTypedArrayConverter<IDLDataView> { };
+template<> struct JSConverter<IDLInt8Array> : Detail::JSTypedArrayConverter<IDLInt8Array> { };
+template<> struct JSConverter<IDLInt16Array> : Detail::JSTypedArrayConverter<IDLInt16Array> { };
+template<> struct JSConverter<IDLInt32Array> : Detail::JSTypedArrayConverter<IDLInt32Array> { };
+template<> struct JSConverter<IDLUint8Array> : Detail::JSTypedArrayConverter<IDLInt8Array> { };
+template<> struct JSConverter<IDLUint16Array> : Detail::JSTypedArrayConverter<IDLUint16Array> { };
+template<> struct JSConverter<IDLUint32Array> : Detail::JSTypedArrayConverter<IDLUint32Array> { };
+template<> struct JSConverter<IDLUint8ClampedArray> : Detail::JSTypedArrayConverter<IDLUint8ClampedArray> { };
+template<> struct JSConverter<IDLFloat32Array> : Detail::JSTypedArrayConverter<IDLFloat32Array> { };
+template<> struct JSConverter<IDLFloat64Array> : Detail::JSTypedArrayConverter<IDLFloat64Array> { };
+template<> struct JSConverter<IDLBigInt64Array> : Detail::JSTypedArrayConverter<IDLBigInt64Array> { };
+template<> struct JSConverter<IDLBigUint64Array> : Detail::JSTypedArrayConverter<IDLBigUint64Array> { };
+template<> struct JSConverter<IDLArrayBufferView> : Detail::JSTypedArrayConverter<IDLArrayBufferView> { };
 
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLUint32Array> : DefaultConverter<IDLUint32Array> {
-    using WrapperType = JSC::JSUint32Array;
-    using ReturnType = RefPtr<JSC::Uint32Array>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLUint32Array, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLUint32Array> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLUint8ClampedArray> : DefaultConverter<IDLUint8ClampedArray> {
-    using WrapperType = JSC::JSUint8ClampedArray;
-    using ReturnType = RefPtr<JSC::Uint8ClampedArray>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLUint8ClampedArray, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLUint8ClampedArray> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLFloat32Array> : DefaultConverter<IDLFloat32Array> {
-    using WrapperType = JSC::JSFloat32Array;
-    using ReturnType = RefPtr<JSC::Float32Array>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLFloat32Array, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLFloat32Array> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLFloat64Array> : DefaultConverter<IDLFloat64Array> {
-    using WrapperType = JSC::JSFloat64Array;
-    using ReturnType = RefPtr<JSC::Float64Array>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLFloat64Array, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLFloat64Array> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLBigInt64Array> : DefaultConverter<IDLBigInt64Array> {
-    using WrapperType = JSC::JSBigInt64Array;
-    using ReturnType = RefPtr<JSC::BigInt64Array>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLBigInt64Array, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLBigInt64Array> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLBigUint64Array> : DefaultConverter<IDLBigUint64Array> {
-    using WrapperType = JSC::JSBigUint64Array;
-    using ReturnType = RefPtr<JSC::BigUint64Array>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLBigUint64Array, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLBigUint64Array> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<> struct Converter<IDLArrayBufferView> : DefaultConverter<IDLArrayBufferView> {
-    using WrapperType = JSC::JSArrayBufferView;
-    using ReturnType = RefPtr<JSC::ArrayBufferView>;
-
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDLArrayBufferView, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
-
-template<> struct JSConverter<IDLArrayBufferView> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
-
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-};
-
-template<typename T>
-struct Converter<IDLAllowSharedAdaptor<T>> : DefaultConverter<T> {
-    using ConverterType = Converter<T>;
+template<typename IDL>
+struct Converter<IDLAllowSharedAdaptor<IDL>> : DefaultConverter<IDL> {
+    using ConverterType = Converter<IDL>;
     using WrapperType = typename ConverterType::WrapperType;
     using ReturnType = typename ConverterType::ReturnType;
 
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static ConversionResult<IDL> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        return Detail::BufferSourceConverter<T, Detail::BufferSourceConverterAllowSharedMode::Allow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
+        return Detail::BufferSourceConverter<IDL, Detail::BufferSourceConverterAllowSharedMode::Allow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
     }
 };
 

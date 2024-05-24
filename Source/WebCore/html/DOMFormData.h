@@ -44,7 +44,7 @@ class HTMLFormElement;
 
 class DOMFormData : public RefCounted<DOMFormData>, public ContextDestructionObserver {
 public:
-    using FormDataEntryValue = std::variant<RefPtr<File>, String>;
+    using FormDataEntryValue = std::variant<Ref<File>, String>;
 
     struct Item {
         String name;

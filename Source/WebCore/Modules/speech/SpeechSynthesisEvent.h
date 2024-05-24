@@ -37,19 +37,19 @@ class SpeechSynthesisEvent : public Event {
     WTF_MAKE_ISO_ALLOCATED(SpeechSynthesisEvent);
 public:
     
-    static Ref<SpeechSynthesisEvent> create(const AtomString& type, const SpeechSynthesisEventInit&);
+    static Ref<SpeechSynthesisEvent> create(const AtomString& type, SpeechSynthesisEventInit&&);
 
-    const SpeechSynthesisUtterance* utterance() const { return m_utterance.get(); }
+    const SpeechSynthesisUtterance& utterance() const { return m_utterance.get(); }
     unsigned long charIndex() const { return m_charIndex; }
     unsigned long charLength() const { return m_charLength; }
     float elapsedTime() const { return m_elapsedTime; }
     const String& name() const { return m_name; }
 
 protected:
-    SpeechSynthesisEvent(enum EventInterfaceType, const AtomString& type, const SpeechSynthesisEventInit&);
+    SpeechSynthesisEvent(enum EventInterfaceType, const AtomString& type, SpeechSynthesisEventInit&&);
 
 private:
-    RefPtr<SpeechSynthesisUtterance> m_utterance;
+    Ref<SpeechSynthesisUtterance> m_utterance;
     unsigned long m_charIndex;
     unsigned long m_charLength;
     float m_elapsedTime;

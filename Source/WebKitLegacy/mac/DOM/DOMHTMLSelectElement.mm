@@ -185,14 +185,20 @@
         raiseTypeErrorException();
 
     auto& coreElement = *core(element);
-    std::variant<RefPtr<WebCore::HTMLOptionElement>, RefPtr<WebCore::HTMLOptGroupElement>> variantElement;
-    if (is<WebCore::HTMLOptionElement>(coreElement))
-        variantElement = &downcast<WebCore::HTMLOptionElement>(coreElement);
-    else if (is<WebCore::HTMLOptGroupElement>(coreElement))
-        variantElement = &downcast<WebCore::HTMLOptGroupElement>(coreElement);
-    else
+    if (!is<WebCore::HTMLOptionElement>(coreElement) && !is<WebCore::HTMLOptGroupElement>(coreElement))
         raiseTypeErrorException();
-    raiseOnDOMError(IMPL->add(WTFMove(variantElement), WebCore::HTMLSelectElement::HTMLElementOrInt(core(before))));
+
+    auto variantElement = [&]() -> std::variant<Ref<WebCore::HTMLOptionElement>, Ref<WebCore::HTMLOptGroupElement>> {
+        if (is<WebCore::HTMLOptionElement>(coreElement))
+            return downcast<WebCore::HTMLOptionElement>(coreElement);
+        return downcast<WebCore::HTMLOptGroupElement>(coreElement);
+    }();
+
+    std::optional<WebCore::HTMLSelectElement::HTMLElementOrInt> optionalVariantBefore;
+    if (before)
+        optionalVariantBefore = *core(before);
+
+    raiseOnDOMError(IMPL->add(WTFMove(variantElement), WTFMove(optionalVariantBefore)));
 }
 
 - (void)remove:(int)index

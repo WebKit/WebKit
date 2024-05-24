@@ -100,17 +100,19 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
 
             auto& globalObject = *context.globalObject();
 
-            auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
-            auto frame = convert<IDLUnion<IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
-
-            if (scope.exception())
+            auto frameConversionResult = convert<IDLUnion<IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
+            if (frameConversionResult.hasException())
                 return Exception { ExceptionCode::ExistingExceptionError };
+            auto frame = frameConversionResult.releaseReturnValue();
 
-            auto rtcFrame = WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
-                return value->rtcFrame();
-            }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
-                return value->rtcFrame();
-            });
+            auto rtcFrame = WTF::switchOn(frame,
+                [&](const Ref<RTCEncodedAudioFrame>& value) {
+                    return value->rtcFrame();
+                },
+                [&](const Ref<RTCEncodedVideoFrame>& value) {
+                    return value->rtcFrame();
+                }
+            );
 
             // If no data, skip the frame since there is nothing to packetize or decode.
             if (rtcFrame->data().data()) {

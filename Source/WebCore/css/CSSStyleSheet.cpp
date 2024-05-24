@@ -154,12 +154,15 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Document& docum
     m_contents->registerClient(this);
     m_contents->checkLoaded();
 
-    WTF::switchOn(WTFMove(options.media), [this](RefPtr<MediaList>&& mediaList) {
-        if (auto queries = mediaList->mediaQueries(); !queries.isEmpty())
-            setMediaQueries(WTFMove(queries));
-    }, [this](String&& mediaString) {
-        setMediaQueries(MQ::MediaQueryParser::parse(mediaString, { }));
-    });
+    WTF::switchOn(WTFMove(options.media),
+        [this](Ref<MediaList>&& mediaList) {
+            if (auto queries = mediaList->mediaQueries(); !queries.isEmpty())
+                setMediaQueries(WTFMove(queries));
+        },
+        [this](String&& mediaString) {
+            setMediaQueries(MQ::MediaQueryParser::parse(WTFMove(mediaString), { }));
+        }
+    );
 }
 
 CSSStyleSheet::~CSSStyleSheet()

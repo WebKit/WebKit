@@ -331,49 +331,59 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
 
 RefPtr<CSSStyleValue> CSSStyleValueFactory::constructStyleValueForCustomPropertySyntaxValue(const CSSCustomPropertyValue::SyntaxValue& syntaxValue)
 {
-    return WTF::switchOn(syntaxValue, [&](const Length& length) -> RefPtr<CSSStyleValue> {
-        if (length.isFixed())
-            return CSSUnitValue::create(length.value(), CSSUnitType::CSS_PX);
-        if (length.isPercent())
-            return CSSUnitValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
-        // FIXME: Calc.
-        return nullptr;
-    }, [&](const CSSCustomPropertyValue::NumericSyntaxValue& numericValue) -> RefPtr<CSSStyleValue>  {
-        return CSSUnitValue::create(numericValue.value, numericValue.unitType);
-    }, [&](const StyleColor& colorValue) -> RefPtr<CSSStyleValue> {
-        if (colorValue.isCurrentColor())
-            return CSSKeywordValue::rectifyKeywordish(nameLiteral(CSSValueCurrentcolor));
-        return CSSStyleValue::create(CSSValuePool::singleton().createColorValue(colorValue.absoluteColor()));
-    }, [&](const URL& urlValue) -> RefPtr<CSSStyleValue> {
-        return CSSStyleValue::create(CSSPrimitiveValue::createURI(urlValue.string()));
-    }, [&](const String& identValue) -> RefPtr<CSSStyleValue> {
-        return CSSKeywordValue::rectifyKeywordish(identValue);
-    }, [&](const RefPtr<StyleImage>&) -> RefPtr<CSSStyleValue>  {
-        // FIXME: <image>.
-        return nullptr;
-    }, [&](const CSSCustomPropertyValue::TransformSyntaxValue&) -> RefPtr<CSSStyleValue>  {
-        // FIXME: <transform>, <transform-list>.
-        return nullptr;
-    });
+    return WTF::switchOn(syntaxValue,
+        [&](const Length& length) -> RefPtr<CSSStyleValue> {
+            if (length.isFixed())
+                return CSSUnitValue::create(length.value(), CSSUnitType::CSS_PX);
+            if (length.isPercent())
+                return CSSUnitValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
+            // FIXME: Calc.
+            return nullptr;
+        },
+        [&](const CSSCustomPropertyValue::NumericSyntaxValue& numericValue) -> RefPtr<CSSStyleValue>  {
+            return CSSUnitValue::create(numericValue.value, numericValue.unitType);
+        },
+        [&](const StyleColor& colorValue) -> RefPtr<CSSStyleValue> {
+            if (colorValue.isCurrentColor())
+                return CSSKeywordValue::rectifyKeywordish(nameLiteral(CSSValueCurrentcolor));
+            return CSSStyleValue::create(CSSValuePool::singleton().createColorValue(colorValue.absoluteColor()));
+        },
+        [&](const URL& urlValue) -> RefPtr<CSSStyleValue> {
+            return CSSStyleValue::create(CSSPrimitiveValue::createURI(urlValue.string()));
+        },
+        [&](const String& identValue) -> RefPtr<CSSStyleValue> {
+            return CSSKeywordValue::rectifyKeywordish(identValue);
+        },
+        [&](const RefPtr<StyleImage>&) -> RefPtr<CSSStyleValue>  {
+            // FIXME: <image>.
+            return nullptr;
+        },
+        [&](const CSSCustomPropertyValue::TransformSyntaxValue&) -> RefPtr<CSSStyleValue>  {
+            // FIXME: <transform>, <transform-list>.
+            return nullptr;
+        }
+    );
 }
 
-ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::vectorFromStyleValuesOrStrings(const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values, const CSSParserContext& parserContext)
+ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::vectorFromStyleValuesOrStrings(const AtomString& property, FixedVector<std::variant<Ref<CSSStyleValue>, String>>&& values, const CSSParserContext& parserContext)
 {
     Vector<Ref<CSSStyleValue>> styleValues;
     for (auto&& value : WTFMove(values)) {
         std::optional<Exception> exception;
-        switchOn(WTFMove(value), [&](RefPtr<CSSStyleValue>&& styleValue) {
-            ASSERT(styleValue);
-            styleValues.append(styleValue.releaseNonNull());
-        }, [&](String&& string) {
-            constexpr bool parseMultiple = true;
-            auto result = CSSStyleValueFactory::parseStyleValue(property, string, parseMultiple, parserContext);
-            if (result.hasException()) {
-                exception = result.releaseException();
-                return;
+        switchOn(WTFMove(value),
+            [&](Ref<CSSStyleValue>&& styleValue) {
+                styleValues.append(WTFMove(styleValue));
+            },
+            [&](String&& string) {
+                constexpr bool parseMultiple = true;
+                auto result = CSSStyleValueFactory::parseStyleValue(property, WTFMove(string), parseMultiple, parserContext);
+                if (result.hasException()) {
+                    exception = result.releaseException();
+                    return;
+                }
+                styleValues.appendVector(result.releaseReturnValue());
             }
-            styleValues.appendVector(result.releaseReturnValue());
-        });
+        );
         if (exception)
             return { WTFMove(*exception) };
     }

@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: The spec IDL exposes this on Worker in addition to Window.
-// We don't currently support nested workers.
-
+// https://w3c.github.io/ServiceWorker/#serviceworkerregistration
 [
     ActiveDOMObject,
     SecureContext,

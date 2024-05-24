@@ -658,7 +658,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         }
     }
 
-    element->focus({ SelectionRestorationMode::SelectAll, direction, { }, { }, FocusVisibility::Visible });
+    element->focus({ .selectionRestorationMode = SelectionRestorationMode::SelectAll, .direction = direction, .visibility = FocusVisibility::Visible });
     return true;
 }
 
@@ -1224,7 +1224,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
     RefPtr element = downcast<Element>(focusCandidate.focusableNode.get());
     ASSERT(element);
 
-    element->focus({ SelectionRestorationMode::SelectAll, direction });
+    element->focus({ .selectionRestorationMode = SelectionRestorationMode::SelectAll, .direction = direction });
     return true;
 }
 

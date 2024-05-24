@@ -2580,7 +2580,7 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
     auto callback = EventFiredCallback::create(*this);
 
     auto createEventListener = [&] (const AtomString& eventName) {
-        node.addEventListener(eventName, callback.copyRef(), false);
+        node.addEventListener(eventName, callback.copyRef(), { { .capture = false } });
     };
 
 #if ENABLE(FULLSCREEN_API)

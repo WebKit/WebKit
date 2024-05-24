@@ -149,7 +149,7 @@ bool Navigator::canShare(Document& document, const ShareData& data)
     if (!document.isFullyActive() || !validateWebSharePolicy(document))
         return false;
 
-    bool hasShareableFiles = document.settings().webShareFileAPIEnabled() && !data.files.isEmpty();
+    bool hasShareableFiles = document.settings().webShareFileAPIEnabled() && data.files && !data.files->isEmpty();
 
     if (data.title.isNull() && data.text.isNull() && data.url.isNull() && !hasShareableFiles)
         return false;
@@ -192,7 +192,7 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
         { },
         ShareDataOriginator::Web,
     };
-    if (document.settings().webShareFileAPIEnabled() && !data.files.isEmpty()) {
+    if (document.settings().webShareFileAPIEnabled() && data.files && !data.files->isEmpty()) {
         if (m_loader)
             m_loader->cancel();
 

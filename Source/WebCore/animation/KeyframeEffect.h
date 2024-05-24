@@ -90,8 +90,11 @@ public:
         Vector<PropertyAndValues> propertiesAndValues;
     };
 
-    struct BaseComputedKeyframe : BaseKeyframe {
+    struct BaseComputedKeyframe {
+        MarkableDouble offset;
         double computedOffset;
+        String easing { "linear"_s };
+        CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
     };
 
     struct ComputedKeyframe : BaseComputedKeyframe {

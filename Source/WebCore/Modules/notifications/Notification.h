@@ -37,15 +37,16 @@
 #include "ContextDestructionObserverInlines.h"
 #include "EventTarget.h"
 #include "NotificationDirection.h"
+#include "NotificationOptions.h"
 #include "NotificationPayload.h"
 #include "NotificationPermission.h"
 #include "NotificationResources.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "SerializedScriptValue.h"
+#include "WritingMode.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
-#include "WritingMode.h"
 
 namespace WebCore {
 
@@ -62,22 +63,8 @@ class Notification final : public RefCounted<Notification>, public ActiveDOMObje
 public:
     using Permission = NotificationPermission;
     using Direction = NotificationDirection;
+    using Options = NotificationOptions;
 
-    struct Options {
-        Direction dir;
-        String lang;
-        String body;
-        String tag;
-        String icon;
-        JSC::JSValue data;
-        RefPtr<SerializedScriptValue> serializedData;
-        RefPtr<JSON::Value> jsonData;
-        std::optional<bool> silent;
-#if ENABLE(DECLARATIVE_WEB_PUSH)
-        String defaultAction;
-        URL defaultActionURL;
-#endif
-    };
     // For JS constructor only.
     static ExceptionOr<Ref<Notification>> create(ScriptExecutionContext&, String&& title, Options&&);
 

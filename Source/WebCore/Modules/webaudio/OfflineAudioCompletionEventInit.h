@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct OfflineAudioCompletionEventInit : EventInit {
-    RefPtr<AudioBuffer> renderedBuffer;
+    Ref<AudioBuffer> renderedBuffer;
 };
 
 }

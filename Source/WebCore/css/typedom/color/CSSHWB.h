@@ -34,13 +34,13 @@ class CSSHWB final : public CSSColorValue {
 public:
     static ExceptionOr<Ref<CSSHWB>> create(Ref<CSSNumericValue>&& hue, CSSNumberish&& whiteness, CSSNumberish&& blackness, CSSNumberish&& alpha);
 
-    CSSNumericValue& h() const;
+    CSSNumericValue& h() const { return m_hue; }
     ExceptionOr<void> setH(Ref<CSSNumericValue>&&);
-    CSSNumberish w() const;
+    CSSNumberish w() const { return m_whiteness; }
     ExceptionOr<void> setW(CSSNumberish&&);
-    CSSNumberish b() const;
+    CSSNumberish b() const { return m_blackness; }
     ExceptionOr<void> setB(CSSNumberish&&);
-    CSSNumberish alpha() const;
+    CSSNumberish alpha() const { return m_alpha; }
     ExceptionOr<void> setAlpha(CSSNumberish&&);
 
 private:

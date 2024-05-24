@@ -80,7 +80,8 @@ static GPUSize64 computeElementSize(const BufferSource& data)
     return WTF::switchOn(data.variant(),
         [&](const RefPtr<JSC::ArrayBufferView>& bufferView) {
             return static_cast<GPUSize64>(JSC::elementSize(bufferView->getType()));
-        }, [&](const RefPtr<JSC::ArrayBuffer>&) {
+        },
+        [&](const RefPtr<JSC::ArrayBuffer>&) {
             return static_cast<GPUSize64>(1);
         }
     );
@@ -258,85 +259,90 @@ static void getImageBytesFromVideoFrame(const RefPtr<VideoFrame>& videoFrame, Im
 }
 #endif
 
-static void imageBytesForSource(const auto& source, const auto& destination, ImageDataCallback&& callback)
+void imageBytesForSource(const auto& source, const auto& destination, ImageDataCallback&& callback)
 {
     using ResultType = void;
-    return WTF::switchOn(source, [&](const RefPtr<ImageBitmap>& imageBitmap) -> ResultType {
-        return getImageBytesFromImageBuffer(imageBitmap->buffer(), destination, WTFMove(callback));
+    return WTF::switchOn(source,
+        [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
+            return getImageBytesFromImageBuffer(imageBitmap->buffer(), destination, WTFMove(callback));
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-    }, [&](const RefPtr<ImageData> imageData) -> ResultType {
-        callback(imageData->pixelBuffer()->bytes(), imageData->height());
-    }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
+        },
+        [&](const Ref<ImageData> imageData) -> ResultType {
+            callback(imageData->pixelBuffer()->bytes(), imageData->height());
+        },
+        [&](const Ref<HTMLImageElement>& imageElement) -> ResultType {
 #if PLATFORM(COCOA)
-        if (!imageElement)
-            return callback({ }, 0);
-        auto* cachedImage = imageElement->cachedImage();
-        if (!cachedImage)
-            return callback({ }, 0);
-        RefPtr image = cachedImage->image();
-        if (!image || !image->isBitmapImage())
-            return callback({ }, 0);
-        RefPtr nativeImage = static_cast<BitmapImage*>(image.get())->nativeImage();
-        if (!nativeImage)
-            return callback({ }, 0);
-        RetainPtr platformImage = nativeImage->platformImage();
-        if (!platformImage)
-            return callback({ }, 0);
-        RetainPtr pixelDataCfData = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(platformImage.get())));
-        if (!pixelDataCfData)
-            return callback({ }, 0);
+            auto* cachedImage = imageElement->cachedImage();
+            if (!cachedImage)
+                return callback({ }, 0);
+            RefPtr image = cachedImage->image();
+            if (!image || !image->isBitmapImage())
+                return callback({ }, 0);
+            RefPtr nativeImage = static_cast<BitmapImage*>(image.get())->nativeImage();
+            if (!nativeImage)
+                return callback({ }, 0);
+            RetainPtr platformImage = nativeImage->platformImage();
+            if (!platformImage)
+                return callback({ }, 0);
+            RetainPtr pixelDataCfData = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(platformImage.get())));
+            if (!pixelDataCfData)
+                return callback({ }, 0);
 
-        auto width = CGImageGetWidth(platformImage.get());
-        auto height = CGImageGetHeight(platformImage.get());
-        if (!width || !height)
-            return callback({ }, 0);
+            auto width = CGImageGetWidth(platformImage.get());
+            auto height = CGImageGetHeight(platformImage.get());
+            if (!width || !height)
+                return callback({ }, 0);
 
-        auto sizeInBytes = height * CGImageGetBytesPerRow(platformImage.get());
-        auto bytePointer = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(pixelDataCfData.get()));
-        auto requiredSize = width * height * 4;
-        if (sizeInBytes == requiredSize)
-            return callback({ bytePointer, sizeInBytes }, height);
+            auto sizeInBytes = height * CGImageGetBytesPerRow(platformImage.get());
+            auto bytePointer = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(pixelDataCfData.get()));
+            auto requiredSize = width * height * 4;
+            if (sizeInBytes == requiredSize)
+                return callback({ bytePointer, sizeInBytes }, height);
 
-        auto bytesPerRow = CGImageGetBytesPerRow(platformImage.get());
-        Vector<uint8_t> tempBuffer(requiredSize, 255);
-        auto bytesPerPixel = sizeInBytes / (width * height);
-        auto bytesToCopy = std::min<size_t>(4, bytesPerPixel);
-        for (size_t y = 0; y < height; ++y) {
-            for (size_t x = 0; x < width; ++x) {
-                for (size_t c = 0; c < bytesToCopy; ++c) {
-                    // FIXME: These pixel values are probably incorrect after only copying 4 if bytesPerPixel is not 4.
-                    tempBuffer[y * (width * 4) + x * 4 + c] = bytePointer[y * bytesPerRow + x * bytesPerPixel + c];
+            auto bytesPerRow = CGImageGetBytesPerRow(platformImage.get());
+            Vector<uint8_t> tempBuffer(requiredSize, 255);
+            auto bytesPerPixel = sizeInBytes / (width * height);
+            auto bytesToCopy = std::min<size_t>(4, bytesPerPixel);
+            for (size_t y = 0; y < height; ++y) {
+                for (size_t x = 0; x < width; ++x) {
+                    for (size_t c = 0; c < bytesToCopy; ++c) {
+                        // FIXME: These pixel values are probably incorrect after only copying 4 if bytesPerPixel is not 4.
+                        tempBuffer[y * (width * 4) + x * 4 + c] = bytePointer[y * bytesPerRow + x * bytesPerPixel + c];
+                    }
                 }
             }
+            callback(tempBuffer.span(), height);
+#else
+            UNUSED_PARAM(imageElement);
+            return callback({ }, 0);
+#endif
+        },
+        [&](const Ref<HTMLVideoElement>& videoElement) -> ResultType {
+#if PLATFORM(COCOA)
+            if (RefPtr player = videoElement->player(); player && player->isVideoPlayer())
+                return getImageBytesFromVideoFrame(player->videoFrameForCurrentTime(), WTFMove(callback));
+#else
+            UNUSED_PARAM(videoElement);
+#endif
+            return callback({ }, 0);
+        },
+        [&](const Ref<WebCodecsVideoFrame>& webCodecsFrame) -> ResultType {
+#if PLATFORM(COCOA)
+            return getImageBytesFromVideoFrame(webCodecsFrame->internalFrame(), WTFMove(callback));
+#else
+            UNUSED_PARAM(webCodecsFrame);
+            return callback({ }, 0);
+#endif
+#endif
+        },
+        [&](const Ref<HTMLCanvasElement>& canvasElement) -> ResultType {
+            return getImageBytesFromImageBuffer(canvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No), destination, WTFMove(callback));
         }
-        callback(tempBuffer.span(), height);
-#else
-        UNUSED_PARAM(imageElement);
-        return callback({ }, 0);
-#endif
-    }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
-#if PLATFORM(COCOA)
-        if (RefPtr player = videoElement ? videoElement->player() : nullptr; player && player->isVideoPlayer())
-            return getImageBytesFromVideoFrame(player->videoFrameForCurrentTime(), WTFMove(callback));
-#else
-        UNUSED_PARAM(videoElement);
-#endif
-        return callback({ }, 0);
-    }, [&](const RefPtr<WebCodecsVideoFrame> webCodecsFrame) -> ResultType {
-#if PLATFORM(COCOA)
-        return getImageBytesFromVideoFrame(webCodecsFrame->internalFrame(), WTFMove(callback));
-#else
-        UNUSED_PARAM(webCodecsFrame);
-        return callback({ }, 0);
-#endif
-#endif
-    }, [&](const RefPtr<HTMLCanvasElement>& canvasElement) -> ResultType {
-        return getImageBytesFromImageBuffer(canvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No), destination, WTFMove(callback));
-    }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [&](const RefPtr<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
-        return getImageBytesFromImageBuffer(offscreenCanvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No), destination, WTFMove(callback));
-    }
+        ,
+        [&](const Ref<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
+            return getImageBytesFromImageBuffer(offscreenCanvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No), destination, WTFMove(callback));
+        }
 #endif
     );
 }
@@ -345,68 +351,81 @@ static bool isOriginClean(const auto& source, ScriptExecutionContext& context)
 {
     UNUSED_PARAM(context);
     using ResultType = bool;
-    return WTF::switchOn(source, [&](const RefPtr<ImageBitmap>& imageBitmap) -> ResultType {
-        return imageBitmap->originClean();
+    return WTF::switchOn(source,
+        [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
+            return imageBitmap->originClean();
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-    }, [&](const RefPtr<ImageData>) -> ResultType {
-        return true;
-    }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
-        return imageElement->originClean(*context.securityOrigin());
-    }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
+        },
+        [&](const Ref<ImageData>&) -> ResultType {
+            return true;
+        },
+        [&](const Ref<HTMLImageElement>& imageElement) -> ResultType {
+            return imageElement->originClean(*context.securityOrigin());
+        },
+        [&](const Ref<HTMLVideoElement>& videoElement) -> ResultType {
 #if PLATFORM(COCOA)
-        return !videoElement->taintsOrigin(*context.securityOrigin());
+            return !videoElement->taintsOrigin(*context.securityOrigin());
 #else
-        UNUSED_PARAM(videoElement);
+            UNUSED_PARAM(videoElement);
 #endif
-        return true;
-    }, [&](const RefPtr<WebCodecsVideoFrame>) -> ResultType {
-        return true;
+            return true;
+        },
+        [&](const Ref<WebCodecsVideoFrame>&) -> ResultType {
+            return true;
 #endif
-    }, [&](const RefPtr<HTMLCanvasElement>& canvasElement) -> ResultType {
-        return canvasElement->originClean();
-    }
+        },
+        [&](const Ref<HTMLCanvasElement>& canvasElement) -> ResultType {
+            return canvasElement->originClean();
+        }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [&](const RefPtr<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
-        return offscreenCanvasElement->originClean();
-    }
+        ,
+        [&](const Ref<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
+            return offscreenCanvasElement->originClean();
+        }
 #endif
     );
 }
 
 static GPUIntegerCoordinate dimension(const GPUExtent3D& extent3D, size_t dimension)
 {
-    return WTF::switchOn(extent3D, [&](const Vector<GPUIntegerCoordinate>& vector) -> GPUIntegerCoordinate {
-        return dimension < vector.size() ? vector[dimension] : 0;
-    }, [&](const GPUExtent3DDict& extent3D) -> GPUIntegerCoordinate {
-        switch (dimension) {
-        case 0:
-            return extent3D.width;
-        case 1:
-            return extent3D.height;
-        case 2:
-            return extent3D.depthOrArrayLayers;
-        default:
-            ASSERT_NOT_REACHED();
-            return 0;
+    return WTF::switchOn(extent3D,
+        [&](const Vector<GPUIntegerCoordinate>& vector) -> GPUIntegerCoordinate {
+            return dimension < vector.size() ? vector[dimension] : 0;
+        },
+        [&](const GPUExtent3DDict& extent3D) -> GPUIntegerCoordinate {
+            switch (dimension) {
+            case 0:
+                return extent3D.width;
+            case 1:
+                return extent3D.height;
+            case 2:
+                return extent3D.depthOrArrayLayers;
+            default:
+                ASSERT_NOT_REACHED();
+                return 0;
+            }
         }
-    });
+    );
 }
 
 static GPUIntegerCoordinate dimension(const GPUOrigin2D& origin, size_t dimension)
 {
-    return WTF::switchOn(origin, [&](const Vector<GPUIntegerCoordinate>& vector) -> GPUIntegerCoordinate {
-        return dimension < vector.size() ? vector[dimension] : 0;
-    }, [&](const GPUOrigin2DDict& origin2D) -> GPUIntegerCoordinate {
-        switch (dimension) {
-        case 0:
-            return origin2D.x;
-        case 1:
-            return origin2D.y;
-        default:
-            ASSERT_NOT_REACHED();
-            return 0;
+    return WTF::switchOn(origin,
+        [&](const Vector<GPUIntegerCoordinate>& vector) -> GPUIntegerCoordinate {
+            return dimension < vector.size() ? vector[dimension] : 0;
+        },
+        [&](const GPUOrigin2DDict& origin2D) -> GPUIntegerCoordinate {
+            switch (dimension) {
+            case 0:
+                return origin2D.x;
+            case 1:
+                return origin2D.y;
+            default:
+                ASSERT_NOT_REACHED();
+                return 0;
+            }
         }
-    });
+    );
 }
 
 static bool isStateValid(const auto& source, const std::optional<GPUOrigin2D>& origin, const GPUExtent3D& copySize, ExceptionCode& errorCode)
@@ -420,80 +439,87 @@ static bool isStateValid(const auto& source, const std::optional<GPUOrigin2D>& o
         return false;
     }
 
-    return WTF::switchOn(source, [&](const RefPtr<ImageBitmap>& imageBitmap) -> ResultType {
-        if (!imageBitmap->buffer()) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
-        }
-        if (horizontalDimension > imageBitmap->width() || verticalDimension > imageBitmap->height()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        return true;
+    return WTF::switchOn(source,
+        [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
+            if (!imageBitmap->buffer()) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            if (horizontalDimension > imageBitmap->width() || verticalDimension > imageBitmap->height()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            return true;
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-    }, [&](const RefPtr<ImageData> imageData) -> ResultType {
-        auto width = imageData->width();
-        auto height = imageData->height();
-        if (width < 0 || height < 0 || horizontalDimension > static_cast<uint32_t>(width) || verticalDimension > static_cast<uint32_t>(height)) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        auto size = width * height;
-        if (!size) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
-        }
-        return true;
-    }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
-        if (!imageElement->cachedImage()) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
-        }
-        if (horizontalDimension > imageElement->width() || verticalDimension > imageElement->height()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        return true;
-    }, [&](const RefPtr<HTMLVideoElement>) -> ResultType {
-        return true;
-    }, [&](const RefPtr<WebCodecsVideoFrame>) -> ResultType {
-        return true;
+        },
+        [&](const Ref<ImageData>& imageData) -> ResultType {
+            auto width = imageData->width();
+            auto height = imageData->height();
+            if (width < 0 || height < 0 || horizontalDimension > static_cast<uint32_t>(width) || verticalDimension > static_cast<uint32_t>(height)) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            auto size = width * height;
+            if (!size) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            return true;
+        },
+        [&](const Ref<HTMLImageElement>& imageElement) -> ResultType {
+            if (!imageElement->cachedImage()) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            if (horizontalDimension > imageElement->width() || verticalDimension > imageElement->height()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            return true;
+        },
+        [&](const Ref<HTMLVideoElement>&) -> ResultType {
+            return true;
+        },
+        [&](const Ref<WebCodecsVideoFrame>&) -> ResultType {
+            return true;
 #endif
-    }, [&](const RefPtr<HTMLCanvasElement>& canvas) -> ResultType {
-        if (!canvas->renderingContext()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
+        },
+        [&](const Ref<HTMLCanvasElement>& canvas) -> ResultType {
+            if (!canvas->renderingContext()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            if (canvas->renderingContext()->isPlaceholder()) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            if (horizontalDimension > canvas->width() || verticalDimension > canvas->height()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            return true;
         }
-        if (canvas->renderingContext()->isPlaceholder()) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
-        }
-        if (horizontalDimension > canvas->width() || verticalDimension > canvas->height()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        return true;
-    }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [&](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> ResultType {
-        if (offscreenCanvas->isDetached()) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
+        ,
+        [&](const Ref<OffscreenCanvas>& offscreenCanvas) -> ResultType {
+            if (offscreenCanvas->isDetached()) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            if (!offscreenCanvas->renderingContext()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            if (offscreenCanvas->renderingContext()->isPlaceholder()) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            if (horizontalDimension > offscreenCanvas->width() || verticalDimension > offscreenCanvas->height()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            return true;
         }
-        if (!offscreenCanvas->renderingContext()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        if (offscreenCanvas->renderingContext()->isPlaceholder()) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
-        }
-        if (horizontalDimension > offscreenCanvas->width() || verticalDimension > offscreenCanvas->height()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        return true;
-    }
 #endif
     );
 }

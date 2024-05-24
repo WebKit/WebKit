@@ -37,7 +37,7 @@ struct ShareData {
     String title;
     String text;
     String url;
-    Vector<Ref<File>> files { };
+    std::optional<Vector<Ref<File>>> files;
 };
 
 struct RawFile {
@@ -51,5 +51,5 @@ struct ShareDataWithParsedURL {
     Vector<RawFile> files;
     ShareDataOriginator originator;
 };
-    
+
 }

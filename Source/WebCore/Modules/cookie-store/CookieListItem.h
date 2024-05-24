@@ -34,27 +34,32 @@
 namespace WebCore {
 
 struct CookieListItem {
-    CookieListItem() = default;
-
-    CookieListItem(Cookie&& cookie)
-        : name(WTFMove(cookie.name))
-        , value(WTFMove(cookie.value))
-        , domain(WTFMove(cookie.domain))
-        , path(WTFMove(cookie.path))
-        , expires(cookie.expires)
-        , secure(cookie.secure)
+    static CookieSameSite from(Cookie::SameSitePolicy policy)
     {
-        switch (cookie.sameSite) {
+        switch (policy) {
         case Cookie::SameSitePolicy::Strict:
-            sameSite = CookieSameSite::Strict;
-            break;
+            return CookieSameSite::Strict;
         case Cookie::SameSitePolicy::Lax:
-            sameSite = CookieSameSite::Lax;
-            break;
+            return CookieSameSite::Lax;
         case Cookie::SameSitePolicy::None:
-            sameSite = CookieSameSite::None;
-            break;
+            return CookieSameSite::None;
         }
+
+        ASSERT_NOT_REACHED();
+        return CookieSameSite::Strict;
+    }
+
+    static CookieListItem from(Cookie&& cookie)
+    {
+        return CookieListItem {
+            WTFMove(cookie.name),
+            WTFMove(cookie.value),
+            WTFMove(cookie.domain),
+            WTFMove(cookie.path),
+            cookie.expires,
+            cookie.secure,
+            from(cookie.sameSite)
+        };
     }
 
     String name;

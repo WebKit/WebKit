@@ -136,13 +136,13 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
         return; 
     }
 
-    JSC::VM& vm = context->globalObject()->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto permissionDescriptor = convert<IDLDictionary<PermissionDescriptor>>(*context->globalObject(), permissionDescriptorValue.get());
-    if (UNLIKELY(scope.exception())) {
+    auto permissionDescriptorResult = convert<IDLDictionary<PermissionDescriptor>>(*context->globalObject(), permissionDescriptorValue.get());
+    if (UNLIKELY(permissionDescriptorResult.hasException())) {
         promise.reject(Exception { ExceptionCode::ExistingExceptionError });
         return;
     }
+
+    auto permissionDescriptor = permissionDescriptorResult.releaseReturnValue();
 
     RefPtr origin = context->securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };

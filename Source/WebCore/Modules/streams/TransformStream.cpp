@@ -109,10 +109,17 @@ ExceptionOr<CreateInternalTransformStreamResult> createInternalTransformStream(J
     if (UNLIKELY(result.hasException()))
         return result.releaseException();
 
-    auto results = Detail::SequenceConverter<IDLObject>::convert(globalObject, result.returnValue());
-    ASSERT(results.size() == 3);
+    auto results = Detail::SequenceConverter<IDLSequence<IDLObject>>::convert(globalObject, result.returnValue());
+    if (results.hasException())
+        return Exception { ExceptionCode::ExistingExceptionError };
 
-    return CreateInternalTransformStreamResult { results[0].get(), JSC::jsDynamicCast<JSReadableStream*>(results[1].get())->wrapped(), JSC::jsDynamicCast<JSWritableStream*>(results[2].get())->wrapped() };
+    ASSERT(results.returnValue().size() == 3);
+
+    return CreateInternalTransformStreamResult {
+        results.returnValue()[0].get(),
+        JSC::jsDynamicCast<JSReadableStream*>(results.returnValue()[1].get())->wrapped(),
+        JSC::jsDynamicCast<JSWritableStream*>(results.returnValue()[2].get())->wrapped()
+    };
 }
 
 template<typename Visitor>

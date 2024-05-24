@@ -227,7 +227,7 @@ static void processRemoteTracks(RTCRtpTransceiver& transceiver, PeerConnectionBa
     setAssociatedRemoteStreams(receiver, state, addList, removeList);
     if ((state.firedDirection && isDirectionReceiving(*state.firedDirection) && (!transceiver.firedDirection() || !isDirectionReceiving(*transceiver.firedDirection()))) || addListSize != addList.size()) {
         // https://w3c.github.io/webrtc-pc/#process-remote-track-addition
-        trackEventList.append(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, &receiver, &receiver.track(), WTFMove(state.receiverStreams), &transceiver));
+        trackEventList.append(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, receiver, receiver.track(), WTFMove(state.receiverStreams), transceiver));
     }
     if (!(state.firedDirection && isDirectionReceiving(*state.firedDirection)) && transceiver.firedDirection() && isDirectionReceiving(*transceiver.firedDirection())) {
         // https://w3c.github.io/webrtc-pc/#process-remote-track-removal
@@ -394,7 +394,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
             }
 
             for (auto& event : trackEventList) {
-                RefPtr track = event->track();
+                Ref track = event->track();
                 m_peerConnection.dispatchEvent(event);
                 if (m_peerConnection.isClosed())
                     return;

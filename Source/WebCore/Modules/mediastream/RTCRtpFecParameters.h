@@ -27,10 +27,12 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <optional>
+
 namespace WebCore {
 
 struct RTCRtpFecParameters {
-    unsigned long ssrc;
+    std::optional<unsigned long> ssrc;
 };
 
 } // namespace WebCore

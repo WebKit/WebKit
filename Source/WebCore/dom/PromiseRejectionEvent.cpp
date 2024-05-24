@@ -37,10 +37,10 @@ using namespace JSC;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PromiseRejectionEvent);
 
-PromiseRejectionEvent::PromiseRejectionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::PromiseRejectionEvent, type, initializer, isTrusted)
-    , m_promise(*(initializer.promise))
-    , m_reason(initializer.reason)
+PromiseRejectionEvent::PromiseRejectionEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : Event(EventInterfaceType::PromiseRejectionEvent, type, WTFMove(init), isTrusted)
+    , m_promise(WTFMove(init.promise))
+    , m_reason(WTFMove(init.reason))
 {
 }
 

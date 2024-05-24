@@ -55,8 +55,8 @@ public:
 
     bool usesMenuList() const;
 
-    using OptionOrOptGroupElement = std::variant<RefPtr<HTMLOptionElement>, RefPtr<HTMLOptGroupElement>>;
-    using HTMLElementOrInt = std::variant<RefPtr<HTMLElement>, int>;
+    using OptionOrOptGroupElement = std::variant<Ref<HTMLOptionElement>, Ref<HTMLOptGroupElement>>;
+    using HTMLElementOrInt = std::variant<Ref<HTMLElement>, int>;
     WEBCORE_EXPORT ExceptionOr<void> add(const OptionOrOptGroupElement&, const std::optional<HTMLElementOrInt>& before);
 
     using Node::remove;

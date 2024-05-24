@@ -34,6 +34,7 @@ class CSSColor : public CSSColorValue {
 public:
     template<typename... Args> static Ref<CSSColor> create(Args&&... args) { return adoptRef(*new CSSColor(std::forward<Args>(args)...)); }
 
+    CSSKeywordish colorSpace() const;
     void setColorSpace(CSSKeywordish);
 
     const CSSNumberish& alpha() const { return m_alpha; }

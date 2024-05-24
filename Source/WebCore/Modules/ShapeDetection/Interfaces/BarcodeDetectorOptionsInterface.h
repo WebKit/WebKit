@@ -31,7 +31,7 @@
 namespace WebCore::ShapeDetection {
 
 struct BarcodeDetectorOptions {
-    Vector<BarcodeFormat> formats;
+    std::optional<Vector<BarcodeFormat>> formats;
 };
 
 } // namespace WebCore::ShapeDetection

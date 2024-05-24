@@ -676,7 +676,7 @@ ExceptionOr<Ref<MediaElementAudioSourceNode>> AudioContext::createMediaElementSo
     ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT(isMainThread());
-    return MediaElementAudioSourceNode::create(*this, { &mediaElement });
+    return MediaElementAudioSourceNode::create(*this, { mediaElement });
 }
 
 #endif
@@ -689,7 +689,7 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> AudioContext::createMediaStreamSour
 
     ASSERT(isMainThread());
 
-    return MediaStreamAudioSourceNode::create(*this, { &mediaStream });
+    return MediaStreamAudioSourceNode::create(*this, { mediaStream });
 }
 
 ExceptionOr<Ref<MediaStreamAudioDestinationNode>> AudioContext::createMediaStreamDestination()

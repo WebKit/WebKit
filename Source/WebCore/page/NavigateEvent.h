@@ -49,14 +49,14 @@ class NavigateEvent final : public Event {
 public:
     struct Init : EventInit {
         NavigationNavigationType navigationType { NavigationNavigationType::Push };
-        RefPtr<NavigationDestination> destination;
-        RefPtr<AbortSignal> signal;
-        RefPtr<DOMFormData> formData;
-        String downloadRequest;
-        JSC::JSValue info;
+        Ref<NavigationDestination> destination;
         bool canIntercept { false };
         bool userInitiated { false };
         bool hashChange { false };
+        Ref<AbortSignal> signal;
+        RefPtr<DOMFormData> formData;
+        String downloadRequest;
+        JSC::JSValue info;
         bool hasUAVisualTransition { false };
     };
 
@@ -76,16 +76,16 @@ public:
         std::optional<NavigationScrollBehavior> scroll;
     };
 
-    static Ref<NavigateEvent> create(const AtomString& type, const Init&);
-    static Ref<NavigateEvent> create(const AtomString& type, const Init&, AbortController*);
+    static Ref<NavigateEvent> create(const AtomString& type, Init&&);
+    static Ref<NavigateEvent> create(const AtomString& type, Init&&, AbortController*);
 
     NavigationNavigationType navigationType() const { return m_navigationType; };
     bool canIntercept() const { return m_canIntercept; };
     bool userInitiated() const { return m_userInitiated; };
     bool hashChange() const { return m_hashChange; };
     bool hasUAVisualTransition() const { return m_hasUAVisualTransition; };
-    NavigationDestination* destination() { return m_destination.get(); };
-    AbortSignal* signal() { return m_signal.get(); };
+    NavigationDestination& destination() { return m_destination.get(); };
+    AbortSignal& signal() { return m_signal.get(); };
     DOMFormData* formData() { return m_formData.get(); };
     String downloadRequest() { return m_downloadRequest; };
     JSC::JSValue info() { return m_info; };
@@ -102,13 +102,13 @@ public:
     Vector<Ref<NavigationInterceptHandler>>& handlers() { return m_handlers; };
 
 private:
-    NavigateEvent(const AtomString& type, const Init&, AbortController*);
+    NavigateEvent(const AtomString& type, Init&&, AbortController*);
 
     ExceptionOr<void> sharedChecks();
 
     NavigationNavigationType m_navigationType;
-    RefPtr<NavigationDestination> m_destination;
-    RefPtr<AbortSignal> m_signal;
+    Ref<NavigationDestination> m_destination;
+    Ref<AbortSignal> m_signal;
     RefPtr<DOMFormData> m_formData;
     String m_downloadRequest;
     Vector<Ref<NavigationInterceptHandler>> m_handlers;

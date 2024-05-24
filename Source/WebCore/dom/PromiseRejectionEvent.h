@@ -36,13 +36,13 @@ class PromiseRejectionEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(PromiseRejectionEvent);
 public:
     struct Init : EventInit {
-        RefPtr<DOMPromise> promise;
+        Ref<DOMPromise> promise;
         JSC::JSValue reason;
     };
 
-    static Ref<PromiseRejectionEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<PromiseRejectionEvent> create(const AtomString& type, Init&& init, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new PromiseRejectionEvent(type, initializer, isTrusted));
+        return adoptRef(*new PromiseRejectionEvent(type, WTFMove(init), isTrusted));
     }
 
     virtual ~PromiseRejectionEvent();
@@ -51,7 +51,7 @@ public:
     const JSValueInWrappedObject& reason() const { return m_reason; }
 
 private:
-    PromiseRejectionEvent(const AtomString&, const Init&, IsTrusted);
+    PromiseRejectionEvent(const AtomString&, Init&&, IsTrusted);
 
     Ref<DOMPromise> m_promise;
     JSValueInWrappedObject m_reason;

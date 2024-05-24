@@ -27,6 +27,10 @@
 #include "PlatformEvent.h"
 #include "UIEvent.h"
 
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+#include "TouchEventInit.h"
+#endif
+
 namespace WebCore {
 
 class UIEventWithKeyState : public UIEvent {
@@ -70,12 +74,23 @@ protected:
     {
     }
 
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    UIEventWithKeyState(enum EventInterfaceType eventInterface, const AtomString& type, const TouchEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+        : UIEvent(eventInterface, type, initializer, isTrusted)
+        , m_modifiers(modifiersFromInitializer(initializer))
+    {
+    }
+#endif
+
     void setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
 private:
     OptionSet<Modifier> m_modifiers;
 
-    static OptionSet<Modifier> modifiersFromInitializer(const EventModifierInit& initializer);
+    static OptionSet<Modifier> modifiersFromInitializer(const EventModifierInit&);
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    static OptionSet<Modifier> modifiersFromInitializer(const TouchEventInit&);
+#endif
 };
 
 UIEventWithKeyState* findEventWithKeyState(Event*);

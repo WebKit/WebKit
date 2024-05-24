@@ -37,12 +37,12 @@ enum class FocusTrigger : uint8_t { Other, Click, Bindings };
 enum class FocusVisibility : bool { Invisible, Visible };
 
 struct FocusOptions {
+    bool preventScroll { false };
     SelectionRestorationMode selectionRestorationMode { SelectionRestorationMode::RestoreOrSelectAll };
     FocusDirection direction { FocusDirection::None };
     FocusRemovalEventsMode removalEventsMode { FocusRemovalEventsMode::Dispatch };
     FocusTrigger trigger { FocusTrigger::Other };
     FocusVisibility visibility { FocusVisibility::Invisible };
-    bool preventScroll { false };
 };
 
 } // namespace WebCore

@@ -293,10 +293,11 @@ static inline bool setJSTestNode_nameSetter(JSGlobalObject& lexicalGlobalObject,
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
+    ASSERT(!nativeValueConversionResult.hasException());
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setName(WTFMove(nativeValue));
+        return impl.setName(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }

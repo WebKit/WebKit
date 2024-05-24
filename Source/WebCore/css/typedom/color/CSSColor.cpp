@@ -32,6 +32,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSColor);
 
+CSSKeywordish CSSColor::colorSpace() const
+{
+    // FIXME: Implement.
+    return String();
+}
+
 void CSSColor::setColorSpace(CSSKeywordish)
 {
     // FIXME: Implement.

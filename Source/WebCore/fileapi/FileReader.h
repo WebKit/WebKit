@@ -73,7 +73,7 @@ public:
     ReadyState readyState() const { return m_state; }
     DOMException* error() { return m_error.get(); }
     FileReaderLoader::ReadType readType() const { return m_readType; }
-    std::optional<std::variant<String, RefPtr<JSC::ArrayBuffer>>> result() const;
+    std::optional<std::variant<String, Ref<JSC::ArrayBuffer>>> result() const;
 
     // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }

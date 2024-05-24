@@ -27,6 +27,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMConvertOptional.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMGlobalObjectInlines.h"
@@ -50,7 +51,7 @@
 namespace WebCore {
 using namespace JSC;
 
-template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWindow::Dict>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> ConversionResult<IDLDictionary<ExposedToWorkerAndWindow::Dict>> convertDictionary<ExposedToWorkerAndWindow::Dict>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -58,21 +59,21 @@ template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWi
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
         throwTypeError(&lexicalGlobalObject, throwScope);
-        return { };
+        return ConversionResultException { };
     }
-    ExposedToWorkerAndWindow::Dict result;
     JSValue objValue;
     if (isNullOrUndefined)
         objValue = jsUndefined();
     else {
         objValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "obj"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!objValue.isUndefined()) {
-        result.obj = convert<IDLInterface<TestObj>>(lexicalGlobalObject, objValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
-    return result;
+    auto objConversionResult = convert<IDLOptional<IDLInterface<TestObj>>>(lexicalGlobalObject, objValue);
+    RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    ASSERT(!objConversionResult.hasException());
+    return ExposedToWorkerAndWindow::Dict {
+        objConversionResult.releaseReturnValue(),
+    };
 }
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const ExposedToWorkerAndWindow::Dict& dictionary)

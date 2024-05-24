@@ -25,6 +25,6 @@
 
 namespace WebCore {
 
-template<> TestDictionary convertDictionary<TestDictionary>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ConversionResult<IDLDictionary<TestDictionary>> convertDictionary<TestDictionary>(JSC::JSGlobalObject&, JSC::JSValue);
 
 } // namespace WebCore

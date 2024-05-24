@@ -39,7 +39,7 @@ class WebLockGrantedCallback : public RefCounted<WebLockGrantedCallback>, public
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<RefPtr<DOMPromise>> handleEvent(WebLock*) = 0;
+    virtual CallbackResult<Ref<DOMPromise>> handleEvent(WebLock*) = 0;
 };
 
 } // namespace WebCore

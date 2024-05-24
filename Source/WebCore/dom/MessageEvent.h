@@ -39,7 +39,7 @@ namespace WebCore {
 
 class Blob;
 
-using MessageEventSource = std::variant<RefPtr<WindowProxy>, RefPtr<MessagePort>, RefPtr<ServiceWorker>>;
+using MessageEventSource = std::variant<Ref<WindowProxy>, Ref<MessagePort>, Ref<ServiceWorker>>;
 
 class MessageEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(MessageEvent);

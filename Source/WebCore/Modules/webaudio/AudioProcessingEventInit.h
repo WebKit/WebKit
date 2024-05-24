@@ -32,8 +32,8 @@ namespace WebCore {
 
 struct AudioProcessingEventInit : EventInit {
     double playbackTime;
-    RefPtr<AudioBuffer> inputBuffer;
-    RefPtr<AudioBuffer> outputBuffer;
+    Ref<AudioBuffer> inputBuffer;
+    Ref<AudioBuffer> outputBuffer;
 };
 
 }

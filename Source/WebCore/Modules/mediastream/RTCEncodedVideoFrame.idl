@@ -28,8 +28,8 @@ enum RTCEncodedVideoFrameType { "empty", "key", "delta" };
 [
     Conditional=WEB_RTC,
     JSGenerateToJSObject,
-]
-dictionary RTCEncodedVideoFrameMetadata {
+    SuppressToNative,
+] dictionary RTCEncodedVideoFrameMetadata {
     long long frameId;
     sequence<long long> dependencies;
     unsigned short width;

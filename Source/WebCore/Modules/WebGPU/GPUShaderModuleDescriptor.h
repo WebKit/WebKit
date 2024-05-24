@@ -35,21 +35,29 @@
 namespace WebCore {
 
 struct GPUShaderModuleDescriptor : public GPUObjectDescriptorBase {
+    static Vector<KeyValuePair<String, WebGPU::ShaderModuleCompilationHint>> convertToBacking(const std::optional<Vector<KeyValuePair<String, GPUShaderModuleCompilationHint>>>& hints, const Ref<GPUPipelineLayout>& autoLayout)
+    {
+        if (!hints)
+            return { };
+
+        return hints->map([&autoLayout](auto& hint) {
+            return KeyValuePair<String, WebGPU::ShaderModuleCompilationHint>(hint.key, hint.value.convertToBacking(autoLayout));
+        });
+    }
+
     WebGPU::ShaderModuleDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
     {
         return {
             { label },
             code,
             // FIXME: Handle the sourceMap.
-            hints.map([&autoLayout](auto& hint) {
-                return KeyValuePair<String, WebGPU::ShaderModuleCompilationHint>(hint.key, hint.value.convertToBacking(autoLayout));
-            }),
+            convertToBacking(hints, autoLayout),
         };
     }
 
     String code;
     JSC::Strong<JSC::JSObject> sourceMap;
-    Vector<KeyValuePair<String, GPUShaderModuleCompilationHint>> hints;
+    std::optional<Vector<KeyValuePair<String, GPUShaderModuleCompilationHint>>> hints;
 };
 
 }

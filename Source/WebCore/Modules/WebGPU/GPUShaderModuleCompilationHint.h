@@ -39,7 +39,7 @@ struct GPUShaderModuleCompilationHint {
         };
     }
 
-    GPULayoutMode layout { nullptr };
+    GPULayoutMode layout;
 };
 
 }

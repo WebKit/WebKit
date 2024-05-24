@@ -38,11 +38,7 @@ struct GPUVertexState : public GPUProgrammableStage {
     {
         ASSERT(module);
         return {
-            {
-                module->backing(),
-                entryPoint,
-                constants,
-            },
+            static_cast<const GPUProgrammableStage*>(this)->convertToBacking(),
             buffers.map([](auto& buffer) -> std::optional<WebGPU::VertexBufferLayout> {
                 if (buffer)
                     return buffer->convertToBacking();

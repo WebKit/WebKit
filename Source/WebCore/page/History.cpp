@@ -210,7 +210,7 @@ uint32_t History::totalStateObjectPayloadLimit() const
     return m_totalStateObjectPayloadLimitOverride.value_or(defaultTotalStateObjectPayloadLimit);
 }
 
-ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& urlString, StateObjectType stateObjectType)
+ExceptionOr<void> History::stateObjectAdded(Ref<SerializedScriptValue>&& data, const String& urlString, StateObjectType stateObjectType)
 {
     m_cachedState.clear();
 
@@ -283,7 +283,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     urlSize *= 2;
 
     Checked<uint64_t> payloadSize = urlSize;
-    payloadSize += data ? data->wireBytes().size() : 0;
+    payloadSize += data->wireBytes().size();
 
     Checked<uint64_t> newTotalUsage = mainHistory->m_totalStateObjectUsage;
 

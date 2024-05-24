@@ -34,14 +34,14 @@
 namespace WebCore {
 
 struct OptionalEffectTiming {
-    std::optional<std::variant<double, String>> duration;
-    std::optional<double> iterations; // This value cannot be a MarkableDouble since we need to check for a NaN value.
     MarkableDouble delay;
     MarkableDouble endDelay;
-    MarkableDouble iterationStart;
-    String easing;
     OptionalFillMode fill;
+    MarkableDouble iterationStart;
+    std::optional<double> iterations; // This value cannot be a MarkableDouble since we need to check for a NaN value.
+    std::optional<std::variant<double, String>> duration;
     OptionalPlaybackDirection direction;
+    String easing;
 };
 
 } // namespace WebCore

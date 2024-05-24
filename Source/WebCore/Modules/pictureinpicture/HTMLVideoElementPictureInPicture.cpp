@@ -103,7 +103,7 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
 
     auto videoElementPictureInPicture = HTMLVideoElementPictureInPicture::from(videoElement);
     if (videoElement.document().pictureInPictureElement() == &videoElement) {
-        promise->resolve<IDLInterface<PictureInPictureWindow>>(*(videoElementPictureInPicture->m_pictureInPictureWindow));
+        promise->resolve<IDLInterface<PictureInPictureWindow>>(videoElementPictureInPicture->m_pictureInPictureWindow);
         return;
     }
 
@@ -157,13 +157,13 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
     m_videoElement->document().setPictureInPictureElement(m_videoElement.ptr());
     m_pictureInPictureWindow->setSize(windowSize);
 
-    PictureInPictureEvent::Init initializer;
-    initializer.bubbles = true;
-    initializer.pictureInPictureWindow = m_pictureInPictureWindow;
-    m_videoElement->scheduleEvent(PictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTFMove(initializer)));
+    m_videoElement->scheduleEvent(PictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, PictureInPictureEvent::Init {
+        { .bubbles = true },
+        m_pictureInPictureWindow
+    }));
 
     if (m_enterPictureInPicturePromise) {
-        m_enterPictureInPicturePromise->resolve<IDLInterface<PictureInPictureWindow>>(*m_pictureInPictureWindow);
+        m_enterPictureInPicturePromise->resolve<IDLInterface<PictureInPictureWindow>>(m_pictureInPictureWindow);
         m_enterPictureInPicturePromise = nullptr;
     }
 }
@@ -174,10 +174,10 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
     m_pictureInPictureWindow->close();
     m_videoElement->document().setPictureInPictureElement(nullptr);
 
-    PictureInPictureEvent::Init initializer;
-    initializer.bubbles = true;
-    initializer.pictureInPictureWindow = m_pictureInPictureWindow;
-    m_videoElement->scheduleEvent(PictureInPictureEvent::create(eventNames().leavepictureinpictureEvent, WTFMove(initializer)));
+    m_videoElement->scheduleEvent(PictureInPictureEvent::create(eventNames().leavepictureinpictureEvent, PictureInPictureEvent::Init {
+        { .bubbles = true },
+        m_pictureInPictureWindow
+    }));
 
     if (m_exitPictureInPicturePromise) {
         m_exitPictureInPicturePromise->resolve();

@@ -69,11 +69,9 @@ static bool isDocumentTypeOrAttr(Node& node)
 
 ExceptionOr<Ref<StaticRange>> StaticRange::create(Init&& init)
 {
-    ASSERT(init.startContainer);
-    ASSERT(init.endContainer);
-    if (isDocumentTypeOrAttr(*init.startContainer) || isDocumentTypeOrAttr(*init.endContainer))
+    if (isDocumentTypeOrAttr(init.startContainer) || isDocumentTypeOrAttr(init.endContainer))
         return Exception { ExceptionCode::InvalidNodeTypeError };
-    return create({ { init.startContainer.releaseNonNull(), init.startOffset }, { init.endContainer.releaseNonNull(), init.endOffset } });
+    return create({ { WTFMove(init.startContainer), init.startOffset }, { WTFMove(init.endContainer), init.endOffset } });
 }
 
 void StaticRange::visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const

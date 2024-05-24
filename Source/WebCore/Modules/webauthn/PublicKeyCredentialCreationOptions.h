@@ -83,4 +83,7 @@ struct PublicKeyCredentialCreationOptions {
 #endif // ENABLE(WEB_AUTHN)
 };
 
+struct PublicKeyCredentialCreationOptionsBackend {
+};
+
 } // namespace WebCore

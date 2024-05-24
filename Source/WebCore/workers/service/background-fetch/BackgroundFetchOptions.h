@@ -31,15 +31,8 @@
 namespace WebCore {
 
 struct BackgroundFetchOptions : BackgroundFetchUIOptions {
-    BackgroundFetchOptions() = default;
-    BackgroundFetchOptions(Vector<ImageResource>&& icons, String title, uint64_t downloadTotal)
-        : BackgroundFetchUIOptions { WTFMove(icons), WTFMove(title) }
-        , downloadTotal(downloadTotal)
-    {
-    }
-
-    BackgroundFetchOptions isolatedCopy() const & { return { crossThreadCopy(icons), title.isolatedCopy(), downloadTotal }; }
-    BackgroundFetchOptions isolatedCopy() && { return { crossThreadCopy(WTFMove(icons)), WTFMove(title).isolatedCopy(), downloadTotal }; }
+    BackgroundFetchOptions isolatedCopy() const & { return { { crossThreadCopy(icons), title.isolatedCopy() }, downloadTotal }; }
+    BackgroundFetchOptions isolatedCopy() && { return { { crossThreadCopy(WTFMove(icons)), WTFMove(title).isolatedCopy() }, downloadTotal }; }
 
     uint64_t downloadTotal { 0 };
 };

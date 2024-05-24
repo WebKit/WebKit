@@ -41,9 +41,9 @@ Ref<BlobEvent> BlobEvent::create(const AtomString& type, Init&& init, IsTrusted 
 }
 
 BlobEvent::BlobEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
-    : Event(EventInterfaceType::BlobEvent, type, init, isTrusted)
-    , m_blob(init.data.releaseNonNull())
-    , m_timecode(init.timecode)
+    : Event(EventInterfaceType::BlobEvent, type, WTFMove(init), isTrusted)
+    , m_blob(WTFMove(init.data))
+    , m_timecode(init.timecode.value_or(0))
 {
 }
 

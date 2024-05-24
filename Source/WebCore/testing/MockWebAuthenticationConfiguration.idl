@@ -92,7 +92,7 @@
 [
     Conditional=WEB_AUTHN,
 ] dictionary MockHidConfiguration {
-    sequence<DOMString> payloadBase64;
+    sequence<DOMString> payloadBase64 = [];
     MockHidStage stage = "info";
     MockHidSubStage subStage = "init";
     MockHidError error = "success";
@@ -110,7 +110,7 @@
     Conditional=WEB_AUTHN,
 ] dictionary MockNfcConfiguration {
     MockNfcError error = "success";
-    sequence<DOMString> payloadBase64;
+    sequence<DOMString> payloadBase64 = [];
     boolean multipleTags = false;
     boolean multiplePhysicalTags = false;
 };
@@ -118,5 +118,5 @@
 [
     Conditional=WEB_AUTHN,
 ] dictionary MockCcidConfiguration {
-    sequence<DOMString> payloadBase64;
+    sequence<DOMString> payloadBase64 = [];
 };

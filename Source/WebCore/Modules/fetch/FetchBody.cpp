@@ -48,37 +48,40 @@ FetchBody::~FetchBody() = default;
 
 ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
 {
-    return WTF::switchOn(value, [&](RefPtr<Blob>& value) mutable -> ExceptionOr<FetchBody> {
-        Ref<const Blob> blob = value.releaseNonNull();
-        if (!blob->type().isEmpty())
-            contentType = blob->type();
-        return FetchBody(WTFMove(blob));
-    }, [&](RefPtr<DOMFormData>& value) mutable -> ExceptionOr<FetchBody> {
-        Ref<DOMFormData> domFormData = value.releaseNonNull();
-        auto formData = FormData::createMultiPart(domFormData.get());
-        contentType = makeString("multipart/form-data; boundary="_s, formData->boundary());
-        return FetchBody(WTFMove(formData));
-    }, [&](RefPtr<URLSearchParams>& value) mutable -> ExceptionOr<FetchBody> {
-        Ref<const URLSearchParams> params = value.releaseNonNull();
-        contentType = HTTPHeaderValues::formURLEncodedContentType();
-        return FetchBody(WTFMove(params));
-    }, [&](RefPtr<ArrayBuffer>& value) mutable -> ExceptionOr<FetchBody> {
-        Ref<const ArrayBuffer> buffer = value.releaseNonNull();
-        return FetchBody(WTFMove(buffer));
-    }, [&](RefPtr<ArrayBufferView>& value) mutable -> ExceptionOr<FetchBody> {
-        Ref<const ArrayBufferView> buffer = value.releaseNonNull();
-        return FetchBody(WTFMove(buffer));
-    }, [&](RefPtr<ReadableStream>& stream) mutable -> ExceptionOr<FetchBody> {
-        if (stream->isDisturbed())
-            return Exception { ExceptionCode::TypeError, "Input body is disturbed."_s };
-        if (stream->isLocked())
-            return Exception { ExceptionCode::TypeError, "Input body is locked."_s };
+    return WTF::switchOn(WTFMove(value),
+        [&](Ref<Blob>&& blob) mutable -> ExceptionOr<FetchBody> {
+            if (!blob->type().isEmpty())
+                contentType = blob->type();
+            return FetchBody(Ref<const Blob> { WTFMove(blob) });
+        },
+        [&](Ref<DOMFormData>&& domFormData) mutable -> ExceptionOr<FetchBody> {
+            auto formData = FormData::createMultiPart(WTFMove(domFormData));
+            contentType = makeString("multipart/form-data; boundary="_s, formData->boundary());
+            return FetchBody(WTFMove(formData));
+        },
+        [&](Ref<URLSearchParams>&& params) mutable -> ExceptionOr<FetchBody> {
+            contentType = HTTPHeaderValues::formURLEncodedContentType();
+            return FetchBody(Ref<const URLSearchParams> { WTFMove(params) });
+        },
+        [&](Ref<ArrayBuffer>&& buffer) mutable -> ExceptionOr<FetchBody> {
+            return FetchBody(Ref<const ArrayBuffer> { WTFMove(buffer) });
+        },
+        [&](Ref<ArrayBufferView>&& buffer) mutable -> ExceptionOr<FetchBody> {
+            return FetchBody(Ref<const ArrayBufferView> { WTFMove(buffer) });
+        },
+        [&](Ref<ReadableStream>&& stream) mutable -> ExceptionOr<FetchBody> {
+            if (stream->isDisturbed())
+                return Exception { ExceptionCode::TypeError, "Input body is disturbed."_s };
+            if (stream->isLocked())
+                return Exception { ExceptionCode::TypeError, "Input body is locked."_s };
 
-        return FetchBody(stream.releaseNonNull());
-    }, [&](String& value) -> ExceptionOr<FetchBody> {
-        contentType = HTTPHeaderValues::textPlainContentType();
-        return FetchBody(WTFMove(value));
-    });
+            return FetchBody(WTFMove(stream));
+        },
+        [&](String&& string) mutable -> ExceptionOr<FetchBody> {
+            contentType = HTTPHeaderValues::textPlainContentType();
+            return FetchBody(WTFMove(string));
+        }
+    );
 }
 
 std::optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context, Ref<FormData>&& formData)

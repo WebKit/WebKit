@@ -287,13 +287,11 @@ GPUExternalTexture* GPUDevice::externalTextureForDescriptor(const GPUExternalTex
 {
     m_videoElementToExternalTextureMap.removeNullReferences();
 #if ENABLE(WEB_CODECS)
-    if (auto* videoElement = std::get_if<RefPtr<HTMLVideoElement>>(&descriptor.source)) {
+    if (const Ref<HTMLVideoElement>* videoElement = std::get_if<Ref<HTMLVideoElement>>(&descriptor.source)) {
 #else
-    if (auto* videoElement = &descriptor.source) {
+    if (const Ref<HTMLVideoElement>* videoElement = &descriptor.source) {
 #endif
-        if (!videoElement->get())
-            return nullptr;
-        HTMLVideoElement& v = *videoElement->get();
+        HTMLVideoElement& v = videoElement->get();
         auto it = m_videoElementToExternalTextureMap.find(v);
         if (it != m_videoElementToExternalTextureMap.end())
             return it->value.get();
@@ -343,11 +341,11 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
     if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
         externalTexture->undestroy();
 #if ENABLE(WEB_CODECS)
-        auto& videoElement = std::get<RefPtr<HTMLVideoElement>>(externalTextureDescriptor.source);
+        auto& videoElement = std::get<Ref<HTMLVideoElement>>(externalTextureDescriptor.source);
 #else
         auto& videoElement = externalTextureDescriptor.source;
 #endif
-        m_videoElementToExternalTextureMap.remove(*videoElement.get());
+        m_videoElementToExternalTextureMap.remove(videoElement.get());
         return externalTexture.releaseNonNull();
     }
 #endif
@@ -357,9 +355,9 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
     auto externalTexture = GPUExternalTexture::create(texture.releaseNonNull());
 #if ENABLE(VIDEO)
 #if ENABLE(WEB_CODECS)
-    if (auto* videoElement = std::get_if<RefPtr<HTMLVideoElement>>(&externalTextureDescriptor.source); videoElement && videoElement->get()) {
+    if (const Ref<HTMLVideoElement>* videoElement = std::get_if<Ref<HTMLVideoElement>>(&externalTextureDescriptor.source)) {
 #else
-    if (auto* videoElement = &externalTextureDescriptor.source; videoElement && videoElement->get()) {
+    if (const Ref<HTMLVideoElement>* videoElement = &externalTextureDescriptor.source) {
 #endif
         WeakPtr<HTMLVideoElement> videoElementPtr = videoElement->get();
         m_videoElementToExternalTextureMap.set(*videoElementPtr, externalTexture.get());
@@ -560,16 +558,16 @@ void GPUDevice::pushErrorScope(GPUErrorFilter errorFilter)
 
 static GPUError createGPUErrorFromWebGPUError(auto& webGPUError)
 {
-    return WTF::switchOn(WTFMove(*webGPUError), [](Ref<WebGPU::OutOfMemoryError>&& outOfMemoryError) {
-        GPUError error = RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create(WTFMove(outOfMemoryError)));
-        return error;
-    }, [](Ref<WebGPU::ValidationError>&& validationError) {
-        GPUError error = RefPtr<GPUValidationError>(GPUValidationError::create(WTFMove(validationError)));
-        return error;
-    }, [](Ref<WebGPU::InternalError>&& internalError) {
-        GPUError error = RefPtr<GPUInternalError>(GPUInternalError::create(WTFMove(internalError)));
-        return error;
-    });
+    return WTF::switchOn(WTFMove(*webGPUError),
+        [](Ref<WebGPU::OutOfMemoryError>&& outOfMemoryError) -> GPUError {
+            return GPUOutOfMemoryError::create(WTFMove(outOfMemoryError));
+        },
+        [](Ref<WebGPU::ValidationError>&& validationError) -> GPUError {
+            return GPUValidationError::create(WTFMove(validationError));
+        }, [](Ref<WebGPU::InternalError>&& internalError) -> GPUError {
+            return GPUInternalError::create(WTFMove(internalError));
+        }
+    );
 }
 
 void GPUDevice::popErrorScope(ErrorScopePromise&& errorScopePromise)

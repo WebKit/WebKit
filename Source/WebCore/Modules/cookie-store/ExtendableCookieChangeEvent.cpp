@@ -42,10 +42,11 @@ Ref<ExtendableCookieChangeEvent> ExtendableCookieChangeEvent::create(const AtomS
 }
 
 ExtendableCookieChangeEvent::ExtendableCookieChangeEvent(const AtomString& type, ExtendableCookieChangeEventInit&& eventInitDict, IsTrusted isTrusted)
-    : ExtendableEvent(EventInterfaceType::ExtendableCookieChangeEvent, type, eventInitDict, isTrusted)
-    , m_changed(WTFMove(eventInitDict.changed))
-    , m_deleted(WTFMove(eventInitDict.deleted))
-{ }
+    : ExtendableEvent(EventInterfaceType::ExtendableCookieChangeEvent, type, WTFMove(eventInitDict), isTrusted)
+    , m_changed(eventInitDict.changed.value_or(Vector<CookieListItem> { }))
+    , m_deleted(eventInitDict.deleted.value_or(Vector<CookieListItem> { }))
+{
+}
 
 ExtendableCookieChangeEvent::~ExtendableCookieChangeEvent() = default;
 

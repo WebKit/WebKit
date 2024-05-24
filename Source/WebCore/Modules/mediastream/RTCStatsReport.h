@@ -80,8 +80,6 @@ public:
     };
 
     struct InboundRtpStreamStats : ReceivedRtpStreamStats {
-        InboundRtpStreamStats() { type = RTCStatsReport::Type::InboundRtp; }
-
         String trackIdentifier;
         String mid;
         String remoteId;
@@ -107,8 +105,6 @@ public:
         std::optional<uint64_t> fecPacketsReceived;
         std::optional<uint64_t> fecPacketsDiscarded;
         std::optional<uint64_t> bytesReceived;
-        std::optional<uint64_t> packetsFailedDecryption;
-        std::optional<uint64_t> packetsDuplicated;
         std::optional<uint32_t> nackCount;
         std::optional<uint32_t> firCount;
         std::optional<uint32_t> pliCount;
@@ -119,8 +115,6 @@ public:
         std::optional<uint64_t> jitterBufferEmittedCount;
         std::optional<double> jitterBufferMinimumDelay;
         std::optional<uint64_t> totalSamplesReceived;
-        std::optional<uint64_t> samplesDecodedWithSilk;
-        std::optional<uint64_t> samplesDecodedWithCelt;
         std::optional<uint64_t> concealedSamples;
         std::optional<uint64_t> silentConcealedSamples;
         std::optional<uint64_t> concealmentEvents;
@@ -130,9 +124,7 @@ public:
         std::optional<double> totalAudioEnergy;
         std::optional<double> totalSamplesDuration;
         std::optional<uint32_t> framesReceived;
-        String decoderImplementation;
         String playoutId;
-        std::optional<bool> powerEfficientDecoder;
         std::optional<uint32_t> framesAssembledFromMultiplePackets;
         std::optional<double> totalAssemblyTime;
         std::optional<uint64_t> retransmittedPacketsReceived;
@@ -142,8 +134,6 @@ public:
     };
 
     struct RemoteInboundRtpStreamStats : ReceivedRtpStreamStats {
-        RemoteInboundRtpStreamStats() { type = RTCStatsReport::Type::RemoteInboundRtp; }
-
         String localId;
         std::optional<double> roundTripTime;
         std::optional<double> totalRoundTripTime;
@@ -164,8 +154,6 @@ public:
     };
 
     struct OutboundRtpStreamStats : SentRtpStreamStats {
-        OutboundRtpStreamStats() { type = RTCStatsReport::Type::OutboundRtp; }
-
         String mid;
         String mediaSourceId;
         String remoteId;
@@ -197,8 +185,6 @@ public:
     };
 
     struct RemoteOutboundRtpStreamStats : SentRtpStreamStats {
-        RemoteOutboundRtpStreamStats() { type = RTCStatsReport::Type::RemoteOutboundRtp; }
-
         String localId;
         std::optional<double> remoteTimestamp;
         std::optional<uint64_t> reportsSent;
@@ -208,8 +194,6 @@ public:
     };
 
     struct DataChannelStats : Stats {
-        DataChannelStats() { type = RTCStatsReport::Type::DataChannel; }
-
         String label;
         String protocol;
         std::optional<int> dataChannelIdentifier;
@@ -229,8 +213,6 @@ public:
     };
 
     struct IceCandidatePairStats : Stats {
-        IceCandidatePairStats() { type = RTCStatsReport::Type::CandidatePair; }
-
         String transportId;
         String localCandidateId;
         String remoteCandidateId;
@@ -272,8 +254,6 @@ public:
     };
 
     struct CertificateStats : Stats {
-        CertificateStats() { type = RTCStatsReport::Type::Certificate; }
-
         String fingerprint;
         String fingerprintAlgorithm;
         String base64Certificate;
@@ -286,15 +266,15 @@ public:
     };
 
     struct CodecStats : Stats {
-        CodecStats() { type = RTCStatsReport::Type::Codec; }
-
         std::optional<uint32_t> payloadType;
         String transportId;
         String mimeType;
         std::optional<uint32_t> clockRate;
         std::optional<uint32_t> channels;
         String sdpFmtpLine;
-        String implementation;
+
+        // Not exposed in bindings
+        String implementation = { };
     };
 
     enum DtlsRole {
@@ -304,8 +284,6 @@ public:
     };
 
     struct TransportStats : Stats {
-        TransportStats() { type = RTCStatsReport::Type::Transport; }
-
         std::optional<uint64_t> packetsSent;
         std::optional<uint64_t> packetsReceived;
         std::optional<uint64_t> bytesSent;
@@ -325,8 +303,6 @@ public:
     };
 
     struct AudioPlayoutStats : Stats {
-        AudioPlayoutStats() { type = RTCStatsReport::Type::MediaPlayout; }
-
         String kind;
         std::optional<double> synthesizedSamplesDuration;
         std::optional<uint32_t> synthesizedSamplesEvents;
@@ -336,8 +312,6 @@ public:
     };
 
     struct PeerConnectionStats : Stats {
-        PeerConnectionStats() { type = RTCStatsReport::Type::PeerConnection; }
-
         std::optional<uint32_t> dataChannelsOpened;
         std::optional<uint32_t> dataChannelsClosed;
     };
@@ -345,12 +319,12 @@ public:
     struct MediaSourceStats : Stats {
         String trackIdentifier;
         String kind;
-        std::optional<bool> relayedSource;
+
+        // Not exposed in bindings
+        std::optional<bool> relayedSource = { };
     };
 
     struct AudioSourceStats : MediaSourceStats {
-        AudioSourceStats() { type = RTCStatsReport::Type::MediaSource; }
-
         std::optional<double> audioLevel;
         std::optional<double> totalAudioEnergy;
         std::optional<double> totalSamplesDuration;
@@ -363,8 +337,6 @@ public:
     };
 
     struct VideoSourceStats : MediaSourceStats {
-        VideoSourceStats() { type = RTCStatsReport::Type::MediaSource; }
-
         std::optional<unsigned long> width;
         std::optional<unsigned long> height;
         std::optional<unsigned long> frames;

@@ -36,7 +36,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CSSHWB);
 
 ExceptionOr<Ref<CSSHWB>> CSSHWB::create(Ref<CSSNumericValue>&& hue, CSSNumberish&& whiteness, CSSNumberish&& blackness, CSSNumberish&& alpha)
 {
-    auto rectifiedHue = rectifyCSSColorAngle(RefPtr { WTFMove(hue) });
+    auto rectifiedHue = rectifyCSSColorAngle(WTFMove(hue));
     if (rectifiedHue.hasException())
         return rectifiedHue.releaseException();
     auto rectifiedWhiteness = rectifyCSSColorPercent(toCSSColorPercent(whiteness));
@@ -48,10 +48,13 @@ ExceptionOr<Ref<CSSHWB>> CSSHWB::create(Ref<CSSNumericValue>&& hue, CSSNumberish
     auto rectifiedAlpha = rectifyCSSColorPercent(toCSSColorPercent(alpha));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
-    return adoptRef(*new CSSHWB(std::get<RefPtr<CSSNumericValue>>(rectifiedHue.releaseReturnValue()).releaseNonNull()
-        , std::get<RefPtr<CSSNumericValue>>(rectifiedWhiteness.releaseReturnValue()).releaseNonNull()
-        , std::get<RefPtr<CSSNumericValue>>(rectifiedBlackness.releaseReturnValue()).releaseNonNull()
-        , std::get<RefPtr<CSSNumericValue>>(rectifiedAlpha.releaseReturnValue()).releaseNonNull()));
+
+    return adoptRef(*new CSSHWB(
+        std::get<Ref<CSSNumericValue>>(rectifiedHue.releaseReturnValue()),
+        std::get<Ref<CSSNumericValue>>(rectifiedWhiteness.releaseReturnValue()),
+        std::get<Ref<CSSNumericValue>>(rectifiedBlackness.releaseReturnValue()),
+        std::get<Ref<CSSNumericValue>>(rectifiedAlpha.releaseReturnValue()))
+    );
 }
 
 CSSHWB::CSSHWB(Ref<CSSNumericValue>&& hue, Ref<CSSNumericValue>&& whiteness, Ref<CSSNumericValue>&& blackness, Ref<CSSNumericValue>&& alpha)
@@ -62,59 +65,39 @@ CSSHWB::CSSHWB(Ref<CSSNumericValue>&& hue, Ref<CSSNumericValue>&& whiteness, Ref
 {
 }
 
-CSSNumericValue& CSSHWB::h() const
-{
-    return m_hue;
-}
-
 ExceptionOr<void> CSSHWB::setH(Ref<CSSNumericValue>&& hue)
 {
-    auto rectifiedHue = rectifyCSSColorAngle(RefPtr { WTFMove(hue) });
+    auto rectifiedHue = rectifyCSSColorAngle(WTFMove(hue));
     if (rectifiedHue.hasException())
         return rectifiedHue.releaseException();
-    m_hue = std::get<RefPtr<CSSNumericValue>>(rectifiedHue.releaseReturnValue()).releaseNonNull();
+    m_hue = std::get<Ref<CSSNumericValue>>(rectifiedHue.releaseReturnValue());
     return { };
-}
-
-CSSNumberish CSSHWB::w() const
-{
-    return RefPtr { m_whiteness.copyRef() };
 }
 
 ExceptionOr<void> CSSHWB::setW(CSSNumberish&& whiteness)
 {
-    auto rectifiedWhiteness = rectifyCSSColorPercent(toCSSColorPercent(whiteness));
+    auto rectifiedWhiteness = rectifyCSSColorPercent(toCSSColorPercent(WTFMove(whiteness)));
     if (rectifiedWhiteness.hasException())
         return rectifiedWhiteness.releaseException();
-    m_whiteness = std::get<RefPtr<CSSNumericValue>>(rectifiedWhiteness.releaseReturnValue()).releaseNonNull();
+    m_whiteness = std::get<Ref<CSSNumericValue>>(rectifiedWhiteness.releaseReturnValue());
     return { };
-}
-
-CSSNumberish CSSHWB::b() const
-{
-    return RefPtr { m_blackness.copyRef() };
 }
 
 ExceptionOr<void> CSSHWB::setB(CSSNumberish&& blackness)
 {
-    auto rectifiedBlackness = rectifyCSSColorPercent(toCSSColorPercent(blackness));
+    auto rectifiedBlackness = rectifyCSSColorPercent(toCSSColorPercent(WTFMove(blackness)));
     if (rectifiedBlackness.hasException())
         return rectifiedBlackness.releaseException();
-    m_blackness = std::get<RefPtr<CSSNumericValue>>(rectifiedBlackness.releaseReturnValue()).releaseNonNull();
+    m_blackness = std::get<Ref<CSSNumericValue>>(rectifiedBlackness.releaseReturnValue());
     return { };
-}
-
-CSSNumberish CSSHWB::alpha() const
-{
-    return RefPtr { m_alpha.copyRef() };
 }
 
 ExceptionOr<void> CSSHWB::setAlpha(CSSNumberish&& alpha)
 {
-    auto rectifiedAlpha = rectifyCSSColorPercent(toCSSColorPercent(alpha));
+    auto rectifiedAlpha = rectifyCSSColorPercent(toCSSColorPercent(WTFMove(alpha)));
     if (rectifiedAlpha.hasException())
         return rectifiedAlpha.releaseException();
-    m_alpha = std::get<RefPtr<CSSNumericValue>>(rectifiedAlpha.releaseReturnValue()).releaseNonNull();
+    m_alpha = std::get<Ref<CSSNumericValue>>(rectifiedAlpha.releaseReturnValue());
     return { };
 }
 

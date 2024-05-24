@@ -70,11 +70,11 @@ public:
     const Vector<String>& profiles() const { return m_source.profiles; };
     double connectTime() const { return m_connectTime; }
 #if ENABLE(GAMEPAD)
-    const Gamepad* gamepad() const { return m_gamepad.ptr(); }
+    Gamepad* gamepad() const { return m_gamepad.ptr(); }
 #endif
 
 #if ENABLE(WEBXR_HANDS)
-    const WebXRHand* hand() const { return m_hand.get(); }
+    WebXRHand* hand() const { return m_hand.get(); }
 #endif
 
     void update(double timestamp, const InputSource&);

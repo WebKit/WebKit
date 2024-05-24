@@ -39,7 +39,6 @@ struct Point2D;
 struct DetectedText {
     ShapeDetection::DetectedText convertToBacking() const
     {
-        ASSERT(boundingBox);
         return {
             {
                 static_cast<float>(boundingBox->x()),
@@ -54,7 +53,7 @@ struct DetectedText {
         };
     }
 
-    RefPtr<DOMRectReadOnly> boundingBox;
+    Ref<DOMRectReadOnly> boundingBox;
     String rawValue;
     Vector<Point2D> cornerPoints;
 };

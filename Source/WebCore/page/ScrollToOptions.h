@@ -36,12 +36,6 @@ namespace WebCore {
 struct ScrollToOptions : ScrollOptions {
     std::optional<double> left;
     std::optional<double> top;
-
-    ScrollToOptions() = default;
-    ScrollToOptions(double x, double y)
-        : left(x)
-        , top(y)
-    { }
 };
 
 inline double normalizeNonFiniteValueOrFallBackTo(std::optional<double> value, double fallbackValue)

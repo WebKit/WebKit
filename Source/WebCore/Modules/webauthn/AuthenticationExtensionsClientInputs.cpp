@@ -61,10 +61,8 @@ std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClie
             largeBlob.read = largeBlobIt->second.getBool();
 
         largeBlobIt = largeBlobMap.find(cbor::CBORValue("write"));
-        if (largeBlobIt != largeBlobMap.end() && largeBlobIt->second.isByteString()) {
-            RefPtr<ArrayBuffer> write = ArrayBuffer::create(largeBlobIt->second.getByteString());
-            largeBlob.write = BufferSource(write);
-        }
+        if (largeBlobIt != largeBlobMap.end() && largeBlobIt->second.isByteString())
+            largeBlob.write = { ArrayBuffer::create(largeBlobIt->second.getByteString()) };
 
         clientInputs.largeBlob = largeBlob;
     }
@@ -77,8 +75,8 @@ Vector<uint8_t> AuthenticationExtensionsClientInputs::toCBOR() const
     cbor::CBORValue::MapValue clientInputsMap;
     if (!appid.isEmpty())
         clientInputsMap[cbor::CBORValue("appid")] = cbor::CBORValue(appid);
-    if (credProps)
-        clientInputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(credProps);
+    if (credProps && *credProps)
+        clientInputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(*credProps);
     if (largeBlob) {
         cbor::CBORValue::MapValue largeBlobMap;
         if (!largeBlob->support.isNull())

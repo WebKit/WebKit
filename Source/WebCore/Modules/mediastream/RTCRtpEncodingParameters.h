@@ -36,15 +36,15 @@
 namespace WebCore {
 
 struct RTCRtpEncodingParameters : RTCRtpCodingParameters {
-    unsigned long ssrc { 0 };
+    std::optional<unsigned long> ssrc { 0 };
     RTCRtpRtxParameters rtx;
     RTCRtpFecParameters fec;
     std::optional<RTCDtxStatus> dtx;
     bool active { false};
-    RTCPriorityType priority { RTCPriorityType::Low };
+    std::optional<RTCPriorityType> priority { RTCPriorityType::Low };
     std::optional<RTCPriorityType> networkPriority;
-    unsigned long maxBitrate { 0 };
-    unsigned long maxFramerate { 0 };
+    std::optional<unsigned long> maxBitrate { 0 };
+    std::optional<unsigned long> maxFramerate { 0 };
     double scaleResolutionDownBy { 1 };
 };
 

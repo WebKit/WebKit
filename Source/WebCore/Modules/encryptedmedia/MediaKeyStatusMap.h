@@ -61,7 +61,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(MediaKeyStatusMap&);
-        std::optional<KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> next();
+        std::optional<KeyValuePair<std::variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>>, MediaKeyStatus>> next();
 
     private:
         Ref<MediaKeyStatusMap> m_map;

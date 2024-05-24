@@ -2114,7 +2114,7 @@ ExceptionOr<void> Internals::unconstrainedScrollTo(Element& element, double x, d
     if (!document || !document->view())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    element.scrollTo(ScrollToOptions(x, y), ScrollClamping::Unclamped);
+    element.scrollTo(ScrollToOptions { { }, x, y }, ScrollClamping::Unclamped);
 
     auto& frameView = *document->view();
     frameView.setViewportConstrainedObjectsNeedLayout();
@@ -3877,7 +3877,7 @@ void Internals::setFullscreenInsets(FullscreenInsets insets)
     Page* page = contextDocument()->frame()->page();
     ASSERT(page);
 
-    page->setFullscreenInsets(FloatBoxExtent(insets.top, insets.right, insets.bottom, insets.left));
+    page->setFullscreenInsets(FloatBoxExtent(insets.top.value_or(0), insets.right.value_or(0), insets.bottom.value_or(0), insets.left.value_or(0)));
 }
 
 void Internals::setFullscreenAutoHideDuration(double duration)
@@ -4228,9 +4228,9 @@ ExceptionOr<String> Internals::getCurrentCursorInfo()
 #endif
 }
 
-Ref<ArrayBuffer> Internals::serializeObject(const RefPtr<SerializedScriptValue>& value) const
+Ref<ArrayBuffer> Internals::serializeObject(const SerializedScriptValue& value) const
 {
-    auto& bytes = value->wireBytes();
+    auto& bytes = value.wireBytes();
     return ArrayBuffer::create(bytes.data(), bytes.size());
 }
 
@@ -6585,14 +6585,34 @@ bool Internals::capsLockIsOn()
     return WebCore::PlatformKeyboardEvent::currentCapsLockState();
 }
 
-auto Internals::parseHEVCCodecParameters(StringView string) -> std::optional<HEVCParameterSet>
+auto Internals::parseHEVCCodecParameters(StringView string) -> std::optional<Internals::HEVCParameterSet>
 {
-    return WebCore::parseHEVCCodecParameters(string);
+    auto backing = WebCore::parseHEVCCodecParameters(string);
+    if (!backing)
+        return std::nullopt;
+
+    return Internals::HEVCParameterSet {
+        backing->codec,
+        backing->generalProfileSpace,
+        backing->generalProfileIDC,
+        backing->generalProfileCompatibilityFlags,
+        backing->generalTierFlag,
+        Vector<unsigned char> { backing->generalConstraintIndicatorFlags },
+        backing->generalLevelIDC
+    };
 }
 
-String Internals::createHEVCCodecParametersString(const HEVCParameterSet& parameters)
+String Internals::createHEVCCodecParametersString(const Internals::HEVCParameterSet& parameters)
 {
-    return WebCore::createHEVCCodecParametersString(parameters);
+    return WebCore::createHEVCCodecParametersString(WebCore::HEVCParameters {
+        parameters.codec,
+        parameters.generalProfileSpace,
+        parameters.generalProfileIDC,
+        parameters.generalProfileCompatibilityFlags,
+        parameters.generalTierFlag,
+        Vector<unsigned char, 6> { parameters.generalConstraintIndicatorFlags },
+        parameters.generalLevelIDC
+    });
 }
 
 auto Internals::parseDoViCodecParameters(StringView string) -> std::optional<DoViParameterSet>
@@ -6775,7 +6795,7 @@ void Internals::addPrefetchLoadEventListener(HTMLLinkElement& link, RefPtr<Event
 {
     if (link.document().settings().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(link.rel(), "prefetch"_s)) {
         link.allowPrefetchLoadAndErrorForTesting();
-        link.addEventListener(eventNames().loadEvent, listener.releaseNonNull(), false);
+        link.addEventListener(eventNames().loadEvent, listener.releaseNonNull(), { { .capture = false } });
     }
 }
 

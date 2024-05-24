@@ -33,15 +33,17 @@
 namespace WebCore {
 
 template<> struct Converter<IDLScheduledAction> : DefaultConverter<IDLScheduledAction> {
-    static std::unique_ptr<ScheduledAction> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, const String& sink)
+    using Result = ConversionResult<IDLScheduledAction>;
+
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, const String& sink)
     {
         JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (!value.isCallable()) {
             auto code = Converter<IDLStringContextTrustedScriptAdaptor<IDLDOMString>>::convert(lexicalGlobalObject, value, sink);
-            RETURN_IF_EXCEPTION(scope, nullptr);
-            return ScheduledAction::create(globalObject.world(), WTFMove(code));
+            RETURN_IF_EXCEPTION(scope, Result::exception());
+            return ScheduledAction::create(globalObject.world(), code.releaseReturnValue());
         }
 
         // The value must be an object at this point because no non-object values are callable.

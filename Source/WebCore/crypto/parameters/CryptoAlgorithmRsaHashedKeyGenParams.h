@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CryptoAlgorithmRsaHashedKeyGenParamsInit.h"
 #include "CryptoAlgorithmRsaKeyGenParams.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
@@ -37,6 +38,13 @@ public:
     // FIXME: Consider merging hash and hashIdentifier.
     std::variant<JSC::Strong<JSC::JSObject>, String> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
+
+    CryptoAlgorithmRsaHashedKeyGenParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmRsaHashedKeyGenParamsInit init, CryptoAlgorithmIdentifier hashIdentifier)
+        : CryptoAlgorithmRsaKeyGenParams { WTFMove(identifier), WTFMove(init) }
+        , hash { WTFMove(init.hash) }
+        , hashIdentifier { WTFMove(hashIdentifier) }
+    {
+    }
 
     Class parametersClass() const final { return Class::RsaHashedKeyGenParams; }
 };

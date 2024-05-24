@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct AuthenticationExtensionsClientOutputs {
     struct CredentialPropertiesOutput {
-        bool rk;
+        std::optional<bool> rk;
     };
 
     struct LargeBlobOutputs {

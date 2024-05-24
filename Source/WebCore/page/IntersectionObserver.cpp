@@ -100,11 +100,11 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
 {
     RefPtr<ContainerNode> root;
     if (init.root) {
-        WTF::switchOn(*init.root, [&root] (RefPtr<Element> element) {
-            root = element.get();
-        }, [&root] (RefPtr<Document> document) {
-            root = document.get();
-        });
+        root = WTF::switchOn(WTFMove(*init.root),
+            [](auto&& root) -> RefPtr<ContainerNode> {
+                return { WTFMove(root) };
+            }
+        );
     }
 
     auto rootMarginOrException = parseRootMargin(init.rootMargin);
@@ -112,11 +112,14 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
         return rootMarginOrException.releaseException();
 
     Vector<double> thresholds;
-    WTF::switchOn(init.threshold, [&thresholds] (double initThreshold) {
-        thresholds.append(initThreshold);
-    }, [&thresholds] (Vector<double>& initThresholds) {
-        thresholds = WTFMove(initThresholds);
-    });
+    WTF::switchOn(init.threshold,
+        [&thresholds](double initThreshold) {
+            thresholds.append(initThreshold);
+        },
+        [&thresholds](Vector<double>& initThresholds) {
+            thresholds = WTFMove(initThresholds);
+        }
+    );
 
     if (thresholds.isEmpty())
         thresholds.append(0.f);
@@ -504,13 +507,14 @@ auto IntersectionObserver::updateObservations(Document& hostDocument) -> NeedNot
             }
 
             appendQueuedEntry(IntersectionObserverEntry::create({
-                timestamp->milliseconds(),
-                reportedRootBounds,
-                { targetBoundingClientRect.x(), targetBoundingClientRect.y(), targetBoundingClientRect.width(), targetBoundingClientRect.height() },
-                { clientIntersectionRect.x(), clientIntersectionRect.y(), clientIntersectionRect.width(), clientIntersectionRect.height() },
-                intersectionState.intersectionRatio,
-                target.get(),
-                intersectionState.thresholdIndex > 0,
+                .time = timestamp->milliseconds(),
+                .rootBounds = reportedRootBounds,
+                .boundingClientRect = { targetBoundingClientRect.x(), targetBoundingClientRect.y(), targetBoundingClientRect.width(), targetBoundingClientRect.height() },
+                .intersectionRect = { clientIntersectionRect.x(), clientIntersectionRect.y(), clientIntersectionRect.width(), clientIntersectionRect.height() },
+                .isIntersecting = intersectionState.thresholdIndex > 0,
+                .intersectionRatio = intersectionState.intersectionRatio,
+                .target = *target,
+
             }));
 
             needNotify = NeedNotify::Yes;
@@ -541,8 +545,7 @@ std::optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() con
 
 void IntersectionObserver::appendQueuedEntry(Ref<IntersectionObserverEntry>&& entry)
 {
-    ASSERT(entry->target());
-    m_pendingTargets.append(*entry->target());
+    m_pendingTargets.append(entry->target());
     m_queuedEntries.append(WTFMove(entry));
 }
 

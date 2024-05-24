@@ -45,7 +45,7 @@ Ref<FormDataEvent> FormDataEvent::create(const AtomString& eventType, CanBubble 
 
 FormDataEvent::FormDataEvent(const AtomString& eventType, Init&& init)
     : Event(EventInterfaceType::FormDataEvent, eventType, init, IsTrusted::No)
-    , m_formData(init.formData.releaseNonNull())
+    , m_formData(WTFMove(init.formData))
 {
 }
 

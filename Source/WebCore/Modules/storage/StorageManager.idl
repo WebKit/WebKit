@@ -36,7 +36,8 @@
 };
 
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary StorageEstimate {
     unsigned long long usage;
     unsigned long long quota;

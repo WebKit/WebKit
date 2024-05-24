@@ -110,35 +110,39 @@ static GPUPresentationContextDescriptor presentationContextDescriptor(GPUComposi
 
 static GPUIntegerCoordinate getCanvasWidth(const GPUCanvasContext::CanvasType& canvas)
 {
-    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> GPUIntegerCoordinate {
-        return htmlCanvas->width();
-    }
+    return WTF::switchOn(canvas,
+        [](const Ref<HTMLCanvasElement>& htmlCanvas) -> GPUIntegerCoordinate {
+            return htmlCanvas->width();
+        }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> GPUIntegerCoordinate {
-        return offscreenCanvas->width();
-    }
+        ,
+        [](const Ref<OffscreenCanvas>& offscreenCanvas) -> GPUIntegerCoordinate {
+            return offscreenCanvas->width();
+        }
 #endif
     );
 }
 
 static GPUIntegerCoordinate getCanvasHeight(const GPUCanvasContext::CanvasType& canvas)
 {
-    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> GPUIntegerCoordinate {
-        return htmlCanvas->height();
-    }
+    return WTF::switchOn(canvas,
+        [](const Ref<HTMLCanvasElement>& htmlCanvas) -> GPUIntegerCoordinate {
+            return htmlCanvas->height();
+        }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> GPUIntegerCoordinate {
-        return offscreenCanvas->height();
-    }
+        ,
+        [](const Ref<OffscreenCanvas>& offscreenCanvas) -> GPUIntegerCoordinate {
+            return offscreenCanvas->height();
+        }
 #endif
     );
 }
 
 GPUCanvasContextCocoa::CanvasType GPUCanvasContextCocoa::htmlOrOffscreenCanvas() const
 {
-    if (auto* c = htmlCanvas())
-        return c;
-    return &downcast<OffscreenCanvas>(canvasBase());
+    if (RefPtr canvas = htmlCanvas())
+        return canvas.releaseNonNull();
+    return downcast<OffscreenCanvas>(canvasBase());
 }
 
 GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)

@@ -195,7 +195,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
             if (m_state != WebCodecsCodecState::Configured)
                 return;
 
-            RefPtr<JSC::ArrayBuffer> buffer = JSC::ArrayBuffer::create(result.data.data(), result.data.size());
+            Ref<JSC::ArrayBuffer> buffer = JSC::ArrayBuffer::create(result.data.data(), result.data.size());
             auto chunk = WebCodecsEncodedAudioChunk::create(WebCodecsEncodedAudioChunk::Init {
                 result.isKeyFrame ? WebCodecsEncodedAudioChunkType::Key : WebCodecsEncodedAudioChunkType::Delta,
                 result.timestamp,
@@ -219,9 +219,9 @@ WebCodecsEncodedAudioChunkMetadata WebCodecsAudioEncoder::createEncodedChunkMeta
         auto baseConfigurationNumberOfChannels = m_baseConfiguration.numberOfChannels;
         metadata.decoderConfig = WebCodecsAudioDecoderConfig {
             !m_activeConfiguration.codec.isEmpty() ? WTFMove(m_activeConfiguration.codec) : String { m_baseConfiguration.codec },
-            { },
             m_activeConfiguration.sampleRate.value_or(baseConfigurationSampleRate),
-            m_activeConfiguration.numberOfChannels.value_or(baseConfigurationNumberOfChannels)
+            m_activeConfiguration.numberOfChannels.value_or(baseConfigurationNumberOfChannels),
+            { }
         };
 
         if (m_activeConfiguration.description && m_activeConfiguration.description->size()) {
@@ -229,7 +229,7 @@ WebCodecsEncodedAudioChunkMetadata WebCodecsAudioEncoder::createEncodedChunkMeta
             RELEASE_LOG_ERROR_IF(!!arrayBuffer, Media, "Cannot create array buffer for WebCodecs encoder description");
             if (arrayBuffer) {
                 memcpy(static_cast<uint8_t*>(arrayBuffer->data()), m_activeConfiguration.description->data(), m_activeConfiguration.description->size());
-                metadata.decoderConfig->description = WTFMove(arrayBuffer);
+                metadata.decoderConfig->description = { arrayBuffer.releaseNonNull() };
             }
         }
     }

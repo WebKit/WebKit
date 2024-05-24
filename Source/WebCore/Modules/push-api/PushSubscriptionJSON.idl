@@ -27,6 +27,7 @@
 
 [
     JSGenerateToJSObject,
+    SuppressToNative
 ] dictionary PushSubscriptionJSON {
     USVString endpoint;
     EpochTimeStamp? expirationTime;

@@ -473,7 +473,7 @@ void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, Serv
     auto& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(context, WTFMove(sourceData)) };
+    MessageEventSource source = ServiceWorker::getOrCreate(context, WTFMove(sourceData));
 
     auto messageEvent = MessageEvent::create(*globalObject, message.message.releaseNonNull(), sourceOrigin, { }, WTFMove(source), MessagePort::entanglePorts(context, WTFMove(message.transferredPorts)));
     if (UNLIKELY(scope.exception())) {

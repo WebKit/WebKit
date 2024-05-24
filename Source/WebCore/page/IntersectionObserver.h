@@ -69,7 +69,7 @@ class IntersectionObserver : public RefCounted<IntersectionObserver>, public Can
     WTF_MAKE_ISO_ALLOCATED(IntersectionObserver);
 public:
     struct Init {
-        std::optional<std::variant<RefPtr<Element>, RefPtr<Document>>> root;
+        std::optional<std::variant<Ref<Element>, Ref<Document>>> root;
         String rootMargin;
         std::variant<double, Vector<double>> threshold;
     };

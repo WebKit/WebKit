@@ -147,7 +147,7 @@ static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCR
     if (parameters.scaleResolutionDownBy)
         rtcParameters.scale_resolution_down_by = parameters.scaleResolutionDownBy;
 
-    rtcParameters.bitrate_priority = toWebRTCBitRatePriority(parameters.priority);
+    rtcParameters.bitrate_priority = toWebRTCBitRatePriority(parameters.priority.value_or(RTCPriorityType::Low));
     if (parameters.networkPriority)
         rtcParameters.network_priority = fromRTCPriorityType(*parameters.networkPriority);
     return rtcParameters;
@@ -185,7 +185,7 @@ static inline RTCRtpCodecParameters toRTCCodecParameters(const webrtc::RtpCodecP
         parameters.channels = *rtcParameters.num_channels;
 
     StringBuilder sdpFmtpLineBuilder;
-    sdpFmtpLineBuilder.append("a=fmtp:"_s, parameters.payloadType, ' ');
+    sdpFmtpLineBuilder.append("a=fmtp:"_s, parameters.payloadType.value_or(0), ' ');
 
     bool isFirst = true;
     for (auto& keyValue : rtcParameters.parameters) {
@@ -216,29 +216,36 @@ RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
 
 RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters& rtcParameters)
 {
-    RTCRtpSendParameters parameters { toRTCRtpParameters(rtcParameters) };
-    parameters.rtcp.cname = fromStdString(rtcParameters.rtcp.cname);
+    auto baseParameters = toRTCRtpParameters(rtcParameters);
+    baseParameters.rtcp.cname = fromStdString(rtcParameters.rtcp.cname);
 
-    parameters.transactionId = fromStdString(rtcParameters.transaction_id);
+    Vector<RTCRtpEncodingParameters> encodings;
     for (auto& rtcEncoding : rtcParameters.encodings)
-        parameters.encodings.append(toRTCEncodingParameters(rtcEncoding));
+        encodings.append(toRTCEncodingParameters(rtcEncoding));
 
+    std::optional<RTCDegradationPreference> degradationPreference;
     if (rtcParameters.degradation_preference) {
         switch (*rtcParameters.degradation_preference) {
         // FIXME: Support DegradationPreference::DISABLED.
         case webrtc::DegradationPreference::DISABLED:
         case webrtc::DegradationPreference::MAINTAIN_FRAMERATE:
-            parameters.degradationPreference = RTCDegradationPreference::MaintainFramerate;
+            degradationPreference = RTCDegradationPreference::MaintainFramerate;
             break;
         case webrtc::DegradationPreference::MAINTAIN_RESOLUTION:
-            parameters.degradationPreference = RTCDegradationPreference::MaintainResolution;
+            degradationPreference = RTCDegradationPreference::MaintainResolution;
             break;
         case webrtc::DegradationPreference::BALANCED:
-            parameters.degradationPreference = RTCDegradationPreference::Balanced;
+            degradationPreference = RTCDegradationPreference::Balanced;
             break;
         };
     }
-    return parameters;
+
+    return RTCRtpSendParameters {
+        baseParameters,
+        fromStdString(rtcParameters.transaction_id),
+        WTFMove(encodings),
+        WTFMove(degradationPreference)
+    };
 }
 
 void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::RtpParameters& rtcParameters)
@@ -260,7 +267,7 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
             rtcParameters.encodings[i].max_framerate = parameters.encodings[i].maxFramerate;
         if (parameters.encodings[i].scaleResolutionDownBy)
             rtcParameters.encodings[i].scale_resolution_down_by = parameters.encodings[i].scaleResolutionDownBy;
-        rtcParameters.encodings[i].bitrate_priority = toWebRTCBitRatePriority(parameters.encodings[i].priority);
+        rtcParameters.encodings[i].bitrate_priority = toWebRTCBitRatePriority(parameters.encodings[i].priority.value_or(RTCPriorityType::Low));
         if (parameters.encodings[i].networkPriority)
             rtcParameters.encodings[i].network_priority = fromRTCPriorityType(*parameters.encodings[i].networkPriority);
     }

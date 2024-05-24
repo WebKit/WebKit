@@ -195,10 +195,10 @@ void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomStrin
 static void copyListenersNotCreatedFromMarkupToTarget(const AtomString& eventType, EventListenerVector& listenerVector, EventTarget* target)
 {
     for (auto& registeredListener : listenerVector) {
-        // Event listeners created from markup have already been transfered to the shadow tree during cloning.
+        // Event listeners created from markup have already been transferred to the shadow tree during cloning.
         if (JSEventListener::wasCreatedFromMarkup(registeredListener->callback()))
             continue;
-        target->addEventListener(eventType, registeredListener->callback(), registeredListener->useCapture());
+        target->addEventListener(eventType, registeredListener->callback(), { { .capture = registeredListener->useCapture() } });
     }
 }
 

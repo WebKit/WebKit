@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: The spec IDL exposes this on Worker in addition to Window.
-// We don't currently support nested workers.
-
+// https://w3c.github.io/ServiceWorker/#serviceworkercontainer
 [
     ActiveDOMObject,
     SecureContext,
@@ -48,6 +46,7 @@
     attribute EventHandler onmessageerror;
 };
 
+// https://w3c.github.io/ServiceWorker/#dictdef-registrationoptions
 dictionary RegistrationOptions {
     USVString scope;
     WorkerType type = "classic";

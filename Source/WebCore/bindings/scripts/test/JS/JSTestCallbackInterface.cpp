@@ -31,6 +31,7 @@
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertOptional.h"
 #include "JSDOMConvertSerializedScriptValue.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMConvertUnion.h"
@@ -91,7 +92,7 @@ template<> ASCIILiteral expectedEnumerationValues<TestCallbackInterface::Enum>()
     return "\"value1\", \"value2\""_s;
 }
 
-template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInterface::Dictionary>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> ConversionResult<IDLDictionary<TestCallbackInterface::Dictionary>> convertDictionary<TestCallbackInterface::Dictionary>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -99,35 +100,36 @@ template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInter
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
         throwTypeError(&lexicalGlobalObject, throwScope);
-        return { };
+        return ConversionResultException { };
     }
-    TestCallbackInterface::Dictionary result;
     JSValue optionalMemberValue;
     if (isNullOrUndefined)
         optionalMemberValue = jsUndefined();
     else {
         optionalMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "optionalMember"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!optionalMemberValue.isUndefined()) {
-        result.optionalMember = convert<IDLLong>(lexicalGlobalObject, optionalMemberValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
+    auto optionalMemberConversionResult = convert<IDLOptional<IDLLong>>(lexicalGlobalObject, optionalMemberValue);
+    RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    ASSERT(!optionalMemberConversionResult.hasException());
     JSValue requiredMemberValue;
     if (isNullOrUndefined)
         requiredMemberValue = jsUndefined();
     else {
         requiredMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "requiredMember"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!requiredMemberValue.isUndefined()) {
-        result.requiredMember = convert<IDLUSVString>(lexicalGlobalObject, requiredMemberValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    } else {
+    if (requiredMemberValue.isUndefined()) {
         throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "requiredMember"_s, "TestCallbackInterfaceDictionary"_s, "USVString"_s);
-        return { };
+        return ConversionResultException { };
     }
-    return result;
+    auto requiredMemberConversionResult = convert<IDLUSVString>(lexicalGlobalObject, requiredMemberValue);
+    RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    ASSERT(!requiredMemberConversionResult.hasException());
+    return TestCallbackInterface::Dictionary {
+        requiredMemberConversionResult.releaseReturnValue(),
+        optionalMemberConversionResult.releaseReturnValue(),
+    };
 }
 
 JSTestCallbackInterface::JSTestCallbackInterface(JSObject* callback, JSDOMGlobalObject* globalObject)
@@ -382,7 +384,8 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto returnValue = convert<IDLDOMString>(lexicalGlobalObject, jsResult);
     RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return { WTFMove(returnValue) };
+    ASSERT(!returnValue.hasException());
+    return { returnValue.releaseReturnValue() };
 }
 
 CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterface::callbackThatRethrowsExceptions(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam)
@@ -413,7 +416,8 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto returnValue = convert<IDLDOMString>(lexicalGlobalObject, jsResult);
     RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return { WTFMove(returnValue) };
+    ASSERT(!returnValue.hasException());
+    return { returnValue.releaseReturnValue() };
 }
 
 CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterface::callbackWithThisObject(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLInterface<TestObj>::ParameterType testObjParam)
@@ -444,7 +448,8 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto returnValue = convert<IDLDOMString>(lexicalGlobalObject, jsResult);
     RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return { WTFMove(returnValue) };
+    ASSERT(!returnValue.hasException());
+    return { returnValue.releaseReturnValue() };
 }
 
 JSC::JSValue toJS(TestCallbackInterface& impl)

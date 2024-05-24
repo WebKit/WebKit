@@ -43,7 +43,7 @@ public:
     }
     virtual ~UserMessageHandler();
 
-    ExceptionOr<void> postMessage(RefPtr<SerializedScriptValue>&&, Ref<DeferredPromise>&&);
+    ExceptionOr<void> postMessage(Ref<SerializedScriptValue>&&, Ref<DeferredPromise>&&);
 
     UserMessageHandlerDescriptor* descriptor() { return m_descriptor.get(); }
     void invalidateDescriptor() { m_descriptor = nullptr; }

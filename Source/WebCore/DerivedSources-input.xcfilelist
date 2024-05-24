@@ -1466,6 +1466,7 @@ $(PROJECT_DIR)/dom/TextEvent.idl
 $(PROJECT_DIR)/dom/ToggleEvent.idl
 $(PROJECT_DIR)/dom/Touch.idl
 $(PROJECT_DIR)/dom/TouchEvent.idl
+$(PROJECT_DIR)/dom/TouchEventInit.idl
 $(PROJECT_DIR)/dom/TouchList.idl
 $(PROJECT_DIR)/dom/TransitionEvent.idl
 $(PROJECT_DIR)/dom/TreeWalker.idl

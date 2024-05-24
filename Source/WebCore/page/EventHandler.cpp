@@ -2967,7 +2967,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
 
     // If focus shift is blocked, we eat the event.
     RefPtr page = frame->page();
-    if (page && !page->checkedFocusController()->setFocusedElement(element.get(), protectedFrame(), { { }, { }, { }, FocusTrigger::Click, { } }))
+    if (page && !page->checkedFocusController()->setFocusedElement(element.get(), protectedFrame(), { .trigger = FocusTrigger::Click }))
         return false;
 
     if (element && m_mouseDownDelegatedFocus)

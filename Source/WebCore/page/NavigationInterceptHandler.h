@@ -35,7 +35,7 @@ class NavigationInterceptHandler : public ThreadSafeRefCounted<NavigationInterce
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<WTF::RefPtr<DOMPromise>> handleEvent() = 0;
+    virtual CallbackResult<Ref<DOMPromise>> handleEvent() = 0;
 };
 
 } // namespace WebCore

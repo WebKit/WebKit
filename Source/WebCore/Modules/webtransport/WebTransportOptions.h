@@ -33,7 +33,7 @@ namespace WebCore {
 struct WebTransportOptions {
     bool allowPooling { false };
     bool requireUnreliable { false };
-    Vector<WebTransportHash> serverCertificateHashes;
+    std::optional<Vector<WebTransportHash>> serverCertificateHashes;
     WebTransportCongestionControl congestionControl { WebTransportCongestionControl::Default };
 };
 

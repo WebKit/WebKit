@@ -145,6 +145,7 @@ enum AutoplayPolicy {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary NowPlayingState {
     DOMString title;
     unrestricted double duration;
@@ -159,6 +160,7 @@ enum AutoplayPolicy {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary MediaUsageState {
     DOMString mediaURL;
     boolean isPlaying;
@@ -194,7 +196,6 @@ enum AutoplayPolicy {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    JSGenerateToJSObject,
 ] dictionary FullscreenInsets {
     double top;
     double left;
@@ -211,13 +212,13 @@ enum HEVCParameterCodec {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary HEVCParameterSet {
-    HEVCParameterCodec codec;
-    unsigned short generalProfileSpace;
-    unsigned short generalProfileIDC;
-    unsigned long generalProfileCompatibilityFlags;
-    octet generalTierFlag;
+    HEVCParameterCodec codec = "hvc1";
+    unsigned short generalProfileSpace = 0;
+    unsigned short generalProfileIDC = 0;
+    unsigned long generalProfileCompatibilityFlags = 0;
+    octet generalTierFlag = 0;
     required FrozenArray<octet> generalConstraintIndicatorFlags;
-    unsigned short generalLevelIDC;
+    unsigned short generalLevelIDC = 0;
 };
 
 enum AV1ConfigurationProfile {
@@ -267,16 +268,16 @@ enum AV1ConfigurationRange {
     JSGenerateToJSObject,
 ] dictionary AV1CodecConfigurationRecord {
     DOMString codecName;
-    AV1ConfigurationProfile profile;
-    AV1ConfigurationLevel level;
-    AV1ConfigurationTier tier;
-    octet bitDepth;
-    octet monochrome;
-    octet chromaSubsampling;
-    octet colorPrimaries;
-    octet transferCharacteristics;
-    octet matrixCoefficients;
-    AV1ConfigurationRange videoFullRangeFlag;
+    AV1ConfigurationProfile profile = "Main";
+    AV1ConfigurationLevel level = "Level_2_0";
+    AV1ConfigurationTier tier = "Main";
+    octet bitDepth = 8;
+    octet monochrome = 0;
+    octet chromaSubsampling = 110; // Subsampling_420_Unknown
+    octet colorPrimaries = 1; // BT_709_6
+    octet transferCharacteristics = 1; // BT_709_6
+    octet matrixCoefficients = 1; // BT_709_6
+    AV1ConfigurationRange videoFullRangeFlag = "VideoRange";
 };
 
 [
@@ -284,8 +285,8 @@ enum AV1ConfigurationRange {
     JSGenerateToJSObject,
 ] dictionary DoViParameterSet {
     DOMString codecName;
-    unsigned short bitstreamProfileID;
-    unsigned short bitstreamLevelID;
+    unsigned short bitstreamProfileID = 0;
+    unsigned short bitstreamLevelID = 0;
 };
 
 [
@@ -293,19 +294,20 @@ enum AV1ConfigurationRange {
     JSGenerateToJSObject,
 ] dictionary VPCodecConfigurationRecord {
     DOMString codecName;
-    octet profile;
-    octet level;
-    octet bitDepth;
-    octet chromaSubsampling;
-    octet videoFullRangeFlag;
-    octet colorPrimaries;
-    octet transferCharacteristics;
-    octet matrixCoefficients;
+    octet profile = 0;
+    octet level = 10; // Level_1
+    octet bitDepth = 8;
+    octet chromaSubsampling = 1; // Subsampling_420_Colocated
+    octet videoFullRangeFlag = 0; // VideoRange
+    octet colorPrimaries = 1; // BT_709_6
+    octet transferCharacteristics = 1; // BT_709_6
+    octet matrixCoefficients = 1; // BT_709_6
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary AcceleratedAnimation {
     DOMString property;
     double speed;
@@ -314,6 +316,7 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary CookieData {
     DOMString name;
     DOMString value;
@@ -329,6 +332,7 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary TextIndicatorInfo {
     DOMRectReadOnly textBoundingRectInRootViewCoordinates;
     DOMRectList textRectsInBoundingRectCoordinates;
@@ -338,6 +342,7 @@ enum AV1ConfigurationRange {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=ATTACHMENT_ELEMENT,
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary AttachmentThumbnailInfo {
     unsigned long width;
     unsigned long height;
@@ -345,7 +350,6 @@ enum AV1ConfigurationRange {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    JSGenerateToJSObject,
 ] dictionary TextIndicatorOptions {
     boolean useBoundingRectAndPaintAllContentForComplexRanges = false;
     boolean computeEstimatedBackgroundColor = false;
@@ -356,6 +360,7 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary TextIteratorState {
     DOMString text;
     Range range;
@@ -363,7 +368,6 @@ enum AV1ConfigurationRange {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    JSGenerateToJSObject,
 ] dictionary ImageOverlayText {
     required DOMString text;
     required DOMPointReadOnly topLeft;
@@ -375,20 +379,18 @@ enum AV1ConfigurationRange {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    JSGenerateToJSObject,
 ] dictionary ImageOverlayLine {
     required DOMPointReadOnly topLeft;
     required DOMPointReadOnly topRight;
     required DOMPointReadOnly bottomRight;
     required DOMPointReadOnly bottomLeft;
-    sequence<ImageOverlayText> children;
+    sequence<ImageOverlayText> children = [];
     boolean hasTrailingNewline = true;
     boolean isVertical = false;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    JSGenerateToJSObject,
 ] dictionary ImageOverlayBlock {
     required DOMString text;
     required DOMPointReadOnly topLeft;
@@ -399,7 +401,6 @@ enum AV1ConfigurationRange {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    JSGenerateToJSObject,
 ] dictionary ImageOverlayDataDetector {
     required DOMPointReadOnly topLeft;
     required DOMPointReadOnly topRight;
@@ -410,6 +411,7 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary SelectorFilterHashCounts {
     unsigned long ids;
     unsigned long classes;
@@ -420,6 +422,7 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary PDFAnnotationRect {
     double x;
     double y;

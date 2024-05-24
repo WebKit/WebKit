@@ -572,7 +572,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& globalObject, Loca
 
 ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& globalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
-    return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTFMove(targetOrigin), WTFMove(transfer) });
+    return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { { WTFMove(transfer) }, WTFMove(targetOrigin) });
 }
 
 ExceptionOr<Ref<CSSStyleDeclaration>> DOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const

@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include <optional>
+
 namespace WebCore {
 
 struct IdleRequestOptions {
-    unsigned timeout { 0 }; // Used if positive.
+    std::optional<unsigned> timeout { 0 }; // Used if positive.
 };
 
 } // namespace WebCore

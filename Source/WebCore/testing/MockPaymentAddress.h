@@ -31,7 +31,31 @@
 
 namespace WebCore {
 
-struct MockPaymentAddress : ApplePayPaymentContact {
+struct MockPaymentAddress {
+    String countryCode;
+    std::optional<Vector<String>> addressLines;
+    String administrativeArea;
+    String locality;
+    String subLocality;
+    String postalCode;
+    String localizedName;
+    String phoneNumber;
+    String emailAddress;
+
+    ApplePayPaymentContact toApplePayPaymentContact() const
+    {
+        return ApplePayPaymentContact {
+            .phoneNumber = phoneNumber,
+            .emailAddress = emailAddress,
+            .addressLines = addressLines,
+            .subLocality = subLocality,
+            .locality = locality,
+            .postalCode = postalCode,
+            .administrativeArea = administrativeArea,
+            .countryCode = countryCode,
+            .localizedName = localizedName,
+        };
+    }
 };
 
 } // namespace WebCore

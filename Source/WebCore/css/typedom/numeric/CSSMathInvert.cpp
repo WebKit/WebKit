@@ -45,10 +45,10 @@ static CSSNumericType negatedType(const CSSNumberish& numberish)
 {
     // https://drafts.css-houdini.org/css-typed-om/#type-of-a-cssmathvalue
     return WTF::switchOn(numberish,
-        [] (double) { return CSSNumericType(); },
-        [] (const RefPtr<CSSNumericValue>& value) {
-            if (!value)
-                return CSSNumericType();
+        [](double) {
+            return CSSNumericType();
+        },
+        [](const Ref<CSSNumericValue>& value) {
             CSSNumericType type = value->type();
             auto negate = [] (auto& optional) {
                 if (optional)

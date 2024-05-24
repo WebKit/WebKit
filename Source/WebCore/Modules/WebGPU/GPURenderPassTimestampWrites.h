@@ -38,14 +38,14 @@ struct GPURenderPassTimestampWrites {
     {
         return {
             querySet ? &querySet->backing() : nullptr,
-            beginningOfPassWriteIndex,
-            endOfPassWriteIndex,
+            beginningOfPassWriteIndex.value_or(UINT32_MAX),
+            endOfPassWriteIndex.value_or(UINT32_MAX),
         };
     }
 
     WeakPtr<GPUQuerySet> querySet;
-    GPUSize32 beginningOfPassWriteIndex { UINT32_MAX };
-    GPUSize32 endOfPassWriteIndex { UINT32_MAX };
+    std::optional<GPUSize32> beginningOfPassWriteIndex;
+    std::optional<GPUSize32> endOfPassWriteIndex;
 };
 
 }

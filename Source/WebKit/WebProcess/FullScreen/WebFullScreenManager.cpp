@@ -190,7 +190,7 @@ void WebFullScreenManager::setElement(WebCore::Element& element)
     m_elementToRestore = element;
 
     for (auto& eventName : eventsToObserve())
-        m_element->addEventListener(eventName, *this, { true });
+        m_element->addEventListener(eventName, *this, { { .capture = true } });
 }
 
 void WebFullScreenManager::clearElement()

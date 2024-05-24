@@ -244,10 +244,10 @@ std::optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(c
     // 12. Follow the steps for the first matching condition from the following list:
     Vector<CDMSessionType> sessionTypes;
 
-    if (!candidateConfiguration.sessionTypes.isEmpty()) {
+    if (candidateConfiguration.sessionTypes) {
         // ↳ If the sessionTypes member is present [WebIDL] in candidate configuration
         // Let session types be candidate configuration's sessionTypes member.
-        sessionTypes = candidateConfiguration.sessionTypes;
+        sessionTypes = candidateConfiguration.sessionTypes.value();
     } else {
         // ↳ Otherwise
         // Let session types be [ "temporary" ].

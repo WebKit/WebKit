@@ -38,20 +38,19 @@ class MediaStreamTrackEvent final : public Event {
 public:
     virtual ~MediaStreamTrackEvent();
 
-    static Ref<MediaStreamTrackEvent> create(const AtomString& type, CanBubble, IsCancelable, RefPtr<MediaStreamTrack>&&);
-
     struct Init : EventInit {
-        RefPtr<MediaStreamTrack> track;
+        Ref<MediaStreamTrack> track;
     };
-    static Ref<MediaStreamTrackEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<MediaStreamTrackEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<MediaStreamTrackEvent> create(const AtomString& type, CanBubble, IsCancelable, Ref<MediaStreamTrack>&&);
 
-    MediaStreamTrack* track() const;
+    const MediaStreamTrack& track() const;
 
 private:
-    MediaStreamTrackEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<MediaStreamTrack>&&);
-    MediaStreamTrackEvent(const AtomString& type, const Init&, IsTrusted);
+    MediaStreamTrackEvent(const AtomString& type, Init&&, IsTrusted);
+    MediaStreamTrackEvent(const AtomString& type, CanBubble, IsCancelable, Ref<MediaStreamTrack>&&);
 
-    RefPtr<MediaStreamTrack> m_track;
+    Ref<MediaStreamTrack> m_track;
 };
 
 } // namespace WebCore

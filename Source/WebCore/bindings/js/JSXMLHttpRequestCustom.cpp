@@ -56,7 +56,7 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN(JSXMLHttpRequest);
 
 JSValue JSXMLHttpRequest::response(JSGlobalObject& lexicalGlobalObject) const
 {
-    auto cacheResult = [&] (JSValue value) -> JSValue {
+    auto cacheResult = [&](JSValue value) {
         m_response.set(lexicalGlobalObject.vm(), this, value);
         return value;
     };

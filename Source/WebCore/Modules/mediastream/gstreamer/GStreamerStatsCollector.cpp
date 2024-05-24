@@ -173,9 +173,6 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamSta
     if (gst_structure_get_uint64(structure, "packets-discarded", &value))
         stats.packetsDiscarded = value;
 
-    if (gst_structure_get_uint64(structure, "packets-duplicated", &value))
-        stats.packetsDuplicated = value;
-
     unsigned firCount;
     if (gst_structure_get_uint(structure, "fir-count", &firCount))
         stats.firCount = firCount;
@@ -191,8 +188,6 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamSta
     uint64_t bytesReceived;
     if (gst_structure_get_uint64(structure, "bytes-received", &bytesReceived))
         stats.bytesReceived = bytesReceived;
-
-    stats.decoderImplementation = "GStreamer"_s;
 
     if (!additionalStats)
         return;
@@ -385,30 +380,40 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
     switch (statsType) {
     case GST_WEBRTC_STATS_CODEC: {
         RTCStatsReport::CodecStats stats;
+        stats.type = RTCStatsReport::Type::Codec;
+
         fillRTCCodecStats(stats, structure);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::CodecStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_INBOUND_RTP: {
         RTCStatsReport::InboundRtpStreamStats stats;
+        stats.type = RTCStatsReport::Type::InboundRtp;
+
         fillInboundRTPStreamStats(stats, structure, additionalStats);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::InboundRtpStreamStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_OUTBOUND_RTP: {
         RTCStatsReport::OutboundRtpStreamStats stats;
+        stats.type = RTCStatsReport::Type::OutboundRtp;
+
         fillOutboundRTPStreamStats(stats, structure, additionalStats);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::OutboundRtpStreamStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_REMOTE_INBOUND_RTP: {
         RTCStatsReport::RemoteInboundRtpStreamStats stats;
+        stats.type = RTCStatsReport::Type::RemoteInboundRtp;
+
         fillRemoteInboundRTPStreamStats(stats, structure, additionalStats);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::RemoteInboundRtpStreamStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_REMOTE_OUTBOUND_RTP: {
         RTCStatsReport::RemoteOutboundRtpStreamStats stats;
+        stats.type = RTCStatsReport::Type::RemoteOutboundRtp;
+
         fillRemoteOutboundRTPStreamStats(stats, structure, additionalStats);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::RemoteOutboundRtpStreamStats>>(stats.id, WTFMove(stats));
         break;
@@ -418,12 +423,16 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
         break;
     case GST_WEBRTC_STATS_PEER_CONNECTION: {
         RTCStatsReport::PeerConnectionStats stats;
+        stats.type = RTCStatsReport::Type::PeerConnection;
+
         fillRTCPeerConnectionStats(stats, structure);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::PeerConnectionStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_TRANSPORT: {
         RTCStatsReport::TransportStats stats;
+        stats.type = RTCStatsReport::Type::Transport;
+
         fillRTCTransportStats(stats, structure);
         report.set<IDLDOMString, IDLDictionary<RTCStatsReport::TransportStats>>(stats.id, WTFMove(stats));
         break;
@@ -445,6 +454,8 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
     case GST_WEBRTC_STATS_CANDIDATE_PAIR:
         if (webkitGstCheckVersion(1, 22, 0)) {
             RTCStatsReport::IceCandidatePairStats stats;
+            stats.type = RTCStatsReport::Type::CandidatePair;
+
             fillRTCCandidatePairStats(stats, structure);
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidatePairStats>>(stats.id, WTFMove(stats));
         }

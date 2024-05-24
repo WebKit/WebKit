@@ -202,8 +202,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
     if (isClosed())
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto track = std::get<RefPtr<MediaStreamTrack>>(withTrack).releaseNonNull();
-    return m_backend->addTransceiver(WTFMove(track), init);
+    return m_backend->addTransceiver(WTFMove(std::get<Ref<MediaStreamTrack>>(withTrack)), init);
 }
 
 void RTCPeerConnection::createOffer(RTCOfferOptions&& options, Ref<DeferredPromise>&& promise)
@@ -337,19 +336,22 @@ void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPr
     std::optional<Exception> exception;
     RefPtr<RTCIceCandidate> candidate;
     if (rtcCandidate) {
-        candidate = WTF::switchOn(*rtcCandidate, [&exception](RTCIceCandidateInit& init) -> RefPtr<RTCIceCandidate> {
-            if (init.candidate.isEmpty())
-                return nullptr;
+        candidate = WTF::switchOn(WTFMove(*rtcCandidate),
+            [&exception](RTCIceCandidateInit&& init) -> RefPtr<RTCIceCandidate> {
+                if (init.candidate.isEmpty())
+                    return nullptr;
 
-            auto result = RTCIceCandidate::create(WTFMove(init));
-            if (result.hasException()) {
-                exception = result.releaseException();
-                return nullptr;
+                auto result = RTCIceCandidate::create(WTFMove(init));
+                if (result.hasException()) {
+                    exception = result.releaseException();
+                    return nullptr;
+                }
+                return result.releaseReturnValue();
+            },
+            [](Ref<RTCIceCandidate>&& iceCandidate) -> RefPtr<RTCIceCandidate> {
+                return WTFMove(iceCandidate);
             }
-            return result.releaseReturnValue();
-        }, [](RefPtr<RTCIceCandidate>& iceCandidate) {
-            return WTFMove(iceCandidate);
-        });
+        );
     }
 
     ALWAYS_LOG(LOGIDENTIFIER, "Received ice candidate:\n", candidate ? candidate->candidate() : "null"_s);
@@ -444,12 +446,15 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
 
 ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> RTCPeerConnection::certificatesFromConfiguration(const RTCConfiguration& configuration)
 {
+    Vector<MediaEndpointConfiguration::CertificatePEM> certificates;
+    if (!configuration.certificates)
+        return certificates;
+
     auto currentMilliSeconds = WallTime::now().secondsSinceEpoch().milliseconds();
     auto& origin = document()->securityOrigin();
 
-    Vector<MediaEndpointConfiguration::CertificatePEM> certificates;
-    certificates.reserveInitialCapacity(configuration.certificates.size());
-    for (auto& certificate : configuration.certificates) {
+    certificates.reserveInitialCapacity(configuration.certificates->size());
+    for (auto& certificate : *(configuration.certificates)) {
         if (!origin.isSameOriginAs(certificate->origin()))
             return Exception { ExceptionCode::InvalidAccessError, "Certificate does not have a valid origin"_s };
 
@@ -491,12 +496,12 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
     if (servers.hasException())
         return servers.releaseException();
 
-    if (configuration.certificates.size()) {
-        if (configuration.certificates.size() != m_configuration.certificates.size())
+    if (configuration.certificates) {
+        if (!m_configuration.certificates || configuration.certificates->size() != m_configuration.certificates->size())
             return Exception { ExceptionCode::InvalidModificationError, "Certificates parameters are different"_s };
 
-        for (auto& certificate : configuration.certificates) {
-            bool isThere = m_configuration.certificates.findIf([&certificate](const auto& item) {
+        for (auto& certificate : *(configuration.certificates)) {
+            bool isThere = m_configuration.certificates->findIf([&certificate](const auto& item) {
                 return item == certificate;
             }) != notFound;
             if (!isThere)
@@ -511,7 +516,7 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
     return { };
 }
 
-void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise>&& promise)
+void RTCPeerConnection::getStats(RefPtr<MediaStreamTrack>&& selector, Ref<DeferredPromise>&& promise)
 {
     if (selector) {
         for (auto& transceiver : m_transceiverSet.list()) {
@@ -870,11 +875,12 @@ static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certifi
     JSC::VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto parameters = convertDictionary<RTCPeerConnection::CertificateParameters>(lexicalGlobalObject, value.get());
+    auto parametersConversionResult = convertDictionary<RTCPeerConnection::CertificateParameters>(lexicalGlobalObject, value.get());
     if (UNLIKELY(scope.exception())) {
         scope.clearException();
         return Exception { ExceptionCode::TypeError, "Unable to read certificate parameters"_s };
     }
+    auto parameters = parametersConversionResult.releaseReturnValue();
 
     if (parameters.expires && *parameters.expires < 0)
         return Exception { ExceptionCode::TypeError, "Expire value is invalid"_s };

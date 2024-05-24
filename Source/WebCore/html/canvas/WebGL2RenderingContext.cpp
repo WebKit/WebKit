@@ -537,13 +537,13 @@ void WebGL2RenderingContext::pixelStorei(GCGLenum pname, GCGLint param)
 void WebGL2RenderingContext::bufferData(GCGLenum target, const ArrayBufferView& data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length)
 {
     if (auto slice = sliceArrayBufferView("bufferData"_s, data, srcOffset, length))
-        WebGLRenderingContextBase::bufferData(target, BufferDataSource(slice.get()), usage);
+        WebGLRenderingContextBase::bufferData(target, BufferDataSource(slice.releaseNonNull()), usage);
 }
 
 void WebGL2RenderingContext::bufferSubData(GCGLenum target, long long offset, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length)
 {
     if (auto slice = sliceArrayBufferView("bufferSubData"_s, data, srcOffset, length))
-        WebGLRenderingContextBase::bufferSubData(target, offset, BufferDataSource(slice.get()));
+        WebGLRenderingContextBase::bufferSubData(target, offset, BufferDataSource(slice.releaseNonNull()));
 }
 
 void WebGL2RenderingContext::copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLint64 readOffset, GCGLint64 writeOffset, GCGLint64 size)
@@ -747,7 +747,10 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
             return nullptr;
     }
 
-    return Int32Array::tryCreate(params.data(), params.size());
+    if (RefPtr buffer = Int32Array::tryCreate(params.data(), params.size()))
+        return buffer.releaseNonNull();
+
+    return nullptr;
 }
 
 void WebGL2RenderingContext::invalidateFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments)
@@ -1836,7 +1839,7 @@ WebGLAny WebGL2RenderingContext::getQuery(GCGLenum target, GCGLenum pname)
     auto query = m_activeQueries[*activeQueryKey];
     if (!query || query->target() != target)
         return nullptr;
-    return query;
+    return query.releaseNonNull();
 }
 
 WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery& query, GCGLenum pname)
@@ -2370,7 +2373,9 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getIndexedParameter"_s, "index out of range"_s);
             return nullptr;
         }
-        return RefPtr { buffer };
+        if (buffer)
+            return Ref { *buffer };
+        return nullptr;
     }
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_SIZE:
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_START:
@@ -2382,7 +2387,9 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getIndexedParameter"_s, "index out of range"_s);
             return nullptr;
         }
-        return m_boundIndexedUniformBuffers[index];
+        if (RefPtr buffer = m_boundIndexedUniformBuffers[index].get())
+            return buffer.releaseNonNull();
+        return nullptr;
     // OES_draw_buffers_indexed
     case GraphicsContextGL::BLEND_EQUATION_RGB:
     case GraphicsContextGL::BLEND_EQUATION_ALPHA:
@@ -2479,7 +2486,9 @@ WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram& pr
         GCGLint size = m_context->getActiveUniformBlocki(program.object(), uniformBlockIndex, GraphicsContextGL::UNIFORM_BLOCK_ACTIVE_UNIFORMS);
         Vector<GCGLint> params(size, 0);
         m_context->getActiveUniformBlockiv(program.object(), uniformBlockIndex, pname, params);
-        return Uint32Array::tryCreate(reinterpret_cast<GCGLuint*>(params.data()), params.size());
+        if (RefPtr buffer = Uint32Array::tryCreate(reinterpret_cast<GCGLuint*>(params.data()), params.size()))
+            return buffer.releaseNonNull();
+        return nullptr;
     }
     case GraphicsContextGL::UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER:
     case GraphicsContextGL::UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER:
@@ -2797,9 +2806,14 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
             return static_cast<unsigned>(GraphicsContextGL::TEXTURE);
         return static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER);
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-        if (isTexture)
-            return std::get<RefPtr<WebGLTexture>>(WTFMove(*attachmentObject));
-        return std::get<RefPtr<WebGLRenderbuffer>>(WTFMove(*attachmentObject));
+        if (isTexture) {
+            if (RefPtr texture = std::get<RefPtr<WebGLTexture>>(WTFMove(*attachmentObject)))
+                return texture.releaseNonNull();
+        } else {
+            if (RefPtr buffer = std::get<RefPtr<WebGLRenderbuffer>>(WTFMove(*attachmentObject)))
+                return buffer.releaseNonNull();
+        }
+        return nullptr;
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER:
@@ -3076,11 +3090,17 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::VERSION:
         return "WebGL 2.0"_str;
     case GraphicsContextGL::COPY_READ_BUFFER_BINDING:
-        return m_boundCopyReadBuffer;
+        if (RefPtr binding = m_boundCopyReadBuffer.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::COPY_WRITE_BUFFER_BINDING:
-        return m_boundCopyWriteBuffer;
+        if (RefPtr binding = m_boundCopyWriteBuffer.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::DRAW_FRAMEBUFFER_BINDING:
-        return m_framebufferBinding;
+        if (RefPtr binding = m_framebufferBinding.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::FRAGMENT_SHADER_DERIVATIVE_HINT:
         return getIntParameter(pname);
     case GraphicsContextGL::MAX_3D_TEXTURE_SIZE:
@@ -3146,9 +3166,13 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::PACK_SKIP_ROWS:
         return m_packParameters.skipRows;
     case GraphicsContextGL::PIXEL_PACK_BUFFER_BINDING:
-        return m_boundPixelPackBuffer;
+        if (RefPtr binding = m_boundPixelPackBuffer.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::PIXEL_UNPACK_BUFFER_BINDING:
-        return m_boundPixelUnpackBuffer;
+        if (RefPtr binding = m_boundPixelUnpackBuffer.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::RASTERIZER_DISCARD:
         return getBooleanParameter(pname);
     case GraphicsContextGL::READ_BUFFER: {
@@ -3158,23 +3182,39 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
         return value;
     }
     case GraphicsContextGL::READ_FRAMEBUFFER_BINDING:
-        return m_readFramebufferBinding;
+        if (RefPtr binding = m_readFramebufferBinding.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::SAMPLER_BINDING:
-        return m_boundSamplers[m_activeTextureUnit];
+        if (RefPtr sampler = m_boundSamplers[m_activeTextureUnit])
+            return sampler.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::TEXTURE_BINDING_2D_ARRAY:
-        return m_textureUnits[m_activeTextureUnit].texture2DArrayBinding;
+        if (RefPtr binding = m_textureUnits[m_activeTextureUnit].texture2DArrayBinding.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::TEXTURE_BINDING_3D:
-        return m_textureUnits[m_activeTextureUnit].texture3DBinding;
+        if (RefPtr binding = m_textureUnits[m_activeTextureUnit].texture3DBinding.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::TRANSFORM_FEEDBACK_ACTIVE:
         return getBooleanParameter(pname);
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_BINDING:
-        return m_boundTransformFeedbackBuffer;
+        if (RefPtr binding = m_boundTransformFeedbackBuffer.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BINDING:
-        return m_boundTransformFeedback == m_defaultTransformFeedback ? nullptr : RefPtr { m_boundTransformFeedback.get() };
+        if (m_boundTransformFeedback == m_defaultTransformFeedback)
+            return nullptr;
+        if (RefPtr binding = m_boundTransformFeedback.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::TRANSFORM_FEEDBACK_PAUSED:
         return getBooleanParameter(pname);
     case GraphicsContextGL::UNIFORM_BUFFER_BINDING:
-        return m_boundUniformBuffer;
+        if (RefPtr binding = m_boundUniformBuffer.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::UNIFORM_BUFFER_OFFSET_ALIGNMENT:
         return getIntParameter(pname);
     case GraphicsContextGL::UNPACK_IMAGE_HEIGHT:
@@ -3190,7 +3230,9 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::VERTEX_ARRAY_BINDING:
         if (m_boundVertexArrayObject->isDefaultObject())
             return nullptr;
-        return RefPtr { static_cast<WebGLVertexArrayObject*>(m_boundVertexArrayObject.get()) };
+        if (RefPtr object = static_cast<WebGLVertexArrayObject*>(m_boundVertexArrayObject.get()))
+            return object.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::MAX_CLIP_DISTANCES_ANGLE:
     case GraphicsContextGL::MAX_CULL_DISTANCES_ANGLE:
     case GraphicsContextGL::MAX_COMBINED_CLIP_AND_CULL_DISTANCES_ANGLE:

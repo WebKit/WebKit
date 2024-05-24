@@ -32,16 +32,14 @@
 namespace WebCore {
 
 template<> struct Converter<IDLAny> : DefaultConverter<IDLAny> {
-    using ReturnType = JSC::JSValue;
-
     static constexpr bool conversionHasSideEffects = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject&, JSC::JSValue value)
+    static ConversionResult<IDLAny> convert(JSC::JSGlobalObject&, JSC::JSValue value)
     {
         return value;
     }
 
-    static JSC::JSValue convert(const JSC::Strong<JSC::Unknown>& value)
+    static ConversionResult<IDLAny> convert(const JSC::Strong<JSC::Unknown>& value)
     {
         return value.get();
     }
@@ -70,15 +68,31 @@ template<> struct JSConverter<IDLAny> {
 template<> struct VariadicConverter<IDLAny> {
     using Item = typename IDLAny::ImplementationType;
 
+    // The result type of the VariadicConverter conversion must conform to the basic structure
+    // of ConversionResult, but does not need to actually be a ConversionResult.
+    //
+    //    struct Result {
+    //        Item releaseReturnValue() { return WTFMove(item); }
+    //        constexpr bool hasException() const { return false; };
+    //
+    //        Item item;
+    //    };
+    //
+    //    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    //    {
+    //        auto& vm = JSC::getVM(&lexicalGlobalObject);
+    //        return {{ vm, value }};
+    //    }
+
     static std::optional<Item> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
         auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        auto result = Converter<IDLAny>::convert(lexicalGlobalObject, value);
+        auto conversionResult = Converter<IDLAny>::convert(lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(scope, std::nullopt);
 
-        return Item { vm, result };
+        return Item { vm, conversionResult.releaseReturnValue() };
     }
 };
 

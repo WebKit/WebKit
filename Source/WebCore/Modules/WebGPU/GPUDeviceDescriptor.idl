@@ -32,6 +32,6 @@ typedef [EnforceRange] unsigned long long GPUSize64;
 ]
 dictionary GPUDeviceDescriptor : GPUObjectDescriptorBase {
     sequence<GPUFeatureName> requiredFeatures = [];
-    record<DOMString, GPUSize64> requiredLimits;
+    record<DOMString, GPUSize64> requiredLimits = [];
     GPUQueueDescriptor defaultQueue = {};
 };

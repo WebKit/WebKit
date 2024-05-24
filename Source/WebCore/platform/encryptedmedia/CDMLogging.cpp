@@ -87,10 +87,12 @@ static Ref<JSON::Object> toJSONObject(const CDMKeySystemConfiguration& configura
     object->setString("distinctiveIdentifier"_s, convertEnumerationToString(configuration.distinctiveIdentifier));
     object->setString("persistentState"_s, convertEnumerationToString(configuration.persistentState));
 
-    auto sessionTypes = JSON::Array::create();
-    for (auto type : configuration.sessionTypes)
-        sessionTypes->pushString(convertEnumerationToString(type));
-    object->setArray("sessionTypes"_s, WTFMove(sessionTypes));
+    if (configuration.sessionTypes) {
+        auto sessionTypes = JSON::Array::create();
+        for (auto type : *configuration.sessionTypes)
+            sessionTypes->pushString(convertEnumerationToString(type));
+        object->setArray("sessionTypes"_s, WTFMove(sessionTypes));
+    }
 
     return object;
 }

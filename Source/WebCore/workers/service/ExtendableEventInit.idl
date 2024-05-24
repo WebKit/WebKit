@@ -23,5 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/ServiceWorker/#dictdef-extendableeventinit
 dictionary ExtendableEventInit : EventInit {
+    // Defined for the forward compatibility across the derived events
 };

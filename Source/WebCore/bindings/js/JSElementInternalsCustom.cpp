@@ -56,14 +56,15 @@ JSValue JSElementInternals::setFormValue(JSGlobalObject& lexicalGlobalObject, Ca
     auto value = convert<JSCustomElementFormValue>(lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, { });
 
-    std::optional<CustomElementFormValue> state;
+    CustomElementFormValue state;
     if (callFrame.argumentCount() > 1) {
         EnsureStillAliveScope argument1 = callFrame.argument(1);
-        state = convert<JSCustomElementFormValue>(lexicalGlobalObject, argument1.value());
+        auto stateConversionResult = convert<JSCustomElementFormValue>(lexicalGlobalObject, argument1.value());
         RETURN_IF_EXCEPTION(throwScope, { });
+        state = stateConversionResult.releaseReturnValue();
     }
 
-    auto result = wrapped().setFormValue(WTFMove(value), WTFMove(state));
+    auto result = wrapped().setFormValue(value.releaseReturnValue(), WTFMove(state));
     if (UNLIKELY(result.hasException())) {
         propagateException(lexicalGlobalObject, throwScope, result.releaseException());
         return { };
@@ -90,8 +91,8 @@ static JSValue getElementsArrayAttribute(JSGlobalObject& lexicalGlobalObject, co
     auto propertyName = PropertyName(Identifier::fromString(vm, attributeName.toString()));
     JSValue cachedValue = cachedObject->getDirect(vm, propertyName);
     if (!cachedValue.isEmpty()) {
-        std::optional<Vector<Ref<Element>>> cachedElements = convert<IDLNullable<IDLFrozenArray<IDLInterface<Element>>>>(lexicalGlobalObject, cachedValue);
-        if (elements == cachedElements)
+        auto cachedElements = convert<IDLNullable<IDLFrozenArray<IDLInterface<Element>>>>(lexicalGlobalObject, cachedValue);
+        if (!cachedElements.hasException() && elements == cachedElements.returnValue())
             return cachedValue;
     }
 

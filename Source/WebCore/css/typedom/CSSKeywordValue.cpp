@@ -43,12 +43,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CSSKeywordValue);
 Ref<CSSKeywordValue> CSSKeywordValue::rectifyKeywordish(CSSKeywordish&& keywordish)
 {
     // https://drafts.css-houdini.org/css-typed-om/#rectify-a-keywordish-value
-    return WTF::switchOn(WTFMove(keywordish), [] (String string) {
-        return adoptRef(*new CSSKeywordValue(string));
-    }, [] (RefPtr<CSSKeywordValue> value) {
-        RELEASE_ASSERT(value);
-        return value.releaseNonNull();
-    });
+    return WTF::switchOn(WTFMove(keywordish),
+        [](String&& string) {
+            return adoptRef(*new CSSKeywordValue(WTFMove(string)));
+        },
+        [](Ref<CSSKeywordValue>&& value) {
+            return value;
+        }
+    );
 }
 
 ExceptionOr<Ref<CSSKeywordValue>> CSSKeywordValue::create(const String& value)
