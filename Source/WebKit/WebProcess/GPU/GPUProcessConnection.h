@@ -66,7 +66,7 @@ class RemoteVideoFrameObjectHeapProxy;
 
 class GPUProcessConnection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUProcessConnection>, public IPC::Connection::Client {
 public:
-    static Ref<GPUProcessConnection> create(Ref<IPC::Connection>&&);
+    static RefPtr<GPUProcessConnection> create(IPC::Connection& parentConnection);
     ~GPUProcessConnection();
     
     IPC::Connection& connection() { return m_connection.get(); }
@@ -117,7 +117,7 @@ public:
 
     static constexpr Seconds defaultTimeout = 3_s;
 private:
-    GPUProcessConnection(Ref<IPC::Connection>&&);
+    GPUProcessConnection(IPC::Connection::Identifier&&);
     bool waitForDidInitialize();
     void invalidate();
 
