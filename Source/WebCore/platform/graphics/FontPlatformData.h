@@ -133,7 +133,7 @@ struct FontPlatformDataAttributes {
     LOGFONT m_font;
 #elif USE(CORE_TEXT)
     RetainPtr<CFDictionaryRef> m_attributes;
-    CTFontDescriptorOptions m_options;
+    CTFontDescriptorOptions m_options { (CTFontDescriptorOptions)0 }; // FIXME: <rdar://121670125>
     RetainPtr<CFStringRef> m_url;
     RetainPtr<CFStringRef> m_psName;
 #elif USE(SKIA)
