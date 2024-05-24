@@ -123,7 +123,6 @@ void NameManglerVisitor::visit(AST::Structure& structure)
     introduceVariable(structure.name(), MangledName::Type);
 
     NameMap fieldMap;
-    m_indexPerType[WTF::enumToUnderlyingType(MangledName::Field)] = 0;
     for (auto& member : structure.members()) {
         Base::visit(member.type());
         auto mangledName = makeMangledName(member.name(), MangledName::Field);

@@ -18,7 +18,7 @@ struct T {
 }
 
 struct U {
-    // CHECK: array<type\d::PackedType, 1> field0
+    // CHECK: array<type\d::PackedType, 1> field\d
     ts: array<T>,
 }
 

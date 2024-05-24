@@ -18,3 +18,15 @@ fn main()
 {
     _ = testStructConstructor();
 }
+
+struct S1 {
+@location(0) x: i32,
+}
+
+struct S2 {
+@location(1) x: i32,
+}
+
+@fragment
+fn fragment_main(s1: S1, s2: S2) {
+}
