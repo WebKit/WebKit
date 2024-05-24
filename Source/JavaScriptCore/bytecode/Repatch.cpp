@@ -1891,12 +1891,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
         callerFrame = callFrame->callerFrame();
 
     if (isDataIC) {
-        CommonJITThunkID jitThunk = CommonJITThunkID::PolymorphicThunkForRegularCall;
-        if (isClosureCall)
-            jitThunk = isTailCall ? CommonJITThunkID::PolymorphicThunkForTailCallForClosure : CommonJITThunkID::PolymorphicThunkForRegularCallForClosure;
-        else
-            jitThunk = isTailCall ? CommonJITThunkID::PolymorphicThunkForTailCall : CommonJITThunkID::PolymorphicThunkForRegularCall;
-
+        CommonJITThunkID jitThunk = isClosureCall ? CommonJITThunkID::PolymorphicThunkForClosure : CommonJITThunkID::PolymorphicThunk;
         auto stubRoutine = PolymorphicCallStubRoutine::create(vm.getCTIStub(jitThunk).retagged<JITStubRoutinePtrTag>(), vm, owner, callerFrame, callLinkInfo, callSlots, nullptr, notUsingCounting, isClosureCall);
 
         // If there had been a previous stub routine, that one will die as soon as the GC runs and sees

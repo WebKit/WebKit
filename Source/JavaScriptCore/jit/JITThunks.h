@@ -68,10 +68,8 @@ class NativeExecutable;
     macro(VirtualThunkForRegularCall, virtualThunkForRegularCall) \
     macro(VirtualThunkForTailCall, virtualThunkForTailCall) \
     macro(VirtualThunkForConstruct, virtualThunkForConstruct) \
-    macro(PolymorphicThunkForRegularCall, polymorphicThunkForRegularCall) \
-    macro(PolymorphicThunkForTailCall, polymorphicThunkForTailCall) \
-    macro(PolymorphicThunkForRegularCallForClosure, polymorphicThunkForRegularCallForClosure) \
-    macro(PolymorphicThunkForTailCallForClosure, polymorphicThunkForTailCallForClosure) \
+    macro(PolymorphicThunk, polymorphicThunk) \
+    macro(PolymorphicThunkForClosure, polymorphicThunkForClosure) \
     macro(ReturnFromBaseline, returnFromBaselineGenerator) \
     macro(ArityFixup, arityFixupGenerator) \
 

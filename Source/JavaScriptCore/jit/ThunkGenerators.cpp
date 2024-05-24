@@ -302,7 +302,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstruct(VM& vm)
 }
 
 enum class ClosureMode : uint8_t { No, Yes };
-static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, CallMode mode, ClosureMode closureMode)
+static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, ClosureMode closureMode)
 {
     // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
     // The return address is on the stack, or in the link register. We will hence
@@ -315,17 +315,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, CallMode m
 
     CCallHelpers jit;
 
-    bool isTailCall = mode == CallMode::Tail;
     bool isClosureCall = closureMode == ClosureMode::Yes;
 
     CCallHelpers::JumpList slowCase;
 
 
 #if USE(JSVALUE32_64)
-    if (isTailCall)
-        slowCase.append(jit.branchIfNotCell(GPRInfo::regT0, DoNotHaveTagRegisters));
-    else
-        slowCase.append(jit.branchIfNotCell(GPRInfo::regT0));
+    slowCase.append(jit.branchIfNotCell(GPRInfo::regT0, DoNotHaveTagRegisters));
 #endif
 
     GPRReg comparisonValueGPR;
@@ -333,10 +329,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, CallMode m
         comparisonValueGPR = GPRInfo::regT4;
         // Verify that we have a function and stash the executable in scratchGPR.
 #if USE(JSVALUE64)
-        if (isTailCall)
-            slowCase.append(jit.branchIfNotCell(GPRInfo::regT0, DoNotHaveTagRegisters));
-        else
-            slowCase.append(jit.branchIfNotCell(GPRInfo::regT0));
+        slowCase.append(jit.branchIfNotCell(GPRInfo::regT0, DoNotHaveTagRegisters));
 #endif
         // FIXME: We could add a fast path for InternalFunction with closure call.
         slowCase.append(jit.branchIfNotFunction(GPRInfo::regT0));
@@ -401,28 +394,18 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, CallMode m
     return FINALIZE_THUNK(
         patchBuffer, JITThunkPtrTag,
         "PolymorphicCall"_s,
-        "Polymorphic %s slow path thunk",
-        mode == CallMode::Regular ? "call" : mode == CallMode::Tail ? "tail call" : "construct");
+        "Polymorphic %s thunk",
+        isClosureCall ? "closure" : "normal");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForRegularCall(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunk(VM& vm)
 {
-    return polymorphicThunkFor(vm, CallMode::Regular, ClosureMode::No);
+    return polymorphicThunkFor(vm, ClosureMode::No);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForTailCall(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForClosure(VM& vm)
 {
-    return polymorphicThunkFor(vm, CallMode::Tail, ClosureMode::No);
-}
-
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForRegularCallForClosure(VM& vm)
-{
-    return polymorphicThunkFor(vm, CallMode::Regular, ClosureMode::Yes);
-}
-
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForTailCallForClosure(VM& vm)
-{
-    return polymorphicThunkFor(vm, CallMode::Tail, ClosureMode::Yes);
+    return polymorphicThunkFor(vm, ClosureMode::Yes);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicRepatchThunk(VM&)
