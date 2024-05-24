@@ -52,8 +52,6 @@ if (!m_renderCommandEncoder || !m_parentEncoder->isValid() || !m_parentEncoder->
     return; \
 }
 
-constexpr uint32_t invalidVertexCount = UINT32_MAX;
-
 RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, uint64_t maxDrawCount, Device& device)
     : m_renderCommandEncoder(renderCommandEncoder)
     , m_device(device)
@@ -412,6 +410,9 @@ NSString* RenderPassEncoder::errorValidatingDrawIndexed() const
     if (!m_indexBuffer)
         return @"Index buffer is not set";
 
+    if (!m_pipeline)
+        return @"Pipeline is not set";
+
     auto topology = m_pipeline->primitiveTopology();
     if (topology == WGPUPrimitiveTopology_LineStrip || topology == WGPUPrimitiveTopology_TriangleStrip) {
         if (m_indexType != m_pipeline->stripIndexFormat())
@@ -537,11 +538,12 @@ uint32_t RenderPassEncoder::computeMininumVertexCount() const
     if (!m_pipeline)
         return 0;
 
-    uint32_t minVertexCount = invalidVertexCount;
+    uint32_t minVertexCount = RenderBundleEncoder::invalidVertexCount;
     auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
         auto it = m_vertexBuffers.find(bufferIndex);
-        RELEASE_ASSERT(it != m_vertexBuffers.end());
+        if (it == m_vertexBuffers.end())
+            return RenderBundleEncoder::invalidVertexCount;
         auto bufferSize = it->value.buffer.length;
         auto stride = bufferData.stepMode == WGPUVertexStepMode_Vertex ? bufferData.stride : 1;
         if (!stride)
@@ -559,7 +561,7 @@ bool RenderPassEncoder::clampIndexBufferToValidValues(uint32_t indexCount, uint3
         return false;
 
     uint32_t minVertexCount = computeMininumVertexCount();
-    if (minVertexCount == invalidVertexCount)
+    if (minVertexCount == RenderBundleEncoder::invalidVertexCount)
         return false;
 
     uint32_t indexSizeInBytes = indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t);
@@ -599,7 +601,7 @@ bool RenderPassEncoder::clampIndexBufferToValidValues(uint32_t indexCount, uint3
 
 std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferToValidValues(Buffer* apiIndexBuffer, const Buffer& indexedIndirectBuffer, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, Device& device, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder> renderCommandEncoder)
 {
-    if (minVertexCount == invalidVertexCount)
+    if (minVertexCount == RenderBundleEncoder::invalidVertexCount)
         return std::make_pair(indexedIndirectBuffer.buffer(), indirectOffset);
 
     id<MTLBuffer> indexBuffer = apiIndexBuffer ? apiIndexBuffer->buffer() : nil;

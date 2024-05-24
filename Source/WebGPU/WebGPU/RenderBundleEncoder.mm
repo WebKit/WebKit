@@ -514,10 +514,11 @@ uint32_t RenderBundleEncoder::computeMininumVertexCount() const
     if (!m_pipeline)
         return 0;
 
-    uint32_t minVertexCount = UINT32_MAX;
+    uint32_t minVertexCount = invalidVertexCount;
     auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
-        RELEASE_ASSERT(bufferIndex < m_vertexBuffers.size());
+        if (bufferIndex >= m_vertexBuffers.size())
+            return invalidVertexCount;
         auto& vertexBuffer = m_vertexBuffers[bufferIndex];
         auto bufferSize = vertexBuffer.size;
         auto stride = bufferData.stepMode == WGPUVertexStepMode_Vertex ? bufferData.stride : 1;

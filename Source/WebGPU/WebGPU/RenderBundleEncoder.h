@@ -107,6 +107,7 @@ public:
 
     static constexpr auto startIndexForFragmentDynamicOffsets = 3;
     static constexpr uint32_t defaultSampleMask = UINT32_MAX;
+    static constexpr uint32_t invalidVertexCount = UINT32_MAX;
 
     bool validateDepthStencilState(bool depthReadOnly, bool stencilReadOnly) const;
     Device& device() const { return m_device; }

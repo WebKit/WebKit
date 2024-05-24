@@ -1,0 +1,26 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script>
+globalThis.testRunner?.waitUntilDone();
+const log = globalThis.$vm?.print ?? console.log;
+
+onload = async () => {
+let adapter = await navigator.gpu.requestAdapter({});
+let device = await adapter.requestDevice({});
+let texture = device.createTexture({format: 'r32uint', size: [1, 1, 1], usage: GPUTextureUsage.RENDER_ATTACHMENT});
+let renderPassDescriptor = {
+  colorAttachments: [{
+    view: texture.createView(),
+    clearValue: [0, 0, 0, 0],
+    loadOp: 'clear', storeOp: 'store',
+  }],
+};
+let commandEncoder = device.createCommandEncoder();
+let renderPassEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+let indexBuffer = device.createBuffer({usage: GPUBufferUsage.INDEX, size: 4});
+renderPassEncoder.setIndexBuffer(indexBuffer, 'uint32');
+renderPassEncoder.drawIndexed(1);
+globalThis.testRunner?.notifyDone();
+};
+</script>

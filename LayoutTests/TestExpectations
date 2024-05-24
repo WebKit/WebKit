@@ -2140,6 +2140,8 @@ webkit.org/b/139639 [ Debug ] cssom/non-subpixel-scroll-top-left-values.html [ S
 [ Release ] fast/webgpu/fuzz-274290.html [ Pass Failure Timeout ]
 [ Debug ] fast/webgpu/fuzz-128396311.html [ Skip ]
 [ Release ] fast/webgpu/fuzz-128396311.html [ Pass Failure Timeout ]
+[ Debug ] fast/webgpu/fuzz-274622.html [ Skip ]
+[ Release ] fast/webgpu/fuzz-274622.html [ Pass Failure Timeout ]
 
 # Imported W3C HTML/DOM ref tests that are failing.
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ ImageOnlyFailure ]
