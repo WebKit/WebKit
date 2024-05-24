@@ -768,10 +768,10 @@ fn((t) => {
     depthStencilAttachment: depthStencilFormat ?
     {
       view: view1,
-      depthStoreOp: view1HasDepth ? 'discard' : undefined,
       depthLoadOp: view1HasDepth ? 'load' : undefined,
-      stencilStoreOp: view1HasStencil ? 'discard' : undefined,
-      stencilLoadOp: view1HasStencil ? 'load' : undefined
+      depthStoreOp: view1HasDepth ? 'discard' : undefined,
+      stencilLoadOp: view1HasStencil ? 'load' : undefined,
+      stencilStoreOp: view1HasStencil ? 'discard' : undefined
     } :
     undefined
   });

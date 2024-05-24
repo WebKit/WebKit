@@ -179,6 +179,11 @@ const kTests = {
   less_then_one: {
     src: `_ = acosh(.9f);`,
     pass: false
+  },
+
+  must_use: {
+    src: `acosh(1);`,
+    pass: false
   }
 };
 

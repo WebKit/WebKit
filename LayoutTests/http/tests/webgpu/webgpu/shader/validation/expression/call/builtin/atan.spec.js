@@ -169,6 +169,11 @@ const kTests = {
   too_many_params: {
     src: `_ = atan(1, 2);`,
     pass: false
+  },
+
+  must_use: {
+    src: `atan(1);`,
+    pass: false
   }
 };
 

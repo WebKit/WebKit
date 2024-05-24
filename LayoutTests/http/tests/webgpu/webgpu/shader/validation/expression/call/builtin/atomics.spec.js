@@ -277,3 +277,36 @@ fn foo() {
   const expect = t.params.atomicType === t.params.returnType && t.params.op !== 'store';
   t.expectCompileResult(expect, code);
 });
+
+g.test('non_atomic').
+desc('Test that non-atomic integers are rejected by all atomic functions.').
+params((u) =>
+u.
+combine('op', keysOf(kAtomicOps)).
+combine('addrspace', ['storage', 'workgroup']).
+combine('type', ['i32', 'u32']).
+combine('atomic', [true, false])
+).
+fn((t) => {
+  let type = t.params.type;
+  if (t.params.atomic) {
+    type = `atomic<${type}>`;
+  }
+
+  let decl = '';
+  if (t.params.addrspace === 'storage') {
+    decl = `@group(0) @binding(0) var<storage, read_write> a : ${type}`;
+  } else if (t.params.addrspace === 'workgroup') {
+    decl = `var<workgroup> a : ${type}`;
+  }
+
+  const op = `${kAtomicOps[t.params.op]('&a')}`;
+  const code = `
+${decl};
+fn foo() {
+  ${op};
+}
+`;
+
+  t.expectCompileResult(t.params.atomic, code);
+});

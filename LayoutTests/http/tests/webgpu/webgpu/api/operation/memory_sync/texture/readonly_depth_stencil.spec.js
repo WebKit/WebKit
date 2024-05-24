@@ -105,13 +105,13 @@ fn((t) => {
     depthStencilAttachment: {
       view: ds.createView(),
       ...(hasDepth && {
-        depthStoreOp: 'store',
         depthLoadOp: 'clear',
+        depthStoreOp: 'store',
         depthClearValue: 0
       }),
       ...(hasStencil && {
-        stencilStoreOp: 'store',
         stencilLoadOp: 'clear',
+        stencilStoreOp: 'store',
         stencilClearValue: 0
       })
     }
@@ -254,15 +254,15 @@ fn((t) => {
       depthReadOnly ?
       { depthReadOnly: true } :
       {
-        depthStoreOp: 'store',
-        depthLoadOp: 'load'
+        depthLoadOp: 'load',
+        depthStoreOp: 'store'
       })),
       ...(hasStencil && (
       stencilReadOnly ?
       { stencilReadOnly: true } :
       {
-        stencilStoreOp: 'store',
-        stencilLoadOp: 'load'
+        stencilLoadOp: 'load',
+        stencilStoreOp: 'store'
       }))
     }
   });

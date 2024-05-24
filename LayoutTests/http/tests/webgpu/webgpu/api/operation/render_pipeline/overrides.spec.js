@@ -41,14 +41,14 @@ class F extends GPUTest {
       colorAttachments: [
       {
         view: renderTarget.createView(),
-        storeOp: 'store',
         clearValue: {
           r: kClearValueResult.R,
           g: kClearValueResult.G,
           b: kClearValueResult.B,
           a: kClearValueResult.A
         },
-        loadOp: 'clear'
+        loadOp: 'clear',
+        storeOp: 'store'
       }]
 
     });
@@ -328,14 +328,14 @@ fn(async (t) => {
     colorAttachments: [
     {
       view: renderTarget0.createView(),
-      storeOp: 'store',
       clearValue: {
         r: kClearValueResult.R,
         g: kClearValueResult.G,
         b: kClearValueResult.B,
         a: kClearValueResult.A
       },
-      loadOp: 'clear'
+      loadOp: 'clear',
+      storeOp: 'store'
     }]
 
   });
@@ -347,14 +347,14 @@ fn(async (t) => {
     colorAttachments: [
     {
       view: renderTarget1.createView(),
-      storeOp: 'store',
       clearValue: {
         r: kClearValueResult.R,
         g: kClearValueResult.G,
         b: kClearValueResult.B,
         a: kClearValueResult.A
       },
-      loadOp: 'clear'
+      loadOp: 'clear',
+      storeOp: 'store'
     }]
 
   });

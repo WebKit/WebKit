@@ -181,6 +181,11 @@ const kTests = {
   less_then_negative_one: {
     src: `_ = asin(-1.1f);`,
     pass: false
+  },
+
+  must_use: {
+    src: `asin(1);`,
+    pass: false
   }
 };
 

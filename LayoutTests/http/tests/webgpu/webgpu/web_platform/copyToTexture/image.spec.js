@@ -146,6 +146,79 @@ fn(async (t) => {
   );
 });
 
+g.test('from_fully_transparent_image').
+desc(
+  `
+  Test HTMLImageElement with alpha 0 can be copied to WebGPU texture correctly.
+
+  Use a prebaked 2x2 fully transparent image as source.
+
+  Then call copyExternalImageToTexture() to do a copy to the 0 mipLevel of dst texture,
+  and read the contents out to compare with the HTMLImageElement contents.
+  When dest alpha mode is:
+  - premultiplied, the content should be (0, 0, 0, 0)
+  - not premultiplied, the content should be the same as prebaked
+    pixel values (255, 102, 153, 0).
+
+  The tests covers:
+  - Source HTMLImageElement is fully transparent with valid dest alphaMode.
+  And the expected results are all passed.
+  `
+).
+params((u) => u.combine('dstPremultiplied', [true, false])).
+beforeAllSubcases((t) => {
+  if (typeof HTMLImageElement === 'undefined') t.skip('HTMLImageElement not available');
+}).
+fn(async (t) => {
+  const { dstPremultiplied } = t.params;
+
+  const kColorFormat = 'rgba8unorm';
+  const kImageWidth = 2;
+  const kImageHeight = 2;
+
+  const imageCanvas = document.createElement('canvas');
+  imageCanvas.width = kImageWidth;
+  imageCanvas.height = kImageHeight;
+
+  // Prebaked fully transparent image with content (255, 102, 153, 0)
+  const image = new Image(kImageWidth, kImageHeight);
+  image.src =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEUlEQVR42mP8nzaTAQQYYQwALssD/5ca+r8AAAAASUVORK5CYII=';
+  await raceWithRejectOnTimeout(image.decode(), 5000, 'decode image timeout');
+
+  const dst = t.device.createTexture({
+    size: { width: kImageWidth, height: kImageHeight },
+    format: kColorFormat,
+    usage:
+    GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
+  });
+
+  t.device.queue.copyExternalImageToTexture(
+    {
+      source: image
+    },
+    {
+      texture: dst,
+      premultipliedAlpha: dstPremultiplied
+    },
+    {
+      width: kImageWidth,
+      height: kImageHeight
+    }
+  );
+
+  const expectedPixels = dstPremultiplied ?
+  new Uint8Array([0, 0, 0, 0]) :
+  new Uint8Array([255, 102, 153, 0]);
+
+  t.expectSinglePixelComparisonsAreOkInTexture({ texture: dst }, [
+  { coord: { x: kImageWidth * 0.3, y: kImageHeight * 0.3 }, exp: expectedPixels }]
+  );
+
+  // Track created texture.
+  t.trackForCleanup(dst);
+});
+
 g.test('copy_subrect_from_2D_Canvas').
 desc(
   `

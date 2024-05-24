@@ -94,9 +94,9 @@ g.test('fullscreen_quad').fn((t) => {
     colorAttachments: [
     {
       view: colorAttachmentView,
-      storeOp: 'store',
       clearValue: { r: 1.0, g: 0.0, b: 0.0, a: 1.0 },
-      loadOp: 'clear'
+      loadOp: 'clear',
+      storeOp: 'store'
     }]
 
   });
@@ -263,9 +263,9 @@ fn(async (t) => {
       colorAttachments: [
       {
         view: colorAttachmentView,
-        storeOp: 'store',
         clearValue: { r: 0.0, g: 0.0, b: 1.0, a: 1.0 },
-        loadOp: 'clear'
+        loadOp: 'clear',
+        storeOp: 'store'
       }]
 
     });

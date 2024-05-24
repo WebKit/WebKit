@@ -177,6 +177,11 @@ const kTests = {
   too_many_params: {
     src: `_ = asinh(1, 2);`,
     pass: false
+  },
+
+  must_use: {
+    src: `asinh(1);`,
+    pass: false
   }
 };
 

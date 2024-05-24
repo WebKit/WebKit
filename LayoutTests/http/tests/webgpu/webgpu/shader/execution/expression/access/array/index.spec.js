@@ -352,3 +352,56 @@ fn(async (t) => {
     cases
   );
 });
+
+g.test('matrix').
+specURL('https://www.w3.org/TR/WGSL/#array-access-expr').
+desc(`Test indexing of an array of matrices`).
+params((u) =>
+u.
+combine('inputSource', allInputSources).
+combine('elementType', ['f16', 'f32']).
+beginSubcases().
+combine('columns', [2, 3, 4]).
+combine('rows', [2, 3, 4]).
+combine('indexType', ['i32', 'u32']).
+filter((u) => {
+  if (u.inputSource !== 'uniform') {
+    return true;
+  }
+  const mat = Type.mat(u.columns, u.rows, Type[u.elementType]);
+  return (align(mat.size, mat.alignment) & 15) === 0;
+})
+).
+beforeAllSubcases((t) => {
+  if (t.params.elementType === 'f16') {
+    t.selectDeviceOrSkipTestCase('shader-f16');
+  }
+}).
+fn(async (t) => {
+  const elementType = Type[t.params.elementType];
+  const indexType = Type[t.params.indexType];
+  const matrixType = Type.mat(t.params.columns, t.params.rows, elementType);
+  const buildMat = (index) => {
+    const elements = [];
+    for (let c = 0; c < t.params.rows; c++) {
+      for (let r = 0; r < t.params.columns; r++) {
+        elements.push(index * 100 + c * 10 + r);
+      }
+    }
+    return matrixType.create(elements);
+  };
+  const matrices = [buildMat(0), buildMat(1), buildMat(2)];
+  await run(
+    t,
+    basicExpressionBuilder((ops) => `${ops[0]}[${ops[1]}]`),
+    [Type.array(3, matrixType), indexType],
+    matrixType,
+    t.params,
+    [
+    {
+      input: [array(...matrices), indexType.create(1)],
+      expected: matrices[1]
+    }]
+
+  );
+});

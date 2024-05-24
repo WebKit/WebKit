@@ -227,3 +227,37 @@ fn((t) => {
     'constant'
   );
 });
+
+const kArgCases = {
+  good: '(1.1)',
+  bad_no_parens: '',
+  // Bad number of args
+  bad_0args: '()',
+  bad_2args: '(1.0,2.0)',
+  // Bad value type for arg 0
+  bad_0i32: '(1i)',
+  bad_0u32: '(1u)',
+  bad_0bool: '(false)',
+  bad_0vec2u: '(vec2u())',
+  bad_0mat: '(mat2x2f())',
+  bad_0array: '(array(1.1,2.2))',
+  bad_0struct: '(modf(2.2))'
+};
+
+g.test('args').
+desc(`Test compilation failure of ${builtin} with variously shaped and typed arguments`).
+params((u) => u.combine('arg', keysOf(kArgCases))).
+fn((t) => {
+  t.expectCompileResult(
+    t.params.arg === 'good',
+    `const c = ${builtin}${kArgCases[t.params.arg]};`
+  );
+});
+
+g.test('must_use').
+desc(`Result of ${builtin} must be used`).
+params((u) => u.combine('use', [true, false])).
+fn((t) => {
+  const use_it = t.params.use ? '_ = ' : '';
+  t.expectCompileResult(t.params.use, `fn f() { ${use_it}${builtin}${kArgCases['good']}; }`);
+});

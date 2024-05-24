@@ -495,6 +495,74 @@ fn fsMain(@builtin(position) pos : vec4f) -> @location(0) u32 {
   drawFullScreen(t, code, dataChecker, fbChecker);
 });
 
+g.test('continuing').
+desc('Test discards in a loop').
+fn((t) => {
+  const code = `
+${kSharedCode}
+
+@fragment
+fn fsMain(@builtin(position) pos : vec4f) -> @location(0) u32 {
+  _ = uniformValues[0];
+  var i = 0;
+  loop {
+    continuing {
+      if i > 0 {
+        discard;
+      }
+      i++;
+      break if i >= 2;
+    }
+  }
+  let idx = atomicAdd(&atomicIndex, 1);
+  output[idx] = pos.xy;
+  return 1;
+}
+`;
+
+  // No storage writes occur.
+  const dataChecker = (a) => {
+    return checkElementsPassPredicate(
+      a,
+      (idx, value) => {
+        return value === 0;
+      },
+      {
+        predicatePrinter: [
+        {
+          leftHeader: 'data exp ==',
+          getValueForCell: (idx) => {
+            return 0;
+          }
+        }]
+
+      }
+    );
+  };
+
+  // No fragment outputs occur.
+  const fbChecker = (a) => {
+    return checkElementsPassPredicate(
+      a,
+      (idx, value) => {
+        return value === kWidth * kHeight;
+      },
+      {
+        predicatePrinter: [
+        {
+          leftHeader: 'fb exp ==',
+          getValueForCell: (idx) => {
+            return kWidth * kHeight;
+          }
+        }]
+
+      }
+    );
+  };
+
+  drawFullScreen(t, code, dataChecker, fbChecker);
+});
+
 g.test('uniform_read_loop').
 desc('Test that helpers read a uniform value in a loop').
 fn((t) => {

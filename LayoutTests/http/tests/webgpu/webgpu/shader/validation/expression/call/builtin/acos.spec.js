@@ -182,6 +182,11 @@ const kTests = {
   less_then_negative_one: {
     src: `_ = acos(-1.1f);`,
     pass: false
+  },
+
+  must_use: {
+    src: `acos(1);`,
+    pass: false
   }
 };
 

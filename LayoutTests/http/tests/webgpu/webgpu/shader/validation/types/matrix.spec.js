@@ -49,7 +49,7 @@ const kValidCases = {
   mat4x3h: `enable f16;\nalias T = mat4x3h;`,
   mat4x4h: `enable f16;\nalias T = mat4x4h;`,
 
-  trailing_comman: `alias T = mat2x2<f32,>;`,
+  trailing_comma: `alias T = mat2x2<f32,>;`,
 
   // Abstract matrices
   abstract_2x2: `const m = mat2x2(1,1,1,1);`,
@@ -85,7 +85,10 @@ const kValidCases = {
   shadow_mat3x4h: `enable f16;\nalias mat3x4h = mat3x4<f16>;`,
   shadow_mat4x2h: `enable f16;\nalias mat4x2h = mat4x2<f16>;`,
   shadow_mat4x3h: `enable f16;\nalias mat4x3h = mat4x3<f16>;`,
-  shadow_mat4x4h: `enable f16;\nalias mat4x4h = mat4x4<f16>;`
+  shadow_mat4x4h: `enable f16;\nalias mat4x4h = mat4x4<f16>;`,
+
+  // Alias
+  alias: `alias E = f32; alias T = mat2x2<E>;`
 };
 
 g.test('valid').
@@ -116,6 +119,11 @@ const kInvalidCases = {
   mat2x1: `alias T = mat2x1<f32>;`,
   mat2x5: `alias T = mat2x5<f32>;`,
   mat5x5: `alias T = mat5x5<f32>;`,
+  mat2x: `alias T = mat2x<f32>;`,
+  matx2: `alias T = matx2<f32>;`,
+  mat2: `alias T = mat2<f32>;`,
+  mat: `alias T = mat;`,
+  mat_f32: `alias T = mat<f32>;`,
 
   // Half-precision aliases require enable
   no_enable_mat2x2h: `alias T = mat2x2h;`,
