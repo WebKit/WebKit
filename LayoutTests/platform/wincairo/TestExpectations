@@ -889,8 +889,6 @@ http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ S
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Skip ] # Failure
 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ] # Failure
 
-webkit.org/b/274368 [ Release ] http/tests/security/navigate-when-restoring-cached-page.html [ Skip ] # Makes a subsequent test crash
-
 webkit.org/b/255748 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Skip ] # Crash
 webkit.org/b/255748 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ] # Crash
 
@@ -1924,6 +1922,8 @@ webkit.org/b/274059 webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-res
 webkit.org/b/274059 webgl/2.0.y/conformance/misc/uninitialized-test.html [ Skip ] # Timeout
 webkit.org/b/274059 webgl/2.0.y/conformance/rendering/multisample-corruption.html [ Skip ] # Timeout
 webkit.org/b/274059 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Skip ] # Failure Timeout
+
+webkit.org/b/268988 fast/events/key-events-in-input-button.html [ Failure ]
 
 webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Failure ]
 animations/shadow-host-child-change.html [ Skip ]
