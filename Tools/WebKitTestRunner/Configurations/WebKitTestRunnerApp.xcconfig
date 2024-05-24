@@ -46,3 +46,4 @@ TARGETED_DEVICE_FAMILY = 1,2,4,7;
 CODE_SIGN_ENTITLEMENTS[sdk=iphone*] = Configurations/WebKitTestRunnerApp-iOS.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=appletv*] = Configurations/WebKitTestRunnerApp-watchOS.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=watch*] = Configurations/WebKitTestRunnerApp-watchOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=xr*] = Configurations/WebKitTestRunnerApp-iOS.entitlements;
