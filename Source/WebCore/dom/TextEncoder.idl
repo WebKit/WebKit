@@ -24,7 +24,8 @@
 */
 
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary TextEncoderEncodeIntoResult {
     unsigned long long read;
     unsigned long long written;

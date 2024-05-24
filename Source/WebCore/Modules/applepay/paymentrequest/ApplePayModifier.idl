@@ -28,8 +28,8 @@
 ] dictionary ApplePayModifier {
     ApplePayPaymentMethodType paymentMethodType;
     ApplePayLineItem total;
-    sequence<ApplePayLineItem> additionalLineItems;
-    [Conditional=APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS] sequence<ApplePayShippingMethod> additionalShippingMethods;
+    sequence<ApplePayLineItem> additionalLineItems = [];
+    [Conditional=APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS] sequence<ApplePayShippingMethod> additionalShippingMethods = [];
 
     [Conditional=APPLE_PAY_RECURRING_PAYMENTS] ApplePayRecurringPaymentRequest recurringPaymentRequest;
 

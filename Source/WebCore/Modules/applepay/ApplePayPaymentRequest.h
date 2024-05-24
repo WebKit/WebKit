@@ -43,13 +43,13 @@ namespace WebCore {
 struct ApplePayPaymentRequest : ApplePayRequestBase {
     using ShippingType = ApplePaySessionPaymentRequest::ShippingType;
 
+    ApplePayLineItem total;
+    std::optional<Vector<ApplePayLineItem>> lineItems;
+
     String currencyCode;
 
     ShippingType shippingType { ShippingType::Shipping };
     std::optional<Vector<ApplePayShippingMethod>> shippingMethods;
-
-    ApplePayLineItem total;
-    std::optional<Vector<ApplePayLineItem>> lineItems;
 
 #if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
     std::optional<ApplePayRecurringPaymentRequest> recurringPaymentRequest;

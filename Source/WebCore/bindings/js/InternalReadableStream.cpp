@@ -188,11 +188,14 @@ ExceptionOr<std::pair<Ref<InternalReadableStream>, Ref<InternalReadableStream>>>
     if (UNLIKELY(scope.exception()))
         return Exception { ExceptionCode::ExistingExceptionError };
 
-    auto results = Detail::SequenceConverter<IDLObject>::convert(*globalObject, result);
-    ASSERT(results.size() == 2);
+    auto results = Detail::SequenceConverter<IDLSequence<IDLObject>>::convert(*globalObject, result);
+    if (results.hasException())
+        return Exception { ExceptionCode::ExistingExceptionError };
+
+    ASSERT(results.returnValue().size() == 2);
 
     auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);
-    return std::make_pair(InternalReadableStream::fromObject(jsDOMGlobalObject, *results[0].get()), InternalReadableStream::fromObject(jsDOMGlobalObject, *results[1].get()));
+    return std::make_pair(InternalReadableStream::fromObject(jsDOMGlobalObject, *results.returnValue()[0].get()), InternalReadableStream::fromObject(jsDOMGlobalObject, *results.returnValue()[1].get()));
 }
 
 JSC::JSValue InternalReadableStream::cancel(JSC::JSGlobalObject& globalObject, JSC::JSValue reason, Use use)

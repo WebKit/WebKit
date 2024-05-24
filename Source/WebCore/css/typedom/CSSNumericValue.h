@@ -39,7 +39,7 @@ class CSSMathSum;
 
 template<typename> class ExceptionOr;
 
-using CSSNumberish = std::variant<double, RefPtr<CSSNumericValue>>;
+using CSSNumberish = std::variant<double, Ref<CSSNumericValue>>;
 
 class CSSNumericValue : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSNumericValue);

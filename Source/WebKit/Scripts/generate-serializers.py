@@ -737,7 +737,8 @@ def check_type_members(type, checking_parent_class):
                 result.append('        ' + member.dictionary_type() + ' ' + member.type + ';')
             result.append('    };')
             result.append('    static_assert(sizeof(ShouldBeSameSizeAs' + type.name + ') == sizeof(' + type.namespace_and_name() + '));')
-        result.append('    static_assert(MembersInCorrectOrder < 0')
+        result.append('    static_assert(MembersInIncreasingOrder<')
+        result.append('          0')
         for member in type.members:
             if 'BitField' in member.attributes:
                 continue
@@ -748,7 +749,7 @@ def check_type_members(type, checking_parent_class):
                 result.append('#endif')
         for member in type.dictionary_members:
             result.append('        , offsetof(' + type.namespace_and_name() + ', m_' + member.type + ')')
-        result.append('    >::value);')
+        result.append('    >);')
     if type.has_optional_tuple_bits():
         serialized_members = type.serialized_members()
         optional_tuple_state = None
@@ -766,10 +767,10 @@ def check_type_members(type, checking_parent_class):
                     result.append('#endif')
                 optional_tuple_state = 'middle'
             elif optional_tuple_state == 'middle':
-                result.append('    >::value);')
+                result.append('    >);')
                 optional_tuple_state = None
         if optional_tuple_state == 'middle':
-            result.append('    >::value);')
+            result.append('    >);')
             optional_tuple_state = None
     result.append('')
     return result
@@ -1081,21 +1082,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
         if header.condition is not None:
             result.append('#endif')
     result.append('')
-    result.append('template<size_t...> struct MembersInCorrectOrder;')
-    result.append('template<size_t onlyOffset> struct MembersInCorrectOrder<onlyOffset> {')
-    result.append('    static constexpr bool value = true;')
-    result.append('};')
-    result.append('template<size_t firstOffset, size_t secondOffset, size_t... remainingOffsets> struct MembersInCorrectOrder<firstOffset, secondOffset, remainingOffsets...> {')
-    result.append('    static constexpr bool value = firstOffset > secondOffset ? false : MembersInCorrectOrder<secondOffset, remainingOffsets...>::value;')
-    result.append('};')
-    result.append('')
-    result.append('template<uint64_t...> struct BitsInIncreasingOrder;')
-    result.append('template<uint64_t onlyBit> struct BitsInIncreasingOrder<onlyBit> {')
-    result.append('    static constexpr bool value = true;')
-    result.append('};')
-    result.append('template<uint64_t firstBit, uint64_t secondBit, uint64_t... remainingBits> struct BitsInIncreasingOrder<firstBit, secondBit, remainingBits...> {')
-    result.append('    static constexpr bool value = firstBit == secondBit >> 1 && BitsInIncreasingOrder<secondBit, remainingBits...>::value;')
-    result.append('};')
+    result.append('#include <wtf/StdLibExtras.h>')
     result.append('')
     result.append('template<bool, bool> struct VirtualTableAndRefCountOverhead;')
     result.append('template<> struct VirtualTableAndRefCountOverhead<true, true> : public RefCounted<VirtualTableAndRefCountOverhead<true, true>> {')

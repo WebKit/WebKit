@@ -44,7 +44,7 @@ Ref<SpeechRecognitionEvent> SpeechRecognitionEvent::create(const AtomString& typ
 }
 
 SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
-    : Event(EventInterfaceType::SpeechRecognitionEvent, type, init, isTrusted)
+    : Event(EventInterfaceType::SpeechRecognitionEvent, type, WTFMove(init), isTrusted)
     , m_resultIndex(init.resultIndex)
     , m_results(WTFMove(init.results))
 {

@@ -116,8 +116,8 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
         m_shippingAddress = request.shippingContact().toApplePayPaymentContact(request.version());
     m_supportedCountries = request.supportedCountries();
     m_shippingMethods = request.shippingMethods();
-    m_requiredBillingContactFields = request.requiredBillingContactFields();
-    m_requiredShippingContactFields = request.requiredShippingContactFields();
+    m_requiredBillingContactFields = MockPaymentContactFields::from(request.requiredBillingContactFields());
+    m_requiredShippingContactFields = MockPaymentContactFields::from(request.requiredShippingContactFields());
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     if (auto& configuration = request.installmentConfiguration().applePayInstallmentConfiguration())
         m_installmentConfiguration = *configuration;

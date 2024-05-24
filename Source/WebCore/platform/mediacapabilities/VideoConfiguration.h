@@ -39,8 +39,8 @@ struct VideoConfiguration {
     uint64_t bitrate;
     double framerate;
     std::optional<bool> alphaChannel;
-    std::optional<ColorGamut> colorGamut;
     std::optional<HdrMetadataType> hdrMetadataType;
+    std::optional<ColorGamut> colorGamut;
     std::optional<TransferFunction> transferFunction;
 
     VideoConfiguration isolatedCopy() const &;
@@ -49,12 +49,12 @@ struct VideoConfiguration {
 
 inline VideoConfiguration VideoConfiguration::isolatedCopy() const &
 {
-    return { contentType.isolatedCopy(), width, height, bitrate, framerate, alphaChannel, colorGamut, hdrMetadataType, transferFunction };
+    return { contentType.isolatedCopy(), width, height, bitrate, framerate, alphaChannel, hdrMetadataType, colorGamut, transferFunction };
 }
 
 inline VideoConfiguration VideoConfiguration::isolatedCopy() &&
 {
-    return { WTFMove(contentType).isolatedCopy(), width, height, bitrate, framerate, alphaChannel, colorGamut, hdrMetadataType, transferFunction };
+    return { WTFMove(contentType).isolatedCopy(), width, height, bitrate, framerate, alphaChannel, hdrMetadataType, colorGamut, transferFunction };
 }
 
 } // namespace WebCore

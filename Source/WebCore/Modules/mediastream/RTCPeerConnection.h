@@ -122,7 +122,7 @@ public:
     RTCSessionDescription* currentRemoteDescription() const { return m_currentRemoteDescription.get(); }
     RTCSessionDescription* pendingRemoteDescription() const { return m_pendingRemoteDescription.get(); }
 
-    using Candidate = std::optional<std::variant<RTCIceCandidateInit, RefPtr<RTCIceCandidate>>>;
+    using Candidate = std::optional<std::variant<RTCIceCandidateInit, Ref<RTCIceCandidate>>>;
     void addIceCandidate(Candidate&&, Ref<DeferredPromise>&&);
 
     RTCSignalingState signalingState() const { return m_signalingState; }
@@ -151,14 +151,14 @@ public:
     ExceptionOr<Ref<RTCRtpSender>> addTrack(Ref<MediaStreamTrack>&&, const FixedVector<std::reference_wrapper<MediaStream>>&);
     ExceptionOr<void> removeTrack(RTCRtpSender&);
 
-    using AddTransceiverTrackOrKind = std::variant<RefPtr<MediaStreamTrack>, String>;
+    using AddTransceiverTrackOrKind = std::variant<Ref<MediaStreamTrack>, String>;
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(AddTransceiverTrackOrKind&&, const RTCRtpTransceiverInit&);
 
     // 6.1 Peer-to-peer data API
     ExceptionOr<Ref<RTCDataChannel>> createDataChannel(String&&, RTCDataChannelInit&&);
 
     // 8.2 Statistics API
-    void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&);
+    void getStats(RefPtr<MediaStreamTrack>&&, Ref<DeferredPromise>&&);
     // Used for testing
     WEBCORE_EXPORT void gatherDecoderImplementationName(Function<void(String&&)>&&);
 

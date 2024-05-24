@@ -23,8 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://www.w3.org/TR/web-animations-1/#dictdef-computedeffecttiming
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary ComputedEffectTiming : EffectTiming {
     unrestricted double  endTime;
     unrestricted double  activeDuration;

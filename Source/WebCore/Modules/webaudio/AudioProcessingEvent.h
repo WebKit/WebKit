@@ -36,7 +36,7 @@ struct AudioProcessingEventInit;
 class AudioProcessingEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(AudioProcessingEvent);
 public:
-    static Ref<AudioProcessingEvent> create(RefPtr<AudioBuffer>&& inputBuffer, RefPtr<AudioBuffer>&& outputBuffer, double playbackTime)
+    static Ref<AudioProcessingEvent> create(RefPtr<AudioBuffer>&& inputBuffer, Ref<AudioBuffer>&& outputBuffer, double playbackTime)
     {
         return adoptRef(*new AudioProcessingEvent(WTFMove(inputBuffer), WTFMove(outputBuffer), playbackTime));
     }
@@ -46,15 +46,16 @@ public:
     virtual ~AudioProcessingEvent();
 
     AudioBuffer* inputBuffer() { return m_inputBuffer.get(); }
-    AudioBuffer* outputBuffer() { return m_outputBuffer.get(); }
+    AudioBuffer* outputBuffer() const { return m_outputBuffer.ptr(); }
     double playbackTime() const { return m_playbackTime; }
 
 private:
-    AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, RefPtr<AudioBuffer>&& outputBuffer, double playbackTime);
+    AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, Ref<AudioBuffer>&& outputBuffer, double playbackTime);
     AudioProcessingEvent(const AtomString&, AudioProcessingEventInit&&);
 
+    // FIXME: This should be a Ref, but `ScriptProcessorNode::fireProcessEvent` currently doesn't guarantee it will be non-null.
     RefPtr<AudioBuffer> m_inputBuffer;
-    RefPtr<AudioBuffer> m_outputBuffer;
+    Ref<AudioBuffer> m_outputBuffer;
     double m_playbackTime;
 };
 

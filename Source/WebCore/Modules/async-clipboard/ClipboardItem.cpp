@@ -58,7 +58,7 @@ static ClipboardItem::PresentationStyle clipboardItemPresentationStyle(const Pas
     return ClipboardItem::PresentationStyle::Unspecified;
 }
 
-ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&& items, const Options& options)
+ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& items, const Options& options)
     : m_dataSource(makeUnique<ClipboardItemBindingsDataSource>(*this, WTFMove(items)))
     , m_presentationStyle(options.presentationStyle)
 {
@@ -72,7 +72,7 @@ ClipboardItem::ClipboardItem(Clipboard& clipboard, const PasteboardItemInfo& inf
 {
 }
 
-Ref<ClipboardItem> ClipboardItem::create(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&& data, const Options& options)
+Ref<ClipboardItem> ClipboardItem::create(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& data, const Options& options)
 {
     return adoptRef(*new ClipboardItem(WTFMove(data), options));
 }

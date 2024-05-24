@@ -43,7 +43,7 @@ public:
     void updateUI(BackgroundFetchUIOptions&&, DOMPromiseDeferred<void>&&);
 
 private:
-    BackgroundFetchUpdateUIEvent(const AtomString&, ExtendableEventInit&&, RefPtr<BackgroundFetchRegistration>&&, IsTrusted);
+    BackgroundFetchUpdateUIEvent(const AtomString&, Init&&, IsTrusted);
 };
 
 } // namespace WebCore

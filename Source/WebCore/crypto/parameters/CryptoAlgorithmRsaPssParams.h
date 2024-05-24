@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmRsaPssParamsInit.h"
 
 namespace WebCore {
 
@@ -33,12 +34,22 @@ class CryptoAlgorithmRsaPssParams final : public CryptoAlgorithmParameters {
 public:
     size_t saltLength;
 
+    CryptoAlgorithmRsaPssParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTFMove(identifier) }
+    {
+    }
+
+    CryptoAlgorithmRsaPssParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmRsaPssParamsInit init)
+        : CryptoAlgorithmParameters { WTFMove(identifier), WTFMove(init) }
+        , saltLength { WTFMove(init.saltLength) }
+    {
+    }
+
     Class parametersClass() const final { return Class::RsaPssParams; }
 
     CryptoAlgorithmRsaPssParams isolatedCopy() const
     {
-        CryptoAlgorithmRsaPssParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmRsaPssParams result { identifier };
         result.saltLength = saltLength;
 
         return result;

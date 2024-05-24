@@ -32,7 +32,7 @@ namespace WebCore {
 class HTMLSlotElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLSlotElement);
 public:
-    using ElementOrText = std::variant<RefPtr<Element>, RefPtr<Text>>;
+    using ElementOrText = std::variant<Ref<Element>, Ref<Text>>;
 
     static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
 

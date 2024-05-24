@@ -36,16 +36,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(XRInputSourcesChangeEvent);
 
-Ref<XRInputSourcesChangeEvent> XRInputSourcesChangeEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<XRInputSourcesChangeEvent> XRInputSourcesChangeEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    return adoptRef(*new XRInputSourcesChangeEvent(type, initializer, isTrusted));
+    return adoptRef(*new XRInputSourcesChangeEvent(type, WTFMove(init), isTrusted));
 }
 
-XRInputSourcesChangeEvent::XRInputSourcesChangeEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+XRInputSourcesChangeEvent::XRInputSourcesChangeEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
     : Event(EventInterfaceType::XRInputSourcesChangeEvent, type, initializer, isTrusted)
-    , m_session(*initializer.session)
-    , m_added(initializer.added)
-    , m_removed(initializer.removed)
+    , m_session(WTFMove(init.session))
+    , m_added(WTFMove(init.added))
+    , m_removed(WTFMove(init.removed))
 {
 }
 

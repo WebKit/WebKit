@@ -39,7 +39,6 @@ struct Landmark;
 struct DetectedFace {
     ShapeDetection::DetectedFace convertToBacking() const
     {
-        ASSERT(boundingBox);
         return {
             {
                 static_cast<float>(boundingBox->x()),
@@ -53,7 +52,7 @@ struct DetectedFace {
         };
     }
 
-    RefPtr<DOMRectReadOnly> boundingBox;
+    Ref<DOMRectReadOnly> boundingBox;
     std::optional<Vector<Landmark>> landmarks;
 };
 

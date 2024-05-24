@@ -166,7 +166,7 @@ void HTMLLabelElement::defaultEventHandler(Event& event)
 
         document().updateLayoutIgnorePendingStylesheets();
         if (control->isMouseFocusable())
-            control->focus({ { }, { }, { }, FocusTrigger::Click, { } });
+            control->focus({ .trigger = FocusTrigger::Click });
 
         event.setDefaultHandled();
     }
@@ -195,7 +195,7 @@ void HTMLLabelElement::focus(const FocusOptions& options)
 
     // To match other browsers, always restore previous selection.
     if (auto element = control())
-        element->focus({ SelectionRestorationMode::RestoreOrSelectAll, options.direction });
+        element->focus({ .selectionRestorationMode = SelectionRestorationMode::RestoreOrSelectAll, .direction = options.direction });
 }
 
 bool HTMLLabelElement::accessKeyAction(bool sendMouseEvents)

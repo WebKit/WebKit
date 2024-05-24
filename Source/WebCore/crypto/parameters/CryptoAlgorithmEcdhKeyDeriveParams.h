@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CryptoAlgorithmEcdhKeyDeriveParamsInit.h"
 #include "CryptoAlgorithmParameters.h"
 
 namespace WebCore {
@@ -34,6 +35,12 @@ class CryptoKey;
 class CryptoAlgorithmEcdhKeyDeriveParams final : public CryptoAlgorithmParameters {
 public:
     RefPtr<CryptoKey> publicKey;
+
+    CryptoAlgorithmEcdhKeyDeriveParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmEcdhKeyDeriveParamsInit init)
+        : CryptoAlgorithmParameters { WTFMove(identifier), WTFMove(init) }
+        , publicKey { WTFMove(init.publicKey) }
+    {
+    }
 
     Class parametersClass() const final { return Class::EcdhKeyDeriveParams; }
 };

@@ -35,14 +35,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisErrorEvent);
 
-Ref<SpeechSynthesisErrorEvent> SpeechSynthesisErrorEvent::create(const AtomString& type, const SpeechSynthesisErrorEventInit& initializer)
+Ref<SpeechSynthesisErrorEvent> SpeechSynthesisErrorEvent::create(const AtomString& type, SpeechSynthesisErrorEventInit&& init)
 {
-    return adoptRef(*new SpeechSynthesisErrorEvent(type, initializer));
+    return adoptRef(*new SpeechSynthesisErrorEvent(type, WTFMove(init)));
 }
 
-SpeechSynthesisErrorEvent::SpeechSynthesisErrorEvent(const AtomString& type, const SpeechSynthesisErrorEventInit& initializer)
-    : SpeechSynthesisEvent(EventInterfaceType::SpeechSynthesisErrorEvent, type, initializer)
-    , m_error(initializer.error)
+SpeechSynthesisErrorEvent::SpeechSynthesisErrorEvent(const AtomString& type, SpeechSynthesisErrorEventInit&& init)
+    : SpeechSynthesisEvent(EventInterfaceType::SpeechSynthesisErrorEvent, type, WTFMove(init))
+    , m_error(WTFMove(init.error))
 {
 }
     

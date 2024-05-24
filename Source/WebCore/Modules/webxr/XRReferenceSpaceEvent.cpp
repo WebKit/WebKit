@@ -36,24 +36,23 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(XRReferenceSpaceEvent);
 
-Ref<XRReferenceSpaceEvent> XRReferenceSpaceEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<XRReferenceSpaceEvent> XRReferenceSpaceEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    return adoptRef(*new XRReferenceSpaceEvent(type, initializer, isTrusted));
+    return adoptRef(*new XRReferenceSpaceEvent(type, WTFMove(init), isTrusted));
 }
 
-XRReferenceSpaceEvent::XRReferenceSpaceEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::XRReferenceSpaceEvent, type, initializer, isTrusted)
-    , m_referenceSpace(initializer.referenceSpace)
-    , m_transform(initializer.transform)
+XRReferenceSpaceEvent::XRReferenceSpaceEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : Event(EventInterfaceType::XRReferenceSpaceEvent, type, WTFMove(init), isTrusted)
+    , m_referenceSpace(WTFMove(init.referenceSpace))
+    , m_transform(WTFMove(init.transform))
 {
-    ASSERT(m_referenceSpace);
 }
 
 XRReferenceSpaceEvent::~XRReferenceSpaceEvent() = default;
 
 const WebXRReferenceSpace& XRReferenceSpaceEvent::referenceSpace() const
 {
-    return *m_referenceSpace;
+    return m_referenceSpace;
 }
 
 WebXRRigidTransform* XRReferenceSpaceEvent::transform() const

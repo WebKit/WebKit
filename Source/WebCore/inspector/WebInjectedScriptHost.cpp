@@ -117,10 +117,10 @@ static JSObject* objectForPaymentDetailsModifier(VM& vm, JSGlobalObject* exec, c
     object->putDirect(vm, Identifier::fromString(vm, "supportedMethods"_s), jsString(vm, modifier.supportedMethods));
     if (modifier.total)
         object->putDirect(vm, Identifier::fromString(vm, "total"_s), objectForPaymentItem(vm, exec, *modifier.total));
-    if (!modifier.additionalDisplayItems.isEmpty()) {
+    if (modifier.additionalDisplayItems && !modifier.additionalDisplayItems->isEmpty()) {
         auto* additionalDisplayItems = constructEmptyArray(exec, nullptr);
-        for (unsigned i = 0; i < modifier.additionalDisplayItems.size(); ++i)
-            additionalDisplayItems->putDirectIndex(exec, i, objectForPaymentItem(vm, exec, modifier.additionalDisplayItems[i]));
+        for (unsigned i = 0; i < modifier.additionalDisplayItems->size(); ++i)
+            additionalDisplayItems->putDirectIndex(exec, i, objectForPaymentItem(vm, exec, (*modifier.additionalDisplayItems)[i]));
         object->putDirect(vm, Identifier::fromString(vm, "additionalDisplayItems"_s), additionalDisplayItems);
     }
     return object;

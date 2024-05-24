@@ -117,11 +117,24 @@ ExceptionOr<Ref<Notification>> Notification::createForServiceWorker(ScriptExecut
 
 Ref<Notification> Notification::create(ScriptExecutionContext& context, NotificationData&& data)
 {
+    Options options {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL), JSC::jsNull(), nullptr, nullptr, data.silent, { }, WTFMove(data.defaultActionURL) };
-#else
-    Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL), JSC::jsNull(), nullptr, nullptr, data.silent };
+        .defaultAction = { },
 #endif
+        .dir = data.direction,
+        .lang = WTFMove(data.language),
+        .body = WTFMove(data.body),
+        .tag = WTFMove(data.tag),
+        .icon = WTFMove(data.iconURL),
+        .silent = data.silent,
+        .data = JSC::jsNull(),
+        .serializedData = nullptr,
+        .jsonData = nullptr,
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+        .defaultActionURL = WTFMove(data.defaultActionURL),
+#endif
+    };
+
     auto notification = adoptRef(*new Notification(context, data.notificationID, WTFMove(data.title), WTFMove(options), SerializedScriptValue::createFromWireBytes(WTFMove(data.data))));
     notification->suspendIfNeeded();
     notification->m_serviceWorkerRegistrationURL = WTFMove(data.serviceWorkerRegistrationURL);
@@ -133,12 +146,23 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, const UR
 {
     Options options;
     if (payload.options) {
+        options = {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-        options = { payload.options->dir, payload.options->lang, payload.options->body, payload.options->tag, payload.options->icon, JSC::jsNull(), nullptr, nullptr, payload.options->silent, { }, { } };
-        options.defaultActionURL = payload.defaultActionURL;
-#else
-        options = { payload.options->dir, payload.options->lang, payload.options->body, payload.options->tag, payload.options->icon, JSC::jsNull(), nullptr, nullptr, payload.options->silent };
+            .defaultAction = { },
 #endif
+            .dir = payload.options->dir,
+            .lang = payload.options->lang,
+            .body = payload.options->body,
+            .tag = payload.options->tag,
+            .icon = payload.options->icon,
+            .silent = payload.options->silent,
+            .data = JSC::jsNull(),
+            .serializedData = nullptr,
+            .jsonData = nullptr,
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+            .defaultActionURL = payload.defaultActionURL,
+#endif
+        };
     }
 
     RefPtr<SerializedScriptValue> dataScriptValue;

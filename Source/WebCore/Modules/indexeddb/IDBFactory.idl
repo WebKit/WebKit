@@ -38,6 +38,7 @@
 
 [
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary IDBDatabaseInfo {
     DOMString name;
     unsigned long long version;

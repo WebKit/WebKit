@@ -22,15 +22,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma once
 
-#include "Notification.h"
+#pragma once
 
 #if ENABLE(NOTIFICATIONS)
 
+#include "NotificationDirection.h"
+#include "SerializedScriptValue.h"
+#include <optional>
+#include <wtf/JSONValues.h>
+#include <wtf/URL.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
-using NotificationOptions = Notification::Options;
+struct NotificationOptions {
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    String defaultAction;
+#endif
+    NotificationDirection dir;
+    String lang;
+    String body;
+    String tag;
+    String icon;
+    std::optional<bool> silent;
+    JSC::JSValue data;
+
+    // Not exposed in bindings.
+    RefPtr<SerializedScriptValue> serializedData = { };
+    RefPtr<JSON::Value> jsonData = { };
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    URL defaultActionURL = { };
+#endif
+};
 
 }
 

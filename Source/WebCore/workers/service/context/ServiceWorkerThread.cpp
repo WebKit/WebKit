@@ -159,24 +159,19 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
 {
     Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
     serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, serviceWorkerGlobalScope, message = WTFMove(message), sourceData = WTFMove(sourceData)]() mutable {
-        URL sourceURL;
-        ExtendableMessageEventSource source;
         if (std::holds_alternative<ServiceWorkerClientData>(sourceData)) {
-            RefPtr<ServiceWorkerClient> sourceClient = ServiceWorkerClient::create(serviceWorkerGlobalScope, WTFMove(std::get<ServiceWorkerClientData>(sourceData)));
+            Ref<ServiceWorkerClient> sourceClient = ServiceWorkerClient::create(serviceWorkerGlobalScope, WTFMove(std::get<ServiceWorkerClientData>(sourceData)));
 
             RELEASE_ASSERT(!sourceClient->url().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope->url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope->url(), sourceClient->url()));
 
-            sourceURL = sourceClient->url();
-            source = WTFMove(sourceClient);
+            fireMessageEvent(serviceWorkerGlobalScope, WTFMove(message), ExtendableMessageEventSource { WTFMove(sourceClient) }, sourceClient->url());
         } else {
-            RefPtr<ServiceWorker> sourceWorker = ServiceWorker::getOrCreate(serviceWorkerGlobalScope, WTFMove(std::get<ServiceWorkerData>(sourceData)));
+            Ref<ServiceWorker> sourceWorker = ServiceWorker::getOrCreate(serviceWorkerGlobalScope, WTFMove(std::get<ServiceWorkerData>(sourceData)));
 
             RELEASE_ASSERT(!sourceWorker->scriptURL().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope->url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope->url(), sourceWorker->scriptURL()));
 
-            sourceURL = sourceWorker->scriptURL();
-            source = WTFMove(sourceWorker);
+            fireMessageEvent(serviceWorkerGlobalScope, WTFMove(message), ExtendableMessageEventSource { WTFMove(sourceWorker) }, sourceWorker->scriptURL());
         }
-        fireMessageEvent(serviceWorkerGlobalScope, WTFMove(message), ExtendableMessageEventSource { source }, sourceURL);
         callOnMainThread([weakThis = WTFMove(weakThis)] {
             if (weakThis)
                 weakThis->finishedFiringMessageEvent();
@@ -366,7 +361,7 @@ void ServiceWorkerThread::queueTaskToFireNotificationEvent(NotificationData&& da
             break;
         }
 
-        auto notificationEvent = NotificationEvent::create(eventName, notification.ptr(), emptyString(), ExtendableEvent::IsTrusted::Yes);
+        auto notificationEvent = NotificationEvent::create(eventName, WTFMove(notification), ExtendableEvent::IsTrusted::Yes);
         serviceWorkerGlobalScope->dispatchEvent(notificationEvent);
 
         notificationEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope, callback = WTFMove(callback)](auto&& extendLifetimePromises) mutable {

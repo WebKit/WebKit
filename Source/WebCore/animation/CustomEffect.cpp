@@ -50,14 +50,14 @@ ExceptionOr<Ref<CustomEffect>> CustomEffect::create(Ref<CustomEffectCallback>&& 
             auto effectTimingOptions = std::get<EffectTiming>(optionsValue);
 
             timing = {
-                effectTimingOptions.duration,
-                effectTimingOptions.iterations,
                 effectTimingOptions.delay,
                 effectTimingOptions.endDelay,
-                effectTimingOptions.iterationStart,
-                effectTimingOptions.easing,
                 effectTimingOptions.fill,
-                effectTimingOptions.direction
+                effectTimingOptions.iterationStart,
+                effectTimingOptions.iterations,
+                effectTimingOptions.duration,
+                effectTimingOptions.direction,
+                effectTimingOptions.easing,
             };
         }
         auto updateTimingResult = customEffect->updateTiming(timing);

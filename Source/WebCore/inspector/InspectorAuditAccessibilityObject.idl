@@ -42,6 +42,7 @@
 
 [
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary ComputedProperties {
     boolean? busy;
     DOMString? checked;

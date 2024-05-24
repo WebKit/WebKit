@@ -32,13 +32,13 @@
 namespace WebCore {
 
 struct ComputedEffectTiming : EffectTiming {
-    AnimationEffectPhase phase { AnimationEffectPhase::Idle };
-    MarkableDouble localTime;
-    MarkableDouble simpleIterationProgress;
-    MarkableDouble progress;
-    MarkableDouble currentIteration;
     double endTime;
     double activeDuration;
+    MarkableDouble localTime;
+    MarkableDouble progress;
+    MarkableDouble simpleIterationProgress;
+    MarkableDouble currentIteration;
+    AnimationEffectPhase phase { AnimationEffectPhase::Idle };
 };
 
 } // namespace WebCore

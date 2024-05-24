@@ -111,13 +111,13 @@ public:
         }
 
         auto resultValue = result.releaseReturnValue();
-        if (!std::holds_alternative<RefPtr<IDBDatabase>>(resultValue)) {
+        if (!std::holds_alternative<Ref<IDBDatabase>>(resultValue)) {
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected result type."_s);
             return;
         }
 
-        auto databaseResult = std::get<RefPtr<IDBDatabase>>(resultValue);
-        m_executableWithDatabase->execute(*databaseResult);
+        auto databaseResult = std::get<Ref<IDBDatabase>>(resultValue);
+        m_executableWithDatabase->execute(databaseResult);
         databaseResult->close();
     }
 
@@ -141,9 +141,8 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
         return;
     }
 
-    result.releaseReturnValue()->addEventListener(eventNames().successEvent, OpenDatabaseCallback::create(*this), false);
+    result.releaseReturnValue()->addEventListener(eventNames().successEvent, OpenDatabaseCallback::create(*this), { { .capture = false } });
 }
-
 
 static Ref<Inspector::Protocol::IndexedDB::KeyPath> keyPathFromIDBKeyPath(const std::optional<IDBKeyPath>& idbKeyPath)
 {
@@ -352,12 +351,12 @@ public:
         }
         
         auto resultValue = result.releaseReturnValue();
-        if (!std::holds_alternative<RefPtr<IDBCursor>>(resultValue)) {
+        if (!std::holds_alternative<Ref<IDBCursor>>(resultValue)) {
             end(false);
             return;
         }
 
-        auto cursor = std::get<RefPtr<IDBCursor>>(resultValue);
+        auto cursor = std::get<Ref<IDBCursor>>(resultValue);
 
         if (m_skipCount) {
             if (cursor->advance(m_skipCount).hasException())
@@ -473,7 +472,7 @@ public:
         }
 
         auto openCursorCallback = OpenCursorCallback::create(m_injectedScript, m_requestCallback.copyRef(), m_skipCount, m_pageSize);
-        idbRequest->addEventListener(eventNames().successEvent, WTFMove(openCursorCallback), false);
+        idbRequest->addEventListener(eventNames().successEvent, WTFMove(openCursorCallback), { { .capture = false } });
     }
 
     BackendDispatcher::CallbackBase& requestCallback() override { return m_requestCallback.get(); }
@@ -693,7 +692,7 @@ public:
             return;
         }
 
-        idbTransaction->addEventListener(eventNames().completeEvent, ClearObjectStoreListener::create(m_requestCallback.copyRef()), false);
+        idbTransaction->addEventListener(eventNames().completeEvent, ClearObjectStoreListener::create(m_requestCallback.copyRef()), { { .capture = false } });
     }
 
     BackendDispatcher::CallbackBase& requestCallback() override { return m_requestCallback.get(); }

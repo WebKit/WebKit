@@ -38,17 +38,17 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(PushEvent);
 
 static Vector<uint8_t> dataFromPushMessageDataInit(PushMessageDataInit& data)
 {
-    return WTF::switchOn(data, [](RefPtr<JSC::ArrayBuffer>& value) -> Vector<uint8_t> {
-        if (!value)
-            return { };
-        return value->span();
-    }, [](RefPtr<JSC::ArrayBufferView>& value) -> Vector<uint8_t> {
-        if (!value)
-            return { };
-        return value->span();
-    }, [](String& value) -> Vector<uint8_t> {
-        return value.utf8().span();
-    });
+    return WTF::switchOn(data,
+        [](Ref<JSC::ArrayBuffer>& value) -> Vector<uint8_t> {
+            return value->span();
+        },
+        [](Ref<JSC::ArrayBufferView>& value) -> Vector<uint8_t> {
+            return value->span();
+        },
+        [](String& value) -> Vector<uint8_t> {
+            return value.utf8().span();
+        }
+    );
 }
 
 Ref<PushEvent> PushEvent::create(const AtomString& type, PushEventInit&& initializer, IsTrusted isTrusted)

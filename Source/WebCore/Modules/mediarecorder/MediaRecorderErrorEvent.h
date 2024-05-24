@@ -35,7 +35,7 @@ class MediaRecorderErrorEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(MediaRecorderErrorEvent);
 public:
     struct Init : EventInit {
-        RefPtr<DOMException> error;
+        Ref<DOMException> error;
     };
     
     static Ref<MediaRecorderErrorEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
@@ -44,7 +44,7 @@ public:
     DOMException& error() const { return m_domError.get(); }
 
 private:
-    MediaRecorderErrorEvent(const AtomString&, Init&&, Ref<DOMException>&&, IsTrusted);
+    MediaRecorderErrorEvent(const AtomString&, Init&&, IsTrusted);
     MediaRecorderErrorEvent(const AtomString&, Exception&&);
 
     Ref<DOMException> m_domError;

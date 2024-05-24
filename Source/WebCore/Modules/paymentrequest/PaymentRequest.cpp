@@ -254,10 +254,12 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
                     return totalResult.releaseException();
             }
 
-            for (auto& item : modifier.additionalDisplayItems) {
-                auto paymentItemResult = checkAndCanonicalizePaymentItem(item, NegativeAmountAllowed::Yes);
-                if (paymentItemResult.hasException())
-                    return paymentItemResult.releaseException();
+            if (modifier.additionalDisplayItems) {
+                for (auto& item : *modifier.additionalDisplayItems) {
+                    auto paymentItemResult = checkAndCanonicalizePaymentItem(item, NegativeAmountAllowed::Yes);
+                    if (paymentItemResult.hasException())
+                        return paymentItemResult.releaseException();
+                }
             }
 
             String serializedData;
@@ -654,11 +656,12 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
 
     auto& context = *m_detailsPromise->scriptExecutionContext();
     auto throwScope = DECLARE_THROW_SCOPE(context.vm());
-    auto detailsUpdate = convertDictionary<PaymentDetailsUpdate>(*context.globalObject(), m_detailsPromise->result());
+    auto detailsUpdateConversion = convertDictionary<PaymentDetailsUpdate>(*context.globalObject(), m_detailsPromise->result());
     if (throwScope.exception()) {
         abortWithException(Exception { ExceptionCode::ExistingExceptionError });
         return;
     }
+    auto detailsUpdate = detailsUpdateConversion.releaseReturnValue();
 
     if (detailsUpdate.total) {
         auto totalResult = checkAndCanonicalizeTotal(*detailsUpdate.total);

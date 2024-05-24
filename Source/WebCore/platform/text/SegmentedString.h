@@ -34,6 +34,7 @@ public:
     SegmentedString() = default;
     SegmentedString(String&&);
     SegmentedString(const String&);
+    explicit SegmentedString(ASCIILiteral);
     explicit SegmentedString(StringView);
 
     SegmentedString(SegmentedString&&) = delete;
@@ -85,6 +86,7 @@ private:
     struct Substring {
         Substring() = default;
         Substring(String&&);
+        explicit Substring(ASCIILiteral);
         explicit Substring(StringView);
 
         UChar currentCharacter() const;
@@ -161,6 +163,16 @@ inline SegmentedString::Substring::Substring(StringView passedStringView)
     }
 }
 
+inline SegmentedString::Substring::Substring(ASCIILiteral passedLiteral)
+    : originalLength(passedLiteral.length())
+    , length(passedLiteral.length())
+{
+    if (length) {
+        is8Bit = true;
+        currentCharacter8 = passedLiteral.span8().data();
+    }
+}
+
 inline SegmentedString::Substring::Substring(String&& passedString)
     : underlyingString(WTFMove(passedString))
     , originalLength(underlyingString.length())
@@ -190,6 +202,15 @@ ALWAYS_INLINE UChar SegmentedString::Substring::currentCharacterPreIncrement()
 {
     ASSERT(length);
     return is8Bit ? *++currentCharacter8 : *++currentCharacter16;
+}
+
+inline SegmentedString::SegmentedString(ASCIILiteral literal)
+    : m_currentSubstring(literal)
+{
+    if (m_currentSubstring.length) {
+        m_currentCharacter = m_currentSubstring.currentCharacter();
+        updateAdvanceFunctionPointers();
+    }
 }
 
 inline SegmentedString::SegmentedString(StringView stringView)

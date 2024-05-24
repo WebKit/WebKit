@@ -31,6 +31,7 @@
 #elif ENABLE(TOUCH_EVENTS)
 
 #include "MouseRelatedEvent.h"
+#include "TouchEventInit.h"
 #include "TouchList.h"
 
 namespace WebCore {
@@ -50,15 +51,9 @@ public:
         return adoptRef(*new TouchEvent);
     }
 
-    struct Init : MouseRelatedEventInit {
-        RefPtr<TouchList> touches;
-        RefPtr<TouchList> targetTouches;
-        RefPtr<TouchList> changedTouches;
-    };
-
-    static Ref<TouchEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<TouchEvent> create(const AtomString& type, TouchEventInit&& init, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new TouchEvent(type, initializer, isTrusted));
+        return adoptRef(*new TouchEvent(type, WTFMove(init), isTrusted));
     }
 
     TouchList* touches() const { return m_touches.get(); }
@@ -75,7 +70,7 @@ private:
     TouchEvent();
     TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches, const AtomString& type,
         RefPtr<WindowProxy>&&, const IntPoint& globalLocation, OptionSet<Modifier>);
-    TouchEvent(const AtomString&, const Init&, IsTrusted);
+    TouchEvent(const AtomString&, TouchEventInit&&, IsTrusted);
 
     RefPtr<TouchList> m_touches;
     RefPtr<TouchList> m_targetTouches;

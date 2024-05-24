@@ -39,11 +39,11 @@ class XRInputSourceEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(XRInputSourceEvent);
 public:
     struct Init : EventInit {
-        RefPtr<WebXRFrame> frame;
-        RefPtr<WebXRInputSource> inputSource;
+        Ref<WebXRFrame> frame;
+        Ref<WebXRInputSource> inputSource;
     };
 
-    static Ref<XRInputSourceEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<XRInputSourceEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRInputSourceEvent();
 
     const WebXRFrame& frame() const;
@@ -51,10 +51,10 @@ public:
     void setFrameActive(bool);
 
 private:
-    XRInputSourceEvent(const AtomString&, const Init&, IsTrusted);
+    XRInputSourceEvent(const AtomString&, Init&&, IsTrusted);
 
-    RefPtr<WebXRFrame> m_frame;
-    RefPtr<WebXRInputSource> m_inputSource;
+    Ref<WebXRFrame> m_frame;
+    Ref<WebXRInputSource> m_inputSource;
     std::optional<int> m_buttonIndex;
 };
 

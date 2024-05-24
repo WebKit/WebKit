@@ -29,7 +29,7 @@ namespace WebCore {
 template<typename Visitor>
 void JSNodeIterator::visitAdditionalChildren(Visitor& visitor)
 {
-    if (auto* filter = wrapped().filter())
+    if (auto filter = wrapped().filter())
         addWebCoreOpaqueRoot(visitor, *filter);
 }
 

@@ -70,6 +70,7 @@ public:
 
     const String& name() const { return m_name; }
 
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
 
     DedicatedWorkerThread& thread();

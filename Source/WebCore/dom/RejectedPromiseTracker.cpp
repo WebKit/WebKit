@@ -162,12 +162,12 @@ void RejectedPromiseTracker::reportUnhandledRejections(Vector<UnhandledPromise>&
         if (promise.isHandled(vm))
             continue;
 
-        PromiseRejectionEvent::Init initializer;
-        initializer.cancelable = true;
-        initializer.promise = &domPromise;
-        initializer.reason = promise.result(vm);
-
-        Ref event = PromiseRejectionEvent::create(eventNames().unhandledrejectionEvent, initializer);
+        Ref event = PromiseRejectionEvent::create(eventNames().unhandledrejectionEvent, PromiseRejectionEvent::Init {
+                { .cancelable = true },
+                domPromise,
+                promise.result(vm)
+            }
+        );
         RefPtr target = m_context->errorEventTarget();
         target->dispatchEvent(event);
 
@@ -191,11 +191,12 @@ void RejectedPromiseTracker::reportRejectionHandled(Ref<DOMPromise>&& rejectedPr
 
     auto& promise = *rejectedPromise->promise();
 
-    PromiseRejectionEvent::Init initializer;
-    initializer.promise = rejectedPromise.ptr();
-    initializer.reason = promise.result(vm);
-
-    Ref event = PromiseRejectionEvent::create(eventNames().rejectionhandledEvent, initializer);
+    Ref event = PromiseRejectionEvent::create(eventNames().rejectionhandledEvent, PromiseRejectionEvent::Init {
+            { },
+            WTFMove(rejectedPromise),
+            promise.result(vm)
+        }
+    );
     RefPtr target = m_context->errorEventTarget();
     target->dispatchEvent(event);
 }

@@ -40,20 +40,20 @@ class XRReferenceSpaceEvent : public Event {
     WTF_MAKE_ISO_ALLOCATED(XRReferenceSpaceEvent);
 public:
     struct Init : EventInit {
-        RefPtr<WebXRReferenceSpace> referenceSpace;
+        Ref<WebXRReferenceSpace> referenceSpace;
         RefPtr<WebXRRigidTransform> transform;
     };
 
-    static Ref<XRReferenceSpaceEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<XRReferenceSpaceEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRReferenceSpaceEvent();
 
     const WebXRReferenceSpace& referenceSpace() const;
     WebXRRigidTransform* transform() const;
 
 private:
-    XRReferenceSpaceEvent(const AtomString&, const Init&, IsTrusted);
+    XRReferenceSpaceEvent(const AtomString&, Init&&, IsTrusted);
 
-    RefPtr<WebXRReferenceSpace> m_referenceSpace;
+    Ref<WebXRReferenceSpace> m_referenceSpace;
     RefPtr<WebXRRigidTransform> m_transform;
 };
 

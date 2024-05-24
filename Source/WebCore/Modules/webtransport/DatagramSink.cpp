@@ -46,18 +46,20 @@ void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DO
 {
     if (!context.globalObject())
         return promise.settle(Exception { ExceptionCode::InvalidStateError });
+
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
-    auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
     auto arrayBufferOrView = convert<IDLUnion<IDLArrayBuffer, IDLArrayBufferView>>(globalObject, value);
-    if (scope.exception())
+    if (arrayBufferOrView.hasException())
         return promise.settle(Exception { ExceptionCode::ExistingExceptionError });
 
-    WTF::switchOn(arrayBufferOrView, [&](auto& arrayBufferOrView) {
-        send(arrayBufferOrView->span(), [promise = WTFMove(promise)] () mutable {
-            // FIXME: Reject if sending failed.
-            promise.resolve();
-        });
-    });
+    WTF::switchOn(arrayBufferOrView.releaseReturnValue(),
+        [&](auto&& arrayBufferOrView) {
+            send(arrayBufferOrView->span(), [promise = WTFMove(promise)] () mutable {
+                // FIXME: Reject if sending failed.
+                promise.resolve();
+            });
+        }
+    );
 }
 
 void DatagramSink::send(std::span<const uint8_t> datagram, CompletionHandler<void()>&& completionHandler)

@@ -32,12 +32,7 @@
 namespace WebCore {
 
 struct StructuredSerializeOptions {
-    StructuredSerializeOptions() = default;
-    StructuredSerializeOptions(Vector<JSC::Strong<JSC::JSObject>>&& transfer)
-        : transfer(WTFMove(transfer))
-    { }
-
-    Vector<JSC::Strong<JSC::JSObject>> transfer;
+    Vector<JSC::Strong<JSC::JSObject>> transfer = { };
 };
 
 } // namespace WebCore

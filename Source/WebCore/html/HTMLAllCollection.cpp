@@ -48,28 +48,30 @@ inline HTMLAllCollection::HTMLAllCollection(Document& document, CollectionType t
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#dom-htmlallcollection-item
-std::optional<std::variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const
+std::optional<std::variant<Ref<HTMLCollection>, Ref<Element>>> HTMLAllCollection::namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const
 {
     if (nameOrIndex.isNull())
         return std::nullopt;
 
-    if (auto index = JSC::parseIndex(*nameOrIndex.impl()))
-        return std::variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<Element> { item(index.value()) } };
+    if (auto index = JSC::parseIndex(*nameOrIndex.impl())) {
+        if (RefPtr element = item(index.value()))
+            return element.releaseNonNull();
+    }
 
     return namedItemOrItems(nameOrIndex);
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#concept-get-all-named
-std::optional<std::variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedItemOrItems(const AtomString& name) const
+std::optional<std::variant<Ref<HTMLCollection>, Ref<Element>>> HTMLAllCollection::namedItemOrItems(const AtomString& name) const
 {
     auto namedItems = this->namedItems(name);
 
     if (namedItems.isEmpty())
         return std::nullopt;
     if (namedItems.size() == 1)
-        return std::variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
+        return { WTFMove(namedItems[0]) };
 
-    return std::variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<HTMLCollection> { downcast<Document>(ownerNode()).allFilteredByName(name) } };
+    return { downcast<Document>(ownerNode()).allFilteredByName(name) };
 }
 
 HTMLAllNamedSubCollection::HTMLAllNamedSubCollection(Document& document, CollectionType type, const AtomString& name)

@@ -685,18 +685,26 @@ static inline void initializeRTCStatsReportBackingMap(DOMMapAdapter& report, con
     for (const auto& rtcStats : rtcReport) {
         if (rtcStats.type() == webrtc::RTCInboundRtpStreamStats::kType) {
             RTCStatsReport::InboundRtpStreamStats stats;
+            stats.type = RTCStatsReport::Type::InboundRtp;
+
             fillInboundRtpStreamStats(stats, static_cast<const webrtc::RTCInboundRtpStreamStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::InboundRtpStreamStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCOutboundRtpStreamStats::kType) {
             RTCStatsReport::OutboundRtpStreamStats stats;
+            stats.type = RTCStatsReport::Type::OutboundRtp;
+
             fillOutboundRtpStreamStats(stats, static_cast<const webrtc::RTCOutboundRtpStreamStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::OutboundRtpStreamStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCDataChannelStats::kType) {
             RTCStatsReport::DataChannelStats stats;
+            stats.type = RTCStatsReport::Type::DataChannel;
+
             fillRTCDataChannelStats(stats, static_cast<const webrtc::RTCDataChannelStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::DataChannelStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCIceCandidatePairStats::kType) {
             RTCStatsReport::IceCandidatePairStats stats;
+            stats.type = RTCStatsReport::Type::CandidatePair;
+
             fillRTCIceCandidatePairStats(stats, static_cast<const webrtc::RTCIceCandidatePairStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidatePairStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCRemoteIceCandidateStats::kType || rtcStats.type() == webrtc::RTCLocalIceCandidateStats::kType) {
@@ -705,38 +713,56 @@ static inline void initializeRTCStatsReportBackingMap(DOMMapAdapter& report, con
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidateStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCCertificateStats::kType) {
             RTCStatsReport::CertificateStats stats;
+            stats.type = RTCStatsReport::Type::Certificate;
+
             fillRTCCertificateStats(stats, static_cast<const webrtc::RTCCertificateStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::CertificateStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCCodecStats::kType) {
             RTCStatsReport::CodecStats stats;
+            stats.type = RTCStatsReport::Type::Codec;
+
             fillRTCCodecStats(stats, static_cast<const webrtc::RTCCodecStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::CodecStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCTransportStats::kType) {
             RTCStatsReport::TransportStats stats;
+            stats.type = RTCStatsReport::Type::Transport;
+
             fillRTCTransportStats(stats, static_cast<const webrtc::RTCTransportStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::TransportStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCPeerConnectionStats::kType) {
             RTCStatsReport::PeerConnectionStats stats;
+            stats.type = RTCStatsReport::Type::PeerConnection;
+
             fillRTCPeerConnectionStats(stats, static_cast<const webrtc::RTCPeerConnectionStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::PeerConnectionStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCAudioSourceStats::kType) {
             RTCStatsReport::AudioSourceStats stats;
+            stats.type = RTCStatsReport::Type::MediaSource;
+
             fillRTCAudioSourceStats(stats, static_cast<const webrtc::RTCAudioSourceStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::AudioSourceStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCVideoSourceStats::kType) {
             RTCStatsReport::VideoSourceStats stats;
+            stats.type = RTCStatsReport::Type::MediaSource;
+
             fillRTCVideoSourceStats(stats, static_cast<const webrtc::RTCVideoSourceStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::VideoSourceStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCRemoteInboundRtpStreamStats::kType) {
             RTCStatsReport::RemoteInboundRtpStreamStats stats;
+            stats.type = RTCStatsReport::Type::RemoteInboundRtp;
+
             fillRemoteInboundRtpStreamStats(stats, static_cast<const webrtc::RTCRemoteInboundRtpStreamStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::RemoteInboundRtpStreamStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCRemoteOutboundRtpStreamStats::kType) {
             RTCStatsReport::RemoteOutboundRtpStreamStats stats;
+            stats.type = RTCStatsReport::Type::RemoteOutboundRtp;
+
             fillRemoteOutboundRtpStreamStats(stats, static_cast<const webrtc::RTCRemoteOutboundRtpStreamStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::RemoteOutboundRtpStreamStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCAudioPlayoutStats::kType) {
             RTCStatsReport::AudioPlayoutStats stats;
+            stats.type = RTCStatsReport::Type::MediaPlayout;
+
             fillRTCAudioPlayoutStats(stats, static_cast<const webrtc::RTCAudioPlayoutStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::AudioPlayoutStats>>(stats.id, WTFMove(stats));
         }

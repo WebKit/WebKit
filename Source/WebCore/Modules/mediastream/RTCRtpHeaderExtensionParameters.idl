@@ -23,12 +23,13 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcrtpheaderextensionparameters
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
 ] dictionary RTCRtpHeaderExtensionParameters {
-    DOMString uri;
-    unsigned short id;
+    required DOMString uri;
+    required unsigned short id;
     // FIXME: Add boolean encrypted;
 };

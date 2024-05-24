@@ -74,45 +74,79 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<CSSNumericValue> angle)
 
 ExceptionOr<Ref<CSSRotate>> CSSRotate::create(CSSFunctionValue& cssFunctionValue)
 {
-    auto makeRotate = [&](const Function<ExceptionOr<Ref<CSSRotate>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSRotate>> {
-        Vector<RefPtr<CSSNumericValue>> components;
+    auto makeRotate = [&]<unsigned expectedNumberOfComponents>(
+        auto createFunction
+    ) -> ExceptionOr<Ref<CSSRotate>> {
+        std::array<RefPtr<CSSNumericValue>, expectedNumberOfComponents> components;
+
+        unsigned numberConsumed = 0;
         for (auto& componentCSSValue : cssFunctionValue) {
+            if (numberConsumed++ > expectedNumberOfComponents) {
+                ASSERT_NOT_REACHED();
+                return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
+            }
+
             auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
             RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());
             if (!numericValue)
                 return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
-            components.append(WTFMove(numericValue));
+
+            components[numberConsumed] = WTFMove(numericValue);
         }
-        if (components.size() != expectedNumberOfComponents) {
-            ASSERT_NOT_REACHED();
-            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
-        }
-        return create(WTFMove(components));
+
+        return createFunction(WTFMove(components));
     };
 
     switch (cssFunctionValue.name()) {
     case CSSValueRotateX:
-        return makeRotate([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSRotate::create(CSSNumericFactory::number(1), CSSNumericFactory::number(0), CSSNumericFactory::number(0), *components[0]);
-        }, 1);
+        return makeRotate.template operator()<1>(
+            [](auto&& components) {
+                return CSSRotate::create(
+                    CSSNumericFactory::number(1),
+                    CSSNumericFactory::number(0),
+                    CSSNumericFactory::number(0),
+                    std::get<0>(components).releaseNonNull()
+                );
+        });
     case CSSValueRotateY:
-        return makeRotate([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSRotate::create(CSSNumericFactory::number(0), CSSNumericFactory::number(1), CSSNumericFactory::number(0), *components[0]);
-        }, 1);
+        return makeRotate.template operator()<1>(
+            [](auto&& components) {
+                return CSSRotate::create(
+                    CSSNumericFactory::number(0),
+                    CSSNumericFactory::number(1),
+                    CSSNumericFactory::number(0),
+                    std::get<0>(components).releaseNonNull()
+                );
+            });
     case CSSValueRotateZ:
-        return makeRotate([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSRotate::create(CSSNumericFactory::number(0), CSSNumericFactory::number(0), CSSNumericFactory::number(1), *components[0]);
-        }, 1);
+        return makeRotate.template operator()<1>(
+            [](auto&& components) {
+                return CSSRotate::create(
+                    CSSNumericFactory::number(0),
+                    CSSNumericFactory::number(0),
+                    CSSNumericFactory::number(1),
+                    std::get<0>(components).releaseNonNull()
+                );
+            });
     case CSSValueRotate:
-        return makeRotate([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSRotate::create(*components[0]);
-        }, 1);
+        return makeRotate.template operator()<1>(
+            [](auto&& components) {
+                return CSSRotate::create(
+                    std::get<0>(components).releaseNonNull()
+                );
+            });
     case CSSValueRotate3d:
-        return makeRotate([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSRotate::create(components[0], components[1], components[2], *components[3]);
-        }, 4);
+        return makeRotate.template operator()<4>(
+            [](auto&& components) {
+                return CSSRotate::create(
+                    std::get<0>(components).releaseNonNull(),
+                    std::get<1>(components).releaseNonNull(),
+                    std::get<2>(components).releaseNonNull(),
+                    std::get<3>(components).releaseNonNull()
+                );
+            });
     default:
         ASSERT_NOT_REACHED();
         return CSSRotate::create(CSSNumericFactory::deg(0));

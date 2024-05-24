@@ -49,7 +49,7 @@ public:
     MediaStream& mediaStream() { return m_mediaStream; }
 
 private:
-    MediaStreamAudioSourceNode(BaseAudioContext&, MediaStream&, Ref<WebAudioSourceProvider>&&);
+    MediaStreamAudioSourceNode(BaseAudioContext&, Ref<MediaStream>&&, Ref<WebAudioSourceProvider>&&);
 
     // AudioNode
     void process(size_t framesToProcess) final;

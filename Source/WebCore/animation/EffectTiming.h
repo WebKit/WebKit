@@ -34,14 +34,14 @@
 namespace WebCore {
 
 struct EffectTiming {
-    std::variant<double, String> duration { autoAtom() };
     double delay { 0 };
     double endDelay { 0 };
+    FillMode fill { FillMode::Auto };
     double iterationStart { 0 };
     double iterations { 1 };
-    String easing { "linear"_s };
-    FillMode fill { FillMode::Auto };
+    std::variant<double, String> duration { autoAtom() };
     PlaybackDirection direction { PlaybackDirection::Normal };
+    String easing { "linear"_s };
 };
 
 } // namespace WebCore

@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/ServiceWorker/#serviceworkerglobalscope
 [
     CustomToJSObject,
     EnabledBySetting=ServiceWorkersEnabled,
@@ -39,6 +40,7 @@
     [CallWith=CurrentGlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options);
 };
 
+// https://w3c.github.io/ServiceWorker/#serviceworkerglobalscope
 enum FrameType {
   "auxiliary",
   "top-level",

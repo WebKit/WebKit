@@ -34,31 +34,31 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigateEvent);
 
-NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& init, AbortController* abortController)
-    : Event(EventInterfaceType::NavigateEvent, type, init, Event::IsTrusted::Yes)
-    , m_navigationType(init.navigationType)
-    , m_destination(init.destination)
-    , m_signal(init.signal)
-    , m_formData(init.formData)
-    , m_downloadRequest(init.downloadRequest)
-    , m_info(init.info)
-    , m_canIntercept(init.canIntercept)
-    , m_userInitiated(init.userInitiated)
-    , m_hashChange(init.hashChange)
-    , m_hasUAVisualTransition(init.hasUAVisualTransition)
+NavigateEvent::NavigateEvent(const AtomString& type, NavigateEvent::Init&& init, AbortController* abortController)
+    : Event(EventInterfaceType::NavigateEvent, type, WTFMove(init), Event::IsTrusted::Yes)
+    , m_navigationType(WTFMove(init.navigationType))
+    , m_destination(WTFMove(init.destination))
+    , m_signal(WTFMove(init.signal))
+    , m_formData(WTFMove(init.formData))
+    , m_downloadRequest(WTFMove(init.downloadRequest))
+    , m_info(WTFMove(init.info))
+    , m_canIntercept(WTFMove(init.canIntercept))
+    , m_userInitiated(WTFMove(init.userInitiated))
+    , m_hashChange(WTFMove(init.hashChange))
+    , m_hasUAVisualTransition(WTFMove(init.hasUAVisualTransition))
     , m_abortController(abortController)
 {
 }
 
-Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateEvent::Init& init, AbortController* abortController)
+Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, NavigateEvent::Init&& init, AbortController* abortController)
 {
-    return adoptRef(*new NavigateEvent(type, init, abortController));
+    return adoptRef(*new NavigateEvent(type, WTFMove(init), abortController));
 }
 
-Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateEvent::Init& init)
+Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, NavigateEvent::Init&& init)
 {
     // FIXME: AbortController is required but JS bindings need to create it with one.
-    return adoptRef(*new NavigateEvent(type, init, nullptr));
+    return adoptRef(*new NavigateEvent(type, WTFMove(init), nullptr));
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigateevent-perform-shared-checks

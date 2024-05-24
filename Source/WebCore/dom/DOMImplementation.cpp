@@ -52,6 +52,7 @@
 #include "SVGNames.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
+#include "SegmentedString.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
 #include "Text.h"
@@ -139,7 +140,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     Ref document = HTMLDocument::create(nullptr, m_document->protectedSettings(), URL(), { });
     document->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent });
     document->open();
-    document->write(nullptr, { "<!doctype html><html><head></head><body></body></html>"_s });
+    document->write(nullptr, SegmentedString { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
         auto titleElement = HTMLTitleElement::create(titleTag, document);
         titleElement->appendChild(document->createTextNode(WTFMove(title)));

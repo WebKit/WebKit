@@ -29,13 +29,7 @@
 
 namespace WebCore {
 
-struct WindowPostMessageOptions : public StructuredSerializeOptions {
-    WindowPostMessageOptions() = default;
-    WindowPostMessageOptions(String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
-        : StructuredSerializeOptions(WTFMove(transfer))
-        , targetOrigin(WTFMove(targetOrigin))
-    { }
-
+struct WindowPostMessageOptions : StructuredSerializeOptions {
     String targetOrigin { "/"_s };
 };
 

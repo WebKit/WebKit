@@ -195,12 +195,6 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     if (!isServiceWorkerNavigationPreloadEnabled)
         fetchRequest->setNavigationPreloadIdentifier(fetchIdentifier);
 
-    FetchEvent::Init init;
-    init.request = WTFMove(fetchRequest);
-    init.resultingClientId = WTFMove(resultingClientIdentifier);
-    init.clientId = WTFMove(clientIdentifier);
-    init.cancelable = true;
-
     auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalScope.globalObject());
     JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
 
@@ -208,9 +202,17 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     ASSERT(promise);
 
     auto deferredPromise = DeferredPromise::create(jsDOMGlobalObject, *promise);
-    init.handled = DOMPromise::create(jsDOMGlobalObject, *promise);
 
-    auto event = FetchEvent::create(*globalScope.globalObject(), eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
+    auto event = FetchEvent::create(*globalScope.globalObject(), eventNames().fetchEvent, FetchEvent::Init {
+            { { .cancelable = true } },
+            WTFMove(fetchRequest),
+            WTFMove(clientIdentifier),
+            WTFMove(resultingClientIdentifier),
+            DOMPromise::create(jsDOMGlobalObject, *promise)
+        },
+        Event::IsTrusted::Yes
+    );
+
     if (isServiceWorkerNavigationPreloadEnabled) {
         client->setFetchEvent(event.copyRef());
         event->setNavigationPreloadIdentifier(fetchIdentifier);

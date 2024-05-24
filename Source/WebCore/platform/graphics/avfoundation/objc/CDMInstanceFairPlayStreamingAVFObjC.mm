@@ -376,13 +376,13 @@ void CDMInstanceFairPlayStreamingAVFObjC::initializeWithConfiguration(const CDMK
         if (configuration.distinctiveIdentifier == CDMRequirement::Required)
             return Failed;
 
-        if (configuration.persistentState != CDMRequirement::Required && (configuration.sessionTypes.contains(CDMSessionType::PersistentUsageRecord) || configuration.sessionTypes.contains(CDMSessionType::PersistentLicense)))
+        if (configuration.persistentState != CDMRequirement::Required && configuration.sessionTypes && (configuration.sessionTypes->contains(CDMSessionType::PersistentUsageRecord) || configuration.sessionTypes->contains(CDMSessionType::PersistentLicense)))
             return Failed;
 
         if (configuration.persistentState == CDMRequirement::Required && !m_storageURL)
             return Failed;
 
-        if (configuration.sessionTypes.contains(CDMSessionType::PersistentLicense) && !supportsPersistentKeys())
+        if (configuration.sessionTypes && configuration.sessionTypes->contains(CDMSessionType::PersistentLicense) && !supportsPersistentKeys())
             return Failed;
 
         if (!PAL::canLoad_AVFoundation_AVContentKeySystemFairPlayStreaming())
@@ -832,7 +832,7 @@ static bool isEqual(const SharedBuffer& data, const String& value)
         return false;
 
     Ref<TextDecoder> decoder = exceptionOrDecoder.releaseReturnValue();
-    auto stringOrException = decoder->decode(BufferSource::VariantType(WTFMove(arrayBuffer)), TextDecoder::DecodeOptions());
+    auto stringOrException = decoder->decode(BufferSource { arrayBuffer.releaseNonNull() }, TextDecoder::DecodeOptions());
     if (stringOrException.hasException())
         return false;
 

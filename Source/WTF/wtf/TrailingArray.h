@@ -99,7 +99,7 @@ protected:
 
         for (size_t i = 0; i < m_size; ++i) {
             if (auto value = generator(i))
-                begin()[i] = WTFMove(*value);
+                new (NotNull, std::addressof(begin()[i])) T(WTFMove(*value));
             else {
                 m_size = i;
                 return;

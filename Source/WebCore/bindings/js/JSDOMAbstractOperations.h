@@ -81,7 +81,7 @@ static bool isVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject, JSC
 // NOTE: Named getters are little odd. To avoid doing duplicate lookups (once when checking if
 //       the property name is a 'supported property name' and once to get the value) we signal
 //       that a property is supported by whether or not it is 'null' (where what null means is
-//       dependant on the IDL type). This is based on the assumption that no named getter will
+//       dependent on the IDL type). This is based on the assumption that no named getter will
 //       ever actually want to return null as an actual return value, which seems like an ok
 //       assumption to make (should it turn out this doesn't hold in the future, we have lots
 //       of options; do two lookups, add an extra layer of Optional, etc.).
@@ -91,7 +91,7 @@ static decltype(auto) visibleNamedPropertyItemAccessorFunctor(InnerItemAccessor&
     if constexpr (IsExceptionOr<std::invoke_result_t<InnerItemAccessor, JSClass&, JSC::PropertyName>>) {
         using ReturnType = ExceptionOr<typename IDLType::ImplementationType>;
 
-        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> std::optional<ReturnType> {
+        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)](JSClass& thisObject, JSC::PropertyName propertyName) -> std::optional<ReturnType> {
             auto result = innerItemAccessor(thisObject, propertyName);
             if (result.hasException())
                 return ReturnType { result.releaseException() };
@@ -102,10 +102,10 @@ static decltype(auto) visibleNamedPropertyItemAccessorFunctor(InnerItemAccessor&
     } else {
         using ReturnType = typename IDLType::ImplementationType;
 
-        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> std::optional<ReturnType> {
-            auto result = innerItemAccessor(thisObject, propertyName);
-            if (!IDLType::isNullValue(result))
-                return ReturnType { IDLType::extractValueFromNullable(result) };
+        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)](JSClass& thisObject, JSC::PropertyName propertyName) -> std::optional<ReturnType> {
+            auto resultValue = innerItemAccessor(thisObject, propertyName);
+            if (!IDLType::isNullValue(resultValue))
+                return ReturnType { IDLType::extractValueFromNullable(WTFMove(resultValue)) };
             return std::nullopt;
         };
     }

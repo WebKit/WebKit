@@ -34,16 +34,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(IntersectionObserverEntry);
 
-IntersectionObserverEntry::IntersectionObserverEntry(const Init& init)
-    : m_time(init.time)
-    , m_boundingClientRect(DOMRectReadOnly::fromRect(init.boundingClientRect))
-    , m_intersectionRect(DOMRectReadOnly::fromRect(init.intersectionRect))
-    , m_intersectionRatio(init.intersectionRatio)
-    , m_target(init.target)
-    , m_isIntersecting(init.isIntersecting)
+IntersectionObserverEntry::IntersectionObserverEntry(Init&& init)
+    : m_time(WTFMove(init.time))
+    , m_boundingClientRect(DOMRectReadOnly::fromRect(WTFMove(init.boundingClientRect)))
+    , m_intersectionRect(DOMRectReadOnly::fromRect(WTFMove(init.intersectionRect)))
+    , m_intersectionRatio(WTFMove(init.intersectionRatio))
+    , m_target(WTFMove(init.target))
+    , m_isIntersecting(WTFMove(init.isIntersecting))
 {
     if (init.rootBounds)
-        m_rootBounds = DOMRectReadOnly::fromRect(*init.rootBounds);
+        m_rootBounds = DOMRectReadOnly::fromRect(WTFMove(*init.rootBounds));
 }
 
 TextStream& operator<<(TextStream& ts, const IntersectionObserverEntry& entry)
@@ -55,12 +55,8 @@ TextStream& operator<<(TextStream& ts, const IntersectionObserverEntry& entry)
     if (entry.rootBounds())
         ts.dumpProperty("rootBounds", entry.rootBounds()->toFloatRect());
 
-    if (entry.boundingClientRect())
-        ts.dumpProperty("boundingClientRect", entry.boundingClientRect()->toFloatRect());
-
-    if (entry.intersectionRect())
-        ts.dumpProperty("intersectionRect", entry.intersectionRect()->toFloatRect());
-
+    ts.dumpProperty("boundingClientRect", entry.boundingClientRect().toFloatRect());
+    ts.dumpProperty("intersectionRect", entry.intersectionRect().toFloatRect());
     ts.dumpProperty("isIntersecting", entry.isIntersecting());
     ts.dumpProperty("intersectionRatio", entry.intersectionRatio());
 

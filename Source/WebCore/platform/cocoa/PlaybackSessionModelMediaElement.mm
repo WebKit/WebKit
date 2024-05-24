@@ -70,17 +70,17 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
 
     if (m_mediaElement && m_isListening) {
         for (auto& eventName : observedEventNames())
-            m_mediaElement->removeEventListener(eventName, *this, false);
+            m_mediaElement->removeEventListener(eventName, *this, { .capture = false });
         if (auto* audioTracks = m_mediaElement->audioTracks()) {
-            audioTracks->removeEventListener(events.addtrackEvent, *this, false);
-            audioTracks->removeEventListener(events.changeEvent, *this, false);
-            audioTracks->removeEventListener(events.removetrackEvent, *this, false);
+            audioTracks->removeEventListener(events.addtrackEvent, *this, { .capture = false });
+            audioTracks->removeEventListener(events.changeEvent, *this, { .capture = false });
+            audioTracks->removeEventListener(events.removetrackEvent, *this, { .capture = false });
         }
 
         if (auto* textTracks = m_mediaElement->audioTracks()) {
-            textTracks->removeEventListener(events.addtrackEvent, *this, false);
-            textTracks->removeEventListener(events.changeEvent, *this, false);
-            textTracks->removeEventListener(events.removetrackEvent, *this, false);
+            textTracks->removeEventListener(events.addtrackEvent, *this, { .capture = false });
+            textTracks->removeEventListener(events.changeEvent, *this, { .capture = false });
+            textTracks->removeEventListener(events.removetrackEvent, *this, { .capture = false });
         }
     }
     m_isListening = false;
@@ -92,17 +92,17 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
 
     if (m_mediaElement) {
         for (auto& eventName : observedEventNames())
-            m_mediaElement->addEventListener(eventName, *this, false);
+            m_mediaElement->addEventListener(eventName, *this, { { .capture = false } });
 
         auto& audioTracks = m_mediaElement->ensureAudioTracks();
-        audioTracks.addEventListener(events.addtrackEvent, *this, false);
-        audioTracks.addEventListener(events.changeEvent, *this, false);
-        audioTracks.addEventListener(events.removetrackEvent, *this, false);
+        audioTracks.addEventListener(events.addtrackEvent, *this, { { .capture = false } });
+        audioTracks.addEventListener(events.changeEvent, *this, { { .capture = false } });
+        audioTracks.addEventListener(events.removetrackEvent, *this, { { .capture = false } });
 
         auto& textTracks = m_mediaElement->ensureTextTracks();
-        textTracks.addEventListener(events.addtrackEvent, *this, false);
-        textTracks.addEventListener(events.changeEvent, *this, false);
-        textTracks.addEventListener(events.removetrackEvent, *this, false);
+        textTracks.addEventListener(events.addtrackEvent, *this, { { .capture = false } });
+        textTracks.addEventListener(events.changeEvent, *this, { { .capture = false } });
+        textTracks.addEventListener(events.removetrackEvent, *this, { { .capture = false } });
         m_isListening = true;
     }
 

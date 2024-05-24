@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct PushSubscriptionOptionsInit {
-    using ApplicationServerKey = std::variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, String>;
+    using ApplicationServerKey = std::variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, String>;
     bool userVisibleOnly { false };
     std::optional<ApplicationServerKey> applicationServerKey;
 };

@@ -54,17 +54,19 @@ void WebTransportSendStreamSink::write(WebCore::ScriptExecutionContext& context,
 
     if (!context.globalObject())
         return promise.reject(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
+
     auto& globalObject = *JSC::jsCast<WebCore::JSDOMGlobalObject*>(context.globalObject());
-    auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
-    auto arrayBufferOrView = convert<WebCore::IDLUnion<WebCore::IDLArrayBuffer, WebCore::IDLArrayBufferView>>(globalObject, value);
-    if (scope.exception())
+    auto arrayBufferOrViewConversionResult = convert<WebCore::IDLUnion<WebCore::IDLArrayBuffer, WebCore::IDLArrayBufferView>>(globalObject, value);
+    if (arrayBufferOrViewConversionResult.hasException())
         return promise.settle(WebCore::Exception { WebCore::ExceptionCode::ExistingExceptionError });
 
-    WTF::switchOn(arrayBufferOrView, [&](auto& arrayBufferOrView) {
-        sendBytes(arrayBufferOrView->span(), [promise = WTFMove(promise)] () mutable {
-            promise.resolve();
-        });
-    });
+    WTF::switchOn(arrayBufferOrViewConversionResult.releaseReturnValue(),
+        [&](auto&& arrayBufferOrView) {
+            sendBytes(arrayBufferOrView->span(), [promise = WTFMove(promise)] () mutable {
+                promise.resolve();
+            });
+        }
+    );
 }
 
 void WebTransportSendStreamSink::sendBytes(std::span<const uint8_t> bytes, CompletionHandler<void()>&& completionHandler)

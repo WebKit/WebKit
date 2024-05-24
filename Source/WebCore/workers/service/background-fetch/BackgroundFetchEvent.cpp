@@ -34,21 +34,18 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(BackgroundFetchEvent);
 
 Ref<BackgroundFetchEvent> BackgroundFetchEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    auto registration = init.registration;
-    return adoptRef(*new BackgroundFetchEvent(EventInterfaceType::BackgroundFetchEvent, type, WTFMove(init), WTFMove(registration), isTrusted));
+    return adoptRef(*new BackgroundFetchEvent(EventInterfaceType::BackgroundFetchEvent, type, WTFMove(init), isTrusted));
 }
 
-BackgroundFetchEvent::BackgroundFetchEvent(enum EventInterfaceType eventInterface, const AtomString& type, ExtendableEventInit&& eventInit, RefPtr<BackgroundFetchRegistration>&& registration, IsTrusted isTrusted)
-    : ExtendableEvent(eventInterface, type, WTFMove(eventInit), isTrusted)
-    , m_registration(WTFMove(registration))
+BackgroundFetchEvent::BackgroundFetchEvent(enum EventInterfaceType eventInterface, const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : ExtendableEvent(eventInterface, type, WTFMove(init), isTrusted)
+    , m_registration(WTFMove(init.registration))
 {
 }
 
-BackgroundFetchEvent::~BackgroundFetchEvent()
-{
-}
+BackgroundFetchEvent::~BackgroundFetchEvent() = default;
 
-RefPtr<BackgroundFetchRegistration> BackgroundFetchEvent::registration() const
+const BackgroundFetchRegistration& BackgroundFetchEvent::registration() const
 {
     return m_registration;
 }

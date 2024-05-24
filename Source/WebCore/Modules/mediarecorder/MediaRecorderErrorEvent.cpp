@@ -42,13 +42,12 @@ Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomString& t
 
 Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    auto domError = init.error.releaseNonNull();
-    return adoptRef(*new MediaRecorderErrorEvent(type, WTFMove(init), WTFMove(domError), isTrusted));
+    return adoptRef(*new MediaRecorderErrorEvent(type, WTFMove(init), isTrusted));
 }
 
-MediaRecorderErrorEvent::MediaRecorderErrorEvent(const AtomString& type, Init&& init, Ref<DOMException>&& exception, IsTrusted isTrusted)
+MediaRecorderErrorEvent::MediaRecorderErrorEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
     : Event(EventInterfaceType::MediaRecorderErrorEvent, type, WTFMove(init), isTrusted)
-    , m_domError(WTFMove(exception))
+    , m_domError(WTFMove(init.error))
 {
 }
 

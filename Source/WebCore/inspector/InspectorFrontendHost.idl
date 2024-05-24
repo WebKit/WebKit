@@ -135,7 +135,7 @@ dictionary SaveData {
     DOMString displayType;
     DOMString url;
     DOMString content;
-    boolean base64Encoded;
+    boolean base64Encoded = false;
 };
 
 dictionary ContextMenuItem {
@@ -149,8 +149,8 @@ dictionary ContextMenuItem {
 
 [
     JSGenerateToJSObject,
-]
-dictionary DebuggableInfo {
+    SuppressToNative,
+] dictionary DebuggableInfo {
     DOMString debuggableType;
     DOMString targetPlatformName;
     DOMString targetBuildVersion;

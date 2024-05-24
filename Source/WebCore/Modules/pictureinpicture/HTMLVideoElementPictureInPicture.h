@@ -80,7 +80,7 @@ private:
     bool m_disablePictureInPicture { false };
 
     WeakRef<HTMLVideoElement> m_videoElement;
-    RefPtr<PictureInPictureWindow> m_pictureInPictureWindow;
+    Ref<PictureInPictureWindow> m_pictureInPictureWindow;
     RefPtr<DeferredPromise> m_enterPictureInPicturePromise;
     RefPtr<DeferredPromise> m_exitPictureInPicturePromise;
 

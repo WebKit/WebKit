@@ -27,7 +27,7 @@
     Conditional=APPLE_PAY,
 ] dictionary ApplePayDetailsUpdateBase {
     required ApplePayLineItem newTotal;
-    sequence<ApplePayLineItem> newLineItems;
+    sequence<ApplePayLineItem> newLineItems = [];
 
     [Conditional=APPLE_PAY_RECURRING_PAYMENTS] ApplePayRecurringPaymentRequest newRecurringPaymentRequest;
 

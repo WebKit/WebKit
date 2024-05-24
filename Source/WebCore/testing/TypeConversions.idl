@@ -100,7 +100,7 @@
     DOMString stringValue = "";
     [LegacyNullToEmptyString] DOMString treatNullAsEmptyStringValue = "";
     sequence<DOMString> sequenceValue = [];
-    (Node or sequence<DOMString> or TypeConversionsOtherDictionary) unionValue = null;
+    (Node or sequence<DOMString> or TypeConversionsOtherDictionary)? unionValue = null;
     [Clamp] long clampLongValue = 0;
     [EnforceRange] long enforceRangeLongValue = 0;
 };

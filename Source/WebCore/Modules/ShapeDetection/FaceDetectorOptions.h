@@ -28,6 +28,7 @@
 #include "FaceDetectorOptionsInterface.h"
 #include <cstdint>
 #include <limits>
+#include <optional>
 
 namespace WebCore {
 
@@ -35,13 +36,13 @@ struct FaceDetectorOptions {
     ShapeDetection::FaceDetectorOptions convertToBacking() const
     {
         return {
-            maxDetectedFaces,
-            fastMode,
+            maxDetectedFaces.value_or(std::numeric_limits<uint16_t>::max()),
+            fastMode.value_or(true),
         };
     }
 
-    uint16_t maxDetectedFaces { std::numeric_limits<uint16_t>::max() };
-    bool fastMode { true };
+    std::optional<uint16_t> maxDetectedFaces;
+    std::optional<bool> fastMode;
 };
 
 inline FaceDetectorOptions convertFromBacking(const ShapeDetection::FaceDetectorOptions& faceDetectorOptions)

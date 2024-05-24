@@ -50,14 +50,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MediaElementAudioSourceNode);
 
 ExceptionOr<Ref<MediaElementAudioSourceNode>> MediaElementAudioSourceNode::create(BaseAudioContext& context, MediaElementAudioSourceOptions&& options)
 {
-    RELEASE_ASSERT(options.mediaElement);
-
     if (options.mediaElement->audioSourceNode())
         return Exception { ExceptionCode::InvalidStateError, "Media element is already associated with an audio source node"_s };
 
-    auto node = adoptRef(*new MediaElementAudioSourceNode(context, *options.mediaElement));
+    auto node = adoptRef(*new MediaElementAudioSourceNode(context, WTFMove(options.mediaElement)));
 
-    options.mediaElement->setAudioSourceNode(node.ptr());
+    node->mediaElement().setAudioSourceNode(node.ptr());
 
     // context keeps reference until node is disconnected.
     context.sourceNodeWillBeginPlayback(node);

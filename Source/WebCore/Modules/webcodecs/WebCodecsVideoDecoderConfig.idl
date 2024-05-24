@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 typedef [EnforceRange] unsigned long long WebCodecsVideoDecoderConfigSize;
 
+// https://www.w3.org/TR/webcodecs/#dictdef-videodecoderconfig
 [
     Conditional=WEB_CODECS,
     JSGenerateToJSObject,

@@ -26,6 +26,7 @@
 #include <JavaScriptCore/ObjectConstructor.h>
 
 #if ENABLE(TEST_CONDITIONAL)
+#include "JSDOMConvertOptional.h"
 #include "JSTestDictionary.h"
 #endif
 
@@ -33,7 +34,7 @@
 namespace WebCore {
 using namespace JSC;
 
-template<> TestDictionaryWithOnlyConditionalMembers convertDictionary<TestDictionaryWithOnlyConditionalMembers>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> ConversionResult<IDLDictionary<TestDictionaryWithOnlyConditionalMembers>> convertDictionary<TestDictionaryWithOnlyConditionalMembers>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -41,23 +42,25 @@ template<> TestDictionaryWithOnlyConditionalMembers convertDictionary<TestDictio
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
         throwTypeError(&lexicalGlobalObject, throwScope);
-        return { };
+        return ConversionResultException { };
     }
-    TestDictionaryWithOnlyConditionalMembers result;
 #if ENABLE(TEST_CONDITIONAL)
     JSValue conditionalMemberValue;
     if (isNullOrUndefined)
         conditionalMemberValue = jsUndefined();
     else {
         conditionalMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "conditionalMember"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!conditionalMemberValue.isUndefined()) {
-        result.conditionalMember = convert<IDLDictionary<TestDictionary>>(lexicalGlobalObject, conditionalMemberValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
+    auto conditionalMemberConversionResult = convert<IDLOptional<IDLDictionary<TestDictionary>>>(lexicalGlobalObject, conditionalMemberValue);
+    RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    ASSERT(!conditionalMemberConversionResult.hasException());
 #endif
-    return result;
+    return TestDictionaryWithOnlyConditionalMembers {
+#if ENABLE(TEST_CONDITIONAL)
+        conditionalMemberConversionResult.releaseReturnValue(),
+#endif
+    };
 }
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const TestDictionaryWithOnlyConditionalMembers& dictionary)

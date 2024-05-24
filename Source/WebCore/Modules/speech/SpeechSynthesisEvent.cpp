@@ -35,18 +35,18 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisEvent);
 
-Ref<SpeechSynthesisEvent> SpeechSynthesisEvent::create(const AtomString& type, const SpeechSynthesisEventInit& initializer)
+Ref<SpeechSynthesisEvent> SpeechSynthesisEvent::create(const AtomString& type, SpeechSynthesisEventInit&& init)
 {
-    return adoptRef(*new SpeechSynthesisEvent(EventInterfaceType::SpeechSynthesisEvent, type, initializer));
+    return adoptRef(*new SpeechSynthesisEvent(EventInterfaceType::SpeechSynthesisEvent, type, WTFMove(init)));
 }
 
-SpeechSynthesisEvent::SpeechSynthesisEvent(enum EventInterfaceType eventInterface, const AtomString& type, const SpeechSynthesisEventInit& initializer)
-    : Event(eventInterface, type, CanBubble::No, IsCancelable::No)
-    , m_utterance(initializer.utterance)
-    , m_charIndex(initializer.charIndex)
-    , m_charLength(initializer.charLength)
-    , m_elapsedTime(initializer.elapsedTime)
-    , m_name(initializer.name)
+SpeechSynthesisEvent::SpeechSynthesisEvent(enum EventInterfaceType eventInterface, const AtomString& type, SpeechSynthesisEventInit&& init)
+    : Event(eventInterface, type, WTFMove(init), IsTrusted::No)
+    , m_utterance(WTFMove(init.utterance))
+    , m_charIndex(WTFMove(init.charIndex))
+    , m_charLength(WTFMove(init.charLength))
+    , m_elapsedTime(WTFMove(init.elapsedTime))
+    , m_name(WTFMove(init.name))
 {
 }
     

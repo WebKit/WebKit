@@ -44,7 +44,7 @@ class MessagePort;
 class ServiceWorker;
 class ServiceWorkerClient;
 
-using ExtendableMessageEventSource = std::variant<RefPtr<ServiceWorkerClient>, RefPtr<ServiceWorker>, RefPtr<MessagePort>>;
+using ExtendableMessageEventSource = std::variant<Ref<ServiceWorkerClient>, Ref<ServiceWorker>, Ref<MessagePort>>;
 
 class ExtendableMessageEvent final : public ExtendableEvent {
     WTF_MAKE_ISO_ALLOCATED(ExtendableMessageEvent);

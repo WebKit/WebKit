@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct BackgroundFetchEventInit : ExtendableEventInit {
-    RefPtr<BackgroundFetchRegistration> registration;
+    Ref<BackgroundFetchRegistration> registration;
 };
 
 } // namespace WebCore

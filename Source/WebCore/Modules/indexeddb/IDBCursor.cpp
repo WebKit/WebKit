@@ -59,14 +59,14 @@ Ref<IDBCursor> IDBCursor::create(IDBIndex& index, const IDBCursorInfo& info)
 
 IDBCursor::IDBCursor(IDBObjectStore& objectStore, const IDBCursorInfo& info)
     : m_info(info)
-    , m_source(&objectStore)
+    , m_source(objectStore)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
 }
 
 IDBCursor::IDBCursor(IDBIndex& index, const IDBCursorInfo& info)
     : m_info(info)
-    , m_source(&index)
+    , m_source(index)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
 }
@@ -81,16 +81,16 @@ bool IDBCursor::sourcesDeleted() const
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
 
     return WTF::switchOn(m_source,
-        [] (const RefPtr<IDBObjectStore>& objectStore) { return objectStore->isDeleted(); },
-        [] (const RefPtr<IDBIndex>& index) { return index->isDeleted() || index->objectStore().isDeleted(); }
+        [](const Ref<IDBObjectStore>& objectStore) { return objectStore->isDeleted(); },
+        [](const Ref<IDBIndex>& index) { return index->isDeleted() || index->objectStore().isDeleted(); }
     );
 }
 
 IDBObjectStore& IDBCursor::effectiveObjectStore() const
 {
     return WTF::switchOn(m_source,
-        [] (const RefPtr<IDBObjectStore>& objectStore) -> IDBObjectStore& { return *objectStore; },
-        [] (const RefPtr<IDBIndex>& index) -> IDBObjectStore& { return index->objectStore(); }
+        [](const Ref<IDBObjectStore>& objectStore) -> IDBObjectStore& { return objectStore; },
+        [](const Ref<IDBIndex>& index) -> IDBObjectStore& { return index->objectStore(); }
     );
 }
 
@@ -191,7 +191,7 @@ ExceptionOr<void> IDBCursor::continuePrimaryKey(JSGlobalObject& state, JSValue k
     if (sourcesDeleted())
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's source or effective object store has been deleted."_s };
 
-    if (!std::holds_alternative<RefPtr<IDBIndex>>(m_source))
+    if (!std::holds_alternative<Ref<IDBIndex>>(m_source))
         return Exception { ExceptionCode::InvalidAccessError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's source is not an index."_s };
 
     auto direction = m_info.cursorDirection();

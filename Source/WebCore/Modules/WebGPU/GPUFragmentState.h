@@ -38,11 +38,7 @@ struct GPUFragmentState : public GPUProgrammableStage {
     {
         ASSERT(module);
         return {
-            {
-                module->backing(),
-                entryPoint,
-                constants,
-            },
+            static_cast<const GPUProgrammableStage*>(this)->convertToBacking(),
             targets.map([](auto& target) -> std::optional<WebGPU::ColorTargetState> {
                 if (target)
                     return target->convertToBacking();

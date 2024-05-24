@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CryptoAlgorithmAesKeyParamsInit.h"
 #include "CryptoAlgorithmParameters.h"
 
 namespace WebCore {
@@ -32,6 +33,12 @@ namespace WebCore {
 class CryptoAlgorithmAesKeyParams final : public CryptoAlgorithmParameters {
 public:
     unsigned short length;
+
+    CryptoAlgorithmAesKeyParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmAesKeyParamsInit init)
+        : CryptoAlgorithmParameters { WTFMove(identifier), WTFMove(init) }
+        , length { WTFMove(init.length) }
+    {
+    }
 
     Class parametersClass() const final { return Class::AesKeyParams; }
 };

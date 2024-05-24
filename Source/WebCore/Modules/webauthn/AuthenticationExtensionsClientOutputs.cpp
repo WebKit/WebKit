@@ -85,7 +85,8 @@ Vector<uint8_t> AuthenticationExtensionsClientOutputs::toCBOR() const
         clientOutputsMap[cbor::CBORValue("appid")] = cbor::CBORValue(*appid);
     if (credProps) {
         cbor::CBORValue::MapValue credPropsMap;
-        credPropsMap[cbor::CBORValue("rk")] = cbor::CBORValue(credProps->rk);
+        if (credProps->rk)
+            credPropsMap[cbor::CBORValue("rk")] = cbor::CBORValue(*credProps->rk);
         clientOutputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(credPropsMap);
     }
 

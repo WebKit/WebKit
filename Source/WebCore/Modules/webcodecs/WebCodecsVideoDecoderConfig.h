@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct WebCodecsVideoDecoderConfig {
     String codec;
-    std::optional<BufferSource::VariantType> description;
+    std::optional<std::variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>>> description;
     std::optional<size_t> codedWidth;
     std::optional<size_t> codedHeight;
     std::optional<size_t> displayAspectWidth;

@@ -27,6 +27,8 @@ typedef double DOMHighResTimeStamp;
 
 [
     EnabledBySetting=WebTransportEnabled,
+    JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary WebTransportDatagramStats {
     DOMHighResTimeStamp timestamp;
     unsigned long long expiredOutgoing;

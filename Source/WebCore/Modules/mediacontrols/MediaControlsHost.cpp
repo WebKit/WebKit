@@ -169,8 +169,8 @@ String MediaControlsHost::displayNameForTrack(const std::optional<TextOrAudioTra
     if (!page)
         return emptyString();
 
-    return std::visit([page] (auto& track) {
-        return page->group().ensureCaptionPreferences().displayNameForTrack(track.get());
+    return std::visit([page](auto& track) {
+        return page->group().ensureCaptionPreferences().displayNameForTrack(track.ptr());
     }, track.value());
 }
 
@@ -760,7 +760,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #if USE(UICONTEXTMENU)
     page->chrome().client().showMediaControlsContextMenu(bounds, WTFMove(items), WTFMove(handleItemSelected));
 #elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
-    target.addEventListener(eventNames().contextmenuEvent, MediaControlsContextMenuEventListener::create(MediaControlsContextMenuProvider::create(WTFMove(items), WTFMove(handleItemSelected))), { /*capture */ true, /* passive */ std::nullopt, /* once */ true });
+    target.addEventListener(eventNames().contextmenuEvent, MediaControlsContextMenuEventListener::create(MediaControlsContextMenuProvider::create(WTFMove(items), WTFMove(handleItemSelected))), AddEventListenerOptions { { /*capture */ true }, /* passive */ std::nullopt, /* once */ true });
     page->contextMenuController().showContextMenuAt(*target.document().frame(), bounds.center());
 #endif
 

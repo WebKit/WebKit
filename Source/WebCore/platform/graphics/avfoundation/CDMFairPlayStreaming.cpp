@@ -341,8 +341,8 @@ bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfig
         return false;
     }
 
-    if (configuration.sessionTypes.contains(CDMSessionType::PersistentLicense)
-        && !configuration.sessionTypes.contains(CDMSessionType::Temporary)
+    if (configuration.sessionTypes && configuration.sessionTypes->contains(CDMSessionType::PersistentLicense)
+        && !configuration.sessionTypes->contains(CDMSessionType::Temporary)
         && !CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKeys()) {
         INFO_LOG(LOGIDENTIFIER, "false, sessionType PersistentLicense not supported");
         return false;
@@ -374,14 +374,15 @@ bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfig
 bool CDMPrivateFairPlayStreaming::supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration& configuration, const CDMRestrictions& restrictions) const
 {
     if (restrictions.persistentStateDenied
-        && !configuration.sessionTypes.isEmpty()
-        && !configuration.sessionTypes.contains(CDMSessionType::Temporary))
+        && configuration.sessionTypes
+        && !configuration.sessionTypes->isEmpty()
+        && !configuration.sessionTypes->contains(CDMSessionType::Temporary))
         return false;
 
     if (restrictions.persistentStateDenied && configuration.persistentState == CDMRequirement::Required)
         return false;
 
-    if (WTF::allOf(configuration.sessionTypes, [restrictions](auto& sessionType) {
+    if (configuration.sessionTypes && WTF::allOf(*configuration.sessionTypes, [restrictions](auto& sessionType) {
         return restrictions.deniedSessionTypes.contains(sessionType);
     }))
         return false;

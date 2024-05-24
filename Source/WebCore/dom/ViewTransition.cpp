@@ -164,7 +164,7 @@ void ViewTransition::callUpdateCallback()
         callbackPromise = WTFMove(promiseAndWrapper.first);
     } else {
         auto result = m_updateCallback->handleEvent();
-        callbackPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
+        callbackPromise = result.type() == CallbackResultType::Success ? RefPtr { result.releaseReturnValue() } : nullptr;
         if (!callbackPromise || callbackPromise->isSuspended()) {
             auto promiseAndWrapper = createPromiseAndWrapper(document);
             // FIXME: First case should reject with `ExceptionCode::ExistingExceptionError`.

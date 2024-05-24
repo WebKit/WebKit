@@ -59,9 +59,9 @@ ImageBitmapCanvas ImageBitmapRenderingContext::canvas()
     auto& base = canvasBase();
 #if ENABLE(OFFSCREEN_CANVAS)
     if (auto* offscreenCanvas = dynamicDowncast<OffscreenCanvas>(base))
-        return offscreenCanvas;
+        return *offscreenCanvas;
 #endif
-    return &downcast<HTMLCanvasElement>(base);
+    return downcast<HTMLCanvasElement>(base);
 }
 
 bool ImageBitmapRenderingContext::isAccelerated() const

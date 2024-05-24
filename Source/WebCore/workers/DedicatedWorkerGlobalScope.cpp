@@ -89,6 +89,11 @@ void DedicatedWorkerGlobalScope::prepareForDestruction()
     WorkerGlobalScope::prepareForDestruction();
 }
 
+ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+{
+    return postMessage(state, messageValue, StructuredSerializeOptions { WTFMove(transfer) });
+}
+
 ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
 {
     Vector<Ref<MessagePort>> ports;

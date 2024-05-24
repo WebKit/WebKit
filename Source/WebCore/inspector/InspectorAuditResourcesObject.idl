@@ -33,6 +33,7 @@
 
 [
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary Resource {
     DOMString id;
     DOMString url;
@@ -41,6 +42,7 @@
 
 [
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary ResourceContent {
     DOMString data;
     boolean base64Encoded;

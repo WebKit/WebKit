@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CryptoAlgorithmHmacKeyParamsInit.h"
 #include "CryptoAlgorithmParameters.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
@@ -39,12 +40,24 @@ public:
     CryptoAlgorithmIdentifier hashIdentifier;
     std::optional<size_t> length;
 
+    CryptoAlgorithmHmacKeyParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTFMove(identifier) }
+    {
+    }
+
+    CryptoAlgorithmHmacKeyParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmHmacKeyParamsInit init, CryptoAlgorithmIdentifier hashIdentifier)
+        : CryptoAlgorithmParameters { WTFMove(identifier), WTFMove(init) }
+        , hash { WTFMove(init.hash) }
+        , hashIdentifier { WTFMove(hashIdentifier) }
+        , length { WTFMove(init.length) }
+    {
+    }
+
     Class parametersClass() const final { return Class::HmacKeyParams; }
 
     CryptoAlgorithmHmacKeyParams isolatedCopy() const
     {
-        CryptoAlgorithmHmacKeyParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmHmacKeyParams result { identifier };
         result.hashIdentifier = hashIdentifier;
         result.length = length;
 
