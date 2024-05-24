@@ -305,7 +305,7 @@ Queue& Device::getQueue()
 
 bool Device::hasFeature(WGPUFeatureName feature) const
 {
-    return std::find(m_capabilities.features.begin(), m_capabilities.features.end(), feature);
+    return m_capabilities.features.contains(feature);
 }
 
 auto Device::currentErrorScope(WGPUErrorFilter type) -> ErrorScope*

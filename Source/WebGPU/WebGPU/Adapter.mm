@@ -79,7 +79,7 @@ void Adapter::getProperties(WGPUAdapterProperties& properties)
 
 bool Adapter::hasFeature(WGPUFeatureName feature)
 {
-    return std::find(m_capabilities.features.begin(), m_capabilities.features.end(), feature);
+    return m_capabilities.features.contains(feature);
 }
 
 void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback)
