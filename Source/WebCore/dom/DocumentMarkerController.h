@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class Document;
+class FontCascade;
 class LayoutPoint;
 class Node;
 class RenderedDocumentMarker;
@@ -101,6 +102,8 @@ public:
 
     template<IterationDirection = IterationDirection::Forwards>
     WEBCORE_EXPORT void forEach(const SimpleRange&, OptionSet<DocumentMarker::Type>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
+
+    WEBCORE_EXPORT static std::tuple<float, float> markerYPositionAndHeightForFont(const FontCascade&);
 
 #if ENABLE(TREE_DEBUGGING)
     void showMarkers() const;

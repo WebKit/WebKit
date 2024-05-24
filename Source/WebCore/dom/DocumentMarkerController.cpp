@@ -30,6 +30,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocumentInlines.h"
+#include "FontCascade.h"
 #include "LocalFrame.h"
 #include "NodeTraversal.h"
 #include "Page.h"
@@ -830,6 +831,17 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(const 
         marker.clearData();
         return false;
     });
+}
+
+std::tuple<float, float> DocumentMarkerController::markerYPositionAndHeightForFont(const FontCascade& font)
+{
+    auto ascent = font.metricsOfPrimaryFont().intAscent();
+    auto fontSize = std::clamp(font.size(), 10.0f, 40.0f);
+
+    auto y = ascent + 0.11035 * fontSize;
+    auto height = 0.13247 * fontSize;
+
+    return { y, height };
 }
 
 void addMarker(const SimpleRange& range, DocumentMarker::Type type, const DocumentMarker::Data& data)

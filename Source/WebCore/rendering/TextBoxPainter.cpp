@@ -1117,10 +1117,7 @@ FloatRect TextBoxPainter<TextBoxPath>::computePaintRect(const LayoutPoint& paint
 FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator& textBox, const MarkedText& markedText)
 {
     auto& font = textBox->fontCascade();
-    auto ascent = font.metricsOfPrimaryFont().intAscent();
-    auto fontSize = std::min(std::max(font.size(), 10.0f), 40.0f);
-    auto y = ascent + 0.11035 * fontSize;
-    auto height = 0.13247 * fontSize;
+    auto [y, height] = DocumentMarkerController::markerYPositionAndHeightForFont(font);
 
     // Avoid measuring the text when the entire line box is selected as an optimization.
     if (markedText.startOffset || markedText.endOffset != textBox->selectableRange().clamp(textBox->end())) {

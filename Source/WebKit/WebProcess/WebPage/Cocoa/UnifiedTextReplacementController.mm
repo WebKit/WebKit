@@ -219,6 +219,14 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         document->selection().revealSelection();
 
         auto rect = document->view()->contentsToRootView(WebCore::unionRect(WebCore::RenderObject::absoluteTextRects(rangeToReplace)));
+
+        if (CheckedPtr renderStyle = node.renderStyle()) {
+            const auto& font = node.renderStyle()->fontCascade();
+            auto [_, height] = WebCore::DocumentMarkerController::markerYPositionAndHeightForFont(font);
+
+            rect.setY(rect.y() + std::round(height / 2.0));
+        }
+
         m_webPage->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(session.uuid, replacement.uuid, rect);
 
         return;
