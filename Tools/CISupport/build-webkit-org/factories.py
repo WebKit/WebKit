@@ -100,7 +100,7 @@ class TestFactory(Factory):
         if platform == 'wincairo':
             self.addStep(InstallWinCairoDependencies())
 
-        if platform.startswith('mac') or platform.startswith('ios-simulator'):
+        if platform.startswith(('mac', 'ios-simulator', 'visionos-simulator')):
             self.addStep(WaitForCrashCollection())
 
         if self.JSCTestClass:
@@ -115,7 +115,7 @@ class TestFactory(Factory):
             self.addStep(ExtractTestResults())
             self.addStep(SetPermissions())
 
-        if platform.startswith('win') or platform.startswith('mac') or platform.startswith('ios-simulator'):
+        if platform.startswith(('win', 'mac', 'ios-simulator')):
             self.addStep(RunAPITests())
 
         # FIXME: Re-enable these tests for Monterey once webkit.org/b/239463 is resolved.
@@ -127,7 +127,7 @@ class TestFactory(Factory):
         self.addStep(RunBindingsTests())
         self.addStep(RunBuiltinsTests())
 
-        if platform.startswith('mac') or platform.startswith('ios-simulator'):
+        if platform.startswith(('mac', 'ios-simulator', 'visionos-simulator')):
             self.addStep(TriggerCrashLogSubmission())
 
         if platform.startswith("gtk"):

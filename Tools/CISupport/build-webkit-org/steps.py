@@ -75,16 +75,16 @@ class CustomFlagsMixin(object):
                     return
 
     def customBuildFlag(self, platform, fullPlatform):
-        if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
+        if platform not in ('gtk', 'wincairo', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
             return []
         if 'simulator' in fullPlatform:
             platform = platform + '-simulator'
-        elif platform in ['ios', 'tvos', 'watchos']:
+        elif platform in ['ios', 'visionos', 'tvos', 'watchos']:
             platform = platform + '-device'
         return ['--' + platform]
 
     def appendCustomBuildFlags(self, platform, fullPlatform):
-        if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos',):
+        if platform not in ('gtk', 'wincairo', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos',):
             return
         if 'simulator' in fullPlatform:
             platform = platform + '-simulator'
@@ -93,12 +93,14 @@ class CustomFlagsMixin(object):
         self.command += ['--' + platform]
 
     def appendCustomTestingFlags(self, platform, device_model):
-        if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe'):
+        if platform not in ('gtk', 'wincairo', 'ios', 'visionos', 'jsc-only', 'wpe'):
             return
         if device_model == 'iphone':
             device_model = 'iphone-simulator'
         elif device_model == 'ipad':
             device_model = 'ipad-simulator'
+        elif device_model == 'visionpro':
+            device_model = 'visionos-simulator'
         else:
             device_model = platform
         self.command += ['--' + device_model]
@@ -377,7 +379,7 @@ class InstallWpeDependencies(shell.ShellCommandNewStyle, CustomFlagsMixin):
 class CompileWebKit(shell.Compile, CustomFlagsMixin):
     build_command = ["perl", "Tools/Scripts/build-webkit", "--no-fatal-warnings"]
     filter_command = ['perl', 'Tools/Scripts/filter-build-webkit', '-logfile', 'build-log.txt']
-    APPLE_PLATFORMS = ('mac', 'ios', 'tvos', 'watchos')
+    APPLE_PLATFORMS = ('mac', 'ios', 'visionos', 'tvos', 'watchos')
     env = {'MFLAGS': ''}
     name = "compile-webkit"
     description = ["compiling"]
@@ -498,7 +500,7 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
                 # S3 might not be configured on local instances, achieve similar functionality without S3.
                 steps_to_add.extend([UploadBuiltProduct()])
         # Minified build archive
-        if (full_platform.startswith(('mac', 'ios-simulator', 'tvos-simulator', 'watchos-simulator'))):
+        if (full_platform.startswith(('mac', 'ios-simulator', 'visionos-simulator', 'tvos-simulator', 'watchos-simulator'))):
             if (triggers or (rc in (SUCCESS, WARNINGS) and self.getProperty('user_provided_git_hash'))):
                 steps_to_add += [ArchiveMinifiedBuiltProduct()]
                 if CURRENT_HOSTNAME in BUILD_WEBKIT_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
@@ -1894,7 +1896,7 @@ class PrintConfiguration(steps.ShellSequence):
         platform = self.getProperty('platform', '*')
         if platform != 'jsc-only':
             platform = platform.split('-')[0]
-        if platform in ('mac', 'ios', 'tvos', 'watchos', '*'):
+        if platform in ('mac', 'ios', 'visionos', 'tvos', 'watchos', '*'):
             command_list.extend(self.command_list_apple)
         elif platform in ('gtk', 'wpe', 'jsc-only'):
             command_list.extend(self.command_list_linux)

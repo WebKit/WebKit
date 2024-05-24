@@ -201,6 +201,16 @@ table.queue-grid tr.platform.ios-17 img.logo {
     content: url(../Images/IOS17.png);
 }
 
+table.queue-grid tr.platform.visionos-simulator-1 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/visionOSSimulator.png);
+}
+
+table.queue-grid tr.platform.visionos-1 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/visionOS.png);
+}
+
 table.queue-grid tr.platform.tvos-simulator-17 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
     content: url(../Images/TvOS17Simulator.png);
