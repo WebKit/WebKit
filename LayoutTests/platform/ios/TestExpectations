@@ -7308,12 +7308,8 @@ http/wpt/webauthn/idl.https.html [ Failure ]
 webkit.org/b/274340 fast/events/ios/key-command-transpose.html [ Pass Timeout ]
 
 # webkit.org/b/274475 REGRESSION (278960@main?): [ MacOS iOS ] 8X imported/w3c/web-platform-t ests/navigation-api are consistently failing and 1 is crashing
-imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-download-userInitiated.html [ Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-download.html [ Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/current-basic.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-navigations-in-multiple-windows.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-replace-cross-origin.html [ Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-navigate-parent.html [ Failure ]
 
 # webkit.org/b/274488 REGRESSION (278902@main): [ iOS ] editing/selection/ios/selection-handles-in-iframe.html and fast/images/text-recognition/iOS.. are timing out 
 editing/selection/ios/selection-handles-in-iframe.html [ Timeout ]
