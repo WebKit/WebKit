@@ -395,6 +395,13 @@ RefPtr<cairo_surface_t> ImageBuffer::createCairoSurface()
 }
 #endif
 
+RefPtr<GraphicsLayerContentsDisplayDelegate> ImageBuffer::layerContentsDisplayDelegate()
+{
+    if (auto* backend = ensureBackend())
+        return backend->layerContentsDisplayDelegate();
+    return nullptr;
+}
+
 RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> source)
 {
     if (!source)

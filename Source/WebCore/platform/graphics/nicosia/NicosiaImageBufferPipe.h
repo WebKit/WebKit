@@ -30,6 +30,10 @@
 #include "ImageBufferPipe.h"
 #include "NicosiaContentLayer.h"
 
+namespace WebCore {
+class NativeImage;
+}
+
 namespace Nicosia {
 
 class NicosiaImageBufferPipeSourceDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate {

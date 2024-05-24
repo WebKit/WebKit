@@ -122,6 +122,10 @@ CanvasCompositingStrategy canvasCompositingStrategy(const RenderObject& renderer
     if (context->isGPUBased())
         return CanvasAsLayerContents;
 
+#if USE(SKIA) && USE(NICOSIA)
+    return CanvasAsLayerContents;
+#endif
+
     return CanvasPaintedToLayer; // On Mac and iOS we paint accelerated canvases into their layers.
 }
 

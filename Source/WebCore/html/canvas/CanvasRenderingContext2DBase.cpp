@@ -262,6 +262,13 @@ bool CanvasRenderingContext2DBase::isAccelerated() const
 #endif
 }
 
+RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext2DBase::layerContentsDisplayDelegate()
+{
+    if (auto buffer = canvasBase().buffer())
+        return buffer->layerContentsDisplayDelegate();
+    return nullptr;
+}
+
 bool CanvasRenderingContext2DBase::hasDeferredOperations() const
 {
     // At the time of writing, any draw might linger in IPC buffer or queue of the underlying graphics system, like with Accelerated

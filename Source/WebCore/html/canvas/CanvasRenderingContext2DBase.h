@@ -457,6 +457,8 @@ private:
 
     bool isAccelerated() const override;
 
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
+
     bool hasDeferredOperations() const final;
     void flushDeferredOperations() final;
 

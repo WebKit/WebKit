@@ -545,12 +545,28 @@ GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type, GPU* g
     return static_cast<GPUCanvasContext*>(m_context.get());
 }
 
+bool HTMLCanvasElement::shouldNotifyRendererOnDidDraw() const
+{
+    if (!renderBox()->hasAcceleratedCompositing())
+        return false;
+
+    if (isGPUBased())
+        return true;
+
+#if USE(SKIA) && USE(NICOSIA)
+    if (m_context && m_context->isAccelerated())
+        return true;
+#endif
+
+    return false;
+}
+
 void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     clearCopiedImage();
     auto adjustedRect = rect;
     if (CheckedPtr renderer = renderBox()) {
-        if (isGPUBased() && renderer->hasAcceleratedCompositing())
+        if (shouldNotifyRendererOnDidDraw())
             renderer->contentChanged(CanvasPixelsChanged);
         else if (adjustedRect) {
             FloatRect destRect;
@@ -621,7 +637,7 @@ void HTMLCanvasElement::reset()
 bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 {
     ASSERT(m_context);
-#if USE(IOSURFACE_CANVAS_BACKING_STORE) || USE(SKIA)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || (USE(SKIA) && !USE(NICOSIA))
     if (m_context->is2d() || m_context->isBitmapRenderer())
         return true;
 #endif

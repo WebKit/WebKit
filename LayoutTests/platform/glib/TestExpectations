@@ -1498,6 +1498,7 @@ http/tests/security/contentSecurityPolicy/report-only-from-header.py [ DumpJSCon
 webkit.org/b/272582 fast/canvas/canvas-strokePath-gradient-shadow.html [ Failure ]
 webkit.org/b/272582 fast/canvas/canvas-strokeRect-alpha-shadow.html [ Failure ]
 webkit.org/b/272582 fast/canvas/canvas-strokeRect-gradient-shadow.html [ Failure ]
+webkit.org/b/274513 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-canvas.html [ ImageOnlyFailure ]
 
 webkit.org/b/273239 fast/canvas/canvas-scale-shadowBlur.html [ Failure ]
 webkit.org/b/273239 imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.composite.1.html [ Failure ]

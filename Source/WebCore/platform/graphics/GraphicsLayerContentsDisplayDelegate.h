@@ -26,13 +26,13 @@
 #pragma once
 
 #include "GraphicsLayer.h"
-#include "ImageBuffer.h"
 #include <wtf/RefCounted.h>
 
 #if !USE(CA)
 #include "PlatformLayer.h"
 #endif
 namespace WebCore {
+class ImageBuffer;
 #if USE(CA)
 class PlatformCALayer;
 #endif

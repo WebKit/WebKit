@@ -27,6 +27,7 @@
 
 #include "CanvasBase.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
+#include "ImageBuffer.h"
 #include "ScriptWrappable.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>

@@ -176,6 +176,8 @@ private:
 
     bool isGPUBased() const;
 
+    bool shouldNotifyRendererOnDidDraw() const;
+
     void refCanvasBase() const final { HTMLElement::ref(); }
     void derefCanvasBase() const final { HTMLElement::deref(); }
 

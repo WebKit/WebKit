@@ -28,6 +28,7 @@
 #include "CopyImageOptions.h"
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsTypesGL.h"
 #include "ImageBufferAllocator.h"
 #include "ImageBufferBackendParameters.h"
@@ -150,6 +151,8 @@ public:
     virtual void ensureNativeImagesHaveCopiedBackingStore() { }
 
     virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }
+
+    virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() const { return nullptr; }
 
     const Parameters& parameters() { return m_parameters; }
 
