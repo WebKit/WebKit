@@ -104,14 +104,21 @@ inline bool BreakLines::isBreakableSpace(UChar character)
 template<typename CharacterType, BreakLines::LineBreakRules shortcutRules, BreakLines::NoBreakSpaceBehavior nonBreakingSpaceBehavior>
 inline size_t BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, std::span<const CharacterType> string, size_t startPosition)
 {
+    // Don't break if positioned at start of primary context and there is no prior context.
+    auto priorContextLength = lineBreakIteratorFactory.priorContext().length();
+    if (!startPosition && !priorContextLength) {
+        if (string.size() <= 1)
+            return string.size();
+        startPosition++;
+    }
+
     CharacterType beforeBefore = startPosition > 1 ? string[startPosition - 2]
         : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().secondToLastCharacter());
     CharacterType before = startPosition > 0 ? string[startPosition - 1]
         : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().lastCharacter());
-    auto priorContextLength = lineBreakIteratorFactory.priorContext().length();
 
     CharacterType after;
-    std::optional<unsigned> nextBreak;
+    std::optional<size_t> nextBreak;
     for (size_t i = startPosition; i < string.size(); beforeBefore = before, before = after, ++i) {
         after = string[i];
 
@@ -147,10 +154,16 @@ inline size_t BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory& 
 
         // ICU lookup (slow).
         if (!nextBreak || nextBreak.value() < i) {
-            // Don't break if positioned at start of primary context and there is no prior context.
-            if (i || priorContextLength) {
-                auto& breakIterator = lineBreakIteratorFactory.get();
-                nextBreak = breakIterator.following(i - 1);
+            auto& breakIterator = lineBreakIteratorFactory.get();
+            nextBreak = breakIterator.following(i - 1);
+        }
+        // Fast forward while our behavior matches ICU.
+        if (nextBreak && i < nextBreak.value()) {
+            for (size_t max = std::min(nextBreak.value(), string.size() - 1); i < max; beforeBefore = before, before = after, ++i) {
+                CharacterType lookahead = string[i + 1];
+                if ((lookahead <= lineBreakTable.lastCharacter && !isASCIIAlpha(lookahead))
+                    || (nonBreakingSpaceBehavior == NoBreakSpaceBehavior::Break && lookahead == noBreakSpace))
+                    break;
             }
         }
         if (i == nextBreak && !isBreakableSpace<nonBreakingSpaceBehavior>(before))
