@@ -202,6 +202,26 @@ class TaskPoolUnittest(unittest.TestCase):
                 ]
             )
 
+        def test_mutually_exclusive_group_single_worker(self):
+            with OutputCapture(level=logging.INFO) as captured:
+                with TaskPool(workers=1, mutually_exclusive_groups=['group']) as pool:
+                    for character in self.alphabet:
+                        pool.do(
+                            action, character,
+                            include_worker=True,
+                            group='group' if character in ('a', 'b', 'c', 'd') else None,
+                        )
+                    pool.wait()
+
+            self.assertEqual(
+                sorted(captured.stdout.getvalue().splitlines())[:4], [
+                    'worker/0 action(a)',
+                    'worker/0 action(b)',
+                    'worker/0 action(c)',
+                    'worker/0 action(d)',
+                ]
+            )
+
         def test_mutually_exclusive_groups(self):
             with OutputCapture(level=logging.INFO) as captured:
                 with TaskPool(workers=4, mutually_exclusive_groups=[
@@ -258,7 +278,7 @@ class TaskPoolUnittest(unittest.TestCase):
 
         def test_invalid_group(self):
             with OutputCapture(level=logging.INFO) as captured:
-                with TaskPool(workers=1) as pool:
+                with TaskPool(workers=2) as pool:
                     with self.assertRaises(ValueError):
                         pool.do(action, 'a', group='invalid')
                     pool.wait()
