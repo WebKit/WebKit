@@ -245,7 +245,7 @@ bool isPlayReadySanitizedInitializationData(const SharedBuffer& buffer)
         return false;
 
     xmlChar* encodedKeyID = xmlNodeGetContent(keyIDNode->nodeTab[0]);
-    std::optional<Vector<uint8_t>> decodedKeyID = base64Decode(encodedKeyID, xmlStrlen(encodedKeyID));
+    std::optional<Vector<uint8_t>> decodedKeyID = base64Decode({ reinterpret_cast<const uint8_t*>(encodedKeyID), static_cast<size_t>(xmlStrlen(encodedKeyID)) });
     xmlFree(encodedKeyID);
     if (!decodedKeyID)
         return false;

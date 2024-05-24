@@ -64,8 +64,6 @@ WTF_EXPORT_PRIVATE void base64Encode(std::span<const std::byte>, std::span<LChar
 
 WTF_EXPORT_PRIVATE Vector<uint8_t> base64EncodeToVector(std::span<const std::byte>, Base64EncodeMode = Base64EncodeMode::Default);
 Vector<uint8_t> base64EncodeToVector(std::span<const uint8_t>, Base64EncodeMode = Base64EncodeMode::Default);
-Vector<uint8_t> base64EncodeToVector(std::span<const char>, Base64EncodeMode = Base64EncodeMode::Default);
-Vector<uint8_t> base64EncodeToVector(const CString&, Base64EncodeMode = Base64EncodeMode::Default);
 
 WTF_EXPORT_PRIVATE String base64EncodeToString(std::span<const std::byte>, Base64EncodeMode = Base64EncodeMode::Default);
 String base64EncodeToString(std::span<const uint8_t>, Base64EncodeMode = Base64EncodeMode::Default);
@@ -76,8 +74,6 @@ String base64EncodeToStringReturnNullIfOverflow(const CString&, Base64EncodeMode
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(std::span<const std::byte>, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(StringView, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
 std::optional<Vector<uint8_t>> base64Decode(std::span<const uint8_t>, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
-std::optional<Vector<uint8_t>> base64Decode(std::span<const char>, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
-std::optional<Vector<uint8_t>> base64Decode(const void*, unsigned, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
 
 WTF_EXPORT_PRIVATE String base64DecodeToString(StringView, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
 
@@ -86,9 +82,6 @@ WTF_EXPORT_PRIVATE String base64DecodeToString(StringView, Base64DecodeMode = Ba
 
 Vector<uint8_t> base64URLEncodeToVector(std::span<const std::byte>);
 Vector<uint8_t> base64URLEncodeToVector(std::span<const uint8_t>);
-Vector<uint8_t> base64URLEncodeToVector(std::span<const char>);
-Vector<uint8_t> base64URLEncodeToVector(const CString&);
-Vector<uint8_t> base64URLEncodeToVector(const void*, unsigned);
 
 String base64URLEncodeToString(std::span<const std::byte>);
 String base64URLEncodeToString(std::span<const uint8_t>);
@@ -97,35 +90,19 @@ std::optional<Vector<uint8_t>> base64URLDecode(StringView);
 inline std::optional<Vector<uint8_t>> base64URLDecode(ASCIILiteral literal) { return base64URLDecode(StringView { literal }); }
 std::optional<Vector<uint8_t>> base64URLDecode(std::span<const std::byte>);
 std::optional<Vector<uint8_t>> base64URLDecode(std::span<const uint8_t>);
-std::optional<Vector<uint8_t>> base64URLDecode(std::span<const char>);
-std::optional<Vector<uint8_t>> base64URLDecode(const void*, unsigned);
 
 // Versions for use with StringBuilder / makeString.
 
 Base64Specification base64Encoded(std::span<const std::byte>, Base64EncodeMode = Base64EncodeMode::Default);
 Base64Specification base64Encoded(std::span<const uint8_t>, Base64EncodeMode = Base64EncodeMode::Default);
-Base64Specification base64Encoded(const CString&, Base64EncodeMode = Base64EncodeMode::Default);
-Base64Specification base64Encoded(const void*, unsigned, Base64EncodeMode = Base64EncodeMode::Default);
 
 Base64Specification base64URLEncoded(std::span<const std::byte>);
 Base64Specification base64URLEncoded(std::span<const uint8_t>);
-Base64Specification base64URLEncoded(const CString&);
-Base64Specification base64URLEncoded(const void*, unsigned);
 
 
 inline Vector<uint8_t> base64EncodeToVector(std::span<const uint8_t> input, Base64EncodeMode mode)
 {
     return base64EncodeToVector(std::as_bytes(input), mode);
-}
-
-inline Vector<uint8_t> base64EncodeToVector(std::span<const char> input, Base64EncodeMode mode)
-{
-    return base64EncodeToVector(std::as_bytes(input), mode);
-}
-
-inline Vector<uint8_t> base64EncodeToVector(const CString& input, Base64EncodeMode mode)
-{
-    return base64EncodeToVector(input.span(), mode);
 }
 
 inline String base64EncodeToString(std::span<const uint8_t> input, Base64EncodeMode mode)
@@ -148,32 +125,12 @@ inline std::optional<Vector<uint8_t>> base64Decode(std::span<const uint8_t> inpu
     return base64Decode(std::as_bytes(input), mode);
 }
 
-inline std::optional<Vector<uint8_t>> base64Decode(std::span<const char> input, Base64DecodeMode mode)
-{
-    return base64Decode(std::as_bytes(input), mode);
-}
-
-inline std::optional<Vector<uint8_t>> base64Decode(const void* input, unsigned length, Base64DecodeMode mode)
-{
-    return base64Decode({ static_cast<const std::byte*>(input), length }, mode);
-}
-
 inline Vector<uint8_t> base64URLEncodeToVector(std::span<const std::byte> input)
 {
     return base64EncodeToVector(input, Base64EncodeMode::URL);
 }
 
 inline Vector<uint8_t> base64URLEncodeToVector(std::span<const uint8_t> input)
-{
-    return base64EncodeToVector(input, Base64EncodeMode::URL);
-}
-
-inline Vector<uint8_t> base64URLEncodeToVector(std::span<const char> input)
-{
-    return base64EncodeToVector(input, Base64EncodeMode::URL);
-}
-
-inline Vector<uint8_t> base64URLEncodeToVector(const CString& input)
 {
     return base64EncodeToVector(input, Base64EncodeMode::URL);
 }
@@ -201,16 +158,6 @@ inline std::optional<Vector<uint8_t>> base64URLDecode(std::span<const std::byte>
 inline std::optional<Vector<uint8_t>> base64URLDecode(std::span<const uint8_t> input)
 {
     return base64Decode(input, Base64DecodeMode::URL);
-}
-
-inline std::optional<Vector<uint8_t>> base64URLDecode(std::span<const char> input)
-{
-    return base64Decode(input, Base64DecodeMode::URL);
-}
-
-inline std::optional<Vector<uint8_t>> base64URLDecode(const void* input, unsigned length)
-{
-    return base64Decode(input, length, Base64DecodeMode::URL);
 }
 
 template<typename CharacterType> bool isBase64OrBase64URLCharacter(CharacterType c)
@@ -256,16 +203,6 @@ inline Base64Specification base64Encoded(std::span<const uint8_t> input, Base64E
     return base64Encoded(std::as_bytes(input), mode);
 }
 
-inline Base64Specification base64Encoded(const CString& input, Base64EncodeMode mode)
-{
-    return base64Encoded(input.span(), mode);
-}
-
-inline Base64Specification base64Encoded(const void* input, unsigned length, Base64EncodeMode mode)
-{
-    return base64Encoded({ static_cast<const std::byte*>(input), length }, mode);
-}
-
 inline Base64Specification base64URLEncoded(std::span<const std::byte> input)
 {
     return base64Encoded(input, Base64EncodeMode::URL);
@@ -274,16 +211,6 @@ inline Base64Specification base64URLEncoded(std::span<const std::byte> input)
 inline Base64Specification base64URLEncoded(std::span<const uint8_t> input)
 {
     return base64Encoded(input, Base64EncodeMode::URL);
-}
-
-inline Base64Specification base64URLEncoded(const CString& input)
-{
-    return base64Encoded(input, Base64EncodeMode::URL);
-}
-
-inline Base64Specification base64URLEncoded(const void* input, unsigned length)
-{
-    return base64Encoded(input, length, Base64EncodeMode::URL);
 }
 
 template<> class StringTypeAdapter<Base64Specification> {

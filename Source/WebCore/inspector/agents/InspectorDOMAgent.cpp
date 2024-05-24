@@ -1907,7 +1907,7 @@ static String computeContentSecurityPolicySHA256Hash(const Element& element)
     auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     cryptoDigest->addBytes(content.span());
     auto digest = cryptoDigest->computeHash();
-    return makeString("sha256-"_s, base64Encoded(digest.data(), digest.size()));
+    return makeString("sha256-"_s, base64Encoded(digest));
 }
 
 Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int depth)

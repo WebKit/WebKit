@@ -56,7 +56,7 @@ static void markupText(GMarkupParseContext*, const gchar* text, gsize textLength
 {
     GMarkupParseContextUserData* userData = static_cast<GMarkupParseContextUserData*>(userDataPtr);
     if (userData->isParsingPssh) {
-        std::optional<Vector<uint8_t>> pssh = base64Decode(text, textLength);
+        auto pssh = base64Decode({ reinterpret_cast<const uint8_t*>(text), textLength });
         if (pssh.has_value())
             userData->pssh = SharedBuffer::create(WTFMove(*pssh));
     }

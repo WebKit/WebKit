@@ -33,6 +33,7 @@
 #import <wtf/CryptographicUtilities.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
@@ -173,7 +174,7 @@ static std::optional<Vector<uint8_t>> findMasterKey()
         return std::nullopt;
     }
     RetainPtr<CFDataRef> keyData = adoptCF(keyDataRef);
-    return base64Decode(CFDataGetBytePtr(keyData.get()), CFDataGetLength(keyData.get()));
+    return base64Decode(span(keyData.get()));
 }
 
 std::optional<Vector<uint8_t>> defaultWebCryptoMasterKey()
