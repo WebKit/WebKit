@@ -67,6 +67,8 @@
 # JavaScriptCore
 
 /Source/JavaScriptCore @WebKit/jsc-reviewers
+/Source/JavaScriptCore/debugger @dcrousso @patrickangle
+/Source/JavaScriptCore/inspector @dcrousso @patrickangle
 /JSTests @WebKit/jsc-reviewers
 /LayoutTests/js @WebKit/jsc-reviewers
 /Tools/TestWebKitAPI/Tests/JavaScriptCore @WebKit/jsc-reviewers
@@ -74,12 +76,7 @@
 # ================================================================================
 # Web Inspector
 
-/Source/JavaScriptCore/debugger @dcrousso @patrickangle
-/Source/JavaScriptCore/inspector @dcrousso @patrickangle
-/Source/WebCore/inspector @dcrousso @patrickangle
 /Source/WebInspectorUI @dcrousso @patrickangle
-/Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle
-/Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle
 /Tools/Scripts/webkitpy/inspector @dcrousso @patrickangle
 /LayoutTests/http/tests/inspector @dcrousso @patrickangle
 /LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle
@@ -112,6 +109,7 @@
 /Source/WebCore/bindings @cdumez
 /Source/WebCore/html @cdumez @rniwa
 /Source/WebCore/html/UserActivation.* @marcoscaceres
+/Source/WebCore/inspector @dcrousso @patrickangle
 /Source/WebCore/loader @cdumez
 /Source/WebCore/page/Quirks.cpp @brentfulgham @karlcow
 /Source/WebCore/workers @cdumez
@@ -150,9 +148,11 @@
 /Source/WebKit/Shared/Sandbox @brentfulgham @pvollan
 /Source/WebKit/UIProcess @cdumez
 /Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon
+/Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle
 /Source/WebKit/WebProcess @cdumez
 /Source/WebKit/WebProcess/ApplePay @aprotyas
 /Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
+/Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle
 /Source/WebKit/WebProcess/com.apple.WebProcess.sb.in  @brentfulgham @pvollan
 
 # ================================================================================
