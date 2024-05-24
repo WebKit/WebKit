@@ -515,8 +515,11 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         auto animationGroup = [CAAnimationGroup animation];
 
         if (properties.animations.size()) {
-            [animationGroup setAnimations:createNSArray(properties.animations, [&] (auto& animationProperties) {
-                return createAnimation(layer, layerTreeHost, animationProperties).get();
+            [animationGroup setAnimations:createNSArray(properties.animations, [&] (auto& animationProperties) -> CAAnimation * {
+                if (PlatformCAAnimation::isValidKeyPath(properties.keyPath, properties.animationType))
+                    return createAnimation(layer, layerTreeHost, animationProperties).get();
+                ASSERT_NOT_REACHED();
+                return nil;
             }).get()];
         }
 
