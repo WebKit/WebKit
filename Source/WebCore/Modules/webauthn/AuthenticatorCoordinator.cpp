@@ -151,7 +151,7 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     ASSERT(options.rp.id);
 
     AuthenticationExtensionsClientInputs extensionInputs = {
-        String(),
+        nullString(),
         false,
         std::nullopt,
         std::nullopt
@@ -255,6 +255,10 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     // Only FIDO AppID Extension is supported.
     if (options.extensions && !options.extensions->appid.isNull()) {
         // The following implements https://www.w3.org/TR/webauthn/#sctn-appid-extension as of 4 March 2019.
+        if (options.extensions->appid.isEmpty()) {
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Empty appid in create request."_s });
+            return;
+        }
         auto appid = processAppIdExtension(callerOrigin, options.extensions->appid);
         if (!appid) {
             promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided App ID."_s });
