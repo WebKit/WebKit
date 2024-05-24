@@ -288,12 +288,12 @@ bool SecurityOrigin::isSameOriginDomain(const SecurityOrigin& other) const
     }
 
     if (canAccess && isLocal())
-        canAccess = passesFileCheck(other);
+        canAccess = hasLocalUnseparatedPath(other);
 
     return canAccess;
 }
 
-bool SecurityOrigin::passesFileCheck(const SecurityOrigin& other) const
+bool SecurityOrigin::hasLocalUnseparatedPath(const SecurityOrigin& other) const
 {
     ASSERT(isLocal() && other.isLocal());
 
@@ -613,7 +613,7 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin& other) const
     if (m_data != other.m_data)
         return false;
 
-    if (isLocal() && !passesFileCheck(other))
+    if (isLocal() && !hasLocalUnseparatedPath(other))
         return false;
 
     return true;
