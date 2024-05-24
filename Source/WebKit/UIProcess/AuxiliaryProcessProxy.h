@@ -82,6 +82,16 @@ public:
 
     static AuxiliaryProcessCreationParameters auxiliaryProcessParameters();
 
+    enum class Type : uint8_t {
+        GraphicsProcessing,
+        Network,
+#if ENABLE(MODEL_PROCESS)
+        Model,
+#endif
+        WebContent,
+    };
+    virtual Type type() const = 0;
+
     void connect();
     virtual void terminate();
 

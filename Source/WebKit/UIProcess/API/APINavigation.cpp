@@ -26,6 +26,7 @@
 #include "config.h"
 #include "APINavigation.h"
 
+#include "ProvisionalFrameProxy.h"
 #include "WebBackForwardListItem.h"
 #include "WebNavigationState.h"
 #include <WebCore/RegistrableDomain.h>
@@ -118,6 +119,11 @@ bool Navigation::currentRequestIsCrossSiteRedirect() const
 {
     return currentRequestIsRedirect()
         && RegistrableDomain(m_lastNavigationAction.redirectResponse.url()) != RegistrableDomain(m_currentRequest.url());
+}
+
+void Navigation::setProvisionalFrame(WebKit::ProvisionalFrameProxy* provisionalFrame)
+{
+    m_provisionalFrame = provisionalFrame;
 }
 
 #if !LOG_DISABLED

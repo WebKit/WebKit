@@ -30,35 +30,29 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class ProvisionalFrameProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ProvisionalFrameProxy> : std::true_type { };
-}
-
-namespace WebKit {
 
 class FrameProcess;
 class VisitedLinkStore;
 class WebFrameProxy;
 class WebProcessProxy;
 
-class ProvisionalFrameProxy : public CanMakeWeakPtr<ProvisionalFrameProxy> {
+class ProvisionalFrameProxy : public RefCounted<ProvisionalFrameProxy>, public CanMakeWeakPtr<ProvisionalFrameProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&);
+    static Ref<ProvisionalFrameProxy> create(WebFrameProxy&, Ref<FrameProcess>&&);
+
     ~ProvisionalFrameProxy();
 
     WebProcessProxy& process() const;
     Ref<WebProcessProxy> protectedProcess() const;
 
-    Ref<FrameProcess> takeFrameProcess();
+    RefPtr<FrameProcess> takeFrameProcess();
 
 private:
+    ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&);
+
     WeakRef<WebFrameProxy> m_frame;
-    Ref<FrameProcess> m_frameProcess;
+    RefPtr<FrameProcess> m_frameProcess;
     Ref<VisitedLinkStore> m_visitedLinkStore;
 };
 

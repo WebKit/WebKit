@@ -132,6 +132,8 @@ public:
 private:
     explicit GPUProcessProxy();
 
+    Type type() const final { return Type::GraphicsProcessing; }
+
     void addSession(const WebsiteDataStore&);
 
     // AuxiliaryProcessProxy

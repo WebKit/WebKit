@@ -519,7 +519,9 @@ public:
     Seconds totalBackgroundTime() const;
     Seconds totalSuspendedTime() const;
 
-protected:
+private:
+    Type type() const final { return Type::WebContent; }
+
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
 
     // AuxiliaryProcessProxy
@@ -544,7 +546,6 @@ protected:
 
     void validateFreezerStatus();
 
-private:
     std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
     using WebProcessProxyMap = HashMap<WebCore::ProcessIdentifier, CheckedRef<WebProcessProxy>>;
     static WebProcessProxyMap& allProcessMap();
@@ -796,3 +797,7 @@ private:
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebProcessProxy)
+static bool isType(const WebKit::AuxiliaryProcessProxy& process) { return process.type() == WebKit::AuxiliaryProcessProxy::Type::WebContent; }
+SPECIALIZE_TYPE_TRAITS_END()

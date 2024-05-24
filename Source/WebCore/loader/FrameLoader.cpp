@@ -3219,7 +3219,7 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
                 }
                 if (ownerFrame)
                     initiator = ownerFrame->document();
-                ASSERT(ownerFrame || localFrame->isMainFrame());
+                ASSERT(ownerFrame || localFrame->isMainFrame() || localFrame->settings().siteIsolationEnabled());
             }
         }
         addSameSiteInfoToRequestIfNeeded(request, initiator, page.get());

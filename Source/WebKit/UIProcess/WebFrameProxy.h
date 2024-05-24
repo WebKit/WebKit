@@ -155,7 +155,7 @@ public:
     void disconnect();
     void didCreateSubframe(WebCore::FrameIdentifier, const String& frameName);
     ProcessID processID() const;
-    void prepareForProvisionalLoadInProcess(WebProcessProxy&, const API::Navigation&, BrowsingContextGroup&, CompletionHandler<void()>&&);
+    void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, CompletionHandler<void()>&&);
 
     void commitProvisionalFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
@@ -169,7 +169,7 @@ public:
     void setProcess(FrameProcess&);
     const FrameProcess& frameProcess() const { return m_frameProcess.get(); }
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
-    std::unique_ptr<ProvisionalFrameProxy> takeProvisionalFrame();
+    RefPtr<ProvisionalFrameProxy> takeProvisionalFrame();
     WebProcessProxy& provisionalLoadProcess();
     void remoteProcessDidTerminate(WebProcessProxy&);
     std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess();
@@ -215,7 +215,7 @@ private:
     WebCore::FrameIdentifier m_frameID;
     ListHashSet<Ref<WebFrameProxy>> m_childFrames;
     WeakPtr<WebFrameProxy> m_parentFrame;
-    std::unique_ptr<ProvisionalFrameProxy> m_provisionalFrame;
+    RefPtr<ProvisionalFrameProxy> m_provisionalFrame;
 #if ENABLE(CONTENT_FILTERING)
     WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;
 #endif
