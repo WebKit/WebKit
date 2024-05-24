@@ -108,7 +108,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const CodeP
 #endif
         exceptionCheck(branchTestPtr(NonZero, operationExceptionRegister<ResultType>()));
     } else
-    exceptionCheck();
+        exceptionCheck();
     return call;
 }
 
@@ -126,7 +126,7 @@ ALWAYS_INLINE void JIT::appendCallWithExceptionCheck(Address function)
 #endif
         exceptionCheck(branchTestPtr(NonZero, operationExceptionRegister<ResultType>()));
     } else
-    exceptionCheck();
+        exceptionCheck();
 }
 
 template<typename OperationType>

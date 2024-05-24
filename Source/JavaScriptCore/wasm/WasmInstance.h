@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "CallLinkInfo.h"
 #include "WasmFormat.h"
 #include "WasmGlobal.h"
 #include "WasmMemory.h"
@@ -220,9 +221,11 @@ public:
         WriteBarrier<JSObject> importFunction { };
         // This is only used when we need to jump directly into the LLInt/IPInt.
         const uintptr_t* boxedTargetCalleeLoadLocation { &NullWasmCallee };
+        DataOnlyCallLinkInfo callLinkInfo;
 #if CPU(ADDRESS32)
         void* _ { nullptr }; // padding
 #endif
+        static constexpr ptrdiff_t offsetOfCallLinkInfo() { return OBJECT_OFFSETOF(ImportFunctionInfo, callLinkInfo); }
     };
     unsigned numImportFunctions() const { return m_numImportFunctions; }
     ImportFunctionInfo* importFunctionInfo(size_t importFunctionNum)
@@ -235,6 +238,7 @@ public:
     static size_t offsetOfBoxedTargetCalleeLoadLocation(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, boxedTargetCalleeLoadLocation); }
     static size_t offsetOfImportFunctionStub(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunctionStub); }
     static size_t offsetOfImportFunction(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunction); }
+    static size_t offsetOfCallLinkInfo(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + ImportFunctionInfo::offsetOfCallLinkInfo(); }
     WriteBarrier<JSObject>& importFunction(unsigned importFunctionNum) { return importFunctionInfo(importFunctionNum)->importFunction; }
 
     static_assert(sizeof(ImportFunctionInfo) == WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(ImportFunctionInfo)), "We rely on this for the alignment to be correct");

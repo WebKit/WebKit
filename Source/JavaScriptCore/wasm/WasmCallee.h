@@ -406,10 +406,7 @@ class WasmToJSCallee final : public Callee {
 public:
     friend class Callee;
 
-    static Ref<WasmToJSCallee> create()
-    {
-        return adoptRef(*new WasmToJSCallee);
-    }
+    static WasmToJSCallee& singleton();
 
 private:
     WasmToJSCallee();

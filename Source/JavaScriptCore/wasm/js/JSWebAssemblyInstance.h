@@ -99,6 +99,9 @@ public:
     JSGlobalObject* globalObject() const { return m_globalObject.get(); }
     JSWebAssemblyModule* module() const { return m_module.get(); }
 
+    void clearJSCallICs(VM&);
+    void finalizeUnconditionally(VM&, CollectionScope);
+
     static constexpr ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_instance); }
     static constexpr ptrdiff_t offsetOfModule() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_module); }
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_globalObject); }
@@ -107,6 +110,7 @@ public:
 
 private:
     JSWebAssemblyInstance(VM&, Structure*, Ref<Wasm::Instance>&&, JSWebAssemblyModule*, WebAssemblyModuleRecord*);
+    ~JSWebAssemblyInstance();
     void finishCreation(VM&);
     DECLARE_VISIT_CHILDREN;
 
