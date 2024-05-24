@@ -61,10 +61,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVBackgroundView)
         return nil;
 
     [self setClipsToBounds:YES];
-#if PLATFORM(APPLETV)
-    _backgroundView = adoptNS([[UIView alloc] initWithFrame:frame]);
-    _backgroundView.get().backgroundColor = [UIColor blackColor];
-#else
+#if !PLATFORM(APPLETV)
     _backgroundView = adoptNS([allocAVBackgroundViewInstance() initWithFrame:frame]);
     // FIXME: remove this once AVBackgroundView handles this. https://bugs.webkit.org/show_bug.cgi?id=188022
     [_backgroundView setClipsToBounds:YES];
@@ -73,18 +70,12 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     [_backgroundView.get().layer setCornerRadius:16];
     [_backgroundView.get().layer setCornerCurve:kCACornerCurveCircular];
-#endif
     [self addSubview:_backgroundView.get()];
+#endif
     return self;
 }
 
-#if PLATFORM(APPLETV)
-- (void)addArrangedSubviewForTV:(UIView *)subview
-{
-    [_backgroundView addSubview:subview];
-    [self addArrangedSubview:subview];
-}
-#else
+#if !PLATFORM(APPLETV)
 - (void)addArrangedSubview:(UIView *)subview applyingMaterialStyle:(AVBackgroundViewMaterialStyle)materialStyle tintEffectStyle:(AVBackgroundViewTintEffectStyle)tintEffectStyle
 {
     [_backgroundView.get() addSubview:subview applyingMaterialStyle:materialStyle tintEffectStyle:tintEffectStyle];
