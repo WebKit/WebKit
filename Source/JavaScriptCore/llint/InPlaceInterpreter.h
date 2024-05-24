@@ -51,6 +51,7 @@ extern "C" void ipint_catch_all_entry();
     m(0x07, catch) \
     m(0x08, throw) \
     m(0x09, rethrow) \
+    m(0x0a, reserved_0xa) \
     m(0x0b, end) \
     m(0x0c, br) \
     m(0x0d, br_if) \
@@ -58,11 +59,20 @@ extern "C" void ipint_catch_all_entry();
     m(0x0f, return) \
     m(0x10, call) \
     m(0x11, call_indirect) \
+    m(0x12, reserved_0x12) \
+    m(0x13, reserved_0x13) \
+    m(0x14, reserved_0x14) \
+    m(0x15, reserved_0x15) \
+    m(0x16, reserved_0x16) \
+    m(0x17, reserved_0x17) \
     m(0x18, delegate) \
     m(0x19, catch_all) \
     m(0x1a, drop) \
     m(0x1b, select) \
     m(0x1c, select_t) \
+    m(0x1d, reserved_0x1d) \
+    m(0x1e, reserved_0x1e) \
+    m(0x1f, reserved_0x1f) \
     m(0x20, local_get) \
     m(0x21, local_set) \
     m(0x22, local_tee) \
@@ -70,6 +80,7 @@ extern "C" void ipint_catch_all_entry();
     m(0x24, global_set) \
     m(0x25, table_get) \
     m(0x26, table_set) \
+    m(0x27, reserved_0x27) \
     m(0x28, i32_load_mem) \
     m(0x29, i64_load_mem) \
     m(0x2a, f32_load_mem) \
@@ -227,12 +238,65 @@ extern "C" void ipint_catch_all_entry();
     m(0xc2, i64_extend8_s) \
     m(0xc3, i64_extend16_s) \
     m(0xc4, i64_extend32_s) \
+    m(0xc5, reserved_0xc5) \
+    m(0xc6, reserved_0xc6) \
+    m(0xc7, reserved_0xc7) \
+    m(0xc8, reserved_0xc8) \
+    m(0xc9, reserved_0xc9) \
+    m(0xca, reserved_0xca) \
+    m(0xcb, reserved_0xcb) \
+    m(0xcc, reserved_0xcc) \
+    m(0xcd, reserved_0xcd) \
+    m(0xce, reserved_0xce) \
+    m(0xcf, reserved_0xcf) \
     m(0xd0, ref_null_t) \
     m(0xd1, ref_is_null) \
     m(0xd2, ref_func) \
+    m(0xd3, reserved_0xd3) \
+    m(0xd4, reserved_0xd4) \
+    m(0xd5, reserved_0xd5) \
+    m(0xd6, reserved_0xd6) \
+    m(0xd7, reserved_0xd7) \
+    m(0xd8, reserved_0xd8) \
+    m(0xd9, reserved_0xd9) \
+    m(0xda, reserved_0xda) \
+    m(0xdb, reserved_0xdb) \
+    m(0xdc, reserved_0xdc) \
+    m(0xdd, reserved_0xdd) \
+    m(0xde, reserved_0xde) \
+    m(0xdf, reserved_0xdf) \
+    m(0xe0, reserved_0xe0) \
+    m(0xe1, reserved_0xe1) \
+    m(0xe2, reserved_0xe2) \
+    m(0xe3, reserved_0xe3) \
+    m(0xe4, reserved_0xe4) \
+    m(0xe5, reserved_0xe5) \
+    m(0xe6, reserved_0xe6) \
+    m(0xe7, reserved_0xe7) \
+    m(0xe8, reserved_0xe8) \
+    m(0xe9, reserved_0xe9) \
+    m(0xea, reserved_0xea) \
+    m(0xeb, reserved_0xeb) \
+    m(0xec, reserved_0xec) \
+    m(0xed, reserved_0xed) \
+    m(0xee, reserved_0xee) \
+    m(0xef, reserved_0xef) \
+    m(0xf0, reserved_0xf0) \
+    m(0xf1, reserved_0xf1) \
+    m(0xf2, reserved_0xf2) \
+    m(0xf3, reserved_0xf3) \
+    m(0xf4, reserved_0xf4) \
+    m(0xf5, reserved_0xf5) \
+    m(0xf6, reserved_0xf6) \
+    m(0xf7, reserved_0xf7) \
+    m(0xf8, reserved_0xf8) \
+    m(0xf9, reserved_0xf9) \
+    m(0xfa, reserved_0xfa) \
+    m(0xfb, reserved_0xfb) \
     m(0xfc, fc_block) \
     m(0xfd, simd) \
-    m(0xfe, atomic)
+    m(0xfe, atomic) \
+    m(0xff, reserved_0xff)
 
 #define FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(m) \
     m(0x00, i32_trunc_sat_f32_s) \
@@ -409,6 +473,7 @@ extern "C" void ipint_catch_all_entry();
     m(0x97, simd_i16x8_min_u) \
     m(0x98, simd_i16x8_max_s) \
     m(0x99, simd_i16x8_max_u) \
+    m(0x9a, reserved_0xfd9a01) \
     m(0x9b, simd_i16x8_avgr_u) \
     m(0x9c, simd_i16x8_extmul_low_i8x16_s) \
     m(0x9d, simd_i16x8_extmul_high_i8x16_s) \
@@ -416,8 +481,11 @@ extern "C" void ipint_catch_all_entry();
     m(0x9f, simd_i16x8_extmul_high_i8x16_u) \
     m(0xa0, simd_i32x4_abs) \
     m(0xa1, simd_i32x4_neg) \
+    m(0xa2, reserved_0xfda201) \
     m(0xa3, simd_i32x4_all_true) \
     m(0xa4, simd_i32x4_bitmask) \
+    m(0xa5, reserved_0xfda501) \
+    m(0xa6, reserved_0xfda601) \
     m(0xa7, simd_i32x4_extend_low_i16x8_s) \
     m(0xa8, simd_i32x4_extend_high_i16x8_s) \
     m(0xa9, simd_i32x4_extend_low_i16x8_u) \
@@ -426,21 +494,30 @@ extern "C" void ipint_catch_all_entry();
     m(0xac, simd_i32x4_shr_s) \
     m(0xad, simd_i32x4_shr_u) \
     m(0xae, simd_i32x4_add) \
+    m(0xaf, reserved_0xfdaf01) \
+    m(0xb0, reserved_0xfdb001) \
     m(0xb1, simd_i32x4_sub) \
+    m(0xb2, reserved_0xfdb201) \
+    m(0xb3, reserved_0xfdb301) \
+    m(0xb4, reserved_0xfdb401) \
     m(0xb5, simd_i32x4_mul) \
     m(0xb6, simd_i32x4_min_s) \
     m(0xb7, simd_i32x4_min_u) \
     m(0xb8, simd_i32x4_max_s) \
     m(0xb9, simd_i32x4_max_u) \
     m(0xba, simd_i32x4_dot_i16x8_s) \
+    m(0xbb, reserved_0xfdbb01) \
     m(0xbc, simd_i32x4_extmul_low_i16x8_s) \
     m(0xbd, simd_i32x4_extmul_high_i16x8_s) \
     m(0xbe, simd_i32x4_extmul_low_i16x8_u) \
     m(0xbf, simd_i32x4_extmul_high_i16x8_u) \
     m(0xc0, simd_i64x2_abs) \
     m(0xc1, simd_i64x2_neg) \
+    m(0xc2, reserved_0xfdc201) \
     m(0xc3, simd_i64x2_all_true) \
     m(0xc4, simd_i64x2_bitmask) \
+    m(0xc5, reserved_0xfdc501) \
+    m(0xc6, reserved_0xfdc601) \
     m(0xc7, simd_i64x2_extend_low_i32x4_s) \
     m(0xc8, simd_i64x2_extend_high_i32x4_s) \
     m(0xc9, simd_i64x2_extend_low_i32x4_u) \
@@ -449,7 +526,12 @@ extern "C" void ipint_catch_all_entry();
     m(0xcc, simd_i64x2_shr_s) \
     m(0xcd, simd_i64x2_shr_u) \
     m(0xce, simd_i64x2_add) \
+    m(0xcf, reserved_0xfdcf01) \
+    m(0xd0, reserved_0xfdd001) \
     m(0xd1, simd_i64x2_sub) \
+    m(0xd2, reserved_0xfdd201) \
+    m(0xd3, reserved_0xfdd301) \
+    m(0xd4, reserved_0xfdd401) \
     m(0xd5, simd_i64x2_mul) \
     m(0xd6, simd_i64x2_eq) \
     m(0xd7, simd_i64x2_ne) \
@@ -463,6 +545,7 @@ extern "C" void ipint_catch_all_entry();
     m(0xdf, simd_i64x2_extmul_high_i32x4_u) \
     m(0xe0, simd_f32x4_abs) \
     m(0xe1, simd_f32x4_neg) \
+    m(0xe2, reserved_0xfde201) \
     m(0xe3, simd_f32x4_sqrt) \
     m(0xe4, simd_f32x4_add) \
     m(0xe5, simd_f32x4_sub) \
@@ -474,6 +557,7 @@ extern "C" void ipint_catch_all_entry();
     m(0xeb, simd_f32x4_pmax) \
     m(0xec, simd_f64x2_abs) \
     m(0xed, simd_f64x2_neg) \
+    m(0xee, reserved_0xfdee01) \
     m(0xef, simd_f64x2_sqrt) \
     m(0xf0, simd_f64x2_add) \
     m(0xf1, simd_f64x2_sub) \
@@ -497,6 +581,18 @@ extern "C" void ipint_catch_all_entry();
     m(0x01, memory_atomic_wait32) \
     m(0x02, memory_atomic_wait64) \
     m(0x03, atomic_fence) \
+    m(0x04, reserved_atomic_0x4) \
+    m(0x05, reserved_atomic_0x5) \
+    m(0x06, reserved_atomic_0x6) \
+    m(0x07, reserved_atomic_0x7) \
+    m(0x08, reserved_atomic_0x8) \
+    m(0x09, reserved_atomic_0x9) \
+    m(0x0a, reserved_atomic_0xa) \
+    m(0x0b, reserved_atomic_0xb) \
+    m(0x0c, reserved_atomic_0xc) \
+    m(0x0d, reserved_atomic_0xd) \
+    m(0x0e, reserved_atomic_0xe) \
+    m(0x0f, reserved_atomic_0xf) \
     m(0x10, i32_atomic_load) \
     m(0x11, i64_atomic_load) \
     m(0x12, i32_atomic_load8_u) \
@@ -561,8 +657,69 @@ extern "C" void ipint_catch_all_entry();
     m(0x4d, i64_atomic_rmw16_cmpxchg_u) \
     m(0x4e, i64_atomic_rmw32_cmpxchg_u) \
 
+#define FOR_EACH_IPINT_ARGUMINT_OPCODE(m) \
+    m(0x00, argumINT_a0) \
+    m(0x01, argumINT_a1) \
+    m(0x02, argumINT_a2) \
+    m(0x03, argumINT_a3) \
+    m(0x04, argumINT_a4) \
+    m(0x05, argumINT_a5) \
+    m(0x06, argumINT_a6) \
+    m(0x07, argumINT_a7) \
+    m(0x08, argumINT_fa0) \
+    m(0x09, argumINT_fa1) \
+    m(0x0a, argumINT_fa2) \
+    m(0x0b, argumINT_fa3) \
+    m(0x0c, argumINT_stack) \
+    m(0x0d, argumINT_end) \
 
-#if !ENABLE(C_LOOP) && CPU(ADDRESS64) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
+#define FOR_EACH_IPINT_SLOW_PATH(m) \
+    m(0x00, local_get_slow_path) \
+    m(0x01, local_set_slow_path) \
+    m(0x02, local_tee_slow_path) \
+
+#define FOR_EACH_IPINT_MINT_CALL_OPCODE(m) \
+    m(0x00, mint_a0) \
+    m(0x01, mint_a1) \
+    m(0x02, mint_a2) \
+    m(0x03, mint_a3) \
+    m(0x04, mint_a4) \
+    m(0x05, mint_a5) \
+    m(0x06, mint_a6) \
+    m(0x07, mint_a7) \
+    m(0x08, mint_fa0) \
+    m(0x09, mint_fa1) \
+    m(0x0a, mint_fa2) \
+    m(0x0b, mint_fa3) \
+    m(0x0c, mint_stackzero) \
+    m(0x0d, mint_stackeight) \
+    m(0x0e, mint_gap) \
+    m(0x0f, mint_call) \
+
+#define FOR_EACH_IPINT_MINT_RETURN_OPCODE(m) \
+    m(0x00, mint_r0) \
+    m(0x01, mint_r1) \
+    m(0x02, mint_r2) \
+    m(0x03, mint_r3) \
+    m(0x04, mint_r4) \
+    m(0x05, mint_r5) \
+    m(0x06, mint_r6) \
+    m(0x07, mint_r7) \
+    m(0x08, mint_fr0) \
+    m(0x09, mint_fr1) \
+    m(0x0a, mint_fr2) \
+    m(0x0b, mint_fr3) \
+    m(0x0c, mint_stack) \
+    m(0x0d, mint_end) \
+
+#define FOR_EACH_IPINT_UINT_OPCODE(m) \
+    m(0x00, uint_r0) \
+    m(0x01, uint_r1) \
+    m(0x02, uint_fr1) \
+    m(0x03, uint_stack) \
+    m(0x04, uint_ret) \
+
+#if !ENABLE(C_LOOP) && (CPU(ADDRESS64) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))) || (CPU(ADDRESS32) && CPU(ARM_THUMB2)))
 FOR_EACH_IPINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_SIMD_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
@@ -572,6 +729,11 @@ FOR_EACH_JS_TO_WASM_WRAPPER_METADATA_OPCODE(JS_TO_WASM_WRAPPER_ENTRY_VALIDATE_DE
 JS_TO_WASM_WRAPPER_ENTRY_VALIDATE_DEFINE_FUNCTION(_, invalidop);
 // This is the label representing the furthest possible dispatch jump
 JS_TO_WASM_WRAPPER_ENTRY_VALIDATE_DEFINE_FUNCTION(_, afterops);
+FOR_EACH_IPINT_ARGUMINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
+FOR_EACH_IPINT_SLOW_PATH(IPINT_VALIDATE_DEFINE_FUNCTION);
+FOR_EACH_IPINT_MINT_CALL_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
+FOR_EACH_IPINT_MINT_RETURN_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
+FOR_EACH_IPINT_UINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 #endif
 
 namespace JSC { namespace IPInt {
