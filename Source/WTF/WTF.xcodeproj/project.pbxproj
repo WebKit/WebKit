@@ -811,7 +811,6 @@
 		DDF308DB27C44F08006A526F /* region.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD8BB5F27B347C500C109E0 /* region.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF308DC27C44F08006A526F /* uset.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD8BAEE27B347C500C109E0 /* uset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E15556F518A0CC18006F48FB /* CryptographicUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */; };
-		E306FE9B2A9600D40074D0E9 /* constexpr_feature_detect.h in Headers */ = {isa = PBXBuildFile; fileRef = E306FE9A2A9600D40074D0E9 /* constexpr_feature_detect.h */; };
 		E311FB171F0A568B003C08DE /* ThreadGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E311FB151F0A568B003C08DE /* ThreadGroup.cpp */; };
 		E3149A39228BB43500BFA6C7 /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F95B63420CB53C100479635 /* Vector.cpp */; };
 		E3149A3B228BDCAC00BFA6C7 /* ConcurrentBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3149A3A228BDCAB00BFA6C7 /* ConcurrentBuffer.cpp */; };
@@ -826,14 +825,6 @@
 		E361DB532891159C00B2A2B8 /* FastFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E361DB512891159B00B2A2B8 /* FastFloat.cpp */; };
 		E361DB542891159C00B2A2B8 /* FastFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB522891159C00B2A2B8 /* FastFloat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E361DB61289115D000B2A2B8 /* fast_float.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB57289115D000B2A2B8 /* fast_float.h */; };
-		E361DB62289115D000B2A2B8 /* parse_number.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB58289115D000B2A2B8 /* parse_number.h */; };
-		E361DB63289115D000B2A2B8 /* simple_decimal_conversion.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB59289115D000B2A2B8 /* simple_decimal_conversion.h */; };
-		E361DB64289115D000B2A2B8 /* float_common.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB5A289115D000B2A2B8 /* float_common.h */; };
-		E361DB65289115D000B2A2B8 /* decimal_to_binary.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB5C289115D000B2A2B8 /* decimal_to_binary.h */; };
-		E361DB66289115D000B2A2B8 /* ascii_number.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB5D289115D000B2A2B8 /* ascii_number.h */; };
-		E361DB67289115D000B2A2B8 /* fast_table.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB5E289115D000B2A2B8 /* fast_table.h */; };
-		E361DB68289115D000B2A2B8 /* digit_comparison.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB5F289115D000B2A2B8 /* digit_comparison.h */; };
-		E361DB69289115D000B2A2B8 /* bigint.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB60289115D000B2A2B8 /* bigint.h */; };
 		E36BA9DE29E275DB00300057 /* WTFProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E36BA9DC29E275DB00300057 /* WTFProcess.cpp */; };
 		E36BA9DF29E275DB00300057 /* WTFProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = E36BA9DD29E275DB00300057 /* WTFProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E37E96542702AD0B00E1C36A /* ApproximateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E37E96522702AD0700E1C36A /* ApproximateTime.cpp */; };
@@ -1744,7 +1735,6 @@
 		E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptographicUtilities.cpp; sourceTree = "<group>"; };
 		E15556F418A0CC18006F48FB /* CryptographicUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptographicUtilities.h; sourceTree = "<group>"; };
 		E300E521203D645F00DA79BE /* UniqueArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueArray.h; sourceTree = "<group>"; };
-		E306FE9A2A9600D40074D0E9 /* constexpr_feature_detect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constexpr_feature_detect.h; sourceTree = "<group>"; };
 		E311FB151F0A568B003C08DE /* ThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGroup.cpp; sourceTree = "<group>"; };
 		E311FB161F0A568B003C08DE /* ThreadGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGroup.h; sourceTree = "<group>"; };
 		E3149A3A228BDCAB00BFA6C7 /* ConcurrentBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcurrentBuffer.cpp; sourceTree = "<group>"; };
@@ -1770,14 +1760,6 @@
 		E361DB512891159B00B2A2B8 /* FastFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastFloat.cpp; sourceTree = "<group>"; };
 		E361DB522891159C00B2A2B8 /* FastFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastFloat.h; sourceTree = "<group>"; };
 		E361DB57289115D000B2A2B8 /* fast_float.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fast_float.h; sourceTree = "<group>"; };
-		E361DB58289115D000B2A2B8 /* parse_number.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parse_number.h; sourceTree = "<group>"; };
-		E361DB59289115D000B2A2B8 /* simple_decimal_conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simple_decimal_conversion.h; sourceTree = "<group>"; };
-		E361DB5A289115D000B2A2B8 /* float_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = float_common.h; sourceTree = "<group>"; };
-		E361DB5C289115D000B2A2B8 /* decimal_to_binary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decimal_to_binary.h; sourceTree = "<group>"; };
-		E361DB5D289115D000B2A2B8 /* ascii_number.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ascii_number.h; sourceTree = "<group>"; };
-		E361DB5E289115D000B2A2B8 /* fast_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fast_table.h; sourceTree = "<group>"; };
-		E361DB5F289115D000B2A2B8 /* digit_comparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = digit_comparison.h; sourceTree = "<group>"; };
-		E361DB60289115D000B2A2B8 /* bigint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bigint.h; sourceTree = "<group>"; };
 		E36895CB23A445CD008DD4C8 /* PackedRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PackedRef.h; sourceTree = "<group>"; };
 		E36895CC23A445EE008DD4C8 /* PackedRefPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PackedRefPtr.h; sourceTree = "<group>"; };
 		E36BA9DC29E275DB00300057 /* WTFProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFProcess.cpp; sourceTree = "<group>"; };
@@ -2955,16 +2937,7 @@
 		E361DB56289115D000B2A2B8 /* fast_float */ = {
 			isa = PBXGroup;
 			children = (
-				E361DB5D289115D000B2A2B8 /* ascii_number.h */,
-				E361DB60289115D000B2A2B8 /* bigint.h */,
-				E306FE9A2A9600D40074D0E9 /* constexpr_feature_detect.h */,
-				E361DB5C289115D000B2A2B8 /* decimal_to_binary.h */,
-				E361DB5F289115D000B2A2B8 /* digit_comparison.h */,
 				E361DB57289115D000B2A2B8 /* fast_float.h */,
-				E361DB5E289115D000B2A2B8 /* fast_table.h */,
-				E361DB5A289115D000B2A2B8 /* float_common.h */,
-				E361DB58289115D000B2A2B8 /* parse_number.h */,
-				E361DB59289115D000B2A2B8 /* simple_decimal_conversion.h */,
 			);
 			path = fast_float;
 			sourceTree = "<group>";
@@ -3076,7 +3049,6 @@
 				DD3DC99627A4BF8E007E5B61 /* AnsiColors.h in Headers */,
 				DD3DC92527A4BF8E007E5B61 /* ApproximateTime.h in Headers */,
 				5CB8CB6D28C16CB700539906 /* ArgumentCoder.h in Headers */,
-				E361DB66289115D000B2A2B8 /* ascii_number.h in Headers */,
 				DD3DC8CA27A4BF8E007E5B61 /* ASCIICType.h in Headers */,
 				DDF307E927C086DF006A526F /* ASCIIFastPath.h in Headers */,
 				DDF307EB27C086DF006A526F /* ASCIILiteral.h in Headers */,
@@ -3092,7 +3064,6 @@
 				DD3DC8F527A4BF8E007E5B61 /* Bag.h in Headers */,
 				DD3DC8B027A4BF8E007E5B61 /* BagToHashMap.h in Headers */,
 				DDF307C327C086DF006A526F /* Base64.h in Headers */,
-				E361DB69289115D000B2A2B8 /* bigint.h in Headers */,
 				DDF3078727C086CD006A526F /* bignum-dtoa.h in Headers */,
 				DDF307B227C086CD006A526F /* bignum.h in Headers */,
 				DDF307F127C086EA006A526F /* BinarySemaphore.h in Headers */,
@@ -3148,7 +3119,6 @@
 				DD3DC88F27A4BF8E007E5B61 /* ConcurrentVector.h in Headers */,
 				DD3DC8D027A4BF8E007E5B61 /* Condition.h in Headers */,
 				DDF307F527C0870E006A526F /* config.h in Headers */,
-				E306FE9B2A9600D40074D0E9 /* constexpr_feature_detect.h in Headers */,
 				1C867D782A254F08000DE93D /* ContextualizedCFString.h in Headers */,
 				1CA6FBAB2A1D75D8001D4402 /* ContextualizedNSString.h in Headers */,
 				DDF307C627C086DF006A526F /* ConversionMode.h in Headers */,
@@ -3171,10 +3141,8 @@
 				DD3DC87A27A4BF8E007E5B61 /* DebugHeap.h in Headers */,
 				DD3DC98627A4BF8E007E5B61 /* DebugUtilities.h in Headers */,
 				FFE39CB52B1D7472004972B0 /* decimal_fp.h in Headers */,
-				E361DB65289115D000B2A2B8 /* decimal_to_binary.h in Headers */,
 				DD3DC90627A4BF8E007E5B61 /* DeferrableRefCounted.h in Headers */,
 				DD3DC94B27A4BF8E007E5B61 /* Deque.h in Headers */,
-				E361DB68289115D000B2A2B8 /* digit_comparison.h in Headers */,
 				DD3DC8C327A4BF8E007E5B61 /* DisallowCType.h in Headers */,
 				DDF306E727C08654006A526F /* DispatchSPI.h in Headers */,
 				FFE39CB32B1D7472004972B0 /* div.h in Headers */,
@@ -3199,7 +3167,6 @@
 				DD3DC94027A4BF8E007E5B61 /* FailureAction.h in Headers */,
 				DDF3076C27C086CD006A526F /* fast-dtoa.h in Headers */,
 				E361DB61289115D000B2A2B8 /* fast_float.h in Headers */,
-				E361DB67289115D000B2A2B8 /* fast_table.h in Headers */,
 				DD3DC8CC27A4BF8E007E5B61 /* FastBitVector.h in Headers */,
 				461229722ACF6B3100BB1CCC /* FastCharacterComparison.h in Headers */,
 				E361DB542891159C00B2A2B8 /* FastFloat.h in Headers */,
@@ -3212,7 +3179,6 @@
 				DD3DC96527A4BF8E007E5B61 /* FixedVector.h in Headers */,
 				339B7B1127C45EF50072BF9A /* FixedWidthDouble.h in Headers */,
 				DD3DC8D327A4BF8E007E5B61 /* FlipBytes.h in Headers */,
-				E361DB64289115D000B2A2B8 /* float_common.h in Headers */,
 				DD3DC95D27A4BF8E007E5B61 /* ForbidHeapAllocation.h in Headers */,
 				DD3DC90827A4BF8E007E5B61 /* Forward.h in Headers */,
 				DD3DC94D27A4BF8E007E5B61 /* Function.h in Headers */,
@@ -3351,7 +3317,6 @@
 				DD4901EB27B4748A00D7E50D /* ParallelJobsOpenMP.h in Headers */,
 				DD3DC95C27A4BF8E007E5B61 /* ParallelVectorIterator.h in Headers */,
 				DD3DC99827A4BF8E007E5B61 /* ParkingLot.h in Headers */,
-				E361DB62289115D000B2A2B8 /* parse_number.h in Headers */,
 				DDF3077A27C086CD006A526F /* PersistentCoders.h in Headers */,
 				DDF3074E27C086CD006A526F /* PersistentDecoder.h in Headers */,
 				DDF3078B27C086CD006A526F /* PersistentEncoder.h in Headers */,
@@ -3423,7 +3388,6 @@
 				DD03059327B5DA0D00344002 /* SignedPtr.h in Headers */,
 				E3ABBABE2BE88FBE00D84916 /* simde.h in Headers */,
 				E38C82692BECAE9D0071EF52 /* SIMDHelpers.h in Headers */,
-				E361DB63289115D000B2A2B8 /* simple_decimal_conversion.h in Headers */,
 				DD3DC8F727A4BF8E007E5B61 /* SimpleStats.h in Headers */,
 				DD3DC97627A4BF8E007E5B61 /* SingleRootGraph.h in Headers */,
 				463CCFBC2B251D77009AB04E /* SingleThreadIntegralWrapper.h in Headers */,

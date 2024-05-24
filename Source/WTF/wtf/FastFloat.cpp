@@ -30,10 +30,12 @@
 
 namespace WTF {
 
+static constexpr fast_float::chars_format formatOption = static_cast<fast_float::chars_format>(fast_float::chars_format::general | fast_float::chars_format::no_infnan);
+
 double parseDouble(std::span<const LChar> string, size_t& parsedLength)
 {
     double doubleValue = 0;
-    auto result = fast_float::from_chars(reinterpret_cast<const char*>(string.data()), reinterpret_cast<const char*>(string.data()) + string.size(), doubleValue);
+    auto result = fast_float::from_chars(reinterpret_cast<const char*>(string.data()), reinterpret_cast<const char*>(string.data()) + string.size(), doubleValue, formatOption);
     parsedLength = result.ptr - reinterpret_cast<const char*>(string.data());
     return doubleValue;
 }
@@ -41,7 +43,7 @@ double parseDouble(std::span<const LChar> string, size_t& parsedLength)
 double parseDouble(std::span<const UChar> string, size_t& parsedLength)
 {
     double doubleValue = 0;
-    auto result = fast_float::from_chars(reinterpret_cast<const char16_t*>(string.data()), reinterpret_cast<const char16_t*>(string.data()) + string.size(), doubleValue);
+    auto result = fast_float::from_chars(reinterpret_cast<const char16_t*>(string.data()), reinterpret_cast<const char16_t*>(string.data()) + string.size(), doubleValue, formatOption);
     parsedLength = result.ptr - reinterpret_cast<const char16_t*>(string.data());
     return doubleValue;
 }
