@@ -5712,8 +5712,7 @@ webkit.org/b/171389 [ Release ] http/tests/security/contentSecurityPolicy/source
 
 webkit.org/b/171528 [ Release ] http/tests/preload/not_delaying_window_onload_before_discovery.html [ Pass Failure ]
 
-#webkit.org/b/231328 http/tests/preload/onload_event.html [ Pass Failure ] # uncomment when below is resolved
-webkit.org/b/274591 http/tests/preload/onload_event.html [ Failure ] # delete this and uncomment above when this is resolved
+webkit.org/b/231328 http/tests/preload/onload_event.html [ Pass Failure ]
 
 webkit.org/b/171530 [ Release ] http/tests/xmlhttprequest/methods-async.html [ Pass Timeout ]
 
