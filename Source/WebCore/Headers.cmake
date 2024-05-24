@@ -1522,6 +1522,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/EventHandler.h
     page/FocusController.h
     page/FocusDirection.h
+    page/FragmentDirective.h
     page/Frame.h
     page/FrameDestructionObserver.h
     page/FrameDestructionObserverInlines.h

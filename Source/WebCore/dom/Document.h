@@ -32,6 +32,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentEventTiming.h"
 #include "FontSelectorClient.h"
+#include "FragmentDirective.h"
 #include "FrameDestructionObserver.h"
 #include "FrameIdentifier.h"
 #include "HitTestSource.h"
@@ -1874,6 +1875,8 @@ public:
     void setFragmentDirective(const String& fragmentDirective) { m_fragmentDirective = fragmentDirective; }
     const String& fragmentDirective() const { return m_fragmentDirective; }
 
+    Ref<FragmentDirective> fragmentDirectiveForBindings() { return m_fragmentDirectiveForBindings; }
+
     void prepareCanvasesForDisplayOrFlushIfNeeded();
     void addCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingContext&);
     void removeCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingContext&);
@@ -2379,6 +2382,8 @@ private:
     UniqueRef<FrameSelection> m_selection;
 
     String m_fragmentDirective;
+
+    Ref<FragmentDirective> m_fragmentDirectiveForBindings;
 
     ListHashSet<Ref<Element>> m_topLayerElements;
     ListHashSet<Ref<HTMLElement>> m_autoPopoverList;

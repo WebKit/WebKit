@@ -5629,7 +5629,21 @@ ScrollToTextFragmentEnabled:
       default: true
     WebCore:
       default: true
-      
+
+ScrollToTextFragmentFeatureDetectionEnabled:
+  type: bool
+  status: preview
+  category: dom
+  humanReadableName: "Scroll To Text Fragment Feature Detection"
+  humanReadableDescription: "Enable Scroll To Text Fragment Feature Detection"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ScrollToTextFragmentGenerationEnabled:
   type: bool
   status: unstable

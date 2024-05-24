@@ -1767,6 +1767,7 @@ $(PROJECT_DIR)/page/DOMWindow+RequestIdleCallback.idl
 $(PROJECT_DIR)/page/DOMWindow+Selection.idl
 $(PROJECT_DIR)/page/DOMWindow+VisualViewport.idl
 $(PROJECT_DIR)/page/EventSource.idl
+$(PROJECT_DIR)/page/FragmentDirective.idl
 $(PROJECT_DIR)/page/History.idl
 $(PROJECT_DIR)/page/IntersectionObserver.idl
 $(PROJECT_DIR)/page/IntersectionObserverCallback.idl

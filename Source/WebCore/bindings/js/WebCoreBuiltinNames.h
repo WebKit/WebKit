@@ -205,6 +205,7 @@ namespace WebCore {
     macro(FileSystemFileHandle) \
     macro(FileSystemHandle) \
     macro(FileSystemSyncAccessHandle) \
+    macro(FragmentDirective) \
     macro(GainNode) \
     macro(GPU) \
     macro(GPUAdapter) \

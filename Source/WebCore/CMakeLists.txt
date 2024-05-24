@@ -1368,6 +1368,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/DOMWindow+VisualViewport.idl
     page/DOMWindow.idl
     page/EventSource.idl
+    page/FragmentDirective.idl
     page/History.idl
     page/IntersectionObserver.idl
     page/IntersectionObserverCallback.idl

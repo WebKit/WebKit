@@ -4483,6 +4483,7 @@ JSCSSTranslate.cpp
 JSCSSStyleValue.cpp
 JSCSSUnitValue.cpp
 JSCSSUnparsedValue.cpp
+JSFragmentDirective.cpp
 JSFullscreenOptions.cpp
 JSUIEvent.cpp
 JSUIEventInit.cpp
