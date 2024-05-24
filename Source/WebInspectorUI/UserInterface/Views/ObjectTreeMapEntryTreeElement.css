@@ -23,9 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.object-tree-array-index.object-tree-map-entry > .titles > .title {
+    display: flex;
+    gap: 8px;
+}
+
 .object-tree-array-index.object-tree-map-entry > .titles > .title > .index-name {
-    width: 40px;
+    min-width: 40px;
     text-align: right;
+}
+
+.object-tree-array-index.object-tree-map-entry > .titles > .title > .index-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .object-tree-map-entry.key:not(:first-child) {
