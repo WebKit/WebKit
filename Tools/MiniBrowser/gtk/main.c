@@ -844,7 +844,6 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     WebKitWebContext *webContext = g_object_new(WEBKIT_TYPE_WEB_CONTEXT,
         "website-data-manager", manager,
         "process-swap-on-cross-site-navigation-enabled", TRUE,
-        "use-system-appearance-for-scrollbars", FALSE,
         "time-zone-override", timeZone,
         NULL);
     g_object_unref(manager);

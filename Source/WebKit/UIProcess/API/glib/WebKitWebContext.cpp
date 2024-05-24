@@ -361,7 +361,9 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
         g_value_set_boolean(value, context->priv->psonEnabled);
         break;
     case PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         g_value_set_boolean(value, webkit_web_context_get_use_system_appearance_for_scrollbars(context));
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 #endif
     case PROP_TIME_ZONE_OVERRIDE:
@@ -394,7 +396,9 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
         context->priv->psonEnabled = g_value_get_boolean(value);
         break;
     case PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         webkit_web_context_set_use_system_appearance_for_scrollbars(context, g_value_get_boolean(value));
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 #endif
     case PROP_MEMORY_PRESSURE_SETTINGS: {
@@ -575,13 +579,15 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      * consistency, or when consistency with other applications is required too.
      *
      * Since: 2.30
+     *
+     * Deprecated: 2.46
      */
     sObjProperties[PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS] =
         g_param_spec_boolean(
             "use-system-appearance-for-scrollbars",
             nullptr, nullptr,
-            TRUE,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+            FALSE,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_DEPRECATED));
 #endif
 
     /**
@@ -1930,7 +1936,11 @@ void webkit_web_context_send_message_to_all_extensions(WebKitWebContext* context
  *
  * Set the #WebKitWebContext:use-system-appearance-for-scrollbars property.
  *
+ * This is now deprecated and when WebKit is built with Skia this method does nothing.
+ *
  * Since: 2.30
+ *
+ * Deprecated: 2.46
  */
 void webkit_web_context_set_use_system_appearance_for_scrollbars(WebKitWebContext* context, gboolean enabled)
 {
@@ -1949,8 +1959,8 @@ void webkit_web_context_set_use_system_appearance_for_scrollbars(WebKitWebContex
     context->priv->processPool->configuration().setUseSystemAppearanceForScrollbars(enabled);
     context->priv->processPool->sendToAllProcesses(Messages::WebProcess::SetUseSystemAppearanceForScrollbars(enabled));
 #else
-    // FIXME: deprecate this when switching to Skia.
-    UNUSED_PARAM(enabled);
+    if (enabled)
+        g_warning("WebKitWebContext:use-system-appearance-for-scrollbars property is deprecated and does nothing");
 #endif
 }
 
@@ -1963,6 +1973,8 @@ void webkit_web_context_set_use_system_appearance_for_scrollbars(WebKitWebContex
  * Returns: %TRUE if scrollbars are rendering using the system appearance, or %FALSE otherwise
  *
  * Since: 2.30
+ *
+ * Deprecated: 2.46
  */
 gboolean webkit_web_context_get_use_system_appearance_for_scrollbars(WebKitWebContext* context)
 {
@@ -1971,7 +1983,6 @@ gboolean webkit_web_context_get_use_system_appearance_for_scrollbars(WebKitWebCo
 #if USE(CAIRO)
     return context->priv->useSystemAppearanceForScrollbars;
 #else
-    // FIXME: deprecate this when switching to Skia.
     return FALSE;
 #endif
 }
