@@ -22,6 +22,7 @@ function mac_process_jsc_entitlements()
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
             plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
+            plistbuddy Add :com.apple.developer.kernel.increased-memory-limit bool YES
         fi
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 && -z "${SKIP_ROSETTA_BREAKING_ENTITLEMENTS}" ))
@@ -46,6 +47,7 @@ function mac_process_testapi_entitlements()
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
             plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
+            plistbuddy Add :com.apple.developer.kernel.increased-memory-limit bool YES
         fi
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 && -z "${SKIP_ROSETTA_BREAKING_ENTITLEMENTS}" ))
@@ -73,6 +75,7 @@ function maccatalyst_process_jsc_entitlements()
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
             plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
+            plistbuddy Add :com.apple.developer.kernel.increased-memory-limit bool YES
         fi
     fi
 
@@ -99,6 +102,7 @@ function maccatalyst_process_testapi_entitlements()
     then
         plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
         plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
+        plistbuddy Add :com.apple.developer.kernel.increased-memory-limit bool YES
     fi
 
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 && -z "${SKIP_ROSETTA_BREAKING_ENTITLEMENTS}" ))
@@ -129,6 +133,7 @@ function ios_family_process_jsc_entitlements()
         fi
     fi
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
+    plistbuddy Add :com.apple.developer.kernel.increased-memory-limit bool YES
     plistbuddy Add :com.apple.security.fatal-exceptions array
     plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
 }
