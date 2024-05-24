@@ -722,7 +722,7 @@ void TypeChecker::visit(AST::Function& function)
         ContextScope functionContext(this);
         for (unsigned i = 0; i < parameters.size(); ++i)
             introduceValue(function.parameters()[i].name(), parameters[i]);
-        Base::visit(function.body());
+        AST::Visitor::visit(function.body());
 
         auto behaviors = analyze(function.body());
         if (behaviors.contains(Behavior::Next) && function.maybeReturnType())
