@@ -54,6 +54,7 @@ struct CSSCounterStyleDescriptors {
         Symbolic,
         Additive,
         Fixed,
+        DisclosureClosed,
         SimplifiedChineseInformal,
         SimplifiedChineseFormal,
         TraditionalChineseInformal,
