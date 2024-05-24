@@ -28,6 +28,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
 struct WGPUTextureViewImpl {
@@ -99,7 +100,7 @@ private:
 
     const Ref<Device> m_device;
     Ref<Texture> m_parentTexture;
-    mutable WeakPtr<CommandEncoder> m_commandEncoder;
+    mutable WeakHashSet<CommandEncoder> m_commandEncoders;
 };
 
 } // namespace WebGPU

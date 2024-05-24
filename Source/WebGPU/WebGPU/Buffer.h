@@ -32,6 +32,7 @@
 #import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
 struct WGPUBufferImpl {
@@ -106,6 +107,8 @@ private:
     NSString* errorValidatingMapAsync(WGPUMapModeFlags, size_t offset, size_t rangeSize) const;
     bool validateUnmap() const;
     void setState(State);
+    void incrementBufferMapCount();
+    void decrementBufferMapCount();
 
     id<MTLBuffer> m_buffer { nil };
     id<MTLBuffer> m_indirectBuffer { nil };
@@ -129,7 +132,7 @@ private:
     } m_indirectCache;
 
     const Ref<Device> m_device;
-    mutable WeakPtr<CommandEncoder> m_commandEncoder;
+    mutable WeakHashSet<CommandEncoder> m_commandEncoders;
     mutable uint16_t m_max16BitIndex { 0 };
     mutable uint32_t m_max32BitIndex { 0 };
 };

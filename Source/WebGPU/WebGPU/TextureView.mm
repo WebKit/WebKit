@@ -168,15 +168,17 @@ bool TextureView::isValid() const
 void TextureView::destroy()
 {
     m_texture = m_device->placeholderTexture(format());
-    if (m_commandEncoder && !m_parentTexture->isCanvasBacking())
-        m_commandEncoder.get()->makeSubmitInvalid();
+    if (!m_parentTexture->isCanvasBacking()) {
+        for (auto& commandEncoder : m_commandEncoders)
+            commandEncoder.makeSubmitInvalid();
+    }
 
-    m_commandEncoder = nullptr;
+    m_commandEncoders.clear();
 }
 
 void TextureView::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    m_commandEncoder = &commandEncoder;
+    m_commandEncoders.add(commandEncoder);
     if (isDestroyed() && !m_parentTexture->isCanvasBacking())
         commandEncoder.makeSubmitInvalid();
 }

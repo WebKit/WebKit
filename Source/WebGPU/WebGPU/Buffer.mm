@@ -156,10 +156,22 @@ Buffer::Buffer(Device& device)
 
 Buffer::~Buffer() = default;
 
+void Buffer::incrementBufferMapCount()
+{
+    for (auto& commandEncoder : m_commandEncoders)
+        commandEncoder.incrementBufferMapCount();
+}
+
+void Buffer::decrementBufferMapCount()
+{
+    for (auto& commandEncoder : m_commandEncoders)
+        commandEncoder.decrementBufferMapCount();
+}
+
 void Buffer::setCommandEncoder(CommandEncoder& commandEncoder, bool mayModifyBuffer) const
 {
     UNUSED_PARAM(mayModifyBuffer);
-    m_commandEncoder = commandEncoder;
+    m_commandEncoders.add(commandEncoder);
     if (m_state == State::Mapped || m_state == State::MappedAtCreation)
         commandEncoder.incrementBufferMapCount();
     if (isDestroyed())
@@ -176,10 +188,10 @@ void Buffer::destroy()
     }
 
     setState(State::Destroyed);
-    if (m_commandEncoder)
-        m_commandEncoder.get()->makeSubmitInvalid();
+    for (auto& commandEncoder : m_commandEncoders)
+        commandEncoder.makeSubmitInvalid();
 
-    m_commandEncoder = nullptr;
+    m_commandEncoders.clear();
     m_buffer = m_device->placeholderBuffer();
 }
 
@@ -304,8 +316,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
     m_device->getQueue().onSubmittedWorkDone([protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
         if (protectedThis->m_state == State::MappingPending) {
             protectedThis->setState(State::Mapped);
-            if (protectedThis->m_commandEncoder)
-                protectedThis->m_commandEncoder->incrementBufferMapCount();
+            protectedThis->incrementBufferMapCount();
 
             protectedThis->m_mappingRange = { offset, offset + rangeSize };
 
@@ -351,8 +362,7 @@ void Buffer::unmap()
     if (!validateUnmap() && !m_device->isValid())
         return;
 
-    if (m_commandEncoder)
-        m_commandEncoder->decrementBufferMapCount();
+    decrementBufferMapCount();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (m_state == State::MappedAtCreation && m_buffer.storageMode == MTLStorageModeManaged) {

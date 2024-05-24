@@ -1762,6 +1762,7 @@ http/tests/webgpu/webgpu/api/validation/buffer/destroy.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/buffer/mapping.html [ Pass ]
 
 http/tests/webgpu/webgpu/api/validation/queue/submit.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/queue/destroyed [ Pass ]
 
 # Skip tests until they can be validated to consistently pass in EWS
 http/tests/webgpu/webgpu/idl/constructable.html [ Skip ]

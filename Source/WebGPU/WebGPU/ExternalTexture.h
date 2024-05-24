@@ -28,6 +28,7 @@
 #import "Device.h"
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
 struct WGPUExternalTextureImpl {
@@ -69,7 +70,7 @@ private:
     WGPUColorSpace m_colorSpace;
     const Ref<Device> m_device;
     bool m_destroyed { false };
-    mutable WeakPtr<CommandEncoder> m_commandEncoder;
+    mutable WeakHashSet<CommandEncoder> m_commandEncoders;
 };
 
 } // namespace WebGPU
