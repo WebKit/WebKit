@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -58,6 +58,9 @@ class ScriptExecutionContext;
 class FragmentedSharedBuffer;
 class WebCoreOpaqueRoot;
 
+struct IDLArrayBuffer;
+
+template<typename> class DOMPromiseDeferred;
 template<typename> class ExceptionOr;
 
 using BlobPartVariant = std::variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
@@ -121,7 +124,8 @@ public:
     Ref<Blob> slice(long long start, long long end, const String& contentType) const;
 
     void text(Ref<DeferredPromise>&&);
-    void arrayBuffer(Ref<DeferredPromise>&&);
+    void arrayBuffer(DOMPromiseDeferred<IDLArrayBuffer>&&);
+    void bytes(Ref<DeferredPromise>&&);
     ExceptionOr<Ref<ReadableStream>> stream();
 
     size_t memoryCost() const { return m_memoryCost; }

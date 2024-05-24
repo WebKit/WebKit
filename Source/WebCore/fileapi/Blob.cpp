@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -288,19 +289,33 @@ void Blob::text(Ref<DeferredPromise>&& promise)
     });
 }
 
-void Blob::arrayBuffer(Ref<DeferredPromise>&& promise)
+static ExceptionOr<Ref<JSC::ArrayBuffer>> arrayBufferFromBlobLoader(BlobLoader& blobLoader)
+{
+    if (auto optionalErrorCode = blobLoader.errorCode())
+        return Exception { *optionalErrorCode };
+    RefPtr arrayBuffer = blobLoader.arrayBufferResult();
+    if (!arrayBuffer)
+        return Exception { ExceptionCode::InvalidStateError };
+    return arrayBuffer.releaseNonNull();
+}
+
+void Blob::arrayBuffer(DOMPromiseDeferred<IDLArrayBuffer>&& promise)
 {
     loadBlob(FileReaderLoader::ReadAsArrayBuffer, [promise = WTFMove(promise)](BlobLoader& blobLoader) mutable {
-        if (auto optionalErrorCode = blobLoader.errorCode()) {
-            promise->reject(Exception { *optionalErrorCode });
+        promise.settle(arrayBufferFromBlobLoader(blobLoader));
+    });
+}
+
+void Blob::bytes(Ref<DeferredPromise>&& promise)
+{
+    loadBlob(FileReaderLoader::ReadAsArrayBuffer, [promise = WTFMove(promise)](BlobLoader& blobLoader) mutable {
+        auto arrayBuffer = arrayBufferFromBlobLoader(blobLoader);
+        if (arrayBuffer.hasException()) {
+            promise->reject(arrayBuffer.releaseException());
             return;
         }
-        auto arrayBuffer = blobLoader.arrayBufferResult();
-        if (!arrayBuffer) {
-            promise->reject(Exception { ExceptionCode::InvalidStateError });
-            return;
-        }
-        promise->resolve<IDLArrayBuffer>(*arrayBuffer);
+        Ref view = Uint8Array::create(arrayBuffer.releaseReturnValue());
+        promise->resolve<IDLUint8Array>(WTFMove(view));
     });
 }
 

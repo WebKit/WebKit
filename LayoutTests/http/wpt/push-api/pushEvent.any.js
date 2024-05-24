@@ -27,8 +27,12 @@ test(() => {
         assert_true(data instanceof PushMessageData);
         assert_equals(data.text(), stringValue);
         assert_true(data.blob() instanceof Blob);
+        assert_true(data.bytes() instanceof Uint8Array);
         assert_equals(data.json().test, 1);
         assert_equals(data.arrayBuffer().byteLength, stringValue.length);
+        assert_equals(data.bytes().length, stringValue.length);
+        assert_not_equals(data.bytes().buffer, data.arrayBuffer());
+        assert_not_equals(data.bytes(), data.bytes());
     }
 }, "PushEvent with data");
 

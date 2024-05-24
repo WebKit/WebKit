@@ -2,5 +2,6 @@
 PASS slice()
 PASS text()
 PASS arrayBuffer()
+PASS bytes()
 PASS stream()
 

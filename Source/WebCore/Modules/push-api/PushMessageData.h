@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "ExceptionOr.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Uint8Array.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Vector.h>
 
@@ -44,6 +45,7 @@ public:
 
     ExceptionOr<RefPtr<JSC::ArrayBuffer>> arrayBuffer();
     RefPtr<Blob> blob(ScriptExecutionContext&);
+    ExceptionOr<RefPtr<JSC::Uint8Array>> bytes();
     ExceptionOr<JSC::JSValue> json(JSDOMGlobalObject&);
     String text();
 

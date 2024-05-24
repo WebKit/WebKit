@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(PushMessageData);
 
 ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushMessageData::arrayBuffer()
 {
-    auto buffer = ArrayBuffer::tryCreate(m_data.data(), m_data.size());
+    auto buffer = ArrayBuffer::tryCreate(m_data.span());
     if (!buffer)
         return Exception { ExceptionCode::OutOfMemoryError };
     return buffer;
@@ -49,6 +49,14 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushMessageData::arrayBuffer()
 RefPtr<Blob> PushMessageData::blob(ScriptExecutionContext& context)
 {
     return Blob::create(&context, Vector<uint8_t> { m_data }, { });
+}
+
+ExceptionOr<RefPtr<JSC::Uint8Array>> PushMessageData::bytes()
+{
+    auto view = Uint8Array::tryCreate(m_data.span());
+    if (!view)
+        return Exception { ExceptionCode::OutOfMemoryError };
+    return view;
 }
 
 ExceptionOr<JSC::JSValue> PushMessageData::json(JSDOMGlobalObject& globalObject)
