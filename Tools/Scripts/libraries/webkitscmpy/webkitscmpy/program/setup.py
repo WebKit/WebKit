@@ -27,11 +27,16 @@ import time
 
 from .command import Command
 from .install_hooks import InstallHooks
-from webkitcorepy import arguments, run, CallByNeed, Editor, OutputCapture, Terminal
+from webkitcorepy import arguments, run, string_utils, CallByNeed, Editor, OutputCapture, TaskPool, Terminal
 from webkitscmpy import log, local, remote as wspremote
 
 requests = CallByNeed(lambda: __import__('requests'))
 HTTPBasicAuth = CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBasicAuth']).HTTPBasicAuth)
+
+
+def _fetch(path, remote):
+    log.info('    Fetching {}...'.format(remote))
+    return run([local.Git.executable(), 'fetch', '--prune', remote], cwd=path, capture_output=True).returncode
 
 
 class Setup(Command):
@@ -71,6 +76,33 @@ class Setup(Command):
 
         log.info('Enabled secret scanning on {}!'.format(repository.url))
         return True
+
+    @classmethod
+    def fetch(cls, repository):
+        from webkitscmpy.mocks.local import Git as MockGit
+
+        kwargs = dict()
+        if sys.version_info >= (3, 6):
+            kwargs = dict(encoding='utf-8')
+        remote_cmd = run(
+            [repository.executable(), 'remote'],
+            capture_output=True, cwd=repository.root_path,
+            **kwargs
+        )
+        if remote_cmd.returncode:
+            sys.stderr.write('Failed to list remotes in repository\n')
+            sys.stderr.write(remote_cmd.stderr)
+            return remote_cmd.returncode
+        remotes = remote_cmd.stdout.split()
+
+        log.warning('Fetching {}...'.format(string_utils.pluralize(len(remotes), 'remote')))
+        results = []
+        with TaskPool(workers=(1 if MockGit.top else 12)) as pool:
+            for remote in remotes:
+                pool.do(_fetch, repository.path, remote, callback=lambda value: results.append(value))
+            pool.wait()
+        log.warning('Fetched {}!'.format(string_utils.pluralize(len([n for n in results if not n]), 'remote')))
+        return 1 if any(results) else 0
 
     @classmethod
     def github(cls, args, repository, additional_setup=None, remote=None, team=None, secrets_scanning=None, **kwargs):
@@ -546,7 +578,7 @@ Automation may create pull requests and forks in unexpected locations
                 sys.stderr.write(warning)
 
         if not forking or forking == 'No':
-            return result
+            return result | cls.fetch(repository)
 
         secrets_scanning_config_value = repository.config().get('webkitscmpy.remotes.origin.secrets-scanning'.format(name), None)
         if cls.github(
@@ -562,16 +594,7 @@ Automation may create pull requests and forks in unexpected locations
             result += 1
         else:
             available_remotes.append('fork')
-
-        for rem in available_remotes:
-            if 'fork' not in rem:
-                continue
-            log.info("Fetching '{}'".format(rem))
-            result += run(
-                [repository.executable(), 'fetch', rem],
-                capture_output=True, cwd=repository.root_path,
-            ).returncode
-        return result
+        return result | cls.fetch(repository)
 
     @classmethod
     def parser(cls, parser, loggers=None):
