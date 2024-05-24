@@ -50,7 +50,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 static std::atomic<unsigned> gNumberOfWorkletGlobalScopes { 0 };
 
 WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::VM>&& vm, const WorkletParameters& parameters)
-    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, parameters.sessionID, WTFMove(vm), parameters.referrerPolicy, &thread, parameters.noiseInjectionHashSalt)
+    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, parameters.sessionID, WTFMove(vm), parameters.referrerPolicy, &thread, parameters.noiseInjectionHashSalt, parameters.advancedPrivacyProtections)
     , m_topOrigin(SecurityOrigin::createOpaque())
     , m_url(parameters.windowURL)
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
@@ -64,7 +64,7 @@ WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::V
 }
 
 WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, ScriptSourceCode&& code)
-    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, *document.sessionID(), WTFMove(vm), document.referrerPolicy(), nullptr, document.noiseInjectionHashSalt())
+    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, *document.sessionID(), WTFMove(vm), document.referrerPolicy(), nullptr, document.noiseInjectionHashSalt(), document.advancedPrivacyProtections())
     , m_document(document)
     , m_topOrigin(SecurityOrigin::createOpaque())
     , m_url(code.url())
