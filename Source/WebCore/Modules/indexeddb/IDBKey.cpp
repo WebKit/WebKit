@@ -47,7 +47,7 @@ Ref<IDBKey> IDBKey::createBinary(const ThreadSafeDataBuffer& buffer)
 Ref<IDBKey> IDBKey::createBinary(JSC::JSArrayBuffer& arrayBuffer)
 {
     RefPtr buffer = arrayBuffer.impl();
-    return adoptRef(*new IDBKey(ThreadSafeDataBuffer::copyData(buffer->data(), buffer->byteLength())));
+    return adoptRef(*new IDBKey(ThreadSafeDataBuffer::copyData(buffer->span())));
 }
 
 Ref<IDBKey> IDBKey::createBinary(JSC::JSArrayBufferView& arrayBufferView)
@@ -55,7 +55,7 @@ Ref<IDBKey> IDBKey::createBinary(JSC::JSArrayBufferView& arrayBufferView)
     auto bufferView = arrayBufferView.possiblySharedImpl();
     if (!bufferView)
         return createInvalid();
-    return adoptRef(*new IDBKey(ThreadSafeDataBuffer::copyData(bufferView->data(), bufferView->byteLength())));
+    return adoptRef(*new IDBKey(ThreadSafeDataBuffer::copyData(bufferView->span())));
 }
 
 IDBKey::IDBKey(IndexedDB::KeyType type, double number)
