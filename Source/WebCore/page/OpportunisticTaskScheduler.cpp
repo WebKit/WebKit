@@ -108,12 +108,12 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
         if (m_runloopCountAfterBeingScheduled > minimumRunloopCountWhenScheduledWorkIsImminent)
             return true;
 
-        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: task does not get scheduled ", remainingTime, " ", hasImminentlyScheduledWork(), " ", page->preferredRenderingUpdateInterval(), " ", m_runloopCountAfterBeingScheduled);
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: task does not get scheduled ", remainingTime, " ", hasImminentlyScheduledWork(), " ", page->preferredRenderingUpdateInterval(), " ", m_runloopCountAfterBeingScheduled, " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
         return false;
     }();
 
     if (!shouldRunTask) {
-        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] RunLoopObserverInvalidate");
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] RunLoopObserverInvalidate", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
         m_runLoopObserver->invalidate();
         m_runLoopObserver->schedule();
         return;
@@ -130,13 +130,13 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
         auto weakPage = m_page;
         page->opportunisticallyRunIdleCallbacks();
         if (UNLIKELY(!weakPage)) {
-            dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: page gets destroyed");
+            dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: page gets destroyed", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
             return;
         }
     }
 
     if (!page->settings().opportunisticSweepingAndGarbageCollectionEnabled()) {
-        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: opportunistic sweep and GC is not enabled");
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: opportunistic sweep and GC is not enabled", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
         return;
     }
 

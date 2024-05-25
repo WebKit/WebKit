@@ -516,6 +516,8 @@ JSC_DEFINE_HOST_FUNCTION(tracePointStop, (JSGlobalObject* globalObject, CallFram
     return JSValue::encode(jsUndefined());
 }
 
+std::atomic<unsigned> activeJSGlobalObjectSignpostIntervalCount { 0 };
+
 #if HAVE(OS_SIGNPOST)
 
 static String asSignpostString(JSGlobalObject* globalObject, JSValue v)
@@ -524,8 +526,6 @@ static String asSignpostString(JSGlobalObject* globalObject, JSValue v)
         return emptyString();
     return v.toWTFString(globalObject);
 }
-
-std::atomic<unsigned> activeJSGlobalObjectSignpostIntervalCount { 0 };
 
 JSC_DEFINE_HOST_FUNCTION(signpostStart, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
