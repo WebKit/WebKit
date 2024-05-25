@@ -38,25 +38,25 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PushMessageData);
 
-ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushMessageData::arrayBuffer()
+ExceptionOr<Ref<JSC::ArrayBuffer>> PushMessageData::arrayBuffer()
 {
-    auto buffer = ArrayBuffer::tryCreate(m_data.span());
+    RefPtr buffer = ArrayBuffer::tryCreate(m_data.span());
     if (!buffer)
         return Exception { ExceptionCode::OutOfMemoryError };
-    return buffer;
+    return buffer.releaseNonNull();
 }
 
-RefPtr<Blob> PushMessageData::blob(ScriptExecutionContext& context)
+Ref<Blob> PushMessageData::blob(ScriptExecutionContext& context)
 {
     return Blob::create(&context, Vector<uint8_t> { m_data }, { });
 }
 
-ExceptionOr<RefPtr<JSC::Uint8Array>> PushMessageData::bytes()
+ExceptionOr<Ref<JSC::Uint8Array>> PushMessageData::bytes()
 {
-    auto view = Uint8Array::tryCreate(m_data.span());
+    RefPtr view = Uint8Array::tryCreate(m_data.span());
     if (!view)
         return Exception { ExceptionCode::OutOfMemoryError };
-    return view;
+    return view.releaseNonNull();
 }
 
 ExceptionOr<JSC::JSValue> PushMessageData::json(JSDOMGlobalObject& globalObject)

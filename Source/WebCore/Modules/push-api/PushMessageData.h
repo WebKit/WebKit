@@ -43,9 +43,9 @@ class PushMessageData final : public RefCounted<PushMessageData> {
 public:
     static Ref<PushMessageData> create(Vector<uint8_t>&& data) { return adoptRef(*new PushMessageData(WTFMove(data))); }
 
-    ExceptionOr<RefPtr<JSC::ArrayBuffer>> arrayBuffer();
-    RefPtr<Blob> blob(ScriptExecutionContext&);
-    ExceptionOr<RefPtr<JSC::Uint8Array>> bytes();
+    ExceptionOr<Ref<JSC::ArrayBuffer>> arrayBuffer();
+    Ref<Blob> blob(ScriptExecutionContext&);
+    ExceptionOr<Ref<JSC::Uint8Array>> bytes();
     ExceptionOr<JSC::JSValue> json(JSDOMGlobalObject&);
     String text();
 
