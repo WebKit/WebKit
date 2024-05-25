@@ -3926,9 +3926,14 @@ ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, Optio
     return replaceChildrenWithFragment(container, fragment.releaseReturnValue());
 }
 
-ExceptionOr<void> Element::setHTMLUnsafe(const String& html)
+ExceptionOr<void> Element::setHTMLUnsafe(std::variant<RefPtr<TrustedHTML>, String>&& html)
 {
-    return replaceChildrenWithMarkup(html, { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML });
+    auto stringValueHolder = trustedTypeCompliantString(*document().scriptExecutionContext(), WTFMove(html), "Element setHTMLUnsafe"_s);
+
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
+    return replaceChildrenWithMarkup(stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML });
 }
 
 String Element::getHTML(GetHTMLOptions&& options) const
@@ -3955,8 +3960,13 @@ String Element::outerHTML() const
     return serializeFragment(*this, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::NoExcludingURLsForPrivacy);
 }
 
-ExceptionOr<void> Element::setOuterHTML(const String& html)
+ExceptionOr<void> Element::setOuterHTML(std::variant<RefPtr<TrustedHTML>, String>&& html)
 {
+    auto stringValueHolder = trustedTypeCompliantString(*document().scriptExecutionContext(), WTFMove(html), "Element outerHTML"_s);
+
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
     // The specification allows setting outerHTML on an Element whose parent is a DocumentFragment and Gecko supports this.
     // https://w3c.github.io/DOM-Parsing/#dom-element-outerhtml
     RefPtr parent = parentElement();
@@ -3969,7 +3979,7 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
     RefPtr previous = previousSibling();
     RefPtr next = nextSibling();
 
-    auto fragment = createFragmentForInnerOuterHTML(*parent, html, { ParserContentPolicy::AllowScriptingContent });
+    auto fragment = createFragmentForInnerOuterHTML(*parent, stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowScriptingContent });
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -3991,9 +4001,14 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
     return { };
 }
 
-ExceptionOr<void> Element::setInnerHTML(const String& markup)
+ExceptionOr<void> Element::setInnerHTML(std::variant<RefPtr<TrustedHTML>, String>&& html)
 {
-    return replaceChildrenWithMarkup(markup, { });
+    auto stringValueHolder = trustedTypeCompliantString(*document().scriptExecutionContext(), WTFMove(html), "Element innerHTML"_s);
+
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
+    return replaceChildrenWithMarkup(stringValueHolder.releaseReturnValue(), { });
 }
 
 String Element::innerText()
@@ -5501,9 +5516,14 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
     return { };
 }
 
-ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String& markup)
+ExceptionOr<void> Element::insertAdjacentHTML(const String& where, std::variant<RefPtr<TrustedHTML>, String>&& markup)
 {
-    return insertAdjacentHTML(where, markup, nullptr);
+    auto stringValueHolder = trustedTypeCompliantString(*document().scriptExecutionContext(), WTFMove(markup), "Element insertAdjacentHTML"_s);
+
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
+    return insertAdjacentHTML(where, stringValueHolder.releaseReturnValue(), nullptr);
 }
 
 ExceptionOr<void> Element::insertAdjacentText(const String& where, String&& text)

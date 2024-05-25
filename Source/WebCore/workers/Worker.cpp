@@ -42,6 +42,7 @@
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include "StructuredSerializeOptions.h"
+#include "TrustedType.h"
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerInitializationData.h"
 #include "WorkerScriptLoader.h"
@@ -96,13 +97,17 @@ Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, 
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, const String& url, WorkerOptions&& options)
+ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, std::variant<RefPtr<TrustedScriptURL>, String>&& url, WorkerOptions&& options)
 {
+    auto compliantScriptURLString = trustedTypeCompliantString(context, WTFMove(url), "Worker constructor"_s);
+    if (compliantScriptURLString.hasException())
+        return compliantScriptURLString.releaseException();
+
     auto worker = adoptRef(*new Worker(context, runtimeFlags, WTFMove(options)));
 
     worker->suspendIfNeeded();
 
-    auto scriptURL = worker->resolveURL(url);
+    auto scriptURL = worker->resolveURL(compliantScriptURLString.releaseReturnValue());
     if (scriptURL.hasException())
         return scriptURL.releaseException();
 

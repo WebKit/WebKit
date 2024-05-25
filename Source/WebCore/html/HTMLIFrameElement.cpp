@@ -41,6 +41,7 @@
 #include "ScriptController.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
+#include "TrustedType.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -188,6 +189,22 @@ const AtomString& HTMLIFrameElement::loadingForBindings() const
 void HTMLIFrameElement::setLoadingForBindings(const AtomString& value)
 {
     setAttributeWithoutSynchronization(loadingAttr, value);
+}
+
+String HTMLIFrameElement::srcdoc() const
+{
+    return attributeWithoutSynchronization(srcdocAttr);
+}
+
+ExceptionOr<void> HTMLIFrameElement::setSrcdoc(std::variant<RefPtr<TrustedHTML>, String>&& value)
+{
+    auto stringValueHolder = trustedTypeCompliantString(*document().scriptExecutionContext(), WTFMove(value), "HTMLIFrameElement srcdoc"_s);
+
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
+    setAttributeWithoutSynchronization(srcdocAttr, AtomString { stringValueHolder.releaseReturnValue() });
+    return { };
 }
 
 static bool isFrameLazyLoadable(const Document& document, const URL& url, const AtomString& loadingAttributeValue)

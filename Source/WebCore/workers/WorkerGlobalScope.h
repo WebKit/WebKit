@@ -60,6 +60,7 @@ class ReportingScope;
 class ScheduledAction;
 class ScriptBuffer;
 class ScriptBufferSourceProvider;
+class TrustedScriptURL;
 class WorkerCacheStorageConnection;
 class WorkerClient;
 class WorkerFileSystemStorageConnection;
@@ -118,7 +119,7 @@ public:
     WorkerLocation& location() const;
     void close();
 
-    virtual ExceptionOr<void> importScripts(const FixedVector<String>& urls);
+    virtual ExceptionOr<void> importScripts(const FixedVector<std::variant<RefPtr<TrustedScriptURL>, String>>& urls);
     WorkerNavigator& navigator();
 
     void setIsOnline(bool);

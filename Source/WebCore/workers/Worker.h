@@ -50,6 +50,7 @@ namespace WebCore {
 class RTCRtpScriptTransform;
 class RTCRtpScriptTransformer;
 class ScriptExecutionContext;
+class TrustedScriptURL;
 class WorkerGlobalScopeProxy;
 class WorkerScriptLoader;
 
@@ -63,7 +64,7 @@ public:
     using AbstractWorker::WeakValueType;
     using AbstractWorker::WeakPtrImplType;
 
-    static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, const String& url, WorkerOptions&&);
+    static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, std::variant<RefPtr<TrustedScriptURL>, String>&&, WorkerOptions&&);
     virtual ~Worker();
 
     // ActiveDOMObject.

@@ -55,6 +55,7 @@
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "SocketProvider.h"
+#include "TrustedType.h"
 #include "URLKeepingBlobAlive.h"
 #include "ViolationReportType.h"
 #include "WindowOrWorkerGlobalScopeTrustedTypes.h"
@@ -369,9 +370,27 @@ void WorkerGlobalScope::clearInterval(int timeoutId)
     DOMTimer::removeById(*this, timeoutId);
 }
 
-ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& urls)
+ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<std::variant<RefPtr<TrustedScriptURL>, String>>& urls)
 {
     ASSERT(contentSecurityPolicy());
+
+    Vector<String> urlStrings;
+    urlStrings.reserveInitialCapacity(urls.size());
+    for (auto&& entry : urls) {
+        auto stringValueHolder = WTF::switchOn(entry,
+            [this](const String& str) -> ExceptionOr<String> {
+                return trustedTypeCompliantString(TrustedType::TrustedScriptURL, *this, str, "WorkerGlobalScope importScripts"_s);
+            },
+            [](const RefPtr<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
+                return trustedScriptURL->toString();
+            }
+        );
+
+        if (stringValueHolder.hasException())
+            return stringValueHolder.releaseException();
+
+        urlStrings.append(stringValueHolder.releaseReturnValue());
+    }
 
     // https://html.spec.whatwg.org/multipage/workers.html#importing-scripts-and-libraries
     // 1. If worker global scope's type is "module", throw a TypeError exception.
@@ -380,7 +399,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
 
     Vector<URLKeepingBlobAlive> completedURLs;
     completedURLs.reserveInitialCapacity(urls.size());
-    for (auto& entry : urls) {
+    for (auto& entry : urlStrings) {
         URL url = completeURL(entry);
         if (!url.isValid())
             return Exception { ExceptionCode::SyntaxError };

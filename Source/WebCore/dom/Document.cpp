@@ -1096,11 +1096,15 @@ void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPoli
     close();
 }
 
-Ref<Document> Document::parseHTMLUnsafe(Document& context, const String& html)
+ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, std::variant<RefPtr<TrustedHTML>, String>&& html)
 {
+    auto stringValueHolder = trustedTypeCompliantString(*context.scriptExecutionContext(), WTFMove(html), "Document parseHTMLUnsafe"_s);
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
     Ref document = HTMLDocument::create(nullptr, context.protectedSettings(), URL { });
-    document->setMarkupUnsafe(html, { ParserContentPolicy::AllowDeclarativeShadowRoots });
-    return document;
+    document->setMarkupUnsafe(stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowDeclarativeShadowRoots });
+    return { document };
 }
 
 Element* Document::elementForAccessKey(const String& key)

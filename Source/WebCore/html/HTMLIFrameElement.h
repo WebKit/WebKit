@@ -31,6 +31,7 @@ namespace WebCore {
 class DOMTokenList;
 class LazyLoadFrameObserver;
 class RenderIFrame;
+class TrustedHTML;
 
 class HTMLIFrameElement final : public HTMLFrameElementBase {
     WTF_MAKE_ISO_ALLOCATED(HTMLIFrameElement);
@@ -47,6 +48,9 @@ public:
 
     const AtomString& loadingForBindings() const;
     void setLoadingForBindings(const AtomString&);
+
+    String srcdoc() const;
+    ExceptionOr<void> setSrcdoc(std::variant<RefPtr<TrustedHTML>, String>&&);
 
     LazyLoadFrameObserver& lazyLoadFrameObserver();
 
