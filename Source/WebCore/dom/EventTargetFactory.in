@@ -10,6 +10,7 @@ BackgroundFetchRegistration
 BaseAudioContext conditional=WEB_AUDIO
 BroadcastChannel
 Clipboard
+CloseWatcher
 CookieStore
 DedicatedWorkerGlobalScope
 DOMApplicationCache

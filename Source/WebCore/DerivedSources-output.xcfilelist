@@ -595,6 +595,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSClipboardItem.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSClipboardItem.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCloseEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCloseEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCloseWatcher.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCloseWatcher.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSColorGamut.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSColorGamut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCommandEvent.cpp

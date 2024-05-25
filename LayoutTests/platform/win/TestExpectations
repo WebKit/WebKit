@@ -2060,6 +2060,7 @@ imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Skip ] # Failure
 imported/w3c/web-platform-tests/css/support [ Skip ]
 imported/w3c/web-platform-tests/css/WOFF2 [ Skip ]
 
+imported/w3c/web-platform-tests/close-watcher [ Skip ]
 imported/w3c/web-platform-tests/custom-elements [ Skip ]
 imported/w3c/web-platform-tests/deprecation-reporting [ Skip ]
 imported/w3c/web-platform-tests/dom [ Skip ]

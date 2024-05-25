@@ -113,6 +113,7 @@ namespace WebCore {
     macro(Clients) \
     macro(Clipboard) \
     macro(ClipboardItem) \
+    macro(CloseWatcher) \
     macro(CompressionStream) \
     macro(CompressionStreamEncoder) \
     macro(CompressionStreamTransform) \
