@@ -38,13 +38,13 @@ public:
     using Init = BackgroundFetchEventInit;
     static Ref<BackgroundFetchEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
 
-    RefPtr<BackgroundFetchRegistration> registration() const;
+    const BackgroundFetchRegistration& registration() const;
 
 protected:
-    BackgroundFetchEvent(enum EventInterfaceType, const AtomString&, ExtendableEventInit&&, RefPtr<BackgroundFetchRegistration>&&, IsTrusted);
+    BackgroundFetchEvent(enum EventInterfaceType, const AtomString&, Init&&, IsTrusted);
 
 private:
-    RefPtr<BackgroundFetchRegistration> m_registration;
+    Ref<BackgroundFetchRegistration> m_registration;
 };
 
 } // namespace WebCore

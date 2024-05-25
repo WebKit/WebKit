@@ -26,12 +26,13 @@
 #pragma once
 
 #include "BufferSource.h"
+#include <optional>
 
 namespace WebCore {
 
 struct WebTransportHash {
     String algorithm;
-    BufferSource value;
+    std::optional<BufferSource> value;
 };
 
 }

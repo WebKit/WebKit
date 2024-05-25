@@ -28,7 +28,7 @@
             }
         },
         "AppleCopyright": {
-            "contextsAllowed": ["interface", "attribute", "operation"]
+            "contextsAllowed": ["interface", "dictionary", "attribute", "operation"]
         },
         "AtomString": {
             "contextsAllowed": ["type"]
@@ -496,6 +496,9 @@
         },
         "SuppressToJSObject": {
             "contextsAllowed": ["interface"]
+        },
+        "SuppressToNative": {
+            "contextsAllowed": ["dictionary", "enum"]
         },
         "TaggedWrapper": {
             "contextsAllowed": ["interface"]

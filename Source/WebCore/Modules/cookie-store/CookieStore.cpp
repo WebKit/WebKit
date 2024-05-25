@@ -270,7 +270,7 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
             return;
         }
 
-        promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem(WTFMove(cookies[0])));
+        promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem::from(WTFMove(cookies[0])));
     };
 
     protectedMainThreadBridge()->get(WTFMove(options), WTFMove(completionHandler));
@@ -328,7 +328,7 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
 
         auto cookies = result.releaseReturnValue();
         promise->resolve<IDLSequence<IDLDictionary<CookieListItem>>>(WTF::map(WTFMove(cookies), [](Cookie&& cookie) {
-            return CookieListItem { WTFMove(cookie) };
+            return CookieListItem::from(WTFMove(cookie));
         }));
     };
 
@@ -479,15 +479,21 @@ void CookieStore::cookiesAdded(const String& host, const Vector<Cookie>& cookies
 
     ASSERT_UNUSED(host, host == downcast<Document>(context)->url().host().toString());
 
-    CookieChangeEventInit eventInit;
+    Vector<CookieListItem> deleted;
+    Vector<CookieListItem> changed;
     auto currentTime = WallTime::now().secondsSinceEpoch().milliseconds();
     for (auto cookie : cookies) {
         if (cookie.expires && *cookie.expires < currentTime) {
             cookie.value = nullString();
-            eventInit.deleted.append(CookieListItem { WTFMove(cookie) });
+            deleted.append(CookieListItem::from(WTFMove(cookie)));
         } else
-            eventInit.changed.append(CookieListItem { WTFMove(cookie) });
+            changed.append(CookieListItem::from(WTFMove(cookie)));
     }
+
+    CookieChangeEventInit eventInit = {
+        .changed = WTFMove(changed),
+        .deleted = WTFMove(deleted)
+    };
 
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, CookieChangeEvent::create(eventNames().changeEvent, WTFMove(eventInit), CookieChangeEvent::IsTrusted::Yes));
 }
@@ -505,7 +511,7 @@ void CookieStore::cookiesDeleted(const String& host, const Vector<Cookie>& cooki
     CookieChangeEventInit eventInit;
     eventInit.deleted = cookies.map([](auto cookie) {
         cookie.value = nullString();
-        return CookieListItem { WTFMove(cookie) };
+        return CookieListItem::from(WTFMove(cookie));
     });
 
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, CookieChangeEvent::create(eventNames().changeEvent, WTFMove(eventInit), CookieChangeEvent::IsTrusted::Yes));

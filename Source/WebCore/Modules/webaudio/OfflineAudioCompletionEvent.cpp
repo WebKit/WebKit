@@ -46,7 +46,6 @@ Ref<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create(Ref<AudioBu
 
 Ref<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create(const AtomString& eventType, OfflineAudioCompletionEventInit&& init)
 {
-    RELEASE_ASSERT(init.renderedBuffer);
     return adoptRef(*new OfflineAudioCompletionEvent(eventType, WTFMove(init)));
 }
 
@@ -57,8 +56,8 @@ OfflineAudioCompletionEvent::OfflineAudioCompletionEvent(Ref<AudioBuffer>&& rend
 }
 
 OfflineAudioCompletionEvent::OfflineAudioCompletionEvent(const AtomString& eventType, OfflineAudioCompletionEventInit&& init)
-    : Event(EventInterfaceType::OfflineAudioCompletionEvent, eventType, init, IsTrusted::No)
-    , m_renderedBuffer(init.renderedBuffer.releaseNonNull())
+    : Event(EventInterfaceType::OfflineAudioCompletionEvent, eventType, WTFMove(init), IsTrusted::No)
+    , m_renderedBuffer(WTFMove(init.renderedBuffer))
 {
 }
 

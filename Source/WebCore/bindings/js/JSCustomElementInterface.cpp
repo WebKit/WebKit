@@ -383,15 +383,20 @@ void JSCustomElementInterface::invokeFormStateRestoreCallback(Element& element, 
     invokeCallback(element, m_formStateRestoreCallback.get(), [&](JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, MarkedArgumentBuffer& args) {
         auto& vm = lexicalGlobalObject->vm();
 
-        WTF::switchOn(restoredState, [&](RefPtr<DOMFormData> state) {
-            args.append(toJS(lexicalGlobalObject, globalObject, *state));
-        }, [&](const String& state) {
-            args.append(jsString(vm, state));
-        }, [&](RefPtr<File>) {
-            ASSERT_NOT_REACHED();
-        }, [](std::nullptr_t) {
-            ASSERT_NOT_REACHED();
-        });
+        WTF::switchOn(restoredState,
+            [&](Ref<DOMFormData> state) {
+                args.append(toJS(lexicalGlobalObject, globalObject, WTFMove(state)));
+            },
+            [&](const String& state) {
+                args.append(jsString(vm, state));
+            },
+            [&](Ref<File>) {
+                ASSERT_NOT_REACHED();
+            },
+            [](std::nullptr_t) {
+                ASSERT_NOT_REACHED();
+            }
+        );
 
         args.append(jsNontrivialString(vm, "restore"_s));
     });

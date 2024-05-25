@@ -46,19 +46,19 @@ public:
 
     virtual ~MediaKeyMessageEvent();
 
-    static Ref<MediaKeyMessageEvent> create(const AtomString& type, const MediaKeyMessageEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<MediaKeyMessageEvent> create(const AtomString& type, MediaKeyMessageEventInit&& init, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new MediaKeyMessageEvent(type, initializer, isTrusted));
+        return adoptRef(*new MediaKeyMessageEvent(type, WTFMove(init), isTrusted));
     }
 
     Type messageType() const { return m_messageType; }
-    RefPtr<JSC::ArrayBuffer> message() const;
+    Ref<JSC::ArrayBuffer> message() const;
 
 private:
-    MediaKeyMessageEvent(const AtomString&, const MediaKeyMessageEventInit&, IsTrusted);
+    MediaKeyMessageEvent(const AtomString&, MediaKeyMessageEventInit&&, IsTrusted);
 
     MediaKeyMessageType m_messageType;
-    RefPtr<JSC::ArrayBuffer> m_message;
+    Ref<JSC::ArrayBuffer> m_message;
 };
 
 } // namespace WebCore

@@ -84,8 +84,7 @@ void GPURenderBundleEncoder::drawIndexedIndirect(const GPUBuffer& indirectBuffer
     m_backing->drawIndexedIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
-void GPURenderBundleEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bindGroup,
-    std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets)
+void GPURenderBundleEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bindGroup, Vector<GPUBufferDynamicOffset>&& dynamicOffsets)
 {
     m_backing->setBindGroup(index, bindGroup.backing(), WTFMove(dynamicOffsets));
 }

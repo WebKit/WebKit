@@ -244,7 +244,7 @@ protected:
         Ref<RTCRtpReceiver> receiver;
         Ref<MediaStreamTrack> track;
         Vector<Ref<MediaStream>> streams;
-        RefPtr<RTCRtpTransceiver> transceiver;
+        Ref<RTCRtpTransceiver> transceiver;
     };
     void addPendingTrackEvent(PendingTrackEvent&&);
 

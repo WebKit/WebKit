@@ -46,11 +46,10 @@ public:
     struct Init {
         AudioSampleFormat format { AudioSampleFormat::U8 };
         float sampleRate;
-        int64_t timestamp { 0 };
-
-        BufferSource data;
         size_t numberOfFrames;
         size_t numberOfChannels;
+        int64_t timestamp { 0 };
+        BufferSource data;
     };
 
     static ExceptionOr<Ref<WebCodecsAudioData>> create(ScriptExecutionContext&, Init&&);

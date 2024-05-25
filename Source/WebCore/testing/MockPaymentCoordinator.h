@@ -55,7 +55,7 @@ public:
 
     void setCanMakePayments(bool canMakePayments) { m_canMakePayments = canMakePayments; }
     void setCanMakePaymentsWithActiveCard(bool canMakePaymentsWithActiveCard) { m_canMakePaymentsWithActiveCard = canMakePaymentsWithActiveCard; }
-    void setShippingAddress(MockPaymentAddress&& shippingAddress) { m_shippingAddress = WTFMove(shippingAddress); }
+    void setShippingAddress(MockPaymentAddress&& shippingAddress) { m_shippingAddress = shippingAddress.toApplePayPaymentContact(); }
     void changeShippingOption(String&& shippingOption);
     void changePaymentMethod(ApplePayPaymentMethod&&);
 #if ENABLE(APPLE_PAY_COUPON_CODE)

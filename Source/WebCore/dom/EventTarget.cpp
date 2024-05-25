@@ -107,7 +107,7 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
     if (options.signal) {
         options.signal->addAlgorithm([weakThis = WeakPtr { *this }, eventType, listener = WeakPtr { listener }, capture = options.capture](JSC::JSValue) {
             if (weakThis && listener)
-                Ref { *weakThis }->removeEventListener(eventType, *listener, capture);
+                Ref { *weakThis }->removeEventListener(eventType, *listener, { .capture = capture });
         });
     }
 
@@ -126,7 +126,7 @@ void EventTarget::addEventListenerForBindings(const AtomString& eventType, RefPt
     auto visitor = WTF::makeVisitor([&](const AddEventListenerOptions& options) {
         addEventListener(eventType, listener.releaseNonNull(), options);
     }, [&](bool capture) {
-        addEventListener(eventType, listener.releaseNonNull(), capture);
+        addEventListener(eventType, listener.releaseNonNull(), { { .capture = capture } });
     });
 
     std::visit(visitor, variant);
@@ -137,11 +137,14 @@ void EventTarget::removeEventListenerForBindings(const AtomString& eventType, Re
     if (!listener)
         return;
 
-    auto visitor = WTF::makeVisitor([&](const EventListenerOptions& options) {
-        removeEventListener(eventType, *listener, options);
-    }, [&](bool capture) {
-        removeEventListener(eventType, *listener, capture);
-    });
+    auto visitor = WTF::makeVisitor(
+        [&](const EventListenerOptions& options) {
+            removeEventListener(eventType, *listener, options);
+        },
+        [&](bool capture) {
+            removeEventListener(eventType, *listener, { .capture = capture });
+        }
+    );
 
     std::visit(visitor, variant);
 }
@@ -168,7 +171,7 @@ void EventTarget::setAttributeEventListener(const AtomString& eventType, JSC::JS
     RefPtr existingListener = attributeEventListener(eventType, isolatedWorld);
     if (!listener.isObject()) {
         if (existingListener)
-            removeEventListener(eventType, *existingListener, false);
+            removeEventListener(eventType, *existingListener, { .capture = false });
     } else if (existingListener) {
         bool capture = false;
 
@@ -187,7 +190,7 @@ bool EventTarget::setAttributeEventListener(const AtomString& eventType, RefPtr<
     RefPtr existingListener = attributeEventListener(eventType, isolatedWorld);
     if (!listener) {
         if (existingListener)
-            removeEventListener(eventType, *existingListener, false);
+            removeEventListener(eventType, *existingListener, { .capture = false });
         return false;
     }
     if (existingListener) {
@@ -353,7 +356,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
 
         // Do this before invocation to avoid reentrancy issues.
         if (registeredListener->isOnce())
-            removeEventListener(event.type(), callback, registeredListener->useCapture());
+            removeEventListener(event.type(), callback, { .capture = registeredListener->useCapture() });
 
         if (registeredListener->isPassive())
             event.setInPassiveListener(true);

@@ -207,7 +207,7 @@ RefPtr<NavigationAPIMethodTracker> Navigation::maybeSetUpcomingNonTraversalTrack
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#add-an-upcoming-traverse-api-method-tracker
-RefPtr<NavigationAPIMethodTracker> Navigation::addUpcomingTrarveseAPIMethodTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, const String& key, JSC::JSValue info)
+RefPtr<NavigationAPIMethodTracker> Navigation::addUpcomingTraverseAPIMethodTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, const String& key, JSC::JSValue info)
 {
     RefPtr apiMethodTracker = NavigationAPIMethodTracker::create(WTFMove(committed), WTFMove(finished), WTFMove(info), nullptr);
     apiMethodTracker->key = key;
@@ -299,7 +299,7 @@ Navigation::Result Navigation::performTraversal(const String& key, Navigation::O
     if (auto existingMethodTracker = m_upcomingTraverseMethodTrackers.getOptional(key))
         return apiMethodTrackerDerivedResult(*existingMethodTracker);
 
-    RefPtr apiMethodTracker = addUpcomingTrarveseAPIMethodTracker(WTFMove(committed), WTFMove(finished), key, options.info);
+    RefPtr apiMethodTracker = addUpcomingTraverseAPIMethodTracker(WTFMove(committed), WTFMove(finished), key, options.info);
 
     // FIXME: 11. Let sourceSnapshotParams be the result of snapshotting source snapshot params given document.
     // FIXME: 12. Append the following session history traversal steps to traversable
@@ -372,7 +372,7 @@ ExceptionOr<void> Navigation::updateCurrentEntry(UpdateCurrentEntryOptions&& opt
     auto currentEntryChangeEvent = NavigationCurrentEntryChangeEvent::create(eventNames().currententrychangeEvent, {
         { false, false, false },
         std::nullopt,
-        current
+        current.releaseNonNull()
     });
     dispatchEvent(currentEntryChangeEvent);
 
@@ -456,7 +456,7 @@ void Navigation::updateForNavigation(Ref<HistoryItem>&& item, NavigationNavigati
         notifyCommittedToEntry(m_ongoingAPIMethodTracker.get(), currentEntry(), navigationType);
 
     auto currentEntryChangeEvent = NavigationCurrentEntryChangeEvent::create(eventNames().currententrychangeEvent, {
-        { false, false, false }, navigationType, oldCurrentEntry
+        { false, false, false }, navigationType, oldCurrentEntry.releaseNonNull()
     });
     dispatchEvent(currentEntryChangeEvent);
 
@@ -557,7 +557,7 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     auto exception = Exception(ExceptionCode::AbortError, "Navigation aborted"_s);
     auto domException = createDOMException(globalObject, exception.isolatedCopy());
 
-    event.signal()->signalAbort(domException);
+    event.signal().signalAbort(domException);
 
     m_ongoingNavigateEvent = nullptr;
 
@@ -604,14 +604,14 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
     auto init = NavigateEvent::Init {
         { false, canBeCanceled, false },
         navigationType,
-        destination.ptr(),
+        destination,
+        canIntercept,
+        UserGestureIndicator::processingUserGesture(document.get()),
+        hashChange,
         abortController->protectedSignal(),
         nullptr, // FIXME: formData
         downloadRequestFilename,
         info,
-        canIntercept,
-        UserGestureIndicator::processingUserGesture(document.get()),
-        hashChange,
         document->page() && document->page()->isInSwipeAnimation(),
     };
 
@@ -619,7 +619,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
     if (apiMethodTracker)
         apiMethodTracker->info = JSC::jsUndefined();
 
-    Ref event = NavigateEvent::create(eventNames().navigateEvent, init, abortController.get());
+    Ref event = NavigateEvent::create(eventNames().navigateEvent, WTFMove(init), abortController.get());
     m_ongoingNavigateEvent = event.ptr();
     m_focusChangedDuringOnoingNavigation = false;
     m_suppressNormalScrollRestorationDuringOngoingNavigation = false;
@@ -634,7 +634,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
     if (event->defaultPrevented()) {
         // FIXME: If navigationType is "traverse", then consume history-action user activation.
-        if (!event->signal()->aborted())
+        if (!event->signal().aborted())
             abortOngoingNavigation(event);
         else
             m_ongoingNavigateEvent = nullptr;
@@ -662,7 +662,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
     }
 
     if (endResultIsSameDocument) {
-        Vector<RefPtr<DOMPromise>> promiseList;
+        Vector<Ref<DOMPromise>> promiseList;
         bool failure = false;
 
         for (auto& handler : event->handlers()) {

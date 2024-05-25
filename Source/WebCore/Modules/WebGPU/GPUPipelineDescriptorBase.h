@@ -29,23 +29,25 @@
 #include "GPUObjectDescriptorBase.h"
 #include "GPUPipelineLayout.h"
 #include "WebGPUPipelineDescriptorBase.h"
-
 #include <variant>
 
 namespace WebCore {
 
 using GPULayoutMode = std::variant<
-    RefPtr<GPUPipelineLayout>,
+    Ref<GPUPipelineLayout>,
     GPUAutoLayoutMode
 >;
 
 static WebGPU::PipelineLayout& convertPipelineLayoutToBacking(const GPULayoutMode& layout, const Ref<GPUPipelineLayout>& autoLayout)
 {
-    return *WTF::switchOn(layout, [](auto pipelineLayout) {
-        return &pipelineLayout->backing();
-    }, [&autoLayout](GPUAutoLayoutMode) {
-        return &autoLayout->backing();
-    });
+    return *WTF::switchOn(layout,
+        [](Ref<GPUPipelineLayout> pipelineLayout) {
+            return &pipelineLayout->backing();
+        },
+        [&autoLayout](GPUAutoLayoutMode) {
+            return &autoLayout->backing();
+        }
+    );
 }
 
 struct GPUPipelineDescriptorBase : public GPUObjectDescriptorBase {
@@ -57,7 +59,7 @@ struct GPUPipelineDescriptorBase : public GPUObjectDescriptorBase {
         };
     }
 
-    GPULayoutMode layout { nullptr };
+    GPULayoutMode layout;
 };
 
 }

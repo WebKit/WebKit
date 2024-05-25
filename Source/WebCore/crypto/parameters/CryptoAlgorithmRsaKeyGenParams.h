@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmRsaKeyGenParamsInit.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <wtf/Vector.h>
 
@@ -35,6 +36,13 @@ class CryptoAlgorithmRsaKeyGenParams : public CryptoAlgorithmParameters {
 public:
     size_t modulusLength;
     RefPtr<Uint8Array> publicExponent;
+
+    CryptoAlgorithmRsaKeyGenParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmRsaKeyGenParamsInit init)
+        : CryptoAlgorithmParameters { WTFMove(identifier), WTFMove(init) }
+        , modulusLength { WTFMove(init.modulusLength) }
+        , publicExponent { WTFMove(init.publicExponent) }
+    {
+    }
 
     Class parametersClass() const override { return Class::RsaKeyGenParams; }
 

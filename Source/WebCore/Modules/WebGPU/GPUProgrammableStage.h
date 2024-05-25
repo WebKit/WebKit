@@ -43,13 +43,13 @@ struct GPUProgrammableStage {
         return {
             module->backing(),
             entryPoint,
-            constants,
+            constants.value_or(Vector<KeyValuePair<String, GPUPipelineConstantValue>> { }),
         };
     }
 
     WeakPtr<GPUShaderModule> module;
     std::optional<String> entryPoint;
-    Vector<KeyValuePair<String, GPUPipelineConstantValue>> constants;
+    std::optional<Vector<KeyValuePair<String, GPUPipelineConstantValue>>> constants;
 };
 
 }

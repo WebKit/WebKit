@@ -48,34 +48,34 @@ public:
         std::optional<DOMRectInit> rootBounds;
         DOMRectInit boundingClientRect;
         DOMRectInit intersectionRect;
-        double intersectionRatio;
-        RefPtr<Element> target;
         bool isIntersecting;
+        double intersectionRatio;
+        Ref<Element> target;
     };
 
-    static Ref<IntersectionObserverEntry> create(const Init& init)
+    static Ref<IntersectionObserverEntry> create(Init&& init)
     {
-        return adoptRef(*new IntersectionObserverEntry(init));
+        return adoptRef(*new IntersectionObserverEntry(WTFMove(init)));
     }
     
     double time() const { return m_time; }
     DOMRectReadOnly* rootBounds() const { return m_rootBounds.get(); }
-    DOMRectReadOnly* boundingClientRect() const { return m_boundingClientRect.get(); }
-    DOMRectReadOnly* intersectionRect() const { return m_intersectionRect.get(); }
-    Element* target() const { return m_target.get(); }
+    DOMRectReadOnly& boundingClientRect() const { return m_boundingClientRect; }
+    DOMRectReadOnly& intersectionRect() const { return m_intersectionRect; }
+    Element& target() { return m_target; }
 
     bool isIntersecting() const { return m_isIntersecting; }
     double intersectionRatio() const { return m_intersectionRatio; }
 
 private:
-    IntersectionObserverEntry(const Init&);
+    IntersectionObserverEntry(Init&&);
 
     double m_time { 0 };
     RefPtr<DOMRectReadOnly> m_rootBounds;
-    RefPtr<DOMRectReadOnly> m_boundingClientRect;
-    RefPtr<DOMRectReadOnly> m_intersectionRect;
+    Ref<DOMRectReadOnly> m_boundingClientRect;
+    Ref<DOMRectReadOnly> m_intersectionRect;
     double m_intersectionRatio { 0 };
-    RefPtr<Element> m_target;
+    Ref<Element> m_target;
     bool m_isIntersecting { false };
 };
 

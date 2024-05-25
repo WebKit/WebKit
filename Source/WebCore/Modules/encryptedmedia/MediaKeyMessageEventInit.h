@@ -37,16 +37,8 @@
 namespace WebCore {
 
 struct MediaKeyMessageEventInit : EventInit {
-    MediaKeyMessageEventInit() = default;
-
-    MediaKeyMessageEventInit(MediaKeyMessageType messageType, RefPtr<JSC::ArrayBuffer>&& message)
-        : EventInit()
-        , messageType(messageType)
-        , message(WTFMove(message))
-    { }
-
     MediaKeyMessageType messageType;
-    RefPtr<JSC::ArrayBuffer> message;
+    Ref<JSC::ArrayBuffer> message;
 };
 
 } // namespace WebCore

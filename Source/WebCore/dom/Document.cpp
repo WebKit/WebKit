@@ -5357,7 +5357,7 @@ void Document::adjustFocusedNodeOnNodeRemoval(Node& node, NodeRemoval nodeRemova
         // FIXME: We should avoid synchronously updating the style inside setFocusedElement.
         // FIXME: Object elements should avoid loading a frame synchronously in a post style recalc callback.
         SubframeLoadingDisabler disabler(dynamicDowncast<ContainerNode>(node));
-        setFocusedElement(nullptr, { { }, { }, FocusRemovalEventsMode::DoNotDispatch, { }, { } });
+        setFocusedElement(nullptr, { .removalEventsMode = FocusRemovalEventsMode::DoNotDispatch });
         // Set the focus navigation starting node to the previous focused element so that
         // we can fallback to the siblings or parent node for the next search.
         // Also we need to call removeFocusNavigationNodeOfSubtree after this function because
@@ -6917,7 +6917,7 @@ static Editor::Command command(Document* document, const String& commandName, bo
         userInterface ? EditorCommandSource::DOMWithUserInterface : EditorCommandSource::DOM);
 }
 
-ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const std::variant<String, RefPtr<TrustedHTML>>& value)
+ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const std::variant<String, Ref<TrustedHTML>>& value)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
         return Exception { ExceptionCode::InvalidStateError, "execCommand is only supported on HTML documents."_s };
@@ -6928,7 +6928,7 @@ ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInte
                 return String(str);
             return trustedTypeCompliantString(TrustedType::TrustedHTML, *scriptExecutionContext(), str, "Document execCommand"_s);
         },
-        [](const RefPtr<TrustedHTML>& trustedHtml) -> ExceptionOr<String> {
+        [](const Ref<TrustedHTML>& trustedHtml) -> ExceptionOr<String> {
             return trustedHtml->toString();
         }
     );
@@ -7618,19 +7618,19 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
 
 #if ENABLE(WEBGL)
     if (RefPtr renderingContext = dynamicDowncast<WebGLRenderingContext>(*context))
-        return RenderingContext { WTFMove(renderingContext) };
+        return RenderingContext { renderingContext.releaseNonNull() };
 
     if (RefPtr renderingContext = dynamicDowncast<WebGL2RenderingContext>(*context))
-        return RenderingContext { WTFMove(renderingContext) };
+        return RenderingContext { renderingContext.releaseNonNull() };
 #endif
 
     if (RefPtr renderingContext = dynamicDowncast<ImageBitmapRenderingContext>(*context))
-        return RenderingContext { WTFMove(renderingContext) };
+        return RenderingContext { renderingContext.releaseNonNull() };
 
-    if (RefPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(*context))
-        return RenderingContext { WTFMove(gpuCanvasContext) };
+    if (RefPtr renderingContext = dynamicDowncast<GPUCanvasContext>(*context))
+        return RenderingContext { renderingContext.releaseNonNull() };
 
-    return RenderingContext { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*context) } };
+    return RenderingContext { downcast<CanvasRenderingContext2D>(*context) };
 }
 
 HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)

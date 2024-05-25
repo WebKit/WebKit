@@ -69,8 +69,7 @@ public:
     void drawIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset);
     void drawIndexedIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset);
 
-    void setBindGroup(GPUIndex32, const GPUBindGroup&,
-        std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets);
+    void setBindGroup(GPUIndex32, const GPUBindGroup&, Vector<GPUBufferDynamicOffset>&& dynamicOffsets);
 
     ExceptionOr<void> setBindGroup(GPUIndex32, const GPUBindGroup&,
         const Uint32Array& dynamicOffsetsData,

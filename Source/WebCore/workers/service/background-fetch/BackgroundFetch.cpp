@@ -467,7 +467,7 @@ void BackgroundFetch::doStore(CompletionHandler<void(BackgroundFetchStore::Store
     encoder << m_identifier;
     encoder << m_options.downloadTotal;
     encoder << m_options.title;
-    encoder << m_options.icons;
+    encoder << m_options.icons.value_or(Vector<ImageResource> { });
 
     encoder << m_pausedFlag;
 
@@ -537,7 +537,7 @@ std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<cons
     if (!pausedFlag)
         return nullptr;
 
-    BackgroundFetchOptions options { WTFMove(*icons), WTFMove(*title), *downloadTotal };
+    BackgroundFetchOptions options { { WTFMove(*icons), WTFMove(*title) }, *downloadTotal };
     auto fetch = makeUnique<BackgroundFetch>(*registration, WTFMove(*identifier), WTFMove(options), WTFMove(store), WTFMove(notificationCallback), *pausedFlag);
 
     std::optional<uint64_t> recordSize;

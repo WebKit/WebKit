@@ -27,9 +27,8 @@
 
 [
     EnabledBySetting=ShapeDetection,
-    JSGenerateToJSObject
-]
-dictionary Landmark {
+    JSGenerateToJSObject,
+] dictionary Landmark {
     required FrozenArray<Point2D> locations;
     LandmarkType type;
 };

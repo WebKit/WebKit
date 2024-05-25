@@ -882,7 +882,7 @@ struct WebCore::ShareData {
     String title;
     String text;
     String url;
-    [NotSerialized] Vector<Ref<WebCore::File>> files;
+    [NotSerialized] std::optional<Vector<Ref<WebCore::File>>> files;
 };
 
 enum class WebCore::ShareDataOriginator : bool
@@ -1584,7 +1584,7 @@ enum class WebCore::WebLockMode : bool;
 
 using WebCore::AuthenticatorResponseDataSerializableForm = std::variant<std::nullptr_t, WebCore::AuthenticatorResponseBaseData, WebCore::AuthenticatorAttestationResponseData, WebCore::AuthenticatorAssertionResponseData>;
 
-using WebCore::PointerID = uint32_t;
+using WebCore::PointerID = int32_t;
 
 struct WebCore::AuthenticatorResponseData {
     WebCore::AuthenticatorResponseDataSerializableForm getSerializableForm();
@@ -1608,13 +1608,13 @@ struct WebCore::AuthenticatorResponseData {
 
 [LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
-    [NotSerialized] bool credProps;
+    [NotSerialized] std::optional<bool> credProps;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::PRFInputs> prf;
 }
 
 [Nested] struct WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput {
-    bool rk;
+    std::optional<bool> rk;
 };
 
 [Nested] struct WebCore::AuthenticationExtensionsClientOutputs::LargeBlobOutputs {
@@ -1669,7 +1669,7 @@ struct WebCore::AuthenticationExtensionsClientOutputs {
 struct WebCore::PublicKeyCredentialDescriptor {
     WebCore::PublicKeyCredentialType type;
     WebCore::BufferSource id;
-    Vector<WebCore::AuthenticatorTransport> transports;
+    std::optional<Vector<WebCore::AuthenticatorTransport>> transports;
 };
 #endif // ENABLE(WEB_AUTHN)
 
@@ -3135,7 +3135,7 @@ struct WebCore::CDMKeySystemConfiguration {
     Vector<WebCore::CDMMediaCapability> videoCapabilities;
     WebCore::CDMRequirement distinctiveIdentifier;
     WebCore::CDMRequirement persistentState;
-    Vector<WebCore::CDMSessionType> sessionTypes;
+    std::optional<Vector<WebCore::CDMSessionType>> sessionTypes;
 }
 #endif // ENABLE(ENCRYPTED_MEDIA)
 
@@ -4310,9 +4310,12 @@ struct WebCore::BackgroundFetchRecordInformation {
     String referrer;
 };
 
-struct WebCore::BackgroundFetchOptions {
-    Vector<WebCore::ImageResource> icons;
+struct WebCore::BackgroundFetchUIOptions {
+    std::optional<Vector<WebCore::ImageResource>> icons;
     String title;
+};
+
+struct WebCore::BackgroundFetchOptions : WebCore::BackgroundFetchUIOptions {
     uint64_t downloadTotal;
 };
 
@@ -6277,7 +6280,7 @@ class WebCore::Credential {
 #if ENABLE(GPU_PROCESS)
 header: <WebCore/BarcodeDetectorOptionsInterface.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ShapeDetection::BarcodeDetectorOptions {
-    Vector<WebCore::ShapeDetection::BarcodeFormat> formats;
+    std::optional<Vector<WebCore::ShapeDetection::BarcodeFormat>> formats;
 };
 
 header: <WebCore/BarcodeFormatInterface.h>
@@ -6949,8 +6952,8 @@ struct WebCore::VideoConfiguration {
     uint64_t bitrate;
     double framerate;
     std::optional<bool> alphaChannel;
-    std::optional<WebCore::ColorGamut> colorGamut;
     std::optional<WebCore::HdrMetadataType> hdrMetadataType;
+    std::optional<WebCore::ColorGamut> colorGamut;
     std::optional<WebCore::TransferFunction> transferFunction;
 }
 

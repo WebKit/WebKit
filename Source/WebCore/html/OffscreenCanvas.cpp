@@ -236,10 +236,10 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
             auto scope = DECLARE_THROW_SCOPE(state.vm());
             auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
             RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
-            m_context = OffscreenCanvasRenderingContext2D::create(*this, WTFMove(settings));
+            m_context = OffscreenCanvasRenderingContext2D::create(*this, settings.releaseReturnValue());
         }
         if (RefPtr context = dynamicDowncast<OffscreenCanvasRenderingContext2D>(m_context.get()))
-            return { { WTFMove(context) } };
+            return { { context.releaseNonNull() } };
         return { { std::nullopt } };
     }
     if (contextType == RenderingContextType::Bitmaprenderer) {
@@ -247,11 +247,11 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
             auto scope = DECLARE_THROW_SCOPE(state.vm());
             auto settings = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
             RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
-            m_context = ImageBitmapRenderingContext::create(*this, WTFMove(settings));
+            m_context = ImageBitmapRenderingContext::create(*this, settings.releaseReturnValue());
             downcast<ImageBitmapRenderingContext>(m_context.get())->transferFromImageBitmap(nullptr);
         }
         if (RefPtr context = dynamicDowncast<ImageBitmapRenderingContext>(m_context.get()))
-            return { { WTFMove(context) } };
+            return { { context.releaseNonNull() } };
         return { { std::nullopt } };
     }
     if (contextType == RenderingContextType::Webgpu) {
@@ -271,7 +271,7 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
             }
         }
         if (RefPtr context = dynamicDowncast<GPUCanvasContext>(m_context.get()))
-            return { { WTFMove(context) } };
+            return { { context.releaseNonNull() } };
 #endif
         return { { std::nullopt } };
     }
@@ -284,14 +284,14 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
             RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
             auto* scriptExecutionContext = this->scriptExecutionContext();
             if (shouldEnableWebGL(scriptExecutionContext->settingsValues(), is<WorkerGlobalScope>(scriptExecutionContext)))
-                m_context = WebGLRenderingContextBase::create(*this, attributes, webGLVersion);
+                m_context = WebGLRenderingContextBase::create(*this, attributes.releaseReturnValue(), webGLVersion);
         }
         if (webGLVersion == WebGLVersion::WebGL1) {
             if (RefPtr context = dynamicDowncast<WebGLRenderingContext>(m_context.get()))
-                return { { WTFMove(context) } };
+                return { { context.releaseNonNull() } };
         } else {
             if (RefPtr context = dynamicDowncast<WebGL2RenderingContext>(m_context.get()))
-                return { { WTFMove(context) } };
+                return { { context.releaseNonNull() } };
         }
         return { { std::nullopt } };
     }

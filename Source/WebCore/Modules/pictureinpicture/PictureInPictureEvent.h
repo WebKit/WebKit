@@ -38,9 +38,8 @@ class PictureInPictureEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(PictureInPictureEvent);
 public:
     struct Init : EventInit {
-        RefPtr<PictureInPictureWindow> pictureInPictureWindow;
+        Ref<PictureInPictureWindow> pictureInPictureWindow;
     };
-
     static Ref<PictureInPictureEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
 
     PictureInPictureWindow& pictureInPictureWindow() const { return m_pictureInPictureWindow.get(); }

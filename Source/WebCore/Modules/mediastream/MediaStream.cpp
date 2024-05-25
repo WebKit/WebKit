@@ -213,7 +213,7 @@ void MediaStream::didAddTrack(MediaStreamTrackPrivate& trackPrivate)
 void MediaStream::didRemoveTrack(MediaStreamTrackPrivate& trackPrivate)
 {
     if (auto track = internalTakeTrack(trackPrivate.id()))
-        dispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
+        dispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, Event::CanBubble::No, Event::IsCancelable::No, track.releaseNonNull()));
 }
 
 void MediaStream::addTrackFromPlatform(Ref<MediaStreamTrack>&& track)

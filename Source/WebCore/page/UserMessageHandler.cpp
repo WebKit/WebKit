@@ -43,7 +43,7 @@ UserMessageHandler::UserMessageHandler(LocalFrame& frame, UserMessageHandlerDesc
 
 UserMessageHandler::~UserMessageHandler() = default;
 
-ExceptionOr<void> UserMessageHandler::postMessage(RefPtr<SerializedScriptValue>&& value, Ref<DeferredPromise>&& promise)
+ExceptionOr<void> UserMessageHandler::postMessage(Ref<SerializedScriptValue>&& value, Ref<DeferredPromise>&& promise)
 {
     // Check to see if the descriptor has been removed. This can happen if the host application has
     // removed the named message handler at the WebKit2 API level.
@@ -52,7 +52,7 @@ ExceptionOr<void> UserMessageHandler::postMessage(RefPtr<SerializedScriptValue>&
         return Exception { ExceptionCode::InvalidAccessError };
     }
 
-    m_descriptor->didPostMessage(*this, value.get(), [promise = WTFMove(promise)](SerializedScriptValue* result, const String& errorMessage) {
+    m_descriptor->didPostMessage(*this, value.ptr(), [promise = WTFMove(promise)](SerializedScriptValue* result, const String& errorMessage) {
         auto* globalObject = promise->globalObject();
         if (!globalObject)
             return;

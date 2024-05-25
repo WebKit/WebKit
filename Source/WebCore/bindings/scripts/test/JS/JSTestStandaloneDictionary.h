@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-template<> WEBCORE_EXPORT DictionaryImplName convertDictionary<DictionaryImplName>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT ConversionResult<IDLDictionary<DictionaryImplName>> convertDictionary<DictionaryImplName>(JSC::JSGlobalObject&, JSC::JSValue);
 
 WEBCORE_EXPORT JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, const DictionaryImplName&);
 

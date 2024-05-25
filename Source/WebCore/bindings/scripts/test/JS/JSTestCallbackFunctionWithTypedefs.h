@@ -51,4 +51,7 @@ private:
 JSC::JSValue toJS(TestCallbackFunctionWithTypedefs&);
 inline JSC::JSValue toJS(TestCallbackFunctionWithTypedefs* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
+template<> struct JSDOMCallbackConverterTraits<JSTestCallbackFunctionWithTypedefs> {
+    using Base = TestCallbackFunctionWithTypedefs;
+};
 } // namespace WebCore

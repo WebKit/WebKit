@@ -42,7 +42,7 @@ public:
     JSCallbackDataStrong* callbackData() { return m_data; }
 
     // Functions
-    CallbackResult<typename IDLDOMString::ImplementationType> handleEvent(FixedVector<typename VariadicConverter<IDLAny>::Item>&& arguments) override;
+    CallbackResult<typename IDLDOMString::ImplementationType> handleEvent(VariadicArguments<IDLAny>&& arguments) override;
 
 private:
     JSTestCallbackFunctionWithVariadic(JSC::JSObject*, JSDOMGlobalObject*);
@@ -53,4 +53,7 @@ private:
 JSC::JSValue toJS(TestCallbackFunctionWithVariadic&);
 inline JSC::JSValue toJS(TestCallbackFunctionWithVariadic* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
+template<> struct JSDOMCallbackConverterTraits<JSTestCallbackFunctionWithVariadic> {
+    using Base = TestCallbackFunctionWithVariadic;
+};
 } // namespace WebCore

@@ -54,7 +54,7 @@ public:
 
     struct Init {
         WebCodecsEncodedVideoChunkType type { WebCodecsEncodedVideoChunkType::Key };
-        int64_t timestamp { 0 };
+        std::optional<int64_t> timestamp { 0 };
         std::optional<uint64_t> duration;
         BufferSource data;
     };

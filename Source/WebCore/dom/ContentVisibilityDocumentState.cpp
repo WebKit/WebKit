@@ -56,10 +56,8 @@ private:
     {
         ASSERT(!entries.isEmpty());
 
-        for (auto& entry : entries) {
-            if (RefPtr element = entry->target())
-                element->document().contentVisibilityDocumentState().updateViewportProximity(*element, entry->isIntersecting() ? ViewportProximity::Near : ViewportProximity::Far);
-        }
+        for (auto& entry : entries)
+            entry->target().document().contentVisibilityDocumentState().updateViewportProximity(entry->target(), entry->isIntersecting() ? ViewportProximity::Near : ViewportProximity::Far);
         return { };
     }
 
@@ -92,7 +90,7 @@ IntersectionObserver* ContentVisibilityDocumentState::intersectionObserver(Docum
 {
     if (!m_observer) {
         auto callback = ContentVisibilityIntersectionObserverCallback::create(document);
-        IntersectionObserver::Init options { &document, { }, { } };
+        IntersectionObserver::Init options { document, { }, { } };
         auto observer = IntersectionObserver::create(document, WTFMove(callback), WTFMove(options));
         if (observer.hasException())
             return nullptr;

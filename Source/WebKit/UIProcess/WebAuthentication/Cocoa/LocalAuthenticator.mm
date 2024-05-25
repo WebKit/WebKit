@@ -93,9 +93,9 @@ constexpr std::array<uint8_t, 16> aaguid = { 0xFB, 0xFC, 0x30, 0x07, 0x15, 0x4E,
 
 constexpr char kLargeBlobMapKey[] = "largeBlob";
 
-static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
+static inline bool emptyTransportsOrContain(const std::optional<Vector<AuthenticatorTransport>>& transports, AuthenticatorTransport target)
 {
-    return transports.isEmpty() ? true : transports.contains(target);
+    return (!transports || transports->isEmpty()) ? true : transports->contains(target);
 }
 
 // A Base64 encoded string of the Credential ID is used as the key of the hash set.

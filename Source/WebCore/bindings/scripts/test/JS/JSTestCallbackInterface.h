@@ -65,6 +65,9 @@ private:
 JSC::JSValue toJS(TestCallbackInterface&);
 inline JSC::JSValue toJS(TestCallbackInterface* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
+template<> struct JSDOMCallbackConverterTraits<JSTestCallbackInterface> {
+    using Base = TestCallbackInterface;
+};
 String convertEnumerationToString(TestCallbackInterface::Enum);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestCallbackInterface::Enum);
 
@@ -72,7 +75,7 @@ template<> std::optional<TestCallbackInterface::Enum> parseEnumerationFromString
 template<> std::optional<TestCallbackInterface::Enum> parseEnumeration<TestCallbackInterface::Enum>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestCallbackInterface::Enum>();
 
-template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInterface::Dictionary>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ConversionResult<IDLDictionary<TestCallbackInterface::Dictionary>> convertDictionary<TestCallbackInterface::Dictionary>(JSC::JSGlobalObject&, JSC::JSValue);
 
 } // namespace WebCore
 

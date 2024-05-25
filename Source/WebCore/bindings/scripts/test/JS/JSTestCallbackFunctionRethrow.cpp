@@ -82,7 +82,8 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto returnValue = convert<IDLDOMString>(lexicalGlobalObject, jsResult);
     RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return { WTFMove(returnValue) };
+    ASSERT(!returnValue.hasException());
+    return { returnValue.releaseReturnValue() };
 }
 
 JSC::JSValue toJS(TestCallbackFunctionRethrow& impl)

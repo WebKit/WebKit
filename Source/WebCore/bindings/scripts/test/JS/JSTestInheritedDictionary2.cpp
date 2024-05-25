@@ -23,6 +23,7 @@
 
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertCallbacks.h"
+#include "JSDOMConvertOptional.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMGlobalObject.h"
 #include "JSVoidCallback.h"
@@ -33,7 +34,7 @@
 namespace WebCore {
 using namespace JSC;
 
-template<> TestInheritedDictionary2 convertDictionary<TestInheritedDictionary2>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> ConversionResult<IDLDictionary<TestInheritedDictionary2>> convertDictionary<TestInheritedDictionary2>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -41,43 +42,43 @@ template<> TestInheritedDictionary2 convertDictionary<TestInheritedDictionary2>(
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
         throwTypeError(&lexicalGlobalObject, throwScope);
-        return { };
+        return ConversionResultException { };
     }
-    TestInheritedDictionary2 result;
     JSValue boolMemberValue;
     if (isNullOrUndefined)
         boolMemberValue = jsUndefined();
     else {
         boolMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "boolMember"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!boolMemberValue.isUndefined()) {
-        result.boolMember = convert<IDLBoolean>(lexicalGlobalObject, boolMemberValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
+    auto boolMemberConversionResult = convert<IDLOptional<IDLBoolean>>(lexicalGlobalObject, boolMemberValue);
+    RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    ASSERT(!boolMemberConversionResult.hasException());
     JSValue callbackMemberValue;
     if (isNullOrUndefined)
         callbackMemberValue = jsUndefined();
     else {
         callbackMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "callbackMember"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!callbackMemberValue.isUndefined()) {
-        result.callbackMember = convert<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, callbackMemberValue, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
+    auto callbackMemberConversionResult = convert<IDLOptional<IDLCallbackFunction<JSVoidCallback>>>(lexicalGlobalObject, callbackMemberValue, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
+    RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    ASSERT(!callbackMemberConversionResult.hasException());
     JSValue stringMemberValue;
     if (isNullOrUndefined)
         stringMemberValue = jsUndefined();
     else {
         stringMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringMember"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!stringMemberValue.isUndefined()) {
-        result.stringMember = convert<IDLDOMString>(lexicalGlobalObject, stringMemberValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
-    return result;
+    auto stringMemberConversionResult = convert<IDLOptional<IDLDOMString>>(lexicalGlobalObject, stringMemberValue);
+    RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    ASSERT(!stringMemberConversionResult.hasException());
+    return TestInheritedDictionary2 {
+        boolMemberConversionResult.releaseReturnValue(),
+        stringMemberConversionResult.releaseReturnValue(),
+        callbackMemberConversionResult.releaseReturnValue(),
+    };
 }
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const TestInheritedDictionary2& dictionary)

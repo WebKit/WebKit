@@ -109,7 +109,7 @@ static inline double toWebRTCBitRatePriority(RTCPriorityType priority)
 GUniquePtr<GstStructure> fromRTCEncodingParameters(const RTCRtpEncodingParameters& parameters)
 {
     GUniquePtr<GstStructure> rtcParameters(gst_structure_new("encoding-parameters", "active", G_TYPE_BOOLEAN, parameters.active,
-        "rid", G_TYPE_STRING, parameters.rid.utf8().data(), "bitrate-priority", G_TYPE_DOUBLE, toWebRTCBitRatePriority(parameters.priority), nullptr));
+        "rid", G_TYPE_STRING, parameters.rid.utf8().data(), "bitrate-priority", G_TYPE_DOUBLE, toWebRTCBitRatePriority(parameters.priority.value_or(RTCPriorityType::Low)), nullptr));
 
     if (parameters.ssrc)
         gst_structure_set(rtcParameters.get(), "ssrc", G_TYPE_UINT, parameters.ssrc, nullptr);

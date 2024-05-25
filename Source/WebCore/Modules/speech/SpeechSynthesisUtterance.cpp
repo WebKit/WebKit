@@ -79,8 +79,7 @@ void SpeechSynthesisUtterance::setVoice(SpeechSynthesisVoice* voice)
     // to go from the platform voice back to the speech synthesis voice in the read property.
     m_voice = voice;
     
-    if (voice)
-        m_platformUtterance->setVoice(voice->platformVoice());
+    m_platformUtterance->setVoice(voice->platformVoice());
 }
 
 void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, unsigned long charIndex, unsigned long charLength, const String& name)
@@ -92,7 +91,14 @@ void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, unsigned lo
         return;
     }
 
-    dispatchEvent(SpeechSynthesisEvent::create(type, { this, charIndex, charLength, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), name }));
+    dispatchEvent(SpeechSynthesisEvent::create(type, SpeechSynthesisEventInit {
+        EventInit { },
+        *this,
+        charIndex,
+        charLength,
+        static_cast<float>((MonotonicTime::now() - startTime()).seconds()),
+        name
+    }));
 }
 
 void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode errorCode)
@@ -102,7 +108,17 @@ void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, Speech
         return;
     }
 
-    dispatchEvent(SpeechSynthesisErrorEvent::create(type, { { this, 0, 0, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), { } }, errorCode }));
+    dispatchEvent(SpeechSynthesisErrorEvent::create(type, SpeechSynthesisErrorEventInit {
+        SpeechSynthesisEventInit {
+            EventInit { },
+            *this,
+            0,
+            0,
+            static_cast<float>((MonotonicTime::now() - startTime()).seconds()),
+            { }
+        },
+        errorCode
+    }));
 }
 
 void SpeechSynthesisUtterance::incrementActivityCountForEventDispatch()

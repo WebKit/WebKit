@@ -75,7 +75,7 @@ Ref<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *anno
 
 PDFPluginTextAnnotation::~PDFPluginTextAnnotation()
 {
-    element()->removeEventListener(eventNames().keydownEvent, *eventListener(), false);
+    element()->removeEventListener(eventNames().keydownEvent, *eventListener(), { .capture = false });
 }
 
 Ref<Element> PDFPluginTextAnnotation::createAnnotationElement()
@@ -87,7 +87,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool isMultiline = textAnnotation.isMultiline;
 
     auto element = document.createElement(isMultiline ? textareaTag : inputTag, false);
-    element->addEventListener(eventNames().keydownEvent, *eventListener(), false);
+    element->addEventListener(eventNames().keydownEvent, *eventListener(), { { .capture = false } });
 
     auto& styledElement = downcast<StyledElement>(element.get());
 

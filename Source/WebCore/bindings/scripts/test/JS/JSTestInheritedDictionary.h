@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-template<> TestInheritedDictionary convertDictionary<TestInheritedDictionary>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ConversionResult<IDLDictionary<TestInheritedDictionary>> convertDictionary<TestInheritedDictionary>(JSC::JSGlobalObject&, JSC::JSValue);
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, const TestInheritedDictionary&);
 

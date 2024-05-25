@@ -91,8 +91,8 @@ void SVGTRefTargetEventListener::attach(RefPtr<Element>&& target)
     ASSERT(target.get());
     ASSERT(target->isConnected());
 
-    target->addEventListener(eventNames().DOMSubtreeModifiedEvent, *this, false);
-    target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, false);
+    target->addEventListener(eventNames().DOMSubtreeModifiedEvent, *this, { { .capture = false } });
+    target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, { { .capture = false } });
     m_target = WTFMove(target);
 }
 
@@ -102,8 +102,8 @@ void SVGTRefTargetEventListener::detach()
         return;
 
     RefPtr target = m_target;
-    target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, *this, false);
-    target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, false);
+    target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, *this, { .capture = false });
+    target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, { .capture = false });
     m_target = nullptr;
 }
 

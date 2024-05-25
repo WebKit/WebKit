@@ -39,12 +39,12 @@ struct Landmark {
             locations.map([] (const auto& location) {
                 return location.convertToBacking();
             }),
-            WebCore::convertToBacking(type),
+            WebCore::convertToBacking(type.value_or(LandmarkType::Eye)),
         };
     }
 
     Vector<Point2D> locations;
-    LandmarkType type { LandmarkType::Eye };
+    std::optional<LandmarkType> type { LandmarkType::Eye };
 };
 
 inline Landmark convertFromBacking(const ShapeDetection::Landmark& landmark)

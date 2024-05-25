@@ -34,33 +34,33 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrackEvent);
 
-Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<MediaStreamTrack>&& track)
+Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
+{
+    return adoptRef(*new MediaStreamTrackEvent(type, WTFMove(init), isTrusted));
+}
+
+Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<MediaStreamTrack>&& track)
 {
     return adoptRef(*new MediaStreamTrackEvent(type, canBubble, cancelable, WTFMove(track)));
 }
 
-Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : Event(EventInterfaceType::MediaStreamTrackEvent, type, WTFMove(init), isTrusted)
+    , m_track(WTFMove(init.track))
 {
-    return adoptRef(*new MediaStreamTrackEvent(type, initializer, isTrusted));
 }
 
-MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<MediaStreamTrack>&& track)
+MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<MediaStreamTrack>&& track)
     : Event(EventInterfaceType::MediaStreamTrackEvent, type, canBubble, cancelable)
     , m_track(WTFMove(track))
 {
 }
 
-MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::MediaStreamTrackEvent, type, initializer, isTrusted)
-    , m_track(initializer.track)
-{
-}
-
 MediaStreamTrackEvent::~MediaStreamTrackEvent() = default;
 
-MediaStreamTrack* MediaStreamTrackEvent::track() const
+const MediaStreamTrack& MediaStreamTrackEvent::track() const
 {
-    return m_track.get();
+    return m_track;
 }
 
 } // namespace WebCore

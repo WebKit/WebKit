@@ -25,6 +25,7 @@
 
 typedef USVString CSSOMString;
 
+// https://drafts.csswg.org/web-animations-1/#keyframeeffect
 [
     Exposed=Window,
     JSGenerateToNativeObject,
@@ -34,26 +35,32 @@ typedef USVString CSSOMString;
 
     attribute Element? target;
     attribute CSSOMString? pseudoElement;
-    attribute IterationCompositeOperation iterationComposite;
     [ImplementedAs=bindingsComposite] attribute CompositeOperation composite;
     [Custom] sequence<object> getKeyframes();
     [CallWith=CurrentGlobalObject&CurrentDocument, ImplementedAs=setBindingsKeyframes] undefined setKeyframes(object? keyframes);
+
+    // Added in WebAnimations 2 - https://drafts.csswg.org/web-animations-2/#the-keyframeeffect-interface
+    attribute IterationCompositeOperation iterationComposite;
 };
 
+// https://drafts.csswg.org/web-animations-1/#dictdef-basepropertyindexedkeyframe
 dictionary BasePropertyIndexedKeyframe {
     (sequence<double?> or double?) offset = [];
     (sequence<DOMString> or DOMString) easing = [];
     (sequence<CompositeOperationOrAuto> or CompositeOperationOrAuto) composite = [];
 };
 
+// https://drafts.csswg.org/web-animations-1/#dictdef-basecomputedkeyframe
 dictionary BaseKeyframe {
     double? offset = null;
     DOMString easing = "linear";
     CompositeOperationOrAuto composite = "auto";
 };
 
+// https://drafts.csswg.org/web-animations-1/#dictdef-basecomputedkeyframe
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary BaseComputedKeyframe {
      double? offset = null;
      double computedOffset;

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CryptoAlgorithmEcdsaParamsInit.h"
 #include "CryptoAlgorithmParameters.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
@@ -38,12 +39,23 @@ public:
     std::variant<JSC::Strong<JSC::JSObject>, String> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
 
+    CryptoAlgorithmEcdsaParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTFMove(identifier) }
+    {
+    }
+
+    CryptoAlgorithmEcdsaParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmEcdsaParamsInit init, CryptoAlgorithmIdentifier hashIdentifier)
+        : CryptoAlgorithmParameters { WTFMove(identifier), WTFMove(init) }
+        , hash { WTFMove(init.hash) }
+        , hashIdentifier { WTFMove(hashIdentifier) }
+    {
+    }
+
     Class parametersClass() const final { return Class::EcdsaParams; }
 
     CryptoAlgorithmEcdsaParams isolatedCopy() const
     {
-        CryptoAlgorithmEcdsaParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmEcdsaParams result { identifier };
         result.hashIdentifier = hashIdentifier;
 
         return result;

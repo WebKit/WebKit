@@ -51,11 +51,11 @@ TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* 
 {
 }
 
-TouchEvent::TouchEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : MouseRelatedEvent(EventInterfaceType::TouchEvent, type, initializer, isTrusted)
-    , m_touches(initializer.touches ? initializer.touches : TouchList::create())
-    , m_targetTouches(initializer.targetTouches ? initializer.targetTouches : TouchList::create())
-    , m_changedTouches(initializer.changedTouches ? initializer.changedTouches : TouchList::create())
+TouchEvent::TouchEvent(const AtomString& type, TouchEventInit&& init, IsTrusted isTrusted)
+    : MouseRelatedEvent(EventInterfaceType::TouchEvent, type, WTFMove(init), isTrusted)
+    , m_touches(init.touches ? init.touches.releaseNonNull() : TouchList::create())
+    , m_targetTouches(init.targetTouches ? init.targetTouches.releaseNonNull() : TouchList::create())
+    , m_changedTouches(init.changedTouches ? init.changedTouches.releaseNonNull() : TouchList::create())
 {
 }
 

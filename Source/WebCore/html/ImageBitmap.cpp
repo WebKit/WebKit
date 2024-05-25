@@ -354,7 +354,7 @@ Ref<ImageBitmap> ImageBitmap::createBlankImageBuffer(ScriptExecutionContext& scr
 
 // 13. Return output.
 
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<HTMLImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<HTMLImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
     // 2. If image is not completely available, then return a promise rejected with
     // an "InvalidStateError" DOMException and abort these steps.
@@ -367,7 +367,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     createCompletionHandler(scriptExecutionContext, imageElement->cachedImage(), imageElement->renderer(), WTFMove(options), rect, WTFMove(completionHandler));
 }
 
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<SVGImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<SVGImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
     createCompletionHandler(scriptExecutionContext, imageElement->cachedImage(), imageElement->renderer(), WTFMove(options), rect, WTFMove(completionHandler));
 }
@@ -463,20 +463,20 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     completionHandler(WTFMove(imageBitmap));
 }
 
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<HTMLCanvasElement>& canvasElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<HTMLCanvasElement>& canvasElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
-    createCompletionHandler(scriptExecutionContext, *canvasElement, WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
+    createCompletionHandler(scriptExecutionContext, canvasElement.get(), WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
 }
 
 #if ENABLE(OFFSCREEN_CANVAS)
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<OffscreenCanvas>& canvasElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<OffscreenCanvas>& canvasElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
-    createCompletionHandler(scriptExecutionContext, *canvasElement, WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
+    createCompletionHandler(scriptExecutionContext, canvasElement.get(), WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
 }
 #endif
 
 #if ENABLE(WEB_CODECS)
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<WebCodecsVideoFrame>& videoFrame, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<WebCodecsVideoFrame>& videoFrame, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
     if (videoFrame->isDetached()) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a detached video frame"_s });
@@ -568,7 +568,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 }
 
 #if ENABLE(VIDEO)
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<HTMLVideoElement>& video, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<HTMLVideoElement>& video, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
     // https://html.spec.whatwg.org/multipage/#dom-createimagebitmap
     // WHATWG HTML 2102913b313078cd8eeac7e81e6a8756cbd3e773
@@ -608,7 +608,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     if (!colorSpace)
         colorSpace = DestinationColorSpace::SRGB();
 
-    const bool originClean = !taintsOrigin(scriptExecutionContext.securityOrigin(), *video);
+    const bool originClean = !taintsOrigin(scriptExecutionContext.securityOrigin(), video);
 
     // FIXME: Add support for pixel formats to ImageBitmap.
     auto bitmapData = video->createBufferForPainting(outputSize, bufferRenderingMode(scriptExecutionContext), *colorSpace, PixelFormat::BGRA8);
@@ -645,12 +645,12 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 }
 #endif
 
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext&, RefPtr<CSSStyleImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext&, Ref<CSSStyleImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&& completionHandler)
 {
     completionHandler(Exception { ExceptionCode::InvalidStateError, "Not implemented"_s });
 }
 
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<ImageBitmap>& existingImageBitmap, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<ImageBitmap>& existingImageBitmap, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
     // 2. If image's [[Detached]] internal slot value is true, return a promise
     //    rejected with an "InvalidStateError" DOMException and abort these steps.
@@ -738,7 +738,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
+    static void fetch(ScriptExecutionContext& scriptExecutionContext, Ref<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
     {
         if (scriptExecutionContext.activeDOMObjectsAreStopped()) {
             completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap in a document without browsing context"_s });
@@ -756,7 +756,7 @@ public:
     }
 
 private:
-    PendingImageBitmap(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
+    PendingImageBitmap(ScriptExecutionContext& scriptExecutionContext, Ref<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
         : ActiveDOMObject(&scriptExecutionContext)
         , m_blobLoader(FileReaderLoader::ReadAsArrayBuffer, this)
         , m_blob(WTFMove(blob))
@@ -769,7 +769,7 @@ private:
     void start(ScriptExecutionContext& scriptExecutionContext)
     {
         m_pendingActivity = makePendingActivity(*this); // Prevent destruction until the load has finished.
-        m_blobLoader.start(&scriptExecutionContext, *m_blob);
+        m_blobLoader.start(&scriptExecutionContext, m_blob);
     }
 
     // ActiveDOMObject
@@ -809,7 +809,7 @@ private:
     }
 
     FileReaderLoader m_blobLoader;
-    RefPtr<Blob> m_blob;
+    Ref<Blob> m_blob;
     ImageBitmapOptions m_options;
     std::optional<IntRect> m_rect;
     ImageBitmap::ImageBitmapCompletionHandler m_completionHandler;
@@ -860,13 +860,13 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     completionHandler(WTFMove(imageBitmap));
 }
 
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<Blob>& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
     // 2. Return a new promise, but continue running these steps in parallel.
     PendingImageBitmap::fetch(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
 }
 
-void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<ImageData>& imageData, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, Ref<ImageData>& imageData, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
 {
     // 6.1. Let buffer be image's data attribute value's [[ViewedArrayBuffer]]
     //      internal slot.

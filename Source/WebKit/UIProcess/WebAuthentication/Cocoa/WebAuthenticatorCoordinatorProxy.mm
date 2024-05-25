@@ -283,11 +283,11 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(con
     RetainPtr<NSMutableArray<ASAuthorizationPlatformPublicKeyCredentialDescriptor *>> platformExcludedCredentials = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<NSMutableArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor *>> crossPlatformExcludedCredentials = adoptNS([[NSMutableArray alloc] init]);
     for (auto credential : options.excludeCredentials) {
-        if (credential.transports.contains(AuthenticatorTransport::Internal) || credential.transports.isEmpty())
+        if (!credential.transports || credential.transports->isEmpty() || credential.transports->contains(AuthenticatorTransport::Internal))
             [platformExcludedCredentials addObject:adoptNS([allocASAuthorizationPlatformPublicKeyCredentialDescriptorInstance() initWithCredentialID:toNSData(credential.id).get()]).get()];
-        if (credential.transports.isEmpty() || !credential.transports.contains(AuthenticatorTransport::Internal)) {
+        if (!credential.transports || credential.transports->isEmpty() || !credential.transports->contains(AuthenticatorTransport::Internal)) {
             RetainPtr<NSMutableArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport>> transports = adoptNS([[NSMutableArray alloc] init]);
-            for (auto transport : credential.transports) {
+            for (auto transport : *credential.transports) {
                 if (auto asTransport = toASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport(transport))
                     [transports addObject:asTransport.get()];
             }
@@ -337,16 +337,16 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(con
     return requests;
 }
 
-static inline bool isPlatformRequest(const Vector<AuthenticatorTransport>& transports)
+static inline bool isPlatformRequest(const std::optional<Vector<AuthenticatorTransport>>& transports)
 {
-    return transports.isEmpty() || transports.containsIf([](auto transport) {
+    return !transports || transports->isEmpty() || transports->containsIf([](auto transport) {
         return transport == AuthenticatorTransport::Internal || transport == AuthenticatorTransport::Hybrid;
     });
 }
 
-static inline bool isCrossPlatformRequest(const Vector<AuthenticatorTransport>& transports)
+static inline bool isCrossPlatformRequest(const std::optional<Vector<AuthenticatorTransport>>& transports)
 {
-    return transports.isEmpty() || transports.containsIf([](auto transport) {
+    return !transports || transports->isEmpty() || transports->containsIf([](auto transport) {
         return transport != AuthenticatorTransport::Internal && transport != AuthenticatorTransport::Hybrid;
     });
 }
@@ -361,9 +361,11 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
             [platformAllowedCredentials addObject:adoptNS([allocASAuthorizationPlatformPublicKeyCredentialDescriptorInstance() initWithCredentialID:toNSData(credential.id).get()]).get()];
         if (isCrossPlatformRequest(credential.transports)) {
             RetainPtr<NSMutableArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport>> transports = adoptNS([[NSMutableArray alloc] init]);
-            for (auto transport : credential.transports) {
-                if (auto asTransport = toASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport(transport))
-                    [transports addObject:asTransport.get()];
+            if (credential.transports) {
+                for (auto transport : *credential.transports) {
+                    if (auto asTransport = toASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport(transport))
+                        [transports addObject:asTransport.get()];
+                }
             }
             [crossPlatformAllowedCredentials addObject:adoptNS([allocASAuthorizationSecurityKeyPublicKeyCredentialDescriptorInstance() initWithCredentialID:toNSData(credential.id).get() transports:transports.get()]).get()];
         }
@@ -644,11 +646,11 @@ static inline RetainPtr<NSString> toNSString(AttestationConveyancePreference att
 static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(PublicKeyCredentialDescriptor descriptor)
 {
     RetainPtr<NSMutableArray<NSString *>> transports;
-    size_t transportCount = descriptor.transports.size();
+    size_t transportCount = descriptor.transports ? descriptor.transports->size() : 0;
     if (transportCount) {
         transports = adoptNS([[NSMutableArray alloc] initWithCapacity:transportCount]);
 
-        for (AuthenticatorTransport transport : descriptor.transports) {
+        for (AuthenticatorTransport transport : *descriptor.transports) {
             NSString *transportString = nil;
             switch (transport) {
             case AuthenticatorTransport::Usb:

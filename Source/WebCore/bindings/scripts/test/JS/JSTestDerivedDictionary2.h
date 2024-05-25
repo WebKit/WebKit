@@ -25,11 +25,11 @@
 
 namespace WebCore {
 
-template<> TestDerivedDictionary2 convertDictionary<TestDerivedDictionary2>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ConversionResult<IDLDictionary<TestDerivedDictionary2>> convertDictionary<TestDerivedDictionary2>(JSC::JSGlobalObject&, JSC::JSValue);
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, const TestDerivedDictionary2&);
 
-template<> TestDerivedDictionary2::Dictionary convertDictionary<TestDerivedDictionary2::Dictionary>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ConversionResult<IDLDictionary<TestDerivedDictionary2::Dictionary>> convertDictionary<TestDerivedDictionary2::Dictionary>(JSC::JSGlobalObject&, JSC::JSValue);
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, const TestDerivedDictionary2::Dictionary&);
 

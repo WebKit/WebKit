@@ -26,8 +26,8 @@
 [
     Conditional=WEB_RTC,
     JSGenerateToJSObject,
-]
-dictionary RTCEncodedAudioFrameMetadata {
+    SuppressToNative,
+] dictionary RTCEncodedAudioFrameMetadata {
     unsigned long synchronizationSource;
     sequence<unsigned long> contributingSources;
 };

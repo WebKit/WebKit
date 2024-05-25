@@ -117,7 +117,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
     }
 
     for (auto& allowCredential : allowCredentials) {
-        if (allowCredential.transports.isEmpty()) {
+        if (!allowCredential.transports || allowCredential.transports->isEmpty()) {
             result.add(AuthenticatorTransport::Internal);
             result.add(AuthenticatorTransport::Usb);
             result.add(AuthenticatorTransport::Nfc);
@@ -127,7 +127,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             break;
         }
 
-        for (const auto& transport : allowCredential.transports) {
+        for (const auto& transport : *allowCredential.transports) {
             if (transport == AuthenticatorTransport::Ble)
                 continue;
 

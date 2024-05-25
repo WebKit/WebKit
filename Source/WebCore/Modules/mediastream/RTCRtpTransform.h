@@ -40,7 +40,7 @@ class RTCRtpSender;
 class RTCRtpTransform  {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using Internal = std::variant<RefPtr<RTCRtpSFrameTransform>, RefPtr<RTCRtpScriptTransform>>;
+    using Internal = std::variant<Ref<RTCRtpSFrameTransform>, Ref<RTCRtpScriptTransform>>;
     static std::unique_ptr<RTCRtpTransform> from(std::optional<Internal>&&);
 
     explicit RTCRtpTransform(Internal&&);
@@ -59,7 +59,7 @@ public:
 
 private:
     void clearBackend();
-    void backendTransferedToNewTransform();
+    void backendTransferredToNewTransform();
 
     RefPtr<RTCRtpTransformBackend> m_backend;
     Internal m_transform;

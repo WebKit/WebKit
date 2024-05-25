@@ -1203,7 +1203,7 @@ void Element::scrollBy(const ScrollToOptions& options)
 
 void Element::scrollBy(double x, double y)
 {
-    scrollBy(ScrollToOptions(x, y));
+    scrollBy(ScrollToOptions { { }, x, y });
 }
 
 void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, ScrollSnapPointSelectionMethod snapPointSelectionMethod, std::optional<FloatSize> originalScrollDelta)
@@ -1282,7 +1282,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
 
 void Element::scrollTo(double x, double y)
 {
-    scrollTo(ScrollToOptions(x, y));
+    scrollTo(ScrollToOptions { { }, x, y });
 }
 
 static double localZoomForRenderer(const RenderElement& renderer)
@@ -1962,18 +1962,18 @@ static ExceptionOr<String> trustedTypesCompliantAttributeValue(const String attr
                 return String(string);
             return trustedTypeCompliantString(stringToTrustedType(attributeType), *(element->document().scriptExecutionContext()), string, sink);
         },
-        [&](const RefPtr<TrustedHTML>& trustedHTML) -> ExceptionOr<String> {
+        [&](const Ref<TrustedHTML>& trustedHTML) -> ExceptionOr<String> {
             if (attributeType.isNull() || attributeType == "TrustedHTML"_s)
                 return trustedHTML->toString();
             return trustedTypeCompliantString(stringToTrustedType(attributeType), *(element->document().scriptExecutionContext()), trustedHTML->toString(), sink);
         },
-        [&](const RefPtr<TrustedScript>& trustedScript) -> ExceptionOr<String> {
+        [&](const Ref<TrustedScript>& trustedScript) -> ExceptionOr<String> {
             if (attributeType.isNull() || attributeType == "TrustedScript"_s)
                 return trustedScript->toString();
             return trustedTypeCompliantString(stringToTrustedType(attributeType), *(element->document().scriptExecutionContext()), trustedScript->toString(), sink);
 
         },
-        [&](const RefPtr<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
+        [&](const Ref<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
             if (attributeType.isNull() || attributeType == "TrustedScriptURL"_s)
                 return trustedScriptURL->toString();
             return trustedTypeCompliantString(stringToTrustedType(attributeType), *(element->document().scriptExecutionContext()), trustedScriptURL->toString(), sink);

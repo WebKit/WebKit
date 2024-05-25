@@ -231,7 +231,7 @@ public:
     void setStrictRawResourceValidationPolicyDisabled(bool);
     std::optional<ResourceLoadPriority> getResourcePriority(const String& url);
 
-    using FetchObject = std::variant<RefPtr<FetchRequest>, RefPtr<FetchResponse>>;
+    using FetchObject = std::variant<Ref<FetchRequest>, Ref<FetchResponse>>;
     bool isFetchObjectContextStopped(const FetchObject&);
 
     void clearMemoryCache();
@@ -623,10 +623,10 @@ public:
 #endif
 
     struct FullscreenInsets {
-        float top { 0 };
-        float left { 0 };
-        float bottom { 0 };
-        float right { 0 };
+        std::optional<float> top { 0 };
+        std::optional<float> left { 0 };
+        std::optional<float> bottom { 0 };
+        std::optional<float> right { 0 };
     };
     void setFullscreenInsets(FullscreenInsets);
     void setFullscreenAutoHideDuration(double);
@@ -681,7 +681,7 @@ public:
     ExceptionOr<void> updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node*);
     unsigned layoutCount() const;
 
-    Ref<ArrayBuffer> serializeObject(const RefPtr<SerializedScriptValue>&) const;
+    Ref<ArrayBuffer> serializeObject(const SerializedScriptValue&) const;
     Ref<SerializedScriptValue> deserializeBuffer(ArrayBuffer&) const;
 
     bool isFromCurrentWorld(JSC::JSValue) const;
@@ -1055,20 +1055,20 @@ public:
 
     struct ImageOverlayText {
         String text;
-        RefPtr<DOMPointReadOnly> topLeft;
-        RefPtr<DOMPointReadOnly> topRight;
-        RefPtr<DOMPointReadOnly> bottomRight;
-        RefPtr<DOMPointReadOnly> bottomLeft;
+        Ref<DOMPointReadOnly> topLeft;
+        Ref<DOMPointReadOnly> topRight;
+        Ref<DOMPointReadOnly> bottomRight;
+        Ref<DOMPointReadOnly> bottomLeft;
         bool hasLeadingWhitespace { true };
 
         ~ImageOverlayText();
     };
 
     struct ImageOverlayLine {
-        RefPtr<DOMPointReadOnly> topLeft;
-        RefPtr<DOMPointReadOnly> topRight;
-        RefPtr<DOMPointReadOnly> bottomRight;
-        RefPtr<DOMPointReadOnly> bottomLeft;
+        Ref<DOMPointReadOnly> topLeft;
+        Ref<DOMPointReadOnly> topRight;
+        Ref<DOMPointReadOnly> bottomRight;
+        Ref<DOMPointReadOnly> bottomLeft;
         Vector<ImageOverlayText> children;
         bool hasTrailingNewline { true };
         bool isVertical { false };
@@ -1078,19 +1078,19 @@ public:
 
     struct ImageOverlayBlock {
         String text;
-        RefPtr<DOMPointReadOnly> topLeft;
-        RefPtr<DOMPointReadOnly> topRight;
-        RefPtr<DOMPointReadOnly> bottomRight;
-        RefPtr<DOMPointReadOnly> bottomLeft;
+        Ref<DOMPointReadOnly> topLeft;
+        Ref<DOMPointReadOnly> topRight;
+        Ref<DOMPointReadOnly> bottomRight;
+        Ref<DOMPointReadOnly> bottomLeft;
 
         ~ImageOverlayBlock();
     };
 
     struct ImageOverlayDataDetector {
-        RefPtr<DOMPointReadOnly> topLeft;
-        RefPtr<DOMPointReadOnly> topRight;
-        RefPtr<DOMPointReadOnly> bottomRight;
-        RefPtr<DOMPointReadOnly> bottomLeft;
+        Ref<DOMPointReadOnly> topLeft;
+        Ref<DOMPointReadOnly> topRight;
+        Ref<DOMPointReadOnly> bottomRight;
+        Ref<DOMPointReadOnly> bottomLeft;
 
         ~ImageOverlayDataDetector();
     };
@@ -1206,8 +1206,19 @@ public:
     unsigned primaryScreenDisplayID();
 
     bool capsLockIsOn();
-        
-    using HEVCParameterSet = WebCore::HEVCParameters;
+
+    // `HEVCParameters` is duplicated here to handle use of inline
+    // capacity of a Vector, which is not supported by the bindings.
+    struct HEVCParameterSet {
+        WebCore::HEVCParameters::Codec codec { WebCore::HEVCParameters::Codec::Hvc1 };
+        uint16_t generalProfileSpace { 0 };
+        uint16_t generalProfileIDC { 0 };
+        uint32_t generalProfileCompatibilityFlags { 0 };
+        uint8_t generalTierFlag { 0 };
+        Vector<unsigned char> generalConstraintIndicatorFlags { 0, 0, 0, 0, 0, 0 };
+        uint16_t generalLevelIDC { 0 };
+    };
+
     using HEVCParameterCodec = WebCore::HEVCParameters::Codec;
     std::optional<HEVCParameterSet> parseHEVCCodecParameters(StringView);
     String createHEVCCodecParametersString(const HEVCParameterSet& parameters);

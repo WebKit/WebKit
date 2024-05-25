@@ -36,7 +36,7 @@ class FormDataEvent : public Event {
     WTF_MAKE_ISO_ALLOCATED(FormDataEvent);
 public:
     struct Init : EventInit {
-        RefPtr<DOMFormData> formData;
+        Ref<DOMFormData> formData;
     };
         
     static Ref<FormDataEvent> create(const AtomString&, Init&&);

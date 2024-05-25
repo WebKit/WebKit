@@ -42,31 +42,32 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCTrackEvent);
 
-Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
+Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
+{
+    return adoptRef(*new RTCTrackEvent(type, WTFMove(init), isTrusted));
+}
+
+Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCRtpReceiver>&& receiver, Ref<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, Ref<RTCRtpTransceiver>&& transceiver)
 {
     return adoptRef(*new RTCTrackEvent(type, canBubble, cancelable, WTFMove(receiver), WTFMove(track), WTFMove(streams), WTFMove(transceiver)));
 }
 
-Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+RTCTrackEvent::RTCTrackEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : Event(EventInterfaceType::RTCTrackEvent, type, WTFMove(init), isTrusted)
+    , m_receiver(WTFMove(init.receiver))
+    , m_track(WTFMove(init.track))
+    , m_streams(WTFMove(init.streams))
+    , m_transceiver(WTFMove(init.transceiver))
 {
-    return adoptRef(*new RTCTrackEvent(type, initializer, isTrusted));
 }
 
-RTCTrackEvent::RTCTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
+
+RTCTrackEvent::RTCTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCRtpReceiver>&& receiver, Ref<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, Ref<RTCRtpTransceiver>&& transceiver)
     : Event(EventInterfaceType::RTCTrackEvent, type, canBubble, cancelable)
     , m_receiver(WTFMove(receiver))
     , m_track(WTFMove(track))
     , m_streams(WTFMove(streams))
     , m_transceiver(WTFMove(transceiver))
-{
-}
-
-RTCTrackEvent::RTCTrackEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::RTCTrackEvent, type, initializer, isTrusted)
-    , m_receiver(initializer.receiver)
-    , m_track(initializer.track)
-    , m_streams(initializer.streams)
-    , m_transceiver(initializer.transceiver)
 {
 }
 

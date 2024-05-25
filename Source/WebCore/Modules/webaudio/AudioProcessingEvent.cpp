@@ -41,12 +41,10 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(AudioProcessingEvent);
 
 Ref<AudioProcessingEvent> AudioProcessingEvent::create(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
 {
-    RELEASE_ASSERT(eventInitDict.inputBuffer);
-    RELEASE_ASSERT(eventInitDict.outputBuffer);
     return adoptRef(*new AudioProcessingEvent(eventType, WTFMove(eventInitDict)));
 }
 
-AudioProcessingEvent::AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, RefPtr<AudioBuffer>&& outputBuffer, double playbackTime)
+AudioProcessingEvent::AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, Ref<AudioBuffer>&& outputBuffer, double playbackTime)
     : Event(EventInterfaceType::AudioProcessingEvent, eventNames().audioprocessEvent, CanBubble::Yes, IsCancelable::No)
     , m_inputBuffer(WTFMove(inputBuffer))
     , m_outputBuffer(WTFMove(outputBuffer))
@@ -55,9 +53,9 @@ AudioProcessingEvent::AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, Re
 }
 
 AudioProcessingEvent::AudioProcessingEvent(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
-    : Event(EventInterfaceType::AudioProcessingEvent, eventType, eventInitDict, IsTrusted::No)
-    , m_inputBuffer(eventInitDict.inputBuffer.releaseNonNull())
-    , m_outputBuffer(eventInitDict.outputBuffer.releaseNonNull())
+    : Event(EventInterfaceType::AudioProcessingEvent, eventType, WTFMove(eventInitDict), IsTrusted::No)
+    , m_inputBuffer(WTFMove(eventInitDict.inputBuffer))
+    , m_outputBuffer(WTFMove(eventInitDict.outputBuffer))
     , m_playbackTime(eventInitDict.playbackTime)
 {
 }

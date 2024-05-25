@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BufferSource.h"
+#include "CryptoAlgorithmAesCtrParamsInit.h"
 #include "CryptoAlgorithmParameters.h"
 #include <wtf/Vector.h>
 
@@ -33,24 +34,36 @@ namespace WebCore {
 
 class CryptoAlgorithmAesCtrParams final : public CryptoAlgorithmParameters {
 public:
-    BufferSource counter;
+    std::optional<BufferSource> counter;
     size_t length;
+
+    CryptoAlgorithmAesCtrParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTFMove(identifier) }
+    {
+    }
+
+    CryptoAlgorithmAesCtrParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmAesCtrParamsInit init)
+        : CryptoAlgorithmParameters { WTFMove(identifier), WTFMove(init) }
+        , counter { WTFMove(init.counter) }
+        , length { WTFMove(init.length) }
+    {
+    }
 
     Class parametersClass() const final { return Class::AesCtrParams; }
 
     const Vector<uint8_t>& counterVector() const
     {
-        if (!m_counterVector.isEmpty() || !counter.length())
+        if (!m_counterVector.isEmpty() || !counter || !counter->length())
             return m_counterVector;
 
-        m_counterVector.append(counter.span());
+        if (counter)
+            m_counterVector.append(counter->span());
         return m_counterVector;
     }
 
     CryptoAlgorithmAesCtrParams isolatedCopy() const
     {
-        CryptoAlgorithmAesCtrParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmAesCtrParams result { identifier };
         result.m_counterVector = counterVector();
         result.length = length;
 

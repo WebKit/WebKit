@@ -67,6 +67,7 @@
 #include "Path2D.h"
 #include "Pattern.h"
 #include "RecordingSwizzleType.h"
+#include "SVGImageElement.h"
 #include "SVGPathUtilities.h"
 #include "StringAdaptors.h"
 #include "WebGL2RenderingContext.h"
@@ -235,7 +236,7 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(CanvasRenderingContext2DBase::StyleVariant& argument)
 {
-    return WTF::switchOn(argument, [&] (auto& value) {
+    return WTF::switchOn(argument, [&](auto& value) {
         return processArgument(value);
     });
 }
@@ -262,34 +263,25 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return {{ WTFMove(array), RecordingSwizzleType::DOMMatrix }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Element* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Element&)
 {
-    if (!argument)
-        return std::nullopt;
-
     // Elements are not serializable, so add a string as a placeholder since the actual
     // element cannot be reconstructed in the frontend.
     return {{ valueIndexForData("Element"_s), RecordingSwizzleType::None }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(HTMLImageElement* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(HTMLImageElement& argument)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ valueIndexForData(argument), RecordingSwizzleType::Image }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(ImageBitmap* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(ImageBitmap& argument)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ valueIndexForData(argument), RecordingSwizzleType::ImageBitmap }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(ImageData* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(ImageData& argument)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ valueIndexForData(argument), RecordingSwizzleType::ImageData }};
 }
 
@@ -318,11 +310,9 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return {{ JSON::Value::create(static_cast<double>(*argument)), RecordingSwizzleType::Number }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Path2D* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Path2D& argument)
 {
-    if (!argument)
-        return std::nullopt;
-    return {{ valueIndexForData(buildStringFromPath(argument->path())), RecordingSwizzleType::Path2D }};
+    return {{ valueIndexForData(buildStringFromPath(argument.path())), RecordingSwizzleType::Path2D }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(PredefinedColorSpace argument)
@@ -330,74 +320,63 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return { { valueIndexForData(convertEnumerationToString(argument)), RecordingSwizzleType::String } };
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<CanvasGradient>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<CanvasGradient>& argument)
 {
-    if (!argument)
-        return std::nullopt;
-    return {{ valueIndexForData(argument), RecordingSwizzleType::CanvasGradient }};
+    return {{ valueIndexForData(argument.get()), RecordingSwizzleType::CanvasGradient }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<CanvasPattern>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<CanvasPattern>& argument)
 {
-    if (!argument)
-        return std::nullopt;
-    return {{ valueIndexForData(argument), RecordingSwizzleType::CanvasPattern }};
+    return {{ valueIndexForData(argument.get()), RecordingSwizzleType::CanvasPattern }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<HTMLCanvasElement>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<HTMLCanvasElement>& argument)
 {
-    if (!argument)
-        return std::nullopt;
-    return {{ valueIndexForData(argument), RecordingSwizzleType::Image }};
+    return {{ valueIndexForData(argument.get()), RecordingSwizzleType::Image }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<HTMLImageElement>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<HTMLImageElement>& argument)
 {
     return processArgument(argument.get());
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<ImageBitmap>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<SVGImageElement>& argument)
 {
     return processArgument(argument.get());
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<ImageData>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<ImageBitmap>& argument)
 {
     return processArgument(argument.get());
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<JSC::ArrayBuffer>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<ImageData>& argument)
 {
-    if (!argument)
-        return std::nullopt;
+    return processArgument(argument.get());
+}
+
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<JSC::ArrayBuffer>&)
+{
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<JSC::ArrayBufferView>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<JSC::ArrayBufferView>&)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<JSC::Float32Array>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<JSC::Float32Array>&)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<JSC::Int32Array>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<JSC::Int32Array>&)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<JSC::Uint32Array>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<JSC::Uint32Array>&)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
@@ -518,19 +497,15 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return {{ JSON::Value::create(argument), RecordingSwizzleType::Boolean }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<CSSStyleImageValue>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<CSSStyleImageValue>& argument)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ valueIndexForData(argument), RecordingSwizzleType::Image }};
 }
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<OffscreenCanvas>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<OffscreenCanvas>& argument)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ valueIndexForData(argument), RecordingSwizzleType::Image }};
 }
 
@@ -538,10 +513,8 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
 
 #if ENABLE(VIDEO)
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<HTMLVideoElement>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<HTMLVideoElement>& argument)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ valueIndexForData(argument), RecordingSwizzleType::Image }};
 }
 
@@ -549,10 +522,8 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
 
 #if ENABLE(WEB_CODECS)
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<WebCodecsVideoFrame>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<WebCodecsVideoFrame>&)
 {
-    if (!argument)
-        return std::nullopt;
     return {{ JSON::Value::create(0), RecordingSwizzleType::Image }};
 }
 
@@ -594,18 +565,14 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLFramebuffer }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLProgram* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLProgram& argument)
 {
-    if (!argument)
-        return std::nullopt;
-    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLProgram }};
+    return {{ JSON::Value::create(static_cast<int>(argument.object())), RecordingSwizzleType::WebGLProgram }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLQuery* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLQuery& argument)
 {
-    if (!argument)
-        return std::nullopt;
-    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLQuery }};
+    return {{ JSON::Value::create(static_cast<int>(argument.object())), RecordingSwizzleType::WebGLQuery }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLRenderbuffer* argument)
@@ -643,25 +610,19 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     });
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLSampler* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLSampler& argument)
 {
-    if (!argument)
-        return std::nullopt;
-    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLSampler }};
+    return {{ JSON::Value::create(static_cast<int>(argument.object())), RecordingSwizzleType::WebGLSampler }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLShader* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLShader& argument)
 {
-    if (!argument)
-        return std::nullopt;
-    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLShader }};
+    return {{ JSON::Value::create(static_cast<int>(argument.object())), RecordingSwizzleType::WebGLShader }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLSync* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLSync& argument)
 {
-    if (!argument)
-        return std::nullopt;
-    return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLSync }};
+    return {{ JSON::Value::create(static_cast<int>(argument.object())), RecordingSwizzleType::WebGLSync }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLTexture* argument)
@@ -671,11 +632,9 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return {{ JSON::Value::create(static_cast<int>(argument->object())), RecordingSwizzleType::WebGLTexture }};
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLUniformLocation* argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLUniformLocation& argument)
 {
-    if (!argument)
-        return std::nullopt;
-    return {{ JSON::Value::create(argument->location()), RecordingSwizzleType::WebGLUniformLocation }};
+    return {{ JSON::Value::create(argument.location()), RecordingSwizzleType::WebGLUniformLocation }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLVertexArrayObject* argument)
@@ -1033,14 +992,14 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         if (data == item)
             return true;
 
-        auto stackTraceA = std::get_if<RefPtr<ScriptCallStack>>(&data);
-        auto stackTraceB = std::get_if<RefPtr<ScriptCallStack>>(&item);
-        if (stackTraceA && *stackTraceA && stackTraceB && *stackTraceB)
-            return (*stackTraceA)->isEqual((*stackTraceB).get());
+        auto stackTraceA = std::get_if<Ref<ScriptCallStack>>(&data);
+        auto stackTraceB = std::get_if<Ref<ScriptCallStack>>(&item);
+        if (stackTraceA && stackTraceB)
+            return (*stackTraceA)->isEqual((*stackTraceB).ptr());
 
-        auto parentStackTraceA = std::get_if<RefPtr<AsyncStackTrace>>(&data);
-        auto parentStackTraceB = std::get_if<RefPtr<AsyncStackTrace>>(&item);
-        if (parentStackTraceA && *parentStackTraceA && parentStackTraceB && *parentStackTraceB)
+        auto parentStackTraceA = std::get_if<Ref<AsyncStackTrace>>(&data);
+        auto parentStackTraceB = std::get_if<Ref<AsyncStackTrace>>(&item);
+        if (parentStackTraceA && parentStackTraceB)
             return *parentStackTraceA == *parentStackTraceB;
 
         return false;
@@ -1055,7 +1014,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
     RefPtr<JSON::Value> item;
     WTF::switchOn(data,
-        [&] (const RefPtr<HTMLImageElement>& imageElement) {
+        [&](const Ref<HTMLImageElement>& imageElement) {
             String dataURL = "data:,"_s;
 
             if (CachedImage* cachedImage = imageElement->cachedImage()) {
@@ -1070,7 +1029,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             index = indexForData(dataURL);
         },
 #if ENABLE(VIDEO)
-        [&] (RefPtr<HTMLVideoElement>& videoElement) {
+        [&](Ref<HTMLVideoElement>& videoElement) {
             String dataURL = "data:,"_s;
 
             unsigned videoWidth = videoElement->videoWidth();
@@ -1084,7 +1043,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             index = indexForData(dataURL);
         },
 #endif
-        [&] (RefPtr<HTMLCanvasElement>& canvasElement) {
+        [&](Ref<HTMLCanvasElement>& canvasElement) {
             String dataURL = "data:,"_s;
 
             ExceptionOr<UncachedString> result = canvasElement->toDataURL("image/png"_s);
@@ -1093,13 +1052,19 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             index = indexForData(dataURL);
         },
-        [&] (const RefPtr<CanvasGradient>& canvasGradient) { item = buildArrayForCanvasGradient(*canvasGradient); },
-        [&] (const RefPtr<CanvasPattern>& canvasPattern) { item = buildArrayForCanvasPattern(*canvasPattern); },
-        [&] (const RefPtr<ImageData>& imageData) { item = buildArrayForImageData(*imageData); },
-        [&] (RefPtr<ImageBitmap>& imageBitmap) {
+        [&](const Ref<CanvasGradient>& canvasGradient) {
+            item = buildArrayForCanvasGradient(canvasGradient);
+        },
+        [&](const Ref<CanvasPattern>& canvasPattern) {
+            item = buildArrayForCanvasPattern(canvasPattern);
+        },
+        [&](const Ref<ImageData>& imageData) {
+            item = buildArrayForImageData(imageData);
+        },
+        [&](Ref<ImageBitmap>& imageBitmap) {
             index = indexForData(imageBitmap->buffer()->toDataURL("image/png"_s));
         },
-        [&] (const RefPtr<ScriptCallStack>& scriptCallStack) {
+        [&](const Ref<ScriptCallStack>& scriptCallStack) {
             auto stackTrace = JSON::ArrayOf<JSON::Value>::create();
 
             auto callFrames = JSON::ArrayOf<double>::create();
@@ -1111,12 +1076,12 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             stackTrace->addItem(scriptCallStack->truncated());
 
-            if (const auto& parentStackTrace = scriptCallStack->parentStackTrace())
-                stackTrace->addItem(indexForData(parentStackTrace));
+            if (RefPtr parentStackTrace = scriptCallStack->parentStackTrace())
+                stackTrace->addItem(indexForData(parentStackTrace.releaseNonNull()));
 
             item = WTFMove(stackTrace);
         },
-        [&] (const RefPtr<AsyncStackTrace>& parentStackTrace) {
+        [&](const Ref<AsyncStackTrace>& parentStackTrace) {
             auto stackTrace = JSON::ArrayOf<JSON::Value>::create();
 
             auto callFrames = JSON::ArrayOf<double>::create();
@@ -1128,12 +1093,12 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             stackTrace->addItem(parentStackTrace->truncated());
 
-            if (const auto& grandparentStackTrace = parentStackTrace->parentStackTrace())
-                stackTrace->addItem(indexForData(grandparentStackTrace));
+            if (RefPtr grandparentStackTrace = parentStackTrace->parentStackTrace())
+                stackTrace->addItem(indexForData(grandparentStackTrace.releaseNonNull()));
 
             item = WTFMove(stackTrace);
         },
-        [&] (const RefPtr<CSSStyleImageValue>& cssImageValue) {
+        [&](const Ref<CSSStyleImageValue>& cssImageValue) {
             String dataURL = "data:,"_s;
 
             if (auto* cachedImage = cssImageValue->image()) {
@@ -1156,7 +1121,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             item = WTFMove(array);
         },
 #if ENABLE(OFFSCREEN_CANVAS)
-        [&] (const RefPtr<OffscreenCanvas> offscreenCanvas) {
+        [&](const Ref<OffscreenCanvas> offscreenCanvas) {
             String dataURL = "data:,"_s;
 
             if (offscreenCanvas->originClean() && offscreenCanvas->hasCreatedImageBuffer()) {
@@ -1167,7 +1132,9 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             index = indexForData(dataURL);
         },
 #endif
-        [&] (const String& value) { item = JSON::Value::create(value); }
+        [&](const String& value) {
+            item = JSON::Value::create(value);
+        }
     );
 
     if (item) {
@@ -1247,19 +1214,19 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
             statePayload->setInteger(stringIndexForKey("direction"_s), indexForData(convertEnumerationToString(state.direction)));
 
             int strokeStyleIndex;
-            if (auto canvasGradient = state.strokeStyle.canvasGradient())
-                strokeStyleIndex = indexForData(canvasGradient);
-            else if (auto canvasPattern = state.strokeStyle.canvasPattern())
-                strokeStyleIndex = indexForData(canvasPattern);
+            if (RefPtr canvasGradient = state.strokeStyle.canvasGradient())
+                strokeStyleIndex = indexForData(canvasGradient.releaseNonNull());
+            else if (RefPtr canvasPattern = state.strokeStyle.canvasPattern())
+                strokeStyleIndex = indexForData(canvasPattern.releaseNonNull());
             else
                 strokeStyleIndex = indexForData(state.strokeStyle.color());
             statePayload->setInteger(stringIndexForKey("strokeStyle"_s), strokeStyleIndex);
 
             int fillStyleIndex;
-            if (auto canvasGradient = state.fillStyle.canvasGradient())
-                fillStyleIndex = indexForData(canvasGradient);
-            else if (auto canvasPattern = state.fillStyle.canvasPattern())
-                fillStyleIndex = indexForData(canvasPattern);
+            if (RefPtr canvasGradient = state.fillStyle.canvasGradient())
+                fillStyleIndex = indexForData(canvasGradient.releaseNonNull());
+            else if (RefPtr canvasPattern = state.fillStyle.canvasPattern())
+                fillStyleIndex = indexForData(canvasPattern.releaseNonNull());
             else
                 fillStyleIndex = indexForData(state.fillStyle.color());
             statePayload->setInteger(stringIndexForKey("fillStyle"_s), fillStyleIndex);
@@ -1311,7 +1278,7 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(String&& name, Insp
     action->addItem(WTFMove(swizzleTypes));
 
     auto stackTrace = Inspector::createScriptCallStack(JSExecState::currentState());
-    action->addItem(indexForData(stackTrace.ptr()));
+    action->addItem(indexForData(WTFMove(stackTrace)));
 
     return action;
 }

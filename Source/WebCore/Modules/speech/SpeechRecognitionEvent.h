@@ -36,13 +36,15 @@ class SpeechRecognitionEvent final : public Event {
 public:
     struct Init : EventInit {
         uint64_t resultIndex;
-        RefPtr<SpeechRecognitionResultList> results;
+        Ref<SpeechRecognitionResultList> results;
     };
 
     static Ref<SpeechRecognitionEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     static Ref<SpeechRecognitionEvent> create(const AtomString&, uint64_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
 
     uint64_t resultIndex() const { return m_resultIndex; }
+
+    // FIXME: To match the WebIDL, this should always be non-null, but currently SpeechRecognition::didFindNoMatch() creates an event with a nullptr for results.
     SpeechRecognitionResultList* results() const { return m_results.get(); }
 
 private:

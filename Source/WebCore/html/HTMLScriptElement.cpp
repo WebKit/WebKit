@@ -99,12 +99,12 @@ void HTMLScriptElement::setText(String&& value)
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#dom-script-text
-ExceptionOr<void> HTMLScriptElement::setText(std::variant<RefPtr<TrustedScript>, String>&& value)
+ExceptionOr<void> HTMLScriptElement::setText(std::variant<Ref<TrustedScript>, String>&& value)
 {
     return setTextContent(trustedTypeCompliantString(*scriptExecutionContext(), WTFMove(value), "HTMLScriptElement text"_s));
 }
 
-ExceptionOr<void> HTMLScriptElement::setTextContent(std::optional<std::variant<RefPtr<TrustedScript>, String>>&& value)
+ExceptionOr<void> HTMLScriptElement::setTextContent(std::optional<std::variant<Ref<TrustedScript>, String>>&& value)
 {
     return setTextContent(trustedTypeCompliantString(*scriptExecutionContext(), value ? WTFMove(*value) : emptyString(), "HTMLScriptElement textContent"_s));
 }
@@ -121,7 +121,7 @@ ExceptionOr<void> HTMLScriptElement::setTextContent(ExceptionOr<String> value)
     return { };
 }
 
-ExceptionOr<void> HTMLScriptElement::setInnerText(std::variant<RefPtr<TrustedScript>, String>&& value)
+ExceptionOr<void> HTMLScriptElement::setInnerText(std::variant<Ref<TrustedScript>, String>&& value)
 {
     auto stringValueHolder = trustedTypeCompliantString(*scriptExecutionContext(), WTFMove(value), "HTMLScriptElement innerText"_s);
     if (stringValueHolder.hasException())
@@ -160,7 +160,7 @@ String HTMLScriptElement::src() const
     return getURLAttributeForBindings(WebCore::HTMLNames::srcAttr).string();
 }
 
-ExceptionOr<void> HTMLScriptElement::setSrc(std::variant<RefPtr<TrustedScriptURL>, String>&& value)
+ExceptionOr<void> HTMLScriptElement::setSrc(std::variant<Ref<TrustedScriptURL>, String>&& value)
 {
     auto stringValueHolder = trustedTypeCompliantString(*scriptExecutionContext(), WTFMove(value), "HTMLScriptElement src"_s);
     if (stringValueHolder.hasException())

@@ -23,5 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[EnabledBySetting=NavigationAPIEnabled] 
-callback NavigationInterceptHandler = Promise<undefined> ();
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigationintercepthandler
+[
+    EnabledBySetting=NavigationAPIEnabled
+] callback NavigationInterceptHandler = Promise<undefined> ();

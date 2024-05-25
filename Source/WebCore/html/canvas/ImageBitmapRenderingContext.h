@@ -39,9 +39,9 @@ class ImageBuffer;
 class OffscreenCanvas;
 
 #if ENABLE(OFFSCREEN_CANVAS)
-using ImageBitmapCanvas = std::variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
+using ImageBitmapCanvas = std::variant<Ref<HTMLCanvasElement>, Ref<OffscreenCanvas>>;
 #else
-using ImageBitmapCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
+using ImageBitmapCanvas = std::variant<Ref<HTMLCanvasElement>>;
 #endif
 
 class ImageBitmapRenderingContext final : public CanvasRenderingContext {

@@ -35,18 +35,15 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(BackgroundFetchUpdateUIEvent);
 
 Ref<BackgroundFetchUpdateUIEvent> BackgroundFetchUpdateUIEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    auto registration = init.registration;
-    return adoptRef(*new BackgroundFetchUpdateUIEvent(type, WTFMove(init), WTFMove(registration), isTrusted));
+    return adoptRef(*new BackgroundFetchUpdateUIEvent(type, WTFMove(init), isTrusted));
 }
 
-BackgroundFetchUpdateUIEvent::BackgroundFetchUpdateUIEvent(const AtomString& type, ExtendableEventInit&& eventInit, RefPtr<BackgroundFetchRegistration>&& registration, IsTrusted isTrusted)
-    : BackgroundFetchEvent(EventInterfaceType::BackgroundFetchUpdateUIEvent, type, WTFMove(eventInit), WTFMove(registration), isTrusted)
+BackgroundFetchUpdateUIEvent::BackgroundFetchUpdateUIEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : BackgroundFetchEvent(EventInterfaceType::BackgroundFetchUpdateUIEvent, type, WTFMove(init), isTrusted)
 {
 }
 
-BackgroundFetchUpdateUIEvent::~BackgroundFetchUpdateUIEvent()
-{
-}
+BackgroundFetchUpdateUIEvent::~BackgroundFetchUpdateUIEvent() = default;
 
 void BackgroundFetchUpdateUIEvent::updateUI(BackgroundFetchUIOptions&&, DOMPromiseDeferred<void>&&)
 {

@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-using CSSColorRGBComp = std::variant<double, RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
-using RectifiedCSSColorRGBComp = std::variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>;
+using CSSColorRGBComp = std::variant<double, Ref<CSSNumericValue>, String, Ref<CSSKeywordValue>>;
+using RectifiedCSSColorRGBComp = std::variant<Ref<CSSNumericValue>, Ref<CSSKeywordValue>>;
 
 class CSSRGB final : public CSSColorValue {
     WTF_MAKE_ISO_ALLOCATED(CSSRGB);

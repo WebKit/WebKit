@@ -80,7 +80,7 @@ template<> struct JSDOMWrapperConverterTraits<TestEventConstructor> {
     using WrapperClass = JSTestEventConstructor;
     using ToWrappedReturnType = TestEventConstructor*;
 };
-template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::Init>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDictionary<TestEventConstructor::Init>(JSC::JSGlobalObject&, JSC::JSValue);
 
 
 } // namespace WebCore

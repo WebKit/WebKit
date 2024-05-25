@@ -162,7 +162,7 @@ void PDFDocument::createDocumentStructure()
     m_iframe->setAttribute(styleAttr, "width: 100%; height: 100%; border: 0; display: block;"_s);
 
     m_listener = PDFDocumentEventListener::create(*this);
-    m_iframe->addEventListener(eventNames().loadEvent, *m_listener, false);
+    m_iframe->addEventListener(eventNames().loadEvent, *m_listener, { { .capture = false } });
 
     body->appendChild(*m_iframe);
 }
@@ -200,7 +200,7 @@ void PDFDocument::postMessageToIframe(const String& name, JSC::JSObject* data)
 
     WindowPostMessageOptions options;
     if (data)
-        options = WindowPostMessageOptions { "/"_s, Vector { JSC::Strong<JSC::JSObject> { vm, data } } };
+        options = WindowPostMessageOptions { { Vector { JSC::Strong<JSC::JSObject> { vm, data } } }, "/"_s };
     auto returnValue = contentWindow->postMessage(*contentWindowGlobalObject, *contentWindow, message, WTFMove(options));
     if (returnValue.hasException())
         returnValue.releaseException();
@@ -251,7 +251,7 @@ void PDFDocument::injectStyleAndContentScript()
     ASSERT(contentDocument->body());
     m_script = HTMLScriptElement::create(scriptTag, *contentDocument, false);
     ASSERT(m_listener);
-    m_script->addEventListener(eventNames().loadEvent, *m_listener, false);
+    m_script->addEventListener(eventNames().loadEvent, *m_listener, { { .capture = false } });
     m_script->setAttribute(srcAttr, "webkit-pdfjs-viewer://pdfjs/extras/content-script.js"_s);
     contentDocument->body()->appendChild(*m_script);
 

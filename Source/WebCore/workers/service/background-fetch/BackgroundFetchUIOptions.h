@@ -26,12 +26,13 @@
 #pragma once
 
 #include "ImageResource.h"
+#include <optional>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct BackgroundFetchUIOptions {
-    Vector<ImageResource> icons;
+    std::optional<Vector<ImageResource>> icons;
     String title;
 };
 

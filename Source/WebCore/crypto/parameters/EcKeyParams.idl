@@ -27,7 +27,7 @@
 // https://www.w3.org/TR/WebCryptoAPI/#EcKeyImportParams-dictionary, and
 // https://www.w3.org/TR/WebCryptoAPI/#EcKeyGenParams-dictionary
 [
-    ImplementedAs=CryptoAlgorithmEcKeyParams
+    ImplementedAs=CryptoAlgorithmEcKeyParamsInit
 ] dictionary EcKeyParams : CryptoAlgorithmParameters {
     required DOMString namedCurve;
 };

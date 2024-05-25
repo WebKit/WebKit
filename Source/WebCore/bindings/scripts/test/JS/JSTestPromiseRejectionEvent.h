@@ -80,7 +80,7 @@ template<> struct JSDOMWrapperConverterTraits<TestPromiseRejectionEvent> {
     using WrapperClass = JSTestPromiseRejectionEvent;
     using ToWrappedReturnType = TestPromiseRejectionEvent*;
 };
-template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectionEvent::Init>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ConversionResult<IDLDictionary<TestPromiseRejectionEvent::Init>> convertDictionary<TestPromiseRejectionEvent::Init>(JSC::JSGlobalObject&, JSC::JSValue);
 
 
 } // namespace WebCore

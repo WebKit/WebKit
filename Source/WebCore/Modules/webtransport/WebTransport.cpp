@@ -58,7 +58,7 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
         return Exception { ExceptionCode::SyntaxError };
 
     bool dedicated = !options.allowPooling;
-    if (!dedicated && !options.serverCertificateHashes.isEmpty())
+    if (!dedicated && options.serverCertificateHashes && !options.serverCertificateHashes->isEmpty())
         return Exception { ExceptionCode::NotSupportedError };
 
     auto* globalObject = context.globalObject();
@@ -99,7 +99,7 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
     auto transport = adoptRef(*new WebTransport(context, domGlobalObject, incomingBidirectionalStreams.releaseReturnValue(), incomingUnidirectionalStreams.releaseReturnValue(), options.congestionControl, WTFMove(datagrams), WTFMove(datagramSource), WTFMove(receiveStreamSource), WTFMove(bidirectionalStreamSource)));
     datagramSink->attachTo(transport);
     transport->suspendIfNeeded();
-    transport->initializeOverHTTP(*socketProvider, context, WTFMove(parsedURL), dedicated, options.requireUnreliable, options.congestionControl, WTFMove(options.serverCertificateHashes));
+    transport->initializeOverHTTP(*socketProvider, context, WTFMove(parsedURL), dedicated, options.requireUnreliable, options.congestionControl, options.serverCertificateHashes.value_or(Vector<WebTransportHash> { }));
     return transport;
 }
 

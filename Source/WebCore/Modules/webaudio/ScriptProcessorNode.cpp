@@ -246,7 +246,7 @@ void ScriptProcessorNode::fireProcessEvent(unsigned bufferIndex)
     auto outputBufferForJS = createOutputBufferForJS(*outputBuffer);
 
     // Call the JavaScript event handler which will do the audio processing.
-    dispatchEvent(AudioProcessingEvent::create(inputBufferForJS.get(), outputBufferForJS.get(), playbackTime));
+    dispatchEvent(AudioProcessingEvent::create(inputBufferForJS.get(), *outputBufferForJS, playbackTime));
 
     if (!outputBufferForJS->copyTo(*outputBuffer))
         outputBuffer->zero();

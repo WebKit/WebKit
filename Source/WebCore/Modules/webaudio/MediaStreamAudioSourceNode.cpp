@@ -44,8 +44,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamAudioSourceNode);
 
 ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(BaseAudioContext& context, MediaStreamAudioSourceOptions&& options)
 {
-    RELEASE_ASSERT(options.mediaStream);
-
     auto audioTracks = options.mediaStream->getAudioTracks();
     if (audioTracks.isEmpty())
         return Exception { ExceptionCode::InvalidStateError, "Media stream has no audio tracks"_s };
@@ -59,7 +57,7 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
     if (!provider)
         return Exception { ExceptionCode::InvalidStateError, "Could not find an audio track with an audio source provider"_s };
 
-    auto node = adoptRef(*new MediaStreamAudioSourceNode(context, *options.mediaStream, provider.releaseNonNull()));
+    auto node = adoptRef(*new MediaStreamAudioSourceNode(context, WTFMove(options.mediaStream), provider.releaseNonNull()));
     node->setFormat(2, context.sampleRate());
 
     // Context keeps reference until node is disconnected.
@@ -68,10 +66,10 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
     return node;
 }
 
-MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context, MediaStream& mediaStream, Ref<WebAudioSourceProvider>&& provider)
+MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context, Ref<MediaStream>&& mediaStream, Ref<WebAudioSourceProvider>&& provider)
     : AudioNode(context, NodeTypeMediaStreamAudioSource)
-    , m_mediaStream(mediaStream)
-    , m_provider(provider)
+    , m_mediaStream(WTFMove(mediaStream))
+    , m_provider(WTFMove(provider))
 {
     m_provider->setClient(this);
     

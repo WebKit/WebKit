@@ -27,23 +27,36 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(UIEventWithKeyState);
 
-auto UIEventWithKeyState::modifiersFromInitializer(const EventModifierInit& initializer) -> OptionSet<Modifier>
+template<typename Init>
+static auto modifiersFromInitializer(const Init& initializer) -> OptionSet<UIEventWithKeyState::Modifier>
 {
-    OptionSet<Modifier> result;
+    OptionSet<UIEventWithKeyState::Modifier> result;
     if (initializer.ctrlKey)
-        result.add(Modifier::ControlKey);
+        result.add(UIEventWithKeyState::Modifier::ControlKey);
     if (initializer.altKey)
-        result.add(Modifier::AltKey);
+        result.add(UIEventWithKeyState::Modifier::AltKey);
     if (initializer.shiftKey)
-        result.add(Modifier::ShiftKey);
+        result.add(UIEventWithKeyState::Modifier::ShiftKey);
     if (initializer.metaKey)
-        result.add(Modifier::MetaKey);
+        result.add(UIEventWithKeyState::Modifier::MetaKey);
     if (initializer.modifierAltGraph)
-        result.add(Modifier::AltGraphKey);
+        result.add(UIEventWithKeyState::Modifier::AltGraphKey);
     if (initializer.modifierCapsLock)
-        result.add(Modifier::CapsLockKey);
+        result.add(UIEventWithKeyState::Modifier::CapsLockKey);
     return result;
 }
+
+auto UIEventWithKeyState::modifiersFromInitializer(const EventModifierInit& initializer) -> OptionSet<Modifier>
+{
+    return WebCore::modifiersFromInitializer(initializer);
+}
+
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+auto UIEventWithKeyState::modifiersFromInitializer(const TouchEventInit& initializer) -> OptionSet<Modifier>
+{
+    return WebCore::modifiersFromInitializer(initializer);
+}
+#endif
 
 bool UIEventWithKeyState::getModifierState(const String& keyIdentifier) const
 {

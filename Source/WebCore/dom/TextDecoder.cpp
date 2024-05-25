@@ -50,14 +50,11 @@ ExceptionOr<Ref<TextDecoder>> TextDecoder::create(const String& label, Options o
     return decoder;
 }
 
-ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource::VariantType> input, DecodeOptions options)
+ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource> input, DecodeOptions options)
 {
-    std::optional<BufferSource> inputBuffer;
     std::span<const uint8_t> data;
-    if (input) {
-        inputBuffer = BufferSource(WTFMove(input.value()));
-        data = inputBuffer->span();
-    }
+    if (input)
+        data = input->span();
 
     if (!m_codec) {
         m_codec = newTextCodec(m_textEncoding);

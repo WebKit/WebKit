@@ -125,13 +125,14 @@ static Vector<VNBarcodeSymbology> convertBarcodeFormat(BarcodeFormat barcodeForm
     }
 }
 
-static std::optional<BarcodeDetectorImpl::BarcodeFormatSet> convertRequestedBarcodeFormatSet(const Vector<BarcodeFormat>& formats)
+static std::optional<BarcodeDetectorImpl::BarcodeFormatSet> convertRequestedBarcodeFormatSet(const std::optional<Vector<BarcodeFormat>>& formats)
 {
-    // FIXME: "formats" is supposed to be optional
+    if (!formats)
+        return std::nullopt;
 
     BarcodeDetectorImpl::BarcodeFormatSet result;
-    result.reserveInitialCapacity(formats.size());
-    for (auto format : formats)
+    result.reserveInitialCapacity(formats->size());
+    for (auto format : *formats)
         result.add(format);
     return result;
 }

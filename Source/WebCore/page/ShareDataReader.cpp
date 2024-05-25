@@ -48,8 +48,11 @@ void ShareDataReader::start(Document* document, ShareDataWithParsedURL&& shareDa
     m_filesReadSoFar = 0;
     m_shareData = WTFMove(shareData);
     int count = 0;
-    m_pendingFileLoads.reserveInitialCapacity(m_shareData.shareData.files.size());
-    for (auto& blob : m_shareData.shareData.files) {
+    if (!m_shareData.shareData.files || m_shareData.shareData.files->isEmpty())
+        return;
+
+    m_pendingFileLoads.reserveInitialCapacity(m_shareData.shareData.files->size());
+    for (auto& blob : m_shareData.shareData.files.value()) {
         m_pendingFileLoads.append(makeUniqueRef<BlobLoader>([this, count, fileName = blob->name()](BlobLoader&) {
             this->didFinishLoading(count, fileName);
         }));

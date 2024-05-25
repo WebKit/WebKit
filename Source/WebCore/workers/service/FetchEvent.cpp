@@ -41,9 +41,16 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FetchEvent);
 
 Ref<FetchEvent> FetchEvent::createForTesting(ScriptExecutionContext& context)
 {
-    FetchEvent::Init init;
-    init.request = FetchRequest::create(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable, { }), { }, { }, { });
-    return FetchEvent::create(*context.globalObject(), eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
+    auto headers = FetchHeaders::create(FetchHeaders::Guard::Immutable, { });
+    auto request = FetchRequest::create(context, { }, WTFMove(headers), { }, { }, { });
+
+    return FetchEvent::create(*context.globalObject(), eventNames().fetchEvent, FetchEvent::Init {
+        ExtendableEventInit { { } },
+        WTFMove(request),
+        { },
+        { },
+        { }
+    }, Event::IsTrusted::Yes);
 }
 
 static inline Ref<DOMPromise> retrieveHandledPromise(JSC::JSGlobalObject& globalObject, RefPtr<DOMPromise>&& promise)
@@ -58,12 +65,12 @@ static inline Ref<DOMPromise> retrieveHandledPromise(JSC::JSGlobalObject& global
     return DOMPromise::create(jsDOMGlobalObject, *JSC::jsCast<JSC::JSPromise*>(deferredPromise->promise()));
 }
 
-FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : ExtendableEvent(EventInterfaceType::FetchEvent, type, initializer, isTrusted)
-    , m_request(initializer.request.releaseNonNull())
-    , m_clientId(WTFMove(initializer.clientId))
-    , m_resultingClientId(WTFMove(initializer.resultingClientId))
-    , m_handled(retrieveHandledPromise(globalObject, WTFMove(initializer.handled)))
+FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : ExtendableEvent(EventInterfaceType::FetchEvent, type, WTFMove(init), isTrusted)
+    , m_request(WTFMove(init.request))
+    , m_clientId(WTFMove(init.clientId))
+    , m_resultingClientId(WTFMove(init.resultingClientId))
+    , m_handled(retrieveHandledPromise(globalObject, WTFMove(init.handled)))
 {
 }
 

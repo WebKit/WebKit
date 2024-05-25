@@ -35,8 +35,9 @@ struct MediaConfiguration {
     std::optional<VideoConfiguration> video;
     std::optional<AudioConfiguration> audio;
 
-    std::optional<Vector<String>> allowedMediaContainerTypes;
-    std::optional<Vector<String>> allowedMediaCodecTypes;
+    // Not exposed in bindings.
+    std::optional<Vector<String>> allowedMediaContainerTypes = { };
+    std::optional<Vector<String>> allowedMediaCodecTypes = { };
 
     MediaConfiguration isolatedCopy() const &;
     MediaConfiguration isolatedCopy() &&;

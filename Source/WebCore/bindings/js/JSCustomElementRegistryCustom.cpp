@@ -152,7 +152,7 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
         if (!observedAttributesValue.isUndefined()) {
             auto observedAttributes = convert<IDLSequence<IDLAtomStringAdaptor<IDLDOMString>>>(lexicalGlobalObject, observedAttributesValue);
             RETURN_IF_EXCEPTION(scope, JSValue());
-            elementInterface->setAttributeChangedCallback(attributeChangedCallback, WTFMove(observedAttributes));
+            elementInterface->setAttributeChangedCallback(attributeChangedCallback, observedAttributes.releaseReturnValue());
         }
     }
 
@@ -162,9 +162,9 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
         auto disabledFeatures = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, disabledFeaturesValue);
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (disabledFeatures.contains("internals"_s))
+        if (disabledFeatures.returnValue().contains("internals"_s))
             elementInterface->disableElementInternals();
-        if (disabledFeatures.contains("shadow"_s))
+        if (disabledFeatures.returnValue().contains("shadow"_s))
             elementInterface->disableShadow();
     }
 

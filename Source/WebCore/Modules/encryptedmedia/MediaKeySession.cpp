@@ -661,7 +661,14 @@ void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const Shar
     // 2. Queue a task to create an event named message that does not bubble and is not cancellable using the MediaKeyMessageEvent
     //    interface with its type attribute set to message and its isTrusted attribute initialized to true, and dispatch it at the
     //    session.
-    auto messageEvent = MediaKeyMessageEvent::create(eventNames().messageEvent, {messageType, message.tryCreateArrayBuffer()}, Event::IsTrusted::Yes);
+
+    // FIXME: MediaKeyMessageEvent requires a non-null ArrayBuffer. Does it make sense
+    // to pass an empty one if creation fails? Should an error be triggered?
+    RefPtr arrayBuffer = message.tryCreateArrayBuffer();
+    if (!arrayBuffer)
+        arrayBuffer = ArrayBuffer::create(nullptr, 0);
+
+    auto messageEvent = MediaKeyMessageEvent::create(eventNames().messageEvent, { { }, messageType, arrayBuffer.releaseNonNull() }, Event::IsTrusted::Yes);
     queueTaskToDispatchEvent(*this, TaskSource::Networking, WTFMove(messageEvent));
 }
 

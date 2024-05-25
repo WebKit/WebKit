@@ -736,6 +736,65 @@ void memsetSpan(std::span<T, Extent> destination, uint8_t byte)
     memset(destination.data(), byte, destination.size_bytes());
 }
 
+// Helper for statically determining that the members of a struct are in the order you expect them in.
+//
+// Example usage:
+//
+//   Given struct:
+//
+//     struct Foo {
+//         int a;
+//         int b;
+//         int c;
+//     };
+//
+//   You can statically assert:
+//
+//     static_assert(MembersInIncreasingOrder<
+//           0
+//         , offsetof(Foo, a)
+//         , offsetof(Foo, b)
+//         , offsetof(Foo, c)
+//     >);
+//
+// Useful for generated code that uses aggregate initialization and wants to make sure the order remains.
+template<size_t...> struct MembersInIncreasingOrderImpl;
+template<size_t onlyOffset> struct MembersInIncreasingOrderImpl<onlyOffset> {
+    static constexpr bool value = true;
+};
+template<size_t firstOffset, size_t secondOffset, size_t... remainingOffsets> struct MembersInIncreasingOrderImpl<firstOffset, secondOffset, remainingOffsets...> {
+    static constexpr bool value = firstOffset > secondOffset ? false : MembersInIncreasingOrderImpl<secondOffset, remainingOffsets...>::value;
+};
+template<size_t... offsets> constexpr bool MembersInIncreasingOrder = MembersInIncreasingOrderImpl<offsets...>::value;
+
+// Helper for statically determining that the bits of a flag/option-set style enum are in the order you expect them in.
+//
+// Example usage:
+//
+//   Given struct:
+//
+//     enum class Foo : uint8_t {
+//         A  = 1 << 0,
+//         B  = 1 << 1,
+//         C  = 1 << 2,
+//     };
+//
+//   You can statically assert:
+//
+//     static_assert(BitsInIncreasingOrder<
+//           static_cast<uint8_t>(Foo::A)
+//         , static_cast<uint8_t>(Foo::B)
+//         , static_cast<uint8_t>(Foo::C)
+//     >);
+template<uint64_t...> struct BitsInIncreasingOrderImpl;
+template<uint64_t onlyBit> struct BitsInIncreasingOrderImpl<onlyBit> {
+    static constexpr bool value = true;
+};
+template<uint64_t firstBit, uint64_t secondBit, uint64_t... remainingBits> struct BitsInIncreasingOrderImpl<firstBit, secondBit, remainingBits...> {
+    static constexpr bool value = firstBit == secondBit >> 1 && BitsInIncreasingOrderImpl<secondBit, remainingBits...>::value;
+};
+template<uint64_t... bits> constexpr bool BitsInIncreasingOrder = BitsInIncreasingOrderImpl<bits...>::value;
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
@@ -764,9 +823,11 @@ template<typename T, typename U> constexpr auto forward_like(U&& value) -> detai
 } // namespace std
 #endif
 
+using WTF::BitsInIncreasingOrder;
 using WTF::GB;
 using WTF::KB;
 using WTF::MB;
+using WTF::MembersInIncreasingOrder;
 using WTF::approximateBinarySearch;
 using WTF::asBytes;
 using WTF::asWritableBytes;

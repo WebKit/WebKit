@@ -1155,6 +1155,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ToggleEvent.idl
     dom/Touch.idl
     dom/TouchEvent.idl
+    dom/TouchEventInit.idl
     dom/TouchList.idl
     dom/TreeWalker.idl
     dom/TrustedHTML.idl

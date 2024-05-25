@@ -103,7 +103,7 @@ void setAdoptedStyleSheetsOnTreeScope(TreeScope& treeScope, JSC::JSGlobalObject&
     auto nativeValue = convert<IDLFrozenArray<IDLInterface<CSSStyleSheet>>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, void());
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return treeScope.setAdoptedStyleSheets(WTFMove(nativeValue));
+        return treeScope.setAdoptedStyleSheets(nativeValue.releaseReturnValue());
     });
 }
 

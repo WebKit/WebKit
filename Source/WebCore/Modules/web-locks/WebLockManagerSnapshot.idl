@@ -23,16 +23,18 @@
  */
 
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary WebLockManagerSnapshot {
     sequence<WebLockInfo> held;
     sequence<WebLockInfo> pending;
 };
 
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary WebLockInfo {
     DOMString name;
-    WebLockMode mode;
+    required WebLockMode mode;
     DOMString clientId;
 };

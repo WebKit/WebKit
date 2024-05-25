@@ -158,9 +158,9 @@ class HTMLVideoElement;
 
 #if ENABLE(OFFSCREEN_CANVAS)
 class OffscreenCanvas;
-using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
+using WebGLCanvas = std::variant<Ref<HTMLCanvasElement>, Ref<OffscreenCanvas>>;
 #else
-using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
+using WebGLCanvas = std::variant<Ref<HTMLCanvasElement>>;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -198,7 +198,7 @@ public:
     void blendFunc(GCGLenum sfactor, GCGLenum dfactor);
     void blendFuncSeparate(GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha);
 
-    using BufferDataSource = std::variant<RefPtr<ArrayBuffer>, RefPtr<ArrayBufferView>>;
+    using BufferDataSource = std::variant<Ref<ArrayBuffer>, Ref<ArrayBufferView>>;
     void bufferData(GCGLenum target, long long size, GCGLenum usage);
     void bufferData(GCGLenum target, std::optional<BufferDataSource>&&, GCGLenum usage);
     void bufferSubData(GCGLenum target, long long offset, BufferDataSource&&);
@@ -317,15 +317,19 @@ public:
     // These must be virtual so more validation can be added in WebGL 2.0.
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&&);
 
-    using TexImageSource = std::variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>
+    using TexImageSource = std::variant<
+          Ref<ImageBitmap>
+        , Ref<ImageData>
+        , Ref<HTMLImageElement>
+        , Ref<HTMLCanvasElement>
 #if ENABLE(VIDEO)
-        , RefPtr<HTMLVideoElement>
+        , Ref<HTMLVideoElement>
 #endif
 #if ENABLE(OFFSCREEN_CANVAS)
-        , RefPtr<OffscreenCanvas>
+        , Ref<OffscreenCanvas>
 #endif
 #if ENABLE(WEB_CODECS)
-        , RefPtr<WebCodecsVideoFrame>
+        , Ref<WebCodecsVideoFrame>
 #endif
     >;
 
@@ -338,10 +342,10 @@ public:
     virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&&);
     virtual ExceptionOr<void> texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, std::optional<TexImageSource>&&);
 
-    template <class TypedArray, class DataType>
+    template<class TypedArray, class DataType>
     class TypedList {
     public:
-        using VariantType = std::variant<RefPtr<TypedArray>, Vector<DataType>>;
+        using VariantType = std::variant<Ref<TypedArray>, Vector<DataType>>;
 
         TypedList(VariantType&& variant)
             : m_variant(WTFMove(variant))
@@ -351,7 +355,7 @@ public:
         const DataType* data() const
         {
             return WTF::switchOn(m_variant,
-                [] (const RefPtr<TypedArray>& typedArray) -> const DataType* { return typedArray->data(); },
+                [] (const Ref<TypedArray>& typedArray) -> const DataType* { return typedArray->data(); },
                 [] (const Vector<DataType>& vector) -> const DataType* { return vector.data(); }
             );
         }
@@ -359,7 +363,7 @@ public:
         GCGLsizei length() const
         {
             return WTF::switchOn(m_variant,
-                [] (const RefPtr<TypedArray>& typedArray) -> GCGLsizei { return typedArray->length(); },
+                [] (const Ref<TypedArray>& typedArray) -> GCGLsizei { return typedArray->length(); },
                 [] (const Vector<DataType>& vector) -> GCGLsizei { return vector.size(); }
             );
         }

@@ -79,7 +79,7 @@ void VideoPresentationModelVideoElement::cleanVideoListeners()
     if (!m_videoElement)
         return;
     for (auto& eventName : observedEventNames())
-        m_videoElement->removeEventListener(eventName, m_videoListener, false);
+        m_videoElement->removeEventListener(eventName, m_videoListener, { .capture = false });
 }
 
 void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
@@ -100,7 +100,7 @@ void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* video
 
     if (m_videoElement) {
         for (auto& eventName : observedEventNames())
-            m_videoElement->addEventListener(eventName, m_videoListener, false);
+            m_videoElement->addEventListener(eventName, m_videoListener, { { .capture = false } });
         m_isListening = true;
     }
 

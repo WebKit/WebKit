@@ -27,6 +27,7 @@ typedef double DOMHighResTimeStamp;
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
+    SuppressToNative,
 ] dictionary AudioTimestamp {
     double contextTime;
     DOMHighResTimeStamp performanceTime;

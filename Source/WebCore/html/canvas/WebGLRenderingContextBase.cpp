@@ -482,9 +482,9 @@ WebGLCanvas WebGLRenderingContextBase::canvas()
     auto& base = canvasBase();
 #if ENABLE(OFFSCREEN_CANVAS)
     if (auto* offscreenCanvas = dynamicDowncast<OffscreenCanvas>(base))
-        return offscreenCanvas;
+        return *offscreenCanvas;
 #endif
-    return &downcast<HTMLCanvasElement>(base);
+    return downcast<HTMLCanvasElement>(base);
 }
 
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -1861,19 +1861,27 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::ACTIVE_TEXTURE:
         return getUnsignedIntParameter(pname);
     case GraphicsContextGL::ALIASED_LINE_WIDTH_RANGE:
-        return getWebGLFloatArrayParameter(pname);
+        if (RefPtr buffer = getWebGLFloatArrayParameter(pname))
+            return buffer.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::ALIASED_POINT_SIZE_RANGE:
-        return getWebGLFloatArrayParameter(pname);
+        if (RefPtr buffer = getWebGLFloatArrayParameter(pname))
+            return buffer.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::ALPHA_BITS:
         if (!m_framebufferBinding && !m_attributes.alpha)
             return 0;
         return getIntParameter(pname);
     case GraphicsContextGL::ARRAY_BUFFER_BINDING:
-        return m_boundArrayBuffer;
+        if (RefPtr binding = m_boundArrayBuffer.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::BLEND:
         return getBooleanParameter(pname);
     case GraphicsContextGL::BLEND_COLOR:
-        return getWebGLFloatArrayParameter(pname);
+        if (RefPtr buffer = getWebGLFloatArrayParameter(pname))
+            return buffer.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::BLEND_DST_ALPHA:
         return getUnsignedIntParameter(pname);
     case GraphicsContextGL::BLEND_DST_RGB:
@@ -1889,17 +1897,23 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::BLUE_BITS:
         return getIntParameter(pname);
     case GraphicsContextGL::COLOR_CLEAR_VALUE:
-        return getWebGLFloatArrayParameter(pname);
+        if (RefPtr buffer = getWebGLFloatArrayParameter(pname))
+            return buffer.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::COLOR_WRITEMASK:
         return getBooleanArrayParameter(pname);
     case GraphicsContextGL::COMPRESSED_TEXTURE_FORMATS:
-        return Uint32Array::tryCreate(m_compressedTextureFormats.data(), m_compressedTextureFormats.size());
+        if (RefPtr array = Uint32Array::tryCreate(m_compressedTextureFormats.data(), m_compressedTextureFormats.size()))
+            return array.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::CULL_FACE:
         return getBooleanParameter(pname);
     case GraphicsContextGL::CULL_FACE_MODE:
         return getUnsignedIntParameter(pname);
     case GraphicsContextGL::CURRENT_PROGRAM:
-        return m_currentProgram;
+        if (RefPtr program = m_currentProgram)
+            return program.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::DEPTH_BITS:
         if (!m_framebufferBinding && !m_attributes.depth)
             return 0;
@@ -1909,7 +1923,9 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::DEPTH_FUNC:
         return getUnsignedIntParameter(pname);
     case GraphicsContextGL::DEPTH_RANGE:
-        return getWebGLFloatArrayParameter(pname);
+        if (RefPtr buffer = getWebGLFloatArrayParameter(pname))
+            return buffer.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::DEPTH_TEST:
         return getBooleanParameter(pname);
     case GraphicsContextGL::DEPTH_WRITEMASK:
@@ -1917,9 +1933,13 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::DITHER:
         return getBooleanParameter(pname);
     case GraphicsContextGL::ELEMENT_ARRAY_BUFFER_BINDING:
-        return RefPtr { m_boundVertexArrayObject->getElementArrayBuffer() };
+        if (RefPtr buffer = m_boundVertexArrayObject->getElementArrayBuffer())
+            return buffer.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::FRAMEBUFFER_BINDING:
-        return m_framebufferBinding;
+        if (RefPtr binding = m_framebufferBinding.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::FRONT_FACE:
         return getUnsignedIntParameter(pname);
     case GraphicsContextGL::GENERATE_MIPMAP_HINT:
@@ -1960,7 +1980,9 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::MAX_VERTEX_UNIFORM_VECTORS:
         return getIntParameter(pname);
     case GraphicsContextGL::MAX_VIEWPORT_DIMS:
-        return getWebGLIntArrayParameter(pname);
+        if (RefPtr buffer = getWebGLIntArrayParameter(pname))
+            return buffer.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::NUM_SHADER_BINARY_FORMATS:
         return getIntParameter(pname);
     case GraphicsContextGL::PACK_ALIGNMENT:
@@ -1974,7 +1996,9 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::RED_BITS:
         return getIntParameter(pname);
     case GraphicsContextGL::RENDERBUFFER_BINDING:
-        return m_renderbufferBinding;
+        if (RefPtr binding = m_renderbufferBinding.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::RENDERER:
         return "WebKit WebGL"_str;
     case GraphicsContextGL::SAMPLE_ALPHA_TO_COVERAGE:
@@ -1990,7 +2014,9 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::SAMPLES:
         return getIntParameter(pname);
     case GraphicsContextGL::SCISSOR_BOX:
-        return getWebGLIntArrayParameter(pname);
+        if (RefPtr buffer = getWebGLIntArrayParameter(pname))
+            return buffer.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::SCISSOR_TEST:
         return getBooleanParameter(pname);
     case GraphicsContextGL::SHADING_LANGUAGE_VERSION:
@@ -2034,9 +2060,13 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::SUBPIXEL_BITS:
         return getIntParameter(pname);
     case GraphicsContextGL::TEXTURE_BINDING_2D:
-        return m_textureUnits[m_activeTextureUnit].texture2DBinding;
+        if (RefPtr binding = m_textureUnits[m_activeTextureUnit].texture2DBinding.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::TEXTURE_BINDING_CUBE_MAP:
-        return m_textureUnits[m_activeTextureUnit].textureCubeMapBinding;
+        if (RefPtr binding = m_textureUnits[m_activeTextureUnit].textureCubeMapBinding.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::UNPACK_ALIGNMENT:
         return m_unpackParameters.alignment;
     case GraphicsContextGL::UNPACK_FLIP_Y_WEBGL:
@@ -2050,7 +2080,9 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::VERSION:
         return "WebGL 1.0"_str;
     case GraphicsContextGL::VIEWPORT:
-        return getWebGLIntArrayParameter(pname);
+        if (RefPtr buffer = getWebGLIntArrayParameter(pname))
+            return buffer.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
         if (m_oesStandardDerivatives)
             return getUnsignedIntParameter(GraphicsContextGL::FRAGMENT_SHADER_DERIVATIVE_HINT_OES);
@@ -2070,7 +2102,7 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
         if (m_oesVertexArrayObject) {
             if (m_boundVertexArrayObject->isDefaultObject())
                 return nullptr;
-            return RefPtr { static_cast<WebGLVertexArrayObjectOES*>(m_boundVertexArrayObject.get()) };
+            return Ref { *static_cast<WebGLVertexArrayObjectOES*>(m_boundVertexArrayObject.get()) };
         }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter"_s, "invalid parameter name, OES_vertex_array_object not enabled"_s);
         return nullptr;
@@ -2525,21 +2557,27 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram& program, const WebG
         m_context->getUniformfv(program.object(), location, std::span { value, length });
         if (length == 1)
             return value[0];
-        return Float32Array::tryCreate(value, length);
+        if (RefPtr buffer = Float32Array::tryCreate(value, length))
+            return buffer.releaseNonNull();
+        return nullptr;
     }
     case GraphicsContextGL::INT: {
         GCGLint value[4] = {0};
         m_context->getUniformiv(program.object(), location, std::span { value, length });
         if (length == 1)
             return value[0];
-        return Int32Array::tryCreate(value, length);
+        if (RefPtr buffer = Int32Array::tryCreate(value, length))
+            return buffer.releaseNonNull();
+        return nullptr;
     }
     case GraphicsContextGL::UNSIGNED_INT: {
         GCGLuint value[4] = {0};
         m_context->getUniformuiv(program.object(), location, std::span { value, length });
         if (length == 1)
             return value[0];
-        return Uint32Array::tryCreate(value, length);
+        if (RefPtr buffer = Uint32Array::tryCreate(value, length))
+            return buffer.releaseNonNull();
+        return nullptr;
     }
     case GraphicsContextGL::BOOL: {
         GCGLint value[4] = {0};
@@ -2620,7 +2658,9 @@ WebGLAny WebGLRenderingContextBase::getVertexAttrib(GCGLuint index, GCGLenum pna
 
     switch (pname) {
     case GraphicsContextGL::VERTEX_ATTRIB_ARRAY_BUFFER_BINDING:
-        return state.bufferBinding;
+        if (RefPtr binding = state.bufferBinding.get())
+            return binding.releaseNonNull();
+        return nullptr;
     case GraphicsContextGL::VERTEX_ATTRIB_ARRAY_ENABLED:
         return state.enabled;
     case GraphicsContextGL::VERTEX_ATTRIB_ARRAY_NORMALIZED:
@@ -2634,11 +2674,17 @@ WebGLAny WebGLRenderingContextBase::getVertexAttrib(GCGLuint index, GCGLenum pna
     case GraphicsContextGL::CURRENT_VERTEX_ATTRIB: {
         switch (m_vertexAttribValue[index].type) {
         case GraphicsContextGL::FLOAT:
-            return Float32Array::tryCreate(m_vertexAttribValue[index].fValue, 4);
+            if (RefPtr buffer = Float32Array::tryCreate(m_vertexAttribValue[index].fValue, 4))
+                return buffer.releaseNonNull();
+            return nullptr;
         case GraphicsContextGL::INT:
-            return Int32Array::tryCreate(m_vertexAttribValue[index].iValue, 4);
+            if (RefPtr buffer = Int32Array::tryCreate(m_vertexAttribValue[index].iValue, 4))
+                return buffer.releaseNonNull();
+            return nullptr;
         case GraphicsContextGL::UNSIGNED_INT:
-            return Uint32Array::tryCreate(m_vertexAttribValue[index].uiValue, 4);
+            if (RefPtr buffer = Uint32Array::tryCreate(m_vertexAttribValue[index].uiValue, 4))
+                return buffer.releaseNonNull();
+            return nullptr;
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -3209,8 +3255,8 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
         return { };
 
     return std::visit([this, functionID, target, level, internalformat, border, format, type, xoffset, yoffset, zoffset, inputSourceImageRect, depth, unpackImageHeight](auto&& source) {
-        return texImageSource(functionID, target, level, internalformat, border, format, type, xoffset, yoffset, zoffset, inputSourceImageRect, depth, unpackImageHeight, *source);
-    }, source);
+        return texImageSource(functionID, target, level, internalformat, border, format, type, xoffset, yoffset, zoffset, inputSourceImageRect, depth, unpackImageHeight, WTFMove(source));
+    }, WTFMove(source));
 }
 
 ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, ImageBitmap& source)
@@ -3360,9 +3406,8 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (!validateTexFunc(functionID, SourceHTMLCanvasElement, target, level, internalformat, sourceImageRect.width(), sourceImageRect.height(), depth, border, format, type, xoffset, yoffset, zoffset))
         return { };
 
-    RefPtr<ImageData> imageData = source.getImageData();
-    if (imageData)
-        texImageSourceHelper(functionID, target, level, internalformat, border, format, type, xoffset, yoffset, zoffset, sourceImageRect, depth, unpackImageHeight, TexImageSource(imageData.get()));
+    if (RefPtr imageData = source.getImageData())
+        texImageSourceHelper(functionID, target, level, internalformat, border, format, type, xoffset, yoffset, zoffset, sourceImageRect, depth, unpackImageHeight, TexImageSource(imageData.releaseNonNull()));
     else
         texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, source.copiedImage(), GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
     return { };

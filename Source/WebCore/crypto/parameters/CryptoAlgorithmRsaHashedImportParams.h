@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmRsaHashedImportParamsInit.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
 #include <variant>
@@ -38,12 +39,23 @@ public:
     std::variant<JSC::Strong<JSC::JSObject>, String> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
 
+    CryptoAlgorithmRsaHashedImportParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTFMove(identifier) }
+    {
+    }
+
+    CryptoAlgorithmRsaHashedImportParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmRsaHashedImportParamsInit init, CryptoAlgorithmIdentifier hashIdentifier)
+        : CryptoAlgorithmParameters { WTFMove(identifier), WTFMove(init) }
+        , hash { WTFMove(init.hash) }
+        , hashIdentifier { WTFMove(hashIdentifier) }
+    {
+    }
+
     Class parametersClass() const final { return Class::RsaHashedImportParams; }
 
     CryptoAlgorithmRsaHashedImportParams isolatedCopy() const
     {
-        CryptoAlgorithmRsaHashedImportParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmRsaHashedImportParams result { identifier };
         result.hashIdentifier = hashIdentifier;
 
         return result;

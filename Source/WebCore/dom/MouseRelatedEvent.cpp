@@ -30,8 +30,10 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "MouseEventInit.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
+#include "TouchEventInit.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -67,7 +69,7 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, con
 {
 }
 
-MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const MouseEventInit& initializer, IsTrusted isTrusted)
     : UIEventWithKeyState(eventInterface, eventType, initializer)
     , m_screenLocation(IntPoint(initializer.screenX, initializer.screenY))
     , m_movementX(initializer.movementX)
@@ -76,6 +78,18 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, con
     ASSERT_UNUSED(isTrusted, isTrusted == IsTrusted::No);
     init(false, IntPoint(0, 0));
 }
+
+#if ENABLE(TOUCH_EVENTS)
+MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const TouchEventInit& initializer, IsTrusted isTrusted)
+    : UIEventWithKeyState(eventInterface, eventType, initializer)
+    , m_screenLocation(IntPoint(initializer.screenX, initializer.screenY))
+    , m_movementX(initializer.movementX)
+    , m_movementY(initializer.movementY)
+{
+    ASSERT_UNUSED(isTrusted, isTrusted == IsTrusted::No);
+    init(false, IntPoint(0, 0));
+}
+#endif
 
 static inline bool isMoveEventType(const AtomString& eventType)
 {
