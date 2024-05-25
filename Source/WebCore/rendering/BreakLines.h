@@ -39,32 +39,74 @@ public:
         Normal,
         BreakAll,
         KeepAll,
+        AutoPhrase,
     };
     enum class LineBreakRules {
         Normal, // Fast path available when using default line-breaking rules within ASCII.
         Special, // Uses ICU to handle special line-breaking rules.
     };
-
-    template<LineBreakRules rules, WordBreakBehavior words, NoBreakSpaceBehavior spaces>
+    template<LineBreakRules, WordBreakBehavior, NoBreakSpaceBehavior>
     static inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory&, size_t startPosition);
+
     static inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory& iterator, size_t startPosition)
     {
         return nextBreakablePosition<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(iterator, startPosition);
     }
+
     static inline bool isBreakable(CachedLineBreakIteratorFactory&, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords, bool breakAnywhere);
 
 private:
 
+    // Iterator implementations.
+    template<typename CharacterType, LineBreakRules, WordBreakBehavior, NoBreakSpaceBehavior>
+    static inline size_t nextBreakablePosition(CachedLineBreakIteratorFactory&, std::span<const CharacterType> string, size_t startPosition);
+
+    template<typename CharacterType, NoBreakSpaceBehavior>
+    static inline size_t nextBreakableSpace(std::span<const CharacterType> string, size_t startPosition);
+
+    static inline unsigned nextCharacter(CachedLineBreakIteratorFactory&, unsigned startPosition);
+
     // Helper functions.
-    template<NoBreakSpaceBehavior nonBreakingSpaceBehavior>
+    enum BreakClass : uint16_t;
+    template<LineBreakRules, NoBreakSpaceBehavior>
+    static inline BreakClass classify(UChar character);
+
+    template<NoBreakSpaceBehavior>
     static inline bool isBreakableSpace(UChar character);
 
-    // Iterator implementations.
-    template<typename CharacterType, LineBreakRules shortcutRules, NoBreakSpaceBehavior nonBreakingSpaceBehavior>
-    static inline size_t nextBreakablePosition(CachedLineBreakIteratorFactory&, std::span<const CharacterType> string, size_t startPosition);
-    template<typename CharacterType, NoBreakSpaceBehavior nonBreakingSpaceBehavior>
-    static inline size_t nextBreakableSpace(std::span<const CharacterType> string, size_t startPosition);
-    static inline unsigned nextCharacter(CachedLineBreakIteratorFactory&, unsigned startPosition);
+    // Data types.
+    enum BreakClass : uint16_t {
+        // See UAX14
+        kIndeterminate = 0,
+        kAL = 1,
+        kID = 1 << 1,
+        kCM = 1 << 2,
+        kOP = 1 << 3,
+        kCP = 1 << 4,
+        kCL = 1 << 5,
+        kGL = 1 << 6,
+        kNU = kAL,
+        kWeird = 1 << 15,
+        // Currently we map HL to AL and H2 and H3 to ID.
+        // We also don't distinguish AL and NU.
+        // If we pull more logic into isBreakable, these may need to be distinguished.
+    };
+
+    template<typename CharacterType>
+    struct CharacterInfo {
+        CharacterType id { 0 };
+        BreakClass type { kIndeterminate };
+        CharacterInfo(CharacterType character = 0)
+            : id(character)
+            , type(kIndeterminate)
+        { }
+        inline void set(CharacterType character)
+        {
+            id = character;
+            type = kIndeterminate;
+        }
+        operator CharacterType() const { return id; }
+    };
 
     class LineBreakTable {
     public:
@@ -81,7 +123,6 @@ private:
         static constexpr unsigned columnCount = (lastCharacter - firstCharacter) / 8 + 1;
         WEBCORE_EXPORT static const unsigned char breakTable[rowCount][columnCount];
     };
-
     static const LineBreakTable lineBreakTable;
 };
 
@@ -101,7 +142,7 @@ inline bool BreakLines::isBreakableSpace(UChar character)
     }
 }
 
-template<typename CharacterType, BreakLines::LineBreakRules shortcutRules, BreakLines::NoBreakSpaceBehavior nonBreakingSpaceBehavior>
+template<typename CharacterType, BreakLines::LineBreakRules shortcutRules, BreakLines::WordBreakBehavior words, BreakLines::NoBreakSpaceBehavior nonBreakingSpaceBehavior>
 inline size_t BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, std::span<const CharacterType> string, size_t startPosition)
 {
     // Don't break if positioned at start of primary context and there is no prior context.
@@ -112,15 +153,15 @@ inline size_t BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory& 
         startPosition++;
     }
 
-    CharacterType beforeBefore = startPosition > 1 ? string[startPosition - 2]
-        : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().secondToLastCharacter());
-    CharacterType before = startPosition > 0 ? string[startPosition - 1]
-        : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().lastCharacter());
+    CharacterInfo<CharacterType> beforeBefore(startPosition > 1 ? string[startPosition - 2]
+        : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().secondToLastCharacter()));
+    CharacterInfo<CharacterType> before(startPosition > 0 ? string[startPosition - 1]
+        : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().lastCharacter()));
+    CharacterInfo<CharacterType> after;
 
-    CharacterType after;
     std::optional<size_t> nextBreak;
     for (size_t i = startPosition; i < string.size(); beforeBefore = before, before = after, ++i) {
-        after = string[i];
+        after.set(string[i]);
 
         // Breakable spaces.
         if (isBreakableSpace<nonBreakingSpaceBehavior>(after))
@@ -149,8 +190,39 @@ inline size_t BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory& 
         }
 
         // Non-ASCII rapid lookup.
-        if (nonBreakingSpaceBehavior == NoBreakSpaceBehavior::Normal && before == noBreakSpace && after == noBreakSpace)
-            continue;
+        if (words != WordBreakBehavior::AutoPhrase) {
+            if (!before.type)
+                before.type = classify<shortcutRules, nonBreakingSpaceBehavior>(before);
+            after.type = classify<shortcutRules, nonBreakingSpaceBehavior>(after);
+            // Short-circuit the commonest cases: letter + letter.
+            int pair = before.type | after.type;
+            if (pair == (kAL | kAL)) {
+                if (words == WordBreakBehavior::BreakAll)
+                    return i;
+                continue;
+            }
+            if ((pair | kAL) == (kID | kAL)) {
+                if (words == WordBreakBehavior::KeepAll)
+                    continue;
+                return i;
+            }
+            // Handle special cases.
+            if (pair & kGL && !(pair & kWeird)) // Keep nbsp high in our list.
+                continue;
+            if (after.type == kCM) {
+                after.type = before.type;
+                continue;
+            }
+            if (shortcutRules == LineBreakRules::Normal && !(pair & kWeird)) {
+                // Handle some common and obvious punctuation behaviors.
+                if (pair & (kCL | kCP | kOP)) {
+                    if (after.type == kCL || after.type == kCP || before.type == kOP)
+                        continue;
+                    if (pair & kID)
+                        return i;
+                }
+            }
+        }
 
         // ICU lookup (slow).
         if (!nextBreak || nextBreak.value() < i) {
@@ -204,14 +276,15 @@ template<BreakLines::LineBreakRules rules, BreakLines::WordBreakBehavior words, 
 inline unsigned BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, size_t startPosition)
 {
     auto stringView = lineBreakIteratorFactory.stringView();
+
     if (stringView.is8Bit()) {
         return words == WordBreakBehavior::KeepAll
             ? nextBreakableSpace<LChar, spaces>(stringView.span8(), startPosition)
-            : nextBreakablePosition<LChar, rules, spaces>(lineBreakIteratorFactory, stringView.span8(), startPosition);
+            : nextBreakablePosition<LChar, rules, words, spaces>(lineBreakIteratorFactory, stringView.span8(), startPosition);
     }
     return words == WordBreakBehavior::KeepAll
         ? nextBreakableSpace<UChar, spaces>(stringView.span16(), startPosition)
-        : nextBreakablePosition<UChar, rules, spaces>(lineBreakIteratorFactory, stringView.span16(), startPosition);
+        : nextBreakablePosition<UChar, rules, words, spaces>(lineBreakIteratorFactory, stringView.span16(), startPosition);
 }
 
 
@@ -237,7 +310,176 @@ inline bool BreakLines::isBreakable(CachedLineBreakIteratorFactory& lineBreakIte
 
     if (breakNBSP)
         return startPosition == nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
+
     return startPosition == nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
+}
+
+template<BreakLines::LineBreakRules rules, BreakLines::NoBreakSpaceBehavior nonBreakingSpaceBehavior>
+inline BreakLines::BreakClass BreakLines::classify(UChar character)
+{
+    // This function is optimized for letters and NBSP.
+
+    static constexpr UChar blockLast3 = ~0x07;
+    static constexpr UChar blockLast4 = ~0x0F;
+    static constexpr UChar blockLast6 = ~0x3F;
+    static constexpr UChar blockLast7 = ~0x7F;
+    static constexpr UChar blockLast8 = ~0xFF;
+
+    switch ((character & blockLast7) / 0x80) {
+        // Compilers are not smart enough to make a jump table if the step is not 1.
+    case 0x0000 / 0x80: // ASCII
+        switch ((character & blockLast4) / 0x10) {
+        case 0x0000 / 0x10:
+            return kWeird;
+        case 0x0010 / 0x10:
+            return kCM;
+        case 0x0020 / 0x10:
+            if (character == 0x0028)
+                return kOP;
+            if (character == 0x0029)
+                return kCP;
+            return kWeird;
+        case 0x0030 / 0x10:
+            if (character <= 0x0039) // Numbers.
+                return kNU;
+            return kWeird;
+        case 0x0040 / 0x10:
+            return kAL;
+        case 0x0050 / 0x10:
+            if (character <= 0x005A)
+                return kAL;
+            if (character == 0x005B)
+                return kOP;
+            if (character == 0x005D)
+                return kCP;
+            return kWeird;
+        case 0x0060 / 0x10:
+            return kAL;
+        case 0x0070 / 0x10:
+            if (character <= 0x007A)
+                return kAL;
+            if (character == 0x007B)
+                return kOP;
+            if (character == 0x007D)
+                return kCL;
+            return kWeird;
+        default:
+            return kWeird;
+        }
+    case 0x0080 / 0x80: // Latin-1
+        if (nonBreakingSpaceBehavior == NoBreakSpaceBehavior::Normal && character == 0xA0)
+            return kGL;
+        if (character > 0x00C0)
+            return kAL;
+        if (character == 0x00A1 || character == 0x00BF)
+            return kOP;
+        return kWeird;
+    case 0x0100 / 0x80:
+    case 0x0180 / 0x80:
+    case 0x0200 / 0x80:
+        return kAL;
+    case 0x0280 / 0x80:
+        switch (character) {
+        case 0x02C8:
+        case 0x02CC:
+        case 0x02DF:
+            return kWeird;
+        default:
+            return kAL;
+        }
+    case 0x0300 / 0x80:
+        if (character == 0x034F || (0x035C <= character && character <= 0x0362))
+            return kGL;
+        if (character < 0x370)
+            return kCM;
+        if (UNLIKELY(character == 0x037E))
+            return kWeird;
+        return kAL;
+    case 0x0380 / 0x80:
+    case 0x0400 / 0x80:
+        return kAL;
+    case 0x0480 / 0x80:
+        if (0x0483 <= character && character <= 0x0489)
+            return kCM;
+        return kAL;
+    case 0x0500 / 0x80:
+        return kAL;
+    case 0x0580 / 0x80:
+        if (character <= 0x0588 || 0x05C8 <= character)
+            return kAL; // WARNING: Some of these are actually HL.
+        if (0x0591 <= character && character <= 0x05BD)
+            return kCM;
+        // 0x05BE to 0x05C7 is mixed up.
+        switch (character) {
+        case 0x05BF:
+        case 0x05C1:
+        case 0x05C2:
+        case 0x05C4:
+        case 0x05C5:
+        case 0x05C7:
+            return kCM;
+        default:
+            return kWeird;
+        }
+    // FIXME: Continue bitmask switch up to 2E80.
+    }
+
+    // CJK
+    if (0x2E80 <= character && character <= 0xA4CF) {
+        if ((character & blockLast8) == 0x3000) {
+            if (character <= 0x303F) {
+                // This block (0x3000-0x303F) is categorically very mixed up.
+                switch (character & 0x1F) {
+                case 0x3001 & 0x1F:
+                case 0x3002 & 0x1F:
+                case 0x3009 & 0x1F:
+                case 0x300B & 0x1F:
+                case 0x300D & 0x1F:
+                case 0x300F & 0x1F:
+                case 0x3011 & 0x1F:
+                case 0x3015 & 0x1F:
+                case 0x3017 & 0x1F:
+                case 0x3019 & 0x1F:
+                case 0x301B & 0x1F:
+                case 0x301E & 0x1F:
+                case 0x301F & 0x1F:
+                    return kCL;
+                case 0x3008 & 0x1F:
+                case 0x300A & 0x1F:
+                case 0x300C & 0x1F:
+                case 0x300E & 0x1F:
+                case 0x3010 & 0x1F:
+                case 0x3016 & 0x1F:
+                case 0x3014 & 0x1F:
+                case 0x3018 & 0x1F:
+                case 0x301A & 0x1F:
+                case 0x301D & 0x1F:
+                    return kOP;
+                default:
+                    return kWeird;
+                }
+            }
+            // This block (0x3040-0x30FF) is tangled up and sensitive to 'line-break'.
+            return kWeird;
+        }
+        if (UNLIKELY((character & blockLast4) == 0x31F0)) // Small Kana.
+            return kWeird;
+        if (UNLIKELY((character & blockLast3) == 0x3248))
+            return kAL;
+        if (UNLIKELY((character & blockLast6) == 0x4DC0))
+            return kAL;
+        if (UNLIKELY(character == 0xA015))
+            return kWeird;
+        return kID;
+    }
+    // Precomposed Hangul
+    if (0xAC00 <= character && character <= 0xD7AF)
+        return kID; // WARNING: These are actually H2 or H3.
+    // More CJK
+    if (0xF900 <= character && character <= 0XFAFF)
+        return kID;
+
+    return kWeird;
 }
 
 } // namespace WebCore

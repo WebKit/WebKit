@@ -368,7 +368,8 @@ inline bool BreakingContext::handleText()
     bool keepAllWords = style.wordBreak() == WordBreak::KeepAll;
     auto iteratorMode = mapLineBreakToIteratorMode(m_blockStyle.lineBreak());
     auto contentAnalysis = mapWordBreakToContentAnalysis(m_blockStyle.wordBreak());
-    bool canUseLineBreakShortcut = iteratorMode == TextBreakIterator::LineMode::Behavior::Default;
+    bool canUseLineBreakShortcut = iteratorMode == TextBreakIterator::LineMode::Behavior::Default
+        && contentAnalysis == TextBreakIterator::ContentAnalysis::Mechanical;
 
     if (svgInlineTextRenderer) {
         breakWords = false;
