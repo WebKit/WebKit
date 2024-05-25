@@ -382,7 +382,6 @@ set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
 
     mac/Misc/WebKitStatisticsPrivate.h
     mac/Misc/WebCache.h
-    mac/Misc/NSURLDownloadSPI.h
     mac/Misc/WebStringTruncator.h
     mac/Misc/WebNSFileManagerExtras.h
     mac/Misc/WebNSWindowExtras.h

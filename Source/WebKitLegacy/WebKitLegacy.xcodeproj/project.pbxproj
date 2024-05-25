@@ -648,7 +648,6 @@
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
 		E13E782C1E5A7365001849D1 /* WebCreateFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E1531BD82187B954002E3F81 /* NSURLDownloadSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E1531BD72187B8F2002E3F81 /* NSURLDownloadSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E15663190FB61C1F00C199CA /* WebDownload.mm in Sources */ = {isa = PBXBuildFile; fileRef = E15663180FB61C1F00C199CA /* WebDownload.mm */; };
 		E4AEF97C1C0DF4BC00B01727 /* WebResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AEF97A1C0DF4BC00B01727 /* WebResourceLoadScheduler.h */; };
 		ED5B9524111B725A00472298 /* WebLocalizableStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED5B9523111B725A00472298 /* WebLocalizableStrings.mm */; };
@@ -1461,7 +1460,6 @@
 		DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebElementDictionary.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DDF74CA627EED8500011F633 /* migrate-header-rule */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "migrate-header-rule"; path = "scripts/migrate-header-rule"; sourceTree = "<group>"; };
 		E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = WebCreateFragmentInternal.h; sourceTree = "<group>"; };
-		E1531BD72187B8F2002E3F81 /* NSURLDownloadSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSURLDownloadSPI.h; sourceTree = "<group>"; };
 		E15663180FB61C1F00C199CA /* WebDownload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDownload.mm; sourceTree = "<group>"; };
 		E4AEF9791C0DF4BC00B01727 /* WebResourceLoadScheduler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = WebResourceLoadScheduler.cpp; path = WebCoreSupport/WebResourceLoadScheduler.cpp; sourceTree = SOURCE_ROOT; };
 		E4AEF97A1C0DF4BC00B01727 /* WebResourceLoadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoadScheduler.h; path = WebCoreSupport/WebResourceLoadScheduler.h; sourceTree = SOURCE_ROOT; };
@@ -1641,7 +1639,6 @@
 			isa = PBXGroup;
 			children = (
 				A10C1D2018202FAF0036883A /* ios */,
-				E1531BD72187B8F2002E3F81 /* NSURLDownloadSPI.h */,
 				5241ADF30B1BC48A004012BD /* WebCache.h */,
 				5241ADF40B1BC48A004012BD /* WebCache.mm */,
 				F59EAE3E0253C7EE018635CA /* WebCoreStatistics.h */,
@@ -2828,7 +2825,6 @@
 				FA96E4B02AAAFA920090C5A3 /* LegacyHistoryItemClient.h in Headers */,
 				5CB05C8229CA0E7000CC1AA0 /* LegacySocketProvider.h in Headers */,
 				5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */,
-				E1531BD82187B954002E3F81 /* NSURLDownloadSPI.h in Headers */,
 				93D4379B1D57ABEF00AB85EA /* ObjCEventListener.h in Headers */,
 				93D4379D1D57ABEF00AB85EA /* ObjCNodeFilterCondition.h in Headers */,
 				5C9EF2F521F061BE003BDC56 /* PageStorageSessionProvider.h in Headers */,

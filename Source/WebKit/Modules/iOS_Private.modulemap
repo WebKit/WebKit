@@ -754,11 +754,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module NSURLDownloadSPI {
-    header "NSURLDownloadSPI.h"
-    export *
-  }
-
   explicit module PreferenceObserver {
     header "PreferenceObserver.h"
     export *
