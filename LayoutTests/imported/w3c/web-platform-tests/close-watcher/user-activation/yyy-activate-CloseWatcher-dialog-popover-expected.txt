@@ -1,4 +1,4 @@
 button
 
-FAIL Create a CloseWatcher with user activation; create a dialog with user activation; create a popover with user activation; sending user activation before each close request promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: CloseWatcher"
+FAIL Create a CloseWatcher with user activation; create a dialog with user activation; create a popover with user activation; sending user activation before each close request assert_true: First close request: The dialog should be open. expected true got false
 
