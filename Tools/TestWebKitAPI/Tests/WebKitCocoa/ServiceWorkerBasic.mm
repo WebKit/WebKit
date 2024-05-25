@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,6 +62,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
@@ -2471,7 +2472,7 @@ static bool isTestServerTrust(SecTrustRef trust)
 
     auto chain = adoptCF(SecTrustCopyCertificateChain(trust));
     auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
-    if (![adoptNS((NSString *)SecCertificateCopySubjectSummary(certificate)) isEqualToString:@"Me"])
+    if (![bridge_cast(adoptCF(SecCertificateCopySubjectSummary(certificate)).get()) isEqualToString:@"Me"])
         return false;
 
     return true;
