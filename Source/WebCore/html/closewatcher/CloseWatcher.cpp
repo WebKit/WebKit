@@ -38,6 +38,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CloseWatcher);
 
+RefPtr<CloseWatcher> CloseWatcher::create(Document& document)
+{
+    if (!document.isFullyActive())
+        return nullptr;
+
+    return CloseWatcher::establish(document);
+}
+
 ExceptionOr<Ref<CloseWatcher>> CloseWatcher::create(ScriptExecutionContext& context, const CloseWatcher::Options& options)
 {
     RefPtr document = dynamicDowncast<Document>(&context);

@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class Document;
 class KeyboardEvent;
 
 class CloseWatcher final : public RefCounted<CloseWatcher>, public EventTarget, public ActiveDOMObject {
@@ -43,6 +44,7 @@ public:
         RefPtr<AbortSignal> signal;
     };
 
+    static RefPtr<CloseWatcher> create(Document&);
     static ExceptionOr<Ref<CloseWatcher>> create(ScriptExecutionContext&, const Options&);
 
     explicit CloseWatcher(Document&);
