@@ -1856,6 +1856,8 @@ imported/w3c/web-platform-tests/css/css-view-transitions/inline-element-size.htm
 [ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree-dynamic.html [ Failure Timeout ]
 [ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree.html [ Failure ]
 
+[ Sonoma ] compositing/plugins/pdf/pdf-in-embed-with-root-page-zoom.html [ Failure ]
+
 webkit.org/b/270235 [ Ventura+ Debug x86_64 ] webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html [ Timeout ]
 
 # webkit.org/b/266168 Two wheel/mousewheel passive event listeners WPT test pass on macOS Sonoma and up

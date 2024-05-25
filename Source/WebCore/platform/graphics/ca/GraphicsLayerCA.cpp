@@ -1440,17 +1440,18 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
 {
     pageScale = 1;
 
+    bool didFindAnyLayerThatAppliesPageScale = false;
     FloatPoint offset;
     for (const GraphicsLayer* currLayer = this; currLayer; currLayer = currLayer->parent()) {
         if (currLayer->appliesPageScale()) {
-            pageScale = currLayer->pageScaleFactor();
-            return offset;
+            pageScale *= currLayer->pageScaleFactor();
+            didFindAnyLayerThatAppliesPageScale = true;
         }
 
         offset += currLayer->position();
     }
 
-    return FloatPoint();
+    return didFindAnyLayerThatAppliesPageScale ? offset : FloatPoint { };
 }
 
 void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
@@ -1838,7 +1839,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         childCommitState.ancestorHadChanges = hadChanges;
 
     if (appliesPageScale()) {
-        pageScaleFactor = this->pageScaleFactor();
+        pageScaleFactor *= this->pageScaleFactor();
         affectedByPageScale = true;
     }
 

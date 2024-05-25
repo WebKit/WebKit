@@ -1363,10 +1363,6 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
         return;
     }
 
-    RefPtr page = this->page();
-    if (!page)
-        return;
-
     if (origin) {
         // Compensate for the subtraction of topContentInset that happens in ViewGestureController::handleMagnificationGestureEvent();
         // origin is not in root view coordinates.
