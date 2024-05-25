@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,6 +128,12 @@ public:
     void validate() const;
 
     RefPtr<UnlinkedMetadataTable> unlinkedMetadata() const { return static_reference_cast<UnlinkedMetadataTable>(linkingData().unlinkedMetadata); }
+
+    bool isDestroyed() const
+    {
+        uintptr_t unlinkedMetadataPtr = *bitwise_cast<uintptr_t*>(&linkingData().unlinkedMetadata);
+        return !unlinkedMetadataPtr;
+    }
 
 private:
     MetadataTable(UnlinkedMetadataTable&);
