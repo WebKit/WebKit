@@ -51,6 +51,17 @@ Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGCircleElement(tagName, document));
 }
 
+SVGAnimatedProperty* SVGCircleElement::propertyForAttribute(const QualifiedName& name) const
+{
+    if (name == SVGNames::cxAttr)
+        return m_cx.ptr();
+    if (name == SVGNames::cyAttr)
+        return m_cy.ptr();
+    if (name == SVGNames::rAttr)
+        return m_r.ptr();
+    return nullptr;
+}
+
 void SVGCircleElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
