@@ -3,6 +3,10 @@
 // (https://github.com/w3c/webref)
 // Source: Web MIDI API (https://webaudio.github.io/web-midi-api/)
 
+dictionary MidiPermissionDescriptor : PermissionDescriptor {
+  boolean sysex = false;
+};
+
 partial interface Navigator {
   [SecureContext]
   Promise <MIDIAccess> requestMIDIAccess(optional MIDIOptions options = {});
@@ -69,7 +73,7 @@ enum MIDIPortConnectionState {
 [SecureContext, Exposed=Window]
 interface MIDIMessageEvent : Event {
   constructor(DOMString type, optional MIDIMessageEventInit eventInitDict = {});
-  readonly attribute Uint8Array data;
+  readonly attribute Uint8Array? data;
 };
 
 dictionary MIDIMessageEventInit: EventInit {
@@ -79,7 +83,7 @@ dictionary MIDIMessageEventInit: EventInit {
 [SecureContext, Exposed=Window]
 interface MIDIConnectionEvent : Event {
   constructor(DOMString type, optional MIDIConnectionEventInit eventInitDict = {});
-  readonly attribute MIDIPort port;
+  readonly attribute MIDIPort? port;
 };
 
 dictionary MIDIConnectionEventInit: EventInit {

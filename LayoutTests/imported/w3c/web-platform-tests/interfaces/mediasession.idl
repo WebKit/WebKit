@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: Media Session Standard (https://w3c.github.io/mediasession/)
+// Source: Media Session (https://w3c.github.io/mediasession/)
 
 [Exposed=Window]
 partial interface Navigator {
@@ -26,7 +26,10 @@ enum MediaSessionAction {
   "seekto",
   "togglemicrophone",
   "togglecamera",
-  "hangup"
+  "hangup",
+  "previousslide",
+  "nextslide",
+  "enterpictureinpicture"
 };
 
 callback MediaSessionActionHandler = undefined(MediaSessionActionDetails details);
@@ -41,9 +44,9 @@ interface MediaSession {
 
   undefined setPositionState(optional MediaPositionState state = {});
 
-  undefined setMicrophoneActive(boolean active);
+  Promise<undefined> setMicrophoneActive(boolean active);
 
-  undefined setCameraActive(boolean active);
+  Promise<undefined> setCameraActive(boolean active);
 };
 
 [Exposed=Window]
@@ -53,12 +56,27 @@ interface MediaMetadata {
   attribute DOMString artist;
   attribute DOMString album;
   attribute FrozenArray<MediaImage> artwork;
+  [SameObject] readonly attribute FrozenArray<ChapterInformation> chapterInfo;
 };
 
 dictionary MediaMetadataInit {
   DOMString title = "";
   DOMString artist = "";
   DOMString album = "";
+  sequence<MediaImage> artwork = [];
+  sequence<ChapterInformationInit> chapterInfo = [];
+};
+
+[Exposed=Window]
+interface ChapterInformation {
+  readonly attribute DOMString title;
+  readonly attribute double startTime;
+  [SameObject] readonly attribute FrozenArray<MediaImage> artwork;
+};
+
+dictionary ChapterInformationInit {
+  DOMString title = "";
+  double startTime = 0;
   sequence<MediaImage> artwork = [];
 };
 
@@ -69,14 +87,24 @@ dictionary MediaImage {
 };
 
 dictionary MediaPositionState {
-  double duration;
+  unrestricted double duration;
   double playbackRate;
   double position;
 };
 
 dictionary MediaSessionActionDetails {
   required MediaSessionAction action;
-  double? seekOffset;
-  double? seekTime;
-  boolean? fastSeek;
+};
+
+dictionary MediaSessionSeekActionDetails : MediaSessionActionDetails {
+  double seekOffset;
+};
+
+dictionary MediaSessionSeekToActionDetails : MediaSessionActionDetails {
+  required double seekTime;
+  boolean fastSeek;
+};
+
+dictionary MediaSessionCaptureActionDetails : MediaSessionActionDetails {
+  boolean isActivating;
 };

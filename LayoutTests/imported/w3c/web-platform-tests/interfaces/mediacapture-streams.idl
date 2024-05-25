@@ -104,19 +104,19 @@ dictionary MediaTrackConstraintSet {
 };
 
 dictionary MediaTrackSettings {
-  long width;
-  long height;
+  unsigned long width;
+  unsigned long height;
   double aspectRatio;
   double frameRate;
   DOMString facingMode;
   DOMString resizeMode;
-  long sampleRate;
-  long sampleSize;
+  unsigned long sampleRate;
+  unsigned long sampleSize;
   boolean echoCancellation;
   boolean autoGainControl;
   boolean noiseSuppression;
   double latency;
-  long channelCount;
+  unsigned long channelCount;
   DOMString deviceId;
   DOMString groupId;
 };
@@ -174,15 +174,19 @@ enum MediaDeviceKind {
   "videoinput"
 };
 
-[Exposed=Window]
+[Exposed=Window, SecureContext]
 interface InputDeviceInfo : MediaDeviceInfo {
   MediaTrackCapabilities getCapabilities();
 };
 
-partial interface Navigator {
-  [SecureContext] undefined getUserMedia(MediaStreamConstraints constraints,
-                                    NavigatorUserMediaSuccessCallback successCallback,
-                                    NavigatorUserMediaErrorCallback errorCallback);
+[Exposed=Window]
+interface DeviceChangeEvent : Event {
+  constructor(DOMString type, optional DeviceChangeEventInit eventInitDict = {});
+  [SameObject] readonly attribute FrozenArray<MediaDeviceInfo> devices;
+};
+
+dictionary DeviceChangeEventInit : EventInit {
+  sequence<MediaDeviceInfo> devices = [];
 };
 
 partial interface MediaDevices {
@@ -194,10 +198,6 @@ dictionary MediaStreamConstraints {
   (boolean or MediaTrackConstraints) video = false;
   (boolean or MediaTrackConstraints) audio = false;
 };
-
-callback NavigatorUserMediaSuccessCallback = undefined (MediaStream stream);
-
-callback NavigatorUserMediaErrorCallback = undefined (DOMException error);
 
 dictionary DoubleRange {
   double max;
@@ -238,3 +238,7 @@ typedef (boolean or ConstrainBooleanParameters) ConstrainBoolean;
 typedef (DOMString or
 sequence<DOMString> or
 ConstrainDOMStringParameters) ConstrainDOMString;
+
+dictionary CameraDevicePermissionDescriptor : PermissionDescriptor {
+  boolean panTiltZoom = false;
+};

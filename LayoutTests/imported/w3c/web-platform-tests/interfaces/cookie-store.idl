@@ -36,16 +36,18 @@ enum CookieSameSite {
 dictionary CookieInit {
   required USVString name;
   required USVString value;
-  DOMTimeStamp? expires = null;
+  DOMHighResTimeStamp? expires = null;
   USVString? domain = null;
   USVString path = "/";
   CookieSameSite sameSite = "strict";
+  boolean partitioned = false;
 };
 
 dictionary CookieStoreDeleteOptions {
   required USVString name;
   USVString? domain = null;
   USVString path = "/";
+  boolean partitioned = false;
 };
 
 dictionary CookieListItem {
@@ -53,9 +55,10 @@ dictionary CookieListItem {
   USVString value;
   USVString? domain;
   USVString path;
-  DOMTimeStamp? expires;
+  DOMHighResTimeStamp? expires;
   boolean secure;
   CookieSameSite sameSite;
+  boolean partitioned;
 };
 
 typedef sequence<CookieListItem> CookieList;

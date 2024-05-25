@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: DeviceOrientation Event Specification (https://w3c.github.io/deviceorientation/)
+// Source: Device Orientation and Motion (https://w3c.github.io/deviceorientation/)
 
 partial interface Window {
     [SecureContext] attribute EventHandler ondeviceorientation;
@@ -15,7 +15,7 @@ interface DeviceOrientationEvent : Event {
     readonly attribute double? gamma;
     readonly attribute boolean absolute;
 
-    static Promise<PermissionState> requestPermission();
+    static Promise<PermissionState> requestPermission(optional boolean absolute = false);
 };
 
 dictionary DeviceOrientationEventInit : EventInit {
@@ -27,14 +27,6 @@ dictionary DeviceOrientationEventInit : EventInit {
 
 partial interface Window {
     [SecureContext] attribute EventHandler ondeviceorientationabsolute;
-};
-
-partial interface Window {
-    attribute EventHandler oncompassneedscalibration;
-};
-
-partial interface Window {
-    [SecureContext] attribute EventHandler ondevicemotion;
 };
 
 [Exposed=Window, SecureContext]
@@ -49,6 +41,10 @@ interface DeviceMotionEventRotationRate {
     readonly attribute double? alpha;
     readonly attribute double? beta;
     readonly attribute double? gamma;
+};
+
+partial interface Window {
+    [SecureContext] attribute EventHandler ondevicemotion;
 };
 
 [Exposed=Window, SecureContext]

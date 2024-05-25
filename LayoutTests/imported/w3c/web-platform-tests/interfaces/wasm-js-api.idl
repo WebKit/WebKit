@@ -8,7 +8,7 @@ dictionary WebAssemblyInstantiatedSource {
     required Instance instance;
 };
 
-[Exposed=(Window,Worker,Worklet)]
+[Exposed=*]
 namespace WebAssembly {
     boolean validate(BufferSource bytes);
     Promise<Module> compile(BufferSource bytes);
@@ -39,7 +39,7 @@ dictionary ModuleImportDescriptor {
   required ImportExportKind kind;
 };
 
-[LegacyNamespace=WebAssembly, Exposed=(Window,Worker,Worklet)]
+[LegacyNamespace=WebAssembly, Exposed=*]
 interface Module {
   constructor(BufferSource bytes);
   static sequence<ModuleExportDescriptor> exports(Module moduleObject);
@@ -47,7 +47,7 @@ interface Module {
   static sequence<ArrayBuffer> customSections(Module moduleObject, DOMString sectionName);
 };
 
-[LegacyNamespace=WebAssembly, Exposed=(Window,Worker,Worklet)]
+[LegacyNamespace=WebAssembly, Exposed=*]
 interface Instance {
   constructor(Module module, optional object importObject);
   readonly attribute object exports;
@@ -58,10 +58,12 @@ dictionary MemoryDescriptor {
   [EnforceRange] unsigned long maximum;
 };
 
-[LegacyNamespace=WebAssembly, Exposed=(Window,Worker,Worklet)]
+[LegacyNamespace=WebAssembly, Exposed=*]
 interface Memory {
   constructor(MemoryDescriptor descriptor);
   unsigned long grow([EnforceRange] unsigned long delta);
+  ArrayBuffer toFixedLengthBuffer();
+  ArrayBuffer toResizableBuffer();
   readonly attribute ArrayBuffer buffer;
 };
 
@@ -78,7 +80,7 @@ dictionary TableDescriptor {
   [EnforceRange] unsigned long maximum;
 };
 
-[LegacyNamespace=WebAssembly, Exposed=(Window,Worker,Worklet)]
+[LegacyNamespace=WebAssembly, Exposed=*]
 interface Table {
   constructor(TableDescriptor descriptor, optional any value);
   unsigned long grow([EnforceRange] unsigned long delta, optional any value);
@@ -92,6 +94,7 @@ enum ValueType {
   "i64",
   "f32",
   "f64",
+  "v128",
   "externref",
   "anyfunc",
 };
@@ -101,7 +104,7 @@ dictionary GlobalDescriptor {
   boolean mutable = false;
 };
 
-[LegacyNamespace=WebAssembly, Exposed=(Window,Worker,Worklet)]
+[LegacyNamespace=WebAssembly, Exposed=*]
 interface Global {
   constructor(GlobalDescriptor descriptor, optional any v);
   any valueOf();
