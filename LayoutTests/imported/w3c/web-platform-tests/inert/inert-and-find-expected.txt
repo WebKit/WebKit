@@ -1,0 +1,4 @@
+
+
+FAIL Basic test for inert and find assert_unreached: Error: assert_equals: Should be not findable: Basic use case, text: me, iter: 1 expected false but got true Reached unreachable code
+

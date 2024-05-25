@@ -895,6 +895,7 @@ webkit.org/b/246766 imported/w3c/web-platform-tests/reporting/generateTestReport
 webkit.org/b/251527 imported/w3c/web-platform-tests/css/css-scroll-snap/selection-target.html [ Failure ]
 
 webkit.org/b/251528 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-uneditable.html [ Failure ]
+webkit.org/b/251528 imported/w3c/web-platform-tests/inert/inert-node-is-uneditable.html [ Failure ]
 
 webkit.org/b/251529 imported/w3c/web-platform-tests/shadow-dom/accesskey.tentative.html [ Failure ]
 
