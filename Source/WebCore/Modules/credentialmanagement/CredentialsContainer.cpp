@@ -126,21 +126,37 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
 
 void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const
 {
+    if (m_document && !m_document->isFullyActive()) {
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not fully active."_s });
+        return;
+    }
     promise.resolve();
 }
 
 template<typename Options>
 bool CredentialsContainer::performCommonChecks(const Options& options, CredentialPromise& promise)
 {
-    if (!m_document || !m_document->page()) {
+
+    if (!m_document) {
         promise.reject(Exception { ExceptionCode::NotSupportedError });
         return false;
     }
+
+    if (!m_document->isFullyActive()) {
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not fully active."_s });
+        return false;
+    }
+
+    if (!m_document->page()) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "No browsing context"_s });
+        return false;
+    }
+
     if (options.signal && options.signal->aborted()) {
         promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
         return false;
     }
-    // Step 1-2.
+
     ASSERT(m_document->isSecureContext());
     return true;
 }
