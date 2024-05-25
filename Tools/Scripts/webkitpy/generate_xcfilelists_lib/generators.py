@@ -726,7 +726,7 @@ class BaseGenerator(object):
 
 
 class JavaScriptCoreGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator", "xros", "xrsimulator")
+    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator", "xros", "xrsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production", "Profiling")
 
     @util.LogEntryExit
@@ -743,7 +743,7 @@ class JavaScriptCoreGenerator(BaseGenerator):
 
 
 class WebCoreGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator", "xros", "xrsimulator")
+    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator", "xros", "xrsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production")
 
     @util.LogEntryExit
@@ -760,7 +760,7 @@ class WebCoreGenerator(BaseGenerator):
 
 
 class WebKitGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator", "xros", "xrsimulator")
+    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator", "xros", "xrsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production")
 
     @util.LogEntryExit
@@ -781,7 +781,7 @@ class WebKitGenerator(BaseGenerator):
 
 
 class WebKitLegacyGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator", "xros", "xrsimulator")
+    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator", "xros", "xrsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production")
 
     @util.LogEntryExit
@@ -820,7 +820,7 @@ class WebKitTestRunnerGenerator(BaseGenerator):
 
 
 class TestWebKitAPIGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator", "xros", "xrsimulator")
+    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator", "xros", "xrsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production")
 
     @util.LogEntryExit
