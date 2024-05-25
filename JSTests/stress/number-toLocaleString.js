@@ -44,7 +44,10 @@ shouldThrow(() => (0).toLocaleString('i'), RangeError);
 shouldBe(Infinity.toLocaleString(), '∞');
 
 // Test that locale parameter is passed through properly.
-shouldBe((123456.789).toLocaleString('ar'), '١٢٣٬٤٥٦٫٧٨٩');
+if ($vm.icuVersion() >= 74 && $vm.icuMinorVersion() >= 2)
+    shouldBe((123456.789).toLocaleString('ar'), '123,456.789');
+else
+    shouldBe((123456.789).toLocaleString('ar'), '١٢٣٬٤٥٦٫٧٨٩');
 shouldBe((123456.789).toLocaleString('zh-Hans-CN-u-nu-hanidec'), '一二三,四五六.七八九');
 
 // Test that options parameter is passed through properly.
