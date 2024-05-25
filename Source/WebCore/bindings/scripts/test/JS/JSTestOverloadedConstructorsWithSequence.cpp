@@ -27,6 +27,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMConvertOptional.h"
 #include "JSDOMConvertSequences.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
@@ -95,9 +96,10 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(
     auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto sequenceOfStrings = argument0.value().isUndefined() ? Converter<IDLSequence<IDLDOMString>>::ReturnType{ } : convert<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestOverloadedConstructorsWithSequence::create(WTFMove(sequenceOfStrings));
+    auto sequenceOfStringsConversionResult = convertOptionalWithDefault<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&]() -> ConversionResult<IDLSequence<IDLDOMString>> { return Converter<IDLSequence<IDLDOMString>>::ReturnType { }; });
+    if (UNLIKELY(sequenceOfStringsConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    auto object = TestOverloadedConstructorsWithSequence::create(sequenceOfStringsConversionResult.releaseReturnValue());
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
@@ -116,9 +118,10 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
     auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto string = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestOverloadedConstructorsWithSequence::create(WTFMove(string));
+    auto stringConversionResult = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
+    if (UNLIKELY(stringConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    auto object = TestOverloadedConstructorsWithSequence::create(stringConversionResult.releaseReturnValue());
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);

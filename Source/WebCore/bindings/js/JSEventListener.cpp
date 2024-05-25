@@ -261,12 +261,12 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     if (event.type() == eventNames().beforeunloadEvent) {
         // This is a OnBeforeUnloadEventHandler, and therefore the return value must be coerced into a String.
         if (auto* beforeUnloadEvent = dynamicDowncast<BeforeUnloadEvent>(event)) {
-            String resultStr = convert<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, retval);
-            if (UNLIKELY(scope.exception())) {
+            auto conversionResult = convert<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, retval);
+            if (UNLIKELY(conversionResult.hasException(scope))) {
                 if (handleExceptionIfNeeded(scope.exception()))
                     return;
             }
-            handleBeforeUnloadEventReturnValue(*beforeUnloadEvent, resultStr);
+            handleBeforeUnloadEventReturnValue(*beforeUnloadEvent, conversionResult.releaseReturnValue());
         }
         return;
     }

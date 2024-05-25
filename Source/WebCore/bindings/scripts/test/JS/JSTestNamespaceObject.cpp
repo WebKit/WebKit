@@ -32,6 +32,7 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertOptional.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObjectInlines.h"
@@ -183,12 +184,14 @@ static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_overl
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    RefPtr objArg = convert<IDLNullable<IDLInterface<TestObj>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "objArg"_s, "TestInterfaceName"_s, "overloadedNamespaceOperation"_s, "TestObj"_s); });
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto objArgConversionResult = convert<IDLNullable<IDLInterface<TestObj>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "objArg"_s, "TestInterfaceName"_s, "overloadedNamespaceOperation"_s, "TestObj"_s); });
+    if (UNLIKELY(objArgConversionResult.hasException(throwScope)))
+       return encodedJSValue();
     EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
-    auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, argument1.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(*lexicalGlobalObject, throwScope, TestNamespaceObject::overloadedNamespaceOperation(objArg.get(), WTFMove(strArg)))));
+    auto strArgConversionResult = convert<IDLDOMString>(*lexicalGlobalObject, argument1.value());
+    if (UNLIKELY(strArgConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(*lexicalGlobalObject, throwScope, TestNamespaceObject::overloadedNamespaceOperation(objArgConversionResult.releaseReturnValue(), strArgConversionResult.releaseReturnValue()))));
 }
 
 static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
@@ -198,12 +201,14 @@ static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_overl
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    RefPtr objArg = convert<IDLNullable<IDLInterface<TestObj>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "objArg"_s, "TestInterfaceName"_s, "overloadedNamespaceOperation"_s, "TestObj"_s); });
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto objArgConversionResult = convert<IDLNullable<IDLInterface<TestObj>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "objArg"_s, "TestInterfaceName"_s, "overloadedNamespaceOperation"_s, "TestObj"_s); });
+    if (UNLIKELY(objArgConversionResult.hasException(throwScope)))
+       return encodedJSValue();
     EnsureStillAliveScope argument1 = callFrame->argument(1);
-    auto longArg = argument1.value().isUndefined() ? std::optional<Converter<IDLLong>::ReturnType>() : std::optional<Converter<IDLLong>::ReturnType>(convert<IDLLong>(*lexicalGlobalObject, argument1.value()));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(*lexicalGlobalObject, throwScope, TestNamespaceObject::overloadedNamespaceOperation(objArg.get(), WTFMove(longArg)))));
+    auto longArgConversionResult = convert<IDLOptional<IDLLong>>(*lexicalGlobalObject, argument1.value());
+    if (UNLIKELY(longArgConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(*lexicalGlobalObject, throwScope, TestNamespaceObject::overloadedNamespaceOperation(objArgConversionResult.releaseReturnValue(), longArgConversionResult.releaseReturnValue()))));
 }
 
 static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperationOverloadDispatcher(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
@@ -239,9 +244,10 @@ static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_enabl
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto arg = convert<IDLAny>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, TestNamespaceObject::enabledBySettingNamespaceOperation(WTFMove(arg)))));
+    auto argConversionResult = convert<IDLAny>(*lexicalGlobalObject, argument0.value());
+    if (UNLIKELY(argConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, TestNamespaceObject::enabledBySettingNamespaceOperation(argConversionResult.releaseReturnValue()))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

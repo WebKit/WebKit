@@ -53,6 +53,9 @@ private:
 JSC::JSValue toJS(TestVoidCallbackFunction&);
 inline JSC::JSValue toJS(TestVoidCallbackFunction* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
+template<> struct JSDOMCallbackConverterTraits<JSTestVoidCallbackFunction> {
+    using Base = TestVoidCallbackFunction;
+};
 } // namespace WebCore
 
 #endif // ENABLE(TEST_CONDITIONAL)

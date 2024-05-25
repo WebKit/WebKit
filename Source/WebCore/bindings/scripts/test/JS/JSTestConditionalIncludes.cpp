@@ -545,10 +545,11 @@ static inline bool setJSTestConditionalIncludes_mixinAttributeSetter(JSGlobalObj
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setMixinAttribute(WTFMove(nativeValue));
+        return impl.setMixinAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -613,10 +614,11 @@ static inline bool setJSTestConditionalIncludes_mixinNodeAttributeSetter(JSGloba
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RefPtr nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionalIncludes"_s, "mixinNodeAttribute"_s, "Node"_s); });
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionalIncludes"_s, "mixinNodeAttribute"_s, "Node"_s); });
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setMixinNodeAttribute(*nativeValue);
+        return impl.setMixinNodeAttribute(*nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -676,12 +678,14 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mix
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto strArgConversionResult = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
+    if (UNLIKELY(strArgConversionResult.hasException(throwScope)))
+       return encodedJSValue();
     EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
-    RefPtr objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument1.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg"_s, "TestConditionalIncludes"_s, "mixinComplexOperation"_s, "TestObj"_s); });
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.mixinComplexOperation(*context, WTFMove(strArg), *objArg))));
+    auto objArgConversionResult = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument1.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg"_s, "TestConditionalIncludes"_s, "mixinComplexOperation"_s, "TestObj"_s); });
+    if (UNLIKELY(objArgConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.mixinComplexOperation(*context, strArgConversionResult.releaseReturnValue(), *objArgConversionResult.releaseReturnValue()))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinComplexOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

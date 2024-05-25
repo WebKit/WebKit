@@ -87,9 +87,11 @@ static ExceptionOr<ApplePayRequest> convertAndValidateApplePayRequest(Document& 
         return Exception { ExceptionCode::TypeError, "Missing payment method data."_s };
 
     auto throwScope = DECLARE_THROW_SCOPE(document.vm());
-    auto applePayRequest = convertDictionary<ApplePayRequest>(*document.globalObject(), data);
-    if (throwScope.exception())
+
+    auto applePayRequestConversion = convertDictionary<ApplePayRequest>(*document.globalObject(), data);
+    if (applePayRequestConversion.hasException(throwScope))
         return Exception { ExceptionCode::ExistingExceptionError };
+    auto applePayRequest = applePayRequestConversion.releaseReturnValue();
 
     auto validatedRequest = convertAndValidate(document, applePayRequest.version, applePayRequest, paymentCoordinator(document));
     if (validatedRequest.hasException())
@@ -493,12 +495,13 @@ ExceptionOr<void> ApplePayPaymentHandler::computePaymentMethodErrors(JSC::JSObje
         return { };
 
     auto& context = *scriptExecutionContext();
-    auto throwScope = DECLARE_THROW_SCOPE(context.vm());
+    auto scope = DECLARE_THROW_SCOPE(context.vm());
+
     auto applePayErrors = convert<IDLSequence<IDLInterface<ApplePayError>>>(*context.globalObject(), paymentMethodErrors);
-    if (throwScope.exception())
+    if (UNLIKELY(applePayErrors.hasException(scope)))
         return Exception { ExceptionCode::ExistingExceptionError };
 
-    errors.appendVector(WTFMove(applePayErrors));
+    errors.appendVector(applePayErrors.releaseReturnValue());
 
     return { };
 }
@@ -601,9 +604,10 @@ ExceptionOr<std::optional<std::tuple<PaymentDetailsModifier, ApplePayModifier>>>
                 return Exception(ExceptionCode::ExistingExceptionError);
         }
 
-        auto applePayModifier = convertDictionary<ApplePayModifier>(lexicalGlobalObject, WTFMove(data));
-        if (scope.exception())
+        auto applePayModifierConversionResult = convertDictionary<ApplePayModifier>(lexicalGlobalObject, WTFMove(data));
+        if (applePayModifierConversionResult.hasException(scope))
             return Exception(ExceptionCode::ExistingExceptionError);
+        auto applePayModifier = applePayModifierConversionResult.releaseReturnValue();
 
         auto validateApplePayModifierResult = validate(applePayModifier);
         if (validateApplePayModifierResult.hasException())
@@ -920,9 +924,10 @@ ExceptionOr<void> ApplePayPaymentHandler::complete(Document& document, std::opti
         if (throwScope.exception())
             return Exception { ExceptionCode::ExistingExceptionError };
 
-        auto details = convertDictionary<ApplePayPaymentCompleteDetails>(*document.globalObject(), WTFMove(parsedData));
-        if (throwScope.exception())
+        auto detailsConversionResult = convertDictionary<ApplePayPaymentCompleteDetails>(*document.globalObject(), WTFMove(parsedData));
+        if (detailsConversionResult.hasException(throwScope))
             return Exception { ExceptionCode::ExistingExceptionError };
+        auto details = detailsConversionResult.releaseReturnValue();
 
         auto convertedDetails = convertAndValidate(WTFMove(details));
         if (convertedDetails.hasException())

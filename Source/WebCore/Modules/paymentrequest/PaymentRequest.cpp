@@ -654,11 +654,12 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
 
     auto& context = *m_detailsPromise->scriptExecutionContext();
     auto throwScope = DECLARE_THROW_SCOPE(context.vm());
-    auto detailsUpdate = convertDictionary<PaymentDetailsUpdate>(*context.globalObject(), m_detailsPromise->result());
-    if (throwScope.exception()) {
+    auto detailsUpdateConversion = convertDictionary<PaymentDetailsUpdate>(*context.globalObject(), m_detailsPromise->result());
+    if (detailsUpdateConversion.hasException(throwScope)) {
         abortWithException(Exception { ExceptionCode::ExistingExceptionError });
         return;
     }
+    auto detailsUpdate = detailsUpdateConversion.releaseReturnValue();
 
     if (detailsUpdate.total) {
         auto totalResult = checkAndCanonicalizeTotal(*detailsUpdate.total);

@@ -252,8 +252,9 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::put(JSCell* cell, JSGloba
         RETURN_IF_EXCEPTION(throwScope, false);
         if (!found) {
             auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
-            RETURN_IF_EXCEPTION(throwScope, true);
-            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
+            if (UNLIKELY(nativeValue.hasException(throwScope)))
+                return true;
+            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), nativeValue.releaseReturnValue()); });
             return true;
         }
     }
@@ -287,8 +288,9 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::putByIndex(JSCell* cell, 
     RETURN_IF_EXCEPTION(throwScope, false);
     if (!found) {
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
-        RETURN_IF_EXCEPTION(throwScope, true);
-        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
+        if (UNLIKELY(nativeValue.hasException(throwScope)))
+            return true;
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), nativeValue.releaseReturnValue()); });
         return true;
     }
 
@@ -319,8 +321,9 @@ static bool isLegacyUnforgeablePropertyName(PropertyName propertyName)
                 if (!propertyDescriptor.isDataDescriptor())
                     return typeError(lexicalGlobalObject, throwScope, shouldThrow, "Cannot set named properties on this object"_s);
                 auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, propertyDescriptor.value());
-                RETURN_IF_EXCEPTION(throwScope, true);
-                invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
+                if (UNLIKELY(nativeValue.hasException(throwScope)))
+                    return true;
+                invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), nativeValue.releaseReturnValue()); });
                 return true;
             }
         }

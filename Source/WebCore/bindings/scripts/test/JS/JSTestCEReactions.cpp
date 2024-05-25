@@ -214,10 +214,11 @@ static inline bool setJSTestCEReactions_attributeWithCEReactionsSetter(JSGlobalO
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithCEReactions(WTFMove(nativeValue));
+        return impl.setAttributeWithCEReactions(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -247,10 +248,11 @@ static inline bool setJSTestCEReactions_reflectAttributeWithCEReactionsSetter(JS
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr, WTFMove(nativeValue));
+        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr, nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -317,10 +319,11 @@ static inline bool setJSTestCEReactions_attributeWithCEReactionsNotNeededSetter(
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithCEReactionsNotNeeded(WTFMove(nativeValue));
+        return impl.setAttributeWithCEReactionsNotNeeded(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -350,10 +353,11 @@ static inline bool setJSTestCEReactions_reflectAttributeWithCEReactionsNotNeeded
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsnotneededAttr, WTFMove(nativeValue));
+        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsnotneededAttr, nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }

@@ -69,7 +69,7 @@ AudioWorkletGlobalScope::AudioWorkletGlobalScope(AudioWorkletThread& thread, Ref
 AudioWorkletGlobalScope::~AudioWorkletGlobalScope() = default;
 
 // https://www.w3.org/TR/webaudio/#dom-audioworkletglobalscope-registerprocessor
-ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<JSAudioWorkletProcessorConstructor>&& processorContructor)
+ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<JSAudioWorkletProcessorConstructor>&& processorConstructor)
 {
     ASSERT(!isMainThread());
 
@@ -79,7 +79,7 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
     if (m_processorConstructorMap.contains(name))
         return Exception { ExceptionCode::NotSupportedError, "A processor was already registered with this name"_s };
 
-    JSC::JSObject* jsConstructor = processorContructor->callbackData()->callback();
+    JSC::JSObject* jsConstructor = processorConstructor->callbackData()->callback();
     auto* globalObject = jsConstructor->globalObject();
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -98,9 +98,12 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
 
     Vector<AudioParamDescriptor> parameterDescriptors;
     if (!parameterDescriptorsValue.isUndefined()) {
-        parameterDescriptors = convert<IDLSequence<IDLDictionary<AudioParamDescriptor>>>(*globalObject, parameterDescriptorsValue);
-        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
-        UNUSED_PARAM(parameterDescriptors);
+        auto parameterDescriptorsConversionResult = convert<IDLSequence<IDLDictionary<AudioParamDescriptor>>>(*globalObject, parameterDescriptorsValue);
+        if (UNLIKELY(parameterDescriptorsConversionResult.hasException(scope)))
+            return Exception { ExceptionCode::ExistingExceptionError };
+
+        parameterDescriptors = parameterDescriptorsConversionResult.releaseReturnValue();
+
         HashSet<String> paramNames;
         for (auto& descriptor : parameterDescriptors) {
             auto addResult = paramNames.add(descriptor.name);
@@ -113,7 +116,7 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
         }
     }
 
-    auto addResult = m_processorConstructorMap.add(name, WTFMove(processorContructor));
+    auto addResult = m_processorConstructorMap.add(name, WTFMove(processorConstructor));
 
     // We've already checked at the beginning of this function but then we ran some JS so we need to check again.
     if (!addResult.isNewEntry)

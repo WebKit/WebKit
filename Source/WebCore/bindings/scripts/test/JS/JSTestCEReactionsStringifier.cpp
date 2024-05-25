@@ -193,10 +193,11 @@ static inline bool setJSTestCEReactionsStringifier_valueSetter(JSGlobalObject& l
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setValue(WTFMove(nativeValue));
+        return impl.setValue(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -226,10 +227,11 @@ static inline bool setJSTestCEReactionsStringifier_valueWithoutReactionsSetter(J
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setValueWithoutReactions(WTFMove(nativeValue));
+        return impl.setValueWithoutReactions(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }

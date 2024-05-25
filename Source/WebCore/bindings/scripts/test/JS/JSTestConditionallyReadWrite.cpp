@@ -267,10 +267,11 @@ static inline bool setJSTestConditionallyReadWrite_conditionallyReadWriteAttribu
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RefPtr nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite"_s, "conditionallyReadWriteAttribute"_s, "Node"_s); });
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite"_s, "conditionallyReadWriteAttribute"_s, "Node"_s); });
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setConditionallyReadWriteAttribute(*nativeValue);
+        return impl.setConditionallyReadWriteAttribute(*nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -306,10 +307,11 @@ static inline bool setJSTestConditionallyReadWrite_conditionalAndConditionallyRe
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RefPtr nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite"_s, "conditionalAndConditionallyReadWriteAttribute"_s, "Node"_s); });
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite"_s, "conditionalAndConditionallyReadWriteAttribute"_s, "Node"_s); });
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setConditionalAndConditionallyReadWriteAttribute(*nativeValue);
+        return impl.setConditionalAndConditionallyReadWriteAttribute(*nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -342,10 +344,11 @@ static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWrite
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RefPtr nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite"_s, "enabledConditionallyReadWriteBySettingAttribute"_s, "Node"_s); });
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite"_s, "enabledConditionallyReadWriteBySettingAttribute"_s, "Node"_s); });
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteBySettingAttribute(*nativeValue);
+        return impl.setEnabledConditionallyReadWriteBySettingAttribute(*nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -374,10 +377,11 @@ static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWrite
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RefPtr nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite"_s, "enabledConditionallyReadWriteBySettingAttributeUnforgeable"_s, "Node"_s); });
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite"_s, "enabledConditionallyReadWriteBySettingAttributeUnforgeable"_s, "Node"_s); });
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteBySettingAttributeUnforgeable(*nativeValue);
+        return impl.setEnabledConditionallyReadWriteBySettingAttributeUnforgeable(*nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -406,10 +410,11 @@ static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWrite
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RefPtr nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite"_s, "enabledConditionallyReadWriteBySettingAttributeUnforgeablePrivate"_s, "Node"_s); });
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite"_s, "enabledConditionallyReadWriteBySettingAttributeUnforgeablePrivate"_s, "Node"_s); });
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteBySettingAttributeUnforgeablePrivate(*nativeValue);
+        return impl.setEnabledConditionallyReadWriteBySettingAttributeUnforgeablePrivate(*nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -438,10 +443,11 @@ static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWrite
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLPromise<IDLDouble>>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLPromise<IDLDouble>>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteBySettingAttributePromise(nativeValue.releaseNonNull());
+        return impl.setEnabledConditionallyReadWriteBySettingAttributePromise(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }

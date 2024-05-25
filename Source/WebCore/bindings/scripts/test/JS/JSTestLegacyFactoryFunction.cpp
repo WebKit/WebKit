@@ -28,6 +28,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMConvertOptional.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObjectInlines.h"
@@ -118,15 +119,18 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestLegacyFactoryFunctionLe
         return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "TestLegacyFactoryFunction"_s);
     auto& document = downcast<Document>(*context);
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto str1 = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto str1ConversionResult = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
+    if (UNLIKELY(str1ConversionResult.hasException(throwScope)))
+       return encodedJSValue();
     EnsureStillAliveScope argument1 = callFrame->argument(1);
-    auto str2 = argument1.value().isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, argument1.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto str2ConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument1.value(), [&]() -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { "defaultString"_s }; });
+    if (UNLIKELY(str2ConversionResult.hasException(throwScope)))
+       return encodedJSValue();
     EnsureStillAliveScope argument2 = callFrame->argument(2);
-    auto str3 = argument2.value().isUndefined() ? String() : convert<IDLDOMString>(*lexicalGlobalObject, argument2.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestLegacyFactoryFunction::createForLegacyFactoryFunction(document, WTFMove(str1), WTFMove(str2), WTFMove(str3));
+    auto str3ConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument2.value(), [&]() -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { String() }; });
+    if (UNLIKELY(str3ConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    auto object = TestLegacyFactoryFunction::createForLegacyFactoryFunction(document, str1ConversionResult.releaseReturnValue(), str2ConversionResult.releaseReturnValue(), str3ConversionResult.releaseReturnValue());
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);

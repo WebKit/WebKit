@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-template<> TestDictionaryWithOnlyConditionalMembers convertDictionary<TestDictionaryWithOnlyConditionalMembers>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ConversionResult<IDLDictionary<TestDictionaryWithOnlyConditionalMembers>> convertDictionary<TestDictionaryWithOnlyConditionalMembers>(JSC::JSGlobalObject&, JSC::JSValue);
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, const TestDictionaryWithOnlyConditionalMembers&);
 

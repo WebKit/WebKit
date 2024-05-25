@@ -41,16 +41,19 @@ JSC::EncodedJSValue constructJSExtendableMessageEvent(JSC::JSGlobalObject* lexic
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
 
     if (UNLIKELY(callFrame.argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto type = convert<IDLAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, callFrame.uncheckedArgument(0));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto eventInitDict = convert<IDLDictionary<ExtendableMessageEvent::Init>>(*lexicalGlobalObject, callFrame.argument(1));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    auto object = ExtendableMessageEvent::create(*lexicalGlobalObject, WTFMove(type), WTFMove(eventInitDict));
+    auto type = convert<IDLAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, callFrame.uncheckedArgument(0));
+    if (UNLIKELY(type.hasException(throwScope)))
+        return encodedJSValue();
+
+    auto eventInitDict = convert<IDLDictionary<ExtendableMessageEvent::Init>>(*lexicalGlobalObject, callFrame.argument(1));
+    if (UNLIKELY(eventInitDict.hasException(throwScope)))
+        return encodedJSValue();
+
+    auto object = ExtendableMessageEvent::create(*lexicalGlobalObject, type.releaseReturnValue(), eventInitDict.releaseReturnValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     return JSValue::encode(object.strongWrapper.get());

@@ -100,11 +100,14 @@ void setAdoptedStyleSheetsOnTreeScope(TreeScope& treeScope, JSC::JSGlobalObject&
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+
     auto nativeValue = convert<IDLFrozenArray<IDLInterface<CSSStyleSheet>>>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, void());
-    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return treeScope.setAdoptedStyleSheets(WTFMove(nativeValue));
-    });
+    if (UNLIKELY(nativeValue.hasException(throwScope)))
+        return;
+
+    auto result = treeScope.setAdoptedStyleSheets(nativeValue.releaseReturnValue());
+    if (UNLIKELY(result.hasException()))
+        propagateException(lexicalGlobalObject, throwScope, result.releaseException());
 }
 
 void JSDocument::setAdoptedStyleSheets(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)

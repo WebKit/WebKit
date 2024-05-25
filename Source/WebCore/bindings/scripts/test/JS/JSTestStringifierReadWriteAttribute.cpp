@@ -188,10 +188,11 @@ static inline bool setJSTestStringifierReadWriteAttribute_identifierSetter(JSGlo
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setIdentifier(WTFMove(nativeValue));
+        return impl.setIdentifier(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }

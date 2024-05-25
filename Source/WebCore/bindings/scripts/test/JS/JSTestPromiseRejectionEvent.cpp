@@ -31,6 +31,7 @@
 #include "JSDOMConvertAny.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMConvertOptional.h"
 #include "JSDOMConvertPromise.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
@@ -52,7 +53,7 @@
 namespace WebCore {
 using namespace JSC;
 
-template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectionEvent::Init>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> ConversionResult<IDLDictionary<TestPromiseRejectionEvent::Init>> convertDictionary<TestPromiseRejectionEvent::Init>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -60,7 +61,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
         throwTypeError(&lexicalGlobalObject, throwScope);
-        return { };
+        return ConversionResultException { };
     }
     TestPromiseRejectionEvent::Init result;
     JSValue bubblesValue;
@@ -68,63 +69,60 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
         bubblesValue = jsUndefined();
     else {
         bubblesValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bubbles"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!bubblesValue.isUndefined()) {
-        result.bubbles = convert<IDLBoolean>(lexicalGlobalObject, bubblesValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    } else
-        result.bubbles = false;
+    auto bubblesConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, bubblesValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    if (UNLIKELY(bubblesConversionResult.hasException(throwScope)))
+        return ConversionResultException { };
+    result.bubbles = bubblesConversionResult.releaseReturnValue();
     JSValue cancelableValue;
     if (isNullOrUndefined)
         cancelableValue = jsUndefined();
     else {
         cancelableValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "cancelable"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!cancelableValue.isUndefined()) {
-        result.cancelable = convert<IDLBoolean>(lexicalGlobalObject, cancelableValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    } else
-        result.cancelable = false;
+    auto cancelableConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, cancelableValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    if (UNLIKELY(cancelableConversionResult.hasException(throwScope)))
+        return ConversionResultException { };
+    result.cancelable = cancelableConversionResult.releaseReturnValue();
     JSValue composedValue;
     if (isNullOrUndefined)
         composedValue = jsUndefined();
     else {
         composedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "composed"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!composedValue.isUndefined()) {
-        result.composed = convert<IDLBoolean>(lexicalGlobalObject, composedValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    } else
-        result.composed = false;
+    auto composedConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, composedValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    if (UNLIKELY(composedConversionResult.hasException(throwScope)))
+        return ConversionResultException { };
+    result.composed = composedConversionResult.releaseReturnValue();
     JSValue promiseValue;
     if (isNullOrUndefined)
         promiseValue = jsUndefined();
     else {
         promiseValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "promise"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!promiseValue.isUndefined()) {
-        result.promise = convert<IDLPromise<IDLAny>>(lexicalGlobalObject, promiseValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    } else {
+    if (promiseValue.isUndefined()) {
         throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "promise"_s, "TestPromiseRejectionEventInit"_s, "Promise"_s);
-        return { };
+        return ConversionResultException { };
     }
+    auto promiseConversionResult = convert<IDLPromise<IDLAny>>(lexicalGlobalObject, promiseValue);
+    if (UNLIKELY(promiseConversionResult.hasException(throwScope)))
+        return ConversionResultException { };
+    result.promise = promiseConversionResult.releaseReturnValue();
     JSValue reasonValue;
     if (isNullOrUndefined)
         reasonValue = jsUndefined();
     else {
         reasonValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "reason"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    if (!reasonValue.isUndefined()) {
-        result.reason = convert<IDLAny>(lexicalGlobalObject, reasonValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    } else
-        result.reason = jsUndefined();
+    auto reasonConversionResult = convertOptionalWithDefault<IDLAny>(lexicalGlobalObject, reasonValue, [&]() -> ConversionResult<IDLAny> { return Converter<IDLAny>::ReturnType { jsUndefined() }; });
+    if (UNLIKELY(reasonConversionResult.hasException(throwScope)))
+        return ConversionResultException { };
+    result.reason = reasonConversionResult.releaseReturnValue();
     return result;
 }
 
@@ -177,12 +175,14 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestPromiseRejectionEventDO
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto type = convert<IDLAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto typeConversionResult = convert<IDLAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value());
+    if (UNLIKELY(typeConversionResult.hasException(throwScope)))
+       return encodedJSValue();
     EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
-    auto eventInitDict = convert<IDLDictionary<TestPromiseRejectionEvent::Init>>(*lexicalGlobalObject, argument1.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestPromiseRejectionEvent::create(*castedThis->globalObject(), WTFMove(type), WTFMove(eventInitDict));
+    auto eventInitDictConversionResult = convert<IDLDictionary<TestPromiseRejectionEvent::Init>>(*lexicalGlobalObject, argument1.value());
+    if (UNLIKELY(eventInitDictConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    auto object = TestPromiseRejectionEvent::create(*castedThis->globalObject(), typeConversionResult.releaseReturnValue(), eventInitDictConversionResult.releaseReturnValue());
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);

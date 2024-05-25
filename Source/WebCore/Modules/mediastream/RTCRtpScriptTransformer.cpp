@@ -99,13 +99,13 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
                 return Exception { ExceptionCode::InvalidStateError };
 
             auto& globalObject = *context.globalObject();
-
             auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
-            auto frame = convert<IDLUnion<IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
 
-            if (scope.exception())
+            auto frameConversionResult = convert<IDLUnion<IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
+            if (UNLIKELY(frameConversionResult.hasException(scope)))
                 return Exception { ExceptionCode::ExistingExceptionError };
 
+            auto frame = frameConversionResult.releaseReturnValue();
             auto rtcFrame = WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
                 return value->rtcFrame();
             }, [&](RefPtr<RTCEncodedVideoFrame>& value) {

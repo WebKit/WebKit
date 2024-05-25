@@ -366,6 +366,16 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return processArgument(argument.get());
 }
 
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<JSC::ArrayBuffer>&)
+{
+    return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
+}
+
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<JSC::ArrayBufferView>&)
+{
+    return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
+}
+
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<JSC::ArrayBuffer>& argument)
 {
     if (!argument)

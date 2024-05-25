@@ -233,9 +233,10 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
         auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
         auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
 
-        auto frame = convert<IDLUnion<IDLArrayBuffer, IDLArrayBufferView, IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
-        if (scope.exception())
+        auto frameConversionResult = convert<IDLUnion<IDLArrayBuffer, IDLArrayBufferView, IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
+        if (UNLIKELY(frameConversionResult.hasException(scope)))
             return Exception { ExceptionCode::ExistingExceptionError };
+        auto frame = frameConversionResult.releaseReturnValue();
 
         // We do not want to throw any exception in the transform to make sure we do not error the transform.
         WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {

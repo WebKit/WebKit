@@ -219,10 +219,17 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     //
     //    Store the result of this procedure as keyframe output.
     KeyframeEffect::BasePropertyIndexedKeyframe baseProperties;
-    if (allowLists)
-        baseProperties = convert<IDLDictionary<KeyframeEffect::BasePropertyIndexedKeyframe>>(lexicalGlobalObject, keyframesInput.get());
-    else {
-        auto baseKeyframe = convert<IDLDictionary<KeyframeEffect::BaseKeyframe>>(lexicalGlobalObject, keyframesInput.get());
+    if (allowLists) {
+        auto basePropertiesConversionResult = convert<IDLDictionary<KeyframeEffect::BasePropertyIndexedKeyframe>>(lexicalGlobalObject, keyframesInput.get());
+        if (UNLIKELY(basePropertiesConversionResult.hasException(scope)))
+            return Exception { ExceptionCode::TypeError };
+        baseProperties = basePropertiesConversionResult.releaseReturnValue();
+    } else {
+        auto baseKeyframeConversionResult = convert<IDLDictionary<KeyframeEffect::BaseKeyframe>>(lexicalGlobalObject, keyframesInput.get());
+        if (UNLIKELY(baseKeyframeConversionResult.hasException(scope)))
+            return Exception { ExceptionCode::TypeError };
+
+        auto baseKeyframe = baseKeyframeConversionResult.releaseReturnValue();
         if (baseKeyframe.offset)
             baseProperties.offset = baseKeyframe.offset.value();
         else
@@ -230,7 +237,6 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         baseProperties.easing = baseKeyframe.easing;
         baseProperties.composite = baseKeyframe.composite;
     }
-    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::TypeError });
 
     KeyframeEffect::KeyframeLikeObject keyframeOuput;
     keyframeOuput.baseProperties = baseProperties;
@@ -281,16 +287,27 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
             // using the procedures defined for converting an ECMAScript value to an IDL value [WEBIDL].
             // If property values is a single DOMString, replace property values with a sequence of DOMStrings with the original value of property
             // Values as the only element.
-            if (rawValue.isObject())
-                propertyValues = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, rawValue);
-            else
-                propertyValues = { rawValue.toWTFString(&lexicalGlobalObject) };
+            auto propertyValuesConversionResult = convert<IDLUnion<IDLDOMString, IDLSequence<IDLDOMString>>>(lexicalGlobalObject, rawValue);
+            if (UNLIKELY(propertyValuesConversionResult.hasException(scope)))
+                return Exception { ExceptionCode::TypeError };
+
+            propertyValues = WTF::switchOn(propertyValuesConversionResult.releaseReturnValue(),
+                [](String&& value) -> Vector<String> {
+                    return { WTFMove(value) };
+                },
+                [](Vector<String>&& values) -> Vector<String> {
+                    return values;
+                }
+            );
         } else {
             // Otherwise,
             // Let property values be the result of converting raw value to a DOMString using the procedure for converting an ECMAScript value to a DOMString.
-            propertyValues = { convert<IDLDOMString>(lexicalGlobalObject, rawValue) };
+            auto propertyValuesConversionResult = convert<IDLDOMString>(lexicalGlobalObject, rawValue);
+            if (UNLIKELY(propertyValuesConversionResult.hasException(scope)))
+                return Exception { ExceptionCode::TypeError };
+
+            propertyValues = { propertyValuesConversionResult.releaseReturnValue() };
         }
-        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::TypeError });
 
         // 4. Calculate the normalized property name as the result of applying the IDL attribute name to animation property name algorithm to property name.
         auto propertyName = animationProperties[i].string();

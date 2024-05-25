@@ -35,9 +35,17 @@ JSC::JSValue jsDate(JSC::JSGlobalObject&, WallTime value);
 WallTime valueToDate(JSC::JSGlobalObject&, JSC::JSValue); // NaN if the value can't be converted to a date.
 
 template<> struct Converter<IDLDate> : DefaultConverter<IDLDate> {
-    static WallTime convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    using Result = ConversionResult<IDLDate>;
+
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return valueToDate(lexicalGlobalObject, value);
+        auto& vm = lexicalGlobalObject.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        auto result = valueToDate(lexicalGlobalObject, value);
+        RETURN_IF_EXCEPTION(scope, Result::exception());
+
+        return Result { WTFMove(result) };
     }
 };
 

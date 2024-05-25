@@ -799,7 +799,7 @@ sub GenerateIndexedGetter
     my ($interface, $indexedGetterOperation, $indexExpression) = @_;
     
     # NOTE: This abstractly implements steps 1.2.1 - 1.2.8 of the LegacyPlatformObjectGetOwnProperty
-    #       algorithm. Returing the conversion expression and attributes expression for use
+    #       algorithm. Returning the conversion expression and attributes expression for use
     #       by the caller.
     
     # 1.2.1 Let operation be the operation used to declare the indexed property getter.
@@ -841,7 +841,7 @@ sub GenerateNamedGetter
     my ($interface, $namedGetterOperation, $namedPropertyExpression) = @_;
     
     # NOTE: This abstractly implements steps 2.1 - 2.10 of the LegacyPlatformObjectGetOwnProperty
-    #       algorithm. Returing the conversion expression and attributes expression for use
+    #       algorithm. Returning the conversion expression and attributes expression for use
     #       by the caller.
     
     # 2.1  Let operation be the operation used to declare the named property getter.
@@ -1060,7 +1060,7 @@ sub GenerateGetOwnPropertySlotByIndex
     # 2. If O supports named properties, the result of running the named property visibility
     #    algorithm with property name P and object O is true, and ignoreNamedProps is false, then:
     if ($namedGetterOperation) {
-        # NOTE: ignoreNamedProps is guarenteed to be false here, as it is initially false, and never set
+        # NOTE: ignoreNamedProps is guaranteed to be false here, as it is initially false, and never set
         #       to true, due to the early return in step 1.3
         AddToImplIncludes("JSDOMAbstractOperations.h");
                 
@@ -1162,13 +1162,13 @@ sub GenerateInvokeIndexedPropertySetter
     # The second argument of the indexed setter operation is the argument being converted.
     my $argument = @{$indexedSetterOperation->arguments}[1];
     my $nativeValue = JSValueToNative($interface, $argument, $value, $indexedSetterOperation->extendedAttributes->{Conditional}, "lexicalGlobalObject", "*lexicalGlobalObject", "thisObject", "", "");
-   
-    my $storageType = ShouldStoreArgumentAsRefPtr($argument->type) ? "RefPtr" : "auto";
-    push(@$outputArray, $indent . "$storageType nativeValue = ${nativeValue};\n");
-    push(@$outputArray, $indent . "RETURN_IF_EXCEPTION(throwScope, true);\n");
-    
+
+    push(@$outputArray, $indent . "auto nativeValue = ${nativeValue};\n");
+    push(@$outputArray, $indent . "if (UNLIKELY(nativeValue.hasException(throwScope)))\n");
+    push(@$outputArray, $indent . "    return true;\n");
+
     my $indexedSetterFunctionName = $indexedSetterOperation->name || "setItem";
-    my $nativeValuePassExpression = PassArgumentExpression("nativeValue", $argument);
+    my $nativeValuePassExpression = PassArgumentExpression("nativeValue.releaseReturnValue()", $argument);
     my $functionString = "thisObject->wrapped().${indexedSetterFunctionName}(${indexExpression}, ${nativeValuePassExpression})";
     push(@$outputArray, $indent . "invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return ${functionString}; });\n");
 }
@@ -1182,10 +1182,11 @@ sub GenerateInvokeNamedPropertySetter
     my $nativeValue = JSValueToNative($interface, $argument, $value, $namedSetterOperation->extendedAttributes->{Conditional}, "lexicalGlobalObject", "*lexicalGlobalObject", "thisObject", "", "");
     
     push(@$outputArray, $indent . "auto nativeValue = ${nativeValue};\n");
-    push(@$outputArray, $indent . "RETURN_IF_EXCEPTION(throwScope, true);\n");
+    push(@$outputArray, $indent . "if (UNLIKELY(nativeValue.hasException(throwScope)))\n");
+    push(@$outputArray, $indent . "    return true;\n");
 
     my $namedSetterFunctionName = $namedSetterOperation->name || "setNamedItem";
-    my $nativeValuePassExpression = PassArgumentExpression("nativeValue", $argument);
+    my $nativeValuePassExpression = PassArgumentExpression("nativeValue.releaseReturnValue()", $argument);
     my $functionString = "thisObject->wrapped().${namedSetterFunctionName}(propertyNameToString(propertyName), ${nativeValuePassExpression})";
     push(@$outputArray, $indent . "invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return ${functionString}; });\n");
 }
@@ -1865,7 +1866,7 @@ sub GetArgumentExceptionFunction
     return undef;
 }
 
-sub GetArgumentExceptionThrower
+sub GetArgumentExceptionThrowerFunctor
 {
     my ($interface, $argument, $argumentIndex, $quotedFunctionName) = @_;
 
@@ -1892,7 +1893,32 @@ sub GetAttributeExceptionThrower
 
     my $functionCall = GetAttributeExceptionFunction($interface, $attribute);
     return "[](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { " . $functionCall . " }" if $functionCall;
+}
 
+sub GetArgumentDefaultValueFunctor
+{
+    my ($interface, $argument) = @_;
+
+    if (defined($argument->default) && !WillConvertUndefinedToDefaultParameterValue($argument->type, $argument->default)) {
+        my $IDLType = GetIDLType($interface, $argument->type);
+        my $defaultValue = GenerateDefaultValue($interface, $argument, $argument->type, $argument->default);
+        return "[&]() -> ConversionResult<${IDLType}> { return ${defaultValue}; }";
+    }
+
+    return undef;
+}
+
+sub GetDictionaryMemberDefaultValueFunctor
+{
+    my ($interface, $member) = @_;
+
+    if (!$member->isRequired && defined $member->default) {
+        my $IDLType = GetIDLType($interface, $member->type);
+        my $defaultValue = GenerateDefaultValue($interface, $member, $member->type, $member->default);
+        return "[&]() -> ConversionResult<${IDLType}> { return ${defaultValue}; }";
+    }
+
+    return undef;
 }
 
 sub PassArgumentExpression
@@ -1901,28 +1927,16 @@ sub PassArgumentExpression
 
     my $type = $context->type;
 
+    if ($codeGenerator->IsPromiseType($type) || $codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type)) {
+        return "${name}";
+    }
+
     if ($codeGenerator->IsInterfaceType($type)) {
-        return "${name}.get()" if $type->isNullable || (ref($context) eq "IDLArgument" && $context->isOptional);
+        return "${name}" if $type->isNullable || (ref($context) eq "IDLArgument" && $context->isOptional);
         return "*${name}";
     }
-    return "WTFMove(${name})" if $type->isNullable;
 
-    if ($codeGenerator->IsBufferSourceType($type)) {
-        return "*${name}" if $type->name eq "ArrayBuffer";
-        return "${name}.releaseNonNull()";
-    }
-
-    if ($codeGenerator->IsPromiseType($type)) {
-        return "WTFMove(${name})" if ref($context) eq "IDLArgument" && $context->isOptional;
-        return "${name}.releaseNonNull()";
-    }
-
-    if ($codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type)) {
-        return "WTFMove(${name})" if ref($context) eq "IDLArgument" && $context->isOptional;
-        return "${name}.releaseNonNull()";
-    }
-
-    return "WTFMove(${name})";
+    return "${name}";
 }
 
 sub MangleAttributeOrFunctionName
@@ -2494,7 +2508,6 @@ sub GenerateEnumerationImplementationContent
     my $result = "";
     $result .= "#if ${conditionalString}\n\n" if $conditionalString;
 
-
     $result .= "String convertEnumerationToString($className enumerationValue)\n";
     $result .= "{\n";
     AddToImplIncludes("<wtf/NeverDestroyed.h>");
@@ -2590,6 +2603,7 @@ sub GenerateEnumerationHeaderContent
     $result .= "template<> ${exportMacro}JSC::JSString* convertEnumerationToJS(JSC::VM&, $className);\n\n";
     $result .= "template<> ${exportMacro}std::optional<$className> parseEnumerationFromString<${className}>(const String&);\n";
     $result .= "template<> ${exportMacro}std::optional<$className> parseEnumeration<$className>(JSC::JSGlobalObject&, JSC::JSValue);\n";
+
     $result .= "template<> ${exportMacro}ASCIILiteral expectedEnumerationValues<$className>();\n\n";
     $result .= "#endif\n\n" if $conditionalString;
     
@@ -2632,30 +2646,29 @@ sub GenerateDefaultValue
 {
     my ($typeScope, $context, $type, $defaultValue) = @_;
 
+    my $IDLType = GetIDLType($typeScope, $type);
+
     if ($defaultValue eq "null") {
         if ($type->isUnion) {
-            return "std::nullopt" if $type->isNullable;
-
-            my $IDLType = GetIDLType($typeScope, $type);
+            return "typename Converter<${IDLType}>::ReturnType { std::nullopt }" if $type->isNullable;
             return "convert<${IDLType}>(lexicalGlobalObject, jsNull());";
         }
 
-        return "jsNull()" if $type->name eq "any";
-        return "nullptr" if $codeGenerator->IsWrapperType($type) || $codeGenerator->IsBufferSourceType($type);
+        return "typename Converter<${IDLType}>::ReturnType { jsNull() }" if $type->name eq "any";
+        return "typename Converter<${IDLType}>::ReturnType { nullptr }" if $codeGenerator->IsWrapperType($type) || $codeGenerator->IsBufferSourceType($type);
         if ($codeGenerator->IsStringType($type)) {
             my $useAtomString = $type->extendedAttributes->{AtomString};
-            return $useAtomString ? "nullAtom()" : "String()";
+            return $useAtomString ? "typename Converter<${IDLType}>::ReturnType { nullAtom() }" : "typename Converter<${IDLType}>::ReturnType { String() }";
         }
-        return "std::nullopt";
+        return "typename Converter<${IDLType}>::ReturnType { std::nullopt }";
     }
 
     if ($defaultValue eq "[]") {
-        my $IDLType = GetIDLType($typeScope, $type);
-        return "Converter<${IDLType}>::ReturnType{ }";
+        return "Converter<${IDLType}>::ReturnType { }";
     }
 
-    return "jsUndefined()" if $defaultValue eq "undefined";
-    return "PNaN" if $defaultValue eq "NaN";
+    return "Converter<${IDLType}>::ReturnType { jsUndefined() }" if $defaultValue eq "undefined";
+    return "Converter<${IDLType}>::ReturnType { PNaN }" if $defaultValue eq "NaN";
 
     if (substr($defaultValue, 0, 1) eq "\"") {
         # Default value is a quoted string so the type should be a DOMString or an enumeration.
@@ -2670,20 +2683,20 @@ sub GenerateDefaultValue
         if ($codeGenerator->IsStringType($type)) {
             my $useAtomString = $type->extendedAttributes->{AtomString};
             if ($defaultValue eq "\"\"") {
-                return $useAtomString ? "emptyAtom()" : "emptyString()";
+                return $useAtomString ? "Converter<${IDLType}>::ReturnType { emptyAtom() }" : "Converter<${IDLType}>::ReturnType { emptyString() }";
             } else {
-                return $useAtomString ? "AtomString(${defaultValue}_s)" : "${defaultValue}_s";
+                return $useAtomString ? "Converter<${IDLType}>::ReturnType { AtomString(${defaultValue}_s) }" : "Converter<${IDLType}>::ReturnType { ${defaultValue}_s }";
             }
         }
 
         if ($codeGenerator->IsEnumType($type)) {
             my $className = GetEnumerationClassName($type, $typeScope);
             my $enumerationValueName = GetEnumerationValueName(substr($defaultValue, 1, -1));
-            return $className . "::" . $enumerationValueName;
+            return "Converter<${IDLType}>::ReturnType { " . $className . "::" . $enumerationValueName . " }";
         }
     }
 
-    return $defaultValue;
+    return "Converter<${IDLType}>::ReturnType { " . $defaultValue . " }";
 }
 
 sub GenerateDictionaryHeaderContent
@@ -2696,7 +2709,8 @@ sub GenerateDictionaryHeaderContent
 
     my $result = "";
     $result .= "#if ${conditionalString}\n\n" if $conditionalString;
-    $result .= "template<> ${exportMacro}${className} convertDictionary<${className}>(JSC::JSGlobalObject&, JSC::JSValue);\n\n";
+
+    $result .= "template<> ${exportMacro}ConversionResult<IDLDictionary<${className}>> convertDictionary<${className}>(JSC::JSGlobalObject&, JSC::JSValue);\n\n";
 
     if ($dictionary->extendedAttributes->{JSGenerateToJSObject}) {
         $result .= "${exportMacro}JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, const ${className}&);\n\n";
@@ -2741,23 +2755,6 @@ sub GenerateDictionaryImplementationContent
     AddToImplIncludes("<JavaScriptCore/JSCInlines.h>");
     AddToImplIncludes("JSDOMConvertDictionary.h");
 
-    # https://webidl.spec.whatwg.org/#es-dictionary
-    $result .= "template<> $className convertDictionary<$className>(JSGlobalObject& lexicalGlobalObject, JSValue value)\n";
-    $result .= "{\n";
-    $result .= "    auto& vm = JSC::getVM(&lexicalGlobalObject);\n";
-    $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";
-    $result .= "    bool isNullOrUndefined = value.isUndefinedOrNull();\n";
-    $result .= "    auto* object = isNullOrUndefined ? nullptr : value.getObject();\n";
-
-    # 1. If Type(V) is not Undefined, Null or Object, then throw a TypeError.
-    $result .= "    if (UNLIKELY(!isNullOrUndefined && !object)) {\n";
-    $result .= "        throwTypeError(&lexicalGlobalObject, throwScope);\n";
-    $result .= "        return { };\n";
-    $result .= "    }\n";
-
-    # 2. Let dict be an empty dictionary value of type D; every dictionary member is initially considered to be not present.
-
-    # 3. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries, in order from least to most derived.
     my @dictionaries;
     push(@dictionaries, $dictionary);
     my $parentType = $dictionary->parentType;
@@ -2768,10 +2765,26 @@ sub GenerateDictionaryImplementationContent
         $parentType = $parentDictionary->parentType;
     }
 
-    my $arguments = "";
-    my $comma = "";
+    # https://webidl.spec.whatwg.org/#es-dictionary
+    $result .= "template<> ConversionResult<IDLDictionary<${className}>> convertDictionary<$className>(JSGlobalObject& lexicalGlobalObject, JSValue value)\n";
+    $result .= "{\n";
+    $result .= "    auto& vm = JSC::getVM(&lexicalGlobalObject);\n";
+    $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";
+    $result .= "    bool isNullOrUndefined = value.isUndefinedOrNull();\n";
+    $result .= "    auto* object = isNullOrUndefined ? nullptr : value.getObject();\n";
 
+    # 1. If Type(V) is not Undefined, Null or Object, then throw a TypeError.
+    $result .= "    if (UNLIKELY(!isNullOrUndefined && !object)) {\n";
+    $result .= "        throwTypeError(&lexicalGlobalObject, throwScope);\n";
+    $result .= "        return ConversionResultException { };\n";
+    $result .= "    }\n";
+
+    # 2. Let dict be an empty dictionary value of type D; every dictionary member is initially considered to be not present.
     $result .= "    $className result;\n";
+
+    # 3. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries, in order from least to most derived.
+    #
+    # Done above so it can be shared with the `convertDictionaryToJS` implementation.
 
     # 4. For each dictionary dictionary in dictionaries, in order:
     foreach my $dictionary (@dictionaries) {
@@ -2807,30 +2820,44 @@ sub GenerateDictionaryImplementationContent
             $result .= "${indent}        ${key}Value = jsUndefined();\n";
             $result .= "${indent}    else {\n";
             $result .= "${indent}        ${key}Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, \"${key}\"_s));\n";
-            $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, { });\n";
+            $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });\n";
             $result .= "${indent}    }\n";
 
             my $IDLType = GetIDLType($typeScope, $type);
 
-            # 4.3. If value is not undefined, then:
-            $result .= "${indent}    if (!${key}Value.isUndefined()) {\n";
+            #   4.3. If value is not undefined, then:
+            #   4.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
+            #   4.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
 
-            my $nativeValue = JSValueToNative($typeScope, $member, "${key}Value", $member->extendedAttributes->{Conditional}, "&lexicalGlobalObject", "lexicalGlobalObject", "", "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)");
-            $result .= "${indent}        result.$implementedAsKey = $nativeValue;\n";
-            $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, { });\n";
+            if ($member->isRequired) {
+                my $conversion = JSValueToNative($typeScope, $member, "${key}Value", $conditional, "&lexicalGlobalObject", "lexicalGlobalObject", "", "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)", undef, undef, undef, undef);
 
-            # Value is undefined.
-            # 4.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
-            if (!$member->isRequired && defined $member->default) {
-                $result .= "${indent}    } else\n";
-                $result .= "${indent}        result.$implementedAsKey = " . GenerateDefaultValue($typeScope, $member, $member->type, $member->default) . ";\n";
-            } elsif ($member->isRequired) {
-                # 4.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
-                $result .= "${indent}    } else {\n";
+                $result .= "${indent}    if (${key}Value.isUndefined()) {\n";
                 $result .= "${indent}        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, \"". $member->name ."\"_s, \"$name\"_s, \"". GetTypeNameForDisplayInException($type) ."\"_s);\n";
-                $result .= "${indent}        return { };\n";
+                $result .= "${indent}        return ConversionResultException { };\n";
                 $result .= "${indent}    }\n";
+
+                $result .= "${indent}    auto ${implementedAsKey}ConversionResult = ${conversion};\n";
+                $result .= "${indent}    if (UNLIKELY(${implementedAsKey}ConversionResult.hasException(throwScope)))\n";
+                $result .= "${indent}        return ConversionResultException { };\n";
+                $result .= "${indent}    result.$implementedAsKey = ${implementedAsKey}ConversionResult.releaseReturnValue();\n";
+            } elsif (defined $member->default) {
+                my $defaultValueFunctor = GetDictionaryMemberDefaultValueFunctor($typeScope, $member);
+                my $conversion = JSValueToNative($typeScope, $member, "${key}Value", $conditional, "&lexicalGlobalObject", "lexicalGlobalObject", "", "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)", undef, undef, 1, $defaultValueFunctor);
+
+                $result .= "${indent}    auto ${implementedAsKey}ConversionResult = ${conversion};\n";
+                $result .= "${indent}    if (UNLIKELY(${implementedAsKey}ConversionResult.hasException(throwScope)))\n";
+                $result .= "${indent}        return ConversionResultException { };\n";
+                $result .= "${indent}    result.$implementedAsKey = ${implementedAsKey}ConversionResult.releaseReturnValue();\n";
             } else {
+                my $defaultValueFunctor = GetDictionaryMemberDefaultValueFunctor($typeScope, $member);
+                my $conversion = JSValueToNative($typeScope, $member, "${key}Value", $conditional, "&lexicalGlobalObject", "lexicalGlobalObject", "", "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)", undef, undef, undef, undef);
+
+                $result .= "${indent}    if (!${key}Value.isUndefined()) {\n";
+                $result .= "${indent}        auto ${implementedAsKey}ConversionResult = ${conversion};\n";
+                $result .= "${indent}        if (UNLIKELY(${implementedAsKey}ConversionResult.hasException(throwScope)))\n";
+                $result .= "${indent}            return ConversionResultException { };\n";
+                $result .= "${indent}        result.$implementedAsKey = ${implementedAsKey}ConversionResult.releaseReturnValue();\n";
                 $result .= "${indent}    }\n";
             }
 
@@ -2862,7 +2889,8 @@ sub GenerateDictionaryImplementationContent
 
         # 2. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries,
         #    in order from least to most derived.
-        #    NOTE: This was done above.
+        #
+        # Done above so it can be shared with the `convertDictionary` implementation.
 
         # 3. For each dictionary dictionary in dictionaries, in order:
         foreach my $dictionary (@dictionaries) {
@@ -5759,6 +5787,8 @@ sub GenerateAttributeSetterBodyDefinition
             return "${functionName}(" . join(", ", @arguments) . ")";
         };
 
+        my $readValue;
+        my $releaseValue;
         if ($codeGenerator->IsEnumType($attribute->type)) {
             # As per section 3.7.6 of https://webidl.spec.whatwg.org/#dfn-attribute-setter, enumerations do not use
             # the standard conversion, but rather silently fail on invalid enumeration values unless the attribute is nullable.
@@ -5777,23 +5807,28 @@ sub GenerateAttributeSetterBodyDefinition
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
             push(@$outputArray, "    if (UNLIKELY(!optionalNativeValue))\n");
             push(@$outputArray, "        return false;\n");
-            push(@$outputArray, "    auto nativeValue = optionalNativeValue.value();\n");
+
+            $readValue = "optionalNativeValue.value()";
+            $releaseValue = "optionalNativeValue.value()";
         } else {
             my $globalObjectReference = $attribute->isStatic ? "*jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)" : "*thisObject.globalObject()";
             my $exceptionThrower = GetAttributeExceptionThrower($interface, $attribute);
 
             my $toNativeExpression = JSValueToNative($interface, $attribute, "value", $attribute->extendedAttributes->{Conditional}, "&lexicalGlobalObject", "lexicalGlobalObject", "thisObject", $globalObjectReference, $exceptionThrower);
-            my $storageType = ShouldStoreArgumentAsRefPtr($attribute->type) ? "RefPtr" : "auto";
-            push(@$outputArray, "    $storageType nativeValue = ${toNativeExpression};\n");
-            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
+            push(@$outputArray, "    auto nativeValueConversionResult = ${toNativeExpression};\n");
+            push(@$outputArray, "    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))\n");
+            push(@$outputArray, "        return false;\n");
+
+            $readValue = "nativeValueConversionResult.returnValue()";
+            $releaseValue = PassArgumentExpression("nativeValueConversionResult.releaseReturnValue()", $attribute);
         }
 
-        my $functionString = $generateFunctionString->(PassArgumentExpression("nativeValue", $attribute));
+        my $functionString = $generateFunctionString->($releaseValue);
 
         my $callTracer = $attribute->extendedAttributes->{CallTracer} || $interface->extendedAttributes->{CallTracer};
         if ($callTracer) {
             my $indent = "    ";
-            my @callTracerArguments = ShouldStoreArgumentAsRefPtr($attribute->type) ? ("nativeValue.get()") : ("nativeValue");
+            my @callTracerArguments = $readValue;
             GenerateCallTracer($outputArray, $callTracer, $attribute->name, \@callTracerArguments, $indent);
         }
 
@@ -6434,6 +6469,7 @@ sub GenerateParametersCheck
     my $argumentIndex = 0;
     foreach my $argument (@{$operation->arguments}) {
         my $type = $argument->type;
+        AddToImplIncludesForIDLType($type, $conditional);
 
         if ($argument->isOptional && !defined($argument->default)) {
             # As per Web IDL, optional dictionary arguments are always considered to have a default value of an empty dictionary, unless otherwise specified.
@@ -6458,8 +6494,7 @@ sub GenerateParametersCheck
 
         if ($argument->isVariadic) {
             AddToImplIncludes("JSDOMConvertVariadic.h", $conditional);
-            AddToImplIncludesForIDLType($type, $conditional);
-        
+
             my $IDLType = GetIDLType($interface, $type);
 
             push(@$outputArray, $indent . "auto ${name} = convertVariadicArguments<${IDLType}>(*lexicalGlobalObject, *callFrame, ${argumentIndex});\n");
@@ -6467,54 +6502,29 @@ sub GenerateParametersCheck
 
             $value = "WTFMove(${name})";
         } else {
-            my $argumentLookupForConversion;
-            my $optionalCheck;
-            my $nativeValueCastFunction;
-
             if ($argument->isOptional) {
                 assert("[ReturnValue] is not supported for optional arguments") if $argument->extendedAttributes->{ReturnValue};
 
-                if (defined($argument->default)) {
-                    push(@$outputArray, $indent . "EnsureStillAliveScope argument${argumentIndex} = callFrame->argument($argumentIndex);\n");
-                    if (!WillConvertUndefinedToDefaultParameterValue($type, $argument->default)) {
-                        my $defaultValue = GenerateDefaultValue($interface, $argument, $argument->type, $argument->default);
-                        $optionalCheck = "argument${argumentIndex}.value().isUndefined() ? $defaultValue : ";
-                    }
-                    $argumentLookupForConversion = "argument${argumentIndex}.value()"
-                } else {
-                    my $argumentIDLType = GetIDLType($interface, $argument->type);
-
-                    my $defaultValue;
-                    if ($codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type)) {
-                        $defaultValue = "Converter<$argumentIDLType>::ReturnType()";
-                    } elsif ($codeGenerator->IsPromiseType($argument->type) || $codeGenerator->IsWrapperType($type)) {
-                        $defaultValue = "nullptr";
-                    } else {
-                        $defaultValue = "std::optional<Converter<$argumentIDLType>::ReturnType>()";
-                        $nativeValueCastFunction = "std::optional<Converter<$argumentIDLType>::ReturnType>";
-                    }
-
-                    push(@$outputArray, $indent . "EnsureStillAliveScope argument${argumentIndex} = callFrame->argument($argumentIndex);\n");
-                    $optionalCheck = "argument${argumentIndex}.value().isUndefined() ? $defaultValue : ";
-                    $argumentLookupForConversion = "argument${argumentIndex}.value()";
-                }
+                push(@$outputArray, $indent . "EnsureStillAliveScope argument${argumentIndex} = callFrame->argument($argumentIndex);\n");
             } else {
                 push(@$outputArray, $indent . "EnsureStillAliveScope argument${argumentIndex} = callFrame->uncheckedArgument($argumentIndex);\n");
-                $argumentLookupForConversion = "argument${argumentIndex}.value()";
             }
 
+            my $argumentLookupForConversion = "argument${argumentIndex}.value()";
             my $globalObjectReference = $operation->isStatic ? "*jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)" : "*castedThis->globalObject()";
-            my $argumentExceptionThrower = GetArgumentExceptionThrower($interface, $argument, $argumentIndex, $quotedFunctionName);
 
-            my $nativeValue = JSValueToNative($interface, $argument, $argumentLookupForConversion, $conditional, "lexicalGlobalObject", "*lexicalGlobalObject", "*castedThis", $globalObjectReference, $argumentExceptionThrower, $functionImplementationName);
+            my $argumentExceptionThrowerFunctor = GetArgumentExceptionThrowerFunctor($interface, $argument, $argumentIndex, $quotedFunctionName);
+            my $argumentDefaultValueFunctor = GetArgumentDefaultValueFunctor($interface, $argument);
 
-            $nativeValue = "${nativeValueCastFunction}(" . $nativeValue . ")" if defined $nativeValueCastFunction;
-            $nativeValue = $optionalCheck . $nativeValue if defined $optionalCheck;
+            my $optional = $argument->isOptional && ((defined($argument->default) && !WillConvertUndefinedToDefaultParameterValue($argument->type, $argument->default))|| !defined($argument->default));
 
-            my $storageType = ShouldStoreArgumentAsRefPtr($argument->type) ? "RefPtr" : "auto";
-            push(@$outputArray, $indent . "$storageType $name = ${nativeValue};\n");
-            push(@$outputArray, $indent . "RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
-            $value = PassArgumentExpression($name, $argument);
+            my $nativeValue = JSValueToNative($interface, $argument, $argumentLookupForConversion, $conditional, "lexicalGlobalObject", "*lexicalGlobalObject", "*castedThis", $globalObjectReference, $argumentExceptionThrowerFunctor, $functionImplementationName, $optional, $argumentDefaultValueFunctor);
+
+            push(@$outputArray, $indent . "auto ${name}ConversionResult = ${nativeValue};\n");
+            push(@$outputArray, $indent . "if (UNLIKELY(${name}ConversionResult.hasException(throwScope)))\n");
+            push(@$outputArray, $indent . "   return encodedJSValue();\n");
+
+            $value = PassArgumentExpression("${name}ConversionResult.releaseReturnValue()", $argument);
         }
 
         push(@arguments, $value);
@@ -6670,7 +6680,7 @@ sub GenerateCallbackHeaderContent
 
     my $name = $interfaceOrCallback->type->name;
     my $callbackDataType = $interfaceOrCallback->extendedAttributes->{IsWeakCallback} ? "JSCallbackDataWeak" : "JSCallbackDataStrong";
-    my $className = "JS${name}";
+    my $className = GetCallbackClassName($name);
 
     $includesRef->{"IDLTypes.h"} = 1;
     $includesRef->{"JSCallbackData.h"} = 1;
@@ -6715,7 +6725,7 @@ sub GenerateCallbackHeaderContent
                 if ($argument->isVariadic) {
                     AddToIncludes("JSDOMConvertVariadic.h", $includesRef, 1);
                     AddToIncludesForIDLType($argument->type, $includesRef, 1);
-                    push(@arguments, "FixedVector<typename VariadicConverter<${IDLType}>::Item>&& " . $argument->name);
+                    push(@arguments, "VariadicArguments<${IDLType}>&& " . $argument->name);
                 } else {
                     push(@arguments, "typename ${IDLType}::ParameterType " . $argument->name);
                 }
@@ -6747,6 +6757,11 @@ sub GenerateCallbackHeaderContent
     # toJS().
     push(@$contentRef, $exportMacro . "JSC::JSValue toJS(${name}&);\n");
     push(@$contentRef, "inline JSC::JSValue toJS(${name}* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }\n\n");
+
+    # JSDOMCallbackConverterTraits
+    push(@$contentRef, "template<> struct JSDOMCallbackConverterTraits<${className}> {\n");
+    push(@$contentRef, "    using Base = ${name};\n");
+    push(@$contentRef, "};\n");
 }
 
 sub GenerateCallbackImplementationContent
@@ -6863,7 +6878,7 @@ sub GenerateCallbackImplementationContent
             foreach my $argument (@{$operation->arguments}) {
                 my $IDLType = GetIDLType($interfaceOrCallback, $argument->type);
                 if ($argument->isVariadic) {
-                    push(@arguments, "FixedVector<typename VariadicConverter<${IDLType}>::Item>&& " . $argument->name);
+                    push(@arguments, "VariadicArguments<${IDLType}>&& " . $argument->name);
                 } else {
                     AddToIncludesForIDLType($argument->type, $includesRef, 1);
                     push(@arguments, "typename ${IDLType}::ParameterType " . $argument->name);
@@ -6934,11 +6949,12 @@ sub GenerateCallbackImplementationContent
                 push(@$contentRef, "    return { };\n");
             } else {
                 my $nativeValue = JSValueToNative($interfaceOrCallback, $operation, "jsResult", "", "&lexicalGlobalObject", "lexicalGlobalObject");
-            
+
                 push(@$contentRef, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
                 push(@$contentRef, "    auto returnValue = ${nativeValue};\n");
-                push(@$contentRef, "    RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);\n");
-                push(@$contentRef, "    return { WTFMove(returnValue) };\n");
+                push(@$contentRef, "    if (UNLIKELY(returnValue.hasException(throwScope)))\n");
+                push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
+                push(@$contentRef, "    return { returnValue.releaseReturnValue() };\n");
             }
 
             push(@$contentRef, "}\n\n");
@@ -6993,7 +7009,7 @@ sub GenerateImplementationFunctionCall
 
     my $callTracer = $operation->extendedAttributes->{CallTracer} || $interface->extendedAttributes->{CallTracer};
     if ($callTracer) {
-        my @callTracerArguments = map { ShouldStoreArgumentAsRefPtr($_->type) ? $_->name . ".get()" : $_->name } @{$operation->arguments};
+        my @callTracerArguments = map { $_->name . "ConversionResult.returnValue()" } @{$operation->arguments};
         GenerateCallTracer($outputArray, $callTracer, $operation->name, \@callTracerArguments, $indent);
     }
 
@@ -7439,7 +7455,7 @@ sub IsValidContextForJSValueToNative
 
 sub JSValueToNative
 {
-    my ($interface, $context, $value, $conditional, $lexicalGlobalObjectPointer, $lexicalGlobalObjectReference, $thisObjectReference, $globalObjectReference, $exceptionThrower, $functionName) = @_;
+    my ($interface, $context, $value, $conditional, $lexicalGlobalObjectPointer, $lexicalGlobalObjectReference, $thisObjectReference, $globalObjectReference, $exceptionThrowerFunctor, $functionName, $optional, $defaultValueFunctor) = @_;
 
     assert("Invalid context type") if !IsValidContextForJSValueToNative($context);
 
@@ -7452,15 +7468,18 @@ sub JSValueToNative
 
     AddToImplIncludesForIDLType($type, $conditional);
     AddToImplIncludes("JSDOMGlobalObject.h", $conditional) if JSValueToNativeDOMConvertNeedsGlobalObject($type);
+    AddToImplIncludes("JSDOMConvertOptional.h", $conditional) if $optional;
 
     my $IDLType = GetIDLType($interface, $type);
+    $IDLType = "IDLOptional<" . $IDLType . ">" if $optional && !$defaultValueFunctor;
 
     my @conversionArguments = ();
     push(@conversionArguments, $lexicalGlobalObjectReference);
     push(@conversionArguments, $value);
     push(@conversionArguments, $thisObjectReference) if JSValueToNativeDOMConvertNeedsThisObject($type);
     push(@conversionArguments, $globalObjectReference) if JSValueToNativeDOMConvertNeedsGlobalObject($type);
-    push(@conversionArguments, $exceptionThrower) if $exceptionThrower;
+    push(@conversionArguments, $defaultValueFunctor) if $defaultValueFunctor;
+    push(@conversionArguments, $exceptionThrowerFunctor) if $exceptionThrowerFunctor;
     if ($type->extendedAttributes->{StringContext} || $type->name eq "ScheduledAction") {
         my $interfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
         if ($functionName) {
@@ -7471,7 +7490,9 @@ sub JSValueToNative
         }
     }
 
-    return "convert<$IDLType>(" . join(", ", @conversionArguments) . ")";
+    my $convertFunction = defined $defaultValueFunctor ? "convertOptionalWithDefault" : "convert";
+
+    return "${convertFunction}<$IDLType>(" . join(", ", @conversionArguments) . ")";
 }
 
 sub ToNativeForFunctionWithoutTypeCheck

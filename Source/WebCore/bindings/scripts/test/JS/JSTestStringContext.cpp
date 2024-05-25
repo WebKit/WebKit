@@ -235,10 +235,11 @@ static inline bool setJSTestStringContext_attributeWithStringContextTrustedHTMLS
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLStringContextTrustedHTMLAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedHTML"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLStringContextTrustedHTMLAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedHTML"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithStringContextTrustedHTML(WTFMove(nativeValue));
+        return impl.setAttributeWithStringContextTrustedHTML(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -267,10 +268,11 @@ static inline bool setJSTestStringContext_attributeWithStringContextTrustedScrip
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLStringContextTrustedScriptAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedScript"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLStringContextTrustedScriptAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedScript"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithStringContextTrustedScript(WTFMove(nativeValue));
+        return impl.setAttributeWithStringContextTrustedScript(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -299,10 +301,11 @@ static inline bool setJSTestStringContext_attributeWithStringContextTrustedScrip
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLStringContextTrustedScriptURLAdaptor<IDLUSVString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedScriptURL"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLStringContextTrustedScriptURLAdaptor<IDLUSVString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedScriptURL"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithStringContextTrustedScriptURL(WTFMove(nativeValue));
+        return impl.setAttributeWithStringContextTrustedScriptURL(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -331,10 +334,11 @@ static inline bool setJSTestStringContext_attributeWithStringContextTrustedHTMLA
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedHTMLAndLegacyNullToEmptyString"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedHTMLAndLegacyNullToEmptyString"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithStringContextTrustedHTMLAndLegacyNullToEmptyString(WTFMove(nativeValue));
+        return impl.setAttributeWithStringContextTrustedHTMLAndLegacyNullToEmptyString(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -363,10 +367,11 @@ static inline bool setJSTestStringContext_attributeWithStringContextTrustedScrip
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedScriptAndLegacyNullToEmptyString"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedScriptAndLegacyNullToEmptyString"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithStringContextTrustedScriptAndLegacyNullToEmptyString(WTFMove(nativeValue));
+        return impl.setAttributeWithStringContextTrustedScriptAndLegacyNullToEmptyString(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -395,10 +400,11 @@ static inline bool setJSTestStringContext_attributeWithStringContextTrustedScrip
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<IDLUSVString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedScriptURLAndLegacyNullToEmptyString"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<IDLUSVString>>(lexicalGlobalObject, value, "TestStringContext attributeWithStringContextTrustedScriptURLAndLegacyNullToEmptyString"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithStringContextTrustedScriptURLAndLegacyNullToEmptyString(WTFMove(nativeValue));
+        return impl.setAttributeWithStringContextTrustedScriptURLAndLegacyNullToEmptyString(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -427,10 +433,11 @@ static inline bool setJSTestStringContext_reflectedAttributeWithStringContextTru
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLAtomStringStringContextTrustedHTMLAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext reflectedAttributeWithStringContextTrustedHTML"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLAtomStringStringContextTrustedHTMLAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext reflectedAttributeWithStringContextTrustedHTML"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedattributewithstringcontexttrustedhtmlAttr, WTFMove(nativeValue));
+        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedattributewithstringcontexttrustedhtmlAttr, nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -459,10 +466,11 @@ static inline bool setJSTestStringContext_reflectedAttributeWithStringContextTru
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLAtomStringStringContextTrustedScriptAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext reflectedAttributeWithStringContextTrustedScript"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLAtomStringStringContextTrustedScriptAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext reflectedAttributeWithStringContextTrustedScript"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedattributewithstringcontexttrustedscriptAttr, WTFMove(nativeValue));
+        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedattributewithstringcontexttrustedscriptAttr, nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -491,10 +499,11 @@ static inline bool setJSTestStringContext_reflectedAttributeWithStringContextTru
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLAtomStringStringContextTrustedScriptURLAdaptor<IDLUSVString>>(lexicalGlobalObject, value, "TestStringContext reflectedAttributeWithStringContextTrustedScriptURL"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLAtomStringStringContextTrustedScriptURLAdaptor<IDLUSVString>>(lexicalGlobalObject, value, "TestStringContext reflectedAttributeWithStringContextTrustedScriptURL"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedattributewithstringcontexttrustedscripturlAttr, WTFMove(nativeValue));
+        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedattributewithstringcontexttrustedscripturlAttr, nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -523,10 +532,11 @@ static inline bool setJSTestStringContext_reflectedUrlAttributeWithStringContext
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLAtomStringStringContextTrustedHTMLAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext reflectedUrlAttributeWithStringContextTrustedHTML"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLAtomStringStringContextTrustedHTMLAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext reflectedUrlAttributeWithStringContextTrustedHTML"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattributewithstringcontexttrustedhtmlAttr, WTFMove(nativeValue));
+        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattributewithstringcontexttrustedhtmlAttr, nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -555,10 +565,11 @@ static inline bool setJSTestStringContext_reflectedUrlAttributeWithStringContext
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLAtomStringStringContextTrustedScriptAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext reflectedUrlAttributeWithStringContextTrustedScript"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLAtomStringStringContextTrustedScriptAdaptor<IDLDOMString>>(lexicalGlobalObject, value, "TestStringContext reflectedUrlAttributeWithStringContextTrustedScript"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattributewithstringcontexttrustedscriptAttr, WTFMove(nativeValue));
+        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattributewithstringcontexttrustedscriptAttr, nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -587,10 +598,11 @@ static inline bool setJSTestStringContext_reflectedUrlAttributeWithStringContext
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLAtomStringStringContextTrustedScriptURLAdaptor<IDLUSVString>>(lexicalGlobalObject, value, "TestStringContext reflectedUrlAttributeWithStringContextTrustedScriptURL"_s);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLAtomStringStringContextTrustedScriptURLAdaptor<IDLUSVString>>(lexicalGlobalObject, value, "TestStringContext reflectedUrlAttributeWithStringContextTrustedScriptURL"_s);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattributewithstringcontexttrustedscripturlAttr, WTFMove(nativeValue));
+        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattributewithstringcontexttrustedscripturlAttr, nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -610,9 +622,10 @@ static inline JSC::EncodedJSValue jsTestStringContextPrototypeFunction_methodWit
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto str = convert<IDLStringContextTrustedHTMLAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedHTML"_s);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedHTML(WTFMove(str)); })));
+    auto strConversionResult = convert<IDLStringContextTrustedHTMLAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedHTML"_s);
+    if (UNLIKELY(strConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedHTML(strConversionResult.releaseReturnValue()); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringContextPrototypeFunction_methodWithStringContextTrustedHTML, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -630,9 +643,10 @@ static inline JSC::EncodedJSValue jsTestStringContextPrototypeFunction_methodWit
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto str = convert<IDLStringContextTrustedScriptAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedScript"_s);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedScript(WTFMove(str)); })));
+    auto strConversionResult = convert<IDLStringContextTrustedScriptAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedScript"_s);
+    if (UNLIKELY(strConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedScript(strConversionResult.releaseReturnValue()); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringContextPrototypeFunction_methodWithStringContextTrustedScript, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -650,9 +664,10 @@ static inline JSC::EncodedJSValue jsTestStringContextPrototypeFunction_methodWit
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto str = convert<IDLStringContextTrustedScriptURLAdaptor<IDLUSVString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedScriptURL"_s);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedScriptURL(WTFMove(str)); })));
+    auto strConversionResult = convert<IDLStringContextTrustedScriptURLAdaptor<IDLUSVString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedScriptURL"_s);
+    if (UNLIKELY(strConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedScriptURL(strConversionResult.releaseReturnValue()); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringContextPrototypeFunction_methodWithStringContextTrustedScriptURL, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -670,9 +685,10 @@ static inline JSC::EncodedJSValue jsTestStringContextPrototypeFunction_methodWit
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto str = convert<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedHTMLAndLegacyNullToEmptyString"_s);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedHTMLAndLegacyNullToEmptyString(WTFMove(str)); })));
+    auto strConversionResult = convert<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedHTMLAndLegacyNullToEmptyString"_s);
+    if (UNLIKELY(strConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedHTMLAndLegacyNullToEmptyString(strConversionResult.releaseReturnValue()); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringContextPrototypeFunction_methodWithStringContextTrustedHTMLAndLegacyNullToEmptyString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -690,9 +706,10 @@ static inline JSC::EncodedJSValue jsTestStringContextPrototypeFunction_methodWit
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto str = convert<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedScriptAndLegacyNullToEmptyString"_s);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedScriptAndLegacyNullToEmptyString(WTFMove(str)); })));
+    auto strConversionResult = convert<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedScriptAndLegacyNullToEmptyString"_s);
+    if (UNLIKELY(strConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedScriptAndLegacyNullToEmptyString(strConversionResult.releaseReturnValue()); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringContextPrototypeFunction_methodWithStringContextTrustedScriptAndLegacyNullToEmptyString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -710,9 +727,10 @@ static inline JSC::EncodedJSValue jsTestStringContextPrototypeFunction_methodWit
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto str = convert<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<IDLUSVString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedScriptURLAndLegacyNullToEmptyString"_s);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedScriptURLAndLegacyNullToEmptyString(WTFMove(str)); })));
+    auto strConversionResult = convert<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<IDLUSVString>>(*lexicalGlobalObject, argument0.value(), "TestStringContext methodWithStringContextTrustedScriptURLAndLegacyNullToEmptyString"_s);
+    if (UNLIKELY(strConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithStringContextTrustedScriptURLAndLegacyNullToEmptyString(strConversionResult.releaseReturnValue()); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringContextPrototypeFunction_methodWithStringContextTrustedScriptURLAndLegacyNullToEmptyString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

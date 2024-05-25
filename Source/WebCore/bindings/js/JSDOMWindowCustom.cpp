@@ -571,15 +571,17 @@ JSC_DEFINE_HOST_FUNCTION(showModalDialog, (JSGlobalObject* lexicalGlobalObjectPt
     if (UNLIKELY(callFrame.argumentCount() < 1))
         return throwVMException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
 
-    String urlString = convert<IDLNullable<IDLDOMString>>(lexicalGlobalObject, callFrame.argument(0));
-    RETURN_IF_EXCEPTION(scope, { });
-    String dialogFeaturesString = convert<IDLNullable<IDLDOMString>>(lexicalGlobalObject, callFrame.argument(2));
-    RETURN_IF_EXCEPTION(scope, { });
+    auto urlString = convert<IDLNullable<IDLDOMString>>(lexicalGlobalObject, callFrame.argument(0));
+    if (UNLIKELY(urlString.hasException(scope)))
+        return { };
+    auto dialogFeaturesString = convert<IDLNullable<IDLDOMString>>(lexicalGlobalObject, callFrame.argument(2));
+    if (UNLIKELY(dialogFeaturesString.hasException(scope)))
+        return { };
 
     DialogHandler handler(lexicalGlobalObject, callFrame);
 
     if (RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(thisObject->wrapped())) {
-        localDOMWindow->showModalDialog(urlString, dialogFeaturesString, activeDOMWindow(lexicalGlobalObject), firstDOMWindow(lexicalGlobalObject), [&handler](DOMWindow& dialog) {
+        localDOMWindow->showModalDialog(urlString.releaseReturnValue(), dialogFeaturesString.releaseReturnValue(), activeDOMWindow(lexicalGlobalObject), firstDOMWindow(lexicalGlobalObject), [&handler](DOMWindow& dialog) {
             handler.dialogCreated(dialog);
         });
     }
@@ -661,16 +663,20 @@ static inline JSC::EncodedJSValue jsDOMWindowInstanceFunctionOpenDatabaseBody(JS
     if (UNLIKELY(callFrame->argumentCount() < 4))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     auto name = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    if (UNLIKELY(name.hasException(throwScope)))
+        return encodedJSValue();
     auto version = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(1));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    if (UNLIKELY(version.hasException(throwScope)))
+        return encodedJSValue();
     auto displayName = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(2));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    if (UNLIKELY(displayName.hasException(throwScope)))
+        return encodedJSValue();
     auto estimatedSize = convert<IDLUnsignedLong>(*lexicalGlobalObject, callFrame->uncheckedArgument(3));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    if (UNLIKELY(estimatedSize.hasException(throwScope)))
+        return encodedJSValue();
 
     if (!DeprecatedGlobalSettings::webSQLEnabled()) {
-        if (name != "null"_s || version != "null"_s || displayName != "null"_s || estimatedSize)
+        if (name.returnValue() != "null"_s || version.returnValue() != "null"_s || displayName.returnValue() != "null"_s || estimatedSize.returnValue())
             propagateException(*lexicalGlobalObject, throwScope, Exception(ExceptionCode::UnknownError, "Web SQL is deprecated"_s));
         return JSValue::encode(constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype()));
     }
@@ -678,8 +684,10 @@ static inline JSC::EncodedJSValue jsDOMWindowInstanceFunctionOpenDatabaseBody(JS
     auto creationCallback = convert<IDLNullable<IDLCallbackFunction<JSDatabaseCallback>>>(*lexicalGlobalObject, callFrame->argument(4), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) {
         throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 4, "creationCallback"_s, "Window"_s, "openDatabase"_s);
     });
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLNullable<IDLInterface<Database>>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WebCore::LocalDOMWindowWebDatabase::openDatabase(*impl, WTFMove(name), WTFMove(version), WTFMove(displayName), WTFMove(estimatedSize), WTFMove(creationCallback))));
+    if (UNLIKELY(creationCallback.hasException(throwScope)))
+        return encodedJSValue();
+
+    return JSValue::encode(toJS<IDLNullable<IDLInterface<Database>>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WebCore::LocalDOMWindowWebDatabase::openDatabase(*impl, name.releaseReturnValue(), version.releaseReturnValue(), displayName.releaseReturnValue(), estimatedSize.releaseReturnValue(), creationCallback.releaseReturnValue())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsDOMWindowInstanceFunction_openDatabase, (JSGlobalObject* globalObject, CallFrame* callFrame))

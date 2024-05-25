@@ -368,9 +368,10 @@ static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunction_itemBody(JS
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto index = convert<IDLUnsignedLong>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<Node>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.item(WTFMove(index)))));
+    auto indexConversionResult = convert<IDLUnsignedLong>(*lexicalGlobalObject, argument0.value());
+    if (UNLIKELY(indexConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<Node>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.item(indexConversionResult.releaseReturnValue()))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestEventTargetPrototypeFunction_item, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

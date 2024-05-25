@@ -178,9 +178,10 @@ static inline JSC::EncodedJSValue jsTestScheduledActionPrototypeFunction_methodB
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto action = convert<IDLScheduledAction>(*lexicalGlobalObject, argument0.value(), *castedThis->globalObject(), "TestScheduledActionReal method"_s);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.method(WTFMove(action)); })));
+    auto actionConversionResult = convert<IDLScheduledAction>(*lexicalGlobalObject, argument0.value(), *castedThis->globalObject(), "TestScheduledActionReal method"_s);
+    if (UNLIKELY(actionConversionResult.hasException(throwScope)))
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.method(actionConversionResult.releaseReturnValue()); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestScheduledActionPrototypeFunction_method, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

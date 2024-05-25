@@ -51,4 +51,7 @@ private:
 JSC::JSValue toJS(TestCallbackFunctionRethrow&);
 inline JSC::JSValue toJS(TestCallbackFunctionRethrow* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
+template<> struct JSDOMCallbackConverterTraits<JSTestCallbackFunctionRethrow> {
+    using Base = TestCallbackFunctionRethrow;
+};
 } // namespace WebCore

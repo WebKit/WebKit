@@ -729,6 +729,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/JSDOMConvertNumbers.h
     bindings/js/JSDOMConvertObject.h
     bindings/js/JSDOMConvertRecord.h
+    bindings/js/JSDOMConvertResult.h
     bindings/js/JSDOMConvertSequences.h
     bindings/js/JSDOMConvertSerializedScriptValue.h
     bindings/js/JSDOMConvertStrings.h

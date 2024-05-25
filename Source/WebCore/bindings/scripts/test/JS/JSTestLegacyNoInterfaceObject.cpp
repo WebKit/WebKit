@@ -185,10 +185,11 @@ static inline bool setJSTestLegacyNoInterfaceObject_readWriteStringAttributeSett
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setReadWriteStringAttribute(WTFMove(nativeValue));
+        return impl.setReadWriteStringAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -241,10 +242,11 @@ static inline bool setJSTestLegacyNoInterfaceObject_nodeAttributeSetter(JSGlobal
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RefPtr nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestLegacyNoInterfaceObject"_s, "nodeAttribute"_s, "Node"_s); });
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestLegacyNoInterfaceObject"_s, "nodeAttribute"_s, "Node"_s); });
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setNodeAttribute(*nativeValue);
+        return impl.setNodeAttribute(*nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -271,10 +273,11 @@ static inline bool setJSTestLegacyNoInterfaceObjectConstructor_staticStringAttri
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return TestLegacyNoInterfaceObject::setStaticStringAttribute(WTFMove(nativeValue));
+        return TestLegacyNoInterfaceObject::setStaticStringAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }

@@ -50,7 +50,7 @@
 namespace WebCore {
 using namespace JSC;
 
-template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWindow::Dict>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> ConversionResult<IDLDictionary<ExposedToWorkerAndWindow::Dict>> convertDictionary<ExposedToWorkerAndWindow::Dict>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -58,7 +58,7 @@ template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWi
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
         throwTypeError(&lexicalGlobalObject, throwScope);
-        return { };
+        return ConversionResultException { };
     }
     ExposedToWorkerAndWindow::Dict result;
     JSValue objValue;
@@ -66,11 +66,13 @@ template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWi
         objValue = jsUndefined();
     else {
         objValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "obj"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
     if (!objValue.isUndefined()) {
-        result.obj = convert<IDLInterface<TestObj>>(lexicalGlobalObject, objValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
+        auto objConversionResult = convert<IDLInterface<TestObj>>(lexicalGlobalObject, objValue);
+        if (UNLIKELY(objConversionResult.hasException(throwScope)))
+            return ConversionResultException { };
+        result.obj = objConversionResult.releaseReturnValue();
     }
     return result;
 }

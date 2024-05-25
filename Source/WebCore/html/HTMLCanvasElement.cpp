@@ -268,10 +268,12 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     if (is2dType(contextId)) {
         Ref vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
-        RefPtr context = createContext2d(contextId, WTFMove(settings));
+        auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
+        if (UNLIKELY(settings.hasException(scope)))
+            return Exception { ExceptionCode::ExistingExceptionError };
+
+        RefPtr context = createContext2d(contextId, settings.releaseReturnValue());
         if (!context)
             return std::optional<RenderingContext> { std::nullopt };
         return std::optional<RenderingContext> { WTFMove(context) };
@@ -280,10 +282,12 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     if (isBitmapRendererType(contextId)) {
         Ref vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        auto settings = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
-        RefPtr context = createContextBitmapRenderer(contextId, WTFMove(settings));
+        auto settings = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
+        if (UNLIKELY(settings.hasException(scope)))
+            return Exception { ExceptionCode::ExistingExceptionError };
+
+        RefPtr context = createContextBitmapRenderer(contextId, settings.releaseReturnValue());
         if (!context)
             return std::optional<RenderingContext> { std::nullopt };
         return std::optional<RenderingContext> { WTFMove(context) };
@@ -293,10 +297,12 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     if (isWebGLType(contextId)) {
         Ref vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
-        RefPtr context = createContextWebGL(toWebGLVersion(contextId), WTFMove(attributes));
+        auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
+        if (UNLIKELY(attributes.hasException(scope)))
+            return Exception { ExceptionCode::ExistingExceptionError };
+
+        RefPtr context = createContextWebGL(toWebGLVersion(contextId), attributes.releaseReturnValue());
         if (!context)
             return std::optional<RenderingContext> { std::nullopt };
 

@@ -870,11 +870,12 @@ static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certifi
     JSC::VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto parameters = convertDictionary<RTCPeerConnection::CertificateParameters>(lexicalGlobalObject, value.get());
-    if (UNLIKELY(scope.exception())) {
+    auto parametersConversionResult = convertDictionary<RTCPeerConnection::CertificateParameters>(lexicalGlobalObject, value.get());
+    if (UNLIKELY(parametersConversionResult.hasException(scope))) {
         scope.clearException();
         return Exception { ExceptionCode::TypeError, "Unable to read certificate parameters"_s };
     }
+    auto parameters = parametersConversionResult.releaseReturnValue();
 
     if (parameters.expires && *parameters.expires < 0)
         return Exception { ExceptionCode::TypeError, "Expire value is invalid"_s };

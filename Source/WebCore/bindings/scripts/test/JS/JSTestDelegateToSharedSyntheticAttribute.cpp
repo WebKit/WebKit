@@ -190,10 +190,11 @@ static inline bool setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute1S
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setSharedAttribute1(propertyNameToAtomString(propertyName), WTFMove(nativeValue));
+        return impl.setSharedAttribute1(propertyNameToAtomString(propertyName), nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -223,10 +224,11 @@ static inline bool setJSTestDelegateToSharedSyntheticAttribute_sharedAttribute2S
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setSharedAttribute2(propertyNameToAtomString(propertyName), WTFMove(nativeValue));
+        return impl.setSharedAttribute2(propertyNameToAtomString(propertyName), nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
