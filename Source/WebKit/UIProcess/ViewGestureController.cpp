@@ -705,8 +705,8 @@ void ViewGestureController::applyMagnification()
 
     if (m_frameHandlesMagnificationGesture)
         m_webPageProxy.scalePage(m_magnification, roundedIntPoint(m_magnificationOrigin));
-    else
-        m_webPageProxy.drawingArea()->adjustTransientZoom(m_magnification, scaledMagnificationOrigin(m_magnificationOrigin, m_magnification));
+    else if (auto* drawingArea = m_webPageProxy.drawingArea())
+        drawingArea->adjustTransientZoom(m_magnification, scaledMagnificationOrigin(m_magnificationOrigin, m_magnification));
 }
 
 void ViewGestureController::endMagnificationGesture()
