@@ -97,10 +97,10 @@ private:
         unsigned originalLength { 0 };
         unsigned length { 0 };
         union {
-            const LChar* currentCharacter8;
+            const LChar* currentCharacter8 { nullptr };
             const UChar* currentCharacter16;
         };
-        bool is8Bit;
+        bool is8Bit { true };
         bool doNotExcludeLineNumbers { true };
     };
 
