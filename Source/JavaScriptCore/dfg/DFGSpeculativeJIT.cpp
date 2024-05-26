@@ -13065,7 +13065,7 @@ void SpeculativeJIT::emitSwitchIntJump(
     addBranch(
         branch32(AboveOrEqual, value, Imm32(linkedTable.m_ctiOffsets.size())),
         data->fallThrough.block);
-    move(TrustedImmPtr(linkedTable.m_ctiOffsets.data()), scratch);
+    move(TrustedImmPtr(linkedTable.m_ctiOffsets.mutableSpan().data()), scratch);
 
 #if USE(JSVALUE64)
     farJump(BaseIndex(scratch, value, ScalePtr), JSSwitchPtrTag);

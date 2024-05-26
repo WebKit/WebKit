@@ -1288,7 +1288,7 @@ void JIT::emit_op_switch_imm(const JSInstruction* currentInstruction)
     sub32(Imm32(unlinkedTable.m_min), jsRegT10.payloadGPR());
 
     addJump(branch32(AboveOrEqual, jsRegT10.payloadGPR(), Imm32(linkedTable.m_ctiOffsets.size())), defaultOffset);
-    move(TrustedImmPtr(linkedTable.m_ctiOffsets.data()), regT2);
+    move(TrustedImmPtr(linkedTable.m_ctiOffsets.mutableSpan().data()), regT2);
     loadPtr(BaseIndex(regT2, jsRegT10.payloadGPR(), ScalePtr), regT2);
     farJump(regT2, JSSwitchPtrTag);
 

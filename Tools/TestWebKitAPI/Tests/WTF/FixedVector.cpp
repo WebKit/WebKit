@@ -363,16 +363,16 @@ TEST(WTF_FixedVector, MoveKeepsData)
 {
     {
         FixedVector<unsigned> vec1(3);
-        auto* data1 = vec1.data();
+        auto* data1 = vec1.span().data();
         FixedVector<unsigned> vec2(WTFMove(vec1));
-        EXPECT_EQ(data1, vec2.data());
+        EXPECT_EQ(data1, vec2.span().data());
     }
     {
         FixedVector<unsigned> vec1(3);
-        auto* data1 = vec1.data();
+        auto* data1 = vec1.span().data();
         FixedVector<unsigned> vec2;
         vec2 = WTFMove(vec1);
-        EXPECT_EQ(data1, vec2.data());
+        EXPECT_EQ(data1, vec2.span().data());
     }
 }
 
@@ -381,19 +381,19 @@ TEST(WTF_FixedVector, MoveKeepsDataNested)
     {
         Vector<FixedVector<unsigned>> vec1;
         vec1.append(FixedVector<unsigned>(3));
-        auto* data1 = vec1[0].data();
+        auto* data1 = vec1[0].span().data();
         FixedVector<FixedVector<unsigned>> vec2(WTFMove(vec1));
         EXPECT_EQ(1U, vec2.size());
-        EXPECT_EQ(data1, vec2[0].data());
+        EXPECT_EQ(data1, vec2[0].span().data());
     }
     {
         Vector<FixedVector<unsigned>> vec1;
         vec1.append(FixedVector<unsigned>(3));
-        auto* data1 = vec1[0].data();
+        auto* data1 = vec1[0].span().data();
         FixedVector<FixedVector<unsigned>> vec2;
         vec2 = WTFMove(vec1);
         EXPECT_EQ(1U, vec2.size());
-        EXPECT_EQ(data1, vec2[0].data());
+        EXPECT_EQ(data1, vec2[0].span().data());
     }
 }
 

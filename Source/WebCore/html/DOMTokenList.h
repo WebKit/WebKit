@@ -67,9 +67,9 @@ private:
     const Vector<AtomString, 1>& tokens() const { return const_cast<DOMTokenList&>(*this).tokens(); }
 
     static ExceptionOr<void> validateToken(StringView);
-    static ExceptionOr<void> validateTokens(const AtomString* tokens, size_t length);
-    ExceptionOr<void> addInternal(const AtomString* tokens, size_t length);
-    ExceptionOr<void> removeInternal(const AtomString* tokens, size_t length);
+    static ExceptionOr<void> validateTokens(std::span<const AtomString> tokens);
+    ExceptionOr<void> addInternal(std::span<const AtomString> tokens);
+    ExceptionOr<void> removeInternal(std::span<const AtomString> tokens);
 
     Element& m_element;
     const WebCore::QualifiedName& m_attributeName;

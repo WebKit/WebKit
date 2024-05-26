@@ -186,7 +186,7 @@ static inline void buildEntryBufferForCatch(Probe::Context& context)
     JSValue thrownValue = JSValue::decode(exception);
     void* payload = nullptr;
     if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue))
-        payload = bitwise_cast<void*>(wasmException->payload().data());
+        payload = bitwise_cast<void*>(wasmException->payload().span().data());
 
     context.gpr(GPRInfo::argumentGPR0) = bitwise_cast<uintptr_t>(buffer);
     context.gpr(GPRInfo::argumentGPR1) = exception;

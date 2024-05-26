@@ -133,11 +133,9 @@ public:
     bool isEmpty() const { return m_storage ? m_storage->isEmpty() : true; }
     size_t byteSize() const { return m_storage ? m_storage->byteSize() : 0; }
 
-    T* data() { return m_storage ? m_storage->data() : nullptr; }
     iterator begin() { return m_storage ? m_storage->begin() : nullptr; }
     iterator end() { return m_storage ? m_storage->end() : nullptr; }
 
-    const T* data() const { return const_cast<FixedVector*>(this)->data(); }
     const_iterator begin() const { return const_cast<FixedVector*>(this)->begin(); }
     const_iterator end() const { return const_cast<FixedVector*>(this)->end(); }
 
@@ -192,8 +190,8 @@ public:
 
     Storage* storage() { return m_storage.get(); }
 
-    std::span<const T> span() const { return { data(), size() }; }
-    std::span<T> mutableSpan() { return { data(), size() }; }
+    std::span<const T> span() const { return { m_storage ? m_storage->data() : nullptr, size() }; }
+    std::span<T> mutableSpan() { return { m_storage ? m_storage->data() : nullptr, size() }; }
 
     Vector<T> subvector(size_t offset, size_t length = std::dynamic_extent) const
     {
