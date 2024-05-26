@@ -576,6 +576,7 @@ std::optional<audit_token_t> Connection::getAuditToken()
     return WTFMove(auditToken);
 }
 
+#if !USE(EXTENSIONKIT)
 bool Connection::kill()
 {
     if (m_xpcConnection) {
@@ -583,9 +584,9 @@ bool Connection::kill()
         m_wasKilled = true;
         return true;
     }
-
     return false;
 }
+#endif
 
 pid_t Connection::remoteProcessID() const
 {

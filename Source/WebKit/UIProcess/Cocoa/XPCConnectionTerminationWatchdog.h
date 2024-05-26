@@ -38,6 +38,9 @@ namespace WebKit {
 
 class AuxiliaryProcessProxy;
 class ProcessAndUIAssertion;
+#if USE(EXTENSIONKIT)
+class ExtensionProcess;
+#endif
 
 // ConnectionTerminationWatchdog does two things:
 // 1) It sets a watchdog timer to kill the peered process.
@@ -51,9 +54,13 @@ private:
     XPCConnectionTerminationWatchdog(AuxiliaryProcessProxy&, Seconds interval);
     void watchdogTimerFired();
 
-    OSObjectPtr<xpc_connection_t> m_xpcConnection;
     RunLoop::Timer m_watchdogTimer;
     Ref<ProcessAndUIAssertion> m_assertion;
+#if USE(EXTENSIONKIT)
+    std::optional<ExtensionProcess> m_process;
+#else
+    OSObjectPtr<xpc_connection_t> m_xpcConnection;
+#endif
 };
 
 }

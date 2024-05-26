@@ -35,7 +35,10 @@ enum class ReasonCode : uint64_t {
     ConnectionKilled,
 };
 
+#if !USE(EXTENSIONKIT)
 void terminateWithReason(xpc_connection_t, ReasonCode, const char* reason);
+#endif
+
 void handleXPCExitMessage(xpc_object_t);
 
 }

@@ -1263,10 +1263,14 @@ void Connection::enqueueIncomingMessage(UniqueRef<Decoder> incomingMessage)
             return;
 
         if (isIncomingMessagesThrottlingEnabled() && m_incomingMessages.size() >= maxPendingIncomingMessagesKillingThreshold) {
-            if (kill()) {
-                RELEASE_LOG_FAULT(IPC, "%p - Connection::enqueueIncomingMessage: Over %zu incoming messages have been queued without the main thread processing them, killing the connection as the remote process seems to be misbehaving", this, maxPendingIncomingMessagesKillingThreshold);
-                m_incomingMessages.clear();
-            }
+            dispatchToClient([protectedThis = Ref { *this }] {
+                if (!protectedThis->m_client)
+                    return;
+                protectedThis->m_client->requestRemoteProcessTermination();
+                RELEASE_LOG_FAULT(IPC, "%p - Connection::enqueueIncomingMessage: Over %zu incoming messages have been queued without the main thread processing them, terminating the remote process as it seems to be misbehaving", protectedThis.ptr(), maxPendingIncomingMessagesKillingThreshold);
+                Locker lock { protectedThis->m_incomingMessagesLock };
+                protectedThis->m_incomingMessages.clear();
+            });
             return;
         }
 #endif
