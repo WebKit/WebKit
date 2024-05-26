@@ -32,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Node-multiple-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Range-createContextualFragment.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/SVGScriptElement-internal-slot.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedType-AttributeNodes.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicy-CSP-no-name.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicy-CSP-wildcard.html
@@ -40,6 +41,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-constants.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-createXYZTests.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-noNamesGiven.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-none-none-name.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-none-none.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-none-skip.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-none.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-wildcard.html
