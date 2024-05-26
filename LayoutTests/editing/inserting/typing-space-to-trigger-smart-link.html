@@ -13,7 +13,7 @@ function runTest()
     var testTypeSpaceDiv = document.getElementById('testTypeSpace');
     var targetText = testTypeSpaceDiv.firstChild;
     window.getSelection().setPosition(targetText, 15);
-    UIHelper.keyDown(" ");
+    document.execCommand("InsertText", false, " ");
     var expectedContents = "The <a href=\"http://www.foo.com\">www.foo.com</a> should be underlined and there is an anchor node created for it.";
     if (expectedContents == testTypeSpaceDiv.innerHTML)
         document.getElementById('log').textContent = "PASS: the anchor for 'www.foo.com' has been created.\n"
@@ -23,18 +23,18 @@ function runTest()
     var testTypeLinkDiv = document.getElementById('testTypeLink');
     targetText = testTypeLinkDiv.firstChild;
     window.getSelection().setPosition(targetText, 4);
-    UIHelper.keyDown("w");
-    UIHelper.keyDown("w");
-    UIHelper.keyDown("w");
-    UIHelper.keyDown(".");
-    UIHelper.keyDown("b");
-    UIHelper.keyDown("a");
-    UIHelper.keyDown("r");
-    UIHelper.keyDown(".");
-    UIHelper.keyDown("c");
-    UIHelper.keyDown("o");
-    UIHelper.keyDown("m");
-    UIHelper.keyDown(" ");
+    document.execCommand("InsertText", false, "w");
+    document.execCommand("InsertText", false, "w");
+    document.execCommand("InsertText", false, "w");
+    document.execCommand("InsertText", false, ".");
+    document.execCommand("InsertText", false, "b");
+    document.execCommand("InsertText", false, "a");
+    document.execCommand("InsertText", false, "r");
+    document.execCommand("InsertText", false, ".");
+    document.execCommand("InsertText", false, "c");
+    document.execCommand("InsertText", false, "o");
+    document.execCommand("InsertText", false, "m");
+    document.execCommand("InsertText", false, " ");
     expectedContents = "The <a href=\"http://www.bar.com\">www.bar.com</a> should be underlined and there is an anchor node created for it.";
     if (expectedContents == testTypeLinkDiv.innerHTML)
         document.getElementById('log').textContent += "PASS: the anchor for 'www.bar.com' has been created."
