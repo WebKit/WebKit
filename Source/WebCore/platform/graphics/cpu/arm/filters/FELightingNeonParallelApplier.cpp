@@ -542,14 +542,14 @@ void FELightingNeonParallelApplier::applyPlatformParallel(const LightingData& da
     floatArguments.colorBlue = color.blue;
     floatArguments.padding4 = 0;
 
-    if (data.lightSource->type() == LS_POINT) {
+    if (data.lightSource->type() == LightType::LS_POINT) {
         neonData.flags |= FLAG_POINT_LIGHT;
         auto& pointLightSource = downcast<PointLightSource>(*data.lightSource);
         floatArguments.lightX = pointLightSource.position().x();
         floatArguments.lightY = pointLightSource.position().y();
         floatArguments.lightZ = pointLightSource.position().z();
         floatArguments.padding2 = 0;
-    } else if (data.lightSource->type() == LS_SPOT) {
+    } else if (data.lightSource->type() == LightType::LS_SPOT) {
         neonData.flags |= FLAG_SPOT_LIGHT;
         auto& spotLightSource = downcast<SpotLightSource>(*data.lightSource);
         floatArguments.lightX = spotLightSource.position().x();
