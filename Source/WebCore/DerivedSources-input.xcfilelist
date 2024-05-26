@@ -348,8 +348,8 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayCouponCodeUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDateComponents.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDateComponentsRange.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDeferredPaymentRequest.idl
-$(PROJECT_DIR)/Modules/applepay/ApplePayDisbursementRequest.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDetailsUpdateBase.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayDisbursementRequest.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorCode.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorContactField.idl
@@ -729,6 +729,7 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-control.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-label.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-label.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/tracks-button.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/tvos-layout-traits.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-layout-traits.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-media-controls.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-media-controls.js
@@ -1757,7 +1758,6 @@ $(PROJECT_DIR)/mathml/mathtags.in
 $(PROJECT_DIR)/page/BarProp.idl
 $(PROJECT_DIR)/page/Crypto.idl
 $(PROJECT_DIR)/page/DOMSelection.idl
-$(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/DOMWindow+CSSOM.idl
 $(PROJECT_DIR)/page/DOMWindow+CSSOMView.idl
 $(PROJECT_DIR)/page/DOMWindow+Compat.idl
@@ -1766,6 +1766,7 @@ $(PROJECT_DIR)/page/DOMWindow+DeviceOrientation.idl
 $(PROJECT_DIR)/page/DOMWindow+RequestIdleCallback.idl
 $(PROJECT_DIR)/page/DOMWindow+Selection.idl
 $(PROJECT_DIR)/page/DOMWindow+VisualViewport.idl
+$(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/EventSource.idl
 $(PROJECT_DIR)/page/FragmentDirective.idl
 $(PROJECT_DIR)/page/History.idl
