@@ -1,4 +1,4 @@
-b0 b1 b2
+b0
 
-FAIL Create three popovers without user activation assert_false: p1 should be closed. expected false got true
+PASS Create three popovers without user activation
 
