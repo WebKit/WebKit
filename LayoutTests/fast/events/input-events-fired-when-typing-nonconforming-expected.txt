@@ -2,6 +2,12 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Typing into contenteditable div element
+Fired `textInput`!
+PASS event.__lookupGetter__('data') is defined.
+PASS event.target.id is expectedTargetID
+PASS event.bubbles is true
+PASS event.cancelable is true
+PASS event.composed is true
 Fired `onbeforeinput`!
 PASS event.__lookupGetter__('inputType') is defined.
 PASS event.__lookupGetter__('data') is defined.
@@ -12,12 +18,6 @@ PASS event.bubbles is true
 PASS event.cancelable is true
 PASS event.composed is true
 PASS event.isComposing is false
-Fired `textInput`!
-PASS event.__lookupGetter__('data') is defined.
-PASS event.target.id is expectedTargetID
-PASS event.bubbles is true
-PASS event.cancelable is true
-PASS event.composed is true
 Fired `oninput`!
 PASS event.__lookupGetter__('inputType') is defined.
 PASS event.__lookupGetter__('data') is defined.
@@ -29,6 +29,12 @@ PASS event.cancelable is false
 PASS event.composed is true
 PASS event.isComposing is false
 Typing into input element
+Fired `textInput`!
+PASS event.__lookupGetter__('data') is defined.
+PASS event.target.id is expectedTargetID
+PASS event.bubbles is true
+PASS event.cancelable is true
+PASS event.composed is true
 Fired `onbeforeinput`!
 PASS event.__lookupGetter__('inputType') is defined.
 PASS event.__lookupGetter__('data') is defined.
@@ -39,12 +45,6 @@ PASS event.bubbles is true
 PASS event.cancelable is true
 PASS event.composed is true
 PASS event.isComposing is false
-Fired `textInput`!
-PASS event.__lookupGetter__('data') is defined.
-PASS event.target.id is expectedTargetID
-PASS event.bubbles is true
-PASS event.cancelable is true
-PASS event.composed is true
 Fired `oninput`!
 PASS event.__lookupGetter__('inputType') is defined.
 PASS event.__lookupGetter__('data') is defined.
@@ -56,6 +56,12 @@ PASS event.cancelable is false
 PASS event.composed is true
 PASS event.isComposing is false
 Typing into textarea element
+Fired `textInput`!
+PASS event.__lookupGetter__('data') is defined.
+PASS event.target.id is expectedTargetID
+PASS event.bubbles is true
+PASS event.cancelable is true
+PASS event.composed is true
 Fired `onbeforeinput`!
 PASS event.__lookupGetter__('inputType') is defined.
 PASS event.__lookupGetter__('data') is defined.
@@ -66,12 +72,6 @@ PASS event.bubbles is true
 PASS event.cancelable is true
 PASS event.composed is true
 PASS event.isComposing is false
-Fired `textInput`!
-PASS event.__lookupGetter__('data') is defined.
-PASS event.target.id is expectedTargetID
-PASS event.bubbles is true
-PASS event.cancelable is true
-PASS event.composed is true
 Fired `oninput`!
 PASS event.__lookupGetter__('inputType') is defined.
 PASS event.__lookupGetter__('data') is defined.

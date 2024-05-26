@@ -27,6 +27,7 @@
 
 #include "Cursor.h"
 #include "DragActions.h"
+#include "Editor.h"
 #include "FocusDirection.h"
 #include "HitTestRequest.h"
 #include "LayoutPoint.h"
@@ -283,6 +284,7 @@ public:
     WEBCORE_EXPORT void handleKeyboardSelectionMovementForAccessibility(KeyboardEvent&);
 
     bool handleTextInputEvent(const String& text, Event* underlyingEvent = nullptr, TextEventInputType = TextEventInputKeyboard);
+    bool handleTextInput(const String& text, Event* underlyingEvent = nullptr, TextEventInputType = TextEventInputKeyboard, DocumentFragment* = nullptr, bool shouldSmartReplace = false, bool shouldMatchStyle = false, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
     void defaultTextInputEventHandler(TextEvent&);
 
 #if ENABLE(DRAG_SUPPORT)

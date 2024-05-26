@@ -4435,6 +4435,52 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
     target->dispatchEvent(event);
     return event->defaultHandled();
 }
+
+bool EventHandler::handleTextInput(const String& text, Event* underlyingEvent, TextEventInputType inputType, DocumentFragment* pastingFragment, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+{
+    LOG(Editing, "EventHandler %p handleTextInput (text %s)", this, text.utf8().data());
+
+    // Platforms should differentiate real commands like selectAll from text input in disguise (like insertNewline),
+    // and avoid dispatching text input events from keydown default handlers.
+    ASSERT(!is<KeyboardEvent>(underlyingEvent) || downcast<KeyboardEvent>(*underlyingEvent).type() == eventNames().keypressEvent);
+
+    Ref frame = m_frame.get();
+
+    EventTarget* target;
+    if (underlyingEvent)
+        target = underlyingEvent->target();
+    else
+        target = eventTargetElementForDocument(frame->protectedDocument().get());
+    if (!target)
+        return false;
+
+    // Default event handling for Drag and Drop will be handled by DragController
+    if (inputType == TextEventInputDrop)
+        return false;
+
+    if (inputType == TextEventInputPaste || inputType == TextEventInputRemoveBackground) {
+        auto action = inputType == TextEventInputRemoveBackground ? EditAction::RemoveBackground : EditAction::Paste;
+        if (pastingFragment) {
+#if PLATFORM(IOS_FAMILY)
+            if (frame->editor().client()->performsTwoStepPaste(pastingFragment))
+                return true;
+#endif
+            frame->editor().replaceSelectionWithFragment(*pastingFragment, Editor::SelectReplacement::No, shouldSmartReplace ? Editor::SmartReplace::Yes : Editor::SmartReplace::No, shouldMatchStyle ? Editor::MatchStyle::Yes : Editor::MatchStyle::No, action, mailBlockquoteHandling);
+        } else
+            frame->editor().replaceSelectionWithText(text, Editor::SelectReplacement::No, shouldSmartReplace ? Editor::SmartReplace::Yes : Editor::SmartReplace::No, action);
+        return true;
+    }
+
+    if (text == "\n"_s) {
+        if (is<HTMLInputElement>(target))
+            return false;
+        if (inputType == TextEventInputLineBreak)
+            return frame->editor().insertLineBreak();
+        return frame->editor().insertParagraphSeparator();
+    }
+
+    return frame->editor().insertTextWithoutSendingTextEventNew(text, false, target, inputType);
+}
     
 bool EventHandler::isKeyboardOptionTab(KeyboardEvent& event)
 {

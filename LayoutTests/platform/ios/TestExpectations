@@ -1094,6 +1094,7 @@ fast/events/focus-change-crash2.html [ Skip ]
 fast/events/imagemap-norender-crash.html [ Skip ]
 fast/events/input-event-insert-replacement.html
 fast/events/input-events-fired-when-typing.html [ Skip ]
+fast/events/input-events-fired-when-typing-nonconforming.html [ Skip ]
 fast/events/input-events-insert-newlines-after-mutation.html [ Skip ]
 fast/events/input-events-typing-data.html [ Skip ]
 fast/events/input-tab-focus-no-duplicate-events.html [ Skip ]

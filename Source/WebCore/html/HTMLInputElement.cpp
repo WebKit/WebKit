@@ -1320,7 +1320,11 @@ void HTMLInputElement::defaultEventHandler(Event& event)
 
     // Call the base event handler before any of our own event handling for almost all events in text fields.
     // Makes editing keyboard handling take precedence over the keydown and keypress handling in this function.
-    bool callBaseClassEarly = isTextField() && (event.type() == eventNames().keydownEvent || event.type() == eventNames().keypressEvent);
+    bool callBaseClassEarly;
+    if (document().settings().conformantBeforeinputEventFiringOrderEnabled())
+        callBaseClassEarly = isTextField() && (event.type() == eventNames().keydownEvent || (event.type() == eventNames().keypressEvent && !m_inputType->shouldSubmitImplicitly(event)));
+    else
+        callBaseClassEarly = isTextField() && (event.type() == eventNames().keydownEvent || (event.type() == eventNames().keypressEvent));
     if (callBaseClassEarly) {
         HTMLTextFormControlElement::defaultEventHandler(event);
         if (event.defaultHandled())
