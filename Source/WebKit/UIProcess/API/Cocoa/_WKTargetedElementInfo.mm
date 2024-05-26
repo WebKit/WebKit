@@ -31,6 +31,7 @@
 #import "WebPageProxy.h"
 #import "_WKFrameTreeNodeInternal.h"
 #import "_WKTargetedElementInfoInternal.h"
+#import <WebCore/ShareableBitmap.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -179,6 +180,19 @@
 - (BOOL)hasAudibleMedia
 {
     return _info->hasAudibleMedia();
+}
+
+- (void)takeSnapshotWithCompletionHandler:(void(^)(CGImageRef))completion
+{
+    return _info->takeSnapshot([completion = makeBlockPtr(completion)](std::optional<WebCore::ShareableBitmapHandle>&& imageHandle) mutable {
+        if (!imageHandle)
+            return completion(nullptr);
+
+        if (RefPtr bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly))
+            return completion(bitmap->makeCGImage().get());
+
+        completion(nullptr);
+    });
 }
 
 - (NSString *)debugDescription

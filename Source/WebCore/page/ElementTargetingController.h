@@ -43,6 +43,7 @@ namespace WebCore {
 
 class Element;
 class Document;
+class Image;
 class Node;
 class Page;
 
@@ -61,6 +62,8 @@ public:
 
     WEBCORE_EXPORT uint64_t numberOfVisibilityAdjustmentRects() const;
     WEBCORE_EXPORT bool resetVisibilityAdjustments(const Vector<TargetedElementIdentifiers>&);
+
+    WEBCORE_EXPORT RefPtr<Image> snapshotIgnoringVisibilityAdjustment(ElementIdentifier, ScriptExecutionContextIdentifier);
 
 private:
     void cleanUpAdjustmentClientRects();

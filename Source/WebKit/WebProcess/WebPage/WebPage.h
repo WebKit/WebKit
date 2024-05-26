@@ -1759,6 +1759,8 @@ public:
 
     void didAdjustVisibilityWithSelectors(Vector<String>&&);
 
+    void takeSnapshotForTargetedElement(WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 

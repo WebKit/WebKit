@@ -63,6 +63,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 - (BOOL)isSameElement:(_WKTargetedElementInfo *)other;
 
 - (void)getChildFrames:(void(^)(NSArray<_WKFrameTreeNode *> *))completionHandler;
+- (void)takeSnapshotWithCompletionHandler:(void(^)(CGImageRef))completionHandler;
 
 @end
 

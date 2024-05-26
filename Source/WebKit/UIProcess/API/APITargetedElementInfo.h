@@ -31,6 +31,10 @@
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class ShareableBitmapHandle;
+}
+
 namespace WebKit {
 class WebPageProxy;
 }
@@ -73,6 +77,8 @@ public:
 
     WebCore::ElementIdentifier elementIdentifier() const { return m_info.elementIdentifier; }
     WebCore::ScriptExecutionContextIdentifier documentIdentifier() const { return m_info.documentIdentifier; }
+
+    void takeSnapshot(CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
 
 private:
     WebCore::TargetedElementInfo m_info;

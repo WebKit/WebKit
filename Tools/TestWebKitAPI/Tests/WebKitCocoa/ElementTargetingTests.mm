@@ -35,6 +35,26 @@
 #import <WebKit/_WKTargetedElementInfo.h>
 #import <WebKit/_WKTargetedElementRequest.h>
 
+@interface _WKTargetedElementInfo (TestWebKitAPI)
+- (CGImageRef)takeSnapshot;
+@end
+
+@implementation _WKTargetedElementInfo (TestWebKitAPI)
+
+- (CGImageRef)takeSnapshot
+{
+    __block bool done = false;
+    __block RetainPtr<CGImageRef> result;
+    [self takeSnapshotWithCompletionHandler:^(CGImageRef image) {
+        result = image;
+        done = true;
+    }];
+    Util::run(&done);
+    return result.autorelease();
+}
+
+@end
+
 @interface WKWebView (ElementTargeting)
 
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point;
@@ -380,6 +400,34 @@ TEST(ElementTargeting, RequestElementsFromSelectors)
     [webView resetVisibilityAdjustmentsForTargets:targets.get()];
     [webView waitForNextPresentationUpdate];
     EXPECT_FALSE(didAdjustVisibility);
+}
+
+TEST(ElementTargeting, SnapshotElementWithVisibilityAdjustment)
+{
+    auto webViewFrame = CGRectMake(0, 0, 800, 600);
+
+    auto viewAndWindow = setUpWebViewForSnapshotting(webViewFrame);
+    auto [webView, window] = viewAndWindow;
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-2"];
+
+    RetainPtr targets = [webView targetedElementInfoWithSelectors:@[
+        [NSSet setWithObject:@".absolute.bottom-right"]
+    ]];
+
+    EXPECT_EQ([targets count], 1U);
+    [webView adjustVisibilityForTargets:targets.get()];
+
+    CGImagePixelReader reader { [[targets firstObject] takeSnapshot] };
+    auto checkPixelColor = [&reader](unsigned x, unsigned y) {
+        auto color = reader.at(x, y);
+        EXPECT_FALSE(color == WebCore::Color::transparentBlack);
+        EXPECT_FALSE(color == WebCore::Color::white);
+    };
+
+    checkPixelColor(10, 10);
+    checkPixelColor(reader.width() - 10, 10);
+    checkPixelColor(reader.width() - 10, reader.height() - 10);
+    checkPixelColor(10, reader.height() - 10);
 }
 
 TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)

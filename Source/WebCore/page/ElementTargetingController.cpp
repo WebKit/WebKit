@@ -28,6 +28,7 @@
 
 #include "AccessibilityObject.h"
 #include "Attr.h"
+#include "BitmapImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTokenList.h"
@@ -40,6 +41,7 @@
 #include "ElementTargetingTypes.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
+#include "FrameSnapshotting.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -1700,6 +1702,59 @@ RefPtr<Document> ElementTargetingController::mainDocument() const
 void ElementTargetingController::selectorBasedVisibilityAdjustmentTimerFired()
 {
     applyVisibilityAdjustmentFromSelectors();
+}
+
+class ClearVisibilityAdjustmentForScope {
+    WTF_MAKE_NONCOPYABLE(ClearVisibilityAdjustmentForScope);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ClearVisibilityAdjustmentForScope(Element& element)
+        : m_element(element)
+        , m_adjustmentToRestore(element.visibilityAdjustment())
+    {
+        if (m_adjustmentToRestore.isEmpty())
+            return;
+
+        element.setVisibilityAdjustment({ });
+        element.invalidateStyleAndRenderersForSubtree();
+    }
+
+    ~ClearVisibilityAdjustmentForScope()
+    {
+        if (m_adjustmentToRestore.isEmpty())
+            return;
+
+        m_element->setVisibilityAdjustment(m_adjustmentToRestore);
+        m_element->invalidateStyleAndRenderersForSubtree();
+    }
+
+private:
+    Ref<Element> m_element;
+    OptionSet<VisibilityAdjustment> m_adjustmentToRestore;
+};
+
+RefPtr<Image> ElementTargetingController::snapshotIgnoringVisibilityAdjustment(ElementIdentifier elementID, ScriptExecutionContextIdentifier documentID)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return { };
+
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!mainFrame)
+        return { };
+
+    RefPtr element = Element::fromIdentifier(elementID);
+    if (!element)
+        return { };
+
+    if (element->document().identifier() != documentID)
+        return { };
+
+    ClearVisibilityAdjustmentForScope clearAdjustmentScope { *element };
+    element->document().updateLayoutIgnorePendingStylesheets();
+
+    auto buffer = snapshotNode(*mainFrame, *element, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    return BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(buffer)));
 }
 
 } // namespace WebCore
