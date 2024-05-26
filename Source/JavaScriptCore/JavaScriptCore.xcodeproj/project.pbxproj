@@ -2109,6 +2109,7 @@
 		FE1E2C3F2240DD5800F6B729 /* MacroAssemblerARM64E.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1E2C3E2240D30B00F6B729 /* MacroAssemblerARM64E.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1E2C402240DD6200F6B729 /* ARM64EAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1E2C3D2240D2F600F6B729 /* ARM64EAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE265F202C02D39100997B07 /* AssertInvariants.h in Headers */ = {isa = PBXBuildFile; fileRef = FE265F1E2C02D39100997B07 /* AssertInvariants.h */; };
 		FE287D02252FB2E800D723F9 /* VerifierSlotVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = FE287D01252FB2E800D723F9 /* VerifierSlotVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE2A87601F02381600EB31B2 /* MinimumReservedZoneSize.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */; };
 		FE2CC9302756B2B9003F5AB8 /* HeapSubspaceTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2CC92F2756B2B9003F5AB8 /* HeapSubspaceTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5887,6 +5888,8 @@
 		FE1E2C3E2240D30B00F6B729 /* MacroAssemblerARM64E.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARM64E.h; sourceTree = "<group>"; };
 		FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntCLoop.cpp; path = llint/LLIntCLoop.cpp; sourceTree = "<group>"; };
 		FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntCLoop.h; path = llint/LLIntCLoop.h; sourceTree = "<group>"; };
+		FE265F1E2C02D39100997B07 /* AssertInvariants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssertInvariants.h; sourceTree = "<group>"; };
+		FE265F1F2C02D39100997B07 /* AssertInvariants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AssertInvariants.cpp; sourceTree = "<group>"; };
 		FE287D01252FB2E800D723F9 /* VerifierSlotVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VerifierSlotVisitor.h; sourceTree = "<group>"; };
 		FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MinimumReservedZoneSize.h; sourceTree = "<group>"; };
 		FE2BD66E25C0DC8200999D3B /* VerifierSlotVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VerifierSlotVisitor.cpp; sourceTree = "<group>"; };
@@ -7899,6 +7902,8 @@
 				E3443E3028E9711700C0020C /* ArrayPrototypeInlines.h */,
 				0FB7F38A15ED8E3800F167B2 /* ArrayStorage.h */,
 				FE1D6D7023625AB0007A5C26 /* ArrayStorageInlines.h */,
+				FE265F1F2C02D39100997B07 /* AssertInvariants.cpp */,
+				FE265F1E2C02D39100997B07 /* AssertInvariants.h */,
 				8B6016F31F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.cpp */,
 				8B6016F41F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.h */,
 				276B385A2A71D0B500252F4E /* AsyncFromSyncIteratorPrototypeInlines.h */,
@@ -10264,6 +10269,7 @@
 				4BDF3004289324AC00AE1DE3 /* AssemblyComments.h in Headers */,
 				0F24E54117EA9F5900ABB217 /* AssemblyHelpers.h in Headers */,
 				6B767E7B26791F270017F8D1 /* AssemblyHelpersSpoolers.h in Headers */,
+				FE265F202C02D39100997B07 /* AssertInvariants.h in Headers */,
 				A784A26111D16622005776AC /* ASTBuilder.h in Headers */,
 				8B6016F61F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.h in Headers */,
 				276B38692A71D0B600252F4E /* AsyncFromSyncIteratorPrototypeInlines.h in Headers */,

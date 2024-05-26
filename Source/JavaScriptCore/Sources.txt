@@ -756,6 +756,7 @@ runtime/ArrayConstructor.cpp
 runtime/ArrayConventions.cpp
 runtime/ArrayIteratorPrototype.cpp
 runtime/ArrayPrototype.cpp
+runtime/AssertInvariants.cpp
 runtime/AsyncFromSyncIteratorPrototype.cpp
 runtime/AsyncGeneratorFunctionConstructor.cpp
 runtime/AsyncGeneratorFunctionPrototype.cpp

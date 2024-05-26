@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,11 +48,6 @@ extern "C" JS_EXPORT_PRIVATE JSC::Opcode g_opcodeMapWide16[numOpcodeIDs + numWas
 extern "C" JS_EXPORT_PRIVATE JSC::Opcode g_opcodeMapWide32[numOpcodeIDs + numWasmOpcodeIDs];
 
 class Data {
-
-public:
-    static void performAssertions(VM&);
-
-private:
     friend void initialize();
 
     friend JSInstruction* exceptionInstructions();

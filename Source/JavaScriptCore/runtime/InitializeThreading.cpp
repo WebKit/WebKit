@@ -30,6 +30,7 @@
 #include "InitializeThreading.h"
 
 #include "AssemblyComments.h"
+#include "AssertInvariants.h"
 #include "ExecutableAllocator.h"
 #include "InPlaceInterpreter.h"
 #include "JITOperationList.h"
@@ -141,6 +142,8 @@ void initialize()
             if (Wasm::isSupported())
                 Wasm::prepareSignalingMemory();
         }
+
+        assertInvariants();
 
         WTF::compilerFence();
         RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);

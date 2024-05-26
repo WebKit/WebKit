@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -259,8 +259,8 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         // Access to arguments as passed. (After capture, arguments may move to a different location.)
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
         size_t argumentCountIncludingThis() const { return this[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].payload(); }
-        static int argumentOffset(int argument) { return (CallFrameSlot::firstArgument + argument); }
-        static int argumentOffsetIncludingThis(int argument) { return (CallFrameSlot::thisArgument + argument); }
+        static constexpr int argumentOffset(int argument) { return (CallFrameSlot::firstArgument + argument); }
+        static constexpr int argumentOffsetIncludingThis(int argument) { return (CallFrameSlot::thisArgument + argument); }
 
         // In the following (argument() and setArgument()), the 'argument'
         // parameter is the index of the arguments of the target function of

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,20 +26,12 @@
 #include "config.h"
 #include "LLIntData.h"
 
-#include "ArithProfile.h"
-#include "BaselineJITCode.h"
-#include "CodeBlock.h"
-#include "DFGJITCode.h"
 #include "JSCConfig.h"
 #include "LLIntCLoop.h"
 #include "LLIntEntrypoint.h"
-#include "LLIntPCRanges.h"
 #include "LLIntSlowPaths.h"
 #include "LLIntThunks.h"
 #include "Opcode.h"
-#include "WriteBarrier.h"
-
-#define STATIC_ASSERT(cond) static_assert(cond, "LLInt assumes " #cond)
 
 namespace JSC {
 
@@ -265,117 +257,5 @@ void initialize()
 #endif // ENABLE(C_LOOP)
     g_jscConfig.defaultCallThunk = defaultCall().code().taggedPtr();
 }
-
-IGNORE_WARNINGS_BEGIN("missing-noreturn")
-void Data::performAssertions(VM& vm)
-{
-    UNUSED_PARAM(vm);
-    
-    // Assertions to match LowLevelInterpreter.asm.  If you change any of this code, be
-    // prepared to change LowLevelInterpreter.asm as well!!
-
-#if USE(JSVALUE64)
-    const ptrdiff_t CallFrameHeaderSlots = 5;
-#else // USE(JSVALUE64) // i.e. 32-bit version
-    const ptrdiff_t CallFrameHeaderSlots = 4;
-#endif
-    const ptrdiff_t MachineRegisterSize = sizeof(CPURegister);
-    const ptrdiff_t SlotSize = 8;
-
-    STATIC_ASSERT(sizeof(Register) == SlotSize);
-    STATIC_ASSERT(CallFrame::headerSizeInRegisters == CallFrameHeaderSlots);
-
-    ASSERT(!CallFrame::callerFrameOffset());
-    STATIC_ASSERT(CallerFrameAndPC::sizeInRegisters == (MachineRegisterSize * 2) / SlotSize);
-    static_assert(CallFrame::returnPCOffset() == CallFrame::callerFrameOffset() + MachineRegisterSize);
-    static_assert(static_cast<std::underlying_type_t<CallFrameSlot>>(CallFrameSlot::codeBlock) * sizeof(Register) == CallFrame::returnPCOffset() + MachineRegisterSize);
-    STATIC_ASSERT(CallFrameSlot::callee * sizeof(Register) == CallFrameSlot::codeBlock * sizeof(Register) + SlotSize);
-    STATIC_ASSERT(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) == CallFrameSlot::callee * sizeof(Register) + SlotSize);
-    STATIC_ASSERT(CallFrameSlot::thisArgument * sizeof(Register) == CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + SlotSize);
-    STATIC_ASSERT(CallFrame::headerSizeInRegisters == CallFrameSlot::thisArgument);
-
-    ASSERT(CallFrame::argumentOffsetIncludingThis(0) == CallFrameSlot::thisArgument);
-
-#if CPU(BIG_ENDIAN)
-    STATIC_ASSERT(TagOffset == 0);
-    STATIC_ASSERT(PayloadOffset == 4);
-#else
-    STATIC_ASSERT(TagOffset == 4);
-    STATIC_ASSERT(PayloadOffset == 0);
-#endif
-
-#if ENABLE(C_LOOP)
-    ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
-#elif USE(JSVALUE32_64)
-    ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
-#elif (CPU(X86_64) && !OS(WINDOWS))  || CPU(ARM64)
-    ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4);
-#elif (CPU(X86_64) && OS(WINDOWS))
-    ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4);
-#endif
-
-    ASSERT(!(reinterpret_cast<ptrdiff_t>((reinterpret_cast<WriteBarrier<JSCell>*>(0x4000)->slot())) - 0x4000));
-
-    // FIXME: make these assertions less horrible.
-#if ASSERT_ENABLED
-    Vector<int> testVector;
-    testVector.resize(42);
-    ASSERT(bitwise_cast<uint32_t*>(&testVector)[sizeof(void*)/sizeof(uint32_t) + 1] == 42);
-    ASSERT(bitwise_cast<int**>(&testVector)[0] == testVector.begin());
-#endif
-
-    {
-        UnaryArithProfile arithProfile;
-        arithProfile.argSawInt32();
-        ASSERT(arithProfile.bits() == UnaryArithProfile::observedIntBits());
-        ASSERT(arithProfile.argObservedType().isOnlyInt32());
-    }
-    {
-        UnaryArithProfile arithProfile;
-        arithProfile.argSawNumber();
-        ASSERT(arithProfile.bits() == UnaryArithProfile::observedNumberBits());
-        ASSERT(arithProfile.argObservedType().isOnlyNumber());
-    }
-
-    {
-        BinaryArithProfile arithProfile;
-        arithProfile.lhsSawInt32();
-        arithProfile.rhsSawInt32();
-        ASSERT(arithProfile.bits() == BinaryArithProfile::observedIntIntBits());
-        ASSERT(arithProfile.lhsObservedType().isOnlyInt32());
-        ASSERT(arithProfile.rhsObservedType().isOnlyInt32());
-    }
-    {
-        BinaryArithProfile arithProfile;
-        arithProfile.lhsSawNumber();
-        arithProfile.rhsSawInt32();
-        ASSERT(arithProfile.bits() == BinaryArithProfile::observedNumberIntBits());
-        ASSERT(arithProfile.lhsObservedType().isOnlyNumber());
-        ASSERT(arithProfile.rhsObservedType().isOnlyInt32());
-    }
-    {
-        BinaryArithProfile arithProfile;
-        arithProfile.lhsSawNumber();
-        arithProfile.rhsSawNumber();
-        ASSERT(arithProfile.bits() == BinaryArithProfile::observedNumberNumberBits());
-        ASSERT(arithProfile.lhsObservedType().isOnlyNumber());
-        ASSERT(arithProfile.rhsObservedType().isOnlyNumber());
-    }
-    {
-        BinaryArithProfile arithProfile;
-        arithProfile.lhsSawInt32();
-        arithProfile.rhsSawNumber();
-        ASSERT(arithProfile.bits() == BinaryArithProfile::observedIntNumberBits());
-        ASSERT(arithProfile.lhsObservedType().isOnlyInt32());
-        ASSERT(arithProfile.rhsObservedType().isOnlyNumber());
-    }
-
-#if ENABLE(DFG_JIT)
-    // We share the same layout for particular fields in all JITData to make our data IC assume this.
-    RELEASE_ASSERT(BaselineJITData::offsetOfGlobalObject() == DFG::JITData::offsetOfGlobalObject());
-    RELEASE_ASSERT(BaselineJITData::offsetOfStackOffset() == DFG::JITData::offsetOfStackOffset());
-#endif
-}
-IGNORE_WARNINGS_END
 
 } } // namespace JSC::LLInt
