@@ -642,11 +642,9 @@ bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const FontC
 
 bool TextUtil::hasPositionDependentContentWidth(StringView textContent)
 {
-    for (char32_t character : StringView(textContent).codePoints()) {
-        if (character == tabCharacter)
-            return true;
-    }
-    return false;
+    if (textContent.is8Bit())
+        return charactersContain<LChar, tabCharacter>(textContent.span8());
+    return charactersContain<UChar, tabCharacter>(textContent.span16());
 }
 
 }

@@ -130,8 +130,14 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     auto isBidiContent = [&] {
         if (lineLayout.contentNeedsVisualReordering())
             return true;
-        if (auto* textRenderer = dynamicDowncast<RenderText>(renderer))
-            return Layout::TextUtil::containsStrongDirectionalityText(textRenderer->text());
+        if (auto* textRenderer = dynamicDowncast<RenderText>(renderer)) {
+            auto hasStrongDirectionalityContent = textRenderer->hasStrongDirectionalityContent();
+            if (!hasStrongDirectionalityContent) {
+                hasStrongDirectionalityContent = Layout::TextUtil::containsStrongDirectionalityText(textRenderer->text());
+                const_cast<RenderText*>(textRenderer)->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
+            }
+            return *hasStrongDirectionalityContent;
+        }
         if (is<RenderInline>(renderer)) {
             auto& style = renderer.style();
             return !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
