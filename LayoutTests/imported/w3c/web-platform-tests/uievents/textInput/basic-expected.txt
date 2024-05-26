@@ -3,7 +3,7 @@ Type "a" into each text field below.
 
 a
 
-FAIL textInput: basic, <input> assert_equals: expected 1 but got 0
-FAIL textInput: basic, <textarea> assert_equals: expected 1 but got 0
-FAIL textInput: basic, <div contenteditable="true"> assert_equals: expected 1 but got 0
+PASS textInput: basic, <input>
+PASS textInput: basic, <textarea>
+PASS textInput: basic, <div contenteditable="true">
 

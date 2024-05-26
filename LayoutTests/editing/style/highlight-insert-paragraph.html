@@ -9,20 +9,6 @@ test
 <div id="console"></div>
 
 <script type="text/javascript">
-
-function pressKey( key ) {
-    if (window.KeyEvent) {
-        var ev = document.createEvent("KeyboardEvent");
-        ev.initKeyEvent("keypress", true, true, window,  0,0,0,0, 0, key.charCodeAt(0));
-        document.body.dispatchEvent(ev);
-    }
-    else {
-        var ev = document.createEvent("TextEvent");
-        ev.initTextEvent('textInput', true, true, null, key.charAt(0));
-        document.body.dispatchEvent(ev);
-    }
-}
-
 if (window.testRunner)
     testRunner.dumpAsText();
 
@@ -41,8 +27,8 @@ r.setStart(e.firstChild.firstChild,5);
 r.setEnd(e.firstChild.firstChild,5);
 s.removeAllRanges();
 s.addRange(r);
-pressKey('\n');
-pressKey('e');
+document.execCommand("InsertParagraph");
+document.execCommand('InsertText', false, 'e')
 
 document.getElementById('console').appendChild(document.createTextNode(e.innerHTML));
 

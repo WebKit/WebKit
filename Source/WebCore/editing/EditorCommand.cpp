@@ -462,7 +462,9 @@ static bool executeIndent(LocalFrame& frame, Event*, EditorCommandSource, const 
 
 static bool executeInsertBacktab(LocalFrame& frame, Event* event, EditorCommandSource, const String&)
 {
-    return targetFrame(frame, event)->eventHandler().handleTextInputEvent("\t"_s, event, TextEventInputBackTab);
+    if (frame.settings().correctBeforeInputEventOrderEnabled())
+        return targetFrame(frame, event)->eventHandler().handleTextInput("\t"_s, event, TextEventInputBackTab);
+    return targetFrame(frame, event)->eventHandler().handleTextInputEvent("\t"_s, event);
 }
 
 static bool executeInsertHorizontalRule(LocalFrame& frame, Event*, EditorCommandSource, const String& value)
@@ -491,6 +493,8 @@ static bool executeInsertLineBreak(LocalFrame& frame, Event* event, EditorComman
 {
     switch (source) {
     case EditorCommandSource::MenuOrKeyBinding:
+        if (frame.settings().correctBeforeInputEventOrderEnabled())
+            return targetFrame(frame, event)->eventHandler().handleTextInput("\n"_s, event, TextEventInputLineBreak);
         return targetFrame(frame, event)->eventHandler().handleTextInputEvent("\n"_s, event, TextEventInputLineBreak);
     case EditorCommandSource::DOM:
     case EditorCommandSource::DOMWithUserInterface:
@@ -507,6 +511,8 @@ static bool executeInsertLineBreak(LocalFrame& frame, Event* event, EditorComman
 static bool executeInsertNewline(LocalFrame& frame, Event* event, EditorCommandSource, const String&)
 {
     RefPtr targetFrame = WebCore::targetFrame(frame, event);
+    if (frame.settings().correctBeforeInputEventOrderEnabled())
+        return targetFrame->eventHandler().handleTextInput("\n"_s, event, targetFrame->editor().canEditRichly() ? TextEventInputKeyboard : TextEventInputLineBreak);
     return targetFrame->eventHandler().handleTextInputEvent("\n"_s, event, targetFrame->editor().canEditRichly() ? TextEventInputKeyboard : TextEventInputLineBreak);
 }
 
@@ -531,12 +537,16 @@ static bool executeInsertParagraph(LocalFrame& frame, Event*, EditorCommandSourc
 
 static bool executeInsertTab(LocalFrame& frame, Event* event, EditorCommandSource, const String&)
 {
+    if (frame.settings().correctBeforeInputEventOrderEnabled())
+        return targetFrame(frame, event)->eventHandler().handleTextInput("\t"_s, event);
     return targetFrame(frame, event)->eventHandler().handleTextInputEvent("\t"_s, event);
 }
 
 static bool executeInsertText(LocalFrame& frame, Event* event, EditorCommandSource, const String& value)
 {
+    frame.editor().setSuppressTextInputEvent(true);
     TypingCommand::insertText(*frame.document(), value, event, { });
+    frame.editor().setSuppressTextInputEvent(false);
     return true;
 }
 
@@ -1213,14 +1223,14 @@ static bool executeUnselect(LocalFrame& frame, Event*, EditorCommandSource, cons
 
 static bool executeYank(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.editor().insertTextWithoutSendingTextEvent(frame.editor().killRing().yank(), false, 0);
+    frame.editor().insertTextWithoutSendingTextEvent(frame.editor().killRing().yank(), false);
     frame.editor().killRing().setToYankedState();
     return true;
 }
 
 static bool executeYankAndSelect(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.editor().insertTextWithoutSendingTextEvent(frame.editor().killRing().yank(), true, 0);
+    frame.editor().insertTextWithoutSendingTextEvent(frame.editor().killRing().yank(), true);
     frame.editor().killRing().setToYankedState();
     return true;
 }
@@ -1296,7 +1306,7 @@ static bool NODELETE enabled(LocalFrame&, Event*, EditorCommandSource)
 static bool enabledVisibleSelection(LocalFrame& frame, Event* event, EditorCommandSource)
 {
     // The term "visible" here includes a caret in editable text or a range in any text.
-    const VisibleSelection& selection = frame.editor().selectionForCommand(event);
+    const VisibleSelection& selection = frame.settings().correctBeforeInputEventOrderEnabled() ? frame.editor().selectionForCommand(event ? event->target() : nullptr) : frame.editor().selectionForCommand(event);
     return (selection.isCaret() && selection.isContentEditable()) || selection.isRange();
 }
 
@@ -1315,14 +1325,14 @@ static bool enabledVisibleSelectionOrCaretBrowsing(LocalFrame& frame, Event* eve
 
 static bool enabledVisibleSelectionAndMark(LocalFrame& frame, Event* event, EditorCommandSource)
 {
-    const VisibleSelection& selection = frame.editor().selectionForCommand(event);
+    const VisibleSelection& selection = frame.settings().correctBeforeInputEventOrderEnabled() ? frame.editor().selectionForCommand(event ? event->target() : nullptr) : frame.editor().selectionForCommand(event);
     return ((selection.isCaret() && selection.isContentEditable()) || selection.isRange())
         && frame.editor().mark().isCaretOrRange();
 }
 
 static bool enableCaretInEditableText(LocalFrame& frame, Event* event, EditorCommandSource)
 {
-    const VisibleSelection& selection = frame.editor().selectionForCommand(event);
+    const VisibleSelection& selection = frame.settings().correctBeforeInputEventOrderEnabled() ? frame.editor().selectionForCommand(event ? event->target() : nullptr) : frame.editor().selectionForCommand(event);
     return selection.isCaret() && selection.isContentEditable();
 }
 
@@ -1393,6 +1403,8 @@ static bool NODELETE enabledClearText(LocalFrame& frame, Event*, EditorCommandSo
 
 static bool enabledInEditableText(LocalFrame& frame, Event* event, EditorCommandSource)
 {
+    if (frame.settings().correctBeforeInputEventOrderEnabled())
+        return frame.editor().selectionForCommand(event ? event->target() : nullptr).rootEditableElement();
     return frame.editor().selectionForCommand(event).rootEditableElement();
 }
 

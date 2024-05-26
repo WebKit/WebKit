@@ -3796,6 +3796,7 @@
 		93F9B6E10BA0FB7200854064 /* JSComment.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B6DF0BA0FB7200854064 /* JSComment.h */; };
 		93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B79F0BA6032600854064 /* JSCDATASection.h */; };
 		93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDAFC90B11307400E2746F /* EditorInsertAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1CB0170262F64F52A4919D1F /* MailBlockquoteHandling.h in Headers */ = {isa = PBXBuildFile; fileRef = 5397A9161E24446DA389C877 /* MailBlockquoteHandling.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		94077C702B92B06C0012E357 /* CryptoClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 94077C6F2B92B0570012E357 /* CryptoClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9418278F1D8CAF9200492764 /* CSSShorthandSubstitutionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9418278D1D8CAE9500492764 /* CSSShorthandSubstitutionValue.h */; };
 		9444CBE81D8861C20073A074 /* CSSVariableData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9444CBDD1D8861580073A074 /* CSSVariableData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -16067,6 +16068,7 @@
 		93FAEB772DB45DA000ABF811 /* PopoverInvokerElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PopoverInvokerElement.idl; sourceTree = "<group>"; };
 		93FCDB4B26470DD10046DD7D /* SVGPropertyTraits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPropertyTraits.cpp; sourceTree = "<group>"; };
 		93FDAFC90B11307400E2746F /* EditorInsertAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorInsertAction.h; sourceTree = "<group>"; };
+		5397A9161E24446DA389C877 /* MailBlockquoteHandling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MailBlockquoteHandling.h; sourceTree = "<group>"; };
 		94077C6F2B92B0570012E357 /* CryptoClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoClient.h; sourceTree = "<group>"; };
 		9418278D1D8CAE9500492764 /* CSSShorthandSubstitutionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSShorthandSubstitutionValue.h; sourceTree = "<group>"; };
 		9444CBDB1D8861580073A074 /* CSSSubstitutionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSSubstitutionValue.h; sourceTree = "<group>"; };
@@ -32026,6 +32028,7 @@
 				93309DA1099E64910056E581 /* InsertParagraphSeparatorCommand.h */,
 				93309DA2099E64910056E581 /* InsertTextCommand.cpp */,
 				93309DA3099E64910056E581 /* InsertTextCommand.h */,
+				5397A9161E24446DA389C877 /* MailBlockquoteHandling.h */,
 				93309DA8099E64910056E581 /* markup.cpp */,
 				93309DA9099E64910056E581 /* markup.h */,
 				9728C3111268E4390041E89B /* MarkupAccumulator.cpp */,
@@ -46134,6 +46137,7 @@
 				E3C788FD2D039A2500D6C13D /* LogMessages.in in Headers */,
 				93A806171E03B51C008A1F26 /* LongRange.h in Headers */,
 				46EFAF121E5FB9F100E7F34B /* LowPowerModeNotifier.h in Headers */,
+				1CB0170262F64F52A4919D1F /* MailBlockquoteHandling.h in Headers */,
 				D98DB1B328CFEE6F00369DDE /* MainThreadPermissionObserver.h in Headers */,
 				D98DB1B228CFEE6A00369DDE /* MainThreadPermissionObserverIdentifier.h in Headers */,
 				7AE6C93C1BE0C60100E19E03 /* MainThreadSharedTimer.h in Headers */,

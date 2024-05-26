@@ -33,6 +33,7 @@
 #include <WebCore/FindOptions.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/MailBlockquoteHandling.h>
 #include <WebCore/PasteboardWriterData.h>
 #include <WebCore/ScrollView.h>
 #include <WebCore/Text.h>
@@ -111,11 +112,6 @@ struct SerializedAttachmentData;
 
 enum class EditorCommandSource : uint8_t { MenuOrKeyBinding, DOM, DOMWithUserInterface };
 enum class EditorParagraphSeparator : bool { div, p };
-
-enum class MailBlockquoteHandling : bool {
-    RespectBlockquote,
-    IgnoreBlockquote,
-};
 
 enum class ClipboardEventKind : uint8_t {
     Copy,
@@ -360,7 +356,8 @@ public:
     WEBCORE_EXPORT bool insertText(const String&, Event* triggeringEvent, TextEventInputType = TextEventInputKeyboard);
     bool insertTextForConfirmedComposition(const String& text);
     WEBCORE_EXPORT bool insertDictatedText(const String&, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent);
-    bool insertTextWithoutSendingTextEvent(const String&, bool selectInsertedText, TextEvent* triggeringEvent);
+    bool insertTextWithoutSendingTextEvent(const String&, bool selectInsertedText, EventTarget* = nullptr, TextEventInputType = TextEventInputKeyboard, const Vector<DictationAlternative>* = nullptr, Event* triggeringEvent = nullptr);
+    bool insertTextWithoutSendingTextEvent(const String&, bool selectInsertedText, TextEvent*);
     bool insertLineBreak();
     bool insertParagraphSeparator();
     WEBCORE_EXPORT bool insertParagraphSeparatorInQuotedContent();
@@ -467,6 +464,7 @@ public:
 
     void clear();
 
+    VisibleSelection selectionForCommand(EventTarget*);
     VisibleSelection selectionForCommand(Event*);
 
     PAL::KillRing& killRing() const LIFETIME_BOUND { return m_killRing; }
@@ -635,6 +633,8 @@ public:
 
     void setIsGettingDictionaryPopupInfo(bool b) { m_isGettingDictionaryPopupInfo = b; }
     bool isGettingDictionaryPopupInfo() const { return m_isGettingDictionaryPopupInfo; }
+    bool suppressTextInputEvent() const { return m_suppressTextInputEvent; }
+    void setSuppressTextInputEvent(bool value) { m_suppressTextInputEvent = value; }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     WEBCORE_EXPORT void insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const AtomString& fileName, const AtomString& contentType);
@@ -782,6 +782,7 @@ private:
     mutable std::unique_ptr<ScrollView::ProhibitScrollingWhenChangingContentSizeForScope> m_prohibitScrollingDueToContentSizeChangesWhileTyping;
 
     bool m_isGettingDictionaryPopupInfo { false };
+    bool m_suppressTextInputEvent { false };
     bool m_hasHandledAnyEditing { false };
     HashSet<Ref<HTMLImageElement>> m_imageElementsToLoadBeforeRevealingSelection;
 };

@@ -48,6 +48,7 @@
 #include "Page.h"
 #include "Range.h"
 #include "RenderedDocumentMarker.h"
+#include "Settings.h"
 #include "SpellingCorrectionCommand.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
@@ -723,6 +724,8 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
     if (!target)
         return false;
 
+    if (document->settings().correctBeforeInputEventOrderEnabled())
+        return document->frame()->editor().insertTextWithoutSendingTextEvent(text, false, target.get(), TextEventInputDictation, &dictationAlternatives);
     Ref windowProxy = document->frame()->windowProxy();
     auto event = TextEvent::createForDictation(windowProxy.ptr(), text, dictationAlternatives);
     event->setUnderlyingEvent(triggeringEvent);

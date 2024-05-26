@@ -1969,6 +1969,7 @@ ConsistentQueryParameterFilteringQuirkEnabled:
     WebCore:
       default: true
 
+
 ContactPickerAPIEnabled:
   type: bool
   status: testable
@@ -2100,6 +2101,20 @@ CoreMathMLEnabled:
       default: false
     WebCore:
       default: false
+
+CorrectBeforeInputEventOrderEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Correct firing order for the beforeinput event"
+  humanReadableDescription: "Enable correct firing order for the beforeinput event"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 CrossOriginEmbedderPolicyEnabled:
   type: bool
