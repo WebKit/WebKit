@@ -326,7 +326,11 @@ unsigned Type::size() const
             CheckedUint32 size = 1;
             if (auto* constantSize = std::get_if<unsigned>(&array.size))
                 size = *constantSize;
-            size *= WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
+            auto elementSize = array.element->size();
+            auto stride = WTF::roundUpToMultipleOf(array.element->alignment(), elementSize);
+            if (stride < elementSize)
+                return std::numeric_limits<unsigned>::max();
+            size *= stride;
             if (size.hasOverflowed())
                 return std::numeric_limits<unsigned>::max();
             return size.value();
