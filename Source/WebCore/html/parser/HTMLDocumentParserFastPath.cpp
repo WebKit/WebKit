@@ -480,13 +480,13 @@ private:
         auto* cursor = start;
         const auto* end = start + m_parsingBuffer.lengthRemaining();
         ([&]() ALWAYS_INLINE_LAMBDA {
-            constexpr size_t stride = 16 / sizeof(CharacterType);
+            constexpr size_t stride = SIMD::stride<CharacterType>;
             using UnsignedType = std::make_unsigned_t<CharacterType>;
             if (static_cast<size_t>(end - cursor) >= stride) {
-                const auto quoteMask = SIMD::splat(static_cast<UnsignedType>('<'));
-                const auto escapeMask = SIMD::splat(static_cast<UnsignedType>('&'));
-                const auto newlineMask = SIMD::splat(static_cast<UnsignedType>('\r'));
-                const auto zeroMask = SIMD::splat(static_cast<UnsignedType>(0));
+                constexpr auto quoteMask = SIMD::splat<UnsignedType>('<');
+                constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
+                constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
+                constexpr auto zeroMask = SIMD::splat<UnsignedType>(0);
 
                 auto match = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
                     auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
@@ -494,7 +494,7 @@ private:
                     auto escapes = SIMD::equal(input, escapeMask);
                     auto newlines = SIMD::equal(input, newlineMask);
                     auto zeros = SIMD::equal(input, zeroMask);
-                    auto mask = SIMD::merge(zeros, SIMD::merge(quotes, SIMD::merge(escapes, newlines)));
+                    auto mask = SIMD::bitOr(zeros, quotes, escapes, newlines);
                     return SIMD::findFirstNonZeroIndex(mask);
                 };
 
@@ -643,19 +643,19 @@ private:
             auto* cursor = start;
             const auto* end = start + m_parsingBuffer.lengthRemaining();
             ([&]() ALWAYS_INLINE_LAMBDA {
-                constexpr size_t stride = 16 / sizeof(CharacterType);
+                constexpr size_t stride = SIMD::stride<CharacterType>;
                 using UnsignedType = std::make_unsigned_t<CharacterType>;
                 if (static_cast<size_t>(end - cursor) >= stride) {
-                    const auto quoteMask = SIMD::splat(static_cast<UnsignedType>(quoteChar));
-                    const auto escapeMask = SIMD::splat(static_cast<UnsignedType>('&'));
-                    const auto newlineMask = SIMD::splat(static_cast<UnsignedType>('\r'));
+                    const auto quoteMask = SIMD::splat<UnsignedType>(quoteChar);
+                    constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
+                    constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
 
                     auto match = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
                         auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
                         auto quotes = SIMD::equal(input, quoteMask);
                         auto escapes = SIMD::equal(input, escapeMask);
                         auto newlines = SIMD::equal(input, newlineMask);
-                        auto mask = SIMD::merge(quotes, SIMD::merge(escapes, newlines));
+                        auto mask = SIMD::bitOr(quotes, escapes, newlines);
                         return SIMD::findFirstNonZeroIndex(mask);
                     };
 

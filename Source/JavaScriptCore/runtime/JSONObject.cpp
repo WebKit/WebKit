@@ -1063,13 +1063,13 @@ void FastStringifier<CharType>::append(JSValue value)
 
         auto charactersCopySameType = [&](auto span, auto* cursor) ALWAYS_INLINE_LAMBDA {
 #if (CPU(ARM64) || CPU(X86_64)) && COMPILER(CLANG)
-            constexpr size_t stride = 16 / sizeof(CharType);
+            constexpr size_t stride = SIMD::stride<CharType>;
             if (span.size() >= stride) {
                 using UnsignedType = std::make_unsigned_t<CharType>;
                 using BulkType = decltype(SIMD::load(static_cast<const UnsignedType*>(nullptr)));
-                constexpr auto quoteMask = SIMD::splat(static_cast<UnsignedType>('"'));
-                constexpr auto escapeMask = SIMD::splat(static_cast<UnsignedType>('\\'));
-                constexpr auto controlMask = SIMD::splat(static_cast<UnsignedType>(' '));
+                constexpr auto quoteMask = SIMD::splat<UnsignedType>('"');
+                constexpr auto escapeMask = SIMD::splat<UnsignedType>('\\');
+                constexpr auto controlMask = SIMD::splat<UnsignedType>(' ');
                 const auto* ptr = span.data();
                 const auto* end = ptr + span.size();
                 auto* cursorEnd = cursor + span.size();
@@ -1080,11 +1080,11 @@ void FastStringifier<CharType>::append(JSValue value)
                     auto quotes = SIMD::equal(input, quoteMask);
                     auto escapes = SIMD::equal(input, escapeMask);
                     auto controls = SIMD::lessThan(input, controlMask);
-                    accumulated = SIMD::merge(accumulated, SIMD::merge(quotes, SIMD::merge(escapes, controls)));
+                    accumulated = SIMD::bitOr(accumulated, quotes, escapes, controls);
                     if constexpr (sizeof(CharType) != 1) {
-                        constexpr auto surrogateMask = SIMD::splat(static_cast<UnsignedType>(0xf800));
-                        constexpr auto surrogateCheckMask = SIMD::splat(static_cast<UnsignedType>(0xd800));
-                        accumulated = SIMD::merge(accumulated, SIMD::equal(simde_vandq_u16(input, surrogateMask), surrogateCheckMask));
+                        constexpr auto surrogateMask = SIMD::splat<UnsignedType>(0xf800);
+                        constexpr auto surrogateCheckMask = SIMD::splat<UnsignedType>(0xd800);
+                        accumulated = SIMD::bitOr(accumulated, SIMD::equal(SIMD::bitAnd(input, surrogateMask), surrogateCheckMask));
                     }
                 }
                 if (ptr < end) {
@@ -1093,11 +1093,11 @@ void FastStringifier<CharType>::append(JSValue value)
                     auto quotes = SIMD::equal(input, quoteMask);
                     auto escapes = SIMD::equal(input, escapeMask);
                     auto controls = SIMD::lessThan(input, controlMask);
-                    accumulated = SIMD::merge(accumulated, SIMD::merge(quotes, SIMD::merge(escapes, controls)));
+                    accumulated = SIMD::bitOr(accumulated, quotes, escapes, controls);
                     if constexpr (sizeof(CharType) != 1) {
-                        constexpr auto surrogateMask = SIMD::splat(static_cast<UnsignedType>(0xf800));
-                        constexpr auto surrogateCheckMask = SIMD::splat(static_cast<UnsignedType>(0xd800));
-                        accumulated = SIMD::merge(accumulated, SIMD::equal(simde_vandq_u16(input, surrogateMask), surrogateCheckMask));
+                        constexpr auto surrogateMask = SIMD::splat<UnsignedType>(0xf800);
+                        constexpr auto surrogateCheckMask = SIMD::splat<UnsignedType>(0xd800);
+                        accumulated = SIMD::bitOr(accumulated, SIMD::equal(SIMD::bitAnd(input, surrogateMask), surrogateCheckMask));
                     }
                 }
                 return SIMD::isNonZero(accumulated);
@@ -1117,14 +1117,14 @@ void FastStringifier<CharType>::append(JSValue value)
 
         auto charactersCopyUpconvert = [&](std::span<const LChar> span, UChar* cursor) ALWAYS_INLINE_LAMBDA {
 #if (CPU(ARM64) || CPU(X86_64)) && COMPILER(CLANG)
-            constexpr size_t stride = 16 / sizeof(LChar);
+            constexpr size_t stride = SIMD::stride<LChar>;
             if (span.size() >= stride) {
                 using UnsignedType = std::make_unsigned_t<LChar>;
                 using BulkType = decltype(SIMD::load(static_cast<const UnsignedType*>(nullptr)));
-                constexpr auto quoteMask = SIMD::splat(static_cast<UnsignedType>('"'));
-                constexpr auto escapeMask = SIMD::splat(static_cast<UnsignedType>('\\'));
-                constexpr auto controlMask = SIMD::splat(static_cast<UnsignedType>(' '));
-                constexpr auto zeros = SIMD::splat(static_cast<UnsignedType>(0));
+                constexpr auto quoteMask = SIMD::splat<UnsignedType>('"');
+                constexpr auto escapeMask = SIMD::splat<UnsignedType>('\\');
+                constexpr auto controlMask = SIMD::splat<UnsignedType>(' ');
+                constexpr auto zeros = SIMD::splat<UnsignedType>(0);
                 const auto* ptr = span.data();
                 const auto* end = ptr + span.size();
                 auto* cursorEnd = cursor + span.size();
@@ -1135,7 +1135,7 @@ void FastStringifier<CharType>::append(JSValue value)
                     auto quotes = SIMD::equal(input, quoteMask);
                     auto escapes = SIMD::equal(input, escapeMask);
                     auto controls = SIMD::lessThan(input, controlMask);
-                    accumulated = SIMD::merge(accumulated, SIMD::merge(quotes, SIMD::merge(escapes, controls)));
+                    accumulated = SIMD::bitOr(accumulated, quotes, escapes, controls);
                 }
                 if (ptr < end) {
                     auto input = SIMD::load(bitwise_cast<const UnsignedType*>(end - stride));
@@ -1143,7 +1143,7 @@ void FastStringifier<CharType>::append(JSValue value)
                     auto quotes = SIMD::equal(input, quoteMask);
                     auto escapes = SIMD::equal(input, escapeMask);
                     auto controls = SIMD::lessThan(input, controlMask);
-                    accumulated = SIMD::merge(accumulated, SIMD::merge(quotes, SIMD::merge(escapes, controls)));
+                    accumulated = SIMD::bitOr(accumulated, quotes, escapes, controls);
                 }
                 return SIMD::isNonZero(accumulated);
             }

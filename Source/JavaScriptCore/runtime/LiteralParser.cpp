@@ -869,18 +869,18 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserT
         } else {
             ([&]() ALWAYS_INLINE_LAMBDA {
 #if CPU(ARM64) || CPU(X86_64)
-                constexpr size_t stride = 16 / sizeof(CharType);
+                constexpr size_t stride = SIMD::stride<CharType>;
                 using UnsignedType = std::make_unsigned_t<CharType>;
                 if (static_cast<size_t>(m_end - m_ptr) >= stride) {
-                    constexpr auto quoteMask = SIMD::splat(static_cast<UnsignedType>('"'));
-                    constexpr auto escapeMask = SIMD::splat(static_cast<UnsignedType>('\\'));
-                    constexpr auto controlMask = SIMD::splat(static_cast<UnsignedType>(' '));
+                    constexpr auto quoteMask = SIMD::splat<UnsignedType>('"');
+                    constexpr auto escapeMask = SIMD::splat<UnsignedType>('\\');
+                    constexpr auto controlMask = SIMD::splat<UnsignedType>(' ');
                     auto match = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
                         auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
                         auto quotes = SIMD::equal(input, quoteMask);
                         auto escapes = SIMD::equal(input, escapeMask);
                         auto controls = SIMD::lessThan(input, controlMask);
-                        auto mask = SIMD::merge(quotes, SIMD::merge(escapes, controls));
+                        auto mask = SIMD::bitOr(quotes, escapes, controls);
                         return SIMD::findFirstNonZeroIndex(mask);
                     };
 

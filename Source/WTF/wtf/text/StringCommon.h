@@ -597,9 +597,9 @@ ALWAYS_INLINE const UnsignedType* findImpl(const UnsignedType* pointer, Unsigned
     const auto* end = pointer + length;
 
     if (length >= thresholdLength) {
-        constexpr size_t stride = 16 / sizeof(UnsignedType);
+        constexpr size_t stride = SIMD::stride<UnsignedType>;
         static_assert(stride <= thresholdLength);
-        auto charactersVector = SIMD::splat(character);
+        auto charactersVector = SIMD::splat<UnsignedType>(character);
         for (; cursor + (stride - 1) < end; cursor += stride) {
             auto value = SIMD::load(cursor);
             auto mask = SIMD::equal(value, charactersVector);
@@ -1144,17 +1144,17 @@ ALWAYS_INLINE bool charactersContain(std::span<const CharacterType> span)
     size_t length = span.size();
 
 #if CPU(ARM64) || CPU(X86_64)
-    constexpr size_t stride = 16 / sizeof(CharacterType);
+    constexpr size_t stride = SIMD::stride<CharacterType>;
     using UnsignedType = std::make_unsigned_t<CharacterType>;
     using BulkType = decltype(SIMD::load(static_cast<const UnsignedType*>(nullptr)));
     if (length >= stride) {
         size_t index = 0;
         BulkType accumulated { };
         for (; index + (stride - 1) < length; index += stride)
-            accumulated = SIMD::merge(accumulated, SIMD::equal<characters...>(SIMD::load(bitwise_cast<const UnsignedType*>(data + index))));
+            accumulated = SIMD::bitOr(accumulated, SIMD::equal<characters...>(SIMD::load(bitwise_cast<const UnsignedType*>(data + index))));
 
         if (index < length)
-            accumulated = SIMD::merge(accumulated, SIMD::equal<characters...>(SIMD::load(bitwise_cast<const UnsignedType*>(data + length - stride))));
+            accumulated = SIMD::bitOr(accumulated, SIMD::equal<characters...>(SIMD::load(bitwise_cast<const UnsignedType*>(data + length - stride))));
 
         return SIMD::isNonZero(accumulated);
     }

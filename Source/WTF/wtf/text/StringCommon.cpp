@@ -39,7 +39,7 @@ const float* findFloatAlignedImpl(const float* pointer, float target, size_t len
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
     ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
     const float* cursor = pointer;
-    constexpr size_t stride = 16 / sizeof(float);
+    constexpr size_t stride = SIMD::stride<float>;
 
     simde_float32x4_t targetsVector = simde_vdupq_n_f32(target);
 
@@ -69,7 +69,7 @@ const double* findDoubleAlignedImpl(const double* pointer, double target, size_t
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
     ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
     const double* cursor = pointer;
-    constexpr size_t stride = 16 / sizeof(double);
+    constexpr size_t stride = SIMD::stride<double>;
 
     simde_float64x2_t targetsVector = simde_vdupq_n_f64(target);
 
@@ -100,7 +100,7 @@ const LChar* find8NonASCIIAlignedImpl(std::span<const LChar> data)
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
     ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
     const uint8_t* cursor = bitwise_cast<const uint8_t*>(pointer);
-    constexpr size_t stride = 16 / sizeof(uint8_t);
+    constexpr size_t stride = SIMD::stride<uint8_t>;
 
     simde_uint8x16_t charactersVector = simde_vdupq_n_u8(0x80);
 
@@ -132,7 +132,7 @@ const UChar* find16NonASCIIAlignedImpl(std::span<const UChar> data)
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
     ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
     const uint16_t* cursor = bitwise_cast<const uint16_t*>(pointer);
-    constexpr size_t stride = 16 / sizeof(uint16_t);
+    constexpr size_t stride = SIMD::stride<uint16_t>;
 
     simde_uint16x8_t charactersVector = simde_vdupq_n_u16(0x80);
 
