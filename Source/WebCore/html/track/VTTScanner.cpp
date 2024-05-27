@@ -62,9 +62,9 @@ bool VTTScanner::scan(std::span<const LChar> characters)
         return false;
     bool matched;
     if (m_is8Bit)
-        matched = equal(m_data.characters8, characters);
+        matched = equalWithLength({ m_data.characters8, m_end.characters8 }, characters, characters.size());
     else
-        matched = equal(m_data.characters16, characters);
+        matched = equalWithLength({ m_data.characters16, m_end.characters16 }, characters, characters.size());
     if (matched)
         advance(characters.size());
     return matched;

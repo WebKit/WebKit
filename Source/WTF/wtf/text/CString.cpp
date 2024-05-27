@@ -119,9 +119,7 @@ bool operator==(const CString& a, const CString& b)
 {
     if (a.isNull() != b.isNull())
         return false;
-    if (a.length() != b.length())
-        return false;
-    return equal(a.span().data(), b.span());
+    return equal(a.span(), b.span());
 }
 
 bool operator==(const CString& a, const char* b)

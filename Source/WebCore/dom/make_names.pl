@@ -1383,16 +1383,16 @@ sub generateFindNameForLength
                 my $letter = substr($string, $currentIndex, 1);
                 print F "${indent}if (buffer[$currentIndex] == '$letter') {\n";
             } else {
-                my $bufferStart = $currentIndex > 0 ? "buffer.data() + $currentIndex" : "buffer.data()";
+                my $bufferStart = $currentIndex > 0 ? "buffer.subspan($currentIndex)" : "buffer";
                 if ($lengthToCompare <= 8) {
-                    print F "${indent}if (compareCharacters($bufferStart";
+                    print F "${indent}if (compareCharacters($bufferStart.data()";
                     for (my $index = $currentIndex; $index < $length; $index = $index + 1) {
                         my $letter = substr($string, $index, 1);
                         print F ", '$letter'";
                     }
                     print F ")) {\n";
                 } else {
-                    print F "${indent}if (WTF::equal($bufferStart, \"". substr($string, $currentIndex, $length - $currentIndex) . "\"_span)) {\n";
+                    print F "${indent}if (WTF::equalWithLength($bufferStart, \"". substr($string, $currentIndex, $length - $currentIndex) . "\"_span, " . ($length - $currentIndex) . ")) {\n";
                 }
             }
             print F "$indent    return ${enumClass}::$enumValue;\n";

@@ -91,9 +91,10 @@ private:
     ALWAYS_INLINE size_t findInner(std::span<const SearchCharacterType> characters, std::span<const MatchCharacterType> matchCharacters) const
     {
         auto* cursor = characters.data();
+        auto* charactersEnd = characters.data() + characters.size();
         auto* last = characters.data() + characters.size() - matchCharacters.size();
         while (cursor <= last) {
-            if (equal(cursor, matchCharacters))
+            if (equalWithLength(std::span { cursor, charactersEnd }, matchCharacters, matchCharacters.size()))
                 return cursor - characters.data();
             cursor += m_table[static_cast<uint8_t>(cursor[matchCharacters.size() - 1])];
         }

@@ -91,52 +91,54 @@ bool equalIgnoringASCIICase(const char*, const char*);
 
 // Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
 #if (CPU(X86_64) || CPU(ARM64)) && !ASAN_ENABLED
-ALWAYS_INLINE bool equal(const LChar* aLChar, std::span<const LChar> bLChar)
+ALWAYS_INLINE bool equalWithLength(std::span<const LChar> aLChar, std::span<const LChar> bLChar, size_t lengthToCompare)
 {
-    ASSERT(bLChar.size() <= std::numeric_limits<unsigned>::max());
-    unsigned length = bLChar.size();
+    ASSERT(aLChar.size() >= lengthToCompare);
+    ASSERT(bLChar.size() >= lengthToCompare);
+    ASSERT(lengthToCompare <= std::numeric_limits<unsigned>::max());
+    unsigned length = static_cast<unsigned>(lengthToCompare);
 
     // These branches could be combined into one, but it's measurably faster
     // for length 0 or 1 strings to separate them out like this.
     if (!length)
         return true;
     if (length == 1)
-        return *aLChar == bLChar.front();
+        return aLChar.front() == bLChar.front();
 
     switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
     case 0:
         RELEASE_ASSERT_NOT_REACHED();
     case 1: // Length is 2.
-        return unalignedLoad<uint16_t>(aLChar) == unalignedLoad<uint16_t>(bLChar.data());
+        return unalignedLoad<uint16_t>(aLChar.data()) == unalignedLoad<uint16_t>(bLChar.data());
     case 2: // Length is 3 or 4.
-        return unalignedLoad<uint16_t>(aLChar) == unalignedLoad<uint16_t>(bLChar.data())
-            && unalignedLoad<uint16_t>(aLChar + length - 2) == unalignedLoad<uint16_t>(bLChar.data() + length - 2);
+        return unalignedLoad<uint16_t>(aLChar.data()) == unalignedLoad<uint16_t>(bLChar.data())
+            && unalignedLoad<uint16_t>(aLChar.data() + length - 2) == unalignedLoad<uint16_t>(bLChar.data() + length - 2);
     case 3: // Length is between 5 and 8 inclusive.
-        return unalignedLoad<uint32_t>(aLChar) == unalignedLoad<uint32_t>(bLChar.data())
-            && unalignedLoad<uint32_t>(aLChar + length - 4) == unalignedLoad<uint32_t>(bLChar.data() + length - 4);
+        return unalignedLoad<uint32_t>(aLChar.data()) == unalignedLoad<uint32_t>(bLChar.data())
+            && unalignedLoad<uint32_t>(aLChar.data() + length - 4) == unalignedLoad<uint32_t>(bLChar.data() + length - 4);
     case 4: // Length is between 9 and 16 inclusive.
-        return unalignedLoad<uint64_t>(aLChar) == unalignedLoad<uint64_t>(bLChar.data())
-            && unalignedLoad<uint64_t>(aLChar + length - 8) == unalignedLoad<uint64_t>(bLChar.data() + length - 8);
+        return unalignedLoad<uint64_t>(aLChar.data()) == unalignedLoad<uint64_t>(bLChar.data())
+            && unalignedLoad<uint64_t>(aLChar.data() + length - 8) == unalignedLoad<uint64_t>(bLChar.data() + length - 8);
 #if CPU(ARM64)
     case 5: // Length is between 17 and 32 inclusive.
         return vminvq_u8(vandq_u8(
-            vceqq_u8(unalignedLoad<uint8x16_t>(aLChar), unalignedLoad<uint8x16_t>(bLChar.data())),
-            vceqq_u8(unalignedLoad<uint8x16_t>(aLChar + length - 16), unalignedLoad<uint8x16_t>(bLChar.data() + length - 16))
+            vceqq_u8(unalignedLoad<uint8x16_t>(aLChar.data()), unalignedLoad<uint8x16_t>(bLChar.data())),
+            vceqq_u8(unalignedLoad<uint8x16_t>(aLChar.data() + length - 16), unalignedLoad<uint8x16_t>(bLChar.data() + length - 16))
         ));
     default: // Length is longer than 32 bytes.
-        if (!vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(aLChar), unalignedLoad<uint8x16_t>(bLChar.data()))))
+        if (!vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(aLChar.data()), unalignedLoad<uint8x16_t>(bLChar.data()))))
             return false;
         for (unsigned i = length % 16; i < length; i += 16) {
-            if (!vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(aLChar + i), unalignedLoad<uint8x16_t>(bLChar.data() + i))))
+            if (!vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(aLChar.data() + i), unalignedLoad<uint8x16_t>(bLChar.data() + i))))
                 return false;
         }
         return true;
 #else
     default: // Length is longer than 16 bytes.
-        if (unalignedLoad<uint64_t>(aLChar) != unalignedLoad<uint64_t>(bLChar.data()))
+        if (unalignedLoad<uint64_t>(aLChar.data()) != unalignedLoad<uint64_t>(bLChar.data()))
             return false;
         for (unsigned i = length % 8; i < length; i += 8) {
-            if (unalignedLoad<uint64_t>(aLChar + i) != unalignedLoad<uint64_t>(bLChar.data() + i))
+            if (unalignedLoad<uint64_t>(aLChar.data() + i) != unalignedLoad<uint64_t>(bLChar.data() + i))
                 return false;
         }
         return true;
@@ -144,47 +146,49 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, std::span<const LChar> bLChar)
     }
 }
 
-ALWAYS_INLINE bool equal(const UChar* aUChar, std::span<const UChar> bUChar)
+ALWAYS_INLINE bool equalWithLength(std::span<const UChar> aUChar, std::span<const UChar> bUChar, size_t lengthToCompare)
 {
-    ASSERT(bUChar.size() <= std::numeric_limits<unsigned>::max());
-    unsigned length = bUChar.size();
+    ASSERT(aUChar.size() >= lengthToCompare);
+    ASSERT(bUChar.size() >= lengthToCompare);
+    ASSERT(lengthToCompare <= std::numeric_limits<unsigned>::max());
+    unsigned length = static_cast<unsigned>(lengthToCompare);
 
     if (!length)
         return true;
     if (length == 1)
-        return *aUChar == bUChar.front();
+        return aUChar.front() == bUChar.front();
 
     switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
     case 0:
         RELEASE_ASSERT_NOT_REACHED();
     case 1: // Length is 2 (4 bytes).
-        return unalignedLoad<uint32_t>(aUChar) == unalignedLoad<uint32_t>(bUChar.data());
+        return unalignedLoad<uint32_t>(aUChar.data()) == unalignedLoad<uint32_t>(bUChar.data());
     case 2: // Length is 3 or 4 (6-8 bytes).
-        return unalignedLoad<uint32_t>(aUChar) == unalignedLoad<uint32_t>(bUChar.data())
-            && unalignedLoad<uint32_t>(aUChar + length - 2) == unalignedLoad<uint32_t>(bUChar.data() + length - 2);
+        return unalignedLoad<uint32_t>(aUChar.data()) == unalignedLoad<uint32_t>(bUChar.data())
+            && unalignedLoad<uint32_t>(aUChar.data() + length - 2) == unalignedLoad<uint32_t>(bUChar.data() + length - 2);
     case 3: // Length is between 5 and 8 inclusive (10-16 bytes).
-        return unalignedLoad<uint64_t>(aUChar) == unalignedLoad<uint64_t>(bUChar.data())
-            && unalignedLoad<uint64_t>(aUChar + length - 4) == unalignedLoad<uint64_t>(bUChar.data() + length - 4);
+        return unalignedLoad<uint64_t>(aUChar.data()) == unalignedLoad<uint64_t>(bUChar.data())
+            && unalignedLoad<uint64_t>(aUChar.data() + length - 4) == unalignedLoad<uint64_t>(bUChar.data() + length - 4);
 #if CPU(ARM64)
     case 4: // Length is between 9 and 16 inclusive (18-32 bytes).
         return vminvq_u16(vandq_u16(
-            vceqq_u16(unalignedLoad<uint16x8_t>(aUChar), unalignedLoad<uint16x8_t>(bUChar.data())),
-            vceqq_u16(unalignedLoad<uint16x8_t>(aUChar + length - 8), unalignedLoad<uint16x8_t>(bUChar.data() + length - 8))
+            vceqq_u16(unalignedLoad<uint16x8_t>(aUChar.data()), unalignedLoad<uint16x8_t>(bUChar.data())),
+            vceqq_u16(unalignedLoad<uint16x8_t>(aUChar.data() + length - 8), unalignedLoad<uint16x8_t>(bUChar.data() + length - 8))
         ));
     default: // Length is longer than 16 (32 bytes).
-        if (!vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(aUChar), unalignedLoad<uint16x8_t>(bUChar.data()))))
+        if (!vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(aUChar.data()), unalignedLoad<uint16x8_t>(bUChar.data()))))
             return false;
         for (unsigned i = length % 8; i < length; i += 8) {
-            if (!vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(aUChar + i), unalignedLoad<uint16x8_t>(bUChar.data() + i))))
+            if (!vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(aUChar.data() + i), unalignedLoad<uint16x8_t>(bUChar.data() + i))))
                 return false;
         }
         return true;
 #else
     default: // Length is longer than 8 (16 bytes).
-        if (unalignedLoad<uint64_t>(aUChar) != unalignedLoad<uint64_t>(bUChar.data()))
+        if (unalignedLoad<uint64_t>(aUChar.data()) != unalignedLoad<uint64_t>(bUChar.data()))
             return false;
         for (unsigned i = length % 4; i < length; i += 4) {
-            if (unalignedLoad<uint64_t>(aUChar + i) != unalignedLoad<uint64_t>(bUChar.data() + i))
+            if (unalignedLoad<uint64_t>(aUChar.data() + i) != unalignedLoad<uint64_t>(bUChar.data() + i))
                 return false;
         }
         return true;
@@ -192,12 +196,14 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, std::span<const UChar> bUChar)
     }
 }
 #elif CPU(X86) && !ASAN_ENABLED
-ALWAYS_INLINE bool equal(const LChar* aLChar, std::span<const LChar> bLChar)
+ALWAYS_INLINE bool equalWithLength(std::span<const LChar> aLChar, std::span<const LChar> bLChar, size_t lengthToCompare)
 {
+    ASSERT(aUChar.size() >= lengthToCompare);
+    ASSERT(bUChar.size() >= lengthToCompare);
     ASSERT(bLChar.size() <= std::numeric_limits<unsigned>::max());
-    unsigned length = bLChar.size();
+    unsigned length = static_cast<unsigned>(lengthToCompare);
 
-    const char* a = reinterpret_cast<const char*>(aLChar);
+    const char* a = reinterpret_cast<const char*>(aLChar.data());
     const char* b = reinterpret_cast<const char*>(bLChar.data());
 
     unsigned wordLength = length >> 2;
@@ -223,12 +229,14 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, std::span<const LChar> bLChar)
     return true;
 }
 
-ALWAYS_INLINE bool equal(const UChar* aUChar, std::span<const UChar> bUChar)
+ALWAYS_INLINE bool equalWithLength(std::span<const UChar> aUChar, std::span<const UChar> bUChar, size_t lengthToCompare)
 {
-    ASSERT(bUChar.size() <= std::numeric_limits<unsigned>::max());
-    unsigned length = bUChar.size();
+    ASSERT(aUChar.size() >= lengthToCompare);
+    ASSERT(bUChar.size() >= lengthToCompare);
+    ASSERT(lengthToCompare <= std::numeric_limits<unsigned>::max());
+    unsigned length = static_cast<unsigned>(lengthToCompare);
 
-    const char* a = reinterpret_cast<const char*>(aUChar);
+    const char* a = reinterpret_cast<const char*>(aUChar.data());
     const char* b = reinterpret_cast<const char*>(bUChar.data());
 
     unsigned wordLength = length >> 1;
@@ -245,11 +253,14 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, std::span<const UChar> bUChar)
     return true;
 }
 #elif OS(DARWIN) && WTF_ARM_ARCH_AT_LEAST(7) && !ASAN_ENABLED
-ALWAYS_INLINE bool equal(const LChar* a, std::span<const LChar> bSpan)
+ALWAYS_INLINE bool equalWithLength(std::span<const LChar> aSpan, std::span<const LChar> bSpan, size_t lengthToCompare)
 {
-    ASSERT(b.size() <= std::numeric_limits<unsigned>::max());
+    ASSERT(aSpan.size() >= lengthToCompare);
+    ASSERT(bSpan.size() >= lengthToCompare);
+    ASSERT(lengthToCompare <= std::numeric_limits<unsigned>::max());
+    auto* a = aSpan.data();
     auto* b = bSpan.data();
-    unsigned length = bSpan.size();
+    unsigned length = static_cast<unsigned>(lengthToCompare);
 
     bool isEqual = false;
     uint32_t aValue;
@@ -298,11 +309,14 @@ ALWAYS_INLINE bool equal(const LChar* a, std::span<const LChar> bSpan)
     return isEqual;
 }
 
-ALWAYS_INLINE bool equal(const UChar* a, std::span<const UChar> bSpan)
+ALWAYS_INLINE bool equalWithLength(std::span<const UChar> aSpan, std::span<const UChar> bSpan, size_t lengthToCompare)
 {
-    ASSERT(b.size() <= std::numeric_limits<unsigned>::max());
+    ASSERT(aSpan.size() >= lengthToCompare);
+    ASSERT(bSpan.size() >= lengthToCompare);
+    ASSERT(lengthToCompare <= std::numeric_limits<unsigned>::max());
+    auto* a = aSpan.data();
     auto* b = bSpan.data();
-    unsigned length = bSpan.size();
+    unsigned length = static_cast<unsigned>(lengthToCompare);
 
     bool isEqual = false;
     uint32_t aValue;
@@ -341,20 +355,35 @@ ALWAYS_INLINE bool equal(const UChar* a, std::span<const UChar> bSpan)
     return isEqual;
 }
 #elif !ASAN_ENABLED
-ALWAYS_INLINE bool equal(const LChar* a, std::span<const LChar> b) { return !memcmp(a, b.data(), b.size()); }
-ALWAYS_INLINE bool equal(const UChar* a, std::span<const UChar> b) { return !memcmp(a, b.data(), b.size_bytes()); }
-#else
-ALWAYS_INLINE bool equal(const LChar* a, std::span<const LChar> b)
+ALWAYS_INLINE bool equalWithLength(std::span<const LChar> a, std::span<const LChar> b, size_t length)
 {
-    for (size_t i = 0; i < b.size(); ++i) {
+    ASSERT(a.size() >= length);
+    ASSERT(b.size() >= length);
+    return !memcmp(a.data(), b.data(), length);
+}
+
+ALWAYS_INLINE bool equalWithLength(std::span<const UChar> a, std::span<const UChar> b, size_t length)
+{
+    ASSERT(a.size() >= length);
+    ASSERT(b.size() >= length);
+    return !memcmp(a.data(), b.data(), length * sizeof(UChar));
+}
+#else
+ALWAYS_INLINE bool equalWithLength(std::span<const LChar> a, std::span<const LChar> b, size_t length)
+{
+    ASSERT(a.size() >= length);
+    ASSERT(b.size() >= length);
+    for (size_t i = 0; i < length; ++i) {
         if (a[i] != b[i])
             return false;
     }
     return true;
 }
-ALWAYS_INLINE bool equal(const UChar* a, std::span<const UChar> b)
+ALWAYS_INLINE bool equalWithLength(std::span<const UChar> a, std::span<const UChar> b, size_t length)
 {
-    for (size_t i = 0; i < b.size(); ++i) {
+    ASSERT(a.size() >= length);
+    ASSERT(b.size() >= length);
+    for (size_t i = 0; i < length; ++i) {
         if (a[i] != b[i])
             return false;
     }
@@ -362,19 +391,19 @@ ALWAYS_INLINE bool equal(const UChar* a, std::span<const UChar> b)
 }
 #endif
 
-ALWAYS_INLINE bool equal(const LChar* a, std::span<const UChar> b)
+ALWAYS_INLINE bool equalWithLength(std::span<const LChar> a, std::span<const UChar> b, size_t length)
 {
+    ASSERT(a.size() >= length);
+    ASSERT(b.size() >= length);
 #if CPU(ARM64)
-    ASSERT(b.size() <= std::numeric_limits<unsigned>::max());
-    unsigned length = b.size();
-
+    ASSERT(length <= std::numeric_limits<unsigned>::max());
     if (length >= 8) {
-        uint16x8_t aHalves = vmovl_u8(unalignedLoad<uint8x8_t>(a)); // Extends 8 LChars into 8 UChars.
+        uint16x8_t aHalves = vmovl_u8(unalignedLoad<uint8x8_t>(a.data())); // Extends 8 LChars into 8 UChars.
         uint16x8_t bHalves = unalignedLoad<uint16x8_t>(b.data());
         if (!vminvq_u16(vceqq_u16(aHalves, bHalves)))
             return false;
         for (unsigned i = length % 8; i < length; i += 8) {
-            aHalves = vmovl_u8(unalignedLoad<uint8x8_t>(a + i));
+            aHalves = vmovl_u8(unalignedLoad<uint8x8_t>(a.data() + i));
             bHalves = unalignedLoad<uint16x8_t>(b.data() + i);
             if (!vminvq_u16(vceqq_u16(aHalves, bHalves)))
                 return false;
@@ -390,7 +419,7 @@ ALWAYS_INLINE bool equal(const LChar* a, std::span<const UChar> b)
             return static_cast<uint64_t>((v64 | (v64 << 8)) & 0x00ff00ff00ff00ffULL);
         };
 
-        return static_cast<unsigned>(read4(a) == unalignedLoad<uint64_t>(b.data())) & static_cast<unsigned>(read4(a + (length % 4)) == unalignedLoad<uint64_t>(b.data() + (length % 4)));
+        return static_cast<unsigned>(read4(a.data()) == unalignedLoad<uint64_t>(b.data())) & static_cast<unsigned>(read4(a.data() + (length % 4)) == unalignedLoad<uint64_t>(b.data() + (length % 4)));
     }
     if (length >= 2) {
         auto read2 = [](const LChar* p) ALWAYS_INLINE_LAMBDA {
@@ -399,13 +428,13 @@ ALWAYS_INLINE bool equal(const LChar* a, std::span<const UChar> b)
             uint32_t v32 = static_cast<uint32_t>(v16);
             return static_cast<uint32_t>((v32 | (v32 << 8)) & 0x00ff00ffUL);
         };
-        return static_cast<unsigned>(read2(a) == unalignedLoad<uint32_t>(b.data())) & static_cast<unsigned>(read2(a + (length % 2)) == unalignedLoad<uint32_t>(b.data() + (length % 2)));
+        return static_cast<unsigned>(read2(a.data()) == unalignedLoad<uint32_t>(b.data())) & static_cast<unsigned>(read2(a.data() + (length % 2)) == unalignedLoad<uint32_t>(b.data() + (length % 2)));
     }
     if (length == 1)
-        return *a == b.front();
+        return a.front() == b.front();
     return true;
 #else
-    for (size_t i = 0; i < b.size(); ++i) {
+    for (size_t i = 0; i < length; ++i) {
         if (a[i] != b[i])
             return false;
     }
@@ -413,9 +442,30 @@ ALWAYS_INLINE bool equal(const LChar* a, std::span<const UChar> b)
 #endif
 }
 
-ALWAYS_INLINE bool equal(const UChar* a, std::span<const LChar> b)
+ALWAYS_INLINE bool equal(std::span<const LChar> a, std::span<const LChar> b)
 {
-    return equal(b.data(), { a, b.size() });
+    return a.size() == b.size() && equalWithLength(a, b, b.size());
+}
+
+ALWAYS_INLINE bool equal(std::span<const LChar> a, std::span<const UChar> b)
+{
+    return a.size() == b.size() && equalWithLength(a, b, b.size());
+}
+
+ALWAYS_INLINE bool equal(std::span<const UChar> a, std::span<const UChar> b)
+{
+    return a.size() == b.size() && equalWithLength(a, b, b.size());
+}
+
+
+ALWAYS_INLINE bool equalWithLength(std::span<const UChar> a, std::span<const LChar> b, size_t length)
+{
+    return equalWithLength(b, a, length);
+}
+
+ALWAYS_INLINE bool equal(std::span<const UChar> a, std::span<const LChar> b)
+{
+    return equal(b, a);
 }
 
 template<typename StringClassA, typename StringClassB>
@@ -428,19 +478,19 @@ ALWAYS_INLINE bool equalCommon(const StringClassA& a, const StringClassB& b, uns
         auto aSpan = a.span8();
         if (b.is8Bit()) {
             auto bSpan = b.span8();
-            return aSpan.front() == bSpan.front() && equal(aSpan.data() + 1, bSpan.subspan(1));
+            return aSpan.front() == bSpan.front() && equalWithLength(aSpan.subspan(1), bSpan.subspan(1), length - 1);
         }
         auto bSpan = b.span16();
-        return aSpan.front() == bSpan.front() && equal(aSpan.data() + 1, bSpan.subspan(1));
+        return aSpan.front() == bSpan.front() && equalWithLength(aSpan.subspan(1), bSpan.subspan(1), length - 1);
     }
 
     auto aSpan = a.span16();
     if (b.is8Bit()) {
         auto bSpan = b.span8();
-        return aSpan.front() == bSpan.front() && equal(aSpan.data() + 1, bSpan.subspan(1));
+        return aSpan.front() == bSpan.front() && equalWithLength(aSpan.subspan(1), bSpan.subspan(1), length - 1);
     }
     auto bSpan = b.span16();
-    return aSpan.front() == bSpan.front() && equal(aSpan.data() + 1, bSpan.subspan(1));
+    return aSpan.front() == bSpan.front() && equalWithLength(aSpan.subspan(1), bSpan.subspan(1), length - 1);
 }
 
 template<typename StringClassA, typename StringClassB>
@@ -469,9 +519,9 @@ template<typename StringClass, unsigned length> bool equal(const StringClass& a,
         return false;
 
     if (a.is8Bit())
-        return equal(a.span8().data(), { codeUnits, length });
+        return equalWithLength(a.span8(), { codeUnits, length }, length);
 
-    return equal(a.span16().data(), { codeUnits, length });
+    return equalWithLength(a.span16(), { codeUnits, length }, length);
 }
 
 template<typename CharacterTypeA, typename CharacterTypeB> inline bool equalIgnoringASCIICaseWithLength(std::span<const CharacterTypeA> a, std::span<const CharacterTypeB> b, size_t lengthToCheck)
@@ -560,7 +610,7 @@ ALWAYS_INLINE static size_t findInner(std::span<const SearchCharacterType> searc
 
     size_t i = 0;
     // keep looping until we match
-    while (searchHash != matchHash || !equal(searchCharacters.data() + i, matchCharacters)) {
+    while (searchHash != matchHash || !equalWithLength(searchCharacters.subspan(i), matchCharacters, matchCharacters.size())) {
         if (i == delta)
             return notFound;
         searchHash += searchCharacters[i + matchCharacters.size()];
@@ -811,7 +861,7 @@ ALWAYS_INLINE static size_t reverseFindInner(std::span<const SearchCharacterType
     }
 
     // keep looping until we match
-    while (searchHash != matchHash || !equal(searchCharacters.data() + delta, matchCharacters)) {
+    while (searchHash != matchHash || !equalWithLength(searchCharacters.subspan(delta), matchCharacters, matchCharacters.size())) {
         if (!delta)
             return notFound;
         --delta;
@@ -1173,6 +1223,7 @@ using WTF::equalIgnoringASCIICase;
 using WTF::equalIgnoringASCIICaseWithLength;
 using WTF::equalLettersIgnoringASCIICase;
 using WTF::equalLettersIgnoringASCIICaseWithLength;
+using WTF::equalWithLength;
 using WTF::isLatin1;
 using WTF::span;
 using WTF::span8;

@@ -850,7 +850,7 @@ size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
         }
 
         size_t i = 0;
-        while (searchHash != matchHash || !equal(searchCharacters.data() + i, matchString)) {
+        while (searchHash != matchHash || !equalWithLength(searchCharacters.subspan(i), matchString, matchString.size())) {
             if (i == delta)
                 return notFound;
             searchHash += searchCharacters[i + matchString.size()];
@@ -870,7 +870,7 @@ size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
     }
 
     size_t i = 0;
-    while (searchHash != matchHash || !equal(searchCharacters.data() + i, matchString)) {
+    while (searchHash != matchHash || !equalWithLength(searchCharacters.subspan(i), matchString, matchString.size())) {
         if (i == delta)
             return notFound;
         searchHash += searchCharacters[i + matchString.size()];
@@ -998,27 +998,28 @@ ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, s
     ASSERT(start + matchString.size() <= string.length());
 
     if (string.is8Bit())
-        return equal(string.span8().data() + start, spanReinterpretCast<const LChar>(matchString));
-    return equal(string.span16().data() + start, spanReinterpretCast<const LChar>(matchString));
+        return equalWithLength(string.span8().subspan(start), spanReinterpretCast<const LChar>(matchString), matchString.size());
+    return equalWithLength(string.span16().subspan(start), spanReinterpretCast<const LChar>(matchString), matchString.size());
 }
 
 ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, StringView matchString)
 {
     if (start > string.length())
         return false;
-    if (matchString.length() > string.length())
+    auto matchLength = matchString.length();
+    if (matchLength > string.length())
         return false;
-    if (matchString.length() + start > string.length())
+    if (matchLength + start > string.length())
         return false;
 
     if (string.is8Bit()) {
         if (matchString.is8Bit())
-            return equal(string.span8().data() + start, matchString.span8());
-        return equal(string.span8().data() + start, matchString.span16());
+            return equalWithLength(string.span8().subspan(start), matchString.span8(), matchLength);
+        return equalWithLength(string.span8().subspan(start), matchString.span16(), matchLength);
     }
     if (matchString.is8Bit())
-        return equal(string.span16().data() + start, matchString.span8());
-    return equal(string.span16().data() + start, matchString.span16());
+        return equalWithLength(string.span16().subspan(start), matchString.span8(), matchLength);
+    return equalWithLength(string.span16().subspan(start), matchString.span16(), matchLength);
 }
 
 bool StringImpl::startsWith(StringView string) const
@@ -1424,8 +1425,8 @@ template<typename CharacterType> inline bool equalInternal(const StringImpl* a, 
     if (b.empty())
         return true;
     if (a->is8Bit())
-        return a->span8().front() == b.front() && equal(a->span8().data() + 1, b.subspan(1));
-    return a->span16().front() == b.front() && equal(a->span16().data() + 1, b.subspan(1));
+        return a->span8().front() == b.front() && equalWithLength(a->span8().subspan(1), b.subspan(1), b.size() - 1);
+    return a->span16().front() == b.front() && equalWithLength(a->span16().subspan(1), b.subspan(1), b.size() - 1);
 }
 
 bool equal(const StringImpl* a, std::span<const LChar> b)
@@ -1622,7 +1623,7 @@ bool equalIgnoringNullity(std::span<const UChar> a, StringImpl* b)
         }
         return true;
     }
-    return equal(a, b->span16());
+    return equalWithLength(a, b->span16(), a.size());
 }
 
 } // namespace WTF

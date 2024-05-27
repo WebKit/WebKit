@@ -661,7 +661,7 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
         return std::nullopt;
 
     auto span = std::span { destinationBuffer }.first(numCharactersConverted);
-    if (numCharactersConverted == length && equal(sourceBuffer.data(), span))
+    if (numCharactersConverted == length && equalWithLength(sourceBuffer, span, span.size()))
         return String();
 
     if (!decodeFunction && !allCharactersInAllowedIDNScriptList(span) && !allCharactersAllowedByTLDRules(span))
