@@ -55,6 +55,7 @@ IPIntPlan::IPIntPlan(VM& vm, Ref<ModuleInformation> info, const Ref<IPIntCallee>
     , m_callees(callees)
 {
     ASSERT(m_callees || !m_moduleInformation->functions.size());
+    m_areWasmToJSStubsCompiled = true;
     prepare();
     m_currentIndex = m_moduleInformation->functions.size();
 }
@@ -81,7 +82,7 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
     const auto& function = m_moduleInformation->functions[functionIndex];
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex);
-    unsigned functionIndexSpace = m_wasmToWasmExitStubs.size() + functionIndex;
+    unsigned functionIndexSpace = m_moduleInformation->importFunctionTypeIndices.size() + functionIndex;
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
 
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
@@ -97,19 +98,23 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
         return;
     }
 
-    Locker locker { m_lock };
+    if (Options::useWebAssemblyTailCalls()) {
+        Locker locker { m_lock };
 
-    for (auto successor : parseAndCompileResult->get()->tailCallSuccessors())
-        addTailCallEdge(m_moduleInformation->importFunctionCount() + parseAndCompileResult->get()->functionIndex(), successor);
+        for (auto successor : parseAndCompileResult->get()->tailCallSuccessors())
+            addTailCallEdge(m_moduleInformation->importFunctionCount() + parseAndCompileResult->get()->functionIndex(), successor);
 
-    if (parseAndCompileResult->get()->tailCallClobbersInstance())
-        m_moduleInformation->addClobberingTailCall(m_moduleInformation->importFunctionCount() + parseAndCompileResult->get()->functionIndex());
+        if (parseAndCompileResult->get()->tailCallClobbersInstance())
+            m_moduleInformation->addClobberingTailCall(m_moduleInformation->importFunctionCount() + parseAndCompileResult->get()->functionIndex());
+    }
 
     m_wasmInternalFunctions[functionIndex] = WTFMove(*parseAndCompileResult);
 }
 
 void IPIntPlan::didCompleteCompilation()
 {
+    generateStubsIfNecessary();
+
 #if ENABLE(JIT)
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_callees && functionCount) {

@@ -125,6 +125,7 @@ protected:
     bool generateWasmToJSStubs();
     bool generateWasmToWasmStubs();
 #endif
+    void generateStubsIfNecessary() WTF_REQUIRES_LOCK(m_lock);
 
     Vector<uint8_t> m_source;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
@@ -135,6 +136,8 @@ protected:
     StreamingParser m_streamingParser;
     State m_state;
 
+    bool m_areWasmToWasmStubsCompiled { false };
+    bool m_areWasmToJSStubsCompiled { false };
     const CompilerMode m_compilerMode;
     uint8_t m_numberOfActiveThreads { 0 };
     uint32_t m_currentIndex { 0 };

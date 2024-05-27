@@ -58,6 +58,8 @@ BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation> moduleInformation, uint32_t func
     ASSERT(Options::useBBQJIT());
     setMode(m_calleeGroup->mode());
     dataLogLnIf(WasmBBQPlanInternal::verbose, "Starting BBQ plan for ", functionIndex);
+    m_areWasmToJSStubsCompiled = true;
+    m_areWasmToWasmStubsCompiled = true;
 }
 
 FunctionAllowlist& BBQPlan::ensureGlobalBBQAllowlist()
@@ -322,6 +324,8 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
 
 void BBQPlan::didCompleteCompilation()
 {
+    generateStubsIfNecessary();
+
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         CompilationContext& context = m_compilationContexts[functionIndex];
         TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
