@@ -70,7 +70,8 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
         // FIXME: It should be the immediate child but continuations can break this assumption.
         for (CheckedPtr first = parent.firstChild(); first; first = first->firstChildSlow()) {
             if (!first->isAnonymous()) {
-                ASSERT_NOT_REACHED();
+                // <ruby blockified><ruby> is valid and still requires construction of an anonymous inline ruby box.
+                ASSERT(first->style().display() == DisplayType::Ruby);
                 break;
             }
             if (first->style().display() == DisplayType::Ruby)
