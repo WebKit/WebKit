@@ -77,6 +77,7 @@ static gboolean exitAfterLoad;
 static gboolean webProcessCrashed;
 static gboolean printVersion;
 static char *configFile;
+static GSettings *interfaceSettings;
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
 static gboolean enableSandbox;
@@ -766,6 +767,31 @@ static void startup(GApplication *application)
         gtk_application_set_accels_for_action(GTK_APPLICATION(application), it[0], &it[1]);
 }
 
+static void colorSchemeChanged(GtkSettings *settings)
+{
+    gboolean useDarkMode = g_settings_get_enum(interfaceSettings, "color-scheme") == 1;
+    g_object_set(settings, "gtk-application-prefer-dark-theme", useDarkMode, NULL);
+}
+
+static void setupDarkMode(GtkSettings *settings)
+{
+    if (darkMode) {
+        g_object_set(settings, "gtk-application-prefer-dark-theme", TRUE, NULL);
+        return;
+    }
+
+    if (g_file_test("/.flatpak-info", G_FILE_TEST_EXISTS))
+        return;
+
+    g_autoptr(GSettingsSchema) schema = g_settings_schema_source_lookup(g_settings_schema_source_get_default(), "org.gnome.desktop.interface", TRUE);
+    if (!schema)
+        return;
+
+    interfaceSettings = g_settings_new("org.gnome.desktop.interface");
+    colorSchemeChanged(settings);
+    g_signal_connect_swapped(interfaceSettings, "changed::color-scheme", G_CALLBACK(colorSchemeChanged), settings);
+}
+
 static void activate(GApplication *application, WebKitSettings *webkitSettings)
 {
 #if GTK_CHECK_VERSION(3, 98, 0)
@@ -923,8 +949,7 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     BrowserWindow *mainWindow = BROWSER_WINDOW(browser_window_new(NULL, webContext));
 #endif
     gtk_application_add_window(GTK_APPLICATION(application), GTK_WINDOW(mainWindow));
-    if (darkMode)
-        g_object_set(gtk_widget_get_settings(GTK_WIDGET(mainWindow)), "gtk-application-prefer-dark-theme", TRUE, NULL);
+    setupDarkMode(gtk_widget_get_settings(GTK_WIDGET(mainWindow)));
     if (fullScreen)
         browser_window_fullscreen(mainWindow);
 
@@ -1050,6 +1075,8 @@ int main(int argc, char *argv[])
     g_signal_connect(application, "activate", G_CALLBACK(activate), webkitSettings);
     g_application_run(G_APPLICATION(application), 0, NULL);
     g_object_unref(application);
+
+    g_clear_object(&interfaceSettings);
 
     return exitAfterLoad && webProcessCrashed ? 1 : 0;
 }
