@@ -175,7 +175,7 @@ public:
     {
     }
 
-    ConversionResult(nullptr_t) requires std::is_same_v<decltype(IDL::nullValue()), nullptr_t>
+    ConversionResult(std::nullptr_t) requires std::is_same_v<decltype(IDL::nullValue()), std::nullptr_t>
         : m_storage { nullptr }
     {
     }
