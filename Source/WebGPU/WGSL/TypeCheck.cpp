@@ -1384,6 +1384,19 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesDot4U8Packed();
             else if (targetName == "extractBits"_s)
                 m_shaderModule.setUsesExtractBits();
+            else if (targetName == "textureGather"_s) {
+                auto& component = call.arguments()[0];
+                if (satisfies(component.inferredType(), Constraints::ConcreteInteger)) {
+                    auto& constant = component.constantValue();
+                    if (!constant)
+                        typeError(InferBottom::No, component.span(), "the component argument must be a const-expression"_s);
+                    else {
+                        auto componentValue = constant->integerValue();
+                        if (componentValue < 0 || componentValue > 3)
+                            typeError(InferBottom::No, component.span(), "the component argument must be at least 0 and at most 3. component is "_s, String::number(componentValue));
+                    }
+                }
+            }
             target.m_inferredType = result;
             return;
         }
