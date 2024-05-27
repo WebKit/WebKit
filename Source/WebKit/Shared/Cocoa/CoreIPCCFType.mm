@@ -35,7 +35,6 @@
 #import "CoreIPCCGColorSpace.h"
 #import "CoreIPCSecAccessControl.h"
 #import "CoreIPCSecCertificate.h"
-#import "CoreIPCSecKeychainItem.h"
 #import "CoreIPCSecTrust.h"
 #import "CoreIPCTypes.h"
 #import "StreamConnectionEncoder.h"
@@ -67,10 +66,6 @@ static CFObjectValue variantFromCFType(CFTypeRef cfType)
         return CoreIPCCFURL((CFURLRef)cfType);
     case IPC::CFType::SecCertificate:
         return CoreIPCSecCertificate((SecCertificateRef)const_cast<void*>(cfType));
-#if HAVE(SEC_KEYCHAIN)
-    case IPC::CFType::SecKeychainItem:
-        return CoreIPCSecKeychainItem((SecKeychainItemRef)const_cast<void*>(cfType));
-#endif
 #if HAVE(SEC_ACCESS_CONTROL)
     case IPC::CFType::SecAccessControl:
         return CoreIPCSecAccessControl((SecAccessControlRef)const_cast<void*>(cfType));
@@ -136,10 +131,6 @@ RetainPtr<CFTypeRef> CoreIPCCFType::toCFType() const
         return colorSpace.toCF();
     }, [] (const WebCore::Color& color) -> RetainPtr<CFTypeRef> {
         return WebCore::cachedCGColor(color);
-#if HAVE(SEC_KEYCHAIN)
-    }, [] (const CoreIPCSecKeychainItem& keychainItem) -> RetainPtr<CFTypeRef> {
-        return keychainItem.createSecKeychainItem();
-#endif
 #if HAVE(SEC_ACCESS_CONTROL)
     }, [] (const CoreIPCSecAccessControl& accessControl) -> RetainPtr<CFTypeRef> {
         return accessControl.createSecAccessControl();
@@ -183,12 +174,6 @@ CFType typeFromCFTypeRef(CFTypeRef type)
         return CFType::CGColor;
     if (typeID == SecCertificateGetTypeID())
         return CFType::SecCertificate;
-#if HAVE(SEC_KEYCHAIN)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (typeID == SecKeychainItemGetTypeID())
-        return CFType::SecKeychainItem;
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 #if HAVE(SEC_ACCESS_CONTROL)
     if (typeID == SecAccessControlGetTypeID())
         return CFType::SecAccessControl;

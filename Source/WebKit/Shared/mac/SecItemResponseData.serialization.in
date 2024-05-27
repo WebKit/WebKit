@@ -21,6 +21,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class WebKit::SecItemResponseData {
-    OSStatus m_resultCode;
-    RetainPtr<CFTypeRef> m_resultObject;
+    OSStatus resultCode()
+#if HAVE(SEC_KEYCHAIN)
+    std::variant<std::nullptr_t, Vector<RetainPtr<SecCertificateRef>>, Vector<RetainPtr<SecKeychainItemRef>>, RetainPtr<CFTypeRef>> resultObject()
+#else
+    std::variant<std::nullptr_t, Vector<RetainPtr<SecCertificateRef>>, RetainPtr<CFTypeRef>> resultObject()
+#endif
 }
