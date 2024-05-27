@@ -109,7 +109,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
     case XSLT_LOAD_DOCUMENT: {
         xsltTransformContextPtr context = (xsltTransformContextPtr)ctxt;
         xmlChar* base = xmlNodeGetBase(context->document->doc, context->node);
-        URL url(URL({ }, String::fromLatin1(reinterpret_cast<const char*>(base))), String::fromLatin1(reinterpret_cast<const char*>(uri)));
+        URL url(URL({ }, String::fromLatin1(byteCast<char>(base))), String::fromLatin1(byteCast<char>(uri)));
         xmlFree(base);
         ResourceError error;
         ResourceResponse response;
@@ -147,8 +147,8 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
 
         // We don't specify an encoding here. Neither Gecko nor WinIE respects
         // the encoding specified in the HTTP headers.
-        auto dataSpan = data->span();
-        return xmlReadMemory(reinterpret_cast<const char*>(dataSpan.data()), dataSpan.size(), (const char*)uri, nullptr, options);
+        auto dataSpan = byteCast<char>(data->span());
+        return xmlReadMemory(dataSpan.data(), dataSpan.size(), byteCast<char>(uri), nullptr, options);
     }
     case XSLT_LOAD_STYLESHEET:
         return globalProcessor->xslStylesheet()->locateStylesheetSubResource(((xsltStylesheetPtr)ctxt)->doc, uri);
@@ -171,7 +171,7 @@ static int writeToStringBuilder(void* context, const char* buffer, int length)
     auto& builder = *static_cast<StringBuilder*>(context);
     if (!length)
         return 0;
-    auto checkedString = WTF::Unicode::checkUTF8({ reinterpret_cast<const char8_t*>(buffer), static_cast<size_t>(length) });
+    auto checkedString = WTF::Unicode::checkUTF8({ byteCast<char8_t>(buffer), static_cast<size_t>(length) });
     if (checkedString.characters.empty())
         return -1;
     builder.append(checkedString);
@@ -308,7 +308,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
 
     xmlChar* origMethod = sheet->method;
     if (!origMethod && mimeType == textHTMLContentTypeAtom())
-        sheet->method = reinterpret_cast<xmlChar*>(const_cast<char*>("html"));
+        sheet->method = byteCast<xmlChar>(const_cast<char*>("html"));
 
     bool success = false;
     bool shouldFreeSourceDoc = false;
@@ -352,7 +352,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
 
         if ((success = saveResultToString(resultDoc, sheet, resultString))) {
             mimeType = resultMIMEType(resultDoc, sheet);
-            resultEncoding = String::fromLatin1(reinterpret_cast<const char*>(resultDoc->encoding));
+            resultEncoding = String::fromLatin1(byteCast<char>(resultDoc->encoding));
         }
         xmlFreeDoc(resultDoc);
     }

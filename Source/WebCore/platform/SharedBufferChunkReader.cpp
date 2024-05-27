@@ -96,7 +96,7 @@ bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSepa
         if (++m_iteratorCurrent == m_iteratorEnd) {
             m_segment = nullptr;
             if (m_separatorIndex > 0)
-                chunk.append(std::span { reinterpret_cast<const uint8_t*>(m_separator.data()), m_separatorIndex });
+                chunk.append(byteCast<uint8_t>(m_separator.subspan(0, m_separatorIndex)));
             return !chunk.isEmpty();
         }
         m_segment = m_iteratorCurrent->segment->span().data();

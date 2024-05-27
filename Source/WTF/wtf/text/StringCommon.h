@@ -50,7 +50,7 @@ inline std::span<const UChar> span(const UChar& character)
 
 inline std::span<const LChar> span8(const char* string)
 {
-    return { reinterpret_cast<const LChar*>(string), string ? strlen(string) : 0 };
+    return { byteCast<LChar>(string), string ? strlen(string) : 0 };
 }
 
 inline std::span<const char> span(const char* string)
@@ -197,8 +197,8 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, std::span<const LChar> bLChar)
     ASSERT(bLChar.size() <= std::numeric_limits<unsigned>::max());
     unsigned length = bLChar.size();
 
-    const char* a = reinterpret_cast<const char*>(aLChar);
-    const char* b = reinterpret_cast<const char*>(bLChar.data());
+    const char* a = byteCast<char>(aLChar);
+    const char* b = byteCast<char>(bLChar.data());
 
     unsigned wordLength = length >> 2;
     for (unsigned i = 0; i != wordLength; ++i) {
@@ -211,8 +211,8 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, std::span<const LChar> bLChar)
     length &= 3;
 
     if (length) {
-        const LChar* aRemainder = reinterpret_cast<const LChar*>(a);
-        const LChar* bRemainder = reinterpret_cast<const LChar*>(b);
+        const LChar* aRemainder = byteCast<LChar>(a);
+        const LChar* bRemainder = byteCast<LChar>(b);
 
         for (unsigned i = 0; i <  length; ++i) {
             if (aRemainder[i] != bRemainder[i])
@@ -839,7 +839,7 @@ template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(std::
 
 template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(std::span<const CharacterType> characters, std::span<const char> lowercaseLetters)
 {
-    return equalLettersIgnoringASCIICase(characters, { reinterpret_cast<const LChar*>(lowercaseLetters.data()), lowercaseLetters.size() });
+    return equalLettersIgnoringASCIICase(characters, byteCast<LChar>(lowercaseLetters));
 }
 
 template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(std::span<const CharacterType> characters, ASCIILiteral lowercaseLetters)

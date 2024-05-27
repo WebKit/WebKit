@@ -36,7 +36,7 @@
 
 #define CHANNEL_TAG_LENGTH 7
 
-    const char* p = reinterpret_cast<const char*>(bytes);
+    const char* p = byteCast<char>(bytes);
     int remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (CHANNEL_TAG_LENGTH - 1);
 
     BOOL foundRDF = false;

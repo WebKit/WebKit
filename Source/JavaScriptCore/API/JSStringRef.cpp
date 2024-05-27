@@ -98,7 +98,7 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
     if (!string || !buffer || !bufferSize)
         return 0;
 
-    std::span<char8_t> target { reinterpret_cast<char8_t*>(buffer), bufferSize - 1 };
+    std::span<char8_t> target { byteCast<char8_t>(buffer), bufferSize - 1 };
     WTF::Unicode::ConversionResult<char8_t> result;
     if (string->is8Bit())
         result = WTF::Unicode::convert(string->span8(), target);

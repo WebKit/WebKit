@@ -63,7 +63,7 @@ public:
     void append(const char*) = delete; // Pass ASCIILiteral or span instead.
     void append(UChar);
     void append(LChar);
-    void append(char character) { append(static_cast<LChar>(character)); }
+    void append(char character) { append(byteCast<LChar>(character)); }
 
     // FIXME: Add a StringTypeAdapter so we can append one string builder to another with variadic append.
     void append(const StringBuilder&);

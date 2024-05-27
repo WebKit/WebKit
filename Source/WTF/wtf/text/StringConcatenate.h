@@ -132,7 +132,7 @@ public:
 private:
     static unsigned computeLength(const LChar* characters)
     {
-        return stringLength(std::strlen(reinterpret_cast<const char*>(characters)));
+        return stringLength(std::strlen(byteCast<char>(characters)));
     }
 
     const LChar* m_characters;
@@ -345,7 +345,7 @@ template<typename UnderlyingElementType> struct PaddingSpecification {
 
 template<typename UnderlyingElementType> PaddingSpecification<UnderlyingElementType> pad(char character, unsigned length, UnderlyingElementType element)
 {
-    return { static_cast<LChar>(character), length, element };
+    return { byteCast<LChar>(character), length, element };
 }
 
 template<typename UnderlyingElementType> class StringTypeAdapter<PaddingSpecification<UnderlyingElementType>> {

@@ -49,7 +49,7 @@ std::unique_ptr<SandboxExtensionImpl> SandboxExtensionImpl::create(const char* p
 }
 
 SandboxExtensionImpl::SandboxExtensionImpl(std::span<const uint8_t> serializedFormat)
-    : m_token { strndup(reinterpret_cast<const char*>(serializedFormat.data()), serializedFormat.size()) }
+    : m_token { strndup(byteCast<char>(serializedFormat.data()), serializedFormat.size()) }
 {
     ASSERT(!serializedFormat.empty());
 }

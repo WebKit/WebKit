@@ -448,7 +448,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
             if (!mtlTexture)
                 return { };
 
-            uint8_t *imageBytes = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, plane));
+            uint8_t *imageBytes = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, plane));
             int bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, plane);
 
             [mtlTexture replaceRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0 withBytes:imageBytes bytesPerRow:bytesPerRow];

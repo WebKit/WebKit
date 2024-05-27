@@ -129,7 +129,7 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
     // The implementation of Collator should be lenient, and accept both "en-US" and "en_US", for example.
     // This lets an author specify sorting rules, e.g. "de_DE@collation=phonebook", which isn't
     // possible with language alone.
-    Collator collator(comp->has_lang ? reinterpret_cast<const char*>(comp->lang) : "en", comp->lower_first);
+    Collator collator(comp->has_lang ? byteCast<char>(comp->lang) : "en", comp->lower_first);
 
     /* Shell's sort of node-set */
     for (incr = len / 2; incr > 0; incr /= 2) {
@@ -160,7 +160,7 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                             tst = 1;
                         else tst = -1;
                     } else
-                        tst = collator.collateUTF8(reinterpret_cast<const char*>(results[j]->stringval), reinterpret_cast<const char*>(results[j + incr]->stringval));
+                        tst = collator.collate(byteCast<char8_t>(results[j]->stringval), byteCast<char8_t>(results[j + incr]->stringval));
                     if (desc[0])
                         tst = -tst;
                 }
@@ -210,7 +210,7 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                                     tst = 1;
                                 else tst = -1;
                             } else
-                                tst = collator.collateUTF8(reinterpret_cast<const char*>(res[j]->stringval), reinterpret_cast<const char*>(res[j + incr]->stringval));
+                                tst = collator.collate(byteCast<char8_t>(res[j]->stringval), byteCast<char8_t>(res[j + incr]->stringval));
                             if (desc[depth])
                                 tst = -tst;
                         }

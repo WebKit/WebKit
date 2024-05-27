@@ -72,7 +72,7 @@ String ScriptBuffer::toString() const
 
     StringBuilder builder;
     m_buffer.get()->forEachSegment([&](auto segment) {
-        builder.append(spanReinterpretCast<const char8_t>(segment));
+        builder.append(byteCast<char8_t>(segment));
     });
     return builder.toString();
 }
@@ -87,7 +87,7 @@ void ScriptBuffer::append(const String& string)
     if (string.isEmpty())
         return;
     auto result = string.tryGetUTF8([&](std::span<const char> span) -> bool {
-        m_buffer.append(spanReinterpretCast<const uint8_t>(span));
+        m_buffer.append(byteCast<char8_t>(span));
         return true;
     });
     RELEASE_ASSERT(result);

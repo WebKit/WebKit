@@ -89,9 +89,8 @@ inline RefPtr<AtomStringImpl> AtomStringImpl::lookUp(StringImpl* string)
 
 ALWAYS_INLINE RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const char> characters)
 {
-    return add({ reinterpret_cast<const LChar*>(characters.data()), characters.size() });
+    return add(byteCast<LChar>(characters));
 }
-
 
 ALWAYS_INLINE RefPtr<AtomStringImpl> AtomStringImpl::add(StringImpl* string)
 {

@@ -598,7 +598,7 @@ struct Segment {
     uint8_t& byte(uint32_t pos)
     {
         ASSERT(pos < sizeInBytes);
-        return *reinterpret_cast<uint8_t*>(reinterpret_cast<char*>(this) + sizeof(Segment) + pos);
+        return *(reinterpret_cast<uint8_t*>(this) + sizeof(Segment) + pos);
     }
 
     static void destroy(Segment*);

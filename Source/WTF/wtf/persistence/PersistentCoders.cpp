@@ -81,7 +81,7 @@ std::optional<CString> Coder<CString>::decodeForPersistence(Decoder& decoder)
 
     char* buffer;
     CString string = CString::newUninitialized(*length, buffer);
-    if (!decoder.decodeFixedLengthData({ reinterpret_cast<uint8_t*>(buffer), *length }))
+    if (!decoder.decodeFixedLengthData({ byteCast<uint8_t>(buffer), *length }))
         return std::nullopt;
 
     return string;

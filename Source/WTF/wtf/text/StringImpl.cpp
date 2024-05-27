@@ -998,8 +998,8 @@ ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, s
     ASSERT(start + matchString.size() <= string.length());
 
     if (string.is8Bit())
-        return equal(string.span8().data() + start, spanReinterpretCast<const LChar>(matchString));
-    return equal(string.span16().data() + start, spanReinterpretCast<const LChar>(matchString));
+        return equal(string.span8().data() + start, byteCast<LChar>(matchString));
+    return equal(string.span16().data() + start, byteCast<LChar>(matchString));
 }
 
 ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, StringView matchString)

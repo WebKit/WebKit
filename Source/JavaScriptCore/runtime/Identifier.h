@@ -147,7 +147,7 @@ public:
     friend bool operator==(const Identifier&, const char*);
 
     static bool equal(const StringImpl*, const LChar*);
-    static inline bool equal(const StringImpl* a, const char* b) { return Identifier::equal(a, reinterpret_cast<const LChar*>(b)); };
+    static inline bool equal(const StringImpl* a, const char* b) { return Identifier::equal(a, byteCast<LChar>(b)); };
     static bool equal(const StringImpl*, std::span<const LChar>);
     static bool equal(const StringImpl*, std::span<const UChar>);
     static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
@@ -234,7 +234,7 @@ inline bool operator==(const Identifier& a, const LChar* b)
 
 inline bool operator==(const Identifier& a, const char* b)
 {
-    return Identifier::equal(a, reinterpret_cast<const LChar*>(b));
+    return Identifier::equal(a, byteCast<LChar>(b));
 }
 
 inline bool Identifier::equal(const StringImpl* r, const LChar* s)

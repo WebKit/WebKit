@@ -736,6 +736,35 @@ void memsetSpan(std::span<T, Extent> destination, uint8_t byte)
     memset(destination.data(), byte, destination.size_bytes());
 }
 
+template<typename T> concept ByteType = sizeof(T) == 1 && ((std::is_integral_v<T> && !std::same_as<T, bool>) || std::same_as<T, std::byte>) && !std::is_const_v<T>;
+
+template<typename> struct ByteCastTraits;
+
+template<ByteType T> struct ByteCastTraits<T> {
+    template<ByteType U> static constexpr U cast(T character) { return static_cast<U>(character); }
+};
+
+template<ByteType T> struct ByteCastTraits<T*> {
+    template<ByteType U> static constexpr auto cast(T* pointer) { return bitwise_cast<U*>(pointer); }
+};
+
+template<ByteType T> struct ByteCastTraits<const T*> {
+    template<ByteType U> static constexpr auto cast(const T* pointer) { return bitwise_cast<const U*>(pointer); }
+};
+
+template<ByteType T, size_t Extent> struct ByteCastTraits<std::span<T, Extent>> {
+    template<ByteType U> static constexpr auto cast(std::span<T, Extent> span) { return spanReinterpretCast<U>(span); }
+};
+
+template<ByteType T, size_t Extent> struct ByteCastTraits<std::span<const T, Extent>> {
+    template<ByteType U> static constexpr auto cast(std::span<const T, Extent> span) { return spanReinterpretCast<const U>(span); }
+};
+
+template<ByteType T, typename U> constexpr auto byteCast(const U& value)
+{
+    return ByteCastTraits<U>::template cast<T>(value);
+}
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
@@ -772,6 +801,7 @@ using WTF::asBytes;
 using WTF::asWritableBytes;
 using WTF::binarySearch;
 using WTF::bitwise_cast;
+using WTF::byteCast;
 using WTF::callStatelessLambda;
 using WTF::checkAndSet;
 using WTF::constructFixedSizeArrayWithArguments;

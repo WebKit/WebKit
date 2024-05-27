@@ -160,7 +160,7 @@ inline size_t VTTScanner::Run::length() const
 template<unsigned charactersCount>
 inline bool VTTScanner::scan(const char (&characters)[charactersCount])
 {
-    return scan({ reinterpret_cast<const LChar*>(characters), charactersCount - 1 });
+    return scan({ byteCast<LChar>(&characters[0]), charactersCount - 1 });
 }
 
 template<bool characterPredicate(UChar)>

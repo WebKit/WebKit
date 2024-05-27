@@ -84,7 +84,7 @@ static RetainPtr<nw_protocol_definition_t> proxyDefinition(HTTPServer::Protocol 
                     break;
                 }
                 case State::DidRequestCredentials:
-                    EXPECT_TRUE(strnstr(reinterpret_cast<const char*>(buffer), "Proxy-Authorization: Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk\r\n", bufferLength));
+                    EXPECT_TRUE(strnstr(byteCast<char>(buffer), "Proxy-Authorization: Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk\r\n", bufferLength));
                     FALLTHROUGH;
                 case State::WillNotRequestCredentials: {
                     const char* negotiationResponse = ""
@@ -557,7 +557,7 @@ void Connection::webSocketHandshake(CompletionHandler<void()>&& connectionHandle
 
             const auto webSocketKeyGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"_span;
             SHA1 sha1;
-            sha1.addBytes(std::span { reinterpret_cast<const uint8_t*>(keyBegin), static_cast<size_t>(keyEnd - keyBegin) });
+            sha1.addBytes(byteCast<uint8_t>(std::span { keyBegin, keyEnd }));
             sha1.addBytes(webSocketKeyGUID);
             SHA1::Digest hash;
             sha1.computeHash(hash);

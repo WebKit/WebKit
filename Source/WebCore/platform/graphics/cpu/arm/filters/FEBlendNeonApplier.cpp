@@ -110,9 +110,9 @@ public:
 
 void FEBlendNeonApplier::applyPlatform(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray, unsigned colorArrayLength) const
 {
-    uint8_t* sourcePixelA = reinterpret_cast<uint8_t*>(srcPixelArrayA);
-    uint8_t* sourcePixelB = reinterpret_cast<uint8_t*>(srcPixelArrayB);
-    uint8_t* destinationPixel = reinterpret_cast<uint8_t*>(dstPixelArray);
+    uint8_t* sourcePixelA = byteCast<uint8_t>(srcPixelArrayA);
+    uint8_t* sourcePixelB = byteCast<uint8_t>(srcPixelArrayB);
+    uint8_t* destinationPixel = byteCast<uint8_t>(dstPixelArray);
 
     uint16x8_t sixteenConst255 = vdupq_n_u16(255);
     uint16x8_t sixteenConstOne = vdupq_n_u16(1);

@@ -287,7 +287,7 @@ bool parseOpusPrivateData(std::span<const uint8_t> codecPrivateData, SharedBuffe
     //
     //     This is an 8-octet (64-bit) field that allows codec
     //     identification and is human readable.
-    if (strncmp("OpusHead", reinterpret_cast<const char*>(codecPrivateData.data()), 8))
+    if (strncmp("OpusHead", byteCast<char>(codecPrivateData.data()), 8))
         return false;
 
     // 2. Version (8 bits, unsigned):

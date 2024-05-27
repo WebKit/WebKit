@@ -354,7 +354,7 @@ static String toStringWithRadixInternal(int32_t number, unsigned radix)
     do {
         uint32_t index = positiveNumber % radix;
         ASSERT(index < sizeof(radixDigits));
-        *--p = static_cast<LChar>(radixDigits[index]);
+        *--p = radixDigits[index];
         positiveNumber /= radix;
     } while (positiveNumber);
 

@@ -411,7 +411,7 @@ bool Memory::fill(uint32_t offset, uint8_t targetValue, uint32_t count)
     if (offset + count > m_handle->size())
         return false;
 
-    memset(reinterpret_cast<uint8_t*>(basePointer()) + offset, targetValue, count);
+    memset(static_cast<uint8_t*>(basePointer()) + offset, targetValue, count);
     return true;
 }
 
@@ -429,7 +429,7 @@ bool Memory::copy(uint32_t dstAddress, uint32_t srcAddress, uint32_t count)
     if (!count)
         return true;
 
-    uint8_t* base = reinterpret_cast<uint8_t*>(basePointer());
+    uint8_t* base = static_cast<uint8_t*>(basePointer());
     // Source and destination areas might overlap, so using memmove.
     memmove(base + dstAddress, base + srcAddress, count);
     return true;
@@ -446,7 +446,7 @@ bool Memory::init(uint32_t offset, const uint8_t* data, uint32_t length)
     if (!length)
         return true;
 
-    memcpy(reinterpret_cast<uint8_t*>(basePointer()) + offset, data, length);
+    memcpy(static_cast<uint8_t*>(basePointer()) + offset, data, length);
     return true;
 }
 

@@ -131,7 +131,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
     if (!pixels)
         return nullptr;
 
-    const auto* bytes = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(pixels.get()));
+    const auto* bytes = byteCast<uint8_t>(CFDataGetBytePtr(pixels.get()));
     CheckedUint32 sizeInBytes = CFDataGetLength(pixels.get());
     if (!bytes || !sizeInBytes || sizeInBytes.hasOverflowed())
         return nullptr;

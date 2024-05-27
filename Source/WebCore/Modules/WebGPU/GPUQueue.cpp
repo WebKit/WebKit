@@ -253,7 +253,7 @@ static void getImageBytesFromVideoFrame(const RefPtr<VideoFrame>& videoFrame, Im
     auto sizeInBytes = rows * CVPixelBufferGetBytesPerRow(pixelBuffer);
 
     CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-    callback({ reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddress(pixelBuffer)), sizeInBytes }, rows);
+    callback({ static_cast<uint8_t*>(CVPixelBufferGetBaseAddress(pixelBuffer)), sizeInBytes }, rows);
     CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
 }
 #endif

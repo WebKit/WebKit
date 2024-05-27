@@ -204,7 +204,7 @@ const char* Thread::normalizeThreadName(const char* threadName)
 #endif
     auto characters = result.span8();
     ASSERT(characters[characters.size()] == '\0');
-    return reinterpret_cast<const char*>(characters.data());
+    return byteCast<char>(characters.data());
 #endif
 }
 

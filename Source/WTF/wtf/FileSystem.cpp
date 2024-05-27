@@ -57,7 +57,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return std::filesystem::u8path(path.utf8().data());
 ALLOW_DEPRECATED_DECLARATIONS_END
 #else
-    return { std::u8string(reinterpret_cast<const char8_t*>(path.utf8().data())) };
+    return { std::u8string(byteCast<char8_t>(path.utf8().data())) };
 #endif
 }
 

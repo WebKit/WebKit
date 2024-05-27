@@ -125,7 +125,7 @@ void printMemory(PrintStream& out, Context& context)
         break;
     }
     case Memory::AddressType::AbsoluteAddress: {
-        ptr = reinterpret_cast<uint8_t*>(const_cast<void*>(memory.u.absoluteAddress.m_ptr));
+        ptr = static_cast<uint8_t*>(const_cast<void*>(memory.u.absoluteAddress.m_ptr));
         break;
     }
     }

@@ -55,53 +55,36 @@ private:
     const size_t m_length;
 };
 
-// A container for a null-terminated char array supporting copy-on-write
-// assignment.  The contained char array may be null.
+// A container for a null-terminated char array supporting copy-on-write assignment.
+// The contained char array may be null.
 class CString final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CString() { }
     WTF_EXPORT_PRIVATE CString(const char*);
     WTF_EXPORT_PRIVATE CString(std::span<const char>);
-    CString(std::span<const uint8_t> bytes) : CString({ reinterpret_cast<const char*>(bytes.data()), bytes.size() }) { }
+    CString(std::span<const uint8_t>);
     CString(CStringBuffer* buffer) : m_buffer(buffer) { }
     WTF_EXPORT_PRIVATE static CString newUninitialized(size_t length, char*& characterBuffer);
     CString(HashTableDeletedValueType) : m_buffer(HashTableDeletedValue) { }
 
-    const char* data() const
-    {
-        return m_buffer ? m_buffer->data() : nullptr;
-    }
+    const char* data() const;
 
     std::string toStdString() const { return m_buffer ? std::string(m_buffer->data()) : std::string(); }
 
-    std::span<const uint8_t> span() const
-    {
-        if (m_buffer)
-            return { reinterpret_cast<const uint8_t*>(m_buffer->data()), m_buffer->length() };
-        return { };
-    }
-
-    std::span<const uint8_t> spanIncludingNullTerminator() const
-    {
-        if (m_buffer)
-            return { reinterpret_cast<const uint8_t*>(m_buffer->data()), m_buffer->length() + 1 };
-        return { };
-    }
+    std::span<const uint8_t> span() const;
+    std::span<const uint8_t> spanIncludingNullTerminator() const;
 
     WTF_EXPORT_PRIVATE char* mutableData();
-    size_t length() const
-    {
-        return m_buffer ? m_buffer->length() : 0;
-    }
+    size_t length() const;
 
     bool isNull() const { return !m_buffer; }
     bool isSafeToSendToAnotherThread() const;
 
     CStringBuffer* buffer() const { return m_buffer.get(); }
-    
+
     bool isHashTableDeletedValue() const { return m_buffer.isHashTableDeletedValue(); }
-    
+
     WTF_EXPORT_PRIVATE unsigned hash() const;
 
     // Useful if you want your CString to hold dynamic data.
@@ -123,11 +106,40 @@ struct CStringHash {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-template<typename T> struct DefaultHash;
+template<typename> struct DefaultHash;
 template<> struct DefaultHash<CString> : CStringHash { };
 
-template<typename T> struct HashTraits;
+template<typename> struct HashTraits;
 template<> struct HashTraits<CString> : SimpleClassHashTraits<CString> { };
+
+inline CString::CString(std::span<const uint8_t> bytes)
+    : CString(byteCast<char>(bytes))
+{
+}
+
+inline const char* CString::data() const
+{
+    return m_buffer ? m_buffer->data() : nullptr;
+}
+
+inline std::span<const uint8_t> CString::span() const
+{
+    if (m_buffer)
+        return { byteCast<uint8_t>(m_buffer->data()), m_buffer->length() };
+    return { };
+}
+
+inline std::span<const uint8_t> CString::spanIncludingNullTerminator() const
+{
+    if (m_buffer)
+        return { byteCast<uint8_t>(m_buffer->data()), m_buffer->length() + 1 };
+    return { };
+}
+
+inline size_t CString::length() const
+{
+    return m_buffer ? m_buffer->length() : 0;
+}
 
 } // namespace WTF
 

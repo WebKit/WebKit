@@ -4552,10 +4552,7 @@ void WebPage::getWebArchiveOfFrame(std::optional<FrameIdentifier> frameID, Compl
 void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
 {
     IPC::SharedBufferReference dataBuffer;
-
 #if PLATFORM(COCOA)
-    RetainPtr<CFDataRef> data;
-
     if (auto treeData = m_page->accessibilityTreeData()) {
         auto stream = adoptCF(CFWriteStreamCreateWithAllocatedBuffers(0, 0));
         CFWriteStreamOpen(stream.get());
@@ -4568,13 +4565,12 @@ void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optiona
         writeTreeToStream(treeData->liveTree);
         writeTreeToStream(treeData->isolatedTree);
 
-        data = adoptCF(static_cast<CFDataRef>(CFWriteStreamCopyProperty(stream.get(), kCFStreamPropertyDataWritten)));
+        auto data = adoptCF(checked_cf_cast<CFDataRef>(CFWriteStreamCopyProperty(stream.get(), kCFStreamPropertyDataWritten)));
         CFWriteStreamClose(stream.get());
 
         dataBuffer = IPC::SharedBufferReference(SharedBuffer::create(data.get()));
     }
 #endif
-
     callback(dataBuffer);
 }
 

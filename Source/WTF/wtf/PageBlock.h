@@ -75,7 +75,7 @@ public:
     PageBlock(void*, size_t, bool hasGuardPages);
     
     void* base() const { return m_base; }
-    void* end() const { return reinterpret_cast<uint8_t*>(m_base) + size(); }
+    void* end() const { return static_cast<uint8_t*>(m_base) + size(); }
     size_t size() const { return m_size; }
 
     operator bool() const { return !!m_realBase; }

@@ -162,7 +162,7 @@ template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>
 
 inline std::span<const uint8_t> span(CFDataRef data)
 {
-    return { reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(data)), Checked<size_t>(CFDataGetLength(data)) };
+    return { static_cast<const uint8_t*>(CFDataGetBytePtr(data)), Checked<size_t>(CFDataGetLength(data)) };
 }
 
 inline Vector<uint8_t> makeVector(CFDataRef data)

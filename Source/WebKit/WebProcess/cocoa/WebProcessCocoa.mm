@@ -873,7 +873,7 @@ static void registerLogHook()
             char* messageString = os_log_copy_message_string(&msg);
             if (!messageString)
                 return;
-            std::span logString(reinterpret_cast<uint8_t*>(messageString), strlen(messageString) + 1);
+            std::span logString(byteCast<uint8_t>(messageString), strlen(messageString) + 1);
 
             auto connectionID = WebProcess::singleton().networkProcessConnectionID();
             if (connectionID)

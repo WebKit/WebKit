@@ -151,7 +151,7 @@ public:
     HistoryEntryDataEncoder& operator<<(const Vector<char>& value)
     {
         *this << static_cast<uint64_t>(value.size());
-        encodeFixedLengthData(spanReinterpretCast<const uint8_t>(value.span()), 1);
+        encodeFixedLengthData(byteCast<uint8_t>(value.span()), 1);
 
         return *this;
     }
@@ -508,7 +508,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     if (!CFPropertyListWrite(stateDictionary.get(), writeStream.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr))
         return nullptr;
 
-    auto data = adoptCF(static_cast<CFDataRef>(CFWriteStreamCopyProperty(writeStream.get(), kCFStreamPropertyDataWritten)));
+    auto data = adoptCF(checked_cf_cast<CFDataRef>(CFWriteStreamCopyProperty(writeStream.get(), kCFStreamPropertyDataWritten)));
 
     CFIndex length = CFDataGetLength(data.get());
 
