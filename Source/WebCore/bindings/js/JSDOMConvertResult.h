@@ -116,7 +116,7 @@ struct ConversionResultStorage<T&> {
         : value([&]() -> Expected<Type, ConversionResultException> {
             if (other.hasException())
                 return makeUnexpected(ConversionResultException());
-            return ReturnType { other.releaseReturnValue() };
+            return static_cast<WebCore::Detail::ConversionResultStorage<T&>::ReturnType>(other.releaseReturnValue());
         }())
     {
     }
