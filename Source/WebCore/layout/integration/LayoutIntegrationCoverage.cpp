@@ -78,6 +78,8 @@ bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
             continue;
         if (is<RenderInline>(renderer))
             continue;
+        if (is<RenderListMarker>(renderer))
+            continue;
         if (renderer.isInFlow() && renderer.style().isHorizontalWritingMode() && renderer.style().logicalWidth().isFixed()) {
             auto isNonSupportedFixedWidthContent = [&] {
                 // FIXME: Implement this image special in line builder.
