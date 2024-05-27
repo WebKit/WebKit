@@ -566,7 +566,6 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(VM& vm, CodeBloc
     }
     propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
     canBeMegamorphic = unlinkedStubInfo.canBeMegamorphic;
-    isEnumerator = unlinkedStubInfo.isEnumerator;
     useDataIC = true;
 
     if (unlinkedStubInfo.canBeMegamorphic)
@@ -770,7 +769,6 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(CodeBlock* co
     prototypeIsKnownObject = unlinkedStubInfo.prototypeIsKnownObject;
     hasConstantIdentifier = unlinkedStubInfo.hasConstantIdentifier;
     canBeMegamorphic = unlinkedStubInfo.canBeMegamorphic;
-    isEnumerator = unlinkedStubInfo.isEnumerator;
     useDataIC = true;
 
     if (unlinkedStubInfo.canBeMegamorphic)

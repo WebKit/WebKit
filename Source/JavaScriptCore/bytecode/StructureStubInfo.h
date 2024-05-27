@@ -463,7 +463,6 @@ public:
     bool propertyIsInt32 : 1 { false };
     bool propertyIsSymbol : 1 { false };
     bool canBeMegamorphic : 1 { false };
-    bool isEnumerator : 1 { false };
     bool useDataIC : 1 { false };
 };
 
@@ -538,7 +537,6 @@ struct UnlinkedStructureStubInfo {
     bool propertyIsSymbol : 1 { false };
     bool prototypeIsKnownObject : 1 { false };
     bool canBeMegamorphic : 1 { false };
-    bool isEnumerator : 1 { false };
     CacheableIdentifier m_identifier; // This only comes from already marked one. Thus, we do not mark it via GC.
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;

@@ -4202,8 +4202,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 #if USE(JSVALUE32_64)
             allAreSimpleLoadOrMiss = false;
 #endif
-            if (m_stubInfo->isEnumerator)
-                allAreSimpleLoadOrMiss = false;
 
             if (allAreSimpleLoadOrMiss) {
                 cases.shrink(0);
