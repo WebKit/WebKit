@@ -54,7 +54,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
     for (auto& child : childrenOfType<RenderObject>(*m_table)) {
         if (CheckedPtr column = dynamicDowncast<RenderTableCol>(child)) {
             // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
-            // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark it's
+            // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark its
             // ancestors as dirty.
             column->clearPreferredLogicalWidthsDirtyBits();
         } else if (CheckedPtr section = dynamicDowncast<RenderTableSection>(child)) {
@@ -181,6 +181,12 @@ void AutoTableLayout::fullRecalc()
 
     for (unsigned i = 0; i < nEffCols; i++)
         recalcColumn(i);
+
+    for (auto& section : childrenOfType<RenderTableSection>(*m_table)) {
+        section.setPreferredLogicalWidthsDirty(false);
+        for (auto* row = section.firstRow(); row; row = row->nextRow())
+            row->setPreferredLogicalWidthsDirty(false);
+    }
 }
 
 static bool shouldScaleColumnsForParent(const RenderTable& table)
