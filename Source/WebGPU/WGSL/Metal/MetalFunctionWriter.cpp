@@ -1895,7 +1895,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
     auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().inferredType());
-    if (isArray || isStruct) {
+    if (call.isConstructor() && (isArray || isStruct)) {
         visit(type);
         m_stringBuilder.append('(');
         const Type* arrayElementType = nullptr;
