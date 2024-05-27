@@ -396,9 +396,6 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
                 return packing;
             operation = packing & Packing::Packed ? "__unpack"_s : "__pack"_s;
         } else if (std::holds_alternative<Types::Array>(*type)) {
-            // array of vec3 can be implicitly converted
-            if (packing & Packing::Vec3)
-                m_shaderModule.setUsesPackedVec3();
             if (packing & Packing::Packed) {
                 operation = "__unpack"_s;
                 m_shaderModule.setUsesUnpackArray();
@@ -761,10 +758,8 @@ void RewriteGlobalVariables::packArrayResource(AST::Variable& global, const Type
 {
     const Type* packedArrayType = packArrayType(arrayType);
     if (!packedArrayType) {
-        if (arrayType->element->packing() & Packing::Vec3) {
-            m_shaderModule.setUsesPackedVec3();
+        if (arrayType->element->packing() & Packing::Vec3)
             m_shaderModule.replace(&global.role(), AST::VariableRole::PackedResource);
-        }
         return;
     }
 
@@ -857,8 +852,11 @@ const Type* RewriteGlobalVariables::packStructType(const Types::Struct* structTy
 const Type* RewriteGlobalVariables::packArrayType(const Types::Array* arrayType)
 {
     auto* structType = std::get_if<Types::Struct>(arrayType->element);
-    if (!structType)
+    if (!structType) {
+        if (arrayType->element->packing() & Packing::Vec3)
+            m_shaderModule.setUsesPackedVec3();
         return nullptr;
+    }
 
     const Type* packedStructType = packStructType(structType);
     if (!packedStructType)
