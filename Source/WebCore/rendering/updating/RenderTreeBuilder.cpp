@@ -461,12 +461,18 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     }
 
     newChild->setNeedsLayoutAndPrefWidthsRecalc();
-    if (!newChild->style().hasOutOfFlowPosition())
+    auto isOutOfFlowBox = newChild->style().hasOutOfFlowPosition();
+    if (!isOutOfFlowBox)
         parent.setPreferredLogicalWidthsDirty(true);
 
     if (!parent.normalChildNeedsLayout()) {
-        // We may supply the static position for an absolute positioned child.
-        parent.setChildNeedsLayout();
+        // setNeedsLayoutAndPrefWidthsRecalc above already takes care of propagating dirty bits on the ancestor chain, but
+        // in order to compute static position for out of flow boxes, the parent has to run layout as well.
+        // FIXME: Introduce a dirty bit to bridge the gap between parent and containing block which would
+        // not trigger layout but a simple traversal all the way to the direct parent.
+        // FIXME: we should be able to ASSERT(isOutOfFlowBox) but some renderers mark themselves dirty when not yet attached to the tree.
+        auto shouldMarkContainingBlockChain = !isOutOfFlowBox || newChild->containingBlock() != &parent;
+        parent.setChildNeedsLayout(shouldMarkContainingBlockChain ? MarkingBehavior::MarkContainingBlockChain : MarkingBehavior::MarkOnlyThis);
     }
 
     if (AXObjectCache* cache = parent.document().axObjectCache())
