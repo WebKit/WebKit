@@ -3783,6 +3783,8 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_hit_test_scroll_visib
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-scrolling.html [ Skip ]
 
+webkit.org/b/274686 imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_mouse_and_release_and_capture_again.html [ Skip ]
+
 # Flaky tests Nov2023
 webkit.org/b/264680 http/tests/multipart/stop-crash.html [ Pass Timeout ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor-iframe.html [ ImageOnlyFailure Pass ]

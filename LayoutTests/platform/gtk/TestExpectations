@@ -57,6 +57,29 @@ imported/w3c/web-platform-tests/pointerevents [ Pass ]
 webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_hit_test_scroll.html [ Skip ]
 webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_hit_test_scroll_visible_descendant.html [ Skip ]
 webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Skip ]
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch_target_after_pointerdown_target_removed.tentative.html
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-in-iframe.html
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-scrollbar.html
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-will-change-in-iframe.html
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-will-change-scrollbar.html
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-will-change.html
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll.html
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_appended_interleaved.tentative.html?touch
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed_interleaved.tentative.html?touch
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?mouse
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?mouse-nonstandard
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?mouse-right
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?mouse-right-nonstandard
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?pen
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?pen-nonstandard
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?pen-right
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?pen-right-nonstandard
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?touch
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?touch-nonstandard
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_mouse_and_release_and_capture_again.html
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_touch_and_release_at_got_capture.html
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_hit_test_scroll_background.html
+webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointermove_isprimary_same_as_pointerdown.html?touch
 # PointerEvents currently only supports mouse on GTK (no Touch/Pen support)
 webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch.html [ Skip ]
 webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercancel_touch.html [ Skip ]
@@ -72,9 +95,6 @@ imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes.https.
 imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes_under_load.https.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_appended.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?touch [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers.html?pen [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_rightbutton.html?mouse [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_rightbutton.html?pen [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html?pen [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_click_is_a_pointerevent.html?pen [ Skip ]
@@ -101,7 +121,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerup_after_pointerdown_target
 imported/w3c/web-platform-tests/pointerevents/predicted_events_attributes.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/touch-action-with-swipe-dir-change.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action_two-finger_interaction.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_nohover_pointers.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture_in_frame.html [ Skip ]

@@ -1880,3 +1880,6 @@ webkit.org/b/273588 fast/forms/select/mac-wk2/inactive-appearance.html [ Pass Im
 webkit.org/b/273905 [ X86_64 ] svg/filters/filter-on-root-tile-boundary.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/274130 [ Debug ] media/video-pause-immediately.html [ Pass Failure ]
+
+webkit.org/b/274709 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-in-iframe.html [ Pass Failure ]
+webkit.org/b/274709 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-will-change-in-iframe.html [ Pass Failure ]

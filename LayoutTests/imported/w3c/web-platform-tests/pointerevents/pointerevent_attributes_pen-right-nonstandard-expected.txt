@@ -1,0 +1,25 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointerover expected 0 but got 4
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointerenter expected 0 but got 4
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: Buttons attribute on pointermove expected 0 but got 4
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerdown event Reached unreachable code
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerover event Reached unreachable code
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerenter event Reached unreachable code
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerdown event Reached unreachable code
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerup event Reached unreachable code
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerout event Reached unreachable code
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointerleave event Reached unreachable code
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: missing pointermove event Reached unreachable code
+
+done
+
+Harness Error (FAIL), message = Unhandled rejection: assert_unreached: missing pointermove event Reached unreachable code
+
+FAIL Test pointer events in the main document assert_equals: Buttons attribute on pointerover expected 0 but got 4
+FAIL Test pointer events in an iframe assert_unreached: missing pointerover event Reached unreachable code
+PASS mouse pointerup.fromElement value is null
+PASS mouse pointerup.toElement value is null
+PASS mouse pointerout.fromElement value is null
+PASS mouse pointerout.toElement value is null
+PASS mouse pointerleave.fromElement value is null
+PASS mouse pointerleave.toElement value is null
+
