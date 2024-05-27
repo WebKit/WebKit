@@ -81,7 +81,7 @@
 }
 
 .box-shadow-editor > table > tr.offset-x > td > svg circle {
-    r: 5px; /* keep in sync with `this._offsetSliderKnobRadius` */
+    border-radius: 5px; /* keep in sync with `this._offsetSliderKnobRadius` */
     fill: var(--glyph-color-active);
 }
 
