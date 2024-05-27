@@ -82,17 +82,17 @@ RefPtr<WebCore::SharedBuffer> SharedBufferReference::unsafeBuffer() const
     return nullptr;
 }
 
-const uint8_t* SharedBufferReference::data() const
+std::span<const uint8_t> SharedBufferReference::span() const
 {
 #if !USE(UNIX_DOMAIN_SOCKETS)
     RELEASE_ASSERT_WITH_MESSAGE(isEmpty() || (!m_buffer && m_memory), "Must only be called on IPC's receiver side");
 
     if (m_memory)
-        return static_cast<uint8_t*>(m_memory->data());
+        return m_memory->span().first(m_size);
 #endif
     if (!m_buffer || !m_buffer->isContiguous())
-        return nullptr;
-    return downcast<SharedBuffer>(m_buffer.get())->span().data();
+        return { };
+    return downcast<SharedBuffer>(m_buffer.get())->span().first(m_size);
 }
 
 RefPtr<WebCore::SharedMemory> SharedBufferReference::sharedCopy() const
