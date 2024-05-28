@@ -121,8 +121,8 @@ public:
 
     const Vector<KeyValuePair<String, int>>& testLongRecord() const { return m_longRecord; }
     void setTestLongRecord(const Vector<KeyValuePair<String, int>>& value) { m_longRecord = value; }
-    const Vector<KeyValuePair<String, RefPtr<Node>>>& testNodeRecord() const { return m_nodeRecord; }
-    void setTestNodeRecord(const Vector<KeyValuePair<String, RefPtr<Node>>>& value) { m_nodeRecord = value; }
+    const Vector<KeyValuePair<String, Ref<Node>>>& testNodeRecord() const { return m_nodeRecord; }
+    void setTestNodeRecord(const Vector<KeyValuePair<String, Ref<Node>>>& value) { m_nodeRecord = value; }
     const Vector<KeyValuePair<String, Vector<String>>>& testSequenceRecord() const { return m_sequenceRecord; }
     void setTestSequenceRecord(const Vector<KeyValuePair<String, Vector<String>>>& value) { m_sequenceRecord = value; }
 
@@ -169,7 +169,7 @@ private:
     String m_byteString;
     String m_treatNullAsEmptyString;
     Vector<KeyValuePair<String, int>> m_longRecord;
-    Vector<KeyValuePair<String, RefPtr<Node>>> m_nodeRecord;
+    Vector<KeyValuePair<String, Ref<Node>>> m_nodeRecord;
     Vector<KeyValuePair<String, Vector<String>>> m_sequenceRecord;
 
     Dictionary m_testDictionary;

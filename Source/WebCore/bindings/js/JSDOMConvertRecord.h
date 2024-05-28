@@ -62,8 +62,8 @@ template<> struct IdentifierConverter<IDLUSVString> {
 
 template<typename K, typename V> struct Converter<IDLRecord<K, V>> : DefaultConverter<IDLRecord<K, V>> {
     using ReturnType = typename DefaultConverter<IDLRecord<K, V>>::ReturnType;
-    using KeyType = typename K::ImplementationType;
-    using ValueType = typename V::ImplementationType;
+    using KeyType = typename K::InnerParameterType;
+    using ValueType = typename V::InnerParameterType;
     using Result = ConversionResult<IDLRecord<K, V>>;
 
     static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject)
@@ -77,6 +77,25 @@ template<typename K, typename V> struct Converter<IDLRecord<K, V>> : DefaultConv
     }
 
 private:
+    // As temporary measure, IDL interfaces need to have their conversion result adjusted
+    // to properly form an inner parameter type. Once all IDL types have full support for
+    // using Ref for interfaces, this adjustment can be removed.
+    template<typename IDL>
+    struct ValueAdjuster {
+        static ValueType adjust(ConversionResult<IDL>&& result)
+        {
+            return result.releaseReturnValue();
+        }
+    };
+
+    template<typename T>
+    struct ValueAdjuster<IDLInterface<T>> {
+        static ValueType adjust(ConversionResult<IDLInterface<T>>&& result)
+        {
+            return Ref { *result.releaseReturnValue() };
+        }
+    };
+
     template<class... Args>
     static Result convertRecord(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, Args&& ...args)
     {
@@ -140,7 +159,7 @@ private:
                         auto addResult = resultMap.add(typedKey, result.size());
                         if (!addResult.isNewEntry) {
                             ASSERT(result[addResult.iterator->value].key == typedKey);
-                            result[addResult.iterator->value].value = typedValue.releaseReturnValue();
+                            result[addResult.iterator->value].value = ValueAdjuster<V>::adjust(WTFMove(typedValue));
                             continue;
                         }
                     }
@@ -148,7 +167,7 @@ private:
                     UNUSED_VARIABLE(resultMap);
                 
                 // 5. Otherwise, append to result a mapping (typedKey, typedValue).
-                result.append({ WTFMove(typedKey), typedValue.releaseReturnValue() });
+                result.append({ WTFMove(typedKey), ValueAdjuster<V>::adjust(WTFMove(typedValue)) });
             }
         }
 

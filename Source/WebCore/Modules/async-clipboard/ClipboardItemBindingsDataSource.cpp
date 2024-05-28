@@ -67,7 +67,7 @@ static FileReaderLoader::ReadType readTypeForMIMEType(const String& type)
     return FileReaderLoader::ReadAsArrayBuffer;
 }
 
-ClipboardItemBindingsDataSource::ClipboardItemBindingsDataSource(ClipboardItem& item, Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&& itemPromises)
+ClipboardItemBindingsDataSource::ClipboardItemBindingsDataSource(ClipboardItem& item, Vector<KeyValuePair<String, Ref<DOMPromise>>>&& itemPromises)
     : ClipboardItemDataSource(item)
     , m_itemPromises(WTFMove(itemPromises))
 {
@@ -77,14 +77,14 @@ ClipboardItemBindingsDataSource::~ClipboardItemBindingsDataSource() = default;
 
 Vector<String> ClipboardItemBindingsDataSource::types() const
 {
-    return m_itemPromises.map([&] (auto& typeAndItem) {
+    return m_itemPromises.map([&](auto& typeAndItem) {
         return typeAndItem.key;
     });
 }
 
 void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPromise>&& promise)
 {
-    auto matchIndex = m_itemPromises.findIf([&] (auto& item) {
+    auto matchIndex = m_itemPromises.findIf([&](auto& item) {
         return type == item.key;
     });
 
@@ -93,7 +93,7 @@ void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPr
         return;
     }
 
-    auto itemPromise = m_itemPromises[matchIndex].value;
+    Ref itemPromise = m_itemPromises[matchIndex].value;
     itemPromise->whenSettled([itemPromise, promise = WTFMove(promise), type] () mutable {
         if (itemPromise->status() != DOMPromise::Status::Fulfilled) {
             promise->reject(ExceptionCode::AbortError);
@@ -140,7 +140,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
     m_completionHandler = WTFMove(completion);
     m_writingDestination = destination;
     m_numberOfPendingClipboardTypes = m_itemPromises.size();
-    m_itemTypeLoaders = m_itemPromises.map([&] (auto& typeAndItem) {
+    m_itemTypeLoaders = m_itemPromises.map([&](auto& typeAndItem) {
         auto type = typeAndItem.key;
         auto itemTypeLoader = ClipboardItemTypeLoader::create(destination, type, [this, protectedItem = Ref { m_item }] {
             ASSERT(m_numberOfPendingClipboardTypes);
