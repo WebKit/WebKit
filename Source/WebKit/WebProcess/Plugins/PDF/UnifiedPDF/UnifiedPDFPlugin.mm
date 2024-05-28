@@ -3696,10 +3696,17 @@ std::pair<String, RetainPtr<PDFSelection>> UnifiedPDFPlugin::textForImmediateAct
         return { { }, nil };
 
     for (PDFAnnotation *annotation in annotationsForCurrentPage.get()) {
-        if (!annotationIsExternalLink(annotation))
+        FloatRect annotationBoundsInPageSpace = [annotation bounds];
+
+        if (!annotationBoundsInPageSpace.contains(pagePoint))
             continue;
 
-        if (!FloatRect { [annotation bounds] }.contains(pagePoint))
+#if PLATFORM(MAC)
+        if (m_activeAnnotation && m_activeAnnotation->annotation() == annotation)
+            data.isActivePDFAnnotation = true;
+#endif
+
+        if (!annotationIsExternalLink(annotation))
             continue;
 
         RetainPtr url = [annotation URL];

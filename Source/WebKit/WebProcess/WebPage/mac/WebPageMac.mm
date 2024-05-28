@@ -930,7 +930,14 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
         if (RefPtr pluginView = static_cast<PluginView*>(embedOrObject->pluginWidget())) {
             if (pluginView->performImmediateActionHitTestAtLocation(locationInViewCoordinates, immediateActionResult)) {
                 // FIXME (144030): Focus does not seem to get set to the PDF when invoking the menu.
-                if (RefPtr pluginDocument = dynamicDowncast<PluginDocument>(element->document()))
+                RefPtr pluginDocument = dynamicDowncast<PluginDocument>(element->document());
+                auto shouldFocusPluginDocument = [&pluginDocument, &immediateActionResult] {
+                    if (!pluginDocument)
+                        return false;
+                    return !immediateActionResult.isActivePDFAnnotation;
+                }();
+
+                if (shouldFocusPluginDocument)
                     pluginDocument->setFocusedElement(element.get());
             }
         }

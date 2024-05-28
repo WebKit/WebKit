@@ -51,6 +51,7 @@ struct WebKit::WebHitTestResultData {
     bool isOverTextInsideFormControlElement;
     bool isDownloadableMedia;
     bool mediaIsInFullscreen;
+    bool isActivePDFAnnotation;
     WebKit::WebHitTestResultData::ElementType elementType;
     std::optional<WebKit::FrameInfoData> frameInfo;
     std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData;
