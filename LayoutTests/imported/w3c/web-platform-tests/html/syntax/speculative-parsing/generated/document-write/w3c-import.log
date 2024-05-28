@@ -44,6 +44,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/meta-csp-img-src-none.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/meta-referrer-no-referrer-img-src.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/meta-viewport-link-stylesheet-media.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/nested-template-shadowrootmode-1.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/nested-template-shadowrootmode-2.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/picture-source-br-img.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/picture-source-no-img.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/picture-source-nomatch-media.tentative.sub.html
@@ -64,6 +66,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/svg-script-href.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/svg-script-src.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/svg-script-xlinkhref.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/template-img-src.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/template-link-stylesheet.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/template-script-src.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/template-shadowrootmode-img-src.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/template-shadowrootmode-link-stylesheet.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/template-shadowrootmode-script-src.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/video-poster.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/document-write/xmp-script-src.tentative.sub.html

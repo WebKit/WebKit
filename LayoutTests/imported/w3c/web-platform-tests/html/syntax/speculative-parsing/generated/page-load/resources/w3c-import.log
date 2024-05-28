@@ -44,6 +44,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/meta-csp-img-src-none-framed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/meta-referrer-no-referrer-img-src-framed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/meta-viewport-link-stylesheet-media-framed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/nested-template-shadowrootmode-1-framed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/nested-template-shadowrootmode-2-framed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/picture-source-br-img-framed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/picture-source-no-img-framed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/picture-source-nomatch-media-framed.sub.html
@@ -64,6 +66,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/svg-script-href-framed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/svg-script-src-framed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/svg-script-xlinkhref-framed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/template-img-src-framed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/template-link-stylesheet-framed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/template-script-src-framed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/template-shadowrootmode-img-src-framed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/template-shadowrootmode-link-stylesheet-framed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/template-shadowrootmode-script-src-framed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/video-poster-framed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/resources/xmp-script-src-framed.sub.html
