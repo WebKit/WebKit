@@ -522,9 +522,10 @@ uint32_t RenderBundleEncoder::computeMininumVertexCount() const
         auto& vertexBuffer = m_vertexBuffers[bufferIndex];
         auto bufferSize = vertexBuffer.size;
         auto stride = bufferData.stepMode == WGPUVertexStepMode_Vertex ? bufferData.stride : 1;
-        if (!stride)
+        auto lastStride = bufferData.lastStride;
+        if (!stride || bufferSize < lastStride)
             continue;
-        auto elementCount = bufferSize / stride;
+        auto elementCount = (bufferSize - lastStride) / stride + 1;
         minVertexCount = std::min<uint32_t>(minVertexCount, elementCount);
     }
     return minVertexCount;

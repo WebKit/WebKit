@@ -542,36 +542,39 @@ uint32_t RenderPassEncoder::computeMininumVertexCount() const
     auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
         auto it = m_vertexBuffers.find(bufferIndex);
-        if (it == m_vertexBuffers.end())
-            return RenderBundleEncoder::invalidVertexCount;
+        RELEASE_ASSERT(it != m_vertexBuffers.end());
         auto bufferSize = it->value.buffer.length;
         auto stride = bufferData.stepMode == WGPUVertexStepMode_Vertex ? bufferData.stride : 1;
-        if (!stride)
+        auto lastStride = bufferData.lastStride;
+        if (!stride || bufferSize < lastStride)
             continue;
-        auto elementCount = bufferSize / stride;
+        auto elementCount = (bufferSize - lastStride) / stride + 1;
         minVertexCount = std::min<uint32_t>(minVertexCount, elementCount);
     }
     return minVertexCount;
 }
 
-bool RenderPassEncoder::clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes)
+RenderPassEncoder::IndexCall RenderPassEncoder::clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes)
 {
     id<MTLBuffer> indexBuffer = m_indexBuffer.get() ? m_indexBuffer->buffer() : nil;
     if (!indexCount || !indexBuffer || m_indexBuffer->isDestroyed())
-        return false;
+        return IndexCall::Skip;
 
     uint32_t minVertexCount = computeMininumVertexCount();
     if (minVertexCount == RenderBundleEncoder::invalidVertexCount)
-        return false;
+        return IndexCall::Draw;
 
     uint32_t indexSizeInBytes = indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t);
     uint32_t firstIndex = indexBufferOffsetInBytes / indexSizeInBytes;
-    if (!minVertexCount || indexBufferOffsetInBytes >= indexBuffer.length || !m_indexBuffer->indirectBufferRequiresRecomputation(firstIndex, indexCount, minVertexCount, indexType))
-        return false;
+    if (!minVertexCount || indexBufferOffsetInBytes >= indexBuffer.length)
+        return IndexCall::Skip;
+
+    if (!m_indexBuffer->indirectBufferRequiresRecomputation(firstIndex, indexCount, minVertexCount, indexType))
+        return IndexCall::Draw;
 
     NSUInteger indexCountInBytes = static_cast<NSUInteger>(indexSizeInBytes) * indexCount;
     if (indexCountInBytes + indexBufferOffsetInBytes > indexBuffer.length)
-        return false;
+        return IndexCall::Skip;
     id<MTLBuffer> indexedIndirectBuffer = m_indexBuffer->indirectIndexedBuffer();
     MTLDrawIndexedPrimitivesIndirectArguments indirectArguments {
         .indexCount = indexCount,
@@ -596,7 +599,7 @@ bool RenderPassEncoder::clampIndexBufferToValidValues(uint32_t indexCount, uint3
     [m_renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
     m_indexBuffer->indirectBufferRecomputed(firstIndex, indexCount, minVertexCount, indexType);
 
-    return true;
+    return IndexCall::IndirectDraw;
 }
 
 std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferToValidValues(Buffer* apiIndexBuffer, const Buffer& indexedIndirectBuffer, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, Device& device, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder> renderCommandEncoder)
@@ -679,7 +682,7 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
     if (!runIndexBufferValidation(firstInstance, instanceCount))
         return;
 
-    bool useIndirectCall = clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes);
+    auto useIndirectCall = clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes);
     if (!executePreDrawCommands())
         return;
 
@@ -687,10 +690,10 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
         return;
 
     id<MTLBuffer> indexBuffer = m_indexBuffer.get() ? m_indexBuffer->buffer() : nil;
-    if (useIndirectCall) {
+    if (useIndirectCall == IndexCall::IndirectDraw) {
         id<MTLBuffer> indirectBuffer = m_indexBuffer->indirectIndexedBuffer();
         [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:0 indirectBuffer:indirectBuffer indirectBufferOffset:0];
-    } else
+    } else if (useIndirectCall == IndexCall::Draw)
         [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:indexBufferOffsetInBytes instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
 }
 

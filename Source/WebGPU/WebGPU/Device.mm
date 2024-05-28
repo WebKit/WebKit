@@ -585,12 +585,12 @@ id<MTLRenderPipelineState> Device::indexBufferClampPipeline(MTLIndexType indexTy
     using namespace metal;
     [[vertex]] void vsUshort(device const ushort* indexBuffer [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], const constant uint* vertexCount [[buffer(2)]], uint indexId [[vertex_id]]) {
         ushort plusOneValue = 1 + indexBuffer[indexId]; // plusOne to handle primitive restarts
-        if (plusOneValue + indexedOutput.baseVertex >= vertexCount[0] + 1)
+        if (indexedOutput.baseVertex >= vertexCount[0] || plusOneValue + indexedOutput.baseVertex >= vertexCount[0] + 1)
             indexedOutput.indexCount = 0u;
     }
     [[vertex]] void vsUint(device const uint* indexBuffer [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], const constant uint* vertexCount [[buffer(2)]], uint indexId [[vertex_id]]) {
         uint plusOneValue = 1 + indexBuffer[indexId]; // plusOne to handle primitive restarts
-        if (plusOneValue + indexedOutput.baseVertex >= vertexCount[0] + 1)
+        if (indexedOutput.baseVertex >= vertexCount[0] || plusOneValue + indexedOutput.baseVertex >= vertexCount[0] + 1)
             indexedOutput.indexCount = 0u;
     })" /* NOLINT */ options:options error:&error];
         if (error) {
@@ -786,7 +786,7 @@ id<MTLRenderPipelineState> Device::icbCommandClampPipeline(MTLIndexType indexTyp
         uint indexId [[vertex_id]]) {
 
         IndexDataUint& data = *indexData;
-        if (data.indexBuffer[indexId] > data.minVertexCount) {
+        if (data.indexBuffer[indexId] >= data.minVertexCount) {
             render_command cmd(icb_container->commandBuffer, data.renderCommand);
             cmd.draw_indexed_primitives(data.primitiveType,
                 0u,
@@ -802,7 +802,7 @@ id<MTLRenderPipelineState> Device::icbCommandClampPipeline(MTLIndexType indexTyp
         uint indexId [[vertex_id]]) {
 
         IndexDataUshort& data = *indexData;
-        if (data.indexBuffer[indexId] > data.minVertexCount) {
+        if (data.indexBuffer[indexId] >= data.minVertexCount) {
             render_command cmd(icb_container->commandBuffer, data.renderCommand);
             cmd.draw_indexed_primitives(data.primitiveType,
                 0u,

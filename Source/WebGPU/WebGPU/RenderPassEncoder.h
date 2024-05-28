@@ -124,7 +124,8 @@ private:
     bool issuedDrawCall() const;
     void incrementDrawCount(uint32_t = 1);
     bool occlusionQueryIsDestroyed() const;
-    bool clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes);
+    enum class IndexCall { Draw, IndirectDraw, Skip };
+    IndexCall clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes);
     uint32_t computeMininumVertexCount() const;
     std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(const Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount);
     id<MTLBuffer> clampIndirectBufferToValidValues(const Buffer&, uint64_t indirectOffset, uint32_t minVertexCount);
