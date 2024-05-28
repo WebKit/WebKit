@@ -2568,6 +2568,16 @@ void KeyframeEffect::computeHasSizeDependentTransform()
 {
     m_animatesSizeAndSizeDependentTransform = (m_blendingKeyframes.hasWidthDependentTransform() && m_blendingKeyframes.containsProperty(CSSPropertyWidth))
         || (m_blendingKeyframes.hasHeightDependentTransform() && m_blendingKeyframes.containsProperty(CSSPropertyHeight));
+
+    // If this is a ::view-transition-group pseudo element with the UA-generated transform
+    // and width/height animations, then prevent the transform component from being applied
+    // asynchronously to ensure they remain synchronized. Since the transform usually animates
+    // the position at the same time as the size animates, even slight desynchronizations look
+    // stuttery.
+    if (auto target = targetStyleable()) {
+        if (target->pseudoElementIdentifier && target->pseudoElementIdentifier->pseudoId == PseudoId::ViewTransitionGroup)
+            m_animatesSizeAndSizeDependentTransform |= ((m_blendingKeyframes.containsProperty(CSSPropertyWidth) || m_blendingKeyframes.containsProperty(CSSPropertyHeight)) && m_blendingKeyframes.containsProperty(CSSPropertyTransform));
+    }
 }
 
 void KeyframeEffect::effectStackNoLongerPreventsAcceleration()

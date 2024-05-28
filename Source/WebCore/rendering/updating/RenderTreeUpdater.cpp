@@ -341,10 +341,14 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
     if (!renderer)
         return;
 
-    generatedContent().updateBackdropRenderer(*renderer);
-    generatedContent().updateWritingSuggestionsRenderer(*renderer);
+    StyleDifference minimalStyleDifference = StyleDifference::Equal;
+    if (update && update->recompositeLayer)
+        minimalStyleDifference = StyleDifference::RecompositeLayer;
+
+    generatedContent().updateBackdropRenderer(*renderer, minimalStyleDifference);
+    generatedContent().updateWritingSuggestionsRenderer(*renderer, minimalStyleDifference);
     if (&element == element.document().documentElement())
-        viewTransition().updatePseudoElementTree(*renderer);
+        viewTransition().updatePseudoElementTree(*renderer, minimalStyleDifference);
 
     m_builder.updateAfterDescendants(*renderer);
 

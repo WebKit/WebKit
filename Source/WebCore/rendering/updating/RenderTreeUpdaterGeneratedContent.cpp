@@ -207,7 +207,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     m_updater.m_builder.updateAfterDescendants(*pseudoElementRenderer);
 }
 
-void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer)
+void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer, StyleDifference minimalStyleDifference)
 {
     auto destroyBackdropIfNeeded = [&renderer, this]() {
         if (WeakPtr backdropRenderer = renderer.backdropRenderer())
@@ -228,7 +228,7 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
 
     auto newStyle = RenderStyle::clone(*style);
     if (auto backdropRenderer = renderer.backdropRenderer())
-        backdropRenderer->setStyle(WTFMove(newStyle));
+        backdropRenderer->setStyle(WTFMove(newStyle), minimalStyleDifference);
     else {
         auto newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, renderer.document(), WTFMove(newStyle));
         newBackdropRenderer->initializeStyle();
@@ -266,7 +266,7 @@ void RenderTreeUpdater::GeneratedContent::removeAfterPseudoElement(Element& elem
     element.clearAfterPseudoElement();
 }
 
-void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(RenderElement& renderer)
+void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(RenderElement& renderer, StyleDifference minimalStyleDifference)
 {
     auto destroyWritingSuggestionsIfNeeded = [&renderer, this]() {
         if (!renderer.element())
@@ -326,7 +326,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
     auto newStyle = RenderStyle::clone(*style);
     if (auto writingSuggestionsRenderer = editor.writingSuggestionRenderer()) {
-        writingSuggestionsRenderer->setStyle(WTFMove(newStyle));
+        writingSuggestionsRenderer->setStyle(WTFMove(newStyle), minimalStyleDifference);
 
         auto* writingSuggestionsText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->firstChild());
         if (!writingSuggestionsText) {
