@@ -101,7 +101,7 @@ static ECMAMode ecmaModeFor(PutByKind putByKind)
 static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
 {
     if (callLinkInfo.type() == CallLinkInfo::Type::Optimizing)
-        static_cast<OptimizingCallLinkInfo&>(callLinkInfo).setSlowPathCallDestination(vm.getCTIVirtualCall(callLinkInfo.callMode()).code().template retagged<JSEntryPtrTag>());
+        callLinkInfo.setVirtualCall(vm);
 }
 #endif
 
@@ -1945,10 +1945,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
     if (isClosureCall) {
         // Verify that we have a function and stash the executable in scratchGPR.
 #if USE(JSVALUE64)
-        if (isTailCall)
-            slowPath.append(jit.branchIfNotCell(calleeGPR, DoNotHaveTagRegisters));
-        else
-            slowPath.append(jit.branchIfNotCell(calleeGPR));
+        slowPath.append(jit.branchIfNotCell(calleeGPR, DoNotHaveTagRegisters));
 #else
         // We would have already checked that the callee is a cell.
 #endif
@@ -1968,51 +1965,44 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
         CallVariant variant(slot.m_calleeOrExecutable);
         CodeBlock* codeBlock = slot.m_codeBlock;
         CodePtr<JSEntryPtrTag> codePtr = slot.m_target;
-        if (fastCounts) {
-            jit.add32(
-                CCallHelpers::TrustedImm32(1),
-                CCallHelpers::Address(fastCountsBaseGPR, caseIndex * sizeof(uint32_t)));
-        }
-        if (isTailCall) {
-            if (codeBlock)
-                jit.storePtr(CCallHelpers::TrustedImmPtr(codeBlock), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
-            jit.nearTailCallThunk(CodeLocationLabel { codePtr });
-        } else {
-            if (codeBlock)
-                jit.storePtr(CCallHelpers::TrustedImmPtr(codeBlock), CCallHelpers::calleeFrameCodeBlockBeforeCall());
-            jit.nearCallThunk(CodeLocationLabel { codePtr });
-            jit.jumpThunk(static_cast<OptimizingCallLinkInfo&>(callLinkInfo).doneLocation());
-        }
+        if (fastCounts)
+            jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(fastCountsBaseGPR, caseIndex * sizeof(uint32_t)));
+        if (codeBlock)
+            jit.storePtr(CCallHelpers::TrustedImmPtr(codeBlock), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
+        jit.nearTailCallThunk(CodeLocationLabel { codePtr });
     }
 
+    // Here we don't know anything, so revert to the full slow path.
     slowPath.link(&jit);
     binarySwitch.fallThrough().link(&jit);
-    jit.move(CCallHelpers::TrustedImmPtr(&callLinkInfo), GPRInfo::regT2);
-    if (isTailCall)
-        jit.nearTailCallThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::PolymorphicRepatchThunk).code() });
-    else {
-        jit.nearCallThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::PolymorphicRepatchThunk).code() });
-        jit.jumpThunk(static_cast<OptimizingCallLinkInfo&>(callLinkInfo).doneLocation());
-    }
+
+    jit.emitFunctionPrologue();
+    if (maxFrameExtentForSlowPathCall)
+        jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
+    jit.move(CCallHelpers::TrustedImmPtr(&callLinkInfo), GPRInfo::regT1);
+    jit.setupArguments<decltype(operationPolymorphicCall)>(GPRInfo::regT1);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationPolymorphicCall)), GPRInfo::nonArgGPR0);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+    if (maxFrameExtentForSlowPathCall)
+        jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
+
+    jit.emitFunctionEpilogue();
+    jit.untagReturnAddress();
+    jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
 
     LinkBuffer patchBuffer(jit, owner, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
     if (patchBuffer.didFailToAllocate()) {
         callLinkInfo.setVirtualCall(vm);
         return;
     }
-    
+
     auto stubRoutine = PolymorphicCallStubRoutine::create(
         FINALIZE_CODE_FOR(
             callerCodeBlock, patchBuffer, JITStubRoutinePtrTag, "PolymorphicCall"_s,
-            "Polymorphic call stub for %s, return point %p, targets %s",
-                isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), static_cast<OptimizingCallLinkInfo&>(callLinkInfo).doneLocation().taggedPtr(),
+            "Polymorphic call stub for %s, targets %s",
+                isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(),
                 toCString(listDump(callSlots.map([&](auto& slot) { return PolymorphicCallCase(CallVariant(slot.m_calleeOrExecutable), slot.m_codeBlock); }))).data()),
         vm, owner, callerFrame, callLinkInfo, callSlots, WTFMove(fastCounts), notUsingCounting, isClosureCall);
-
-    // The original slow path is unreachable on 64-bits, but still
-    // reachable on 32-bits since a non-cell callee will always
-    // trigger the slow path
-    linkSlowFor(vm, callLinkInfo);
 
     // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
     // that it's no longer on stack.

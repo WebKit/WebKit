@@ -282,12 +282,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         ASSERT(m_jitCode->common.m_stubInfos.isEmpty());
     }
 
-    for (auto& record : m_jsCalls) {
-        std::visit([&](auto* info) {
-            info->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(record.doneLocation));
-        }, record.info);
-    }
-    
     for (auto& record : m_jsDirectCalls) {
         auto& info = *record.info;
         info.setSlowPathStart(linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath));

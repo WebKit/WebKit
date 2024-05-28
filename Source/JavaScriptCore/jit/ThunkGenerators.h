@@ -55,8 +55,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstruct(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicRepatchThunk(VM&);
-
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallWithDebuggerHookGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructGenerator(VM&);

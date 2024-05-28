@@ -408,36 +408,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForClosure(VM& vm)
     return polymorphicThunkFor(vm, ClosureMode::Yes);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicRepatchThunk(VM&)
-{
-    // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
-    // The return address is on the stack, or in the link register. We will hence
-    // jump to the callee, or save the return address to the call frame while we
-    // make a C++ function call to the appropriate JIT operation.
-
-    // regT0 => callee
-    // regT1 => tag (32bit)
-    // regT2 => CallLinkInfo*
-
-    CCallHelpers jit;
-
-    jit.emitFunctionPrologue();
-    if (maxFrameExtentForSlowPathCall)
-        jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
-    jit.setupArguments<decltype(operationPolymorphicCall)>(GPRInfo::regT2);
-    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationPolymorphicCall)), GPRInfo::nonArgGPR0);
-    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
-    if (maxFrameExtentForSlowPathCall)
-        jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-
-    jit.emitFunctionEpilogue();
-    jit.untagReturnAddress();
-    jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
-
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "PolymorphicRepatch"_s, "Polymorphic repatch thunk");
-}
-
 enum ThunkEntryType { EnterViaCall, EnterViaJumpWithSavedTags, EnterViaJumpWithoutSavedTags };
 enum class ThunkFunctionType { JSFunction, InternalFunction };
 enum class IncludeDebuggerHook : bool { No, Yes };

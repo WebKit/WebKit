@@ -64,7 +64,6 @@ class NativeExecutable;
     macro(InternalFunctionConstruct, internalFunctionConstructGenerator) \
     macro(ThrowExceptionFromCall, throwExceptionFromCallGenerator) \
     macro(ThrowExceptionFromCallSlowPath, throwExceptionFromCallSlowPathGenerator) \
-    macro(PolymorphicRepatchThunk, polymorphicRepatchThunk) \
     macro(VirtualThunkForRegularCall, virtualThunkForRegularCall) \
     macro(VirtualThunkForTailCall, virtualThunkForTailCall) \
     macro(VirtualThunkForConstruct, virtualThunkForConstruct) \

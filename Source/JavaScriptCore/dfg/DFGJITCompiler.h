@@ -259,11 +259,6 @@ public:
         m_privateBrandAccesses.append(InlineCacheWrapper<JITPrivateBrandAccessGenerator>(gen, slowPath));
     }
 
-    void addJSCall(Label slowPathStart, Label doneLocation, CompileTimeCallLinkInfo info)
-    {
-        m_jsCalls.append(JSCallRecord(slowPathStart, doneLocation, info));
-    }
-    
     void addJSDirectCall(Label slowPath, DirectCallLinkInfo* info)
     {
         m_jsDirectCalls.append(JSDirectCallRecord(slowPath, info));
@@ -437,19 +432,6 @@ protected:
     Vector<Label> m_blockHeads;
 
 
-    struct JSCallRecord {
-        JSCallRecord(Label slowPathStart, Label doneLocation, CompileTimeCallLinkInfo info)
-            : slowPathStart(slowPathStart)
-            , doneLocation(doneLocation)
-            , info(info)
-        {
-        }
-        
-        Label slowPathStart;
-        Label doneLocation;
-        CompileTimeCallLinkInfo info;
-    };
-    
     struct JSDirectCallRecord {
         JSDirectCallRecord(Label slowPath, DirectCallLinkInfo* info)
             : slowPath(slowPath)
@@ -473,7 +455,6 @@ protected:
     Vector<InlineCacheWrapper<JITInByValGenerator>, 4> m_inByVals;
     Vector<InlineCacheWrapper<JITInstanceOfGenerator>, 4> m_instanceOfs;
     Vector<InlineCacheWrapper<JITPrivateBrandAccessGenerator>, 4> m_privateBrandAccesses;
-    Vector<JSCallRecord, 4> m_jsCalls;
     Vector<JSDirectCallRecord, 4> m_jsDirectCalls;
     SegmentedVector<OSRExitCompilationInfo, 4> m_exitCompilationInfo;
     Vector<Vector<Label>> m_exitSiteLabels;

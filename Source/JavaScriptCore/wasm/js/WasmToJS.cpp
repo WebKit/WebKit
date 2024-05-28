@@ -337,8 +337,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
     jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
     jit.addPtr(JIT::TrustedImm32(Instance::offsetOfCallLinkInfo(importIndex)), GPRInfo::wasmContextInstancePointer, BaselineJITRegisters::Call::callLinkInfoGPR);
-    auto [slowPaths, dispatchLabel] = CallLinkInfo::emitDataICFastPath(jit);
-    ASSERT(slowPaths.empty());
+    CallLinkInfo::emitDataICFastPath(jit);
 
     if (signature.returnCount() == 1) {
         const auto& returnType = signature.returnType(0);
