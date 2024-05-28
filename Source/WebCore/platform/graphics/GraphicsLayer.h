@@ -158,7 +158,7 @@ public:
         : AnimationValue(keyTime, timingFunction)
     {
         if (value)
-            m_value.operations().append(value);
+            m_value.append(*value);
     }
 
     std::unique_ptr<AnimationValue> clone() const override
@@ -169,9 +169,7 @@ public:
     TransformAnimationValue(const TransformAnimationValue& other)
         : AnimationValue(other)
     {
-        m_value.operations().appendContainerWithMapping(other.m_value.operations(), [](auto& operation) {
-            return operation->clone();
-        });
+        m_value.appendCloning(other.m_value);
     }
 
     TransformAnimationValue(TransformAnimationValue&&) = default;

@@ -49,11 +49,11 @@ public:
     };
 
     struct TransformSyntaxValue {
-        RefPtr<TransformOperation> transform;
-        bool operator==(const TransformSyntaxValue& other) const { return arePointingToEqualData(transform, other.transform); }
+        Ref<TransformOperation> transform;
+        bool operator==(const TransformSyntaxValue& other) const { return arePointingToEqualData(transform.ptr(), other.transform.ptr()); }
     };
 
-    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, URL, String, TransformSyntaxValue>;
+    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, Ref<StyleImage>, URL, String, TransformSyntaxValue>;
 
     struct SyntaxValueList {
         Vector<SyntaxValue> values;

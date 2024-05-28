@@ -317,8 +317,8 @@ ExceptionOr<std::optional<Seconds>> WebAnimation::validateCSSNumberishValue(cons
     if (std::holds_alternative<double>(*optionalCSSNumberish))
         return { Seconds::fromMilliseconds(std::get<double>(*optionalCSSNumberish)) };
 
-    auto numericValue = std::get<RefPtr<CSSNumericValue>>(*optionalCSSNumberish);
-    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
+    auto numericValue = std::get<Ref<CSSNumericValue>>(*optionalCSSNumberish);
+    if (auto unitValue = dynamicDowncast<CSSUnitValue>(numericValue)) {
         if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER)
             return { Seconds::fromMilliseconds(unitValue->value()) };
         if (auto milliseconds = unitValue->convertTo(CSSUnitType::CSS_MS))

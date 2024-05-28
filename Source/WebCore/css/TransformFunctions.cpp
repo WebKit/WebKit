@@ -115,7 +115,7 @@ std::optional<TransformOperations> transformsForValue(const CSSValue& value, con
         auto transform  = transformForValue(currentValue, conversionData);
         if (!transform)
             return { };
-        operations.operations().append(WTFMove(transform));
+        operations.append(transform.releaseNonNull());
     }
     return operations;
 }

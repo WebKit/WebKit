@@ -47,6 +47,7 @@
 #include "JSExecState.h"
 #include "Path2D.h"
 #include "PlaceholderRenderingContext.h"
+#include "SVGImageElement.h"
 #include "StringAdaptors.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLBuffer.h"

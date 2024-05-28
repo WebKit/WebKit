@@ -82,7 +82,7 @@ Ref<CSSUnparsedValue> CSSUnparsedValue::create(CSSParserTokenRange tokens)
                     // No fallback
                     auto variableReference = CSSOMVariableReferenceValue::create(identToken.value().toString());
                     ASSERT(!variableReference.hasException());
-                    segmentStack.last().append(CSSUnparsedSegment { RefPtr<CSSOMVariableReferenceValue> { variableReference.releaseReturnValue() } });
+                    segmentStack.last().append(variableReference.releaseReturnValue());
                     tokens.consume();
                 } else
                     ASSERT_NOT_REACHED();
@@ -122,11 +122,14 @@ CSSUnparsedValue::CSSUnparsedValue(Vector<CSSUnparsedSegment>&& segments)
 void CSSUnparsedValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
 {
     for (auto& segment : m_segments) {
-        std::visit(WTF::makeVisitor([&] (const String& value) {
-            builder.append(value);
-        }, [&] (const RefPtr<CSSOMVariableReferenceValue>& value) {
-            value->serialize(builder, arguments);
-        }), segment);
+        WTF::switchOn(segment,
+            [&](const String& value) {
+                builder.append(value);
+            },
+            [&](const Ref<CSSOMVariableReferenceValue>& value) {
+                value->serialize(builder, arguments);
+            }
+        );
     }
 }
 
@@ -134,7 +137,7 @@ std::optional<CSSUnparsedSegment> CSSUnparsedValue::item(size_t index)
 {
     if (index >= m_segments.size())
         return std::nullopt;
-    return CSSUnparsedSegment { m_segments[index] };
+    return { m_segments[index] };
 }
 
 ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::setItem(size_t index, CSSUnparsedSegment&& val)

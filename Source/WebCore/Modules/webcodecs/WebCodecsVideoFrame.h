@@ -56,16 +56,17 @@ class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame>, public Conte
 public:
     ~WebCodecsVideoFrame();
 
-    using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
-        , RefPtr<SVGImageElement>
-        , RefPtr<HTMLCanvasElement>
-        , RefPtr<ImageBitmap>
-        , RefPtr<CSSStyleImageValue>
+    using CanvasImageSource = std::variant<
+          Ref<HTMLImageElement>
+        , Ref<SVGImageElement>
+        , Ref<HTMLCanvasElement>
+        , Ref<ImageBitmap>
+        , Ref<CSSStyleImageValue>
 #if ENABLE(OFFSCREEN_CANVAS)
-        , RefPtr<OffscreenCanvas>
+        , Ref<OffscreenCanvas>
 #endif
 #if ENABLE(VIDEO)
-        , RefPtr<HTMLVideoElement>
+        , Ref<HTMLVideoElement>
 #endif
     >;
 

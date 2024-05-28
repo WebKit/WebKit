@@ -41,14 +41,29 @@ namespace WebCore {
 
 class BufferSource {
 public:
+    // FIXME: This should be using Refs, not RefPtrs, but too much, in WebKit, rather than WebCore,
+    // depends on this being default constructible to make the change yet.
     using VariantType = std::variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>>;
 
     BufferSource() { }
     BufferSource(VariantType&& variant)
         : m_variant(WTFMove(variant))
-    { }
+    {
+    }
+
+    BufferSource(std::variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>>&& variant)
+        : m_variant(
+            WTF::switchOn(WTFMove(variant),
+                [](auto&& value) -> VariantType { return RefPtr { WTFMove(value) }; }
+            )
+        )
+    {
+    }
+
     explicit BufferSource(std::span<const uint8_t> span)
-        : m_variant(JSC::ArrayBuffer::tryCreate(span.data(), span.size_bytes())) { }
+        : m_variant(JSC::ArrayBuffer::tryCreate(span.data(), span.size_bytes()))
+    {
+    }
 
     const VariantType& variant() const { return m_variant; }
 

@@ -232,37 +232,37 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
 
         if (RefPtr context = dynamicDowncast<CanvasRenderingContext2D>(*m_context)) {
             if (!is2dType(contextId))
-                return std::optional<RenderingContext> { std::nullopt };
-            return std::optional<RenderingContext> { WTFMove(context) };
+                return { std::nullopt };
+            return { context.releaseNonNull() };
         }
 
         if (RefPtr context = dynamicDowncast<ImageBitmapRenderingContext>(*m_context)) {
             if (!isBitmapRendererType(contextId))
-                return std::optional<RenderingContext> { std::nullopt };
-            return std::optional<RenderingContext> { WTFMove(context) };
+                return { std::nullopt };
+            return { context.releaseNonNull() };
         }
 
 #if ENABLE(WEBGL)
         if (m_context->isWebGL()) {
             if (!isWebGLType(contextId))
-                return std::optional<RenderingContext> { std::nullopt };
+                return { std::nullopt };
             auto version = toWebGLVersion(contextId);
             if ((version == WebGLVersion::WebGL1) != m_context->isWebGL1())
-                return std::optional<RenderingContext> { std::nullopt };
+                return { std::nullopt };
             if (RefPtr context = dynamicDowncast<WebGLRenderingContext>(*m_context))
-                return std::optional<RenderingContext> { WTFMove(context) };
-            return std::optional<RenderingContext> { RefPtr { &downcast<WebGL2RenderingContext>(*m_context) } };
+                return { context.releaseNonNull() };
+            return { Ref { downcast<WebGL2RenderingContext>(*m_context) } };
         }
 #endif
 
         if (RefPtr context = dynamicDowncast<GPUCanvasContext>(m_context.get())) {
             if (!isWebGPUType(contextId))
                 return { std::nullopt };
-            return { context };
+            return { context.releaseNonNull() };
         }
 
         ASSERT_NOT_REACHED();
-        return std::optional<RenderingContext> { std::nullopt };
+        return { std::nullopt };
     }
 
     if (is2dType(contextId)) {
@@ -273,10 +273,10 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         if (UNLIKELY(settings.hasException(scope)))
             return Exception { ExceptionCode::ExistingExceptionError };
 
-        RefPtr context = createContext2d(contextId, settings.releaseReturnValue());
-        if (!context)
-            return std::optional<RenderingContext> { std::nullopt };
-        return std::optional<RenderingContext> { WTFMove(context) };
+        if (RefPtr context = createContext2d(contextId, settings.releaseReturnValue()))
+            return { context.releaseNonNull() };
+
+        return { std::nullopt };
     }
 
     if (isBitmapRendererType(contextId)) {
@@ -287,10 +287,9 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         if (UNLIKELY(settings.hasException(scope)))
             return Exception { ExceptionCode::ExistingExceptionError };
 
-        RefPtr context = createContextBitmapRenderer(contextId, settings.releaseReturnValue());
-        if (!context)
-            return std::optional<RenderingContext> { std::nullopt };
-        return std::optional<RenderingContext> { WTFMove(context) };
+        if (RefPtr context = createContextBitmapRenderer(contextId, settings.releaseReturnValue()))
+            return { context.releaseNonNull() };
+        return { std::nullopt };
     }
 
 #if ENABLE(WEBGL)
@@ -304,12 +303,12 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
 
         RefPtr context = createContextWebGL(toWebGLVersion(contextId), attributes.releaseReturnValue());
         if (!context)
-            return std::optional<RenderingContext> { std::nullopt };
+            return { std::nullopt };
 
-        if (auto* webGLContext = dynamicDowncast<WebGLRenderingContext>(*context))
-            return std::optional<RenderingContext> { RefPtr { webGLContext } };
+        if (RefPtr webGLContext = dynamicDowncast<WebGLRenderingContext>(*context))
+            return { webGLContext.releaseNonNull() };
 
-        return std::optional<RenderingContext> { downcast<WebGL2RenderingContext>(WTFMove(context)) };
+        return { downcast<WebGL2RenderingContext>(context.releaseNonNull()) };
     }
 #endif
 
@@ -319,13 +318,13 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
             // FIXME: Should we be instead getting this through jsDynamicCast<JSDOMWindow*>(state)->wrapped().navigator().gpu()?
             gpu = window->navigator().gpu();
         }
-        auto context = createContextWebGPU(contextId, gpu);
-        if (!context)
-            return { std::nullopt };
-        return { context };
+
+        if (RefPtr context = createContextWebGPU(contextId, gpu))
+            return { context.releaseNonNull() };
+        return { std::nullopt };
     }
 
-    return std::optional<RenderingContext> { std::nullopt };
+    return { std::nullopt };
 }
 
 CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)

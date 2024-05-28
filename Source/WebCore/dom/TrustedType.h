@@ -59,13 +59,11 @@ WEBCORE_EXPORT ExceptionOr<String> trustedTypeCompliantString(TrustedType, Scrip
 
 WEBCORE_EXPORT ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecutionContext&, const String& urlString);
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::variant<RefPtr<TrustedHTML>, String>&&, const String& sink);
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::variant<Ref<TrustedHTML>, String>&&, const String& sink);
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::variant<Ref<TrustedScript>, String>&&, const String& sink);
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::variant<Ref<TrustedScriptURL>, String>&&, const String& sink);
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::variant<RefPtr<TrustedScript>, String>&&, const String& sink);
-
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::variant<RefPtr<TrustedScriptURL>, String>&&, const String& sink);
-
-ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document>, RefPtr<Node> parent, std::variant<RefPtr<Node>, String, RefPtr<TrustedScript>>);
+ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document>, RefPtr<Node> parent, std::variant<Ref<Node>, String, Ref<TrustedScript>>);
 
 WEBCORE_EXPORT AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const String& attributeName, const String& elementNamespace, const String& attributeNamespace);
 } // namespace WebCore

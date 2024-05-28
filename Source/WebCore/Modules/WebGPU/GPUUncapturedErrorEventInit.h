@@ -32,7 +32,10 @@
 namespace WebCore {
 
 struct GPUUncapturedErrorEventInit : public EventInit {
-    GPUError error;
+    // FIXME: `error` is temporarily being wrapped in std::optional, but it is expected to always be there.
+    // This is needed to keep the bindings working while support for non-default constructible dictionaries are
+    // being worked on.
+    std::optional<GPUError> error;
 };
 
 }

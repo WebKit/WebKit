@@ -567,29 +567,26 @@ ExceptionOr<void> Node::appendChild(Node& newChild)
     return Exception { ExceptionCode::HierarchyRequestError };
 }
 
-static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringOrTrustedScriptVector(const FixedVector<NodeOrStringOrTrustedScript>& vector)
+static HashSet<Ref<Node>> nodeSetPreTransformedFromNodeOrStringOrTrustedScriptVector(const FixedVector<NodeOrStringOrTrustedScript>& vector)
 {
-    HashSet<RefPtr<Node>> nodeSet;
+    HashSet<Ref<Node>> nodeSet;
     for (const auto& variant : vector) {
-        WTF::switchOn(variant,
-            [&] (const RefPtr<Node>& node) { nodeSet.add(const_cast<Node*>(node.get())); },
-            [] (const String&) { },
-            [] (const RefPtr<TrustedScript>&) { }
-        );
+        if (std::holds_alternative<Ref<Node>>(variant))
+            nodeSet.add(std::get<Ref<Node>>(variant));
     }
     return nodeSet;
 }
 
-static RefPtr<Node> firstPrecedingSiblingNotInNodeSet(Node& context, const HashSet<RefPtr<Node>>& nodeSet)
+static RefPtr<Node> firstPrecedingSiblingNotInNodeSet(Node& context, const HashSet<Ref<Node>>& nodeSet)
 {
     for (auto* sibling = context.previousSibling(); sibling; sibling = sibling->previousSibling()) {
-        if (!nodeSet.contains(sibling))
+        if (!nodeSet.contains(*sibling))
             return sibling;
     }
     return nullptr;
 }
 
-static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashSet<RefPtr<Node>>& nodeSet)
+static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashSet<Ref<Node>>& nodeSet)
 {
     for (auto* sibling = context.nextSibling(); sibling; sibling = sibling->nextSibling()) {
         if (!nodeSet.contains(sibling))
@@ -622,10 +619,8 @@ ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsOrTrustedScriptsIntoNode(Re
             continue;
         }
 
-        ASSERT(std::holds_alternative<RefPtr<Node>>(variant));
-        RefPtr node = WTFMove(std::get<RefPtr<Node>>(variant));
-        ASSERT(node);
-        nodes.append(node.releaseNonNull());
+        ASSERT(std::holds_alternative<Ref<Node>>(variant));
+        nodes.append(WTFMove(std::get<Ref<Node>>(variant)));
     }
 
     if (nodes.size() == 1)
@@ -665,14 +660,13 @@ ExceptionOr<NodeVector> Node::convertNodesOrStringsOrTrustedScriptsIntoNodeVecto
             continue;
         }
 
-        ASSERT(std::holds_alternative<RefPtr<Node>>(variant));
-        RefPtr node = WTFMove(std::get<RefPtr<Node>>(variant));
-        ASSERT(node);
+        ASSERT(std::holds_alternative<Ref<Node>>(variant));
+        Ref node = WTFMove(std::get<Ref<Node>>(variant));
         if (auto* fragment = dynamicDowncast<DocumentFragment>(node.get()); UNLIKELY(fragment)) {
             for (auto* child = fragment->firstChild(); child; child = child->nextSibling())
                 nodeVector.append(*child);
         } else
-            nodeVector.append(node.releaseNonNull());
+            nodeVector.append(WTFMove(node));
     }
 
     if (nodeVector.size() == 1)

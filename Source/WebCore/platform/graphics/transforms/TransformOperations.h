@@ -36,10 +36,17 @@ class TransformOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     TransformOperations() = default;
-    WEBCORE_EXPORT explicit TransformOperations(Vector<RefPtr<TransformOperation>>&&);
+    WEBCORE_EXPORT explicit TransformOperations(Vector<Ref<TransformOperation>>&&);
     
     bool operator==(const TransformOperations& o) const;
-    
+
+    TransformOperations clone() const
+    {
+        return TransformOperations { m_operations.map([](const auto& operation) {
+            return operation->clone();
+        }) };
+    }
+
     void apply(const FloatSize& size, TransformationMatrix& matrix) const { apply(0, size, matrix); }
     void apply(unsigned start, const FloatSize& size, TransformationMatrix& matrix) const
     {
@@ -47,46 +54,72 @@ public:
             m_operations[i]->apply(matrix, size);
     }
 
-    
-    // Return true if any of the operation types are 3D operation types (even if the
-    // values describe affine transforms)
-    bool has3DOperation() const
-    {
-        for (const auto& operation : m_operations) {
-            if (operation->is3DOperation())
-                return true;
-        }
-        return false;
-    }
-    
-    bool hasMatrixOperation() const
-    {
-        return std::any_of(m_operations.begin(), m_operations.end(), [](auto operation) {
-            return operation->type() == WebCore::TransformOperation::Type::Matrix;
-        });
-    }
-
-    bool isRepresentableIn2D() const
-    {
-        for (const auto& operation : m_operations) {
-            if (!operation->isRepresentableIn2D())
-                return false;
-        }
-        return true;
-    }
-
     void clear()
     {
         m_operations.clear();
     }
 
-    bool affectedByTransformOrigin() const;
-    
-    Vector<RefPtr<TransformOperation>>& operations() { return m_operations; }
-    const Vector<RefPtr<TransformOperation>>& operations() const { return m_operations; }
+    void append(Ref<TransformOperation>&& operation)
+    {
+        m_operations.append(WTFMove(operation));
+    }
 
+    void append(const TransformOperations& operations)
+    {
+        m_operations.appendVector(operations.m_operations);
+    }
+
+    void appendCloning(const TransformOperations& operations)
+    {
+        m_operations.appendContainerWithMapping(operations.m_operations, [](auto& operation) {
+            return operation->clone();
+        });
+    }
+
+    void appendSelfOrCopyWithResolvedCalculatedValues(const TransformOperations& operations, const FloatSize& box)
+    {
+        m_operations.appendContainerWithMapping(operations.m_operations, [&](auto& operation) {
+            return operation->selfOrCopyWithResolvedCalculatedValues(box);
+        });
+    }
+
+    // Return true if any of the operation types are 3D operation types (even if the
+    // values describe affine transforms)
+    bool has3DOperation() const
+    {
+        return WTF::anyOf(m_operations, [](auto& operation) {
+            return operation->is3DOperation();
+        });
+    }
+
+    template<TransformOperation::Type operationType>
+    bool hasOperation() const
+    {
+        return WTF::anyOf(m_operations, [](auto& operation) {
+            return operation->type() == operationType;
+        });
+    }
+
+    bool affectedByTransformOrigin() const
+    {
+        return WTF::anyOf(m_operations, [](auto& operation) {
+            return operation->isAffectedByTransformOrigin();
+        });
+    }
+
+    bool isRepresentableIn2D() const
+    {
+        return WTF::allOf(m_operations, [](auto& operation) {
+            return operation->isRepresentableIn2D();
+        });
+    }
+
+    const Vector<Ref<TransformOperation>>& operations() const { return m_operations; }
+
+    bool isEmpty() const { return m_operations.isEmpty(); }
     size_t size() const { return m_operations.size(); }
-    const TransformOperation* at(size_t index) const { return index < m_operations.size() ? m_operations.at(index).get() : 0; }
+    const TransformOperation* at(size_t index) const { return index < m_operations.size() ? m_operations.at(index).ptr() : nullptr; }
+
     bool isInvertible(const LayoutSize& size) const
     {
         TransformationMatrix transform;
@@ -96,11 +129,11 @@ public:
     
     bool shouldFallBackToDiscreteAnimation(const TransformOperations&, const LayoutSize&) const;
     
-    RefPtr<TransformOperation> createBlendedMatrixOperationFromOperationsSuffix(const TransformOperations& from, unsigned start, const BlendingContext&, const LayoutSize& referenceBoxSize) const;
+    Ref<TransformOperation> createBlendedMatrixOperationFromOperationsSuffix(const TransformOperations& from, unsigned start, const BlendingContext&, const LayoutSize& referenceBoxSize) const;
     TransformOperations blend(const TransformOperations& from, const BlendingContext&, const LayoutSize&, std::optional<unsigned> prefixLength = std::nullopt) const;
 
 private:
-    Vector<RefPtr<TransformOperation>> m_operations;
+    Vector<Ref<TransformOperation>> m_operations;
 };
 
 // SharedPrimitivesPrefix is used to find a shared prefix of transform function primitives (as

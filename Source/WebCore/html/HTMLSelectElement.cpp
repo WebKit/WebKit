@@ -228,14 +228,18 @@ ExceptionOr<void> HTMLSelectElement::add(const OptionOrOptGroupElement& element,
     RefPtr<HTMLElement> beforeElement;
     if (before) {
         beforeElement = WTF::switchOn(before.value(),
-            [](const RefPtr<HTMLElement>& element) -> HTMLElement* { return element.get(); },
-            [this](int index) -> HTMLElement* { return item(index); }
+            [](Ref<HTMLElement> element) -> RefPtr<HTMLElement> {
+                return { WTFMove(element) };
+            },
+            [this](int index) -> RefPtr<HTMLElement> {
+                return item(index);
+            }
         );
     }
-    Ref toInsert = WTF::switchOn(element,
-        [](const auto& htmlElement) -> HTMLElement& { return *htmlElement; }
-    );
 
+    Ref toInsert = WTF::switchOn(element,
+        [](const auto& htmlElement) -> Ref<HTMLElement> { return htmlElement; }
+    );
 
     return insertBefore(toInsert, WTFMove(beforeElement));
 }
@@ -484,8 +488,12 @@ ExceptionOr<void> HTMLSelectElement::setItem(unsigned index, HTMLOptionElement* 
         remove(index);
     }
 
+    std::optional<HTMLElementOrInt> addBefore;
+    if (before)
+        addBefore = before.releaseNonNull();
+
     // Finally add the new element.
-    auto result = add(option, HTMLElementOrInt { before.get() });
+    auto result = add(*option, WTFMove(addBefore));
     if (result.hasException())
         return result;
 
@@ -507,7 +515,7 @@ ExceptionOr<void> HTMLSelectElement::setLength(unsigned newLength)
 
     if (diff < 0) { // Add dummy elements.
         do {
-            auto result = add(HTMLOptionElement::create(protectedDocument()).ptr(), std::nullopt);
+            auto result = add(HTMLOptionElement::create(protectedDocument()), std::nullopt);
             if (result.hasException())
                 return result;
         } while (++diff);

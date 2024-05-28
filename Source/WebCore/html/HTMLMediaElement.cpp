@@ -1214,7 +1214,7 @@ MediaError* HTMLMediaElement::error() const
     return m_error.get();
 }
 
-void HTMLMediaElement::setSrcObject(MediaProvider&& mediaProvider)
+void HTMLMediaElement::setSrcObject(std::optional<MediaProvider>&& mediaProvider)
 {
     // FIXME: Setting the srcObject attribute may cause other changes to the media element's internal state:
     // Specifically, if srcObject is specified, the UA must use it as the source of media, even if the src
@@ -1239,8 +1239,8 @@ void HTMLMediaElement::setSrcObject(MediaProvider&& mediaProvider)
     m_blob = nullptr;
 
 #if ENABLE(MEDIA_SOURCE)
-    if (m_mediaProvider && std::holds_alternative<RefPtr<MediaSource>>(*m_mediaProvider)) {
-        RefPtr mediaSource = std::get<RefPtr<MediaSource>>(*m_mediaProvider);
+    if (m_mediaProvider && std::holds_alternative<Ref<MediaSource>>(*m_mediaProvider)) {
+        Ref mediaSource = std::get<Ref<MediaSource>>(*m_mediaProvider);
         mediaSource->setAsSrcObject(true);
     }
 #endif
@@ -1563,24 +1563,24 @@ void HTMLMediaElement::selectMediaResource()
             // 3. Run the resource fetch algorithm with the assigned media provider object.
             switchOn(m_mediaProvider.value(),
 #if ENABLE(MEDIA_STREAM)
-                [this](RefPtr<MediaStream> stream) { m_mediaStreamSrcObject = stream; },
+                [this](Ref<MediaStream> stream) { m_mediaStreamSrcObject = WTFMove(stream); },
 #endif
 #if ENABLE(MEDIA_SOURCE)
-                [this](RefPtr<MediaSource> source) { m_mediaSource = MediaSourceInterfaceMainThread::create(source.releaseNonNull()); },
+                [this](Ref<MediaSource> source) { m_mediaSource = MediaSourceInterfaceMainThread::create(WTFMove(source)); },
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
-                [this, &logSiteIdentifier](RefPtr<MediaSourceHandle> handle) {
+                [this, &logSiteIdentifier](Ref<MediaSourceHandle> handle) {
                     // If the media provider object is a MediaSourceHandle whose [[Detached]] internal slot is true
                     // Run the "If the media data cannot be fetched at all, due to network errors, causing the user agent to give up trying to fetch the resource" steps of the resource fetch algorithm's media data processing steps list.
                     // If the media provider object is a MediaSourceHandle whose underlying MediaSource's [[has ever been attached]] internal slot is true
                     // Run the "If the media data cannot be fetched at all, due to network errors, causing the user agent to give up trying to fetch the resource" steps of the resource fetch algorithm's media data processing steps list.
                     if (!handle->isDetached() && !handle->hasEverBeenAssignedAsSrcObject())
-                        m_mediaSource = MediaSourceInterfaceWorker::create(handle.releaseNonNull());
+                        m_mediaSource = MediaSourceInterfaceWorker::create(WTFMove(handle));
                     else
                         ALWAYS_LOG(logSiteIdentifier, "Attempting to use a detached or a previously attached MediaSourceHandle");
                 },
 #endif
-                [this](RefPtr<Blob> blob) { m_blob = blob; }
+                [this](Ref<Blob> blob) { m_blob = WTFMove(blob); }
             );
 
             ContentType contentType;

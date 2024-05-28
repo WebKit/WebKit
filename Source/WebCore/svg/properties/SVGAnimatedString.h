@@ -31,7 +31,7 @@ namespace WebCore {
 
 class TrustedScriptURL;
 
-using StringOrTrustedScriptURL = std::variant<String, RefPtr<TrustedScriptURL>>;
+using StringOrTrustedScriptURL = std::variant<String, Ref<TrustedScriptURL>>;
 
 class SVGAnimatedString : public SVGAnimatedPrimitiveProperty<String> {
 public:

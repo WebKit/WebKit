@@ -101,13 +101,16 @@ void ScriptBuffer::append(const FragmentedSharedBuffer& buffer)
 std::optional<ScriptBuffer> ScriptBuffer::fromIPCData(IPCData&& ipcData)
 {
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-    return WTF::switchOn(WTFMove(ipcData), [](ShareableResourceHandle&& handle) -> std::optional<ScriptBuffer> {
-        if (RefPtr buffer = WTFMove(handle).tryWrapInSharedBuffer())
+    return WTF::switchOn(WTFMove(ipcData),
+        [](ShareableResourceHandle&& handle) -> std::optional<ScriptBuffer> {
+            if (RefPtr buffer = WTFMove(handle).tryWrapInSharedBuffer())
+                return ScriptBuffer { WTFMove(buffer) };
+            return std::nullopt;
+        },
+        [](RefPtr<FragmentedSharedBuffer>&& buffer) -> std::optional<ScriptBuffer> {
             return ScriptBuffer { WTFMove(buffer) };
-        return std::nullopt;
-    }, [](RefPtr<FragmentedSharedBuffer>&& buffer) -> std::optional<ScriptBuffer> {
-        return ScriptBuffer { WTFMove(buffer) };
-    });
+        }
+    );
 #else
     return ScriptBuffer { WTFMove(ipcData) };
 #endif

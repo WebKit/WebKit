@@ -93,72 +93,73 @@ WebCodecsVideoFrame::~WebCodecsVideoFrame()
 static std::optional<Exception> checkImageUsability(ScriptExecutionContext& context, const WebCodecsVideoFrame::CanvasImageSource& source)
 {
     return switchOn(source,
-    [&] (const RefPtr<HTMLImageElement>& imageElement) -> std::optional<Exception> {
-        if (!imageElement->originClean(*context.securityOrigin()))
-            return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
+        [&](const Ref<HTMLImageElement>& imageElement) -> std::optional<Exception> {
+            if (!imageElement->originClean(*context.securityOrigin()))
+                return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
 
-        RefPtr image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
-        if (!image)
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has no data"_s };
-        if (!image->width() || !image->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has a bad size"_s };
-        return { };
-    },
-    [] (const RefPtr<SVGImageElement>& imageElement) -> std::optional<Exception> {
-        if (imageElement->renderingTaintsOrigin())
-            return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
+            RefPtr image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
+            if (!image)
+                return Exception { ExceptionCode::InvalidStateError,  "Image element has no data"_s };
+            if (!image->width() || !image->height())
+                return Exception { ExceptionCode::InvalidStateError,  "Image element has a bad size"_s };
+            return { };
+        },
+        [](const Ref<SVGImageElement>& imageElement) -> std::optional<Exception> {
+            if (imageElement->renderingTaintsOrigin())
+                return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
 
-        RefPtr image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
-        if (!image)
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has no data"_s };
-        if (!image->width() || !image->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has a bad size"_s };
-        return { };
-    },
-    [&] (const RefPtr<CSSStyleImageValue>& cssImage) -> std::optional<Exception> {
-        UNUSED_PARAM(cssImage);
-        ASSERT(!cssImage->isLoadedFromOpaqueSource());
-        return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
-    },
+            RefPtr image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
+            if (!image)
+                return Exception { ExceptionCode::InvalidStateError,  "Image element has no data"_s };
+            if (!image->width() || !image->height())
+                return Exception { ExceptionCode::InvalidStateError,  "Image element has a bad size"_s };
+            return { };
+        },
+        [&](const Ref<CSSStyleImageValue>& cssImage) -> std::optional<Exception> {
+            UNUSED_PARAM(cssImage);
+            ASSERT(!cssImage->isLoadedFromOpaqueSource());
+            return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
+        },
 #if ENABLE(VIDEO)
-    [&] (const RefPtr<HTMLVideoElement>& video) -> std::optional<Exception> {
-        RefPtr origin = context.securityOrigin();
-        if (video->taintsOrigin(*origin))
-            return Exception { ExceptionCode::SecurityError, "Video element is tainted"_s };
+        [&](const Ref<HTMLVideoElement>& video) -> std::optional<Exception> {
+            RefPtr origin = context.securityOrigin();
+            if (video->taintsOrigin(*origin))
+                return Exception { ExceptionCode::SecurityError, "Video element is tainted"_s };
 
-        auto readyState = video->readyState();
-        if (readyState < HTMLMediaElement::HAVE_CURRENT_DATA)
-            return Exception { ExceptionCode::InvalidStateError,  "Video element has no data"_s };
-        return { };
-    },
+            auto readyState = video->readyState();
+            if (readyState < HTMLMediaElement::HAVE_CURRENT_DATA)
+                return Exception { ExceptionCode::InvalidStateError,  "Video element has no data"_s };
+            return { };
+        },
 #endif
-    [] (const RefPtr<HTMLCanvasElement>& canvas) -> std::optional<Exception> {
-        if (!canvas->originClean())
-            return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
+        [](const Ref<HTMLCanvasElement>& canvas) -> std::optional<Exception> {
+            if (!canvas->originClean())
+                return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
 
-        auto size = canvas->size();
-        if (!size.width() || !size.height())
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
-        return { };
-    },
+            auto size = canvas->size();
+            if (!size.width() || !size.height())
+                return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
+            return { };
+        },
 #if ENABLE(OFFSCREEN_CANVAS)
-    [] (const RefPtr<OffscreenCanvas>& canvas) -> std::optional<Exception> {
-        if (!canvas->originClean())
-            return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
+        [](const Ref<OffscreenCanvas>& canvas) -> std::optional<Exception> {
+            if (!canvas->originClean())
+                return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
 
-        if (!canvas->width() || !canvas->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
-        return { };
-    },
+            if (!canvas->width() || !canvas->height())
+                return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
+            return { };
+        },
 #endif
-    [] (const RefPtr<ImageBitmap>& image) -> std::optional<Exception> {
-        if (image->isDetached())
-            return Exception { ExceptionCode::InvalidStateError,  "Input ImageBitmap is detached"_s };
+        [](const Ref<ImageBitmap>& image) -> std::optional<Exception> {
+            if (image->isDetached())
+                return Exception { ExceptionCode::InvalidStateError,  "Input ImageBitmap is detached"_s };
 
-        if (!image->originClean())
-            return Exception { ExceptionCode::SecurityError,  "Input ImageBitmap is tainted"_s };
-        return { };
-    });
+            if (!image->originClean())
+                return Exception { ExceptionCode::SecurityError,  "Input ImageBitmap is tainted"_s };
+            return { };
+        }
+    );
 }
 
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, CanvasImageSource&& source, Init&& init)
@@ -166,85 +167,88 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     if (auto exception = checkImageUsability(context, source))
         return WTFMove(*exception);
 
-    return switchOn(source,
-    [&] (RefPtr<HTMLImageElement>& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+    return switchOn(WTFMove(source),
+        [&](Ref<HTMLImageElement>&& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+            if (!init.timestamp)
+                return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        auto image = imageElement->cachedImage()->image()->currentNativeImage();
-        if (!image)
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
+            RefPtr image = imageElement->cachedImage()->image()->currentNativeImage();
+            if (!image)
+                return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
 
-        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
-    },
-    [&] (RefPtr<SVGImageElement>& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+            return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
+        },
+        [&](Ref<SVGImageElement>&& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+            if (!init.timestamp)
+                return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        auto image = imageElement->cachedImage()->image()->currentNativeImage();
-        if (!image)
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
+            RefPtr image = imageElement->cachedImage()->image()->currentNativeImage();
+            if (!image)
+                return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
 
-        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
-    },
-    [&] (RefPtr<CSSStyleImageValue>& cssImage) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+            return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
+        },
+        [&](Ref<CSSStyleImageValue>&& cssImage) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+            if (!init.timestamp)
+                return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        auto image = cssImage->image()->image()->currentNativeImage();
-        if (!image)
-            return Exception { ExceptionCode::InvalidStateError,  "CSS Image has no video frame"_s };
+            RefPtr image = cssImage->image()->image()->currentNativeImage();
+            if (!image)
+                return Exception { ExceptionCode::InvalidStateError,  "CSS Image has no video frame"_s };
 
-        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
-    },
+            return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
+        },
 #if ENABLE(VIDEO)
-    [&] (RefPtr<HTMLVideoElement>& video) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        RefPtr videoFrame = video->player() ? video->player()->videoFrameForCurrentTime() : nullptr;
-        if (!videoFrame)
-            return Exception { ExceptionCode::InvalidStateError,  "Video element has no video frame"_s };
-        return initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::No);
-    },
+        [&](Ref<HTMLVideoElement>&& video) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+            RefPtr videoFrame = video->player() ? video->player()->videoFrameForCurrentTime() : nullptr;
+            if (!videoFrame)
+                return Exception { ExceptionCode::InvalidStateError,  "Video element has no video frame"_s };
+
+            return initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::No);
+        },
 #endif
-    [&] (RefPtr<HTMLCanvasElement>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+        [&](Ref<HTMLCanvasElement>&& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+            if (!init.timestamp)
+                return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        if (!canvas->width() || !canvas->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
+            if (!canvas->width() || !canvas->height())
+                return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
 
-        auto videoFrame = canvas->toVideoFrame();
-        if (!videoFrame)
-            return Exception { ExceptionCode::InvalidStateError,  "Canvas has no frame"_s };
-        return initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
-    },
+            RefPtr videoFrame = canvas->toVideoFrame();
+            if (!videoFrame)
+                return Exception { ExceptionCode::InvalidStateError,  "Canvas has no frame"_s };
+
+            return initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
+        },
 #if ENABLE(OFFSCREEN_CANVAS)
-    [&] (RefPtr<OffscreenCanvas>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+        [&](Ref<OffscreenCanvas>&& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+            if (!init.timestamp)
+                return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        if (!canvas->width() || !canvas->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
+            if (!canvas->width() || !canvas->height())
+                return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
 
-        RefPtr imageBuffer = canvas->makeRenderingResultsAvailable();
-        if (!imageBuffer)
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has no image buffer"_s };
+            RefPtr imageBuffer = canvas->makeRenderingResultsAvailable();
+            if (!imageBuffer)
+                return Exception { ExceptionCode::InvalidStateError,  "Input canvas has no image buffer"_s };
 
-        return create(context, *imageBuffer, { static_cast<int>(canvas->width()), static_cast<int>(canvas->height()) }, WTFMove(init));
-    },
+            return create(context, imageBuffer.releaseNonNull(), { static_cast<int>(canvas->width()), static_cast<int>(canvas->height()) }, WTFMove(init));
+        },
 #endif // ENABLE(OFFSCREEN_CANVAS)
-    [&] (RefPtr<ImageBitmap>& image) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+        [&](Ref<ImageBitmap>&& image) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+            if (!init.timestamp)
+                return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        if (!image->width() || !image->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Input image has a bad size"_s };
+            if (!image->width() || !image->height())
+                return Exception { ExceptionCode::InvalidStateError,  "Input image has a bad size"_s };
 
-        RefPtr imageBuffer = image->buffer();
-        if (!imageBuffer)
-            return Exception { ExceptionCode::InvalidStateError,  "Input image has no image buffer"_s };
+            RefPtr imageBuffer = image->buffer();
+            if (!imageBuffer)
+                return Exception { ExceptionCode::InvalidStateError,  "Input image has no image buffer"_s };
 
-        return create(context, *imageBuffer, { static_cast<int>(image->width()), static_cast<int>(image->height()) }, WTFMove(init));
-    });
+            return create(context, imageBuffer.releaseNonNull(), { static_cast<int>(image->width()), static_cast<int>(image->height()) }, WTFMove(init));
+        }
+    );
 }
 
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageBuffer& buffer, IntSize size, WebCodecsVideoFrame::Init&& init)

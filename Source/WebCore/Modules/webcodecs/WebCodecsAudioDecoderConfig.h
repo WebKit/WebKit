@@ -35,7 +35,7 @@ namespace WebCore {
 
 struct WebCodecsAudioDecoderConfig {
     String codec;
-    std::optional<BufferSource::VariantType> description;
+    std::optional<std::variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>>> description;
     size_t sampleRate;
     size_t numberOfChannels;
 

@@ -41,10 +41,10 @@ public:
     static ExceptionOr<Ref<CSSRotate>> create(Ref<CSSNumericValue>);
     static ExceptionOr<Ref<CSSRotate>> create(CSSFunctionValue&);
 
-    CSSNumberish x() { return { m_x.ptr() }; }
-    CSSNumberish y() { return { m_y.ptr() }; }
-    CSSNumberish z() { return { m_z.ptr() }; }
-    const CSSNumericValue& angle() { return m_angle.get(); }
+    CSSNumberish x() { return m_x; }
+    CSSNumberish y() { return m_y; }
+    CSSNumberish z() { return m_z; }
+    const CSSNumericValue& angle() { return m_angle; }
 
     ExceptionOr<void> setX(CSSNumberish);
     ExceptionOr<void> setY(CSSNumberish);

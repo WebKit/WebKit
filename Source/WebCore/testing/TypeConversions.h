@@ -39,8 +39,8 @@ public:
     static Ref<TypeConversions> create() { return adoptRef(*new TypeConversions()); }
 
     struct OtherDictionary {
-        int longValue;
-        String stringValue;
+        int longValue = 0;
+        String stringValue = emptyString();
     };
 
     struct Dictionary {
@@ -48,7 +48,7 @@ public:
         String stringValue;
         String treatNullAsEmptyStringValue;
         Vector<String> sequenceValue;
-        std::variant<RefPtr<Node>, Vector<String>, OtherDictionary> unionValue;
+        std::variant<Ref<Node>, Vector<String>, OtherDictionary> unionValue = OtherDictionary { };
         int clampLongValue;
         int enforceRangeLongValue;
     };
@@ -126,7 +126,7 @@ public:
     const Vector<KeyValuePair<String, Vector<String>>>& testSequenceRecord() const { return m_sequenceRecord; }
     void setTestSequenceRecord(const Vector<KeyValuePair<String, Vector<String>>>& value) { m_sequenceRecord = value; }
 
-    using TestUnion = std::variant<String, int, bool, RefPtr<Node>, Vector<int>>;
+    using TestUnion = std::variant<String, int, bool, Ref<Node>, Vector<int>>;
     const TestUnion& testUnion() const { return m_union; }
     void setTestUnion(TestUnion&& value) { m_union = value; }
 

@@ -40,7 +40,7 @@ GPUUncapturedErrorEvent::GPUUncapturedErrorEvent(const AtomString& type, GPUUnca
 
 GPUError GPUUncapturedErrorEvent::error() const
 {
-    return m_uncapturedErrorEventInit.error;
+    return *m_uncapturedErrorEventInit.error;
 }
 
 }

@@ -188,40 +188,37 @@ ExceptionOr<String> trustedTypeCompliantString(TrustedType expectedType, ScriptE
     return stringValue;
 }
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, std::variant<RefPtr<TrustedHTML>, String>&& input, const String& sink)
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, std::variant<Ref<TrustedHTML>, String>&& input, const String& sink)
 {
-    return WTF::switchOn(
-        WTFMove(input),
+    return WTF::switchOn(WTFMove(input),
         [&scriptExecutionContext, &sink](const String& string) -> ExceptionOr<String> {
             return trustedTypeCompliantString(TrustedType::TrustedHTML, scriptExecutionContext, string, sink);
         },
-        [](const RefPtr<TrustedHTML>& html) -> ExceptionOr<String> {
+        [](const Ref<TrustedHTML>& html) -> ExceptionOr<String> {
             return html->toString();
         }
     );
 }
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, std::variant<RefPtr<TrustedScript>, String>&& input, const String& sink)
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, std::variant<Ref<TrustedScript>, String>&& input, const String& sink)
 {
-    return WTF::switchOn(
-        WTFMove(input),
+    return WTF::switchOn(WTFMove(input),
         [&scriptExecutionContext, &sink](const String& string) -> ExceptionOr<String> {
             return trustedTypeCompliantString(TrustedType::TrustedScript, scriptExecutionContext, string, sink);
         },
-        [](const RefPtr<TrustedScript>& script) -> ExceptionOr<String> {
+        [](const Ref<TrustedScript>& script) -> ExceptionOr<String> {
             return script->toString();
         }
     );
 }
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, std::variant<RefPtr<TrustedScriptURL>, String>&& input, const String& sink)
+ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, std::variant<Ref<TrustedScriptURL>, String>&& input, const String& sink)
 {
-    return WTF::switchOn(
-        WTFMove(input),
+    return WTF::switchOn(WTFMove(input),
         [&scriptExecutionContext, &sink](const String& string) -> ExceptionOr<String> {
             return trustedTypeCompliantString(TrustedType::TrustedScriptURL, scriptExecutionContext, string, sink);
         },
-        [](const RefPtr<TrustedScriptURL>& scriptURL) -> ExceptionOr<String> {
+        [](const Ref<TrustedScriptURL>& scriptURL) -> ExceptionOr<String> {
             return scriptURL->toString();
         }
     );
@@ -302,17 +299,10 @@ ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecuti
         : nullString());
 }
 
-ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document> document, RefPtr<Node> parent, std::variant<RefPtr<Node>, String, RefPtr<TrustedScript>> variant)
+ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document> document, RefPtr<Node> parent, std::variant<Ref<Node>, String, Ref<TrustedScript>> variant)
 {
-    RefPtr<Text> text;
-    if (std::holds_alternative<String>(variant))
-        text = Text::create(document, WTFMove(std::get<String>(variant)));
-    else if (std::holds_alternative<RefPtr<Node>>(variant)) {
-        if (RefPtr textNode = dynamicDowncast<Text>(std::get<RefPtr<Node>>(variant)))
-            text = textNode;
-    }
 
-    if (text) {
+    auto process = [&](Ref<Text> text) -> ExceptionOr<RefPtr<Text>> {
         if (UNLIKELY(is<HTMLScriptElement>(parent))) {
             auto holder = trustedTypeCompliantString(TrustedType::TrustedScript, *document->scriptExecutionContext(), text->wholeText(), "HTMLScriptElement text"_s);
             if (holder.hasException())
@@ -320,10 +310,22 @@ ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document> documen
 
             text->replaceWholeText(holder.releaseReturnValue());
         }
-    } else if (std::holds_alternative<RefPtr<TrustedScript>>(variant))
-        text = Text::create(document, std::get<RefPtr<TrustedScript>>(variant)->toString());
+        return RefPtr { WTFMove(text) };
+    };
 
-    return text;
+    return WTF::switchOn(WTFMove(variant),
+        [&](Ref<Node>&& node) -> ExceptionOr<RefPtr<Text>> {
+            if (RefPtr text = dynamicDowncast<Text>(WTFMove(node)))
+                return process(text.releaseNonNull());
+            return nullptr;
+        },
+        [&](String&& string) -> ExceptionOr<RefPtr<Text>> {
+            return process(Text::create(document, WTFMove(string)));
+        },
+        [&](Ref<TrustedScript>&& trustedScript) -> ExceptionOr<RefPtr<Text>> {
+            return RefPtr { Text::create(document, trustedScript->toString()) };
+        }
+    );
 }
 
 } // namespace WebCore

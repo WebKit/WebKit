@@ -473,13 +473,12 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         }
         case CSSCustomPropertySyntax::Type::Color: {
             auto color = builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value), Style::ForVisitedLink::No);
-            return { color };
+            return { WTFMove(color) };
         }
         case CSSCustomPropertySyntax::Type::Image: {
-            auto styleImage = builderState.createStyleImage(value);
-            if (!styleImage)
-                return { };
-            return { WTFMove(styleImage) };
+            if (RefPtr styleImage = builderState.createStyleImage(value))
+                return { styleImage.releaseNonNull() };
+            return { };
         }
         case CSSCustomPropertySyntax::Type::URL: {
             auto url = m_context.completeURL(downcast<CSSPrimitiveValue>(value).stringValue());
@@ -490,9 +489,10 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
 
         case CSSCustomPropertySyntax::Type::TransformFunction:
         case CSSCustomPropertySyntax::Type::TransformList:
-            if (auto transform = transformForValue(value, builderState.cssToLengthConversionData()))
-                return { CSSCustomPropertyValue::TransformSyntaxValue { transform } };
+            if (RefPtr transform = transformForValue(value, builderState.cssToLengthConversionData()))
+                return { CSSCustomPropertyValue::TransformSyntaxValue { transform.releaseNonNull() } };
             return { };
+
         case CSSCustomPropertySyntax::Type::Unknown:
             return { };
         }

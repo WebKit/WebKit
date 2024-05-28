@@ -50,7 +50,7 @@ public:
     void setLoadingForBindings(const AtomString&);
 
     String srcdoc() const;
-    ExceptionOr<void> setSrcdoc(std::variant<RefPtr<TrustedHTML>, String>&&);
+    ExceptionOr<void> setSrcdoc(std::variant<Ref<TrustedHTML>, String>&&);
 
     LazyLoadFrameObserver& lazyLoadFrameObserver();
 

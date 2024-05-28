@@ -297,17 +297,20 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& cont
     auto request = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { }, { }, { }));
     request->suspendIfNeeded();
 
-    if (std::holds_alternative<String>(input)) {
-        auto result = request->initializeWith(std::get<String>(input), WTFMove(init));
-        if (result.hasException())
-            return result.releaseException();
-    } else {
-        auto result = request->initializeWith(*std::get<RefPtr<FetchRequest>>(input), WTFMove(init));
-        if (result.hasException())
-            return result.releaseException();
-    }
-
-    return request;
+    return WTF::switchOn(WTFMove(input),
+        [&](String&& string) -> ExceptionOr<Ref<FetchRequest>> {
+            auto result = request->initializeWith(WTFMove(string), WTFMove(init));
+            if (result.hasException())
+                return result.releaseException();
+            return WTFMove(request);
+        },
+        [&](Ref<FetchRequest>&& inputRequest) -> ExceptionOr<Ref<FetchRequest>> {
+            auto result = request->initializeWith(WTFMove(inputRequest), WTFMove(init));
+            if (result.hasException())
+                return result.releaseException();
+            return WTFMove(request);
+        }
+    );
 }
 
 Ref<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)

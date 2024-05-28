@@ -155,7 +155,7 @@ static KeyframeValueList createThreadsafeKeyFrames(const KeyframeValueList& orig
         const auto& transformValue = static_cast<const TransformAnimationValue&>(keyframes.at(i));
         for (auto& operation : transformValue.value().operations()) {
             if (is<TranslateTransformOperation>(operation)) {
-                TranslateTransformOperation* translation = static_cast<TranslateTransformOperation*>(operation.get());
+                TranslateTransformOperation* translation = static_cast<TranslateTransformOperation*>(operation.ptr());
                 translation->setX(Length(translation->xAsFloat(boxSize), LengthType::Fixed));
                 translation->setY(Length(translation->yAsFloat(boxSize), LengthType::Fixed));
                 translation->setZ(Length(translation->zAsFloat(), LengthType::Fixed));

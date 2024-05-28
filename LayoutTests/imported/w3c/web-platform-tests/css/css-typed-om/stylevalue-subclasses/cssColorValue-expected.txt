@@ -39,24 +39,24 @@ FAIL Converting HWB using gradians to RGB works for medium purple. hwb_color_gra
 FAIL Converting HWB to HSL works for medium purple. hwb_color_degrees.toHSL is not a function. (In 'hwb_color_degrees.toHSL()', 'hwb_color_degrees.toHSL' is undefined)
 FAIL Converting RGB to HSL works for medium purple. rgb_color.toHSL is not a function. (In 'rgb_color.toHSL()', 'rgb_color.toHSL' is undefined)
 FAIL Converting RGB to HWB works for medium purple. rgb_color.toHWB is not a function. (In 'rgb_color.toHWB()', 'rgb_color.toHWB' is undefined)
-FAIL Parsing the color string "rgb(255,255,255)" null is not an object (evaluating 'parsedColor[attr]')
-FAIL Parsing the color string "rgba(100,255,255, 1)" null is not an object (evaluating 'parsedColor[attr]')
-FAIL Parsing the color string "#00bfff" null is not an object (evaluating 'parsedColor[attr]')
-FAIL Parsing the color string "hsl(195, 100%, 50%)" null is not an object (evaluating 'parsedColor[attr]')
-FAIL Parsing the color string "hsla(123, 100%, 20%, .5)" null is not an object (evaluating 'parsedColor[attr]')
-FAIL Parsing the color string "hwb(200 31% 38%)" null is not an object (evaluating 'parsedColor[attr]')
-FAIL Parsing the color string "hwb(200 31% 38% / 0.5)" null is not an object (evaluating 'parsedColor[attr]')
-FAIL Parsing the color string "blue" null is not an object (evaluating 'parsedColor[attr]')
-FAIL Parsing the color string "transparent" null is not an object (evaluating 'parsedColor[attr]')
-FAIL throwing invalid color string "abcdef assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
-FAIL throwing invalid color string "--foo assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
-FAIL throwing invalid color string "--bar assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
-FAIL throwing invalid color string "abc() assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
-FAIL throwing invalid color string "initial assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
-FAIL throwing invalid color string "inherit assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
-FAIL throwing invalid color string "unset assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
-FAIL throwing invalid color string "revert assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
-FAIL throwing invalid color string "revert-layer assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
-FAIL CSSColorValue Tests null is not an object (evaluating 'parsedColor.constructor')
-FAIL CSSColorValue Tests 1 null is not an object (evaluating 'parsedColor.constructor')
+FAIL Parsing the color string "rgb(255,255,255)" Not implemented
+FAIL Parsing the color string "rgba(100,255,255, 1)" Not implemented
+FAIL Parsing the color string "#00bfff" Not implemented
+FAIL Parsing the color string "hsl(195, 100%, 50%)" Not implemented
+FAIL Parsing the color string "hsla(123, 100%, 20%, .5)" Not implemented
+FAIL Parsing the color string "hwb(200 31% 38%)" Not implemented
+FAIL Parsing the color string "hwb(200 31% 38% / 0.5)" Not implemented
+FAIL Parsing the color string "blue" Not implemented
+FAIL Parsing the color string "transparent" Not implemented
+FAIL throwing invalid color string "abcdef assert_throws_dom: function "() => CSSColorValue.parse(testCase)" threw object "NotSupportedError: Not implemented" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL throwing invalid color string "--foo assert_throws_dom: function "() => CSSColorValue.parse(testCase)" threw object "NotSupportedError: Not implemented" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL throwing invalid color string "--bar assert_throws_dom: function "() => CSSColorValue.parse(testCase)" threw object "NotSupportedError: Not implemented" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL throwing invalid color string "abc() assert_throws_dom: function "() => CSSColorValue.parse(testCase)" threw object "NotSupportedError: Not implemented" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL throwing invalid color string "initial assert_throws_dom: function "() => CSSColorValue.parse(testCase)" threw object "NotSupportedError: Not implemented" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL throwing invalid color string "inherit assert_throws_dom: function "() => CSSColorValue.parse(testCase)" threw object "NotSupportedError: Not implemented" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL throwing invalid color string "unset assert_throws_dom: function "() => CSSColorValue.parse(testCase)" threw object "NotSupportedError: Not implemented" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL throwing invalid color string "revert assert_throws_dom: function "() => CSSColorValue.parse(testCase)" threw object "NotSupportedError: Not implemented" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL throwing invalid color string "revert-layer assert_throws_dom: function "() => CSSColorValue.parse(testCase)" threw object "NotSupportedError: Not implemented" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL CSSColorValue Tests Not implemented
+FAIL CSSColorValue Tests 1 Not implemented
 
