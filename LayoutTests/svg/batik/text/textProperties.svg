@@ -80,11 +80,6 @@
             <text y="15" style="Caption">font-size="28"</text>
         </g>       
 
-        <g transform="translate(100, 225)">
-            <text font-size="30"><tref xlink:href="#sample"/></text>
-            <text y="15" style="Caption">referenced text via &lt;tref&gt;</text>
-        </g>       
-
         <g transform="translate(225, 225)">
             <text font-size="30">
             sa<tspan font-family="Serif" font-weight="bold" fill="DarkRed"

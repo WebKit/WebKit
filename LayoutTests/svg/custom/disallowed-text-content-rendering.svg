@@ -7,14 +7,12 @@
   <a xlink:href="http://www.webkit.org">
     <textPath xlink:href="#path1"></textPath>
     <tspan/>
-    <tref/>
     <altGlyph/>
   </a>
   <svg>
     <a xlink:href="http://www.webkit.org">
       <textPath xlink:href="#path1"></textPath>
       <tspan/>
-      <tref/>
       <altGlyph/>
     </a>
   </svg>
@@ -22,7 +20,6 @@
     <a xlink:href="http://www.webkit.org">
       <textPath xlink:href="#path1"></textPath>
       <tspan/>
-      <tref/>
       <altGlyph/>
     </a>
   </g>
@@ -30,7 +27,6 @@
     <a xlink:href="http://www.webkit.org">
       <textPath xlink:href="#path1"></textPath>
       <tspan/>
-      <tref/>
       <altGlyph/>
     </a>
   </defs>
@@ -38,7 +34,6 @@
     <a xlink:href="http://www.webkit.org">
       <textPath xlink:href="#path1"></textPath>
       <tspan/>
-      <tref/>
       <altGlyph/>
     </a>
   </symbol>
@@ -46,7 +41,6 @@
     <a xlink:href="http://www.webkit.org">
       <textPath xlink:href="#path1"></textPath>
       <tspan/>
-      <tref/>
       <altGlyph/>
     </a>
   </use>
@@ -54,7 +48,6 @@
     <a xlink:href="http://www.webkit.org">
       <textPath xlink:href="#path1"></textPath>
       <tspan/>
-      <tref/>
       <altGlyph/>
     </a>
   </switch>
@@ -62,7 +55,7 @@
     <a xlink:href="http://www.webkit.org">
       <textPath xlink:href="#path1"></textPath>
       <tspan/>
-      <tref/>
+
       <altGlyph/>
     </a>
   </filter>
@@ -70,7 +63,6 @@
     <a xlink:href="http://www.webkit.org">
       <textPath xlink:href="#path1"></textPath>
       <tspan/>
-      <tref/>
       <altGlyph/>
     </a>
   </marker>
@@ -78,7 +70,6 @@
     <a xlink:href="http://www.webkit.org">
       <textPath xlink:href="#path1"></textPath>
       <tspan/>
-      <tref/>
       <altGlyph/>
     </a>
   </mask>
@@ -86,7 +77,6 @@
     <a xlink:href="http://www.webkit.org">
       <textPath xlink:href="#path1"></textPath>
       <tspan/>
-      <tref/>
       <altGlyph/>
     </a>
   </pattern>

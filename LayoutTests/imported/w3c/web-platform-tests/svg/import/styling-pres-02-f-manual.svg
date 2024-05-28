@@ -26,7 +26,6 @@
           <li>stop-color on text</li>
           <li>font-variant on ellipse</li>
           <li>letter-spacing on polyline</li>
-          <li>flood-color on tref</li>
           <li>flood-opacity on textPath</li>
           <li>color-interpolation-filters on altGlyph</li>
           <li>display on linearGradient</li>
@@ -70,7 +69,7 @@
       <circle id='circle' r='10' font-style='italic'/>
       <ellipse id='ellipse' rx='10' ry='5' font-variant='small-caps'/>
       <polyline id='polyline' points='0,0 10,10' letter-spacing='20px'/>
-      <text id='text' stop-color='rgb(0, 255, 0)'>a<tspan id='tspan' stop-opacity='0.5'>b</tspan><tref id='tref' xlink:href='#tspan' flood-color='rgb(255, 0, 0)'/><textPath id='textPath' xlink:href='#path' flood-opacity='0.25'/><altGlyph id='altGlyph' glyphRef='blah' color-interpolation-filters='auto'>c</altGlyph></text>
+      <text id='text' stop-color='rgb(0, 255, 0)'>a<tspan id='tspan' stop-opacity='0.5'>b</tspan><textPath id='textPath' xlink:href='#path' flood-opacity='0.25'/><altGlyph id='altGlyph' glyphRef='blah' color-interpolation-filters='auto'>c</altGlyph></text>
       <linearGradient id='linearGradient' display='block'><stop id='stop' offset='0' fill-rule='evenodd'/></linearGradient>
       <radialGradient id='radialGradient' visibility='hidden'><stop offset='0'/></radialGradient>
       <clipPath id='clipPath' lighting-color='rgb(255, 255, 255)'/>
@@ -97,9 +96,6 @@
 
       <rect id='r7' x='10' y='205' width='20' height='20'/>
       <text x='40' y='220'>letter-spacing on polyline</text>
-
-      <rect id='r11' x='250' y='25' width='20' height='20'/>
-      <text x='280' y='40'>flood-color on tref</text>
 
       <rect id='r12' x='250' y='55' width='20' height='20'/>
       <text x='280' y='70'>flood-opacity on textPath</text>
@@ -191,7 +187,6 @@
       report(6, checkIdent($('ellipse'), 'font-variant', 'small-caps'));
       report(7, checkPx($('polyline'), 'letter-spacing', '20px'));
 
-      report(11, checkSVGColor($('tref'), 'flood-color', 255, 0, 0));
       report(12, checkFloat($('textPath'), 'flood-opacity', 0.25));
       report(13, checkIdent($('altGlyph'), 'color-interpolation-filters', 'auto'));
       report(14, checkIdent($('linearGradient'), 'display', 'block'));

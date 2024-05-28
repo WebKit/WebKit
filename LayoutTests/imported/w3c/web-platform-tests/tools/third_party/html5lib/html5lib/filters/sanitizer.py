@@ -564,7 +564,6 @@ svg_allow_local_href = frozenset((
     (None, 'pattern'),
     (None, 'radialGradient'),
     (None, 'textpath'),
-    (None, 'tref'),
     (None, 'set'),
     (None, 'use')
 ))

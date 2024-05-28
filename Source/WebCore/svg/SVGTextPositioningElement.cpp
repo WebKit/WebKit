@@ -30,7 +30,6 @@
 #include "SVGAltGlyphElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
-#include "SVGTRefElement.h"
 #include "SVGTSpanElement.h"
 #include "SVGTextElement.h"
 #include <wtf/IsoMallocInlines.h>
@@ -121,8 +120,7 @@ SVGTextPositioningElement* SVGTextPositioningElement::elementFromRenderer(Render
 
     if (!is<SVGTextElement>(element)
         && !is<SVGTSpanElement>(element)
-        && !is<SVGAltGlyphElement>(element)
-        && !is<SVGTRefElement>(element))
+        && !is<SVGAltGlyphElement>(element))
         return nullptr;
 
     // FIXME: This should use downcast<>().

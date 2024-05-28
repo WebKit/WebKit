@@ -8,13 +8,10 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 314x42
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 313.88: "Test of 'text-anchor'"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGText {text} at (0,-17) size 96x22 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 96x21
-            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 13 width 95.05: "end text tref"
         RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M -5 260 L 220 260"]
-      RenderSVGText {text} at (20,52) size 219x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 219x35
-          chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 17 width 218.45: "Tspan, tref, toap"
+      RenderSVGText {text} at (20,52) size 159x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 159x35
+          chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 11 width 158.44: "Tspan, toap"
       RenderSVGPath {line} at (365,200) size 3x234 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=220.00] [y1=120.00] [x2=220.00] [y2=260.00]
       RenderSVGContainer {g} at (18,208) size 588x232
         RenderSVGText {text} at (220,125) size 144x19 contains 1 chunk(s)
@@ -31,11 +28,7 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (81,0) size 86x19
               chunk 1 (middle anchor) text run 1 at (218.24,180.00) startOffset 0 endOffset 11 width 85.33: " bold tspan"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGText {text} at (135,205) size 85x19 contains 1 chunk(s)
-          RenderSVGInline {tref} at (0,0) size 85x19
-            RenderSVGInlineText {#text} at (0,0) size 85x19
-              chunk 1 (end anchor) text run 1 at (135.51,220.00) startOffset 0 endOffset 13 width 84.49: "end text tref"
-          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGText {text}
         RenderSVGText {text} at (10,245) size 210x19 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 210x19
             RenderSVGInlineText {#text} at (0,0) size 210x19

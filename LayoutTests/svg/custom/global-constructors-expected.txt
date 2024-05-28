@@ -102,9 +102,6 @@ PASS SVGTextContentElement.toString() is "function SVGTextContentElement() {\n  
 PASS SVGTextPositioningElement.toString() is "function SVGTextPositioningElement() {\n    [native code]\n}"
 PASS SVGTextElement.toString() is "function SVGTextElement() {\n    [native code]\n}"
 PASS SVGTSpanElement.toString() is "function SVGTSpanElement() {\n    [native code]\n}"
-FAIL SVGTRefElement.toString() should be function SVGTRefElement() {
-    [native code]
-}. Threw exception ReferenceError: Can't find variable: SVGTRefElement
 PASS SVGTextPathElement.toString() is "function SVGTextPathElement() {\n    [native code]\n}"
 FAIL SVGAltGlyphElement.toString() should be function SVGAltGlyphElement() {
     [native code]

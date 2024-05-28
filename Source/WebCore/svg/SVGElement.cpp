@@ -476,7 +476,6 @@ static inline bool isSVGLayerAwareElement(const SVGElement& element)
     case SVG::symbol:
     case SVG::text:
     case SVG::textPath:
-    case SVG::tref:
     case SVG::tspan:
     case SVG::use:
         return true;
@@ -501,7 +500,6 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     switch (svgChild->elementName()) {
     case ElementNames::SVG::altGlyph:
     case ElementNames::SVG::textPath:
-    case ElementNames::SVG::tref:
     case ElementNames::SVG::tspan:
         return false;
     default:

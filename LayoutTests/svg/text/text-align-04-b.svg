@@ -39,7 +39,7 @@
             <Paragraph>
                 The second group from the top contains sub-tests to verify that the
                 interpreter handles text-anchor when the text is comprised of other 
-                text related elements, 'tspan', 'tref', and 'textPath'.  
+                text related elements, 'tspan', and 'textPath'.
                 The text-anchor property is present on the containing 'text' element
                 in these cases, not on the contained child elements.
             </Paragraph>
@@ -58,18 +58,16 @@
    <g id="test-body-content">
       <text x="5" y="40" font-family="Arial" font-size="40" fill="black" >Test of 'text-anchor'</text>
             <defs>
-               <text id="tref-internal-reference">end text tref</text>
                <path id="myPath" d="M -5 260 220 260"/>
             </defs>
 
-      <text x="20" y="80" font-family="Arial" font-size="30" fill="black" >Tspan, tref, toap</text>
+      <text x="20" y="80" font-family="Arial" font-size="30" fill="black" >Tspan, toap</text>
             <!-- Test cases -->
             <line x1="220" y1="120" x2="220" y2="260" stroke="red" />
             <g font-family="Arial" font-size="30" fill="blue" >
                <text x="220" y="140" text-anchor="start" >start text <tspan xml:space="preserve" fill="red" > red tspan</tspan></text>
                <text x="220" y="180" text-anchor="middle" >middle text <tspan font-weight="bold"  xml:space="preserve"> bold tspan</tspan></text>
                <text x="220" y="220" text-anchor="end" >
-                  <tref xlink:href="#tref-internal-reference"/>
                </text>
                <text text-anchor="end" >
                   <textPath text-anchor="end"  startOffset="100%" xlink:href="#myPath">Text-anchor: end text on path</textPath>

@@ -125,7 +125,6 @@ bool SVGTextPathElement::childShouldCreateRenderer(const Node& child) const
 {
     if (child.isTextNode()
         || child.hasTagName(SVGNames::aTag)
-        || child.hasTagName(SVGNames::trefTag)
         || child.hasTagName(SVGNames::tspanTag))
         return true;
 

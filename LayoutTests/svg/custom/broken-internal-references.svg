@@ -44,9 +44,4 @@
     <textPath font-size="36" xlink:href="path-that-is-never-referred">Shoud not be shown</textPath> 
   </text>
 
-  <text x="20" y="100" fill="black" >
-    <!-- Referring a text in wrong format; A valid href should be "#text-that-is-never-referred" -->
-    <tref xlink:href="text-that-is-never-referred" />
-  </text>
-
 </svg>

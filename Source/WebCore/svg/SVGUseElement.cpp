@@ -223,7 +223,6 @@ static inline bool isDisallowedElement(const SVGElement& element)
     case SVG::text:
     case SVG::textPath:
     case SVG::title:
-    case SVG::tref:
     case SVG::tspan:
     case SVG::use:
         return false;

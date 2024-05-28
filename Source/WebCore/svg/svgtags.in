@@ -78,7 +78,6 @@ symbol
 text
 textPath
 title
-tref interfaceName=SVGTRefElement, JSInterfaceName=SVGElement
 tspan interfaceName=SVGTSpanElement
 use
 view

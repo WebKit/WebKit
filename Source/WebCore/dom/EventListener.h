@@ -45,7 +45,6 @@ public:
         ConditionEventListenerType,
         GObjectEventListenerType,
         NativeEventListenerType,
-        SVGTRefTargetEventListenerType,
         PDFDocumentEventListenerType,
     };
 

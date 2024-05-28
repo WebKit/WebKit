@@ -139,11 +139,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-22,4) size 44x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 44x14
             chunk 1 (middle anchor) text run 1 at (-22.00,15.00) startOffset 0 endOffset 9 width 44.00: "Helvetica"
-      RenderSVGContainer {g} at (51,383) size 98x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,410.00)}]
-        RenderSVGText {text} at (-49,-27) size 98x33 contains 1 chunk(s)
-          RenderSVGInline {tref} at (0,0) size 98x33
-            RenderSVGInlineText {#text} at (0,0) size 98x33
-              chunk 1 (middle anchor) text run 1 at (-49.00,0.00) startOffset 0 endOffset 6 width 98.00: "sample"
+      RenderSVGContainer {g} at (57,414) size 86x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,410.00)}]
         RenderSVGText {text} at (-43,4) size 86x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 85x14
             chunk 1 (middle anchor) text run 1 at (-42.50,15.00) startOffset 0 endOffset 18 width 85.00: "Arial (underlined)"
@@ -155,11 +151,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-16,4) size 32x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 32x14
             chunk 1 (middle anchor) text run 1 at (-16.00,15.00) startOffset 0 endOffset 6 width 32.00: "Impact"
-      RenderSVGContainer {g} at (286,383) size 128x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,410.00)}]
-        RenderSVGText {text} at (-42,-27) size 84x33 contains 1 chunk(s)
-          RenderSVGInline {tref} at (0,0) size 84x33
-            RenderSVGInlineText {#text} at (0,0) size 84x33
-              chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
+      RenderSVGContainer {g} at (286,414) size 128x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,410.00)}]
         RenderSVGText {text} at (-64,4) size 128x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 127x14
             chunk 1 (middle anchor) text run 1 at (-63.05,15.00) startOffset 0 endOffset 25 width 126.11: "AvantGarde (line-through)"

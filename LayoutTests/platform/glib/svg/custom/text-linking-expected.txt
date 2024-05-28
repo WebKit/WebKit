@@ -1,22 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (97,36) size 166x217
+  RenderSVGRoot {svg} at (97,36) size 133x217
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (0,-14) size 163x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 163x17
-          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 25 width 163.00: "Referenced character data"
       RenderSVGPath {path} at (100,140) size 100x10 [fill={[type=SOLID] [color=#000000]}] [data="M 100 150 L 150 140 L 200 150"]
     RenderSVGText {text} at (100,36) size 77x17 contains 1 chunk(s)
       RenderSVGInline {a} at (0,0) size 77x17
         RenderSVGTSpan {tspan} at (0,0) size 77x17
           RenderSVGInlineText {#text} at (0,0) size 77x17
             chunk 1 text run 1 at (100.00,50.00) startOffset 0 endOffset 13 width 77.00: "tspan in link"
-    RenderSVGText {text} at (100,86) size 163x17 contains 1 chunk(s)
-      RenderSVGInline {a} at (0,0) size 163x17
-        RenderSVGInline {tref} at (0,0) size 163x17
-          RenderSVGInlineText {#text} at (0,0) size 163x17
-            chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 25 width 163.00: "Referenced character data"
     RenderSVGText {text} at (97,126) size 99x27 contains 1 chunk(s)
       RenderSVGInline {a} at (0,0) size 99x27
         RenderSVGTextPath {textPath} at (0,0) size 99x27

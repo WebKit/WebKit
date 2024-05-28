@@ -43,7 +43,7 @@
             <Paragraph>
                 The second group from the top contains sub-tests to verify that the
                 interpreter handles text-anchor when the text is comprised of other 
-                text related elements, 'tspan', 'tref', and 'textPath'.  
+                text related elements, 'tspan', and 'textPath'.  
                 The text-anchor property is present on the containing 'text' element
                 in these cases, not on the contained child elements.
             </Paragraph>
@@ -73,7 +73,6 @@
 	<!--======================================================================-->
 	<g id="test-body-content">
 		<defs>
-			<text id="tref-internal-reference">end. text w/ tref</text>
 			<path id="myPath" d="M 150 135 375 135"/>
 		</defs>
 		<text x="105" y="25" font-family="Helvetica" font-size="14" fill="black" >Basic test of 'text-anchor' alignment property.</text>
@@ -94,14 +93,13 @@
 			<text x="20" y="115">middle...</text>
 			<text x="20" y="135">end...</text>
 		</g>
-		<text x="175" y="55" font-family="Helvetica" font-size="14" fill="black" >Tspan, tref, toap</text>
+		<text x="175" y="55" font-family="Helvetica" font-size="14" fill="black" >Tspan, toap</text>
 		<!-- Test cases -->
 		<line x1="375" y1="60" x2="375" y2="145" stroke="red" />
 		<g font-family="Helvetica" font-size="10" fill="blue" >
 			<text x="375" y="75" text-anchor="start" >start. text w/<tspan xml:space="preserve" fill="red" > red tspan</tspan></text>
 			<text x="375" y="95" text-anchor="middle" >middle. text w/<tspan font-weight="bold"  xml:space="preserve"> bold tspan</tspan></text>
 			<text x="375" y="115" text-anchor="end" >
-				<tref xlink:href="#tref-internal-reference"/>
 			</text>
 			<text text-anchor="end" >
 				<textPath text-anchor="end"  startOffset="100%" xlink:href="#myPath">Text-anchor: end. Text on path</textPath>
@@ -111,7 +109,6 @@
 		<g font-family="Helvetica" font-size="10" fill="black" >
 			<text x="190" y="75">tspan...</text>
 			<text x="190" y="95">tspan...</text>
-			<text x="190" y="115">tref...</text>
 			<text x="190" y="135">textPath...</text>
 		</g>
 		<text x="5" y="190" font-family="Helvetica" font-size="14" fill="black" >Changes in chunks.</text>

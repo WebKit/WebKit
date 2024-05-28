@@ -161,12 +161,6 @@ Ref<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)
     return create(targetDocument, String { data() });
 }
 
-static bool isSVGShadowText(const Text& text)
-{
-    ASSERT(text.parentNode());
-    auto* parentShadowRoot = dynamicDowncast<ShadowRoot>(*text.parentNode());
-    return parentShadowRoot && parentShadowRoot->host()->hasTagName(SVGNames::trefTag);
-}
 
 static bool isSVGText(const Text& text)
 {
@@ -177,7 +171,7 @@ static bool isSVGText(const Text& text)
 
 RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
 {
-    if (isSVGText(*this) || isSVGShadowText(*this))
+    if (isSVGText(*this))
         return createRenderer<RenderSVGInlineText>(*this, data());
 
     if (style.hasTextCombine())

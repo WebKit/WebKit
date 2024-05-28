@@ -3546,7 +3546,6 @@ webkit.org/b/232386 svg/as-object/nested-embedded-svg-size-changes-no-layout-tri
 webkit.org/b/232386 svg/as-object/nested-embedded-svg-size-changes.html [ Failure ]
 webkit.org/b/232386 svg/css/use-window-inactive-crash.html [ ImageOnlyFailure ]
 webkit.org/b/232386 svg/custom/crash-inline-container-client.html [ Failure ]
-webkit.org/b/232386 svg/custom/tref-clone-crash.html [ Failure ]
 webkit.org/b/232386 svg/custom/use-animation-in-fill.html [ Failure ]
 webkit.org/b/232386 svg/custom/use-multiple-on-nested-disallowed-font.html [ Failure ]
 webkit.org/b/232386 svg/custom/xlink-prefix-in-attributes.html [ Failure ]

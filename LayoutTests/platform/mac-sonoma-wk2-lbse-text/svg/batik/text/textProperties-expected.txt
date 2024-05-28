@@ -62,17 +62,6 @@ layer at (-47.03,1) size 94x18 backgroundClip at (0,0) size 450x500 clip at (0,0
   RenderSVGText {text} at (9,37) size 95x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 95x18
       chunk 1 (middle anchor) text run 1 at (-47.03,15.00) startOffset 0 endOffset 14 width 94.06: "font-size=\"28\""
-layer at (-81.64,-27.50) size 165x47 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (4.94,8.50) size 163.28x46.50
-layer at (-42.50,-27.50) size 85x35 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGText {text} at (39,0) size 86x35 contains 1 chunk(s)
-    RenderSVGInline {tref} at (0,0) size 85x35
-      RenderSVGInlineText {#text} at (0,0) size 85x35
-        chunk 1 (middle anchor) text run 1 at (-42.49,0.00) startOffset 0 endOffset 6 width 84.98: "sample"
-layer at (-81.64,1) size 163x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGText {text} at (0,28) size 164x19 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 164x18
-      chunk 1 (middle anchor) text run 1 at (-81.64,15.00) startOffset 0 endOffset 26 width 163.28: "referenced text via <tref>"
 layer at (-47.25,-27.50) size 95x47 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {g} at (39.33,8.50) size 94.50x46.50
 layer at (-43.33,-27.50) size 87x35 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500

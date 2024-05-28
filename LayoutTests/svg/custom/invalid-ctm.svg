@@ -13,11 +13,11 @@
 <font-face><font-face-format><font-face-name><font-face-src><font-face-uri>
 <g><glyph><glyphRef><hkern><line><linearGradient><marker><mask><metadata>
 <missing-glyph><mpath><path><pattern><polygon><polyline><radialGradient><rect>
-<set><stop><svg><switch><symbol><text><textPath><tref><tspan><use><view><vkern>
+<set><stop><svg><switch><symbol><text><textPath><tspan><use><view><vkern>
 
 <g id="g">text</g>
 
-</vkern></view></use></tspan></tref></textPath></text></symbol></switch></svg>
+</vkern></view></use></tspan></textPath></text></symbol></switch></svg>
 </stop></set></rect></radialGradient></polyline></polygon></pattern></path>
 </mpath></missing-glyph></metadata></mask></marker></linearGradient></line>
 </hkern></glyphRef></glyph></g></font-face-uri></font-face-src>

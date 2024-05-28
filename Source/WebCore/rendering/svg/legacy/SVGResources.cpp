@@ -91,7 +91,6 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterM
         // (Already mailed SVG WG, waiting for a solution)
         &SVGNames::altGlyphTag,
         &SVGNames::textPathTag,
-        &SVGNames::trefTag,
         &SVGNames::tspanTag,
 
         // Not listed in the definitions is the foreignObject element, but clip-path
@@ -131,7 +130,6 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& fillAndStrokeT
         &SVGNames::rectTag,
         &SVGNames::textTag,
         &SVGNames::textPathTag,
-        &SVGNames::trefTag,
         &SVGNames::tspanTag,
     };
     static NeverDestroyed set = tagSet(tags);
