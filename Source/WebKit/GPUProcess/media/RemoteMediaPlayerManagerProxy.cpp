@@ -158,6 +158,8 @@ bool RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection&
 RefPtr<MediaPlayer> RemoteMediaPlayerManagerProxy::mediaPlayer(const MediaPlayerIdentifier& identifier)
 {
     ASSERT(RunLoop::isMain());
+    if (!identifier.isValid())
+        return nullptr;
     auto results = m_proxies.find(identifier);
     if (results != m_proxies.end())
         return results->value->mediaPlayer();
