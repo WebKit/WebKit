@@ -152,8 +152,11 @@
 #include "LocalAudioSessionRoutingArbitrator.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
+#if PLATFORM(MAC) && ENABLE(MEDIA_STREAM)
 #include <WebCore/CoreAudioSharedUnit.h>
+#endif
+
+#if ENABLE(MEDIA_STREAM)
 #include <WebCore/SecurityOrigin.h>
 #endif
 
