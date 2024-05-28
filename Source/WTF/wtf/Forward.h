@@ -60,8 +60,8 @@ class WallTime;
 struct AnyThreadsAccessTraits;
 struct FastMalloc;
 struct MainThreadAccessTraits;
-struct ObjectIdentifierMainThreadAccessTraits;
-struct ObjectIdentifierThreadSafeAccessTraits;
+template<typename> struct ObjectIdentifierMainThreadAccessTraits;
+template<typename> struct ObjectIdentifierThreadSafeAccessTraits;
 
 namespace JSONImpl {
 class Array;
@@ -87,9 +87,9 @@ template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
 template<typename T, typename Traits = typename T::MarkableTraits> class Markable;
 template<typename, typename = AnyThreadsAccessTraits> class NeverDestroyed;
 template<typename> class OSObjectPtr;
-template<typename, typename> class ObjectIdentifierGeneric;
-template<typename T> using ObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits>;
-template<typename T> using AtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits>;
+template<typename, typename, typename> class ObjectIdentifierGeneric;
+template<typename T, typename RawValue = uint64_t> using ObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue>;
+template<typename T, typename RawValue = uint64_t> using AtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue>;
 template<typename> class Observer;
 template<typename> class OptionSet;
 template<typename> class Packed;

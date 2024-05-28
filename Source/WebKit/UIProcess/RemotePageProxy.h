@@ -87,7 +87,7 @@ public:
     template<typename M> void send(M&&);
     template<typename M> IPC::ConnectionSendSyncResult<M> sendSync(M&& message);
     template<typename M, typename C> void sendWithAsyncReply(M&&, C&&);
-    template<typename M, typename C> void sendWithAsyncReply(M&&, C&&, const ObjectIdentifierGenericBase&);
+    template<typename M, typename C, typename RawValue> void sendWithAsyncReply(M&&, C&&, const ObjectIdentifierGenericBase<RawValue>&);
 
     void injectPageIntoNewProcess();
     void processDidTerminate(WebCore::ProcessIdentifier);
@@ -136,7 +136,7 @@ template<typename M, typename C> void RemotePageProxy::sendWithAsyncReply(M&& me
     sendWithAsyncReply(std::forward<M>(message), std::forward<C>(completionHandler), m_webPageID);
 }
 
-template<typename M, typename C> void RemotePageProxy::sendWithAsyncReply(M&& message, C&& completionHandler, const ObjectIdentifierGenericBase& destinationID)
+template<typename M, typename C, typename RawValue> void RemotePageProxy::sendWithAsyncReply(M&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID)
 {
     m_process->sendWithAsyncReply(std::forward<M>(message), std::forward<C>(completionHandler), destinationID.toUInt64());
 }

@@ -156,7 +156,7 @@ template: struct WebKit::WebPageProxyIdentifierType
 template: struct WebKit::WebTransportSessionIdentifierType
 template: struct WebKit::WebTransportStreamIdentifierType
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::ObjectIdentifier {
-    [Validator='WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
+    [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }
 
 header: <wtf/ObjectIdentifier.h>
@@ -201,7 +201,7 @@ template: struct WebCore::WebSocketFrame
 template: struct WebKit::ConnectionAsyncReplyHandler
 template: struct WebKit::StorageAreaIdentifierType
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::AtomicObjectIdentifier {
-    [Validator='WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
+    [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }
 
 #if OS(WINDOWS)

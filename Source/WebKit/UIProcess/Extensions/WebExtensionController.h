@@ -151,8 +151,8 @@ public:
 
     void cookiesDidChange(API::HTTPCookieStore&);
 
-    template<typename T>
-    void sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase& destinationID);
+    template<typename T, typename RawValue>
+    void sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase<RawValue>& destinationID);
 
 #if PLATFORM(MAC)
     void addItemsToContextMenu(WebPageProxy&, const ContextMenuContextData&, NSMenu *);
@@ -258,8 +258,8 @@ private:
     std::unique_ptr<HTTPCookieStoreObserver> m_cookieStoreObserver;
 };
 
-template<typename T>
-void WebExtensionController::sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase& destinationID)
+template<typename T, typename RawValue>
+void WebExtensionController::sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase<RawValue>& destinationID)
 {
     for (auto& process : allProcesses()) {
         if (process.canSendMessage())
