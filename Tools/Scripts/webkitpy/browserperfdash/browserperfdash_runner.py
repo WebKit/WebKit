@@ -87,6 +87,7 @@ class BrowserPerfDashRunner(object):
                              'bot_password': None,
                              'browser_id': self._args.browser,
                              'browser_version': self._args.browser_version,
+                             'local_hostname': os.uname().nodename,
                              'test_id': None,
                              'test_version': None,
                              'test_data': None}
@@ -272,7 +273,9 @@ class BrowserPerfDashRunner(object):
                                                     self._args.browser,
                                                     None,
                                                     browser_args=self._args.browser_args)
+                    self._result_data['local_timestamp_teststart'] = datetime.now().strftime('%s')
                     runner.execute()
+                    self._result_data['local_timestamp_testend'] = datetime.now().strftime('%s')
                     _log.info('Finished benchmark plan: {plan_name}'.format(plan_name=plan))
                     # Fill test info for upload
                     self._result_data['test_id'] = plan
