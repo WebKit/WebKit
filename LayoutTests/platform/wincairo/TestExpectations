@@ -3315,8 +3315,6 @@ fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
 
 imported/w3c/web-platform-tests/navigation-api [ Skip ]
 
-webkit.org/b/271408 [ Debug ] fast/images/decode-render-animated-image.html [ Skip ] # Crash
-
 # Makes a subsequent test crash
 webkit.org/b/272127 fast/text/remove-renderer-and-select-crash.html [ Skip ]
 
