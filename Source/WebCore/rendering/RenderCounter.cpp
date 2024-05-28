@@ -466,26 +466,24 @@ String RenderCounter::originalText() const
     RefPtr child = m_counterNode.get();
     int value = child->actsAsReset() ? child->value() : child->countInParent();
 
-    auto counterText = [](const ListStyleType& styleType, int value, CSSCounterStyle* counterStyle) {
-        if (styleType.type == ListStyleType::Type::None)
+    auto counterText = [this](int value) {
+        if (this->m_counter.listStyleType().type == ListStyleType::Type::None)
             return emptyString();
 
-        if (styleType.type == ListStyleType::Type::CounterStyle) {
-            ASSERT(counterStyle);
-            return counterStyle->text(value);
+        if (this->m_counter.listStyleType().type == ListStyleType::Type::CounterStyle) {
+            ASSERT(this->counterStyle());
+            return this->counterStyle()->text(value, this->style().direction());
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     };
-    auto counterStyle = this->counterStyle();
-    String text = counterText(m_counter.listStyleType(), value, counterStyle.get());
-
+    auto text = counterText(value);
     if (!m_counter.separator().isNull()) {
         if (!child->actsAsReset())
             child = child->parent();
         while (CounterNode* parent = child->parent()) {
-            text = counterText(m_counter.listStyleType(), child->countInParent(), counterStyle.get())
+            text = counterText(child->countInParent())
                 + m_counter.separator() + text;
             child = parent;
         }

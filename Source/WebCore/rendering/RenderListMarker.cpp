@@ -126,12 +126,8 @@ auto RenderListMarker::textRun() const -> TextRunWithUnderlyingString
     if (m_textIsLeftToRightDirection) {
         if (style().isLeftToRightDirection())
             textForRun = m_textWithSuffix;
-        else {
-            if (style().listStyleType().isDisclosureClosed())
-                textForRun = span(blackLeftPointingSmallTriangle);
-            else
-                textForRun = makeString(reversed(StringView(m_textWithSuffix).substring(m_textWithoutSuffixLength)), m_textWithSuffix.left(m_textWithoutSuffixLength));
-        }
+        else
+            textForRun = makeString(reversed(StringView(m_textWithSuffix).substring(m_textWithoutSuffixLength)), m_textWithSuffix.left(m_textWithoutSuffixLength));
     } else {
         if (!style().isLeftToRightDirection())
             textForRun = reversed(m_textWithSuffix);
@@ -317,7 +313,7 @@ void RenderListMarker::updateContent()
     case ListStyleType::Type::CounterStyle: {
         auto counter = counterStyle();
         ASSERT(counter);
-        auto text = makeString(counter->prefix().text, counter->text(m_listItem->value()));
+        auto text = makeString(counter->prefix().text, counter->text(m_listItem->value(), style().direction()));
         m_textWithSuffix = makeString(text, counter->suffix().text);
         m_textWithoutSuffixLength = text.length();
         m_textIsLeftToRightDirection = u_charDirection(text[0]) != U_RIGHT_TO_LEFT;
