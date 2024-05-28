@@ -588,6 +588,8 @@ void RenderObject::scheduleLayout(RenderElement* layoutRoot)
 RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layoutRoot)
 {
     ASSERT(!isSetNeedsLayoutForbidden());
+    if (is<RenderView>(*this))
+        return downcast<RenderElement>(this);
 
     CheckedPtr ancestor = container();
 

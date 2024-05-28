@@ -965,10 +965,8 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
         }
     }
 
-    // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
-    // that a positioned child got yanked). We also repaint, so that the area exposed when the child
-    // disappears gets repainted properly.
-    child.setNeedsLayoutAndPrefWidthsRecalc();
+    if (willBeDestroyed == RenderTreeBuilder::WillBeDestroyed::No)
+        child.setNeedsLayoutAndPrefWidthsRecalc();
 
     // If we have a line box wrapper, delete it.
     if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
