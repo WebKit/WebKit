@@ -197,9 +197,9 @@ function webcontent_sandbox_entitlements()
 
 function notify_entitlements()
 {
-    plistbuddy Add :com.apple.developer.web-browser-engine.restrict.notifyd bool YES
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
+        plistbuddy Add :com.apple.developer.web-browser-engine.restrict.notifyd bool YES
         plistbuddy Add :com.apple.private.darwin-notification.introspect array
         plistbuddy Add :com.apple.private.darwin-notification.introspect:0 string com.apple.CFPreferences._domainsChangedExternally
         plistbuddy Add :com.apple.private.darwin-notification.introspect:1 string com.apple.WebKit.LibraryPathDiagnostics

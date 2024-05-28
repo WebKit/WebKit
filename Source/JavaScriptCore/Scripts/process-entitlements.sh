@@ -141,7 +141,7 @@ then
     [[ "${RC_XBS}" != YES ]] && plistbuddy Add :com.apple.security.get-task-allow bool YES
 elif [[ "${WK_PLATFORM_NAME}" == macosx ]]
 then
-    [[ "${RC_XBS}" != YES ]] && plistbuddy Add :com.apple.security.get-task-allow bool YES
+    [[ "${RC_XBS}" != YES ]] && [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]] && plistbuddy Add :com.apple.security.get-task-allow bool YES
 
     if [[ "${PRODUCT_NAME}" == jsc ||
           "${PRODUCT_NAME}" == dynbench ||

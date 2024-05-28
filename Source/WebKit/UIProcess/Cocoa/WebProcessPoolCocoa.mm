@@ -765,7 +765,11 @@ void WebProcessPool::registerNotificationObservers()
                 if (!protectedThis)
                     return;
                 String messageString(message);
-                protectedThis->sendToAllProcesses(Messages::WebProcess::PostNotification(messageString, (status == NOTIFY_STATUS_OK) ? std::optional<uint64_t>(state) : std::nullopt));
+                for (auto& process : protectedThis->m_processes) {
+                    if (process->auditToken() && !WTF::hasEntitlement(process->auditToken().value(), "com.apple.developer.web-browser-engine.restrict.notifyd"_s))
+                        continue;
+                    process->send(Messages::WebProcess::PostNotification(messageString, (status == NOTIFY_STATUS_OK) ? std::optional<uint64_t>(state) : std::nullopt), 0);
+                }
             });
         });
         if (registerStatus)
