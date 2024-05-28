@@ -534,7 +534,7 @@ void RenderBundleEncoder::storeVertexBufferCountsForValidation(uint32_t indexCou
 {
     id<MTLBuffer> indexBuffer = m_indexBuffer.get() ? m_indexBuffer->buffer() : nil;
     id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand();
-    if (!icbCommand || !indexBuffer || baseVertex < 0)
+    if (!icbCommand || !indexBuffer)
         return;
 
     m_minVertexCountForDrawCommand.add(m_currentCommandIndex, IndexBufferAndIndexData {

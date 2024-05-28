@@ -557,7 +557,7 @@ uint32_t RenderPassEncoder::computeMininumVertexCount() const
 bool RenderPassEncoder::clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes)
 {
     id<MTLBuffer> indexBuffer = m_indexBuffer.get() ? m_indexBuffer->buffer() : nil;
-    if (!indexCount || !indexBuffer || baseVertex < 0 || m_indexBuffer->isDestroyed())
+    if (!indexCount || !indexBuffer || m_indexBuffer->isDestroyed())
         return false;
 
     uint32_t minVertexCount = computeMininumVertexCount();
