@@ -400,12 +400,6 @@ bool Buffer::isDestroyed() const
     return state() == State::Destroyed;
 }
 
-uint32_t Buffer::maxIndex(MTLIndexType indexType) const
-{
-    ASSERT(m_usage & WGPUBufferUsage_Index);
-    return indexType == MTLIndexTypeUInt16 ? m_max16BitIndex : m_max32BitIndex;
-}
-
 id<MTLBuffer> Buffer::indirectBuffer() const
 {
     return m_indirectBuffer;
