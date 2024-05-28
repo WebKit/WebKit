@@ -518,7 +518,7 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
             continue;
 
         while (true) {
-            buffer = ArrayBuffer::create(m_sampleInputBuffer.data(), m_sampleInputBuffer.size());
+            buffer = ArrayBuffer::create(m_sampleInputBuffer);
             auto view = JSC::DataView::create(WTFMove(buffer), 0, buffer->byteLength());
 
             auto peekResult = ISOBox::peekBox(view, 0);
@@ -607,7 +607,7 @@ bool InbandTextTrackPrivateAVF::readNativeSampleBuffer(CFArrayRef nativeSamples,
     m_sampleInputBuffer.grow(m_sampleInputBuffer.size() + bufferLength);
     CMBlockBufferCopyDataBytes(blockBuffer, 0, bufferLength, m_sampleInputBuffer.data() + m_sampleInputBuffer.size() - bufferLength);
 
-    buffer = ArrayBuffer::create(m_sampleInputBuffer.data(), m_sampleInputBuffer.size());
+    buffer = ArrayBuffer::create(m_sampleInputBuffer);
 
     formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
 

@@ -185,15 +185,15 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 {
     bool closeStream = false;
     if (isArrayBuffer())
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferBody().data(), arrayBufferBody().byteLength()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferBody().span()));
     else if (isArrayBufferView())
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferViewBody().span()));
     else if (isText()) {
         auto data = PAL::TextCodecUTF8::encodeUTF8(textBody());
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(data));
     } else if (isURLSearchParams()) {
         auto data = PAL::TextCodecUTF8::encodeUTF8(urlSearchParamsBody().toString());
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(data));
     } else if (isBlob())
         owner.loadBlob(blobBody(), nullptr);
     else if (isFormData())

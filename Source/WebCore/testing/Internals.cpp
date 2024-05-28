@@ -4230,8 +4230,7 @@ ExceptionOr<String> Internals::getCurrentCursorInfo()
 
 Ref<ArrayBuffer> Internals::serializeObject(const RefPtr<SerializedScriptValue>& value) const
 {
-    auto& bytes = value->wireBytes();
-    return ArrayBuffer::create(bytes.data(), bytes.size());
+    return ArrayBuffer::create(value->wireBytes());
 }
 
 Ref<SerializedScriptValue> Internals::deserializeBuffer(ArrayBuffer& buffer) const

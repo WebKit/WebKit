@@ -42,6 +42,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebCore {
 
@@ -110,8 +111,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto keyRequestBuffer = ArrayBuffer::create([keyRequest bytes], [keyRequest length]);
-    return Uint8Array::create(WTFMove(keyRequestBuffer));
+    return Uint8Array::create(ArrayBuffer::create(span(keyRequest.get())));
 }
 
 void CDMSessionAVFoundationObjC::releaseKeys()

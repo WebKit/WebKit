@@ -88,7 +88,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleCustomSections, (JSGlobalObject* globa
     for (const Wasm::CustomSection& section : customSections) {
         // FIXME: Add a function that compares a String with a span<char8_t> so we don't need to make a string.
         if (WTF::makeString(section.name) == sectionNameString) {
-            auto buffer = ArrayBuffer::tryCreate(section.payload.data(), section.payload.size());
+            auto buffer = ArrayBuffer::tryCreate(section.payload.span());
             if (!buffer)
                 return JSValue::encode(throwException(globalObject, throwScope, createOutOfMemoryError(globalObject)));
 

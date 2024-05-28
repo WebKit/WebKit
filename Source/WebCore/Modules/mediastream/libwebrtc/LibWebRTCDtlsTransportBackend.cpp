@@ -95,7 +95,7 @@ void LibWebRTCDtlsTransportBackendObserver::updateState(webrtc::DtlsTransportInf
         }
     }
     m_client->onStateChanged(toRTCDtlsTransportState(info.state()), map(certificates, [](auto& certificate) -> Ref<JSC::ArrayBuffer> {
-        return JSC::ArrayBuffer::create(certificate.data(), certificate.size());
+        return JSC::ArrayBuffer::create(certificate);
     }));
 }
 

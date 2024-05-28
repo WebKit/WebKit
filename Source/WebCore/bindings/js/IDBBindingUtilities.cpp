@@ -165,7 +165,7 @@ JSValue toJS(JSGlobalObject& lexicalGlobalObject, JSGlobalObject& globalObject, 
             return jsNull();
         }
 
-        auto arrayBuffer = ArrayBuffer::create(data->data(), data->size());
+        auto arrayBuffer = ArrayBuffer::create(*data);
         Structure* structure = globalObject.arrayBufferStructure(arrayBuffer->sharingMode());
         if (!structure)
             return jsNull();

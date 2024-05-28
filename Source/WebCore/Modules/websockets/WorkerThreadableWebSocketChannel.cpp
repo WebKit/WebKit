@@ -46,6 +46,7 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/MainThread.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -451,7 +452,7 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
     // ArrayBuffer isn't thread-safe, hence the content of ArrayBuffer is copied into Vector<uint8_t>.
     Vector<uint8_t> data(byteLength);
     if (binaryData.byteLength())
-        memcpy(data.data(), static_cast<const uint8_t*>(binaryData.data()) + byteOffset, byteLength);
+        memcpySpan(data.mutableSpan(), binaryData.span().subspan(byteOffset, byteLength));
     setMethodNotCompleted();
 
     m_loaderProxy.postTaskToLoader([peer = m_peer, data = WTFMove(data)](ScriptExecutionContext& context) {
@@ -459,7 +460,7 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
         ASSERT_UNUSED(context, context.isDocument());
         ASSERT(peer);
 
-        auto arrayBuffer = ArrayBuffer::create(data.data(), data.size());
+        auto arrayBuffer = ArrayBuffer::create(data.span());
         peer->send(arrayBuffer);
     });
 

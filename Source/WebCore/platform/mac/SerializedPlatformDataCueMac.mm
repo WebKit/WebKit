@@ -38,6 +38,8 @@
 #import <JavaScriptCore/JSObjectRef.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <objc/runtime.h>
+#import <wtf/cocoa/SpanCocoa.h>
+
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
@@ -136,7 +138,7 @@ static JSValue *jsValueWithValueInContext(id value, JSContext *context)
 
 static JSValue *jsValueWithDataInContext(NSData *data, JSContext *context)
 {
-    auto dataArray = ArrayBuffer::tryCreate([data bytes], [data length]);
+    auto dataArray = ArrayBuffer::tryCreate(span(data));
 
     auto* lexicalGlobalObject = toJS([context JSGlobalContextRef]);
     JSC::JSValue array = toJS(lexicalGlobalObject, JSC::jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), dataArray.get());

@@ -222,7 +222,7 @@ void WebCodecsAudioDecoder::isConfigSupported(ScriptExecutionContext& context, W
         ScriptExecutionContext::postTaskTo(identifier, [success = result.has_value(), config = WTFMove(config).isolatedCopyWithoutDescription(), description = WTFMove(description), promisePtr](auto& context) mutable {
             if (auto promise = context.takeDeferredPromise(promisePtr)) {
                 if (description.size())
-                    config.description = RefPtr { JSC::ArrayBuffer::create(description.data(), description.size()) };
+                    config.description = RefPtr { JSC::ArrayBuffer::create(description) };
                 promise->template resolve<IDLDictionary<WebCodecsAudioDecoderSupport>>(WebCodecsAudioDecoderSupport { success, WTFMove(config) });
             }
         });

@@ -113,14 +113,14 @@ using namespace WebCore;
 
 static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
 {
-    return ArrayBuffer::create(reinterpret_cast<const uint8_t *>(data.bytes), data.length);
+    return ArrayBuffer::create(span(data));
 }
 
 static inline RefPtr<ArrayBuffer> toArrayBufferNilIfEmpty(NSData *data)
 {
     if (!data || !data.length)
         return nullptr;
-    return ArrayBuffer::create(reinterpret_cast<const uint8_t *>(data.bytes), data.length);
+    return ArrayBuffer::create(span(data));
 }
 
 static inline RetainPtr<NSData> toNSData(const Vector<uint8_t>& data)

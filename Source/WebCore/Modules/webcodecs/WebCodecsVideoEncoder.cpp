@@ -185,7 +185,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
             if (m_state != WebCodecsCodecState::Configured)
                 return;
 
-            RefPtr<JSC::ArrayBuffer> buffer = JSC::ArrayBuffer::create(result.data.data(), result.data.size());
+            RefPtr<JSC::ArrayBuffer> buffer = JSC::ArrayBuffer::create(result.data);
             auto chunk = WebCodecsEncodedVideoChunk::create(WebCodecsEncodedVideoChunk::Init {
                 result.isKeyFrame ? WebCodecsEncodedVideoChunkType::Key : WebCodecsEncodedVideoChunkType::Delta,
                 result.timestamp,

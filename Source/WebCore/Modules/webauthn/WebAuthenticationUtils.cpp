@@ -178,9 +178,7 @@ Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& ch
     if (scope != WebAuthn::Scope::SameOrigin)
         object->setBoolean("crossOrigin"_s, scope != WebAuthn::Scope::SameOrigin);
 
-    auto utf8JSONString = object->toJSONString().utf8();
-
-    return ArrayBuffer::create(utf8JSONString.data(), utf8JSONString.length());
+    return ArrayBuffer::create(object->toJSONString().utf8().span());
 }
 
 Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson)

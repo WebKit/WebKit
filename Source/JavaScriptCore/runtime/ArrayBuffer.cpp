@@ -197,18 +197,10 @@ Ref<ArrayBuffer> ArrayBuffer::create(size_t numElements, unsigned elementByteSiz
 
 Ref<ArrayBuffer> ArrayBuffer::create(ArrayBuffer& other)
 {
-    return ArrayBuffer::create(other.data(), other.byteLength());
+    return ArrayBuffer::create(other.span());
 }
 
-Ref<ArrayBuffer> ArrayBuffer::create(const void* source, size_t byteLength)
-{
-    auto buffer = tryCreate(source, byteLength);
-    if (!buffer)
-        CRASH();
-    return buffer.releaseNonNull();
-}
-
-Ref<ArrayBuffer> ArrayBuffer::create(std::span<uint8_t> span)
+Ref<ArrayBuffer> ArrayBuffer::create(std::span<const uint8_t> span)
 {
     auto buffer = tryCreate(span);
     if (!buffer)
@@ -221,19 +213,14 @@ Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents&& contents)
     return adoptRef(*new ArrayBuffer(WTFMove(contents)));
 }
 
-Ref<ArrayBuffer> ArrayBuffer::create(const Vector<uint8_t>& vector)
-{
-    return ArrayBuffer::create(vector.data(), vector.size());
-}
-
 // FIXME: We cannot use this except if the memory comes from the cage.
 // Current this is only used from:
 // - JSGenericTypedArrayView<>::slowDownAndWasteMemory. But in that case, the memory should have already come
 //   from the cage.
-Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, size_t byteLength)
+Ref<ArrayBuffer> ArrayBuffer::createAdopted(std::span<const uint8_t> data)
 {
-    ASSERT(!Gigacage::isEnabled() || (Gigacage::contains(data) && Gigacage::contains(static_cast<const uint8_t*>(data) + byteLength - 1)));
-    return createFromBytes(data, byteLength, ArrayBuffer::primitiveGigacageDestructor());
+    ASSERT(!Gigacage::isEnabled() || (Gigacage::contains(data.data()) && Gigacage::contains(static_cast<const uint8_t*>(data.data()) + data.size() - 1)));
+    return createFromBytes(data.data(), data.size(), ArrayBuffer::primitiveGigacageDestructor());
 }
 
 // FIXME: We cannot use this except if the memory comes from the cage.
@@ -264,21 +251,16 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(size_t numElements, unsigned elementB
 
 RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(ArrayBuffer& other)
 {
-    return tryCreate(other.data(), other.byteLength());
-}
-
-RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(const void* source, size_t byteLength)
-{
-    ArrayBufferContents contents;
-    contents.tryAllocate(byteLength, 1, ArrayBufferContents::InitializationPolicy::DontInitialize);
-    if (!contents.m_data)
-        return nullptr;
-    return createInternal(WTFMove(contents), source, byteLength);
+    return tryCreate(other.span());
 }
 
 RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(std::span<const uint8_t> span)
 {
-    return tryCreate(span.data(), span.size_bytes());
+    ArrayBufferContents contents;
+    contents.tryAllocate(span.size(), 1, ArrayBufferContents::InitializationPolicy::DontInitialize);
+    if (!contents.m_data)
+        return nullptr;
+    return createInternal(WTFMove(contents), span.data(), span.size());
 }
 
 Ref<ArrayBuffer> ArrayBuffer::createUninitialized(size_t numElements, unsigned elementByteSize)
@@ -372,7 +354,7 @@ RefPtr<ArrayBuffer> ArrayBuffer::slice(double begin) const
 RefPtr<ArrayBuffer> ArrayBuffer::sliceWithClampedIndex(size_t begin, size_t end) const
 {
     size_t size = begin <= end ? end - begin : 0;
-    auto result = ArrayBuffer::tryCreate(static_cast<const char*>(data()) + begin, size);
+    auto result = ArrayBuffer::tryCreate(span().subspan(begin, size));
     if (result)
         result->setSharingMode(sharingMode());
     return result;

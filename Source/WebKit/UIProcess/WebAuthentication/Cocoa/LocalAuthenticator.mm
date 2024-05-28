@@ -145,9 +145,9 @@ static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
     return ArrayBuffer::create(span(data));
 }
 
-static inline Ref<ArrayBuffer> toArrayBuffer(const Vector<uint8_t>& data)
+static inline Ref<ArrayBuffer> toArrayBuffer(std::span<const uint8_t> data)
 {
-    return ArrayBuffer::create(data.data(), data.size());
+    return ArrayBuffer::create(data);
 }
 
 static Vector<AuthenticatorTransport> transports()

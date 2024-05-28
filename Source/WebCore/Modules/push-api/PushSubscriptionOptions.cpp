@@ -52,7 +52,7 @@ const Vector<uint8_t>& PushSubscriptionOptions::serverVAPIDPublicKey() const
 ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscriptionOptions::applicationServerKey() const
 {
     if (!m_applicationServerKey) {
-        m_applicationServerKey = ArrayBuffer::tryCreate(m_serverVAPIDPublicKey.data(), m_serverVAPIDPublicKey.size());
+        m_applicationServerKey = ArrayBuffer::tryCreate(m_serverVAPIDPublicKey);
         if (!m_applicationServerKey)
             return Exception { ExceptionCode::OutOfMemoryError };
     }

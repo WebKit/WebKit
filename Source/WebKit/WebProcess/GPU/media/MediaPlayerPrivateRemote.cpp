@@ -1463,7 +1463,7 @@ void MediaPlayerPrivateRemote::waitingForKeyChanged(bool waitingForKey)
 
 void MediaPlayerPrivateRemote::initializationDataEncountered(const String& initDataType, std::span<const uint8_t> initData)
 {
-    auto initDataBuffer = ArrayBuffer::create(initData.data(), initData.size());
+    auto initDataBuffer = ArrayBuffer::create(initData);
     if (auto player = m_player.get())
         player->initializationDataEncountered(initDataType, WTFMove(initDataBuffer));
 }

@@ -723,7 +723,7 @@ std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t> frame
     VP8FrameHeader header;
     size_t headerSize = 11;
 
-    auto view = JSC::DataView::create(ArrayBuffer::create(frameData.data(), headerSize), 0, headerSize);
+    auto view = JSC::DataView::create(ArrayBuffer::create(frameData.first(headerSize)), 0, headerSize);
     bool status = true;
 
     auto uncompressedChunk = view->get<uint32_t>(0, true, &status);

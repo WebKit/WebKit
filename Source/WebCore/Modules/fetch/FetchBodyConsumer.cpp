@@ -323,7 +323,7 @@ void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchB
             return;
         }
 
-        if (!source->enqueue(ArrayBuffer::tryCreate(value.data(), value.size())))
+        if (!source->enqueue(ArrayBuffer::tryCreate(value)))
             m_formDataConsumer->cancel();
     });
 }

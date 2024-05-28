@@ -581,7 +581,7 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
             dispatchEvent(MessageEvent::create(Blob::create(scriptExecutionContext(), WTFMove(binaryData), emptyString()), SecurityOrigin::create(m_url)->toString()));
             break;
         case BinaryType::Arraybuffer:
-            dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData.data(), binaryData.size()), SecurityOrigin::create(m_url)->toString()));
+            dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData), SecurityOrigin::create(m_url)->toString()));
             break;
         }
     });
