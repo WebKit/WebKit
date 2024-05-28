@@ -3029,18 +3029,7 @@ void InlineCacheCompiler::generateImpl(unsigned index, AccessCase& accessCase)
 #endif
             m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
             auto* callLinkInfo = m_callLinkInfos[index].get();
-
-            // FIXME: If we generated a polymorphic call stub that jumped back to the getter
-            // stub, which then jumped back to the main code, then we'd have a reachability
-            // situation that the GC doesn't know about. The GC would ensure that the polymorphic
-            // call stub stayed alive, and it would ensure that the main code stayed alive, but
-            // it wouldn't know that the getter stub was alive. Ideally JIT stub routines would
-            // be GC objects, and then we'd be able to say that the polymorphic call stub has a
-            // reference to the getter stub.
-            // https://bugs.webkit.org/show_bug.cgi?id=148914
-            callLinkInfo->disallowStubs();
             callLinkInfo->setUpCall(CallLinkInfo::Call);
-
             CallLinkInfo::emitFastPath(jit, callLinkInfo);
         }
 
@@ -3727,10 +3716,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
 #endif
         m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
         auto* callLinkInfo = m_callLinkInfos[index].get();
-
-        callLinkInfo->disallowStubs();
         callLinkInfo->setUpCall(CallLinkInfo::Call);
-
         CallLinkInfo::emitFastPath(jit, callLinkInfo);
     }
 
