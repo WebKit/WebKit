@@ -136,7 +136,7 @@ JSC_DEFINE_HOST_FUNCTION(mapProtoFuncDelete, (JSGlobalObject* globalObject, Call
     JSMap* map = getMap(globalObject, callFrame->thisValue());
     RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
 
-    return JSValue::encode(jsBoolean(map->remove(globalObject, callFrame->argument(0))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(map->remove(globalObject, callFrame->argument(0)))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(mapProtoFuncGet, (JSGlobalObject* globalObject, CallFrame* callFrame))
