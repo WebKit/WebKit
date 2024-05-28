@@ -53,7 +53,8 @@ std::optional<Win32Handle> ArgumentCoder<Win32Handle>::decode(Decoder& decoder)
     HANDLE duplicatedHandle;
     // Copy the handle into our process and close the handle that the sending process created for us.
     if (!::DuplicateHandle(sourceProcess.get(), reinterpret_cast<HANDLE>(*sourceHandle), ::GetCurrentProcess(), &duplicatedHandle, 0, FALSE, DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE)) {
-        ASSERT_WITH_MESSAGE(false, "::DuplicateHandle failed with error %lu", ::GetLastError());
+        // The source process may exit after the above OpenProcess calling.
+        // DuplicateHandle fails with ERROR_INVALID_HANDLE in such a case.
         return std::nullopt;
     }
     return Win32Handle::adopt(duplicatedHandle);
