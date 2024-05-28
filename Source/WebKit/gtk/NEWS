@@ -1,4 +1,20 @@
 ================
+WebKitGTK 2.45.3
+================
+
+What's new in WebKitGTK 2.45.3?
+
+  - Enable offscreen canvas by default.
+  - Enable ImageBitmap acceleration.
+  - Add support for accelerated offscreen canvas.
+  - Do not display WebGL front buffer before it's initialized.
+  - Fix text scaling.
+  - Add a new setting to enable or disable the 2D canvas acceleration (enabled by default).
+  - Deprecate WebKitWebContext:use-system-appearance-for-scrollbars property.
+  - Undeprecate and document webkit_print_operation_print() behavior.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.45.2
 ================
 
