@@ -128,7 +128,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void setVideoFullscreenFrame(FloatRect) override;
 #endif
 
-    bool requiresTextTrackRepresentation() const override;
     void setTextTrackRepresentation(TextTrackRepresentation*) override;
     void syncTextTrackBounds() override;
 

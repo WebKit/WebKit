@@ -97,6 +97,7 @@ private:
     void requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     void setVideoLayerFrame(WebCore::FloatRect) override;
     void setVideoLayerGravity(WebCore::MediaPlayerEnums::VideoGravity) override;
+    void setVideoFullscreenFrame(WebCore::FloatRect) override;
     void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     bool hasVideo() const override { return m_hasVideo; }
     WebCore::FloatSize videoDimensions() const override { return m_videoDimensions; }
@@ -122,6 +123,8 @@ private:
     void didExitFullscreen() final;
     void didCleanupFullscreen() final;
     void fullscreenMayReturnToInline() final;
+    void setRequiresTextTrackRepresentation(bool) final;
+    void setTextTrackRepresentationBounds(const WebCore::IntRect&) final;
 
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const final;
@@ -238,6 +241,8 @@ private:
     void textTrackRepresentationUpdate(PlaybackSessionContextIdentifier, WebCore::ShareableBitmap::Handle&& textTrack);
     void textTrackRepresentationSetContentsScale(PlaybackSessionContextIdentifier, float scale);
     void textTrackRepresentationSetHidden(PlaybackSessionContextIdentifier, bool hidden);
+    void setRequiresTextTrackRepresentation(PlaybackSessionContextIdentifier, bool);
+    void setTextTrackRepresentationBounds(PlaybackSessionContextIdentifier, const WebCore::IntRect&);
 
     // Messages to VideoPresentationManager
     void requestFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);
@@ -253,6 +258,7 @@ private:
     void didCleanupFullscreen(PlaybackSessionContextIdentifier);
     void setVideoLayerFrame(PlaybackSessionContextIdentifier, WebCore::FloatRect);
     void setVideoLayerGravity(PlaybackSessionContextIdentifier, WebCore::MediaPlayerEnums::VideoGravity);
+    void setVideoFullscreenFrame(PlaybackSessionContextIdentifier, WebCore::FloatRect);
     void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier);
 

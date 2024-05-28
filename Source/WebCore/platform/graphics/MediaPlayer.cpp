@@ -1603,11 +1603,6 @@ void MediaPlayer::removeVideoTrack(VideoTrackPrivate& track)
     client().mediaPlayerDidRemoveVideoTrack(track);
 }
 
-bool MediaPlayer::requiresTextTrackRepresentation() const
-{
-    return m_private->requiresTextTrackRepresentation();
-}
-
 void MediaPlayer::setTextTrackRepresentation(TextTrackRepresentation* representation)
 {
     m_private->setTextTrackRepresentation(representation);

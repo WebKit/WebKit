@@ -1481,15 +1481,6 @@ void MediaPlayerPrivateRemote::setShouldContinueAfterKeyNeeded(bool should)
 }
 #endif
 
-bool MediaPlayerPrivateRemote::requiresTextTrackRepresentation() const
-{
-#if PLATFORM(COCOA)
-    return m_videoLayerManager->requiresTextTrackRepresentation();
-#else
-    return false;
-#endif
-}
-
 void MediaPlayerPrivateRemote::setTextTrackRepresentation(WebCore::TextTrackRepresentation* representation)
 {
 #if PLATFORM(COCOA)

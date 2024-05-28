@@ -336,6 +336,7 @@ enum class PIPState {
         }
 
         model->didExitFullscreen();
+        model->setRequiresTextTrackRepresentation(false);
     }
 
     _videoPresentationInterfaceMac->clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
@@ -409,10 +410,14 @@ void VideoPresentationInterfaceMac::setMode(HTMLMediaElementEnums::VideoFullscre
 
     m_mode = newMode;
 
+    RefPtr model = videoPresentationModel();
+    if (model)
+        model->setRequiresTextTrackRepresentation(hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture));
+
     if (hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && !isMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture))
         return;
 
-    if (auto model = videoPresentationModel())
+    if (model)
         model->fullscreenModeChanged(m_mode);
 }
 
@@ -424,10 +429,14 @@ void VideoPresentationInterfaceMac::clearMode(HTMLMediaElementEnums::VideoFullsc
 
     m_mode = newMode;
 
+    RefPtr model = videoPresentationModel();
+    if (model)
+        model->setRequiresTextTrackRepresentation(hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture));
+
     if (hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && !isMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture))
         return;
 
-    if (auto model = videoPresentationModel())
+    if (model)
         model->fullscreenModeChanged(m_mode);
 }
 
@@ -461,8 +470,10 @@ void VideoPresentationInterfaceMac::setupFullscreen(NSView& layerHostedView, con
     [videoPresentationInterfaceObjC() setUpPIPForVideoView:&layerHostedView withFrame:(NSRect)initialRect inWindow:parentWindow];
 
     RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
-        if (auto model = videoPresentationModel())
+        if (RefPtr model = videoPresentationModel()) {
             model->didSetupFullscreen();
+            model->setRequiresTextTrackRepresentation(true);
+        }
     });
 }
 

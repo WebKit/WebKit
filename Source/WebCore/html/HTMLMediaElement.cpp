@@ -122,6 +122,7 @@
 #include "SpeechSynthesis.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
+#include "TextTrackRepresentation.h"
 #include "ThreadableBlobRegistry.h"
 #include "TimeRanges.h"
 #include "UserContentController.h"
@@ -6745,9 +6746,27 @@ void HTMLMediaElement::visibilityStateChanged()
 #endif
 }
 
+void HTMLMediaElement::setTextTrackRepresentataionBounds(const IntRect& bounds)
+{
+    if (!ensureMediaControls())
+        return;
+
+    if (auto* textTrackRepresentation = m_mediaControlsHost->textTrackRepresentation())
+        textTrackRepresentation->setBounds(bounds);
+}
+
+void HTMLMediaElement::setRequiresTextTrackRepresentation(bool requiresTextTrackRepresentation)
+{
+    if (m_requiresTextTrackRepresentation == requiresTextTrackRepresentation)
+        return;
+    m_requiresTextTrackRepresentation = requiresTextTrackRepresentation;
+    if (ensureMediaControls())
+        m_mediaControlsHost->requiresTextTrackRepresentationChanged();
+}
+
 bool HTMLMediaElement::requiresTextTrackRepresentation() const
 {
-    return (m_videoFullscreenMode != VideoFullscreenModeNone) && m_player ? m_player->requiresTextTrackRepresentation() : false;
+    return m_requiresTextTrackRepresentation;
 }
 
 void HTMLMediaElement::setTextTrackRepresentation(TextTrackRepresentation* representation)
@@ -6755,10 +6774,17 @@ void HTMLMediaElement::setTextTrackRepresentation(TextTrackRepresentation* repre
     if (RefPtr player = m_player)
         player->setTextTrackRepresentation(representation);
 
-    if (representation)
-        protectedDocument()->setMediaElementShowingTextTrack(*this);
-    else
+    if (!representation) {
         protectedDocument()->clearMediaElementShowingTextTrack();
+        return;
+    }
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (representation->bounds().isEmpty())
+        representation->setBounds(enclosingIntRect(m_videoFullscreenFrame));
+#endif
+
+    protectedDocument()->setMediaElementShowingTextTrack(*this);
 }
 
 void HTMLMediaElement::syncTextTrackBounds()

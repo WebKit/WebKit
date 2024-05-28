@@ -440,6 +440,8 @@ public:
     void videoTrackSelectedChanged(VideoTrack&) final;
     void willRemoveVideoTrack(VideoTrack&) final;
 
+    void setTextTrackRepresentataionBounds(const IntRect&);
+    void setRequiresTextTrackRepresentation(bool);
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);
     void syncTextTrackBounds();
@@ -1264,6 +1266,7 @@ private:
     bool m_shouldVideoPlaybackRequireUserGesture : 1;
     bool m_volumeLocked : 1;
     bool m_cachedIsInVisibilityAdjustmentSubtree : 1 { false };
+    bool m_requiresTextTrackRepresentation : 1 { false };
 
     enum class ControlsState : uint8_t { None, Initializing, Ready, PartiallyDeinitialized };
     friend String convertEnumerationToString(HTMLMediaElement::ControlsState enumerationValue);

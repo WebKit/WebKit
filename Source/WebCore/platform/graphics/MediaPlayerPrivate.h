@@ -281,7 +281,6 @@ public:
     virtual void setShouldContinueAfterKeyNeeded(bool) { }
 #endif
 
-    virtual bool requiresTextTrackRepresentation() const { return false; }
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) { }
     virtual void syncTextTrackBounds() { };
     virtual void tracksChanged() { };

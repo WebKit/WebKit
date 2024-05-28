@@ -57,7 +57,9 @@ public:
     void updateSizes(ForceUpdate force = ForceUpdate::No);
     void updateDisplay();
 
+    TextTrackRepresentation* textTrackRepresentation() const { return m_textTrackRepresentation.get(); }
     void updateTextTrackRepresentationImageIfNeeded();
+    void requiresTextTrackRepresentationChanged();
 
     void enteredFullscreen();
     void exitedFullscreen();

@@ -246,7 +246,6 @@ private:
 
     MediaTime getStartDate() const final;
 
-    bool requiresTextTrackRepresentation() const final;
     void setTextTrackRepresentation(TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
 

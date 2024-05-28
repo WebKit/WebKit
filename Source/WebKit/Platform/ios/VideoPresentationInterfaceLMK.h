@@ -49,6 +49,8 @@ public:
 #endif
     ~VideoPresentationInterfaceLMK();
 
+    void captionsLayerBoundsChanged(const WebCore::FloatRect&);
+
 private:
     VideoPresentationInterfaceLMK(WebCore::PlaybackSessionInterfaceIOS&);
 

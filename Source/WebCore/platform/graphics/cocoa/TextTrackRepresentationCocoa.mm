@@ -153,6 +153,11 @@ void TextTrackRepresentationCocoa::setHidden(bool hidden) const
     [m_layer setHidden:hidden];
 }
 
+void TextTrackRepresentationCocoa::setBounds(const IntRect& bounds)
+{
+    [m_layer setBounds:FloatRect(bounds)];
+}
+
 IntRect TextTrackRepresentationCocoa::bounds() const
 {
     return enclosingIntRect(FloatRect([m_layer bounds]));

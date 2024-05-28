@@ -67,6 +67,7 @@ public:
     WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) final;
     WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) final;
     WEBCORE_EXPORT void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) final;
+    WEBCORE_EXPORT void setVideoFullscreenFrame(FloatRect) final;
     WEBCORE_EXPORT void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) final;
     FloatSize videoDimensions() const final { return m_videoDimensions; }
     bool hasVideo() const final { return m_hasVideo; }
@@ -74,6 +75,8 @@ public:
     WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, WTF::MachSendRight&&);
 
     WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) final;
+    WEBCORE_EXPORT void setRequiresTextTrackRepresentation(bool) final;
+    WEBCORE_EXPORT void setTextTrackRepresentationBounds(const IntRect&) final;
 
 #if !RELEASE_LOG_DISABLED
     const Logger* loggerPtr() const final;

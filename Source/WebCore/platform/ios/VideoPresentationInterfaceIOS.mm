@@ -615,6 +615,7 @@ void VideoPresentationInterfaceIOS::willStartPictureInPicture()
     if (auto model = videoPresentationModel()) {
         if (!m_hasVideoContentLayer)
             model->requestVideoContentLayer();
+        model->setRequiresTextTrackRepresentation(true);
         model->willEnterPictureInPicture();
     }
 }
@@ -833,12 +834,14 @@ void VideoPresentationInterfaceIOS::finalizeSetup()
             if (!m_hasVideoContentLayer && m_targetMode.hasVideo()) {
                 m_finalizeSetupNeedsVideoContentLayer = true;
                 model->requestVideoContentLayer();
+                model->setRequiresTextTrackRepresentation(true);
                 return;
             }
             m_finalizeSetupNeedsVideoContentLayer = false;
             if (m_hasVideoContentLayer && !m_targetMode.hasVideo()) {
                 m_finalizeSetupNeedsReturnVideoContentLayer = true;
                 model->returnVideoContentLayer();
+                model->setRequiresTextTrackRepresentation(false);
                 return;
             }
             m_finalizeSetupNeedsReturnVideoContentLayer = false;
@@ -876,7 +879,12 @@ void VideoPresentationInterfaceIOS::setMode(HTMLMediaElementEnums::VideoFullscre
     // Mode::mode() can be 3 (VideoFullscreenModeStandard | VideoFullscreenModePictureInPicture).
     // HTMLVideoElement does not expect such a value in the fullscreenModeChanged() callback.
     auto model = videoPresentationModel();
-    if (model && shouldNotifyModel)
+    if (!model)
+        return;
+
+    model->setRequiresTextTrackRepresentation(m_currentMode.hasVideo());
+
+    if (shouldNotifyModel)
         model->fullscreenModeChanged(mode);
 }
 
@@ -887,7 +895,12 @@ void VideoPresentationInterfaceIOS::clearMode(HTMLMediaElementEnums::VideoFullsc
 
     m_currentMode.clearMode(mode);
     auto model = videoPresentationModel();
-    if (model && shouldNotifyModel)
+    if (!model)
+        return;
+
+    model->setRequiresTextTrackRepresentation(m_currentMode.hasVideo());
+
+    if (shouldNotifyModel)
         model->fullscreenModeChanged(m_currentMode.mode());
 }
 

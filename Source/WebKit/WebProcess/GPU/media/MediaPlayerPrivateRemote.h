@@ -416,7 +416,6 @@ private:
     void setShouldContinueAfterKeyNeeded(bool) final;
 #endif
 
-    bool requiresTextTrackRepresentation() const final;
     void setTextTrackRepresentation(WebCore::TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
 

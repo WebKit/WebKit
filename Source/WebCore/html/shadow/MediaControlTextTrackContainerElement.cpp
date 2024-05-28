@@ -351,6 +351,12 @@ void MediaControlTextTrackContainerElement::updateTextTrackStyle()
     removeInlineStyleProperty(CSSPropertyTop);
 }
 
+void MediaControlTextTrackContainerElement::requiresTextTrackRepresentationChanged()
+{
+    updateTextTrackRepresentationIfNeeded();
+    updateSizes(ForceUpdate::Yes);
+}
+
 void MediaControlTextTrackContainerElement::enteredFullscreen()
 {
     updateTextTrackRepresentationIfNeeded();

@@ -298,6 +298,13 @@ void VideoPresentationModelContext::setVideoLayerGravity(WebCore::MediaPlayerEnu
         m_manager->setVideoLayerGravity(m_contextId, gravity);
 }
 
+void VideoPresentationModelContext::setVideoFullscreenFrame(WebCore::FloatRect frame)
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, frame);
+    if (m_manager)
+        m_manager->setVideoFullscreenFrame(m_contextId, frame);
+}
+
 void VideoPresentationModelContext::fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, mode);
@@ -444,6 +451,18 @@ void VideoPresentationModelContext::willExitPictureInPicture()
     m_clients.forEach([&](auto& client) {
         client.willExitPictureInPicture();
     });
+}
+
+void VideoPresentationModelContext::setRequiresTextTrackRepresentation(bool requiresTextTrackRepresentation)
+{
+    if (RefPtr manager = m_manager.get())
+        manager->setRequiresTextTrackRepresentation(m_contextId, requiresTextTrackRepresentation);
+}
+
+void VideoPresentationModelContext::setTextTrackRepresentationBounds(const IntRect& bounds)
+{
+    if (RefPtr manager = m_manager.get())
+        manager->setTextTrackRepresentationBounds(m_contextId, bounds);
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -1105,6 +1124,18 @@ void VideoPresentationManagerProxy::preparedToExitFullscreen(PlaybackSessionCont
     ensureInterface(contextId).preparedToExitFullscreen();
 }
 
+void VideoPresentationManagerProxy::setRequiresTextTrackRepresentation(PlaybackSessionContextIdentifier contextId , bool requiresTextTrackRepresentation)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::VideoPresentationManager::SetRequiresTextTrackRepresentation(contextId, requiresTextTrackRepresentation));
+}
+
+void VideoPresentationManagerProxy::setTextTrackRepresentationBounds(PlaybackSessionContextIdentifier contextId , const IntRect& bounds)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::VideoPresentationManager::SetTextTrackRepresentationBounds(contextId, bounds));
+}
+
 void VideoPresentationManagerProxy::textTrackRepresentationUpdate(PlaybackSessionContextIdentifier contextId, ShareableBitmap::Handle&& textTrack)
 {
     auto bitmap = ShareableBitmap::create(WTFMove(textTrack));
@@ -1314,6 +1345,12 @@ void VideoPresentationManagerProxy::setVideoLayerGravity(PlaybackSessionContextI
 {
     if (m_page)
         m_page->send(Messages::VideoPresentationManager::SetVideoLayerGravityEnum(contextId, (unsigned)gravity));
+}
+
+void VideoPresentationManagerProxy::setVideoFullscreenFrame(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::VideoPresentationManager::SetVideoFullscreenFrame(contextId, frame));
 }
 
 void VideoPresentationManagerProxy::fullscreenModeChanged(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)

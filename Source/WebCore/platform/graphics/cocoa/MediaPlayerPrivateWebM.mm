@@ -821,11 +821,6 @@ void MediaPlayerPrivateWebM::setVideoFullscreenFrame(FloatRect frame)
     m_videoLayerManager->setVideoFullscreenFrame(frame);
 }
 
-bool MediaPlayerPrivateWebM::requiresTextTrackRepresentation() const
-{
-    return m_videoLayerManager->videoFullscreenLayer();
-}
-
 void MediaPlayerPrivateWebM::syncTextTrackBounds()
 {
     m_videoLayerManager->syncTextTrackBounds();

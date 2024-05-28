@@ -70,6 +70,7 @@ public:
     virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) = 0;
     virtual void setVideoLayerFrame(FloatRect) = 0;
     virtual void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) = 0;
+    virtual void setVideoFullscreenFrame(FloatRect) = 0;
     virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) = 0;
 
     virtual FloatSize videoDimensions() const = 0;
@@ -92,6 +93,8 @@ public:
     virtual void didExitFullscreen() { };
     virtual void didCleanupFullscreen() { };
     virtual void fullscreenMayReturnToInline() { };
+    virtual void setRequiresTextTrackRepresentation(bool) { }
+    virtual void setTextTrackRepresentationBounds(const IntRect&) { }
 
     virtual void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler) { completionHandler(RouteSharingPolicy::Default, emptyString()); }
 

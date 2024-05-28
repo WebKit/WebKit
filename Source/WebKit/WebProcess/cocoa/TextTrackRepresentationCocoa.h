@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/EventTarget.h>
+#include <WebCore/IntRect.h>
 #include <WebCore/TextTrackRepresentationCocoa.h>
 
 namespace WebCore {
@@ -43,10 +44,13 @@ public:
     virtual ~WebTextTrackRepresentationCocoa() { }
 
 private:
+    void setBounds(const WebCore::IntRect&) final;
+    WebCore::IntRect bounds() const final { return m_bounds; }
     void update() final;
     void setContentScale(float) final;
     void setHidden(bool) const final;
 
+    WebCore::IntRect m_bounds;
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::HTMLMediaElement> m_mediaElement;
 };

@@ -36,22 +36,34 @@
 #import <UIKit/UIKit.h>
 #import <WebCore/AudioSession.h>
 #import <WebCore/Color.h>
+#import <WebCore/IntRect.h>
 #import <WebCore/WebAVPlayerLayerView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/UUID.h>
 
-@interface WKLinearMediaKitCaptionsLayer : CALayer
+@interface WKLinearMediaKitCaptionsLayer : CALayer {
+    ThreadSafeWeakPtr<WebKit::VideoPresentationInterfaceLMK> _parent;
+}
+- (id)initWithParent:(WebKit::VideoPresentationInterfaceLMK&)parent;
 @end
 
 @implementation WKLinearMediaKitCaptionsLayer
+- (id)initWithParent:(WebKit::VideoPresentationInterfaceLMK&)parent
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _parent = parent;
+    return self;
+}
+
 - (void)layoutSublayers
 {
-    ASSERT(self.sublayers.count <= 1);
-    for (CALayer* sublayer in self.sublayers)
-        sublayer.frame = CGRectMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds), 0, 0);
-
     [super layoutSublayers];
+    if (RefPtr parent = _parent.get())
+        parent->captionsLayerBoundsChanged(self.bounds);
 }
 @end
 
@@ -147,7 +159,7 @@ CALayer *VideoPresentationInterfaceLMK::captionsLayer()
     if (m_captionsLayer)
         return m_captionsLayer.get();
 
-    m_captionsLayer = adoptNS([[WKLinearMediaKitCaptionsLayer alloc] init]);
+    m_captionsLayer = adoptNS([[WKLinearMediaKitCaptionsLayer alloc] initWithParent:*this]);
     [m_captionsLayer setName:@"Captions Layer"];
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
@@ -159,6 +171,15 @@ CALayer *VideoPresentationInterfaceLMK::captionsLayer()
 #endif
 
     return m_captionsLayer.get();
+}
+
+void VideoPresentationInterfaceLMK::captionsLayerBoundsChanged(const WebCore::FloatRect& bounds)
+{
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    [m_spatialTrackingLayer setPosition:bounds.center()];
+#endif
+    if (RefPtr model = videoPresentationModel())
+        model->setVideoFullscreenFrame(enclosingIntRect(bounds));
 }
 
 void VideoPresentationInterfaceLMK::setupCaptionsLayer(CALayer *, const WebCore::FloatSize& initialSize)

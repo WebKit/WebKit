@@ -1542,11 +1542,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame(FloatRect fra
     m_videoLayerManager->setVideoFullscreenFrame(frame);
 }
 
-bool MediaPlayerPrivateMediaSourceAVFObjC::requiresTextTrackRepresentation() const
-{
-    return m_videoLayerManager->videoFullscreenLayer();
-}
-
 void MediaPlayerPrivateMediaSourceAVFObjC::syncTextTrackBounds()
 {
     m_videoLayerManager->syncTextTrackBounds();

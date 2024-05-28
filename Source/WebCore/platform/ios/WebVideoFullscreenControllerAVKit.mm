@@ -201,6 +201,7 @@ private:
     void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     void setVideoLayerFrame(FloatRect) override;
     void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) override;
+    void setVideoFullscreenFrame(FloatRect) override { }
     void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
     bool hasVideo() const override;
     FloatSize videoDimensions() const override;

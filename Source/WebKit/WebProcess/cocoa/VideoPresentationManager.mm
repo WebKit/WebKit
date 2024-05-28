@@ -806,6 +806,12 @@ void VideoPresentationManager::setVideoLayerFrameFenced(PlaybackSessionContextId
         model->setVideoSizeFenced(bounds.size(), WTFMove(machSendRight));
 }
 
+void VideoPresentationManager::setVideoFullscreenFrame(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)
+{
+    INFO_LOG(LOGIDENTIFIER, contextId.toUInt64());
+    ensureModel(contextId).setVideoFullscreenFrame(frame);
+}
+
 void VideoPresentationManager::updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement& videoElement, ShareableBitmap::Handle&& textTrack)
 {
     if (!m_page)
@@ -830,6 +836,16 @@ void VideoPresentationManager::setTextTrackRepresentationIsHiddenForVideoElement
     auto contextId = m_videoElements.get(videoElement);
     m_page->send(Messages::VideoPresentationManagerProxy::TextTrackRepresentationSetHidden(contextId, hidden));
 
+}
+
+void VideoPresentationManager::setRequiresTextTrackRepresentation(PlaybackSessionContextIdentifier contextId, bool requiresTextTrackRepresentation)
+{
+    ensureModel(contextId).setRequiresTextTrackRepresentation(requiresTextTrackRepresentation);
+}
+
+void VideoPresentationManager::setTextTrackRepresentationBounds(PlaybackSessionContextIdentifier contextId, const IntRect& bounds)
+{
+    ensureModel(contextId).setTextTrackRepresentationBounds(bounds);
 }
 
 #if !RELEASE_LOG_DISABLED

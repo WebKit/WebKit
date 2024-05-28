@@ -230,10 +230,23 @@ void MediaControlsHost::updateTextTrackContainer()
         m_textTrackContainer->updateDisplay();
 }
 
+TextTrackRepresentation* MediaControlsHost::textTrackRepresentation() const
+{
+    if (m_textTrackContainer)
+        return m_textTrackContainer->textTrackRepresentation();
+    return nullptr;
+}
+
 void MediaControlsHost::updateTextTrackRepresentationImageIfNeeded()
 {
     if (m_textTrackContainer)
         m_textTrackContainer->updateTextTrackRepresentationImageIfNeeded();
+}
+
+void MediaControlsHost::requiresTextTrackRepresentationChanged()
+{
+    if (m_textTrackContainer)
+        m_textTrackContainer->requiresTextTrackRepresentationChanged();
 }
 
 void MediaControlsHost::enteredFullscreen()

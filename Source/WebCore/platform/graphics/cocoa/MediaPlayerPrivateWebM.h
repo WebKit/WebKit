@@ -177,7 +177,6 @@ private:
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) final;
     void setVideoFullscreenFrame(FloatRect) final;
 
-    bool requiresTextTrackRepresentation() const final;
     void setTextTrackRepresentation(TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
         

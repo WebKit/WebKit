@@ -2625,11 +2625,6 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
     ALWAYS_LOG(LOGIDENTIFIER, "track count was ", count, ", is ", m_videoTracks.size());
 }
 
-bool MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation() const
-{
-    return m_videoLayerManager->requiresTextTrackRepresentation();
-}
-
 void MediaPlayerPrivateAVFoundationObjC::syncTextTrackBounds()
 {
     m_videoLayerManager->syncTextTrackBounds();
