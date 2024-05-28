@@ -2,5 +2,5 @@
 
 PASS select showPicker() requires a user gesture
 PASS select showPicker() does not throw when user activation is active
-FAIL select showPicker() consumes user activation assert_false: expected false got true
+PASS select showPicker() consumes user activation
 
