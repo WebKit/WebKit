@@ -477,7 +477,7 @@ static bool isEqual(const T* bindingLayoutPtr, const T& bindingLayout)
     return isEqual(*bindingLayoutPtr, bindingLayout);
 }
 
-static bool equalBindingEntries(const BindGroupLayout::Entry::BindingLayout& entry, const BindGroupLayout::Entry::BindingLayout& otherEntry)
+bool BindGroupLayout::equalBindingEntries(const BindGroupLayout::Entry::BindingLayout& entry, const BindGroupLayout::Entry::BindingLayout& otherEntry)
 {
     return WTF::switchOn(entry, [&](const WGPUBufferBindingLayout& bufferEntry) {
         return isEqual(get_if<WGPUBufferBindingLayout>(&otherEntry), bufferEntry);
@@ -500,7 +500,7 @@ static bool equalEntries(const BindGroupLayout::Entry& entry, const BindGroupLay
     if (entry.visibility != otherEntry.visibility)
         return false;
 
-    return equalBindingEntries(entry.bindingLayout, otherEntry.bindingLayout);
+    return BindGroupLayout::equalBindingEntries(entry.bindingLayout, otherEntry.bindingLayout);
 }
 
 NSString* BindGroupLayout::errorValidatingBindGroupCompatibility(const BindGroupLayout& otherLayout) const

@@ -773,6 +773,61 @@ static WGPUTextureFormat convertFormat(WGSL::TexelFormat format)
     }
 }
 
+static auto makeBindingLayout(WGPUBindGroupLayoutEntry& newEntry, auto& bindingMember, WGPUBufferBindingType bufferTypeOverride = WGPUBufferBindingType_Undefined, uint64_t bufferSizeForBinding = 0)
+{
+    using Result = BindGroupLayout::Entry::BindingLayout;
+    return WTF::switchOn(bindingMember, [&](const WGSL::BufferBindingLayout& bufferBinding) -> Result {
+        return newEntry.buffer = WGPUBufferBindingLayout {
+            .nextInChain = nullptr,
+            .type = (bufferTypeOverride != WGPUBufferBindingType_Undefined) ? bufferTypeOverride : convertBindingType(bufferBinding.type),
+            .hasDynamicOffset = bufferBinding.hasDynamicOffset,
+            .minBindingSize = bufferBinding.minBindingSize,
+            .bufferSizeForBinding = bufferSizeForBinding,
+        };
+    }, [&](const WGSL::SamplerBindingLayout& sampler) -> Result {
+        return newEntry.sampler = WGPUSamplerBindingLayout {
+            .nextInChain = nullptr,
+            .type = convertSamplerBindingType(sampler.type)
+        };
+    }, [&](const WGSL::TextureBindingLayout& texture) -> Result {
+        return newEntry.texture = WGPUTextureBindingLayout {
+            .nextInChain = nullptr,
+            .sampleType = convertSampleType(texture.sampleType),
+            .viewDimension = convertViewDimension(texture.viewDimension),
+            .multisampled = texture.multisampled
+        };
+    }, [&](const WGSL::StorageTextureBindingLayout& storageTexture) -> Result {
+        return newEntry.storageTexture = WGPUStorageTextureBindingLayout {
+            .nextInChain = nullptr,
+            .access = convertAccess(storageTexture.access),
+            .format = convertFormat(storageTexture.format),
+            .viewDimension = convertViewDimension(storageTexture.viewDimension)
+        };
+    }, [&](const WGSL::ExternalTextureBindingLayout&) -> Result {
+        return newEntry.texture = WGPUTextureBindingLayout {
+            .nextInChain = nullptr,
+            .sampleType = static_cast<WGPUTextureSampleType>(WGPUTextureSampleType_ExternalTexture),
+            .viewDimension = WGPUTextureViewDimension_2D,
+            .multisampled = false
+        };
+    });
+}
+
+static BindGroupLayout::Entry::BindingLayout toBindingLayout(const WGPUBindGroupLayoutEntry& entry)
+{
+    BindGroupLayout::Entry::BindingLayout result;
+    if (BindGroupLayout::isPresent(entry.buffer))
+        result = entry.buffer;
+    else if (BindGroupLayout::isPresent(entry.sampler))
+        result = entry.sampler;
+    else if (BindGroupLayout::isPresent(entry.texture))
+        result = entry.texture;
+    else if (BindGroupLayout::isPresent(entry.storageTexture))
+        result = entry.storageTexture;
+
+    return result;
+}
+
 NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipelineEntries, const std::optional<WGSL::PipelineLayout>& optionalPipelineLayout)
 {
     if (!optionalPipelineLayout || !optionalPipelineLayout->bindGroupLayouts.size())
@@ -797,15 +852,17 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
         for (auto& entry : bindGroupLayout.entries) {
             auto visibility = convertVisibility(entry.visibility);
             auto stage = visibility / 2;
+            WGPUBindGroupLayoutEntry newEntry = { };
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=265204 - use a set instead
             if (auto existingBindingIndex = entries.findIf([&](const WGPUBindGroupLayoutEntry& e) {
                 return e.binding == entry.webBinding;
             }); existingBindingIndex != notFound) {
                 entries[existingBindingIndex].visibility |= visibility;
                 entries[existingBindingIndex].metalBinding[stage] = entry.binding;
+                if (!BindGroupLayout::equalBindingEntries(toBindingLayout(entries[existingBindingIndex]), makeBindingLayout(newEntry, entry.bindingMember)))
+                    return @"Binding mismatch in auto-generated layouts";
                 continue;
             }
-            WGPUBindGroupLayoutEntry newEntry = { };
             uint64_t bufferSizeForBinding = 0;
             WGPUBufferBindingType bufferTypeOverride = WGPUBufferBindingType_Undefined;
             if (auto& entryName = entry.name; entryName.length()) {
@@ -821,41 +878,7 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
             newEntry.binding = entry.webBinding;
             newEntry.metalBinding[stage] = entry.binding;
             newEntry.visibility = visibility;
-            WTF::switchOn(entry.bindingMember, [&](const WGSL::BufferBindingLayout& bufferBinding) {
-                newEntry.buffer = WGPUBufferBindingLayout {
-                    .nextInChain = nullptr,
-                    .type = (bufferTypeOverride != WGPUBufferBindingType_Undefined) ? bufferTypeOverride : convertBindingType(bufferBinding.type),
-                    .hasDynamicOffset = bufferBinding.hasDynamicOffset,
-                    .minBindingSize = bufferBinding.minBindingSize,
-                    .bufferSizeForBinding = bufferSizeForBinding,
-                };
-            }, [&](const WGSL::SamplerBindingLayout& sampler) {
-                newEntry.sampler = WGPUSamplerBindingLayout {
-                    .nextInChain = nullptr,
-                    .type = convertSamplerBindingType(sampler.type)
-                };
-            }, [&](const WGSL::TextureBindingLayout& texture) {
-                newEntry.texture = WGPUTextureBindingLayout {
-                    .nextInChain = nullptr,
-                    .sampleType = convertSampleType(texture.sampleType),
-                    .viewDimension = convertViewDimension(texture.viewDimension),
-                    .multisampled = texture.multisampled
-                };
-            }, [&](const WGSL::StorageTextureBindingLayout& storageTexture) {
-                newEntry.storageTexture = WGPUStorageTextureBindingLayout {
-                    .nextInChain = nullptr,
-                    .access = convertAccess(storageTexture.access),
-                    .format = convertFormat(storageTexture.format),
-                    .viewDimension = convertViewDimension(storageTexture.viewDimension)
-                };
-            }, [&](const WGSL::ExternalTextureBindingLayout&) {
-                newEntry.texture = WGPUTextureBindingLayout {
-                    .nextInChain = nullptr,
-                    .sampleType = static_cast<WGPUTextureSampleType>(WGPUTextureSampleType_ExternalTexture),
-                    .viewDimension = WGPUTextureViewDimension_2D,
-                    .multisampled = false
-                };
-            });
+            makeBindingLayout(newEntry, entry.bindingMember, bufferTypeOverride, bufferSizeForBinding);
 
             entries.append(WTFMove(newEntry));
         }
