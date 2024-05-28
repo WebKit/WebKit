@@ -973,7 +973,8 @@ void RenderBundleEncoder::setIndexBuffer(Buffer& buffer, WGPUIndexFormat format,
             return;
         }
 
-        if (offset + size > buffer.initialSize()) {
+        auto sum = checkedSum<uint64_t>(offset + size);
+        if (sum.hasOverflowed() || sum.value() > buffer.initialSize()) {
             makeInvalid(@"setIndexBuffer: offset + size > buffer.size()");
             return;
         }
@@ -1145,7 +1146,8 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, Buffer* optionalBuffer,
                 makeInvalid(@"setVertexBuffer: validation failed");
                 return;
             }
-            if (offset + size > buffer.initialSize()) {
+            auto sum = checkedSum<uint64_t>(offset + size);
+            if (sum.hasOverflowed() || sum.value() > buffer.initialSize()) {
                 makeInvalid(@"offset + size > buffer.size()");
                 return;
             }

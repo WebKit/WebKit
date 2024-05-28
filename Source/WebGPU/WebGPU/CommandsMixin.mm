@@ -70,7 +70,8 @@ bool CommandsMixin::computedSizeOverflows(const Buffer& buffer, uint64_t offset,
         size = localSize.value();
     }
 
-    if (offset + size > buffer.initialSize())
+    auto sum = checkedSum<uint64_t>(offset, size);
+    if (sum.hasOverflowed() || sum.value() > buffer.initialSize())
         return true;
 
     return false;
