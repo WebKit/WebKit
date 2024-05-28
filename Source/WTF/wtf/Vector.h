@@ -1121,7 +1121,11 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<typename U>
 bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::contains(const U& value) const
 {
-    return find(value) != notFound;
+    for (const auto& elem : *this) {
+        if (value == elem)
+            return true;
+    }
+    return false;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
