@@ -455,7 +455,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
 }
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
 {
-    if (page.wpeView()) {
+    if (page.viewBackend()) {
         platformSimulateKeySequenceLibWPE(page, keySequence, m_currentModifiers);
         return;
     }
