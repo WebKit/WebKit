@@ -2561,7 +2561,7 @@ class WebCore::DatabaseDetails {
     std::optional<WallTime> modificationTime();
 };
 
-[RefCounted] class WebCore::DecomposedGlyphs {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DecomposedGlyphs {
     WebCore::PositionedGlyphs positionedGlyphs();
     WebCore::RenderingResourceIdentifier renderingResourceIdentifier();
 }
