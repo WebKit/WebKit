@@ -52,7 +52,7 @@ Data Data::empty()
     return { OSObjectPtr<dispatch_data_t> { dispatch_data_empty } };
 }
 
-const uint8_t* Data::data() const
+std::span<const uint8_t> Data::span() const
 {
     if (!m_data && m_dispatchData) {
         const void* data;
@@ -61,7 +61,7 @@ const uint8_t* Data::data() const
         ASSERT(size == m_size);
         m_data = static_cast<const uint8_t*>(data);
     }
-    return m_data;
+    return { m_data, m_size };
 }
 
 bool Data::isNull() const
