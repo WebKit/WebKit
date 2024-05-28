@@ -7316,3 +7316,5 @@ editing/selection/ios/selection-handles-in-iframe.html [ Timeout ]
 fast/images/text-recognition/ios/select-word-in-image-overlay-inside-link.html [ Timeout ]
 
 webkit.org/b/271916 media/track/track-in-band-layout.html [ Failure ]
+
+webkit.org/b/274766 [ Debug ] http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Failure ]
