@@ -48,37 +48,41 @@ BackgroundFetchManager::~BackgroundFetchManager()
 
 static ExceptionOr<Vector<Ref<FetchRequest>>> buildBackgroundFetchRequests(ScriptExecutionContext& context, BackgroundFetchManager::Requests&& backgroundFetchRequests)
 {
-    return switchOn(WTFMove(backgroundFetchRequests), [&context] (RefPtr<FetchRequest>&& request) -> ExceptionOr<Vector<Ref<FetchRequest>>> {
-        auto result = FetchRequest::create(context, request.releaseNonNull(), { });
-        if (result.hasException())
-            return result.releaseException();
-        if (result.returnValue()->mode() == FetchOptions::Mode::NoCors)
-            return Exception { ExceptionCode::TypeError, "Request has no-cors mode"_s };
-        return Vector<Ref<FetchRequest>> { result.releaseReturnValue() };
-    }, [&context] (String&& url) -> ExceptionOr<Vector<Ref<FetchRequest>>> {
-        auto result = FetchRequest::create(context, WTFMove(url), { });
-        if (result.hasException())
-            return result.releaseException();
-        return Vector<Ref<FetchRequest>> { result.releaseReturnValue() };
-    }, [&context] (Vector<BackgroundFetchManager::RequestInfo>&& requestInfos) -> ExceptionOr<Vector<Ref<FetchRequest>>> {
-        std::optional<Exception> exception;
-        Vector<Ref<FetchRequest>> requests;
-        requests.reserveInitialCapacity(requestInfos.size());
-        for (auto& requestInfo : requestInfos) {
-            auto result = FetchRequest::create(context, WTFMove(requestInfo), { });
+    return switchOn(WTFMove(backgroundFetchRequests),
+        [&context](Ref<FetchRequest>&& request) -> ExceptionOr<Vector<Ref<FetchRequest>>> {
+            auto result = FetchRequest::create(context, WTFMove(request), { });
             if (result.hasException())
                 return result.releaseException();
             if (result.returnValue()->mode() == FetchOptions::Mode::NoCors)
                 return Exception { ExceptionCode::TypeError, "Request has no-cors mode"_s };
-            
-            // FIXME: Add support for readable stream bodies
-            if (result.returnValue()->isReadableStreamBody())
-                return Exception { ExceptionCode::NotSupportedError, "ReadableStream uploading is not supported"_s };
-            
-            requests.append(result.releaseReturnValue());
+            return Vector<Ref<FetchRequest>> { result.releaseReturnValue() };
+        },
+        [&context](String&& url) -> ExceptionOr<Vector<Ref<FetchRequest>>> {
+            auto result = FetchRequest::create(context, WTFMove(url), { });
+            if (result.hasException())
+                return result.releaseException();
+            return Vector<Ref<FetchRequest>> { result.releaseReturnValue() };
+        },
+        [&context](Vector<BackgroundFetchManager::RequestInfo>&& requestInfos) -> ExceptionOr<Vector<Ref<FetchRequest>>> {
+            std::optional<Exception> exception;
+            Vector<Ref<FetchRequest>> requests;
+            requests.reserveInitialCapacity(requestInfos.size());
+            for (auto& requestInfo : requestInfos) {
+                auto result = FetchRequest::create(context, WTFMove(requestInfo), { });
+                if (result.hasException())
+                    return result.releaseException();
+                if (result.returnValue()->mode() == FetchOptions::Mode::NoCors)
+                    return Exception { ExceptionCode::TypeError, "Request has no-cors mode"_s };
+
+                // FIXME: Add support for readable stream bodies
+                if (result.returnValue()->isReadableStreamBody())
+                    return Exception { ExceptionCode::NotSupportedError, "ReadableStream uploading is not supported"_s };
+
+                requests.append(result.releaseReturnValue());
+            }
+            return requests;
         }
-        return requests;
-    });
+    );
 }
 
 Ref<BackgroundFetchRegistration> BackgroundFetchManager::backgroundFetchRegistrationInstance(ScriptExecutionContext& context, BackgroundFetchInformation&& data)

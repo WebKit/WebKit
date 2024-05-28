@@ -64,7 +64,7 @@ public:
     using AbstractWorker::WeakValueType;
     using AbstractWorker::WeakPtrImplType;
 
-    static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, std::variant<RefPtr<TrustedScriptURL>, String>&&, WorkerOptions&&);
+    static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, std::variant<Ref<TrustedScriptURL>, String>&&, WorkerOptions&&);
     virtual ~Worker();
 
     // ActiveDOMObject.

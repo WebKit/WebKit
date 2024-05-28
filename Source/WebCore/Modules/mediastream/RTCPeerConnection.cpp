@@ -202,8 +202,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
     if (isClosed())
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto track = std::get<RefPtr<MediaStreamTrack>>(withTrack).releaseNonNull();
-    return m_backend->addTransceiver(WTFMove(track), init);
+    return m_backend->addTransceiver(WTFMove(std::get<Ref<MediaStreamTrack>>(withTrack)), init);
 }
 
 void RTCPeerConnection::createOffer(RTCOfferOptions&& options, Ref<DeferredPromise>&& promise)
@@ -337,19 +336,22 @@ void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPr
     std::optional<Exception> exception;
     RefPtr<RTCIceCandidate> candidate;
     if (rtcCandidate) {
-        candidate = WTF::switchOn(*rtcCandidate, [&exception](RTCIceCandidateInit& init) -> RefPtr<RTCIceCandidate> {
-            if (init.candidate.isEmpty())
-                return nullptr;
+        candidate = WTF::switchOn(WTFMove(*rtcCandidate),
+            [&exception](RTCIceCandidateInit&& init) -> RefPtr<RTCIceCandidate> {
+                if (init.candidate.isEmpty())
+                    return nullptr;
 
-            auto result = RTCIceCandidate::create(WTFMove(init));
-            if (result.hasException()) {
-                exception = result.releaseException();
-                return nullptr;
+                auto result = RTCIceCandidate::create(WTFMove(init));
+                if (result.hasException()) {
+                    exception = result.releaseException();
+                    return nullptr;
+                }
+                return result.releaseReturnValue();
+            },
+            [](Ref<RTCIceCandidate>&& iceCandidate) -> RefPtr<RTCIceCandidate> {
+                return WTFMove(iceCandidate);
             }
-            return result.releaseReturnValue();
-        }, [](RefPtr<RTCIceCandidate>& iceCandidate) {
-            return WTFMove(iceCandidate);
-        });
+        );
     }
 
     ALWAYS_LOG(LOGIDENTIFIER, "Received ice candidate:\n", candidate ? candidate->candidate() : "null"_s);

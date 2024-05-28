@@ -324,11 +324,11 @@ struct IDLError : IDLUnsupportedType { };
 struct IDLDOMException : IDLUnsupportedType { };
 
 template<typename... Ts>
-struct IDLUnion : IDLType<std::variant<typename Ts::ImplementationType...>> {
+struct IDLUnion : IDLType<std::variant<typename Ts::InnerParameterType...>> {
     using TypeList = brigand::list<Ts...>;
 
-    using ParameterType = const std::variant<typename Ts::ImplementationType...>&;
-    using NullableParameterType = const std::optional<std::variant<typename Ts::ImplementationType...>>&;
+    using ParameterType = const std::variant<typename Ts::InnerParameterType...>&;
+    using NullableParameterType = const std::optional<std::variant<typename Ts::InnerParameterType...>>&;
 };
 
 template<typename T> struct IDLBufferSource : IDLWrapper<T> {

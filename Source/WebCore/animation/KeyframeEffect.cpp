@@ -2190,21 +2190,12 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
     return true;
 }
 
-static bool containsRotation(const Vector<RefPtr<TransformOperation>>& operations)
-{
-    for (const auto& operation : operations) {
-        if (operation->type() == TransformOperation::Type::Rotate)
-            return true;
-    }
-    return false;
-}
-
 bool KeyframeEffect::computeTransformedExtentViaTransformList(const FloatRect& rendererBox, const RenderStyle& style, LayoutRect& bounds) const
 {
     FloatRect floatBounds = bounds;
     FloatPoint transformOrigin;
 
-    bool applyTransformOrigin = containsRotation(style.transform().operations()) || style.transform().affectedByTransformOrigin();
+    bool applyTransformOrigin = style.transform().hasOperation<TransformOperation::Type::Rotate>() || style.transform().affectedByTransformOrigin();
     if (applyTransformOrigin) {
         transformOrigin = style.computeTransformOrigin(rendererBox).xy();
         // Ignore transformOriginZ because we'll bail if we encounter any 3D transforms.

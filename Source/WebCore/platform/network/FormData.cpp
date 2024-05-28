@@ -136,13 +136,15 @@ unsigned FormData::imageOrMediaFilesCount() const
 uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& blobSize) const
 {
     return WTF::switchOn(data,
-        [] (const Vector<uint8_t>& bytes) {
+        [](const Vector<uint8_t>& bytes) {
             return static_cast<uint64_t>(bytes.size());
-        }, [] (const FormDataElement::EncodedFileData& fileData) {
+        },
+        [](const FormDataElement::EncodedFileData& fileData) {
             if (fileData.fileLength != BlobDataItem::toEndOfFile)
                 return static_cast<uint64_t>(fileData.fileLength);
             return FileSystem::fileSize(fileData.filename).value_or(0);
-        }, [&blobSize] (const FormDataElement::EncodedBlobData& blobData) {
+        },
+        [&blobSize](const FormDataElement::EncodedBlobData& blobData) {
             return blobSize(blobData.url);
         }
     );
@@ -158,11 +160,13 @@ uint64_t FormDataElement::lengthInBytes() const
 FormDataElement FormDataElement::isolatedCopy() const
 {
     return WTF::switchOn(data,
-        [] (const Vector<uint8_t>& bytes) {
+        [](const Vector<uint8_t>& bytes) {
             return FormDataElement(Vector<uint8_t> { bytes });
-        }, [] (const FormDataElement::EncodedFileData& fileData) {
+        },
+        [](const FormDataElement::EncodedFileData& fileData) {
             return FormDataElement(fileData.isolatedCopy());
-        }, [] (const FormDataElement::EncodedBlobData& blobData) {
+        },
+        [](const FormDataElement::EncodedBlobData& blobData) {
             return FormDataElement(blobData.url.isolatedCopy());
         }
     );
@@ -249,8 +253,8 @@ void FormData::appendMultiPartKeyValuePairItems(const DOMFormData& formData)
         Vector<uint8_t> header;
         FormDataBuilder::beginMultiPartHeader(header, m_boundary.span(), normalizedName);
 
-        if (std::holds_alternative<RefPtr<File>>(item.data))
-            appendMultiPartFileValue(*std::get<RefPtr<File>>(item.data), header, encoding);
+        if (std::holds_alternative<Ref<File>>(item.data))
+            appendMultiPartFileValue(std::get<Ref<File>>(item.data), header, encoding);
         else
             appendMultiPartStringValue(std::get<String>(item.data), header, encoding);
 
@@ -272,7 +276,8 @@ void FormData::appendNonMultiPartKeyValuePairItems(const DOMFormData& formData, 
         String stringValue = WTF::switchOn(item.data,
             [](const String& string) {
                 return string;
-            }, [](const RefPtr<File>& file) {
+            },
+            [](const Ref<File>& file) {
                 return file->name();
             }
         );
@@ -347,11 +352,13 @@ Ref<FormData> FormData::resolveBlobReferences(BlobRegistryImpl* blobRegistryImpl
 
     for (auto& element : m_elements) {
         switchOn(element.data,
-            [&] (const Vector<uint8_t>& bytes) {
+            [&](const Vector<uint8_t>& bytes) {
                 newFormData->appendData(bytes.span());
-            }, [&] (const FormDataElement::EncodedFileData& fileData) {
+            },
+            [&](const FormDataElement::EncodedFileData& fileData) {
                 newFormData->appendFileRange(fileData.filename, fileData.fileStart, fileData.fileLength, fileData.expectedFileModificationTime);
-            }, [&] (const FormDataElement::EncodedBlobData& blobData) {
+            },
+            [&](const FormDataElement::EncodedBlobData& blobData) {
                 appendBlobResolved(blobRegistryImpl ? blobRegistryImpl : blobRegistry().blobRegistryImpl(), newFormData.get(), blobData.url);
             }
         );

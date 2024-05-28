@@ -33,7 +33,7 @@ public:
     static Ref<DOMParser> create(Document& contextDocument);
     ~DOMParser();
 
-    ExceptionOr<Ref<Document>> parseFromString(std::variant<RefPtr<TrustedHTML>, String>&&, const AtomString& contentType);
+    ExceptionOr<Ref<Document>> parseFromString(std::variant<Ref<TrustedHTML>, String>&&, const AtomString& contentType);
 
 private:
     explicit DOMParser(Document& contextDocument);

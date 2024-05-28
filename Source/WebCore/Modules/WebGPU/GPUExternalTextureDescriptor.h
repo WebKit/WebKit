@@ -38,26 +38,24 @@ namespace WebCore {
 
 class HTMLVideoElement;
 #if ENABLE(WEB_CODECS)
-using GPUVideoSource = std::variant<RefPtr<HTMLVideoElement>, RefPtr<WebCodecsVideoFrame>>;
+using GPUVideoSource = std::variant<Ref<HTMLVideoElement>, Ref<WebCodecsVideoFrame>>;
 #else
 using GPUVideoSource = RefPtr<HTMLVideoElement>;
 #endif
 
 struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) &&  ENABLE(WEB_CODECS)
     static WebGPU::VideoSourceIdentifier mediaIdentifierForSource(const GPUVideoSource& videoSource)
     {
-#if ENABLE(WEB_CODECS)
-        return WTF::switchOn(videoSource, [&](const RefPtr<HTMLVideoElement> videoElement) -> WebGPU::VideoSourceIdentifier {
-            return videoElement->playerIdentifier();
-        }
-        , [&](const RefPtr<WebCodecsVideoFrame> videoFrame) -> WebGPU::VideoSourceIdentifier {
-            return videoFrame->internalFrame();
-        });
-#else
-        return videoSource->playerIdentifier();
-#endif
+        return WTF::switchOn(videoSource,
+            [&](const Ref<HTMLVideoElement>& videoElement) -> WebGPU::VideoSourceIdentifier {
+                return videoElement->playerIdentifier();
+            },
+            [&](const Ref<WebCodecsVideoFrame>& videoFrame) -> WebGPU::VideoSourceIdentifier {
+                return videoFrame->internalFrame();
+            }
+        );
     }
 #endif
 
@@ -66,7 +64,11 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
         return {
             { label },
 #if ENABLE(VIDEO)
-            mediaIdentifierForSource(source),
+#if ENABLE(WEB_CODECS)
+            mediaIdentifierForSource(*source),
+#else
+            source->playerIdentifier(),
+#endif
 #else
             { },
 #endif
@@ -75,8 +77,16 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
     }
 
 #if ENABLE(VIDEO)
+    // FIXME: `source` is temporarily being wrapped in std::optional, but it is expected to always be there.
+    // This is needed to keep the bindings working while support for non-default constructible dictionaries are
+    // being worked on.
+#if ENABLE(WEB_CODECS)
+    std::optional<GPUVideoSource> source;
+#else
     GPUVideoSource source;
 #endif
+#endif
+
     GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
 };
 

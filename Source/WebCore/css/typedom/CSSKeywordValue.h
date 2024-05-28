@@ -33,7 +33,7 @@ namespace WebCore {
 
 template<typename> class ExceptionOr;
 class CSSKeywordValue;
-using CSSKeywordish = std::variant<String, RefPtr<CSSKeywordValue>>;
+using CSSKeywordish = std::variant<String, Ref<CSSKeywordValue>>;
 
 class CSSKeywordValue final : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSKeywordValue);
@@ -49,9 +49,9 @@ public:
 
     RefPtr<CSSValue> toCSSValue() const final;
 
-private:
-    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
+    void serialize(StringBuilder&, OptionSet<SerializationArguments> = { }) const final;
 
+private:
     explicit CSSKeywordValue(const String& value)
         : m_value(value) { }
     String m_value;

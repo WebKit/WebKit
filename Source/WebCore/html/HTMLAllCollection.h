@@ -33,8 +33,8 @@ class HTMLAllCollection final : public AllDescendantsCollection {
 public:
     static Ref<HTMLAllCollection> create(Document&, CollectionType);
 
-    std::optional<std::variant<RefPtr<HTMLCollection>, RefPtr<Element>>> namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const;
-    std::optional<std::variant<RefPtr<HTMLCollection>, RefPtr<Element>>> namedItemOrItems(const AtomString&) const;
+    std::optional<std::variant<Ref<HTMLCollection>, Ref<Element>>> namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const;
+    std::optional<std::variant<Ref<HTMLCollection>, Ref<Element>>> namedItemOrItems(const AtomString&) const;
 
 private:
     HTMLAllCollection(Document&, CollectionType);

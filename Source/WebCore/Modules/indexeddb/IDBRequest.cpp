@@ -104,7 +104,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.connectionProxy())
     , m_result(NullResultType::Undefined)
-    , m_source(&objectStore)
+    , m_source(objectStore)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
 }
@@ -118,7 +118,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
     , m_connectionProxy(transaction.database().connectionProxy())
 {
     WTF::switchOn(cursor.source(),
-        [this] (const auto& value) { this->m_source = IDBRequest::Source { value }; }
+        [this](const auto& value) { this->m_source = { value }; }
     );
 
     cursor.setRequest(*this);
@@ -129,7 +129,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTran
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.connectionProxy())
     , m_result(NullResultType::Undefined)
-    , m_source(&index)
+    , m_source(index)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
 }
@@ -139,7 +139,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.connectionProxy())
     , m_result(NullResultType::Undefined)
-    , m_source(&objectStore)
+    , m_source(objectStore)
     , m_connectionProxy(transaction.database().connectionProxy())
     , m_requestedObjectStoreRecordType(type)
 {
@@ -156,8 +156,8 @@ IDBRequest::~IDBRequest()
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     WTF::switchOn(m_result,
-        [] (RefPtr<IDBCursor>& cursor) { cursor->clearRequest(); },
-        [] (const auto&) { }
+        [](Ref<IDBCursor>& cursor) { cursor->clearRequest(); },
+        [](const auto&) { }
     );
 }
 
@@ -183,7 +183,7 @@ void IDBRequest::setSource(IDBCursor& cursor)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    m_source = Source { &cursor };
+    m_source = { cursor };
 }
 
 void IDBRequest::setVersionChangeTransaction(IDBTransaction& transaction)
@@ -210,9 +210,9 @@ uint64_t IDBRequest::sourceObjectStoreIdentifier() const
         return 0;
 
     return WTF::switchOn(m_source.value(),
-        [] (const RefPtr<IDBObjectStore>& objectStore) -> uint64_t { return objectStore->info().identifier(); },
-        [] (const RefPtr<IDBIndex>& index) -> uint64_t { return index->info().objectStoreIdentifier(); },
-        [] (const RefPtr<IDBCursor>&) -> uint64_t { return 0; }
+        [](const Ref<IDBObjectStore>& objectStore) -> uint64_t { return objectStore->info().identifier(); },
+        [](const Ref<IDBIndex>& index) -> uint64_t { return index->info().objectStoreIdentifier(); },
+        [](const Ref<IDBCursor>&) -> uint64_t { return 0; }
     );
 }
 
@@ -224,9 +224,9 @@ uint64_t IDBRequest::sourceIndexIdentifier() const
         return 0;
 
     return WTF::switchOn(m_source.value(),
-        [] (const RefPtr<IDBObjectStore>&) -> uint64_t { return 0; },
-        [] (const RefPtr<IDBIndex>& index) -> uint64_t { return index->info().identifier(); },
-        [] (const RefPtr<IDBCursor>&) -> uint64_t { return 0; }
+        [](const Ref<IDBObjectStore>&) -> uint64_t { return 0; },
+        [](const Ref<IDBIndex>& index) -> uint64_t { return index->info().identifier(); },
+        [](const Ref<IDBCursor>&) -> uint64_t { return 0; }
     );
 }
 
@@ -241,7 +241,7 @@ IndexedDB::IndexRecordType IDBRequest::requestedIndexRecordType() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(m_source);
-    ASSERT(std::holds_alternative<RefPtr<IDBIndex>>(m_source.value()));
+    ASSERT(std::holds_alternative<Ref<IDBIndex>>(m_source.value()));
 
     return m_requestedIndexRecordType;
 }
@@ -303,12 +303,14 @@ void IDBRequest::dispatchEvent(Event& event)
     if (event.type() != eventNames().blockedEvent) {
         m_readyState = ReadyState::Done;
         if (m_pendingActivity != PendingActivityType::None && (event.type() == eventNames().successEvent || event.type() == eventNames().errorEvent)) {
-            WTF::switchOn(m_result, [&] (const RefPtr<IDBCursor>& cursor) mutable {
-                if (!!cursor.get() && m_transaction && !m_transaction->isFinishedOrFinishing())
-                    m_pendingActivity = PendingActivityType::CursorIteration;
-                else
-                    m_pendingActivity = PendingActivityType::None;
-                }, [&] (const auto&) mutable {
+            WTF::switchOn(m_result,
+                [&](const Ref<IDBCursor>&) mutable {
+                    if (m_transaction && !m_transaction->isFinishedOrFinishing())
+                        m_pendingActivity = PendingActivityType::CursorIteration;
+                    else
+                        m_pendingActivity = PendingActivityType::None;
+                },
+                [&](const auto&) mutable {
                     m_pendingActivity = PendingActivityType::None;
                 }
             );
@@ -451,8 +453,8 @@ IDBCursor* IDBRequest::resultCursor()
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     return WTF::switchOn(m_result,
-        [] (const RefPtr<IDBCursor>& cursor) -> IDBCursor* { return cursor.get(); },
-        [] (const auto&) -> IDBCursor* { return nullptr; }
+        [](const Ref<IDBCursor>& cursor) -> IDBCursor* { return cursor.ptr(); },
+        [](const auto&) -> IDBCursor* { return nullptr; }
     );
 }
 
@@ -493,7 +495,7 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
     if (resultData.type() == IDBResultType::IterateCursorSuccess || resultData.type() == IDBResultType::OpenCursorSuccess) {
         m_pendingCursor->setGetResult(*this, resultData.getResult(), m_currentTransactionOperationID);
         if (resultData.getResult().isDefined())
-            m_result = m_pendingCursor;
+            m_result = m_pendingCursor.releaseNonNull();
     }
 
     if (std::get_if<NullResultType>(&m_result))
@@ -546,7 +548,7 @@ void IDBRequest::setResult(Ref<IDBDatabase>&& database)
     VM& vm = context->vm();
     JSLockHolder lock(vm);
 
-    m_result = RefPtr<IDBDatabase> { WTFMove(database) };
+    m_result = WTFMove(database);
     m_resultWrapper.clear();
 }
 
@@ -561,8 +563,8 @@ void IDBRequest::clearWrappers()
     m_resultWrapper.clear();
     
     WTF::switchOn(m_result,
-        [] (RefPtr<IDBCursor>& cursor) { cursor->clearWrappers(); },
-        [] (const auto&) { }
+        [](Ref<IDBCursor>& cursor) { cursor->clearWrappers(); },
+        [](const auto&) { }
     );
 }
 

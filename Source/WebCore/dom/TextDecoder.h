@@ -52,7 +52,7 @@ public:
     struct DecodeOptions {
         bool stream { false };
     };
-    ExceptionOr<String> decode(std::optional<BufferSource::VariantType>, DecodeOptions);
+    ExceptionOr<String> decode(std::optional<std::variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>>>, DecodeOptions);
 
 private:
     TextDecoder(StringView, Options);

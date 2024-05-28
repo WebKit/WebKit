@@ -1096,7 +1096,7 @@ void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPoli
     close();
 }
 
-ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, std::variant<RefPtr<TrustedHTML>, String>&& html)
+ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, std::variant<Ref<TrustedHTML>, String>&& html)
 {
     auto stringValueHolder = trustedTypeCompliantString(*context.scriptExecutionContext(), WTFMove(html), "Document parseHTMLUnsafe"_s);
     if (stringValueHolder.hasException())
@@ -6921,7 +6921,7 @@ static Editor::Command command(Document* document, const String& commandName, bo
         userInterface ? EditorCommandSource::DOMWithUserInterface : EditorCommandSource::DOM);
 }
 
-ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const std::variant<String, RefPtr<TrustedHTML>>& value)
+ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const std::variant<String, Ref<TrustedHTML>>& value)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
         return Exception { ExceptionCode::InvalidStateError, "execCommand is only supported on HTML documents."_s };
@@ -6932,7 +6932,7 @@ ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInte
                 return String(str);
             return trustedTypeCompliantString(TrustedType::TrustedHTML, *scriptExecutionContext(), str, "Document execCommand"_s);
         },
-        [](const RefPtr<TrustedHTML>& trustedHtml) -> ExceptionOr<String> {
+        [](const Ref<TrustedHTML>& trustedHtml) -> ExceptionOr<String> {
             return trustedHtml->toString();
         }
     );
@@ -7622,19 +7622,19 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
 
 #if ENABLE(WEBGL)
     if (RefPtr renderingContext = dynamicDowncast<WebGLRenderingContext>(*context))
-        return RenderingContext { WTFMove(renderingContext) };
+        return RenderingContext { renderingContext.releaseNonNull() };
 
     if (RefPtr renderingContext = dynamicDowncast<WebGL2RenderingContext>(*context))
-        return RenderingContext { WTFMove(renderingContext) };
+        return RenderingContext { renderingContext.releaseNonNull() };
 #endif
 
     if (RefPtr renderingContext = dynamicDowncast<ImageBitmapRenderingContext>(*context))
-        return RenderingContext { WTFMove(renderingContext) };
+        return RenderingContext { renderingContext.releaseNonNull() };
 
-    if (RefPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(*context))
-        return RenderingContext { WTFMove(gpuCanvasContext) };
+    if (RefPtr renderingContext = dynamicDowncast<GPUCanvasContext>(*context))
+        return RenderingContext { renderingContext.releaseNonNull() };
 
-    return RenderingContext { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*context) } };
+    return RenderingContext { downcast<CanvasRenderingContext2D>(*context) };
 }
 
 HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)

@@ -181,8 +181,8 @@ static inline TransformOperations blendFunc(const TransformOperations& from, con
     if (context.compositeOperation == CompositeOperation::Add) {
         ASSERT(context.progress == 1.0);
         TransformOperations resultOperations;
-        resultOperations.operations().appendVector(from.operations());
-        resultOperations.operations().appendVector(to.operations());
+        resultOperations.append(from);
+        resultOperations.append(to);
         return resultOperations;
     }
 
@@ -304,11 +304,9 @@ static RefPtr<TranslateTransformOperation> blendFunc(TranslateTransformOperation
     return nullptr;
 }
 
-static RefPtr<TransformOperation> blendFunc(TransformOperation* from, TransformOperation* to, const CSSPropertyBlendingContext& context)
+static Ref<TransformOperation> blendFunc(TransformOperation& from, TransformOperation& to, const CSSPropertyBlendingContext& context)
 {
-    if (from && to)
-        return to->blend(from, context);
-    return nullptr;
+    return to.blend(&from, context);
 }
 
 static inline RefPtr<PathOperation> blendFunc(PathOperation* from, PathOperation* to, const CSSPropertyBlendingContext& context)
@@ -4320,7 +4318,7 @@ static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(cons
     if (std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(from) && std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(to)) {
         auto& fromTransformOperation = std::get<CSSCustomPropertyValue::TransformSyntaxValue>(from).transform;
         auto& toTransformOperation = std::get<CSSCustomPropertyValue::TransformSyntaxValue>(to).transform;
-        return CSSCustomPropertyValue::TransformSyntaxValue { blendFunc(fromTransformOperation.get(), toTransformOperation.get(), blendingContext) };
+        return CSSCustomPropertyValue::TransformSyntaxValue { blendFunc(fromTransformOperation, toTransformOperation, blendingContext) };
     }
 
     return std::nullopt;
@@ -4354,7 +4352,7 @@ static std::optional<CSSCustomPropertyValue::SyntaxValueList> blendSyntaxValueLi
             TransformOperations transformOperations;
             for (auto& syntaxValue : src.values) {
                 ASSERT(std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(syntaxValue));
-                transformOperations.operations().append(std::get<CSSCustomPropertyValue::TransformSyntaxValue>(syntaxValue).transform);
+                transformOperations.append(std::get<CSSCustomPropertyValue::TransformSyntaxValue>(syntaxValue).transform.copyRef());
             }
             return transformOperations;
         };
@@ -4362,8 +4360,8 @@ static std::optional<CSSCustomPropertyValue::SyntaxValueList> blendSyntaxValueLi
         auto fromTransformOperations = transformOperationsFromSyntaxValueList(from);
         auto toTransformOperations = transformOperationsFromSyntaxValueList(to);
         auto blendedTransformOperations = blendFunc(fromTransformOperations, toTransformOperations, blendingContext);
-        auto blendedSyntaxValues = blendedTransformOperations.operations().map([](auto& transformOperation) -> CSSCustomPropertyValue::SyntaxValue {
-            return CSSCustomPropertyValue::TransformSyntaxValue { transformOperation };
+        auto blendedSyntaxValues = blendedTransformOperations.operations().map([](auto transformOperation) -> CSSCustomPropertyValue::SyntaxValue {
+            return CSSCustomPropertyValue::TransformSyntaxValue { WTFMove(transformOperation) };
         });
         return CSSCustomPropertyValue::SyntaxValueList { blendedSyntaxValues, from.separator };
     }
@@ -4426,9 +4424,10 @@ static void blendCustomProperty(const CSSPropertyBlendingClient& client, const A
 void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client, const AnimatableCSSProperty& property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
 {
     WTF::switchOn(property,
-        [&] (CSSPropertyID propertyId) {
+        [&](CSSPropertyID propertyId) {
             blendStandardProperty(client, propertyId, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration);
-        }, [&] (const AtomString& customProperty) {
+        },
+        [&](const AtomString& customProperty) {
             blendCustomProperty(client, customProperty, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration);
         }
     );
@@ -4437,10 +4436,10 @@ void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client
 bool CSSPropertyAnimation::isPropertyAnimatable(const AnimatableCSSProperty& property)
 {
     return WTF::switchOn(property,
-        [] (CSSPropertyID propertyId) {
+        [](CSSPropertyID propertyId) {
             return propertyId == CSSPropertyCustom || !!CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId);
         },
-        [] (const AtomString&) {
+        [](const AtomString&) {
             // FIXME: this should only be true for property that are registered custom properties.
             return true;
         }
@@ -4450,36 +4449,54 @@ bool CSSPropertyAnimation::isPropertyAnimatable(const AnimatableCSSProperty& pro
 bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(const AnimatableCSSProperty& property)
 {
     return WTF::switchOn(property,
-        [] (CSSPropertyID propertyId) {
+        [](CSSPropertyID propertyId) {
             if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
                 return wrapper->isAdditiveOrCumulative();
             return false;
-        }, [] (const AtomString&) { return true; }
+        },
+        [](const AtomString&) {
+            return true;
+        }
     );
 }
 
 static bool syntaxValuesRequireBlendingForAccumulativeIteration(const CSSCustomPropertyValue::SyntaxValue& a, const CSSCustomPropertyValue::SyntaxValue& b, bool isList)
 {
-    return WTF::switchOn(a, [b, isList](const Length& aLength) {
-        ASSERT(std::holds_alternative<Length>(b));
-        return !isList && lengthsRequireBlendingForAccumulativeIteration(aLength, std::get<Length>(b));
-    }, [] (const RefPtr<TransformOperation>&) {
-        return true;
-    }, [] (const StyleColor&) {
-        return true;
-    }, [] (auto&) {
-        return false;
-    });
+    return WTF::switchOn(a,
+        [b, isList](const Length& aLength) {
+            ASSERT(std::holds_alternative<Length>(b));
+            return !isList && lengthsRequireBlendingForAccumulativeIteration(aLength, std::get<Length>(b));
+        },
+        [](const CSSCustomPropertyValue::NumericSyntaxValue&) {
+            return false;
+        },
+        [](const StyleColor&) {
+            return true;
+        },
+        [](const Ref<StyleImage>&) {
+            return false;
+        },
+        [](const URL&) {
+            return false;
+        },
+        [](const String&) {
+            return false;
+        },
+        [](const CSSCustomPropertyValue::TransformSyntaxValue&) {
+            return true;
+        }
+    );
 }
 
 bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient&, const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b)
 {
     return WTF::switchOn(property,
-        [&] (CSSPropertyID propertyId) {
+        [&](CSSPropertyID propertyId) {
             if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
                 return wrapper->requiresBlendingForAccumulativeIteration(a, b);
             return false;
-        }, [&] (const AtomString& customProperty) {
+        },
+        [&](const AtomString& customProperty) {
             auto [from, to] = customPropertyValuesForBlending(customProperty, a, b);
             if (!from || !to)
                 return false;
@@ -4510,22 +4527,26 @@ bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(cons
 bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(const AnimatableCSSProperty& property, const Settings& settings)
 {
     return WTF::switchOn(property,
-        [&] (CSSPropertyID cssProperty) {
+        [&](CSSPropertyID cssProperty) {
             if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(cssProperty))
                 return wrapper->animationIsAccelerated(settings);
             return false;
-        }, [] (const AtomString&) { return false; }
+        },
+        [](const AtomString&) {
+            return false;
+        }
     );
 }
 
 bool CSSPropertyAnimation::propertiesEqual(const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b, const Document&)
 {
     return WTF::switchOn(property,
-        [&] (CSSPropertyID propertyId) {
+        [&](CSSPropertyID propertyId) {
             if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
                 return wrapper->equals(a, b);
             return true;
-        }, [&] (const AtomString& customProperty) {
+        },
+        [&](const AtomString& customProperty) {
             auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(customProperty, a, b);
             if (!aCustomPropertyValue && !bCustomPropertyValue)
                 return true;
@@ -4543,23 +4564,26 @@ bool CSSPropertyAnimation::propertiesEqual(const AnimatableCSSProperty& property
 static bool typeOfSyntaxValueCanBeInterpolated(const CSSCustomPropertyValue::SyntaxValue& syntaxValue)
 {
     return WTF::switchOn(syntaxValue,
-        [] (const Length&) {
+        [](const Length&) {
             return true;
         },
-        [] (const StyleColor&) {
+        [](const CSSCustomPropertyValue::NumericSyntaxValue&) {
             return true;
         },
-        [] (CSSCustomPropertyValue::NumericSyntaxValue) {
+        [](const StyleColor&) {
             return true;
         },
-        [] (const CSSCustomPropertyValue::TransformSyntaxValue&) {
-            return true;
-        },
-        [] (RefPtr<StyleImage>) {
+        [](const Ref<StyleImage>&) {
             return false;
         },
-        [] (auto&) {
+        [](const URL&) {
             return false;
+        },
+        [](const String&) {
+            return false;
+        },
+        [](const CSSCustomPropertyValue::TransformSyntaxValue&) {
+            return true;
         }
     );
 }
@@ -4567,11 +4591,12 @@ static bool typeOfSyntaxValueCanBeInterpolated(const CSSCustomPropertyValue::Syn
 bool CSSPropertyAnimation::canPropertyBeInterpolated(const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b, const Document&)
 {
     return WTF::switchOn(property,
-        [&] (CSSPropertyID propertyId) {
+        [&](CSSPropertyID propertyId) {
             if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
                 return wrapper->canInterpolate(a, b, CompositeOperation::Replace);
             return true;
-        }, [&] (const AtomString& customProperty) {
+        },
+        [&](const AtomString& customProperty) {
             auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(customProperty, a, b);
             if (!aCustomPropertyValue || !bCustomPropertyValue || aCustomPropertyValue == bCustomPropertyValue)
                 return false;
@@ -4579,8 +4604,22 @@ bool CSSPropertyAnimation::canPropertyBeInterpolated(const AnimatableCSSProperty
             auto& bVariantValue = bCustomPropertyValue->value();
             if (aVariantValue.index() != bVariantValue.index())
                 return false;
+
             return WTF::switchOn(aVariantValue,
-                [bVariantValue] (const CSSCustomPropertyValue::SyntaxValueList& aValueList) {
+                [](const Ref<CSSVariableReferenceValue>&) {
+                    return false;
+                },
+                [](CSSValueID) {
+                    return false;
+                },
+                [](const Ref<CSSVariableData>&) {
+                    return false;
+                },
+                [bVariantValue](const CSSCustomPropertyValue::SyntaxValue& aSyntaxValue) {
+                    auto bSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(bVariantValue);
+                    return aSyntaxValue != bSyntaxValue && typeOfSyntaxValueCanBeInterpolated(aSyntaxValue);
+                },
+                [bVariantValue](const CSSCustomPropertyValue::SyntaxValueList& aValueList) {
                     auto bValueList = std::get<CSSCustomPropertyValue::SyntaxValueList>(bVariantValue);
                     if (aValueList == bValueList)
                         return false;
@@ -4592,13 +4631,6 @@ bool CSSPropertyAnimation::canPropertyBeInterpolated(const AnimatableCSSProperty
                         }
                         return typeOfSyntaxValueCanBeInterpolated(*firstValue);
                     }
-                    return false;
-                },
-                [bVariantValue] (const CSSCustomPropertyValue::SyntaxValue& aSyntaxValue) {
-                    auto bSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(bVariantValue);
-                    return aSyntaxValue != bSyntaxValue && typeOfSyntaxValueCanBeInterpolated(aSyntaxValue);
-                },
-                [] (auto&) {
                     return false;
                 }
             );

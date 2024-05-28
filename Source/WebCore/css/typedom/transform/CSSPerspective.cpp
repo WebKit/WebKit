@@ -47,20 +47,25 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CSSPerspective);
 static ExceptionOr<CSSPerspectiveValue> checkLength(CSSPerspectiveValue length)
 {
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssperspective-cssperspective
-    auto checkKeywordValue = [] (RefPtr<CSSKeywordValue> value) -> ExceptionOr<CSSPerspectiveValue> {
-        RELEASE_ASSERT(value);
+    auto checkKeywordValue = [](Ref<CSSKeywordValue>&& value) -> ExceptionOr<CSSPerspectiveValue> {
         if (!equalLettersIgnoringASCIICase(value->value(), "none"_s))
             return Exception { ExceptionCode::TypeError };
         return { WTFMove(value) };
     };
+
     return WTF::switchOn(WTFMove(length),
-        [] (RefPtr<CSSNumericValue> value) -> ExceptionOr<CSSPerspectiveValue> {
-            if (value && !value->type().matches<CSSNumericBaseType::Length>())
+        [&](Ref<CSSNumericValue>&& value) -> ExceptionOr<CSSPerspectiveValue> {
+            if (!value->type().matches<CSSNumericBaseType::Length>())
                 return Exception { ExceptionCode::TypeError };
             return { WTFMove(value) };
-        }, [&] (String value) {
+        },
+        [&](String&& value) -> ExceptionOr<CSSPerspectiveValue> {
             return checkKeywordValue(CSSKeywordValue::rectifyKeywordish(WTFMove(value)));
-        }, checkKeywordValue);
+        },
+        [&](Ref<CSSKeywordValue>&& value) -> ExceptionOr<CSSPerspectiveValue> {
+            return checkKeywordValue(WTFMove(value));
+        }
+    );
 }
 
 ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSPerspectiveValue length)
@@ -86,14 +91,13 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSFunctionValue& cssFun
     auto keywordOrNumeric = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0), std::nullopt);
     if (keywordOrNumeric.hasException())
         return keywordOrNumeric.releaseException();
+
     auto& keywordOrNumericValue = keywordOrNumeric.returnValue().get();
-    return [&]() -> ExceptionOr<Ref<CSSPerspective>> {
-        if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(keywordOrNumericValue))
-            return CSSPerspective::create(keywordValue);
-        if (auto* numericValue = dynamicDowncast<CSSNumericValue>(keywordOrNumericValue))
-            return CSSPerspective::create(numericValue);
-        return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
-    }();
+    if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(keywordOrNumericValue))
+        return { CSSPerspective::create(*keywordValue) };
+    if (auto* numericValue = dynamicDowncast<CSSNumericValue>(keywordOrNumericValue))
+        return { CSSPerspective::create(*numericValue) };
+    return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
 }
 
 CSSPerspective::CSSPerspective(CSSPerspectiveValue length)
@@ -121,30 +125,31 @@ void CSSPerspective::serialize(StringBuilder& builder) const
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssperspective
     builder.append("perspective("_s);
     WTF::switchOn(m_length,
-        [&] (const RefPtr<CSSNumericValue>& value) {
+        [&](const Ref<CSSNumericValue>& value) {
             if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get()); unitValue && unitValue->value() < 0.0) {
                 builder.append("calc("_s);
                 value->serialize(builder);
                 builder.append(')');
                 return;
             }
-            if (value)
-                value->serialize(builder);
-        }, [&] (const String& value) {
+            value->serialize(builder);
+        },
+        [&](const String& value) {
             builder.append(value);
-        }, [&] (const RefPtr<CSSKeywordValue>& value) {
-            if (CSSStyleValue* styleValue = value.get())
-                styleValue->serialize(builder);
-        });
+        },
+        [&](const Ref<CSSKeywordValue>& value) {
+            value->serialize(builder);
+        }
+    );
     builder.append(')');
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
 {
-    if (!std::holds_alternative<RefPtr<CSSNumericValue>>(m_length))
+    if (!std::holds_alternative<Ref<CSSNumericValue>>(m_length))
         return { DOMMatrix::create({ }, DOMMatrixReadOnly::Is2D::Yes) };
 
-    RefPtr length = dynamicDowncast<CSSUnitValue>(std::get<RefPtr<CSSNumericValue>>(m_length));
+    RefPtr length = dynamicDowncast<CSSUnitValue>(std::get<Ref<CSSNumericValue>>(m_length));
     if (!length)
         return Exception { ExceptionCode::TypeError };
 
@@ -160,14 +165,18 @@ ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
 
 RefPtr<CSSValue> CSSPerspective::toCSSValue() const
 {
-    RefPtr<CSSValue> length;
-    switchOn(m_length, [&](const RefPtr<CSSNumericValue>& numericValue) {
-        length = numericValue->toCSSValue();
-    }, [&](const String&) {
-        // FIXME: Implement this.
-    }, [&](const RefPtr<CSSKeywordValue>& keywordValue) {
-        length = keywordValue->toCSSValue();
-    });
+    auto length = switchOn(m_length,
+        [](const Ref<CSSNumericValue>& numericValue) -> RefPtr<CSSValue> {
+            return numericValue->toCSSValue();
+        },
+        [](const String&) -> RefPtr<CSSValue> {
+            // FIXME: Implement this.
+            return nullptr;
+        },
+        [](const Ref<CSSKeywordValue>& keywordValue) -> RefPtr<CSSValue> {
+            return keywordValue->toCSSValue();
+        }
+    );
     if (!length)
         return nullptr;
 

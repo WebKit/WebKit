@@ -45,7 +45,7 @@ class CryptoAlgorithmParameters;
 class ScriptExecutionContext;
 
 using KeyData = std::variant<Vector<uint8_t>, JsonWebKey>;
-using KeyOrKeyPair = std::variant<RefPtr<CryptoKey>, CryptoKeyPair>;
+using KeyOrKeyPair = std::variant<Ref<CryptoKey>, CryptoKeyPair>;
 
 class CryptoAlgorithm : public ThreadSafeRefCounted<CryptoAlgorithm> {
 public:

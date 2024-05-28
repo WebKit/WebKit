@@ -44,6 +44,7 @@
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
 #include "Page.h"
+#include "SVGImageElement.h"
 
 #if ENABLE(OFFSCREEN_CANVAS)
 #include "OffscreenCanvas.h"

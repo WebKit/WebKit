@@ -73,21 +73,22 @@ class WebCodecsVideoFrame;
 struct DOMMatrix2DInit;
 
 
-using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
-    , RefPtr<SVGImageElement>
-    , RefPtr<HTMLCanvasElement>
-    , RefPtr<ImageBitmap>
-    , RefPtr<CSSStyleImageValue>
+using CanvasImageSource = std::variant<
+      Ref<HTMLImageElement>
+    , Ref<SVGImageElement>
+    , Ref<HTMLCanvasElement>
+    , Ref<ImageBitmap>
+    , Ref<CSSStyleImageValue>
 #if ENABLE(OFFSCREEN_CANVAS)
-    , RefPtr<OffscreenCanvas>
+    , Ref<OffscreenCanvas>
 #endif
 #if ENABLE(VIDEO)
-    , RefPtr<HTMLVideoElement>
+    , Ref<HTMLVideoElement>
 #endif
 #if ENABLE(WEB_CODECS)
-    , RefPtr<WebCodecsVideoFrame>
+    , Ref<WebCodecsVideoFrame>
 #endif
-    >;
+>;
 
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
@@ -200,7 +201,7 @@ public:
     void drawImageFromRect(HTMLImageElement&, float sx = 0, float sy = 0, float sw = 0, float sh = 0, float dx = 0, float dy = 0, float dw = 0, float dh = 0, const String& compositeOperation = emptyString());
     void clearCanvas();
 
-    using StyleVariant = std::variant<String, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>>;
+    using StyleVariant = std::variant<String, Ref<CanvasGradient>, Ref<CanvasPattern>>;
     StyleVariant strokeStyle() const;
     void setStrokeStyle(StyleVariant&&);
     StyleVariant fillStyle() const;

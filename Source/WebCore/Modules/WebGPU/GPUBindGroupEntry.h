@@ -36,22 +36,24 @@
 
 namespace WebCore {
 
-using GPUBindingResource = std::variant<RefPtr<GPUSampler>, RefPtr<GPUTextureView>, GPUBufferBinding, RefPtr<GPUExternalTexture>>;
+using GPUBindingResource = std::variant<Ref<GPUSampler>, Ref<GPUTextureView>, GPUBufferBinding, Ref<GPUExternalTexture>>;
 
 inline WebGPU::BindingResource convertToBacking(const GPUBindingResource& bindingResource)
 {
-    return WTF::switchOn(bindingResource, [](const RefPtr<GPUSampler>& sampler) -> WebGPU::BindingResource {
-        ASSERT(sampler);
-        return sampler->backing();
-    }, [](const RefPtr<GPUTextureView>& textureView) -> WebGPU::BindingResource {
-        ASSERT(textureView);
-        return textureView->backing();
-    }, [](const GPUBufferBinding& bufferBinding) -> WebGPU::BindingResource {
-        return bufferBinding.convertToBacking();
-    }, [](const RefPtr<GPUExternalTexture>& externalTexture) -> WebGPU::BindingResource {
-        ASSERT(externalTexture);
-        return externalTexture->backing();
-    });
+    return WTF::switchOn(bindingResource,
+        [](const Ref<GPUSampler>& sampler) -> WebGPU::BindingResource {
+            return sampler->backing();
+        },
+        [](const Ref<GPUTextureView>& textureView) -> WebGPU::BindingResource {
+            return textureView->backing();
+        },
+        [](const GPUBufferBinding& bufferBinding) -> WebGPU::BindingResource {
+            return bufferBinding.convertToBacking();
+        },
+        [](const Ref<GPUExternalTexture>& externalTexture) -> WebGPU::BindingResource {
+            return externalTexture->backing();
+        }
+    );
 }
 
 struct GPUBindGroupEntry {
@@ -59,12 +61,16 @@ struct GPUBindGroupEntry {
     {
         return {
             binding,
-            WebCore::convertToBacking(resource),
+            WebCore::convertToBacking(*resource),
         };
     }
 
     GPUIndex32 binding { 0 };
-    GPUBindingResource resource;
+
+    // FIXME: `resource` is temporarily being wrapped in std::optional, but it is expected to always be there.
+    // This is needed to keep the bindings working while support for non-default constructible dictionaries are
+    // being worked on.
+    std::optional<GPUBindingResource> resource;
 };
 
 }

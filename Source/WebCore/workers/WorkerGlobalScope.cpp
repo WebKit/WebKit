@@ -370,7 +370,7 @@ void WorkerGlobalScope::clearInterval(int timeoutId)
     DOMTimer::removeById(*this, timeoutId);
 }
 
-ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<std::variant<RefPtr<TrustedScriptURL>, String>>& urls)
+ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<std::variant<Ref<TrustedScriptURL>, String>>& urls)
 {
     ASSERT(contentSecurityPolicy());
 
@@ -381,7 +381,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<std::varian
             [this](const String& str) -> ExceptionOr<String> {
                 return trustedTypeCompliantString(TrustedType::TrustedScriptURL, *this, str, "WorkerGlobalScope importScripts"_s);
             },
-            [](const RefPtr<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
+            [](const Ref<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
                 return trustedScriptURL->toString();
             }
         );

@@ -99,12 +99,16 @@ static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoder
 {
     std::span<const uint8_t> description;
     if (config.description) {
-        auto* data = std::visit([](auto& buffer) -> const uint8_t* {
-            return buffer ? static_cast<const uint8_t*>(buffer->data()) : nullptr;
-        }, *config.description);
-        auto length = std::visit([](auto& buffer) -> size_t {
-            return buffer ? buffer->byteLength() : 0;
-        }, *config.description);
+        auto* data = WTF::switchOn(*config.description,
+            [](auto& buffer) -> const uint8_t* {
+                return static_cast<const uint8_t*>(buffer->data());
+            }
+        );
+        auto length = WTF::switchOn(*config.description,
+            [](auto& buffer) -> size_t {
+                return buffer->byteLength();
+            }
+        );
         if (length)
             description = { data, length };
     }
@@ -258,7 +262,7 @@ void WebCodecsVideoDecoder::isConfigSupported(ScriptExecutionContext& context, W
         ScriptExecutionContext::postTaskTo(identifier, [success = result.has_value(), config = WTFMove(config).isolatedCopyWithoutDescription(), description = WTFMove(description), promisePtr](auto& context) mutable {
             if (auto promise = context.takeDeferredPromise(promisePtr)) {
                 if (description.size())
-                    config.description = RefPtr { JSC::ArrayBuffer::create(description.data(), description.size()) };
+                    config.description = JSC::ArrayBuffer::create(description.data(), description.size());
                 promise->template resolve<IDLDictionary<WebCodecsVideoDecoderSupport>>(WebCodecsVideoDecoderSupport { success, WTFMove(config) });
             }
         });

@@ -60,7 +60,7 @@ public:
     void initializeBackendForReceiver(RTCRtpTransformBackend&);
     void initializeBackendForSender(RTCRtpTransformBackend&);
     void willClearBackend(RTCRtpTransformBackend&);
-    void backendTransferedToNewTransform() { clear(RTCRtpScriptTransformer::ClearCallback::No); }
+    void backendTransferredToNewTransform() { clear(RTCRtpScriptTransformer::ClearCallback::No); }
 
 private:
     RTCRtpScriptTransform(ScriptExecutionContext&, Ref<Worker>&&);

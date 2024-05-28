@@ -33,7 +33,7 @@ public:
     static ExceptionOr<Ref<TextDecoderStreamDecoder>> create(const String& label, bool fatal, bool ignoreBOM);
 
     String encoding() const { return m_textDecoder->encoding(); }
-    ExceptionOr<String> decode(std::optional<BufferSource::VariantType>);
+    ExceptionOr<String> decode(std::optional<std::variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>>>);
     ExceptionOr<String> flush();
 
 private:

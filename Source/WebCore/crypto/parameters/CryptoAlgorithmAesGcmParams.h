@@ -35,7 +35,7 @@ class CryptoAlgorithmAesGcmParams final : public CryptoAlgorithmParameters {
 public:
     BufferSource iv;
     // Use additionalDataVector() instead of additionalData. The label will be gone once additionalDataVector() is called.
-    mutable std::optional<BufferSource::VariantType> additionalData;
+    mutable std::optional<std::variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>>> additionalData;
     mutable std::optional<uint8_t> tagLength;
 
     Class parametersClass() const final { return Class::AesGcmParams; }

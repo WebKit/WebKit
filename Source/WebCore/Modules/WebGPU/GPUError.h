@@ -33,6 +33,6 @@
 
 namespace WebCore {
 
-using GPUError = std::variant<RefPtr<GPUOutOfMemoryError>, RefPtr<GPUValidationError>, RefPtr<GPUInternalError>>;
+using GPUError = std::variant<Ref<GPUOutOfMemoryError>, Ref<GPUValidationError>, Ref<GPUInternalError>>;
 
 }

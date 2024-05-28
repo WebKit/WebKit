@@ -46,9 +46,7 @@ AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& 
     transformOperationData = src.transformOperationData;
     transformBox = src.transformBox;
 
-    auto& transformOperations = transform.operations();
-    auto& srcTransformOperations = src.transform.operations();
-    transformOperations.appendVector(srcTransformOperations);
+    transform.append(src.transform);
 
     translate = src.translate.copyRef();
     scale = src.scale.copyRef();
@@ -77,10 +75,7 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
         clonedTransformOperationData = transformOperationData;
 
     auto clonedTransformOrigin = transformOrigin;
-
-    TransformOperations clonedTransform { transform.operations().map([](const auto& operation) {
-        return RefPtr { operation->clone() };
-    }) };
+    auto clonedTransform = transform.clone();
 
     RefPtr<TransformOperation> clonedTranslate;
     if (auto* srcTranslate = translate.get())
@@ -149,12 +144,7 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
     if (renderer)
         transformOperationData = TransformOperationData(renderer->transformReferenceBoxRect(style), renderer);
 
-    auto& transformOperations = transform.operations();
-    auto& srcTransformOperations = style.transform().operations();
-    transformOperations.appendContainerWithMapping(srcTransformOperations, [&](auto& srcTransformOperation) {
-        return srcTransformOperation->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
-    });
-
+    transform.appendSelfOrCopyWithResolvedCalculatedValues(style.transform(), borderBoxSize);
     transformBox = style.transformBox();
 
     if (auto* srcTranslate = style.translate())

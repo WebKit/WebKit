@@ -5563,24 +5563,24 @@ RenderStyle RenderLayer::createReflectionStyle()
     TransformOperations transform;
     switch (renderer().style().boxReflect()->direction()) {
     case ReflectionDirection::Below:
-        transform.operations().append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(100., LengthType::Percent), TransformOperation::Type::Translate));
-        transform.operations().append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), renderer().style().boxReflect()->offset(), TransformOperation::Type::Translate));
-        transform.operations().append(ScaleTransformOperation::create(1.0, -1.0, ScaleTransformOperation::Type::Scale));
+        transform.append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(100., LengthType::Percent), TransformOperation::Type::Translate));
+        transform.append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), renderer().style().boxReflect()->offset(), TransformOperation::Type::Translate));
+        transform.append(ScaleTransformOperation::create(1.0, -1.0, ScaleTransformOperation::Type::Scale));
         break;
     case ReflectionDirection::Above:
-        transform.operations().append(ScaleTransformOperation::create(1.0, -1.0, ScaleTransformOperation::Type::Scale));
-        transform.operations().append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(100., LengthType::Percent), TransformOperation::Type::Translate));
-        transform.operations().append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), renderer().style().boxReflect()->offset(), TransformOperation::Type::Translate));
+        transform.append(ScaleTransformOperation::create(1.0, -1.0, ScaleTransformOperation::Type::Scale));
+        transform.append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(100., LengthType::Percent), TransformOperation::Type::Translate));
+        transform.append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), renderer().style().boxReflect()->offset(), TransformOperation::Type::Translate));
         break;
     case ReflectionDirection::Right:
-        transform.operations().append(TranslateTransformOperation::create(Length(100., LengthType::Percent), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
-        transform.operations().append(TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
-        transform.operations().append(ScaleTransformOperation::create(-1.0, 1.0, ScaleTransformOperation::Type::Scale));
+        transform.append(TranslateTransformOperation::create(Length(100., LengthType::Percent), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
+        transform.append(TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
+        transform.append(ScaleTransformOperation::create(-1.0, 1.0, ScaleTransformOperation::Type::Scale));
         break;
     case ReflectionDirection::Left:
-        transform.operations().append(ScaleTransformOperation::create(-1.0, 1.0, ScaleTransformOperation::Type::Scale));
-        transform.operations().append(TranslateTransformOperation::create(Length(100., LengthType::Percent), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
-        transform.operations().append(TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
+        transform.append(ScaleTransformOperation::create(-1.0, 1.0, ScaleTransformOperation::Type::Scale));
+        transform.append(TranslateTransformOperation::create(Length(100., LengthType::Percent), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
+        transform.append(TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
         break;
     }
     newStyle.setTransform(transform);

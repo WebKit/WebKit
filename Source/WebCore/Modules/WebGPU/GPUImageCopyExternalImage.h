@@ -41,14 +41,19 @@
 namespace WebCore {
 
 struct GPUImageCopyExternalImage {
-    using SourceType = std::variant<RefPtr<ImageBitmap>,
+    using SourceType = std::variant<
+        Ref<ImageBitmap>,
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-    RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<WebCodecsVideoFrame>,
+        Ref<ImageData>,
+        Ref<HTMLImageElement>,
+        Ref<HTMLVideoElement>,
+        Ref<WebCodecsVideoFrame>,
 #endif
 #if ENABLE(OFFSCREEN_CANVAS)
-    RefPtr<OffscreenCanvas>,
+        Ref<OffscreenCanvas>,
 #endif
-    RefPtr<HTMLCanvasElement>>;
+        Ref<HTMLCanvasElement>
+    >;
 
     WebGPU::ImageCopyExternalImage convertToBacking() const
     {
@@ -59,7 +64,11 @@ struct GPUImageCopyExternalImage {
         };
     }
 
-    SourceType source;
+    // FIXME: `source` is temporarily being wrapped in std::optional, but it is expected to always be there.
+    // This is needed to keep the bindings working while support for non-default constructible dictionaries are
+    // being worked on.
+    std::optional<SourceType> source;
+
     std::optional<GPUOrigin2D> origin;
     bool flipY { false };
 };

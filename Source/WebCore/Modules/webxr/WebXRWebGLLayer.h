@@ -56,10 +56,9 @@ struct XRWebGLLayerInit;
 class WebXRWebGLLayer : public WebXRLayer, private CanvasObserver {
     WTF_MAKE_ISO_ALLOCATED(WebXRWebGLLayer);
 public:
-
     using WebXRRenderingContext = std::variant<
-        RefPtr<WebGLRenderingContext>,
-        RefPtr<WebGL2RenderingContext>
+        Ref<WebGLRenderingContext>,
+        Ref<WebGL2RenderingContext>
     >;
 
     static ExceptionOr<Ref<WebXRWebGLLayer>> create(Ref<WebXRSession>&&, WebXRRenderingContext&&, const XRWebGLLayerInit&);

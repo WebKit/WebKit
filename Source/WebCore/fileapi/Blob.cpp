@@ -135,15 +135,20 @@ static size_t computeMemoryCost(const Vector<BlobPartVariant>& blobPartVariants)
 {
     size_t memoryCost = 0;
     for (auto& blobPartVariant : blobPartVariants) {
-        WTF::switchOn(blobPartVariant, [&](const RefPtr<Blob>& blob) {
-            memoryCost += blob->memoryCost();
-        }, [&](const RefPtr<JSC::ArrayBufferView>& view) {
-            memoryCost += view->byteLength();
-        }, [&](const RefPtr<JSC::ArrayBuffer>& array) {
-            memoryCost += array->byteLength();
-        }, [&](const String& string) {
-            memoryCost += string.sizeInBytes();
-        });
+        WTF::switchOn(blobPartVariant,
+            [&](const Ref<Blob>& blob) {
+                memoryCost += blob->memoryCost();
+            },
+            [&](const Ref<JSC::ArrayBufferView>& view) {
+                memoryCost += view->byteLength();
+            },
+            [&](const Ref<JSC::ArrayBuffer>& array) {
+                memoryCost += array->byteLength();
+            },
+            [&](const String& string) {
+                memoryCost += string.sizeInBytes();
+            }
+        );
     }
     return memoryCost;
 }

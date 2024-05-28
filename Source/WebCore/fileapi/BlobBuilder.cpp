@@ -46,24 +46,18 @@ BlobBuilder::BlobBuilder(EndingType endings)
 {
 }
 
-void BlobBuilder::append(RefPtr<ArrayBuffer>&& arrayBuffer)
+void BlobBuilder::append(Ref<ArrayBuffer>&& arrayBuffer)
 {
-    if (!arrayBuffer)
-        return;
     m_appendableData.append(arrayBuffer->span());
 }
 
-void BlobBuilder::append(RefPtr<ArrayBufferView>&& arrayBufferView)
+void BlobBuilder::append(Ref<ArrayBufferView>&& arrayBufferView)
 {
-    if (!arrayBufferView)
-        return;
     m_appendableData.append(arrayBufferView->span());
 }
 
-void BlobBuilder::append(RefPtr<Blob>&& blob)
+void BlobBuilder::append(Ref<Blob>&& blob)
 {
-    if (!blob)
-        return;
     if (!m_appendableData.isEmpty())
         m_items.append(BlobPart(WTFMove(m_appendableData)));
     m_items.append(BlobPart(blob->url()));

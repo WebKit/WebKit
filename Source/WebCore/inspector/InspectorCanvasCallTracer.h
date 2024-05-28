@@ -44,6 +44,7 @@ class ArrayBufferView;
 
 namespace WebCore {
 
+class CSSStyleImageValue;
 class CanvasGradient;
 class CanvasPattern;
 class CanvasRenderingContext;
@@ -55,7 +56,7 @@ class ImageBitmap;
 class ImageData;
 class OffscreenCanvas;
 class Path2D;
-class CSSStyleImageValue;
+class SVGImageElement;
 class WebGLBuffer;
 class WebGLFramebuffer;
 class WebGLProgram;
@@ -82,11 +83,13 @@ enum class PredefinedColorSpace : uint8_t;
 enum ImageSmoothingQuality;
 
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_CSS_TYPED_OM_ARGUMENT(macro) \
+    macro(Ref<CSSStyleImageValue>&) \
     macro(RefPtr<CSSStyleImageValue>&) \
 // end of FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_CSS_TYPED_OM_ARGUMENT
 
 #if ENABLE(OFFSCREEN_CANVAS)
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_OFFSCREEN_CANVAS_ARGUMENT(macro) \
+    macro(Ref<OffscreenCanvas>&) \
     macro(RefPtr<OffscreenCanvas>&) \
 // end of FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_OFFSCREEN_CANVAS_ARGUMENT
 #else
@@ -95,6 +98,7 @@ enum ImageSmoothingQuality;
 
 #if ENABLE(VIDEO)
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_VIDEO_ARGUMENT(macro) \
+    macro(Ref<HTMLVideoElement>&) \
     macro(RefPtr<HTMLVideoElement>&) \
 // end of FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_VIDEO_ARGUMENT
 #else
@@ -103,6 +107,7 @@ enum ImageSmoothingQuality;
 
 #if ENABLE(WEB_CODECS)
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_VIDEOFRAME_ARGUMENT(macro) \
+    macro(Ref<WebCodecsVideoFrame>&) \
     macro(RefPtr<WebCodecsVideoFrame>&) \
 // end of FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_VIDEOFRAME_ARGUMENT
 #else
@@ -113,21 +118,33 @@ enum ImageSmoothingQuality;
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_WEBGL_ARGUMENT(macro) \
     macro(std::optional<WebGLRenderingContextBase::BufferDataSource>&) \
     macro(std::optional<WebGLRenderingContextBase::TexImageSource>&) \
+    macro(WebGLBuffer&) \
     macro(WebGLBuffer*) \
+    macro(WebGLFramebuffer&) \
     macro(WebGLFramebuffer*) \
+    macro(WebGLProgram&) \
     macro(WebGLProgram*) \
+    macro(WebGLQuery&) \
     macro(WebGLQuery*) \
+    macro(WebGLRenderbuffer&) \
     macro(WebGLRenderbuffer*) \
     macro(WebGLRenderingContextBase::BufferDataSource&) \
     macro(WebGLRenderingContextBase::Float32List::VariantType&) \
     macro(WebGLRenderingContextBase::Int32List::VariantType&) \
     macro(WebGLRenderingContextBase::TexImageSource&) \
+    macro(WebGLSampler&) \
     macro(WebGLSampler*) \
+    macro(WebGLShader&) \
     macro(WebGLShader*) \
+    macro(WebGLSync&) \
     macro(WebGLSync*) \
+    macro(WebGLTexture&) \
     macro(WebGLTexture*) \
+    macro(WebGLTransformFeedback&) \
     macro(WebGLTransformFeedback*) \
+    macro(WebGLUniformLocation&) \
     macro(WebGLUniformLocation*) \
+    macro(WebGLVertexArrayObject&) \
     macro(WebGLVertexArrayObject*) \
     macro(WebGL2RenderingContext::Uint32List::VariantType&) \
 // end of FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_WEBGL_ARGUMENT
@@ -146,28 +163,46 @@ enum ImageSmoothingQuality;
     macro(CanvasTextAlign) \
     macro(CanvasTextBaseline) \
     macro(DOMMatrix2DInit&) \
+    macro(Element&) \
     macro(Element*) \
+    macro(HTMLImageElement&) \
     macro(HTMLImageElement*) \
+    macro(SVGImageElement&) \
+    macro(SVGImageElement*) \
+    macro(ImageBitmap&) \
     macro(ImageBitmap*) \
+    macro(ImageData&) \
     macro(ImageData*) \
     macro(ImageDataSettings&) \
     macro(ImageSmoothingQuality) \
     macro(std::optional<float>&) \
     macro(std::optional<double>&) \
+    macro(Path2D&) \
     macro(Path2D*) \
     macro(PredefinedColorSpace) \
+    macro(Ref<CanvasGradient>&) \
     macro(RefPtr<CanvasGradient>&) \
+    macro(Ref<CanvasPattern>&) \
     macro(RefPtr<CanvasPattern>&) \
+    macro(Ref<HTMLCanvasElement>&) \
     macro(RefPtr<HTMLCanvasElement>&) \
+    macro(Ref<HTMLImageElement>&) \
     macro(RefPtr<HTMLImageElement>&) \
+    macro(Ref<SVGImageElement>&) \
+    macro(RefPtr<SVGImageElement>&) \
+    macro(Ref<ImageBitmap>&) \
     macro(RefPtr<ImageBitmap>&) \
+    macro(Ref<ImageData>&) \
     macro(RefPtr<ImageData>&) \
     macro(Ref<JSC::ArrayBuffer>&) \
-    macro(Ref<JSC::ArrayBufferView>&) \
     macro(RefPtr<JSC::ArrayBuffer>&) \
+    macro(Ref<JSC::ArrayBufferView>&) \
     macro(RefPtr<JSC::ArrayBufferView>&) \
+    macro(Ref<JSC::Float32Array>&) \
     macro(RefPtr<JSC::Float32Array>&) \
+    macro(Ref<JSC::Int32Array>&) \
     macro(RefPtr<JSC::Int32Array>&) \
+    macro(Ref<JSC::Uint32Array>&) \
     macro(RefPtr<JSC::Uint32Array>&) \
     macro(String&) \
     macro(Vector<String>&) \

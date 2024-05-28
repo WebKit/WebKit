@@ -448,14 +448,14 @@ ExceptionOr<void> XMLHttpRequest::send(std::optional<SendTypes>&& sendType)
     if (!sendType)
         result = send();
     else {
-        result = WTF::switchOn(sendType.value(),
-            [this] (const RefPtr<Document>& document) -> ExceptionOr<void> { return send(*document); },
-            [this] (const RefPtr<Blob>& blob) -> ExceptionOr<void> { return send(*blob); },
-            [this] (const RefPtr<JSC::ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> { return send(*arrayBufferView); },
-            [this] (const RefPtr<JSC::ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> { return send(*arrayBuffer); },
-            [this] (const RefPtr<DOMFormData>& formData) -> ExceptionOr<void> { return send(*formData); },
-            [this] (const RefPtr<URLSearchParams>& searchParams) -> ExceptionOr<void> { return send(*searchParams); },
-            [this] (const String& string) -> ExceptionOr<void> { return send(string); }
+        result = WTF::switchOn(WTFMove(sendType.value()),
+            [this](Ref<Document>&& document) -> ExceptionOr<void> { return send(document.get()); },
+            [this](Ref<Blob>&& blob) -> ExceptionOr<void> { return send(blob.get()); },
+            [this](Ref<JSC::ArrayBufferView>&& arrayBufferView) -> ExceptionOr<void> { return send(arrayBufferView.get()); },
+            [this](Ref<JSC::ArrayBuffer>&& arrayBuffer) -> ExceptionOr<void> { return send(arrayBuffer.get()); },
+            [this](Ref<DOMFormData>&& formData) -> ExceptionOr<void> { return send(formData.get()); },
+            [this](Ref<URLSearchParams>&& searchParams) -> ExceptionOr<void> { return send(searchParams.get()); },
+            [this](String&& string) -> ExceptionOr<void> { return send(string); }
         );
     }
 

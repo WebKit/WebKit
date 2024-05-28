@@ -48,7 +48,7 @@ class WebCoreOpaqueRoot;
 class FetchRequest final : public FetchBodyOwner {
 public:
     using Init = FetchRequestInit;
-    using Info = std::variant<RefPtr<FetchRequest>, String>;
+    using Info = std::variant<Ref<FetchRequest>, String>;
 
     using Cache = FetchOptions::Cache;
     using Credentials = FetchOptions::Credentials;

@@ -50,7 +50,7 @@ ExceptionOr<Ref<TextDecoder>> TextDecoder::create(const String& label, Options o
     return decoder;
 }
 
-ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource::VariantType> input, DecodeOptions options)
+ExceptionOr<String> TextDecoder::decode(std::optional<std::variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>>> input, DecodeOptions options)
 {
     std::optional<BufferSource> inputBuffer;
     std::span<const uint8_t> data;
