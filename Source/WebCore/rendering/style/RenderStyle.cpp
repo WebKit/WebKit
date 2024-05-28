@@ -1265,9 +1265,20 @@ inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const
     return false;
 }
 
+static bool currentColorWithVisitedDiffers(const RenderStyle& a, const RenderStyle& b)
+{
+    auto currentColorForRenderStyle = [](const auto& style) {
+        if (style.insideLink() == InsideLink::InsideVisited)
+            return style.visitedLinkColor();
+        return style.color();
+    };
+
+    return currentColorForRenderStyle(a) != currentColorForRenderStyle(b);
+}
+
 bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
-    bool currentColorDiffers = m_inheritedData->color != other.m_inheritedData->color;
+    bool currentColorDiffers = currentColorWithVisitedDiffers(*this, other);
 
     if (currentColorDiffers || m_svgStyle.ptr() != other.m_svgStyle.ptr()) {
         if (m_svgStyle->changeRequiresRepaint(other.m_svgStyle, currentColorDiffers))
@@ -1318,8 +1329,10 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
 
 bool RenderStyle::changeRequiresRepaintIfText(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>&) const
 {
-    // FIXME: Does this code need to consider currentColorDiffers? webkit.org/b/266833
-    if (m_inheritedData->color != other.m_inheritedData->color)
+    bool currentColorDiffers = currentColorWithVisitedDiffers(*this, other);
+    // FIXME: We could be more precise and propagate currentColorDiffers to each color property comparison (to avoid repainting when currentcolor is never used for example).
+    // webkit.org/b/266833
+    if (currentColorDiffers)
         return true;
 
     if (m_inheritedFlags.textDecorationLines != other.m_inheritedFlags.textDecorationLines
