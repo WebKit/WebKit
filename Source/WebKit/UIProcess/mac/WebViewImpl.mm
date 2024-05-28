@@ -2794,8 +2794,10 @@ void WebViewImpl::selectionDidChange()
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    if (m_page->editorState().hasPostLayoutData() && wantsCompleteUnifiedTextReplacementBehavior() && m_page->editorState().selectionIsRange) {
-        auto selectionRect = m_page->editorState().postLayoutData->selectionBoundingRect;
+    if (wantsCompleteUnifiedTextReplacementBehavior()) {
+        auto isRange = m_page->editorState().hasPostLayoutData() && m_page->editorState().selectionIsRange;
+        auto selectionRect = isRange ? m_page->editorState().postLayoutData->selectionBoundingRect : IntRect { };
+
         scheduleShowSwapCharactersViewForSelectionRectOfView(selectionRect, m_view.getAutoreleased());
     }
 #endif
