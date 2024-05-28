@@ -394,7 +394,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
                 auto snappedPaintRect = snapRectToDevicePixelsWithWritingDirection(LayoutRect { m_paintRect }, m_document.deviceScaleFactor(), m_paintTextRun.ltr());
                 if (startOffset || endOffset != m_paintTextRun.length()) {
                     LayoutRect selectionRect = { m_paintRect.x(), m_paintRect.y(), m_paintRect.width(), m_paintRect.height() };
-                    fontCascade().adjustSelectionRectForText(m_paintTextRun, selectionRect, startOffset, endOffset);
+                    fontCascade().adjustSelectionRectForText(m_renderer.canUseSimplifiedTextMeasuring().value_or(false), m_paintTextRun, selectionRect, startOffset, endOffset);
                     snappedPaintRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, m_document.deviceScaleFactor(), m_paintTextRun.ltr());
                 }
                 auto decorationPainter = createDecorationPainter(markedText, textDecorationSelectionClipOutRect);
@@ -473,7 +473,7 @@ void TextBoxPainter<TextBoxPath>::paintBackground(unsigned startOffset, unsigned
     auto selectionHeight = LayoutUnit { std::max(0.f, selectionBottom - selectionTop) };
     auto selectionRect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(m_logicalRect.width()), selectionHeight };
     auto adjustedSelectionRect = selectionRect;
-    fontCascade().adjustSelectionRectForText(m_paintTextRun, adjustedSelectionRect, startOffset, endOffset);
+    fontCascade().adjustSelectionRectForText(m_renderer.canUseSimplifiedTextMeasuring().value_or(false), m_paintTextRun, adjustedSelectionRect, startOffset, endOffset);
     if (m_paintTextRun.length() == endOffset - startOffset) {
         // FIXME: We should reconsider re-measuring the content when non-whitespace runs are joined together (see webkit.org/b/251318).
         auto visualRight = std::max(adjustedSelectionRect.maxX(), selectionRect.maxX());
@@ -1123,7 +1123,7 @@ FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator& t
     if (markedText.startOffset || markedText.endOffset != textBox->selectableRange().clamp(textBox->end())) {
         auto run = textBox->textRun();
         auto selectionRect = LayoutRect { 0_lu, y, 0_lu, height };
-        font.adjustSelectionRectForText(run, selectionRect, markedText.startOffset, markedText.endOffset);
+        font.adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring().value_or(false), run, selectionRect, markedText.startOffset, markedText.endOffset);
         return selectionRect;
     }
 

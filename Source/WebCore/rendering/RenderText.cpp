@@ -233,7 +233,7 @@ static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox
 
     auto textRun = textBox.textRun();
     if (clampedStart || clampedEnd != textRun.length())
-        textBox.fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
+        textBox.fontCascade().adjustSelectionRectForText(textBox.renderer().canUseSimplifiedTextMeasuring().value_or(false), textRun, selectionRect, clampedStart, clampedEnd);
 
     return snappedSelectionRect(selectionRect, textBox.logicalRightIgnoringInlineDirection(), lineSelectionRect.y(), lineSelectionRect.height(), textBox.isHorizontal());
 }
