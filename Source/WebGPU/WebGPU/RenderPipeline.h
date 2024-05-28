@@ -94,7 +94,6 @@ public:
     const RequiredBufferIndicesContainer& requiredBufferIndices() const { return m_requiredBufferIndices; }
     WGPUPrimitiveTopology primitiveTopology() const;
     MTLIndexType stripIndexFormat() const;
-    size_t vertexStageInBufferCount() const;
     const BufferBindingSizesForBindGroup* minimumBufferSizes(uint32_t) const;
 
 private:

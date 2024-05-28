@@ -452,7 +452,7 @@ bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
         return false;
     }
     auto& pipeline = *m_pipeline.get();
-    if (NSString* error = pipeline.pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups, pipeline.vertexStageInBufferCount())) {
+    if (NSString* error = pipeline.pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups)) {
         makeInvalid(error);
         return false;
     }

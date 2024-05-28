@@ -1,0 +1,77 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  const format = 'bgra8unorm';
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let texture = device.createTexture({format, size: [1, 1, 1], usage: GPUTextureUsage.RENDER_ATTACHMENT});
+    let textureView = texture.createView();
+    let commandEncoder = device.createCommandEncoder();
+    let module = device.createShaderModule({
+      code: `
+@group(0) @binding(0) var<storage, read_write> readWriteStorage0: array<vec4f, (1<<27)>;
+
+@vertex
+fn v() -> @builtin(position) vec4f {
+  return vec4();
+}
+
+@fragment
+fn f() -> @location(0) vec4f {
+  for (var i:u32 = 1; i < 128; i++) {
+    readWriteStorage0[i] = bitcast<vec4f>(vec4u(12340000+i));
+  }
+  return readWriteStorage0[10201020];
+}
+`,
+    });
+
+    let bindGroupLayout = device.createBindGroupLayout({
+      entries: [
+        {binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: {type: 'storage'}},
+      ],
+    });
+    let pipelineLayout = device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout]});
+    let renderPipeline = device.createRenderPipeline({
+      layout: pipelineLayout,
+      vertex: {module, buffers: []},
+      fragment: {module, targets: [{format}]},
+      primitive: {topology: 'point-list'},
+    });
+    let readWriteStorageBuffer = device.createBuffer({size: 16, usage: GPUBufferUsage.STORAGE});
+    let outputBuffer = device.createBuffer({size: 4, usage: GPUBufferUsage.MAP_READ});
+    let bindGroup0 = device.createBindGroup({
+      layout: bindGroupLayout,
+      entries: [
+        {binding: 0, resource: {buffer: readWriteStorageBuffer}},
+      ],
+    });
+
+    let renderPassEncoder0 = commandEncoder.beginRenderPass({
+      colorAttachments: [
+        {view: textureView, loadOp: 'clear', storeOp: 'store'},
+      ],
+    });
+    renderPassEncoder0.setPipeline(renderPipeline);
+    renderPassEncoder0.setBindGroup(0, bindGroup0);
+    renderPassEncoder0.draw(1);
+    renderPassEncoder0.end();
+    let commandBuffer = commandEncoder.finish();
+    device.queue.submit([commandBuffer]);
+    await device.queue.onSubmittedWorkDone();
+    await outputBuffer.mapAsync(GPUMapMode.READ);
+    let outputU32 = new Uint32Array(outputBuffer.getMappedRange());
+    log(outputU32);
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log(`no validation error`);
+    }
+    globalThis.testRunner?.notifyDone();
+  };
+</script>
