@@ -41,7 +41,8 @@ class GCAwareJITStubRoutineWithExceptionHandler;
 class PolymorphicAccessJITStubRoutine;
 class PolymorphicCallStubRoutine;
 class MarkingGCAwareJITStubRoutine;
-
+class CallLinkInfo;
+class ConcurrentJSLocker;
 class AccessCase;
 
 // This is a base-class for JIT stub routines, and also the class you want
