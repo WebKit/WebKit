@@ -631,9 +631,11 @@ class SimulatedDevice(object):
             if exit_code == 0:
                 return True
 
+            # Return code 18 indicates that the app is not compatible with the current device, which can
+            # happen under load and may not occur on retry.
             # Return code 204 indicates that the device is booting, a retry may be successful.
-            if exit_code == 204:
-                time.sleep(5)
+            if exit_code in (18, 204):
+                time.sleep(15)
                 continue
             return False
         return False
