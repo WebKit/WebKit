@@ -487,9 +487,14 @@ void* wgpuBufferGetBufferContents(WGPUBuffer buffer)
     return WebGPU::fromAPI(buffer).getBufferContents();
 }
 
-uint64_t wgpuBufferGetSize(WGPUBuffer buffer)
+uint64_t wgpuBufferGetInitialSize(WGPUBuffer buffer)
 {
     return WebGPU::fromAPI(buffer).initialSize();
+}
+
+uint64_t wgpuBufferGetCurrentSize(WGPUBuffer buffer)
+{
+    return WebGPU::fromAPI(buffer).currentSize();
 }
 
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
