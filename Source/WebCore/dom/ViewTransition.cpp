@@ -648,27 +648,28 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
     if (renderer.isDocumentElementRenderer()) {
         size.setWidth(frameView.frameRect().width());
         size.setHeight(frameView.frameRect().height());
-    } else if (CheckedPtr renderBox = dynamicDowncast<RenderBoxModelObject>(&renderer))
+    } else if (CheckedPtr renderBox = dynamicDowncast<RenderBoxModelObject>(&renderer)) {
         size = renderBox->borderBoundingBox().size();
+
+        if (auto transform = renderer.viewTransitionTransform()) {
+            // FIXME(mattwoodrow): `transform` gives absolute coords, not
+            // document. We should be accounting for page zoom to get the
+            // absolute->document conversion correct.
+            auto offset = frameView.documentToClientOffset();
+            transform->translate(offset.width(), offset.height());
+
+            // Apply the inverse of what will be added by the default value of 'transform-origin',
+            // since the computed transform has already included it.
+            transform->translate(size.width() / 2, size.height() / 2);
+            transform->translateRight(-size.width() / 2, -size.height() / 2);
+
+            Ref transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(*transform, renderer.style()));
+            props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
+        }
+    }
 
     props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(size.width(), CSSUnitType::CSS_PX));
     props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(size.height(), CSSUnitType::CSS_PX));
-
-    if (auto transform = renderer.viewTransitionTransform()) {
-        // FIXME(mattwoodrow): `transform` gives absolute coords, not
-        // document. We should be accounting for page zoom to get the
-        // absolute->document conversion correct.
-        auto offset = frameView.documentToClientOffset();
-        transform->translate(offset.width(), offset.height());
-
-        // Apply the inverse of what will be added by the default value of 'transform-origin',
-        // since the computed transform has already included it.
-        transform->translate(size.width() / 2, size.height() / 2);
-        transform->translateRight(-size.width() / 2, -size.height() / 2);
-
-        Ref transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(*transform, renderer.style()));
-        props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
-    }
     return props;
 }
 

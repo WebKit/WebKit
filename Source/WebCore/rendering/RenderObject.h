@@ -719,7 +719,11 @@ public:
     inline bool hasTransformOrPerspective() const;
 
     bool capturedInViewTransition() const { return m_stateBitfields.hasFlag(StateFlag::CapturedInViewTransition); }
-    void setCapturedInViewTransition(bool captured) { m_stateBitfields.setFlag(StateFlag::CapturedInViewTransition, captured); }
+    void setCapturedInViewTransition(bool);
+
+    // When the document element is captured, the captured contents uses the RenderView
+    // instead. Returns the capture state with this adjustment applied.
+    bool effectiveCapturedInViewTransition() const;
 
     inline bool preservesNewline() const;
 

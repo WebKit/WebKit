@@ -3515,7 +3515,7 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
 
     for (auto* childLayer : layerIterator) {
         if (paintFlags.contains(PaintLayerFlag::PaintingSkipDescendantViewTransition)) {
-            if (childLayer->renderer().capturedInViewTransition() && !childLayer->renderer().isDocumentElementRenderer())
+            if (childLayer->renderer().effectiveCapturedInViewTransition())
                 continue;
             if (childLayer->renderer().isViewTransitionPseudo())
                 continue;

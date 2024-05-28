@@ -6999,7 +6999,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-blo
 imported/w3c/web-platform-tests/css/css-view-transitions/fractional-translation-from-position.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/scroller-child.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/scroller.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-new-main-new-iframe.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main-new-iframe.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main-old-iframe.html [ ImageOnlyFailure ]
 

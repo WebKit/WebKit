@@ -662,11 +662,15 @@ void RenderLayerBacking::updateOpacity(const RenderStyle& style)
 void RenderLayerBacking::updateTransform(const RenderStyle& style)
 {
     TransformationMatrix t;
-    if (renderer().capturedInViewTransition() && renderer().element()) {
+    if (renderer().effectiveCapturedInViewTransition()) {
         if (RefPtr activeViewTransition = renderer().document().activeViewTransition()) {
             if (CheckedPtr viewTransitionCapture = activeViewTransition->viewTransitionNewPseudoForCapturedElement(renderer())) {
                 t.scaleNonUniform(viewTransitionCapture->scale().width(), viewTransitionCapture->scale().height());
                 t.translate(viewTransitionCapture->captureContentInset().x(), viewTransitionCapture->captureContentInset().y());
+            }
+            if (m_owningLayer.isRenderViewLayer()) {
+                auto scrollPosition = renderer().view().frameView().scrollPosition();
+                t.translate(-scrollPosition.x(), -scrollPosition.y());
             }
         }
     } else if (m_owningLayer.isTransformed())
@@ -683,10 +687,10 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
 {
     auto defaultAnchorPoint = FloatPoint3D { 0.5, 0.5, 0 };
 
-    if (m_owningLayer.isRenderViewLayer() || renderer().capturedInViewTransition())
+    if (m_owningLayer.isRenderViewLayer() || renderer().effectiveCapturedInViewTransition())
         defaultAnchorPoint = { };
 
-    if (!renderer().hasTransformRelatedProperty() || renderer().capturedInViewTransition()) {
+    if (!renderer().hasTransformRelatedProperty() || renderer().effectiveCapturedInViewTransition()) {
         m_graphicsLayer->setAnchorPoint(defaultAnchorPoint);
         if (m_contentsContainmentLayer)
             m_contentsContainmentLayer->setAnchorPoint(defaultAnchorPoint);
@@ -896,7 +900,7 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
         return false;
 #endif
 
-    if (renderer().capturedInViewTransition())
+    if (renderer().effectiveCapturedInViewTransition())
         return false;
     if (renderer().style().pseudoElementType() == PseudoId::ViewTransitionNew)
         return false;
@@ -1435,7 +1439,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     // If our content is being used in a view-transition, then all positioning is handled using a synthesized 'transform' property on the wrapping
     // ::view-transition-new element. Set the parent graphics layer rect to that of the pseudo, adjusted into coordinates of the parent layer.
-    if (renderer().capturedInViewTransition() && renderer().element()) {
+    if (renderer().effectiveCapturedInViewTransition() && renderer().element()) {
         if (RefPtr activeViewTransition = renderer().document().activeViewTransition()) {
             if (CheckedPtr viewTransitionCapture = activeViewTransition->viewTransitionNewPseudoForCapturedElement(renderer())) {
                 ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, viewTransitionCapture->captureOverflowRect(), { }, { });
