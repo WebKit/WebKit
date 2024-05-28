@@ -1794,7 +1794,7 @@ void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInt
             callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
         callbackInMap = WTFMove(mouseEventsFlushedCallback);
 
-        platformSimulateMouseInteraction(page, interaction, mouseButton, locationInViewport, platformWebModifiersFromRaw(m_currentModifiers), pointerType);
+        platformSimulateMouseInteraction(page, interaction, mouseButton, locationInViewport, platformWebModifiersFromRaw(page, m_currentModifiers), pointerType);
 
         // If the event does not hit test anything in the window, then it may not have been delivered.
         if (callbackInMap && !page->isProcessingMouseEvents()) {

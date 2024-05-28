@@ -266,7 +266,7 @@ private:
     void updateClickCount(MouseButton, const WebCore::IntPoint&, Seconds maxTime = 1_s, int maxDistance = 0);
     void resetClickCount();
     void platformSimulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInViewport, OptionSet<WebEventModifier>, const String& pointerType);
-    static OptionSet<WebEventModifier> platformWebModifiersFromRaw(unsigned modifiers);
+    static OptionSet<WebEventModifier> platformWebModifiersFromRaw(WebPageProxy&, unsigned modifiers);
 #endif
 #if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
     // Simulates a single touch point being pressed, moved, and released.

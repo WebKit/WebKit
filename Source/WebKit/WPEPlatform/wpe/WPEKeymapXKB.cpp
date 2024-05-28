@@ -168,7 +168,7 @@ static void wpe_keymap_xkb_class_init(WPEKeymapXKBClass* keymapXKBClass)
 /**
  * wpe_keymap_xkb_new: (skip)
  *
- * Crerate a new #WPEKeymapXKB
+ * Create a new #WPEKeymapXKB
  *
  * Returns: (transfer full): a #WPEKeymapXKB
  */

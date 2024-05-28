@@ -332,7 +332,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     page.handleKeyboardEvent(event);
 }
 
-OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
+OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(WebPageProxy&, unsigned modifiers)
 {
     OptionSet<WebEventModifier> webModifiers;
 

@@ -103,7 +103,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     }
 }
 
-OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
+OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(WebPageProxy&, unsigned modifiers)
 {
     OptionSet<WebEventModifier> webModifiers;
 
