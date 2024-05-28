@@ -787,6 +787,9 @@ static void setupDarkMode(GtkSettings *settings)
     if (!schema)
         return;
 
+    if (!g_settings_schema_has_key(schema, "color-scheme"))
+        return;
+
     interfaceSettings = g_settings_new("org.gnome.desktop.interface");
     colorSchemeChanged(settings);
     g_signal_connect_swapped(interfaceSettings, "changed::color-scheme", G_CALLBACK(colorSchemeChanged), settings);
