@@ -88,7 +88,6 @@ private:
     RefPtr<CalleeGroup> m_calleeGroups[numberOfMemoryModes];
     Ref<LLIntCallees> m_llintCallees;
     Ref<IPIntCallees> m_ipintCallees;
-    MacroAssemblerCodeRef<JITCompilationPtrTag> m_llintEntryThunks;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToJSExitStubs;
     Lock m_lock;
 };

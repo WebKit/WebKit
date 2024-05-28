@@ -53,12 +53,6 @@ public:
     LLIntPlan(VM&, Ref<ModuleInformation>, const Ref<LLIntCallee>*, CompletionTask&&);
     LLIntPlan(VM&, Ref<ModuleInformation>, CompilerMode, CompletionTask&&); // For StreamingCompiler.
 
-    MacroAssemblerCodeRef<JITCompilationPtrTag>&& takeEntryThunks()
-    {
-        RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_entryThunks);
-    }
-
     Vector<Ref<LLIntCallee>>&& takeCallees()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
@@ -93,14 +87,16 @@ private:
     void addTailCallEdge(uint32_t, uint32_t);
     void computeTransitiveTailCalls() const;
 
-    bool makeInterpretedJSToWasmCallee(unsigned functionIndex);
+    bool ensureEntrypoint(LLIntCallee&, unsigned functionIndex);
+
+    RefPtr<JSEntrypointCallee> tryCreateInterpretedJSToWasmCallee(unsigned functionIndex);
 
     Vector<std::unique_ptr<FunctionCodeBlockGenerator>> m_wasmInternalFunctions;
     const Ref<LLIntCallee>* m_callees { nullptr };
     Vector<Ref<LLIntCallee>> m_calleesVector;
+    Vector<RefPtr<JSEntrypointCallee>> m_entrypoints;
     JSEntrypointCalleeMap m_jsEntrypointCallees;
     TailCallGraph m_tailCallGraph;
-    MacroAssemblerCodeRef<JITCompilationPtrTag> m_entryThunks;
 };
 
 

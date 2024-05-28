@@ -33,6 +33,7 @@
 #include "JITCompilation.h"
 #include "JITOpaqueByproducts.h"
 #include "JSToWasm.h"
+#include "LLIntData.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "WasmCallee.h"
@@ -72,8 +73,17 @@ bool IPIntPlan::prepareImpl()
     const auto& functions = m_moduleInformation->functions;
     if (!tryReserveCapacity(m_wasmInternalFunctions, functions.size(), "WebAssembly functions"_s))
         return false;
-
     m_wasmInternalFunctions.resize(functions.size());
+
+    if (!tryReserveCapacity(m_entrypoints, functions.size(), " WebAssembly functions"_s))
+        return false;
+    m_entrypoints.resize(functions.size());
+
+    if (!m_callees) {
+        if (!tryReserveCapacity(m_calleesVector, functions.size(), " WebAssembly functions"_s))
+            return false;
+        m_calleesVector.resize(functions.size());
+    }
     return true;
 }
 
@@ -109,6 +119,70 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
     }
 
     m_wasmInternalFunctions[functionIndex] = WTFMove(*parseAndCompileResult);
+
+    IPIntCallee* ipintCallee = nullptr;
+    if (!m_callees) {
+        auto callee = IPIntCallee::create(*m_wasmInternalFunctions[functionIndex], functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
+        ASSERT(!callee->entrypoint());
+
+        if (Options::useJIT()) {
+#if ENABLE(JIT)
+            if (m_moduleInformation->usesSIMD(functionIndex))
+                callee->setEntrypoint(LLInt::inPlaceInterpreterEntryThunkSIMD().retaggedCode<WasmEntryPtrTag>());
+            else
+                callee->setEntrypoint(LLInt::inPlaceInterpreterEntryThunk().retaggedCode<WasmEntryPtrTag>());
+#endif
+        } else
+            callee->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline));
+        ipintCallee = callee.ptr();
+        m_calleesVector[functionIndex] = WTFMove(callee);
+    } else
+        ipintCallee = m_callees[functionIndex].ptr();
+
+    // If the function is exported via module, then we ensure JSToWasm entrypoint.
+    if (m_compilerMode != CompilerMode::Validation) {
+        if (m_exportedFunctionIndices.contains(functionIndex)) {
+            if (!ensureEntrypoint(*ipintCallee, functionIndex)) {
+                Locker locker { m_lock };
+                Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));
+                return;
+            }
+        }
+    }
+
+}
+
+bool IPIntPlan::ensureEntrypoint(IPIntCallee& ipintCallee, unsigned functionIndex)
+{
+    if (m_entrypoints[functionIndex])
+        return true;
+
+    if (!LIKELY(Options::useJIT()))
+        return false;
+
+#if ENABLE(JIT)
+    TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
+    const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
+    CCallHelpers jit;
+    // The LLInt always bounds checks
+    MemoryMode mode = MemoryMode::BoundsChecking;
+    auto callee = JSEntrypointJITCallee::create();
+    std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, callee.get(), &ipintCallee, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
+
+    LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
+    if (UNLIKELY(linkBuffer.didFailToAllocate()))
+        return false;
+
+    function->entrypoint.compilation = makeUnique<Compilation>(
+        FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
+        nullptr);
+
+    callee->setEntrypoint(WTFMove(function->entrypoint));
+    m_entrypoints[functionIndex] = WTFMove(callee);
+    return true;
+#else
+    return false;
+#endif
 }
 
 void IPIntPlan::didCompleteCompilation()
@@ -118,40 +192,6 @@ void IPIntPlan::didCompleteCompilation()
 #if ENABLE(JIT)
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_callees && functionCount) {
-        // IPInt entrypoint thunks generation
-        CCallHelpers jit;
-        m_calleesVector.resize(functionCount);
-        Vector<CCallHelpers::Label> entrypoints(functionCount);
-        Vector<CCallHelpers::Jump> jumps(functionCount);
-        for (unsigned i = 0; i < functionCount; ++i) {
-            size_t functionIndexSpace = i + m_moduleInformation->importFunctionCount();
-
-            // TODO: dump option
-
-            m_calleesVector[i] = IPIntCallee::create(*m_wasmInternalFunctions[i], functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
-            ASSERT(!m_calleesVector[i]->entrypoint());
-            entrypoints[i] = jit.label();
-            if (m_moduleInformation->usesSIMD(i))
-                JIT_COMMENT(jit, "SIMD function entrypoint");
-            JIT_COMMENT(jit, "Entrypoint for function[", i, "]");
-            jumps[i] = jit.jump();
-        }
-
-        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
-        if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-            Base::fail("Out of executable memory in Wasm IPInt entry thunks"_s);
-            return;
-        }
-
-        for (unsigned i = 0; i < functionCount; ++i) {
-            m_calleesVector[i]->setEntrypoint(linkBuffer.locationOf<WasmEntryPtrTag>(entrypoints[i]));
-            if (m_moduleInformation->usesSIMD(i))
-                linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::inPlaceInterpreterEntryThunkSIMD().code()));
-            else
-                linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::inPlaceInterpreterEntryThunk().code()));
-        }
-
-        m_entryThunks = FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "Wasm IPInt entry thunks");
         m_callees = m_calleesVector.data();
         if (!m_moduleInformation->clobberingTailCalls().isEmpty())
             computeTransitiveTailCalls();
@@ -161,35 +201,19 @@ void IPIntPlan::didCompleteCompilation()
     if (m_compilerMode == CompilerMode::Validation)
         return;
 
-#if ENABLE(JIT)
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
-        const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
-        if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndexSpace)) {
-            TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
-            const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
-            CCallHelpers jit;
-            // The LLInt always bounds checks
-            MemoryMode mode = MemoryMode::BoundsChecking;
-            auto callee = JSEntrypointJITCallee::create();
-            std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, callee.get(), m_callees[functionIndex].ptr(), signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
-
-            LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
-            if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-                Base::fail(makeString("Out of executable memory in function entrypoint at index "_s, functionIndex));
-                return;
+        if (!m_entrypoints[functionIndex]) {
+            const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
+            if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndexSpace)) {
+                if (!ensureEntrypoint(m_callees[functionIndex].get(), functionIndex)) {
+                    Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));
+                    return;
+                }
             }
-
-            function->entrypoint.compilation = makeUnique<Compilation>(
-                FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
-                nullptr);
-
-            callee->setEntrypoint(WTFMove(function->entrypoint));
-
-            auto result = m_jsEntrypointCallees.add(functionIndex, WTFMove(callee));
-            ASSERT_UNUSED(result, result.isNewEntry);
         }
+        if (auto& callee = m_entrypoints[functionIndex])
+            m_jsEntrypointCallees.add(functionIndex, callee);
     }
-#endif
 
     for (auto& unlinked : m_unlinkedWasmToWasmCalls) {
         for (auto& call : unlinked) {
