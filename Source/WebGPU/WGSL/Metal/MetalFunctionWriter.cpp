@@ -2154,7 +2154,12 @@ void FunctionDefinitionWriter::visit(AST::PointerDereferenceExpression& pointerD
 }
 void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
 {
+    bool isPointer = std::holds_alternative<Types::Pointer>(*access.base().inferredType());
+    if (isPointer)
+        m_stringBuilder.append("(*("_s);
     visit(access.base());
+    if (isPointer)
+        m_stringBuilder.append("))"_s);
     m_stringBuilder.append('[');
     visit(access.index());
     m_stringBuilder.append(']');

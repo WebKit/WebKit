@@ -1247,6 +1247,7 @@ void TypeChecker::visit(AST::CallExpression& call)
     if (targetBinding) {
         target.m_inferredType = targetBinding->type;
         if (targetBinding->kind == Binding::Type) {
+            call.m_isConstructor = true;
             if (auto* structType = std::get_if<Types::Struct>(targetBinding->type)) {
                 if (!targetBinding->type->isConstructible()) {
                     typeError(call.span(), "struct is not constructible"_s);
@@ -1506,6 +1507,7 @@ void TypeChecker::visit(AST::CallExpression& call)
             argument.m_inferredType = elementType;
     }
 
+    call.m_isConstructor = true;
     auto* result = m_types.arrayType(elementType, { elementCount });
     inferred(result);
 
