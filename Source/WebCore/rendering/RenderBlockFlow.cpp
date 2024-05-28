@@ -3879,11 +3879,8 @@ void RenderBlockFlow::invalidateLineLayoutPath(InvalidationReason invalidationRe
     ASSERT_NOT_REACHED();
 }
 
-static bool hasSimpleStaticPositionForOutOfFlowChildren(const RenderBlockFlow& root)
+static bool hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(const RenderStyle& rootStyle)
 {
-    if (root.hasLineIfEmpty())
-        return false;
-    auto& rootStyle = root.style();
     if (rootStyle.textAlign() != TextAlignMode::Start)
         return false;
     if (rootStyle.textIndent() != RenderStyle::zeroLength())
@@ -3895,7 +3892,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 {
     auto& layoutState = *view().frameView().layoutContext().layoutState();
 
-    auto hasSimpleOutOfFlowContentOnly = hasSimpleStaticPositionForOutOfFlowChildren(*this);
+    auto hasSimpleOutOfFlowContentOnly = !hasLineIfEmpty();
+    auto hasSimpleStaticPositionForInlineLevelOutOfFlowContentByStyle = hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(style());
 
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
@@ -3912,14 +3910,17 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
             // FIXME: This is only needed because of the synchronous layout call in setStaticPositionsForSimpleOutOfFlowContent
             // which itself appears to be a workaround for a bad subtree layout shown by
             // fast/block/positioning/static_out_of_flow_inside_layout_boundary.html
+            auto& style = renderer.style();
             auto hasParentRelativeHeightOrTop = [&] {
-                auto& style = renderer.style();
                 if (style.logicalHeight().isPercentOrCalculated() || style.logicalTop().isPercentOrCalculated())
                     return true;
                 return !renderer.style().logicalBottom().isAuto();
             }();
             if (hasParentRelativeHeightOrTop)
                 hasSimpleOutOfFlowContentOnly = false;
+
+            if (hasSimpleOutOfFlowContentOnly && style.isOriginalDisplayInlineType())
+                hasSimpleOutOfFlowContentOnly = hasSimpleStaticPositionForInlineLevelOutOfFlowContentByStyle;
         } else
             hasSimpleOutOfFlowContentOnly = false;
 
@@ -4057,8 +4058,15 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 void RenderBlockFlow::setStaticPositionsForSimpleOutOfFlowContent()
 {
     ASSERT(childrenInline());
-    ASSERT(hasSimpleStaticPositionForOutOfFlowChildren(*this));
-
+#ifndef NDEBUG
+    ASSERT(!hasLineIfEmpty());
+    for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
+        if (walker.current()->style().isDisplayInlineType()) {
+            ASSERT(hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(style()));
+            break;
+        }
+    }
+#endif
     // We have nothing but out-of-flow boxes so we don't need to run the actual line layout.
     // Instead, we can just set the static positions to the point where all these boxes would end up.
     // This is a common case when using transforms to animate positioned boxes.
