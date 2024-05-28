@@ -134,6 +134,37 @@
     ctx.shadowColor = 'RGBA(0,255, 0,0)';
     @assert ctx.shadowColor === 'rgba(0, 255, 0, 0)';
 
+- name: 2d.shadow.attributes.shadowColor.current.basic
+  desc: currentColor is computed from the canvas element
+  canvas_types: ['HtmlCanvas']
+  code: |
+    canvas.style.color = '#0f0';
+    ctx.shadowColor = 'currentColor';
+    @assert ctx.shadowColor === '#00ff00';
+
+- name: 2d.shadow.attributes.shadowColor.current.changed
+  desc: currentColor is computed when the attribute is set, not when it is painted
+  canvas_types: ['HtmlCanvas']
+  code: |
+    canvas.style.color = '#0f0';
+    ctx.shadowColor = 'currentColor';
+    canvas.style.color = '#f00';
+    @assert ctx.shadowColor === '#00ff00';
+
+- name: 2d.shadow.attributes.shadowColor.current.removed
+  desc: currentColor is solid black when the canvas element is not in a document
+  canvas_types: ['HtmlCanvas']
+  code: |
+    // Try not to let it undetectably incorrectly pick up opaque-black
+    // from other parts of the document:
+    document.documentElement.style.color = '#f00';
+    document.body.style.color = '#f00';
+    canvas.style.color = '#f00';
+
+    canvas.remove();
+    ctx.shadowColor = 'currentColor';
+    @assert ctx.shadowColor === '#000000';
+
 - name: 2d.shadow.attributes.shadowColor.invalid
   code: |
     ctx.shadowColor = '#00ff00';
@@ -487,11 +518,13 @@
     @assert pixel 50,25 == 0,255,0,255;
   expected: green
   variants: &load-image-variant-definition
-    _HtmlCanvas:
-      canvasType: ['HtmlCanvas']
+  - HtmlCanvas:
+      append_variants_to_name: false
+      canvas_types: ['HtmlCanvas']
       load_image: var img = document.getElementById('{{ images[0] }}');
-    _OffscreenCanvas:
-      canvasType: ['OffscreenCanvas', 'Worker']
+    OffscreenCanvas:
+      append_variants_to_name: false
+      canvas_types: ['OffscreenCanvas', 'Worker']
       test_type: promise
       load_image: |-
         var response = await fetch('/images/{{ images[0] }}')
@@ -609,14 +642,16 @@
     @assert pixel 50,25 == 0,255,0,255;
   expected: green
   variants: &create-canvas2-variant-definition
-    _HtmlCanvas:
-      canvasType: ['HtmlCanvas']
+  - HtmlCanvas:
+      append_variants_to_name: false
+      canvas_types: ['HtmlCanvas']
       create_canvas2: |-
         var canvas2 = document.createElement('canvas');
         canvas2.width = 100;
         canvas2.height = 50;
-    _OffscreenCanvas:
-      canvasType: ['OffscreenCanvas', 'Worker']
+    OffscreenCanvas:
+      append_variants_to_name: false
+      canvas_types: ['OffscreenCanvas', 'Worker']
       create_canvas2: |-
         var canvas2 = new OffscreenCanvas(100, 50);
 

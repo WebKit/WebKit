@@ -177,8 +177,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.fontVariantCaps6.w.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.actualBoundingBox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.actualBoundingBox.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.advances.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.advances.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.baselines.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.baselines.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.emHeights-low-ascent.html
@@ -195,6 +193,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fontBoundingBox.ahem.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fontBoundingBox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fontBoundingBox.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.selection-rects-baselines.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.selection-rects-baselines.tentative.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.selection-rects-exceptions.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.selection-rects-exceptions.tentative.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.selection-rects.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.basic.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.empty.html
@@ -203,6 +206,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.space.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.setFont.mathFont.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.setFont.mathFont.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/canvas.2d.fontStretch-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/canvas.2d.fontStretch.condensed-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/canvas.2d.fontStretch.condensed.html

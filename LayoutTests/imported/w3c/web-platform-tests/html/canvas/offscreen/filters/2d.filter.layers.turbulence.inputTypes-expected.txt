@@ -1,0 +1,7 @@
+2d.filter.layers.turbulence.inputTypes
+
+Test exceptions on CanvasFilter() turbulence object
+
+
+FAIL Test exceptions on CanvasFilter() turbulence object ctx.beginLayer is not a function. (In 'ctx.beginLayer({filter: filterOptions})', 'ctx.beginLayer' is undefined)
+

@@ -1,0 +1,6 @@
+2d.shadow.attributes.shadowColor.current.removed
+currentColor is solid black when the canvas element is not in a document
+Actual output:
+
+PASS currentColor is solid black when the canvas element is not in a document
+

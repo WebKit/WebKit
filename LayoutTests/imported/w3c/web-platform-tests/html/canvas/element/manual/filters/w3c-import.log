@@ -36,3 +36,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-opacity-blend-modes-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-opacity-blend-modes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-opacity-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter-lh-rlh-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter-lh-rlh-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter-lh-rlh.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/filters/svg-filter.svg

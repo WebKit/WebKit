@@ -1,0 +1,3 @@
+
+FAIL Check that TextMetrics::getSelectionRects() works correctly with textBaseline. tm.getSelectionRects is not a function. (In 'tm.getSelectionRects(0, 1)', 'tm.getSelectionRects' is undefined)
+

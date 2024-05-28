@@ -2148,9 +2148,6 @@ webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Failure ]
 
 # rdar://65642935 15 canvas layout tests consistently failing
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.miter.obtuse.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.selfintersect.1.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
 
 webkit.org/b/215593 webaudio/oscillator-square.html [ Pass Failure ]
 
@@ -2800,3 +2797,5 @@ imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-fr
 webkit.org/b/260883 inspector/timeline/timeline-recording.html [ Skip ]
 
 webkit.org/b/274409 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-src.https.sub.html [ Pass Failure ]
+
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html [ ImageOnlyFailure ]

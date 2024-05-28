@@ -1,0 +1,5 @@
+
+FAIL OffscreenCanvasRenderingContext2D.commit method is removed assert_equals: expected (undefined) undefined but got (function) function "function commit() {
+    [native code]
+}"
+

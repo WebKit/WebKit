@@ -1,0 +1,6 @@
+2d.text.measure.selection-rects.tentative
+Check that TextMetrics::getSelectionRects() matches its DOM equivalent.
+Actual output:
+
+FAIL Check that TextMetrics::getSelectionRects() matches its DOM equivalent. tm.getSelectionRects is not a function. (In 'tm.getSelectionRects(0, 1)', 'tm.getSelectionRects' is undefined)
+

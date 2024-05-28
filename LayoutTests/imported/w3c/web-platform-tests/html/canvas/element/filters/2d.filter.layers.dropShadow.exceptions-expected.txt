@@ -1,0 +1,7 @@
+2d.filter.layers.dropShadow.exceptions
+Test exceptions on CanvasFilter() dropShadow object
+Actual output:
+
+FAIL Test exceptions on CanvasFilter() dropShadow object ctx.beginLayer is not a function. (In 'ctx.beginLayer({filter:
+    {name: 'dropShadow', dx: 10}})', 'ctx.beginLayer' is undefined)
+

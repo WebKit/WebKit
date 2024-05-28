@@ -1,0 +1,6 @@
+2d.shadow.attributes.shadowColor.current.basic
+currentColor is computed from the canvas element
+Actual output:
+
+PASS currentColor is computed from the canvas element
+

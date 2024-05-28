@@ -1,0 +1,7 @@
+2d.filter.layers.convolveMatrix.exceptions
+Test exceptions on CanvasFilter() convolveMatrix
+Actual output:
+
+FAIL Test exceptions on CanvasFilter() convolveMatrix ctx.beginLayer is not a function. (In 'ctx.beginLayer({filter:
+    {name: 'convolveMatrix', kernelMatrix: [[]]}})', 'ctx.beginLayer' is undefined)
+

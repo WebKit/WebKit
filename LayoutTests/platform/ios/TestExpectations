@@ -7318,3 +7318,10 @@ fast/images/text-recognition/ios/select-word-in-image-overlay-inside-link.html [
 webkit.org/b/271916 media/track/track-in-band-layout.html [ Failure ]
 
 webkit.org/b/274766 [ Debug ] http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Failure ]
+
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.discrete.tentative.worker.html [ Failure ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.gamma.tentative.worker.html [ Failure ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.identity.tentative.worker.html [ Failure ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.linear.tentative.worker.html [ Failure ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.table.tentative.worker.html [ Failure ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.advances.worker.html [ Failure ]

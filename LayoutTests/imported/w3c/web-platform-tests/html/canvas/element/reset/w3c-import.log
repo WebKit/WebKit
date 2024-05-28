@@ -64,3 +64,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.state.text_rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.state.transformation_matrix.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.state.word_spacing.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/WEB_FEATURES.yml

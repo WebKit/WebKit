@@ -1,0 +1,6 @@
+2d.text.measure.selection-rects-exceptions.tentative
+Check that TextMetrics::getSelectionRects() throws when using invalid indexes.
+Actual output:
+
+FAIL Check that TextMetrics::getSelectionRects() throws when using invalid indexes. assert_throws_dom: function "() => tm.getSelectionRects(text.length + 1, 0)" threw object "TypeError: tm.getSelectionRects is not a function. (In 'tm.getSelectionRects(text.length + 1, 0)', 'tm.getSelectionRects' is undefined)" that is not a DOMException IndexSizeError: property "code" is equal to undefined, expected 1
+

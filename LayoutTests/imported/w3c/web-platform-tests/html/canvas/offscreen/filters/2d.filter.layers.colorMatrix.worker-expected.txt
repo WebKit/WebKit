@@ -1,0 +1,4 @@
+
+FAIL Test the functionality of ColorMatrix filters ctx.beginLayer is not a function. (In 'ctx.beginLayer({filter:
+    {name: 'colorMatrix', type: 'hueRotate', values: 0}})', 'ctx.beginLayer' is undefined)
+

@@ -26,6 +26,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.attributes.shadowBlur.initial.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.attributes.shadowBlur.invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.attributes.shadowBlur.valid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.attributes.shadowColor.current.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.attributes.shadowColor.current.changed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.attributes.shadowColor.current.removed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.attributes.shadowColor.initial.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.attributes.shadowColor.invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.attributes.shadowColor.valid.html

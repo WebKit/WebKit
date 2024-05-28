@@ -1,0 +1,7 @@
+2d.canvas.context.unrecognised.badsuffix
+
+Context name "2d" plus a suffix is unrecognised
+
+
+PASS Context name "2d" plus a suffix is unrecognised
+

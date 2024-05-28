@@ -99,7 +99,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.fontVariantCaps6-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.fontVariantCaps6.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.actualBoundingBox.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.advances.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.baselines.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.emHeights-low-ascent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.emHeights-zero-descent.html
@@ -108,9 +107,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.fontBoundingBox-zero-descent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.fontBoundingBox.ahem.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.fontBoundingBox.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.selection-rects-baselines.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.selection-rects-exceptions.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.selection-rects.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.width.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.width.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.measure.width.space.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.setFont.mathFont.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/direction-inherit-rtl-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/direction-inherit-rtl.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/direction-ltr-expected.html

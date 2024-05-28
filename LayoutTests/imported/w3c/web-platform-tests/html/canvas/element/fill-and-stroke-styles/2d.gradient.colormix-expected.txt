@@ -1,0 +1,6 @@
+2d.gradient.colormix
+color-mix works as CanvasGradient color input
+Actual output:
+
+FAIL color-mix works as CanvasGradient color input assert_approx_equals: Red channel of the pixel at (25, 25) expected 212 +/- 3 but got 190
+

@@ -1,0 +1,7 @@
+2d.path.arc.twopie.6
+
+arc() draws correctly when start = 5 and end = start + 2pi+e and clockwise
+
+
+PASS arc() draws correctly when start = 5 and end = start + 2pi+e and clockwise
+
