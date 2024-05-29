@@ -1122,13 +1122,6 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 # <rdar://problem/63547191> webrtc/h265.html consistently times out on several Mac models
 [ Release ] webrtc/h265.html [ Pass Timeout ]
 
-# <rdar://problem/64547962> REGRESSION: fast/multicol/newmulticol/ tests are flaky failing.
-fast/multicol/newmulticol/adjacent-spanners.html [ Pass Failure ImageOnlyFailure ]
-fast/multicol/newmulticol/insert-spanner4.html [ Pass Failure ]
-fast/multicol/newmulticol/remove-row-content2.html [ Pass Failure ]
-fast/multicol/newmulticol/remove-row-content8.html [ Pass Failure ]
-fast/multicol/newmulticol/spanner-last.html [ Pass Failure ]
-
 # <rdar://problem/64700658> imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html is a flaky timeout and flaky failure
 imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html [ Pass Failure Timeout ]
 
