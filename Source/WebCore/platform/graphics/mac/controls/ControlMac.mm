@@ -206,6 +206,11 @@ static void applyViewlessCellSettings(float deviceScaleFactor, const ControlStyl
 
     [cell _setFallbackBackingScaleFactor:deviceScaleFactor];
 
+#if USE(NSPRESENTATIONSTATE)
+    bool isInActiveWindow = style.states.contains(ControlStyle::State::WindowActive);
+    [cell _setFallbackBezelPresentationState:isInActiveWindow ? NSPresentationStateActiveKey : NSPresentationStateInactive];
+#endif
+
 #if USE(NSVIEW_SEMANTICCONTEXT)
     if (style.states.contains(ControlStyle::State::FormSemanticContext))
         [cell _setFallbackSemanticContext:NSViewSemanticContextForm];

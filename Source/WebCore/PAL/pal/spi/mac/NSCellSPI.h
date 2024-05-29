@@ -29,6 +29,18 @@
 
 #import <AppKit/NSCell_Private.h>
 
+#else
+
+#if USE(NSPRESENTATIONSTATE)
+
+typedef NS_ENUM(NSInteger, NSPresentationState) {
+    NSPresentationStateActiveKey = 0,
+    NSPresentationStateActive,
+    NSPresentationStateInactive,
+};
+
+#endif // USE(NSPRESENTATIONSTATE)
+
 #endif
 
 WTF_EXTERN_C_BEGIN
