@@ -277,10 +277,16 @@ static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalF
 {
     ASSERT(renderer.hasLayer());
     CheckedRef layerRenderer = renderer;
-    if (layerRenderer->isDocumentElementRenderer())
-        layerRenderer = layerRenderer->view();
 
     IntRect paintRect = snappedIntRect(snapshotRect);
+
+    if (layerRenderer->isDocumentElementRenderer()) {
+        auto& view = layerRenderer->view();
+        layerRenderer = view;
+
+        auto scrollPosition = view.frameView().scrollPosition();
+        paintRect.moveBy(scrollPosition);
+    }
 
     ASSERT(frame.page());
     float scaleFactor = frame.page()->deviceScaleFactor();
