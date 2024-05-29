@@ -81,8 +81,7 @@ void QueueImpl::writeBuffer(
 
 void QueueImpl::writeTexture(
     const ImageCopyTexture&,
-    const void*,
-    size_t,
+    std::span<const uint8_t>,
     const ImageDataLayout&,
     const Extent3D&)
 {
@@ -96,14 +95,12 @@ void QueueImpl::writeBufferNoCopy(
     Size64 dataOffset,
     std::optional<Size64> size)
 {
-    // FIXME: Use checked arithmetic and check the cast
-    wgpuQueueWriteBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), bufferOffset, static_cast<uint8_t*>(source.data()) + dataOffset, static_cast<size_t>(size.value_or(source.size() - dataOffset)));
+    wgpuQueueWriteBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), bufferOffset, source.subspan(dataOffset, size.value_or(source.size() - dataOffset)));
 }
 
 void QueueImpl::writeTexture(
     const ImageCopyTexture& destination,
-    void* source,
-    size_t byteLength,
+    std::span<uint8_t> source,
     const ImageDataLayout& dataLayout,
     const Extent3D& size)
 {
@@ -124,7 +121,7 @@ void QueueImpl::writeTexture(
 
     WGPUExtent3D backingSize = m_convertToBackingContext->convertToBacking(size);
 
-    wgpuQueueWriteTexture(m_backing.get(), &backingDestination, source, byteLength, &backingDataLayout, &backingSize);
+    wgpuQueueWriteTexture(m_backing.get(), &backingDestination, source, &backingDataLayout, &backingSize);
 }
 
 void QueueImpl::copyExternalImageToTexture(

@@ -86,8 +86,7 @@ void RemoteQueueProxy::writeBuffer(
 
 void RemoteQueueProxy::writeTexture(
     const WebCore::WebGPU::ImageCopyTexture& destination,
-    const void* source,
-    size_t byteLength,
+    std::span<const uint8_t> source,
     const WebCore::WebGPU::ImageDataLayout& dataLayout,
     const WebCore::WebGPU::Extent3D& size)
 {
@@ -100,7 +99,7 @@ void RemoteQueueProxy::writeTexture(
     if (!convertedDestination || !convertedDataLayout || !convertedSize)
         return;
 
-    auto sendResult = send(Messages::RemoteQueue::WriteTexture(*convertedDestination, Vector(std::span { static_cast<const uint8_t*>(source), byteLength }), *convertedDataLayout, *convertedSize));
+    auto sendResult = send(Messages::RemoteQueue::WriteTexture(*convertedDestination, Vector(source), *convertedDataLayout, *convertedSize));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -116,8 +115,7 @@ void RemoteQueueProxy::writeBufferNoCopy(
 
 void RemoteQueueProxy::writeTexture(
     const WebCore::WebGPU::ImageCopyTexture&,
-    void*,
-    size_t,
+    std::span<uint8_t>,
     const WebCore::WebGPU::ImageDataLayout&,
     const WebCore::WebGPU::Extent3D&)
 {

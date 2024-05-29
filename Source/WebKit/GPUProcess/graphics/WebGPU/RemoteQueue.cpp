@@ -105,7 +105,7 @@ void RemoteQueue::writeTexture(
     if (!convertedDestination || !convertedDestination || !convertedSize)
         return;
 
-    m_backing->writeTexture(*convertedDestination, data.data(), data.size(), *convertedDataLayout, *convertedSize);
+    m_backing->writeTexture(*convertedDestination, data.mutableSpan(), *convertedDataLayout, *convertedSize);
 }
 
 void RemoteQueue::copyExternalImageToTexture(

@@ -111,7 +111,7 @@ void GPUQueue::writeTexture(
     const GPUImageDataLayout& imageDataLayout,
     const GPUExtent3D& size)
 {
-    m_backing->writeTexture(destination.convertToBacking(), data.data(), data.length(), imageDataLayout.convertToBacking(), convertToBacking(size));
+    m_backing->writeTexture(destination.convertToBacking(), data.span(), imageDataLayout.convertToBacking(), convertToBacking(size));
 }
 
 static PixelFormat toPixelFormat(GPUTextureFormat textureFormat)
@@ -724,7 +724,7 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
             return;
 
         bool supportedFormat;
-        auto newImageBytes = copyToDestinationFormat(imageBytes.data(), destination.texture->format(), sizeInBytes, supportedFormat);
+        uint8_t* newImageBytes = static_cast<uint8_t*>(copyToDestinationFormat(imageBytes.data(), destination.texture->format(), sizeInBytes, supportedFormat));
         GPUImageDataLayout dataLayout { 0, sizeInBytes / rows, rows };
         auto copyDestination = destination.convertToBacking();
 
@@ -733,7 +733,7 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
         if (!supportedFormat || !(destinationTexture->usage() & GPUTextureUsage::RENDER_ATTACHMENT))
             copyDestination.mipLevel = INT_MAX;
 
-        m_backing->writeTexture(copyDestination, newImageBytes ? newImageBytes : imageBytes.data(), sizeInBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
+        m_backing->writeTexture(copyDestination, newImageBytes ? std::span { newImageBytes, sizeInBytes } : imageBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
         free(newImageBytes);
     });
     callbackScopeIsSafe = false;

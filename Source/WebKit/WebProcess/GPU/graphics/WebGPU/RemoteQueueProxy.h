@@ -86,8 +86,7 @@ private:
 
     void writeTexture(
         const WebCore::WebGPU::ImageCopyTexture& destination,
-        const void* source,
-        size_t byteLength,
+        std::span<const uint8_t> source,
         const WebCore::WebGPU::ImageDataLayout&,
         const WebCore::WebGPU::Extent3D& size) final;
 
@@ -100,8 +99,7 @@ private:
 
     void writeTexture(
         const WebCore::WebGPU::ImageCopyTexture& destination,
-        void* source,
-        size_t byteLength,
+        std::span<uint8_t> source,
         const WebCore::WebGPU::ImageDataLayout&,
         const WebCore::WebGPU::Extent3D& size) final;
 

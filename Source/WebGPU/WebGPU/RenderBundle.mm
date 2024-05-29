@@ -93,7 +93,7 @@ void RenderBundle::updateMinMaxDepths(float minDepth, float maxDepth)
     m_maxDepth = maxDepth;
     float twoFloats[2] = { m_minDepth, m_maxDepth };
     for (RenderBundleICBWithResources* icb in m_renderBundlesResources)
-        m_device->getQueue().writeBuffer(icb.fragmentDynamicOffsetsBuffer, 0, twoFloats, sizeof(float) * 2);
+        m_device->getQueue().writeBuffer(icb.fragmentDynamicOffsetsBuffer, 0, { reinterpret_cast<uint8_t*>(twoFloats), sizeof(float) * 2 });
 }
 
 uint64_t RenderBundle::drawCount() const
