@@ -32,7 +32,6 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnectionInfo.h"
 #include "GPUProcessConnectionMessages.h"
-#include "GPUProcessConnectionParameters.h"
 #include "LibWebRTCCodecs.h"
 #include "LibWebRTCCodecsMessages.h"
 #include "Logging.h"
@@ -103,35 +102,15 @@
 namespace WebKit {
 using namespace WebCore;
 
-static GPUProcessConnectionParameters getGPUProcessConnectionParameters()
+Ref<GPUProcessConnection> GPUProcessConnection::create(Ref<IPC::Connection>&& connection)
 {
-    GPUProcessConnectionParameters parameters;
-#if PLATFORM(COCOA)
-    parameters.webProcessIdentity = ProcessIdentity { ProcessIdentity::CurrentProcess };
-#endif
-    return parameters;
-}
-
-RefPtr<GPUProcessConnection> GPUProcessConnection::create(IPC::Connection& parentConnection)
-{
-    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
-    if (!connectionIdentifiers)
-        return nullptr;
-
-    RELEASE_ASSERT_WITH_MESSAGE(WebProcess::singleton().hasEverHadAnyWebPages(), "GPUProcess preferences come from the pages");
-    parentConnection.send(Messages::WebProcessProxy::CreateGPUProcessConnection(WTFMove(connectionIdentifiers->client), getGPUProcessConnectionParameters()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-
-    auto instance = adoptRef(*new GPUProcessConnection(WTFMove(connectionIdentifiers->server)));
-#if ENABLE(IPC_TESTING_API)
-    if (parentConnection.ignoreInvalidMessageForTesting())
-        instance->connection().setIgnoreInvalidMessageForTesting();
-#endif
+    Ref instance = adoptRef(*new GPUProcessConnection(WTFMove(connection)));
     RELEASE_LOG(Process, "GPUProcessConnection::create - %p", instance.ptr());
     return instance;
 }
 
-GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier&& connectionIdentifier)
-    : m_connection(IPC::Connection::createServerConnection(connectionIdentifier))
+GPUProcessConnection::GPUProcessConnection(Ref<IPC::Connection>&& connection)
+    : m_connection(WTFMove(connection))
 {
     m_connection->open(*this);
 

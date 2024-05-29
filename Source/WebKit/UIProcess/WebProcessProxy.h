@@ -47,6 +47,7 @@
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ProcessIdentity.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SharedStringHash.h>
 #include <pal/SessionID.h>
@@ -91,6 +92,7 @@ class ResourceRequest;
 struct NotificationData;
 struct PluginInfo;
 struct PrewarmInformation;
+struct WebProcessCreationParameters;
 class SecurityOriginData;
 enum class PermissionName : uint8_t;
 enum class ThirdPartyCookieBlockingMode : uint8_t;
@@ -175,6 +177,8 @@ public:
 
     static void forWebPagesWithOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, const Function<void(WebPageProxy&)>&);
     static Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies();
+
+    void initializeWebProcess(WebProcessCreationParameters&&);
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
     RefPtr<WebConnection> protectedWebConnection() const { return m_webConnection; }
@@ -575,7 +579,7 @@ private:
     void getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&);
 
 #if ENABLE(GPU_PROCESS)
-    void createGPUProcessConnection(IPC::Connection::Handle&&, WebKit::GPUProcessConnectionParameters&&);
+    void createGPUProcessConnection(IPC::Connection::Handle&&);
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -792,6 +796,7 @@ private:
     Seconds m_totalForegroundTime;
     Seconds m_totalBackgroundTime;
     Seconds m_totalSuspendedTime;
+    WebCore::ProcessIdentity m_processIdentity;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);

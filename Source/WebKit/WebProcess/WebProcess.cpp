@@ -416,9 +416,11 @@ static void scheduleLogMemoryStatistics(LogMemoryStatisticsReason reason)
     });
 }
 
-void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
+void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters, CompletionHandler<void(ProcessIdentity)>&& completionHandler)
 {    
     TraceScope traceScope(InitializeWebProcessStart, InitializeWebProcessEnd);
+    // Reply immediately so that the identity is available as soon as possible.
+    completionHandler(ProcessIdentity { ProcessIdentity::CurrentProcess });
 
     ASSERT(m_pageMap.isEmpty());
 
@@ -1370,9 +1372,16 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
 
     // If we've lost our connection to the GPU process (e.g. it crashed) try to re-establish it.
     if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = GPUProcessConnection::create(Ref { *parentProcessConnection() });
-        if (!m_gpuProcessConnection)
+        auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+        if (!connectionIdentifiers)
             CRASH();
+        protectedParentProcessConnection()->send(Messages::WebProcessProxy::CreateGPUProcessConnection(WTFMove(connectionIdentifiers->client)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        Ref gpuConnection = IPC::Connection::createServerConnection(WTFMove(connectionIdentifiers->server));
+#if ENABLE(IPC_TESTING_API)
+        if (gpuConnection->ignoreInvalidMessageForTesting())
+            gpuConnection->setIgnoreInvalidMessageForTesting();
+#endif
+        m_gpuProcessConnection = GPUProcessConnection::create(WTFMove(gpuConnection));
         for (auto& page : m_pageMap.values()) {
             // If page is null, then it is currently being constructed.
             if (page)
