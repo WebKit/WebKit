@@ -59,6 +59,7 @@
 #import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
 #import "LocalFrame.h"
+#import "LocalizedStrings.h"
 #import "NodeName.h"
 #import "Quirks.h"
 #import "RenderImage.h"
@@ -182,7 +183,6 @@ private:
 
     RetainPtr<NSMutableAttributedString> _attrStr;
     RetainPtr<NSMutableDictionary> _documentAttrs;
-    RetainPtr<NSURL> _baseURL;
     RetainPtr<NSPresentationIntent> _topPresentationIntent;
     NSInteger _topPresentationIntentIdentity;
     RetainPtr<NSMutableArray> _textLists;
@@ -259,7 +259,6 @@ HTMLConverter::HTMLConverter(const SimpleRange& range)
 {
     _attrStr = adoptNS([[NSMutableAttributedString alloc] init]);
     _documentAttrs = adoptNS([[NSMutableDictionary alloc] init]);
-    _baseURL = nil;
     _topPresentationIntent = nil;
     _topPresentationIntentIdentity = 0;
     _textLists = adoptNS([[NSMutableArray alloc] init]);
@@ -1646,7 +1645,7 @@ void HTMLConverter::_addLinkForElement(Element& element, NSRange range)
         if (!url)
             url = element.document().completeURL(strippedString);
         if (!url)
-            url = [NSURL _web_URLWithString:strippedString relativeToURL:_baseURL.get()];
+            url = [NSURL _web_URLWithString:strippedString relativeToURL:nil];
         [_attrStr addAttribute:NSLinkAttributeName value:url ? (id)url : (id)urlString range:range];
     }
 }
@@ -1806,7 +1805,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         if (retval && urlString && [urlString length] > 0) {
             NSURL *url = element.document().completeURL(urlString);
             if (!url)
-                url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL.get()];
+                url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
 #if PLATFORM(IOS_FAMILY)
             BOOL usePlaceholderImage = NO;
 #else
@@ -1826,14 +1825,14 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             if (baseString && [baseString length] > 0) {
                 baseURL = element.document().completeURL(baseString);
                 if (!baseURL)
-                    baseURL = [NSURL _web_URLWithString:[baseString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL.get()];
+                    baseURL = [NSURL _web_URLWithString:[baseString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
             }
             if (baseURL)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:baseURL];
             if (!url)
                 url = element.document().completeURL(urlString);
             if (!url)
-                url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL.get()];
+                url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
             if (url)
                 retval = !_addAttachmentForElement(element, url, isBlockLevel, NO);
         }
@@ -2338,11 +2337,47 @@ static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader* dataSource, NS
 
 #endif
 
+
+static String preferredFilenameForElement(const HTMLImageElement& element)
+{
+    if (RefPtr attachmentElement = element.attachmentElement())
+        return attachmentElement->attachmentTitle();
+
+    auto altText = element.altText();
+
+    auto urlString = element.imageSourceURL();
+
+    NSURL *url = element.document().completeURL(urlString);
+    if (!url)
+        url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
+
+    RefPtr frame = element.document().frame();
+    if (frame->loader().frameHasLoaded()) {
+        RefPtr dataSource = frame->loader().documentLoader();
+        if (auto resource = dataSource->subresource(url)) {
+            auto& mimeType = resource->mimeType();
+
+            if (!altText.isEmpty())
+                return suggestedFilenameWithMIMEType(url, mimeType, altText);
+
+            return suggestedFilenameWithMIMEType(url, mimeType);
+        }
+    }
+
+    if (!altText.isEmpty())
+        return altText;
+
+    return copyImageUnknownFileLabel();
+}
+
 static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
 {
     if (CachedImage* cachedImage = element.cachedImage()) {
-        if (FragmentedSharedBuffer* sharedBuffer = cachedImage->resourceBuffer())
-            return adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:sharedBuffer->makeContiguous()->createNSData().get()]);
+        if (RefPtr sharedBuffer = cachedImage->resourceBuffer()) {
+            RetainPtr wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:sharedBuffer->makeContiguous()->createNSData().get()]);
+            [wrapper setPreferredFilename:preferredFilenameForElement(element)];
+            return wrapper;
+        }
     }
 
     auto* renderer = element.renderer();
