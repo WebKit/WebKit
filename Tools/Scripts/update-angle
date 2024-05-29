@@ -90,12 +90,12 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         --*)
-            echo "ERROR: Unrecognized argument: $1"
+            echo "ERROR: Unrecognized argument: $opt"
             usage
             exit 1
             ;;
         *)
-            ANGLE_TARGET_COMMIT="$1"
+            ANGLE_TARGET_COMMIT="$opt"
             ;;
     esac
 done
