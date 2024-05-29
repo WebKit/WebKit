@@ -604,7 +604,8 @@ RenderPassEncoder::IndexCall RenderPassEncoder::clampIndexBufferToValidValues(ui
     [m_renderCommandEncoder setRenderPipelineState:m_device->indexBufferClampPipeline(indexType, m_rasterSampleCount)];
     [m_renderCommandEncoder setVertexBuffer:indexBuffer offset:indexBufferOffsetInBytes atIndex:0];
     [m_renderCommandEncoder setVertexBuffer:indexedIndirectBuffer offset:0 atIndex:1];
-    [m_renderCommandEncoder setVertexBytes:&minVertexCount length:sizeof(minVertexCount) atIndex:2];
+    uint32_t data[] = { minVertexCount, m_primitiveType == MTLPrimitiveTypeLineStrip || m_primitiveType == MTLPrimitiveTypeTriangleStrip ? 1u : 0u };
+    [m_renderCommandEncoder setVertexBytes:data length:sizeof(data) atIndex:2];
     [m_renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:indexCount];
 
     [m_renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
@@ -613,7 +614,7 @@ RenderPassEncoder::IndexCall RenderPassEncoder::clampIndexBufferToValidValues(ui
     return IndexCall::IndirectDraw;
 }
 
-std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferToValidValues(Buffer* apiIndexBuffer, const Buffer& indexedIndirectBuffer, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, Device& device, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder> renderCommandEncoder)
+std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferToValidValues(Buffer* apiIndexBuffer, const Buffer& indexedIndirectBuffer, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, MTLPrimitiveType primitiveType, Device& device, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder> renderCommandEncoder)
 {
     if (minVertexCount == RenderBundleEncoder::invalidVertexCount)
         return std::make_pair(indexedIndirectBuffer.buffer(), indirectOffset);
@@ -638,7 +639,8 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     [renderCommandEncoder setRenderPipelineState:device.indexBufferClampPipeline(indexType, rasterSampleCount)];
     [renderCommandEncoder setVertexBuffer:indexBuffer offset:indexBufferOffsetInBytes atIndex:0];
     [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.indirectIndexedBuffer() offset:0 atIndex:1];
-    [renderCommandEncoder setVertexBytes:&minVertexCount length:sizeof(minVertexCount) atIndex:2];
+    uint32_t data[] = { minVertexCount, primitiveType == MTLPrimitiveTypeLineStrip || primitiveType == MTLPrimitiveTypeTriangleStrip ? 1u : 0u };
+    [renderCommandEncoder setVertexBytes:data length:sizeof(data) atIndex:2];
     [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.indirectIndexedBuffer() offset:0 atIndex:3];
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint indirectBuffer:indirectBuffer indirectBufferOffset:0];
     [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
@@ -648,7 +650,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
 
 std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferToValidValues(const Buffer& indexedIndirectBuffer, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount)
 {
-    return clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indexedIndirectBuffer, indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, m_device.get(), m_rasterSampleCount, m_renderCommandEncoder);
+    return clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indexedIndirectBuffer, indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, m_primitiveType, m_device.get(), m_rasterSampleCount, m_renderCommandEncoder);
 }
 
 id<MTLBuffer> RenderPassEncoder::clampIndirectBufferToValidValues(const Buffer& indirectBuffer, uint64_t indirectOffset, uint32_t minVertexCount, Device& device, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder> renderCommandEncoder)

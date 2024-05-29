@@ -609,7 +609,7 @@ void RenderBundleEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t i
     id<MTLBuffer> mtlIndirectBuffer = nil;
     uint64_t modifiedIndirectOffset = 0;
     if (m_renderPassEncoder) {
-        auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, computeMininumVertexCount(), m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder());
+        auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, computeMininumVertexCount(), m_primitiveType, m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder());
         mtlIndirectBuffer = result.first;
         modifiedIndirectOffset = result.second;
     }

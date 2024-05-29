@@ -582,15 +582,17 @@ id<MTLRenderPipelineState> Device::indexBufferClampPipeline(MTLIndexType indexTy
         options.fastMathEnabled = YES;
         ALLOW_DEPRECATED_DECLARATIONS_END
         /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+#define vertexCount 0
+#define primitiveRestart 1
     using namespace metal;
-    [[vertex]] void vsUshort(device const ushort* indexBuffer [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], const constant uint* vertexCount [[buffer(2)]], uint indexId [[vertex_id]]) {
-        ushort plusOneValue = 1 + indexBuffer[indexId]; // plusOne to handle primitive restarts
-        if (indexedOutput.baseVertex >= vertexCount[0] || plusOneValue + indexedOutput.baseVertex >= vertexCount[0] + 1)
+    [[vertex]] void vsUshort(device const ushort* indexBuffer [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], const constant uint* data [[buffer(2)]], uint indexId [[vertex_id]]) {
+        ushort vertexIndex = data[primitiveRestart] + indexBuffer[indexId];
+        if (vertexIndex + indexedOutput.baseVertex >= data[vertexCount] + data[primitiveRestart])
             indexedOutput.indexCount = 0u;
     }
-    [[vertex]] void vsUint(device const uint* indexBuffer [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], const constant uint* vertexCount [[buffer(2)]], uint indexId [[vertex_id]]) {
-        uint plusOneValue = 1 + indexBuffer[indexId]; // plusOne to handle primitive restarts
-        if (indexedOutput.baseVertex >= vertexCount[0] || plusOneValue + indexedOutput.baseVertex >= vertexCount[0] + 1)
+    [[vertex]] void vsUint(device const uint* indexBuffer [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], const constant uint* data [[buffer(2)]], uint indexId [[vertex_id]]) {
+        uint vertexIndex = data[primitiveRestart] + indexBuffer[indexId];
+        if (vertexIndex + indexedOutput.baseVertex >= data[vertexCount] + data[primitiveRestart])
             indexedOutput.indexCount = 0u;
     })" /* NOLINT */ options:options error:&error];
         if (error) {
@@ -786,7 +788,9 @@ id<MTLRenderPipelineState> Device::icbCommandClampPipeline(MTLIndexType indexTyp
         uint indexId [[vertex_id]]) {
 
         IndexDataUint& data = *indexData;
-        if (data.indexBuffer[indexId] >= data.minVertexCount) {
+        uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0
+        uint32_t vertexIndex = data.indexBuffer[indexId] + k;
+        if (data.baseVertex + vertexIndex >= data.minVertexCount + k) {
             render_command cmd(icb_container->commandBuffer, data.renderCommand);
             cmd.draw_indexed_primitives(data.primitiveType,
                 0u,
@@ -802,7 +806,9 @@ id<MTLRenderPipelineState> Device::icbCommandClampPipeline(MTLIndexType indexTyp
         uint indexId [[vertex_id]]) {
 
         IndexDataUshort& data = *indexData;
-        if (data.indexBuffer[indexId] >= data.minVertexCount) {
+        uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0
+        uint32_t vertexIndex = data.indexBuffer[indexId] + k;
+        if (data.baseVertex + vertexIndex >= data.minVertexCount + k) {
             render_command cmd(icb_container->commandBuffer, data.renderCommand);
             cmd.draw_indexed_primitives(data.primitiveType,
                 0u,

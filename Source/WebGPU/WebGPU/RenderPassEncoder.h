@@ -102,7 +102,7 @@ public:
     static double quantizedDepthValue(double, WGPUTextureFormat);
     NSString* errorValidatingPipeline(const RenderPipeline&) const;
 
-    static std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer*, const Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, Device&, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder>);
+    static std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer*, const Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, MTLPrimitiveType, Device&, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder>);
     static id<MTLBuffer> clampIndirectBufferToValidValues(const Buffer&, uint64_t indirectOffset, uint32_t minVertexCount, Device&, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder>);
 
 private:
