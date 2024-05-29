@@ -130,6 +130,8 @@ public:
     virtual void setNeedsDisplay() = 0;
     virtual void setNeedsDisplayInRect(const FloatRect& dirtyRect) = 0;
 
+    virtual bool needsDisplay() const = 0;
+
     virtual void copyContentsFromLayer(PlatformCALayer*) = 0;
 
     LayerType layerType() const { return m_layerType; }

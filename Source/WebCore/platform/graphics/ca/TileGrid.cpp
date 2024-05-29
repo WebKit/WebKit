@@ -46,13 +46,13 @@ namespace WebCore {
 
 #if !LOG_DISABLED
 
-static String validationPolicyAsString(OptionSet<TileGrid::ValidationPolicyFlag> policy)
+static TextStream& operator<<(TextStream& ts, TileGrid::ValidationPolicyFlag flag)
 {
-    return makeString('[',
-        policy.contains(TileGrid::PruneSecondaryTiles) ? "prune secondary"_s : ""_s,
-        policy.containsAll({ TileGrid::PruneSecondaryTiles, TileGrid::UnparentAllTiles }) ? ", "_s : ""_s,
-        policy.contains(TileGrid::PruneSecondaryTiles) ? "unparent all"_s : ""_s,
-        ']');
+    switch (flag) {
+    case TileGrid::ValidationPolicyFlag::PruneSecondaryTiles: ts << "prune secondary"; break;
+    case TileGrid::ValidationPolicyFlag::UnparentAllTiles: ts << "unparent all"; break;
+    }
+    return ts;
 }
 
 #endif
@@ -351,7 +351,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
     FloatRect coverageRect = m_controller.coverageRect();
     IntRect bounds = m_controller.bounds();
 
-    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " (controller " << &m_controller << ") revalidateTiles: bounds " << bounds << " coverageRect" << coverageRect << " validation: " << validationPolicyAsString(validationPolicy));
+    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " (controller " << &m_controller << ") revalidateTiles: bounds " << bounds << " coverageRect" << coverageRect << " validation: " << validationPolicy);
 
     FloatRect scaledRect(coverageRect);
     scaledRect.scale(m_scale);
@@ -585,7 +585,6 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
 
             if (!tileInfo.layer) {
                 tileInfo.layer = m_controller.createTileLayer(tileRect, *this);
-                m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
                 ASSERT(!m_tileRepaintCounts.contains(tileInfo.layer.get()));
             } else {
                 // We already have a layer for this tile. Ensure that its size is correct.
@@ -596,7 +595,6 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
                     tileInfo.layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
                     tileInfo.layer->setPosition(tileRect.location());
                     tileInfo.layer->setNeedsDisplay();
-                    m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
                 }
             }
 
@@ -604,6 +602,9 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
                 tileInfo.cohort = currCohort;
                 ++tilesInCohort;
             }
+
+            if (tileInfo.layer->needsDisplay())
+                m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
 
             if (!tileInfo.layer->superlayer())
                 m_containerLayer.get().appendSublayer(*tileInfo.layer);

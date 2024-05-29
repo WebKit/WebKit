@@ -331,6 +331,14 @@ void PlatformCALayerRemote::setNeedsDisplay()
     m_properties.backingStoreOrProperties.store->setNeedsDisplay();
 }
 
+bool PlatformCALayerRemote::needsDisplay() const
+{
+    if (!m_properties.backingStoreOrProperties.store)
+        return false;
+
+    return m_properties.backingStoreOrProperties.store->needsDisplay();
+}
+
 void PlatformCALayerRemote::copyContentsFromLayer(PlatformCALayer* layer)
 {
     ASSERT(m_properties.clonedLayerID == layer->layerID());

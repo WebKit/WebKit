@@ -74,6 +74,7 @@ public:
 
     void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
     void setNeedsDisplay() override;
+    bool needsDisplay() const override;
 
     void copyContentsFromLayer(PlatformCALayer*) override;
 

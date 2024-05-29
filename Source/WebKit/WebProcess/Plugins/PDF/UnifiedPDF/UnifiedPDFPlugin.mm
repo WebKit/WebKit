@@ -477,7 +477,7 @@ void UnifiedPDFPlugin::ensureLayers()
         m_contentsLayer = createGraphicsLayer("PDF contents"_s, isFullMainFramePlugin() ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::TiledBacking);
         m_contentsLayer->setAnchorPoint({ });
         m_contentsLayer->setDrawsContent(true);
-        // FIXME: <https://webkit.org/b/274387> Re-enable asynchronous drawing for the contents layer.
+        m_contentsLayer->setAcceleratesDrawing(canPaintSelectionIntoOwnedLayer());
         m_scrolledContentsLayer->addChild(*m_contentsLayer);
 
         // This is the call that enables async rendering.
