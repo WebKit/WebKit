@@ -1,7 +1,9 @@
-CONSOLE MESSAGE: Permission policy 'Fullscreen' check failed for element with origin 'null' and allow attribute ''.
+CONSOLE MESSAGE: Permission policy 'Fullscreen' check failed for document with origin ''.
+CONSOLE MESSAGE: Permission policy 'Fullscreen' check failed for document with origin ''.
+CONSOLE MESSAGE: Permission policy 'Fullscreen' check failed for document with origin ''.
 
 PASS iframe-same-origin-allowfullscreen
-FAIL iframe-cross-origin-allowfullscreen assert_false: Fullscreen should be denied when allowfullscreen attribute is added, before reload expected false got true
+PASS iframe-cross-origin-allowfullscreen
 PASS iframe-noload-noallowfullscreen
 PASS iframe-noload-allowfullscreen
 

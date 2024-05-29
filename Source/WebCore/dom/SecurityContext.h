@@ -154,6 +154,7 @@ protected:
     void didFailToInitializeSecurityOrigin() { m_haveInitializedSecurityOrigin = false; }
 
 private:
+    virtual void securityOriginDidChange() { };
     void addSandboxFlags(SandboxFlags);
     virtual std::unique_ptr<ContentSecurityPolicy> makeEmptyContentSecurityPolicy() = 0;
 

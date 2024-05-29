@@ -234,7 +234,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     // Step 1, 3, 13 are handled by the caller.
     // Step 2.
     // This implements https://www.w3.org/TR/webauthn-2/#sctn-permissions-policy
-    if (scopeAndCrossOriginParent.first != WebAuthn::Scope::SameOrigin && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::PublickeyCredentialsGetRule, document, LogPermissionsPolicyFailure::No)) {
+    if (scopeAndCrossOriginParent.first != WebAuthn::Scope::SameOrigin && !PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::PublickeyCredentialsGetRule, document, PermissionsPolicy::ShouldReportViolation::No)) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
         return;
     }

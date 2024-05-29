@@ -660,8 +660,10 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         // Either loader is null or some error was synchronously sent to us.
         ASSERT(m_loadingActivity || !m_sendFlag);
     } else {
-        if (scriptExecutionContext()->isDocument() && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::SyncXHR, *document()))
-            return Exception { ExceptionCode::NetworkError };
+        if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext())) {
+            if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::SyncXHR, *document))
+                return Exception { ExceptionCode::NetworkError };
+        }
 
         request.setDomainForCachePartition(scriptExecutionContext()->domainForCachePartition());
         InspectorInstrumentation::willLoadXHRSynchronously(scriptExecutionContext());

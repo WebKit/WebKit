@@ -86,7 +86,7 @@ ExceptionOr<const Vector<RefPtr<Gamepad>>&> NavigatorGamepad::getGamepads(Naviga
         return { emptyGamepads.get() };
     }
 
-    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Gamepad, *document, LogPermissionsPolicyFailure::Yes))
+    if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Gamepad, *document))
         return Exception { ExceptionCode::SecurityError, "Third-party iframes are not allowed to call getGamepads() unless explicitly allowed via Feature-Policy (gamepad)"_s };
 
     return NavigatorGamepad::from(navigator)->gamepads();

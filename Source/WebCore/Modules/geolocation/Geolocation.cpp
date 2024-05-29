@@ -353,7 +353,7 @@ static void logError(const String& target, const bool isSecure, const bool isMix
 bool Geolocation::shouldBlockGeolocationRequests()
 {
     RefPtr document = this->document();
-    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Geolocation, *document, LogPermissionsPolicyFailure::Yes))
+    if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Geolocation, *document))
         return true;
 
     bool isSecure = SecurityOrigin::isSecure(document->url()) || document->isSecureContext();

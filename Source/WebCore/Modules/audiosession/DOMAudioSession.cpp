@@ -84,7 +84,7 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
     if (!document)
         return Exception { ExceptionCode::InvalidStateError };
 
-    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Microphone, *document, LogPermissionsPolicyFailure::No))
+    if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, *document, PermissionsPolicy::ShouldReportViolation::No))
         return { };
 
     document->topDocument().setAudioSessionType(type);
@@ -101,7 +101,7 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
 DOMAudioSession::Type DOMAudioSession::type() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (document && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Microphone, *document, LogPermissionsPolicyFailure::No))
+    if (document && !PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, *document, PermissionsPolicy::ShouldReportViolation::No))
         return DOMAudioSession::Type::Auto;
 
     return document ? document->topDocument().audioSessionType() : DOMAudioSession::Type::Auto;
@@ -121,7 +121,7 @@ static DOMAudioSession::State computeAudioSessionState()
 DOMAudioSession::State DOMAudioSession::state() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (!document || !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Microphone, *document, LogPermissionsPolicyFailure::No))
+    if (!document || !PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, *document, PermissionsPolicy::ShouldReportViolation::No))
         return DOMAudioSession::State::Inactive;
 
     if (!m_state)
@@ -156,7 +156,7 @@ void DOMAudioSession::audioSessionActiveStateChanged()
 void DOMAudioSession::scheduleStateChangeEvent()
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (document && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Microphone, *document, LogPermissionsPolicyFailure::No))
+    if (document && !PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, *document, PermissionsPolicy::ShouldReportViolation::No))
         return;
 
     if (m_hasScheduleStateChangeEvent)

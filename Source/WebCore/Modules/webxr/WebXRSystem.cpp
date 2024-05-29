@@ -165,7 +165,7 @@ void WebXRSystem::isSessionSupported(XRSessionMode mode, IsSessionSupportedPromi
     // 3. If the requesting document's origin is not allowed to use the "xr-spatial-tracking" feature policy,
     //    reject promise with a "SecurityError" DOMException and return it.
     auto document = downcast<Document>(scriptExecutionContext());
-    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::XRSpatialTracking, *document, LogPermissionsPolicyFailure::Yes)) {
+    if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::XRSpatialTracking, *document)) {
         promise.reject(Exception { ExceptionCode::SecurityError });
         return;
     }
@@ -279,7 +279,7 @@ bool WebXRSystem::isFeaturePermitted(PlatformXR::SessionFeature feature) const
     case PlatformXR::SessionFeature::HandTracking:
 #endif
         RefPtr document = downcast<Document>(scriptExecutionContext());
-        return document && isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::XRSpatialTracking, *document, LogPermissionsPolicyFailure::Yes);
+        return document && PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::XRSpatialTracking, *document);
     }
 
     ASSERT_NOT_REACHED();

@@ -49,7 +49,7 @@ static bool isSecure(DocumentLoader& documentLoader)
 
 ExceptionOr<void> PaymentSession::canCreateSession(Document& document)
 {
-    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::Payment, document, LogPermissionsPolicyFailure::Yes))
+    if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Payment, document))
         return Exception { ExceptionCode::SecurityError, "Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)"_s };
 
     if (!document.frame())

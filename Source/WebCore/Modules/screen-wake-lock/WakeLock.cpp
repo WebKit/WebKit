@@ -56,7 +56,7 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
         promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is not fully active"_s });
         return;
     }
-    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Feature::ScreenWakeLock, *document, LogPermissionsPolicyFailure::Yes)) {
+    if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::ScreenWakeLock, *document, PermissionsPolicy::ShouldReportViolation::Yes)) {
         promise->reject(Exception { ExceptionCode::NotAllowedError, "'screen-wake-lock' is not allowed by Feature-Policy"_s });
         return;
     }

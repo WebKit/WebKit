@@ -38,6 +38,7 @@
 #include "HitTestSource.h"
 #include "IntDegrees.h"
 #include "PageIdentifier.h"
+#include "PermissionsPolicy.h"
 #include "PlaybackTargetClientContextIdentifier.h"
 #include "PseudoElementIdentifier.h"
 #include "RegistrableDomain.h"
@@ -1929,6 +1930,8 @@ public:
 
     void detachFromFrame();
 
+    PermissionsPolicy permissionsPolicy() const;
+
 protected:
     enum class ConstructionFlag : uint8_t {
         Synthesized = 1 << 0,
@@ -2075,6 +2078,7 @@ private:
     MediaProducerMediaStateFlags computeCaptureState() const;
 #endif
     bool isTopDocumentLegacy() const { return &topDocument() == this; }
+    void securityOriginDidChange() final;
 
     const Ref<const Settings> m_settings;
 
@@ -2605,6 +2609,7 @@ private:
     std::optional<bool> m_cachedCookiesEnabled;
 
     mutable std::unique_ptr<CSSParserContext> m_cachedCSSParserContext;
+    mutable std::unique_ptr<PermissionsPolicy> m_permissionsPolicy;
 };
 
 Element* eventTargetElementForDocument(Document*);
