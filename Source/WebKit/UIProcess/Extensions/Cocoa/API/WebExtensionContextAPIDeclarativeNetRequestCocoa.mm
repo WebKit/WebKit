@@ -335,9 +335,11 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(_WKWebExtens
                             completionHandler({ });
                         });
                     }).get()];
+
+                    return;
                 }
 
-                // Load was sucessful, commit the changes to the database.
+                // Load was successful, commit the changes to the database.
                 [storage commitSavepoint:savepointIdentifier completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), storageType](NSString *savepointErrorMessage) mutable {
                     if (savepointErrorMessage)
                         RELEASE_LOG_ERROR(Extensions, "Unable to commit %{public}@ rules savepoint for extension %{private}@. Error: %{public}@", storageType, (NSString *)uniqueIdentifier(), savepointErrorMessage);
