@@ -1501,9 +1501,9 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 #endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(std::span<const char> logSubsystem, std::span<const char> logCategory, std::span<const uint8_t> logString, uint8_t logType, int32_t pid)
+void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(std::span<const char> logSubsystemIncludingNullTerminator, std::span<const char> logChannelIncludingNullTerminator, std::span<const uint8_t> logString, uint8_t logType, int32_t pid)
 {
-    auto isNullTerminated = [](std::span<const uint8_t> view) {
+    auto isNullTerminated = [](std::span<const char> view) {
         return view.data() && !view.empty() && view.back() == '\0';
     };
 
@@ -1512,9 +1512,9 @@ void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(std::span<const char
 
     // os_log_hook on sender side sends a null category and subsystem when logging to OS_LOG_DEFAULT.
     auto osLog = OSObjectPtr<os_log_t>();
-    if (isNullTerminated(logSubsystem) && isNullTerminated(logCategory)) {
-        auto subsystem = logSubsystem.data();
-        auto category = logCategory.data();
+    if (isNullTerminated(logSubsystemIncludingNullTerminator) && isNullTerminated(logCategoryIncludingNullTerminator)) {
+        auto subsystem = logSubsystemIncludingNullTerminator.data();
+        auto category = logCategoryIncludingNullTerminator.data();
         osLog = adoptOSObject(os_log_create(subsystem, category));
     }
 
