@@ -27,6 +27,7 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
@@ -231,6 +232,27 @@ TEST(WebSocket, BlockedWithSubresources)
     auto webView = adoptNS([WKWebView new]);
     [webView loadHTMLString:html baseURL:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "opened successfully");
+}
+
+TEST(WebSocket, LoadRequestWSS)
+{
+    HTTPServer tlsServer({ }, HTTPServer::Protocol::HttpsProxy);
+    HTTPServer plaintextServer({ });
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", tlsServer.port()]]];
+    [storeConfiguration setHTTPProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", plaintextServer.port()]]];
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"wss://webkit.org/"]]];
+    [delegate waitForDidFailProvisionalNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ws://webkit.org/"]]];
+    [delegate waitForDidFailProvisionalNavigation];
 }
 
 }
