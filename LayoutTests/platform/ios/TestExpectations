@@ -7321,3 +7321,5 @@ webkit.org/b/271916 media/track/track-in-band-layout.html [ Failure ]
 webkit.org/b/274766 [ Debug ] http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Failure ]
 
 webkit.org/b/274732 [ Debug ] js/dom/missing-exception-check-in-convertVariadicArguments.html [ Skip ]
+
+webkit.org/b/274847 http/tests/site-isolation/opened-window-length.html [ Timeout ]
