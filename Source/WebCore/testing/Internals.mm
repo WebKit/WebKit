@@ -92,6 +92,10 @@
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebCoreInternalsAdditions.mm>)
+#import <WebKitAdditions/WebCoreInternalsAdditions.mm>
+#endif
+
 namespace WebCore {
 
 String Internals::userVisibleString(const DOMURL& url)
