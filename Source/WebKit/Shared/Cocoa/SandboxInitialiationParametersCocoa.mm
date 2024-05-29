@@ -33,25 +33,19 @@ SandboxInitializationParameters::SandboxInitializationParameters()
 {
 }
 
-SandboxInitializationParameters::~SandboxInitializationParameters()
-{
-    for (size_t i = 0; i + 1 < m_namedParameters.size(); i += 2)
-        fastFree(const_cast<char*>(m_namedParameters[i + 1]));
-}
+SandboxInitializationParameters::~SandboxInitializationParameters() = default;
 
-void SandboxInitializationParameters::appendPathInternal(const char* name, const char* path)
+void SandboxInitializationParameters::appendPathInternal(ASCIILiteral name, const char* path)
 {
     char normalizedPath[PATH_MAX];
     if (!realpath(path, normalizedPath))
         normalizedPath[0] = '\0';
 
-    ASSERT(!(m_namedParameters.size() % 2));
-
-    m_namedParameters.append(name);
-    m_namedParameters.append(fastStrDup(normalizedPath));
+    m_parameterNames.append(name);
+    m_parameterValues.append(normalizedPath);
 }
 
-void SandboxInitializationParameters::addConfDirectoryParameter(const char* name, int confID)
+void SandboxInitializationParameters::addConfDirectoryParameter(ASCIILiteral name, int confID)
 {
     char path[PATH_MAX];
     if (confstr(confID, path, PATH_MAX) <= 0)
@@ -60,44 +54,48 @@ void SandboxInitializationParameters::addConfDirectoryParameter(const char* name
     appendPathInternal(name, path);
 }
 
-void SandboxInitializationParameters::addPathParameter(const char* name, NSString *path)
+void SandboxInitializationParameters::addPathParameter(ASCIILiteral name, NSString *path)
 {
     appendPathInternal(name, [path length] ? [(NSString *)path fileSystemRepresentation] : "");
 }
 
-void SandboxInitializationParameters::addPathParameter(const char* name, const char* path)
+void SandboxInitializationParameters::addPathParameter(ASCIILiteral name, const char* path)
 {
     appendPathInternal(name, path);
 }
 
-void SandboxInitializationParameters::addParameter(const char* name, const char* value)
+void SandboxInitializationParameters::addParameter(ASCIILiteral name, CString&& value)
 {
-    m_namedParameters.append(name);
-    m_namedParameters.append(fastStrDup(value));
+    m_parameterNames.append(name);
+    m_parameterValues.append(WTFMove(value));
 }
 
-const char* const* SandboxInitializationParameters::namedParameterArray() const
+Vector<const char*> SandboxInitializationParameters::namedParameterVector() const
 {
-    if (!(m_namedParameters.size() % 2))
-        m_namedParameters.append(static_cast<const char*>(0));
-
-    return m_namedParameters.data();
+    Vector<const char*> result;
+    result.reserveInitialCapacity(m_parameterNames.size() * 2 + 1);
+    ASSERT(m_parameterNames.size() == m_parameterValues.size());
+    for (size_t i = 0; i < m_parameterNames.size(); ++i) {
+        result.append(m_parameterNames[i]);
+        result.append(m_parameterValues[i].data());
+    }
+    result.append(nullptr);
+    return result;
 }
 
 size_t SandboxInitializationParameters::count() const
 {
-    return m_namedParameters.size() / 2;
+    return m_parameterNames.size();
 }
 
-const char* SandboxInitializationParameters::name(size_t index) const
+ASCIILiteral SandboxInitializationParameters::name(size_t index) const
 {
-    ASSERT(index != m_namedParameters.size());
-    return m_namedParameters[index * 2];
+    return m_parameterNames[index];
 }
 
 const char* SandboxInitializationParameters::value(size_t index) const
 {
-    return m_namedParameters[index * 2 + 1];
+    return m_parameterValues[index].data();
 }
 
 } // namespace WebKit

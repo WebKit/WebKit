@@ -42,16 +42,15 @@ public:
     ~SandboxInitializationParameters();
 
 #if PLATFORM(COCOA)
-    // Name must be a literal.
-    void addConfDirectoryParameter(const char* name, int confID);
-    void addPathParameter(const char* name, NSString *path);
-    void addPathParameter(const char* name, const char* path);
-    void addParameter(const char* name, const char* value);
+    void addConfDirectoryParameter(ASCIILiteral name, int confID);
+    void addPathParameter(ASCIILiteral name, NSString *path);
+    void addPathParameter(ASCIILiteral name, const char* path);
+    void addParameter(ASCIILiteral name, CString&& value);
 
-    const char* const* namedParameterArray() const;
+    Vector<const char*> namedParameterVector() const;
 
     size_t count() const;
-    const char* name(size_t index) const;
+    ASCIILiteral name(size_t index) const;
     const char* value(size_t index) const;
 
     enum class ProfileSelectionMode : uint8_t {
@@ -92,9 +91,10 @@ public:
 
 private:
 #if PLATFORM(COCOA)
-    void appendPathInternal(const char* name, const char* path);
+    void appendPathInternal(ASCIILiteral name, const char* path);
 
-    mutable Vector<const char*> m_namedParameters;
+    mutable Vector<ASCIILiteral> m_parameterNames;
+    mutable Vector<CString> m_parameterValues;
     String m_userDirectorySuffix;
 
     ProfileSelectionMode m_profileSelectionMode;

@@ -544,7 +544,7 @@ static bool compileAndApplySandboxSlowCase(const String& profileOrProfilePath, b
     uint64_t flags = isProfilePath ? SANDBOX_NAMED_EXTERNAL : 0;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (sandbox_init_with_parameters(temp.data(), flags, parameters.namedParameterArray(), &errorBuf)) {
+    if (sandbox_init_with_parameters(temp.data(), flags, parameters.namedParameterVector().data(), &errorBuf)) {
 ALLOW_DEPRECATED_DECLARATIONS_END
         WTFLogAlways("%s: Could not initialize sandbox profile [%s], error '%s'\n", getprogname(), temp.data(), errorBuf);
         for (size_t i = 0, count = parameters.count(); i != count; ++i)
@@ -676,7 +676,7 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
         WTFLogAlways("%s: Couldn't find OS Version\n", getprogname());
         exitProcess(EX_NOPERM);
     }
-    sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
+    sandboxParameters.addParameter("_OS_VERSION"_s, osVersion.utf8());
 
     // Use private temporary and cache directories.
     setenv("DIRHELPER_USER_DIR_SUFFIX", FileSystem::fileSystemRepresentation(sandboxParameters.userDirectorySuffix()).data(), 1);
@@ -691,22 +691,22 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     if (!bundlePath.startsWith("/System/Library/Frameworks"_s))
         bundlePath = webKit2Bundle().bundlePath.stringByDeletingLastPathComponent;
 
-    sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR", bundlePath);
-    sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
-    sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR", _CS_DARWIN_USER_CACHE_DIR);
+    sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR"_s, bundlePath.utf8().data());
+    sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR"_s, _CS_DARWIN_USER_TEMP_DIR);
+    sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR"_s, _CS_DARWIN_USER_CACHE_DIR);
 
     auto homeDirectory = getHomeDirectory();
     
-    sandboxParameters.addPathParameter("HOME_DIR", homeDirectory);
+    sandboxParameters.addPathParameter("HOME_DIR"_s, homeDirectory.utf8().data());
     String path = FileSystem::pathByAppendingComponent(homeDirectory, "Library"_s);
-    sandboxParameters.addPathParameter("HOME_LIBRARY_DIR", FileSystem::fileSystemRepresentation(path).data());
+    sandboxParameters.addPathParameter("HOME_LIBRARY_DIR"_s, FileSystem::fileSystemRepresentation(path).data());
     path = FileSystem::pathByAppendingComponent(path, "/Preferences"_s);
-    sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR", FileSystem::fileSystemRepresentation(path).data());
+    sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR"_s, FileSystem::fileSystemRepresentation(path).data());
 
 #if CPU(X86_64)
-    sandboxParameters.addParameter("CPU", "x86_64");
+    sandboxParameters.addParameter("CPU"_s, "x86_64"_span);
 #elif CPU(ARM64)
-    sandboxParameters.addParameter("CPU", "arm64");
+    sandboxParameters.addParameter("CPU"_s, "arm64"_span);
 #else
 #error "Unknown architecture."
 #endif
@@ -733,7 +733,7 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
     enableMessageFilter = WTF::processHasEntitlement("com.apple.private.security.message-filter"_s);
 #endif
-    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", enableMessageFilter ? "YES" : "NO");
+    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER"_s, enableMessageFilter ? "YES"_span : "NO"_span);
 
     if (sandboxParameters.userDirectorySuffix().isNull())
         sandboxParameters.setUserDirectorySuffix(getUserDirectorySuffix(parameters));
