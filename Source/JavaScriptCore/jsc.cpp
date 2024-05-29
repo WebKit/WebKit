@@ -945,7 +945,8 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     nullptr, // compileStreaming
     nullptr, // instantinateStreaming
     &deriveShadowRealmGlobalObject,
-    &codeForEval
+    &codeForEval,
+    &canCompileStrings,
 };
 
 GlobalObject::GlobalObject(VM& vm, Structure* structure)

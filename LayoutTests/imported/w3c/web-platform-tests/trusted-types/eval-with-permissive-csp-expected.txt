@@ -1,17 +1,15 @@
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
-FAIL eval with plain string with Trusted Types and permissive CSP throws (no type). assert_throws_js: function "_ => {
-      eval('a="hello there"');
-    }" did not throw
-FAIL indirect eval with plain string with Trusted Types and permissive CSP throws (no type). assert_throws_js: function "_ => {
-      eval?.('a="hello there"');
-    }" did not throw
+PASS eval with plain string with Trusted Types and permissive CSP throws (no type).
+PASS indirect eval with plain string with Trusted Types and permissive CSP throws (no type).
 FAIL Function constructor with plain string with Trusted Types and permissive CSP throws (no type). assert_throws_js: function "_ => {
       new Function('a="hello there"');
     }" did not throw
 PASS eval with TrustedScript and permissive CSP works.
 PASS indirect eval with TrustedScript and permissive CSP works.
 PASS new Function with TrustedScript and permissive CSP works.
-FAIL eval with default policy and permissive CSP still obeys default policy. assert_equals: expected "Hello a cat untrusted string" but got "Hello transformed untrusted string"
-FAIL indirect eval with default policy and permissive CSP still obeys default policy. assert_equals: expected "Hello a cat untrusted string" but got "Hello transformed untrusted string"
-FAIL new Function with default policy and permissive CSP still obeys default policy. assert_equals: expected "Hello a cat untrusted string" but got "Hello transformed untrusted string"
+PASS eval with plain string with Trusted Types and permissive CSP works with default policy.
+PASS indirect eval with plain string with Trusted Types and permissive CSP works with default policy.
+PASS new Function with plain string default policy and permissive CSP works with default policy.
 

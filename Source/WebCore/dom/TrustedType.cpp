@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "HTMLScriptElement.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSTrustedScript.h"
 #include "LocalDOMWindow.h"
 #include "Node.h"
 #include "SVGNames.h"
@@ -324,6 +325,24 @@ ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document> documen
         text = Text::create(document, std::get<RefPtr<TrustedScript>>(variant)->toString());
 
     return text;
+}
+
+ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString, JSC::JSValue bodyArgument)
+{
+    VM& vm = scriptExecutionContext.vm();
+
+    if (bodyArgument.isObject())
+        return JSTrustedScript::toWrapped(vm, bodyArgument) ? true : false;
+
+    ASSERT(bodyArgument.isString());
+
+    auto sink = compilationType == CompilationType::Function ? "Function"_s : "eval"_s;
+
+    auto stringValueHolder = trustedTypeCompliantString(TrustedType::TrustedScript, scriptExecutionContext, codeString, sink);
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
+    return codeString == stringValueHolder.releaseReturnValue();
 }
 
 } // namespace WebCore

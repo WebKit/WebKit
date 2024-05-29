@@ -1,8 +1,10 @@
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS eval of TrustedScript works.
 PASS indirect eval of TrustedScript works.
-FAIL eval of string fails. assert_throws_js: function "_ => eval('1+1')" did not throw
-FAIL indirect eval of string fails. assert_throws_js: function "_ => eval?.('1+1')" did not throw
+PASS eval of string fails.
+PASS indirect eval of string fails.
 PASS eval of !TrustedScript and !string works.
 PASS Function constructor of TrustedScript works.
 FAIL Function constructor of string fails. assert_throws_js: function "_ => new Function('return 1+1')()" did not throw

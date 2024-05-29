@@ -453,6 +453,14 @@ void ScriptController::setWebAssemblyEnabled(bool value, const String& errorMess
     jsWindowProxy->window()->setWebAssemblyEnabled(value, errorMessage);
 }
 
+void ScriptController::setRequiresTrustedTypes(bool required)
+{
+    auto* proxy = windowProxy().existingJSWindowProxy(mainThreadNormalWorld());
+    if (!proxy)
+        return;
+    proxy->window()->setRequiresTrustedTypes(required);
+}
+
 bool ScriptController::canAccessFromCurrentOrigin(LocalFrame* frame, Document& accessingDocument)
 {
     auto* lexicalGlobalObject = JSExecState::currentState();

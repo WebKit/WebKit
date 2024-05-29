@@ -1,20 +1,26 @@
 
-FAIL eval(string) in dedicated worker assert_throws_js: function "_ => eval("2")" did not throw
-FAIL indirect eval(string) in dedicated worker assert_throws_js: function "_ => eval?.("2")" did not throw
+PASS eval(string) in dedicated worker
+PASS indirect eval(string) in dedicated worker
 PASS eval(TrustedScript) in dedicated worker
 PASS indirect eval(TrustedScript) in dedicated worker
-FAIL eval(string) with default policy in dedicated worker assert_equals: expected 5 but got 2
-FAIL indirect eval(string) with default policy in dedicated worker assert_equals: expected 5 but got 2
-FAIL eval(string) in service worker assert_throws_js: function "_ => eval("2")" did not throw
-FAIL indirect eval(string) in service worker assert_throws_js: function "_ => eval?.("2")" did not throw
+PASS eval(string) with default policy in dedicated worker
+PASS indirect eval(string) with default policy in dedicated worker
+PASS eval(string) with default policy mutation in dedicated worker
+PASS indirect eval(string) with default policy mutation in dedicated worker
+PASS eval(string) in service worker
+PASS indirect eval(string) in service worker
+PASS eval(string) in shared worker
+PASS indirect eval(string) in shared worker
+PASS eval(TrustedScript) in shared worker
 PASS eval(TrustedScript) in service worker
 PASS indirect eval(TrustedScript) in service worker
-FAIL eval(string) with default policy in service worker assert_equals: expected 5 but got 2
-FAIL eval(string) in shared worker assert_throws_js: function "_ => eval("2")" did not throw
-FAIL indirect eval(string) with default policy in service worker assert_equals: expected 5 but got 2
-FAIL indirect eval(string) in shared worker assert_throws_js: function "_ => eval?.("2")" did not throw
-PASS eval(TrustedScript) in shared worker
+PASS eval(string) with default policy in service worker
+PASS indirect eval(string) with default policy in service worker
 PASS indirect eval(TrustedScript) in shared worker
-FAIL eval(string) with default policy in shared worker assert_equals: expected 5 but got 2
-FAIL indirect eval(string) with default policy in shared worker assert_equals: expected 5 but got 2
+PASS eval(string) with default policy in shared worker
+PASS indirect eval(string) with default policy in shared worker
+PASS eval(string) with default policy mutation in shared worker
+PASS indirect eval(string) with default policy mutation in shared worker
+PASS eval(string) with default policy mutation in service worker
+PASS indirect eval(string) with default policy mutation in service worker
 

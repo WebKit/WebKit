@@ -97,6 +97,11 @@ void WorkerOrWorkletGlobalScope::disableWebAssembly(const String& errorMessage)
     m_script->disableWebAssembly(errorMessage);
 }
 
+void WorkerOrWorkletGlobalScope::setRequiresTrustedTypes(bool required)
+{
+    m_script->setRequiresTrustedTypes(required);
+}
+
 bool WorkerOrWorkletGlobalScope::isJSExecutionForbidden() const
 {
     return !m_script || m_script->isExecutionForbidden();

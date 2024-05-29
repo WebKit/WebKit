@@ -79,6 +79,8 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
+    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, JSC::JSValue);
+
     // https://tc39.es/ecma262/#sec-agent-clusters
     String agentClusterID() const;
     static String defaultAgentClusterID();

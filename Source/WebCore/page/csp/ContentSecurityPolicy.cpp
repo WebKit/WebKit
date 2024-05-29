@@ -187,6 +187,7 @@ void ContentSecurityPolicy::didCreateWindowProxy(JSWindowProxy& windowProxy) con
     }
     window->setEvalEnabled(m_lastPolicyEvalDisabledErrorMessage.isNull(), m_lastPolicyEvalDisabledErrorMessage);
     window->setWebAssemblyEnabled(m_lastPolicyWebAssemblyDisabledErrorMessage.isNull(), m_lastPolicyWebAssemblyDisabledErrorMessage);
+    window->setRequiresTrustedTypes(requireTrustedTypesForSinkGroup("script"_s));
 }
 
 ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() const
@@ -292,6 +293,7 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
     updateSourceSelf(*m_scriptExecutionContext->securityOrigin());
 
     bool enableStrictMixedContentMode = false;
+    bool requiresTrustedTypesForScript = false;
     for (auto& policy : m_policies) {
         const ContentSecurityPolicyDirective* violatedDirective = policy->violatedDirectiveForUnsafeEval();
         if (violatedDirective && !violatedDirective->directiveList().isReportOnly()) {
@@ -300,6 +302,10 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
         }
         if (policy->hasBlockAllMixedContentDirective() && !policy->isReportOnly())
             enableStrictMixedContentMode = true;
+
+        // Intentionally doesn't check for report only, this boolean is used for performance purposes, rather than CSP enforcement.
+        if (policy->requiresTrustedTypesForScript())
+            requiresTrustedTypesForScript = true;
     }
 
     if (!m_lastPolicyEvalDisabledErrorMessage.isNull())
@@ -310,6 +316,7 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
         m_scriptExecutionContext->enforceSandboxFlags(m_sandboxFlags, SecurityContext::SandboxFlagsSource::CSP);
     if (enableStrictMixedContentMode)
         m_scriptExecutionContext->setStrictMixedContentMode(true);
+    m_scriptExecutionContext->setRequiresTrustedTypes(requiresTrustedTypesForScript);
 }
 
 void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)

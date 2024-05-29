@@ -30,6 +30,14 @@
 #include "TrustedScript.h"
 #include "TrustedScriptURL.h"
 
+namespace JSC {
+
+class JSValue;
+
+enum class CompilationType;
+
+} // namespace JSC
+
 namespace WebCore {
 
 class Document;
@@ -68,4 +76,7 @@ ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::var
 ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document>, RefPtr<Node> parent, std::variant<RefPtr<Node>, String, RefPtr<TrustedScript>>);
 
 WEBCORE_EXPORT AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const String& attributeName, const String& elementNamespace, const String& attributeNamespace);
+
+ExceptionOr<bool> canCompile(ScriptExecutionContext&, JSC::CompilationType, String codeString, JSC::JSValue bodyArgument);
+
 } // namespace WebCore

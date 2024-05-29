@@ -611,7 +611,8 @@ const GlobalObjectMethodTable* JSGlobalObject::baseGlobalObjectMethodTable()
         nullptr, // compileStreaming
         nullptr, // instantiateStreaming
         &deriveShadowRealmGlobalObject,
-        &codeForEval
+        &codeForEval,
+        &canCompileStrings,
     };
     return &table;
 };

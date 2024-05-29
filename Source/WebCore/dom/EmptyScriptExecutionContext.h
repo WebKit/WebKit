@@ -61,6 +61,7 @@ public:
 
     void disableEval(const String&) final { };
     void disableWebAssembly(const String&) final { };
+    void setRequiresTrustedTypes(bool) final { };
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final { return nullptr; }
     SocketProvider* socketProvider() final { return nullptr; }

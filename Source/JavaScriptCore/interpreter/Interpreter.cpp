@@ -134,15 +134,20 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     if (!programString)
         return program;
 
+    auto programSource = programString->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, JSValue());
+
+    if (Options::useTrustedTypes() && globalObject->requiresTrustedTypes() && !globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::DirectEval, programSource, program)) {
+        throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
+        return { };
+    }
+
     TopCallFrameSetter topCallFrame(vm, callFrame);
     if (!globalObject->evalEnabled()) {
         globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, programString);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return { };
     }
-    auto programSource = programString->value(globalObject);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    
 
     bool isArrowFunctionContext = callerUnlinkedCodeBlock->isArrowFunction() || callerUnlinkedCodeBlock->isArrowFunctionContext();
 

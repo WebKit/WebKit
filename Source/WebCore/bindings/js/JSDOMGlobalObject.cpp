@@ -372,6 +372,24 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
     return nullptr;
 }
 
+bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, String codeString, JSValue bodyArgument)
+{
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    auto& thisObject = static_cast<JSDOMGlobalObject&>(*globalObject);
+    auto* scriptExecutionContext = thisObject.scriptExecutionContext();
+
+    auto result = canCompile(*scriptExecutionContext, compilationType, codeString, bodyArgument);
+
+    if (result.hasException()) {
+        propagateException(*globalObject, throwScope, result.releaseException());
+        RETURN_IF_EXCEPTION(throwScope, false);
+    }
+
+    return result.releaseReturnValue();
+}
+
 template<typename Visitor>
 void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
