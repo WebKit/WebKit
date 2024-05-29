@@ -456,7 +456,7 @@ private:
     template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator);
 
     bool isAccelerated() const override;
-
+    bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 
     bool hasDeferredOperations() const final;

@@ -661,30 +661,24 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 
 void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 {
-    if (m_context)
-        m_context->clearAccumulatedDirtyRect();
+    if (!m_context)
+        return;
+    m_context->clearAccumulatedDirtyRect();
 
     if (!context.paintingDisabled()) {
-        bool shouldPaint = true;
-
-        if (m_context) {
-            shouldPaint = paintsIntoCanvasBuffer() || document().printing() || m_isSnapshotting;
-            if (shouldPaint) {
-                if (m_context->compositingResultsNeedUpdating())
-                    m_context->prepareForDisplay();
-                m_context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
-            }
-        }
-
-        if (shouldPaint) {
-            if (hasCreatedImageBuffer()) {
-                if (RefPtr imageBuffer = buffer())
-                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r), { context.compositeOperation() });
+        if (paintsIntoCanvasBuffer() || document().printing() || m_isSnapshotting) {
+            if (m_context->compositingResultsNeedUpdating())
+                m_context->prepareForDisplay();
+            const bool skipTransparentBlackDraw = context.compositeMode() == CompositeMode { CompositeOperator::SourceOver, BlendMode::Normal };
+            if (!skipTransparentBlackDraw || !m_context->isSurfaceBufferTransparentBlack(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer)) {
+                RefPtr buffer = m_context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
+                if (buffer)
+                    context.drawImageBuffer(*buffer, snappedIntRect(r), { context.compositeOperation() });
             }
         }
     }
 
-    if (UNLIKELY(m_context && m_context->hasActiveInspectorCanvasCallTracer()))
+    if (UNLIKELY(m_context->hasActiveInspectorCanvasCallTracer()))
         InspectorInstrumentation::didFinishRecordingCanvasFrame(*m_context);
 }
 

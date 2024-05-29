@@ -87,6 +87,17 @@ void CanvasRenderingContext::deref() const
     m_canvas.derefCanvasBase();
 }
 
+RefPtr<ImageBuffer> CanvasRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
+{
+    // This will be removed once all contexts store their own buffers.
+    return canvasBase().buffer();
+}
+
+bool CanvasRenderingContext::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
+{
+    return false;
+}
+
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext::layerContentsDisplayDelegate()
 {
     return nullptr;

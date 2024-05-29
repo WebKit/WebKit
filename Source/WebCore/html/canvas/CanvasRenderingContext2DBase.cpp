@@ -262,6 +262,13 @@ bool CanvasRenderingContext2DBase::isAccelerated() const
 #endif
 }
 
+bool CanvasRenderingContext2DBase::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
+{
+    // Before the first draw (or first access to the drawing buffer), the drawing buffer is transparent black.
+    // Currently the canvas does not support alpha == false.
+    return !canvasBase().hasCreatedImageBuffer();
+}
+
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext2DBase::layerContentsDisplayDelegate()
 {
     if (auto buffer = canvasBase().buffer())

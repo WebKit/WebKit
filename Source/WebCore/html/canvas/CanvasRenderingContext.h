@@ -91,7 +91,8 @@ public:
     };
 
     // Draws the source buffer to the canvasBase().buffer().
-    virtual void drawBufferToCanvas(SurfaceBuffer) { }
+    virtual RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer);
+    virtual bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const;
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
     virtual void setContentsToLayer(GraphicsLayer&);
 

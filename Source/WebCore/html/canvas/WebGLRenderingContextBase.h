@@ -439,7 +439,7 @@ public:
 
     void reshape(int width, int height, int oldWidth, int oldHeight) override;
 
-    void drawBufferToCanvas(SurfaceBuffer) final;
+    RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
 
     RefPtr<PixelBuffer> drawingBufferToPixelBuffer(GraphicsContextGL::FlipY);
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)

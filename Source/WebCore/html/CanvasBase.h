@@ -153,6 +153,8 @@ public:
     void setNoiseInjectionSalt(NoiseInjectionHashSalt salt) { m_canvasNoiseHashSalt = salt; }
     bool havePendingCanvasNoiseInjection() const { return m_canvasNoiseInjection.haveDirtyRects(); }
 
+    virtual bool hasCreatedImageBuffer() const { return false; }
+
 protected:
     explicit CanvasBase(IntSize, const std::optional<NoiseInjectionHashSalt>&);
 
@@ -161,8 +163,6 @@ protected:
     virtual void setSize(const IntSize&);
 
     RefPtr<ImageBuffer> setImageBuffer(RefPtr<ImageBuffer>&&) const;
-    virtual bool hasCreatedImageBuffer() const { return false; }
-
     RefPtr<ImageBuffer> allocateImageBuffer() const;
     String lastFillText() const { return m_lastFillText; }
     void addCanvasNeedingPreparationForDisplayOrFlush();

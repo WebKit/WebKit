@@ -480,19 +480,15 @@ std::unique_ptr<DetachedOffscreenCanvas> OffscreenCanvas::detach()
 
 void OffscreenCanvas::commitToPlaceholderCanvas()
 {
-    RefPtr imageBuffer = buffer();
-    if (!imageBuffer)
-        return;
     if (!m_placeholderData)
         return;
-
-    // FIXME: Transfer texture over if we're using accelerated compositing
-    if (m_context && (m_context->isWebGL() || m_context->isAccelerated())) {
-        if (m_context->compositingResultsNeedUpdating())
-            m_context->prepareForDisplay();
-        m_context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
-    }
-
+    if  (!m_context)
+        return;
+    if (m_context->compositingResultsNeedUpdating())
+        m_context->prepareForDisplay();
+    RefPtr imageBuffer = m_context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
+    if (!imageBuffer)
+        return;
     if (auto pipeSource = m_placeholderData->pipeSource())
         pipeSource->handle(*imageBuffer);
 

@@ -100,9 +100,10 @@ AffineTransform CanvasBase::baseTransform() const
 RefPtr<ImageBuffer> CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     if (auto* context = renderingContext()) {
-        context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
+        RefPtr buffer = context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
         if (m_canvasNoiseHashSalt && shouldApplyPostProcessingToDirtyRect == ShouldApplyPostProcessingToDirtyRect::Yes)
-            m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer(), *m_canvasNoiseHashSalt, context->is2d() ? CanvasNoiseInjectionPostProcessArea::DirtyRect : CanvasNoiseInjectionPostProcessArea::FullBuffer);
+            m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer.get(), *m_canvasNoiseHashSalt, context->is2d() ? CanvasNoiseInjectionPostProcessArea::DirtyRect : CanvasNoiseInjectionPostProcessArea::FullBuffer);
+        return buffer;
     }
     return buffer();
 }

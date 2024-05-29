@@ -772,15 +772,16 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
     return combinedClear;
 }
 
-void WebGLRenderingContextBase::drawBufferToCanvas(SurfaceBuffer sourceBuffer)
+
+RefPtr<ImageBuffer> WebGLRenderingContextBase::surfaceBufferToImageBuffer(SurfaceBuffer sourceBuffer)
 {
-    if (isContextLost())
-        return;
-    if (m_canvasBufferContents == sourceBuffer)
-        return;
     auto buffer = canvasBase().buffer();
+    if (isContextLost())
+        return buffer;
     if (!buffer)
-        return;
+        return buffer;
+    if (m_canvasBufferContents == sourceBuffer)
+        return buffer;
     if (sourceBuffer == SurfaceBuffer::DrawingBuffer)
         clearIfComposited(CallerTypeOther);
     m_canvasBufferContents = sourceBuffer;
@@ -789,6 +790,7 @@ void WebGLRenderingContextBase::drawBufferToCanvas(SurfaceBuffer sourceBuffer)
     // canvas element repeatedly.
     buffer->flushDrawingContext();
     m_context->drawSurfaceBufferToImageBuffer(toGCGLSurfaceBuffer(sourceBuffer), *buffer);
+    return buffer;
 }
 
 RefPtr<PixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuffer(GraphicsContextGL::FlipY flipY)
