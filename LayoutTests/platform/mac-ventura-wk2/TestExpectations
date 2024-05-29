@@ -6,8 +6,6 @@
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-# Disable Sonoma only test added in rdar://110488738.
-accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Skip ]
 # These tests require compile-time flags in WebKit that are only enabled in Sonoma. They were marked as Skip in
 # https://bugs.webkit.org/show_bug.cgi?id=248545 — re-disable them here.
 fast/images/animations-resume-from-last-displayed-frame.html [ Skip ]
