@@ -4625,6 +4625,9 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         }
 
         frameView.layoutOrVisualViewportChanged();
+    } else if (visibleContentRectUpdateInfo.unobscuredContentRect() != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()) {
+        frameView.setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
+        frameView.layoutOrVisualViewportChanged();
     }
 
     bool isChangingObscuredInsetsInteractively = visibleContentRectUpdateInfo.viewStability().contains(ViewStabilityFlag::ChangingObscuredInsetsInteractively);
