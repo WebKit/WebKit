@@ -939,7 +939,9 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 }
                 auto& apiBuffer = WebGPU::fromAPI(entry.buffer);
                 id<MTLBuffer> buffer = apiBuffer.buffer();
-                auto entrySize = entry.size == WGPU_WHOLE_MAP_SIZE ? buffer.length : entry.size;
+                auto entryOffset = apiBuffer.isDestroyed() ? 0 : entry.offset;
+                auto bufferLengthMinusOffset = buffer.length > entryOffset ? (buffer.length - entryOffset) : 0;
+                auto entrySize = entry.size == WGPU_WHOLE_MAP_SIZE ? bufferLengthMinusOffset : entry.size;
                 if (layoutBinding->hasDynamicOffset && !appendedBufferToDynamicBuffers) {
                     dynamicBuffers.append({ .type = layoutBinding->type, .bindingSize = entrySize, .bufferSize = apiBuffer.currentSize() });
                     appendedBufferToDynamicBuffers = true;
@@ -980,15 +982,14 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                         VALIDATION_ERROR([NSString stringWithFormat:@"Storage buffer size(%llu) is not multiple of 4", entrySize]);
                         return BindGroup::createInvalid(*this);
                     }
-                    if (!entrySize || entrySize > buffer.length || (layoutBinding->minBindingSize && layoutBinding->minBindingSize > entrySize)) {
-                        VALIDATION_ERROR([NSString stringWithFormat:@"entrySize == 0 or entrySize(%llu) > buffer size(%lu) or layoutBinding->minBindingSize(%llu) > entrySize(%llu)", entrySize, static_cast<unsigned long>(buffer.length), layoutBinding->minBindingSize, entrySize]);
+                    if (!entrySize || entrySize + entryOffset > buffer.length || (layoutBinding->minBindingSize && layoutBinding->minBindingSize > entrySize)) {
+                        VALIDATION_ERROR([NSString stringWithFormat:@"entrySize == 0 or entrySize(%llu) + entryOffset(%llu) > buffer size(%lu) or layoutBinding->minBindingSize(%llu) > entrySize(%llu)", entrySize, entryOffset, static_cast<unsigned long>(buffer.length), layoutBinding->minBindingSize, entrySize]);
                         return BindGroup::createInvalid(*this);
                     }
                 }
 
                 if (stage != ShaderStage::Undefined && buffer.length) {
-                    auto entryOffset = std::min<uint32_t>(entry.offset, buffer.length - 1);
-                    [argumentEncoder[stage] setBuffer:buffer offset:(apiBuffer.isDestroyed() ? 0 : entryOffset) atIndex:index];
+                    [argumentEncoder[stage] setBuffer:buffer offset:entryOffset atIndex:index];
                     if (bufferSizeArgumentBufferIndex)
                         *(uint32_t*)[argumentEncoder[stage] constantDataAtIndex:*bufferSizeArgumentBufferIndex] = std::min<uint32_t>(entrySize, buffer.length);
                 }
