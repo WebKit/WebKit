@@ -479,9 +479,8 @@ void ProcessAssertion::acquireSync()
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
 #if USE(EXTENSIONKIT)
     if (m_process && m_capability && m_capability->hasPlatformCapability()) {
-        auto capability = m_capability->platformCapability();
         Locker locker { s_capabilityLock };
-        auto grant = m_process->grantCapability(capability);
+        auto grant = m_process->grantCapability(m_capability->platformCapability(), m_capability->didInvalidateBlock());
         m_grant.setPlatformGrant(WTFMove(grant));
         if (m_grant.isValid()) {
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Successfully granted capability", this);

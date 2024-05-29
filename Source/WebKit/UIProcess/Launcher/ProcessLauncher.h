@@ -69,7 +69,7 @@ public:
 private:
     explicit LaunchGrant(ExtensionProcess&);
 
-    RetainPtr<BEProcessCapabilityGrant> m_grant;
+    ExtensionCapabilityGrant m_grant;
 };
 #endif
 
