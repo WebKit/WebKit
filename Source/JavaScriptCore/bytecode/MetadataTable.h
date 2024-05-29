@@ -129,7 +129,7 @@ public:
 
     RefPtr<UnlinkedMetadataTable> unlinkedMetadata() const { return static_reference_cast<UnlinkedMetadataTable>(linkingData().unlinkedMetadata); }
 
-    bool isDestroyed() const
+    SUPPRESS_ASAN bool isDestroyed() const
     {
         uintptr_t unlinkedMetadataPtr = *bitwise_cast<uintptr_t*>(&linkingData().unlinkedMetadata);
         return !unlinkedMetadataPtr;
