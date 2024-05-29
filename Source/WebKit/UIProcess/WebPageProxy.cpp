@@ -2670,7 +2670,7 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState> mayHaveChange
 void WebPageProxy::viewDidLeaveWindow()
 {
     closeOverlayedViews();
-#if ENABLE(VIDEO_PRESENTATION_MODE) && !PLATFORM(APPLETV) && !PLATFORM(VISION)
+#if ENABLE(VIDEO_PRESENTATION_MODE) && !PLATFORM(APPLETV) && !PLATFORM(VISIONOS)
     // When leaving the current page, close the video fullscreen.
     // FIXME: On tvOS, modally presenting the AVPlayerViewController when entering fullscreen causes
     // the web view to become invisible, resulting in us exiting fullscreen as soon as we entered it.

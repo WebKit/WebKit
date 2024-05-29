@@ -406,7 +406,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     String m_spatialTrackingLabel;
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    bool m_usingLinearMediaPlayer { false };
     RetainPtr<FigVideoTargetRef> m_videoTarget;
 #endif
 };

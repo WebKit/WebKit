@@ -40,7 +40,6 @@
 #import <objc/message.h>
 #import <objc/runtime.h>
 #import <pal/spi/ios/UIKitSPI.h>
-#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -214,8 +213,8 @@ void VideoPresentationInterfaceIOS::doSetup()
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-#if !PLATFORM(WATCHOS)
-    if (![[m_parentView window] _isHostedInAnotherProcess] && !m_window && !PAL::currentUserInterfaceIdiomIsVision()) {
+#if !PLATFORM(WATCHOS) && !ENABLE(LINEAR_MEDIA_PLAYER)
+    if (![[m_parentView window] _isHostedInAnotherProcess] && !m_window) {
         m_window = adoptNS([PAL::allocUIWindowInstance() initWithWindowScene:[[m_parentView window] windowScene]]);
         [m_window setBackgroundColor:clearUIColor()];
         if (!m_viewController)
@@ -230,7 +229,7 @@ void VideoPresentationInterfaceIOS::doSetup()
         [m_window setWindowLevel:textEffectsWindowLevel - 1];
         [m_window makeKeyAndVisible];
     }
-#endif // !PLATFORM(WATCHOS)
+#endif // !PLATFORM(WATCHOS) && !ENABLE(LINEAR_MEDIA_PLAYER)
 
     if (!m_playerLayerView)
         m_playerLayerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);

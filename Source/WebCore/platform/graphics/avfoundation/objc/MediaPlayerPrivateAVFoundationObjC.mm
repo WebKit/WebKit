@@ -4140,8 +4140,6 @@ void MediaPlayerPrivateAVFoundationObjC::isInFullscreenOrPictureInPictureChanged
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     assertIsMainThread();
 
-    if (!m_videoTarget)
-        return;
     if (isInFullscreenOrPictureInPicture)
         [m_videoLayer setPlayer:nil];
     else if (RetainPtr videoTarget = std::exchange(m_videoTarget, nullptr)) {
