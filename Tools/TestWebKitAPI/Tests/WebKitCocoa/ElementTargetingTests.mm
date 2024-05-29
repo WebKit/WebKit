@@ -351,6 +351,12 @@ TEST(ElementTargeting, AdjustVisibilityFromSelectors)
         EXPECT_TRUE([adjustedSelectors containsObject:@".absolute.bottom-right"]);
         EXPECT_TRUE([adjustedSelectors containsObject:@".fixed.container"]);
         EXPECT_TRUE([adjustedSelectors containsObject:@".absolute.bottom-left"]);
+
+        [webView objectByEvaluatingJavaScript:@"[...document.querySelectorAll('.fixed,.absolute')].map(e => e.style.display = 'none')"];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_GT([webView numberOfVisibilityAdjustmentRects], 0U);
+        [webView objectByEvaluatingJavaScript:@"[...document.querySelectorAll('.fixed,.absolute')].map(e => e.style.display = '')"];
+        [webView waitForNextPresentationUpdate];
     }
 
     [webView resetVisibilityAdjustmentsForTargets:nil];

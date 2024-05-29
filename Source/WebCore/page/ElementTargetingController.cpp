@@ -1638,14 +1638,23 @@ uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects() const
 
     Vector<FloatRect> clientRects;
     clientRects.reserveInitialCapacity(m_adjustedElements.computeSize());
+
+    unsigned numberOfParentedEmptyOrNonRenderedElements = 0;
     for (auto& element : m_adjustedElements) {
-        CheckedPtr renderer = element.renderer();
-        if (!renderer)
+        if (!element.isConnected())
             continue;
 
-        auto clientRect = computeClientRect(*renderer);
-        if (clientRect.isEmpty())
+        CheckedPtr renderer = element.renderer();
+        if (!renderer) {
+            numberOfParentedEmptyOrNonRenderedElements++;
             continue;
+        }
+
+        auto clientRect = computeClientRect(*renderer);
+        if (clientRect.isEmpty()) {
+            numberOfParentedEmptyOrNonRenderedElements++;
+            continue;
+        }
 
         clientRects.append(clientRect);
     }
@@ -1667,7 +1676,7 @@ uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects() const
         adjustedRegion.unite(enclosingRect);
     }
 
-    return numberOfRects;
+    return numberOfParentedEmptyOrNonRenderedElements + numberOfRects;
 }
 
 void ElementTargetingController::cleanUpAdjustmentClientRects()
