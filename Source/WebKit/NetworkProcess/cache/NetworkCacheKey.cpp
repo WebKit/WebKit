@@ -93,7 +93,7 @@ static void hashString(SHA1& sha1, const String& string)
         return;
     }
 
-    sha1.addBytes(string.utf8().spanIncludingNullTerminator());
+    sha1.addBytes(string.utf8());
 }
 
 Key::HashType Key::computeHash(const Salt& salt) const

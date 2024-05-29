@@ -73,7 +73,7 @@ public:
     std::string toStdString() const { return m_buffer ? std::string(m_buffer->data()) : std::string(); }
 
     std::span<const uint8_t> span() const;
-    std::span<const uint8_t> spanIncludingNullTerminator() const;
+    std::span<const char> spanIncludingNullTerminator() const;
 
     WTF_EXPORT_PRIVATE char* mutableData();
     size_t length() const;
@@ -129,10 +129,10 @@ inline std::span<const uint8_t> CString::span() const
     return { };
 }
 
-inline std::span<const uint8_t> CString::spanIncludingNullTerminator() const
+inline std::span<const char> CString::spanIncludingNullTerminator() const
 {
     if (m_buffer)
-        return { byteCast<uint8_t>(m_buffer->data()), m_buffer->length() + 1 };
+        return { m_buffer->data(), m_buffer->length() + 1 };
     return { };
 }
 

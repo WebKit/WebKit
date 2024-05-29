@@ -161,7 +161,7 @@ static void addStringToSHA1(SHA1& sha1, const String& string)
         return;
     }
 
-    sha1.addBytes(string.utf8().spanIncludingNullTerminator());
+    sha1.addBytes(string.utf8());
 }
 
 String RealtimeMediaSourceCenter::hashStringWithSalt(const String& id, const String& hashSalt)
