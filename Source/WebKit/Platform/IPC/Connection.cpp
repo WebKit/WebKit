@@ -69,6 +69,9 @@ constexpr Seconds largeOutgoingMessageQueueTimeThreshold { 30_s };
 
 std::atomic<unsigned> UnboundedSynchronousIPCScope::unboundedSynchronousIPCCount = 0;
 
+enum class MessageIdentifierType { };
+using MessageIdentifier = AtomicObjectIdentifier<MessageIdentifierType>;
+
 Lock Connection::s_connectionMapLock;
 
 struct Connection::WaitForMessageState {
@@ -105,14 +108,20 @@ public:
     // waiting for a reply to a synchronous message.
     bool processIncomingMessage(Connection& connectionForLockCheck, UniqueRef<Decoder>&) WTF_REQUIRES_LOCK(connectionForLockCheck.m_incomingMessagesLock);
 
-    // Dispatch pending sync messages.
+    // Dispatch pending messages that should be dispatched while waiting for a sync reply.
     void dispatchMessages(Function<void(MessageName, uint64_t)>&& willDispatchMessage = { });
+
+    // Dispatch pending messages that should be dispatched while waiting for a sync reply,
+    // up until the message with the provided identifier.
+    void dispatchMessagesUntil(MessageIdentifier lastMessageToDispatch);
 
     // Add matching pending messages to the provided MessageReceiveQueue.
     void enqueueMatchingMessages(Connection&, MessageReceiveQueue&, const ReceiverMatcher&);
 
     // Dispatch pending sync messages for given connection.
     void dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection(Connection&);
+
+    std::optional<MessageIdentifier> identifierOfLastMessageToDispatchWhileWaitingForSyncReply();
 
 private:
     explicit SyncMessageState(SerialFunctionDispatcher& dispatcher)
@@ -137,6 +146,7 @@ private:
     struct ConnectionAndIncomingMessage {
         Ref<Connection> connection;
         UniqueRef<Decoder> message;
+        MessageIdentifier identifier { MessageIdentifier::generate() };
 
         void dispatch()
         {
@@ -240,7 +250,7 @@ void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, u
             m_messagesBeingDispatched = std::exchange(m_messagesToDispatchWhileWaitingForSyncReply, { });
         else {
             while (!m_messagesToDispatchWhileWaitingForSyncReply.isEmpty())
-                m_messagesBeingDispatched.append(m_messagesToDispatchWhileWaitingForSyncReply.takeLast());
+                m_messagesBeingDispatched.append(m_messagesToDispatchWhileWaitingForSyncReply.takeFirst());
         }
     }
 
@@ -250,6 +260,33 @@ void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, u
             willDispatchMessage(messageToDispatch.message->messageName(), messageToDispatch.message->destinationID());
         messageToDispatch.dispatch();
     }
+}
+
+void Connection::SyncMessageState::dispatchMessagesUntil(MessageIdentifier lastMessageToDispatch)
+{
+    assertIsCurrent(m_dispatcher);
+    {
+        Locker locker { m_lock };
+        if (!m_messagesToDispatchWhileWaitingForSyncReply.containsIf([&](auto& message) { return message.identifier == lastMessageToDispatch; }))
+            return; // This message has already been dispatched.
+
+        while (!m_messagesToDispatchWhileWaitingForSyncReply.isEmpty()) {
+            m_messagesBeingDispatched.append(m_messagesToDispatchWhileWaitingForSyncReply.takeFirst());
+            if (m_messagesBeingDispatched.last().identifier == lastMessageToDispatch)
+                break;
+        }
+    }
+
+    while (!m_messagesBeingDispatched.isEmpty())
+        m_messagesBeingDispatched.takeFirst().dispatch();
+}
+
+std::optional<MessageIdentifier> Connection::SyncMessageState::identifierOfLastMessageToDispatchWhileWaitingForSyncReply()
+{
+    Locker locker { m_lock };
+    if (m_messagesToDispatchWhileWaitingForSyncReply.isEmpty())
+        return std::nullopt;
+    return m_messagesToDispatchWhileWaitingForSyncReply.last().identifier;
 }
 
 void Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection(Connection& connection)
@@ -281,6 +318,10 @@ struct Connection::PendingSyncReply {
     // The reply decoder, will be null if there was an error processing the sync
     // message on the other side.
     std::unique_ptr<Decoder> replyDecoder;
+
+    // To make sure we maintain message ordering, we keep track of the last message (that returns true for shouldDispatchMessageWhenWaitingForSyncReply())
+    // and that was received *before* the sync reply. This is to make sure that we dispatch messages up until this one, before dispatching the sync reply.
+    std::optional<MessageIdentifier> identifierOfLastMessageToDispatchBeforeSyncReply;
 
     PendingSyncReply() = default;
 
@@ -822,8 +863,18 @@ auto Connection::waitForSyncReply(SyncRequestID syncRequestID, MessageName messa
             ASSERT_UNUSED(syncRequestID, pendingSyncReply.syncRequestID == syncRequestID);
 
             // We found the sync reply.
-            if (pendingSyncReply.replyDecoder)
-                return makeUniqueRefFromNonNullUniquePtr(WTFMove(pendingSyncReply.replyDecoder));
+            if (pendingSyncReply.replyDecoder) {
+                auto replyDecoder = std::exchange(pendingSyncReply.replyDecoder, nullptr);
+                if (auto identifierOfLastMessageToDispatchBeforeSyncReply = pendingSyncReply.identifierOfLastMessageToDispatchBeforeSyncReply) {
+                    locker.unlockEarly();
+
+                    // Dispatch messages (that return true for shouldDispatchMessageWhenWaitingForSyncReply()) that
+                    // were received before this sync reply, in order to maintain ordering.
+                    m_syncState->dispatchMessagesUntil(*identifierOfLastMessageToDispatchBeforeSyncReply);
+                }
+
+                return { makeUniqueRefFromNonNullUniquePtr(WTFMove(replyDecoder)) };
+            }
 
             // The connection was closed.
             if (!m_shouldWaitForSyncReplies)
@@ -870,6 +921,11 @@ void Connection::processIncomingSyncReply(UniqueRef<Decoder> decoder)
             ASSERT(!pendingSyncReply.replyDecoder);
 
             pendingSyncReply.replyDecoder = decoder.moveToUniquePtr();
+
+            // Keep track of the last message (that returns true for shouldDispatchMessageWhenWaitingForSyncReply())
+            // we've received before this sync reply. This is to make sure that we dispatch all messages up to this
+            // one, before the sync reply, to maintain ordering.
+            pendingSyncReply.identifierOfLastMessageToDispatchBeforeSyncReply = m_syncState->identifierOfLastMessageToDispatchWhileWaitingForSyncReply();
 
             // We got a reply to the last send message, wake up the client run loop so it can be processed.
             if (i == m_pendingSyncReplies.size()) {
