@@ -68,14 +68,6 @@ mappedAtCreation: true,
 }
 );
 
-try {
-await adapter0.requestAdapterInfo(
-[
-`a`
-]
-);
-} catch {}
-
 let pipelineLayout0 = device0.createPipelineLayout(
 {
 label: 'a',
@@ -182,12 +174,7 @@ label: 'a',
 try {
 await device0.queue.onSubmittedWorkDone();
 } catch {}
-let promise3 = adapter1.requestAdapterInfo(
-[
-`a`,
-`a`
-]
-);
+
 try {
 buffer0.unmap();
 } catch {}
@@ -202,13 +189,7 @@ try {
 await device0.queue.onSubmittedWorkDone();
 } catch {}
 let canvas1 = document.createElement('canvas');
-try {
-await adapter1.requestAdapterInfo(
-[
-`a`
-]
-);
-} catch {}
+
 try {
 buffer0.unmap();
 } catch {}
@@ -308,9 +289,7 @@ maxColorAttachmentBytesPerSample: 32 + Math.floor((adapter0.limits.maxColorAttac
 );
 
 let imageData0 = new ImageData(56, 248);
-try {
-await adapter0.requestAdapterInfo();
-} catch {}
+
 let gpuCanvasContext0 = canvas1.getContext('webgpu');
 let adapter2 = await navigator.gpu.requestAdapter();
 let querySet1 = device2.createQuerySet(
@@ -548,13 +527,7 @@ commandEncoder1.insertDebugMarker(
 try {
 await device2.popErrorScope();
 } catch {}
-try {
-await adapter2.requestAdapterInfo(
-[
-`a`
-]
-);
-} catch {}
+
 let adapter5 = await promise4;
 
 try {
