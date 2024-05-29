@@ -77,7 +77,7 @@ public:
 #endif
 
     // Only public for the callbacks
-    size_t dataProviderGetBytesAtPosition(void* buffer, off_t position, size_t count);
+    size_t dataProviderGetBytesAtPosition(std::span<uint8_t> buffer, off_t position);
     void dataProviderGetByteRanges(CFMutableArrayRef buffers, const CFRange* ranges, size_t count);
 
 private:
@@ -90,11 +90,11 @@ private:
 
     void appendAccumulatedDataToDataBuffer(ByteRangeRequest&);
 
-    std::span<const uint8_t> dataPtrForRange(uint64_t position, size_t count, CheckValidRanges) const;
+    std::span<const uint8_t> dataSpanForRange(uint64_t position, size_t count, CheckValidRanges) const;
     uint64_t availableDataSize() const;
 
     void getResourceBytesAtPosition(size_t count, off_t position, DataRequestCompletionHandler&&);
-    size_t getResourceBytesAtPositionAfterLoadingComplete(void* buffer, off_t position, size_t count);
+    size_t getResourceBytesAtPositionAfterLoadingComplete(std::span<uint8_t> buffer, off_t position);
 
     void unconditionalCompleteOutstandingRangeRequests();
 

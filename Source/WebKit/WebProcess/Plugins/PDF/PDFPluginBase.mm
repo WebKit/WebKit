@@ -66,6 +66,8 @@
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/VoidCallback.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
@@ -249,7 +251,7 @@ bool PDFPluginBase::haveStreamedDataForRange(uint64_t offset, size_t count) cons
     return m_streamedBytes >= offset + count;
 }
 
-size_t PDFPluginBase::copyDataAtPosition(void* buffer, uint64_t sourcePosition, size_t count) const
+size_t PDFPluginBase::copyDataAtPosition(std::span<uint8_t> buffer, uint64_t sourcePosition) const
 {
     ASSERT(isMainRunLoop());
 
@@ -260,14 +262,14 @@ size_t PDFPluginBase::copyDataAtPosition(void* buffer, uint64_t sourcePosition, 
 
     Locker locker { m_streamedDataLock };
 
-    if (!haveStreamedDataForRange(sourcePosition, count))
+    if (!haveStreamedDataForRange(sourcePosition, buffer.size()))
         return 0;
 
-    memcpy(buffer, CFDataGetBytePtr(m_data.get()) + sourcePosition, count);
-    return count;
+    memcpySpan(buffer, span(m_data.get()).subspan(sourcePosition, buffer.size()));
+    return buffer.size();
 }
 
-std::span<const uint8_t> PDFPluginBase::dataPtrForRange(uint64_t sourcePosition, size_t count, CheckValidRanges checkValidRanges) const
+std::span<const uint8_t> PDFPluginBase::dataSpanForRange(uint64_t sourcePosition, size_t count, CheckValidRanges checkValidRanges) const
 {
     Locker locker { m_streamedDataLock };
 
