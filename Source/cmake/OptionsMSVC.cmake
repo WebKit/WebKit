@@ -198,10 +198,6 @@ if (COMPILER_IS_CLANG_CL)
     find_library(CLANG_BUILTINS_LIBRARY clang_rt.builtins-x86_64 PATHS ${CLANG_CL_DIR} REQUIRED NO_DEFAULT_PATH)
     string(APPEND CMAKE_SHARED_LINKER_FLAGS " \"${CLANG_BUILTINS_LIBRARY}\"")
     string(APPEND CMAKE_EXE_LINKER_FLAGS " \"${CLANG_BUILTINS_LIBRARY}\"")
-
-    # FIXME: remove these lines after fixing UUID serialization
-    set(HAVE_INT128_T OFF)
-    list(REMOVE_ITEM _WEBKIT_CONFIG_FILE_VARIABLES HAVE_INT128_T)
 endif ()
 
 # Enable the new lambda processor for better C++ conformance

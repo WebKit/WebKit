@@ -1250,8 +1250,13 @@ constexpr Int128Impl operator>>(Int128Impl lhs, int amount) {
 }
 
 #if HAVE(INT128_T)
+#if COMPILER(MSVC) // Workaround for a clang-cl bug <https://webkit.org/b/274765>
+typedef __uint128_t UInt128 __attribute__((aligned(16)));
+typedef __int128_t Int128 __attribute__((aligned(16)));
+#else
 using UInt128 = __uint128_t;
 using Int128 = __int128_t;
+#endif
 #else
 using UInt128 = UInt128Impl;
 using Int128 = Int128Impl;
