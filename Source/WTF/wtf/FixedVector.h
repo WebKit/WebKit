@@ -144,11 +144,11 @@ public:
     const_reverse_iterator rbegin() const { return m_storage ? m_storage->rbegin() : const_reverse_iterator(nullptr); }
     const_reverse_iterator rend() const { return m_storage ? m_storage->rend() : const_reverse_iterator(nullptr); }
 
-    T& at(size_t i) { RELEASE_ASSERT(i < m_storage->size()); return m_storage->at(i); }
-    const T& at(size_t i) const { RELEASE_ASSERT(i < m_storage->size()); return m_storage->at(i); }
+    T& at(size_t i) { return m_storage->at(i); }
+    const T& at(size_t i) const { return m_storage->at(i); }
 
-    T& operator[](size_t i) { RELEASE_ASSERT(i < m_storage->size()); return m_storage->at(i); }
-    const T& operator[](size_t i) const { RELEASE_ASSERT(i < m_storage->size()); return m_storage->at(i); }
+    T& operator[](size_t i) { return m_storage->at(i); }
+    const T& operator[](size_t i) const { return m_storage->at(i); }
 
     T& first() { return (*this)[0]; }
     const T& first() const { return (*this)[0]; }

@@ -143,13 +143,13 @@ public:
 
     reference at(unsigned i)
     {
-        ASSERT(i < size());
+        RELEASE_ASSERT(i < size());
         return begin()[i];
     }
 
     const_reference at(unsigned i) const
     {
-        ASSERT(i < size());
+        RELEASE_ASSERT(i < size());
         return begin()[i];
     }
 
