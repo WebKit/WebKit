@@ -1,0 +1,1010 @@
+
+PASS :read_layout:case="vec2u_align8";aspace="storage"
+PASS :read_layout:case="vec2u_align8";aspace="uniform"
+PASS :read_layout:case="vec2u_align8";aspace="workgroup"
+PASS :read_layout:case="vec2u_align8";aspace="function"
+PASS :read_layout:case="vec2u_align8";aspace="private"
+PASS :read_layout:case="vec3u_align16";aspace="storage"
+PASS :read_layout:case="vec3u_align16";aspace="uniform"
+PASS :read_layout:case="vec3u_align16";aspace="workgroup"
+PASS :read_layout:case="vec3u_align16";aspace="function"
+PASS :read_layout:case="vec3u_align16";aspace="private"
+PASS :read_layout:case="vec4u_align16";aspace="storage"
+PASS :read_layout:case="vec4u_align16";aspace="uniform"
+PASS :read_layout:case="vec4u_align16";aspace="workgroup"
+PASS :read_layout:case="vec4u_align16";aspace="function"
+PASS :read_layout:case="vec4u_align16";aspace="private"
+PASS :read_layout:case="struct_align32";aspace="storage"
+PASS :read_layout:case="struct_align32";aspace="uniform"
+PASS :read_layout:case="struct_align32";aspace="workgroup"
+PASS :read_layout:case="struct_align32";aspace="function"
+PASS :read_layout:case="struct_align32";aspace="private"
+PASS :read_layout:case="vec2h_align4";aspace="storage"
+PASS :read_layout:case="vec2h_align4";aspace="uniform"
+PASS :read_layout:case="vec2h_align4";aspace="workgroup"
+PASS :read_layout:case="vec2h_align4";aspace="function"
+PASS :read_layout:case="vec2h_align4";aspace="private"
+PASS :read_layout:case="vec3h_align8";aspace="storage"
+PASS :read_layout:case="vec3h_align8";aspace="uniform"
+PASS :read_layout:case="vec3h_align8";aspace="workgroup"
+PASS :read_layout:case="vec3h_align8";aspace="function"
+PASS :read_layout:case="vec3h_align8";aspace="private"
+PASS :read_layout:case="vec4h_align8";aspace="storage"
+PASS :read_layout:case="vec4h_align8";aspace="uniform"
+PASS :read_layout:case="vec4h_align8";aspace="workgroup"
+PASS :read_layout:case="vec4h_align8";aspace="function"
+PASS :read_layout:case="vec4h_align8";aspace="private"
+PASS :read_layout:case="vec2f_align8";aspace="storage"
+PASS :read_layout:case="vec2f_align8";aspace="uniform"
+PASS :read_layout:case="vec2f_align8";aspace="workgroup"
+PASS :read_layout:case="vec2f_align8";aspace="function"
+PASS :read_layout:case="vec2f_align8";aspace="private"
+PASS :read_layout:case="vec3f_align16";aspace="storage"
+PASS :read_layout:case="vec3f_align16";aspace="uniform"
+PASS :read_layout:case="vec3f_align16";aspace="workgroup"
+PASS :read_layout:case="vec3f_align16";aspace="function"
+PASS :read_layout:case="vec3f_align16";aspace="private"
+PASS :read_layout:case="vec4f_align16";aspace="storage"
+PASS :read_layout:case="vec4f_align16";aspace="uniform"
+PASS :read_layout:case="vec4f_align16";aspace="workgroup"
+PASS :read_layout:case="vec4f_align16";aspace="function"
+PASS :read_layout:case="vec4f_align16";aspace="private"
+PASS :read_layout:case="vec3i_size12";aspace="storage"
+PASS :read_layout:case="vec3i_size12";aspace="uniform"
+PASS :read_layout:case="vec3i_size12";aspace="workgroup"
+PASS :read_layout:case="vec3i_size12";aspace="function"
+PASS :read_layout:case="vec3i_size12";aspace="private"
+PASS :read_layout:case="vec3h_size6";aspace="storage"
+PASS :read_layout:case="vec3h_size6";aspace="uniform"
+PASS :read_layout:case="vec3h_size6";aspace="workgroup"
+PASS :read_layout:case="vec3h_size6";aspace="function"
+PASS :read_layout:case="vec3h_size6";aspace="private"
+PASS :read_layout:case="size80";aspace="storage"
+PASS :read_layout:case="size80";aspace="uniform"
+PASS :read_layout:case="size80";aspace="workgroup"
+PASS :read_layout:case="size80";aspace="function"
+PASS :read_layout:case="size80";aspace="private"
+PASS :read_layout:case="atomic_align4";aspace="storage"
+PASS :read_layout:case="atomic_align4";aspace="uniform"
+PASS :read_layout:case="atomic_align4";aspace="workgroup"
+PASS :read_layout:case="atomic_align4";aspace="function"
+PASS :read_layout:case="atomic_align4";aspace="private"
+PASS :read_layout:case="atomic_size4";aspace="storage"
+PASS :read_layout:case="atomic_size4";aspace="uniform"
+PASS :read_layout:case="atomic_size4";aspace="workgroup"
+PASS :read_layout:case="atomic_size4";aspace="function"
+PASS :read_layout:case="atomic_size4";aspace="private"
+PASS :read_layout:case="mat2x2f_align8";aspace="storage"
+PASS :read_layout:case="mat2x2f_align8";aspace="uniform"
+PASS :read_layout:case="mat2x2f_align8";aspace="workgroup"
+PASS :read_layout:case="mat2x2f_align8";aspace="function"
+PASS :read_layout:case="mat2x2f_align8";aspace="private"
+PASS :read_layout:case="mat3x2f_align8";aspace="storage"
+PASS :read_layout:case="mat3x2f_align8";aspace="uniform"
+PASS :read_layout:case="mat3x2f_align8";aspace="workgroup"
+PASS :read_layout:case="mat3x2f_align8";aspace="function"
+PASS :read_layout:case="mat3x2f_align8";aspace="private"
+PASS :read_layout:case="mat4x2f_align8";aspace="storage"
+PASS :read_layout:case="mat4x2f_align8";aspace="uniform"
+PASS :read_layout:case="mat4x2f_align8";aspace="workgroup"
+PASS :read_layout:case="mat4x2f_align8";aspace="function"
+PASS :read_layout:case="mat4x2f_align8";aspace="private"
+PASS :read_layout:case="mat2x3f_align16";aspace="storage"
+PASS :read_layout:case="mat2x3f_align16";aspace="uniform"
+PASS :read_layout:case="mat2x3f_align16";aspace="workgroup"
+PASS :read_layout:case="mat2x3f_align16";aspace="function"
+PASS :read_layout:case="mat2x3f_align16";aspace="private"
+PASS :read_layout:case="mat3x3f_align16";aspace="storage"
+PASS :read_layout:case="mat3x3f_align16";aspace="uniform"
+PASS :read_layout:case="mat3x3f_align16";aspace="workgroup"
+PASS :read_layout:case="mat3x3f_align16";aspace="function"
+PASS :read_layout:case="mat3x3f_align16";aspace="private"
+PASS :read_layout:case="mat4x3f_align16";aspace="storage"
+PASS :read_layout:case="mat4x3f_align16";aspace="uniform"
+PASS :read_layout:case="mat4x3f_align16";aspace="workgroup"
+PASS :read_layout:case="mat4x3f_align16";aspace="function"
+PASS :read_layout:case="mat4x3f_align16";aspace="private"
+PASS :read_layout:case="mat2x4f_align16";aspace="storage"
+PASS :read_layout:case="mat2x4f_align16";aspace="uniform"
+PASS :read_layout:case="mat2x4f_align16";aspace="workgroup"
+PASS :read_layout:case="mat2x4f_align16";aspace="function"
+PASS :read_layout:case="mat2x4f_align16";aspace="private"
+PASS :read_layout:case="mat3x4f_align16";aspace="storage"
+PASS :read_layout:case="mat3x4f_align16";aspace="uniform"
+PASS :read_layout:case="mat3x4f_align16";aspace="workgroup"
+PASS :read_layout:case="mat3x4f_align16";aspace="function"
+PASS :read_layout:case="mat3x4f_align16";aspace="private"
+PASS :read_layout:case="mat4x4f_align16";aspace="storage"
+PASS :read_layout:case="mat4x4f_align16";aspace="uniform"
+PASS :read_layout:case="mat4x4f_align16";aspace="workgroup"
+PASS :read_layout:case="mat4x4f_align16";aspace="function"
+PASS :read_layout:case="mat4x4f_align16";aspace="private"
+PASS :read_layout:case="mat2x2h_align4";aspace="storage"
+PASS :read_layout:case="mat2x2h_align4";aspace="uniform"
+PASS :read_layout:case="mat2x2h_align4";aspace="workgroup"
+PASS :read_layout:case="mat2x2h_align4";aspace="function"
+PASS :read_layout:case="mat2x2h_align4";aspace="private"
+PASS :read_layout:case="mat3x2h_align4";aspace="storage"
+PASS :read_layout:case="mat3x2h_align4";aspace="uniform"
+PASS :read_layout:case="mat3x2h_align4";aspace="workgroup"
+PASS :read_layout:case="mat3x2h_align4";aspace="function"
+PASS :read_layout:case="mat3x2h_align4";aspace="private"
+PASS :read_layout:case="mat4x2h_align4";aspace="storage"
+PASS :read_layout:case="mat4x2h_align4";aspace="uniform"
+PASS :read_layout:case="mat4x2h_align4";aspace="workgroup"
+PASS :read_layout:case="mat4x2h_align4";aspace="function"
+PASS :read_layout:case="mat4x2h_align4";aspace="private"
+PASS :read_layout:case="mat2x3h_align8";aspace="storage"
+PASS :read_layout:case="mat2x3h_align8";aspace="uniform"
+PASS :read_layout:case="mat2x3h_align8";aspace="workgroup"
+PASS :read_layout:case="mat2x3h_align8";aspace="function"
+PASS :read_layout:case="mat2x3h_align8";aspace="private"
+PASS :read_layout:case="mat3x3h_align8";aspace="storage"
+PASS :read_layout:case="mat3x3h_align8";aspace="uniform"
+PASS :read_layout:case="mat3x3h_align8";aspace="workgroup"
+PASS :read_layout:case="mat3x3h_align8";aspace="function"
+PASS :read_layout:case="mat3x3h_align8";aspace="private"
+PASS :read_layout:case="mat4x3h_align8";aspace="storage"
+PASS :read_layout:case="mat4x3h_align8";aspace="uniform"
+PASS :read_layout:case="mat4x3h_align8";aspace="workgroup"
+PASS :read_layout:case="mat4x3h_align8";aspace="function"
+PASS :read_layout:case="mat4x3h_align8";aspace="private"
+PASS :read_layout:case="mat2x4h_align8";aspace="storage"
+PASS :read_layout:case="mat2x4h_align8";aspace="uniform"
+PASS :read_layout:case="mat2x4h_align8";aspace="workgroup"
+PASS :read_layout:case="mat2x4h_align8";aspace="function"
+PASS :read_layout:case="mat2x4h_align8";aspace="private"
+PASS :read_layout:case="mat3x4h_align8";aspace="storage"
+PASS :read_layout:case="mat3x4h_align8";aspace="uniform"
+PASS :read_layout:case="mat3x4h_align8";aspace="workgroup"
+PASS :read_layout:case="mat3x4h_align8";aspace="function"
+PASS :read_layout:case="mat3x4h_align8";aspace="private"
+PASS :read_layout:case="mat4x4h_align8";aspace="storage"
+PASS :read_layout:case="mat4x4h_align8";aspace="uniform"
+PASS :read_layout:case="mat4x4h_align8";aspace="workgroup"
+PASS :read_layout:case="mat4x4h_align8";aspace="function"
+PASS :read_layout:case="mat4x4h_align8";aspace="private"
+PASS :read_layout:case="mat2x2f_size";aspace="storage"
+PASS :read_layout:case="mat2x2f_size";aspace="uniform"
+PASS :read_layout:case="mat2x2f_size";aspace="workgroup"
+PASS :read_layout:case="mat2x2f_size";aspace="function"
+PASS :read_layout:case="mat2x2f_size";aspace="private"
+PASS :read_layout:case="mat3x2f_size";aspace="storage"
+PASS :read_layout:case="mat3x2f_size";aspace="uniform"
+PASS :read_layout:case="mat3x2f_size";aspace="workgroup"
+PASS :read_layout:case="mat3x2f_size";aspace="function"
+PASS :read_layout:case="mat3x2f_size";aspace="private"
+PASS :read_layout:case="mat4x2f_size";aspace="storage"
+PASS :read_layout:case="mat4x2f_size";aspace="uniform"
+PASS :read_layout:case="mat4x2f_size";aspace="workgroup"
+PASS :read_layout:case="mat4x2f_size";aspace="function"
+PASS :read_layout:case="mat4x2f_size";aspace="private"
+PASS :read_layout:case="mat2x3f_size";aspace="storage"
+PASS :read_layout:case="mat2x3f_size";aspace="uniform"
+PASS :read_layout:case="mat2x3f_size";aspace="workgroup"
+PASS :read_layout:case="mat2x3f_size";aspace="function"
+PASS :read_layout:case="mat2x3f_size";aspace="private"
+PASS :read_layout:case="mat3x3f_size";aspace="storage"
+PASS :read_layout:case="mat3x3f_size";aspace="uniform"
+PASS :read_layout:case="mat3x3f_size";aspace="workgroup"
+PASS :read_layout:case="mat3x3f_size";aspace="function"
+PASS :read_layout:case="mat3x3f_size";aspace="private"
+PASS :read_layout:case="mat4x3f_size";aspace="storage"
+PASS :read_layout:case="mat4x3f_size";aspace="uniform"
+PASS :read_layout:case="mat4x3f_size";aspace="workgroup"
+PASS :read_layout:case="mat4x3f_size";aspace="function"
+PASS :read_layout:case="mat4x3f_size";aspace="private"
+PASS :read_layout:case="mat2x4f_size";aspace="storage"
+PASS :read_layout:case="mat2x4f_size";aspace="uniform"
+PASS :read_layout:case="mat2x4f_size";aspace="workgroup"
+PASS :read_layout:case="mat2x4f_size";aspace="function"
+PASS :read_layout:case="mat2x4f_size";aspace="private"
+PASS :read_layout:case="mat3x4f_size";aspace="storage"
+PASS :read_layout:case="mat3x4f_size";aspace="uniform"
+PASS :read_layout:case="mat3x4f_size";aspace="workgroup"
+PASS :read_layout:case="mat3x4f_size";aspace="function"
+PASS :read_layout:case="mat3x4f_size";aspace="private"
+PASS :read_layout:case="mat4x4f_size";aspace="storage"
+PASS :read_layout:case="mat4x4f_size";aspace="uniform"
+PASS :read_layout:case="mat4x4f_size";aspace="workgroup"
+PASS :read_layout:case="mat4x4f_size";aspace="function"
+PASS :read_layout:case="mat4x4f_size";aspace="private"
+PASS :read_layout:case="mat2x2h_size";aspace="storage"
+PASS :read_layout:case="mat2x2h_size";aspace="uniform"
+PASS :read_layout:case="mat2x2h_size";aspace="workgroup"
+PASS :read_layout:case="mat2x2h_size";aspace="function"
+PASS :read_layout:case="mat2x2h_size";aspace="private"
+PASS :read_layout:case="mat3x2h_size";aspace="storage"
+PASS :read_layout:case="mat3x2h_size";aspace="uniform"
+PASS :read_layout:case="mat3x2h_size";aspace="workgroup"
+PASS :read_layout:case="mat3x2h_size";aspace="function"
+PASS :read_layout:case="mat3x2h_size";aspace="private"
+PASS :read_layout:case="mat4x2h_size";aspace="storage"
+PASS :read_layout:case="mat4x2h_size";aspace="uniform"
+PASS :read_layout:case="mat4x2h_size";aspace="workgroup"
+PASS :read_layout:case="mat4x2h_size";aspace="function"
+PASS :read_layout:case="mat4x2h_size";aspace="private"
+PASS :read_layout:case="mat2x3h_size";aspace="storage"
+PASS :read_layout:case="mat2x3h_size";aspace="uniform"
+PASS :read_layout:case="mat2x3h_size";aspace="workgroup"
+PASS :read_layout:case="mat2x3h_size";aspace="function"
+PASS :read_layout:case="mat2x3h_size";aspace="private"
+PASS :read_layout:case="mat3x3h_size";aspace="storage"
+PASS :read_layout:case="mat3x3h_size";aspace="uniform"
+PASS :read_layout:case="mat3x3h_size";aspace="workgroup"
+PASS :read_layout:case="mat3x3h_size";aspace="function"
+PASS :read_layout:case="mat3x3h_size";aspace="private"
+PASS :read_layout:case="mat4x3h_size";aspace="storage"
+PASS :read_layout:case="mat4x3h_size";aspace="uniform"
+PASS :read_layout:case="mat4x3h_size";aspace="workgroup"
+PASS :read_layout:case="mat4x3h_size";aspace="function"
+PASS :read_layout:case="mat4x3h_size";aspace="private"
+PASS :read_layout:case="mat2x4h_size";aspace="storage"
+PASS :read_layout:case="mat2x4h_size";aspace="uniform"
+PASS :read_layout:case="mat2x4h_size";aspace="workgroup"
+PASS :read_layout:case="mat2x4h_size";aspace="function"
+PASS :read_layout:case="mat2x4h_size";aspace="private"
+PASS :read_layout:case="mat3x4h_size";aspace="storage"
+PASS :read_layout:case="mat3x4h_size";aspace="uniform"
+PASS :read_layout:case="mat3x4h_size";aspace="workgroup"
+PASS :read_layout:case="mat3x4h_size";aspace="function"
+PASS :read_layout:case="mat3x4h_size";aspace="private"
+PASS :read_layout:case="mat4x4h_size";aspace="storage"
+PASS :read_layout:case="mat4x4h_size";aspace="uniform"
+PASS :read_layout:case="mat4x4h_size";aspace="workgroup"
+PASS :read_layout:case="mat4x4h_size";aspace="function"
+PASS :read_layout:case="mat4x4h_size";aspace="private"
+PASS :read_layout:case="struct_align_vec2i";aspace="storage"
+PASS :read_layout:case="struct_align_vec2i";aspace="uniform"
+PASS :read_layout:case="struct_align_vec2i";aspace="workgroup"
+PASS :read_layout:case="struct_align_vec2i";aspace="function"
+PASS :read_layout:case="struct_align_vec2i";aspace="private"
+PASS :read_layout:case="struct_align_vec3i";aspace="storage"
+PASS :read_layout:case="struct_align_vec3i";aspace="uniform"
+PASS :read_layout:case="struct_align_vec3i";aspace="workgroup"
+PASS :read_layout:case="struct_align_vec3i";aspace="function"
+PASS :read_layout:case="struct_align_vec3i";aspace="private"
+PASS :read_layout:case="struct_align_vec4i";aspace="storage"
+PASS :read_layout:case="struct_align_vec4i";aspace="uniform"
+PASS :read_layout:case="struct_align_vec4i";aspace="workgroup"
+PASS :read_layout:case="struct_align_vec4i";aspace="function"
+PASS :read_layout:case="struct_align_vec4i";aspace="private"
+PASS :read_layout:case="struct_align_vec2h";aspace="storage"
+PASS :read_layout:case="struct_align_vec2h";aspace="uniform"
+PASS :read_layout:case="struct_align_vec2h";aspace="workgroup"
+PASS :read_layout:case="struct_align_vec2h";aspace="function"
+PASS :read_layout:case="struct_align_vec2h";aspace="private"
+PASS :read_layout:case="struct_align_vec3h";aspace="storage"
+PASS :read_layout:case="struct_align_vec3h";aspace="uniform"
+PASS :read_layout:case="struct_align_vec3h";aspace="workgroup"
+PASS :read_layout:case="struct_align_vec3h";aspace="function"
+PASS :read_layout:case="struct_align_vec3h";aspace="private"
+PASS :read_layout:case="struct_align_vec4h";aspace="storage"
+PASS :read_layout:case="struct_align_vec4h";aspace="uniform"
+PASS :read_layout:case="struct_align_vec4h";aspace="workgroup"
+PASS :read_layout:case="struct_align_vec4h";aspace="function"
+PASS :read_layout:case="struct_align_vec4h";aspace="private"
+PASS :read_layout:case="struct_size_roundup";aspace="storage"
+PASS :read_layout:case="struct_size_roundup";aspace="uniform"
+PASS :read_layout:case="struct_size_roundup";aspace="workgroup"
+PASS :read_layout:case="struct_size_roundup";aspace="function"
+PASS :read_layout:case="struct_size_roundup";aspace="private"
+PASS :read_layout:case="struct_inner_size";aspace="storage"
+PASS :read_layout:case="struct_inner_size";aspace="uniform"
+PASS :read_layout:case="struct_inner_size";aspace="workgroup"
+PASS :read_layout:case="struct_inner_size";aspace="function"
+PASS :read_layout:case="struct_inner_size";aspace="private"
+PASS :read_layout:case="struct_inner_align";aspace="storage"
+PASS :read_layout:case="struct_inner_align";aspace="uniform"
+PASS :read_layout:case="struct_inner_align";aspace="workgroup"
+PASS :read_layout:case="struct_inner_align";aspace="function"
+PASS :read_layout:case="struct_inner_align";aspace="private"
+PASS :read_layout:case="struct_inner_size_and_align";aspace="storage"
+PASS :read_layout:case="struct_inner_size_and_align";aspace="uniform"
+PASS :read_layout:case="struct_inner_size_and_align";aspace="workgroup"
+PASS :read_layout:case="struct_inner_size_and_align";aspace="function"
+PASS :read_layout:case="struct_inner_size_and_align";aspace="private"
+PASS :read_layout:case="struct_override_size";aspace="storage"
+PASS :read_layout:case="struct_override_size";aspace="uniform"
+PASS :read_layout:case="struct_override_size";aspace="workgroup"
+PASS :read_layout:case="struct_override_size";aspace="function"
+PASS :read_layout:case="struct_override_size";aspace="private"
+PASS :read_layout:case="struct_double_align";aspace="storage"
+PASS :read_layout:case="struct_double_align";aspace="uniform"
+PASS :read_layout:case="struct_double_align";aspace="workgroup"
+PASS :read_layout:case="struct_double_align";aspace="function"
+PASS :read_layout:case="struct_double_align";aspace="private"
+PASS :read_layout:case="array_vec3u_align";aspace="storage"
+PASS :read_layout:case="array_vec3u_align";aspace="uniform"
+PASS :read_layout:case="array_vec3u_align";aspace="workgroup"
+PASS :read_layout:case="array_vec3u_align";aspace="function"
+PASS :read_layout:case="array_vec3u_align";aspace="private"
+PASS :read_layout:case="array_vec3h_align";aspace="storage"
+PASS :read_layout:case="array_vec3h_align";aspace="uniform"
+PASS :read_layout:case="array_vec3h_align";aspace="workgroup"
+PASS :read_layout:case="array_vec3h_align";aspace="function"
+PASS :read_layout:case="array_vec3h_align";aspace="private"
+PASS :read_layout:case="array_vec3u_stride";aspace="storage"
+PASS :read_layout:case="array_vec3u_stride";aspace="uniform"
+PASS :read_layout:case="array_vec3u_stride";aspace="workgroup"
+PASS :read_layout:case="array_vec3u_stride";aspace="function"
+PASS :read_layout:case="array_vec3u_stride";aspace="private"
+PASS :read_layout:case="array_vec3h_stride";aspace="storage"
+PASS :read_layout:case="array_vec3h_stride";aspace="uniform"
+PASS :read_layout:case="array_vec3h_stride";aspace="workgroup"
+PASS :read_layout:case="array_vec3h_stride";aspace="function"
+PASS :read_layout:case="array_vec3h_stride";aspace="private"
+PASS :read_layout:case="array_stride_size";aspace="storage"
+PASS :read_layout:case="array_stride_size";aspace="uniform"
+PASS :read_layout:case="array_stride_size";aspace="workgroup"
+PASS :read_layout:case="array_stride_size";aspace="function"
+PASS :read_layout:case="array_stride_size";aspace="private"
+PASS :read_layout:case="array_mat2x2f_stride";aspace="storage"
+PASS :read_layout:case="array_mat2x2f_stride";aspace="uniform"
+PASS :read_layout:case="array_mat2x2f_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat2x2f_stride";aspace="function"
+PASS :read_layout:case="array_mat2x2f_stride";aspace="private"
+PASS :read_layout:case="array_mat2x2h_stride";aspace="storage"
+PASS :read_layout:case="array_mat2x2h_stride";aspace="uniform"
+PASS :read_layout:case="array_mat2x2h_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat2x2h_stride";aspace="function"
+PASS :read_layout:case="array_mat2x2h_stride";aspace="private"
+PASS :read_layout:case="array_mat3x2f_stride";aspace="storage"
+PASS :read_layout:case="array_mat3x2f_stride";aspace="uniform"
+PASS :read_layout:case="array_mat3x2f_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat3x2f_stride";aspace="function"
+PASS :read_layout:case="array_mat3x2f_stride";aspace="private"
+PASS :read_layout:case="array_mat3x2h_stride";aspace="storage"
+PASS :read_layout:case="array_mat3x2h_stride";aspace="uniform"
+PASS :read_layout:case="array_mat3x2h_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat3x2h_stride";aspace="function"
+PASS :read_layout:case="array_mat3x2h_stride";aspace="private"
+PASS :read_layout:case="array_mat4x2f_stride";aspace="storage"
+PASS :read_layout:case="array_mat4x2f_stride";aspace="uniform"
+PASS :read_layout:case="array_mat4x2f_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat4x2f_stride";aspace="function"
+PASS :read_layout:case="array_mat4x2f_stride";aspace="private"
+PASS :read_layout:case="array_mat4x2h_stride";aspace="storage"
+PASS :read_layout:case="array_mat4x2h_stride";aspace="uniform"
+PASS :read_layout:case="array_mat4x2h_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat4x2h_stride";aspace="function"
+PASS :read_layout:case="array_mat4x2h_stride";aspace="private"
+PASS :read_layout:case="array_mat2x3f_stride";aspace="storage"
+PASS :read_layout:case="array_mat2x3f_stride";aspace="uniform"
+PASS :read_layout:case="array_mat2x3f_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat2x3f_stride";aspace="function"
+PASS :read_layout:case="array_mat2x3f_stride";aspace="private"
+PASS :read_layout:case="array_mat2x3h_stride";aspace="storage"
+PASS :read_layout:case="array_mat2x3h_stride";aspace="uniform"
+PASS :read_layout:case="array_mat2x3h_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat2x3h_stride";aspace="function"
+PASS :read_layout:case="array_mat2x3h_stride";aspace="private"
+PASS :read_layout:case="array_mat3x3f_stride";aspace="storage"
+PASS :read_layout:case="array_mat3x3f_stride";aspace="uniform"
+PASS :read_layout:case="array_mat3x3f_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat3x3f_stride";aspace="function"
+PASS :read_layout:case="array_mat3x3f_stride";aspace="private"
+PASS :read_layout:case="array_mat3x3h_stride";aspace="storage"
+PASS :read_layout:case="array_mat3x3h_stride";aspace="uniform"
+PASS :read_layout:case="array_mat3x3h_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat3x3h_stride";aspace="function"
+PASS :read_layout:case="array_mat3x3h_stride";aspace="private"
+PASS :read_layout:case="array_mat4x3f_stride";aspace="storage"
+PASS :read_layout:case="array_mat4x3f_stride";aspace="uniform"
+PASS :read_layout:case="array_mat4x3f_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat4x3f_stride";aspace="function"
+PASS :read_layout:case="array_mat4x3f_stride";aspace="private"
+PASS :read_layout:case="array_mat4x3h_stride";aspace="storage"
+PASS :read_layout:case="array_mat4x3h_stride";aspace="uniform"
+PASS :read_layout:case="array_mat4x3h_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat4x3h_stride";aspace="function"
+PASS :read_layout:case="array_mat4x3h_stride";aspace="private"
+PASS :read_layout:case="array_mat2x4f_stride";aspace="storage"
+PASS :read_layout:case="array_mat2x4f_stride";aspace="uniform"
+PASS :read_layout:case="array_mat2x4f_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat2x4f_stride";aspace="function"
+PASS :read_layout:case="array_mat2x4f_stride";aspace="private"
+PASS :read_layout:case="array_mat2x4h_stride";aspace="storage"
+PASS :read_layout:case="array_mat2x4h_stride";aspace="uniform"
+PASS :read_layout:case="array_mat2x4h_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat2x4h_stride";aspace="function"
+PASS :read_layout:case="array_mat2x4h_stride";aspace="private"
+PASS :read_layout:case="array_mat3x4f_stride";aspace="storage"
+PASS :read_layout:case="array_mat3x4f_stride";aspace="uniform"
+PASS :read_layout:case="array_mat3x4f_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat3x4f_stride";aspace="function"
+PASS :read_layout:case="array_mat3x4f_stride";aspace="private"
+PASS :read_layout:case="array_mat3x4h_stride";aspace="storage"
+PASS :read_layout:case="array_mat3x4h_stride";aspace="uniform"
+PASS :read_layout:case="array_mat3x4h_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat3x4h_stride";aspace="function"
+PASS :read_layout:case="array_mat3x4h_stride";aspace="private"
+PASS :read_layout:case="array_mat4x4f_stride";aspace="storage"
+PASS :read_layout:case="array_mat4x4f_stride";aspace="uniform"
+PASS :read_layout:case="array_mat4x4f_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat4x4f_stride";aspace="function"
+PASS :read_layout:case="array_mat4x4f_stride";aspace="private"
+PASS :read_layout:case="array_mat4x4h_stride";aspace="storage"
+PASS :read_layout:case="array_mat4x4h_stride";aspace="uniform"
+PASS :read_layout:case="array_mat4x4h_stride";aspace="workgroup"
+PASS :read_layout:case="array_mat4x4h_stride";aspace="function"
+PASS :read_layout:case="array_mat4x4h_stride";aspace="private"
+PASS :write_layout:case="vec2u_align8";aspace="storage"
+FAIL :write_layout:case="vec2u_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 38009219 00000000
+       failed ->                    xx
+     expected ==     00000000 00000000 00000000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="vec2u_align8";aspace="function"
+PASS :write_layout:case="vec2u_align8";aspace="private"
+PASS :write_layout:case="vec3u_align16";aspace="storage"
+PASS :write_layout:case="vec3u_align16";aspace="workgroup"
+PASS :write_layout:case="vec3u_align16";aspace="function"
+PASS :write_layout:case="vec3u_align16";aspace="private"
+PASS :write_layout:case="vec4u_align16";aspace="storage"
+PASS :write_layout:case="vec4u_align16";aspace="workgroup"
+PASS :write_layout:case="vec4u_align16";aspace="function"
+PASS :write_layout:case="vec4u_align16";aspace="private"
+PASS :write_layout:case="struct_align32";aspace="storage"
+PASS :write_layout:case="struct_align32";aspace="workgroup"
+PASS :write_layout:case="struct_align32";aspace="function"
+PASS :write_layout:case="struct_align32";aspace="private"
+PASS :write_layout:case="vec2h_align4";aspace="storage"
+FAIL :write_layout:case="vec2h_align4";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: 040d0000 00005140
+       failed ->           xx
+     expected ==     00000000 00005140
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="vec2h_align4";aspace="function"
+PASS :write_layout:case="vec2h_align4";aspace="private"
+PASS :write_layout:case="vec3h_align8";aspace="storage"
+PASS :write_layout:case="vec3h_align8";aspace="workgroup"
+PASS :write_layout:case="vec3h_align8";aspace="function"
+PASS :write_layout:case="vec3h_align8";aspace="private"
+PASS :write_layout:case="vec4h_align8";aspace="storage"
+FAIL :write_layout:case="vec4h_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 0 through 1.
+     Starting at index 0:
+       actual == 0x: 040d0000 4ccd8015 00000000
+       failed ->           xx       xx
+     expected ==     00000000 00000000 00000000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="vec4h_align8";aspace="function"
+PASS :write_layout:case="vec4h_align8";aspace="private"
+PASS :write_layout:case="vec2f_align8";aspace="storage"
+FAIL :write_layout:case="vec2f_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 c6cd8015 00000000
+       failed ->                    xx
+     expected ==     00000000 00000000 00000000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="vec2f_align8";aspace="function"
+PASS :write_layout:case="vec2f_align8";aspace="private"
+PASS :write_layout:case="vec3f_align16";aspace="storage"
+PASS :write_layout:case="vec3f_align16";aspace="workgroup"
+PASS :write_layout:case="vec3f_align16";aspace="function"
+PASS :write_layout:case="vec3f_align16";aspace="private"
+PASS :write_layout:case="vec4f_align16";aspace="storage"
+PASS :write_layout:case="vec4f_align16";aspace="workgroup"
+PASS :write_layout:case="vec4f_align16";aspace="function"
+PASS :write_layout:case="vec4f_align16";aspace="private"
+PASS :write_layout:case="vec3i_size12";aspace="storage"
+PASS :write_layout:case="vec3i_size12";aspace="workgroup"
+PASS :write_layout:case="vec3i_size12";aspace="function"
+PASS :write_layout:case="vec3i_size12";aspace="private"
+PASS :write_layout:case="vec3h_size6";aspace="storage"
+PASS :write_layout:case="vec3h_size6";aspace="workgroup"
+PASS :write_layout:case="vec3h_size6";aspace="function"
+PASS :write_layout:case="vec3h_size6";aspace="private"
+PASS :write_layout:case="size80";aspace="storage"
+PASS :write_layout:case="size80";aspace="workgroup"
+PASS :write_layout:case="size80";aspace="function"
+PASS :write_layout:case="size80";aspace="private"
+PASS :write_layout:case="atomic_align4";aspace="storage"
+PASS :write_layout:case="atomic_align4";aspace="workgroup"
+PASS :write_layout:case="atomic_align4";aspace="function"
+PASS :write_layout:case="atomic_align4";aspace="private"
+PASS :write_layout:case="atomic_size4";aspace="storage"
+PASS :write_layout:case="atomic_size4";aspace="workgroup"
+PASS :write_layout:case="atomic_size4";aspace="function"
+PASS :write_layout:case="atomic_size4";aspace="private"
+PASS :write_layout:case="mat2x2f_align8";aspace="storage"
+FAIL :write_layout:case="mat2x2f_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 ffffffff 42280000
+       failed ->                    xx
+     expected ==     00000000 00000000 42280000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat2x2f_align8";aspace="function"
+PASS :write_layout:case="mat2x2f_align8";aspace="private"
+PASS :write_layout:case="mat3x2f_align8";aspace="storage"
+FAIL :write_layout:case="mat3x2f_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 56cd801d 42280000
+       failed ->                    xx
+     expected ==     00000000 00000000 42280000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat3x2f_align8";aspace="function"
+PASS :write_layout:case="mat3x2f_align8";aspace="private"
+PASS :write_layout:case="mat4x2f_align8";aspace="storage"
+FAIL :write_layout:case="mat4x2f_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 60c00604 42280000
+       failed ->                    xx
+     expected ==     00000000 00000000 42280000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat4x2f_align8";aspace="function"
+PASS :write_layout:case="mat4x2f_align8";aspace="private"
+PASS :write_layout:case="mat2x3f_align16";aspace="storage"
+FAIL :write_layout:case="mat2x3f_align16";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 3.
+     Starting at index 0:
+       actual == 0x: 00000000 f7841185 68702a80 4a37172c 42280000
+       failed ->                    xx       xx       xx
+     expected ==     00000000 00000000 00000000 00000000 42280000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat2x3f_align16";aspace="function"
+PASS :write_layout:case="mat2x3f_align16";aspace="private"
+PASS :write_layout:case="mat3x3f_align16";aspace="storage"
+PASS :write_layout:case="mat3x3f_align16";aspace="workgroup"
+PASS :write_layout:case="mat3x3f_align16";aspace="function"
+PASS :write_layout:case="mat3x3f_align16";aspace="private"
+PASS :write_layout:case="mat4x3f_align16";aspace="storage"
+FAIL :write_layout:case="mat4x3f_align16";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 3.
+     Starting at index 0:
+       actual == 0x: 00000000 13f8a628 ae84b341 21791225 42280000
+       failed ->                    xx       xx       xx
+     expected ==     00000000 00000000 00000000 00000000 42280000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat4x3f_align16";aspace="function"
+PASS :write_layout:case="mat4x3f_align16";aspace="private"
+PASS :write_layout:case="mat2x4f_align16";aspace="storage"
+FAIL :write_layout:case="mat2x4f_align16";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 3.
+     Starting at index 0:
+       actual == 0x: 00000000 053dd800 a8032800 01623100 42280000
+       failed ->                    xx       xx       xx
+     expected ==     00000000 00000000 00000000 00000000 42280000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat2x4f_align16";aspace="function"
+PASS :write_layout:case="mat2x4f_align16";aspace="private"
+PASS :write_layout:case="mat3x4f_align16";aspace="storage"
+FAIL :write_layout:case="mat3x4f_align16";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 3.
+     Starting at index 0:
+       actual == 0x: 00000000 354a26d0 7e021bd1 6042a638 42280000
+       failed ->                    xx       xx       xx
+     expected ==     00000000 00000000 00000000 00000000 42280000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat3x4f_align16";aspace="function"
+PASS :write_layout:case="mat3x4f_align16";aspace="private"
+PASS :write_layout:case="mat4x4f_align16";aspace="storage"
+FAIL :write_layout:case="mat4x4f_align16";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 3.
+     Starting at index 0:
+       actual == 0x: 00000000 ffffffff ffffffff ffffffff 42280000
+       failed ->                    xx       xx       xx
+     expected ==     00000000 00000000 00000000 00000000 42280000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat4x4f_align16";aspace="function"
+PASS :write_layout:case="mat4x4f_align16";aspace="private"
+PASS :write_layout:case="mat2x2h_align4";aspace="storage"
+PASS :write_layout:case="mat2x2h_align4";aspace="workgroup"
+PASS :write_layout:case="mat2x2h_align4";aspace="function"
+PASS :write_layout:case="mat2x2h_align4";aspace="private"
+PASS :write_layout:case="mat3x2h_align4";aspace="storage"
+PASS :write_layout:case="mat3x2h_align4";aspace="workgroup"
+PASS :write_layout:case="mat3x2h_align4";aspace="function"
+PASS :write_layout:case="mat3x2h_align4";aspace="private"
+PASS :write_layout:case="mat4x2h_align4";aspace="storage"
+PASS :write_layout:case="mat4x2h_align4";aspace="workgroup"
+PASS :write_layout:case="mat4x2h_align4";aspace="function"
+PASS :write_layout:case="mat4x2h_align4";aspace="private"
+PASS :write_layout:case="mat2x3h_align8";aspace="storage"
+FAIL :write_layout:case="mat2x3h_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 c4cd801d 00005140
+       failed ->                    xx
+     expected ==     00000000 00000000 00005140
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat2x3h_align8";aspace="function"
+PASS :write_layout:case="mat2x3h_align8";aspace="private"
+PASS :write_layout:case="mat3x3h_align8";aspace="storage"
+PASS :write_layout:case="mat3x3h_align8";aspace="workgroup"
+PASS :write_layout:case="mat3x3h_align8";aspace="function"
+PASS :write_layout:case="mat3x3h_align8";aspace="private"
+PASS :write_layout:case="mat4x3h_align8";aspace="storage"
+FAIL :write_layout:case="mat4x3h_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 ffffffff 00005140
+       failed ->                    xx
+     expected ==     00000000 00000000 00005140
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat4x3h_align8";aspace="function"
+PASS :write_layout:case="mat4x3h_align8";aspace="private"
+PASS :write_layout:case="mat2x4h_align8";aspace="storage"
+FAIL :write_layout:case="mat2x4h_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 038e6398 00005140
+       failed ->                    xx
+     expected ==     00000000 00000000 00005140
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat2x4h_align8";aspace="function"
+PASS :write_layout:case="mat2x4h_align8";aspace="private"
+PASS :write_layout:case="mat3x4h_align8";aspace="storage"
+FAIL :write_layout:case="mat3x4h_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 3a56aa00 00005140
+       failed ->                    xx
+     expected ==     00000000 00000000 00005140
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat3x4h_align8";aspace="function"
+PASS :write_layout:case="mat3x4h_align8";aspace="private"
+PASS :write_layout:case="mat4x4h_align8";aspace="storage"
+FAIL :write_layout:case="mat4x4h_align8";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 0dc00140 00005140
+       failed ->                    xx
+     expected ==     00000000 00000000 00005140
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="mat4x4h_align8";aspace="function"
+PASS :write_layout:case="mat4x4h_align8";aspace="private"
+PASS :write_layout:case="mat2x2f_size";aspace="storage"
+PASS :write_layout:case="mat2x2f_size";aspace="workgroup"
+PASS :write_layout:case="mat2x2f_size";aspace="function"
+PASS :write_layout:case="mat2x2f_size";aspace="private"
+PASS :write_layout:case="mat3x2f_size";aspace="storage"
+PASS :write_layout:case="mat3x2f_size";aspace="workgroup"
+PASS :write_layout:case="mat3x2f_size";aspace="function"
+PASS :write_layout:case="mat3x2f_size";aspace="private"
+PASS :write_layout:case="mat4x2f_size";aspace="storage"
+PASS :write_layout:case="mat4x2f_size";aspace="workgroup"
+PASS :write_layout:case="mat4x2f_size";aspace="function"
+PASS :write_layout:case="mat4x2f_size";aspace="private"
+PASS :write_layout:case="mat2x3f_size";aspace="storage"
+PASS :write_layout:case="mat2x3f_size";aspace="workgroup"
+PASS :write_layout:case="mat2x3f_size";aspace="function"
+PASS :write_layout:case="mat2x3f_size";aspace="private"
+PASS :write_layout:case="mat3x3f_size";aspace="storage"
+PASS :write_layout:case="mat3x3f_size";aspace="workgroup"
+PASS :write_layout:case="mat3x3f_size";aspace="function"
+PASS :write_layout:case="mat3x3f_size";aspace="private"
+PASS :write_layout:case="mat4x3f_size";aspace="storage"
+PASS :write_layout:case="mat4x3f_size";aspace="workgroup"
+PASS :write_layout:case="mat4x3f_size";aspace="function"
+PASS :write_layout:case="mat4x3f_size";aspace="private"
+PASS :write_layout:case="mat2x4f_size";aspace="storage"
+PASS :write_layout:case="mat2x4f_size";aspace="workgroup"
+PASS :write_layout:case="mat2x4f_size";aspace="function"
+PASS :write_layout:case="mat2x4f_size";aspace="private"
+PASS :write_layout:case="mat3x4f_size";aspace="storage"
+PASS :write_layout:case="mat3x4f_size";aspace="workgroup"
+PASS :write_layout:case="mat3x4f_size";aspace="function"
+PASS :write_layout:case="mat3x4f_size";aspace="private"
+PASS :write_layout:case="mat4x4f_size";aspace="storage"
+PASS :write_layout:case="mat4x4f_size";aspace="workgroup"
+PASS :write_layout:case="mat4x4f_size";aspace="function"
+PASS :write_layout:case="mat4x4f_size";aspace="private"
+PASS :write_layout:case="mat2x2h_size";aspace="storage"
+PASS :write_layout:case="mat2x2h_size";aspace="workgroup"
+PASS :write_layout:case="mat2x2h_size";aspace="function"
+PASS :write_layout:case="mat2x2h_size";aspace="private"
+PASS :write_layout:case="mat3x2h_size";aspace="storage"
+PASS :write_layout:case="mat3x2h_size";aspace="workgroup"
+PASS :write_layout:case="mat3x2h_size";aspace="function"
+PASS :write_layout:case="mat3x2h_size";aspace="private"
+PASS :write_layout:case="mat4x2h_size";aspace="storage"
+PASS :write_layout:case="mat4x2h_size";aspace="workgroup"
+PASS :write_layout:case="mat4x2h_size";aspace="function"
+PASS :write_layout:case="mat4x2h_size";aspace="private"
+PASS :write_layout:case="mat2x3h_size";aspace="storage"
+PASS :write_layout:case="mat2x3h_size";aspace="workgroup"
+PASS :write_layout:case="mat2x3h_size";aspace="function"
+PASS :write_layout:case="mat2x3h_size";aspace="private"
+PASS :write_layout:case="mat3x3h_size";aspace="storage"
+PASS :write_layout:case="mat3x3h_size";aspace="workgroup"
+PASS :write_layout:case="mat3x3h_size";aspace="function"
+PASS :write_layout:case="mat3x3h_size";aspace="private"
+PASS :write_layout:case="mat4x3h_size";aspace="storage"
+PASS :write_layout:case="mat4x3h_size";aspace="workgroup"
+PASS :write_layout:case="mat4x3h_size";aspace="function"
+PASS :write_layout:case="mat4x3h_size";aspace="private"
+PASS :write_layout:case="mat2x4h_size";aspace="storage"
+PASS :write_layout:case="mat2x4h_size";aspace="workgroup"
+PASS :write_layout:case="mat2x4h_size";aspace="function"
+PASS :write_layout:case="mat2x4h_size";aspace="private"
+PASS :write_layout:case="mat3x4h_size";aspace="storage"
+PASS :write_layout:case="mat3x4h_size";aspace="workgroup"
+PASS :write_layout:case="mat3x4h_size";aspace="function"
+PASS :write_layout:case="mat3x4h_size";aspace="private"
+PASS :write_layout:case="mat4x4h_size";aspace="storage"
+PASS :write_layout:case="mat4x4h_size";aspace="workgroup"
+PASS :write_layout:case="mat4x4h_size";aspace="function"
+PASS :write_layout:case="mat4x4h_size";aspace="private"
+PASS :write_layout:case="struct_align_vec2i";aspace="storage"
+PASS :write_layout:case="struct_align_vec2i";aspace="workgroup"
+PASS :write_layout:case="struct_align_vec2i";aspace="function"
+PASS :write_layout:case="struct_align_vec2i";aspace="private"
+PASS :write_layout:case="struct_align_vec3i";aspace="storage"
+PASS :write_layout:case="struct_align_vec3i";aspace="workgroup"
+PASS :write_layout:case="struct_align_vec3i";aspace="function"
+PASS :write_layout:case="struct_align_vec3i";aspace="private"
+PASS :write_layout:case="struct_align_vec4i";aspace="storage"
+PASS :write_layout:case="struct_align_vec4i";aspace="workgroup"
+PASS :write_layout:case="struct_align_vec4i";aspace="function"
+PASS :write_layout:case="struct_align_vec4i";aspace="private"
+PASS :write_layout:case="struct_align_vec2h";aspace="storage"
+FAIL :write_layout:case="struct_align_vec2h";aspace="workgroup" assert_unreached:
+  - EXPECTATION FAILED: subcase:
+    Array had unexpected contents at indices 0 through 1.
+     Starting at index 0:
+       actual == 0x: ffff0000 ffff5140 00000000
+       failed ->           xx       xx
+     expected ==     00000000 00005140 00000000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1189:31
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :write_layout:case="struct_align_vec2h";aspace="function"
+PASS :write_layout:case="struct_align_vec2h";aspace="private"
+PASS :write_layout:case="struct_align_vec3h";aspace="storage"
+PASS :write_layout:case="struct_align_vec3h";aspace="workgroup"
+PASS :write_layout:case="struct_align_vec3h";aspace="function"
+PASS :write_layout:case="struct_align_vec3h";aspace="private"
+PASS :write_layout:case="struct_align_vec4h";aspace="storage"
+PASS :write_layout:case="struct_align_vec4h";aspace="workgroup"
+PASS :write_layout:case="struct_align_vec4h";aspace="function"
+PASS :write_layout:case="struct_align_vec4h";aspace="private"
+PASS :write_layout:case="struct_size_roundup";aspace="storage"
+PASS :write_layout:case="struct_size_roundup";aspace="workgroup"
+PASS :write_layout:case="struct_size_roundup";aspace="function"
+PASS :write_layout:case="struct_size_roundup";aspace="private"
+PASS :write_layout:case="struct_inner_size";aspace="storage"
+PASS :write_layout:case="struct_inner_size";aspace="workgroup"
+PASS :write_layout:case="struct_inner_size";aspace="function"
+PASS :write_layout:case="struct_inner_size";aspace="private"
+PASS :write_layout:case="struct_inner_align";aspace="storage"
+PASS :write_layout:case="struct_inner_align";aspace="workgroup"
+PASS :write_layout:case="struct_inner_align";aspace="function"
+PASS :write_layout:case="struct_inner_align";aspace="private"
+PASS :write_layout:case="struct_inner_size_and_align";aspace="storage"
+PASS :write_layout:case="struct_inner_size_and_align";aspace="workgroup"
+PASS :write_layout:case="struct_inner_size_and_align";aspace="function"
+PASS :write_layout:case="struct_inner_size_and_align";aspace="private"
+PASS :write_layout:case="struct_override_size";aspace="storage"
+PASS :write_layout:case="struct_override_size";aspace="workgroup"
+PASS :write_layout:case="struct_override_size";aspace="function"
+PASS :write_layout:case="struct_override_size";aspace="private"
+PASS :write_layout:case="struct_double_align";aspace="storage"
+PASS :write_layout:case="struct_double_align";aspace="workgroup"
+PASS :write_layout:case="struct_double_align";aspace="function"
+PASS :write_layout:case="struct_double_align";aspace="private"
+PASS :write_layout:case="array_vec3u_align";aspace="storage"
+PASS :write_layout:case="array_vec3u_align";aspace="workgroup"
+PASS :write_layout:case="array_vec3u_align";aspace="function"
+PASS :write_layout:case="array_vec3u_align";aspace="private"
+PASS :write_layout:case="array_vec3h_align";aspace="storage"
+PASS :write_layout:case="array_vec3h_align";aspace="workgroup"
+PASS :write_layout:case="array_vec3h_align";aspace="function"
+PASS :write_layout:case="array_vec3h_align";aspace="private"
+PASS :write_layout:case="array_vec3u_stride";aspace="storage"
+PASS :write_layout:case="array_vec3u_stride";aspace="workgroup"
+PASS :write_layout:case="array_vec3u_stride";aspace="function"
+PASS :write_layout:case="array_vec3u_stride";aspace="private"
+PASS :write_layout:case="array_vec3h_stride";aspace="storage"
+PASS :write_layout:case="array_vec3h_stride";aspace="workgroup"
+PASS :write_layout:case="array_vec3h_stride";aspace="function"
+PASS :write_layout:case="array_vec3h_stride";aspace="private"
+PASS :write_layout:case="array_stride_size";aspace="storage"
+PASS :write_layout:case="array_stride_size";aspace="workgroup"
+PASS :write_layout:case="array_stride_size";aspace="function"
+PASS :write_layout:case="array_stride_size";aspace="private"
+PASS :write_layout:case="array_mat2x2f_stride";aspace="storage"
+PASS :write_layout:case="array_mat2x2f_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat2x2f_stride";aspace="function"
+PASS :write_layout:case="array_mat2x2f_stride";aspace="private"
+PASS :write_layout:case="array_mat2x2h_stride";aspace="storage"
+PASS :write_layout:case="array_mat2x2h_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat2x2h_stride";aspace="function"
+PASS :write_layout:case="array_mat2x2h_stride";aspace="private"
+PASS :write_layout:case="array_mat3x2f_stride";aspace="storage"
+PASS :write_layout:case="array_mat3x2f_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat3x2f_stride";aspace="function"
+PASS :write_layout:case="array_mat3x2f_stride";aspace="private"
+PASS :write_layout:case="array_mat3x2h_stride";aspace="storage"
+PASS :write_layout:case="array_mat3x2h_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat3x2h_stride";aspace="function"
+PASS :write_layout:case="array_mat3x2h_stride";aspace="private"
+PASS :write_layout:case="array_mat4x2f_stride";aspace="storage"
+PASS :write_layout:case="array_mat4x2f_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat4x2f_stride";aspace="function"
+PASS :write_layout:case="array_mat4x2f_stride";aspace="private"
+PASS :write_layout:case="array_mat4x2h_stride";aspace="storage"
+PASS :write_layout:case="array_mat4x2h_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat4x2h_stride";aspace="function"
+PASS :write_layout:case="array_mat4x2h_stride";aspace="private"
+PASS :write_layout:case="array_mat2x3f_stride";aspace="storage"
+PASS :write_layout:case="array_mat2x3f_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat2x3f_stride";aspace="function"
+PASS :write_layout:case="array_mat2x3f_stride";aspace="private"
+PASS :write_layout:case="array_mat2x3h_stride";aspace="storage"
+PASS :write_layout:case="array_mat2x3h_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat2x3h_stride";aspace="function"
+PASS :write_layout:case="array_mat2x3h_stride";aspace="private"
+PASS :write_layout:case="array_mat3x3f_stride";aspace="storage"
+PASS :write_layout:case="array_mat3x3f_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat3x3f_stride";aspace="function"
+PASS :write_layout:case="array_mat3x3f_stride";aspace="private"
+PASS :write_layout:case="array_mat3x3h_stride";aspace="storage"
+PASS :write_layout:case="array_mat3x3h_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat3x3h_stride";aspace="function"
+PASS :write_layout:case="array_mat3x3h_stride";aspace="private"
+PASS :write_layout:case="array_mat4x3f_stride";aspace="storage"
+PASS :write_layout:case="array_mat4x3f_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat4x3f_stride";aspace="function"
+PASS :write_layout:case="array_mat4x3f_stride";aspace="private"
+PASS :write_layout:case="array_mat4x3h_stride";aspace="storage"
+PASS :write_layout:case="array_mat4x3h_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat4x3h_stride";aspace="function"
+PASS :write_layout:case="array_mat4x3h_stride";aspace="private"
+PASS :write_layout:case="array_mat2x4f_stride";aspace="storage"
+PASS :write_layout:case="array_mat2x4f_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat2x4f_stride";aspace="function"
+PASS :write_layout:case="array_mat2x4f_stride";aspace="private"
+PASS :write_layout:case="array_mat2x4h_stride";aspace="storage"
+PASS :write_layout:case="array_mat2x4h_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat2x4h_stride";aspace="function"
+PASS :write_layout:case="array_mat2x4h_stride";aspace="private"
+PASS :write_layout:case="array_mat3x4f_stride";aspace="storage"
+PASS :write_layout:case="array_mat3x4f_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat3x4f_stride";aspace="function"
+PASS :write_layout:case="array_mat3x4f_stride";aspace="private"
+PASS :write_layout:case="array_mat3x4h_stride";aspace="storage"
+PASS :write_layout:case="array_mat3x4h_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat3x4h_stride";aspace="function"
+PASS :write_layout:case="array_mat3x4h_stride";aspace="private"
+PASS :write_layout:case="array_mat4x4f_stride";aspace="storage"
+PASS :write_layout:case="array_mat4x4f_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat4x4f_stride";aspace="function"
+PASS :write_layout:case="array_mat4x4f_stride";aspace="private"
+PASS :write_layout:case="array_mat4x4h_stride";aspace="storage"
+PASS :write_layout:case="array_mat4x4h_stride";aspace="workgroup"
+PASS :write_layout:case="array_mat4x4h_stride";aspace="function"
+PASS :write_layout:case="array_mat4x4h_stride";aspace="private"
+

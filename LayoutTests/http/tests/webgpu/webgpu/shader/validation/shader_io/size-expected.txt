@@ -1,0 +1,73 @@
+
+PASS :size:attr="valid"
+PASS :size:attr="non_align_size"
+PASS :size:attr="i32"
+PASS :size:attr="u32"
+PASS :size:attr="constant"
+PASS :size:attr="const_expr"
+PASS :size:attr="trailing_comma"
+PASS :size:attr="hex"
+PASS :size:attr="whitespace"
+PASS :size:attr="comment"
+PASS :size:attr="large"
+PASS :size:attr="misspelling"
+PASS :size:attr="no_value"
+PASS :size:attr="missing_left_paren"
+PASS :size:attr="missing_right_paren"
+PASS :size:attr="missing_parens"
+PASS :size:attr="multiple_values"
+PASS :size:attr="override"
+PASS :size:attr="zero"
+PASS :size:attr="negative"
+PASS :size:attr="f32_literal"
+PASS :size:attr="f32"
+PASS :size:attr="duplicate1"
+PASS :size:attr="duplicate2"
+PASS :size:attr="too_small"
+PASS :size_fp16:ext=""
+PASS :size_fp16:ext="h"
+PASS :size_non_struct:attr="control"
+FAIL :size_non_struct:attr="struct" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    @size(4) struct S { a: f32 }
+    @workgroup_size(1)
+    @compute fn main() {
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/size.spec.js:219:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :size_non_struct:attr="constant"
+PASS :size_non_struct:attr="vec"
+PASS :size_non_struct:attr="mat"
+PASS :size_non_struct:attr="array"
+PASS :size_non_struct:attr="scalar"
+PASS :size_creation_fixed_footprint:array_size=",%204"
+FAIL :size_creation_fixed_footprint:array_size="" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    struct S {
+      @size(64) a: array<f32>,
+    };
+    @group(0) @binding(0)
+    var<storage> a: S;
+
+    @workgroup_size(1)
+    @compute fn main() {
+      _ = a.a[0];
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/size.spec.js:237:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+

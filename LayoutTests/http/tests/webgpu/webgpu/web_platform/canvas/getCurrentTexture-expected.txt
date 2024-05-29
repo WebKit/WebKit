@@ -3,10 +3,47 @@ PASS :configured:canvasType="onscreen"
 PASS :configured:canvasType="offscreen"
 PASS :single_frames:canvasType="onscreen"
 PASS :single_frames:canvasType="offscreen"
-PASS :multiple_frames:canvasType="onscreen"
+FAIL :multiple_frames:canvasType="onscreen" assert_unreached:
+  - EXPECTATION FAILED: subcase: clearTexture=true
+
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:316:43
+    frameCheck@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:192:17
+  - EXPECTATION FAILED: subcase: clearTexture=false
+
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:316:43
+    frameCheck@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:192:17
+  - EXPECTATION FAILED: subcase: clearTexture=true
+    Array had unexpected contents at indices 2 through 263.
+     Starting at index 1:
+       actual == 0x: 00 ff ff 00 00 ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
+       failed ->        xx xx       xx xx                                                                                     ...
+     expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
+      at (elided: only 2 shown)
+  - INFO: subcase: clearTexture=true
+    OK
+  - INFO: subcase: clearTexture=false
+    OK
+ Reached unreachable code
 PASS :multiple_frames:canvasType="offscreen"
-PASS :resize:canvasType="onscreen"
-PASS :resize:canvasType="offscreen"
+FAIL :resize:canvasType="onscreen" assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1029:36
+    expectTextureDestroyed@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:45:31
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:258:27
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1029:36
+    expectTextureDestroyed@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:45:31
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:315:29
+ Reached unreachable code
+FAIL :resize:canvasType="offscreen" assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1029:36
+    expectTextureDestroyed@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:45:31
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:258:27
+ Reached unreachable code
 PASS :expiry:canvasType="onscreen";prevFrameCallsite="runInNewCanvasFrame";getCurrentTextureAgain=true
 PASS :expiry:canvasType="onscreen";prevFrameCallsite="runInNewCanvasFrame";getCurrentTextureAgain=false
 PASS :expiry:canvasType="onscreen";prevFrameCallsite="requestAnimationFrame";getCurrentTextureAgain=true

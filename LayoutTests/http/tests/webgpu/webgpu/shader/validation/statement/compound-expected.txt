@@ -1,0 +1,9 @@
+
+PASS :parse:stmt="missing_start"
+PASS :parse:stmt="missing_end"
+PASS :parse:stmt="empty"
+PASS :parse:stmt="semicolon"
+PASS :parse:stmt="semicolons"
+PASS :parse:stmt="decl"
+PASS :parse:stmt="nested"
+

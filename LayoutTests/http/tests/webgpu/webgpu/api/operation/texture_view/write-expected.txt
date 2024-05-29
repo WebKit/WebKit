@@ -1,5 +1,107 @@
 
-PASS :format:
+PASS :format:method="storage-write-fragment";format="rgba8unorm";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rgba8snorm";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rgba8uint";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rgba8sint";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rgba16uint";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rgba16sint";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rgba16float";sampleCount=1
+PASS :format:method="storage-write-fragment";format="r32uint";sampleCount=1
+PASS :format:method="storage-write-fragment";format="r32sint";sampleCount=1
+PASS :format:method="storage-write-fragment";format="r32float";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rg32uint";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rg32sint";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rg32float";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rgba32uint";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rgba32sint";sampleCount=1
+PASS :format:method="storage-write-fragment";format="rgba32float";sampleCount=1
+PASS :format:method="storage-write-compute";format="rgba8unorm";sampleCount=1
+PASS :format:method="storage-write-compute";format="rgba8snorm";sampleCount=1
+PASS :format:method="storage-write-compute";format="rgba8uint";sampleCount=1
+PASS :format:method="storage-write-compute";format="rgba8sint";sampleCount=1
+PASS :format:method="storage-write-compute";format="rgba16uint";sampleCount=1
+PASS :format:method="storage-write-compute";format="rgba16sint";sampleCount=1
+PASS :format:method="storage-write-compute";format="rgba16float";sampleCount=1
+PASS :format:method="storage-write-compute";format="r32uint";sampleCount=1
+PASS :format:method="storage-write-compute";format="r32sint";sampleCount=1
+PASS :format:method="storage-write-compute";format="r32float";sampleCount=1
+PASS :format:method="storage-write-compute";format="rg32uint";sampleCount=1
+PASS :format:method="storage-write-compute";format="rg32sint";sampleCount=1
+PASS :format:method="storage-write-compute";format="rg32float";sampleCount=1
+PASS :format:method="storage-write-compute";format="rgba32uint";sampleCount=1
+PASS :format:method="storage-write-compute";format="rgba32sint";sampleCount=1
+PASS :format:method="storage-write-compute";format="rgba32float";sampleCount=1
+PASS :format:method="render-pass-store";format="r8unorm";sampleCount=1
+PASS :format:method="render-pass-store";format="r8uint";sampleCount=1
+PASS :format:method="render-pass-store";format="r8sint";sampleCount=1
+PASS :format:method="render-pass-store";format="rg8unorm";sampleCount=1
+PASS :format:method="render-pass-store";format="rg8uint";sampleCount=1
+PASS :format:method="render-pass-store";format="rg8sint";sampleCount=1
+PASS :format:method="render-pass-store";format="rgba8unorm";sampleCount=1
+PASS :format:method="render-pass-store";format="rgba8unorm-srgb";sampleCount=1
+PASS :format:method="render-pass-store";format="rgba8uint";sampleCount=1
+PASS :format:method="render-pass-store";format="rgba8sint";sampleCount=1
+PASS :format:method="render-pass-store";format="bgra8unorm";sampleCount=1
+PASS :format:method="render-pass-store";format="bgra8unorm-srgb";sampleCount=1
+PASS :format:method="render-pass-store";format="r16uint";sampleCount=1
+PASS :format:method="render-pass-store";format="r16sint";sampleCount=1
+PASS :format:method="render-pass-store";format="r16float";sampleCount=1
+PASS :format:method="render-pass-store";format="rg16uint";sampleCount=1
+PASS :format:method="render-pass-store";format="rg16sint";sampleCount=1
+PASS :format:method="render-pass-store";format="rg16float";sampleCount=1
+PASS :format:method="render-pass-store";format="rgba16uint";sampleCount=1
+PASS :format:method="render-pass-store";format="rgba16sint";sampleCount=1
+PASS :format:method="render-pass-store";format="rgba16float";sampleCount=1
+PASS :format:method="render-pass-store";format="r32uint";sampleCount=1
+PASS :format:method="render-pass-store";format="r32sint";sampleCount=1
+PASS :format:method="render-pass-store";format="r32float";sampleCount=1
+PASS :format:method="render-pass-store";format="rg32uint";sampleCount=1
+PASS :format:method="render-pass-store";format="rg32sint";sampleCount=1
+PASS :format:method="render-pass-store";format="rg32float";sampleCount=1
+PASS :format:method="render-pass-store";format="rgba32uint";sampleCount=1
+PASS :format:method="render-pass-store";format="rgba32sint";sampleCount=1
+PASS :format:method="render-pass-store";format="rgba32float";sampleCount=1
+FAIL :format:method="render-pass-store";format="rgb10a2unorm";sampleCount=1 assert_unreached:
+  - EXPECTATION FAILED: Texture level had unexpected contents:
+     between 0,0,0 and 15,15,0 inclusive:
+                                coords ==   X,Y,Z:                            0,0,0                            1,0,0                            2,0,0 ...
+      act. texel bytes (little-endian) ==      0x:                      00 00 00 00                      00 00 00 00                      00 00 00 00 ...
+                           act. colors == R,G,B,A:  0.00000,0.00000,0.00000,0.00000  0.00000,0.00000,0.00000,0.00000  0.00000,0.00000,0.00000,0.00000 ...
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,0.800000 0.00000,1.00000,0.00000,0.700000 0.00000,0.00000,0.00000,0.600000 ...
+            act. normal-ULPs-from-zero == R,G,B,A:                          0,0,0,0                          0,0,0,0                          0,0,0,0 ...
+            exp. normal-ULPs-from-zero == R,G,B,A:                       1023,0,0,2                       0,1023,0,2                          0,0,0,2 ...
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              -1023,0,0,-2                     0,-1023,0,-2                         0,0,0,-2 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/texture_view/write.spec.js:366:43
+ Reached unreachable code
+PASS :format:method="render-pass-resolve";format="r8unorm";sampleCount=1
+PASS :format:method="render-pass-resolve";format="rg8unorm";sampleCount=1
+PASS :format:method="render-pass-resolve";format="rgba8unorm";sampleCount=1
+PASS :format:method="render-pass-resolve";format="rgba8unorm-srgb";sampleCount=1
+PASS :format:method="render-pass-resolve";format="bgra8unorm";sampleCount=1
+PASS :format:method="render-pass-resolve";format="bgra8unorm-srgb";sampleCount=1
+PASS :format:method="render-pass-resolve";format="r16float";sampleCount=1
+FAIL :format:method="render-pass-resolve";format="rg16float";sampleCount=1 assert_unreached:
+  - EXPECTATION FAILED: Texture level had unexpected contents:
+     between 0,0,0 and 15,15,0 inclusive:
+                                coords == X,Y,Z:           0,0,0           1,0,0           4,0,0            5,0,0            6,0,0 ...
+      act. texel bytes (little-endian) ==    0x:     00 00 00 00     00 00 00 00     00 00 00 00      00 00 00 00      00 00 00 00 ...
+                           act. colors ==   R,G: 0.00000,0.00000 0.00000,0.00000 0.00000,0.00000  0.00000,0.00000  0.00000,0.00000 ...
+                           exp. colors ==   R,G: 1.00000,0.00000 0.00000,1.00000 1.00000,1.00000 0.700000,0.00000 0.00000,0.800000 ...
+            act. normal-ULPs-from-zero ==   R,G:             0,0             0,0             0,0              0,0              0,0 ...
+            exp. normal-ULPs-from-zero ==   R,G:         14337,0         0,14337     14337,14337          13722,0          0,13927 ...
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==               -14337,0        0,-14337   -14337,-14337         -13722,0         0,-13927 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/texture_view/write.spec.js:366:43
+ Reached unreachable code
+PASS :format:method="render-pass-resolve";format="rgba16float";sampleCount=1
+PASS :format:method="render-pass-resolve";format="rgb10a2unorm";sampleCount=1
 PASS :dimension:
 PASS :aspect:
 

@@ -1,0 +1,468 @@
+
+PASS :binary_op:
+PASS :binary_op_rhs_const:
+PASS :binary_op_lhs_const:
+PASS :binary_op_chain:
+PASS :binary_op_chain_R_C_C_C:
+PASS :binary_op_chain_C_R_C_C:
+PASS :binary_op_chain_C_C_R_C:
+PASS :binary_op_chain_C_C_C_R:
+PASS :binary_op_parenthesized_expr:
+PASS :array_index:
+FAIL :array_index_lhs_assignment: assert_unreached:
+  - EXPECTATION FAILED: expect_order(4) expected event 4, got 1
+    Output values (length: 6): 1, 6, 3, 4, 5, 2
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:265:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:244:21
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:529:22
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+      var arr : array<array<array<i32, 8>, 8>, 8>;
+      push_output(1); // expect_order(0)
+      arr[a()][b()][c()] = ~d();
+      push_output(2); // expect_order(5)
+
+    }
+
+    fn a() -> i32 {
+      push_output(3); // expect_order(1)
+      return 1;
+    }
+    fn b() -> i32 {
+      push_output(4); // expect_order(2)
+      return 1;
+    }
+    fn c() -> i32 {
+      push_output(5); // expect_order(3)
+      return 1;
+    }
+    fn d() -> i32 {
+      push_output(6); // expect_order(4)
+      return 1;
+    }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:244:21
+ Reached unreachable code
+FAIL :array_index_lhs_member_assignment: assert_unreached:
+  - EXPECTATION FAILED: expect_order(4) expected event 4, got 1
+    Output values (length: 6): 1, 6, 3, 4, 5, 2
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:300:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:276:21
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:529:22
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+      var arr : array<array<S, 8>, 8>;
+      push_output(1); // expect_order(0)
+      arr[a()][b()].member[c()] = d();
+      push_output(2); // expect_order(5)
+
+    }
+
+    struct S {
+      member : array<i32, 8>,
+    }
+    fn a() -> i32 {
+      push_output(3); // expect_order(1)
+      return 1;
+    }
+    fn b() -> i32 {
+      push_output(4); // expect_order(2)
+      return 1;
+    }
+    fn c() -> i32 {
+      push_output(5); // expect_order(3)
+      return 1;
+    }
+    fn d() -> i32 {
+      push_output(6); // expect_order(4)
+      return 1;
+    }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:276:21
+ Reached unreachable code
+FAIL :array_index_via_ptrs: assert_unreached:
+  - EXPECTATION FAILED: expect_order(3) expected event 3, got 2
+    Output values (length: 8): 1, 2, 3, 4, 5, 6, 7, 8
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:316:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:309:21
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:529:22
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+      var arr : array<array<array<i32, 8>, 8>, 8>;
+      push_output(1); // expect_order(0)
+      let p0 = &arr;
+      push_output(2); // expect_order(1)
+      let p1 = &(*p0)[a()];
+      push_output(3); // expect_order(3)
+      let p2 = &(*p1)[b()];
+      push_output(4); // expect_order(5)
+      let p3 = &(*p2)[c()];
+      push_output(5); // expect_order(7)
+      let p4 = *p3;
+
+    }
+
+    fn a() -> i32 {
+      push_output(6); // expect_order(2)
+      return 1;
+    }
+    fn b() -> i32 {
+      push_output(7); // expect_order(4)
+      return 1;
+    }
+    fn c() -> i32 {
+      push_output(8); // expect_order(6)
+      return 1;
+    }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:309:21
+ Reached unreachable code
+PASS :array_index_via_struct_members:
+PASS :matrix_index:
+FAIL :matrix_index_via_ptr: assert_unreached:
+  - EXPECTATION FAILED: expect_order(3) expected event 3, got 2
+    Output values (length: 6): 1, 2, 3, 5, 6, 4
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:406:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:399:21
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:529:22
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+      var mat : mat4x4<f32>;
+      push_output(1); // expect_order(0)
+      let p0 = &mat;
+      push_output(2); // expect_order(1)
+      let p1 = &(*p0)[a()];
+      push_output(3); // expect_order(3)
+      let v = (*p1)[b()];
+      push_output(4); // expect_order(5)
+
+    }
+
+    fn a() -> i32 {
+      push_output(5); // expect_order(2)
+      return 1;
+    }
+    fn b() -> i32 {
+      push_output(6); // expect_order(4)
+      return 1;
+    }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:399:21
+ Reached unreachable code
+PASS :logical_and:
+PASS :logical_or:
+PASS :bitwise_and:
+PASS :bitwise_or:
+PASS :user_fn_args:
+PASS :nested_fn_args:
+PASS :builtin_fn_args:
+PASS :nested_builtin_fn_args:
+PASS :1d_array_constructor:
+PASS :2d_array_constructor:
+PASS :vec4_constructor:
+PASS :nested_vec4_constructor:
+PASS :struct_constructor:
+PASS :nested_struct_constructor:
+FAIL :1d_array_assignment: assert_unreached:
+  - EXPECTATION FAILED: expect_order(2) expected event 2, got 1
+    Output values (length: 4): 1, 4, 3, 2
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:875:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:862:21
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:529:22
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+      var arr : array<i32, 8>;
+      push_output(1); // expect_order(0)
+      arr[a()] = arr[b()];
+      push_output(2); // expect_order(3)
+
+    }
+
+    fn a() -> i32 {
+      push_output(3); // expect_order(1)
+      return 1;
+    }
+    fn b() -> i32 {
+      push_output(4); // expect_order(2)
+      return 2;
+    }
+
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:862:21
+ Reached unreachable code
+FAIL :2d_array_assignment: assert_unreached:
+  - EXPECTATION FAILED: expect_order(3) expected event 3, got 1
+    Output values (length: 6): 1, 5, 6, 3, 4, 2
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:902:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:885:21
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:529:22
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+      var arr : array<array<i32, 8>, 8>;
+      push_output(1); // expect_order(0)
+      arr[a()][b()] = arr[c()][d()];
+      push_output(2); // expect_order(5)
+
+    }
+
+    fn a() -> i32 {
+      push_output(3); // expect_order(1)
+      return 1;
+    }
+    fn b() -> i32 {
+      push_output(4); // expect_order(2)
+      return 2;
+    }
+    fn c() -> i32 {
+      push_output(5); // expect_order(3)
+      return 1;
+    }
+    fn d() -> i32 {
+      push_output(6); // expect_order(4)
+      return 2;
+    }
+
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:885:21
+ Reached unreachable code
+FAIL :1d_array_compound_assignment: assert_unreached:
+  - EXPECTATION FAILED: expect_order(1)) unexpectedly reached at event 3
+    Output values (length: 5): 1, 3, 4, 3, 2
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:925:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:916:21
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:529:22
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+      var arr : array<i32, 8>;
+      push_output(1); // expect_order(0)
+      arr[a()] += arr[b()];
+      push_output(2); // expect_order(3)
+
+    }
+
+    fn a() -> i32 {
+      push_output(3); // expect_order(1)
+      return 1;
+    }
+    fn b() -> i32 {
+      push_output(4); // expect_order(2)
+      return 2;
+    }
+
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:916:21
+ Reached unreachable code
+FAIL :2d_array_compound_assignment: assert_unreached:
+  - EXPECTATION FAILED: expect_order(1)) unexpectedly reached at event 5
+    Output values (length: 8): 1, 3, 4, 5, 6, 3, 4, 2
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:948:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:939:21
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:529:22
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+      var arr : array<array<i32, 8>, 8>;
+      push_output(1); // expect_order(0)
+      arr[a()][b()] += arr[c()][d()];
+      push_output(2); // expect_order(5)
+
+    }
+
+    fn a() -> i32 {
+      push_output(3); // expect_order(1)
+      return 1;
+    }
+    fn b() -> i32 {
+      push_output(4); // expect_order(2)
+      return 2;
+    }
+    fn c() -> i32 {
+      push_output(5); // expect_order(3)
+      return 1;
+    }
+    fn d() -> i32 {
+      push_output(6); // expect_order(4)
+      return 2;
+    }
+
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:939:21
+ Reached unreachable code
+PASS :1d_array_increment:
+PASS :2d_array_increment:
+

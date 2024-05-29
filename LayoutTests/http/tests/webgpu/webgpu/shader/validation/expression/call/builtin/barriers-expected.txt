@@ -1,0 +1,299 @@
+
+PASS :only_in_compute:entry_point="none";call="bar"
+PASS :only_in_compute:entry_point="none";call="storageBarrier"
+PASS :only_in_compute:entry_point="none";call="textureBarrier"
+PASS :only_in_compute:entry_point="none";call="workgroupBarrier"
+PASS :only_in_compute:entry_point="compute";call="bar"
+PASS :only_in_compute:entry_point="compute";call="storageBarrier"
+PASS :only_in_compute:entry_point="compute";call="textureBarrier"
+PASS :only_in_compute:entry_point="compute";call="workgroupBarrier"
+PASS :only_in_compute:entry_point="vertex";call="bar"
+FAIL :only_in_compute:entry_point="vertex";call="storageBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar() {}
+
+    fn foo() {
+      storageBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:82:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_compute:entry_point="vertex";call="textureBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar() {}
+
+    fn foo() {
+      textureBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:82:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_compute:entry_point="vertex";call="workgroupBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar() {}
+
+    fn foo() {
+      workgroupBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:82:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_compute:entry_point="fragment";call="bar"
+FAIL :only_in_compute:entry_point="fragment";call="storageBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main() {
+      foo();
+    }
+    fn bar() {}
+
+    fn foo() {
+      storageBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:82:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_compute:entry_point="fragment";call="textureBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main() {
+      foo();
+    }
+    fn bar() {}
+
+    fn foo() {
+      textureBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:82:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_compute:entry_point="fragment";call="workgroupBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main() {
+      foo();
+    }
+    fn bar() {}
+
+    fn foo() {
+      workgroupBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:82:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_compute:entry_point="compute_and_fragment";call="bar"
+FAIL :only_in_compute:entry_point="compute_and_fragment";call="storageBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main1() {
+      foo();
+    }
+
+    @fragment
+    fn main2() {
+      foo();
+    }
+
+    fn bar() {}
+
+    fn foo() {
+      storageBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:82:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_compute:entry_point="compute_and_fragment";call="textureBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main1() {
+      foo();
+    }
+
+    @fragment
+    fn main2() {
+      foo();
+    }
+
+    fn bar() {}
+
+    fn foo() {
+      textureBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:82:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_compute:entry_point="compute_and_fragment";call="workgroupBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main1() {
+      foo();
+    }
+
+    @fragment
+    fn main2() {
+      foo();
+    }
+
+    fn bar() {}
+
+    fn foo() {
+      workgroupBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:82:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_compute:entry_point="fragment_without_call";call="bar"
+PASS :only_in_compute:entry_point="fragment_without_call";call="storageBarrier"
+PASS :only_in_compute:entry_point="fragment_without_call";call="textureBarrier"
+PASS :only_in_compute:entry_point="fragment_without_call";call="workgroupBarrier"
+PASS :no_return_value:assign=false;rhs="bar"
+PASS :no_return_value:assign=false;rhs="storageBarrier"
+PASS :no_return_value:assign=false;rhs="textureBarrier"
+PASS :no_return_value:assign=false;rhs="workgroupBarrier"
+FAIL :no_return_value:assign=true;rhs="bar" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    fn bar() {}
+
+    fn foo() {
+      _ =  bar();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:108:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :no_return_value:assign=true;rhs="storageBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    fn bar() {}
+
+    fn foo() {
+      _ =  storageBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:108:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :no_return_value:assign=true;rhs="textureBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    fn bar() {}
+
+    fn foo() {
+      _ =  textureBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:108:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :no_return_value:assign=true;rhs="workgroupBarrier" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    fn bar() {}
+
+    fn foo() {
+      _ =  workgroupBarrier();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:108:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+

@@ -9,7 +9,8 @@ PASS :location,mismatch:isAsync=true;outputs=["%40location(0)%20__:%20f32"];inpu
 PASS :location,mismatch:isAsync=true;outputs=["%40location(1)%20__:%20f32"];inputs=["%40location(0)%20__:%20f32"]
 PASS :location,mismatch:isAsync=true;outputs=["%40location(0)%20__:%20f32","%40location(1)%20__:%20f32"];inputs=["%40location(1)%20__:%20f32","%40location(0)%20__:%20f32"]
 PASS :location,mismatch:isAsync=true;outputs=["%40location(1)%20__:%20f32","%40location(0)%20__:%20f32"];inputs=["%40location(0)%20__:%20f32","%40location(1)%20__:%20f32"]
-PASS :location,superset:
+PASS :location,superset:isAsync=false
+PASS :location,superset:isAsync=true
 PASS :location,subset:isAsync=false
 PASS :location,subset:isAsync=true
 PASS :type:isAsync=false;output="f32";input="f32"
@@ -77,19 +78,47 @@ PASS :max_shader_variable_location:isAsync=true;locationDelta=-2
 PASS :max_components_count,output:isAsync=false;numScalarDelta=0;topology="triangle-list"
 PASS :max_components_count,output:isAsync=false;numScalarDelta=0;topology="point-list"
 PASS :max_components_count,output:isAsync=false;numScalarDelta=1;topology="triangle-list"
-PASS :max_components_count,output:isAsync=false;numScalarDelta=-1;topology="point-list"
+FAIL :max_components_count,output:isAsync=false;numScalarDelta=-1;topology="point-list" assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1029:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:417:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/inter_stage.spec.js:298:31
+ Reached unreachable code
+FAIL :max_components_count,output:isAsync=false;numScalarDelta=-3;topology="point-list" assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1029:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:417:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/inter_stage.spec.js:298:31
+ Reached unreachable code
+PASS :max_components_count,output:isAsync=false;numScalarDelta=-4;topology="point-list"
 PASS :max_components_count,output:isAsync=true;numScalarDelta=0;topology="triangle-list"
 PASS :max_components_count,output:isAsync=true;numScalarDelta=0;topology="point-list"
 PASS :max_components_count,output:isAsync=true;numScalarDelta=1;topology="triangle-list"
-PASS :max_components_count,output:isAsync=true;numScalarDelta=-1;topology="point-list"
+FAIL :max_components_count,output:isAsync=true;numScalarDelta=-1;topology="point-list" assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:413:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/inter_stage.spec.js:298:31
+ Reached unreachable code
+FAIL :max_components_count,output:isAsync=true;numScalarDelta=-3;topology="point-list" assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test.js:413:26
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/inter_stage.spec.js:298:31
+ Reached unreachable code
+PASS :max_components_count,output:isAsync=true;numScalarDelta=-4;topology="point-list"
 PASS :max_components_count,input:isAsync=false;numScalarDelta=0;useExtraBuiltinInputs=false
 PASS :max_components_count,input:isAsync=false;numScalarDelta=0;useExtraBuiltinInputs=true
 PASS :max_components_count,input:isAsync=false;numScalarDelta=1;useExtraBuiltinInputs=false
 PASS :max_components_count,input:isAsync=false;numScalarDelta=-3;useExtraBuiltinInputs=true
-PASS :max_components_count,input:isAsync=false;numScalarDelta=-2;useExtraBuiltinInputs=true
+PASS :max_components_count,input:isAsync=false;numScalarDelta=-4;useExtraBuiltinInputs=true
 PASS :max_components_count,input:isAsync=true;numScalarDelta=0;useExtraBuiltinInputs=false
 PASS :max_components_count,input:isAsync=true;numScalarDelta=0;useExtraBuiltinInputs=true
 PASS :max_components_count,input:isAsync=true;numScalarDelta=1;useExtraBuiltinInputs=false
 PASS :max_components_count,input:isAsync=true;numScalarDelta=-3;useExtraBuiltinInputs=true
-PASS :max_components_count,input:isAsync=true;numScalarDelta=-2;useExtraBuiltinInputs=true
+PASS :max_components_count,input:isAsync=true;numScalarDelta=-4;useExtraBuiltinInputs=true
 

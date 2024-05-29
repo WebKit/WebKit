@@ -1,0 +1,6 @@
+
+PASS :passthrough:type="f32"
+PASS :passthrough:type="f16"
+PASS :passthrough:type="i32"
+PASS :passthrough:type="u32"
+

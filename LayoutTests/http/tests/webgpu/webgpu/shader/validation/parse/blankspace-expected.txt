@@ -1,1 +1,121 @@
-(Populate me when we're ready to investigate this test)
+
+FAIL :null_characters:contains_null=true;placement="comment" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    // Here is a \0 character
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/blankspace.spec.js:25:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :null_characters:contains_null=true;placement="delimiter"
+FAIL :null_characters:contains_null=true;placement="eol" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    const name : i32 = 0;\0
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/blankspace.spec.js:25:24
+  - EXPECTATION FAILED: subcase:
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+ Reached unreachable code
+PASS :null_characters:contains_null=false;placement="comment"
+PASS :null_characters:contains_null=false;placement="delimiter"
+PASS :null_characters:contains_null=false;placement="eol"
+PASS :blankspace:blankspace=["%20","space"]
+PASS :blankspace:blankspace=["%5Ct","horizontal_tab"]
+PASS :blankspace:blankspace=["%5Cn","line_feed"]
+PASS :blankspace:blankspace=["%5Cu000b","vertical_tab"]
+PASS :blankspace:blankspace=["%5Cf","form_feed"]
+PASS :blankspace:blankspace=["%5Cr","carriage_return"]
+FAIL :blankspace:blankspace=["%C2%85","next_line"] assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:6: error: Expected a Identifier, but got a Invalid
+
+    ---- shader ----
+    constident : i32 = 0;
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:5: Expected a Identifier, but got a Invalid
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :blankspace:blankspace=["%E2%80%8E","left_to_right_mark"] assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:6: error: Expected a Identifier, but got a Invalid
+
+    ---- shader ----
+    const‎ident : i32 = 0;
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:5: Expected a Identifier, but got a Invalid
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :blankspace:blankspace=["%E2%80%8F","right_to_left_mark"] assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:6: error: Expected a Identifier, but got a Invalid
+
+    ---- shader ----
+    const‏ident : i32 = 0;
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:5: Expected a Identifier, but got a Invalid
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :blankspace:blankspace=["%E2%80%A8","line_separator"] assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:6: error: Expected a Identifier, but got a Invalid
+
+    ---- shader ----
+    const ident : i32 = 0;
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:5: Expected a Identifier, but got a Invalid
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :blankspace:blankspace=["%E2%80%A9","paragraph_separator"] assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    1:6: error: Expected a Identifier, but got a Invalid
+
+    ---- shader ----
+    const ident : i32 = 0;
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:5: Expected a Identifier, but got a Invalid
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :bom:include_bom=true
+PASS :bom:include_bom=false
+
