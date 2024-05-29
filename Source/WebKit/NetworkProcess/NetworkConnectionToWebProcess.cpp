@@ -1501,9 +1501,9 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 #endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(std::span<const char> logSubsystemIncludingNullTerminator, std::span<const char> logChannelIncludingNullTerminator, std::span<const uint8_t> logString, uint8_t logType, int32_t pid)
+void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(std::span<const char> logSubsystemIncludingNullTerminator, std::span<const char> logCategoryIncludingNullTerminator, std::span<const uint8_t> logString, uint8_t logType, int32_t pid)
 {
-    auto isNullTerminated = [](std::span<const char> view) {
+    auto isNullTerminated = [](auto view) {
         return view.data() && !view.empty() && view.back() == '\0';
     };
 
