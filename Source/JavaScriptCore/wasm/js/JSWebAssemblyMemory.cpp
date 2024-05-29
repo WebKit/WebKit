@@ -94,7 +94,7 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(JSGlobalObject* globalObject)
         size_t size = m_memory->size();
         ASSERT(memory);
         auto destructor = createSharedTask<void(void*)>([protectedHandle = WTFMove(protectedHandle)] (void*) { });
-        m_buffer = ArrayBuffer::createFromBytes(memory, size, WTFMove(destructor));
+        m_buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(memory), size }, WTFMove(destructor));
         m_buffer->makeWasmMemory();
         if (m_memory->sharingMode() == MemorySharingMode::Shared)
             m_buffer->makeShared();

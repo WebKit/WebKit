@@ -219,8 +219,8 @@ Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents&& contents)
 //   from the cage.
 Ref<ArrayBuffer> ArrayBuffer::createAdopted(std::span<const uint8_t> data)
 {
-    ASSERT(!Gigacage::isEnabled() || (Gigacage::contains(data.data()) && Gigacage::contains(static_cast<const uint8_t*>(data.data()) + data.size() - 1)));
-    return createFromBytes(data.data(), data.size(), ArrayBuffer::primitiveGigacageDestructor());
+    ASSERT(!Gigacage::isEnabled() || (Gigacage::contains(data.data()) && Gigacage::contains(data.data() + data.size() - 1)));
+    return createFromBytes(data, ArrayBuffer::primitiveGigacageDestructor());
 }
 
 // FIXME: We cannot use this except if the memory comes from the cage.
@@ -229,12 +229,12 @@ Ref<ArrayBuffer> ArrayBuffer::createAdopted(std::span<const uint8_t> data)
 //   longer caged, or we could introduce a new set of typed array types that are uncaged and get accessed
 //   differently.
 // - WebAssembly. Wasm should allocate from the cage.
-Ref<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, size_t byteLength, ArrayBufferDestructorFunction&& destructor)
+Ref<ArrayBuffer> ArrayBuffer::createFromBytes(std::span<const uint8_t> data, ArrayBufferDestructorFunction&& destructor)
 {
-    if (data && !Gigacage::isCaged(Gigacage::Primitive, data))
+    if (data.data() && !Gigacage::isCaged(Gigacage::Primitive, data.data()))
         Gigacage::disablePrimitiveGigacage();
     
-    ArrayBufferContents contents(const_cast<void*>(data), byteLength, std::nullopt, WTFMove(destructor));
+    ArrayBufferContents contents(data, std::nullopt, WTFMove(destructor));
     return create(WTFMove(contents));
 }
 

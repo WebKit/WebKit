@@ -132,6 +132,11 @@ public:
         RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     }
 
+    ArrayBufferContents(std::span<const uint8_t> data, std::optional<size_t> maxByteLength, ArrayBufferDestructorFunction&& destructor)
+        : ArrayBufferContents(const_cast<uint8_t*>(data.data()), data.size(), maxByteLength, WTFMove(destructor))
+    {
+    }
+
     ArrayBufferContents(Ref<SharedArrayBufferContents>&& shared)
         : m_shared(WTFMove(shared))
         , m_memoryHandle(m_shared->memoryHandle())
@@ -268,7 +273,7 @@ public:
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(std::span<const uint8_t> = { });
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(ArrayBufferContents&&);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createAdopted(std::span<const uint8_t>);
-    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createFromBytes(const void* data, size_t byteLength, ArrayBufferDestructorFunction&&);
+    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createFromBytes(std::span<const uint8_t> data, ArrayBufferDestructorFunction&&);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createShared(Ref<SharedArrayBufferContents>&&);
     JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(size_t numElements, unsigned elementByteSize, std::optional<size_t> maxByteLength = std::nullopt);
     JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(ArrayBuffer&);
