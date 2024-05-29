@@ -4,8 +4,9 @@ ARG CPU=native
 ARG LTO_FLAG="-flto='full'"
 ARG LLVM_VERSION="16"
 ARG DEFAULT_CFLAGS="-mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -ffunction-sections -fdata-sections"
+ARG DEBIAN_VERSION="bullseye"
 
-FROM bitnami/minideb:bullseye as base
+FROM bitnami/minideb:${DEBIAN_VERSION} as base
 
 ARG MARCH_FLAG
 ARG WEBKIT_RELEASE_TYPE

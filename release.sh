@@ -40,7 +40,13 @@ if [ "$WEBKIT_RELEASE_TYPE" == "relwithdebuginfo" ]; then
     CONTAINER_NAME=bun-webkit-linux-$BUILDKIT_ARCH-dbg
 fi
 
+if [ "$WEBKIT_RELEASE_TYPE" == "Debug" ]; then
+    export DEBIAN_VERSION="bookworm"
+else
+    export DEBIAN_VERSION="bullseye"
+fi
+
 mkdir -p $temp
 rm -rf $temp/bun-webkit
 
-docker buildx build -f Dockerfile -t $CONTAINER_NAME --build-arg LTO_FLAG=$LTO_FLAG --build-arg WEBKIT_RELEASE_TYPE=$WEBKIT_RELEASE_TYPE --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
+docker buildx build -f Dockerfile -t $CONTAINER_NAME --build-arg LTO_FLAG=$LTO_FLAG --build-arg WEBKIT_RELEASE_TYPE=$WEBKIT_RELEASE_TYPE --build-arg DEBIAN_VERSION=$DEBIAN_VERSION --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
