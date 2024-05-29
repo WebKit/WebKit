@@ -883,17 +883,6 @@ webkit.org/b/137096 svg/W3C-SVG-1.1/text-altglyph-01-b.svg [ Failure ]
 webkit.org/b/137096 svg/custom/altglyph.svg [ Failure ]
 webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
 
-webkit.org/b/156148 fast/text/svg-font-face-with-kerning.html [ Failure ]
-webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-05-t.svg [ Failure ]
-webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]
-webkit.org/b/156148 svg/custom/glyph-selection-lang-attribute.svg [ Failure ]
-webkit.org/b/156148 svg/text/kerning.svg [ Failure ]
-webkit.org/b/156148 svg/text/multichar-glyph.svg [ Failure ]
-webkit.org/b/156148 svg/text/text-hkern.svg [ Failure ]
-webkit.org/b/156148 svg/text/text-text-04-t.svg [ Failure ]
-webkit.org/b/156148 svg/text/text-text-06-t.svg [ Failure ]
-webkit.org/b/156148 svg/text/text-vkern.svg [ Failure ]
-
 # Since r200320 resource-timing feature is a runtime flag.
 webkit.org/b/158617 fast/dom/Window/window-properties-performance-resource-timing.html [ Failure ]
 
