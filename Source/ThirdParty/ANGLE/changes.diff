@@ -1,3 +1,136 @@
+diff --git a/.gitmodules b/.gitmodules
+index f5f80fd062a0ec82e83bf9c6265e4f7f2e67fb0f..2e25b5d74f673e5449b59f5481acc78f01a2e6c4 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -1,31 +1,11 @@
+-[submodule "build"]
+-	path = build
+-	url = https://chromium.googlesource.com/chromium/src/build
+-	gclient-condition = not build_with_chromium
+-[submodule "buildtools"]
+-	path = buildtools
+-	url = https://chromium.googlesource.com/chromium/src/buildtools
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/clang-format/script"]
+ 	path = third_party/clang-format/script
+ 	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/clang/tools/clang-format
+ 	gclient-condition = not build_with_chromium
+-[submodule "testing"]
+-	path = testing
+-	url = https://chromium.googlesource.com/chromium/src/testing
+-	gclient-condition = not build_with_chromium
+-[submodule "third_party/abseil-cpp"]
+-	path = third_party/abseil-cpp
+-	url = https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/android_build_tools"]
+ 	path = third_party/android_build_tools
+ 	url = https://chromium.googlesource.com/chromium/src/third_party/android_build_tools
+ 	gclient-condition = checkout_android and not build_with_chromium
+-[submodule "third_party/android_deps"]
+-	path = third_party/android_deps
+-	url = https://chromium.googlesource.com/chromium/src/third_party/android_deps
+-	gclient-condition = checkout_android and not build_with_chromium
+ [submodule "third_party/android_platform"]
+ 	path = third_party/android_platform
+ 	url = https://chromium.googlesource.com/chromium/src/third_party/android_platform
+@@ -38,10 +18,6 @@
+ 	path = third_party/astc-encoder/src
+ 	url = https://chromium.googlesource.com/external/github.com/ARM-software/astc-encoder
+ 	gclient-condition = not build_with_chromium
+-[submodule "third_party/catapult"]
+-	path = third_party/catapult
+-	url = https://chromium.googlesource.com/catapult
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/cherry"]
+ 	path = third_party/cherry
+ 	url = https://android.googlesource.com/platform/external/cherry
+@@ -62,18 +38,10 @@
+ 	path = third_party/dawn
+ 	url = https://dawn.googlesource.com/dawn
+ 	gclient-condition = not build_with_chromium
+-[submodule "third_party/depot_tools"]
+-	path = third_party/depot_tools
+-	url = https://chromium.googlesource.com/chromium/tools/depot_tools
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/EGL-Registry/src"]
+ 	path = third_party/EGL-Registry/src
+ 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/EGL-Registry
+ 	gclient-condition = not build_with_chromium
+-[submodule "third_party/flatbuffers/src"]
+-	path = third_party/flatbuffers/src
+-	url = https://chromium.googlesource.com/external/github.com/google/flatbuffers
+-	gclient-condition = checkout_android and not build_with_chromium
+ [submodule "third_party/gles1_conform"]
+ 	path = third_party/gles1_conform
+ 	url = https://chrome-internal.googlesource.com/angle/es-cts
+@@ -113,18 +81,6 @@
+ 	path = third_party/jsoncpp
+ 	url = https://chromium.googlesource.com/chromium/src/third_party/jsoncpp
+ 	gclient-condition = not build_with_chromium
+-[submodule "third_party/libc++/src"]
+-	path = third_party/libc++/src
+-	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx
+-	gclient-condition = not build_with_chromium
+-[submodule "third_party/libc++abi/src"]
+-	path = third_party/libc++abi/src
+-	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi
+-	gclient-condition = not build_with_chromium
+-[submodule "third_party/libunwind/src"]
+-	path = third_party/libunwind/src
+-	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libunwind
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/markupsafe"]
+ 	path = third_party/markupsafe
+ 	url = https://chromium.googlesource.com/chromium/src/third_party/markupsafe
+@@ -180,17 +136,6 @@
+ 	path = third_party/six
+ 	url = https://chromium.googlesource.com/chromium/src/third_party/six
+ 	gclient-condition = checkout_android and not build_with_chromium
+-[submodule "third_party/SwiftShader"]
+-	path = third_party/SwiftShader
+-	url = https://swiftshader.googlesource.com/SwiftShader
+-	gclient-condition = not build_with_chromium
+-[submodule "third_party/VK-GL-CTS/src"]
+-	path = third_party/VK-GL-CTS/src
+-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/VK-GL-CTS
+-[submodule "third_party/vulkan-deps"]
+-	path = third_party/vulkan-deps
+-	url = https://chromium.googlesource.com/vulkan-deps
+-	gclient-condition = not build_with_chromium
+ [submodule "third_party/glslang/src"]
+ 	path = third_party/glslang/src
+ 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang
+@@ -239,18 +184,6 @@
+ 	path = third_party/zlib
+ 	url = https://chromium.googlesource.com/chromium/src/third_party/zlib
+ 	gclient-condition = not build_with_chromium
+-[submodule "tools/android"]
+-	path = tools/android
+-	url = https://chromium.googlesource.com/chromium/src/tools/android
+-	gclient-condition = checkout_android and not build_with_chromium
+-[submodule "tools/clang"]
+-	path = tools/clang
+-	url = https://chromium.googlesource.com/chromium/src/tools/clang
+-	gclient-condition = not build_with_chromium
+-[submodule "tools/mb"]
+-	path = tools/mb
+-	url = https://chromium.googlesource.com/chromium/src/tools/mb
+-	gclient-condition = not build_with_chromium
+ [submodule "tools/md_browser"]
+ 	path = tools/md_browser
+ 	url = https://chromium.googlesource.com/chromium/src/tools/md_browser
+@@ -259,10 +192,6 @@
+ 	path = tools/memory
+ 	url = https://chromium.googlesource.com/chromium/src/tools/memory
+ 	gclient-condition = not build_with_chromium
+-[submodule "tools/perf"]
+-	path = tools/perf
+-	url = https://chromium.googlesource.com/chromium/src/tools/perf
+-	gclient-condition = not build_with_chromium
+ [submodule "tools/protoc_wrapper"]
+ 	path = tools/protoc_wrapper
+ 	url = https://chromium.googlesource.com/chromium/src/tools/protoc_wrapper
 diff --git a/doc/ExtensionSupport.md b/doc/ExtensionSupport.md
 index 604071d9e22bec6eae57df3c7043319666e55f3b..407f5f71a10cc97e9229e40df8b9dd2e6336f8f8 100644
 --- a/doc/ExtensionSupport.md
@@ -68,7 +201,7 @@ index a636c5e7773d4186fc58a665b1a4e6c0cf7cc345..d1624a7c49f745f41ef6d381151e8ae9
              "name": "allow_inline_const_vertex_data",
              "category": "Features",
 diff --git a/scripts/generate_entry_points.py b/scripts/generate_entry_points.py
-index 0bf5224fa2af81ed2966630b50d37e1ea79b427d..6d9d4d8ddf0c0ecba3c8ae74881ae6d2eb5cc965 100755
+index 35dca1a1cbbce6e382a99de4023093fe803baf46..cca757b1046ea70d7a33c25e3ef335a742ae8d40 100755
 --- a/scripts/generate_entry_points.py
 +++ b/scripts/generate_entry_points.py
 @@ -1009,6 +1009,7 @@ FORMAT_DICT = {
@@ -130,7 +263,7 @@ index 466387f2a92f2bda5884e6cde7910678690fe58d..835cc7d42424dfc18067140a8c9d1236
 +    </enums>
  </registry>
 diff --git a/scripts/registry_xml.py b/scripts/registry_xml.py
-index ed55ba4ec9f352b87d5173487901c28fbd9f2789..5466e3a1accfc7e69369deddf9000dea34db49c7 100644
+index b6e096aab82d916c8c418663f906062c4f1836c2..c57e02f04b1ec063782621e2c595f5c91e567106 100644
 --- a/scripts/registry_xml.py
 +++ b/scripts/registry_xml.py
 @@ -73,6 +73,7 @@ angle_requestable_extensions = [
@@ -376,7 +509,7 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
-index 4a419a72cd1d7e0a4dfcb16bce4d86563cd11b62..3b7b4379a00a06d1aa679f754703b9fb5e6704b0 100644
+index 6456d2046f8366c838c71a82cee635b6cd9acae9..526371603138e93f155d179ecfaf38033ff8af25 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
 +++ b/src/compiler/translator/glslang_tab_autogen.cpp
 @@ -1,5 +1,8 @@
@@ -402,10 +535,10 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index 1b23bd94a8a4e3905b18ef232587053ea02525cf..051f5038798a1756c50604f7c6d00b6a1e0d34f9 100644
+index 77f4bd999ea3c00125c3f302531c4b1431a5f472..1aa25c4712b32993bbe317893109a90edf589099 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
-@@ -9912,6 +9912,14 @@ void Context::textureFoveationParameters(TextureID texturePacked,
+@@ -9928,6 +9928,14 @@ void Context::textureFoveationParameters(TextureID texturePacked,
      texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
  }
  
@@ -434,7 +567,7 @@ index 3fd1870d19346fbb5dfd4c267f9949f8293c4034..eb30a63f8972247027d2d9a29d333a45
      void acquireTextures(GLuint numTextures, const TextureID *texturesPacked,                      \
                           const GLenum *layouts);                                                   \
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 24169c06636a71725acfa0ef74d95365349884a3..93237f2910e587f3c3cc16f3e4a2dceb59647f7f 100644
+index 1f3de17a0d442b8286b1c20f892ed83de3d22867..ac7de443ee0c206038001c2e8491081c1c23cc0e 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -513,7 +646,7 @@ index 24169c06636a71725acfa0ef74d95365349884a3..93237f2910e587f3c3cc16f3e4a2dceb
              UNREACHABLE();
              break;
 diff --git a/src/libANGLE/State.h b/src/libANGLE/State.h
-index fa61701b303e41d496aa5af8b8c92f3f79b320a4..72d4e0eff898b5d50954ec523f767170a2a5cdea 100644
+index b2aa6749060b673ba72589664ec8a4e0a96b79e3..06fd53d9607f5dfae719133674ac3964cd2ed3d8 100644
 --- a/src/libANGLE/State.h
 +++ b/src/libANGLE/State.h
 @@ -179,7 +179,8 @@ enum ExtendedDirtyBitType
@@ -553,24 +686,6 @@ index fa61701b303e41d496aa5af8b8c92f3f79b320a4..72d4e0eff898b5d50954ec523f767170
      // GLES1 emulation: state specific to GLES1
      GLES1State mGLES1State;
  
-@@ -1470,6 +1484,9 @@ class State : angle::NonCopyable
-             return handlers;
-         }();
- 
-+    // FIXME(djg): On our GCC builds, handler is not a constant expression and
-+    // the static_assert fails to compile.
-+#if 0
-     static_assert(
-         []() {
-             for (auto handler : kDirtyObjectHandlers)
-@@ -1482,6 +1499,7 @@ class State : angle::NonCopyable
-             return true;
-         }(),
-         "kDirtyObjectHandlers missing a handler");
-+#endif
- 
-     // Robust init must happen before Framebuffer init for the Vulkan back-end.
-     static_assert(state::DIRTY_OBJECT_ACTIVE_TEXTURES < state::DIRTY_OBJECT_TEXTURES_INIT,
 diff --git a/src/libANGLE/capture/capture_gles_ext_autogen.cpp b/src/libANGLE/capture/capture_gles_ext_autogen.cpp
 index 12003aa6b55f6c8d8320a88499438991918fe7c9..445a026e1e7bf788a55752fdccec56ac18d2ca1c 100644
 --- a/src/libANGLE/capture/capture_gles_ext_autogen.cpp
@@ -1064,10 +1179,10 @@ index 1089fb59517f0c50d055275a66992dda7f380e5f..1c1e2b823d9a4c1340fabb9dff87e8b6
          // Now we have to resize depth stencil buffers if required.
          ANGLE_TRY(ensureCompanionTexturesSizeCorrect(context));
 diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.mm b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-index b0726b984f41119e930897b043a7da70a446a12a..d1877ade8fb10211d437c2d0dba8ea27c48bf497 100644
+index d93f10afc07d12b88cd234e569fa658a1fbf6ad2..24fc07ff9b0e8294d972e7623173b9d47ff49679 100644
 --- a/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 +++ b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-@@ -1065,16 +1065,23 @@ angle::Result VertexArrayMtl::convertVertexBufferGPU(const gl::Context *glContex
+@@ -1084,16 +1084,23 @@ angle::Result VertexArrayMtl::convertVertexBufferGPU(const gl::Context *glContex
      ANGLE_TRY(conversion->data.allocate(contextMtl, numVertices * targetStride, nullptr, &newBuffer,
                                          &newBufferOffset));
  
@@ -1151,7 +1266,7 @@ index 7cf68b2d13a8b04fffc57d6223a8b60c7c0df010..0bbd15bd77be43272d8b8542a76926e5
    private:
      // Override CommandEncoder
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 6ca770bbf26ec46ec79c9f45fce214e373fe7c3f..b874cdfe491325d85067a77b9d4608809ebadcb6 100644
+index 6ca770bbf26ec46ec79c9f45fce214e373fe7c3f..0639b7fead2b5f45d689230f721c3f4792bba0ac 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 @@ -373,12 +373,20 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
@@ -1212,35 +1327,17 @@ index 6ca770bbf26ec46ec79c9f45fce214e373fe7c3f..b874cdfe491325d85067a77b9d460880
      mCommands.clear();
  }
  
-@@ -1776,8 +1800,26 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
+@@ -1776,7 +1800,8 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
      return setStencilRefVals(ref, ref);
  }
  
 -RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewport)
-+RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &intialViewport,
++RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewport,
 +                                                        id<MTLRasterizationRateMap> map)
  {
-+    auto viewport = intialViewport;
-+    if (map)
-+    {
-+        auto adjustedOrigin =
-+            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(viewport.originX, (int)viewport.originY)
-+                                       forLayer:0];
-+        auto adjustedSize =
-+            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(viewport.width, viewport.height)
-+                                       forLayer:0];
-+
-+        viewport.originX      = std::max<double>(0, adjustedOrigin.x);
-+        viewport.originY      = std::max<double>(0, adjustedOrigin.y);
-+        MTLSize screenSize = [map screenSize];
-+        viewport.width  = std::min<double>(screenSize.width, ceilf(adjustedSize.x));
-+        viewport.height = std::min<double>(screenSize.height, ceilf(adjustedSize.y));
-+    }
-+
      if (mStateCache.viewport.valid() && mStateCache.viewport.value() == viewport)
      {
-         return *this;
-@@ -1789,12 +1831,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
+@@ -1789,12 +1814,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
      return *this;
  }
  
@@ -1266,7 +1363,7 @@ index 6ca770bbf26ec46ec79c9f45fce214e373fe7c3f..b874cdfe491325d85067a77b9d460880
  
      MTLScissorRect clampedRect = {rect.x, rect.y, std::min(rect.width, clampedWidth),
                                    std::min(rect.height, clampedHeight)};
-@@ -1806,6 +1858,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
+@@ -1806,6 +1841,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
  
      mStateCache.scissorRect = clampedRect;
  
@@ -1280,17 +1377,17 @@ index 6ca770bbf26ec46ec79c9f45fce214e373fe7c3f..b874cdfe491325d85067a77b9d460880
 +                                                                    clampedRect.height)
 +                                       forLayer:0];
 +
-+        clampedRect.x      = (NSUInteger)floorf(adjustedOrigin.x);
-+        clampedRect.y      = (NSUInteger)floorf(adjustedOrigin.y);
++        clampedRect.x      = (NSUInteger)roundf(adjustedOrigin.x);
++        clampedRect.y      = (NSUInteger)roundf(adjustedOrigin.y);
 +        MTLSize screenSize = [map screenSize];
-+        clampedRect.width  = std::min<NSUInteger>(screenSize.width, ceilf(adjustedSize.x));
-+        clampedRect.height = std::min<NSUInteger>(screenSize.height, ceilf(adjustedSize.y));
++        clampedRect.width  = std::min<NSUInteger>(screenSize.width, roundf(adjustedSize.x));
++        clampedRect.height = std::min<NSUInteger>(screenSize.height, roundf(adjustedSize.y));
 +    }
 +
      mCommands.push(CmdType::SetScissorRect).push(clampedRect);
  
      return *this;
-@@ -2211,6 +2280,17 @@ void RenderCommandEncoder::popDebugGroup()
+@@ -2211,6 +2263,17 @@ void RenderCommandEncoder::popDebugGroup()
      mCommands.push(CmdType::PopDebugGroup);
  }
  
@@ -1308,7 +1405,7 @@ index 6ca770bbf26ec46ec79c9f45fce214e373fe7c3f..b874cdfe491325d85067a77b9d460880
  RenderCommandEncoder &RenderCommandEncoder::setColorStoreAction(MTLStoreAction action,
                                                                  uint32_t colorAttachmentIndex)
  {
-@@ -2306,6 +2386,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
+@@ -2306,6 +2369,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
      return *this;
  }
  
@@ -1512,7 +1609,7 @@ index b0aa166a63fcd66bf6ac5faa5e10735b792624d3..d132acb7ccf1da94a71472d409df71eb
      TextureRef createMipView(const MipmapNativeLevel &level);
      // Create a view with different format
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 7e8a0dd0b8717f5f61f0f6056aa82b3e113b434e..cac11852374d00aab7199d6827d3fd1deaf5d64b 100644
+index 4fd9dec7338e3b637c1f9eb236f503467e0c5a74..47973ce57b2cdcb1a1507cbd459e4658d89b6503 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
 @@ -78,12 +78,10 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
@@ -1528,7 +1625,7 @@ index 7e8a0dd0b8717f5f61f0f6056aa82b3e113b434e..cac11852374d00aab7199d6827d3fd1d
      }
  }
  
-@@ -696,7 +694,9 @@ TextureRef Texture::createCubeFaceView(uint32_t face)
+@@ -695,7 +693,9 @@ TextureRef Texture::createCubeFaceView(uint32_t face)
      }
  }
  
@@ -1539,7 +1636,7 @@ index 7e8a0dd0b8717f5f61f0f6056aa82b3e113b434e..cac11852374d00aab7199d6827d3fd1d
  {
      ANGLE_MTL_OBJC_SCOPE
      {
-@@ -705,7 +705,7 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
+@@ -704,7 +704,7 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
              case MTLTextureTypeCube:
              case MTLTextureType2D:
              case MTLTextureType2DArray:
@@ -1548,7 +1645,7 @@ index 7e8a0dd0b8717f5f61f0f6056aa82b3e113b434e..cac11852374d00aab7199d6827d3fd1d
                                                NSMakeRange(level.get(), 1), NSMakeRange(slice, 1)));
              default:
                  UNREACHABLE();
-@@ -714,6 +714,11 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
+@@ -713,6 +713,11 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
      }
  }
  
@@ -1704,10 +1801,10 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +if __name__ == '__main__':
 +    sys.exit(main())
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index 39ca05160237bfadaebe1055e3c48d24d10bbbce..c2a1a2b8509ff3e2d61632144d2edc5c6a21f8db 100644
+index 05c8a3bd0061c5b77e70f23b3a159091404c84ce..c8d9d9582bee50e31284164ec35013956442142f 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -5912,6 +5912,13 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -5922,6 +5922,13 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                                  mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE);
                              }
                              break;

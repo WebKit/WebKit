@@ -11,10 +11,99 @@
 #ifndef LIBANGLE_RESOURCE_MAP_H_
 #define LIBANGLE_RESOURCE_MAP_H_
 
+#include <mutex>
+#include <type_traits>
+
+#include "common/SimpleMutex.h"
 #include "libANGLE/angletypes.h"
 
 namespace gl
 {
+// The resource map needs to be internally synchronized for maps that are placed in the share group
+// (as opposed to being private to the context) and that are accessed without holding the share
+// group lock.
+#if defined(ANGLE_ENABLE_SHARE_CONTEXT_LOCK)
+using ResourceMapMutex = angle::SimpleMutex;
+#else
+using ResourceMapMutex = angle::NoOpMutex;
+#endif
+
+template <bool NeedsLock = true>
+struct SelectResourceMapMutex
+{
+    using type = ResourceMapMutex;
+};
+
+template <>
+struct SelectResourceMapMutex<false>
+{
+    using type = angle::NoOpMutex;
+};
+
+// Analysis of ANGLE's traces as well as Chrome usage reveals the following:
+//
+// - Buffers: Typical applications use no more than 4000 ids.  Very few use over 6000.
+// - Textures: Typical applications use no more than 1200 ids.  Very few use over 2000.
+// - Samplers: Typical applications use no more than 50 ids.  Very few use over 100.
+// - Shaders and Programs: Typical applications use no more than 500.  Very few use over 700.
+// - Sync objects: Typical applications use no more than 500.  Very few use over 1500.
+//
+// For all the other shared types, the maximum used id is small (under 100).  For
+// context-private parts (such as vertex arrays and queries), the id count can be in the
+// thousands.
+//
+// The initial size of the flat resource map is based on the above, rounded up to a multiple of
+// 1536.  Resource maps that need a lock (kNeedsLock == true) have the maximum flat size identical
+// to initial flat size to avoid reallocation.  For others, the maps start small and can grow.
+template <typename IDType>
+struct ResourceMapParams
+{
+    static constexpr size_t kInitialFlatResourcesSize = 192;
+
+    // The following are private to the context and don't need a lock:
+    //
+    // - Vertex Array Objects
+    // - Framebuffer Objects
+    // - Transform Feedback Objects
+    // - Query Objects
+    //
+    // The rest of the maps need a lock.  However, only a select few are currently locked as API
+    // relevant to the rest of the types are protected by the share group lock.  As the share group
+    // lock is removed from more types, the resource map lock needs to be enabled for them.
+    static constexpr bool kNeedsLock = false;
+};
+template <>
+struct ResourceMapParams<BufferID>
+{
+    static constexpr size_t kInitialFlatResourcesSize = 6144;
+    static constexpr bool kNeedsLock                  = true;
+};
+template <>
+struct ResourceMapParams<TextureID>
+{
+    static constexpr size_t kInitialFlatResourcesSize = 1536;
+    static constexpr bool kNeedsLock                  = false;
+};
+template <>
+struct ResourceMapParams<ShaderProgramID>
+{
+    static constexpr size_t kInitialFlatResourcesSize = 1536;
+    static constexpr bool kNeedsLock                  = false;
+};
+template <>
+struct ResourceMapParams<SyncID>
+{
+    static constexpr size_t kInitialFlatResourcesSize = 1536;
+    static constexpr bool kNeedsLock                  = false;
+};
+// For the purpose of unit testing, |int| is considered private (not needing lock), and
+// |unsigned int| is considered shared (needing lock).
+template <>
+struct ResourceMapParams<unsigned int>
+{
+    static constexpr size_t kInitialFlatResourcesSize = 192;
+    static constexpr bool kNeedsLock                  = true;
+};
 
 template <typename ResourceType, typename IDType>
 class ResourceMap final : angle::NonCopyable
@@ -26,11 +115,18 @@ class ResourceMap final : angle::NonCopyable
     ANGLE_INLINE ResourceType *query(IDType id) const
     {
         GLuint handle = GetIDValue(id);
+        // No need for a lock when accessing the flat map.  Either the flat map is static, or
+        // locking is not needed.
+        static_assert(!kNeedsLock || kInitialFlatResourcesSize == kFlatResourcesLimit);
+
         if (handle < mFlatResourcesSize)
         {
             ResourceType *value = mFlatResources[handle];
             return (value == InvalidPointer() ? nullptr : value);
         }
+
+        std::lock_guard<Mutex> lock(mMutex);
+
         auto it = mHashedResources.find(handle);
         return (it == mHashedResources.end() ? nullptr : it->second);
     }
@@ -73,6 +169,11 @@ class ResourceMap final : angle::NonCopyable
         bool mSkipNulls;
     };
 
+  private:
+    friend class Iterator;
+    template <typename SameResourceType, typename SameIDType>
+    friend class UnsafeResourceMapIter;
+
     // null values represent reserved handles.
     Iterator begin() const;
     Iterator end() const;
@@ -80,32 +181,74 @@ class ResourceMap final : angle::NonCopyable
     Iterator beginWithNull() const;
     Iterator endWithNull() const;
 
-    // Not a constant-time operation, should only be used for verification.
-    bool empty() const;
-
-  private:
-    friend class Iterator;
-
+    // Used by iterators and related functions only (due to lack of thread safety).
     GLuint nextResource(size_t flatIndex, bool skipNulls) const;
 
     // constexpr methods cannot contain reinterpret_cast, so we need a static method.
     static ResourceType *InvalidPointer();
     static constexpr intptr_t kInvalidPointer = static_cast<intptr_t>(-1);
 
-    // Start with 32 maximum elements in the map, which can grow.
-    static constexpr size_t kInitialFlatResourcesSize = 0x20;
+    static constexpr bool kNeedsLock = ResourceMapParams<IDType>::kNeedsLock;
+    using Mutex                      = typename SelectResourceMapMutex<kNeedsLock>::type;
 
-    // Experimental testing suggests that 16k is a reasonable upper limit.
-    static constexpr size_t kFlatResourcesLimit = 0x4000;
+    static constexpr size_t kInitialFlatResourcesSize =
+        ResourceMapParams<IDType>::kInitialFlatResourcesSize;
 
-    // Size of one map element.
-    static constexpr size_t kElementSize = sizeof(ResourceType *);
+    // Experimental testing suggests that ~10k is a reasonable upper limit.
+    static constexpr size_t kFlatResourcesLimit = kNeedsLock ? kInitialFlatResourcesSize : 0x3000;
+    // Due to the way assign() is implemented, kFlatResourcesLimit / kInitialFlatResourcesSize must
+    // be a power of 2.
+    static_assert(kFlatResourcesLimit % kInitialFlatResourcesSize == 0);
+    static_assert(((kFlatResourcesLimit / kInitialFlatResourcesSize) &
+                   (kFlatResourcesLimit / kInitialFlatResourcesSize - 1)) == 0);
 
     size_t mFlatResourcesSize;
     ResourceType **mFlatResources;
 
     // A map of GL objects indexed by object ID.
     HashMap mHashedResources;
+
+    // mFlatResources is allocated at object creation time, with a default size of
+    // |kInitialFlatResourcesSize|.  This is thread safe, because the allocation is done by the
+    // first context in the share group.  The flat map is allowed to grow up to
+    // |kFlatResourcesLimit|, but only for maps that don't need a lock (kNeedsLock == false).
+    //
+    // For maps that don't need a lock, this mutex is a no-op.  For those that do, the mutex is
+    // taken when allocating / deleting objects, as well as when accessing |mHashedResources|.
+    // Otherwise, access to the flat map (which never gets reallocated due to
+    // |kInitialFlatResourcesSize == kFlatResourcesLimit|) is lockless.  This latter is possible
+    // because the application is not allowed to gen/delete and bind the same ID in different
+    // threads at the same time.
+    //
+    // Note that because HandleAllocator is not yet thread-safe, glGen* and glDelete* functions
+    // cannot be free of the share group mutex yet.  To remove the share group mutex from those
+    // functions, likely the HandleAllocator class should be merged with this class, and the
+    // necessary insert/erase operations done under this same lock.
+    mutable Mutex mMutex;
+};
+
+// A helper to retrieve the resource map iterators while being explicit that this is not thread
+// safe.  Usage of iterators are limited to clean up on destruction and capture/replay, neither of
+// which can race with other threads in their access to the resource map.
+template <typename ResourceType, typename IDType>
+class UnsafeResourceMapIter
+{
+  public:
+    using ResMap = ResourceMap<ResourceType, IDType>;
+
+    UnsafeResourceMapIter(const ResMap &resourceMap) : mResourceMap(resourceMap) {}
+
+    typename ResMap::Iterator begin() const { return mResourceMap.begin(); }
+    typename ResMap::Iterator end() const { return mResourceMap.end(); }
+
+    typename ResMap::Iterator beginWithNull() const { return mResourceMap.beginWithNull(); }
+    typename ResMap::Iterator endWithNull() const { return mResourceMap.endWithNull(); }
+
+    // Not a constant-time operation, should only be used for verification.
+    bool empty() const;
+
+  private:
+    const ResMap &mResourceMap;
 };
 
 template <typename ResourceType, typename IDType>
@@ -113,13 +256,13 @@ ResourceMap<ResourceType, IDType>::ResourceMap()
     : mFlatResourcesSize(kInitialFlatResourcesSize),
       mFlatResources(new ResourceType *[kInitialFlatResourcesSize])
 {
-    memset(mFlatResources, kInvalidPointer, mFlatResourcesSize * kElementSize);
+    memset(mFlatResources, kInvalidPointer, mFlatResourcesSize * sizeof(mFlatResources[0]));
 }
 
 template <typename ResourceType, typename IDType>
 ResourceMap<ResourceType, IDType>::~ResourceMap()
 {
-    ASSERT(empty());
+    ASSERT(begin() == end());
     delete[] mFlatResources;
 }
 
@@ -129,9 +272,10 @@ ANGLE_INLINE bool ResourceMap<ResourceType, IDType>::contains(IDType id) const
     GLuint handle = GetIDValue(id);
     if (handle < mFlatResourcesSize)
     {
-        return (mFlatResources[handle] != InvalidPointer());
+        return mFlatResources[handle] != InvalidPointer();
     }
-    return (mHashedResources.find(handle) != mHashedResources.end());
+    std::lock_guard<Mutex> lock(mMutex);
+    return mHashedResources.find(handle) != mHashedResources.end();
 }
 
 template <typename ResourceType, typename IDType>
@@ -150,6 +294,8 @@ bool ResourceMap<ResourceType, IDType>::erase(IDType id, ResourceType **resource
     }
     else
     {
+        std::lock_guard<Mutex> lock(mMutex);
+
         auto it = mHashedResources.find(handle);
         if (it == mHashedResources.end())
         {
@@ -169,6 +315,9 @@ void ResourceMap<ResourceType, IDType>::assign(IDType id, ResourceType *resource
     {
         if (handle >= mFlatResourcesSize)
         {
+            // No need for a lock as the flat map never grows when locking is needed.
+            static_assert(!kNeedsLock || kInitialFlatResourcesSize == kFlatResourcesLimit);
+
             // Use power-of-two.
             size_t newSize = mFlatResourcesSize;
             while (newSize <= handle)
@@ -180,8 +329,8 @@ void ResourceMap<ResourceType, IDType>::assign(IDType id, ResourceType *resource
 
             mFlatResources = new ResourceType *[newSize];
             memset(&mFlatResources[mFlatResourcesSize], kInvalidPointer,
-                   (newSize - mFlatResourcesSize) * kElementSize);
-            memcpy(mFlatResources, oldResources, mFlatResourcesSize * kElementSize);
+                   (newSize - mFlatResourcesSize) * sizeof(mFlatResources[0]));
+            memcpy(mFlatResources, oldResources, mFlatResourcesSize * sizeof(mFlatResources[0]));
             mFlatResourcesSize = newSize;
             delete[] oldResources;
         }
@@ -190,6 +339,7 @@ void ResourceMap<ResourceType, IDType>::assign(IDType id, ResourceType *resource
     }
     else
     {
+        std::lock_guard<Mutex> lock(mMutex);
         mHashedResources[handle] = resource;
     }
 }
@@ -222,15 +372,16 @@ ResourceMap<ResourceType, IDType>::endWithNull() const
 }
 
 template <typename ResourceType, typename IDType>
-bool ResourceMap<ResourceType, IDType>::empty() const
+bool UnsafeResourceMapIter<ResourceType, IDType>::empty() const
 {
-    return (begin() == end());
+    return begin() == end();
 }
 
 template <typename ResourceType, typename IDType>
 void ResourceMap<ResourceType, IDType>::clear()
 {
-    memset(mFlatResources, kInvalidPointer, kInitialFlatResourcesSize * kElementSize);
+    // No need for a lock as this is only called on destruction.
+    memset(mFlatResources, kInvalidPointer, kInitialFlatResourcesSize * sizeof(mFlatResources[0]));
     mFlatResourcesSize = kInitialFlatResourcesSize;
     mHashedResources.clear();
 }
@@ -238,6 +389,8 @@ void ResourceMap<ResourceType, IDType>::clear()
 template <typename ResourceType, typename IDType>
 GLuint ResourceMap<ResourceType, IDType>::nextResource(size_t flatIndex, bool skipNulls) const
 {
+    // This function is only used by the iterators, access to which is marked by
+    // UnsafeResourceMapIter.  Locking is the responsibility of the caller.
     for (size_t index = flatIndex; index < mFlatResourcesSize; index++)
     {
         if ((mFlatResources[index] != nullptr || !skipNulls) &&

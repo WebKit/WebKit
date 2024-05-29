@@ -1244,9 +1244,9 @@ config("angle_abseil_config") {
 group("angle_abseil") {
   if (angle_enable_abseil) {
     # When build_with_chromium=true we need to include "//third_party/abseil-cpp:absl" while
-    # we can be more specific when building standalone ANGLE.
+    # we can be more specific when building standalone non-component ANGLE.
     # Also build the combined target when building Dawn to avoid multiply defined globals.
-    if (build_with_chromium || angle_enable_wgpu) {
+    if (build_with_chromium || angle_enable_wgpu || is_component_build) {
       public_deps = [ "$angle_abseil_cpp_dir:absl" ]
     } else {
       public_deps = [

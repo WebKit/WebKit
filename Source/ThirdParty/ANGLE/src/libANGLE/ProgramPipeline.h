@@ -64,7 +64,7 @@ class ProgramPipelineState final : angle::NonCopyable
     const Program *getShaderProgram(ShaderType shaderType) const { return mPrograms[shaderType]; }
     const SharedProgramExecutable &getShaderProgramExecutable(ShaderType shaderType) const
     {
-        return mProgramExecutables[shaderType];
+        return mExecutable->mPPOProgramExecutables[shaderType];
     }
 
     bool usesShaderProgram(ShaderProgramID program) const;
@@ -89,10 +89,6 @@ class ProgramPipelineState final : angle::NonCopyable
     Program *mActiveShaderProgram;
     // The shader programs for each stage.
     ShaderMap<Program *> mPrograms;
-
-    // Installed executables from the programs.  Note that these may be different from the programs'
-    // current executables, because they may have been unsuccessfully relinked.
-    ShaderMap<SharedProgramExecutable> mProgramExecutables;
 
     // Mapping from program's UBOs into the program executable's UBOs.
     ShaderMap<ProgramUniformBlockArray<GLuint>> mUniformBlockMap;

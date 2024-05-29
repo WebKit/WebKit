@@ -365,3 +365,12 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.texture*cube* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.random.* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.* = SKIP
 
+// BGRA failures
+8692 : dEQP-GLES2.functional.fbo.completeness.renderable.renderbuffer*bgra = FAIL
+8692 : dEQP-GLES2.functional.fbo.render.color*bgra* = FAIL
+8692 : dEQP-GLES2.functional.fbo.render.depth*bgra* = FAIL
+8692 : dEQP-GLES2.functional.fbo.render.*_colorbuffer*bgra* = FAIL
+8692 : dEQP-GLES2.functional.fbo.render.*_depthbuffer*bgra* = FAIL
+8692 : dEQP-GLES2.functional.fbo.render.*_stencilbuffer*bgra* = FAIL
+8692 : dEQP-GLES2.functional.fbo.render.resize*bgra* = FAIL
+8692 : dEQP-GLES2.functional.fbo.render.stencil*bgra* = FAIL

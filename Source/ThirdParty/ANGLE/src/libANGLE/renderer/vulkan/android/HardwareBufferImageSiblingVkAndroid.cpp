@@ -446,7 +446,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
 
     ANGLE_TRY(mImage->initExternalMemory(displayVk, renderer->getMemoryProperties(),
                                          externalMemoryRequirements, 1, &dedicatedAllocInfoPtr,
-                                         VK_QUEUE_FAMILY_FOREIGN_EXT, flags));
+                                         vk::kForeignDeviceQueueIndex, flags));
 
     if (isExternal)
     {

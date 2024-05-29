@@ -300,12 +300,13 @@ class QueueFamily final : angle::NonCopyable
     static const uint32_t kQueueCount = static_cast<uint32_t>(egl::ContextPriority::EnumCount);
     static const float kQueuePriorities[static_cast<uint32_t>(egl::ContextPriority::EnumCount)];
 
-    QueueFamily() : mProperties{}, mIndex(kInvalidIndex) {}
+    QueueFamily() : mProperties{}, mQueueFamilyIndex(kInvalidIndex) {}
     ~QueueFamily() {}
 
-    void initialize(const VkQueueFamilyProperties &queueFamilyProperties, uint32_t index);
-    bool valid() const { return (mIndex != kInvalidIndex); }
-    uint32_t getIndex() const { return mIndex; }
+    void initialize(const VkQueueFamilyProperties &queueFamilyProperties,
+                    uint32_t queueFamilyIndex);
+    bool valid() const { return (mQueueFamilyIndex != kInvalidIndex); }
+    uint32_t getQueueFamilyIndex() const { return mQueueFamilyIndex; }
     const VkQueueFamilyProperties *getProperties() const { return &mProperties; }
     bool isGraphics() const { return ((mProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT) > 0); }
     bool isCompute() const { return ((mProperties.queueFlags & VK_QUEUE_COMPUTE_BIT) > 0); }
@@ -315,40 +316,52 @@ class QueueFamily final : angle::NonCopyable
     }
     uint32_t getDeviceQueueCount() const { return mProperties.queueCount; }
 
-    DeviceQueueMap initializeQueueMap(VkDevice device,
-                                      bool makeProtected,
-                                      uint32_t queueIndex,
-                                      uint32_t queueCount);
-
   private:
     VkQueueFamilyProperties mProperties;
-    uint32_t mIndex;
-
-    void getDeviceQueue(VkDevice device, bool makeProtected, uint32_t queueIndex, VkQueue *queue);
+    uint32_t mQueueFamilyIndex;
 };
 
-class DeviceQueueMap : public angle::PackedEnumMap<egl::ContextPriority, VkQueue>
+class DeviceQueueMap final
 {
-    friend QueueFamily;
-
   public:
-    DeviceQueueMap() : mIndex(QueueFamily::kInvalidIndex), mIsProtected(false) {}
-    DeviceQueueMap(uint32_t queueFamilyIndex, bool isProtected)
-        : mIndex(queueFamilyIndex), mIsProtected(isProtected)
-    {}
-    DeviceQueueMap(const DeviceQueueMap &other) = default;
+    DeviceQueueMap() : mQueueFamilyIndex(QueueFamily::kInvalidIndex), mIsProtected(false) {}
     ~DeviceQueueMap();
-    DeviceQueueMap &operator=(const DeviceQueueMap &other);
 
-    bool valid() const { return (mIndex != QueueFamily::kInvalidIndex); }
-    uint32_t getIndex() const { return mIndex; }
+    void initialize(VkDevice device,
+                    const QueueFamily &queueFamily,
+                    bool makeProtected,
+                    uint32_t queueIndex,
+                    uint32_t queueCount);
+    void destroy();
+
+    bool valid() const { return (mQueueFamilyIndex != QueueFamily::kInvalidIndex); }
+    uint32_t getQueueFamilyIndex() const { return mQueueFamilyIndex; }
     bool isProtected() const { return mIsProtected; }
-    egl::ContextPriority getDevicePriority(egl::ContextPriority priority) const;
+    egl::ContextPriority getDevicePriority(egl::ContextPriority priority) const
+    {
+        return mQueueAndIndices[priority].devicePriority;
+    }
+    DeviceQueueIndex getDeviceQueueIndex(egl::ContextPriority priority) const
+    {
+        return DeviceQueueIndex(mQueueFamilyIndex, mQueueAndIndices[priority].index);
+    }
+    const VkQueue &getQueue(egl::ContextPriority priority) const
+    {
+        return mQueueAndIndices[priority].queue;
+    }
 
   private:
-    uint32_t mIndex;
+    uint32_t mQueueFamilyIndex;
     bool mIsProtected;
-    angle::PackedEnumMap<egl::ContextPriority, egl::ContextPriority> mPriorities;
+    struct QueueAndIndex
+    {
+        // The actual priority that used
+        egl::ContextPriority devicePriority;
+        VkQueue queue;
+        // The queueIndex used for VkGetDeviceQueue
+        uint32_t index;
+    };
+    angle::PackedEnumMap<egl::ContextPriority, QueueAndIndex> mQueueAndIndices;
 };
 
 // Note all public APIs of CommandQueue class must be thread safe.
@@ -358,7 +371,11 @@ class CommandQueue : angle::NonCopyable
     CommandQueue();
     ~CommandQueue();
 
-    angle::Result init(Context *context, const DeviceQueueMap &queueMap);
+    angle::Result init(Context *context,
+                       const QueueFamily &queueFamily,
+                       bool enableProtectedContent,
+                       uint32_t queueCount);
+
     void destroy(Context *context);
 
     void handleDeviceLost(Renderer *renderer);
@@ -369,9 +386,13 @@ class CommandQueue : angle::NonCopyable
     {
         return mQueueMap.getDevicePriority(priority);
     }
-    uint32_t getDeviceQueueIndex() const { return mQueueMap.getIndex(); }
 
-    VkQueue getQueue(egl::ContextPriority priority) const { return mQueueMap[priority]; }
+    DeviceQueueIndex getDeviceQueueIndex(egl::ContextPriority priority) const
+    {
+        return mQueueMap.getDeviceQueueIndex(priority);
+    }
+
+    VkQueue getQueue(egl::ContextPriority priority) const { return mQueueMap.getQueue(priority); }
 
     Serial getLastSubmittedSerial(SerialIndex index) const { return mLastSubmittedSerials[index]; }
 
@@ -513,7 +534,7 @@ class CommandQueue : angle::NonCopyable
     angle::Result initCommandPool(Context *context, ProtectionType protectionType)
     {
         PersistentCommandPool &commandPool = mPrimaryCommandPoolMap[protectionType];
-        return commandPool.init(context, protectionType, mQueueMap.getIndex());
+        return commandPool.init(context, protectionType, mQueueMap.getQueueFamilyIndex());
     }
 
     // Protect multi-thread access to mInFlightCommands.pop and ensure ordering of submission.
@@ -635,6 +656,8 @@ class CommandProcessor : public Context
         return queueSerial <= mLastEnqueuedSerials;
     }
     Serial getLastEnqueuedSerial(SerialIndex index) const { return mLastEnqueuedSerials[index]; }
+
+    std::thread::id getThreadId() const { return mTaskThread.get_id(); }
 
   private:
     bool hasPendingError() const

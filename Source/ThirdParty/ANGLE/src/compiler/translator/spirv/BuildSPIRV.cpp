@@ -2321,7 +2321,7 @@ spirv::Blob SPIRVBuilder::getSpirv()
                    mSpirvFunctions.size());
 
     // Generate the SPIR-V header.
-    spirv::WriteSpirvHeader(&result, mNextAvailableId);
+    spirv::WriteSpirvHeader(&result, spirv::kVersion_1_0, mNextAvailableId);
 
     // Generate metadata in the following order:
     //

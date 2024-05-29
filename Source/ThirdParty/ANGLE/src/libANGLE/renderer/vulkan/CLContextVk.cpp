@@ -26,7 +26,9 @@ CLContextVk::CLContextVk(const cl::Context &context, const cl::DevicePtrs device
     : CLContextImpl(context),
       vk::Context(getPlatform()->getRenderer()),
       mAssociatedDevices(devicePtrs)
-{}
+{
+    mDeviceQueueIndex = mRenderer->getDefaultDeviceQueueIndex();
+}
 
 CLContextVk::~CLContextVk() = default;
 

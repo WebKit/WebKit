@@ -2235,25 +2235,6 @@ TEST_P(RobustResourceInitTestES31, Multisample2DTextureArray)
     }
 }
 
-// Tests that using an out of bounds draw offset with a dynamic array succeeds.
-TEST_P(RobustResourceInitTest, DynamicVertexArrayOffsetOutOfBounds)
-{
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
-    glUseProgram(program);
-
-    GLint posLoc = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
-    ASSERT_NE(-1, posLoc);
-
-    glEnableVertexAttribArray(posLoc);
-    GLBuffer buf;
-    glBindBuffer(GL_ARRAY_BUFFER, buf);
-    glVertexAttribPointer(posLoc, 4, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const void *>(500));
-    glBufferData(GL_ARRAY_BUFFER, 100, nullptr, GL_DYNAMIC_DRAW);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    // Either no error or invalid operation is okay.
-}
-
 // Test to cover a bug that the multisampled depth attachment of a framebuffer are not successfully
 // initialized before it is used as the read framebuffer in blitFramebuffer.
 // Referenced from the following WebGL CTS:

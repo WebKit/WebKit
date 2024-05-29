@@ -269,8 +269,7 @@ angle::Result Texture::Make3DTexture(ContextMtl *context,
     ANGLE_MTL_OBJC_SCOPE
     {
         // Use texture2DDescriptorWithPixelFormat to calculate full range mipmap range:
-        uint32_t maxDimen = std::max(width, height);
-        maxDimen          = std::max(maxDimen, depth);
+        const uint32_t maxDimen = std::max({width, height, depth});
         MTLTextureDescriptor *desc =
             [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:format.metalFormat
                                                                width:maxDimen

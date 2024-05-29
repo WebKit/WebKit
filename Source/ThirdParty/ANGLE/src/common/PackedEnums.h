@@ -784,12 +784,6 @@ typename std::enable_if<IsResourceIDType<T>::value, bool>::type operator<(const 
 template <typename ResourceIDType>
 GLuint GetIDValue(ResourceIDType id);
 
-template <>
-inline GLuint GetIDValue(GLuint id)
-{
-    return id;
-}
-
 template <typename ResourceIDType>
 inline GLuint GetIDValue(ResourceIDType id)
 {

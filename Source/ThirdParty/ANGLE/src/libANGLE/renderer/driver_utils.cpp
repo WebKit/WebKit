@@ -138,6 +138,16 @@ const uint16_t IntelGen12[] = {
     // DG1
     0x4905, 0x4906, 0x4907, 0x4908, 0x4909};
 
+// The following is used to parse generic Vulkan driver versions.
+angle::VersionTriple ParseGenericVulkanDriverVersion(uint32_t driverVersion)
+{
+    // Generic Vulkan driver versions are built using the following format:
+    // (Major << 22) | (Minor << 12) | (Patch)
+    constexpr uint32_t kMinorVersionMask = angle::BitMask<uint32_t>(10);
+    constexpr uint32_t kPatchVersionMask = angle::BitMask<uint32_t>(12);
+    return angle::VersionTriple(driverVersion >> 22, (driverVersion >> 12) & kMinorVersionMask,
+                                driverVersion & kPatchVersionMask);
+}
 }  // anonymous namespace
 
 IntelDriverVersion::IntelDriverVersion(uint32_t buildNumber) : mBuildNumber(buildNumber) {}
@@ -305,14 +315,14 @@ IntelDriverVersion ParseIntelWindowsDriverVersion(uint32_t driverVersion)
 #endif
 }
 
-ARMDriverVersion ParseARMDriverVersion(uint32_t driverVersion)
+ARMDriverVersion ParseARMVulkanDriverVersion(uint32_t driverVersion)
 {
-    // ARM driver versions are built with the following macro:
-    // ((((uint32_t)(major)) << 22) | (((uint32_t)(minor)) << 12) | ((uint32_t)(patch)))
-    constexpr uint32_t kMinorVersionMask = angle::BitMask<uint32_t>(10);
-    constexpr uint32_t kPatchMask        = angle::BitMask<uint32_t>(12);
-    return ARMDriverVersion(driverVersion >> 22, (driverVersion >> 12) & kMinorVersionMask,
-                            driverVersion & kPatchMask);
+    return ParseGenericVulkanDriverVersion(driverVersion);
+}
+
+QualcommDriverVersion ParseQualcommVulkanDriverVersion(uint32_t driverVersion)
+{
+    return ParseGenericVulkanDriverVersion(driverVersion);
 }
 
 int GetAndroidSDKVersion()

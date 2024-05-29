@@ -179,20 +179,8 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 3886 VULKAN NVIDIA : dEQP-GLES31.functional.image_load_store.3d.*single_layer = SKIP
 
 // Emulated advanced blend equations (only Nvidia and SwiftShader support the Vulkan extension):
-3586 AMD VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
 3586 INTEL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
 3586 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
-////
-//// AMD Vulkan expectations
-////
-
-// Cannot support the per-sample shading when gl_SampleID or gl_SamplePosition:
-3588 VULKAN AMD : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit*_per_sample.multisample_*_1 = FAIL
-3588 VULKAN AMD : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit*_per_sample.multisample_*_2 = FAIL
-3588 VULKAN AMD : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit*_per_sample.multisample_*_4 = FAIL
-3588 VULKAN AMD : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit*_per_sample.multisample_*_8 = FAIL
-3588 VULKAN AMD : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_two_samples.multisample_*_4 = FAIL
-3588 VULKAN AMD : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_two_samples.multisample_*_8 = FAIL
 
 ////
 //// Android (i.e. Pixel*) Vulkan expectations
@@ -208,16 +196,11 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 4371 SWIFTSHADER : dEQP-GLES31.functional.shaders.implicit_conversions.* = FAIL
 
 // Desktop cards without native etc support, angle emulated format fails
-5276 AMD VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_eac* = FAIL
-5276 AMD VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_etc* = FAIL
-5276 AMD VULKAN : dEQP-GLES31.functional.copy_image.mixed.*eac* = FAIL
 5276 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_eac* = FAIL
 5276 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_etc* = FAIL
 5276 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.mixed.*eac* = FAIL
 
 // Copy image tests fail on desktop cards where ASTC is emulated
-7415 AMD VULKAN : dEQP-GLES31.functional.copy_image.mixed.*astc* = FAIL
-7415 AMD VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_astc* = FAIL
 7415 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.mixed.*astc* = FAIL
 7415 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_astc* = FAIL
 

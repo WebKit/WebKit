@@ -20,7 +20,7 @@ namespace angle
 namespace spirv
 {
 
-void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t idCount);
+void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t version, uint32_t idCount);
 void WriteNop(Blob *blob);
 void WriteUndef(Blob *blob, IdResultType idResultType, IdResult idResult);
 void WriteSourceContinued(Blob *blob, LiteralString continuedSource);

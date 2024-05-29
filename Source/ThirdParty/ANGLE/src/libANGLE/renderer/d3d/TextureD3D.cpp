@@ -413,7 +413,7 @@ GLint TextureD3D::creationLevels(GLsizei width, GLsizei height, GLsizei depth) c
         mRenderer->getNativeExtensions().textureNpotOES)
     {
         // Maximum number of levels
-        return gl::log2(std::max(std::max(width, height), depth)) + 1;
+        return gl::log2(std::max({width, height, depth})) + 1;
     }
     else
     {

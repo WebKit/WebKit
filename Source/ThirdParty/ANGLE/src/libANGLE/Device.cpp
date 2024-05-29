@@ -20,7 +20,7 @@
 #include "libANGLE/renderer/DeviceImpl.h"
 
 #if defined(ANGLE_ENABLE_D3D11)
-#    include "libANGLE/renderer/d3d/DeviceD3D.h"
+#    include "libANGLE/renderer/d3d/d3d11/Device11.h"
 #endif
 
 namespace egl
@@ -54,7 +54,7 @@ egl::Error Device::CreateDevice(EGLint deviceType, void *nativeDevice, Device **
 #if defined(ANGLE_ENABLE_D3D11)
     if (deviceType == EGL_D3D11_DEVICE_ANGLE)
     {
-        newDeviceImpl.reset(new rx::DeviceD3D(deviceType, nativeDevice));
+        newDeviceImpl.reset(new rx::Device11(nativeDevice));
     }
 #endif
 
@@ -108,11 +108,6 @@ Error Device::getAttribute(EGLint attribute, EGLAttrib *value)
         getImplementation()->getAttribute(getOwningDisplay(), attribute, &nativeAttribute);
     *value = reinterpret_cast<EGLAttrib>(nativeAttribute);
     return error;
-}
-
-EGLint Device::getType() const
-{
-    return mImplementation.get()->getType();
 }
 
 void Device::initDeviceExtensions()

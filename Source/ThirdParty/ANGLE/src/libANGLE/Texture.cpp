@@ -185,8 +185,8 @@ GLuint TextureState::getMipmapMaxLevel() const
     GLuint expectedMipLevels       = 0;
     if (mType == TextureType::_3D)
     {
-        const int maxDim  = std::max(std::max(baseImageDesc.size.width, baseImageDesc.size.height),
-                                     baseImageDesc.size.depth);
+        const int maxDim = std::max(
+            {baseImageDesc.size.width, baseImageDesc.size.height, baseImageDesc.size.depth});
         expectedMipLevels = static_cast<GLuint>(log2(maxDim));
     }
     else
@@ -594,7 +594,7 @@ GLuint TextureState::getEnabledLevelCount() const
 {
     GLuint levelCount      = 0;
     const GLuint baseLevel = getEffectiveBaseLevel();
-    const GLuint maxLevel  = std::min(getEffectiveMaxLevel(), getMipmapMaxLevel());
+    const GLuint maxLevel  = getMipmapMaxLevel();
 
     // The mip chain will have either one or more sequential levels, or max levels,
     // but not a sparse one.

@@ -700,6 +700,12 @@ struct DeviceExtensions
     // EGL_ANGLE_device_d3d
     bool deviceD3D = false;
 
+    // EGL_ANGLE_device_d3d9
+    bool deviceD3D9 = false;
+
+    // EGL_ANGLE_device_d3d11
+    bool deviceD3D11 = false;
+
     // EGL_ANGLE_device_cgl
     bool deviceCGL = false;
 

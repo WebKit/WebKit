@@ -1064,7 +1064,7 @@ angle::spirv::Blob MakeFragShader(
     code.reserve(169);
 
     // Header
-    spirv::WriteSpirvHeader(&code, kIdCount);
+    spirv::WriteSpirvHeader(&code, spirv::kVersion_1_0, kIdCount);
 
     // The preamble
     InsertPreamble(colorAttachmentCount, unresolveDepth, unresolveStencilWithShaderExport, &code);

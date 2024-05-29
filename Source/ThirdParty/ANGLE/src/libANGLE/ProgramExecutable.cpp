@@ -745,6 +745,14 @@ void ProgramExecutable::destroy(const Context *context)
 {
     ASSERT(mImplementation != nullptr);
 
+    for (SharedProgramExecutable &executable : mPPOProgramExecutables)
+    {
+        if (executable)
+        {
+            UninstallExecutable(context, &executable);
+        }
+    }
+
     mImplementation->destroy(context);
     SafeDelete(mImplementation);
 }

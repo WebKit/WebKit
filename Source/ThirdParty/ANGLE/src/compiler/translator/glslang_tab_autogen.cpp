@@ -4522,7 +4522,7 @@ yyreduce:
 
         case 301: /* $@7: %empty  */
         {
-            context->incrSwitchNestingLevel();
+            context->incrSwitchNestingLevel((yylsp[-3]));
         }
         break;
 

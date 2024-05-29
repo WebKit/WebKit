@@ -984,6 +984,77 @@ void main() {
     }
 }
 
+// Test that interleaved layout works for drawing one vertex
+TEST_P(VertexAttributeTest, InterleavedOneVertex)
+{
+    float pointSizeRange[2] = {};
+    glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
+    ANGLE_SKIP_TEST_IF(pointSizeRange[1] < 8);
+
+    constexpr char kVS[] = R"(
+attribute vec4 a_pos;
+attribute vec4 a_col;
+varying mediump vec4 v_col;
+void main() {
+    gl_PointSize = 8.0;
+    gl_Position = a_pos;
+    v_col = a_col;
+})";
+    constexpr char kFS[] = R"(
+varying mediump vec4 v_col;
+void main() {
+    gl_FragColor = v_col;
+})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "a_pos");
+    glBindAttribLocation(program, 1, "a_col");
+    glUseProgram(program);
+
+    GLBuffer buf;
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+
+    // One vertex, magenta
+    const GLfloat data1[8] = {
+        0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+    };
+
+    // Two vertices, red and blue
+    const GLfloat data2[16] = {
+        -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+        +0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+    };
+
+    // One vertex, green
+    const GLfloat data3[8] = {
+        0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+    };
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 32, reinterpret_cast<void *>(0));
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 32, reinterpret_cast<void *>(16));
+
+    // The second attribute stride is reaching beyond the buffer's length.
+    // It must not cause any errors as there only one vertex to draw.
+    glBufferData(GL_ARRAY_BUFFER, 32, data1, GL_STATIC_DRAW);
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::magenta);
+
+    // Replace data and draw two vertices to ensure that stride has been applied correctly.
+    glBufferData(GL_ARRAY_BUFFER, 64, data2, GL_STATIC_DRAW);
+    glDrawArrays(GL_POINTS, 0, 2);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(32, 64, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(96, 64, GLColor::blue);
+
+    // Replace data reducing the buffer size back to one vertex
+    glBufferData(GL_ARRAY_BUFFER, 32, data3, GL_STATIC_DRAW);
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::green);
+}
+
 class VertexAttributeTestES3 : public VertexAttributeTest
 {
   protected:
@@ -4505,43 +4576,6 @@ void main()
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
-}
-
-// Test that vertex conversion correctly no-ops when the vertex format requires conversion but there
-// are no vertices to convert.
-TEST_P(VertexAttributeTest, ConversionWithNoVertices)
-{
-    constexpr char kVS[] = R"(precision highp float;
-attribute vec3 attr1;
-void main(void) {
-   gl_Position = vec4(attr1, 1.0);
-})";
-
-    constexpr char kFS[] = R"(precision highp float;
-void main(void) {
-   gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-})";
-
-    GLBuffer buffer;
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    std::array<int8_t, 12> data = {
-        1,
-    };
-    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(data[0]), data.data(), GL_STATIC_DRAW);
-
-    ANGLE_GL_PROGRAM(program, kVS, kFS);
-    glBindAttribLocation(program, 0, "attr1");
-    glLinkProgram(program);
-    ASSERT_TRUE(CheckLinkStatusAndReturnProgram(program, true));
-    glUseProgram(program);
-
-    // Set the offset the athe attribute past the end of the buffer but use a format that requires
-    // conversion in Vulkan
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_BYTE, true, 128, reinterpret_cast<void *>(256));
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    EXPECT_GL_NO_ERROR();
 }
 
 // Test that pipeline is recreated properly when switching from ARRAY buffer to client buffer,

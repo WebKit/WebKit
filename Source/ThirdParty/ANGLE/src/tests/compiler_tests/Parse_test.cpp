@@ -293,7 +293,7 @@ int E=int)";
     EXPECT_TRUE(foundInIntermediateTree("array has too many dimensions"));
 }
 
-TEST_F(ParseTest, DeeplyNestedWhileExpressionsNoCrash)
+TEST_F(ParseTest, DeeplyNestedWhileStatementsNoCrash)
 {
     mShaderSpec = SH_WEBGL2_SPEC;
     std::ostringstream shader;
@@ -310,7 +310,7 @@ void main() {
     EXPECT_TRUE(foundInIntermediateTree("statement is too deeply nested"));
 }
 
-TEST_F(ParseTest, DeeplyNestedForExpresionsNoCrash)
+TEST_F(ParseTest, DeeplyNestedForStatementsNoCrash)
 {
     mShaderSpec = SH_WEBGL2_SPEC;
     std::ostringstream shader;
@@ -327,7 +327,7 @@ void main() {
     EXPECT_TRUE(foundInIntermediateTree("statement is too deeply nested"));
 }
 
-TEST_F(ParseTest, DeeplyNestedDoWhileExpresionsNoCrash)
+TEST_F(ParseTest, DeeplyNestedDoWhileStatementsNoCrash)
 {
     mShaderSpec = SH_WEBGL2_SPEC;
     std::ostringstream shader;
@@ -341,6 +341,27 @@ void main() {
     for (int i = 0; i < 1700; ++i)
     {
         shader << "} while(true);";
+    }
+    shader << "}";
+    EXPECT_FALSE(compile(shader.str()));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("statement is too deeply nested"));
+}
+
+TEST_F(ParseTest, DeeplyNestedSwitchStatementsNoCrash)
+{
+    mShaderSpec = SH_WEBGL2_SPEC;
+    std::ostringstream shader;
+    shader << R"(#version 300 es
+void main() {
+)";
+    for (int i = 0; i < 1700; ++i)
+    {
+        shader << " switch(1) { default: int i=0;";
+    }
+    for (int i = 0; i < 1700; ++i)
+    {
+        shader << "}";
     }
     shader << "}";
     EXPECT_FALSE(compile(shader.str()));

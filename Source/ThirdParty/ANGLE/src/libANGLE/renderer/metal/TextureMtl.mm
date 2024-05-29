@@ -1324,7 +1324,9 @@ angle::Result TextureMtl::setEGLImageTarget(const gl::Context *context,
         angle::Format::InternalFormatToID(image->getFormat().info->sizedInternalFormat);
     mFormat = contextMtl->getPixelFormat(angleFormatId);
 
-    mSlices = mNativeTexture->cubeFacesOrArrayLength();
+    mSlices           = mNativeTexture->cubeFacesOrArrayLength();
+    mCurrentBaseLevel = 0;
+    mCurrentMaxLevel  = mNativeTexture->mipmapLevels() - 1;
 
     ANGLE_TRY(ensureSamplerStateCreated(context));
 
@@ -1484,10 +1486,13 @@ angle::Result TextureMtl::bindTexImage(const gl::Context *context, egl::Surface 
 {
     releaseTexture(true);
 
-    mBoundSurface  = surface;
-    auto pBuffer   = GetImplAs<OffscreenSurfaceMtl>(surface);
-    mNativeTexture = pBuffer->getColorTexture();
-    mFormat        = pBuffer->getColorFormat();
+    mBoundSurface     = surface;
+    auto pBuffer      = GetImplAs<OffscreenSurfaceMtl>(surface);
+    mNativeTexture    = pBuffer->getColorTexture();
+    mFormat           = pBuffer->getColorFormat();
+    mSlices           = mNativeTexture->cubeFacesOrArrayLength();
+    mCurrentBaseLevel = 0;
+    mCurrentMaxLevel  = mNativeTexture->mipmapLevels() - 1;
     ANGLE_TRY(ensureSamplerStateCreated(context));
 
     // Tell context to rebind textures

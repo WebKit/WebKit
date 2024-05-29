@@ -993,6 +993,10 @@ class ProgramExecutable final : public angle::Subject
     // been modified.
     UniformBufferBindingArray<ProgramUniformBlockMask> mUniformBufferBindingToUniformBlocks;
 
+    // PPO only: installed executables from the programs.  Note that these may be different from the
+    // programs' current executables, because they may have been unsuccessfully relinked.
+    ShaderMap<SharedProgramExecutable> mPPOProgramExecutables;
+
     // Cache for sampler validation
     mutable Optional<bool> mCachedValidateSamplersResult;
 

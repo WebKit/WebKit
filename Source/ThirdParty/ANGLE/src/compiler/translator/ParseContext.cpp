@@ -1368,7 +1368,7 @@ bool TParseContext::checkIsValidTypeAndQualifierForArray(const TSourceLoc &index
 
 void TParseContext::checkNestingLevel(const TSourceLoc &line)
 {
-    if (static_cast<size_t>(mLoopNestingLevel) > mMaxStatementDepth)
+    if (static_cast<size_t>(mLoopNestingLevel + mSwitchNestingLevel) > mMaxStatementDepth)
     {
         error(line, "statement is too deeply nested", "");
     }

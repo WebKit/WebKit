@@ -708,4 +708,16 @@ void main(void)
     EXPECT_EGL_TRUE(eglDestroyContext(display, context2));
 }
 
+// Test that leaked fences are cleaned up in a safe way. Regression test for sync objects using tail
+// calls for destruction.
+TEST_P(EGLSyncTest, DISABLED_LeakSyncToDisplayDestruction)
+{
+    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    EGLSyncKHR sync = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, nullptr);
+    EXPECT_NE(sync, EGL_NO_SYNC_KHR);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(EGLSyncTest);

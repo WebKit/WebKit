@@ -179,6 +179,8 @@ egl::Error DisplayVk::initialize(egl::Display *display)
         getWSIExtension(), getWSILayer(), getWindowSystem(), mState.featureOverrides);
     ANGLE_TRY(angle::ToEGL(result, EGL_NOT_INITIALIZED));
 
+    mDeviceQueueIndex = mRenderer->getDeviceQueueIndex(egl::ContextPriority::Medium);
+
     InstallDebugAnnotator(display, mRenderer);
 
     // Query and cache supported surface format and colorspace for later use.

@@ -635,7 +635,7 @@ class Separator : public TIntermRebuild
     PostResult visitConstantUnionPost(TIntermConstantUnion &node) override
     {
         const TType &type = node.getType();
-        if (!type.isScalar())
+        if (!type.isScalar() && !type.isVector() && !type.isMatrix())
         {
             pushBinding(node, node);
         }

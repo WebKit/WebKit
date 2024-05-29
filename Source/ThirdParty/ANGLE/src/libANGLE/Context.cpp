@@ -664,7 +664,21 @@ Context::Context(egl::Display *display,
 egl::Error Context::initialize()
 {
     if (!mImplementation)
+    {
         return egl::Error(EGL_NOT_INITIALIZED, "native context creation failed");
+    }
+
+    // If the final context version created (with backwards compatibility possibly added in),
+    // generate an error if it's higher than the maximum supported version for the display. This
+    // validation is always done even with EGL validation disabled because it's not possible to
+    // detect ahead of time if an ES 3.1 context is supported (no ES_31_BIT) or if
+    // KHR_no_config_context is used.
+    if (getClientType() == EGL_OPENGL_ES_API &&
+        getClientVersion() > getDisplay()->getMaxSupportedESVersion())
+    {
+        return egl::Error(EGL_BAD_ATTRIBUTE, "Requested version is not supported");
+    }
+
     return egl::NoError();
 }
 
@@ -850,7 +864,7 @@ egl::Error Context::onDestroy(const egl::Display *display)
     mDefaultFramebuffer->onDestroy(this);
     mDefaultFramebuffer.reset();
 
-    for (auto fence : mFenceNVMap)
+    for (auto fence : UnsafeResourceMapIter(mFenceNVMap))
     {
         if (fence.second)
         {
@@ -860,7 +874,7 @@ egl::Error Context::onDestroy(const egl::Display *display)
     }
     mFenceNVMap.clear();
 
-    for (auto query : mQueryMap)
+    for (auto query : UnsafeResourceMapIter(mQueryMap))
     {
         if (query.second != nullptr)
         {
@@ -869,7 +883,7 @@ egl::Error Context::onDestroy(const egl::Display *display)
     }
     mQueryMap.clear();
 
-    for (auto vertexArray : mVertexArrayMap)
+    for (auto vertexArray : UnsafeResourceMapIter(mVertexArrayMap))
     {
         if (vertexArray.second)
         {
@@ -878,7 +892,7 @@ egl::Error Context::onDestroy(const egl::Display *display)
     }
     mVertexArrayMap.clear();
 
-    for (auto transformFeedback : mTransformFeedbackMap)
+    for (auto transformFeedback : UnsafeResourceMapIter(mTransformFeedbackMap))
     {
         if (transformFeedback.second != nullptr)
         {
@@ -3618,7 +3632,8 @@ void Context::beginTransformFeedback(PrimitiveMode primitiveMode)
 
 bool Context::hasActiveTransformFeedback(ShaderProgramID program) const
 {
-    for (auto pair : mTransformFeedbackMap)
+    // Note: transform feedback objects are private to context and so the map doesn't need locking
+    for (auto pair : UnsafeResourceMapIter(mTransformFeedbackMap))
     {
         if (pair.second != nullptr && pair.second->hasBoundProgram(program))
         {
@@ -4498,7 +4513,8 @@ void Context::updateCaps()
                                       (mState.isWebGL() || mState.hasRobustAccess()));
 
     // Cache this in the VertexArrays. They need to check it in state change notifications.
-    for (auto vaoIter : mVertexArrayMap)
+    // Note: vertex array objects are private to context and so the map doesn't need locking
+    for (auto vaoIter : UnsafeResourceMapIter(mVertexArrayMap))
     {
         VertexArray *vao = vaoIter.second;
         vao->setBufferAccessValidationEnabled(mBufferAccessValidationEnabled);

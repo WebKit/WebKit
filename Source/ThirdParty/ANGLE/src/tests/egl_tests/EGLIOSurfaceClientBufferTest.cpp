@@ -1293,6 +1293,73 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromBGRX8888IOSurfaceWithTexBaseMaxLevelSe
                                });
 }
 
+// Test that the following scenario works:
+// - change IOSurface bound texture's max level to 0.
+// - attach IOSurface bound texture to a FBO 1.
+// - bind FBO 1
+// - clear FBO 1 -> this should trigger render targets initialization in backends.
+// - bind FBO 0.
+// - draw IOSurface bound texture to FBO 0.
+//   -> In the past, this could trigger the texture's render targets invalidation in metal backend.
+//   See https://issues.chromium.org/issues/335353385
+// - bind FBO 1
+// - blit FBO 0 to FBO 1.
+//   -> this will reconstruct render pass descriptor in metal backend.
+// - flush to restart render encoder with new render pass descriptor.
+// - draw.
+TEST_P(IOSurfaceClientBufferTest, SetMaxLevelWouldInvalidateRenderTargetBug)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    ANGLE_GL_PROGRAM(blueProgram, angle::essl1_shaders::vs::Simple(),
+                     angle::essl1_shaders::fs::Blue());
+
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'BGRA', 4);
+
+    GLTexture texture;
+    glBindTexture(getGLTextureTarget(), texture);
+
+    // Bind the IOSurface to a texture.
+    EGLSurface pbuffer;
+    bindIOSurfaceToTexture(ioSurface, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, &pbuffer, &texture);
+
+    // 1. Change the texture's max level to 0.
+    glTexParameteri(getGLTextureTarget(), GL_TEXTURE_MAX_LEVEL, 0);
+    EXPECT_GL_NO_ERROR();
+
+    // 2. Attach IOSurface bound texture to a FBO and clear it.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, getGLTextureTarget(), texture, 0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glClearColor(1.0f / 255.0f, 2.0f / 255.0f, 3.0f / 255.0f, 4.0f / 255.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // 3. Draw IOSurface bound texture to default FBO.
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    doSampleTestWithTexture(texture, R | G | B);
+
+    // 3. Draw to custom FBO again
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // Using a blit is important: it will trigger render pass reconstruction in
+    // metal backend due to DIRTY_BIT_COLOR_BUFFER_CONTENTS_0 dirty bit.
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glFlush();  // flush so that render encoder will be recreated again in metal backend.
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, angle::essl1_shaders::PositionAttrib(), 0.5f);
+    glFlush();
+
+    // Expect the final color to be accumulated color
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(1, 2, 255, 255));
+}
+
 // TODO(cwallez@chromium.org): Test setting width and height to less than the IOSurface's work as
 // expected.
 

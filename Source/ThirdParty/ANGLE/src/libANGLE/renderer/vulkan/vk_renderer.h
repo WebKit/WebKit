@@ -228,6 +228,15 @@ class Renderer : angle::NonCopyable
     {
         return mQueueFamilyProperties[mCurrentQueueFamilyIndex];
     }
+    const DeviceQueueIndex getDeviceQueueIndex(egl::ContextPriority priority) const
+    {
+        return mCommandQueue.getDeviceQueueIndex(priority);
+    }
+    const DeviceQueueIndex getDefaultDeviceQueueIndex() const
+    {
+        // By default it will always use medium priority
+        return mCommandQueue.getDeviceQueueIndex(egl::ContextPriority::Medium);
+    }
 
     const vk::MemoryProperties &getMemoryProperties() const { return mMemoryProperties; }
 
@@ -277,7 +286,6 @@ class Renderer : angle::NonCopyable
     {
         return mCommandQueue.getDriverPriority(priority);
     }
-    ANGLE_INLINE uint32_t getDeviceQueueIndex() { return mCommandQueue.getDeviceQueueIndex(); }
 
     VkQueue getQueue(egl::ContextPriority priority) { return mCommandQueue.getQueue(priority); }
 
@@ -337,14 +345,6 @@ class Renderer : angle::NonCopyable
     {
         vk::BufferSuballocationGarbage garbage(use, std::move(suballocation), std::move(buffer));
         mSuballocationGarbageList.add(this, std::move(garbage));
-    }
-
-    void collectRefCountedEventsGarbage(const QueueSerial &queueSerial,
-                                        vk::RefCountedEventCollector &&refCountedEvents)
-    {
-        ASSERT(!refCountedEvents.empty());
-        vk::RefCountedEventsGarbage garbage(queueSerial, std::move(refCountedEvents));
-        mRefCountedEventGarbageList.add(this, std::move(garbage));
     }
 
     angle::Result getPipelineCache(vk::Context *context, vk::PipelineCacheAccess *pipelineCacheOut);
@@ -748,6 +748,10 @@ class Renderer : angle::NonCopyable
         return mPipelineCacheGraphDumpPath.c_str();
     }
 
+    vk::RefCountedEventRecycler *getRefCountedEventRecycler() { return &mRefCountedEventRecycler; }
+
+    std::thread::id getCommandProcessorThreadId() const { return mCommandProcessor.getThreadId(); }
+
   private:
     angle::Result setupDevice(vk::Context *context,
                               const angle::FeatureOverrides &featureOverrides,
@@ -957,8 +961,8 @@ class Renderer : angle::NonCopyable
     vk::SharedGarbageList<vk::BufferSuballocationGarbage> mSuballocationGarbageList;
     // Holds orphaned BufferBlocks when ShareGroup gets destroyed
     vk::BufferBlockGarbageList mOrphanedBufferBlockList;
-    // Holds RefCountedEvent garbage
-    vk::SharedGarbageList<vk::RefCountedEventsGarbage> mRefCountedEventGarbageList;
+    // Holds RefCountedEvent that are free and ready to reuse
+    vk::RefCountedEventRecycler mRefCountedEventRecycler;
 
     VkDeviceSize mPendingGarbageSizeLimit;
 

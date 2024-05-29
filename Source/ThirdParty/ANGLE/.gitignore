@@ -54,6 +54,7 @@
 /third_party/fuchsia-sdk
 /third_party/gles1_conform
 /third_party/glmark2/src
+/third_party/glslang/src
 /third_party/googletest
 /third_party/ijar
 /third_party/jdk/current
@@ -89,10 +90,18 @@
 /third_party/rapidjson/src
 /third_party/requests/src
 /third_party/six
+/third_party/spirv-cross/src
+/third_party/spirv-headers/src
+/third_party/spirv-tools/src
 /third_party/SwiftShader
 /third_party/turbine/*.jar
 /third_party/VK-GL-CTS/src
 /third_party/vulkan-deps
+/third_party/vulkan-headers/src
+/third_party/vulkan-loader/src
+/third_party/vulkan-tools/src
+/third_party/vulkan-utility-libraries/src
+/third_party/vulkan-validation-layers/src
 /third_party/vulkan_memory_allocator
 /third_party/wayland
 /third_party/zlib
