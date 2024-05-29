@@ -6090,7 +6090,12 @@ public:
 
     static void replaceWithHlt(void* instructionStart)
     {
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        uint8_t op = OP_HLT;
+        performJITMemcpy(instructionStart, &op, 1);
+#else
         WTF::unalignedStore<uint8_t>(instructionStart, static_cast<uint8_t>(OP_HLT));
+#endif
     }
 
     static void replaceWithJump(void* instructionStart, void* to)
@@ -6098,16 +6103,27 @@ public:
         uint8_t* ptr = bitwise_cast<uint8_t*>(instructionStart);
         uint8_t* dstPtr = bitwise_cast<uint8_t*>(to);
         intptr_t distance = (intptr_t)(dstPtr - (ptr + 5));
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        uint8_t buffer[5];
+        buffer[0] = static_cast<uint8_t>(OP_JMP_rel32);
+        WTF::unalignedStore<int32_t>(buffer + 1, static_cast<int32_t>(distance));
+        performJITMemcpy(ptr, buffer, 5);
+#else
         WTF::unalignedStore<uint8_t>(ptr, static_cast<uint8_t>(OP_JMP_rel32));
         WTF::unalignedStore<int32_t>(ptr + 1, static_cast<int32_t>(distance));
+#endif
     }
 
     static void replaceWithNops(void* instructionStart, size_t memoryToFillWithNopsInBytes)
     {
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        fillNops<MachineCodeCopyMode::JITMemcpy>(instructionStart, memoryToFillWithNopsInBytes);
+#else
         fillNops<MachineCodeCopyMode::Memcpy>(instructionStart, memoryToFillWithNopsInBytes);
+#endif
     }
 
-    static ptrdiff_t maxJumpReplacementSize()
+    static constexpr ptrdiff_t maxJumpReplacementSize()
     {
         return 5;
     }
@@ -6119,20 +6135,28 @@ public:
     
     static void revertJumpTo_movq_i64r(void* instructionStart, int64_t imm, RegisterID dst)
     {
-        const unsigned instructionSize = 10; // REX.W MOV IMM64
-        const int rexBytes = 1;
-        const int opcodeBytes = 1;
+        constexpr unsigned instructionSize = 10; // REX.W MOV IMM64
+        constexpr int rexBytes = 1;
+        constexpr int opcodeBytes = 1;
         uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
-        ptr[0] = PRE_REX | (1 << 3) | (dst >> 3);
-        ptr[1] = OP_MOV_EAXIv | (dst & 7);
         
         union {
             uint64_t asWord;
             uint8_t asBytes[8];
         } u;
         u.asWord = imm;
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        uint8_t buffer[instructionSize];
+        buffer[0] = PRE_REX | (1 << 3) | (dst >> 3);
+        buffer[1] = OP_MOV_EAXIv | (dst & 7);
+        memcpy(buffer + rexBytes + opcodeBytes, u.asBytes, instructionSize - rexBytes - opcodeBytes);
+        performJITMemcpy(ptr, buffer, instructionSize);
+#else
+        ptr[0] = PRE_REX | (1 << 3) | (dst >> 3);
+        ptr[1] = OP_MOV_EAXIv | (dst & 7);
         for (unsigned i = rexBytes + opcodeBytes; i < instructionSize; ++i)
             ptr[i] = u.asBytes[i - rexBytes - opcodeBytes];
+#endif
     }
 
     static void revertJumpTo_movl_i32r(void* instructionStart, int32_t imm, RegisterID dst)
@@ -6141,55 +6165,79 @@ public:
         // FIXME: If the above is ever false then we need to make this smarter with respect to emitting 
         // the REX byte.
         ASSERT(dst == X86Registers::r11);
-        const unsigned instructionSize = 6; // REX MOV IMM32
-        const int rexBytes = 1;
-        const int opcodeBytes = 1;
+        constexpr unsigned instructionSize = 6; // REX MOV IMM32
+        constexpr int rexBytes = 1;
+        constexpr int opcodeBytes = 1;
         uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
-        ptr[0] = PRE_REX | (dst >> 3);
-        ptr[1] = OP_MOV_EAXIv | (dst & 7);
         
         union {
             uint32_t asWord;
             uint8_t asBytes[4];
         } u;
         u.asWord = imm;
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        uint8_t buffer[instructionSize];
+        buffer[0] = PRE_REX | (1 << 3) | (dst >> 3);
+        buffer[1] = OP_MOV_EAXIv | (dst & 7);
+        memcpy(buffer + rexBytes + opcodeBytes, u.asBytes, instructionSize - rexBytes - opcodeBytes);
+        performJITMemcpy(ptr, buffer, instructionSize);
+#else
+        ptr[0] = PRE_REX | (dst >> 3);
+        ptr[1] = OP_MOV_EAXIv | (dst & 7);
         for (unsigned i = rexBytes + opcodeBytes; i < instructionSize; ++i)
             ptr[i] = u.asBytes[i - rexBytes - opcodeBytes];
+#endif
     }
 
     static void revertJumpTo_cmpl_ir_force32(void* instructionStart, int32_t imm, RegisterID dst)
     {
-        const int opcodeBytes = 1;
-        const int modRMBytes = 1;
+        constexpr int opcodeBytes = 1;
+        constexpr int modRMBytes = 1;
         ASSERT(opcodeBytes + modRMBytes <= maxJumpReplacementSize());
         uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
-        ptr[0] = OP_GROUP1_EvIz;
-        ptr[1] = (X86InstructionFormatter::ModRmRegister << 6) | (GROUP1_OP_CMP << 3) | dst;
         union {
             uint32_t asWord;
             uint8_t asBytes[4];
         } u;
         u.asWord = imm;
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        uint8_t buffer[maxJumpReplacementSize()];
+        buffer[0] = OP_GROUP1_EvIz;
+        buffer[1] = (X86InstructionFormatter::ModRmRegister << 6) | (GROUP1_OP_CMP << 3) | dst;
+        memcpy(buffer + 2, u.asBytes, maxJumpReplacementSize() - opcodeBytes - modRMBytes);
+        performJITMemcpy(ptr, buffer, maxJumpReplacementSize());
+#else
+        ptr[0] = OP_GROUP1_EvIz;
+        ptr[1] = (X86InstructionFormatter::ModRmRegister << 6) | (GROUP1_OP_CMP << 3) | dst;
         for (unsigned i = opcodeBytes + modRMBytes; i < static_cast<unsigned>(maxJumpReplacementSize()); ++i)
             ptr[i] = u.asBytes[i - opcodeBytes - modRMBytes];
+#endif
     }
     
     static void revertJumpTo_cmpl_im_force32(void* instructionStart, int32_t imm, int offset, RegisterID dst)
     {
         ASSERT_UNUSED(offset, !offset);
-        const int opcodeBytes = 1;
-        const int modRMBytes = 1;
+        constexpr int opcodeBytes = 1;
+        constexpr int modRMBytes = 1;
         ASSERT(opcodeBytes + modRMBytes <= maxJumpReplacementSize());
         uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
-        ptr[0] = OP_GROUP1_EvIz;
-        ptr[1] = (X86InstructionFormatter::ModRmMemoryNoDisp << 6) | (GROUP1_OP_CMP << 3) | dst;
         union {
             uint32_t asWord;
             uint8_t asBytes[4];
         } u;
         u.asWord = imm;
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        uint8_t buffer[maxJumpReplacementSize()];
+        buffer[0] = OP_GROUP1_EvIz;
+        buffer[1] = (X86InstructionFormatter::ModRmMemoryNoDisp << 6) | (GROUP1_OP_CMP << 3) | dst;
+        memcpy(buffer + 2, u.asBytes, maxJumpReplacementSize() - opcodeBytes - modRMBytes);
+        performJITMemcpy(ptr, buffer, maxJumpReplacementSize());
+#else
+        ptr[0] = OP_GROUP1_EvIz;
+        ptr[1] = (X86InstructionFormatter::ModRmMemoryNoDisp << 6) | (GROUP1_OP_CMP << 3) | dst;
         for (unsigned i = opcodeBytes + modRMBytes; i < static_cast<unsigned>(maxJumpReplacementSize()); ++i)
             ptr[i] = u.asBytes[i - opcodeBytes - modRMBytes];
+#endif
     }
 
     static unsigned getCallReturnOffset(AssemblerLabel call)
@@ -6247,13 +6295,21 @@ public:
         while (size) {
             unsigned nopSize = static_cast<unsigned>(std::min<size_t>(size, 15));
             unsigned numPrefixes = nopSize <= 10 ? 0 : nopSize - 10;
+            uint8_t buffer[16];
+            uint8_t* bufferWriter = buffer;
             for (unsigned i = 0; i != numPrefixes; ++i)
-                *where++ = 0x66;
+                *bufferWriter++ = 0x66;
 
             unsigned nopRest = nopSize - numPrefixes;
             for (unsigned i = 0; i != nopRest; ++i)
-                *where++ = nops[nopRest-1][i];
+                *bufferWriter++ = nops[nopRest-1][i];
 
+            ASSERT(nopSize == bufferWriter - buffer);
+            if constexpr (copy == MachineCodeCopyMode::JITMemcpy)
+                performJITMemcpy(where, buffer, nopSize);
+            else
+                memcpy(where, buffer, nopSize);
+            where += nopSize;
             size -= nopSize;
         }
     }
@@ -6265,17 +6321,29 @@ private:
 
     static void setPointer(void* where, void* value)
     {
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        performJITMemcpy(bitwise_cast<void**>(where) - 1, &value, sizeof(void*));
+#else
         WTF::unalignedStore<void*>(bitwise_cast<void**>(where) - 1, value);
+#endif
     }
 
     static void setInt32(void* where, int32_t value)
     {
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        performJITMemcpy(bitwise_cast<int32_t*>(where) - 1, &value, sizeof(int32_t));
+#else
         WTF::unalignedStore<int32_t>(bitwise_cast<int32_t*>(where) - 1, value);
+#endif
     }
     
     static void setInt8(void* where, int8_t value)
     {
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        performJITMemcpy(bitwise_cast<int8_t*>(where) - 1, &value, sizeof(int8_t));
+#else
         WTF::unalignedStore<int8_t>(bitwise_cast<int8_t*>(where) - 1, value);
+#endif
     }
 
     static void setRel32(void* from, void* to)

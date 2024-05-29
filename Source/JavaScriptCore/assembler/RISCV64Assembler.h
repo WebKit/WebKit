@@ -1612,7 +1612,7 @@ public:
         linkJump(m_buffer.data(), from, location);
     }
 
-    static ptrdiff_t maxJumpReplacementSize()
+    static constexpr ptrdiff_t maxJumpReplacementSize()
     {
         return sizeof(uint32_t) * 8;
     }

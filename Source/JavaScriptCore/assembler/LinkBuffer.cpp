@@ -318,6 +318,9 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 
     if (g_jscConfig.useFastJITPermissions)
         threadSelfRestrictRWXToRW();
+#if ENABLE(MPROTECT_RX_TO_RWX)
+    ExecutableAllocator::singleton().startWriting(outData, initialSize);
+#endif
 
     if (m_shouldPerformBranchCompaction) {
         for (unsigned i = 0; i < jumpCount; ++i) {
@@ -414,7 +417,6 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         else
             Assembler::fillNops<MachineCodeCopyMode::JITMemcpy>(outData + compactSize, nopSizeInBytes);
     }
-
     if (g_jscConfig.useFastJITPermissions)
         threadSelfRestrictRWXToRX();
 
@@ -435,6 +437,10 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 #else
     ASSERT(codeOutData != outData);
     performJITMemcpy(codeOutData, outData, m_size);
+#endif
+
+#if ENABLE(MPROTECT_RX_TO_RWX)
+    ExecutableAllocator::singleton().finishWriting(outData, initialSize);
 #endif
 
     jumpsToLink.clear();
@@ -536,10 +542,16 @@ void LinkBuffer::linkComments(MacroAssembler& assembler)
 
 void LinkBuffer::performFinalization()
 {
+#if ENABLE(MPROTECT_RX_TO_RWX)
+    ExecutableAllocator::singleton().startWriting(code(), m_size);
+#endif
     for (auto& task : m_linkTasks)
         task->run(*this);
     for (auto& task : m_lateLinkTasks)
         task->run(*this);
+#if ENABLE(MPROTECT_RX_TO_RWX)
+    ExecutableAllocator::singleton().finishWriting(code(), m_size);
+#endif
 
 #ifndef NDEBUG
     ASSERT(!m_completed);

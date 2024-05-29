@@ -2785,7 +2785,7 @@ public:
         cacheFlush(instructionStart, memoryToFillWithNopsInBytes);
     }
 
-    static ptrdiff_t maxJumpReplacementSize()
+    static constexpr ptrdiff_t maxJumpReplacementSize()
     {
 #if OS(LINUX)
         return 10;

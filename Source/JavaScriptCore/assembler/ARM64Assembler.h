@@ -3542,7 +3542,7 @@ public:
         cacheFlush(where, memoryToFillWithNopsInBytes);
     }
 
-    static ptrdiff_t maxJumpReplacementSize()
+    static constexpr ptrdiff_t maxJumpReplacementSize()
     {
         return 4;
     }
