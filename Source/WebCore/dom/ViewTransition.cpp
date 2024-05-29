@@ -40,6 +40,7 @@
 #include "LayoutRect.h"
 #include "PseudoElementRequest.h"
 #include "RenderBox.h"
+#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
 #include "RenderView.h"
@@ -273,6 +274,17 @@ static LayoutRect captureOverflowRect(RenderLayerModelObject& renderer)
     return renderer.layer()->calculateLayerBounds(renderer.layer(), LayoutSize(), { RenderLayer::IncludeFilterOutsets, RenderLayer::ExcludeHiddenDescendants, RenderLayer::IncludeCompositedDescendants, RenderLayer::PreserveAncestorFlags });
 }
 
+// The computed local-to-absolute transform, and layer bounds don't include the position
+// of a RenderInline. Manually add an extra offset to adjust for it.
+static LayoutPoint layerToLayoutOffset(const RenderLayerModelObject& renderer)
+{
+    if (const auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
+        auto boundingBox = renderInline->linesBoundingBox();
+        return LayoutPoint { boundingBox.x(), boundingBox.y() };
+    }
+    return { };
+}
+
 static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalFrame& frame, RenderLayerModelObject& renderer, const LayoutRect& snapshotRect)
 {
     ASSERT(renderer.hasLayer());
@@ -381,6 +393,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
         capture.oldOverflowRect = captureOverflowRect(renderer.get());
         if (RefPtr frame = document()->frame())
             capture.oldImage = snapshotElementVisualOverflowClippedToViewport(*frame, renderer.get(), capture.oldOverflowRect);
+        capture.oldLayerToLayoutOffset = layerToLayoutOffset(renderer.get());
 
         auto transitionName = renderer->style().viewTransitionName();
         m_namedElements.add(transitionName->name, capture);
@@ -658,6 +671,8 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
         size = renderBox->borderBoundingBox().size();
 
         if (auto transform = renderer.viewTransitionTransform()) {
+            auto layoutOffset = layerToLayoutOffset(renderer);
+            transform->translate(layoutOffset.x(), layoutOffset.y());
             // FIXME(mattwoodrow): `transform` gives absolute coords, not
             // document. We should be accounting for page zoom to get the
             // absolute->document conversion correct.
@@ -700,7 +715,7 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
             if (RefPtr documentElement = document()->documentElement()) {
                 Styleable styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name });
                 if (CheckedPtr viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(styleable.renderer())) {
-                    if (viewTransitionCapture->setSize(boxSize, overflowRect))
+                    if (viewTransitionCapture->setCapturedSize(boxSize, overflowRect, layerToLayoutOffset(*renderer)))
                         viewTransitionCapture->setNeedsLayout();
 
                     RefPtr<ImageBuffer> image;

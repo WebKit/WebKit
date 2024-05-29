@@ -61,6 +61,7 @@ public:
     // nullptr represents an absent snapshot on an capturable element.
     std::optional<RefPtr<ImageBuffer>> oldImage;
     LayoutRect oldOverflowRect;
+    LayoutPoint oldLayerToLayoutOffset;
     LayoutSize oldSize;
     RefPtr<MutableStyleProperties> oldProperties;
     WeakStyleable newElement;

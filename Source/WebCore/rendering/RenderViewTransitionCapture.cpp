@@ -48,12 +48,13 @@ void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage)
     m_oldImage = oldImage;
 }
 
-bool RenderViewTransitionCapture::setSize(const LayoutSize& size, const LayoutRect& overflowRect)
+bool RenderViewTransitionCapture::setCapturedSize(const LayoutSize& size, const LayoutRect& overflowRect, const LayoutPoint& layerToLayoutOffset)
 {
-    if (m_overflowRect == overflowRect && intrinsicSize() == size)
+    if (m_overflowRect == overflowRect && intrinsicSize() == size && m_layerToLayoutOffset == layerToLayoutOffset)
         return false;
     setIntrinsicSize(size);
     m_overflowRect = overflowRect;
+    m_layerToLayoutOffset = layerToLayoutOffset;
     return true;
 }
 
@@ -76,10 +77,14 @@ void RenderViewTransitionCapture::paintReplaced(PaintInfo& paintInfo, const Layo
 void RenderViewTransitionCapture::layout()
 {
     RenderReplaced::layout();
+    // Move the overflow rect of the captured renderer into layout coords, and then scale/position so that the intrinsic size subset covers
+    // our replaced content rect.
     m_localOverflowRect = m_overflowRect;
+    m_localOverflowRect.moveBy(-m_layerToLayoutOffset);
     m_scale = { replacedContentRect().width().toFloat() / intrinsicSize().width().toFloat() , replacedContentRect().height().toFloat() / intrinsicSize().height().toFloat()  };
     m_localOverflowRect.scale(m_scale.width(), m_scale.height());
     m_localOverflowRect.moveBy(replacedContentRect().location());
+
     addVisualOverflow(m_localOverflowRect);
 }
 
