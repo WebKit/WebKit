@@ -1875,8 +1875,6 @@ webkit.org/b/272685 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/svg/pain
 
 webkit.org/b/273012 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
 
-webkit.org/b/273588 fast/forms/select/mac-wk2/inactive-appearance.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/273905 [ X86_64 ] svg/filters/filter-on-root-tile-boundary.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/274130 [ Debug ] media/video-pause-immediately.html [ Pass Failure ]
