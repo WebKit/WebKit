@@ -200,47 +200,36 @@ RefPtr<JSEntrypointCallee> LLIntPlan::tryCreateInterpretedJSToWasmCallee(unsigne
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
     const FunctionSignature& functionSignature = *signature.as<FunctionSignature>();
-    if (!Options::useIPIntWrappers()
+    if (!Options::useInterpretedJSEntryWrappers()
         || m_moduleInformation->memoryCount() > 1
         || m_moduleInformation->usesSIMD(functionIndex)
         || functionSignature.argumentCount() > 16
         || functionSignature.returnCount() > 16)
         return nullptr;
-
-    RegisterSet registersToSpill = RegisterSetBuilder::wasmPinnedRegisters();
-    registersToSpill.add(GPRInfo::regCS1, IgnoreVectors);
-    if (!isARM64()) {
-        // We use some additional registers, see js_to_wasm_wrapper_entry
-        registersToSpill.add(GPRInfo::regCS2, IgnoreVectors);
-    }
-#if CPU(ARM64) || CPU(ARMv7)
-    const size_t JSEntrypointInterpreterCalleeSaveSpaceStackAligned = WTF::roundUpToMultipleOf(stackAlignmentBytes(), 4 * sizeof(CPURegister));
-#else
-    const size_t JSEntrypointInterpreterCalleeSaveSpaceStackAligned = WTF::roundUpToMultipleOf(stackAlignmentBytes(), 8 * sizeof(CPURegister));
-#endif
-    size_t totalFrameSize = JSEntrypointInterpreterCalleeSaveSpaceStackAligned;
-    CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
-    RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
-    totalFrameSize += wasmFrameConvention.headerAndArgumentStackSizeInBytes;
-    totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
-    totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
-
     Vector<JSEntrypointInterpreterCalleeMetadata> metadata;
-    metadata.append(JSEntrypointInterpreterCalleeMetadata::FrameSize);
-    metadata.append(static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>((totalFrameSize - JSEntrypointInterpreterCalleeSaveSpaceStackAligned) / 8)));
+
+    CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
+
+    {
+        RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
+        size_t totalFrameSize = wasmFrameConvention.headerAndArgumentStackSizeInBytes;
+        totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
+        totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
+
+        metadata.append(JSEntrypointInterpreterCalleeMetadata::FrameSize);
+        metadata.append(static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(totalFrameSize / 8)));
+    }
 
     if (m_moduleInformation->memoryCount())
         metadata.append(JSEntrypointInterpreterCalleeMetadata::Memory);
 
     CallInformation jsFrameConvention = jsCallingConvention().callInformationFor(signature, CallRole::Callee);
-    // This offset converts a caller-perspective SP-relative offset to a caller-perspective FP-relative offset.
-    // To the js code, we are the callee. To the wasm code, we are the caller.
-    intptr_t spToFP = -safeCast<int>(totalFrameSize);
 
     for (unsigned i = 0; i < functionSignature.argumentCount(); ++i) {
         RELEASE_ASSERT(jsFrameConvention.params[i].location.isStack());
 
         Type type = functionSignature.argumentType(i);
+        // Note: Loads are FP relative, Stores are SP relative.
         auto jsParam = static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t >(
             (jsFrameConvention.params[i].location.offsetFromFP() + static_cast<int>(PayloadOffset)) / 8));
 
@@ -249,9 +238,9 @@ RefPtr<JSEntrypointCallee> LLIntPlan::tryCreateInterpretedJSToWasmCallee(unsigne
 
         if (wasmFrameConvention.params[i].location.isStackArgument()) {
             auto wasmParam = static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(
-                (spToFP + wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(PayloadOffset)) / 8));
+                (wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(PayloadOffset)) / 8));
             auto wasmParamTag = static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(
-                (spToFP + wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(TagOffset)) / 8));
+                (wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(TagOffset)) / 8));
             auto loadType = (type.width() == Width32) ? JSEntrypointInterpreterCalleeMetadata::LoadI32 : JSEntrypointInterpreterCalleeMetadata::LoadI64;
             auto storeType = (type.width() == Width32) ? JSEntrypointInterpreterCalleeMetadata::StoreI32 : JSEntrypointInterpreterCalleeMetadata::StoreI64;
             metadata.append(loadType);

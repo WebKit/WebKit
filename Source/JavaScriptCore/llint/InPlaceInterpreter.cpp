@@ -141,7 +141,7 @@ void initialize()
     FOR_EACH_IPINT_SIMD_OPCODE(VALIDATE_IPINT_SIMD_OPCODE);
     FOR_EACH_IPINT_ATOMIC_OPCODE(VALIDATE_IPINT_ATOMIC_OPCODE);
 
-    if (Options::useIPIntWrappers()) {
+    if (Options::useInterpretedJSEntryWrappers()) {
         FOR_EACH_JS_TO_WASM_WRAPPER_METADATA_OPCODE(VALIDATE_JS_TO_WASM_WRAPPER_ENTRY);
         // Label after last defined opcode
         VALIDATE_JS_TO_WASM_WRAPPER_ENTRY(static_cast<int>(Wasm::JSEntrypointInterpreterCalleeMetadata::InvalidRegister), invalidop);

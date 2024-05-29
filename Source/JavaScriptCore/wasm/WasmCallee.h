@@ -175,7 +175,7 @@ private:
 };
 
 #define FOR_EACH_JS_TO_WASM_WRAPPER_METADATA_OPCODE(macro) \
-/* Load/Store accumulator; followed by (offset from cfr : int8_t) */ \
+/* Load/Store accumulator; followed by (offset from sp (load) or cfr (store): int8_t) */ \
 macro(0, LoadI32) \
 macro(1, LoadI64) \
 macro(2, LoadF32) \
@@ -376,7 +376,10 @@ public:
 
     void setReplacement(RefPtr<Wasm::Callee> callee)
     {
-        ASSERT(!m_replacementCallee);
+        // Note that we can compile the same function with multiple memory modes, which can cause the JS->Wasm stub generator to
+        // race. That's fine, both stubs should do the same thing.
+        if (m_replacementCallee)
+            return;
         ASSERT(callee);
         m_replacementCallee = WTFMove(callee);
     }

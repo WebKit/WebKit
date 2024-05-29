@@ -605,16 +605,32 @@ op(js_to_wasm_wrapper_entry, macro ()
     const AccumulatorTag = invalidGPR # Only used for JSVALUE32_64
 
 if ARM64 or ARM64E or ARMv7
-    const CP = ws3 # Callee prologue (jump target) pointer
+    const MPC = t8
+    const CalleeExecutableAddress = ws3 # Callee prologue (jump target) pointer
     const Accumulator = ws0
     const Scratch = ws1
     const Scratch2 = ws2
+
+    const MPCSpill = -4 * SlotSize
 else
+    const MPC = metadataTable
     const Accumulator = csr2
     const Scratch = ws1
-    const AccumulatorCSRSlot = -0x28
-    const AccumulatorSpill = -0x30
-    const CP = -0x38
+
+    # Any callee saves clobbered here would also have to be saved by the JS->WASM thunk,
+    # since the exception unwinder cannot tell if an interpreted callee had a replacementCallee installed
+    # when the stack frame was created.
+    # Instead of making every thunk save more callee-saves, we should just restore these extra
+    # clobbered callee-saves here before calling JS.
+    # TODO: https://bugs.webkit.org/show_bug.cgi?id=274768 ([WASM + Global GC] Interpreted Wasm->JS ICs should be able to be replaced directly).
+    # If we could replace the interpreted callee directly, we could just add these clobbered callee-saves
+    # directly to the callee save list in JSEntrypointInterpreterCallee.
+    const MPCCSRSlot = -4 * SlotSize
+    const AccumulatorCSRSlot = -5 * SlotSize
+
+    const MPCSpill = -6 * SlotSize
+    const AccumulatorSpill = -7 * SlotSize
+    const CalleeExecutableAddress = -8 * SlotSize
 end
 
     macro clobberVolatileRegisters()
@@ -640,35 +656,38 @@ end
             emit "movz x5, #0xBAD"
             emit "movz x6, #0xBAD"
             emit "movz x7, #0xBAD"
-            emit "movz x8, #0xBAD"
         end
     end
 
     clobberVolatileRegisters()
 
+
 if ARM64 or ARM64E or ARMv7
-    const JSEntrypointInterpreterCalleeSaveSpaceStackAligned = (4 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
+    const JSEntrypointInterpreterSpillSpaceStackAligned = (4 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
 else
-    const JSEntrypointInterpreterCalleeSaveSpaceStackAligned = (8 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
+    const JSEntrypointInterpreterSpillSpaceStackAligned = (8 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
 end
 
     macro saveJSEntrypointInterpreterRegisters()
-        subp JSEntrypointInterpreterCalleeSaveSpaceStackAligned, sp
+        subp JSEntrypointInterpreterSpillSpaceStackAligned, sp
         if ARM64 or ARM64E
-            storepairq boundsCheckingSize, metadataTable, -16[cfr]
-            storepairq wasmInstance, memoryBase, -32[cfr]
+            storepairq memoryBase, boundsCheckingSize, -2 * SlotSize[cfr]
+            storep wasmInstance, -3 * SlotSize[cfr]
+            # These are just for us to spill things
+            # MPCSpill
         elsif X86_64
             # These must match the wasmToJS thunk, since the unwinder won't be able to tell the difference between us and them.
             # See calleeSaveRegistersImpl
-            storep metadataTable, -0x8[cfr]
-            storep boundsCheckingSize, -0x10[cfr]
-            storep memoryBase, -0x18[cfr]
-            storep wasmInstance, -0x20[cfr]
+            storep boundsCheckingSize, -1 * SlotSize[cfr]
+            storep memoryBase, -2 * SlotSize[cfr]
+            storep wasmInstance, -3 * SlotSize[cfr]
             # This gets restored before call too, since it doesn't get saved/restored by the wasmToJS thunk
+            storep MPC, MPCCSRSlot[cfr]
             storep Accumulator, AccumulatorCSRSlot[cfr]
             # These are just for us to spill things
             # AccumulatorSpill
-            # CP
+            # MPCSpill
+            # CalleeExecutableAddress
         else
             error
         end
@@ -676,18 +695,18 @@ end
 
     macro restoreJSEntrypointInterpreterRegisters()
         if ARM64 or ARM64E
-            loadpairq -16[cfr], boundsCheckingSize, metadataTable
-            loadpairq -32[cfr], wasmInstance, memoryBase
+            loadpairq -2 * SlotSize[cfr], memoryBase, boundsCheckingSize
+            loadp -3 * SlotSize[cfr], wasmInstance
         elsif X86_64
-            loadp -0x8[cfr], metadataTable
-            loadp -0x10[cfr], boundsCheckingSize
-            loadp -0x18[cfr], memoryBase
-            loadp -0x20[cfr], wasmInstance
+            loadp -1 * SlotSize[cfr], boundsCheckingSize
+            loadp -2 * SlotSize[cfr], memoryBase
+            loadp -3 * SlotSize[cfr], wasmInstance
+            loadp MPCCSRSlot[cfr], MPC
             loadp AccumulatorCSRSlot[cfr], Accumulator
         else
             error
         end
-        addp JSEntrypointInterpreterCalleeSaveSpaceStackAligned, sp
+        addp JSEntrypointInterpreterSpillSpaceStackAligned, sp
     end
 
     tagReturnAddress sp
@@ -734,11 +753,11 @@ end
 
     # Callee saves are saved, so now we can use our prefered registers
     # and free up the argument registers (t* and wa* overlap on some platforms)
-    move t1, metadataTable
+    move t1, MPC
 if ARM64 or ARM64E or ARMv7
-    move t2, CP
+    move t2, CalleeExecutableAddress
 else
-    storeq t2, CP[cfr]
+    storeq t2, CalleeExecutableAddress[cfr]
 end
 
 if JSVALUE64
@@ -754,13 +773,13 @@ end
     const OpcodeSizeShift = 5 # 8 instructions * 4 bytes per instruction
 
     macro advance()
-        loadb [metadataTable], Scratch
-        addp 1, metadataTable
+        loadb [MPC], Scratch
+        addp 1, MPC
     end
 
     macro advanceSigned()
-        loadbsq [metadataTable], Scratch
-        addp 1, metadataTable
+        loadbsq [MPC], Scratch
+        addp 1, MPC
     end
 
     macro idispatch()
@@ -811,7 +830,12 @@ opcode(LoadF64)
 opcode(StoreI32)
     advanceSigned()
     lshiftq 3, Scratch
-    addp cfr, Scratch
+if X86_64
+    addp sp, Scratch
+else
+    move sp, Scratch2
+    addp Scratch2, Scratch
+end
     storei Accumulator, [Scratch]
 
 opcode(StoreI64)
@@ -948,12 +972,15 @@ opcodesEnd()
     idispatch()
 
 .call:
+    storeq MPC, MPCSpill[cfr]
 if ARM64 or ARM64E or ARMv7
-    call CP, LLIntToWasmEntryPtrTag
+    call CalleeExecutableAddress, LLIntToWasmEntryPtrTag
 else
+    loadq MPCCSRSlot[cfr], MPC
     loadq AccumulatorCSRSlot[cfr], Accumulator
-    call CP[cfr]
+    call CalleeExecutableAddress[cfr]
 end
+    loadq MPCSpill[cfr], MPC
     clobberVolatileRegisters()
     clobberArgumentOnlyRegisters()
     idispatch()

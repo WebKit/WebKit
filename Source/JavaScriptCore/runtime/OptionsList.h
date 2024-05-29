@@ -579,7 +579,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useWasmIPIntEpilogueOSR, true, Normal, "Allow IPInt to tier up during function epilogues"_s) \
     v(Bool, wasmIPIntTiersUpToBBQ, true, Normal, "Allow IPInt to tier up to BBQ"_s) \
     v(Bool, wasmIPIntTiersUpToOMG, true, Normal, "Allow IPInt to tier up to OMG"_s) \
-    v(Bool, useIPIntWrappers, false, Normal, "Allow IPInt to replace JIT wasm wrappers"_s) \
+    v(Bool, useInterpretedJSEntryWrappers, false, Normal, "Allow some JS->Wasm wrappers to be replaced by jit-less versions."_s) \
     v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing."_s) \
     \
     /* Feature Flags */\

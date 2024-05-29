@@ -1,5 +1,5 @@
-//  Debugging: jsc -m cc-int-to-int.js --useConcurrentJIT=0 --useBBQJIT=0 --useOMGJIT=0 --jitAllowList=nothing --useDFGJIT=0 --dumpDisassembly=0 --forceICFailure=1 --useIPIntWrappers=1 --dumpDisassembly=0
-//@ requireOptions("--useIPIntWrappers=1")
+//  Debugging: jsc -m cc-int-to-int.js --useConcurrentJIT=0 --useBBQJIT=0 --useOMGJIT=0 --jitAllowList=nothing --useDFGJIT=0 --dumpDisassembly=0 --forceICFailure=1 --useInterpretedJSEntryWrappers=1 --dumpDisassembly=0
+//@ requireOptions("--useInterpretedJSEntryWrappers=1")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 

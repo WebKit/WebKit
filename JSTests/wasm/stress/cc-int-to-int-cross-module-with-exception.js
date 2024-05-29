@@ -1,5 +1,5 @@
 //@ skip if $architecture != "arm64" and $architecture != "x86_64"
-//@ runDefault("-m", "--wasmFunctionIndexRangeToCompile=0:5", "--useOMGJIT=0", "--useIPIntWrappers=1")
+//@ runDefault("-m", "--wasmFunctionIndexRangeToCompile=0:5", "--useOMGJIT=0", "--useInterpretedJSEntryWrappers=1")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 

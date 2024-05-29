@@ -712,7 +712,7 @@ void Options::notifyOptionsChanged()
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
     Options::useWebAssemblySIMD() = false;
-    Options::useIPIntWrappers() = false;
+    Options::useInterpretedJSEntryWrappers() = false;
 #if !CPU(ARM_THUMB2)
     Options::useBBQJIT() = false;
 #endif
@@ -722,7 +722,7 @@ void Options::notifyOptionsChanged()
 #endif
 
 #if ENABLE(C_LOOP) || !CPU(ADDRESS64) || !(CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
-    Options::useIPIntWrappers() = false;
+    Options::useInterpretedJSEntryWrappers() = false;
 #endif
 
 #if !CPU(ARM64)

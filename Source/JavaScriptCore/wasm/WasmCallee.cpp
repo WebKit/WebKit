@@ -431,7 +431,7 @@ RegisterAtOffsetList* JSEntrypointInterpreterCallee::calleeSaveRegistersImpl()
         RegisterSet registers = RegisterSetBuilder::wasmPinnedRegisters();
 #if CPU(X86_64)
 #elif CPU(ARM64) || CPU(RISCV64)
-        ASSERT(registers.numberOfSetRegisters() == 4);
+        ASSERT(registers.numberOfSetRegisters() == 3);
 #elif CPU(ARM)
 #else
 #error Unsupported architecture.
