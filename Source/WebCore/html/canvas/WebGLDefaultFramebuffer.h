@@ -46,6 +46,7 @@ public:
     GCGLbitfield dirtyBuffers() const { return m_dirtyBuffers; }
     void markBuffersClear(GCGLbitfield clearBuffers);
     void markAllUnpreservedBuffersDirty();
+    void markAllBuffersDirty();
 
 private:
     WebGLDefaultFramebuffer(WebGLRenderingContextBase&);

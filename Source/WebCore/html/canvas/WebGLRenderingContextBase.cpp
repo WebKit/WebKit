@@ -810,6 +810,14 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
 }
 #endif
 
+void WebGLRenderingContextBase::markDrawingBuffersDirtyAfterTransfer()
+{
+    // Any draw or read sees cleared drawing buffer.
+    m_defaultFramebuffer->markAllBuffersDirty();
+    // Next transfer uses the cleared drawing buffer.
+    m_compositingResultsNeedUpdating = true;
+}
+
 WebGLTexture::TextureExtensionFlag WebGLRenderingContextBase::textureExtensionFlags() const
 {
     return static_cast<WebGLTexture::TextureExtensionFlag>((m_oesTextureFloatLinear ? WebGLTexture::TextureExtensionFloatLinearEnabled : 0) | (m_oesTextureHalfFloatLinear ? WebGLTexture::TextureExtensionHalfFloatLinearEnabled : 0));
@@ -5682,6 +5690,7 @@ void WebGLRenderingContextBase::prepareForDisplay()
         return;
     ASSERT(m_compositingResultsNeedUpdating);
 
+    clearIfComposited(CallerTypeOther);
     m_context->prepareForDisplay();
     m_defaultFramebuffer->markAllUnpreservedBuffersDirty();
 

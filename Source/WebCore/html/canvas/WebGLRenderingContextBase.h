@@ -445,6 +445,7 @@ public:
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer);
 #endif
+    void markDrawingBuffersDirtyAfterTransfer();
 
     void removeSharedObject(WebGLObject&);
     void removeContextObject(WebGLObject&);
@@ -486,6 +487,9 @@ public:
     const PixelStoreParameters& unpackPixelStoreParameters() const { return m_unpackParameters; };
 
     WeakPtr<WebGLRenderingContextBase> createRefForContextObject();
+
+    bool compositingResultsNeedUpdating() const final { return m_compositingResultsNeedUpdating; }
+    void prepareForDisplay() final;
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes&&);
 
@@ -590,10 +594,7 @@ protected:
     void loseExtensions(LostContextMode);
 
     virtual void uncacheDeletedBuffer(const AbstractLocker&, WebGLBuffer*);
-
-    bool compositingResultsNeedUpdating() const final { return m_compositingResultsNeedUpdating; }
     bool needsPreparationForDisplay() const final { return true; }
-    void prepareForDisplay() final;
     void updateActiveOrdinal();
 
     struct ContextLostState {

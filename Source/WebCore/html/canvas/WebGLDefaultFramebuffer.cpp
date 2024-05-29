@@ -67,6 +67,15 @@ void WebGLDefaultFramebuffer::markAllUnpreservedBuffersDirty()
     m_dirtyBuffers = m_unpreservedBuffers;
 }
 
+void WebGLDefaultFramebuffer::markAllBuffersDirty()
+{
+    m_dirtyBuffers |= GraphicsContextGL::COLOR_BUFFER_BIT;
+    if (m_hasStencil)
+        m_dirtyBuffers |= GraphicsContextGL::STENCIL_BUFFER_BIT;
+    if (m_hasDepth)
+        m_dirtyBuffers |= GraphicsContextGL::DEPTH_BUFFER_BIT;
+}
+
 }
 
 #endif
