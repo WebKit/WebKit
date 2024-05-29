@@ -94,7 +94,7 @@ class OverflowSupport extends MediaControllerSupport
 
         let media = this.mediaController.media;
 
-        if (media.duration === Number.POSITIVE_INFINITY && media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        if (media.duration > maxNonLiveDuration && media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
             // Do not allow adjustment of the playback rate for live broadcasts.
             return false;
         }

@@ -315,6 +315,13 @@ bool MediaControlsHost::inWindowFullscreen() const
     return false;
 }
 
+bool MediaControlsHost::supportsRewind() const
+{
+    if (auto sourceType = this->sourceType())
+        return *sourceType == SourceType::HLS || *sourceType == SourceType::File;
+    return false;
+}
+
 String MediaControlsHost::externalDeviceDisplayName() const
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+const maxNonLiveDuration = 604800; // 604800 seconds == 1 week
+
 class MediaController
 {
     constructor(shadowRoot, media, host)
@@ -334,9 +336,6 @@ class MediaController
         this.controls = new ControlsClass;
         this.controls.delegate = this;
 
-        if (this.host && this.host.inWindowFullscreen)
-            this._stopPropagationOnClickEvents();
-
         if (this.controls.autoHideController && this.shadowRoot.host && this.shadowRoot.host.dataset.autoHideDelay)
             this.controls.autoHideController.autoHideDelay = this.shadowRoot.host.dataset.autoHideDelay;
 
@@ -354,8 +353,14 @@ class MediaController
 
         this.controls.shouldUseSingleBarLayout = this.controls instanceof InlineMediaControls && this.isYouTubeEmbedWithTitle;
 
-        if (this.host && !this.host.supportsSeeking && this.layoutTraits.isFullscreen)
-            this.controls.timeControl.scrubber.disabled = true;
+        if (this.host && this.host.inWindowFullscreen) {
+            this._stopPropagationOnClickEvents();
+            if (!this.host.supportsSeeking)
+                this.controls.timeControl.scrubber.disabled = true;
+
+            if (!this.host.supportsRewind)
+                this.controls.rewindButton.dropped = true;
+        }
 
         this._updateControlsAvailability();
     }

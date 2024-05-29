@@ -84,6 +84,7 @@ public:
     bool shouldForceControlsDisplay() const;
     bool supportsSeeking() const;
     bool inWindowFullscreen() const;
+    bool supportsRewind() const;
 
     enum class ForceUpdate : bool { No, Yes };
     void updateCaptionDisplaySizes(ForceUpdate = ForceUpdate::No);

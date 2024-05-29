@@ -41,7 +41,7 @@ class StatusSupport extends MediaControllerSupport
     syncControl()
     {
         const media = this.mediaController.media;
-        const isLiveBroadcast = media.duration === Number.POSITIVE_INFINITY;
+        const isLiveBroadcast = media.duration > maxNonLiveDuration;
         const canPlayThrough = media.readyState === HTMLMediaElement.HAVE_ENOUGH_DATA && !media.error;
 
         if (!!media.error)
