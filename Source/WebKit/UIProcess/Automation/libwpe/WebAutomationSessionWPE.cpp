@@ -222,21 +222,21 @@ static void doKeyStrokeEvent(WebPageProxy &page, bool pressed, uint32_t keyVal, 
     GUniqueOutPtr<GError> error;
     auto* keymap = WPE_KEYMAP(wpe_display_get_keymap(display, &error.outPtr()));
     if (error) {
-        LOG(Automation, "WebAutomationSession::doKeyStrokeEvent: Failed to get keymap: %s. Ignoring event.", error->message);
+        RELEASE_LOG(Automation, "WebAutomationSession::doKeyStrokeEvent: Failed to get keymap: %s. Ignoring event.", error->message);
         return;
     }
 
     WPEKeymapEntry* entries;
     guint entriesCount;
     if (!wpe_keymap_get_entries_for_keyval(keymap, keyVal, &entries, &entriesCount)) {
-        LOG(Automation, "WebAutomationSession::doKeyStrokeEvent: Failed to get keymap entries for keyval %u. Ignoring event.", keyVal);
+        RELEASE_LOG(Automation, "WebAutomationSession::doKeyStrokeEvent: Failed to get keymap entries for keyval %u. Ignoring event.", keyVal);
         return;
     }
     unsigned keyCode = entries[0].keycode;
 
     WPEModifiers consumedModifiers;
     if (!wpe_keymap_translate_keyboard_state(keymap, keyCode, static_cast<WPEModifiers>(modifiers), entries[0].group, &keyVal, nullptr, nullptr, &consumedModifiers)) {
-        LOG(Automation, "WebAutomationSession::doKeyStrokeEvent: Failed to translate keyboard state for keycode %u. Ignoring event.", keyCode);
+        RELEASE_LOG(Automation, "WebAutomationSession::doKeyStrokeEvent: Failed to translate keyboard state for keycode %u. Ignoring event.", keyCode);
         return;
     }
 
