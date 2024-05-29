@@ -1,9 +1,0 @@
-
-PASS :all:
-PASS :three_quarters:
-PASS :function_call:
-PASS :loop:
-PASS :continuing:
-PASS :uniform_read_loop:
-PASS :derivatives:
-

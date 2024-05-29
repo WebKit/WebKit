@@ -1,5 +1,0 @@
-
-PASS :abstract:inputSource="const"
-PASS :f32:inputSource="const"
-PASS :f16:inputSource="const"
-
