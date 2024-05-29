@@ -40,7 +40,7 @@ public:
 
     JSC::Uint8ClampedArray& data() const { return m_data.get(); }
     Ref<JSC::Uint8ClampedArray>&& takeData() { return WTFMove(m_data); }
-    WEBCORE_EXPORT std::span<const uint8_t> dataSpan() const;
+    WEBCORE_EXPORT std::span<const uint8_t> span() const;
 
     RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const override;
 

@@ -7250,7 +7250,7 @@ enum class WebCore::RepaintRectCalculation : bool;
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ByteArrayPixelBuffer {
     WebCore::PixelBufferFormat format();
     WebCore::IntSize size();
-    std::span<const uint8_t> dataSpan();
+    std::span<const uint8_t> span();
 }
 
 #if ENABLE(WEB_AUTHN)
