@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+enum class AdvancedPrivacyProtections : uint16_t;
 struct BackgroundFetchInformation;
 struct NotificationData;
 struct NotificationPayload;
