@@ -851,7 +851,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayerOrVideoRenderer() co
         return player && player->renderingCanBeAccelerated();
     }();
 #else
-    return !m_hasBeenAskedToPaintGL && !m_isGatheringVideoFrameMetadata;
+    return !m_hasBeenAskedToPaintGL;
 #endif
 }
 
