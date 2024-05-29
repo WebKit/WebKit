@@ -1181,7 +1181,7 @@ inline static String sharedWorkerMainBytes()
 
 inline static String sharedWorkerBytes()
 {
-    return R"TESTRESOURCE(
+    return String::fromUTF8(R"TESTRESOURCE(
         onconnect = (event) => {
             const port = event.ports[0];
             port.onmessage = function(event) {
@@ -1216,7 +1216,7 @@ inline static String sharedWorkerBytes()
                 });
             };
         };
-        )TESTRESOURCE"_s;
+        )TESTRESOURCE");
 }
 
 TEST(AdvancedPrivacyProtections, NoiseInjectionForOffscreenCanvasInSharedWorker)
