@@ -563,6 +563,9 @@ def run(port, options, args, logging_stream):
         manager = Manager(port, options, printer)
         printer.print_config(port.results_directory())
 
+        # Facilitate pasting in a comma-separated list of pathnames from the
+        # “Found N new test failures” list at the top of EWS builder report pages.
+        args = [arg.rstrip(",") for arg in args]
         run_details = manager.run(args)
         _log.debug("Testing completed, Exit status: %d" % run_details.exit_code)
         return run_details
