@@ -1,4 +1,3 @@
-<!-- webkit-test-runner [ runSingly=true ] -->
 <!DOCTYPE html>
 <html>
     <head>
@@ -15,8 +14,8 @@ if (window.testRunner)
     testRunner.waitUntilDone();
 
 addEventListener("load", async () => {
-    if (window.testRunner)
-        testRunner.setWindowIsKey(false);
+    if (window.internals)
+        window.internals.setPageIsFocusedAndActive(false);
 
     await UIHelper.renderingUpdate();
     if (window.testRunner)

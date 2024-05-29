@@ -29,14 +29,6 @@
 
 #import <AppKit/NSCell_Private.h>
 
-#else
-
-typedef NS_ENUM(NSInteger, NSPresentationState) {
-    NSPresentationStateActiveKey = 0,
-    NSPresentationStateActive,
-    NSPresentationStateInactive,
-};
-
 #endif
 
 WTF_EXTERN_C_BEGIN
@@ -45,6 +37,7 @@ void _NSDrawCarbonThemeListBox(NSRect, BOOL enabled, BOOL flipped, BOOL textured
 
 WTF_EXTERN_C_END
 
+typedef NS_ENUM(NSInteger, NSPresentationState);
 typedef NS_ENUM(NSInteger, NSViewSemanticContext);
 
 @interface NSCell ()
