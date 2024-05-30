@@ -73,17 +73,12 @@ static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
 }
 #endif
 
-static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const unsigned char* bytes, NSUInteger length)
+static RetainPtr<NSKeyedUnarchiver> createUnarchiver(std::span<const uint8_t> span)
 {
-    auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<unsigned char*>(bytes) length:length freeWhenDone:NO]);
-    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:data.get() error:nullptr]);
+    RetainPtr data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<uint8_t*>(span.data()) length:span.size() freeWhenDone:NO]);
+    RetainPtr unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:data.get() error:nullptr]);
     unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
     return unarchiver;
-}
-
-static RetainPtr<NSKeyedUnarchiver> createUnarchiver(std::span<const uint8_t> data)
-{
-    return createUnarchiver(data.data(), data.size());
 }
 
 static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const API::Data& data)
