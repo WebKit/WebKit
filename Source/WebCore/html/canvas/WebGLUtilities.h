@@ -53,14 +53,14 @@ private:
     void hideHighlight();
 
     struct {
-        GCGLfloat color[4];
-        GCGLenum equationRGB;
-        GCGLenum equationAlpha;
-        GCGLenum srcRGB;
-        GCGLenum dstRGB;
-        GCGLenum srcAlpha;
-        GCGLenum dstAlpha;
-        GCGLboolean enabled;
+        GCGLfloat color[4] { 0, 0, 0, 0 };
+        GCGLenum equationRGB { GraphicsContextGL::NONE };
+        GCGLenum equationAlpha { GraphicsContextGL::NONE };
+        GCGLenum srcRGB { GraphicsContextGL::ONE };
+        GCGLenum dstRGB { GraphicsContextGL::ZERO };
+        GCGLenum srcAlpha { GraphicsContextGL::ONE };
+        GCGLenum dstAlpha { GraphicsContextGL::ZERO };
+        GCGLboolean enabled { false };
     } m_savedBlend;
 
     WebGLRenderingContextBase* const m_context;
