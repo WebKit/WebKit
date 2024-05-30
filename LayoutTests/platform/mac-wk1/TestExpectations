@@ -2775,3 +2775,5 @@ media/track/track-paint-on-captions.html [ Skip ]
 
 # rdar://127763127 (Mark expectations on the 7618-branch for test failures occurring on main with existing bugs
 [ Ventura ] imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
+
+webkit.org/b/273279 fonts/font-fallback-prefers-pictographs.html [ Skip ]
