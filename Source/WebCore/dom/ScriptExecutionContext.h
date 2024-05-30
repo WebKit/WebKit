@@ -368,6 +368,12 @@ public:
         }
     }
 
+    template<typename Promise, typename Task, typename Finalizer>
+    void enqueueTaskWhenSettled(Ref<Promise>&& promise, TaskSource taskSource, Task&& task, Finalizer&& finalizer)
+    {
+        enqueueTaskWhenSettled(WTFMove(promise), taskSource, CompletionHandlerWithFinalizer<void(typename Promise::Result&&)>(WTFMove(task), WTFMove(finalizer)));
+    }
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -413,7 +419,7 @@ private:
     RejectedPromiseTracker* ensureRejectedPromiseTrackerSlow();
 
     void checkConsistency() const;
-    RefCountedSerialFunctionDispatcher& nativePromiseDispatcher();
+    WEBCORE_EXPORT RefCountedSerialFunctionDispatcher& nativePromiseDispatcher();
 
     HashSet<MessagePort*> m_messagePorts;
     HashSet<ContextDestructionObserver*> m_destructionObservers;

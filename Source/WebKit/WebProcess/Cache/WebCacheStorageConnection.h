@@ -50,26 +50,27 @@ public:
     void networkProcessConnectionClosed();
 
 private:
-    WebCacheStorageConnection(WebCacheStorageProvider&);
+    explicit WebCacheStorageConnection(WebCacheStorageProvider&);
 
     IPC::Connection& connection();
 
     // WebCore::CacheStorageConnection
     Ref<OpenPromise> open(const WebCore::ClientOrigin&, const String& cacheName) final;
     Ref<RemovePromise> remove(WebCore::DOMCacheIdentifier) final;
-    void retrieveCaches(const WebCore::ClientOrigin&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&) final;
 
-    void retrieveRecords(WebCore::DOMCacheIdentifier, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&) final;
-    void batchDeleteOperation(WebCore::DOMCacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&) final;
-    void batchPutOperation(WebCore::DOMCacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&) final;
+    Ref<RetrieveCachesPromise> retrieveCaches(const WebCore::ClientOrigin&, uint64_t)  final;
+
+    Ref<RetrieveRecordsPromise> retrieveRecords(WebCore::DOMCacheIdentifier, WebCore::RetrieveRecordsOptions&&)  final;
+    Ref<BatchPromise> batchDeleteOperation(WebCore::DOMCacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&)  final;
+    Ref<BatchPromise> batchPutOperation(WebCore::DOMCacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&&)  final;
 
     void reference(WebCore::DOMCacheIdentifier) final;
     void dereference(WebCore::DOMCacheIdentifier) final;
     void lockStorage(const WebCore::ClientOrigin&) final;
     void unlockStorage(const WebCore::ClientOrigin&) final;
 
-    void clearMemoryRepresentation(const WebCore::ClientOrigin&, WebCore::DOMCacheEngine::CompletionCallback&&) final;
-    void engineRepresentation(CompletionHandler<void(const String&)>&&) final;
+    Ref<CompletionPromise> clearMemoryRepresentation(const WebCore::ClientOrigin&) final;
+    Ref<EngineRepresentationPromise> engineRepresentation() final;
     void updateQuotaBasedOnSpaceUsage(const WebCore::ClientOrigin&) final;
 
     WebCacheStorageProvider& m_provider;

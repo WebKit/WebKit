@@ -168,9 +168,6 @@ void WorkerGlobalScope::prepareForDestruction()
 
     stopIndexedDatabase();
 
-    if (m_cacheStorageConnection)
-        m_cacheStorageConnection->clearPendingRequests();
-
     if (m_storageConnection)
         m_storageConnection->scopeClosed();
 

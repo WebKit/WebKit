@@ -56,10 +56,10 @@ public:
 private:
     Ref<OpenPromise> open(const ClientOrigin&, const String&) final { return OpenPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
     Ref<RemovePromise> remove(DOMCacheIdentifier) final { return RemovePromise::createAndReject(DOMCacheEngine::Error::Stopped); }
-    void retrieveCaches(const ClientOrigin&, uint64_t, DOMCacheEngine::CacheInfosCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
-    void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::CrossThreadRecordsCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
-    void batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
-    void batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&&, DOMCacheEngine::RecordIdentifiersCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    Ref<RetrieveCachesPromise> retrieveCaches(const ClientOrigin&, uint64_t)  final { return RetrieveCachesPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
+    Ref<RetrieveRecordsPromise> retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&)  final { return RetrieveRecordsPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
+    Ref<BatchPromise> batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&)  final { return BatchPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
+    Ref<BatchPromise> batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&&)  final { return BatchPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
     void reference(DOMCacheIdentifier)  final { }
     void dereference(DOMCacheIdentifier)  final { }
     void lockStorage(const ClientOrigin&) final { }
@@ -106,90 +106,32 @@ auto WorkerCacheStorageConnection::remove(DOMCacheIdentifier cacheIdentifier) ->
     });
 }
 
-void WorkerCacheStorageConnection::retrieveCaches(const ClientOrigin& origin, uint64_t updateCounter, CacheInfosCallback&& callback)
+auto WorkerCacheStorageConnection::retrieveCaches(const ClientOrigin& origin, uint64_t updateCounter) -> Ref<RetrieveCachesPromise>
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
-    m_retrieveCachesPendingRequests.add(requestIdentifier, WTFMove(callback));
-
-    callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, origin = origin.isolatedCopy(), updateCounter] () mutable {
-        mainThreadConnection->retrieveCaches(origin, updateCounter, [workerThread = WTFMove(workerThread), requestIdentifier] (CacheInfosOrError&& result) mutable {
-            CacheInfosOrError isolatedResult;
-            if (!result.has_value())
-                isolatedResult = WTFMove(result);
-            else
-                isolatedResult = WTFMove(result).value().isolatedCopy();
-
-            workerThread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(isolatedResult)] (auto& scope) mutable {
-                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().retrieveCachesCompleted(requestIdentifier, WTFMove(result));
-            }, WorkerRunLoop::defaultMode());
-        });
+    return invokeAsync(RunLoop::main(), [mainThreadConnection = m_mainThreadConnection, origin = origin.isolatedCopy(), updateCounter] {
+        return mainThreadConnection->retrieveCaches(origin, updateCounter);
     });
 }
 
-void WorkerCacheStorageConnection::retrieveCachesCompleted(uint64_t requestIdentifier, CacheInfosOrError&& result)
+auto WorkerCacheStorageConnection::retrieveRecords(DOMCacheIdentifier cacheIdentifier, RetrieveRecordsOptions&& options) -> Ref<RetrieveRecordsPromise>
 {
-    if (auto callback = m_retrieveCachesPendingRequests.take(requestIdentifier))
-        callback(WTFMove(result));
-}
-
-void WorkerCacheStorageConnection::retrieveRecords(DOMCacheIdentifier cacheIdentifier, RetrieveRecordsOptions&& options, CrossThreadRecordsCallback&& callback)
-{
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
-    m_retrieveRecordsPendingRequests.add(requestIdentifier, WTFMove(callback));
-
-    callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, options = WTFMove(options).isolatedCopy()]() mutable {
-        mainThreadConnection->retrieveRecords(cacheIdentifier, WTFMove(options), [workerThread = WTFMove(workerThread), requestIdentifier]<typename Result> (Result&& result) mutable {
-            workerThread->runLoop().postTaskForMode([result = isolatedCopyCrossThreadRecordsOrError(std::forward<Result>(result)), requestIdentifier] (auto& scope) mutable {
-                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().retrieveRecordsCompleted(requestIdentifier, WTFMove(result));
-            }, WorkerRunLoop::defaultMode());
-        });
+    return invokeAsync(RunLoop::main(), [mainThreadConnection = m_mainThreadConnection, cacheIdentifier, options = WTFMove(options).isolatedCopy()] () mutable {
+        return mainThreadConnection->retrieveRecords(cacheIdentifier, WTFMove(options));
     });
 }
 
-void WorkerCacheStorageConnection::retrieveRecordsCompleted(uint64_t requestIdentifier, CrossThreadRecordsOrError&& result)
+auto WorkerCacheStorageConnection::batchDeleteOperation(DOMCacheIdentifier cacheIdentifier, const ResourceRequest& request, CacheQueryOptions&& options) -> Ref<BatchPromise>
 {
-    if (auto callback = m_retrieveRecordsPendingRequests.take(requestIdentifier))
-        callback(WTFMove(result));
-}
-
-void WorkerCacheStorageConnection::batchDeleteOperation(DOMCacheIdentifier cacheIdentifier, const ResourceRequest& request, CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
-{
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
-    m_batchDeleteAndPutPendingRequests.add(requestIdentifier, WTFMove(callback));
-
-    callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, request = request.isolatedCopy(), options]() mutable {
-        mainThreadConnection->batchDeleteOperation(cacheIdentifier, request, WTFMove(options), [workerThread = WTFMove(workerThread), requestIdentifier](RecordIdentifiersOrError&& result) mutable {
-            workerThread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(result)] (auto& scope) mutable {
-                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().deleteRecordsCompleted(requestIdentifier, WTFMove(result));
-            }, WorkerRunLoop::defaultMode());
-        });
+    return invokeAsync(RunLoop::main(), [mainThreadConnection = m_mainThreadConnection, cacheIdentifier, request = request.isolatedCopy(), options] () mutable {
+        return mainThreadConnection->batchDeleteOperation(cacheIdentifier, request, WTFMove(options));
     });
 }
 
-void WorkerCacheStorageConnection::deleteRecordsCompleted(uint64_t requestIdentifier, Expected<Vector<uint64_t>, Error>&& result)
+auto WorkerCacheStorageConnection::batchPutOperation(DOMCacheIdentifier cacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&& records) -> Ref<BatchPromise>
 {
-    if (auto callback = m_batchDeleteAndPutPendingRequests.take(requestIdentifier))
-        callback(WTFMove(result));
-}
-
-void WorkerCacheStorageConnection::batchPutOperation(DOMCacheIdentifier cacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&& records, DOMCacheEngine::RecordIdentifiersCallback&& callback)
-{
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
-    m_batchDeleteAndPutPendingRequests.add(requestIdentifier, WTFMove(callback));
-
-    callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, records = crossThreadCopy(WTFMove(records))]() mutable {
-        mainThreadConnection->batchPutOperation(cacheIdentifier, WTFMove(records), [workerThread = WTFMove(workerThread), requestIdentifier] (RecordIdentifiersOrError&& result) mutable {
-            workerThread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(result)] (auto& scope) mutable {
-                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().putRecordsCompleted(requestIdentifier, WTFMove(result));
-            }, WorkerRunLoop::defaultMode());
-        });
+    return invokeAsync(RunLoop::main(), [mainThreadConnection = m_mainThreadConnection, cacheIdentifier, records = crossThreadCopy(WTFMove(records))] () mutable {
+        return mainThreadConnection->batchPutOperation(cacheIdentifier, WTFMove(records));
     });
-}
-
-void WorkerCacheStorageConnection::putRecordsCompleted(uint64_t requestIdentifier, Expected<Vector<uint64_t>, Error>&& result)
-{
-    if (auto callback = m_batchDeleteAndPutPendingRequests.take(requestIdentifier))
-        callback(WTFMove(result));
 }
 
 void WorkerCacheStorageConnection::reference(DOMCacheIdentifier cacheIdentifier)
@@ -218,21 +160,6 @@ void WorkerCacheStorageConnection::unlockStorage(const ClientOrigin& origin)
     callOnMainThread([mainThreadConnection = m_mainThreadConnection, origin = origin.isolatedCopy()]() {
         mainThreadConnection->unlockStorage(origin);
     });
-}
-
-void WorkerCacheStorageConnection::clearPendingRequests()
-{
-    auto retrieveCachesPendingRequests = WTFMove(m_retrieveCachesPendingRequests);
-    for (auto& callback : retrieveCachesPendingRequests.values())
-        callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
-
-    auto retrieveRecordsPendingRequests = WTFMove(m_retrieveRecordsPendingRequests);
-    for (auto& callback : retrieveRecordsPendingRequests.values())
-        callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
-
-    auto batchDeleteAndPutPendingRequests = WTFMove(m_batchDeleteAndPutPendingRequests);
-    for (auto& callback : batchDeleteAndPutPendingRequests.values())
-        callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
 }
 
 } // namespace WebCore

@@ -40,39 +40,25 @@ public:
     static Ref<WorkerCacheStorageConnection> create(WorkerGlobalScope& scope) { return adoptRef(*new WorkerCacheStorageConnection(scope)); }
     ~WorkerCacheStorageConnection();
 
-    void clearPendingRequests();
-
 private:
     explicit WorkerCacheStorageConnection(WorkerGlobalScope&);
 
     // WebCore::CacheStorageConnection.
     Ref<OpenPromise> open(const ClientOrigin&, const String& cacheName) final;
     Ref<RemovePromise> remove(DOMCacheIdentifier) final;
-    void retrieveCaches(const ClientOrigin&, uint64_t updateCounter, DOMCacheEngine::CacheInfosCallback&&) final;
+    Ref<RetrieveCachesPromise> retrieveCaches(const ClientOrigin&, uint64_t updateCounter) final;
 
-    void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::CrossThreadRecordsCallback&&) final;
-    void batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&) final;
-    void batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&&, DOMCacheEngine::RecordIdentifiersCallback&&) final;
+    Ref<RetrieveRecordsPromise> retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&) final;
+    Ref<BatchPromise> batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&) final;
+    Ref<BatchPromise> batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&&) final;
 
     void reference(DOMCacheIdentifier) final;
     void dereference(DOMCacheIdentifier) final;
     void lockStorage(const ClientOrigin&) final;
     void unlockStorage(const ClientOrigin&) final;
 
-    void retrieveCachesCompleted(uint64_t requestIdentifier, DOMCacheEngine::CacheInfosOrError&&);
-    void retrieveRecordsCompleted(uint64_t requestIdentifier, DOMCacheEngine::CrossThreadRecordsOrError&&);
-    void deleteRecordsCompleted(uint64_t requestIdentifier, DOMCacheEngine::RecordIdentifiersOrError&&);
-    void putRecordsCompleted(uint64_t requestIdentifier, DOMCacheEngine::RecordIdentifiersOrError&&);
-
     WorkerGlobalScope& m_scope;
-
     Ref<CacheStorageConnection> m_mainThreadConnection;
-
-    HashMap<uint64_t, DOMCacheEngine::CacheInfosCallback> m_retrieveCachesPendingRequests;
-    HashMap<uint64_t, DOMCacheEngine::CrossThreadRecordsCallback> m_retrieveRecordsPendingRequests;
-    HashMap<uint64_t, DOMCacheEngine::RecordIdentifiersCallback> m_batchDeleteAndPutPendingRequests;
-
-    uint64_t m_lastRequestIdentifier { 0 };
 };
 
 } // namespace WebCore
