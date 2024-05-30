@@ -1,6 +1,6 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,75 +29,87 @@
 #include "XPathNodeSet.h"
 
 namespace WebCore {
-    namespace XPath {
-    
-        class Value {
-        public:
-            enum Type { NodeSetValue, BooleanValue, NumberValue, StringValue };
-            
-            Value(bool value) : m_type(BooleanValue), m_bool(value) { }
-            Value(unsigned value) : m_type(NumberValue), m_number(value) { }
-            Value(double value) : m_type(NumberValue), m_number(value) { }
+namespace XPath {
 
-            Value(const String& value) : m_type(StringValue), m_data(Data::create(value)) { }
-            Value(const char* value) : m_type(StringValue), m_data(Data::create(String::fromLatin1(value))) { }
+class Value {
+public:
+    enum class Type : uint8_t { NodeSet, Boolean, Number, String };
 
-            explicit Value(NodeSet&& value)
-                : m_type(NodeSetValue), m_data(Data::create(WTFMove(value)))
-            { }
-            explicit Value(Node* value)
-                : m_type(NodeSetValue), m_data(Data::create(value))
-            { }
-            explicit Value(RefPtr<Node>&& value)
-                : m_type(NodeSetValue), m_data(Data::create(WTFMove(value)))
-            { }
+    Value() = delete;
 
-            Type type() const { return m_type; }
+    Value(bool value)
+        : m_type(Type::Boolean), m_bool(value)
+    { }
+    Value(unsigned value)
+        : m_type(Type::Number), m_number(value)
+    { }
+    Value(double value)
+        : m_type(Type::Number), m_number(value)
+    { }
 
-            bool isNodeSet() const { return m_type == NodeSetValue; }
-            bool isBoolean() const { return m_type == BooleanValue; }
-            bool isNumber() const { return m_type == NumberValue; }
-            bool isString() const { return m_type == StringValue; }
+    Value(const String& value)
+        : m_type(Type::String), m_data(Data::create(value))
+    { }
+    Value(const char* value)
+        : m_type(Type::String), m_data(Data::create(String::fromLatin1(value)))
+    { }
 
-            const NodeSet& toNodeSet() const;
-            bool toBoolean() const;
-            double toNumber() const;
-            String toString() const;
+    explicit Value(NodeSet&& value)
+        : m_type(Type::NodeSet), m_data(Data::create(WTFMove(value)))
+    { }
+    explicit Value(Node* value)
+        : m_type(Type::NodeSet), m_data(Data::create(value))
+    { }
+    explicit Value(RefPtr<Node>&& value)
+        : m_type(Type::NodeSet), m_data(Data::create(WTFMove(value)))
+    { }
 
-            // Note that the NodeSet is shared with other Values that this one was copied from or that are copies of this one.
-            NodeSet& modifiableNodeSet();
+    Type type() const { return m_type; }
 
-        private:
-            // This constructor creates ambiguity so that we don't accidentally call the boolean overload for pointer types.
-            Value(void*) = delete;
+    bool isNodeSet() const { return m_type == Type::NodeSet; }
+    bool isBoolean() const { return m_type == Type::Boolean; }
+    bool isNumber() const { return m_type == Type::Number; }
+    bool isString() const { return m_type == Type::String; }
 
-            struct Data : public RefCounted<Data> {
-                static Ref<Data> create() { return adoptRef(*new Data); }
-                static Ref<Data> create(const String& string) { return adoptRef(*new Data(string)); }
-                static Ref<Data> create(NodeSet&& nodeSet) { return adoptRef(*new Data(WTFMove(nodeSet))); }
-                static Ref<Data> create(RefPtr<Node>&& node) { return adoptRef(*new Data(WTFMove(node))); }
+    const NodeSet& toNodeSet() const;
+    bool toBoolean() const;
+    double toNumber() const;
+    String toString() const;
 
-                String string;
-                NodeSet nodeSet;
+    // Note that the NodeSet is shared with other Values that this one was copied from or that are copies of this one.
+    NodeSet& modifiableNodeSet();
 
-            private:
-                Data() { }
-                explicit Data(const String& string)
-                    : string(string)
-                { }
-                explicit Data(NodeSet&& nodeSet)
-                    : nodeSet(WTFMove(nodeSet))
-                { }
-                explicit Data(RefPtr<Node>&& node)
-                    : nodeSet(WTFMove(node))
-                { }
-            };
+private:
+    // This constructor creates ambiguity so that we don't accidentally call the boolean overload for pointer types.
+    Value(void*) = delete;
 
-            Type m_type;
-            bool m_bool;
-            double m_number;
-            RefPtr<Data> m_data;
-        };
+    struct Data : public RefCounted<Data> {
+        static Ref<Data> create() { return adoptRef(*new Data); }
+        static Ref<Data> create(const String& string) { return adoptRef(*new Data(string)); }
+        static Ref<Data> create(NodeSet&& nodeSet) { return adoptRef(*new Data(WTFMove(nodeSet))); }
+        static Ref<Data> create(RefPtr<Node>&& node) { return adoptRef(*new Data(WTFMove(node))); }
 
-    } // namespace XPath
+        String string;
+        NodeSet nodeSet;
+
+    private:
+        Data() { }
+        explicit Data(const String& string)
+            : string(string)
+        { }
+        explicit Data(NodeSet&& nodeSet)
+            : nodeSet(WTFMove(nodeSet))
+        { }
+        explicit Data(RefPtr<Node>&& node)
+            : nodeSet(WTFMove(node))
+        { }
+    };
+
+    Type m_type;
+    bool m_bool { false };
+    double m_number { 0 };
+    RefPtr<Data> m_data;
+};
+
+} // namespace XPath
 } // namespace WebCore

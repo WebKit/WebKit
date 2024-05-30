@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2019 Google Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
@@ -68,157 +68,157 @@ private:
 
 class FunLast final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::NumberValue; }
+    Value::Type resultType() const override { return Value::Type::Number; }
 public:
     FunLast() { setIsContextSizeSensitive(true); }
 };
 
 class FunPosition final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::NumberValue; }
+    Value::Type resultType() const override { return Value::Type::Number; }
 public:
     FunPosition() { setIsContextPositionSensitive(true); }
 };
 
 class FunCount final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::NumberValue; }
+    Value::Type resultType() const override { return Value::Type::Number; }
 };
 
 class FunId final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::NodeSetValue; }
+    Value::Type resultType() const override { return Value::Type::NodeSet; }
 };
 
 class FunLocalName final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::StringValue; }
+    Value::Type resultType() const override { return Value::Type::String; }
 public:
     FunLocalName() { setIsContextNodeSensitive(true); } // local-name() with no arguments uses context node. 
 };
 
 class FunNamespaceURI final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::StringValue; }
+    Value::Type resultType() const override { return Value::Type::String; }
 public:
     FunNamespaceURI() { setIsContextNodeSensitive(true); } // namespace-uri() with no arguments uses context node. 
 };
 
 class FunName final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::StringValue; }
+    Value::Type resultType() const override { return Value::Type::String; }
 public:
     FunName() { setIsContextNodeSensitive(true); } // name() with no arguments uses context node. 
 };
 
 class FunString final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::StringValue; }
+    Value::Type resultType() const override { return Value::Type::String; }
 public:
     FunString() { setIsContextNodeSensitive(true); } // string() with no arguments uses context node. 
 };
 
 class FunConcat final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::StringValue; }
+    Value::Type resultType() const override { return Value::Type::String; }
 };
 
 class FunStartsWith final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::BooleanValue; }
+    Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunContains final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::BooleanValue; }
+    Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunSubstringBefore final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::StringValue; }
+    Value::Type resultType() const override { return Value::Type::String; }
 };
 
 class FunSubstringAfter final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::StringValue; }
+    Value::Type resultType() const override { return Value::Type::String; }
 };
 
 class FunSubstring final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::StringValue; }
+    Value::Type resultType() const override { return Value::Type::String; }
 };
 
 class FunStringLength final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::NumberValue; }
+    Value::Type resultType() const override { return Value::Type::Number; }
 public:
     FunStringLength() { setIsContextNodeSensitive(true); } // string-length() with no arguments uses context node. 
 };
 
 class FunNormalizeSpace final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::StringValue; }
+    Value::Type resultType() const override { return Value::Type::String; }
 public:
     FunNormalizeSpace() { setIsContextNodeSensitive(true); } // normalize-space() with no arguments uses context node. 
 };
 
 class FunTranslate final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::StringValue; }
+    Value::Type resultType() const override { return Value::Type::String; }
 };
 
 class FunBoolean final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::BooleanValue; }
+    Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunNot : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::BooleanValue; }
+    Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunTrue final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::BooleanValue; }
+    Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunFalse final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::BooleanValue; }
+    Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunLang final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::BooleanValue; }
+    Value::Type resultType() const override { return Value::Type::Boolean; }
 public:
     FunLang() { setIsContextNodeSensitive(true); } // lang() always works on context node. 
 };
 
 class FunNumber final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::NumberValue; }
+    Value::Type resultType() const override { return Value::Type::Number; }
 public:
     FunNumber() { setIsContextNodeSensitive(true); } // number() with no arguments uses context node. 
 };
 
 class FunSum final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::NumberValue; }
+    Value::Type resultType() const override { return Value::Type::Number; }
 };
 
 class FunFloor final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::NumberValue; }
+    Value::Type resultType() const override { return Value::Type::Number; }
 };
 
 class FunCeiling final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::NumberValue; }
+    Value::Type resultType() const override { return Value::Type::Number; }
 };
 
 class FunRound final : public Function {
     Value evaluate() const override;
-    Value::Type resultType() const override { return Value::NumberValue; }
+    Value::Type resultType() const override { return Value::Type::Number; }
 public:
     static double round(double);
 };
@@ -784,5 +784,5 @@ std::unique_ptr<Function> Function::create(const String& name, Vector<std::uniqu
     return function;
 }
 
-}
-}
+} // namespace XPath
+} // namespace WebCore

@@ -1,6 +1,6 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,21 +59,21 @@ NodeSet& Value::modifiableNodeSet()
     if (!m_data)
         m_data = Data::create();
 
-    m_type = NodeSetValue;
+    m_type = Type::NodeSet;
     return m_data->nodeSet;
 }
 
 bool Value::toBoolean() const
 {
     switch (m_type) {
-        case NodeSetValue:
-            return !m_data->nodeSet.isEmpty();
-        case BooleanValue:
-            return m_bool;
-        case NumberValue:
-            return m_number && !std::isnan(m_number);
-        case StringValue:
-            return !m_data->string.isEmpty();
+    case Type::NodeSet:
+        return !m_data->nodeSet.isEmpty();
+    case Type::Boolean:
+        return m_bool;
+    case Type::Number:
+        return m_number && !std::isnan(m_number);
+    case Type::String:
+        return !m_data->string.isEmpty();
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -82,29 +82,29 @@ bool Value::toBoolean() const
 double Value::toNumber() const
 {
     switch (m_type) {
-        case NodeSetValue:
-            return Value(toString()).toNumber();
-        case NumberValue:
-            return m_number;
-        case StringValue: {
-            const String& str = m_data->string.simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
+    case Type::NodeSet:
+        return Value(toString()).toNumber();
+    case Type::Number:
+        return m_number;
+    case Type::String: {
+        const String& str = m_data->string.simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
 
-            // String::toDouble() supports exponential notation, which is not allowed in XPath.
-            unsigned len = str.length();
-            for (unsigned i = 0; i < len; ++i) {
-                UChar c = str[i];
-                if (!isASCIIDigit(c) && c != '.'  && c != '-')
-                    return std::numeric_limits<double>::quiet_NaN();
-            }
-
-            bool canConvert;
-            double value = str.toDouble(&canConvert);
-            if (canConvert)
-                return value;
-            return std::numeric_limits<double>::quiet_NaN();
+        // String::toDouble() supports exponential notation, which is not allowed in XPath.
+        unsigned len = str.length();
+        for (unsigned i = 0; i < len; ++i) {
+            UChar c = str[i];
+            if (!isASCIIDigit(c) && c != '.'  && c != '-')
+                return std::numeric_limits<double>::quiet_NaN();
         }
-        case BooleanValue:
-            return m_bool;
+
+        bool canConvert;
+        double value = str.toDouble(&canConvert);
+        if (canConvert)
+            return value;
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+    case Type::Boolean:
+        return m_bool;
     }
 
     ASSERT_NOT_REACHED();
@@ -114,27 +114,27 @@ double Value::toNumber() const
 String Value::toString() const
 {
     switch (m_type) {
-        case NodeSetValue:
-            if (m_data->nodeSet.isEmpty())
-                return emptyString();
-            return stringValue(m_data->nodeSet.firstNode());
-        case StringValue:
-            return m_data->string;
-        case NumberValue:
-            if (std::isnan(m_number))
-                return "NaN"_s;
-            if (m_number == 0)
-                return "0"_s;
-            if (std::isinf(m_number))
-                return std::signbit(m_number) ? "-Infinity"_s : "Infinity"_s;
-            return String::number(m_number);
-        case BooleanValue:
-            return m_bool ? trueAtom() : falseAtom();
+    case Type::NodeSet:
+        if (m_data->nodeSet.isEmpty())
+            return emptyString();
+        return stringValue(m_data->nodeSet.firstNode());
+    case Type::String:
+        return m_data->string;
+    case Type::Number:
+        if (std::isnan(m_number))
+            return "NaN"_s;
+        if (!m_number)
+            return "0"_s;
+        if (std::isinf(m_number))
+            return std::signbit(m_number) ? "-Infinity"_s : "Infinity"_s;
+        return String::number(m_number);
+    case Type::Boolean:
+        return m_bool ? trueAtom() : falseAtom();
     }
 
     ASSERT_NOT_REACHED();
     return String();
 }
 
-}
-}
+} // namespace XPath
+} // namespace WebCore
