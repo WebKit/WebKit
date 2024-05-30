@@ -219,6 +219,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
         for (auto* rules : ruleVectors)
             collectMatchingRulesForList(rules, matchRequest);
     }
+    if (m_pseudoElementRequest && m_pseudoElementRequest->nameArgument() != nullAtom())
+        collectMatchingRulesForList(matchRequest.ruleSet.namedPseudoElementRules(m_pseudoElementRequest->nameArgument()), matchRequest);
     if (element.isLink())
         collectMatchingRulesForList(matchRequest.ruleSet.linkPseudoClassRules(), matchRequest);
     if (matchesFocusPseudoClass(element))
