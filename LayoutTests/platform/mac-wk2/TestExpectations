@@ -1817,6 +1817,4 @@ webkit.org/b/274766 http/wpt/webauthn/public-key-credential-get-success-u2f.http
 
 webkit.org/b/258228 [ Sonoma+ ] accessibility/mac/text-input-session-notifications.html [ Pass ]
 
-webkit.org/b/274847 http/tests/site-isolation/opened-window-length.html [ Timeout ]
-
 webkit.org/b/274852 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-flat-transform-ancestor.html [ ImageOnlyFailure ]
