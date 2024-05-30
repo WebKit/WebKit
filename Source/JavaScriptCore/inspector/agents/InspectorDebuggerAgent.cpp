@@ -965,20 +965,20 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::continueToLocation(Ref<JSO
 
 Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> InspectorDebuggerAgent::searchInContent(const Protocol::Debugger::ScriptId& scriptId, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
-    auto it = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).value_or(0));
-    if (it == m_scripts.end())
+    auto injectedScript = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).value_or(0));
+    if (injectedScript == m_scripts.end())
         return makeUnexpected("Missing script for given scriptId"_s);
 
-    return ContentSearchUtilities::searchInTextByLines(it->value.source, query, caseSensitive.value_or(false), isRegex.value_or(false));
+    return ContentSearchUtilities::searchInTextByLines(injectedScript->value.source, query, caseSensitive.value_or(false), isRegex.value_or(false));
 }
 
 Protocol::ErrorStringOr<String> InspectorDebuggerAgent::getScriptSource(const Protocol::Debugger::ScriptId& scriptId)
 {
-    auto it = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).value_or(0));
-    if (it == m_scripts.end())
+    auto injectedScript = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).value_or(0));
+    if (injectedScript == m_scripts.end())
         return makeUnexpected("Missing script for given scriptId"_s);
 
-    return it->value.source;
+    return injectedScript->value.source;
 }
 
 Protocol::ErrorStringOr<Ref<Protocol::Debugger::FunctionDetails>> InspectorDebuggerAgent::getFunctionDetails(const String& functionId)
