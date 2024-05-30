@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SQLTransactionState.h"
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 

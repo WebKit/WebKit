@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AdvancedPrivacyProtections.h"
 #include "BackgroundFetchFailureReason.h"
 #include "ExceptionData.h"
 #include "NotificationEventType.h"

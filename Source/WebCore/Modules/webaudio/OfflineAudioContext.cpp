@@ -30,6 +30,7 @@
 #include "OfflineAudioContext.h"
 
 #include "AudioBuffer.h"
+#include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
 #include "Document.h"
 #include "JSAudioBuffer.h"

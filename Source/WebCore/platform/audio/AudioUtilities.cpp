@@ -28,6 +28,7 @@
 
 #include "AudioUtilities.h"
 #include <random>
+#include <wtf/HashFunctions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/WeakRandomNumber.h>
 
