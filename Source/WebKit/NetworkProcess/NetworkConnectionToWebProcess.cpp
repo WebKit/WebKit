@@ -1519,7 +1519,7 @@ void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(std::span<const char
     }
 
     auto osLogPointer = osLog.get() ? osLog.get() : OS_LOG_DEFAULT;
-    auto* logData = logString.data();
+    auto* logData = logStringIncludingNullTerminator.data();
 
 #if HAVE(OS_SIGNPOST)
     if (WTFSignpostHandleIndirectLog(osLogPointer, pid, logData))
