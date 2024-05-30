@@ -27,7 +27,7 @@
 
 #include <wtf/SoftLinking.h>
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC)
 
 #include <OpenGL/OpenGL.h>
 

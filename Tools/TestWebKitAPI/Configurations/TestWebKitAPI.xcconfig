@@ -67,9 +67,12 @@ WK_VISIONKITCORE_LDFLAGS_iphonesimulator = -framework VisionKitCore;
 WK_VISIONKITCORE_LDFLAGS_xros = -framework VisionKitCore;
 WK_VISIONKITCORE_LDFLAGS_xrsimulator = -framework VisionKitCore;
 
-WK_OPENGL_LDFLAGS = $(WK_OPENGL_LDFLAGS_$(WK_COCOA_TOUCH));
-WK_OPENGL_LDFLAGS_ = -framework OpenGL;
-WK_OPENGL_LDFLAGS_cocoatouch = -framework OpenGLES;
+WK_OPENGL_LDFLAGS = $(WK_OPENGL_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_OPENGL_LDFLAGS_macosx = -framework OpenGL;
+WK_OPENGL_LDFLAGS_iphoneos = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_iphonesimulator = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_xros = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_xrsimulator = -framework OpenGLES;
 
 WK_PDFKIT_LDFLAGS = $(WK_PDFKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_PDFKIT_LDFLAGS_macosx = -framework PDFKit;

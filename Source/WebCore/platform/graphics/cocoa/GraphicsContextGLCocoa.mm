@@ -111,18 +111,15 @@ static bool checkVolatileContextSupportIfDeviceExists(EGLDisplay display, const 
 static bool platformSupportsMetal()
 {
     auto device = adoptNS(MTLCreateSystemDefaultDevice());
-
-    if (device) {
+    if (!device)
+        return false;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-        // Old Macs, such as MacBookPro11,4 cannot use WebGL via Metal.
-        // This check can be removed once they are no longer supported.
-        return [device supportsFamily:MTLGPUFamilyMac2];
-#else
-        return true;
+    // Old Macs, such as MacBookPro11,4 cannot use WebGL via Metal.
+    // This check can be removed once they are no longer supported.
+    if (![device supportsFamily:MTLGPUFamilyMac2])
+        return false;
 #endif
-    }
-
-    return false;
+    return true;
 }
 
 static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
@@ -150,8 +147,6 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         // For WK1 type APIs we need to set "volatile platform context" for specific
         // APIs, since client code will be able to override the thread-global context
         // that ANGLE expects.
-        displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE);
-        displayAttributes.append(EGL_TRUE);
         displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE);
         displayAttributes.append(EGL_TRUE);
     }
@@ -201,7 +196,6 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     }
     LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
     if (shouldInitializeWithVolatileContextSupport) {
-        ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_eagl", "EGL_ANGLE_device_eagl", EGL_EAGL_CONTEXT_ANGLE));
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_cgl", "EGL_ANGLE_device_cgl", EGL_CGL_CONTEXT_ANGLE));
     }
 
@@ -212,17 +206,6 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
 
     return display;
 }
-
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-static bool needsEAGLOnMac()
-{
-#if PLATFORM(MACCATALYST) && CPU(ARM64)
-    return true;
-#else
-    return false;
-#endif
-}
-#endif
 
 RefPtr<GraphicsContextGLCocoa> GraphicsContextGLCocoa::create(GraphicsContextGLAttributes&& attributes, ProcessIdentity&& resourceOwner)
 {
@@ -268,10 +251,17 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
 {
     GraphicsContextGLAttributes attributes = contextAttributes();
     m_isForWebGL2 = attributes.isWebGL2;
+#if PLATFORM(MAC)
     if (attributes.useMetal && !platformSupportsMetal()) {
         attributes.useMetal = false;
         setContextAttributes(attributes);
     }
+#else
+    if (!attributes.useMetal)
+        return false;
+    if (!platformSupportsMetal())
+        return false;
+#endif
 
     m_displayObj = initializeEGLDisplay(attributes);
     if (!m_displayObj)
@@ -376,16 +366,14 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
 bool GraphicsContextGLCocoa::platformInitializeExtensions()
 {
     auto attributes = contextAttributes();
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    if (!needsEAGLOnMac()) {
-        // For IOSurface-backed textures.
-        if (!attributes.useMetal && !enableExtension("GL_ANGLE_texture_rectangle"_s))
-            return false;
-        // For creating the EGL surface from an IOSurface.
-        if (!enableExtension("GL_EXT_texture_format_BGRA8888"_s))
-            return false;
-    }
-#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC)
+    // For IOSurface-backed textures.
+    if (!attributes.useMetal && !enableExtension("GL_ANGLE_texture_rectangle"_s))
+        return false;
+    // For creating the EGL surface from an IOSurface.
+    if (!enableExtension("GL_EXT_texture_format_BGRA8888"_s))
+        return false;
+#endif
 #if ENABLE(WEBXR)
     if (attributes.xrCompatible && !enableRequiredWebXRExtensionsImpl())
         return false;
