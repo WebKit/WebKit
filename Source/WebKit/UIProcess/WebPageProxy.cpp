@@ -4666,8 +4666,10 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
         loadParameters.navigationID = navigation.navigationID();
 
+        auto& processNavigatingFrom = frame.provisionalFrame() ? frame.provisionalFrame()->process() : frame.isMainFrame() && m_provisionalPage ? m_provisionalPage->process() : frame.process();
+        frame.setHasPendingBackForwardItem(frame.parentFrame() && frame.parentFrame()->process() == processNavigatingFrom);
+
         auto webPageID = webPageIDInProcess(newProcess);
-        frame.setHasPendingBackForwardItem(!frame.isMainFrame() && !m_browsingContextGroup->processForDomain(navigationDomain));
         frame.prepareForProvisionalLoadInProcess(newProcess, navigation, m_browsingContextGroup, [
             this,
             protectedThis = Ref { *this },
