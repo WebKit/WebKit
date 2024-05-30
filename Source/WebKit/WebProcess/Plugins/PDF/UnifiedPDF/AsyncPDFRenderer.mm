@@ -100,6 +100,8 @@ void AsyncPDFRenderer::generatePreviewImageForPage(PDFDocumentLayout::PageIndex 
     pageBounds.setLocation({ });
 
     auto pagePreviewRequest = PagePreviewRequest { pageIndex, pageBounds, scale };
+    m_enqueuedPagePreviews.set(pageIndex, pagePreviewRequest);
+
     m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument = WTFMove(pdfDocument), pagePreviewRequest]() mutable {
         protectedThis->paintPagePreviewOnWorkQueue(WTFMove(pdfDocument), pagePreviewRequest);
     });
@@ -133,13 +135,23 @@ void AsyncPDFRenderer::paintPagePreviewOnWorkQueue(RetainPtr<PDFDocument>&& pdfD
         if (!protectedThis)
             return;
 
-        RefPtr plugin = protectedThis->m_plugin.get();
-        if (!plugin)
-            return;
-
-        protectedThis->m_pagePreviews.set(pagePreviewRequest.pageIndex, WTFMove(imageBuffer));
-        plugin->didGeneratePreviewForPage(pagePreviewRequest.pageIndex);
+        protectedThis->didCompletePagePreviewRender(WTFMove(imageBuffer), pagePreviewRequest);
     });
+}
+
+void AsyncPDFRenderer::didCompletePagePreviewRender(RefPtr<ImageBuffer>&& imageBuffer, const PagePreviewRequest& pagePreviewRequest)
+{
+    ASSERT(isMainRunLoop());
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return;
+
+    auto pageIndex = pagePreviewRequest.pageIndex;
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didCompletePagePreviewRender for page " << pageIndex << " (have request " << m_enqueuedPagePreviews.contains(pageIndex) << ")");
+
+    m_enqueuedPagePreviews.remove(pageIndex);
+    m_pagePreviews.set(pageIndex, WTFMove(imageBuffer));
+    plugin->didGeneratePreviewForPage(pageIndex);
 }
 
 RefPtr<WebCore::ImageBuffer> AsyncPDFRenderer::previewImageForPage(PDFDocumentLayout::PageIndex pageIndex) const
