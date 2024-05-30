@@ -121,7 +121,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    LogOnBehalfOfWebContent(std::span<const char> logChannelIncludingNullTerminator, std::span<const char> logCategoryIncludingNullTerminator, std::span<const uint8_t> logString, uint8_t logType, int32_t pid)
+    LogOnBehalfOfWebContent(std::span<const char> logChannelIncludingNullTerminator, std::span<const char> logCategoryIncludingNullTerminator, std::span<const char> logStringIncludingNullTerminator, uint8_t logType, int32_t pid)
 #endif
 
     UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)

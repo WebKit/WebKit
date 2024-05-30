@@ -873,11 +873,11 @@ static void registerLogHook()
             char* messageString = os_log_copy_message_string(&msg);
             if (!messageString)
                 return;
-            std::span logString(byteCast<uint8_t>(messageString), strlen(messageString) + 1);
+            std::span logStringIncludingNullTerminator(messageString, strlen(messageString) + 1);
 
             auto connectionID = WebProcess::singleton().networkProcessConnectionID();
             if (connectionID)
-                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.spanIncludingNullTerminator(), logCategory.spanIncludingNullTerminator(), logString, type, getpid()), 0, { }, qos);
+                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.spanIncludingNullTerminator(), logCategory.spanIncludingNullTerminator(), logStringIncludingNullTerminator, type, getpid()), 0, { }, qos);
 
             free(messageString);
         }, qos);
