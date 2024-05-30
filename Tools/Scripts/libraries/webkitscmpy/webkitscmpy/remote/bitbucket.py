@@ -345,7 +345,7 @@ class BitBucket(Scm):
                 source=defaultdict(lambda: defaultdict(lambda: None)),
                 destination=defaultdict(lambda: defaultdict(lambda: None))
             )
-            relative_to_absolute = defaultdict(lambda: defaultdict(list))
+            relative_to_absolute = defaultdict(lambda: defaultdict(dict))
 
             for diff in json_diff.get('diffs', []):
                 destination = (diff.get('destination') or {}).get('toString')
@@ -370,9 +370,9 @@ class BitBucket(Scm):
                                 absolute_to_relative['source'][source][source_pos] = count
 
                             if dest_pos:
-                                relative_to_absolute[destination][count] = {'to': dest_pos}
+                                relative_to_absolute[destination][count]['to'] = dest_pos
                             elif source_pos:
-                                relative_to_absolute[source][count] = {'from': source_pos}
+                                relative_to_absolute[source][count]['from'] = source_pos
                             if segment.get('type'):
                                 relative_to_absolute[source or destination][count]['type'] = segment['type']
 
