@@ -126,4 +126,9 @@ void GPUAdapter::requestAdapterInfo(const std::optional<Vector<String>>&, Reques
     promise.resolve(GPUAdapterInfo::create(name()));
 }
 
+Ref<GPUAdapterInfo> GPUAdapter::info()
+{
+    return GPUAdapterInfo::create(name());
+}
+
 }
