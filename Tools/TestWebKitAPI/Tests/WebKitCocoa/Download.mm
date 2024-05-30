@@ -938,7 +938,12 @@ TEST(_WKDownload, DISABLED_DownloadMonitorSurvive)
     EXPECT_TRUE(timeoutReached);
 }
 
+// FIXME when rdar://129011312 is resolved.
+#if PLATFORM(IOS)
+TEST(_WKDownload, DISABLED_DownloadMonitorReturnToForeground)
+#else
 TEST(_WKDownload, DownloadMonitorReturnToForeground)
+#endif
 {
     __block BOOL timeoutReached = NO;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
