@@ -526,8 +526,10 @@ DecodingStatus BitmapImageSource::requestNativeImageAtIndexIfNeeded(unsigned ind
     if (index >= m_frames.size())
         return DecodingStatus::Invalid;
 
+    // Never decode the same frame from two different threads.
     if (isPendingDecodingAtIndex(index, subsamplingLevel, options)) {
         LOG(Images, "BitmapImageSource::%s - %p - url: %s. Frame at index = %d is being decoded.", __FUNCTION__, this, sourceUTF8(), index);
+        ++m_blankDrawCountForTesting;
         return DecodingStatus::Decoding;
     }
 
@@ -543,9 +545,11 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
     if (index >= m_frames.size())
         return makeUnexpected(DecodingStatus::Invalid);
 
+    // FIXME: Remove this for CG; ImageIO should be thread safe when decoding the same frame from multiple threads.
     // Never decode the same frame from two different threads.
     if (isPendingDecodingAtIndex(index, subsamplingLevel, options)) {
         LOG(Images, "BitmapImageSource::%s - %p - url: %s. Frame at index = %d is being decoded.", __FUNCTION__, this, sourceUTF8(), index);
+        ++m_blankDrawCountForTesting;
         return makeUnexpected(DecodingStatus::Decoding);
     }
 
@@ -567,11 +571,9 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
 
 Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndexRequestIfNeeded(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
-    if (index >= m_frames.size())
-        return makeUnexpected(DecodingStatus::Invalid);
+    ASSERT(!isAnimated());
 
-    auto animatingState = isAnimated() ? ImageAnimatingState::Yes : ImageAnimatingState::No;
-    auto status = requestNativeImageAtIndexIfNeeded(index, subsamplingLevel, animatingState, options);
+    auto status = requestNativeImageAtIndexIfNeeded(index, subsamplingLevel, ImageAnimatingState::No, options);
     if (status == DecodingStatus::Invalid || status == DecodingStatus::Decoding)
         return makeUnexpected(status);
 
@@ -583,7 +585,9 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
 
 Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndexForDrawing(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
-    if (options.decodingMode() == DecodingMode::Asynchronous)
+    // If this is an animated image and the frame is not available, we have no
+    // choice but to decode it synchronously. Otherwise, a flicker will happen.
+    if (options.decodingMode() == DecodingMode::Asynchronous && !isAnimated())
         return nativeImageAtIndexRequestIfNeeded(index, subsamplingLevel, options);
     return nativeImageAtIndexCacheIfNeeded(index, subsamplingLevel, options);
 }

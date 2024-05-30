@@ -101,6 +101,7 @@ public:
 
     // Testing support
     virtual unsigned decodeCountForTesting() const { return 0; }
+    virtual unsigned blankDrawCountForTesting() const { return 0; }
     virtual void setMinimumDecodingDurationForTesting(Seconds) { RELEASE_ASSERT_NOT_REACHED(); }
     virtual void setClearDecoderAfterAsyncFrameRequestForTesting(bool) { RELEASE_ASSERT_NOT_REACHED(); }
     virtual void setAsyncDecodingEnabledForTesting(bool) { RELEASE_ASSERT_NOT_REACHED(); }

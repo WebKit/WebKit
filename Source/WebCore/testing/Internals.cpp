@@ -1179,6 +1179,12 @@ unsigned Internals::imageDecodeCount(HTMLImageElement& element)
     return bitmapImage ? bitmapImage->decodeCountForTesting() : 0;
 }
 
+unsigned Internals::imageBlankDrawCount(HTMLImageElement& element)
+{
+    auto* bitmapImage = bitmapImageFromImageElement(element);
+    return bitmapImage ? bitmapImage->blankDrawCountForTesting() : 0;
+}
+
 AtomString Internals::imageLastDecodingOptions(HTMLImageElement& element)
 {
     auto* bitmapImage = bitmapImageFromImageElement(element);

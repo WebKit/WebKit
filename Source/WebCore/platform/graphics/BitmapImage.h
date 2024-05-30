@@ -90,6 +90,7 @@ public:
     void setMinimumDecodingDurationForTesting(Seconds duration) { m_source->setMinimumDecodingDurationForTesting(duration); }
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool enabled) { m_source->setClearDecoderAfterAsyncFrameRequestForTesting(enabled); }
     unsigned decodeCountForTesting() const { return m_source->decodeCountForTesting(); }
+    unsigned blankDrawCountForTesting() const { return m_source->blankDrawCountForTesting(); }
 
 private:
     BitmapImage(ImageObserver*, AlphaOption, GammaAndColorProfileOption);

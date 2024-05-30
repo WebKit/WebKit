@@ -202,7 +202,8 @@ private:
     long long expectedContentLength() const;
 
     // Testing support
-    unsigned decodeCountForTesting() const { return m_decodeCountForTesting; }
+    unsigned decodeCountForTesting() const final { return m_decodeCountForTesting; }
+    unsigned blankDrawCountForTesting() const final { return m_blankDrawCountForTesting; }
     void setMinimumDecodingDurationForTesting(Seconds) final;
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool enabled) final { m_clearDecoderAfterAsyncFrameRequestForTesting = enabled; }
     void setAsyncDecodingEnabledForTesting(bool enabled) final { m_isAsyncDecodingEnabledForTesting = enabled; }
@@ -247,6 +248,7 @@ private:
 
     // Testing support
     unsigned m_decodeCountForTesting { 0 };
+    unsigned m_blankDrawCountForTesting { 0 };
     bool m_isAsyncDecodingEnabledForTesting { false };
     bool m_clearDecoderAfterAsyncFrameRequestForTesting { false };
 };
