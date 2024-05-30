@@ -194,9 +194,8 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         }
         case MemorySharingMode::Shared: {
             auto handle = adoptRef(*new BufferMemoryHandle(fastMemory, initialBytes, BufferMemoryHandle::fastMappedBytes(), initial, maximum, MemorySharingMode::Shared, MemoryMode::Signaling));
-            void* memory = handle->memory();
-            size_t size = handle->size();
-            auto content = SharedArrayBufferContents::create(memory, size, maximumBytes, WTFMove(handle), nullptr, SharedArrayBufferContents::Mode::WebAssembly);
+            auto span = handle->mutableSpan();
+            auto content = SharedArrayBufferContents::create(span, maximumBytes, WTFMove(handle), nullptr, SharedArrayBufferContents::Mode::WebAssembly);
             return Memory::create(WTFMove(content), WTFMove(growSuccessCallback));
         }
         }
@@ -244,9 +243,8 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         }
 
         auto handle = adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, maximumBytes, initial, maximum, MemorySharingMode::Shared, MemoryMode::BoundsChecking));
-        void* memory = handle->memory();
-        size_t size = handle->size();
-        auto content = SharedArrayBufferContents::create(memory, size, maximumBytes, WTFMove(handle), nullptr, SharedArrayBufferContents::Mode::WebAssembly);
+        auto span = handle->mutableSpan();
+        auto content = SharedArrayBufferContents::create(span, maximumBytes, WTFMove(handle), nullptr, SharedArrayBufferContents::Mode::WebAssembly);
         return Memory::create(WTFMove(content), WTFMove(growSuccessCallback));
     }
     }

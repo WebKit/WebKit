@@ -5887,8 +5887,8 @@ header: <JavaScriptCore/ArrayBuffer.h>
 }
 
 header: <JavaScriptCore/ArrayBuffer.h>
-[CustomHeader, CreateUsing=fromDataSpan] class JSC::ArrayBufferContents {
-    std::span<const uint8_t> dataSpan();
+[CustomHeader, CreateUsing=fromSpan] class JSC::ArrayBufferContents {
+    std::span<const uint8_t> span();
 }
 
 enum class WebCore::TextIndicatorPresentationTransition : uint8_t {

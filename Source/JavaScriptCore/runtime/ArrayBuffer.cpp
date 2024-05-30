@@ -149,7 +149,7 @@ void ArrayBufferContents::tryAllocate(size_t numElements, unsigned elementByteSi
 
 void ArrayBufferContents::makeShared()
 {
-    m_shared = SharedArrayBufferContents::create(data(), sizeInBytes(), maxByteLength(), m_memoryHandle, WTFMove(m_destructor), SharedArrayBufferContents::Mode::Default);
+    m_shared = SharedArrayBufferContents::create(mutableSpan(), maxByteLength(), m_memoryHandle, WTFMove(m_destructor), SharedArrayBufferContents::Mode::Default);
     m_destructor = nullptr;
 }
 
@@ -554,8 +554,8 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreateShared(VM& vm, size_t numElements, uns
     if (!handle)
         return nullptr;
 
-    void* memory = handle->memory();
-    return createShared(SharedArrayBufferContents::create(memory, sizeInBytes.value(), maxByteLength, WTFMove(handle), nullptr, SharedArrayBufferContents::Mode::Default));
+    auto* memory = static_cast<uint8_t*>(handle->memory());
+    return createShared(SharedArrayBufferContents::create({ memory, sizeInBytes.value() }, maxByteLength, WTFMove(handle), nullptr, SharedArrayBufferContents::Mode::Default));
 }
 
 Expected<int64_t, GrowFailReason> SharedArrayBufferContents::grow(VM& vm, size_t newByteLength)
@@ -634,7 +634,7 @@ ASCIILiteral errorMessageForTransfer(ArrayBuffer* buffer)
     return "Cannot transfer an ArrayBuffer whose backing store has been accessed by the JavaScriptCore C API"_s;
 }
 
-std::optional<ArrayBufferContents> ArrayBufferContents::fromDataSpan(std::span<const uint8_t> data)
+std::optional<ArrayBufferContents> ArrayBufferContents::fromSpan(std::span<const uint8_t> data)
 {
     void* buffer = Gigacage::tryMalloc(Gigacage::Primitive, data.size_bytes());
     if (!buffer)
