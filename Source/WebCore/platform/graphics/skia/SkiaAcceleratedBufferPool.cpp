@@ -45,16 +45,7 @@ SkiaAcceleratedBufferPool::SkiaAcceleratedBufferPool()
 {
 }
 
-SkiaAcceleratedBufferPool::~SkiaAcceleratedBufferPool()
-{
-    if (m_buffers.isEmpty())
-        return;
-
-    if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
-        return;
-
-    m_buffers.clear();
-}
+SkiaAcceleratedBufferPool::~SkiaAcceleratedBufferPool() = default;
 
 RefPtr<Nicosia::Buffer> SkiaAcceleratedBufferPool::acquireBuffer(const IntSize& size, bool supportsAlpha)
 {
@@ -106,11 +97,9 @@ void SkiaAcceleratedBufferPool::releaseUnusedBuffersTimerFired()
     static const Seconds releaseUnusedSecondsTolerance { 3_s };
     MonotonicTime minUsedTime = MonotonicTime::now() - releaseUnusedSecondsTolerance;
 
-    if (PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent()) {
-        m_buffers.removeAllMatching([&minUsedTime](const Entry& entry) {
-            return entry.canBeReleased(minUsedTime);
-        });
-    }
+    m_buffers.removeAllMatching([&minUsedTime](const Entry& entry) {
+        return entry.canBeReleased(minUsedTime);
+    });
 
     if (!m_buffers.isEmpty())
         scheduleReleaseUnusedBuffers();
