@@ -1356,9 +1356,6 @@ platform/mac-wk2/plugins/npruntime/remove-property-from-javascript.html [ Skip ]
 platform/mac-wk2/plugins/npp-setwindow-called-on-scroll.html [ Skip ]
 platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]
 
-# Need to handle object fit MSE for non UI-side compositing
-webkit.org/b/264944 [ Ventura ] http/tests/media/media-source/media-source-video-fit-fill.html [ Failure ]
-
 fast/text/install-font-style-recalc.html [ Pass ]
 
 webkit.org/b/238880 [ Release ] imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-012.html [ Pass ImageOnlyFailure ]
