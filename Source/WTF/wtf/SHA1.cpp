@@ -35,6 +35,7 @@
 #include <cstddef>
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
@@ -202,6 +203,35 @@ void SHA1::reset()
 }
 
 #endif
+
+void SHA1::addUTF8Bytes(StringView string)
+{
+    if (string.containsOnlyASCII()) {
+        if (string.is8Bit())
+            addBytes(string.span8());
+        else
+            addBytes(String::make8Bit(string.span16()).span8());
+    } else
+        addBytes(string.utf8().span());
+}
+
+#if USE(CF)
+void SHA1::addUTF8Bytes(CFStringRef string)
+{
+    if (auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingASCII)) {
+        addBytes(std::span { byteCast<uint8_t>(characters), static_cast<size_t>(CFStringGetLength(string)) });
+        return;
+    }
+
+    Vector<char, 1024> buffer(CFStringGetLength(string) + 1);
+    if (CFStringGetCString(string, buffer.data(), buffer.size(), kCFStringEncodingASCII)) {
+        addBytes(span8(buffer.data()));
+        return;
+    }
+
+    addUTF8Bytes(String(string));
+}
+#endif // USE(CF)
 
 CString SHA1::hexDigest(const Digest& digest)
 {

@@ -53,7 +53,7 @@ CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKin
     ASSERT(sourceCode.length() >= 0);
     constexpr unsigned maxSourceCodeLengthToHash = 500 * MB;
     if (static_cast<unsigned>(sourceCode.length()) < maxSourceCodeLengthToHash)
-        sha1.addBytes(sourceCode.toUTF8());
+        sha1.addUTF8Bytes(sourceCode.view());
     else {
         // Just hash with the length and samples of the source string instead.
         StringView str = sourceCode.provider()->source();

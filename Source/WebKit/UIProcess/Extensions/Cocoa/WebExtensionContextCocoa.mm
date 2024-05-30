@@ -4267,7 +4267,7 @@ bool WebExtensionContext::hasContentModificationRules()
 static NSString *computeStringHashForContentBlockerRules(NSString *rules)
 {
     SHA1 sha1;
-    sha1.addBytes(String(rules).span8());
+    sha1.addUTF8Bytes(rules);
 
     SHA1::Digest digest;
     sha1.computeHash(digest);
