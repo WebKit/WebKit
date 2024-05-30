@@ -1175,9 +1175,12 @@ webkit.org/b/218341 inspector/dom-debugger/attribute-modified-style.html [ Pass 
 
 webkit.org/b/218725 inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames.html [ Pass Timeout ]
 
+# These are only enabled on Cocoa WK2 ports
+webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Pass ]
+webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass ]
 
 webkit.org/b/232040 webanimations/marker-opacity-animation-no-effect.html [ Pass ImageOnlyFailure ]
 
@@ -1317,9 +1320,6 @@ webkit.org/b/228591 fast/scrolling/mac/programmatic-scroll-overrides-rubberband.
 webkit.org/b/229163 webrtc/video-addTransceiver.html [ Pass Failure ]
 
 webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
-
-#rdar://82032946 ([Mac wk2] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html is a flaky image-only fail)
- webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass Failure ]
 
 #rdar://82043074 ([Star wk2 Debug arm64,Sky/AzulE wk2 Guard-Malloc] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html is a flaky failure)
 imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html [ Pass Failure ]
