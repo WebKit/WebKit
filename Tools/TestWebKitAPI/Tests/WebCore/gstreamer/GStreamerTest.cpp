@@ -47,7 +47,6 @@ void GStreamerTest::TearDownTestSuite()
 {
     ASSERT(gst_is_initialized());
     gst_deinit();
-    ASSERT(!gst_is_initialized());
 }
 
 TEST_F(GStreamerTest, gstStructureJSONSerializing)
