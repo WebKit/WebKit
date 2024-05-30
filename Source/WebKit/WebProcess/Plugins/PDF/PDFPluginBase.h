@@ -184,6 +184,7 @@ public:
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const;
 
     bool isBeingDestroyed() const { return m_isBeingDestroyed; }
+    virtual void releaseMemory() { }
 
     bool isFullFramePlugin() const;
     WebCore::IntSize size() const { return m_size; }

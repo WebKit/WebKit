@@ -77,6 +77,8 @@ public:
     virtual void setPDFDisplayModeForTesting(const String&) { };
     virtual Vector<FloatRect> pdfAnnotationRectsForTesting() const { return { }; }
 
+    virtual void releaseMemory() { }
+
 protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
 

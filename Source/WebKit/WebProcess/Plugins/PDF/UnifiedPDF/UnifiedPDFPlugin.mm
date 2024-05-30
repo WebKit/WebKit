@@ -1566,6 +1566,12 @@ NSData *UnifiedPDFPlugin::liveData() const
     return originalData();
 }
 
+void UnifiedPDFPlugin::releaseMemory()
+{
+    if (RefPtr asyncRenderer = asyncRendererIfExists())
+        asyncRenderer->releaseMemory();
+}
+
 void UnifiedPDFPlugin::didChangeScrollOffset()
 {
     if (this->currentScrollType() == ScrollType::User)
@@ -1737,6 +1743,12 @@ DelegatedScrollingMode UnifiedPDFPlugin::scrollingMode() const
 bool UnifiedPDFPlugin::isFullMainFramePlugin() const
 {
     return m_frame->isMainFrame() && isFullFramePlugin();
+}
+
+bool UnifiedPDFPlugin::shouldCachePagePreviews() const
+{
+    // Only main frame plugins are hooked up to releaseMemory().
+    return isFullFramePlugin();
 }
 
 OptionSet<TiledBackingScrollability> UnifiedPDFPlugin::computeScrollability() const

@@ -50,6 +50,7 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PerformanceLogging.h"
+#include "PluginDocument.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SVGPathElement.h"
@@ -131,6 +132,9 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         if (RefPtr fontSelector = document->fontSelectorIfExists())
             fontSelector->emptyCaches();
         document->cachedResourceLoader().garbageCollectDocumentResources();
+
+        if (RefPtr pluginDocument = dynamicDowncast<PluginDocument>(document))
+            pluginDocument->releaseMemory();
     }
 
     if (synchronous == Synchronous::Yes)

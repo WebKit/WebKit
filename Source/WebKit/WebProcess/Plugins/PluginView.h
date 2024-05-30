@@ -177,6 +177,8 @@ private:
     bool transformsAffectFrameRect() final;
     void clipRectChanged() final;
 
+    void releaseMemory() final;
+
     RefPtr<WebPage> protectedWebPage() const;
 
     Ref<WebCore::HTMLPlugInElement> m_pluginElement;

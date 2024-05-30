@@ -145,6 +145,8 @@ public:
 
     float documentFittingScale() const { return m_documentLayout.scale(); }
 
+    bool shouldCachePagePreviews() const;
+
 #if PLATFORM(MAC)
     WebCore::FloatRect convertFromPDFPageToScreenForAccessibility(const WebCore::FloatRect&, PDFDocumentLayout::PageIndex) const;
     void accessibilityScrollToPage(PDFDocumentLayout::PageIndex);
@@ -279,6 +281,8 @@ private:
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const override;
 
     NSData *liveData() const override;
+
+    void releaseMemory() override;
 
     bool wantsWheelEvents() const override { return false; }
     bool handleMouseEvent(const WebMouseEvent&) override;

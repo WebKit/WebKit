@@ -192,4 +192,10 @@ void PluginDocument::detachFromPluginElement()
     m_pluginElement = nullptr;
 }
 
+void PluginDocument::releaseMemory()
+{
+    if (RefPtr pluginView = pluginWidget())
+        pluginView->releaseMemory();
+}
+
 }

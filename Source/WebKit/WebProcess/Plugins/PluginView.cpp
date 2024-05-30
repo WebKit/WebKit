@@ -979,6 +979,11 @@ bool PluginView::isBeingDestroyed() const
     return protectedPlugin()->isBeingDestroyed();
 }
 
+void PluginView::releaseMemory()
+{
+    protectedPlugin()->releaseMemory();
+}
+
 RetainPtr<PDFDocument> PluginView::pdfDocumentForPrinting() const
 {
     return protectedPlugin()->pdfDocument();
