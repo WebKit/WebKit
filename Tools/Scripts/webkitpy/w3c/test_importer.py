@@ -121,8 +121,13 @@ def configure_logging():
 # FIXME: We should decide whether we want to make this specific to web-platform-tests or to make it generic to any git repository containing tests.
 def parse_args(args):
     description = """
-To import a web-platform-tests test suite named xyz, use: 'import-w3c-tests web-platform-tests/xyz'.
-To import a web-platform-tests suite from a specific folder, use 'import-w3c-tests xyz -s my-folder-containing-web-platform-tests-folder'"""
+To import a web-platform-tests test suite named xyz, use:
+    import-w3c-tests --tip-of-tree web-platform-tests/xyz
+
+To import a web-platform-tests suite from a local copy of web platform tests:
+   1. Your local WPT copy must be in a directory called "web-platform-tests".
+   2. If the local copy is at, for example, "~/dev/web-platform-tests/", use:
+      import-w3c-tests web-platform-tests/xyz --src-dir ~/dev/ --clean-dest-dir"""
     parser = argparse.ArgumentParser(description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
