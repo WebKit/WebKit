@@ -317,8 +317,10 @@ bool MediaControlsHost::inWindowFullscreen() const
 
 bool MediaControlsHost::supportsRewind() const
 {
+#if ENABLE(MODERN_MEDIA_CONTROLS)
     if (auto sourceType = this->sourceType())
         return *sourceType == SourceType::HLS || *sourceType == SourceType::File;
+#endif
     return false;
 }
 
