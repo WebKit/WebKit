@@ -8369,7 +8369,8 @@ void WebPageProxy::didChooseDate(StringView date)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::DidChooseDate(date.toString()));
+    auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
+    sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidChooseDate(date.toString()));
 }
 
 void WebPageProxy::didEndDateTimePicker()
@@ -8378,7 +8379,8 @@ void WebPageProxy::didEndDateTimePicker()
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::DidEndDateTimePicker());
+    auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
+    sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidEndDateTimePicker());
 }
 
 #endif
