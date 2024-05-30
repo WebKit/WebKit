@@ -1,4 +1,18 @@
 =================
+WPE WebKit 2.45.3
+=================
+
+What's new in WPE WebKit 2.45.3?
+
+  - Enable offscreen canvas by default.
+  - Enable ImageBitmap acceleration.
+  - Add support for accelerated offscreen canvas.
+  - Do not display WebGL front buffer before it's initialized.
+  - Add a new setting to enable or disable the 2D canvas acceleration (enabled by default).
+  - Add support for building QtWPE with Qt6.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.45.2
 =================
 
