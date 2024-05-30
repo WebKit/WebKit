@@ -294,11 +294,14 @@ void ARKitCoordinator::renderLoop(Box<RenderState> active)
             auto completionPort = MachSendRight::create([completionHandle.get() eventPort]);
 
             // FIXME: rdar://77858090 (Need to transmit color space information)
-            frameData.layers.set(defaultLayerHandle(), PlatformXR::FrameData::LayerData {
+            auto layerData = makeUniqueRef<PlatformXR::FrameData::LayerData>(PlatformXR::FrameData::LayerData {
                 .framebufferSize = IntSize(colorTexture.width, colorTexture.height),
-                .colorTexture = WTFMove(colorTextureSendRight),
-                .completionSyncEvent = { MachSendRight(completionPort), renderingFrameIndex }
+                .textureData = PlatformXR::FrameData::ExternalTextureData {
+                    .colorTexture = WTFMove(colorTextureSendRight),
+                    .completionSyncEvent = { MachSendRight(completionPort), renderingFrameIndex }
+                },
             });
+            frameData.layers.set(defaultLayerHandle(), WTFMove(layerData));
             frameData.shouldRender = true;
 
             callOnMainRunLoop([callback = WTFMove(active->onFrameUpdate), frameData = WTFMove(frameData)]() mutable {

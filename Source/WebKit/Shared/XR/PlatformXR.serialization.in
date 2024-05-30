@@ -118,14 +118,19 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
     MachSendRight handle;
     bool isSharedTexture;
 };
+
+[Nested, RValue] struct PlatformXR::FrameData::ExternalTextureData {
+    size_t reusableTextureIndex;
+    PlatformXR::FrameData::ExternalTexture colorTexture;
+    PlatformXR::FrameData::ExternalTexture depthStencilBuffer;
+};
 #endif
 
 [Nested, RValue] struct PlatformXR::FrameData::LayerData {
 #if PLATFORM(COCOA)
     std::optional<PlatformXR::FrameData::LayerSetupData> layerSetup;
     uint64_t renderingFrameIndex;
-    PlatformXR::FrameData::ExternalTexture colorTexture;
-    PlatformXR::FrameData::ExternalTexture depthStencilBuffer;
+    std::optional<PlatformXR::FrameData::ExternalTextureData> textureData;
 #else
     WebCore::IntSize framebufferSize;
     PlatformGLObject opaqueTexture;
@@ -181,7 +186,7 @@ header: <WebCore/PlatformXR.h>
     std::optional<PlatformXR::FrameData::Pose> floorTransform;
     PlatformXR::FrameData::StageParameters stageParameters;
     Vector<PlatformXR::FrameData::View> views;
-    HashMap<PlatformXR::LayerHandle, PlatformXR::FrameData::LayerData> layers;
+    HashMap<PlatformXR::LayerHandle, UniqueRef<PlatformXR::FrameData::LayerData>> layers;
     Vector<PlatformXR::FrameData::InputSource> inputSources;
 };
 

@@ -376,6 +376,9 @@ void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
 
 void WebXRSession::didCompleteShutdown()
 {
+    if (isImmersive(m_mode) && m_activeRenderState && m_activeRenderState->baseLayer())
+        m_activeRenderState->baseLayer()->sessionEnded();
+
     if (auto device = m_device.get())
         device->setTrackingAndRenderingClient(nullptr);
 

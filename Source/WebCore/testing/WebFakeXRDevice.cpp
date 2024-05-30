@@ -35,6 +35,7 @@
 #include "WebFakeXRInputController.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MathExtras.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -161,15 +162,16 @@ void SimulatedXRDevice::frameTimerFired()
 #if PLATFORM(COCOA)
         PlatformXR::FrameData::LayerSetupData layerSetupData;
         layerSetupData.physicalSize[0] = { static_cast<uint16_t>(layer.value.width()), static_cast<uint16_t>(layer.value.height()) };
-        data.layers.add(layer.key, PlatformXR::FrameData::LayerData {
+        auto layerData = makeUniqueRef<PlatformXR::FrameData::LayerData>(PlatformXR::FrameData::LayerData {
             .layerSetup = layerSetupData,
-            .colorTexture = { MachSendRight(), false }
         });
+        data.layers.add(layer.key, WTFMove(layerData));
 #else
-        data.layers.add(layer.key, PlatformXR::FrameData::LayerData {
+        auto layerData = makeUniqueRef<PlatformXR::FrameData::LayerData>(PlatformXR::FrameData::LayerData {
             .framebufferSize = IntSize(0, 0),
             .opaqueTexture = layer.value
         });
+        data.layers.add(layer.key, WTFMove(layerData));
 #endif
     }
 

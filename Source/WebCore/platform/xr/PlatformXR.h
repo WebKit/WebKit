@@ -278,14 +278,20 @@ struct FrameData {
         MachSendRight handle;
         bool isSharedTexture;
     };
+
+    struct ExternalTextureData {
+        size_t reusableTextureIndex = 0;
+        ExternalTexture colorTexture = { MachSendRight(), false };
+        ExternalTexture depthStencilBuffer = { MachSendRight(), false };
+    };
 #endif
 
     struct LayerData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
 #if PLATFORM(COCOA)
         std::optional<LayerSetupData> layerSetup = { std::nullopt };
         uint64_t renderingFrameIndex { 0 };
-        ExternalTexture colorTexture = { MachSendRight(), false };
-        ExternalTexture depthStencilBuffer = { MachSendRight(), false };
+        std::optional<ExternalTextureData> textureData;
 #else
         WebCore::IntSize framebufferSize;
         PlatformGLObject opaqueTexture { 0 };
@@ -335,7 +341,7 @@ struct FrameData {
     std::optional<Pose> floorTransform;
     StageParameters stageParameters;
     Vector<View> views;
-    HashMap<LayerHandle, LayerData> layers;
+    HashMap<LayerHandle, UniqueRef<LayerData>> layers;
     Vector<InputSource> inputSources;
 
     FrameData copy() const;

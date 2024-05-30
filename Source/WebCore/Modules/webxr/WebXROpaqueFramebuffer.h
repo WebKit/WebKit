@@ -34,6 +34,7 @@
 #include "WebXRLayer.h"
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -45,6 +46,8 @@ struct XRWebGLLayerInit;
 struct WebXRExternalRenderbuffer {
     GCGLOwnedRenderbuffer renderBufferObject;
     GCGLOwnedExternalImage image;
+
+    explicit operator bool() const { return !!image; }
 
     void destroyImage(GraphicsContextGL&);
     void release(GraphicsContextGL&);
@@ -58,7 +61,7 @@ struct WebXRAttachmentSet {
 
     operator bool() const
     {
-        return colorBuffer; // Need colorBuffer at the minimum!
+        return !!colorBuffer; // Need colorBuffer at the minimum!
     }
 
     void release(GraphicsContextGL& gl)
@@ -102,11 +105,18 @@ public:
     void endFrame();
     bool usesLayeredMode() const;
 
+#if PLATFORM(COCOA)
+    void releaseAllDisplayAttachments();
+#endif
+
 private:
     WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, IntSize);
 
 #if PLATFORM(COCOA)
     bool setupFramebuffer(GraphicsContextGL&, const PlatformXR::FrameData::LayerSetupData&);
+    const std::array<WebXRExternalAttachments, 2>* reusableDisplayAttachments(const PlatformXR::FrameData::ExternalTextureData&) const;
+    void bindCompositorTexturesForDisplay(GraphicsContextGL&, const PlatformXR::FrameData::LayerData&);
+    void releaseDisplayAttachmentsAtIndex(size_t);
 #endif
     void allocateRenderbufferStorage(GraphicsContextGL&, GCGLOwnedRenderbuffer&, GCGLsizei, GCGLenum, IntSize);
     void allocateAttachments(GraphicsContextGL&, WebXRAttachments&, GCGLsizei, IntSize);
@@ -133,7 +143,8 @@ private:
     GCGLOwnedFramebuffer m_displayFBO;
     GCGLOwnedFramebuffer m_resolvedFBO;
 #if PLATFORM(COCOA)
-    std::array<WebXRExternalAttachments, 2> m_displayAttachments;
+    Vector<std::array<WebXRExternalAttachments, 2>> m_displayAttachmentsSets;
+    size_t m_currentDisplayAttachmentIndex { 0 };
     MachSendRight m_completionSyncEvent;
     uint64_t m_renderingFrameIndex { ~0u };
     bool m_usingFoveation { false };
