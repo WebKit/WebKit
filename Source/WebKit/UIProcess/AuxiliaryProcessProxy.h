@@ -286,9 +286,6 @@ private:
     Vector<String> platformOverrideLanguages() const;
     void platformStartConnectionTerminationWatchdog();
 
-    // Connection::Client
-    void requestRemoteProcessTermination() final;
-
     ResponsivenessTimer m_responsivenessTimer;
     Vector<PendingMessage> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;

@@ -186,7 +186,7 @@ void AuxiliaryProcessProxy::terminate()
 {
     RELEASE_LOG(Process, "AuxiliaryProcessProxy::terminate: PID=%d", processID());
 
-#if PLATFORM(COCOA) && !USE(EXTENSIONKIT)
+#if PLATFORM(COCOA)
     if (RefPtr connection = m_connection) {
         if (connection->kill())
             return;
@@ -577,11 +577,6 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
 }
 
 #endif
-
-void AuxiliaryProcessProxy::requestRemoteProcessTermination()
-{
-    terminate();
-}
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
 void AuxiliaryProcessProxy::setRunningBoardThrottlingEnabled()

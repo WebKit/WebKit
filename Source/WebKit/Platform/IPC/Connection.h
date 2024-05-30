@@ -208,7 +208,6 @@ public:
     public:
         virtual void didClose(Connection&) = 0;
         virtual void didReceiveInvalidMessage(Connection&, MessageName) = 0;
-        virtual void requestRemoteProcessTermination() { }
 
     protected:
         virtual ~Client() { }
@@ -399,7 +398,7 @@ public:
 
     Identifier identifier() const;
 
-#if PLATFORM(COCOA) && !USE(EXTENSIONKIT)
+#if PLATFORM(COCOA)
     bool kill();
 #endif
 
