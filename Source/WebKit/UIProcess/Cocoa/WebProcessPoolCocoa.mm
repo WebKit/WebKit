@@ -701,6 +701,10 @@ void WebProcessPool::registerNotificationObservers()
 
 #if ENABLE(NOTIFY_BLOCKING)
     const Vector<ASCIILiteral> notificationMessages = {
+        // Keep in sync with notify_entitlements() in process-entitlements.sh.
+        // FORWARDED_NOTIFICATIONS
+        "_NS_ctasd"_s,
+        "com.apple.CFPreferences._domainsChangedExternally"_s,
         "com.apple.WebKit.LibraryPathDiagnostics"_s,
         "com.apple.WebKit.deleteAllCode"_s,
         "com.apple.WebKit.dumpGCHeap"_s,
@@ -716,35 +720,18 @@ void WebProcessPool::registerNotificationObservers()
         "com.apple.WebKit.showMemoryCache"_s,
         "com.apple.WebKit.showPaintOrderTree"_s,
         "com.apple.WebKit.showRenderTree"_s,
-        "com.apple.CFPreferences._domainsChangedExternally"_s,
-        "com.apple.accessibility.cache.app.ax"_s,
-        "com.apple.accessibility.cache.ax"_s,
-        "com.apple.accessibility.cache.enhance.text.legibility"_s,
-        "com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent"_s,
-        "com.apple.accessibility.cache.guided.access.via.mdm"_s,
-        "com.apple.accessibility.cache.invert.colors"_s,
-        "com.apple.accessibility.cache.invert.colorscom.apple.WebKit.WebContent"_s,
-        "com.apple.accessibility.cache.vot"_s,
-        "com.apple.accessibility.cache.zoom"_s,
+        "com.apple.analyticsd.running"_s,
+        "com.apple.coreaudio.list_components"_s,
+        "com.apple.distnote.locale_changed"_s,
         "com.apple.language.changed"_s,
         "com.apple.mediaaccessibility.audibleMediaSettingsChanged"_s,
         "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"_s,
-#if !PLATFORM(MAC)
-        "com.apple.mobile.usermanagerd.foregrounduser_changed"_s,
-        "com.apple.mobile.keybagd.lock_status"_s,
-        "com.apple.mobile.keybagd.user_changed"_s,
-#endif
         "com.apple.powerlog.state_changed"_s,
-#if PLATFORM(MAC)
-        "com.apple.system.DirectoryService.InvalidateCache"_s,
-        "com.apple.system.DirectoryService.InvalidateCache.group"_s,
-        "com.apple.system.DirectoryService.InvalidateCache.host"_s,
-        "com.apple.system.DirectoryService.InvalidateCache.service"_s,
-        "com.apple.system.DirectoryService.InvalidateCache.user"_s,
-#endif
         "com.apple.system.logging.prefschanged"_s,
         "com.apple.system.lowpowermode"_s,
+        "com.apple.system.networkd.settings"_s,
         "com.apple.system.timezone"_s,
+        "com.apple.webinspectord.automatic_inspection_enabled"_s,
         "com.apple.webinspectord.available"_s,
         "com.apple.zoomwindow"_s,
         "org.WebKit.lowMemory"_s,
@@ -753,6 +740,26 @@ void WebProcessPool::registerNotificationObservers()
         "org.WebKit.memoryWarning"_s,
         "org.WebKit.memoryWarning.begin"_s,
         "org.WebKit.memoryWarning.end"_s,
+
+#if PLATFORM(MAC)
+        // MACOS_FORWARDED_NOTIFICATIONS
+        "com.apple.sessionagent.screenLockUIIsHidden"_s,
+        "com.apple.sessionagent.screenLockUIIsShowing"_s,
+        "com.apple.sessionagent.screenLockUIIsShown"_s,
+        "com.apple.sessionagent.shieldWindowIsShowing"_s,
+        "com.apple.sessionagent.shieldWindowLowered"_s,
+        "com.apple.sessionagent.shieldWindowRaised"_s,
+        "com.apple.system.DirectoryService.InvalidateCache"_s,
+        "com.apple.system.DirectoryService.InvalidateCache.group"_s,
+        "com.apple.system.DirectoryService.InvalidateCache.host"_s,
+        "com.apple.system.DirectoryService.InvalidateCache.service"_s,
+        "com.apple.system.DirectoryService.InvalidateCache.user"_s,
+#else
+        // EMBEDDED_FORWARDED_NOTIFICATIONS
+        "com.apple.mobile.usermanagerd.foregrounduser_changed"_s,
+        "com.apple.mobile.keybagd.lock_status"_s,
+        "com.apple.mobile.keybagd.user_changed"_s,
+#endif
     };
     m_notifyTokens = WTF::compactMap(notificationMessages, [weakThis = WeakPtr { *this }](const ASCIILiteral& message) -> std::optional<int> {
         int notifyToken = 0;
