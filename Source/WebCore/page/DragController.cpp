@@ -765,6 +765,11 @@ bool DragController::tryDHTMLDrag(LocalFrame& frame, const DragData& dragData, s
 
 static bool imageElementIsDraggable(const HTMLImageElement& image, const LocalFrame& sourceFrame)
 {
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    if (image.isMultiRepresentationHEIC())
+        return false;
+#endif
+
     if (sourceFrame.settings().loadsImagesAutomatically())
         return true;
 
