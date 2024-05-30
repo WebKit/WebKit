@@ -191,8 +191,6 @@ static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Device &object, st
     for (const auto& error : failedCheck.errors)
         message.print("\n"_s, error);
 
-    dataLogLn(message.toString());
-    dataLogLn(fromAPI(shaderModuleParameters->wgsl.code));
     object.generateAValidationError(message.toString());
     return ShaderModule::createInvalid(object, failedCheck);
 }

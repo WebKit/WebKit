@@ -1,0 +1,9 @@
+
+PASS :declaration:
+PASS :builtin:
+PASS :for_loop:
+PASS :while:
+PASS :loop:
+PASS :switch:
+PASS :if:
+

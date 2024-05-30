@@ -1,0 +1,28 @@
+
+PASS :struct_members:
+PASS :nesting_depth_composite_struct:
+PASS :nesting_depth_composite_array:
+PASS :nesting_depth_braces:
+PASS :function_parameters:
+PASS :switch_case_selectors:
+PASS :switch_case_selectors_same_clause:
+PASS :private_array_byte_size:type="bool"
+PASS :private_array_byte_size:type="u32"
+PASS :private_array_byte_size:type="vec4u"
+PASS :private_array_combined_byte_size:type="bool"
+PASS :private_array_combined_byte_size:type="u32"
+PASS :private_array_combined_byte_size:type="vec4u"
+PASS :function_array_byte_size:type="bool"
+PASS :function_array_byte_size:type="u32"
+PASS :function_array_byte_size:type="vec4u"
+PASS :function_variable_combined_byte_size:type="bool"
+PASS :function_variable_combined_byte_size:type="u32"
+PASS :function_variable_combined_byte_size:type="vec4u"
+PASS :workgroup_array_byte_size:type="bool"
+PASS :workgroup_array_byte_size:type="u32"
+PASS :workgroup_array_byte_size:type="vec4u"
+PASS :workgroup_array_byte_size_override:type="bool"
+PASS :workgroup_array_byte_size_override:type="u32"
+PASS :workgroup_array_byte_size_override:type="vec4u"
+PASS :const_array_elements:
+

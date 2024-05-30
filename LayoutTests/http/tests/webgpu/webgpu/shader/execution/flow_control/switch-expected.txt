@@ -1,0 +1,128 @@
+
+PASS :switch:preventValueOptimizations=true
+PASS :switch:preventValueOptimizations=false
+PASS :switch_multiple_case:preventValueOptimizations=true
+PASS :switch_multiple_case:preventValueOptimizations=false
+PASS :switch_multiple_case_default:preventValueOptimizations=true
+PASS :switch_multiple_case_default:preventValueOptimizations=false
+PASS :switch_default:preventValueOptimizations=true
+PASS :switch_default:preventValueOptimizations=false
+PASS :switch_default_only:preventValueOptimizations=true
+PASS :switch_default_only:preventValueOptimizations=false
+FAIL :switch_inside_loop_with_continue:preventValueOptimizations=true assert_unreached:
+  - EXPECTATION FAILED: expect_order(2)) unexpectedly reached at event 6
+    Output values (length: 9): 1, 3, 4, 5, 2, 5, 4, 5, 6
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/switch.spec.js:178:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/switch.spec.js:162:21
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:529:22
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+    push_output(1); // expect_order(0)
+    var i = inputs[0];
+    loop {
+      switch (i) {
+        case 1: {
+          push_output(2); // expect_order(4)
+          continue;
+        }
+        default: {
+          push_output(3); // expect_order(1)
+          break;
+        }
+      }
+      push_output(4); // expect_order(2)
+
+      continuing {
+        push_output(5); // expect_order(3, 5)
+        i++;
+        break if i >= 2;
+      }
+    }
+    push_output(6); // expect_order(6)
+
+    }
+
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/switch.spec.js:162:21
+ Reached unreachable code
+FAIL :switch_inside_loop_with_continue:preventValueOptimizations=false assert_unreached:
+  - EXPECTATION FAILED: expect_order(2)) unexpectedly reached at event 6
+    Output values (length: 9): 1, 3, 4, 5, 2, 5, 4, 5, 6
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/switch.spec.js:178:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/switch.spec.js:162:21
+    @http://127.0.0.1:8000/webgpu/common/internal/test_group.js:529:22
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+    push_output(1); // expect_order(0)
+    var i = 0;
+    loop {
+      switch (i) {
+        case 1: {
+          push_output(2); // expect_order(4)
+          continue;
+        }
+        default: {
+          push_output(3); // expect_order(1)
+          break;
+        }
+      }
+      push_output(4); // expect_order(2)
+
+      continuing {
+        push_output(5); // expect_order(3, 5)
+        i++;
+        break if i >= 2;
+      }
+    }
+    push_output(6); // expect_order(6)
+
+    }
+
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/switch.spec.js:162:21
+ Reached unreachable code
+

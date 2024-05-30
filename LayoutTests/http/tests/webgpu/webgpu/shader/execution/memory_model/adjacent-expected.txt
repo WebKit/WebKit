@@ -1,0 +1,10 @@
+
+PASS :f16:addressSpace="workgroup";pattern=0
+PASS :f16:addressSpace="workgroup";pattern=1
+PASS :f16:addressSpace="workgroup";pattern=2
+PASS :f16:addressSpace="workgroup";pattern=3
+PASS :f16:addressSpace="storage";pattern=0
+PASS :f16:addressSpace="storage";pattern=1
+PASS :f16:addressSpace="storage";pattern=2
+PASS :f16:addressSpace="storage";pattern=3
+

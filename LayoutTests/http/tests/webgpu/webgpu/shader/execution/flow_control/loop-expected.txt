@@ -1,0 +1,14 @@
+
+PASS :loop_break:preventValueOptimizations=true
+PASS :loop_break:preventValueOptimizations=false
+PASS :loop_continue:preventValueOptimizations=true
+PASS :loop_continue:preventValueOptimizations=false
+PASS :loop_continuing_basic:preventValueOptimizations=true
+PASS :loop_continuing_basic:preventValueOptimizations=false
+PASS :nested_loops:preventValueOptimizations=true
+PASS :nested_loops:preventValueOptimizations=false
+PASS :loop_break_if_logical_and_condition:preventValueOptimizations=true
+PASS :loop_break_if_logical_and_condition:preventValueOptimizations=false
+PASS :loop_break_if_logical_or_condition:preventValueOptimizations=true
+PASS :loop_break_if_logical_or_condition:preventValueOptimizations=false
+

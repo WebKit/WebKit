@@ -63,4 +63,5 @@ PASS :sub_workgroup:workgroupSize=64;dispatchSize=8;scalarType="u32"
 PASS :sub_workgroup:workgroupSize=64;dispatchSize=8;scalarType="i32"
 PASS :sub_workgroup:workgroupSize=64;dispatchSize=16;scalarType="u32"
 PASS :sub_workgroup:workgroupSize=64;dispatchSize=16;scalarType="i32"
+PASS :sub_i32_min:
 

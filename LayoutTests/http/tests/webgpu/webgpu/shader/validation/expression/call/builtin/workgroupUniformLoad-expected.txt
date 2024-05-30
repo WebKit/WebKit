@@ -1,0 +1,204 @@
+
+PASS :only_in_compute:entry_point="none";call="bar()"
+PASS :only_in_compute:entry_point="none";call="workgroupUniformLoad(%26wgvar)"
+PASS :only_in_compute:entry_point="compute";call="bar()"
+PASS :only_in_compute:entry_point="compute";call="workgroupUniformLoad(%26wgvar)"
+PASS :only_in_compute:entry_point="vertex";call="bar()"
+FAIL :only_in_compute:entry_point="vertex";call="workgroupUniformLoad(%26wgvar)" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+
+    var<workgroup> wgvar : u32;
+
+    fn bar() -> u32 {
+      return 0;
+    }
+
+    fn foo() {
+      _ = workgroupUniformLoad(&wgvar);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:83:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_compute:entry_point="fragment";call="bar()"
+FAIL :only_in_compute:entry_point="fragment";call="workgroupUniformLoad(%26wgvar)" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main() {
+      foo();
+    }
+
+    var<workgroup> wgvar : u32;
+
+    fn bar() -> u32 {
+      return 0;
+    }
+
+    fn foo() {
+      _ = workgroupUniformLoad(&wgvar);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:83:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_compute:entry_point="compute_and_fragment";call="bar()"
+FAIL :only_in_compute:entry_point="compute_and_fragment";call="workgroupUniformLoad(%26wgvar)" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main1() {
+      foo();
+    }
+
+    @fragment
+    fn main2() {
+      foo();
+    }
+
+
+    var<workgroup> wgvar : u32;
+
+    fn bar() -> u32 {
+      return 0;
+    }
+
+    fn foo() {
+      _ = workgroupUniformLoad(&wgvar);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:83:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_compute:entry_point="fragment_without_call";call="bar()"
+PASS :only_in_compute:entry_point="fragment_without_call";call="workgroupUniformLoad(%26wgvar)"
+PASS :no_atomics:type="bool";call="bar()"
+PASS :no_atomics:type="bool";call="workgroupUniformLoad(%26wgvar)"
+PASS :no_atomics:type="atomic%3Ci32%3E";call="bar()"
+FAIL :no_atomics:type="atomic%3Ci32%3E";call="workgroupUniformLoad(%26wgvar)" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    struct AtomicStruct {
+      a : atomic<u32>
+    }
+
+    var<workgroup> wgvar : atomic<i32>;
+
+    fn bar() -> bool {
+      return true;
+    }
+
+    fn foo() {
+      _ = workgroupUniformLoad(&wgvar);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:121:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :no_atomics:type="atomic%3Cu32%3E";call="bar()"
+FAIL :no_atomics:type="atomic%3Cu32%3E";call="workgroupUniformLoad(%26wgvar)" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    struct AtomicStruct {
+      a : atomic<u32>
+    }
+
+    var<workgroup> wgvar : atomic<u32>;
+
+    fn bar() -> bool {
+      return true;
+    }
+
+    fn foo() {
+      _ = workgroupUniformLoad(&wgvar);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:121:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :no_atomics:type="array%3Catomic%3Ci32%3E,%204%3E";call="bar()"
+FAIL :no_atomics:type="array%3Catomic%3Ci32%3E,%204%3E";call="workgroupUniformLoad(%26wgvar)" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    struct AtomicStruct {
+      a : atomic<u32>
+    }
+
+    var<workgroup> wgvar : array<atomic<i32>, 4>;
+
+    fn bar() -> bool {
+      return true;
+    }
+
+    fn foo() {
+      _ = workgroupUniformLoad(&wgvar);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:121:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :no_atomics:type="AtomicStruct";call="bar()"
+FAIL :no_atomics:type="AtomicStruct";call="workgroupUniformLoad(%26wgvar)" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    struct AtomicStruct {
+      a : atomic<u32>
+    }
+
+    var<workgroup> wgvar : AtomicStruct;
+
+    fn bar() -> bool {
+      return true;
+    }
+
+    fn foo() {
+      _ = workgroupUniformLoad(&wgvar);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/workgroupUniformLoad.spec.js:121:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :must_use:use=true
+PASS :must_use:use=false
+

@@ -1,1 +1,1548 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - EXPECTATION FAILED: subcase: errorScale=0
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+  - INFO: subcase: errorScale=1000000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - EXPECTATION FAILED: subcase: errorScale=0
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+  - INFO: subcase: errorScale=1000000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="vertexCount";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - EXPECTATION FAILED: subcase: errorScale=1
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - EXPECTATION FAILED: subcase: errorScale=4
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+      at (elided: only 2 shown)
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+      at (elided: only 2 shown)
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - EXPECTATION FAILED: subcase: errorScale=1
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - EXPECTATION FAILED: subcase: errorScale=4
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+      at (elided: only 2 shown)
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+      at (elided: only 2 shown)
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=false;indirect=true;drawCallTestParameter="firstVertex";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=false;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - EXPECTATION FAILED: subcase: errorScale=0
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+  - INFO: subcase: errorScale=1000000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="baseVertex";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - EXPECTATION FAILED: subcase: errorScale=0
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=1000000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=1000000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - EXPECTATION FAILED: subcase: errorScale=0
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - EXPECTATION FAILED: subcase: errorScale=1
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - EXPECTATION FAILED: subcase: errorScale=4
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+      at (elided: only 2 shown)
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+  - INFO: subcase: errorScale=1000000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="vertexCountInIndexBuffer";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="indexCount";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=100
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - EXPECTATION FAILED: subcase: errorScale=10000
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=10000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="instanceCount";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x2";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x2";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x2";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x2";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x3";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x3";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+FAIL :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x3";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true assert_unreached:
+  - EXPECTATION FAILED: subcase: errorScale=0
+    Texture level had unexpected contents:
+     between 0,0,0 and 0,0,0 inclusive:
+                                coords ==   X,Y,Z:                           0,0,0
+      act. texel bytes (little-endian) ==      0x:                     ff 00 00 ff
+                           act. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             255,-255,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectSinglePixelComparisonsAreOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1563:28
+    doTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:517:52
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js:597:11
+  - INFO: subcase: errorScale=0
+    OK
+  - INFO: subcase: errorScale=1
+    OK
+  - INFO: subcase: errorScale=4
+    OK
+  - INFO: subcase: errorScale=100
+    OK
+  - INFO: subcase: errorScale=10000
+    OK
+  - INFO: subcase: errorScale=1000000
+    OK
+ Reached unreachable code
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x3";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x4";additionalBuffers=0;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x4";additionalBuffers=0;partialLastNumber=true;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x4";additionalBuffers=4;partialLastNumber=false;offsetVertexBuffer=true
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=false
+PASS :vertex_buffer_access:indexed=true;indirect=true;drawCallTestParameter="firstIndex";type="float32x4";additionalBuffers=4;partialLastNumber=true;offsetVertexBuffer=true
+

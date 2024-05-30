@@ -1,0 +1,114 @@
+
+PASS :valid:case="i32"
+PASS :valid:case="u32"
+PASS :valid:case="f32"
+PASS :valid:case="f16"
+PASS :valid:case="bool"
+PASS :valid:case="vec2u"
+PASS :valid:case="vec3i"
+PASS :valid:case="vec4f"
+PASS :valid:case="array"
+PASS :valid:case="struct"
+PASS :valid:case="mat2x2f"
+PASS :valid:case="mat4x4h"
+PASS :valid:case="atomicu"
+PASS :valid:case="atomici"
+PASS :valid:case="literal_count"
+PASS :valid:case="literali_count"
+PASS :valid:case="literalu_count"
+PASS :valid:case="const_count"
+PASS :valid:case="const_expr_count1"
+PASS :valid:case="const_expr_count2"
+PASS :valid:case="const_expr_func"
+PASS :valid:case="override_count"
+PASS :valid:case="override_expr1"
+PASS :valid:case="override_expr2"
+PASS :valid:case="override_zero"
+PASS :valid:case="override_neg"
+PASS :valid:case="same_const_value1"
+PASS :valid:case="same_const_value2"
+PASS :valid:case="same_const_value3"
+FAIL :valid:case="same_override" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    6:20: error: type in function call does not match parameter type: expected 'ptr<workgroup, array<u32, x>, read_write>', found 'ptr<workgroup, array<u32, x>, read_write>'
+
+    ---- shader ----
+
+        requires unrestricted_pointer_parameters;
+        override x : u32;
+        var<workgroup> v : array<u32, x>;
+        fn bar(p : ptr<workgroup, array<u32, x>>) { }
+        fn foo() { bar(&v); }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:19: type in function call does not match parameter type: expected 'ptr<workgroup, array<u32, x>, read_write>', found 'ptr<workgroup, array<u32, x>, read_write>'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :valid:case="same_rta"
+PASS :valid:case="shadow"
+FAIL :valid:case="trailing_comma1" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:16: error: Expected a >, but got a ,
+
+    ---- shader ----
+    alias T = array<u32,4,>;
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:15: Expected a >, but got a ,
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :valid:case="trailing_comma2" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    1:21: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+    alias T = array<u32,>;
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    1:20: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :valid:case="alias_element"
+FAIL :invalid:case="f16_without_enable" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    alias T = array<f16>;
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/array.spec.js:175:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :invalid:case="texture"
+PASS :invalid:case="sampler"
+PASS :invalid:case="runtime_nested"
+PASS :invalid:case="override_nested"
+PASS :invalid:case="override_nested_struct"
+PASS :invalid:case="zero_size"
+PASS :invalid:case="negative_size"
+PASS :invalid:case="const_zero"
+PASS :invalid:case="const_neg"
+PASS :invalid:case="float_size"
+PASS :invalid:case="incompatible_overrides"
+PASS :invalid:case="incompatible_size"
+PASS :invalid:case="incompatible_element"
+PASS :invalid:case="incompatible_rta"
+PASS :invalid:case="incompatible_override_element"
+PASS :invalid:case="override_function"
+PASS :invalid:case="override_private"
+PASS :invalid:case="override_uniform"
+PASS :invalid:case="override_storage"
+PASS :invalid:case="missing_r_template"
+PASS :invalid:case="missing_l_template"
+PASS :invalid:case="missing_type"
+PASS :invalid:case="bad_type"
+PASS :invalid:case="missing_l_template_rta"
+PASS :invalid:case="missing_r_template_rta"
+PASS :invalid:case="bad_size"
+PASS :invalid:case="inline_struct"
+

@@ -1,0 +1,1725 @@
+
+PASS :return_type:returnType="bool";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="bool";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="bool";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="bool";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="bool";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cbool%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cbool%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cbool%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="abstract-int";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="abstract-int";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="abstract-int";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="abstract-int";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="abstract-int";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="abstract-float";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="abstract-float";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="abstract-float";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="abstract-float";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="abstract-float";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="f32";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="f32";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="f32";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="f32";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="f32";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="f16";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="f16";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="f16";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="f16";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="f16";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cabstract-int%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cabstract-int%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cabstract-int%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cabstract-float%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cf32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cf16%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cabstract-float%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cf32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cf16%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cabstract-float%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cf16%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="i32";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="i32";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="i32";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="i32";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="i32";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Ci32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Ci32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Ci32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="u32";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="u32";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="u32";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="u32";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="u32";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec2%3Cu32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec3%3Cu32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :return_type:returnType="vec4%3Cu32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="bool"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="f32"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="f16"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="i32"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="u32"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_2d%3Cf32%3E";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="bool"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="f32"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="f16"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="i32"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="u32"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_2d_array%3Cf32%3E";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="bool"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="f32"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="f16"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="i32"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="u32"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_3d%3Cf32%3E";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="bool"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="f32"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="f16"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="i32"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="u32"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube%3Cf32%3E";coordType="vec4%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="bool"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cbool%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="abstract-int"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="abstract-float"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="f32"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="f16"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cabstract-int%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cabstract-float%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cf32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cf16%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="i32"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Ci32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="u32"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec2%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec3%3Cu32%3E"
+PASS :coords_argument:textureType="texture_cube_array%3Cf32%3E";coordType="vec4%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="bool"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="abstract-int"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="abstract-float"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="f32"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="f16"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="i32"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="u32"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec2%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec3%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_2d_array%3Cf32%3E";arrayIndexType="vec4%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="bool"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cbool%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="abstract-int"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="abstract-float"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="f32"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="f16"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cabstract-int%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cabstract-float%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cf32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cf16%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="i32"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Ci32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="u32"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec2%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec3%3Cu32%3E"
+PASS :array_index_argument:textureType="texture_cube_array%3Cf32%3E";arrayIndexType="vec4%3Cu32%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="bool"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec2%3Cbool%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec3%3Cbool%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec4%3Cbool%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="abstract-int"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="abstract-float"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="f32"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="f16"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec2%3Cabstract-int%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec3%3Cabstract-int%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec4%3Cabstract-int%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec2%3Cabstract-float%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec2%3Cf32%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec2%3Cf16%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec3%3Cabstract-float%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec3%3Cf32%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec3%3Cf16%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec4%3Cabstract-float%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec4%3Cf32%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec4%3Cf16%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="i32"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec2%3Ci32%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec3%3Ci32%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec4%3Ci32%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="u32"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec2%3Cu32%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec3%3Cu32%3E"
+PASS :bias_argument:textureType="texture_2d%3Cf32%3E";biasType="vec4%3Cu32%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="bool"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec2%3Cbool%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec3%3Cbool%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec4%3Cbool%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="abstract-int"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="abstract-float"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="f32"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="f16"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec2%3Cabstract-int%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec3%3Cabstract-int%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec4%3Cabstract-int%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec2%3Cabstract-float%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec2%3Cf32%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec2%3Cf16%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec3%3Cabstract-float%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec3%3Cf32%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec3%3Cf16%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec4%3Cabstract-float%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec4%3Cf32%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec4%3Cf16%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="i32"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec2%3Ci32%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec3%3Ci32%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec4%3Ci32%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="u32"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec2%3Cu32%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec3%3Cu32%3E"
+PASS :bias_argument:textureType="texture_2d_array%3Cf32%3E";biasType="vec4%3Cu32%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="bool"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec2%3Cbool%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec3%3Cbool%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec4%3Cbool%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="abstract-int"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="abstract-float"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="f32"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="f16"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec2%3Cabstract-int%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec3%3Cabstract-int%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec4%3Cabstract-int%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec2%3Cabstract-float%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec2%3Cf32%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec2%3Cf16%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec3%3Cabstract-float%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec3%3Cf32%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec3%3Cf16%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec4%3Cabstract-float%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec4%3Cf32%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec4%3Cf16%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="i32"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec2%3Ci32%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec3%3Ci32%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec4%3Ci32%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="u32"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec2%3Cu32%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec3%3Cu32%3E"
+PASS :bias_argument:textureType="texture_3d%3Cf32%3E";biasType="vec4%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="bool"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="abstract-int"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="abstract-float"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="f32"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="f16"
+FAIL :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, vec2(-9, -9));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, vec2(8, 8));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="i32"
+FAIL :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, vec2(i32(-9), i32(-9)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, vec2(i32(8), i32(8)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Ci32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Ci32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="u32"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec2%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec3%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d%3Cf32%3E";offsetType="vec4%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="bool"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cbool%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="abstract-int"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="abstract-float"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="f32"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="f16"
+FAIL :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0, vec2(-9, -9));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0, vec2(8, 8));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cf32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cf16%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="i32"
+FAIL :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Ci32%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0, vec2(i32(-9), i32(-9)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0, vec2(i32(8), i32(8)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Ci32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Ci32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="u32"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec2%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec3%3Cu32%3E"
+PASS :offset_argument:textureType="texture_2d_array%3Cf32%3E";offsetType="vec4%3Cu32%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="bool"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cbool%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cbool%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cbool%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="abstract-int"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="abstract-float"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="f32"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="f16"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E"
+FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(-9, -9, -9));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(8, 8, 8));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cf32%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cf16%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cf32%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cf16%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cabstract-float%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cf32%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cf16%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="i32"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Ci32%3E"
+FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3E" assert_unreached:
+  - VALIDATION FAILED: subcase: value=-9
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(i32(-9), i32(-9), i32(-9)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - INFO: subcase: value=-8
+    OK
+  - INFO: subcase: value=0
+    OK
+  - INFO: subcase: value=7
+    OK
+  - VALIDATION FAILED: subcase: value=8
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(i32(8), i32(8), i32(8)));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
+  - EXPECTATION FAILED: subcase: value=-9
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: value=8
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: value=-9
+    OK
+  - INFO: subcase: value=8
+    OK
+ Reached unreachable code
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Ci32%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="u32"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cu32%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cu32%3E"
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cu32%3E"
+PASS :offset_argument,non_const:textureType="texture_2d%3Cf32%3E";varType="c"
+FAIL :offset_argument,non_const:textureType="texture_2d%3Cf32%3E";varType="u" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(u));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:316:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :offset_argument,non_const:textureType="texture_2d%3Cf32%3E";varType="l" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, vec2<i32>(l));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:316:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="c"
+FAIL :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="u" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0, vec2<i32>(u));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:316:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="l" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+    @group(0) @binding(2) var<uniform> u: vec2<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec2(i32(0), i32(0));
+      let v = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0, vec2<i32>(l));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:316:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="c"
+FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="u" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+    @group(0) @binding(2) var<uniform> u: vec3<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec3(i32(0), i32(0), i32(0));
+      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3<i32>(u));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:316:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="l" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+    @group(0) @binding(2) var<uniform> u: vec3<i32>;
+    @fragment fn fs() -> @location(0) vec4f {
+      const c = 1;
+      let l = vec3(i32(0), i32(0), i32(0));
+      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3<i32>(l));
+      return vec4f(0);
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:316:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="none";offset=false
+PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="none";offset=true
+PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="fragment";offset=false
+PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="fragment";offset=true
+FAIL :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="vertex";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @vertex
+          fn main() -> @builtin(position) vec4f {
+            foo();
+            return vec4f();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="vertex";offset=true assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @vertex
+          fn main() -> @builtin(position) vec4f {
+            foo();
+            return vec4f();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, vec2(i32(0), i32(0)));
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="compute";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="compute";offset=true assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, vec2(i32(0), i32(0)));
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="fragment_and_compute";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @fragment
+          fn main1() {
+            foo();
+          }
+
+          @compute @workgroup_size(1)
+          fn main2() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="fragment_and_compute";offset=true assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @fragment
+          fn main1() {
+            foo();
+          }
+
+          @compute @workgroup_size(1)
+          fn main2() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, vec2(i32(0), i32(0)));
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="compute_without_call";offset=false
+PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="compute_without_call";offset=true
+PASS :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="none";offset=false
+PASS :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="none";offset=true
+PASS :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="fragment";offset=false
+PASS :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="fragment";offset=true
+FAIL :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="vertex";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @vertex
+          fn main() -> @builtin(position) vec4f {
+            foo();
+            return vec4f();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="vertex";offset=true assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @vertex
+          fn main() -> @builtin(position) vec4f {
+            foo();
+            return vec4f();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0, vec2(i32(0), i32(0)));
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="compute";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="compute";offset=true assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0, vec2(i32(0), i32(0)));
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="fragment_and_compute";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @fragment
+          fn main1() {
+            foo();
+          }
+
+          @compute @workgroup_size(1)
+          fn main2() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="fragment_and_compute";offset=true assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @fragment
+          fn main1() {
+            foo();
+          }
+
+          @compute @workgroup_size(1)
+          fn main2() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_2d_array<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec2(0.0f, 0.0f), 0, 0, vec2(i32(0), i32(0)));
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="compute_without_call";offset=false
+PASS :only_in_fragment:textureType="texture_2d_array%3Cf32%3E";entryPoint="compute_without_call";offset=true
+PASS :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="none";offset=false
+PASS :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="none";offset=true
+PASS :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="fragment";offset=false
+PASS :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="fragment";offset=true
+FAIL :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="vertex";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @vertex
+          fn main() -> @builtin(position) vec4f {
+            foo();
+            return vec4f();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="vertex";offset=true assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @vertex
+          fn main() -> @builtin(position) vec4f {
+            foo();
+            return vec4f();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(i32(0), i32(0), i32(0)));
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="compute";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="compute";offset=true assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(i32(0), i32(0), i32(0)));
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="fragment_and_compute";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @fragment
+          fn main1() {
+            foo();
+          }
+
+          @compute @workgroup_size(1)
+          fn main2() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="fragment_and_compute";offset=true assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @fragment
+          fn main1() {
+            foo();
+          }
+
+          @compute @workgroup_size(1)
+          fn main2() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_3d<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(i32(0), i32(0), i32(0)));
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="compute_without_call";offset=false
+PASS :only_in_fragment:textureType="texture_3d%3Cf32%3E";entryPoint="compute_without_call";offset=true
+PASS :only_in_fragment:textureType="texture_cube%3Cf32%3E";entryPoint="none";offset=false
+PASS :only_in_fragment:textureType="texture_cube%3Cf32%3E";entryPoint="fragment";offset=false
+FAIL :only_in_fragment:textureType="texture_cube%3Cf32%3E";entryPoint="vertex";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @vertex
+          fn main() -> @builtin(position) vec4f {
+            foo();
+            return vec4f();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_cube%3Cf32%3E";entryPoint="compute";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_cube%3Cf32%3E";entryPoint="fragment_and_compute";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @fragment
+          fn main1() {
+            foo();
+          }
+
+          @compute @workgroup_size(1)
+          fn main2() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_fragment:textureType="texture_cube%3Cf32%3E";entryPoint="compute_without_call";offset=false
+PASS :only_in_fragment:textureType="texture_cube_array%3Cf32%3E";entryPoint="none";offset=false
+PASS :only_in_fragment:textureType="texture_cube_array%3Cf32%3E";entryPoint="fragment";offset=false
+FAIL :only_in_fragment:textureType="texture_cube_array%3Cf32%3E";entryPoint="vertex";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @vertex
+          fn main() -> @builtin(position) vec4f {
+            foo();
+            return vec4f();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube_array<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_cube_array%3Cf32%3E";entryPoint="compute";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube_array<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:textureType="texture_cube_array%3Cf32%3E";entryPoint="fragment_and_compute";offset=false assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+          @fragment
+          fn main1() {
+            foo();
+          }
+
+          @compute @workgroup_size(1)
+          fn main2() {
+            foo();
+          }
+
+    @group(0) @binding(0) var s: sampler;
+    @group(0) @binding(1) var t: texture_cube_array<f32>;
+
+    fn foo() {
+      _ = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, 0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:352:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_fragment:textureType="texture_cube_array%3Cf32%3E";entryPoint="compute_without_call";offset=false
+PASS :texture_type:testTextureType="texture_1d%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_1d%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_1d%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_1d%3Cf32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_1d%3Cf32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_1d%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_1d%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_1d%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_1d%3Cu32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_1d%3Cu32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d%3Cf32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d%3Cf32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d%3Cu32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d%3Cu32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d_array%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d_array%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d_array%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d_array%3Cf32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d_array%3Cf32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d_array%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d_array%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d_array%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d_array%3Cu32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_2d_array%3Cu32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_3d%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_3d%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_3d%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_3d%3Cf32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_3d%3Cf32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_3d%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_3d%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_3d%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_3d%3Cu32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_3d%3Cu32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube%3Cf32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube%3Cf32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube%3Cu32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube%3Cu32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube_array%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube_array%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube_array%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube_array%3Cf32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube_array%3Cf32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube_array%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube_array%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube_array%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube_array%3Cu32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_cube_array%3Cu32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_multisampled_2d%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_multisampled_2d%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_multisampled_2d%3Cf32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_multisampled_2d%3Cf32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_multisampled_2d%3Cf32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_multisampled_2d%3Cu32%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_multisampled_2d%3Cu32%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_multisampled_2d%3Cu32%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_multisampled_2d%3Cu32%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_multisampled_2d%3Cu32%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_multisampled_2d";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_multisampled_2d";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_multisampled_2d";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_multisampled_2d";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_multisampled_2d";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_external";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_external";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_external";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_external";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_external";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_1d%3Crgba8unorm,%20read%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_1d%3Crgba8unorm,%20read%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_1d%3Crgba8unorm,%20read%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_1d%3Crgba8unorm,%20read%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_1d%3Crgba8unorm,%20read%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_1d%3Cr32uint,%20read%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_1d%3Cr32uint,%20read%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_1d%3Cr32uint,%20read%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_1d%3Cr32uint,%20read%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_1d%3Cr32uint,%20read%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d%3Crgba8unorm,%20read%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d%3Crgba8unorm,%20read%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d%3Crgba8unorm,%20read%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d%3Crgba8unorm,%20read%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d%3Crgba8unorm,%20read%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d%3Cr32uint,%20read%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d%3Cr32uint,%20read%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d%3Cr32uint,%20read%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d%3Cr32uint,%20read%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d%3Cr32uint,%20read%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d_array%3Crgba8unorm,%20read%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d_array%3Crgba8unorm,%20read%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d_array%3Crgba8unorm,%20read%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d_array%3Crgba8unorm,%20read%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d_array%3Crgba8unorm,%20read%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d_array%3Cr32uint,%20read%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d_array%3Cr32uint,%20read%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d_array%3Cr32uint,%20read%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d_array%3Cr32uint,%20read%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_2d_array%3Cr32uint,%20read%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_3d%3Crgba8unorm,%20read%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_3d%3Crgba8unorm,%20read%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_3d%3Crgba8unorm,%20read%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_3d%3Crgba8unorm,%20read%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_3d%3Crgba8unorm,%20read%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_3d%3Cr32uint,%20read%3E";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_3d%3Cr32uint,%20read%3E";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_3d%3Cr32uint,%20read%3E";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_3d%3Cr32uint,%20read%3E";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_storage_3d%3Cr32uint,%20read%3E";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_2d";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_2d";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_2d";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_2d";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_2d";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_2d_array";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_2d_array";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_2d_array";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_2d_array";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_2d_array";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_cube";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_cube";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_cube";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_cube";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_cube";textureType="texture_cube_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_cube_array";textureType="texture_2d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_cube_array";textureType="texture_2d_array%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_cube_array";textureType="texture_3d%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_cube_array";textureType="texture_cube%3Cf32%3E"
+PASS :texture_type:testTextureType="texture_depth_cube_array";textureType="texture_cube_array%3Cf32%3E"
+PASS :must_use:use=true
+PASS :must_use:use=false
+

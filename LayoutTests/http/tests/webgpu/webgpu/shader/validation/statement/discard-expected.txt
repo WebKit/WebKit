@@ -1,0 +1,193 @@
+
+FAIL :placement:place="compute" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+    fn subvert() {
+
+    }
+
+    @vertex
+    fn vtx() -> @builtin(position) vec4f {
+
+      subvert();
+      return vec4f(1);
+    }
+
+    fn subfrag() {
+
+    }
+
+    @fragment
+    fn frag() -> @location(0) vec4f {
+
+      subfrag();
+      return vec4f(1);
+    }
+
+    fn subcomp() {
+
+    }
+
+    @compute
+    @workgroup_size(1)
+    fn comp() {
+      discard;
+      subcomp();
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/discard.spec.js:64:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :placement:place="vertex" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+    fn subvert() {
+
+    }
+
+    @vertex
+    fn vtx() -> @builtin(position) vec4f {
+      discard;
+      subvert();
+      return vec4f(1);
+    }
+
+    fn subfrag() {
+
+    }
+
+    @fragment
+    fn frag() -> @location(0) vec4f {
+
+      subfrag();
+      return vec4f(1);
+    }
+
+    fn subcomp() {
+
+    }
+
+    @compute
+    @workgroup_size(1)
+    fn comp() {
+
+      subcomp();
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/discard.spec.js:64:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :placement:place="fragment"
+PASS :placement:place="module"
+PASS :placement:place="subfrag"
+FAIL :placement:place="subvert" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+    fn subvert() {
+      discard;
+    }
+
+    @vertex
+    fn vtx() -> @builtin(position) vec4f {
+
+      subvert();
+      return vec4f(1);
+    }
+
+    fn subfrag() {
+
+    }
+
+    @fragment
+    fn frag() -> @location(0) vec4f {
+
+      subfrag();
+      return vec4f(1);
+    }
+
+    fn subcomp() {
+
+    }
+
+    @compute
+    @workgroup_size(1)
+    fn comp() {
+
+      subcomp();
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/discard.spec.js:64:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :placement:place="subcomp" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+    fn subvert() {
+
+    }
+
+    @vertex
+    fn vtx() -> @builtin(position) vec4f {
+
+      subvert();
+      return vec4f(1);
+    }
+
+    fn subfrag() {
+
+    }
+
+    @fragment
+    fn frag() -> @location(0) vec4f {
+
+      subfrag();
+      return vec4f(1);
+    }
+
+    fn subcomp() {
+      discard;
+    }
+
+    @compute
+    @workgroup_size(1)
+    fn comp() {
+
+      subcomp();
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/discard.spec.js:64:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+

@@ -1,0 +1,2283 @@
+
+PASS :values:stage="constant";type="vec2%3Cabstract-int%3E"
+PASS :values:stage="constant";type="vec3%3Cabstract-int%3E"
+PASS :values:stage="constant";type="vec4%3Cabstract-int%3E"
+PASS :values:stage="constant";type="vec2%3Cabstract-float%3E"
+PASS :values:stage="constant";type="vec2%3Cf32%3E"
+PASS :values:stage="constant";type="vec2%3Cf16%3E"
+PASS :values:stage="constant";type="vec3%3Cabstract-float%3E"
+PASS :values:stage="constant";type="vec3%3Cf32%3E"
+PASS :values:stage="constant";type="vec3%3Cf16%3E"
+PASS :values:stage="constant";type="vec4%3Cabstract-float%3E"
+PASS :values:stage="constant";type="vec4%3Cf32%3E"
+PASS :values:stage="constant";type="vec4%3Cf16%3E"
+FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b="_negzero_"
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=0
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-11728123330560;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-11728123330560;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-11728123330560;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-11728123330560;b="_negzero_"
+    OK
+  - INFO: subcase: a=-11728123330560;b=0
+    OK
+  - INFO: subcase: a=-11728123330560;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-11728123330560;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-11728123330560;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-11728123330560
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b="_negzero_"
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=0
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=11728123330560
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-11728123330560
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b="_negzero_"
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=0
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=11728123330560
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-11728123330560
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b="_negzero_"
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=0
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=11728123330560
+    OK
+  - INFO: subcase: a="_negzero_";b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a="_negzero_";b=-11728123330560
+    OK
+  - INFO: subcase: a="_negzero_";b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a="_negzero_";b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a="_negzero_";b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a="_negzero_";b="_negzero_"
+    OK
+  - INFO: subcase: a="_negzero_";b=0
+    OK
+  - INFO: subcase: a="_negzero_";b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a="_negzero_";b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a="_negzero_";b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a="_negzero_";b=11728123330560
+    OK
+  - INFO: subcase: a="_negzero_";b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=0;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=0;b=-11728123330560
+    OK
+  - INFO: subcase: a=0;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=0;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=0;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=0;b="_negzero_"
+    OK
+  - INFO: subcase: a=0;b=0
+    OK
+  - INFO: subcase: a=0;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=0;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=0;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=0;b=11728123330560
+    OK
+  - INFO: subcase: a=0;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-11728123330560
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b="_negzero_"
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=0
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=11728123330560
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-11728123330560
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b="_negzero_"
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=0
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=11728123330560
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-11728123330560
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b="_negzero_"
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=0
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=11728123330560
+    OK
+  - INFO: subcase: a=11728123330560;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=11728123330560;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=11728123330560;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=11728123330560;b="_negzero_"
+    OK
+  - INFO: subcase: a=11728123330560;b=0
+    OK
+  - INFO: subcase: a=11728123330560;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=11728123330560;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=11728123330560;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b="_negzero_"
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=0
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=3.78956116703702e-13
+    OK
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-11728123330560
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=-11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.78956116703702e-13;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.78956116703702e-13;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754943508222875e-38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754943508222875e-38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754942106924411e-38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754942106924411e-38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.78956116703702e-13;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.78956116703702e-13;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-11728123330560
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=11728123330560
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-11728123330560;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-11728123330560;b=-11728123330560
+    OK
+  - INFO: subcase: a=-11728123330560;b=11728123330560
+    OK
+  - INFO: subcase: a=-11728123330560;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=3.4028234663852886e+38
+    OK
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=-11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=11728123330560;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=11728123330560;b=-11728123330560
+    OK
+  - INFO: subcase: a=11728123330560;b=11728123330560
+    OK
+  - INFO: subcase: a=11728123330560;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-11728123330560
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=11728123330560
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
+    OK
+ Reached unreachable code
+FAIL :values:stage="override";type="vec2%3Cf16%3E" assert_unreached:
+  - INFO: subcase: a=-65504;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-65504;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-65504;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-65504;b="_negzero_"
+    OK
+  - INFO: subcase: a=-65504;b=0
+    OK
+  - INFO: subcase: a=-65504;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-65504;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-65504;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-63.96875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-63.96875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-63.96875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-63.96875;b="_negzero_"
+    OK
+  - INFO: subcase: a=-63.96875;b=0
+    OK
+  - INFO: subcase: a=-63.96875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-63.96875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-63.96875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-63.96875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-0.062469482421875;b="_negzero_"
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=0
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=63.96875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-63.96875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-0.00006103515625;b="_negzero_"
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=0
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=63.96875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-63.96875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b="_negzero_"
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=0
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=63.96875
+    OK
+  - INFO: subcase: a="_negzero_";b=-65504
+    OK
+  - INFO: subcase: a="_negzero_";b=-63.96875
+    OK
+  - INFO: subcase: a="_negzero_";b=-0.062469482421875
+    OK
+  - INFO: subcase: a="_negzero_";b=-0.00006103515625
+    OK
+  - INFO: subcase: a="_negzero_";b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a="_negzero_";b="_negzero_"
+    OK
+  - INFO: subcase: a="_negzero_";b=0
+    OK
+  - INFO: subcase: a="_negzero_";b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a="_negzero_";b=0.00006103515625
+    OK
+  - INFO: subcase: a="_negzero_";b=0.062469482421875
+    OK
+  - INFO: subcase: a="_negzero_";b=63.96875
+    OK
+  - INFO: subcase: a="_negzero_";b=65504
+    OK
+  - INFO: subcase: a=0;b=-65504
+    OK
+  - INFO: subcase: a=0;b=-63.96875
+    OK
+  - INFO: subcase: a=0;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=0;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=0;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=0;b="_negzero_"
+    OK
+  - INFO: subcase: a=0;b=0
+    OK
+  - INFO: subcase: a=0;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=0;b=0.00006103515625
+    OK
+  - INFO: subcase: a=0;b=0.062469482421875
+    OK
+  - INFO: subcase: a=0;b=63.96875
+    OK
+  - INFO: subcase: a=0;b=65504
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-65504
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-63.96875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b="_negzero_"
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=0
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=0.00006103515625
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=0.062469482421875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=63.96875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=65504
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-63.96875
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=0.00006103515625;b="_negzero_"
+    OK
+  - INFO: subcase: a=0.00006103515625;b=0
+    OK
+  - INFO: subcase: a=0.00006103515625;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=0.00006103515625;b=0.00006103515625
+    OK
+  - INFO: subcase: a=0.00006103515625;b=0.062469482421875
+    OK
+  - INFO: subcase: a=0.00006103515625;b=63.96875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-63.96875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=0.062469482421875;b="_negzero_"
+    OK
+  - INFO: subcase: a=0.062469482421875;b=0
+    OK
+  - INFO: subcase: a=0.062469482421875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=0.062469482421875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=0.062469482421875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=63.96875
+    OK
+  - INFO: subcase: a=63.96875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=63.96875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=63.96875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=63.96875;b="_negzero_"
+    OK
+  - INFO: subcase: a=63.96875;b=0
+    OK
+  - INFO: subcase: a=63.96875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=63.96875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=63.96875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=65504;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=65504;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=65504;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=65504;b="_negzero_"
+    OK
+  - INFO: subcase: a=65504;b=0
+    OK
+  - INFO: subcase: a=65504;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=65504;b=0.00006103515625
+    OK
+  - INFO: subcase: a=65504;b=0.062469482421875
+    OK
+  - EXPECTATION FAILED: subcase: a=-65504;b=-65504
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-65504;b=-63.96875
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-65504;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-65504;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=-63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.062469482421875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.062469482421875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006103515625;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006103515625;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006097555160522461;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006097555160522461;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.00006103515625;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.00006103515625;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.062469482421875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.062469482421875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=-65504;b=-65504
+    OK
+  - INFO: subcase: a=-65504;b=-63.96875
+    OK
+  - INFO: subcase: a=-65504;b=63.96875
+    OK
+  - INFO: subcase: a=-65504;b=65504
+    OK
+  - INFO: subcase: a=-63.96875;b=-65504
+    OK
+  - INFO: subcase: a=-63.96875;b=-63.96875
+    OK
+  - INFO: subcase: a=-63.96875;b=63.96875
+    OK
+  - INFO: subcase: a=-63.96875;b=65504
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-65504
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=65504
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-65504
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=65504
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-65504
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=65504
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-65504
+    OK
+  - INFO: subcase: a=0.00006103515625;b=65504
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-65504
+    OK
+  - INFO: subcase: a=0.062469482421875;b=65504
+    OK
+  - EXPECTATION FAILED: subcase: a=63.96875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=63.96875;b=-63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=63.96875;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=63.96875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=-63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=63.96875;b=-65504
+    OK
+  - INFO: subcase: a=63.96875;b=-63.96875
+    OK
+  - INFO: subcase: a=63.96875;b=63.96875
+    OK
+  - INFO: subcase: a=63.96875;b=65504
+    OK
+  - INFO: subcase: a=65504;b=-65504
+    OK
+  - INFO: subcase: a=65504;b=-63.96875
+    OK
+  - INFO: subcase: a=65504;b=63.96875
+    OK
+  - INFO: subcase: a=65504;b=65504
+    OK
+ Reached unreachable code
+FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b="_negzero_"
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=0
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-11728123330560;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-11728123330560;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-11728123330560;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-11728123330560;b="_negzero_"
+    OK
+  - INFO: subcase: a=-11728123330560;b=0
+    OK
+  - INFO: subcase: a=-11728123330560;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-11728123330560;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-11728123330560;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-11728123330560
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b="_negzero_"
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=0
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=11728123330560
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-11728123330560
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b="_negzero_"
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=0
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=11728123330560
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-11728123330560
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b="_negzero_"
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=0
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=11728123330560
+    OK
+  - INFO: subcase: a="_negzero_";b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a="_negzero_";b=-11728123330560
+    OK
+  - INFO: subcase: a="_negzero_";b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a="_negzero_";b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a="_negzero_";b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a="_negzero_";b="_negzero_"
+    OK
+  - INFO: subcase: a="_negzero_";b=0
+    OK
+  - INFO: subcase: a="_negzero_";b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a="_negzero_";b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a="_negzero_";b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a="_negzero_";b=11728123330560
+    OK
+  - INFO: subcase: a="_negzero_";b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=0;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=0;b=-11728123330560
+    OK
+  - INFO: subcase: a=0;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=0;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=0;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=0;b="_negzero_"
+    OK
+  - INFO: subcase: a=0;b=0
+    OK
+  - INFO: subcase: a=0;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=0;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=0;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=0;b=11728123330560
+    OK
+  - INFO: subcase: a=0;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-11728123330560
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b="_negzero_"
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=0
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=11728123330560
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-11728123330560
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b="_negzero_"
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=0
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=11728123330560
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-11728123330560
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b="_negzero_"
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=0
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=11728123330560
+    OK
+  - INFO: subcase: a=11728123330560;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=11728123330560;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=11728123330560;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=11728123330560;b="_negzero_"
+    OK
+  - INFO: subcase: a=11728123330560;b=0
+    OK
+  - INFO: subcase: a=11728123330560;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=11728123330560;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=11728123330560;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b="_negzero_"
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=0
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=3.78956116703702e-13
+    OK
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-11728123330560
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=-11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.78956116703702e-13;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.78956116703702e-13;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754943508222875e-38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754943508222875e-38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754942106924411e-38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754942106924411e-38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.78956116703702e-13;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.78956116703702e-13;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-11728123330560
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=11728123330560
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-11728123330560;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-11728123330560;b=-11728123330560
+    OK
+  - INFO: subcase: a=-11728123330560;b=11728123330560
+    OK
+  - INFO: subcase: a=-11728123330560;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=3.4028234663852886e+38
+    OK
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=-11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=11728123330560;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=11728123330560;b=-11728123330560
+    OK
+  - INFO: subcase: a=11728123330560;b=11728123330560
+    OK
+  - INFO: subcase: a=11728123330560;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-11728123330560
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=11728123330560
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
+    OK
+ Reached unreachable code
+FAIL :values:stage="override";type="vec3%3Cf16%3E" assert_unreached:
+  - INFO: subcase: a=-65504;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-65504;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-65504;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-65504;b="_negzero_"
+    OK
+  - INFO: subcase: a=-65504;b=0
+    OK
+  - INFO: subcase: a=-65504;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-65504;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-65504;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-63.96875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-63.96875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-63.96875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-63.96875;b="_negzero_"
+    OK
+  - INFO: subcase: a=-63.96875;b=0
+    OK
+  - INFO: subcase: a=-63.96875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-63.96875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-63.96875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-63.96875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-0.062469482421875;b="_negzero_"
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=0
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=63.96875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-63.96875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-0.00006103515625;b="_negzero_"
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=0
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=63.96875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-63.96875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b="_negzero_"
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=0
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=63.96875
+    OK
+  - INFO: subcase: a="_negzero_";b=-65504
+    OK
+  - INFO: subcase: a="_negzero_";b=-63.96875
+    OK
+  - INFO: subcase: a="_negzero_";b=-0.062469482421875
+    OK
+  - INFO: subcase: a="_negzero_";b=-0.00006103515625
+    OK
+  - INFO: subcase: a="_negzero_";b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a="_negzero_";b="_negzero_"
+    OK
+  - INFO: subcase: a="_negzero_";b=0
+    OK
+  - INFO: subcase: a="_negzero_";b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a="_negzero_";b=0.00006103515625
+    OK
+  - INFO: subcase: a="_negzero_";b=0.062469482421875
+    OK
+  - INFO: subcase: a="_negzero_";b=63.96875
+    OK
+  - INFO: subcase: a="_negzero_";b=65504
+    OK
+  - INFO: subcase: a=0;b=-65504
+    OK
+  - INFO: subcase: a=0;b=-63.96875
+    OK
+  - INFO: subcase: a=0;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=0;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=0;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=0;b="_negzero_"
+    OK
+  - INFO: subcase: a=0;b=0
+    OK
+  - INFO: subcase: a=0;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=0;b=0.00006103515625
+    OK
+  - INFO: subcase: a=0;b=0.062469482421875
+    OK
+  - INFO: subcase: a=0;b=63.96875
+    OK
+  - INFO: subcase: a=0;b=65504
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-65504
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-63.96875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b="_negzero_"
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=0
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=0.00006103515625
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=0.062469482421875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=63.96875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=65504
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-63.96875
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=0.00006103515625;b="_negzero_"
+    OK
+  - INFO: subcase: a=0.00006103515625;b=0
+    OK
+  - INFO: subcase: a=0.00006103515625;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=0.00006103515625;b=0.00006103515625
+    OK
+  - INFO: subcase: a=0.00006103515625;b=0.062469482421875
+    OK
+  - INFO: subcase: a=0.00006103515625;b=63.96875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-63.96875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=0.062469482421875;b="_negzero_"
+    OK
+  - INFO: subcase: a=0.062469482421875;b=0
+    OK
+  - INFO: subcase: a=0.062469482421875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=0.062469482421875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=0.062469482421875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=63.96875
+    OK
+  - INFO: subcase: a=63.96875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=63.96875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=63.96875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=63.96875;b="_negzero_"
+    OK
+  - INFO: subcase: a=63.96875;b=0
+    OK
+  - INFO: subcase: a=63.96875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=63.96875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=63.96875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=65504;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=65504;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=65504;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=65504;b="_negzero_"
+    OK
+  - INFO: subcase: a=65504;b=0
+    OK
+  - INFO: subcase: a=65504;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=65504;b=0.00006103515625
+    OK
+  - INFO: subcase: a=65504;b=0.062469482421875
+    OK
+  - EXPECTATION FAILED: subcase: a=-65504;b=-65504
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-65504;b=-63.96875
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-65504;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-65504;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=-63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.062469482421875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.062469482421875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006103515625;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006103515625;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006097555160522461;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=-65504;b=-65504
+    OK
+  - INFO: subcase: a=-65504;b=-63.96875
+    OK
+  - INFO: subcase: a=-65504;b=63.96875
+    OK
+  - INFO: subcase: a=-65504;b=65504
+    OK
+  - INFO: subcase: a=-63.96875;b=-65504
+    OK
+  - INFO: subcase: a=-63.96875;b=-63.96875
+    OK
+  - INFO: subcase: a=-63.96875;b=63.96875
+    OK
+  - INFO: subcase: a=-63.96875;b=65504
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-65504
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=65504
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-65504
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=65504
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-65504
+    OK
+  - EXPECTATION FAILED: subcase: a=-0.00006097555160522461;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.00006103515625;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.00006103515625;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.062469482421875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.062469482421875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=63.96875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=63.96875;b=-63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=63.96875;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=63.96875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=-63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=-0.00006097555160522461;b=65504
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-65504
+    OK
+  - INFO: subcase: a=0.00006103515625;b=65504
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-65504
+    OK
+  - INFO: subcase: a=0.062469482421875;b=65504
+    OK
+  - INFO: subcase: a=63.96875;b=-65504
+    OK
+  - INFO: subcase: a=63.96875;b=-63.96875
+    OK
+  - INFO: subcase: a=63.96875;b=63.96875
+    OK
+  - INFO: subcase: a=63.96875;b=65504
+    OK
+  - INFO: subcase: a=65504;b=-65504
+    OK
+  - INFO: subcase: a=65504;b=-63.96875
+    OK
+  - INFO: subcase: a=65504;b=63.96875
+    OK
+  - INFO: subcase: a=65504;b=65504
+    OK
+ Reached unreachable code
+FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b="_negzero_"
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=0
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-11728123330560;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-11728123330560;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-11728123330560;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-11728123330560;b="_negzero_"
+    OK
+  - INFO: subcase: a=-11728123330560;b=0
+    OK
+  - INFO: subcase: a=-11728123330560;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-11728123330560;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-11728123330560;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-11728123330560
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b="_negzero_"
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=0
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=11728123330560
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-11728123330560
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b="_negzero_"
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=0
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=11728123330560
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-11728123330560
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b="_negzero_"
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=0
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=11728123330560
+    OK
+  - INFO: subcase: a="_negzero_";b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a="_negzero_";b=-11728123330560
+    OK
+  - INFO: subcase: a="_negzero_";b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a="_negzero_";b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a="_negzero_";b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a="_negzero_";b="_negzero_"
+    OK
+  - INFO: subcase: a="_negzero_";b=0
+    OK
+  - INFO: subcase: a="_negzero_";b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a="_negzero_";b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a="_negzero_";b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a="_negzero_";b=11728123330560
+    OK
+  - INFO: subcase: a="_negzero_";b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=0;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=0;b=-11728123330560
+    OK
+  - INFO: subcase: a=0;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=0;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=0;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=0;b="_negzero_"
+    OK
+  - INFO: subcase: a=0;b=0
+    OK
+  - INFO: subcase: a=0;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=0;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=0;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=0;b=11728123330560
+    OK
+  - INFO: subcase: a=0;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-11728123330560
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b="_negzero_"
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=0
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=11728123330560
+    OK
+  - INFO: subcase: a=1.401298464324817e-45;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-11728123330560
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b="_negzero_"
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=0
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=11728123330560
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-11728123330560
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b="_negzero_"
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=0
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=11728123330560
+    OK
+  - INFO: subcase: a=11728123330560;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=11728123330560;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=11728123330560;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=11728123330560;b="_negzero_"
+    OK
+  - INFO: subcase: a=11728123330560;b=0
+    OK
+  - INFO: subcase: a=11728123330560;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=11728123330560;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=11728123330560;b=3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-3.78956116703702e-13
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-1.1754942106924411e-38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b="_negzero_"
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=0
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=1.401298464324817e-45
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=1.1754943508222875e-38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=3.78956116703702e-13
+    OK
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=-11728123330560
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=-11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-11728123330560;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.78956116703702e-13;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-3.78956116703702e-13;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754943508222875e-38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=-11728123330560
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=11728123330560
+    OK
+  - INFO: subcase: a=-3.4028234663852886e+38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-11728123330560;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-11728123330560;b=-11728123330560
+    OK
+  - INFO: subcase: a=-11728123330560;b=11728123330560
+    OK
+  - INFO: subcase: a=-11728123330560;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-3.78956116703702e-13;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754943508222875e-38;b=-3.4028234663852886e+38
+    OK
+  - EXPECTATION FAILED: subcase: a=-1.1754943508222875e-38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754942106924411e-38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-1.1754942106924411e-38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=1.1754943508222875e-38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.78956116703702e-13;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.78956116703702e-13;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=-11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=11728123330560;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=-11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=11728123330560
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=-1.1754943508222875e-38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=-1.1754942106924411e-38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=1.1754943508222875e-38;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.78956116703702e-13;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=11728123330560;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=11728123330560;b=-11728123330560
+    OK
+  - INFO: subcase: a=11728123330560;b=11728123330560
+    OK
+  - INFO: subcase: a=11728123330560;b=3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-3.4028234663852886e+38
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=-11728123330560
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=11728123330560
+    OK
+  - INFO: subcase: a=3.4028234663852886e+38;b=3.4028234663852886e+38
+    OK
+ Reached unreachable code
+FAIL :values:stage="override";type="vec4%3Cf16%3E" assert_unreached:
+  - INFO: subcase: a=-65504;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-65504;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-65504;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-65504;b="_negzero_"
+    OK
+  - INFO: subcase: a=-65504;b=0
+    OK
+  - INFO: subcase: a=-65504;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-65504;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-65504;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-63.96875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-63.96875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-63.96875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-63.96875;b="_negzero_"
+    OK
+  - INFO: subcase: a=-63.96875;b=0
+    OK
+  - INFO: subcase: a=-63.96875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-63.96875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-63.96875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-63.96875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-0.062469482421875;b="_negzero_"
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=0
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=63.96875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-63.96875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-0.00006103515625;b="_negzero_"
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=0
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=63.96875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-63.96875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b="_negzero_"
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=0
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=0.00006103515625
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=0.062469482421875
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=63.96875
+    OK
+  - INFO: subcase: a="_negzero_";b=-65504
+    OK
+  - INFO: subcase: a="_negzero_";b=-63.96875
+    OK
+  - INFO: subcase: a="_negzero_";b=-0.062469482421875
+    OK
+  - INFO: subcase: a="_negzero_";b=-0.00006103515625
+    OK
+  - INFO: subcase: a="_negzero_";b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a="_negzero_";b="_negzero_"
+    OK
+  - INFO: subcase: a="_negzero_";b=0
+    OK
+  - INFO: subcase: a="_negzero_";b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a="_negzero_";b=0.00006103515625
+    OK
+  - INFO: subcase: a="_negzero_";b=0.062469482421875
+    OK
+  - INFO: subcase: a="_negzero_";b=63.96875
+    OK
+  - INFO: subcase: a="_negzero_";b=65504
+    OK
+  - INFO: subcase: a=0;b=-65504
+    OK
+  - INFO: subcase: a=0;b=-63.96875
+    OK
+  - INFO: subcase: a=0;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=0;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=0;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=0;b="_negzero_"
+    OK
+  - INFO: subcase: a=0;b=0
+    OK
+  - INFO: subcase: a=0;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=0;b=0.00006103515625
+    OK
+  - INFO: subcase: a=0;b=0.062469482421875
+    OK
+  - INFO: subcase: a=0;b=63.96875
+    OK
+  - INFO: subcase: a=0;b=65504
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-65504
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-63.96875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b="_negzero_"
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=0
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=0.00006103515625
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=0.062469482421875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=63.96875
+    OK
+  - INFO: subcase: a=5.960464477539063e-8;b=65504
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-63.96875
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=0.00006103515625;b="_negzero_"
+    OK
+  - INFO: subcase: a=0.00006103515625;b=0
+    OK
+  - INFO: subcase: a=0.00006103515625;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=0.00006103515625;b=0.00006103515625
+    OK
+  - INFO: subcase: a=0.00006103515625;b=0.062469482421875
+    OK
+  - INFO: subcase: a=0.00006103515625;b=63.96875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-63.96875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=0.062469482421875;b="_negzero_"
+    OK
+  - INFO: subcase: a=0.062469482421875;b=0
+    OK
+  - INFO: subcase: a=0.062469482421875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=0.062469482421875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=0.062469482421875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=0.062469482421875;b=63.96875
+    OK
+  - INFO: subcase: a=63.96875;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=63.96875;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=63.96875;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=63.96875;b="_negzero_"
+    OK
+  - INFO: subcase: a=63.96875;b=0
+    OK
+  - INFO: subcase: a=63.96875;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=63.96875;b=0.00006103515625
+    OK
+  - INFO: subcase: a=63.96875;b=0.062469482421875
+    OK
+  - INFO: subcase: a=65504;b=-0.062469482421875
+    OK
+  - INFO: subcase: a=65504;b=-0.00006103515625
+    OK
+  - INFO: subcase: a=65504;b=-0.00006097555160522461
+    OK
+  - INFO: subcase: a=65504;b="_negzero_"
+    OK
+  - INFO: subcase: a=65504;b=0
+    OK
+  - INFO: subcase: a=65504;b=5.960464477539063e-8
+    OK
+  - INFO: subcase: a=65504;b=0.00006103515625
+    OK
+  - INFO: subcase: a=65504;b=0.062469482421875
+    OK
+  - EXPECTATION FAILED: subcase: a=-65504;b=-65504
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-65504;b=-63.96875
+    Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/reflect.spec.js:89:37
+  - EXPECTATION FAILED: subcase: a=-65504;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-65504;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=-63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-63.96875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.062469482421875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.062469482421875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006103515625;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006103515625;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006097555160522461;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=-0.00006097555160522461;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.00006103515625;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.00006103515625;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.062469482421875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=0.062469482421875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=-65504;b=-65504
+    OK
+  - INFO: subcase: a=-65504;b=-63.96875
+    OK
+  - INFO: subcase: a=-65504;b=63.96875
+    OK
+  - INFO: subcase: a=-65504;b=65504
+    OK
+  - INFO: subcase: a=-63.96875;b=-65504
+    OK
+  - INFO: subcase: a=-63.96875;b=-63.96875
+    OK
+  - INFO: subcase: a=-63.96875;b=63.96875
+    OK
+  - INFO: subcase: a=-63.96875;b=65504
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=-65504
+    OK
+  - INFO: subcase: a=-0.062469482421875;b=65504
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=-65504
+    OK
+  - INFO: subcase: a=-0.00006103515625;b=65504
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=-65504
+    OK
+  - INFO: subcase: a=-0.00006097555160522461;b=65504
+    OK
+  - INFO: subcase: a=0.00006103515625;b=-65504
+    OK
+  - INFO: subcase: a=0.00006103515625;b=65504
+    OK
+  - INFO: subcase: a=0.062469482421875;b=-65504
+    OK
+  - INFO: subcase: a=0.062469482421875;b=65504
+    OK
+  - EXPECTATION FAILED: subcase: a=63.96875;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=63.96875;b=-63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=63.96875;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=63.96875;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=-65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=-63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=63.96875
+    Expected validation error
+      at (elided: only 2 shown)
+  - EXPECTATION FAILED: subcase: a=65504;b=65504
+    Expected validation error
+      at (elided: only 2 shown)
+  - INFO: subcase: a=63.96875;b=-65504
+    OK
+  - INFO: subcase: a=63.96875;b=-63.96875
+    OK
+  - INFO: subcase: a=63.96875;b=63.96875
+    OK
+  - INFO: subcase: a=63.96875;b=65504
+    OK
+  - INFO: subcase: a=65504;b=-65504
+    OK
+  - INFO: subcase: a=65504;b=-63.96875
+    OK
+  - INFO: subcase: a=65504;b=63.96875
+    OK
+  - INFO: subcase: a=65504;b=65504
+    OK
+ Reached unreachable code
+PASS :args:arg="good"
+PASS :args:arg="bad_no_parens"
+PASS :args:arg="bad_0args"
+PASS :args:arg="bad_1arg"
+PASS :args:arg="bad_3arg"
+PASS :args:arg="bad_0bool"
+PASS :args:arg="bad_0array"
+PASS :args:arg="bad_0struct"
+PASS :args:arg="bad_1bool"
+PASS :args:arg="bad_1array"
+PASS :args:arg="bad_1struct"
+PASS :must_use:use=true
+PASS :must_use:use=false
+

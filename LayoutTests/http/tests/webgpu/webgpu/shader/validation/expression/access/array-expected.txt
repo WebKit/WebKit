@@ -1,0 +1,94 @@
+
+PASS :index_type:type="bool"
+PASS :index_type:type="u32"
+PASS :index_type:type="i32"
+PASS :index_type:type="abstract-int"
+PASS :index_type:type="f32"
+PASS :index_type:type="f16"
+PASS :index_type:type="abstract-float"
+PASS :index_type:type="vec2i"
+PASS :result_type:type="i32";elements=0
+PASS :result_type:type="i32";elements=4
+PASS :result_type:type="vec2%3Ci32%3E";elements=0
+PASS :result_type:type="vec2%3Ci32%3E";elements=4
+PASS :result_type:type="vec3%3Ci32%3E";elements=0
+PASS :result_type:type="vec3%3Ci32%3E";elements=4
+PASS :result_type:type="vec4%3Ci32%3E";elements=0
+PASS :result_type:type="vec4%3Ci32%3E";elements=4
+PASS :result_type:type="u32";elements=0
+PASS :result_type:type="u32";elements=4
+PASS :result_type:type="vec2%3Cu32%3E";elements=0
+PASS :result_type:type="vec2%3Cu32%3E";elements=4
+PASS :result_type:type="vec3%3Cu32%3E";elements=0
+PASS :result_type:type="vec3%3Cu32%3E";elements=4
+PASS :result_type:type="vec4%3Cu32%3E";elements=0
+PASS :result_type:type="vec4%3Cu32%3E";elements=4
+PASS :result_type:type="f16";elements=0
+PASS :result_type:type="f16";elements=4
+PASS :result_type:type="vec2%3Cf16%3E";elements=0
+PASS :result_type:type="vec2%3Cf16%3E";elements=4
+PASS :result_type:type="vec3%3Cf16%3E";elements=0
+PASS :result_type:type="vec3%3Cf16%3E";elements=4
+PASS :result_type:type="vec4%3Cf16%3E";elements=0
+PASS :result_type:type="vec4%3Cf16%3E";elements=4
+PASS :result_type:type="f32";elements=0
+PASS :result_type:type="f32";elements=4
+PASS :result_type:type="vec2%3Cf32%3E";elements=0
+PASS :result_type:type="vec2%3Cf32%3E";elements=4
+PASS :result_type:type="vec3%3Cf32%3E";elements=0
+PASS :result_type:type="vec3%3Cf32%3E";elements=4
+PASS :result_type:type="vec4%3Cf32%3E";elements=0
+PASS :result_type:type="vec4%3Cf32%3E";elements=4
+PASS :result_type:type="bool";elements=4
+PASS :result_type:type="vec2%3Cbool%3E";elements=4
+PASS :result_type:type="vec3%3Cbool%3E";elements=4
+PASS :result_type:type="vec4%3Cbool%3E";elements=4
+PASS :early_eval_errors:case="const_module_in_bounds"
+PASS :early_eval_errors:case="const_module_oob_neg"
+PASS :early_eval_errors:case="const_module_oob_pos"
+PASS :early_eval_errors:case="const_func_in_bounds"
+PASS :early_eval_errors:case="const_func_oob_neg"
+PASS :early_eval_errors:case="const_func_oob_pos"
+PASS :early_eval_errors:case="override_in_bounds"
+FAIL :early_eval_errors:case="override_oob_neg" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:218:27
+ Reached unreachable code
+FAIL :early_eval_errors:case="override_oob_pos" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:218:27
+ Reached unreachable code
+PASS :early_eval_errors:case="runtime_in_bounds"
+PASS :early_eval_errors:case="runtime_oob_neg"
+PASS :early_eval_errors:case="runtime_oob_pos"
+FAIL :early_eval_errors:case="runtime_array_const_oob_neg" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    @group(0) @binding(0) var<storage> x : array<u32>;
+        fn y() -> u32 {
+          let tmp = x[-1];
+          return 0;
+        }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:225:26
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :early_eval_errors:case="runtime_array_override_oob_neg" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:971:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:149:24
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/access/array.spec.js:218:27
+ Reached unreachable code
+PASS :abstract_array_concrete_index:
+

@@ -1,1 +1,6 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :2d_coords:
+PASS :3d_coords:
+PASS :arrayed_2d_coords:
+PASS :arrayed_3d_coords:
+

@@ -1,0 +1,66 @@
+
+PASS :break_if_type:type="bool"
+PASS :break_if_type:type="i32"
+PASS :break_if_type:type="u32"
+PASS :break_if_type:type="f32"
+PASS :break_if_type:type="f16"
+PASS :break_if_type:type="abstract-int"
+PASS :break_if_type:type="abstract-float"
+PASS :break_if_type:type="vec2af"
+PASS :break_if_type:type="vec3af"
+PASS :break_if_type:type="vec4af"
+PASS :break_if_type:type="vec2ai"
+PASS :break_if_type:type="vec3ai"
+PASS :break_if_type:type="vec4ai"
+PASS :break_if_type:type="vec2f"
+PASS :break_if_type:type="vec3h"
+PASS :break_if_type:type="vec4u"
+PASS :break_if_type:type="vec3b"
+PASS :break_if_type:type="mat2x3f"
+PASS :break_if_type:type="mat4x2h"
+PASS :break_if_type:type="array"
+PASS :break_if_type:type="atomic"
+PASS :break_if_type:type="struct"
+PASS :break_if_type:type="texture"
+PASS :break_if_type:type="sampler"
+PASS :parse:test="break"
+PASS :parse:test="return"
+PASS :parse:test="break_continuing"
+PASS :parse:test="var_break"
+PASS :parse:test="var_break_continuing_inc"
+PASS :parse:test="var_break_continuing_discard"
+PASS :parse:test="continuing_break_if"
+PASS :parse:test="expr_break"
+PASS :parse:test="loop"
+FAIL :parse:test="continuing_break" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    fn f() {
+      let expr = true;
+      loop { continuing {} break; }
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/loop.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :parse:test="break_continuing_continue"
+PASS :parse:test="break_continuing_return"
+PASS :parse:test="break_continuing_if_break"
+PASS :parse:test="break_continuing_if_return"
+PASS :parse:test="break_continuing_lbrace"
+PASS :parse:test="break_continuing_rbrace"
+PASS :parse:test="continuing"
+PASS :parse:test="semicolon"
+PASS :parse:test="lbrace"
+PASS :parse:test="rbrace"
+PASS :parse:test="lparen"
+PASS :parse:test="rparen"
+PASS :parse:test="continue"
+PASS :parse:test="discard"
+PASS :parse:test="empty"
+

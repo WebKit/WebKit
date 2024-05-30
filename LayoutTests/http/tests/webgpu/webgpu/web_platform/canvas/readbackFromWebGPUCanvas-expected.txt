@@ -1,3 +1,11 @@
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
 CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
 
 PASS :onscreenCanvas,snapshot:format="bgra8unorm";alphaMode="opaque";colorSpace="srgb";snapshotType="toDataURL"
@@ -144,7 +152,8 @@ PASS :drawTo2DCanvas:format="rgba16float";alphaMode="premultiplied";colorSpace="
 PASS :drawTo2DCanvas:format="rgba16float";alphaMode="premultiplied";colorSpace="display-p3";webgpuCanvasType="onscreen";canvas2DType="offscreen"
 PASS :drawTo2DCanvas:format="rgba16float";alphaMode="premultiplied";colorSpace="display-p3";webgpuCanvasType="offscreen";canvas2DType="onscreen"
 PASS :drawTo2DCanvas:format="rgba16float";alphaMode="premultiplied";colorSpace="display-p3";webgpuCanvasType="offscreen";canvas2DType="offscreen"
-PASS :transferToImageBitmap_unconfigured_nonzero_size:
+PASS :transferToImageBitmap_unconfigured_nonzero_size:readbackCanvasType="onscreen"
+PASS :transferToImageBitmap_unconfigured_nonzero_size:readbackCanvasType="offscreen"
 PASS :transferToImageBitmap_zero_size:configure=true
 PASS :transferToImageBitmap_zero_size:configure=false
 PASS :transferToImageBitmap_huge_size:
