@@ -20,9 +20,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
+
+if sys.version_info < (3, 6):
+    raise ImportError("webkitcorepy requires Python 3.6 or above")
+
 import logging
 import platform
-import sys
 
 from logging import NullHandler
 
@@ -49,8 +53,6 @@ from webkitcorepy.filtered_call import filtered_call
 from webkitcorepy.partial_proxy import PartialProxy
 
 version = Version(1, 0, 0)
-if sys.version_info < (3, 0):
-    raise ImportError('webkitcorepy no longer supports Python 2')
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

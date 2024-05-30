@@ -20,9 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
+
+if sys.version_info < (3, 6):
+    raise ImportError("webkitscmpy requires Python 3.6 or above")
+
 import logging
 import os
-import sys
 
 log = logging.getLogger('webkitscmpy')
 

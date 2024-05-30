@@ -20,8 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import sys
+
+if sys.version_info < (3, 6):
+    raise ImportError("webkitflaskpy requires Python 3.6 or above")
+
+import os
 
 
 def _maybe_add_webkitcorepy_path():
