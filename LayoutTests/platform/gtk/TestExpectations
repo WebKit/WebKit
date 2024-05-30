@@ -224,15 +224,22 @@ webkit.org/b/263720 http/tests/security/redirect-BLOCKED-to-localURL.html [ Cras
 # WebInspector.
 webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Failure Timeout ]
 webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass Timeout ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-bitmaprenderer-frameCount.html [ Failure Pass ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-bitmaprenderer-full.html [ Failure Pass ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-bitmaprenderer-memoryLimit.html [ Failure Pass ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-frameCount.html [ Failure ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-full.html [ Failure ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-memoryLimit.html [ Failure ]
-webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-full.html [ Failure ]
-webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-snapshots.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl2-frameCount.html [ Failure Pass ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl2-full.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl2-memoryLimit.html [ Failure Pass ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl2-snapshots.html [ Failure ]
-webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-frameCount.html [ Failure Pass ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-full.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-memoryLimit.html [ Failure Pass ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-snapshots.html [ Failure ]
 webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl.html [ Failure ]
 
 # WebXR is not yet supported in GTK
 webkit.org/b/208988 http/tests/webxr [ Skip ]
@@ -985,9 +992,6 @@ http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-b
 # CSP extensions are not available on GTK
 http/tests/security/contentSecurityPolicy/extensions/ [ Skip ]
 
-webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-02.xhtml
-webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-05.xhtml
-
 # IsLoggedIn is an experimental feature (Introduced in r250944)
 http/tests/is-logged-in/ [ Skip ]
 
@@ -1169,9 +1173,48 @@ webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Timeout ]
 
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-001.xht [ ImageOnlyFailure ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-003.xht [ ImageOnlyFailure ]
-webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-003.xht [ ImageOnlyFailure ]
+webkit.org/b/185939 imported/w3c/web-platform-tests/css/WOFF2 [ Pass ]
+# WOFF2 tests failing.
+webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/directory-knowntags-001.xht [ ImageOnlyFailure ]
+webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-bbox-001.xht [ ImageOnlyFailure ]
+webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-001.xht [ ImageOnlyFailure ]
+webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-002.xht [ ImageOnlyFailure ]
+webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-003.xht [ ImageOnlyFailure ]
+# WOFF2 tests flakey.
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-002.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-003.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-004.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-005.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-006.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-007.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-008.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-overlap-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-overlap-002.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-overlap-003.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-002.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/datatypes-invalid-base128-003.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/directory-mismatched-tables-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-length-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-length-002.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-numTables-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/header-signature-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-bad-origlength-loca-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-bad-origlength-loca-002.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-brotli-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-002.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-003.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-decompressed-length-004.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-extraneous-data-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-bbox-002.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-bbox-003.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-non-zero-loca-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-bad-flag-001.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-bad-flag-002.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-003.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-004.xht [ ImageOnlyFailure Pass ]
 
 webkit.org/b/211836 imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Failure Pass ]
 
@@ -1866,13 +1909,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shapin
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001.xht [ Timeout ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001.xht [ Timeout ImageOnlyFailure ]
 
-webkit.org/b/185939 imported/w3c/web-platform-tests/css/WOFF2 [ Pass ]
-webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-bbox-001.xht [ ImageOnlyFailure ]
-webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-001.xht [ ImageOnlyFailure ]
-webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-002.xht [ ImageOnlyFailure ]
-webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/directory-knowntags-001.xht [ ImageOnlyFailure ]
-webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-003.xht [ ImageOnlyFailure ]
-
 webkit.org/b/185913 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Failure ]
 
 webkit.org/b/186099 editing/caret/caret-in-empty-cell.html [ ImageOnlyFailure ]
@@ -1901,12 +1937,7 @@ webkit.org/b/191002 imported/w3c/web-platform-tests/intersection-observer/ [ Pas
 webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Skip ]
 webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Skip ]
 
-webkit.org/b/191400 fast/block/basic/child-block-level-box-with-height-percent.html [ Failure ]
-webkit.org/b/191400 fast/block/basic/quirk-mode-percent-height.html [ Failure ]
-
 webkit.org/b/191882 fast/forms/auto-fill-button/input-credit-card-auto-fill-button.html [ Failure ]
-
-webkit.org/b/191885 fast/inline/simple-inline-with-out-of-flow-descendant.html [ Failure ]
 
 webkit.org/b/192434 fast/inline/inline-content-with-float-and-margin.html [ Failure ]
 
@@ -2052,6 +2083,8 @@ imported/w3c/web-platform-tests/css/css-tables/tentative/colgroup-col.html [ Fai
 imported/w3c/web-platform-tests/css/css-tables/tentative/table-quirks.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html [ Failure ]
+
+webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ ImageOnlyFailure ]
 
 # Timeout
 animations/animation-end-event-destroy-renderer.html [ Skip ]
