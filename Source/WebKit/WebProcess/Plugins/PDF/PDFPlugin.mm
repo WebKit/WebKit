@@ -457,7 +457,7 @@ static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cu
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeActiveAnnotation:(PDFAnnotation *)annotation
 {
-    _pdfPlugin->setActiveAnnotation(annotation);
+    _pdfPlugin->setActiveAnnotation({ annotation });
 }
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeContentScaleFactor:(CGFloat)scaleFactor
@@ -1194,10 +1194,10 @@ void PDFPlugin::invalidateScrollCornerRect(const IntRect& rect)
     [m_scrollCornerLayer setNeedsDisplay];
 }
 
-void PDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation)
+void PDFPlugin::setActiveAnnotation(SetActiveAnnotationParams&& setActiveAnnotationParams)
 {
     // This may be called off the main thread if VoiceOver is running, thus dispatch to the main runloop since it involves main thread only objects.
-    callOnMainRunLoopAndWait([annotation = WTFMove(annotation), this] {
+    callOnMainRunLoopAndWait([annotation = WTFMove(setActiveAnnotationParams.annotation), this] {
         if (!supportsForms())
             return;
 

@@ -228,7 +228,15 @@ public:
     PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
     RefPtr<PDFPluginAnnotation> protectedActiveAnnotation() const;
 #endif
-    virtual void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) = 0;
+
+    enum class IsInPluginCleanup : bool { No, Yes };
+
+    struct SetActiveAnnotationParams {
+        RetainPtr<PDFAnnotation> annotation;
+        IsInPluginCleanup isInPluginCleanup { IsInPluginCleanup::No };
+    };
+
+    virtual void setActiveAnnotation(SetActiveAnnotationParams&&) = 0;
     void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
 
     virtual CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const = 0;

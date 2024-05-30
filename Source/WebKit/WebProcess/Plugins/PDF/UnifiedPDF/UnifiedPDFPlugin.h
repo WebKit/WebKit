@@ -125,7 +125,7 @@ public:
     WebCore::FrameView* mainFrameView() const;
 
     CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
-    void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) final;
+    void setActiveAnnotation(SetActiveAnnotationParams&&) final;
     void focusNextAnnotation() final;
     void focusPreviousAnnotation() final;
 #if PLATFORM(MAC)

@@ -202,6 +202,8 @@ void UnifiedPDFPlugin::teardown()
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
     std::exchange(m_dataDetectorOverlayController, nullptr)->teardown();
 #endif
+
+    setActiveAnnotation({ nullptr, IsInPluginCleanup::Yes });
 }
 
 GraphicsLayer* UnifiedPDFPlugin::graphicsLayer() const
@@ -2346,7 +2348,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                     return true;
 
                 if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] || [annotation isKindOfClass:getPDFAnnotationChoiceWidgetClass()]) {
-                    setActiveAnnotation(WTFMove(annotation));
+                    setActiveAnnotation({ WTFMove(annotation) });
                     return true;
                 }
 
@@ -3891,7 +3893,7 @@ void UnifiedPDFPlugin::focusNextAnnotation()
     RetainPtr nextTextAnnotation = this->nextTextAnnotation(AnnotationSearchDirection::Forward);
     if (!nextTextAnnotation || nextTextAnnotation == m_activeAnnotation->annotation())
         return;
-    setActiveAnnotation(WTFMove(nextTextAnnotation));
+    setActiveAnnotation({ WTFMove(nextTextAnnotation) });
 #endif
 }
 
@@ -3903,17 +3905,21 @@ void UnifiedPDFPlugin::focusPreviousAnnotation()
     RetainPtr previousTextAnnotation = this->nextTextAnnotation(AnnotationSearchDirection::Backward);
     if (!previousTextAnnotation || previousTextAnnotation == m_activeAnnotation->annotation())
         return;
-    setActiveAnnotation(WTFMove(previousTextAnnotation));
+    setActiveAnnotation({ WTFMove(previousTextAnnotation) });
 #endif
 }
 
-void UnifiedPDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation)
+void UnifiedPDFPlugin::setActiveAnnotation(SetActiveAnnotationParams&& setActiveAnnotationParams)
 {
 #if PLATFORM(MAC)
-    if (!supportsForms())
+    auto&& [annotation, isInPluginCleanup] = setActiveAnnotationParams;
+
+    ASSERT(isInPluginCleanup != IsInPluginCleanup::Yes || !annotation, "Must pass a null annotation when cleaning up the plugin");
+
+    if (isInPluginCleanup != IsInPluginCleanup::Yes && !supportsForms())
         return;
 
-    if (m_activeAnnotation) {
+    if (isInPluginCleanup != IsInPluginCleanup::Yes && m_activeAnnotation) {
         m_activeAnnotation->commit();
         setNeedsRepaintForAnnotation(m_activeAnnotation->annotation(), repaintRequirementsForAnnotation(m_activeAnnotation->annotation(), IsAnnotationCommit::Yes));
     }
