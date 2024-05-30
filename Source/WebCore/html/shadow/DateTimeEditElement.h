@@ -77,6 +77,7 @@ public:
     virtual ~DateTimeEditElement();
     void addField(Ref<DateTimeFieldElement>);
     Element& fieldsWrapperElement() const;
+    Ref<Element> protectedFieldsWrapperElement() const;
     void focusByOwner();
     void resetFields();
     void setEmptyValue(const LayoutParameters&);
