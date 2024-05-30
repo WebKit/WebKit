@@ -78,6 +78,7 @@
 #include "WillChangeData.h"
 #include <wtf/HexNumber.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/CString.h>
@@ -284,7 +285,9 @@ struct RenderLayerCompositor::UpdateBackingTraversalState {
 class RenderLayerCompositor::BackingSharingState {
     WTF_MAKE_NONCOPYABLE(BackingSharingState);
 public:
-    BackingSharingState() = default;
+    BackingSharingState(bool allowOverlappingProviders)
+        : m_allowOverlappingProviders(allowOverlappingProviders)
+    { }
 
     struct Provider {
         SingleThreadWeakPtr<RenderLayer> providerLayer;
@@ -301,7 +304,7 @@ public:
 
     RenderLayer* backingSharingStackingContext() const { return m_backingSharingStackingContext; }
 
-    Provider* backingProviderCandidateForLayer(const RenderLayer&);
+    Provider* backingProviderCandidateForLayer(const RenderLayer&, const RenderLayerCompositor&, LayerOverlapMap&, OverlapExtent&);
     Provider* backingProviderForLayer(const RenderLayer&);
 
     // Add a layer that would repaint into a layer in m_backingSharingLayers.
@@ -311,11 +314,12 @@ public:
         m_layersPendingRepaint.add(layer);
     }
 
-    void addBackingSharingCandidate(RenderLayer& candidateLayer, LayoutRect candidateAbsoluteBounds, RenderLayer& candidateStackingContext);
+    void addBackingSharingCandidate(RenderLayer& candidateLayer, LayoutRect candidateAbsoluteBounds, RenderLayer& candidateStackingContext, const BackingSharingSnapshot&);
     bool isAdditionalProviderCandidate(RenderLayer&, LayoutRect candidateAbsoluteBounds, RenderLayer* stackingContextAncestor) const;
-
     void startBackingSharingSequence(RenderLayer& candidateLayer, LayoutRect candidateAbsoluteBounds, RenderLayer& candidateStackingContext);
     void endBackingSharingSequence(RenderLayer&);
+
+    BackingSharingSnapshot snapshot() { return { m_backingSharingStackingContext, m_backingProviderCandidates.size() }; }
 
 private:
     void layerWillBeComposited(RenderLayer&);
@@ -325,6 +329,7 @@ private:
     Vector<Provider> m_backingProviderCandidates;
     RenderLayer* m_backingSharingStackingContext { nullptr };
     SingleThreadWeakHashSet<RenderLayer> m_layersPendingRepaint;
+    bool m_allowOverlappingProviders { false };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayerCompositor::BackingSharingState::Provider&);
@@ -333,47 +338,109 @@ void RenderLayerCompositor::BackingSharingState::startBackingSharingSequence(Ren
 {
     ASSERT(!m_backingSharingStackingContext);
     ASSERT(m_backingProviderCandidates.isEmpty());
-
     m_backingProviderCandidates.append({ &candidateLayer, { }, candidateAbsoluteBounds });
     m_backingSharingStackingContext = &candidateStackingContext;
 }
 
-void RenderLayerCompositor::BackingSharingState::addBackingSharingCandidate(RenderLayer& candidateLayer, LayoutRect candidateAbsoluteBounds, RenderLayer& candidateStackingContext)
+void RenderLayerCompositor::BackingSharingState::addBackingSharingCandidate(RenderLayer& candidateLayer, LayoutRect candidateAbsoluteBounds, RenderLayer& candidateStackingContext, const BackingSharingSnapshot& backingSharingSnapshot)
 {
     ASSERT_UNUSED(candidateStackingContext, m_backingSharingStackingContext == &candidateStackingContext);
     ASSERT(!m_backingProviderCandidates.containsIf([&](auto& candidate) { return candidate.providerLayer == &candidateLayer; }));
 
-    m_backingProviderCandidates.append({ &candidateLayer, { }, candidateAbsoluteBounds });
+    // Inserts candidateLayer into the provider list in z-order, using the state snapshot that
+    // was taken before any descendant layers were traversed.
+
+    if (m_backingSharingStackingContext != backingSharingSnapshot.backingSharingStackingContext) {
+        // If a new sharing sequence has been started since the snapshot was taken, then this candidate
+        // will be before any of the current ones in z-order.
+        m_backingProviderCandidates.insert(0, { &candidateLayer, { }, candidateAbsoluteBounds });
+    } else
+        // Otherwise insert it at the position captured in the snapshot
+        m_backingProviderCandidates.insert(backingSharingSnapshot.providerCount, { &candidateLayer, { }, candidateAbsoluteBounds });
 }
 
 void RenderLayerCompositor::BackingSharingState::endBackingSharingSequence(RenderLayer& endLayer)
 {
     ASSERT(m_backingSharingStackingContext);
 
-    for (auto& candidate : m_backingProviderCandidates) {
+    Vector candidates = WTFMove(m_backingProviderCandidates);
+
+    for (auto& candidate : candidates) {
         candidate.sharingLayers.remove(endLayer);
         candidate.providerLayer->backing()->setBackingSharingLayers(WTFMove(candidate.sharingLayers));
     }
-    m_backingProviderCandidates.clear();
     m_backingSharingStackingContext = nullptr;
 
     issuePendingRepaints();
 }
 
-auto RenderLayerCompositor::BackingSharingState::backingProviderCandidateForLayer(const RenderLayer& layer) -> Provider*
+auto RenderLayerCompositor::BackingSharingState::backingProviderCandidateForLayer(const RenderLayer& layer, const RenderLayerCompositor& compositor, LayerOverlapMap& overlapMap, OverlapExtent& overlap) -> Provider*
 {
     if (layer.hasReflection())
         return nullptr;
 
-    for (size_t i = 0; i < m_backingProviderCandidates.size(); ++i) {
-        auto& candidate = m_backingProviderCandidates[i];
-        auto& providerLayer = *candidate.providerLayer;
+    if (!m_allowOverlappingProviders) {
+        for (size_t i = 0; i < m_backingProviderCandidates.size(); ++i) {
+            auto& candidate = m_backingProviderCandidates[i];
+            auto& providerLayer = *candidate.providerLayer;
+            if (layer.ancestorLayerIsInContainingBlockChain(providerLayer))
+                return &candidate;
+        }
 
-        if (layer.ancestorLayerIsInContainingBlockChain(providerLayer))
-            return &candidate;
+        return nullptr;
     }
 
-    return nullptr;
+    if (!m_backingProviderCandidates.size())
+        return nullptr;
+
+    LOG_WITH_STREAM(Compositing, stream << "Looking for backing provider candidate for " << &layer);
+
+    // First, find the frontmost provider that is an ancestor in the containing block chain.
+    int32_t candidateIndex = m_backingProviderCandidates.size() - 1;
+    bool foundPreviousCandidate = false;
+    for (; candidateIndex >= 0; --candidateIndex) {
+        auto& candidate = m_backingProviderCandidates[candidateIndex];
+        auto& providerLayer = *candidate.providerLayer;
+
+        if (&layer != &providerLayer && layer.ancestorLayerIsInContainingBlockChain(providerLayer)) {
+            LOG_WITH_STREAM(Compositing, stream << "Found " << &providerLayer);
+            if (!foundPreviousCandidate)
+                return &candidate;
+            break;
+        }
+
+        LOG_WITH_STREAM(Compositing, stream << "Rejected " << &providerLayer);
+        foundPreviousCandidate = true;
+    }
+
+    if (candidateIndex < 0)
+        return nullptr;
+
+    auto& candidate = m_backingProviderCandidates[candidateIndex];
+    auto& providerLayer = *candidate.providerLayer;
+
+    LayoutRect overlapBounds;
+    LOG_WITH_STREAM(Compositing, stream << "Provider: composited scroll(" << providerLayer.canUseCompositedScrolling() << ") scrollableArea(" << providerLayer.scrollableArea() << ") horizontaloverflow(" << (providerLayer.scrollableArea() ? providerLayer.scrollableArea()->hasScrollableHorizontalOverflow() : false) << ")");
+    if  (providerLayer.canUseCompositedScrolling() && providerLayer.scrollableArea() && !providerLayer.scrollableArea()->hasScrollableHorizontalOverflow()) {
+        // If the provider is composited vertical-only scrolling, then we can use the bounds of the
+        // to-be-added layer in the horizontal axis when checking for overlap.
+        overlapBounds = compositor.computeClippedOverlapBounds(overlapMap, layer, overlap);
+        LOG_WITH_STREAM(Compositing, stream << "Candidate provider is vertical only scroll, using layers bounds in horizontal direction " << overlapBounds);
+        overlapBounds.setY(candidate.absoluteBounds.y());
+        overlapBounds.setHeight(candidate.absoluteBounds.height());
+    } else
+        overlapBounds = candidate.absoluteBounds;
+
+    // Check if any of the other candidates that are in front of the selected provider will
+    // overlap the bounds of the layer to be added.
+    for (int32_t i = m_backingProviderCandidates.size() - 1; i > candidateIndex; --i) {
+        if (overlapBounds.intersects(m_backingProviderCandidates[i].absoluteBounds)) {
+            LOG_WITH_STREAM(Compositing, stream << "Aborting due to " << overlapBounds << " intersecting with " << m_backingProviderCandidates[i].providerLayer << " " << m_backingProviderCandidates[i].absoluteBounds);
+            return nullptr;
+        }
+    }
+
+    return &m_backingProviderCandidates[candidateIndex];
 }
 
 auto RenderLayerCompositor::BackingSharingState::backingProviderForLayer(const RenderLayer& layer) -> Provider*
@@ -392,16 +459,21 @@ bool RenderLayerCompositor::BackingSharingState::isAdditionalProviderCandidate(R
     if (!stackingContextAncestor || stackingContextAncestor != m_backingSharingStackingContext)
         return false;
 
-    // Only allow multiple providers for overflow scroll, which we know clips its descendants.
-    if (!(m_backingProviderCandidates[0].providerLayer->canUseCompositedScrolling() && candidateLayer.canUseCompositedScrolling()))
-        return false;
-
-    // Disallow overlap between backing providers.
-    for (auto& candidate : m_backingProviderCandidates) {
-        if (candidateAbsoluteBounds.intersects(candidate.absoluteBounds))
+    if (!m_allowOverlappingProviders) {
+        // Only allow multiple providers for overflow scroll, which we know clips its descendants.
+        if (!(m_backingProviderCandidates[0].providerLayer->canUseCompositedScrolling() && candidateLayer.canUseCompositedScrolling()))
             return false;
+
+        // Disallow overlap between backing providers.
+        for (auto& candidate : m_backingProviderCandidates) {
+            if (candidateAbsoluteBounds.intersects(candidate.absoluteBounds))
+                return false;
+        }
+        return true;
     }
 
+    if (m_backingProviderCandidates.size() >= 10)
+        return false;
     return true;
 }
 
@@ -941,7 +1013,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (updateRoot->hasDescendantNeedingCompositingRequirementsTraversal() || updateRoot->needsCompositingRequirementsTraversal()) {
         auto& rootLayer = rootRenderLayer();
         CompositingState compositingState(updateRoot);
-        BackingSharingState backingSharingState;
+        BackingSharingState backingSharingState(m_renderView.settings().overlappingBackingStoreProvidersEnabled());
         LayerOverlapMap overlapMap(rootLayer);
 
         bool descendantHas3DTransform = false;
@@ -1055,19 +1127,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         willBeComposited = needsToBeComposited(layer, queryData);
     }
 
-    bool layerPaintsIntoProvidedBacking = false;
-    if (!willBeComposited && compositingState.subtreeIsCompositing && canBeComposited(layer)) {
-        if (auto* provider = backingSharingState.backingProviderCandidateForLayer(layer)) {
-            provider->sharingLayers.add(layer);
-            LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(treeDepth * 2, ' ') << " " << &layer << " can share with " << backingSharingState.backingProviderCandidates());
-            compositingReason = IndirectCompositingReason::None;
-            layerPaintsIntoProvidedBacking = true;
-        }
-    }
-
     compositingState.fullPaintOrderTraversalRequired |= layer.subsequentLayersNeedCompositingRequirementsTraversal();
 
     OverlapExtent layerExtent;
+
     // Use the fact that we're composited as a hint to check for an animating transform.
     // FIXME: Maybe needsToBeComposited() should return a bitmask of reasons, to avoid the need to recompute things.
     if (willBeComposited && !layer.isRenderViewLayer())
@@ -1075,6 +1138,16 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     bool respectTransforms = !layerExtent.hasTransformAnimation;
     overlapMap.geometryMap().pushMappingsToAncestor(&layer, ancestorLayer, respectTransforms);
+
+    bool layerPaintsIntoProvidedBacking = false;
+    if (!willBeComposited && compositingState.subtreeIsCompositing && canBeComposited(layer)) {
+        if (auto* provider = backingSharingState.backingProviderCandidateForLayer(layer, *this, overlapMap, layerExtent)) {
+            provider->sharingLayers.add(layer);
+            LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(treeDepth * 2, ' ') << " " << &layer << " can share with " << backingSharingState.backingProviderCandidates());
+            compositingReason = IndirectCompositingReason::None;
+            layerPaintsIntoProvidedBacking = true;
+        }
+    }
 
     // If we know for sure the layer is going to be composited, don't bother looking it up in the overlap map
     if (!willBeComposited && !layerPaintsIntoProvidedBacking && !overlapMap.isEmpty() && compositingState.testingOverlap) {
@@ -1156,7 +1229,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         LOG_WITH_STREAM(CompositingOverlap, stream << TextStream::Repeat(treeDepth * 2, ' ') << "layer " << &layer << " will share, pushed container " << overlapMap);
     }
 
-    updateBackingSharingBeforeDescendantTraversal(backingSharingState, treeDepth, overlapMap, layer, layerExtent, willBeComposited, compositingState.stackingContextAncestor);
+    auto backingSharingSnapshot = updateBackingSharingBeforeDescendantTraversal(backingSharingState, treeDepth, overlapMap, layer, layerExtent, willBeComposited, compositingState.stackingContextAncestor);
     auto preDescendantProviderStartLayer = backingSharingState.firstProviderCandidateLayer();
 
 #if ASSERT_ENABLED
@@ -1280,7 +1353,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // Compute state passed to the caller.
     descendantHas3DTransform |= anyDescendantHas3DTransform || layer.has3DTransform();
     compositingState.updateWithDescendantStateAndLayer(currentState, layer, ancestorLayer, layerExtent);
-    updateBackingSharingAfterDescendantTraversal(backingSharingState, treeDepth, overlapMap, layer, layerExtent, preDescendantProviderStartLayer, compositingState.stackingContextAncestor);
+    updateBackingSharingAfterDescendantTraversal(backingSharingState, treeDepth, overlapMap, layer, layerExtent, preDescendantProviderStartLayer, compositingState.stackingContextAncestor, backingSharingSnapshot);
 
     bool layerContributesToOverlap = (currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer()) || currentState.backingSharingAncestor;
     updateOverlapMap(overlapMap, layer, layerExtent, didPushOverlapContainer, layerContributesToOverlap, becameCompositedAfterDescendantTraversal && !descendantsAddedToOverlap);
@@ -1327,7 +1400,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         computeExtent(overlapMap, layer, layerExtent);
 
     if (layer.paintsIntoProvidedBacking()) {
-        auto* provider = backingSharingState.backingProviderCandidateForLayer(layer);
+        auto* provider = backingSharingState.backingProviderCandidateForLayer(layer, *this, overlapMap, layerExtent);
         ASSERT(provider);
         provider->sharingLayers.add(layer);
         layerPaintsIntoProvidedBacking = true;
@@ -1357,7 +1430,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         LOG_WITH_STREAM(CompositingOverlap, stream << "unchangedSubtree: layer " << &layer << " will share, pushed container " << overlapMap);
     }
 
-    updateBackingSharingBeforeDescendantTraversal(backingSharingState, treeDepth, overlapMap, layer, layerExtent, layerIsComposited, compositingState.stackingContextAncestor);
+    auto backingSharingSnapshot = updateBackingSharingBeforeDescendantTraversal(backingSharingState, treeDepth, overlapMap, layer, layerExtent, layerIsComposited, compositingState.stackingContextAncestor);
     auto preDescendantProviderStartLayer = backingSharingState.firstProviderCandidateLayer();
 
 #if ASSERT_ENABLED
@@ -1386,7 +1459,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
 
     ASSERT(!currentState.fullPaintOrderTraversalRequired);
     compositingState.updateWithDescendantStateAndLayer(currentState, layer, ancestorLayer, layerExtent, true);
-    updateBackingSharingAfterDescendantTraversal(backingSharingState, treeDepth, overlapMap, layer, layerExtent, preDescendantProviderStartLayer, compositingState.stackingContextAncestor);
+    updateBackingSharingAfterDescendantTraversal(backingSharingState, treeDepth, overlapMap, layer, layerExtent, preDescendantProviderStartLayer, compositingState.stackingContextAncestor, backingSharingSnapshot);
 
     bool layerContributesToOverlap = (currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer()) || currentState.backingSharingAncestor;
     updateOverlapMap(overlapMap, layer, layerExtent, didPushOverlapContainer, layerContributesToOverlap);
@@ -1587,7 +1660,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
     layer.clearUpdateBackingOrHierarchyTraversalState();
 }
 
-void RenderLayerCompositor::updateBackingSharingBeforeDescendantTraversal(BackingSharingState& sharingState, unsigned depth, const LayerOverlapMap& overlapMap, RenderLayer& layer, OverlapExtent& layerExtent, bool willBeComposited, RenderLayer* stackingContextAncestor)
+RenderLayerCompositor::BackingSharingSnapshot RenderLayerCompositor::updateBackingSharingBeforeDescendantTraversal(BackingSharingState& sharingState, unsigned depth, const LayerOverlapMap& overlapMap, RenderLayer& layer, OverlapExtent& layerExtent, bool willBeComposited, RenderLayer* stackingContextAncestor)
 {
     UNUSED_PARAM(depth);
 
@@ -1612,9 +1685,11 @@ void RenderLayerCompositor::updateBackingSharingBeforeDescendantTraversal(Backin
         LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(depth * 2, ' ') << " - ending sharing sequence on " << sharingState.backingProviderCandidates());
         sharingState.endBackingSharingSequence(layer);
     }
+
+    return sharingState.snapshot();
 }
 
-void RenderLayerCompositor::updateBackingSharingAfterDescendantTraversal(BackingSharingState& sharingState, unsigned depth, const LayerOverlapMap& overlapMap, RenderLayer& layer, OverlapExtent& layerExtent, const RenderLayer* preDescendantProviderStartLayer, RenderLayer*  stackingContextAncestor)
+void RenderLayerCompositor::updateBackingSharingAfterDescendantTraversal(BackingSharingState& sharingState, unsigned depth, const LayerOverlapMap& overlapMap, RenderLayer& layer, OverlapExtent& layerExtent, const RenderLayer* preDescendantProviderStartLayer, RenderLayer*  stackingContextAncestor, const BackingSharingSnapshot& backingSharingSnapshot)
 {
     UNUSED_PARAM(depth);
     LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(depth * 2, ' ') << &layer << " updateBackingSharingAfterDescendantTraversal for layer - is composited " << layer.isComposited() << " has composited descendant " << layer.hasCompositingDescendant());
@@ -1655,7 +1730,7 @@ void RenderLayerCompositor::updateBackingSharingAfterDescendantTraversal(Backing
 
         computeExtent(overlapMap, layer, layerExtent);
         if (sharingState.isAdditionalProviderCandidate(layer, layerExtent.bounds, stackingContextAncestor)) {
-            sharingState.addBackingSharingCandidate(layer, layerExtent.bounds, *stackingContextAncestor);
+            sharingState.addBackingSharingCandidate(layer, layerExtent.bounds, *stackingContextAncestor, backingSharingSnapshot);
             LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(depth * 2, ' ') << " - added additional provider candidate " << &layer);
             return;
         }
@@ -2357,11 +2432,8 @@ void RenderLayerCompositor::computeClippingScopes(const RenderLayer& layer, Over
     extent.clippingScopesComputed = true;
 }
 
-void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
+LayoutRect RenderLayerCompositor::computeClippedOverlapBounds(LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
 {
-    if (layer.isRenderViewLayer())
-        return;
-
     computeExtent(overlapMap, layer, extent);
     computeClippingScopes(layer, extent);
 
@@ -2385,6 +2457,17 @@ void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const R
         clippedBounds.intersect(clipRect);
     }
 
+    return clippedBounds;
+}
+
+void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
+{
+    if (layer.isRenderViewLayer())
+        return;
+
+    auto clippedBounds = computeClippedOverlapBounds(overlapMap, layer, extent);
+
+    computeClippingScopes(layer, extent);
     overlapMap.add(layer, clippedBounds, extent.clippingScopes);
 }
 

@@ -5,7 +5,7 @@
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 4
+      (children 3
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 302.00 202.00)
@@ -39,6 +39,7 @@
                   (offsetFromRenderer width=1 height=1)
                   (anchor 0.00 0.00)
                   (bounds 300.00 620.00)
+                  (drawsContent 1)
                 )
               )
             )
@@ -46,21 +47,6 @@
         )
         (GraphicsLayer
           (position 9.00 9.00)
-          (bounds 300.00 200.00)
-          (children 1
-            (GraphicsLayer
-              (children 1
-                (GraphicsLayer
-                  (position 10.00 10.00)
-                  (bounds 100.00 100.00)
-                  (contentsOpaque 1)
-                )
-              )
-            )
-          )
-        )
-        (GraphicsLayer
-          (position 9.00 201.00)
           (bounds 300.00 200.00)
           (children 1
             (GraphicsLayer
