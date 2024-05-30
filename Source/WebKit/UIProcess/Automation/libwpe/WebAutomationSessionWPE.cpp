@@ -97,7 +97,7 @@ static uint32_t modifiersToEventState(OptionSet<WebEventModifier> modifiers)
     return state;
 }
 
-static unsigned mouseButtonToWPEButton(MouseButton button)
+static unsigned libWPEMouseButtonToWPEButton(MouseButton button)
 {
     switch (button) {
     case MouseButton::None:
@@ -111,7 +111,7 @@ static unsigned mouseButtonToWPEButton(MouseButton button)
     return 1;
 }
 
-static unsigned stateModifierForWPEButton(unsigned button)
+static unsigned libWPEStateModifierForWPEButton(unsigned button)
 {
     uint32_t state = 0;
 
@@ -152,7 +152,7 @@ static WebCore::IntPoint deviceScaleLocationInView(WebPageProxy& page, const Web
 static void doMouseEvent(WebPageProxy& page, const WebCore::IntPoint& location, unsigned button, bool isPressed, uint32_t modifiers)
 {
     auto* view = page.wpeView();
-    auto buttonModifiers =  stateModifierForWPEButton(button);
+    auto buttonModifiers =  libWPEStateModifierForWPEButton(button);
     if (isPressed)
         modifiers |= buttonModifiers;
     else
@@ -182,8 +182,8 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     }
 
 #if ENABLE(WPE_PLATFORM)
-    unsigned wpeButton = mouseButtonToWPEButton(button);
-    auto modifier = stateModifierForWPEButton(wpeButton);
+    unsigned wpeButton = libWPEMouseButtonToWPEButton(button);
+    auto modifier = libWPEStateModifierForWPEButton(wpeButton);
     uint32_t state = modifiersToEventState(keyModifiers) | m_currentModifiers;
 
     switch (interaction) {

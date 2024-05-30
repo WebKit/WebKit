@@ -35,7 +35,7 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-static uint32_t modifiersToEventState(OptionSet<WebEventModifier> modifiers)
+static uint32_t libWPEModifiersToEventState(OptionSet<WebEventModifier> modifiers)
 {
     uint32_t state = 0;
     if (modifiers.contains(WebEventModifier::ControlKey))
@@ -100,7 +100,7 @@ void platformSimulateMouseInteractionLibWPE(WebPageProxy& page, MouseInteraction
 
     unsigned wpeButton = mouseButtonToWPEButton(button);
     auto modifier = stateModifierForWPEButton(wpeButton);
-    uint32_t state = modifiersToEventState(keyModifiers) | currentModifiers;
+    uint32_t state = libWPEModifiersToEventState(keyModifiers) | currentModifiers;
 
     switch (interaction) {
     case MouseInteraction::Move:
