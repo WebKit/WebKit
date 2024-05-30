@@ -1,3 +1,9 @@
+//@ skip if $memoryLimited
+
+// This tests can easily use more than the 600M that $memoryLimited devices
+// are capped at due JSCTEST_memoryLimit. Skip it to avoid the crash as a
+// result of exceeding that limit.
+
 let count = 0;
 
 function foo() {
