@@ -601,12 +601,7 @@ bool GraphicsLayerTextureMapper::filtersCanBeComposited(const FilterOperations& 
     if (!filters.size())
         return false;
 
-    for (const auto& filterOperation : filters.operations()) {
-        if (filterOperation->type() == FilterOperation::Type::Reference)
-            return false;
-    }
-
-    return true;
+    return !filters.hasReferenceFilter();
 }
 
 bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList, const FloatSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)

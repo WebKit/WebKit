@@ -80,8 +80,8 @@ void RenderLayerFilters::updateReferenceFilterClients(const FilterOperations& op
 {
     removeReferenceFilterClients();
 
-    for (auto& operation : operations.operations()) {
-        RefPtr referenceOperation = dynamicDowncast<ReferenceFilterOperation>(*operation);
+    for (auto& operation : operations) {
+        RefPtr referenceOperation = dynamicDowncast<ReferenceFilterOperation>(operation);
         if (!referenceOperation)
             continue;
 

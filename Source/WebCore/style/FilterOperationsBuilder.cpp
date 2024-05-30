@@ -74,16 +74,16 @@ static FilterOperation::Type filterOperationForType(CSSValueID type)
 
 std::optional<FilterOperations> createFilterOperations(const Document& document, RenderStyle& style, const CSSToLengthConversionData& cssToLengthConversionData, const CSSValue& inValue)
 {
-    FilterOperations operations;
-
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(inValue)) {
         if (primitiveValue->valueID() == CSSValueNone)
-            return operations;
+            return FilterOperations { };
     }
 
     auto* list = dynamicDowncast<CSSValueList>(inValue);
     if (!list)
         return std::nullopt;
+
+    Vector<Ref<FilterOperation>> operations;
 
     for (auto& currentValue : *list) {
         if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(currentValue)) {
@@ -92,7 +92,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
 
             auto filterURL = primitiveValue->stringValue();
             auto fragment = document.completeURL(filterURL).fragmentIdentifier().toAtomString();
-            operations.operations().append(ReferenceFilterOperation::create(filterURL, WTFMove(fragment)));
+            operations.append(ReferenceFilterOperation::create(filterURL, WTFMove(fragment)));
             continue;
         }
 
@@ -130,7 +130,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
                     amount /= 100;
             }
 
-            operations.operations().append(BasicColorMatrixFilterOperation::create(amount, operationType));
+            operations.append(BasicColorMatrixFilterOperation::create(amount, operationType));
             break;
         }
         case FilterOperation::Type::HueRotate: {
@@ -138,7 +138,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             if (filterValue->length() == 1)
                 angle = firstValue->computeDegrees();
 
-            operations.operations().append(BasicColorMatrixFilterOperation::create(angle, operationType));
+            operations.append(BasicColorMatrixFilterOperation::create(angle, operationType));
             break;
         }
         case FilterOperation::Type::Invert:
@@ -152,11 +152,11 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
                     amount /= 100;
             }
 
-            operations.operations().append(BasicComponentTransferFilterOperation::create(amount, operationType));
+            operations.append(BasicComponentTransferFilterOperation::create(amount, operationType));
             break;
         }
         case FilterOperation::Type::AppleInvertLightness: {
-            operations.operations().append(InvertLightnessFilterOperation::create());
+            operations.append(InvertLightnessFilterOperation::create());
             break;
         }
         case FilterOperation::Type::Blur: {
@@ -166,7 +166,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             if (stdDeviation.isUndefined())
                 return std::nullopt;
 
-            operations.operations().append(BlurFilterOperation::create(stdDeviation));
+            operations.append(BlurFilterOperation::create(stdDeviation));
             break;
         }
         case FilterOperation::Type::DropShadow: {
@@ -183,7 +183,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             int blur = item->blur ? item->blur->computeLength<int>(cssToLengthConversionData) : 0;
             auto color = item->color ? colorFromPrimitiveValueWithResolvedCurrentColor(document, style, *item->color) : style.color();
 
-            operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparentBlack));
+            operations.append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparentBlack));
             break;
         }
         default:
@@ -192,7 +192,9 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
         }
     }
 
-    return operations;
+    operations.shrinkToFit();
+
+    return FilterOperations { WTFMove(operations) };
 }
 
 } // namespace Style

@@ -46,27 +46,35 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
     if (!from.isEmpty() && !to.isEmpty() && !from.operationsMatch(to))
         return to;
 
-    FilterOperations result;
-
-    size_t fromSize = from.operations().size();
-    size_t toSize = to.operations().size();
+    size_t fromSize = from.size();
+    size_t toSize = to.size();
     size_t size = std::max(fromSize, toSize);
+
+    Vector<Ref<FilterOperation>> operations;
+    operations.reserveInitialCapacity(size);
+
     for (size_t i = 0; i < size; i++) {
-        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : nullptr;
-        RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : nullptr;
+        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from[i].ptr() : nullptr;
+        RefPtr<FilterOperation> toOp = (i < toSize) ? to[i].ptr() : nullptr;
         RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), *toOp, progress, boxSize) : (fromOp ? blendFunc(nullptr, *fromOp, progress, boxSize, true) : nullptr);
         if (blendedOp)
-            result.operations().append(blendedOp);
+            operations.append(blendedOp.releaseNonNull());
         else {
-            auto identityOp = PassthroughFilterOperation::create();
-            if (progress > 0.5)
-                result.operations().append(toOp ? toOp : WTFMove(identityOp));
-            else
-                result.operations().append(fromOp ? fromOp : WTFMove(identityOp));
+            if (progress > 0.5) {
+                if (toOp)
+                    operations.append(toOp.releaseNonNull());
+                else
+                    operations.append(PassthroughFilterOperation::create());
+            } else {
+                if (fromOp)
+                    operations.append(fromOp.releaseNonNull());
+                else
+                    operations.append(PassthroughFilterOperation::create());
+            }
         }
     }
 
-    return result;
+    return FilterOperations { WTFMove(operations) };
 }
 
 static bool shouldReverseAnimationValue(WebCore::Animation::Direction direction, int loopCount)

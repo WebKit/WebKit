@@ -100,10 +100,10 @@ private:
 
     enum class Direction { X, Y };
 
-    RefPtr<BitmapTexture> applyFilter(RefPtr<BitmapTexture>&, const RefPtr<const FilterOperation>&, bool defersLastPass);
+    RefPtr<BitmapTexture> applyFilter(RefPtr<BitmapTexture>&, const Ref<const FilterOperation>&, bool defersLastPass);
     RefPtr<BitmapTexture> applyBlurFilter(RefPtr<BitmapTexture>&, const BlurFilterOperation&);
     RefPtr<BitmapTexture> applyDropShadowFilter(RefPtr<BitmapTexture>&, const DropShadowFilterOperation&);
-    RefPtr<BitmapTexture> applySinglePassFilter(RefPtr<BitmapTexture>&, const RefPtr<const FilterOperation>&, bool shouldDefer);
+    RefPtr<BitmapTexture> applySinglePassFilter(RefPtr<BitmapTexture>&, const Ref<const FilterOperation>&, bool shouldDefer);
 
     void drawTextureCopy(const BitmapTexture& sourceTexture, const FloatRect& sourceRect, const FloatRect& targetRect);
     void drawBlurred(const BitmapTexture& sourceTexture, const FloatRect&, float radius, Direction, bool alphaBlur = false);

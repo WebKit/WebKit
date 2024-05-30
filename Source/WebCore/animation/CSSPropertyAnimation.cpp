@@ -1483,11 +1483,12 @@ private:
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperFilter);
-class PropertyWrapperFilter final : public PropertyWrapper<const FilterOperations&> {
+class PropertyWrapperFilter final : public PropertyWrapperGetter<const FilterOperations&> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PropertyWrapperFilter);
 public:
-    PropertyWrapperFilter(CSSPropertyID propertyID, const FilterOperations& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const FilterOperations&))
-        : PropertyWrapper(propertyID, getter, setter)
+    PropertyWrapperFilter(CSSPropertyID property, const FilterOperations& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(FilterOperations&&))
+        : PropertyWrapperGetter<const FilterOperations&>(property, getter)
+        , m_setter(setter)
     {
     }
 
@@ -1510,6 +1511,8 @@ private:
     {
         (destination.*m_setter)(blendFunc(value(from), value(to), context));
     }
+
+    void (RenderStyle::*m_setter)(FilterOperations&&);
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperFilter);
 

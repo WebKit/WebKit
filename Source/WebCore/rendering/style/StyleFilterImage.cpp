@@ -101,8 +101,8 @@ void StyleFilterImage::load(CachedResourceLoader& cachedResourceLoader, const Re
             m_cachedImage->addClient(*this);
     }
 
-    for (auto& filterOperation : m_filterOperations.operations()) {
-        if (auto* referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation.get()))
+    for (auto& filterOperation : m_filterOperations) {
+        if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation))
             referenceFilterOperation->loadExternalDocumentIfNeeded(cachedResourceLoader, options);
     }
 

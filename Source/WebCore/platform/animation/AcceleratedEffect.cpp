@@ -467,9 +467,8 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
         // has it as its final operation since it will be applied by a separate CALayer property
         // from the other filter operations and it will be applied to the layer as the last filer.
         ASSERT(longestFilterList);
-        auto& longestFilterOperations = longestFilterList->operations();
-        for (auto& operation : longestFilterOperations) {
-            if (operation->type() == FilterOperation::Type::DropShadow && operation != longestFilterOperations.last())
+        for (auto& operation : *longestFilterList) {
+            if (operation->type() == FilterOperation::Type::DropShadow && operation != longestFilterList->last())
                 return false;
         }
 

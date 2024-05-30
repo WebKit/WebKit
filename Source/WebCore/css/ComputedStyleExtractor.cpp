@@ -973,13 +973,13 @@ Ref<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* shadow, C
 
 Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, const FilterOperations& filterOperations, AdjustPixelValuesForComputedStyle adjust)
 {
-    if (filterOperations.operations().isEmpty())
+    if (filterOperations.isEmpty())
         return CSSPrimitiveValue::create(CSSValueNone);
 
     CSSValueListBuilder list;
 
-    for (auto& filterOperationPointer : filterOperations.operations()) {
-        auto& filterOperation = *filterOperationPointer;
+    for (auto& filterOperationRef : filterOperations) {
+        auto& filterOperation = filterOperationRef.get();
 
         if (auto* referenceOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation))
             list.append(CSSPrimitiveValue::createURI(referenceOperation->url()));

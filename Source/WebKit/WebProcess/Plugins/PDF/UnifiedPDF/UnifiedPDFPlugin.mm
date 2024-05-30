@@ -522,12 +522,11 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
         destinationRect.scale(m_documentLayout.scale());
 
         auto addLayerShadow = [](GraphicsLayer& layer, IntPoint shadowOffset, const Color& shadowColor, int shadowStdDeviation) {
-            Vector<RefPtr<FilterOperation>> filterOperations;
-            filterOperations.append(DropShadowFilterOperation::create(shadowOffset, shadowStdDeviation, shadowColor));
-
-            FilterOperations filters;
-            filters.setOperations(WTFMove(filterOperations));
-            layer.setFilters(filters);
+            layer.setFilters(FilterOperations {
+                Vector<Ref<FilterOperation>> {
+                    DropShadowFilterOperation::create(shadowOffset, shadowStdDeviation, shadowColor)
+                }
+            });
         };
 
         const auto containerShadowOffset = IntPoint { 0, 1 };

@@ -199,10 +199,8 @@ public:
 
     FilterAnimationValue(const FilterAnimationValue& other)
         : AnimationValue(other)
+        , m_value(other.m_value.clone())
     {
-        m_value.operations().appendContainerWithMapping(other.m_value.operations(), [](auto& operation) {
-            return operation->clone();
-        });
     }
 
     FilterAnimationValue(FilterAnimationValue&&) = default;
@@ -706,8 +704,8 @@ protected:
     // This method is used by platform GraphicsLayer classes to clear the filters
     // when compositing is not done in hardware. It is not virtual, so the caller
     // needs to notifiy the change to the platform layer as needed.
-    void clearFilters() { m_filters.clear(); }
-    void clearBackdropFilters() { m_backdropFilters.clear(); }
+    void clearFilters() { m_filters = { }; }
+    void clearBackdropFilters() { m_backdropFilters = { }; }
 
     // Given a KeyframeValueList containing filterOperations, return true if the operations are valid.
     static int validateFilterOperations(const KeyframeValueList&);

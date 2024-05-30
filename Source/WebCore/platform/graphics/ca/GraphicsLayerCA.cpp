@@ -3634,9 +3634,9 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     return appendToUncommittedAnimations(valueList, TransformOperation::Type::Matrix3D, animation, animationName, boxSize, primitives.size(), timeOffset, true /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction);
 }
 
-bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation* operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation& operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    auto filterOp = operation->type();
+    auto filterOp = operation.type();
     if (!PlatformCAFilters::isAnimatedFilterProperty(filterOp))
         return true;
 
@@ -3672,18 +3672,15 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
     if (!filtersCanBeComposited(operations))
         return false;
 
-    int numAnimations = operations.size();
-
     // FIXME: We can't currently hardware animate shadows.
-    for (int i = 0; i < numAnimations; ++i) {
-        if (operations.at(i)->type() == FilterOperation::Type::DropShadow)
-            return false;
-    }
+    if (operations.hasFilterOfType<FilterOperation::Type::DropShadow>())
+        return false;
 
     removeAnimation(animationName, valueList.property());
 
-    for (int animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
-        if (!appendToUncommittedAnimations(valueList, operations.operations().at(animationIndex).get(), animation, animationName, animationIndex, timeOffset, keyframesShouldUseAnimationWideTimingFunction))
+    int numberOfAnimations = operations.size();
+    for (int animationIndex = 0; animationIndex < numberOfAnimations; ++animationIndex) {
+        if (!appendToUncommittedAnimations(valueList, operations[animationIndex], animation, animationName, animationIndex, timeOffset, keyframesShouldUseAnimationWideTimingFunction))
             return false;
     }
 
@@ -3978,8 +3975,8 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
         toOperation = defaultToOperation.get();
     }
 
-    basicAnim->setFromValue(fromOperation);
-    basicAnim->setToValue(toOperation);
+    basicAnim->setFromValue(*fromOperation);
+    basicAnim->setToValue(*toOperation);
 
     return true;
 }
@@ -3987,7 +3984,7 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
 bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, FilterOperation::Type filterOp, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     Vector<float> keyTimes;
-    Vector<RefPtr<FilterOperation>> values;
+    Vector<Ref<FilterOperation>> values;
     Vector<Ref<const TimingFunction>> timingFunctions;
     RefPtr<DefaultFilterOperation> defaultOperation;
 
@@ -3998,12 +3995,12 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
         const FilterAnimationValue& curValue = static_cast<const FilterAnimationValue&>(valueList.at(index));
         keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
-        if (curValue.value().operations().size() > static_cast<size_t>(functionIndex))
-            values.append(curValue.value().operations()[functionIndex]);
+        if (curValue.value().size() > static_cast<size_t>(functionIndex))
+            values.append(curValue.value()[functionIndex].copyRef());
         else {
             if (!defaultOperation)
                 defaultOperation = DefaultFilterOperation::create(filterOp);
-            values.append(defaultOperation);
+            values.append(*defaultOperation);
         }
 
         if (i < (valueList.size() - 1))

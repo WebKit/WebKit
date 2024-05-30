@@ -1072,16 +1072,13 @@ public:
 
     inline OptionSet<SpeakAs> speakAs() const;
 
-    inline FilterOperations& mutableFilter();
     inline const FilterOperations& filter() const;
     inline bool hasFilter() const;
     bool hasReferenceFilterOnly() const;
 
-    inline FilterOperations& mutableAppleColorFilter();
     inline const FilterOperations& appleColorFilter() const;
     inline bool hasAppleColorFilter() const;
 
-    inline FilterOperations& mutableBackdropFilter();
     inline const FilterOperations& backdropFilter() const;
     inline bool hasBackdropFilter() const;
 
@@ -1513,10 +1510,10 @@ public:
     inline void setColorScheme(StyleColorScheme);
 #endif
 
-    inline void setFilter(const FilterOperations&);
-    inline void setAppleColorFilter(const FilterOperations&);
+    inline void setFilter(FilterOperations&&);
+    inline void setAppleColorFilter(FilterOperations&&);
 
-    inline void setBackdropFilter(const FilterOperations&);
+    inline void setBackdropFilter(FilterOperations&&);
 
     inline void setTabSize(const TabSize&);
 

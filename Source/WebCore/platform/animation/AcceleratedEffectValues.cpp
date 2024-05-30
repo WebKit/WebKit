@@ -61,13 +61,8 @@ AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& 
     offsetAnchor = src.offsetAnchor;
     offsetRotate = src.offsetRotate;
 
-    filter.setOperations(src.filter.operations().map([](const auto& operation) {
-        return operation.copyRef();
-    }));
-
-    backdropFilter.setOperations(src.backdropFilter.operations().map([](const auto& operation) {
-        return operation.copyRef();
-    }));
+    filter = src.filter;
+    backdropFilter = src.backdropFilter;
 }
 
 AcceleratedEffectValues AcceleratedEffectValues::clone() const
@@ -103,13 +98,8 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
     auto clonedOffsetAnchor = offsetAnchor;
     auto clonedOffsetRotate = offsetRotate;
 
-    FilterOperations clonedFilter { filter.operations().map([](const auto& operation) {
-        return RefPtr { operation->clone() };
-    }) };
-
-    FilterOperations clonedBackdropFilter { backdropFilter.operations().map([](const auto& operation) {
-        return RefPtr { operation->clone() };
-    }) };
+    auto clonedFilter = filter.clone();
+    auto clonedBackdropFilter = backdropFilter.clone();
 
     return {
         opacity,
@@ -179,13 +169,8 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
         offsetDistance = { path ? path->length() : 0.0f, LengthType:: Fixed };
     }
 
-    filter.setOperations(style.filter().operations().map([](const auto& operation) {
-        return operation.copyRef();
-    }));
-
-    backdropFilter.setOperations(style.backdropFilter().operations().map([](const auto& operation) {
-        return operation.copyRef();
-    }));
+    filter = style.filter();
+    backdropFilter = style.backdropFilter();
 }
 
 TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const FloatRect& boundingBox) const

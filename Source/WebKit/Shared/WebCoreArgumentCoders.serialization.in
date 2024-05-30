@@ -7090,7 +7090,7 @@ struct WebCore::KeypressCommand {
 
 #if !USE(COORDINATED_GRAPHICS)
 class WebCore::FilterOperations {
-    Vector<RefPtr<WebCore::FilterOperation>> operations();
+    Vector<Ref<WebCore::FilterOperation>> m_operations;
 }
 #endif // !USE(COORDINATED_GRAPHICS)
 

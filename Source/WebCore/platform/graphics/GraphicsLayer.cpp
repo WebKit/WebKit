@@ -792,7 +792,7 @@ int GraphicsLayer::validateFilterOperations(const KeyframeValueList& valueList)
     // Empty filters match anything, so find the first non-empty entry as the reference
     size_t firstIndex = 0;
     for ( ; firstIndex < valueList.size(); ++firstIndex) {
-        if (!filterOperationsAt(valueList, firstIndex).operations().isEmpty())
+        if (!filterOperationsAt(valueList, firstIndex).isEmpty())
             break;
     }
 
@@ -804,8 +804,8 @@ int GraphicsLayer::validateFilterOperations(const KeyframeValueList& valueList)
     for (size_t i = firstIndex + 1; i < valueList.size(); ++i) {
         const FilterOperations& val = filterOperationsAt(valueList, i);
         
-        // An emtpy filter list matches anything.
-        if (val.operations().isEmpty())
+        // An empty filter list matches anything.
+        if (val.isEmpty())
             continue;
         
         if (!firstVal.operationsMatch(val))
