@@ -1842,6 +1842,8 @@
 #if ENABLE(IOKIT_SERVICE_SYSCALL_BLOCKING_IN_WEBCONTENT)
             (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
                 (allow mach-message-send (kernel-mig-routines-iokit-service)))
+            (with-filter (state-flag "BlockIOKitInWebContentSandbox")
+                (deny mach-message-send (with no-report) (kernel-mig-routines-iokit-service)))
 #else
             (allow mach-message-send (kernel-mig-routines-iokit-service))
 #endif
