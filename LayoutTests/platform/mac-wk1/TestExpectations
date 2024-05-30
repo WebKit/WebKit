@@ -1818,6 +1818,7 @@ imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
 # Skip Digital Credentials API
 http/wpt/identity/ [ Skip ]
+imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
 
 webkit.org/b/182554 transitions/transition-display-property.html [ Pass ImageOnlyFailure ]
 
