@@ -53,6 +53,11 @@ class DarwinPort(ApplePort):
             # with MallocStackLogging enabled.
             self.set_option_default("batch_size", 1000)
 
+    def sharding_groups(self):
+        return {
+            'media': lambda shard: 'media' in shard.name or 'webaudio' in shard.name,
+        }
+
     def default_timeout_ms(self):
         if self.get_option('guard_malloc'):
             return 350 * 1000
