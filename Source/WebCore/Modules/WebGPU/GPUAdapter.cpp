@@ -121,9 +121,9 @@ void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, c
     });
 }
 
-Ref<GPUAdapterInfo> GPUAdapter::info()
+void GPUAdapter::requestAdapterInfo(const std::optional<Vector<String>>&, RequestAdapterInfoPromise&& promise)
 {
-    return GPUAdapterInfo::create(name());
+    promise.resolve(GPUAdapterInfo::create(name()));
 }
 
 }
