@@ -107,12 +107,12 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 88
+TOTAL_TESTS = 90
 TOTAL_SKIPS = 12
-TOTAL_RETRIES = 13
+TOTAL_RETRIES = 15
 
 UNEXPECTED_PASSES = 6
-UNEXPECTED_FAILURES = 19
+UNEXPECTED_FAILURES = 21
 
 
 def unit_test_list():
@@ -269,6 +269,8 @@ layer at (0,0) size 800x34
     tests.add('corner-cases/ews/directory-skipped/timeout.html', timeout=True)
     tests.add('corner-cases/ews/directory-flaky/failure.html', expected_text='ok-txt', actual_text='text_fail-txt')
     tests.add('corner-cases/ews/directory-flaky/timeout.html', timeout=True)
+    tests.add('corner-cases/multiple-failures/failure-crash.html', expected_text='ok-txt', actual_text='text_fail-txt')
+    tests.add('corner-cases/multiple-failures/failure-timeout.html', expected_text='ok-txt', actual_text='text_fail-txt')
 
     tests.add('imported/w3c/web-platform-tests/some/new.html',
         expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None)
@@ -338,6 +340,7 @@ Bug(test) failures/unexpected/pass.html [ Failure ]
 Bug(test) passes/skipped/skip.html [ Skip ]
 Bug(test) corner-cases/ews/directory-skipped [ Skip ]
 Bug(test) corner-cases/ews/directory-flaky [ Pass Timeout Failure ]
+Bug(test) corner-cases/multiple-failures/failure-timeout.html [ Pass Timeout ]
 """)
     w3c_resources_path = LAYOUT_TEST_DIR + '/imported/w3c/resources/'
     if not filesystem.exists(w3c_resources_path + 'resource-files.json'):
@@ -615,9 +618,16 @@ class TestDriver(Driver):
         audio = None
         actual_text = test.actual_text
 
-        if 'flaky' in test_name and not test_name in self._port._flakes:
+        if 'flaky' in test_name and test_name not in self._port._flakes:
             self._port._flakes.add(test_name)
             actual_text = 'flaky text failure'
+
+        if 'multiple-failures' in test_name:
+            if 'crash' in test_name and test_name in self._port._flakes:
+                test.crash = True
+            if 'timeout' in test_name and test_name in self._port._flakes:
+                test.timeout = True
+            self._port._flakes.add(test_name)
 
         if actual_text and test_args and test_name == 'passes/args.html':
             actual_text = actual_text + ' ' + ' '.join(test_args)
