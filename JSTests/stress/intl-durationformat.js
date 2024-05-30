@@ -170,7 +170,7 @@ function test() {
         shouldThrow(() => df.format(null), TypeError);
         shouldThrow(() => df.format(undefined), TypeError);
         shouldThrow(() => df.format([null]), TypeError);
-        shouldBe(JSON.stringify(df.resolvedOptions()), `{"locale":"en","style":"long","years":"long","yearsDisplay":"auto","months":"long","monthsDisplay":"auto","weeks":"long","weeksDisplay":"auto","days":"long","daysDisplay":"auto","hours":"long","hoursDisplay":"auto","minutes":"long","minutesDisplay":"auto","seconds":"long","secondsDisplay":"auto","milliseconds":"long","millisecondsDisplay":"auto","microseconds":"long","microsecondsDisplay":"auto","nanoseconds":"long","nanosecondsDisplay":"auto","fractionalDigits":0,"numberingSystem":"latn"}`);
+        shouldBe(JSON.stringify(df.resolvedOptions()), `{"locale":"en","style":"long","years":"long","yearsDisplay":"auto","months":"long","monthsDisplay":"auto","weeks":"long","weeksDisplay":"auto","days":"long","daysDisplay":"auto","hours":"long","hoursDisplay":"auto","minutes":"long","minutesDisplay":"auto","seconds":"long","secondsDisplay":"auto","milliseconds":"long","millisecondsDisplay":"auto","microseconds":"long","microsecondsDisplay":"auto","nanoseconds":"long","nanosecondsDisplay":"auto","numberingSystem":"latn"}`);
         shouldBe(JSON.stringify(Reflect.getOwnPropertyDescriptor(Intl.DurationFormat.prototype, Symbol.toStringTag)), `{"value":"Intl.DurationFormat","writable":false,"enumerable":false,"configurable":true}`);
     }
     {

@@ -56,6 +56,8 @@ namespace IntlDurationFormatInternal {
 static constexpr bool verbose = false;
 }
 
+static constexpr unsigned fractionalDigitsUndefinedValue = std::numeric_limits<unsigned>::max();
+
 const ClassInfo IntlDurationFormat::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDurationFormat) };
 
 IntlDurationFormat* IntlDurationFormat::create(VM& vm, Structure* structure)
@@ -239,7 +241,7 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
         }
     }
 
-    m_fractionalDigits = intlNumberOption(globalObject, options, vm.propertyNames->fractionalDigits, 0, 9, 0);
+    m_fractionalDigits = intlNumberOption(globalObject, options, vm.propertyNames->fractionalDigits, 0, 9, fractionalDigitsUndefinedValue);
     RETURN_IF_EXCEPTION(scope, void());
 
 #if HAVE(ICU_U_LIST_FORMATTER)
@@ -363,7 +365,9 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 }
                 // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#fraction-precision
                 skeletonBuilder.append(" ."_s);
-                for (unsigned i = 0; i < durationFormat->fractionalDigits(); ++i)
+
+                unsigned fractionalDigits = durationFormat->fractionalDigits() == fractionalDigitsUndefinedValue ? 0 : durationFormat->fractionalDigits();
+                for (unsigned i = 0; i < fractionalDigits; ++i)
                     skeletonBuilder.append('0');
                 done = true;
             }
@@ -720,7 +724,7 @@ JSObject* IntlDurationFormat::resolvedOptions(JSGlobalObject* globalObject) cons
         options->putDirect(vm, displayName(vm, unit), jsNontrivialString(vm, displayString(unitData.display())));
     }
 
-    options->putDirect(vm, vm.propertyNames->fractionalDigits, jsNumber(m_fractionalDigits));
+    options->putDirect(vm, vm.propertyNames->fractionalDigits, m_fractionalDigits == fractionalDigitsUndefinedValue ? jsUndefined() : jsNumber(m_fractionalDigits));
     options->putDirect(vm, vm.propertyNames->numberingSystem, jsString(vm, m_numberingSystem));
     return options;
 }
