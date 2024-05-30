@@ -457,7 +457,7 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
     [[m_avAsset resourceLoader] setDelegate:nil queue:0];
 
     for (auto& pair : m_resourceLoaderMap) {
-        m_targetQueue->dispatch([loader = pair.value] () mutable {
+        m_targetDispatcher->dispatch([loader = pair.value] () mutable {
             loader->stopLoading();
         });
     }
@@ -1053,7 +1053,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     [resourceLoader setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
 
     if (auto mediaResourceLoader = player->createResourceLoader()) {
-        m_targetQueue = mediaResourceLoader->targetQueue();
+        m_targetDispatcher = mediaResourceLoader->targetDispatcher();
         resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:*mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
     }
 
@@ -2232,7 +2232,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 #endif
 #endif
 
-    auto resourceLoader = WebCoreAVFResourceLoader::create(this, avRequest, m_targetQueue);
+    auto resourceLoader = WebCoreAVFResourceLoader::create(this, avRequest, m_targetDispatcher);
     m_resourceLoaderMap.add((__bridge CFTypeRef)avRequest, resourceLoader.copyRef());
     resourceLoader->startLoading();
 
@@ -2245,7 +2245,7 @@ void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResource
 
     ALWAYS_LOG(LOGIDENTIFIER);
     if (RefPtr resourceLoader = m_resourceLoaderMap.get((__bridge CFTypeRef)avRequest)) {
-        m_targetQueue->dispatch([resourceLoader = WTFMove(resourceLoader)] { resourceLoader->stopLoading();
+        m_targetDispatcher->dispatch([resourceLoader = WTFMove(resourceLoader)] { resourceLoader->stopLoading();
         });
     }
 }
@@ -2256,7 +2256,7 @@ void MediaPlayerPrivateAVFoundationObjC::didStopLoadingRequest(AVAssetResourceLo
 
     ALWAYS_LOG(LOGIDENTIFIER);
     if (RefPtr resourceLoader = m_resourceLoaderMap.take((__bridge CFTypeRef)avRequest))
-        m_targetQueue->dispatch([resourceLoader = WTFMove(resourceLoader)] { });
+        m_targetDispatcher->dispatch([resourceLoader = WTFMove(resourceLoader)] { });
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::isAvailable()

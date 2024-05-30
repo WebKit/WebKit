@@ -91,6 +91,8 @@
 		5164042D2AB1D46B0042B1C3 /* NativePromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 5164042C2AB1D46B0042B1C3 /* NativePromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5164042F2AB1D4DD0042B1C3 /* TypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 5164042E2AB1D4DD0042B1C3 /* TypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517F82D71FD22F3000DA3DEA /* CrossThreadTaskHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517F82D51FD22F2F00DA3DEA /* CrossThreadTaskHandler.cpp */; };
+		5187AC952C08570600549EFE /* MainThreadDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5187AC942C08570600549EFE /* MainThreadDispatcher.cpp */; };
+		5187AC962C08570600549EFE /* MainThreadDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 5187AC932C08570600549EFE /* MainThreadDispatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51B07F542AB8797300E14EE9 /* NativePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B07F532AB8797300E14EE9 /* NativePromise.cpp */; };
 		51F1752B1F3D486000C74950 /* PersistentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175261F3D486000C74950 /* PersistentCoders.cpp */; };
 		51F1752C1F3D486000C74950 /* PersistentDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175271F3D486000C74950 /* PersistentDecoder.cpp */; };
@@ -1193,6 +1195,8 @@
 		517F82D51FD22F2F00DA3DEA /* CrossThreadTaskHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadTaskHandler.cpp; sourceTree = "<group>"; };
 		517F82D61FD22F2F00DA3DEA /* CrossThreadTaskHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadTaskHandler.h; sourceTree = "<group>"; };
 		5182C22C1F2BC7E60059BA7C /* InstanceCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstanceCounted.h; sourceTree = "<group>"; };
+		5187AC932C08570600549EFE /* MainThreadDispatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainThreadDispatcher.h; sourceTree = "<group>"; };
+		5187AC942C08570600549EFE /* MainThreadDispatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MainThreadDispatcher.cpp; sourceTree = "<group>"; };
 		51B07F532AB8797300E14EE9 /* NativePromise.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NativePromise.cpp; sourceTree = "<group>"; };
 		51F175251F3D486000C74950 /* PersistentCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentCoders.h; sourceTree = "<group>"; };
 		51F175261F3D486000C74950 /* PersistentCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistentCoders.cpp; sourceTree = "<group>"; };
@@ -2248,6 +2252,8 @@
 				A8A472C6151A825A004123FF /* MainThread.cpp */,
 				A8A472C7151A825B004123FF /* MainThread.h */,
 				DD4901E527B4748A00D7E50D /* MainThreadData.h */,
+				5187AC942C08570600549EFE /* MainThreadDispatcher.cpp */,
+				5187AC932C08570600549EFE /* MainThreadDispatcher.h */,
 				1A233C7C17DAA6E300A93ACF /* MallocPtr.h */,
 				304CA4E41375437EBE931D03 /* Markable.h */,
 				A8A472C9151A825B004123FF /* MathExtras.h */,
@@ -3297,6 +3303,7 @@
 				DDF306E027C08654006A526F /* MachVMSPI.h in Headers */,
 				DD3DC8B627A4BF8E007E5B61 /* MainThread.h in Headers */,
 				DD4901EC27B4748A00D7E50D /* MainThreadData.h in Headers */,
+				5187AC962C08570600549EFE /* MainThreadDispatcher.h in Headers */,
 				DD3DC8D427A4BF8E007E5B61 /* MallocPtr.h in Headers */,
 				DD3DC89727A4BF8E007E5B61 /* Markable.h in Headers */,
 				DD3DC89427A4BF8E007E5B61 /* MathExtras.h in Headers */,
@@ -3986,6 +3993,7 @@
 				7A6EBA3420746C34004F9C44 /* MachSendRight.cpp in Sources */,
 				A8A473E5151A825B004123FF /* MainThread.cpp in Sources */,
 				A8A473E4151A825B004123FF /* MainThreadCocoa.mm in Sources */,
+				5187AC952C08570600549EFE /* MainThreadDispatcher.cpp in Sources */,
 				CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */,
 				ADF2CE671E39F106006889DB /* MemoryFootprintCocoa.cpp in Sources */,
 				AD89B6B71E6415080090707F /* MemoryPressureHandler.cpp in Sources */,

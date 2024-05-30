@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "MainThreadDispatcher.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
-
-#include <WebCore/PlatformMediaResourceLoader.h>
-#include <WebCore/ResourceRequest.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
+#include <wtf/Ref.h>
 
-namespace WebKit {
+namespace WTF {
 
-class RemoteMediaPlayerProxy;
+MainThreadDispatcher& MainThreadDispatcher::singleton()
+{
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<Ref<MainThreadDispatcher>> dispatcher;
+    std::call_once(onceKey, [] {
+        dispatcher.construct(adoptRef(*new MainThreadDispatcher()));
+    });
+    return dispatcher.get();
+}
 
-class RemoteMediaResourceLoader final
-    : public WebCore::PlatformMediaResourceLoader {
-public:
-    explicit RemoteMediaResourceLoader(RemoteMediaPlayerProxy&);
-    ~RemoteMediaResourceLoader();
+bool MainThreadDispatcher::isCurrent() const
+{
+    return isMainThread();
+}
 
-    static Ref<WorkQueue> defaultQueue()
-    {
-        static std::once_flag onceKey;
-        static LazyNeverDestroyed<Ref<WorkQueue>> messageQueue;
-        std::call_once(onceKey, [] {
-            messageQueue.construct(WorkQueue::create("PlatformMediaResourceLoader"_s));
-        });
-        return messageQueue.get();
-    }
+void MainThreadDispatcher::dispatch(Function<void ()>&& function)
+{
+    callOnMainThread(WTFMove(function));
+}
 
-private:
-    RefPtr<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, LoadOptions) final;
-    void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) final;
-    Ref<RefCountedSerialFunctionDispatcher> targetDispatcher() final { return defaultQueue(); }
+void MainThreadDispatcher::ref() const
+{
+    ThreadSafeRefCounted::ref();
+}
 
-    WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
-};
+void MainThreadDispatcher::deref() const
+{
+    ThreadSafeRefCounted::deref();
+}
 
-} // namespace WebKit
-
-#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+} // namespace WTF

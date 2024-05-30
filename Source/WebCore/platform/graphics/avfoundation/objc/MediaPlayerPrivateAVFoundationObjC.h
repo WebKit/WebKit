@@ -32,6 +32,7 @@
 #include <CoreMedia/CMTime.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
+#include <wtf/MainThreadDispatcher.h>
 #include <wtf/Observer.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/WorkQueue.h>
@@ -510,7 +511,7 @@ private:
     ProcessIdentity m_resourceOwner;
     PlatformTimeRanges m_buffered;
     TrackID m_currentTextTrackID { 0 };
-    Ref<WorkQueue> m_targetQueue { WorkQueue::main() };
+    Ref<RefCountedSerialFunctionDispatcher> m_targetDispatcher { MainThreadDispatcher::singleton() };
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,23 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+#include <wtf/FunctionDispatcher.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
-#include <WebCore/PlatformMediaResourceLoader.h>
-#include <WebCore/ResourceRequest.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
+namespace WTF {
 
-namespace WebKit {
-
-class RemoteMediaPlayerProxy;
-
-class RemoteMediaResourceLoader final
-    : public WebCore::PlatformMediaResourceLoader {
+class MainThreadDispatcher final : public ThreadSafeRefCounted<MainThreadDispatcher>, public RefCountedSerialFunctionDispatcher {
 public:
-    explicit RemoteMediaResourceLoader(RemoteMediaPlayerProxy&);
-    ~RemoteMediaResourceLoader();
-
-    static Ref<WorkQueue> defaultQueue()
-    {
-        static std::once_flag onceKey;
-        static LazyNeverDestroyed<Ref<WorkQueue>> messageQueue;
-        std::call_once(onceKey, [] {
-            messageQueue.construct(WorkQueue::create("PlatformMediaResourceLoader"_s));
-        });
-        return messageQueue.get();
-    }
-
+    WTF_EXPORT_PRIVATE static MainThreadDispatcher& singleton();
+    void ref() const final;
+    void deref() const final;
 private:
-    RefPtr<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, LoadOptions) final;
-    void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) final;
-    Ref<RefCountedSerialFunctionDispatcher> targetDispatcher() final { return defaultQueue(); }
-
-    WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
+    MainThreadDispatcher() = default;
+    bool isCurrent() const final;
+    void dispatch(Function<void ()>&&) final;
 };
 
-} // namespace WebKit
+} // namespace WTF
 
-#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+using WTF::MainThreadDispatcher;
+

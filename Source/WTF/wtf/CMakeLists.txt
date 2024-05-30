@@ -157,6 +157,7 @@ set(WTF_PUBLIC_HEADERS
     MachSendRight.h
     MainThread.h
     MainThreadData.h
+    MainThreadDispatcher.h
     MallocPtr.h
     Markable.h
     MathExtras.h
@@ -508,6 +509,7 @@ set(WTF_SOURCES
     Logger.cpp
     Logging.cpp
     MainThread.cpp
+    MainThreadDispatcher.cpp
     MediaTime.cpp
     MemoryPressureHandler.cpp
     MetaAllocator.cpp

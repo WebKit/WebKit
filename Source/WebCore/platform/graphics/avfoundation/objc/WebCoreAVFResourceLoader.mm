@@ -165,9 +165,9 @@ private:
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final { loadFinished(); }
 
     WebCoreAVFResourceLoader& m_parent;
-    const WorkQueue& m_targetQueue;
-    RefPtr<PlatformMediaResource> m_resource WTF_GUARDED_BY_CAPABILITY(m_targetQueue);
-    SharedBufferBuilder m_buffer WTF_GUARDED_BY_CAPABILITY(m_targetQueue);
+    const RefCountedSerialFunctionDispatcher& m_targetDispatcher;
+    RefPtr<PlatformMediaResource> m_resource WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher);
+    SharedBufferBuilder m_buffer WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher);
 };
 
 RefPtr<PlatformResourceMediaLoader> PlatformResourceMediaLoader::create(WebCoreAVFResourceLoader& parent, PlatformMediaResourceLoader& loader, ResourceRequest&& request)
@@ -183,14 +183,14 @@ RefPtr<PlatformResourceMediaLoader> PlatformResourceMediaLoader::create(WebCoreA
 
 PlatformResourceMediaLoader::PlatformResourceMediaLoader(WebCoreAVFResourceLoader& parent, Ref<PlatformMediaResource>&& resource)
     : m_parent(parent)
-    , m_targetQueue(parent.m_targetQueue)
+    , m_targetDispatcher(parent.m_targetDispatcher)
     , m_resource(WTFMove(resource))
 {
 }
 
 void PlatformResourceMediaLoader::stop()
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     if (!m_resource)
         return;
@@ -201,7 +201,7 @@ void PlatformResourceMediaLoader::stop()
 
 void PlatformResourceMediaLoader::responseReceived(PlatformMediaResource&, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     m_parent.responseReceived(response.mimeType(), response.httpStatusCode(), response.contentRange(), response.expectedContentLength());
     completionHandler(ShouldContinuePolicyCheck::Yes);
@@ -209,21 +209,21 @@ void PlatformResourceMediaLoader::responseReceived(PlatformMediaResource&, const
 
 void PlatformResourceMediaLoader::loadFailed(const ResourceError& error)
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     m_parent.loadFailed(error);
 }
 
 void PlatformResourceMediaLoader::loadFinished()
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     m_parent.loadFinished();
 }
 
 void PlatformResourceMediaLoader::dataReceived(PlatformMediaResource&, const SharedBuffer& buffer)
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     m_buffer.append(buffer);
     m_parent.newDataStoredInSharedBuffer(*m_buffer.get());
@@ -248,7 +248,7 @@ DataURLResourceMediaLoader::DataURLResourceMediaLoader(WebCoreAVFResourceLoader&
         // data URLs can end up being unreasonably big so we want to avoid having to call isolatedCopy() here when passing the URL String to the loading thread.
         auto response = ResourceResponse::dataURLResponse(request.url(), *result);
         auto buffer = SharedBuffer::create(WTFMove(result->data));
-        m_parent.m_targetQueue->dispatch([this, parent = Ref { m_parent }, buffer = WTFMove(buffer), mimeType = response.mimeType().isolatedCopy(), status =  response.httpStatusCode(), contentRange = response.contentRange()] {
+        m_parent.m_targetDispatcher->dispatch([this, parent = Ref { m_parent }, buffer = WTFMove(buffer), mimeType = response.mimeType().isolatedCopy(), status =  response.httpStatusCode(), contentRange = response.contentRange()] {
 
             if (m_parent.m_dataURLMediaLoader.get() != this)
                 return;
@@ -262,7 +262,7 @@ DataURLResourceMediaLoader::DataURLResourceMediaLoader(WebCoreAVFResourceLoader&
             m_parent.loadFinished();
         });
     } else {
-        m_parent.m_targetQueue->dispatch([this, parent = Ref { m_parent }] {
+        m_parent.m_targetDispatcher->dispatch([this, parent = Ref { m_parent }] {
             if (m_parent.m_dataURLMediaLoader.get() != this)
                 return;
             m_parent.loadFailed(ResourceError(ResourceError::Type::General));
@@ -270,17 +270,17 @@ DataURLResourceMediaLoader::DataURLResourceMediaLoader(WebCoreAVFResourceLoader&
     }
 }
 
-Ref<WebCoreAVFResourceLoader> WebCoreAVFResourceLoader::create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *avRequest, WorkQueue& targetQueue)
+Ref<WebCoreAVFResourceLoader> WebCoreAVFResourceLoader::create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *avRequest, RefCountedSerialFunctionDispatcher& targetQueue)
 {
     ASSERT(avRequest);
     ASSERT(parent);
     return adoptRef(*new WebCoreAVFResourceLoader(parent, avRequest, targetQueue));
 }
 
-WebCoreAVFResourceLoader::WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *avRequest, WorkQueue& targetQueue)
+WebCoreAVFResourceLoader::WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *avRequest, RefCountedSerialFunctionDispatcher& targetDispatcher)
     : m_parent(parent)
     , m_avRequest(avRequest)
-    , m_targetQueue(targetQueue)
+    , m_targetDispatcher(targetDispatcher)
 {
 }
 
@@ -337,7 +337,7 @@ void WebCoreAVFResourceLoader::startLoading()
 // No code accessing `this` should ever be used after calling stopLoading().
 void WebCoreAVFResourceLoader::stopLoading()
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     m_dataURLMediaLoader = nullptr;
     m_resourceMediaLoader = nullptr;
@@ -355,7 +355,7 @@ void WebCoreAVFResourceLoader::stopLoading()
 
 bool WebCoreAVFResourceLoader::responseReceived(const String& mimeType, int status, const ParsedContentRange& contentRange, size_t expectedContentLength)
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     if (status && (status < 200 || status > 299)) {
         [m_avRequest finishLoadingWithError:0];
@@ -393,7 +393,7 @@ bool WebCoreAVFResourceLoader::responseReceived(const String& mimeType, int stat
 
 void WebCoreAVFResourceLoader::loadFailed(const ResourceError& error)
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     // <rdar://problem/13987417> Set the contentType of the contentInformationRequest to an empty
     // string to trigger AVAsset's playable value to complete loading.
@@ -406,7 +406,7 @@ void WebCoreAVFResourceLoader::loadFailed(const ResourceError& error)
 
 void WebCoreAVFResourceLoader::loadFinished()
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_avRequest finishLoading];
@@ -416,7 +416,7 @@ void WebCoreAVFResourceLoader::loadFinished()
 
 bool WebCoreAVFResourceLoader::newDataStoredInSharedBuffer(const FragmentedSharedBuffer& data)
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     AVAssetResourceLoadingDataRequest* dataRequest = [m_avRequest dataRequest];
     if (!dataRequest)

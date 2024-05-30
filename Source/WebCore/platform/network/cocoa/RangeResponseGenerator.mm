@@ -35,7 +35,7 @@
 #import "WebCoreNSURLSession.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/FastMalloc.h>
-#import <wtf/WorkQueue.h>
+#import <wtf/FunctionDispatcher.h>
 #import <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -62,7 +62,7 @@ struct RangeResponseGeneratorDataTaskData : public CanMakeWeakPtr<RangeResponseG
 
 struct RangeResponseGenerator::Data {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    // The RangeResponseGenerator is used with a WorkQueue which can do thread hoping over time.
+    // The RangeResponseGenerator is used with a RefCountedSerialFunctionDispatcher which can do thread hoping over time.
     // The ResourceResponse contains WTF::Strings which must first be copied via isolatedCopy().
     Data(const ResourceResponse& response, PlatformMediaResource& resource)
         : originalResponse(ResourceResponse::fromCrossThreadData(response.crossThreadData()))
@@ -87,8 +87,8 @@ struct RangeResponseGenerator::Data {
     RefPtr<PlatformMediaResource> resource;
 };
 
-RangeResponseGenerator::RangeResponseGenerator(WorkQueue& targetQueue)
-    : m_targetQueue(targetQueue)
+RangeResponseGenerator::RangeResponseGenerator(RefCountedSerialFunctionDispatcher& targetDispatcher)
+    : m_targetDispatcher(targetDispatcher)
 {
 }
 
@@ -96,7 +96,7 @@ RangeResponseGenerator::~RangeResponseGenerator() = default;
 
 HashMap<String, std::unique_ptr<RangeResponseGenerator::Data>>& RangeResponseGenerator::map()
 {
-    assertIsCurrent(m_targetQueue.get());
+    assertIsCurrent(m_targetDispatcher.get());
     return m_map;
 }
 
@@ -133,7 +133,7 @@ void RangeResponseGenerator::removeTask(WebCoreNSURLSessionDataTask *task)
 
 void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *task, const ParsedRequestRange& range, std::optional<size_t> expectedContentLength, const Data& data)
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
     auto bufferSize = data.buffer.size();
     if (bufferSize < range.begin)
         return;
@@ -143,7 +143,7 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
     if (!taskData)
         return;
 
-    auto giveBytesToTask = [task = retainPtr(task), buffer, bufferSize, taskData = WeakPtr { *taskData }, weakGenerator = ThreadSafeWeakPtr { *this }, targetQueue = m_targetQueue] {
+    auto giveBytesToTask = [task = retainPtr(task), buffer, bufferSize, taskData = WeakPtr { *taskData }, weakGenerator = ThreadSafeWeakPtr { *this }, targetQueue = m_targetDispatcher] {
         assertIsCurrent(targetQueue);
         if ([task state] != NSURLSessionTaskStateRunning)
             return;
@@ -209,7 +209,7 @@ std::optional<size_t> RangeResponseGenerator::expectedContentLengthFromData(cons
 
 void RangeResponseGenerator::giveResponseToTasksWithFinishedRanges(Data& data)
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
     auto expectedContentLength = expectedContentLengthFromData(data);
 
     for (auto& pair : data.taskData)
@@ -218,7 +218,7 @@ void RangeResponseGenerator::giveResponseToTasksWithFinishedRanges(Data& data)
 
 bool RangeResponseGenerator::willHandleRequest(WebCoreNSURLSessionDataTask *task, NSURLRequest *request)
 {
-    assertIsCurrent(m_targetQueue);
+    assertIsCurrent(m_targetDispatcher);
 
     if (!request.URL)
         return false;
@@ -312,7 +312,7 @@ private:
 
 bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDataTask *task, PlatformMediaResource& resource, const ResourceResponse& response)
 {
-    assertIsCurrent(m_targetQueue.get());
+    assertIsCurrent(m_targetDispatcher.get());
     NSURLRequest *originalRequest = task.originalRequest;
     if (!originalRequest.URL)
         return false;
