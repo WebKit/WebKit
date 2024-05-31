@@ -247,6 +247,12 @@ void PDFDataDetectorOverlayController::updatePlatformHighlightData(PDFDocumentLa
     });
 }
 
+void PDFDataDetectorOverlayController::hideActiveHighlightOverlay()
+{
+    if (RefPtr activeHighlight = m_activeDataDetectorItemWithHighlight.second)
+        activeHighlight->dismissImmediately();
+}
+
 void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::optional<PDFDocumentLayout::PageIndex> pageIndex, ShouldUpdatePlatformHighlightData shouldUpdatePlatformHighlightData, ActiveHighlightChanged activeHighlightChanged)
 {
     // Regardless of what we repaint, we don't need the stale data after this.
@@ -254,11 +260,15 @@ void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::o
         m_staleDataDetectorItemWithHighlight = { { }, { } };
     });
 
+    RefPtr plugin = protectedPlugin();
+    if (!plugin)
+        return;
+
     auto [previousDataDetectorItem, previousActiveHighlight] = m_staleDataDetectorItemWithHighlight;
     auto [activeDataDetectorItem, activeHighlight] = m_activeDataDetectorItemWithHighlight;
 
     bool shouldUpdateHighlights = activeHighlightChanged == ActiveHighlightChanged::Yes || activeHighlight || previousActiveHighlight;
-    if (!shouldUpdateHighlights)
+    if (!shouldUpdateHighlights || !plugin->canShowDataDetectorHighlightOverlays())
         return;
 
     if (shouldUpdatePlatformHighlightData == ShouldUpdatePlatformHighlightData::No)

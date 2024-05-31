@@ -98,6 +98,7 @@ public:
 
     WEBCORE_EXPORT void fadeIn();
     WEBCORE_EXPORT void fadeOut();
+    WEBCORE_EXPORT void dismissImmediately();
 
     WEBCORE_EXPORT void setHighlight(DDHighlightRef);
 
