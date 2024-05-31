@@ -1,0 +1,9 @@
+
+PASS inset-area(top left), top left
+PASS inset-area(span-top left), span-top left
+PASS inset-area(top span-left), top span-left
+PASS inset-area(top center), top center
+PASS inset-area(left center), left center
+PASS inset-area(start center), start center
+PASS inset-area(center start), center start
+

@@ -1,0 +1,3 @@
+
+FAIL The chosen position options changes when the base style differs assert_equals: expected 20 but got 0
+

@@ -1,0 +1,3 @@
+
+PASS Anchor names in different tree scopes should not be confused
+

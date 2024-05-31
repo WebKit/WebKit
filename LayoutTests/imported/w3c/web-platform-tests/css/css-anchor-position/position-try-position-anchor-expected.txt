@@ -1,0 +1,5 @@
+
+FAIL #anchored 1 assert_equals:
+<div id="anchored" data-offset-x="100"></div>
+offsetLeft expected 100 but got 0
+

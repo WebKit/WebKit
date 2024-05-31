@@ -1,0 +1,4 @@
+
+PASS anchor-name should not leak out of a shadow tree
+FAIL anchor() in shadow tree should not match host anchor-name assert_equals: #anchored is positioned using fallback expected 37 but got 8
+

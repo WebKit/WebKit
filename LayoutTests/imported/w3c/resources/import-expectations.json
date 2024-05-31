@@ -56,7 +56,7 @@
     "web-platform-tests/css/WOFF2": "import",
     "web-platform-tests/css/compositing": "import",
     "web-platform-tests/css/css-align": "import",
-    "web-platform-tests/css/css-anchor-position": "skip",
+    "web-platform-tests/css/css-anchor-position": "import",
     "web-platform-tests/css/css-animations": "import",
     "web-platform-tests/css/css-backgrounds": "import",
     "web-platform-tests/css/css-borders": "skip",

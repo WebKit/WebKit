@@ -1,0 +1,56 @@
+
+FAIL e.style['position-anchor'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['position-anchor'] = "--foo" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['position-anchor'] = "none" should not set the property value
+PASS e.style['position-anchor'] = "foo-bar" should not set the property value
+PASS e.style['position-anchor'] = "--foo --bar" should not set the property value
+PASS e.style['position-anchor'] = "--foo, --bar" should not set the property value
+PASS e.style['position-anchor'] = "100px" should not set the property value
+PASS e.style['position-anchor'] = "100%" should not set the property value
+FAIL Property position-anchor value 'auto' assert_true: position-anchor doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-anchor value '--foo' assert_true: position-anchor doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-anchor has initial value auto assert_true: position-anchor doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-anchor does not inherit assert_true: expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (-0.3) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0.3) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-anchor> from [--foo] to [auto] at (-0.3) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0.3) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-anchor> from [--foo] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-anchor> from [--foo] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <position-anchor> from [--foo] to [auto] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <position-anchor> from [--foo] to [auto] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <position-anchor> from [--foo] to [auto] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <position-anchor> from [--foo] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <position-anchor> from [--foo] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <position-anchor> from [--foo] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <position-anchor> from [--foo] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <position-anchor> from [--foo] to [auto] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <position-anchor> from [--foo] to [auto] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <position-anchor> from [--foo] to [auto] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <position-anchor> from [--foo] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <position-anchor> from [--foo] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <position-anchor> from [--foo] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <position-anchor> from [--foo] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <position-anchor> from [--foo] to [auto] at (-0.3) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <position-anchor> from [--foo] to [auto] at (0) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <position-anchor> from [--foo] to [auto] at (0.3) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <position-anchor> from [--foo] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <position-anchor> from [--foo] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <position-anchor> from [--foo] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <position-anchor> from [--foo] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <position-anchor> from [--foo] to [auto] at (-0.3) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <position-anchor> from [--foo] to [auto] at (0) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <position-anchor> from [--foo] to [auto] at (0.3) should be [--foo] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <position-anchor> from [--foo] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <position-anchor> from [--foo] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <position-anchor> from [--foo] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <position-anchor> from [--foo] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+

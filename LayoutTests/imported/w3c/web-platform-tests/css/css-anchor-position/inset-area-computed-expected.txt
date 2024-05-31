@@ -1,0 +1,12 @@
+
+FAIL Property inset-area value 'none' assert_true: inset-area doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset-area value 'span-all' assert_true: inset-area doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset-area value 'x-start' assert_true: inset-area doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset-area value 'center' assert_true: inset-area doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset-area value 'span-all span-all' assert_true: inset-area doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset-area value 'center center' assert_true: inset-area doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset-area value 'top center' assert_true: inset-area doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset-area value 'span-bottom span-all' assert_true: inset-area doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset-area has initial value none assert_true: inset-area doesn't seem to be supported in the computed style expected true got false
+FAIL Property inset-area does not inherit assert_true: expected true got false
+

@@ -1,0 +1,7 @@
+
+PASS Offsets for inset-area: span-all and insets: {"top":"5px","bottom":"5px","left":"5px","right":"5px"}
+FAIL Offsets for inset-area: center center and insets: {"top":"10px","bottom":"40px","left":"5px","right":"15px"} assert_equals: Check expected offsetLeft expected 105 but got 5
+FAIL Offsets for inset-area: left bottom and insets: {"top":"10px","bottom":"40px","left":"5px","right":"15px"} assert_equals: Check expected offsetTop expected 235 but got 10
+FAIL Offsets for inset-area: span-right center and insets: {"top":"20%","bottom":"auto","left":"auto","right":"25%"} assert_equals: Check expected offsetLeft expected 100 but got 300
+PASS Offsets for inset-area: bottom right and insets: {"left":"50px","right":"100px","top":"30px","bottom":"10px"}
+

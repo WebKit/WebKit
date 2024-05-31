@@ -1,0 +1,4 @@
+
+FAIL Offsets for inset-area: span-bottom span-left and insets: {"left":"auto","right":"auto","top":"auto","bottom":"auto"} assert_equals: Check expected offsetTop expected 150 but got 100
+FAIL Offsets for inset-area: span-bottom span-left and insets: {"left":"10px","right":"10px","top":"10px","bottom":"10px"} assert_equals: Check expected offsetTop expected 160 but got 110
+

@@ -1,0 +1,7 @@
+Text
+
+FAIL Element.getBoundingClientRect() returns the actual rendered location assert_equals: expected 200 but got 0
+FAIL Range.getBoundingClientRect() returns the actual rendered location assert_equals: expected 200 but got 0
+FAIL Element.offset* return adjusted offsets assert_equals: expected 200 but got 0
+PASS IntersectionObserver should fire when anchored element is moved into visible area
+

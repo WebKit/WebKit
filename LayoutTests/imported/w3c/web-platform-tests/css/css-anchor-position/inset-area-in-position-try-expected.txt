@@ -1,0 +1,61 @@
+
+FAIL none assert_true: expected true got false
+FAIL span-all assert_true: expected true got false
+FAIL span-all span-all assert_true: expected true got false
+FAIL top left assert_true: expected true got false
+FAIL top center assert_true: expected true got false
+FAIL top right assert_true: expected true got false
+FAIL center left assert_true: expected true got false
+FAIL center center assert_true: expected true got false
+FAIL center right assert_true: expected true got false
+FAIL bottom left assert_true: expected true got false
+FAIL bottom center assert_true: expected true got false
+FAIL bottom right assert_true: expected true got false
+FAIL start start assert_true: expected true got false
+FAIL start center assert_true: expected true got false
+FAIL start end assert_true: expected true got false
+FAIL center start assert_true: expected true got false
+FAIL center end assert_true: expected true got false
+FAIL end start assert_true: expected true got false
+FAIL end center assert_true: expected true got false
+FAIL end end assert_true: expected true got false
+FAIL self-start self-start assert_true: expected true got false
+FAIL self-start center assert_true: expected true got false
+FAIL self-start self-end assert_true: expected true got false
+FAIL center self-start assert_true: expected true got false
+FAIL center self-end assert_true: expected true got false
+FAIL self-end self-start assert_true: expected true got false
+FAIL self-end center assert_true: expected true got false
+FAIL self-end self-end assert_true: expected true got false
+FAIL y-start x-start assert_true: expected true got false
+FAIL y-start center assert_true: expected true got false
+FAIL y-start x-end assert_true: expected true got false
+FAIL center x-start assert_true: expected true got false
+FAIL center x-end assert_true: expected true got false
+FAIL y-end x-start assert_true: expected true got false
+FAIL y-end center assert_true: expected true got false
+FAIL y-end x-end assert_true: expected true got false
+FAIL y-self-start x-self-start assert_true: expected true got false
+FAIL y-self-start center assert_true: expected true got false
+FAIL y-self-start x-self-end assert_true: expected true got false
+FAIL center x-self-start assert_true: expected true got false
+FAIL center x-self-end assert_true: expected true got false
+FAIL y-self-end x-self-start assert_true: expected true got false
+FAIL y-self-end center assert_true: expected true got false
+FAIL y-self-end x-self-end assert_true: expected true got false
+FAIL span-y-self-start span-x-self-end assert_true: expected true got false
+FAIL span-bottom span-all assert_true: expected true got false
+FAIL Placement: --top assert_true: expected true got false
+FAIL Placement: --left assert_true: expected true got false
+FAIL Placement: --right, --top assert_true: expected true got false
+FAIL Placement: --bottom, --top assert_true: expected true got false
+FAIL Placement: --bottom, --right, --top assert_true: expected true got false
+FAIL Placement: --bottom, --right, --left, --top assert_true: expected true got false
+FAIL Placement: --bottom, --left, --top, --right assert_true: expected true got false
+FAIL Placement: --right flip-inline assert_true: expected true got false
+FAIL Placement: --bottom flip-block assert_true: expected true got false
+FAIL Placement: --left flip-start assert_true: expected true got false
+FAIL Placement: --left flip-inline, --top assert_true: expected true got false
+FAIL Placement: --top flip-block, --left assert_true: expected true got false
+FAIL Placement: --left flip-start flip-block, --left assert_true: expected true got false
+

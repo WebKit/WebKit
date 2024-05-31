@@ -1,0 +1,7 @@
+
+FAIL .target 1 assert_equals:
+<div class="target" data-offset-x="200" data-offset-y="0" data-expected-width="200" data-expected-height="100">
+      <span class="inline-spacer"></span>
+    </div>
+offsetLeft expected 200 but got 0
+

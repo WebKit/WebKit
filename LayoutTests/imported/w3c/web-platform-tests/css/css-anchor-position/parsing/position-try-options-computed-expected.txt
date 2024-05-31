@@ -1,0 +1,22 @@
+
+FAIL Property position-try-options value 'none' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'flip-block' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'flip-inline' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'flip-start' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'flip-block, flip-inline' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value '--foo, --bar' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'flip-start flip-inline flip-block' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'flip-start --flop' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value '--flop flip-start' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'inset-area(left top)' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'inset-area(top left)' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'inset-area(start start)' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'inset-area(left), inset-area(right)' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value '--foo, inset-area(left)' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value '--foo, inset-area(left), --bar' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value '--foo, flip-start, inset-area(left)' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value '--foo flip-start, inset-area(left)' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options value 'inset-area(left), --bar flip-start' assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options has initial value none assert_true: position-try-options doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-options does not inherit assert_true: expected true got false
+

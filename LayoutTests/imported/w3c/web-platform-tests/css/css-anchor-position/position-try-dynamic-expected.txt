@@ -1,0 +1,4 @@
+
+PASS Initial static left position is 0
+FAIL Left position set to right edge of anchor with @position-try assert_equals: expected 100 but got 999999
+

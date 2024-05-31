@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
+
+Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
+
+PASS #host is initially left: 999999px
+PASS #slotted is initially left: 999999px
+

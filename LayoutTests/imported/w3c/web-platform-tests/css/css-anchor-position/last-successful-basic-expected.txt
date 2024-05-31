@@ -1,0 +1,5 @@
+
+FAIL Starts rendering with flip-block assert_equals: expected 200 but got 100
+FAIL No successful position, keep flip-block assert_equals: expected 250 but got 100
+FAIL Base position without option now successful assert_equals: expected 0 but got 100
+
