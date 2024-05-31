@@ -1694,6 +1694,11 @@ webkit.org/b/263396 css3/color/text.html [ Skip ]
 [ Release ] http/tests/webgpu/webgpu/shader [ Pass Failure Timeout ]
 [ Release ] http/tests/webgpu/webgpu/web_platform [ Pass Failure Timeout ]
 
+# skipped due to debug crashes - https://bugs.webkit.org/show_bug.cgi?id=274972
+http/tests/webgpu/webgpu/api/validation/render_pass/render_pass_descriptor.html [ Skip ]
+http/tests/webgpu/webgpu/api/validation/texture/destroy.html [ Skip ]
+http/tests/webgpu/webgpu/web_platform/canvas/getCurrentTexture.html [ Skip ]
+
 # skipped debug due to https://bugs.webkit.org/show_bug.cgi?id=273961
 [ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Pass ]
 # skipped debug due to https://bugs.webkit.org/show_bug.cgi?id=273716
