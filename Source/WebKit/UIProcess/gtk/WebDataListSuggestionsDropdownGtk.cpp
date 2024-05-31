@@ -250,6 +250,7 @@ void WebDataListSuggestionsDropdownGtk::handleKeydownWithIdentifier(const String
 void WebDataListSuggestionsDropdownGtk::close()
 {
     gtk_widget_hide(m_popup);
+    WebDataListSuggestionsDropdown::close();
 }
 
 } // namespace WebKit

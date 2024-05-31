@@ -138,7 +138,7 @@ void WebDataListSuggestionsDropdownIOS::close()
 {
     [m_suggestionsControl invalidate];
     m_suggestionsControl = nil;
-    m_page->didCloseSuggestions();
+    WebDataListSuggestionsDropdown::close();
 }
 
 void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOption)
