@@ -138,6 +138,7 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
     GST_DEBUG_OBJECT(m_transcoder.get(), "Stop requested, pushing EOS event");
 
     auto scopeExit = makeScopeExit([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        unregisterPipeline(m_pipeline);
         m_pipeline.clear();
         GST_DEBUG_OBJECT(m_transcoder.get(), "Stopping");
         m_transcoder.clear();
