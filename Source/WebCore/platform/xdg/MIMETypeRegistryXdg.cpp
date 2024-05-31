@@ -29,6 +29,7 @@
 #define XDG_PREFIX _wk_xdg
 #include "xdgmime.h"
 
+#define MAX_EXTENSION_COUNT 10
 namespace WebCore {
 
 String MIMETypeRegistry::mimeTypeForExtension(StringView string)
@@ -69,10 +70,19 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& mimeType)
     return returnValue;
 }
 
-Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String&)
+Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String& mimeType)
 {
-    ASSERT_NOT_IMPLEMENTED_YET();
-    return { };
+    if (mimeType.isEmpty())
+        return { };
+
+    Vector<String> returnValue;
+    char* extensions[MAX_EXTENSION_COUNT];
+    int n = xdg_mime_get_simple_globs(mimeType.utf8().data(), extensions, MAX_EXTENSION_COUNT);
+    for (int i = 0; i < n; ++i) {
+        returnValue.append(String::fromUTF8(extensions[i]));
+        free(extensions[i]);
+    }
+    return returnValue;
 }
 
 }
