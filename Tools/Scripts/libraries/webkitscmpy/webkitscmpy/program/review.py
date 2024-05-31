@@ -52,11 +52,11 @@ class Review(Command):
         parser.add_argument(
             'argument', nargs=1,
             type=str, default=None,
-            help='String representation of a pull request (pr-#), commit or URL to review',
+            help='String representation of a pull-request (pr-#), commit or URL to review',
         )
         parser.add_argument(
             '--remote', dest='remote', type=str, default=None,
-            help='Specify remote to search for pull request from.',
+            help='Specify remote to search for pull-request from.',
         )
         parser.add_argument(
             '--dry-run', '-n', '--no-dry-run',
@@ -85,6 +85,39 @@ class Review(Command):
             if match:
                 return match.group('number'), remote.Scm.from_url(match.group('url'))
         return None, None
+
+    @classmethod
+    def truncate_strs(cls, d):
+        if not isinstance(d, dict):
+            return d
+        for key in d.keys():
+            if isinstance(d[key], str):
+                d[key] = d[key].rstrip().split('\n')
+            else:
+                cls.truncate_strs(d[key])
+        return d
+
+    @classmethod
+    def user_delta(cls, pull_request, original, value):
+        returncode = 0
+        me, _ = pull_request.generator.repository.credentials(required=False)
+        modified = []
+        for name in string_utils.split(value):
+            if name.lower() == 'me':
+                modified.append(me)
+                continue
+            user = pull_request.generator.repository.contributors.get(name)
+            if not user:
+                sys.stderr.write("'{}' is not a recognized user\n".format(name))
+                returncode += 1
+            else:
+                modified.append(user)
+        added = [user for user in modified if user not in original]
+        removed = [user for user in original if user not in modified]
+
+        added_no_me = [candidate for candidate in added if not me or candidate != me]
+
+        return len(added_no_me) != len(added), added_no_me, removed, returncode
 
     @classmethod
     def invoke_wizard(
@@ -159,7 +192,137 @@ class Review(Command):
                     continue
                 input[cnt].append(line)
 
-        return dict()
+        # Users can:
+        # - Change metadata
+        # - Add global comments
+        # - Add diff comments
+        response = dict(
+            metadata=dict(),
+            comments=[],
+            diff=dict(),
+        )
+
+        # First section: metadata
+        resolved_metadata = dict()
+        for line in input[0]:
+            if ':' not in line:
+                continue
+            key, value = line.split(':', maxsplit=1)
+            resolved_metadata[key.rstrip().lstrip()] = value.rstrip().lstrip()
+        for key in resolved_metadata.keys():
+            if (resolved_metadata[key] or '') != (sanitized_header.get(key) or ''):
+                response['metadata'][key] = resolved_metadata[key] or ''
+        for key, value in sanitized_header.items():
+            if value and key not in resolved_metadata:
+                response['metadata'][key] = ''
+        if not response['metadata']:
+            del response['metadata']
+
+        # Second section: commit message
+        previous_line = None
+        response['comments'].append('')
+        for line in difflib.ndiff(output[1], input[1]):
+            if line[0] in ('-', '?'):
+                continue
+            if line[0] == '+':
+                if previous_line:
+                    if response['comments'][-1]:
+                        response['comments'][-1] += '\n'
+                    response['comments'][-1] += '> {}\n\n'.format(previous_line)
+                    previous_line = None
+                response['comments'][-1] += line[2:].lstrip().rstrip() + '\n'
+                continue
+            if line.rstrip():
+                previous_line = line[6:]
+        if response['comments'][-1]:
+            response['comments'][-1] = response['comments'][-1].rstrip()
+        else:
+            response['comments'].pop()
+
+        # Third section: comments
+        original_index = -1
+        previous_line = None
+        found_previous_line = False
+        response['comments'].append('')
+        for line in difflib.ndiff(output[2], input[2]):
+            original_index += 1
+            if line[2:] == '-' * cls.SEPERATOR_SIZE:
+                previous_line = None
+                if response['comments'][-1]:
+                    response['comments'][-1] = response['comments'][-1].rstrip()
+                    in_response_to = comment_for_lines.get(original_index)
+                    if in_response_to and found_previous_line:
+                        response['comments'][-1] = (in_response_to, response['comments'][-1])
+                    found_previous_line = False
+                    response['comments'].append('')
+                continue
+            if line[0] in ('-', '?'):
+                original_index -= 1
+                continue
+            if line[0] == '+':
+                original_index -= 1
+                if previous_line:
+                    if response['comments'][-1]:
+                        response['comments'][-1] += '\n'
+                    response['comments'][-1] += '> {}\n'.format(previous_line)
+                    previous_line = None
+                    found_previous_line = True
+                response['comments'][-1] += line[2:].lstrip().rstrip() + '\n'
+                continue
+            if not previous_line:
+                line = '  {}'.format(line.split(':', maxsplit=1)[-1].lstrip())
+            if line.rstrip():
+                previous_line = line[2:]
+        if response['comments'][-1]:
+            response['comments'][-1] = response['comments'][-1].rstrip()
+            in_response_to = comment_for_lines.get(original_index)
+            if in_response_to and found_previous_line:
+                response['comments'][-1] = (in_response_to, response['comments'][-1])
+        else:
+            response['comments'].pop()
+
+        if not response['comments']:
+            del response['comments']
+
+        # Fourth section: diff
+        file = None
+        position = None
+        in_comment = False
+        for line in difflib.ndiff(output[3], input[3]):
+            if line.startswith('  diff') or line.startswith('  index'):
+                position = None
+                file = None
+                continue
+            if line.startswith('  --- a/') or line.startswith('  +++ b/'):
+                position = None
+                file = line[8:]
+                continue
+            if file is not None and position is None and line.startswith('  @@'):
+                position = 0
+                continue
+
+            if line.startswith('+ '):
+                if not file:
+                    response['diff']['comment'] = response['diff'].get('comment', '') + line[2:].lstrip().rstrip() + '\n'
+                    continue
+                response['diff']['diff_comments'] = response['diff'].get('diff_comments', {})
+                response['diff']['diff_comments'][file] = response['diff']['diff_comments'].get(file, {})
+                key = position or 0
+                response['diff']['diff_comments'][file][key] = response['diff']['diff_comments'][file].get(key, '') + line[2:].lstrip().rstrip() + '\n'
+                continue
+
+            if line.startswith('  >>>>'):
+                in_comment = True
+            if not in_comment and position is not None:
+                position += 1
+            if line.startswith('  <<<<'):
+                in_comment = False
+
+        cls.truncate_strs(response['diff'])
+        if not response['diff']:
+            del response['diff']
+
+        return response
 
     @classmethod
     def main(cls, args, repository, **kwargs):
@@ -231,4 +394,108 @@ class Review(Command):
             ], diff=pull_request.diff(comments=True),
         )
 
-        return 0
+        if args.dry_run:
+            if response:
+                sys.stderr.write('User modified the pull-request, but is running as a dry-run, no edits were published.\n')
+                return 1
+            return 0
+
+        returncode = 0
+        did_approve = None
+        reviewers_to_add = set()
+        user, _ = pull_request.generator.repository.credentials(required=False)
+
+        for key in ('Approved by', 'Blocked by'):
+            value = (response.get('metadata') or {}).pop(key, None)
+            if value is None:
+                continue
+            original = pull_request.approvers if key == 'Approved by' else pull_request.blockers
+            is_me, added, removed, rc = cls.user_delta(pull_request, original, value)
+            returncode += rc
+            if is_me:
+                did_approve = key == 'Approved by'
+            reviewers_to_add.update(added + removed)
+        if 'metadata' in response and not response['metadata']:
+            del response['metadata']
+
+        if pull_request.opened and did_approve is None and user and pull_request.author != user:
+            did_approve = {'Approve': True, 'Request changes': False}.get(Terminal.choose(
+                'Would you like to approve this change?',
+                default='No', options=('Approve', 'Comment', 'Request changes'),
+            ), None)
+
+        if did_approve is None and not reviewers_to_add and not response:
+            sys.stderr.write('No pull-request edits detected\n')
+            return 1
+
+        changes_made = 0
+
+        # FIXME: Adding reviewers is not yet supported
+        if reviewers_to_add:
+            sys.stderr.write('Failed to request {} as reviewer{}\n'.format(
+                string_utils.join([reviewer.name for reviewer in sorted(reviewers_to_add)]),
+                's' if len(reviewers_to_add) != 1 else '',
+            ))
+            returncode += 1
+
+        for key, value in response.get('metadata', {}).items():
+            if key.lower() == 'title':
+                log.info('Setting title of pull-request...')
+                if pull_request.generator.update(pull_request, title=value):
+                    changes_made += 1
+                else:
+                    returncode += 1
+                continue
+            if key.lower() == 'status':
+                if value.lower() in ('open', 'opened') and not pull_request.merged:
+                    if not pull_request.opened:
+                        log.info('Opening pull-request...')
+                        if pull_request.open():
+                            changes_made += 1
+                        else:
+                            returncode += 1
+                    continue
+                if value.lower() in ('close', 'closed') and not pull_request.merged:
+                    if pull_request.opened:
+                        log.info('Closing pull-request...')
+                        if pull_request.close():
+                            changes_made += 1
+                        else:
+                            returncode += 1
+                    continue
+                sys.stderr.write("Cannot change pull-request status to '{}'\n".format(value))
+                returncode += 1
+                continue
+            if key.lower() == 'labels' and pull_request._metadata and pull_request._metadata.get('issue'):
+                try:
+                    log.info('Setting labels on pull-request...')
+                    if pull_request._metadata['issue'].set_labels(string_utils.split(value)):
+                        changes_made += 1
+                    else:
+                        returncode += 1
+                except ValueError as e:
+                    sys.stderr.write("{}\n".format(e))
+                    returncode += 1
+                continue
+            sys.stderr.write("Cannot modify the '{}' key on this pull-request\n".format(key))
+            returncode += 1
+
+        for comment in (response.get('comments') or []):
+            # FIXME: We should actually reply to specific comments
+            if isinstance(comment, tuple):
+                comment = comment[1]
+            log.info('Making top-level comment on pull-request...')
+            pull_request.comment(comment)
+            changes_made += 1
+
+        diff = response.get('diff') or {}
+        if did_approve is not None or diff:
+            log.info('Posting review on pull-request...')
+            if pull_request.review(approve=did_approve, **diff):
+                changes_made += 1
+            else:
+                sys.stderr.write('Failed to post review and diff comments\n')
+                returncode += 1
+
+        print('{} made'.format(string_utils.pluralize(changes_made, 'change')))
+        return returncode
