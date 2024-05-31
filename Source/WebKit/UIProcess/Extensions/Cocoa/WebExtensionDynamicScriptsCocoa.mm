@@ -117,14 +117,14 @@ public:
     InjectionResults results;
 };
 
-void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebExtensionTab *tab, const WebExtensionScriptInjectionParameters& parameters, WebExtensionContext& context, CompletionHandler<void(InjectionResults&&)>&& completionHandler)
+void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebExtensionTab& tab, const WebExtensionScriptInjectionParameters& parameters, WebExtensionContext& context, CompletionHandler<void(InjectionResults&&)>&& completionHandler)
 {
     auto injectionResults = InjectionResultHolder::create();
     auto aggregator = MainRunLoopCallbackAggregator::create([injectionResults, completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(WTFMove(injectionResults->results));
     });
 
-    [webView _frames:makeBlockPtr([webView = RetainPtr { webView }, tab, context = Ref { context }, scriptPairs, executionWorld = Ref { executionWorld }, injectionResults, aggregator, parameters](_WKFrameTreeNode *mainFrame) mutable {
+    [webView _frames:makeBlockPtr([webView = RetainPtr { webView }, tab = Ref { tab }, context = Ref { context }, scriptPairs, executionWorld = Ref { executionWorld }, injectionResults, aggregator, parameters](_WKFrameTreeNode *mainFrame) mutable {
         WKContentWorld *world = executionWorld->wrapper();
         Vector<RetainPtr<_WKFrameTreeNode>> frames = getFrames(mainFrame, parameters.frameIDs);
 
@@ -132,7 +132,7 @@ void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, A
             WKFrameInfo *frameInfo = frame.get().info;
             NSURL *frameURL = frameInfo.request.URL;
 
-            if (!context->hasPermission(frameURL, tab)) {
+            if (!context->hasPermission(frameURL, tab.ptr())) {
                 injectionResults->results.append(toInjectionResultParameters(nil, frameInfo, @"Failed to execute script. Extension does not have access to this frame."));
                 continue;
             }
