@@ -1,4 +1,5 @@
 //@ skip if $architecture != "arm64" and $architecture != "x86_64" or $memoryLimited
+//@ requireOptions("--useJITCage=0") # temporary workaround for rdar://127308350
 //@ runDefault("-m", "--wasmFunctionIndexRangeToCompile=0:5", "--useOMGJIT=0", "--useInterpretedJSEntryWrappers=1")
 
 // This tests will use more than the 600M that $memoryLimited devices are capped
