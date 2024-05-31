@@ -352,6 +352,7 @@ public:
     GraphicsLayer* updateLayerForFooter(bool wantsLayer);
 
     void updateLayerForOverhangAreasBackgroundColor();
+    void updateSizeAndPositionForOverhangAreaLayer();
 #endif // HAVE(RUBBER_BANDING)
 
     // FIXME: make the coordinated/async terminology consistent.

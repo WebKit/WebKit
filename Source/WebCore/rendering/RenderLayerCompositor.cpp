@@ -2470,11 +2470,7 @@ void RenderLayerCompositor::frameViewDidChangeSize()
         updateOverflowControlsLayers();
 
 #if HAVE(RUBBER_BANDING)
-        if (m_layerForOverhangAreas) {
-            auto& frameView = m_renderView.frameView();
-            m_layerForOverhangAreas->setSize(frameView.frameRect().size());
-            m_layerForOverhangAreas->setPosition(FloatPoint(0, frameView.topContentInset()));
-        }
+        updateSizeAndPositionForOverhangAreaLayer();
 #endif
     }
 }
@@ -4481,6 +4477,21 @@ void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()
     rootLayerConfigurationChanged();
 }
 
+#if HAVE(RUBBER_BANDING)
+void RenderLayerCompositor::updateSizeAndPositionForOverhangAreaLayer()
+{
+    if (!m_layerForOverhangAreas)
+        return;
+
+    float topContentInset = m_renderView.frameView().topContentInset();
+    IntSize overhangAreaSize = m_renderView.frameView().frameRect().size();
+    overhangAreaSize.contract(0, topContentInset);
+    overhangAreaSize.clampNegativeToZero();
+    m_layerForOverhangAreas->setSize(overhangAreaSize);
+    m_layerForOverhangAreas->setPosition({ 0, topContentInset });
+}
+#endif
+
 void RenderLayerCompositor::updateOverflowControlsLayers()
 {
 #if HAVE(RUBBER_BANDING)
@@ -4490,11 +4501,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForOverhangAreas->setName(MAKE_STATIC_STRING_IMPL("overhang areas"));
             m_layerForOverhangAreas->setDrawsContent(false);
 
-            float topContentInset = m_renderView.frameView().topContentInset();
-            IntSize overhangAreaSize = m_renderView.frameView().frameRect().size();
-            overhangAreaSize.setHeight(overhangAreaSize.height() - topContentInset);
-            m_layerForOverhangAreas->setSize(overhangAreaSize);
-            m_layerForOverhangAreas->setPosition(FloatPoint(0, topContentInset));
+            updateSizeAndPositionForOverhangAreaLayer();
             m_layerForOverhangAreas->setAnchorPoint(FloatPoint3D());
             updateLayerForOverhangAreasBackgroundColor();
 
