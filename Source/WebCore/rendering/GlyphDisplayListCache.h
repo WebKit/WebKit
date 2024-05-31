@@ -34,7 +34,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -44,7 +43,7 @@ namespace InlineDisplay {
 struct Box;
 }
 
-class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>, public CanMakeSingleThreadWeakPtr<GlyphDisplayListCacheEntry> {
+class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry> {
     WTF_MAKE_FAST_ALLOCATED;
     friend struct GlyphDisplayListCacheKeyTranslator;
     friend void add(Hasher&, const GlyphDisplayListCacheEntry&);
@@ -53,8 +52,6 @@ public:
     {
         return adoptRef(*new GlyphDisplayListCacheEntry(WTFMove(displayList), textRun, font, context));
     }
-
-    ~GlyphDisplayListCacheEntry();
 
     bool operator==(const GlyphDisplayListCacheEntry& other) const
     {
@@ -91,11 +88,11 @@ inline void add(Hasher& hasher, const GlyphDisplayListCacheEntry& entry)
 }
 
 struct GlyphDisplayListCacheEntryHash {
+    static unsigned hash(const GlyphDisplayListCacheEntry& entry) { return computeHash(entry); }
     static unsigned hash(const GlyphDisplayListCacheEntry* entry) { return computeHash(*entry); }
-    static unsigned hash(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& entry) { return computeHash(entry.get()); }
-    static bool equal(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& a, const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& b) { return a.ptr() == b.ptr(); }
-    static bool equal(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& a, const GlyphDisplayListCacheEntry* b) { return a.ptr() == b; }
-    static bool equal(const GlyphDisplayListCacheEntry* a, const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& b) { return a == b.ptr(); }
+    static bool equal(const GlyphDisplayListCacheEntry& a, const GlyphDisplayListCacheEntry& b) { return &a == &b; }
+    static bool equal(const GlyphDisplayListCacheEntry* a, const GlyphDisplayListCacheEntry& b) { return a == &b; }
+    static bool equal(const GlyphDisplayListCacheEntry& a, const GlyphDisplayListCacheEntry* b) { return &a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
@@ -133,14 +130,8 @@ private:
 
     HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
     HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForFrequentlyPaintedLayoutRun;
-    HashSet<SingleThreadWeakRef<GlyphDisplayListCacheEntry>> m_entries;
+    HashSet<Ref<GlyphDisplayListCacheEntry>, GlyphDisplayListCacheEntryHash> m_entries;
     bool m_forceUseGlyphDisplayListForTesting { false };
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct DefaultHash<SingleThreadWeakRef<WebCore::GlyphDisplayListCacheEntry>> : WebCore::GlyphDisplayListCacheEntryHash { };
-
-} // namespace WTF
