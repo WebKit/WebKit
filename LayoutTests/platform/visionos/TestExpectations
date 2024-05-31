@@ -133,6 +133,8 @@ imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.ht
 
 webkit.org/b/274931 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_viewports.https.html [ Failure ]
 
+webkit.org/b/274980 imported/w3c/web-platform-tests/webxr/xrViewport_valid.https.html [ Failure ]
+
 ### END OF Triaged failures
 ###################################################################################################
 
