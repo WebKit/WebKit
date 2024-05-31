@@ -78,33 +78,23 @@ static bool systemCanPromptForCapture = false;
 }
 @end
 
+@interface MediaCaptureUIDelegate : NSObject<WKUIDelegate>
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKPermissionDecision decision))decisionHandler;
+@end
+@implementation MediaCaptureUIDelegate
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKPermissionDecision decision))decisionHandler
+{
+    decisionHandler(WKPermissionDecisionDeny);
+}
+@end
+
 namespace TestWebKitAPI {
 
 class GetDisplayMediaTest : public testing::Test {
 public:
-    virtual void SetUp()
-    {
-        m_configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-        auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
-        m_configuration.get().processPool = (WKProcessPool *)context.get();
+    enum class UseGetDisplayMediaUIDelegate : bool { No, Yes };
 
-        auto handler = adoptNS([[GetDisplayMediaMessageHandler alloc] init]);
-        [[m_configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
-
-        auto preferences = [m_configuration preferences];
-        preferences._mediaCaptureRequiresSecureConnection = NO;
-        m_configuration.get()._mediaCaptureEnabled = YES;
-        preferences._mockCaptureDevicesEnabled = YES;
-        preferences._screenCaptureEnabled = YES;
-
-        m_webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get() addToWindow:YES]);
-
-        m_uiDelegate = adoptNS([[GetDisplayMediaUIDelegate alloc] init]);
-        m_webView.get().UIDelegate = m_uiDelegate.get();
-        [m_webView focus];
-
-        [m_webView synchronouslyLoadTestPageNamed:@"getDisplayMedia"];
-    }
+    virtual void SetUp() { SetUpInternal(UseGetDisplayMediaUIDelegate::Yes); }
 
     bool haveStream(bool expected)
     {
@@ -141,22 +131,61 @@ public:
             EXPECT_STREQ(getDisplayMediaResult, "allowed") << " with contraint " << constraintString;
             EXPECT_TRUE(haveStream(true)) << " with contraint " << constraintString;
             if (!systemCanPromptForCapture)
-                EXPECT_TRUE(wasPrompted) << " with contraint " << constraintString;
+                EXPECT_EQ(wasPrompted, hasDisplayCaptureDelegate()) << " with contraint " << constraintString;
             else
                 EXPECT_FALSE(wasPrompted) << " with contraint " << constraintString;
         } else {
             EXPECT_STREQ(getDisplayMediaResult, "denied") << " with contraint " << constraintString;
             EXPECT_TRUE(haveStream(false)) << " with contraint " << constraintString;
             if (shouldDeny && !systemCanPromptForCapture)
-                EXPECT_TRUE(wasPrompted) << " with contraint " << constraintString;
+                EXPECT_EQ(wasPrompted, hasDisplayCaptureDelegate()) << " with contraint " << constraintString;
             else
                 EXPECT_FALSE(wasPrompted) << " with contraint " << constraintString;
         }
     }
 
+protected:
+    void SetUpInternal(UseGetDisplayMediaUIDelegate useGetDisplayMediaUIDelegate)
+    {
+        m_configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+        m_configuration.get().processPool = (WKProcessPool *)context.get();
+
+        auto handler = adoptNS([[GetDisplayMediaMessageHandler alloc] init]);
+        [[m_configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+
+        auto preferences = [m_configuration preferences];
+        preferences._mediaCaptureRequiresSecureConnection = NO;
+        m_configuration.get()._mediaCaptureEnabled = YES;
+        preferences._mockCaptureDevicesEnabled = YES;
+        preferences._screenCaptureEnabled = YES;
+
+        m_webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get() addToWindow:YES]);
+
+        if (useGetDisplayMediaUIDelegate == UseGetDisplayMediaUIDelegate::Yes) {
+            m_uiDelegate = adoptNS([[GetDisplayMediaUIDelegate alloc] init]);
+            m_webView.get().UIDelegate = m_uiDelegate.get();
+        } else {
+            m_mediaCaptureUIDelegate = adoptNS([[MediaCaptureUIDelegate alloc] init]);
+            m_webView.get().UIDelegate = m_mediaCaptureUIDelegate.get();
+        }
+        [m_webView focus];
+
+        [m_webView synchronouslyLoadTestPageNamed:@"getDisplayMedia"];
+    }
+
+private:
+    bool hasDisplayCaptureDelegate() const { return m_uiDelegate.get(); }
+
     RetainPtr<WKWebViewConfiguration> m_configuration;
     RetainPtr<GetDisplayMediaUIDelegate> m_uiDelegate;
+    RetainPtr<MediaCaptureUIDelegate> m_mediaCaptureUIDelegate;
     RetainPtr<TestWKWebView> m_webView;
+};
+
+class GetDisplayMediaTestWithMediaCaptureDelegate : public GetDisplayMediaTest {
+public:
+    void SetUp() override { SetUpInternal(UseGetDisplayMediaUIDelegate::No); }
 };
 
 TEST_F(GetDisplayMediaTest, BasicPrompt)
@@ -191,8 +220,16 @@ TEST_F(GetDisplayMediaTest, SystemCanPrompt)
     promptForCapture(@"{ audio: true, video: false }", false);
     promptForCapture(@"{ audio: false, video: true }", true);
     promptForCapture(@"{ audio: false, video: false }", false);
+    systemCanPromptForCapture = false;
 }
 
+TEST_F(GetDisplayMediaTestWithMediaCaptureDelegate, BasicPrompt)
+{
+    promptForCapture(@"{ audio: true, video: true }", true);
+    promptForCapture(@"{ audio: true, video: false }", false);
+    promptForCapture(@"{ audio: false, video: true }", true);
+    promptForCapture(@"{ audio: false, video: false }", false);
+}
 
 } // namespace TestWebKitAPI
 
