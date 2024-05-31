@@ -126,6 +126,7 @@ private:
     void invokeDidReceiveResponse(const CurlResponse&, Function<void()>&& completionHandler = { });
 
     NetworkLoadMetrics networkLoadMetrics();
+    std::optional<long long> getContentLength();
 
     // Callback functions for curl
     static size_t willSendDataCallback(char*, size_t, size_t, void*);
@@ -159,6 +160,7 @@ private:
     Function<void()> m_responseCompletionHandler;
 
     bool m_captureExtraMetrics;
+    size_t m_requestHeaderSize { 0 };
     HTTPHeaderMap m_requestHeaders;
     MonotonicTime m_performStartTime;
     size_t m_totalReceivedSize { 0 };

@@ -728,19 +728,6 @@ std::optional<long> CurlHandle::getHttpConnectCode()
     return httpConnectCode;
 }
 
-std::optional<long long> CurlHandle::getContentLength()
-{
-    if (!m_handle)
-        return std::nullopt;
-
-    curl_off_t contentLength;
-    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &contentLength);
-    if (errorCode != CURLE_OK)
-        return std::nullopt;
-
-    return contentLength;
-}
-
 std::optional<long> CurlHandle::getHttpAuthAvail()
 {
     auto allowedAuthMethods = CURLAUTH_DIGEST | CURLAUTH_BASIC;
@@ -879,18 +866,12 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTim
 
 void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetrics)
 {
-    long requestHeaderSize = 0;
     curl_off_t requestBodySize = 0;
     long responseHeaderSize = 0;
     char* ip = nullptr;
     long port = 0;
 
-    // FIXME: Gets total request size not just headers https://bugs.webkit.org/show_bug.cgi?id=188363
-    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_REQUEST_SIZE, &requestHeaderSize);
-    if (errorCode != CURLE_OK)
-        return;
-
-    errorCode = curl_easy_getinfo(m_handle, CURLINFO_SIZE_UPLOAD_T, &requestBodySize);
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_SIZE_UPLOAD_T, &requestBodySize);
     if (errorCode != CURLE_OK)
         return;
 
@@ -915,7 +896,6 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
         }
     }
 
-    additionalMetrics->requestHeaderBytesSent = requestHeaderSize;
     additionalMetrics->requestBodyBytesSent = requestBodySize;
     additionalMetrics->responseHeaderBytesReceived = responseHeaderSize;
 

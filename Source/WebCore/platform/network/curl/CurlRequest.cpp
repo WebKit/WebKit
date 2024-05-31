@@ -31,6 +31,7 @@
 #include "CertificateInfo.h"
 #include "CurlRequestClient.h"
 #include "CurlRequestScheduler.h"
+#include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "NetworkLoadMetrics.h"
 #include "ResourceError.h"
@@ -214,9 +215,7 @@ CURL* CurlRequest::setupTransfer()
 
     m_curlHandle->setHeaderCallbackFunction(didReceiveHeaderCallback, this);
     m_curlHandle->setWriteCallbackFunction(didReceiveDataCallback, this);
-
-    if (m_captureExtraMetrics)
-        m_curlHandle->setDebugCallbackFunction(didReceiveDebugInfoCallback, this);
+    m_curlHandle->setDebugCallbackFunction(didReceiveDebugInfoCallback, this);
 
     m_curlHandle->setTimeout(timeoutInterval());
 
@@ -317,7 +316,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     m_response.statusCode = statusCode;
     m_response.httpConnectCode = httpConnectCode;
 
-    if (auto length = m_curlHandle->getContentLength())
+    if (auto length = getContentLength())
         m_response.expectedContentLength = *length;
 
     if (auto proxyURL = m_curlHandle->getProxyUrl())
@@ -517,6 +516,8 @@ int CurlRequest::didReceiveDebugInfo(curl_infotype type, std::span<const char> d
         if (headerFields.size())
             headerFields.remove(0);
 
+        m_requestHeaderSize = requestHeader.length();
+
         for (auto& header : headerFields) {
             auto pos = header.find(':');
             if (pos != notFound) {
@@ -629,11 +630,28 @@ NetworkLoadMetrics CurlRequest::networkLoadMetrics()
 
     if (m_captureExtraMetrics) {
         m_curlHandle->addExtraNetworkLoadMetrics(*networkLoadMetrics);
-        if (auto* additionalMetrics = networkLoadMetrics->additionalNetworkLoadMetricsForWebInspector.get())
+        if (auto* additionalMetrics = networkLoadMetrics->additionalNetworkLoadMetricsForWebInspector.get()) {
+            additionalMetrics->requestHeaderBytesSent = m_requestHeaderSize;
             additionalMetrics->requestHeaders = m_requestHeaders;
+        }
     }
 
     return WTFMove(*networkLoadMetrics);
+}
+
+std::optional<long long> CurlRequest::getContentLength()
+{
+    for (const auto& header : m_response.headers) {
+        if (header.startsWithIgnoringASCIICase("content-length:"_s)) {
+            if (auto splitPosition = header.find(':'); splitPosition != notFound) {
+                auto value = header.substring(splitPosition + 1).trim(deprecatedIsSpaceOrNewline);
+                if (auto length = parseContentLength(value))
+                    return *length;
+            }
+        }
+    }
+
+    return std::nullopt;
 }
 
 size_t CurlRequest::willSendDataCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* userData)

@@ -3321,12 +3321,6 @@ webkit.org/b/272127 fast/text/remove-renderer-and-select-crash.html [ Skip ]
 
 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
 
-# Pass on Buildbot, Failure on my PC
-webkit.org/b/272445 http/tests/inspector/network/resource-sizes-network.html [ Failure Pass ]
-webkit.org/b/272445 http/tests/xmlhttprequest/onabort-response-getters.html [ Failure Pass ]
-webkit.org/b/272445 http/tests/xmlhttprequest/onload-progressevent-attributes.html [ Failure Pass ]
-webkit.org/b/272445 http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html [ Failure Pass ]
-
 fast/forms/form-submission-crash-4.html [ Timeout Failure Pass ]
 
 css3/filters/backdrop-filter-page-scale.html [ ImageOnlyFailure ]
