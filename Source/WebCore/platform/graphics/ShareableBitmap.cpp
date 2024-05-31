@@ -170,7 +170,7 @@ ShareableBitmap::ShareableBitmap(ShareableBitmapConfiguration configuration, Ref
 
 void* ShareableBitmap::data() const
 {
-    return m_sharedMemory->data();
+    return m_sharedMemory->mutableSpan().data();
 }
 
 } // namespace WebCore

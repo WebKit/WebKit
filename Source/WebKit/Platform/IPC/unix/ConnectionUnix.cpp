@@ -205,7 +205,7 @@ bool Connection::processMessage()
 
     uint8_t* messageBody = messageData;
     if (messageInfo.isBodyOutOfLine())
-        messageBody = reinterpret_cast<uint8_t*>(oolMessageBody->data());
+        messageBody = oolMessageBody->mutableSpan().data();
 
     auto decoder = Decoder::create({ messageBody, messageInfo.bodySize() }, WTFMove(attachments));
     ASSERT(decoder);

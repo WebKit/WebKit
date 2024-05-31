@@ -102,7 +102,7 @@ auto ShareableResource::createHandle() -> std::optional<Handle>
 
 const uint8_t* ShareableResource::data() const
 {
-    return static_cast<const uint8_t*>(m_sharedMemory->data()) + m_offset;
+    return m_sharedMemory->span().subspan(m_offset).data();
 }
 
 unsigned ShareableResource::size() const

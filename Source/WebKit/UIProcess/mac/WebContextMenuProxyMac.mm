@@ -424,7 +424,7 @@ void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem 
     }
 
     if (hitTestData.imageSharedMemory) {
-        if (auto image = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:(unsigned char*)hitTestData.imageSharedMemory->data() length:hitTestData.imageSharedMemory->size()]])) {
+        if (auto image = adoptNS([[NSImage alloc] initWithData:hitTestData.imageSharedMemory->toNSData().get()])) {
 #if HAVE(NSPREVIEWREPRESENTINGACTIVITYITEM)
             NSString *title = hitTestData.imageText;
             if (!title.length)

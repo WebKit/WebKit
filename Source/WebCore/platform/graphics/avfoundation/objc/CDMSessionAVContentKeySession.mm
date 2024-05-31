@@ -28,6 +28,7 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
+#import "CDMFairPlayStreaming.h"
 #import "CDMPrivateMediaSourceAVFObjC.h"
 #import "LegacyCDM.h"
 #import "Logging.h"

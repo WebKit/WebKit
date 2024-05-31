@@ -219,7 +219,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/RuntimeApplicationChecksCocoa.mm
     platform/cocoa/SearchPopupMenuCocoa.mm
     platform/cocoa/SharedBufferCocoa.mm
-    platform/cocoa/SharedMemoryCocoa.cpp
+    platform/cocoa/SharedMemoryCocoa.mm
     platform/cocoa/SystemBattery.mm
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp

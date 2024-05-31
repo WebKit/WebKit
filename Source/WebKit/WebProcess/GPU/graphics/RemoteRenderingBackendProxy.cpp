@@ -47,6 +47,7 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <WebCore/FontCustomPlatformData.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/TextStream.h>
 
 #if HAVE(IOSURFACE)
@@ -256,7 +257,7 @@ bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResource
         if (!sendResult.succeeded())
             return false;
     }
-    memcpy(result.data(), m_getPixelBufferSharedMemory->data(), result.size());
+    memcpySpan(result, m_getPixelBufferSharedMemory->span().first(result.size()));
     return true;
 }
 

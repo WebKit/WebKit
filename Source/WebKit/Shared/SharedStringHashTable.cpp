@@ -27,6 +27,7 @@
 #include "SharedStringHashTable.h"
 
 #include <WebCore/SharedMemory.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
@@ -68,7 +69,7 @@ void SharedStringHashTable::clear()
     if (!m_sharedMemory)
         return;
 
-    memset(m_sharedMemory->data(), 0, m_sharedMemory->size());
+    memsetSpan(m_sharedMemory->mutableSpan(), 0);
     setSharedMemory(nullptr);
 }
 

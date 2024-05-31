@@ -2766,10 +2766,9 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #if ENABLE(APP_HIGHLIGHTS)
 static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, NSData *highlight)
 {
-    auto sharedMemory = WebCore::SharedMemory::allocate(highlight.length);
-    if (sharedMemory) {
-        [highlight getBytes:sharedMemory->data() length:highlight.length];
-        buffers.append(*sharedMemory);
+    if (auto sharedMemory = WebCore::SharedMemory::allocate(highlight.length)) {
+        [highlight getBytes:sharedMemory->mutableSpan().data() length:highlight.length];
+        buffers.append(sharedMemory.releaseNonNull());
     }
 }
 #endif

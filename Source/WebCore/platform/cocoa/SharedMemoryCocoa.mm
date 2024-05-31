@@ -23,22 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SharedMemory.h"
+#import "config.h"
+#import "SharedMemory.h"
 
-#include "Logging.h"
-#include "ProcessIdentity.h"
-#include "SharedBuffer.h"
-#include <mach/mach_error.h>
-#include <mach/mach_init.h>
-#include <mach/mach_port.h>
-#include <mach/vm_map.h>
-#include <wtf/MachSendRight.h>
-#include <wtf/RefPtr.h>
-#include <wtf/spi/cocoa/MachVMSPI.h>
+#import "Logging.h"
+#import "ProcessIdentity.h"
+#import "SharedBuffer.h"
+#import <mach/mach_error.h>
+#import <mach/mach_init.h>
+#import <mach/mach_port.h>
+#import <mach/vm_map.h>
+#import <wtf/MachSendRight.h>
+#import <wtf/RefPtr.h>
+#import <wtf/spi/cocoa/MachVMSPI.h>
 
 #if HAVE(MACH_MEMORY_ENTRY)
-#include <mach/memory_entry.h>
+#import <mach/memory_entry.h>
 #endif
 
 namespace WebCore {
@@ -226,6 +226,12 @@ WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
 
     ASSERT(m_data);
     return makeMemoryEntry(m_size, toVMAddress(m_data), protection, MACH_PORT_NULL);
+}
+
+RetainPtr<NSData> SharedMemory::toNSData() const
+{
+    auto span = this->span();
+    return adoptNS([[NSData alloc] initWithBytes:span.data() length:span.size()]);
 }
 
 } // namespace WebCore

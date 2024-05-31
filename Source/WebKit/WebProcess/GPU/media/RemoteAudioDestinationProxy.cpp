@@ -73,7 +73,7 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
 uint32_t RemoteAudioDestinationProxy::totalFrameCount() const
 {
     RELEASE_ASSERT(m_frameCount->size() == sizeof(std::atomic<uint32_t>));
-    return WTF::atomicLoad(static_cast<uint32_t*>(m_frameCount->data()));
+    return WTF::atomicLoad(reinterpret_cast<uint32_t*>(m_frameCount->mutableSpan().data()));
 }
 
 void RemoteAudioDestinationProxy::startRenderingThread()

@@ -314,7 +314,7 @@ platform/cocoa/RuntimeApplicationChecksCocoa.mm
 platform/cocoa/SearchPopupMenuCocoa.mm
 platform/cocoa/SerializedPlatformDataCueValue.mm @no-unify
 platform/cocoa/SharedBufferCocoa.mm
-platform/cocoa/SharedMemoryCocoa.cpp
+platform/cocoa/SharedMemoryCocoa.mm
 platform/cocoa/SystemVersion.mm
 platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 platform/cocoa/TextRecognitionResultCocoa.mm

@@ -27,6 +27,7 @@
 #include "SharedMemory.h"
 
 #include "SharedBuffer.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -46,10 +47,10 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const FragmentedSharedBuffer& buff
     if (!sharedMemory)
         return nullptr;
 
-    auto sharedMemoryPtr = static_cast<char*>(sharedMemory->data());
-    buffer.forEachSegment([sharedMemoryPtr] (std::span<const uint8_t> segment) mutable {
-        memcpy(sharedMemoryPtr, segment.data(), segment.size());
-        sharedMemoryPtr += segment.size();
+    auto destination = sharedMemory->mutableSpan();
+    buffer.forEachSegment([&] (std::span<const uint8_t> segment) mutable {
+        memcpySpan(destination.first(segment.size()), segment);
+        destination = destination.subspan(segment.size());
     });
 
     return sharedMemory;
@@ -60,7 +61,7 @@ Ref<SharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
     ASSERT(dataSize <= size());
     return SharedBuffer::create(DataSegment::Provider {
         [protectedThis = Ref { *this }] () -> const uint8_t* {
-            return static_cast<const uint8_t*>(protectedThis->data());
+            return protectedThis->span().data();
         },
         [dataSize] () -> size_t {
             return dataSize;

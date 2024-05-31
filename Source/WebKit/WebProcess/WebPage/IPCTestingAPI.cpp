@@ -65,6 +65,7 @@
 #include <WebCore/SharedMemory.h>
 #include <wtf/PageBlock.h>
 #include <wtf/Scope.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringConcatenate.h>
 
 namespace WebKit::IPCTestingAPI {
@@ -1637,7 +1638,7 @@ JSValueRef JSSharedMemory::writeBytes(JSContextRef context, JSObjectRef, JSObjec
         length = *lengthValue;
     }
 
-    memcpy(static_cast<uint8_t*>(jsSharedMemory->m_sharedMemory->data()) + offset, span.data(), length);
+    memcpySpan(jsSharedMemory->m_sharedMemory->mutableSpan().subspan(offset, length), span.first(length));
 
     return JSValueMakeUndefined(context);
 }

@@ -110,7 +110,7 @@ public:
 
     Atomic<ClientOffset>& clientOffset() { return header().clientOffset; }
     Atomic<ServerOffset>& serverOffset() { return header().serverOffset; }
-    uint8_t* data() const { return static_cast<uint8_t*>(m_sharedMemory->data()) + headerSize(); }
+    uint8_t* data() const { return m_sharedMemory->mutableSpan().subspan(headerSize()).data(); }
     size_t dataSize() const { return m_dataSize; }
 
     static constexpr size_t maximumSize() { return std::min(static_cast<size_t>(ClientOffset::serverIsSleepingTag), static_cast<size_t>(ClientOffset::serverIsSleepingTag)) - 1; }
@@ -135,7 +135,7 @@ protected:
 
 #undef HEADER_POINTER_ALIGNMENT
 
-    Header& header() const { return *reinterpret_cast<Header*>(m_sharedMemory->data()); }
+    Header& header() const { return *reinterpret_cast<Header*>(m_sharedMemory->mutableSpan().data()); }
     static constexpr size_t headerSize() { return roundUpToMultipleOf<alignof(std::max_align_t)>(sizeof(Header)); }
 
     size_t m_dataSize { 0 };

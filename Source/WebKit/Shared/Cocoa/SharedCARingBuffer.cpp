@@ -83,7 +83,7 @@ std::optional<ProducerSharedCARingBuffer::Pair> ProducerSharedCARingBuffer::allo
     if (!handle)
         return std::nullopt;
 
-    new (NotNull, sharedMemory->data()) TimeBoundsBuffer;
+    new (NotNull, sharedMemory->mutableSpan().data()) TimeBoundsBuffer;
     std::unique_ptr<ProducerSharedCARingBuffer> result { new ProducerSharedCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, sharedMemory.releaseNonNull() } };
     result->initialize();
     return Pair { WTFMove(result), { WTFMove(*handle), frameCount } };

@@ -36,6 +36,10 @@ OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+typedef struct __CVBuffer* CVPixelBufferRef;
+#endif
+
 namespace WebCore {
 
 class WebCoreDecompressionSession;
