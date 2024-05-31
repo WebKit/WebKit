@@ -176,7 +176,7 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
 
 bool InlineAccess::generateSelfPropertyAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
 {
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
     if (codeBlock->useDataIC()) {
@@ -235,7 +235,7 @@ ALWAYS_INLINE static bool hasFreeRegister(StructureStubInfo& stubInfo)
 
 bool InlineAccess::canGenerateSelfPropertyReplace(CodeBlock* codeBlock, StructureStubInfo& stubInfo, PropertyOffset offset)
 {
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
     if (codeBlock->useDataIC())
@@ -249,7 +249,7 @@ bool InlineAccess::canGenerateSelfPropertyReplace(CodeBlock* codeBlock, Structur
 
 bool InlineAccess::generateSelfPropertyReplace(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
 {
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
     ASSERT(canGenerateSelfPropertyReplace(codeBlock, stubInfo, offset));
@@ -288,7 +288,7 @@ bool InlineAccess::isCacheableArrayLength(CodeBlock* codeBlock, StructureStubInf
 {
     ASSERT(array->indexingType() & IsArray);
 
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
     if (codeBlock->useDataIC())
@@ -305,7 +305,7 @@ bool InlineAccess::generateArrayLength(CodeBlock* codeBlock, StructureStubInfo& 
     ASSERT_UNUSED(codeBlock, !codeBlock->useDataIC());
     ASSERT_UNUSED(codeBlock, isCacheableArrayLength(codeBlock, stubInfo, array));
 
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
     CCallHelpers jit;
@@ -327,7 +327,7 @@ bool InlineAccess::generateArrayLength(CodeBlock* codeBlock, StructureStubInfo& 
 
 bool InlineAccess::isCacheableStringLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
     if (codeBlock->useDataIC())
@@ -341,7 +341,7 @@ bool InlineAccess::generateStringLength(CodeBlock* codeBlock, StructureStubInfo&
     ASSERT_UNUSED(codeBlock, !codeBlock->useDataIC());
     ASSERT_UNUSED(codeBlock, isCacheableStringLength(codeBlock, stubInfo));
 
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
     CCallHelpers jit;
@@ -374,7 +374,7 @@ bool InlineAccess::generateSelfInAccess(CodeBlock* codeBlock, StructureStubInfo&
 {
     CCallHelpers jit;
 
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
     if (codeBlock->useDataIC()) {

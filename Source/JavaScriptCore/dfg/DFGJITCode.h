@@ -66,7 +66,6 @@ struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     GPRReg m_extraTagGPR { InvalidGPRReg };
     GPRReg m_extra2TagGPR { InvalidGPRReg };
 #endif
-    bool hasConstantIdentifier { false };
 };
 
 struct UnlinkedCallLinkInfo : JSC::UnlinkedCallLinkInfo {

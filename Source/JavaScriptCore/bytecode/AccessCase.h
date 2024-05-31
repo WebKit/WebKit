@@ -86,7 +86,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(ProxyObjectStore) \
     macro(InstanceOfHit) \
     macro(InstanceOfMiss) \
-    macro(InstanceOfGeneric) \
+    macro(InstanceOfMegamorphic) \
     macro(CheckPrivateBrand) \
     macro(SetPrivateBrand) \
     macro(IndexedProxyObjectLoad) \
@@ -211,13 +211,26 @@ public:
         return m_structureID.get();
     }
 
+    StructureID structureID() const
+    {
+        if (auto* result = structure())
+            return result->id();
+        return StructureID();
+    }
+
     Structure* newStructure() const
     {
         ASSERT(m_type == Transition || m_type == Delete || m_type == SetPrivateBrand);
         return m_structureID.get();
     }
 
-    ObjectPropertyConditionSet conditionSet() const { return m_conditionSet; }
+    StructureID newStructureID() const
+    {
+        ASSERT(m_type == Transition || m_type == Delete || m_type == SetPrivateBrand);
+        return m_structureID.value();
+    }
+
+    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
 
     JSObject* tryGetAlternateBase() const;
 

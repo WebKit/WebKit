@@ -689,13 +689,41 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+    if (result.generatedMegamorphicCode())
+        return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
 void repatchArrayGetByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, StructureStubInfo& stubInfo, GetByKind kind)
 {
-    if (tryCacheArrayGetByVal(globalObject, codeBlock, base, index, stubInfo) == GiveUpOnCache)
+    switch (tryCacheArrayGetByVal(globalObject, codeBlock, base, index, stubInfo)) {
+    case PromoteToMegamorphic: {
+        switch (kind) {
+        case GetByKind::ById:
+            repatchSlowPathCall(codeBlock, stubInfo, operationGetByIdMegamorphic);
+            break;
+        case GetByKind::ByIdWithThis:
+            repatchSlowPathCall(codeBlock, stubInfo, operationGetByIdWithThisMegamorphic);
+            break;
+        case GetByKind::ByVal:
+            repatchSlowPathCall(codeBlock, stubInfo, operationGetByValMegamorphic);
+            break;
+        case GetByKind::ByValWithThis:
+            repatchSlowPathCall(codeBlock, stubInfo, operationGetByValWithThisMegamorphic);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+    case GiveUpOnCache:
         repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByGaveUpFunction(kind));
+        break;
+    case RetryCacheLater:
+    case AttemptToCache:
+        break;
+    }
 }
 
 static CodePtr<CFunctionPtrTag> appropriatePutByGaveUpFunction(PutByKind putByKind)
@@ -1023,7 +1051,6 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-
     if (result.generatedMegamorphicCode())
         return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
@@ -1149,13 +1176,41 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+    if (result.generatedMegamorphicCode())
+        return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
 void repatchArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, StructureStubInfo& stubInfo, PutByKind putByKind)
 {
-    if (tryCacheArrayPutByVal(globalObject, codeBlock, base, index, stubInfo, putByKind) == GiveUpOnCache)
+    switch (tryCacheArrayPutByVal(globalObject, codeBlock, base, index, stubInfo, putByKind)) {
+    case PromoteToMegamorphic: {
+        switch (putByKind) {
+        case PutByKind::ByIdStrict:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByIdStrictMegamorphic);
+            break;
+        case PutByKind::ByIdSloppy:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByIdSloppyMegamorphic);
+            break;
+        case PutByKind::ByValStrict:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByValStrictMegamorphic);
+            break;
+        case PutByKind::ByValSloppy:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByValSloppyMegamorphic);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+    case GiveUpOnCache:
         repatchSlowPathCall(codeBlock, stubInfo, appropriatePutByGaveUpFunction(putByKind));
+        break;
+    case RetryCacheLater:
+    case AttemptToCache:
+        break;
+    }
 }
 
 static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeletePropertySlot& slot, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, StructureStubInfo& stubInfo, DelByKind, ECMAMode ecmaMode)
@@ -1222,7 +1277,6 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1384,10 +1438,8 @@ static InlineCacheAction tryCacheInBy(
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-
     if (result.generatedMegamorphicCode())
         return PromoteToMegamorphic;
-
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1449,7 +1501,6 @@ static InlineCacheAction tryCacheHasPrivateBrand(JSGlobalObject* globalObject, C
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1492,7 +1543,6 @@ static InlineCacheAction tryCacheCheckPrivateBrand(
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1547,7 +1597,6 @@ static InlineCacheAction tryCacheSetPrivateBrand(
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-    
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1559,9 +1608,7 @@ void repatchSetPrivateBrand(JSGlobalObject* globalObject, CodeBlock* codeBlock, 
         repatchSlowPathCall(codeBlock, stubInfo, operationSetPrivateBrandGaveUp);
 }
 
-static InlineCacheAction tryCacheInstanceOf(
-    JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue valueValue, JSValue prototypeValue, StructureStubInfo& stubInfo,
-    bool wasFound)
+static InlineCacheAction tryCacheInstanceOf(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue valueValue, JSValue prototypeValue, StructureStubInfo& stubInfo, bool wasFound)
 {
     VM& vm = globalObject->vm();
     AccessGenerationResult result;
@@ -1600,7 +1647,7 @@ static InlineCacheAction tryCacheInstanceOf(
         }
         
         if (!newCase)
-            newCase = AccessCase::create(vm, codeBlock, AccessCase::InstanceOfGeneric, nullptr);
+            newCase = AccessCase::create(vm, codeBlock, AccessCase::InstanceOfMegamorphic, nullptr);
         
         LOG_IC((vm, ICEvent::InstanceOfAddAccessCase, structure->classInfoForCells(), Identifier()));
         
@@ -1611,7 +1658,8 @@ static InlineCacheAction tryCacheInstanceOf(
     }
     
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-    
+    if (result.generatedMegamorphicCode())
+        return GiveUpOnCache; // In this case, we give up since we do not cache the results in the megamorphic table.
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1731,13 +1779,35 @@ static InlineCacheAction tryCacheArrayInByVal(JSGlobalObject* globalObject, Code
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+    if (result.generatedMegamorphicCode())
+        return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
 void repatchArrayInByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, StructureStubInfo& stubInfo, InByKind kind)
 {
-    if (tryCacheArrayInByVal(globalObject, codeBlock, base, index, stubInfo) == GiveUpOnCache)
+    switch (tryCacheArrayInByVal(globalObject, codeBlock, base, index, stubInfo)) {
+    case PromoteToMegamorphic: {
+        switch (kind) {
+        case InByKind::ById:
+            repatchSlowPathCall(codeBlock, stubInfo, operationInByIdMegamorphic);
+            break;
+        case InByKind::ByVal:
+            repatchSlowPathCall(codeBlock, stubInfo, operationInByValMegamorphic);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+    case GiveUpOnCache:
         repatchSlowPathCall(codeBlock, stubInfo, appropriateInByGaveUpFunction(kind));
+        break;
+    case RetryCacheLater:
+    case AttemptToCache:
+        break;
+    }
 }
 
 void repatchInstanceOf(

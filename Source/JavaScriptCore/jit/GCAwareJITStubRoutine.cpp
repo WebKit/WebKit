@@ -286,6 +286,11 @@ Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
     return stub;
 }
 
+Ref<PolymorphicAccessJITStubRoutine> createPreCompiledICJITStubRoutine(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm)
+{
+    return adoptRef(*new PolymorphicAccessJITStubRoutine(JITStubRoutine::Type::PolymorphicAccessJITStubRoutineType, code, vm, { }, { }, nullptr));
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

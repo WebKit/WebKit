@@ -267,6 +267,13 @@ public:
         add32Impl(imm, address, updateFlags);
     }
 
+    void add8(TrustedImm32 imm, Address address)
+    {
+        load8(address, dataTempRegister);
+        add32(imm, dataTempRegister, dataTempRegister);
+        store8(dataTempRegister, address);
+    }
+
     void getEffectiveAddress(BaseIndex address, RegisterID dest)
     {
         RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();

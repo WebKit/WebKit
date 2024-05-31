@@ -97,7 +97,6 @@ public:
             stubInfo.codeOrigin = codeOrigin;
             stubInfo.callSiteIndex = callSiteIndex;
             stubInfo.usedRegisters = usedRegisters.buildScalarRegisterSet();
-            stubInfo.hasConstantIdentifier = true;
         }
     }
 
@@ -293,7 +292,6 @@ public:
             stubInfo.m_valueTagGPR = valueRegs.tagGPR();
             stubInfo.m_extraTagGPR = propertyRegs.tagGPR();
 #endif
-            stubInfo.hasConstantIdentifier = false;
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(propertyRegs);
@@ -346,7 +344,6 @@ public:
             stubInfo.m_valueTagGPR = resultRegs.tagGPR();
             stubInfo.m_extraTagGPR = propertyRegs.tagGPR();
 #endif
-            stubInfo.hasConstantIdentifier = false;
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(propertyRegs);
@@ -431,7 +428,6 @@ public:
             stubInfo.m_valueTagGPR = resultRegs.tagGPR();
             stubInfo.m_extraTagGPR = propertyRegs.tagGPR();
 #endif
-            stubInfo.hasConstantIdentifier = false;
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(propertyRegs);
@@ -504,7 +500,6 @@ public:
             stubInfo.m_valueTagGPR = InvalidGPRReg;
             stubInfo.m_extraTagGPR = InvalidGPRReg;
 #endif
-            stubInfo.hasConstantIdentifier = false;
         } else {
             UNUSED_PARAM(valueGPR);
             UNUSED_PARAM(resultGPR);
@@ -559,7 +554,6 @@ public:
             stubInfo.m_valueTagGPR = resultRegs.tagGPR();
             stubInfo.m_extraTagGPR = propertyRegs.tagGPR();
 #endif
-            stubInfo.hasConstantIdentifier = false;
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(propertyRegs);
@@ -618,7 +612,6 @@ public:
             stubInfo.m_extraTagGPR = thisRegs.tagGPR();
             stubInfo.m_extra2TagGPR = propertyRegs.tagGPR();
 #endif
-            stubInfo.hasConstantIdentifier = false;
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(propertyRegs);
@@ -671,7 +664,6 @@ public:
             stubInfo.m_extraTagGPR = brandRegs.tagGPR();
             stubInfo.m_valueTagGPR = InvalidGPRReg;
 #endif
-            stubInfo.hasConstantIdentifier = false;
         } else {
             UNUSED_PARAM(baseRegs);
             UNUSED_PARAM(brandRegs);
