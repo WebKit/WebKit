@@ -1596,8 +1596,6 @@ webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/cap
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-spans.html [ ImageOnlyFailure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ ImageOnlyFailure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/filter-effects/background-image-blur-repaint.html [ ImageOnlyFailure ]
-webkit.org/b/273396 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-003.html [ ImageOnlyFailure ]
-webkit.org/b/273396 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-007.html [ ImageOnlyFailure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-002.html [ ImageOnlyFailure ]
 webkit.org/b/273396 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
@@ -1625,8 +1623,6 @@ webkit.org/b/273482 imported/w3c/web-platform-tests/svg/shapes/scripted/stroke-d
 webkit.org/b/273483 imported/w3c/web-platform-tests/svg/text/scripted/transform-dynamic-update.html [ Failure ]
 
 webkit.org/b/273484 inspector/model/font-calculate-properties.html [ Failure ]
-
-webkit.org/b/273485 svg/dom/SVGGeometry-circle.xhtml [ Failure ]
 
 webkit.org/b/273486 svg/filters/svg-gaussianblur-edgeMode-duplicate.svg [ ImageOnlyFailure ]
 
