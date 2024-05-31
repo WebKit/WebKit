@@ -354,25 +354,34 @@ void RenderPassEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32_t
 
     auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
-        uint64_t strideCount = 0;
+        Checked<int64_t, WTF::RecordOverflow> strideCount = 0;
         switch (bufferData.stepMode) {
         case WGPUVertexStepMode_Vertex:
-            strideCount = firstVertex + vertexCount;
+            strideCount = checkedSum<uint32_t>(firstVertex, vertexCount);
+            if (strideCount.hasOverflowed()) {
+                makeInvalid(@"StrideCount invalid");
+                return;
+            }
             break;
         case WGPUVertexStepMode_Instance:
-            strideCount = firstInstance + instanceCount;
+            strideCount = checkedSum<uint32_t>(firstInstance, instanceCount);
+            if (strideCount.hasOverflowed()) {
+                makeInvalid(@"StrideCount invalid");
+                return;
+            }
             break;
         default:
             break;
         }
-        if (!strideCount)
+
+        if (!strideCount.value())
             continue;
 
         auto it = m_vertexBuffers.find(bufferIndex);
         RELEASE_ASSERT(it != m_vertexBuffers.end());
         auto bufferSize = it->value.size;
-        if ((strideCount - 1) * bufferData.stride + bufferData.lastStride > bufferSize) {
-            makeInvalid([NSString stringWithFormat:@"Buffer[%d] fails: (strideCount(%llu) - 1) * bufferData.stride(%llu) + bufferData.lastStride(%llu) > bufferSize(%llu)", bufferIndex, strideCount, bufferData.stride,  bufferData.lastStride, bufferSize]);
+        if ((strideCount.value() - 1) * bufferData.stride + bufferData.lastStride > bufferSize) {
+            makeInvalid([NSString stringWithFormat:@"Buffer[%d] fails: (strideCount(%llu) - 1) * bufferData.stride(%llu) + bufferData.lastStride(%llu) > bufferSize(%llu)", bufferIndex, strideCount.value(), bufferData.stride,  bufferData.lastStride, bufferSize]);
             return;
         }
     }
