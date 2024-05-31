@@ -1027,7 +1027,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 
     Position adjustedStart = start;
 
-    if (RefPtr pictureElement = dynamicDowncast<HTMLPictureElement>(specialCommonAncestor))
+    if (RefPtr pictureElement = enclosingElementWithTag(adjustedStart, pictureTag))
         adjustedStart = firstPositionInNode(pictureElement.get());
 
     if (annotate == AnnotateForInterchange::Yes && needInterchangeNewlineAfter(visibleStart)) {
