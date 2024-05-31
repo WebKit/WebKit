@@ -382,6 +382,14 @@ private:
     Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16> m_callLinkInfos;
 };
 
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingHandlerCodeGenerator(VM&);
+
 } // namespace JSC
 
 namespace WTF {

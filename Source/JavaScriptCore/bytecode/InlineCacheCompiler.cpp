@@ -4852,7 +4852,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
 template<bool ownProperty>
-static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerCodeGenerator(VM& vm)
+static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerCodeGeneratorImpl(VM& vm)
 {
     CCallHelpers jit;
 
@@ -4887,8 +4887,20 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerCodeGenerator(VM&
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetById Load handler"_s, "GetById Load handler");
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandlerCodeGenerator(VM& vm)
+{
+    constexpr bool ownProperty = true;
+    return getByIdLoadHandlerCodeGeneratorImpl<ownProperty>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandlerCodeGenerator(VM& vm)
+{
+    constexpr bool ownProperty = false;
+    return getByIdLoadHandlerCodeGeneratorImpl<ownProperty>(vm);
+}
+
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
-static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandlerCodeGenerator(VM& vm)
 {
     CCallHelpers jit;
 
@@ -4918,7 +4930,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandlerCodeGenerator(VM&
 }
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
-static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM& vm)
 {
     CCallHelpers jit;
 
@@ -4950,7 +4962,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
 template<bool allocating, bool reallocating>
-static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionHandlerCodeGenerator(VM& vm)
+static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionHandlerCodeGeneratorImpl(VM& vm)
 {
     CCallHelpers jit;
 
@@ -5055,6 +5067,27 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionHandlerCodeGenerat
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "PutById Transition handler"_s, "PutById Transition handler");
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandlerCodeGenerator(VM& vm)
+{
+    constexpr bool allocating = false;
+    constexpr bool reallocating = false;
+    return putByIdTransitionHandlerCodeGeneratorImpl<allocating, reallocating>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandlerCodeGenerator(VM& vm)
+{
+    constexpr bool allocating = true;
+    constexpr bool reallocating = false;
+    return putByIdTransitionHandlerCodeGeneratorImpl<allocating, reallocating>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingHandlerCodeGenerator(VM& vm)
+{
+    constexpr bool allocating = true;
+    constexpr bool reallocating = true;
+    return putByIdTransitionHandlerCodeGeneratorImpl<allocating, reallocating>(vm);
+}
+
 AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(PolymorphicAccess& poly, CodeBlock* codeBlock, AccessCase& accessCase, Vector<WatchpointSet*, 8>&& additionalWatchpointSets)
 {
     ASSERT(useHandlerIC());
@@ -5150,9 +5183,9 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
 
                             MacroAssemblerCodeRef<JITStubRoutinePtrTag> code;
                             if (!accessCase.tryGetAlternateBase())
-                                code = vm.getCTIStub(getByIdLoadHandlerCodeGenerator<true>).retagged<JITStubRoutinePtrTag>();
+                                code = vm.getCTIStub(CommonJITThunkID::GetByIdLoadOwnPropertyHandler).retagged<JITStubRoutinePtrTag>();
                             else
-                                code = vm.getCTIStub(getByIdLoadHandlerCodeGenerator<false>).retagged<JITStubRoutinePtrTag>();
+                                code = vm.getCTIStub(CommonJITThunkID::GetByIdLoadPrototypePropertyHandler).retagged<JITStubRoutinePtrTag>();
                             auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
                             connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
                             return finishPreCompiledCodeGeneration(WTFMove(stub));
@@ -5166,7 +5199,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                         Vector<ObjectPropertyCondition, 64> checkingConditions;
                         collectConditions(accessCase, watchedConditions, checkingConditions);
                         if (checkingConditions.isEmpty()) {
-                            auto code = vm.getCTIStub(getByIdMissHandlerCodeGenerator).retagged<JITStubRoutinePtrTag>();
+                            auto code = vm.getCTIStub(CommonJITThunkID::GetByIdMissHandler).retagged<JITStubRoutinePtrTag>();
                             auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
                             connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
                             return finishPreCompiledCodeGeneration(WTFMove(stub));
@@ -5199,7 +5232,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                         Vector<ObjectPropertyCondition, 64> checkingConditions;
                         collectConditions(accessCase, watchedConditions, checkingConditions);
                         if (checkingConditions.isEmpty()) {
-                            auto code = vm.getCTIStub(putByIdReplaceHandlerCodeGenerator).retagged<JITStubRoutinePtrTag>();
+                            auto code = vm.getCTIStub(CommonJITThunkID::PutByIdReplaceHandler).retagged<JITStubRoutinePtrTag>();
                             auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
                             connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
                             return finishPreCompiledCodeGeneration(WTFMove(stub));
@@ -5219,11 +5252,11 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                         if (checkingConditions.isEmpty()) {
                             MacroAssemblerCodeRef<JITStubRoutinePtrTag> code;
                             if (!allocating)
-                                code = vm.getCTIStub(putByIdTransitionHandlerCodeGenerator<false, false>).retagged<JITStubRoutinePtrTag>();
+                                code = vm.getCTIStub(CommonJITThunkID::PutByIdTransitionNonAllocatingHandler).retagged<JITStubRoutinePtrTag>();
                             else if (!reallocating)
-                                code = vm.getCTIStub(putByIdTransitionHandlerCodeGenerator<true, false>).retagged<JITStubRoutinePtrTag>();
+                                code = vm.getCTIStub(CommonJITThunkID::PutByIdTransitionNewlyAllocatingHandler).retagged<JITStubRoutinePtrTag>();
                             else
-                                code = vm.getCTIStub(putByIdTransitionHandlerCodeGenerator<true, true>).retagged<JITStubRoutinePtrTag>();
+                                code = vm.getCTIStub(CommonJITThunkID::PutByIdTransitionReallocatingHandler).retagged<JITStubRoutinePtrTag>();
                             auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
                             connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
                             return finishPreCompiledCodeGeneration(WTFMove(stub));
@@ -5380,6 +5413,14 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
     return finishCodeGeneration(WTFMove(stub), JSC::doesJSCalls(accessCase.m_type));
 }
 
+#else
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandlerCodeGenerator(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandlerCodeGenerator(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandlerCodeGenerator(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandlerCodeGenerator(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandlerCodeGenerator(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingHandlerCodeGenerator(VM&) { return { }; }
 #endif
 
 PolymorphicAccess::PolymorphicAccess() = default;

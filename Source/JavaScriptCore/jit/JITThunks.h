@@ -71,7 +71,13 @@ class NativeExecutable;
     macro(PolymorphicThunkForClosure, polymorphicThunkForClosure) \
     macro(ReturnFromBaseline, returnFromBaselineGenerator) \
     macro(ArityFixup, arityFixupGenerator) \
-
+    macro(GetByIdLoadOwnPropertyHandler, getByIdLoadOwnPropertyHandlerCodeGenerator) \
+    macro(GetByIdLoadPrototypePropertyHandler, getByIdLoadPrototypePropertyHandlerCodeGenerator) \
+    macro(GetByIdMissHandler, getByIdMissHandlerCodeGenerator) \
+    macro(PutByIdReplaceHandler, putByIdReplaceHandlerCodeGenerator) \
+    macro(PutByIdTransitionNonAllocatingHandler, putByIdTransitionNonAllocatingHandlerCodeGenerator) \
+    macro(PutByIdTransitionNewlyAllocatingHandler, putByIdTransitionNewlyAllocatingHandlerCodeGenerator) \
+    macro(PutByIdTransitionReallocatingHandler, putByIdTransitionReallocatingHandlerCodeGenerator) \
 
 #if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
 #define JSC_FOR_EACH_YARR_JIT_BACKREFERENCES_THUNK(macro) \
