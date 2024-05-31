@@ -22,7 +22,6 @@
 
 #if ENABLE(WEB_CODECS) && USE(GSTREAMER)
 
-#include "GStreamerCodecUtilities.h"
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"

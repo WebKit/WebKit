@@ -22,12 +22,9 @@
 
 #if USE(GSTREAMER)
 
-#include "GStreamerCodecUtilities.h"
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
-#include "HEVCUtilities.h"
-#include "VP9Utilities.h"
 #include "VideoFrameGStreamer.h"
 #include <wtf/WorkQueue.h>
 
