@@ -493,7 +493,6 @@ accessibility/focusable-ancestor.html [ Skip ]
 
 # Missing AccessibilityUIElement::{editableAncestor, highestEditableAncestor} implementations.
 accessibility/editable-ancestor.html [ Skip ]
-accessibility/content-editable-property-change.html [ Skip ]
 
 # Timing out since it was added in https://bugs.webkit.org/show_bug.cgi?id=239434.
 accessibility/text-updates-after-dynamic-change.html [ Skip ]
@@ -621,6 +620,9 @@ accessibility/table-insert-second-thead.html [ Skip ]
 
 # Fails due to missing AccessibilityUIElement::columns() implementation.
 accessibility/dynamic-table-row-column-indices.html [ Skip ]
+
+# Failing since added in webkit.org/b/274607
+accessibility/cells-inside-contenteditable.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs

@@ -1,0 +1,10 @@
+This test verifies that cells expose their static text when inside contenteditable + textbox containers.
+
+AXValue: Head 1
+AXValue: Cell 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Head 1	Head 2
+Cell 1	cell 2

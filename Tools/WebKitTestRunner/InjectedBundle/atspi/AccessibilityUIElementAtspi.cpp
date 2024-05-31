@@ -1863,11 +1863,6 @@ bool AccessibilityUIElement::isLastItemInSuggestion() const
     return false;
 }
 
-bool AccessibilityUIElement::isInNonNativeTextControl() const
-{
-    return false;
-}
-
 } // namespace WTR
 
 #endif // USE(ATSPI)

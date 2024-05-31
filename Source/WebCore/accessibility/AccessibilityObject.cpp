@@ -367,7 +367,7 @@ bool AccessibilityObject::isARIATextControl() const
 
 bool AccessibilityObject::isNonNativeTextControl() const
 {
-    return (hasContentEditableAttributeSet() || isARIATextControl()) && !isNativeTextControl();
+    return (isARIATextControl() || hasContentEditableAttributeSet()) && !isNativeTextControl();
 }
 
 bool AccessibilityObject::hasMisspelling() const

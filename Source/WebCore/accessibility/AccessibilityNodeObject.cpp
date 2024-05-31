@@ -336,11 +336,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
 
 bool AccessibilityNodeObject::matchesTextAreaRole() const
 {
-#if !PLATFORM(COCOA)
-    if (hasContentEditableAttributeSet())
-        return true;
-#endif
-    return is<HTMLTextAreaElement>(node());
+    return is<HTMLTextAreaElement>(node()) || hasContentEditableAttributeSet();
 }
 
 AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline treatStyleFormatGroupAsInline) const
@@ -480,11 +476,6 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Details;
     if (auto* summaryElement = dynamicDowncast<HTMLSummaryElement>(node.get()); summaryElement && summaryElement->isActiveSummary())
         return AccessibilityRole::Summary;
-
-#if PLATFORM(COCOA)
-    if (isNonNativeTextControl())
-        return AccessibilityRole::Group;
-#endif
 
     // http://rawgit.com/w3c/aria/master/html-aam/html-aam.html
     // Output elements should be mapped to status role.

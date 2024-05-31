@@ -103,9 +103,6 @@ bool AXCoreObject::isButton() const
 
 bool AXCoreObject::isTextControl() const
 {
-    if (isNonNativeTextControl())
-        return true;
-
     switch (roleValue()) {
     case AccessibilityRole::ComboBox:
     case AccessibilityRole::SearchField:
