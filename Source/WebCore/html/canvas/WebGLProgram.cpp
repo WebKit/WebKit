@@ -110,30 +110,6 @@ void WebGLProgram::deleteObjectImpl(const AbstractLocker& locker, GraphicsContex
     }
 }
 
-unsigned WebGLProgram::numActiveAttribLocations()
-{
-    cacheInfoIfNeeded();
-    return m_activeAttribLocations.size();
-}
-
-GCGLint WebGLProgram::getActiveAttribLocation(GCGLuint index)
-{
-    cacheInfoIfNeeded();
-    if (index >= numActiveAttribLocations())
-        return -1;
-    return m_activeAttribLocations[index];
-}
-
-bool WebGLProgram::isUsingVertexAttrib0()
-{
-    cacheInfoIfNeeded();
-    for (unsigned ii = 0; ii < numActiveAttribLocations(); ++ii) {
-        if (!getActiveAttribLocation(ii))
-            return true;
-    }
-    return false;
-}
-
 bool WebGLProgram::getLinkStatus()
 {
     cacheInfoIfNeeded();
@@ -204,19 +180,6 @@ void WebGLProgram::addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractS
     addWebCoreOpaqueRoot(visitor, m_fragmentShader.get());
 }
 
-void WebGLProgram::cacheActiveAttribLocations(GraphicsContextGL* context3d)
-{
-    m_activeAttribLocations.clear();
-
-    GCGLint numAttribs = context3d->getProgrami(object(), GraphicsContextGL::ACTIVE_ATTRIBUTES);
-    m_activeAttribLocations.resize(static_cast<size_t>(numAttribs));
-    for (int i = 0; i < numAttribs; ++i) {
-        GraphicsContextGLActiveInfo info;
-        context3d->getActiveAttrib(object(), i, info);
-        m_activeAttribLocations[i] = context3d->getAttribLocation(object(), info.name);
-    }
-}
-
 void WebGLProgram::cacheInfoIfNeeded()
 {
     if (m_infoValid)
@@ -231,7 +194,6 @@ void WebGLProgram::cacheInfoIfNeeded()
     GCGLint linkStatus = context->getProgrami(object(), GraphicsContextGL::LINK_STATUS);
     m_linkStatus = linkStatus;
     if (m_linkStatus) {
-        cacheActiveAttribLocations(context.get());
         m_requiredTransformFeedbackBufferCount = m_requiredTransformFeedbackBufferCountAfterNextLink;
     }
     m_infoValid = true;
