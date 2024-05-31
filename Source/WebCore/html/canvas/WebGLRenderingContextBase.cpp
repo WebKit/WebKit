@@ -820,11 +820,6 @@ void WebGLRenderingContextBase::markDrawingBuffersDirtyAfterTransfer()
     m_compositingResultsNeedUpdating = true;
 }
 
-WebGLTexture::TextureExtensionFlag WebGLRenderingContextBase::textureExtensionFlags() const
-{
-    return static_cast<WebGLTexture::TextureExtensionFlag>((m_oesTextureFloatLinear ? WebGLTexture::TextureExtensionFloatLinearEnabled : 0) | (m_oesTextureHalfFloatLinear ? WebGLTexture::TextureExtensionHalfFloatLinearEnabled : 0));
-}
-
 void WebGLRenderingContextBase::reshape(int width, int height, int oldWidth, int oldHeight)
 {
     if (isContextLost())

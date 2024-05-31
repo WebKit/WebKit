@@ -588,8 +588,6 @@ protected:
     RefPtr<Image> videoFrameToImage(HTMLVideoElement&, ASCIILiteral functionName);
 #endif
 
-    WebGLTexture::TextureExtensionFlag textureExtensionFlags() const;
-
     bool enableSupportedExtension(ASCIILiteral extensionNameLiteral);
     void loseExtensions(LostContextMode);
 
