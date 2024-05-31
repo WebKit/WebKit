@@ -285,4 +285,59 @@ TEST(WKWebViewMacEditingTests, SetMarkedTextWithNoAttributedString)
 }
 #endif
 
+TEST(WKWebViewMacEditingTests, FirstRectForCharacterRange)
+{
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient, NSTextInputClient_Async> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+
+    [webView synchronouslyLoadHTMLString:@"<body id='p' contenteditable>First Line<br>Second Line<br>Third Line<br></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView _setEditable:YES];
+    [webView waitForNextPresentationUpdate];
+
+    __unsafe_unretained id<NSTextInputClient_Async> inputClient = (id<NSTextInputClient_Async>)webView.get();
+
+    __block bool doneTest1 = false;
+    [inputClient firstRectForCharacterRange: { 0, 31 } completionHandler:^(NSRect firstRect, NSRange actualRange) {
+        EXPECT_EQ(8, firstRect.origin.x);
+        EXPECT_EQ(574, firstRect.origin.y);
+        EXPECT_EQ(62, firstRect.size.width);
+        EXPECT_EQ(18, firstRect.size.height);
+
+        EXPECT_EQ(0U, actualRange.location);
+        EXPECT_EQ(10U, actualRange.length);
+        doneTest1 = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneTest1);
+
+    __block bool doneTest2 = false;
+    [inputClient firstRectForCharacterRange: { 0, 5 } completionHandler:^(NSRect firstRect, NSRange actualRange) {
+        EXPECT_EQ(8, firstRect.origin.x);
+        EXPECT_EQ(574, firstRect.origin.y);
+        EXPECT_EQ(30, firstRect.size.width);
+        EXPECT_EQ(18, firstRect.size.height);
+
+        EXPECT_EQ(0U, actualRange.location);
+        EXPECT_EQ(5U, actualRange.length);
+        doneTest2 = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneTest2);
+
+    __block bool doneTest3 = false;
+    [inputClient firstRectForCharacterRange: { 17, 4 } completionHandler:^(NSRect firstRect, NSRange actualRange) {
+        EXPECT_EQ(55, firstRect.origin.x);
+        EXPECT_EQ(556, firstRect.origin.y);
+        EXPECT_EQ(27, firstRect.size.width);
+        EXPECT_EQ(18, firstRect.size.height);
+
+        EXPECT_EQ(17U, actualRange.location);
+        EXPECT_EQ(4U, actualRange.length);
+        doneTest3 = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneTest3);
+}
+
 #endif // PLATFORM(MAC)
