@@ -199,7 +199,7 @@
                   },
                   { "name": "Apple-Sonoma-Debug-WK2-Site-Isolation-Tree-Tests", "factory": "TestLayoutFactory",
                   "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures", "--site-isolation"],
+                  "additionalArguments": ["--no-retry-failures", "--site-isolation", "--run-singly"],
                   "workernames": ["bot303"]
                   },
                   { "name": "Apple-Sonoma-Debug-Build", "factory": "BuildFactory",
