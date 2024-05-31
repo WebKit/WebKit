@@ -1,7 +1,8 @@
 /**
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2006, 2010, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Google Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -108,7 +109,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     }
 
     RenderElement* currentParent = markerRenderer->parent();
-    RenderBlock* newParent = getParentOfFirstLineBox(listItemRenderer, *markerRenderer);
+    RenderBlock* newParent = markerRenderer->isInside() ? &listItemRenderer : getParentOfFirstLineBox(listItemRenderer, *markerRenderer);
     if (!newParent) {
         // If the marker is currently contained inside an anonymous box,
         // then we are the only item in that anonymous box (since no line box
