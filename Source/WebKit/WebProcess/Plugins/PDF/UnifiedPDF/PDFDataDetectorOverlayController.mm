@@ -74,7 +74,7 @@ PageOverlay& PDFDataDetectorOverlayController::installOverlayIfNeeded()
     if (m_overlay)
         return *m_overlay;
 
-    m_overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document, PageOverlay::AlwaysTileOverlayLayer::Yes);
+    m_overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
     protectedPlugin()->installDataDetectorOverlay(*m_overlay);
 
     return *m_overlay;
@@ -257,40 +257,24 @@ void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::o
     auto [previousDataDetectorItem, previousActiveHighlight] = m_staleDataDetectorItemWithHighlight;
     auto [activeDataDetectorItem, activeHighlight] = m_activeDataDetectorItemWithHighlight;
 
-    bool shouldMakePaintRequest = activeHighlightChanged == ActiveHighlightChanged::Yes || activeHighlight || previousActiveHighlight;
-
-    if (!shouldMakePaintRequest)
+    bool shouldUpdateHighlights = activeHighlightChanged == ActiveHighlightChanged::Yes || activeHighlight || previousActiveHighlight;
+    if (!shouldUpdateHighlights)
         return;
 
-    if (shouldUpdatePlatformHighlightData == ShouldUpdatePlatformHighlightData::Yes) {
-        auto pageIndices = [&] {
-            if (pageIndex) {
-                if (auto iterator = m_pdfDataDetectorItemsWithHighlightsMap.find(*pageIndex); iterator != m_pdfDataDetectorItemsWithHighlightsMap.end())
-                    return makeSizedIteratorRange(m_pdfDataDetectorItemsWithHighlightsMap, iterator.keys(), std::next(iterator).keys());
-            }
-
-            return m_pdfDataDetectorItemsWithHighlightsMap.keys();
-        }();
-
-        WTF::forEach(pageIndices, [this](auto pageIndex) {
-            updatePlatformHighlightData(pageIndex);
-        });
-    }
-
-    RefPtr plugin = protectedPlugin();
-    if (!plugin)
+    if (shouldUpdatePlatformHighlightData == ShouldUpdatePlatformHighlightData::No)
         return;
 
-    Vector<IntRect> dirtyRectsInMainFrameContentsSpace;
+    auto pageIndices = [&] {
+        if (pageIndex) {
+            if (auto iterator = m_pdfDataDetectorItemsWithHighlightsMap.find(*pageIndex); iterator != m_pdfDataDetectorItemsWithHighlightsMap.end())
+                return makeSizedIteratorRange(m_pdfDataDetectorItemsWithHighlightsMap, iterator.keys(), std::next(iterator).keys());
+        }
 
-    if (activeHighlight)
-        dirtyRectsInMainFrameContentsSpace.append(plugin->rectForSelectionInMainFrameContentsSpace(activeDataDetectorItem->selection().get()));
+        return m_pdfDataDetectorItemsWithHighlightsMap.keys();
+    }();
 
-    if (previousActiveHighlight)
-        dirtyRectsInMainFrameContentsSpace.append(plugin->rectForSelectionInMainFrameContentsSpace(previousDataDetectorItem->selection().get()));
-
-    WTF::forEach(dirtyRectsInMainFrameContentsSpace, [&](const auto& dirtyRectInMainFrameContentsSpace) {
-        installOverlayIfNeeded().setNeedsDisplay(dirtyRectInMainFrameContentsSpace);
+    WTF::forEach(pageIndices, [this](auto pageIndex) {
+        updatePlatformHighlightData(pageIndex);
     });
 }
 
