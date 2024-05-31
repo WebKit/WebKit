@@ -196,6 +196,10 @@
 		AD89B6B71E6415080090707F /* MemoryPressureHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD89B6B51E6415080090707F /* MemoryPressureHandler.cpp */; };
 		AD89B6BA1E64150F0090707F /* MemoryPressureHandlerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */; };
 		ADF2CE671E39F106006889DB /* MemoryFootprintCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */; };
+		BCF478C12C08F7EB009371C0 /* STLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF478C02C08F7DF009371C0 /* STLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCF478C22C08F7F1009371C0 /* iterator_range.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF478BF2C08F73E009371C0 /* iterator_range.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCF478C32C08F7F1009371C0 /* iterator.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF478BE2C08F705009371C0 /* iterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCF478C42C08F7F1009371C0 /* ADL.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF478BD2C08F705009371C0 /* ADL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2BCFC401F61D13000C9222C /* Language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC3E1F61D13000C9222C /* Language.cpp */; };
 		C2BCFC421F61D61600C9222C /* LanguageCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC411F61D61600C9222C /* LanguageCF.cpp */; };
 		C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC531F621F3F00C9222C /* LineEnding.cpp */; };
@@ -1501,6 +1505,11 @@
 		AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandlerCocoa.mm; sourceTree = "<group>"; };
 		ADF2CE641E39F106006889DB /* MemoryFootprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryFootprint.h; sourceTree = "<group>"; };
 		ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprintCocoa.cpp; sourceTree = "<group>"; };
+		BC6BA9912C090D4C00698314 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		BCF478BD2C08F705009371C0 /* ADL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ADL.h; sourceTree = "<group>"; };
+		BCF478BE2C08F705009371C0 /* iterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iterator.h; sourceTree = "<group>"; };
+		BCF478BF2C08F73E009371C0 /* iterator_range.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iterator_range.h; sourceTree = "<group>"; };
+		BCF478C02C08F7DF009371C0 /* STLExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = STLExtras.h; sourceTree = "<group>"; };
 		C2BCFC3E1F61D13000C9222C /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
 		C2BCFC3F1F61D13000C9222C /* Language.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Language.h; sourceTree = "<group>"; };
 		C2BCFC411F61D61600C9222C /* LanguageCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LanguageCF.cpp; sourceTree = "<group>"; };
@@ -2039,6 +2048,7 @@
 				A8A47281151A825A004123FF /* dtoa */,
 				E361DB56289115D000B2A2B8 /* fast_float */,
 				1FA47C87152502DA00568D1B /* ios */,
+				BCF478BC2C08F683009371C0 /* llvm_adt */,
 				A8A472C4151A825A004123FF /* mac */,
 				E43A46851E228B5700276B05 /* persistence */,
 				A331D96321F24A2E009F02AA /* posix */,
@@ -2664,6 +2674,18 @@
 			path = icu;
 			sourceTree = "<group>";
 		};
+		BCF478BC2C08F683009371C0 /* llvm_adt */ = {
+			isa = PBXGroup;
+			children = (
+				BCF478BD2C08F705009371C0 /* ADL.h */,
+				BCF478BE2C08F705009371C0 /* iterator.h */,
+				BCF478BF2C08F73E009371C0 /* iterator_range.h */,
+				BC6BA9912C090D4C00698314 /* LICENSE.txt */,
+				BCF478C02C08F7DF009371C0 /* STLExtras.h */,
+			);
+			path = llvm_adt;
+			sourceTree = "<group>";
+		};
 		DD3DC9FF27A4E176007E5B61 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
@@ -3077,6 +3099,7 @@
 				FE6997E129D241630078B9C6 /* AbortWithReasonSPI.h in Headers */,
 				E3B8E6032961EA7600A8AEE3 /* AccessibleAddress.h in Headers */,
 				E383AAC92B6C730B00058E60 /* AdaptiveStringSearcher.h in Headers */,
+				BCF478C42C08F7F1009371C0 /* ADL.h in Headers */,
 				DD3DC8FA27A4BF8E007E5B61 /* AggregateLogger.h in Headers */,
 				DD3DC96027A4BF8E007E5B61 /* Algorithms.h in Headers */,
 				DD3DC99627A4BF8E007E5B61 /* AnsiColors.h in Headers */,
@@ -3266,6 +3289,8 @@
 				DD3DC8BA27A4BF8E007E5B61 /* IsoMalloc.h in Headers */,
 				DD3DC89827A4BF8E007E5B61 /* IsoMallocInlines.h in Headers */,
 				DD3DC8B227A4BF8E007E5B61 /* IterationStatus.h in Headers */,
+				BCF478C32C08F7F1009371C0 /* iterator.h in Headers */,
+				BCF478C22C08F7F1009371C0 /* iterator_range.h in Headers */,
 				DD3DC90027A4BF8E007E5B61 /* IteratorAdaptors.h in Headers */,
 				DD3DC86B27A4BF8E007E5B61 /* IteratorRange.h in Headers */,
 				DD3DC92D27A4BF8E007E5B61 /* JSONValues.h in Headers */,
@@ -3460,6 +3485,7 @@
 				DD3DC88E27A4BF8E007E5B61 /* StdSet.h in Headers */,
 				DD3DC96C27A4BF8E007E5B61 /* StdUnorderedMap.h in Headers */,
 				DD3DC93427A4BF8E007E5B61 /* StdUnorderedSet.h in Headers */,
+				BCF478C12C08F7EB009371C0 /* STLExtras.h in Headers */,
 				DD3DC98027A4BF8E007E5B61 /* Stopwatch.h in Headers */,
 				DD3DC8A527A4BF8E007E5B61 /* StreamBuffer.h in Headers */,
 				DDF307D827C086DF006A526F /* StringBuffer.h in Headers */,

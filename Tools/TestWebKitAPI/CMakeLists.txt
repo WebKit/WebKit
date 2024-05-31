@@ -61,7 +61,9 @@ set(TestWTF_SOURCES
     Tests/WTF/IndexSparseSet.cpp
     Tests/WTF/Int128.cpp
     Tests/WTF/IntegerToStringConversion.cpp
+    Tests/WTF/IteratorEnumerate.cpp
     Tests/WTF/IteratorRange.cpp
+    Tests/WTF/IteratorZip.cpp
     Tests/WTF/JSONValue.cpp
     Tests/WTF/LEBDecoder.cpp
     Tests/WTF/LazyRef.cpp

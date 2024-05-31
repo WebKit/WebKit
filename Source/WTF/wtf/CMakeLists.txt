@@ -394,6 +394,11 @@ set(WTF_PUBLIC_HEADERS
     fast_float/parse_number.h
     fast_float/simple_decimal_conversion.h
 
+    llvm_adt/ADL.h
+    llvm_adt/iterator.h
+    llvm_adt/iterator_range.h
+    llvm_adt/STLExtras.h
+
     persistence/PersistentCoders.h
     persistence/PersistentDecoder.h
     persistence/PersistentEncoder.h
@@ -686,6 +691,7 @@ set(WTF_PRIVATE_INCLUDE_DIRECTORIES
     "${WTF_DIR}/wtf"
     "${WTF_DIR}/wtf/dtoa"
     "${WTF_DIR}/wtf/fast_float"
+    "${WTF_DIR}/wtf/llvm_adt"
     "${WTF_DIR}/wtf/persistence"
     "${WTF_DIR}/wtf/text"
     "${WTF_DIR}/wtf/text/icu"

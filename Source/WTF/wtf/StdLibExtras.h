@@ -36,6 +36,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Compiler.h>
 #include <wtf/GetPtr.h>
+#include <wtf/llvm_adt/STLExtras.h>
 #include <wtf/TypeCasts.h>
 
 // Use this macro to declare and define a debug-only global variable that may have a
@@ -765,6 +766,19 @@ template<ByteType T, typename U> constexpr auto byteCast(const U& value)
     return ByteCastTraits<U>::template cast<T>(value);
 }
 
+struct iota_range {
+    std::size_t Begin;
+    std::size_t End;
+
+    detail::index_iterator begin() const { return { Begin }; }
+    detail::index_iterator end() const { return { End }; }
+};
+
+constexpr iota_range iota(size_t begin = 0, size_t end = std::numeric_limits<std::size_t>::max())
+{
+    return iota_range { begin, end };
+}
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
@@ -828,3 +842,5 @@ using WTF::tryBinarySearch;
 using WTF::valueOrCompute;
 using WTF::valueOrDefault;
 using WTF::toTwosComplement;
+using WTF::enumerate;
+using WTF::zip;

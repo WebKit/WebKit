@@ -970,6 +970,8 @@
 		BCAA485614A0444C0088FAC4 /* simple-tall.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = BCAA485514A021640088FAC4 /* simple-tall.html */; };
 		BCB68042126FBFF100642A61 /* DocumentStartUserScriptAlertCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB68041126FBFF100642A61 /* DocumentStartUserScriptAlertCrash_Bundle.cpp */; };
 		BCBD3737125ABBEB00D2C29F /* icon.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = BCBD372E125ABBE600D2C29F /* icon.png */; };
+		BCF478C72C08FE77009371C0 /* IteratorEnumerate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF478C62C08FE77009371C0 /* IteratorEnumerate.cpp */; };
+		BCF478D02C08FE87009371C0 /* IteratorZip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF478CF2C08FE87009371C0 /* IteratorZip.cpp */; };
 		C01A23F21266156700C9ED55 /* spacebar-scrolling.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C02B7882126615410026BF0F /* spacebar-scrolling.html */; };
 		C07E6CB213FD73930038B22B /* devicePixelRatio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C07E6CB113FD738A0038B22B /* devicePixelRatio.html */; };
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
@@ -3263,6 +3265,8 @@
 		BCBD372E125ABBE600D2C29F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameMIMETypePNG.cpp; sourceTree = "<group>"; };
 		BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FailedLoad.cpp; sourceTree = "<group>"; };
+		BCF478C62C08FE77009371C0 /* IteratorEnumerate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IteratorEnumerate.cpp; sourceTree = "<group>"; };
+		BCF478CF2C08FE87009371C0 /* IteratorZip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IteratorZip.cpp; sourceTree = "<group>"; };
 		C01363C713C3997300EF3964 /* StringOperators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringOperators.cpp; sourceTree = "<group>"; };
 		C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpacebarScrolling.cpp; sourceTree = "<group>"; };
 		C02B7853126613AE0026BF0F /* Carbon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Carbon.framework; sourceTree = SDKROOT; };
@@ -5409,7 +5413,9 @@
 				33976D8224DC479B00812304 /* IndexSparseSet.cpp */,
 				F6D67D3626F90206006E0349 /* Int128.cpp */,
 				266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */,
+				BCF478C62C08FE77009371C0 /* IteratorEnumerate.cpp */,
 				7CEB62A92236086C0069CBB0 /* IteratorRange.cpp */,
+				BCF478CF2C08FE87009371C0 /* IteratorZip.cpp */,
 				7A0509401FB9F04400B33FB8 /* JSONValue.cpp */,
 				E376DF942B5D0A2900DBF31F /* LazyRef.cpp */,
 				E376DF9D2B5D0A5C00DBF31F /* LazyUniqueRef.cpp */,
@@ -6402,7 +6408,9 @@
 				F6D67D3826F90206006E0349 /* Int128.cpp in Sources */,
 				7C83DEE01D0A590C00FEBCF3 /* IntegerToStringConversion.cpp in Sources */,
 				53FCDE6B229EFFB900598ECF /* IsoHeap.cpp in Sources */,
+				BCF478C72C08FE77009371C0 /* IteratorEnumerate.cpp in Sources */,
 				7CEB62AB223609DE0069CBB0 /* IteratorRange.cpp in Sources */,
+				BCF478D02C08FE87009371C0 /* IteratorZip.cpp in Sources */,
 				7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */,
 				E376DF9C2B5D0A2900DBF31F /* LazyRef.cpp in Sources */,
 				E376DF9E2B5D0A5C00DBF31F /* LazyUniqueRef.cpp in Sources */,
