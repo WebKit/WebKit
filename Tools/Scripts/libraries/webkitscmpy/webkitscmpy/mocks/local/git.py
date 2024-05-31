@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ class Git(mocks.Subprocess):
     #     repositoryformatversion = 0
     # [branch "main"]
     #     remote = origin
-    # 	  merge = refs/heads/main
+    #     merge = refs/heads/main
     RE_SINGLE_TOP = re.compile(r'^\[\s*(?P<key>\S+)\s*\]')
     RE_MULTI_TOP = re.compile(r'^\[\s*(?P<keya>\S+) "(?P<keyb>\S+)"\s*\]')
     RE_ELEMENT = re.compile(r'^\s+(?P<key>\S+)\s*=\s*(?P<value>.*\S+)')
@@ -50,7 +50,7 @@ class Git(mocks.Subprocess):
         self, path='/.invalid-git', datafile=None,
         remote=None, tags=None,
         detached=None, default_branch='main',
-        git_svn=False, remotes=None,
+        git_svn=False, remotes=None, editor=None,
     ):
         self.path = path
         self.default_branch = default_branch
@@ -99,6 +99,11 @@ class Git(mocks.Subprocess):
 
         self.has_git_lfs = False
 
+        def editor_generator(*args, **kwargs):
+            if editor:
+                editor(args[3])
+            return mocks.ProcessCompletion(returncode=0)
+
         # If the directory provided actually exists, populate it
         if self.path != '/' and os.path.isdir(self.path):
             if not os.path.isdir(os.path.join(self.path, '.git')):
@@ -112,8 +117,9 @@ class Git(mocks.Subprocess):
                     '\tlogallrefupdates = true\n'
                     '\tignorecase = true\n'
                     '\tprecomposeunicode = true\n'
+                    '{editor}'
                     '[pull]\n'
-	                '\trebase = true\n'
+                    '\trebase = true\n'
                     '[remote "origin"]\n'
                     '\turl = {remote}\n'
                     '\tfetch = +refs/heads/*:refs/remotes/origin/*\n'
@@ -122,6 +128,7 @@ class Git(mocks.Subprocess):
                     '\tmerge = refs/heads/{branch}\n'.format(
                         remote=self.remote,
                         branch=self.default_branch,
+                        editor='\teditor = /bin/example -n -w\n' if editor else '',
                     ))
                 for name, url in (remotes or {}).items():
                     config.write(
@@ -755,6 +762,9 @@ nothing to commit, working tree clean
             ), mocks.Subprocess.Route(
                 self.executable, 'lfs', 'install',
                 generator=lambda *args, **kwargs: self._configure_git_lfs(),
+            ), mocks.Subprocess.Route(
+                '/bin/example', '-n', '-w',
+                generator=editor_generator,
             ), *git_svn_routes
         )
 

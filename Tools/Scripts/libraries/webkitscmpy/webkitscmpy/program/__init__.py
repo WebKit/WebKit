@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@ from .log import Log
 from .pull import Pull
 from .pull_request import PullRequest
 from .revert import Revert
+from .review import Review
 from .setup_git_svn import SetupGitSvn
 from .setup import Setup
 from .show import Show
@@ -93,7 +94,7 @@ def main(
     programs = [
         Blame, Branch, Canonicalize, Checkout,
         Clean, Clone, Find, Info, Land, Log, Pull,
-        PullRequest, Revert, Setup, InstallGitLFS,
+        PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show, Publish,
         Classify, InstallHooks,
