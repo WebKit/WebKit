@@ -901,9 +901,22 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
     SkPaint paint = createFillPaint();
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
 
-    if (spacing.isZero() && tileRect.size() == nativeImage.size())
-        paint.setShader(image->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions, &shaderMatrix));
-    else {
+    if (spacing.isZero() && tileRect.size() == nativeImage.size()) {
+        // Check whether we're sampling the pattern beyond the image size. If this is the case, we need to set the repeat
+        // flag when sampling. Otherwise we use the clamp flag. This is done to avoid a situation where the pattern is scaled
+        // to fit perfectly the destinationRect, but if we use the repeat flag in that case the edges are wrong because the
+        // scaling interpolation is using pixels from the other end of the image.
+        bool repeatX = true;
+        bool repeatY = true;
+        SkMatrix inverse;
+        if (shaderMatrix.invert(&inverse)) {
+            SkRect imageSampledRect;
+            inverse.mapRect(&imageSampledRect, SkRect::MakeXYWH(destRect.x(), destRect.y(), destRect.width(), destRect.height()));
+            repeatX = imageSampledRect.x() < 0 || std::trunc(imageSampledRect.right()) > nativeImage.size().width();
+            repeatY = imageSampledRect.y() < 0 || std::trunc(imageSampledRect.bottom()) > nativeImage.size().height();
+        }
+        paint.setShader(image->makeShader(repeatX ? SkTileMode::kRepeat : SkTileMode::kClamp, repeatY ? SkTileMode::kRepeat : SkTileMode::kClamp, samplingOptions, &shaderMatrix));
+    } else {
         SkPictureRecorder recorder;
         auto* recordCanvas = recorder.beginRecording(SkRect::MakeWH(tileRect.width() + spacing.width() / patternTransform.a(), tileRect.height() + spacing.height() / patternTransform.d()));
         // The below call effectively extracts a tile from the image thus performing a clipping.
