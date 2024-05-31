@@ -36,14 +36,23 @@
 namespace WebCore {
 
 struct GlyphDisplayListCacheKey {
+    GlyphDisplayListCacheKey(const TextRun& textRun, const FontCascade& font, const GraphicsContext& context)
+        : textRun(textRun)
+        , scaleFactor(context.scaleFactor())
+        , fontCascadeGeneration(font.generation())
+        , shouldSubpixelQuantizeFonts(context.shouldSubpixelQuantizeFonts())
+    {
+    }
+
     const TextRun& textRun;
-    const FontCascade& font;
-    GraphicsContext& context;
+    const FloatSize scaleFactor;
+    const unsigned fontCascadeGeneration;
+    const bool shouldSubpixelQuantizeFonts;
 };
 
 static void add(Hasher& hasher, const GlyphDisplayListCacheKey& key)
 {
-    add(hasher, key.textRun, key.context.scaleFactor().width(), key.context.scaleFactor().height(), key.font.generation(), key.context.shouldSubpixelQuantizeFonts());
+    add(hasher, key.textRun, key.scaleFactor.width(), key.scaleFactor.height(), key.fontCascadeGeneration, key.shouldSubpixelQuantizeFonts);
 }
 
 struct GlyphDisplayListCacheKeyTranslator {
@@ -56,9 +65,9 @@ struct GlyphDisplayListCacheKeyTranslator {
     {
         auto& entry = entryRef.get();
         return entry.m_textRun == key.textRun
-            && entry.m_scaleFactor == key.context.scaleFactor()
-            && entry.m_fontCascadeGeneration == key.font.generation()
-            && entry.m_shouldSubpixelQuantizeFont == key.context.shouldSubpixelQuantizeFonts();
+            && entry.m_scaleFactor == key.scaleFactor
+            && entry.m_fontCascadeGeneration == key.fontCascadeGeneration
+            && entry.m_shouldSubpixelQuantizeFont == key.shouldSubpixelQuantizeFonts;
     }
 };
 
