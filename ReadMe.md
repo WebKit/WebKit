@@ -22,6 +22,8 @@ Run the following command to clone WebKit's Git repository:
 git clone https://github.com/WebKit/WebKit.git WebKit
 ```
 
+You can enable [git fsmonitor](https://git-scm.com/docs/git-config#Documentation/git-config.txt-corefsmonitor) to make many git commands faster (such as `git status`) with `git config core.fsmonitor true`
+
 ## Building WebKit
 
 ### Building for Apple platforms
@@ -153,4 +155,3 @@ Pass one of `--gtk`, `--jsc-only`, or `--wpe` to indicate the port to use.
 ## Contribute
 
 Congratulations! You’re up and running. Now you can begin coding in WebKit and contribute your fixes and new features to the project. For details on submitting your code to the project, read [Contributing Code](https://webkit.org/contributing-code/).
-
