@@ -1204,6 +1204,11 @@ static NSTrackingAreaOptions trackingAreaOptions()
     return options;
 }
 
+static NSTrackingAreaOptions flagsChangedEventMonitorTrackingAreaOptions()
+{
+    return NSTrackingInVisibleRect | NSTrackingActiveInActiveApp | NSTrackingMouseEnteredAndExited;
+}
+
 #if HAVE(REDESIGNED_TEXT_CURSOR) && PLATFORM(MAC)
 static RetainPtr<_WKWebViewTextInputNotifications> subscribeToTextInputNotifications(WebViewImpl*);
 #endif
@@ -1226,6 +1231,7 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     , m_contentRelativeViewsHysteresis(makeUnique<PAL::HysteresisActivity>([this](auto state) { this->contentRelativeViewsHysteresisTimerFired(state); }, 500_ms))
     , m_mouseTrackingObserver(adoptNS([[WKMouseTrackingObserver alloc] initWithViewImpl:*this]))
     , m_primaryTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:view.frame options:trackingAreaOptions() owner:m_mouseTrackingObserver.get() userInfo:nil]))
+    , m_flagsChangedEventMonitorTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:view.frame options:flagsChangedEventMonitorTrackingAreaOptions() owner:m_mouseTrackingObserver.get() userInfo:nil]))
 {
     static_cast<PageClientImpl&>(*m_pageClient).setImpl(*this);
 
@@ -1256,6 +1262,7 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
         m_drawingAreaType = DrawingAreaType::RemoteLayerTree;
 
     [view addTrackingArea:m_primaryTrackingArea.get()];
+    [view addTrackingArea:m_flagsChangedEventMonitorTrackingArea.get()];
 
     for (NSView *subview in view.subviews) {
         if ([subview isKindOfClass:WKFlippedView.class]) {
@@ -2257,15 +2264,6 @@ void WebViewImpl::viewDidMoveToWindow()
         // FIXME(135509) This call becomes unnecessary once 135509 is fixed; remove.
         m_page->layerHostingModeDidChange();
 
-        if (!m_flagsChangedEventMonitor) {
-            WeakPtr weakThis { *this };
-            m_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskFlagsChanged handler:[weakThis] (NSEvent *flagsChangedEvent) {
-                if (weakThis)
-                    weakThis->scheduleMouseDidMoveOverElement(flagsChangedEvent);
-                return flagsChangedEvent;
-            }];
-        }
-
         accessibilityRegisterUIProcessTokens();
 
         if (m_immediateActionGestureRecognizer && ![[m_view gestureRecognizers] containsObject:m_immediateActionGestureRecognizer.get()] && !m_ignoresNonWheelEvents && m_allowsLinkPreview)
@@ -2277,9 +2275,6 @@ void WebViewImpl::viewDidMoveToWindow()
         else
             activityStateChanges.add(WebCore::ActivityState::IsInWindow);
         m_page->activityStateDidChange(activityStateChanges);
-
-        [NSEvent removeMonitor:m_flagsChangedEventMonitor];
-        m_flagsChangedEventMonitor = nil;
 
         dismissContentRelativeChildWindowsWithAnimation(false);
         m_page->closeSharedPreviewPanelIfNecessary();
@@ -5631,10 +5626,35 @@ void WebViewImpl::nativeMouseEventHandlerInternal(NSEvent *event)
     nativeMouseEventHandler(event);
 }
 
+void WebViewImpl::createFlagsChangedEventMonitor()
+{
+    if (m_flagsChangedEventMonitor)
+        return;
+
+    WeakPtr weakThis { *this };
+    m_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskFlagsChanged handler:[weakThis] (NSEvent *flagsChangedEvent) {
+        if (weakThis)
+            weakThis->scheduleMouseDidMoveOverElement(flagsChangedEvent);
+        return flagsChangedEvent;
+    }];
+}
+
+void WebViewImpl::removeFlagsChangedEventMonitor()
+{
+    if (!m_flagsChangedEventMonitor)
+        return;
+
+    [NSEvent removeMonitor:m_flagsChangedEventMonitor];
+    m_flagsChangedEventMonitor = nil;
+}
+
 void WebViewImpl::mouseEntered(NSEvent *event)
 {
     if (m_ignoresMouseMoveEvents)
         return;
+
+    if (event.trackingArea == m_flagsChangedEventMonitorTrackingArea.get())
+        createFlagsChangedEventMonitor();
 
     nativeMouseEventHandler(event);
 }
@@ -5643,6 +5663,9 @@ void WebViewImpl::mouseExited(NSEvent *event)
 {
     if (m_ignoresMouseMoveEvents)
         return;
+
+    if (event.trackingArea == m_flagsChangedEventMonitorTrackingArea.get())
+        removeFlagsChangedEventMonitor();
 
     nativeMouseEventHandler(event);
 }

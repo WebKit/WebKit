@@ -478,7 +478,6 @@ public:
     void enableAccessibilityIfNecessary();
     id accessibilityAttributeValue(NSString *, id parameter = nil);
 
-    NSTrackingArea *primaryTrackingArea() const { return m_primaryTrackingArea.get(); }
     void updatePrimaryTrackingAreaOptions(NSTrackingAreaOptions);
 
     NSTrackingRectTag addTrackingRect(CGRect, id owner, void* userData, bool assumeInside);
@@ -615,6 +614,9 @@ public:
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     void insertMultiRepresentationHEIC(NSData *, NSString *);
 #endif
+
+    void createFlagsChangedEventMonitor();
+    void removeFlagsChangedEventMonitor();
 
     void mouseMoved(NSEvent *);
     void mouseDown(NSEvent *);
@@ -932,6 +934,7 @@ private:
 
     RetainPtr<WKMouseTrackingObserver> m_mouseTrackingObserver;
     RetainPtr<NSTrackingArea> m_primaryTrackingArea;
+    RetainPtr<NSTrackingArea> m_flagsChangedEventMonitorTrackingArea;
 
     NSToolTipTag m_lastToolTipTag { 0 };
     WeakObjCPtr<id> m_trackingRectOwner;
