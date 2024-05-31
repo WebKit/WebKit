@@ -382,6 +382,7 @@ private:
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
     RetainPtr<PDFSelection> protectedCurrentSelection() const;
     void repaintOnSelectionChange(ActiveStateChangeReason, PDFSelection* previousSelection = nil);
+    void showOrHideSelectionLayerAsNecessary();
 
     String selectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;

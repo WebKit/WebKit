@@ -499,7 +499,6 @@ void UnifiedPDFPlugin::ensureLayers()
         m_selectionLayer->setDrawsContent(true);
         m_selectionLayer->setAcceleratesDrawing(true);
         m_selectionLayer->setBlendMode(BlendMode::Multiply);
-        m_scrolledContentsLayer->addChild(*m_selectionLayer);
     }
 #endif
 }
@@ -3346,6 +3345,24 @@ void UnifiedPDFPlugin::repaintOnSelectionChange(ActiveStateChangeReason reason, 
         repaintSelection(previousSelection);
 
     repaintSelection(protectedCurrentSelection().get());
+    showOrHideSelectionLayerAsNecessary();
+}
+
+void UnifiedPDFPlugin::showOrHideSelectionLayerAsNecessary()
+{
+#if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
+    if ([m_currentSelection isEmpty]) {
+        m_selectionLayer->removeFromParent();
+        return;
+    }
+
+    if (!m_selectionLayer->parent()) {
+        m_scrolledContentsLayer->addChild(*m_selectionLayer);
+        RefPtr page = this->page();
+        if (page)
+            m_selectionLayer->setIsInWindow(page->isInWindow());
+    }
+#endif
 }
 
 RetainPtr<PDFSelection> UnifiedPDFPlugin::protectedCurrentSelection() const
