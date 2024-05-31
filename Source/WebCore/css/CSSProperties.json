@@ -3388,7 +3388,8 @@
             ],
             "codegen-properties": {
                 "converter": "SVGPath",
-                "parser-grammar": "none | <path()>"
+                "parser-grammar": "none | <path()>",
+                "settings-flag": "cssDPropertyEnabled"
             },
             "specification": {
                 "category": "svg",
