@@ -465,6 +465,12 @@ static bool isInWindowOrStandardFullscreen(HTMLMediaElementEnums::VideoFullscree
     return mode == HTMLMediaElementEnums::VideoFullscreenModeStandard || mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
 }
 
+struct HTMLMediaElement::CueData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    PODIntervalTree<MediaTime, TextTrackCue*> cueTree;
+    CueList currentlyActiveCues;
+};
+
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })
     , ActiveDOMObject(document)
@@ -1860,12 +1866,6 @@ void HTMLMediaElement::mediaSourceWasDetached()
     // https://github.com/w3c/media-source/issues/348 ; we do what's the most sensible for now.
     userCancelledLoad();
 }
-
-struct HTMLMediaElement::CueData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    PODIntervalTree<MediaTime, TextTrackCue*> cueTree;
-    CueList currentlyActiveCues;
-};
 
 static bool trackIndexCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>& b)
 {

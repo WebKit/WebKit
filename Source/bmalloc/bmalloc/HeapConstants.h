@@ -61,7 +61,9 @@ private:
     Vector<LineMetadata> m_smallLineMetadataStorage;
     std::array<size_t, sizeClassCount> m_pageClasses;
 };
+BALLOW_DEPRECATED_DECLARATIONS_BEGIN
 DECLARE_STATIC_PER_PROCESS_STORAGE(HeapConstants);
+BALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace bmalloc
 

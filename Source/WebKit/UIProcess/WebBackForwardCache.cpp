@@ -93,7 +93,7 @@ void WebBackForwardCache::addEntry(WebBackForwardListItem& item, std::unique_ptr
 
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, WebCore::ProcessIdentifier processIdentifier)
 {
-    addEntry(item, makeUnique<WebBackForwardCacheEntry>(*this, item.itemID(), WTFMove(processIdentifier)));
+    addEntry(item, makeUnique<WebBackForwardCacheEntry>(*this, item.itemID(), WTFMove(processIdentifier), nullptr));
 }
 
 void WebBackForwardCache::removeEntry(WebBackForwardListItem& item)

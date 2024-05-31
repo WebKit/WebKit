@@ -30,8 +30,11 @@ enum : size_t { kInlineStorageWords = 4 };
 union VoidUnion {
   void* void_ptr;
   FunVoid* fun_ptr;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   typename std::aligned_storage<kInlineStorageWords * sizeof(uintptr_t)>::type
       inline_storage;
+#pragma clang diagnostic pop
 };
 
 // Returns the number of elements of the `inline_storage` array required to

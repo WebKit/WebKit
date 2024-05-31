@@ -5801,7 +5801,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
         , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles
 #endif
 #if ENABLE(WEBASSEMBLY)
-        , std::unique_ptr<WasmModuleArray> wasmModulesArray
+        , WasmModuleArray&& wasmModulesArray
         , std::unique_ptr<WasmMemoryHandleArray> wasmMemoryHandlesArray
 #endif
 #if ENABLE(WEB_CODECS)
@@ -5840,7 +5840,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
 #endif
         , .inMemoryMessagePorts = WTFMove(inMemoryMessagePorts)
 #if ENABLE(WEBASSEMBLY)
-        , .wasmModulesArray = WTFMove(wasmModulesArray)
+        , .wasmModulesArray = wasmModulesArray.isEmpty() ? nullptr : makeUnique<WasmModuleArray>(WTFMove(wasmModulesArray))
         , .wasmMemoryHandlesArray = WTFMove(wasmMemoryHandlesArray)
 #endif
         , .blobHandles = crossThreadCopy(WTFMove(blobHandles))
@@ -6295,7 +6295,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
                 , WTFMove(detachedMediaSourceHandles)
 #endif
 #if ENABLE(WEBASSEMBLY)
-                , makeUnique<WasmModuleArray>(wasmModules)
+                , WTFMove(wasmModules)
                 , context == SerializationContext::WorkerPostMessage ? makeUnique<WasmMemoryHandleArray>(wasmMemoryHandles) : nullptr
 #endif
 #if ENABLE(WEB_CODECS)

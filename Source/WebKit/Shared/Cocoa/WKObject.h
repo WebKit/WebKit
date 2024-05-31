@@ -43,7 +43,9 @@ template<typename ObjectClass> struct ObjectStorage {
     ObjectClass& operator*() { return *get(); }
     ObjectClass* operator->() { return get(); }
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     typename std::aligned_storage<sizeof(ObjectClass), std::alignment_of<ObjectClass>::value>::type data;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 API::Object* unwrap(void*);

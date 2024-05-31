@@ -647,7 +647,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         if (!HashFunctions::safeToCompareToEmptyOrDeleted)
             return;
         ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         typename std::aligned_storage<sizeof(ValueType), std::alignment_of<ValueType>::value>::type deletedValueBuffer;
+        ALLOW_DEPRECATED_DECLARATIONS_END
         ValueType* deletedValuePtr = reinterpret_cast_ptr<ValueType*>(&deletedValueBuffer);
         ValueType& deletedValue = *deletedValuePtr;
         Traits::constructDeletedValue(deletedValue);

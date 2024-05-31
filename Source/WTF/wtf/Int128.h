@@ -233,7 +233,6 @@ class numeric_limits<WTF::UInt128Impl> {
   static constexpr bool has_infinity = false;
   static constexpr bool has_quiet_NaN = false;
   static constexpr bool has_signaling_NaN = false;
-  static constexpr float_denorm_style has_denorm = denorm_absent;
   static constexpr bool has_denorm_loss = false;
   static constexpr float_round_style round_style = round_toward_zero;
   static constexpr bool is_iec559 = false;
@@ -437,7 +436,6 @@ class numeric_limits<WTF::Int128Impl> {
   static constexpr bool has_infinity = false;
   static constexpr bool has_quiet_NaN = false;
   static constexpr bool has_signaling_NaN = false;
-  static constexpr float_denorm_style has_denorm = denorm_absent;
   static constexpr bool has_denorm_loss = false;
   static constexpr float_round_style round_style = round_toward_zero;
   static constexpr bool is_iec559 = false;

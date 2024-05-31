@@ -112,8 +112,7 @@ struct RemoteLayerBackingStoreOrProperties {
     ~RemoteLayerBackingStoreOrProperties();
     RemoteLayerBackingStoreOrProperties(RemoteLayerBackingStoreOrProperties&&) = default;
     RemoteLayerBackingStoreOrProperties& operator=(RemoteLayerBackingStoreOrProperties&&) = default;
-    RemoteLayerBackingStoreOrProperties(std::unique_ptr<RemoteLayerBackingStoreProperties>&& properties)
-        : properties(WTFMove(properties)) { }
+    RemoteLayerBackingStoreOrProperties(std::unique_ptr<RemoteLayerBackingStoreProperties>&&);
 
     // Used in the WebContent process.
     std::unique_ptr<RemoteLayerBackingStore> store;

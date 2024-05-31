@@ -80,7 +80,9 @@ struct SigInfo {
 };
 
 using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&)>;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 using SignalHandlerMemory = std::aligned_storage<sizeof(SignalHandler), std::alignment_of<SignalHandler>::value>::type;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 struct SignalHandlers {
     static void initialize();

@@ -115,7 +115,9 @@
 #import "_WKWebExtensionMessagePortInternal.h"
 #endif
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static const size_t minimumObjectAlignment = alignof(std::aligned_storage<std::numeric_limits<size_t>::max()>::type);
+ALLOW_DEPRECATED_DECLARATIONS_END
 static_assert(minimumObjectAlignment >= alignof(void*), "Objects should always be at least pointer-aligned.");
 static const size_t maximumExtraSpaceForAlignment = minimumObjectAlignment - alignof(void*);
 

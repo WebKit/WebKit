@@ -207,4 +207,19 @@ std::string AudioProcessing::Config::ToString() const {
   return builder.str();
 }
 
+AudioProcessingBuilder& AudioProcessingBuilder::SetCapturePostProcessing(std::unique_ptr<CustomProcessing> capture_post_processing) {
+  capture_post_processing_ = std::move(capture_post_processing);
+  return *this;
+}
+
+AudioProcessingBuilder& AudioProcessingBuilder::SetRenderPreProcessing(std::unique_ptr<CustomProcessing> render_pre_processing) {
+  render_pre_processing_ = std::move(render_pre_processing);
+  return *this;
+}
+
+AudioProcessingBuilder& AudioProcessingBuilder::SetCaptureAnalyzer(std::unique_ptr<CustomAudioAnalyzer> capture_analyzer) {
+  capture_analyzer_ = std::move(capture_analyzer);
+  return *this;
+}
+
 }  // namespace webrtc

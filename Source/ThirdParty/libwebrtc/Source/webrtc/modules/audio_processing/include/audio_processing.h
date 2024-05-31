@@ -752,18 +752,10 @@ class RTC_EXPORT AudioProcessingBuilder {
   }
 
   // Sets the capture post-processing sub-module to inject when APM is created.
-  AudioProcessingBuilder& SetCapturePostProcessing(
-      std::unique_ptr<CustomProcessing> capture_post_processing) {
-    capture_post_processing_ = std::move(capture_post_processing);
-    return *this;
-  }
+  AudioProcessingBuilder& SetCapturePostProcessing(std::unique_ptr<CustomProcessing>);
 
   // Sets the render pre-processing sub-module to inject when APM is created.
-  AudioProcessingBuilder& SetRenderPreProcessing(
-      std::unique_ptr<CustomProcessing> render_pre_processing) {
-    render_pre_processing_ = std::move(render_pre_processing);
-    return *this;
-  }
+  AudioProcessingBuilder& SetRenderPreProcessing(std::unique_ptr<CustomProcessing>);
 
   // Sets the echo detector to inject when APM is created.
   AudioProcessingBuilder& SetEchoDetector(
@@ -773,11 +765,7 @@ class RTC_EXPORT AudioProcessingBuilder {
   }
 
   // Sets the capture analyzer sub-module to inject when APM is created.
-  AudioProcessingBuilder& SetCaptureAnalyzer(
-      std::unique_ptr<CustomAudioAnalyzer> capture_analyzer) {
-    capture_analyzer_ = std::move(capture_analyzer);
-    return *this;
-  }
+  AudioProcessingBuilder& SetCaptureAnalyzer(std::unique_ptr<CustomAudioAnalyzer>);
 
   // Creates an APM instance with the specified config or the default one if
   // unspecified. Injects the specified components transferring the ownership

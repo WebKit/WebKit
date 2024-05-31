@@ -40,6 +40,15 @@
 
 namespace WebCore {
 
+GridTrackSizingAlgorithm::GridTrackSizingAlgorithm(const RenderGrid* renderGrid, Grid& grid)
+    : m_grid(grid)
+    , m_renderGrid(renderGrid)
+    , m_sizingState(SizingState::ColumnSizingFirstIteration)
+{
+}
+
+GridTrackSizingAlgorithm::~GridTrackSizingAlgorithm() = default;
+
 LayoutUnit GridTrack::baseSize() const
 {
     ASSERT(isGrowthLimitBiggerThanBaseSize());

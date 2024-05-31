@@ -652,9 +652,13 @@ private:
     // FIXME: Add a redzone before the buffer to catch off by one accesses. We don't need a guard after, because the buffer is the last member variable.
     static constexpr size_t asanInlineBufferAlignment = std::alignment_of<T>::value >= 8 ? std::alignment_of<T>::value : 8;
     static constexpr size_t asanAdjustedInlineCapacity = ((sizeof(T) * inlineCapacity + 7) & ~7) / sizeof(T);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     typename std::aligned_storage<sizeof(T), asanInlineBufferAlignment>::type m_inlineBuffer[asanAdjustedInlineCapacity];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_inlineBuffer[inlineCapacity];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 };
 

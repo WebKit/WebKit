@@ -39,7 +39,7 @@ class WebProcessProxy;
 class WebBackForwardCacheEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebBackForwardCacheEntry(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::ProcessIdentifier, std::unique_ptr<SuspendedPageProxy>&& = nullptr);
+    WebBackForwardCacheEntry(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::ProcessIdentifier, std::unique_ptr<SuspendedPageProxy>&&);
     ~WebBackForwardCacheEntry();
 
     WebBackForwardCache& backForwardCache() const { return m_backForwardCache; }

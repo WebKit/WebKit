@@ -73,7 +73,9 @@ struct PrimitiveDisableCallbacks : public StaticPerProcess<PrimitiveDisableCallb
     
     Vector<Gigacage::Callback> callbacks;
 };
+BALLOW_DEPRECATED_DECLARATIONS_BEGIN
 DECLARE_STATIC_PER_PROCESS_STORAGE_WITH_LINKAGE(PrimitiveDisableCallbacks, BNOEXPORT);
+BALLOW_DEPRECATED_DECLARATIONS_END
 DEFINE_STATIC_PER_PROCESS_STORAGE(PrimitiveDisableCallbacks);
 
 } // namespace bmalloc

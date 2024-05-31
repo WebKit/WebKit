@@ -650,4 +650,7 @@ TextStream& operator<<(TextStream& ts, BackingStoreNeedsDisplayReason reason)
     return ts;
 }
 
+RemoteLayerBackingStoreOrProperties::RemoteLayerBackingStoreOrProperties(std::unique_ptr<RemoteLayerBackingStoreProperties>&& properties)
+    : properties(WTFMove(properties)) { }
+
 } // namespace WebKit

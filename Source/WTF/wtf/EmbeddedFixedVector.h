@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <iterator>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>
 #include <wtf/TrailingArray.h>

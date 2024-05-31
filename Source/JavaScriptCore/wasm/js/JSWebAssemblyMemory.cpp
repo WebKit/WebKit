@@ -59,7 +59,7 @@ void JSWebAssemblyMemory::adopt(Ref<Wasm::Memory>&& memory)
 {
     m_memory.swap(memory);
     ASSERT(m_memory->refCount() == 1);
-    m_memory->check();
+    m_memory->checkLifetime();
 }
 
 Structure* JSWebAssemblyMemory::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -171,7 +171,7 @@ void JSWebAssemblyMemory::growSuccessCallback(VM& vm, PageCount oldPageCount, Pa
         m_bufferWrapper.clear();
     }
     
-    memory().check();
+    memory().checkLifetime();
     
     vm.heap.reportExtraMemoryAllocated(this, newPageCount.bytes() - oldPageCount.bytes());
 }
