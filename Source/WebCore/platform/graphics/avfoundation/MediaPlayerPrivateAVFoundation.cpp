@@ -48,6 +48,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
@@ -842,7 +843,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyURIArray)
         return false;
 
-    keyURI = String({ reinterpret_cast<UChar*>(keyURIArray->data()), keyURILength / sizeof(unsigned short) });
+    keyURI = spanReinterpretCast<const UChar>(keyURIArray->span().first(keyURILength));
     offset += keyURILength;
 
     uint32_t keyIDLength = initDataView->get<uint32_t>(offset, true, &status);
@@ -854,7 +855,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyIDArray)
         return false;
 
-    keyID = String({ reinterpret_cast<UChar*>(keyIDArray->data()), keyIDLength / sizeof(unsigned short) });
+    keyID = spanReinterpretCast<const UChar>(keyIDArray->span().first(keyIDLength));
     offset += keyIDLength;
 
     uint32_t certificateLength = initDataView->get<uint32_t>(offset, true, &status);
