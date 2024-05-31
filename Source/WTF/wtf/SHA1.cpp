@@ -223,10 +223,15 @@ void SHA1::addUTF8Bytes(CFStringRef string)
         return;
     }
 
-    Vector<char, 1024> buffer(CFStringGetLength(string) + 1);
-    if (CFStringGetCString(string, buffer.data(), buffer.size(), kCFStringEncodingASCII)) {
-        addBytes(span8(buffer.data()));
-        return;
+    constexpr size_t bufferSize = 1024;
+    if (size_t length = CFStringGetLength(string); length <= bufferSize) {
+        std::array<UInt8, bufferSize> buffer;
+        CFIndex usedBufferLength = 0;
+        CFStringGetBytes(string, CFRangeMake(0, length), kCFStringEncodingASCII, 0, false, buffer.data(), buffer.size(), &usedBufferLength);
+        if (length == static_cast<size_t>(usedBufferLength)) {
+            addBytes(std::span { buffer }.first(length));
+            return;
+        }
     }
 
     addUTF8Bytes(String(string));
