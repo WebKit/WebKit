@@ -168,6 +168,7 @@ public:
     Ref<WebProcessProxy> protectedProcess() const { return process(); }
     void setProcess(FrameProcess&);
     const FrameProcess& frameProcess() const { return m_frameProcess.get(); }
+    void removeChildFrames();
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
     RefPtr<ProvisionalFrameProxy> takeProvisionalFrame();
     WebProcessProxy& provisionalLoadProcess();

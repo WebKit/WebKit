@@ -536,6 +536,11 @@ void WebFrameProxy::setProcess(FrameProcess& process)
     m_frameProcess = process;
 }
 
+void WebFrameProxy::removeChildFrames()
+{
+    m_childFrames.clear();
+}
+
 bool WebFrameProxy::isFocused() const
 {
     auto* webPage = page();

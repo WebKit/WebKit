@@ -2594,6 +2594,44 @@ TEST(SiteIsolation, NavigateIframeToProvisionalNavigationFailure)
     checkProvisionalLoadFailure(@"https://apple.com/redirect_to_apple_terminate");
 }
 
+TEST(SiteIsolation, DrawAfterNavigateToDomainAgain)
+{
+    HTTPServer server({
+        { "/a"_s, { "<iframe src='https://b.com/b'></iframe>"_s } },
+        { "/b"_s, { "hi"_s } },
+        { "/c"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://a.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://b.com"_s } }
+        }
+    });
+
+    [webView evaluateJavaScript:@"window.location = 'https://c.com/c'" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://c.com"_s }
+    });
+
+    [webView evaluateJavaScript:@"window.location = 'https://a.com/a'" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://a.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://b.com"_s } }
+        }
+    });
+
+    [webView waitForNextPresentationUpdate];
+}
+
 TEST(SiteIsolation, CancelProvisionalLoad)
 {
     HTTPServer server({

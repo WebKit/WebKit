@@ -4588,6 +4588,8 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
     WEBPAGEPROXY_RELEASE_LOG(Loading, "commitProvisionalPage: newPID=%i", m_provisionalPage->process().processID());
 
     RefPtr mainFrameInPreviousProcess = m_mainFrame;
+    if (mainFrameInPreviousProcess && preferences().siteIsolationEnabled())
+        mainFrameInPreviousProcess->removeChildFrames();
 
     ASSERT(m_process.ptr() != &m_provisionalPage->process());
 
