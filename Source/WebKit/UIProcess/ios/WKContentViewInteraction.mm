@@ -2590,9 +2590,7 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
 
 - (void)_cancelTouchEventGestureRecognizer
 {
-#if HAVE(CANCEL_WEB_TOUCH_EVENTS_GESTURE)
     [_touchEventGestureRecognizer cancel];
-#endif
 }
 
 - (void)_didScroll
