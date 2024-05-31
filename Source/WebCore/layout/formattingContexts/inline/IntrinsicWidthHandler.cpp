@@ -90,7 +90,7 @@ IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineForm
 {
     auto initializeRangeAndTextOnlyBuilderEligibility = [&] {
         m_inlineItemRange = { 0, inlineItems.content().size() };
-        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(root().style());
+        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(formattingContextRoot().style());
         if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
             return;
 
@@ -127,10 +127,10 @@ InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
 {
     auto minimumContentSize = InlineLayoutUnit { };
 
-    if (isContentEligibleForNonLineBuilderMinimumWidth(root(), m_mayUseSimplifiedTextOnlyInlineLayoutInRange))
-        minimumContentSize = simplifiedMinimumWidth(root());
+    if (isContentEligibleForNonLineBuilderMinimumWidth(formattingContextRoot(), m_mayUseSimplifiedTextOnlyInlineLayoutInRange))
+        minimumContentSize = simplifiedMinimumWidth(formattingContextRoot());
     else if (m_mayUseSimplifiedTextOnlyInlineLayoutInRange) {
-        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), formattingContext().root(), { }, inlineItemList() };
+        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilerRoot(), { }, inlineItemList() };
         minimumContentSize = computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum, simplifiedLineBuilder, MayCacheLayoutResult::No);
     } else {
         auto lineBuilder = LineBuilder { formattingContext(), { }, inlineItemList() };
@@ -145,17 +145,17 @@ InlineLayoutUnit IntrinsicWidthHandler::maximumContentSize()
     auto mayCacheLayoutResult = m_mayUseSimplifiedTextOnlyInlineLayoutInRange && !m_inlineItemRange.startIndex() ? MayCacheLayoutResult::Yes : MayCacheLayoutResult::No;
     auto maximumContentSize = InlineLayoutUnit { };
 
-    if (isContentEligibleForNonLineBuilderMaximumWidth(root(), inlineItemList()))
+    if (isContentEligibleForNonLineBuilderMaximumWidth(formattingContextRoot(), inlineItemList()))
         maximumContentSize = simplifiedMaximumWidth(mayCacheLayoutResult);
     else if (m_mayUseSimplifiedTextOnlyInlineLayoutInRange) {
-        if (m_maximumContentWidthBetweenLineBreaks && mayUseContentWidthBetweenLineBreaksAsMaximumSize(root(), inlineItemList())) {
+        if (m_maximumContentWidthBetweenLineBreaks && mayUseContentWidthBetweenLineBreaksAsMaximumSize(formattingContextRoot(), inlineItemList())) {
             maximumContentSize = *m_maximumContentWidthBetweenLineBreaks;
 #ifndef NDEBUG
-            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), formattingContext().root(), { }, inlineItemList() };
+            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilerRoot(), { }, inlineItemList() };
             ASSERT(std::abs(maximumContentSize - computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, MayCacheLayoutResult::No)) < 1);
 #endif
         } else {
-            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), formattingContext().root(), { }, inlineItemList() };
+            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilerRoot(), { }, inlineItemList() };
             maximumContentSize = computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, mayCacheLayoutResult);
         }
     } else {
@@ -271,7 +271,7 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox&
 
 InlineLayoutUnit IntrinsicWidthHandler::simplifiedMaximumWidth(MayCacheLayoutResult mayCacheLayoutResult)
 {
-    ASSERT(root().firstChild() && root().firstChild() == root().lastChild());
+    ASSERT(formattingContextRoot().firstChild() && formattingContextRoot().firstChild() == formattingContextRoot().lastChild());
     auto& inlineTextItem = downcast<InlineTextItem>(inlineItemList()[0]);
     auto& style = inlineTextItem.firstLineStyle();
 
@@ -302,9 +302,30 @@ const InlineFormattingContext& IntrinsicWidthHandler::formattingContext() const
     return m_inlineFormattingContext;
 }
 
-const ElementBox& IntrinsicWidthHandler::root() const
+const ElementBox& IntrinsicWidthHandler::formattingContextRoot() const
 {
     return m_inlineFormattingContext.root();
+}
+
+const ElementBox& IntrinsicWidthHandler::lineBuilerRoot() const
+{
+    if (!m_inlineItemRange.startIndex())
+        return formattingContextRoot();
+
+    auto rootBoxIndex = m_inlineItemRange.startIndex() - 1;
+    auto& inlineItems = inlineItemList();
+    if (rootBoxIndex >= inlineItems.size()) {
+        ASSERT_NOT_REACHED();
+        return formattingContextRoot();
+    }
+
+    if (auto* inlineBox = dynamicDowncast<ElementBox>(inlineItems[rootBoxIndex].layoutBox()); inlineBox && inlineBox->isInlineBox()) {
+        // We are running a range based line building where we only need to layout the inner text content (e.g. <span>inner text content</span>)
+        return *inlineBox;
+    }
+
+    ASSERT_NOT_REACHED();
+    return formattingContextRoot();
 }
 
 }

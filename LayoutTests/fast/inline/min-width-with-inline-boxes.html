@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<style>
+div {
+  white-space: nowrap;
+  border: solid orange;
+  width: min-content;
+  font-size: 10px;
+  font-family: Ahem;
+  color: transparent;
+}
+span {
+  white-space: normal;
+}
+</style>
+<div><span>very long line is very long</span></div>
+<div><span>very long line is very long</span> </div>
+<div><span><span>very long line is very long</span></span></div>
+<div><span style="white-space: inherit"><span>very long line is very long</span></span></div>
+<div><span style="white-space: inherit"> <span>very long line is very long</span></span></div>
+<div><span style="padding: 1px">very long line is very long</span></div>
