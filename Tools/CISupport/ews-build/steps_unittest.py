@@ -3963,6 +3963,110 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Checked out pull request')
         return self.runStep()
 
+    def test_success_apple(self):
+        self.setupStep(CheckOutPullRequest())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.repo.full_name', 'Contributor/WebKit-apple')
+        self.setProperty('remote', 'apple')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.base.sha', 'aaebef7312238f3ad1d25e8894916a1aaea45ba1')
+        self.setProperty('got_revision', '59dab0396721db221c264aad3c0cea37ef0d297b')
+        self.assertEqual(CheckOutPullRequest.flunkOnFailure, True)
+        self.assertEqual(CheckOutPullRequest.haltOnFailure, True)
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['/bin/sh', '-c', 'git remote add Contributor-apple https://github.com/Contributor/WebKit-apple.git || true'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'remote', 'set-url', 'Contributor-apple', 'https://github.com/Contributor/WebKit-apple.git'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'fetch', 'Contributor-apple', 'eng/pull-request-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'checkout', '-b', 'eng/pull-request-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'cherry-pick', 'HEAD..remotes/Contributor-apple/eng/pull-request-branch'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Checked out pull request')
+        return self.runStep()
+
+    def test_success_integration_remote(self):
+        self.setupStep(CheckOutPullRequest())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.repo.full_name', 'WebKit/WebKit-integration')
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.head.ref', 'integration/ci/1234')
+        self.setProperty('github.base.sha', 'aaebef7312238f3ad1d25e8894916a1aaea45ba1')
+        self.setProperty('got_revision', '59dab0396721db221c264aad3c0cea37ef0d297b')
+        self.assertEqual(CheckOutPullRequest.flunkOnFailure, True)
+        self.assertEqual(CheckOutPullRequest.haltOnFailure, True)
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['/bin/sh', '-c', 'git remote add WebKit-integration https://github.com/WebKit/WebKit-integration.git || true'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'remote', 'set-url', 'WebKit-integration', 'https://github.com/WebKit/WebKit-integration.git'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'fetch', 'WebKit-integration', 'integration/ci/1234'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'checkout', '-b', 'integration/ci/1234'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'cherry-pick', 'HEAD..remotes/WebKit-integration/integration/ci/1234'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Checked out pull request')
+        return self.runStep()
+
     def test_success_wincairo(self):
         self.setupStep(CheckOutPullRequest())
         self.setProperty('platform', 'wincairo')
@@ -8502,6 +8606,46 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
                         timeout=300,
                         env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
                         command=['git', 'push', '-f', 'Contributor', 'HEAD:eng/pull-request-branch'])
+            + 0
+            + ExpectShell.log('stdio', stdout='To https://github.com/Contributor/WebKit.git\n37b7da95723b...9e2cb83b07b6 eng/pull-request-branch -> eng/pull-request-branch (forced update)\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Pushed to pull request branch')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.runStep()
+
+    def test_success_apple(self):
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
+        self.setupStep(PushPullRequestBranch())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.repo.full_name', 'Contributor/WebKit-apple')
+        self.setProperty('remote', 'apple')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=300,
+                        env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
+                        command=['git', 'push', '-f', 'Contributor-apple', 'HEAD:eng/pull-request-branch'])
+            + 0
+            + ExpectShell.log('stdio', stdout='To https://github.com/Contributor/WebKit.git\n37b7da95723b...9e2cb83b07b6 eng/pull-request-branch -> eng/pull-request-branch (forced update)\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Pushed to pull request branch')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.runStep()
+
+    def test_success_integration(self):
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
+        self.setupStep(PushPullRequestBranch())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.repo.full_name', 'WebKit/WebKit-integration')
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.head.ref', 'integration/ci/1234')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=300,
+                        env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
+                        command=['git', 'push', '-f', 'WebKit-integration', 'HEAD:integration/ci/1234'])
             + 0
             + ExpectShell.log('stdio', stdout='To https://github.com/Contributor/WebKit.git\n37b7da95723b...9e2cb83b07b6 eng/pull-request-branch -> eng/pull-request-branch (forced update)\n'),
         )

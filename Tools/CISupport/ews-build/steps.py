@@ -1163,7 +1163,9 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
     def run(self):
         self.commands = []
 
-        remote = self.getProperty('github.head.repo.full_name', DEFAULT_REMOTE).split('/')[0]
+        remote, repo_name = self.getProperty('github.head.repo.full_name', DEFAULT_REMOTE).split('/', 1)
+        if '-' in repo_name:
+            remote = f"{remote}-{repo_name.split('-', 1)[-1]}"
         project = self.getProperty('github.head.repo.full_name', self.getProperty('project'))
         pr_branch = self.getProperty('github.head.ref', DEFAULT_BRANCH)
         rebase_target_hash = self.getProperty('ews_revision') or self.getProperty('got_revision')
@@ -6596,7 +6598,9 @@ class PushPullRequestBranch(shell.ShellCommandNewStyle):
         super().__init__(logEnviron=False, timeout=300, **kwargs)
 
     def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
-        remote = self.getProperty('github.head.repo.full_name').split('/')[0]
+        remote, repo_name = self.getProperty('github.head.repo.full_name', DEFAULT_REMOTE).split('/', 1)
+        if '-' in repo_name:
+            remote = f"{remote}-{repo_name.split('-', 1)[-1]}"
         head_ref = self.getProperty('github.head.ref')
         self.command = ['git', 'push', '-f', remote, f'HEAD:{head_ref}']
 
