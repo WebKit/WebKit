@@ -90,8 +90,8 @@ public:
     String downloadRequest() { return m_downloadRequest; };
     JSC::JSValue info() { return m_info; };
 
-    ExceptionOr<void> intercept(NavigationInterceptOptions&&);
-    ExceptionOr<void> scroll();
+    ExceptionOr<void> intercept(Document&, NavigationInterceptOptions&&);
+    ExceptionOr<void> scroll(Document&);
 
     bool wasIntercepted() const { return m_interceptionState.has_value(); };
     void setCanIntercept(bool canIntercept) { m_canIntercept = canIntercept; };
@@ -104,7 +104,7 @@ public:
 private:
     NavigateEvent(const AtomString& type, const Init&, AbortController*);
 
-    ExceptionOr<void> sharedChecks();
+    ExceptionOr<void> sharedChecks(Document&);
 
     NavigationNavigationType m_navigationType;
     RefPtr<NavigationDestination> m_destination;

@@ -62,8 +62,11 @@ Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateE
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigateevent-perform-shared-checks
-ExceptionOr<void> NavigateEvent::sharedChecks()
+ExceptionOr<void> NavigateEvent::sharedChecks(Document& document)
 {
+    if (!document.isFullyActive())
+        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s };
+
     if (!isTrusted())
         return Exception { ExceptionCode::SecurityError, "Event is not trusted"_s };
 
@@ -74,9 +77,9 @@ ExceptionOr<void> NavigateEvent::sharedChecks()
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigateevent-intercept
-ExceptionOr<void> NavigateEvent::intercept(NavigationInterceptOptions&& options)
+ExceptionOr<void> NavigateEvent::intercept(Document& document, NavigationInterceptOptions&& options)
 {
-    if (auto checkResult = sharedChecks(); checkResult.hasException())
+    if (auto checkResult = sharedChecks(document); checkResult.hasException())
         return checkResult;
 
     if (!canIntercept())
@@ -106,9 +109,9 @@ ExceptionOr<void> NavigateEvent::intercept(NavigationInterceptOptions&& options)
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigateevent-scroll
-ExceptionOr<void> NavigateEvent::scroll()
+ExceptionOr<void> NavigateEvent::scroll(Document& document)
 {
-    auto checkResult = sharedChecks();
+    auto checkResult = sharedChecks(document);
     if (checkResult.hasException())
         return checkResult;
 

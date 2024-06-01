@@ -1,3 +1,3 @@
 
-FAIL event.intercept() throws if used on an event from a detached iframe assert_throws_dom: function "() => e.intercept()" did not throw
+PASS event.intercept() throws if used on an event from a detached iframe
 
