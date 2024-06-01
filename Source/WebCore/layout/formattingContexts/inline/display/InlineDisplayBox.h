@@ -159,8 +159,8 @@ struct Box {
     void setIsFirstForLayoutBox(bool isFirstBox) { m_isFirstForLayoutBox = isFirstBox; }
     void setIsLastForLayoutBox(bool isLastBox) { m_isLastForLayoutBox = isLastBox; }
 
-    bool isInGlyphDisplayListCache() const { return m_isInGlyphDisplayListCache; }
-    void setIsInGlyphDisplayListCache() { m_isInGlyphDisplayListCache = true; }
+    bool isInGlyphDisplayListCache() const { return m_maybeInGlyphDisplayListCache; }
+    void setIsInGlyphDisplayListCache() { m_maybeInGlyphDisplayListCache = true; }
     void removeFromGlyphDisplayListCache();
 
 private:
@@ -180,7 +180,7 @@ private:
     bool m_isFirstForLayoutBox : 1 { false };
     bool m_isLastForLayoutBox : 1 { false };
     bool m_isFullyTruncated : 1 { false };
-    bool m_isInGlyphDisplayListCache : 1 { false };
+    bool m_maybeInGlyphDisplayListCache : 1 { false }; // Maybe, because after move it is not.
 
     Text m_text;
 };
@@ -204,7 +204,7 @@ inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDi
 
 inline Box::~Box()
 {
-    if (m_isInGlyphDisplayListCache)
+    if (m_maybeInGlyphDisplayListCache)
         removeBoxFromGlyphDisplayListCache(*this);
 }
 
@@ -295,9 +295,9 @@ inline void Box::setRect(const FloatRect& rect, const FloatRect& inkOverflow)
 
 inline void Box::removeFromGlyphDisplayListCache()
 {
-    if (m_isInGlyphDisplayListCache) {
+    if (m_maybeInGlyphDisplayListCache) {
         removeBoxFromGlyphDisplayListCache(*this);
-        m_isInGlyphDisplayListCache = false;
+        m_maybeInGlyphDisplayListCache = false;
     }
 }
 

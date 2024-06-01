@@ -61,9 +61,8 @@ struct GlyphDisplayListCacheKeyTranslator {
         return computeHash(key);
     }
 
-    static bool equal(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& entryRef, const GlyphDisplayListCacheKey& key)
+    static bool equal(const GlyphDisplayListCacheEntry& entry, const GlyphDisplayListCacheKey& key)
     {
-        auto& entry = entryRef.get();
         return entry.m_textRun == key.textRun
             && entry.m_scaleFactor == key.scaleFactor
             && entry.m_fontCascadeGeneration == key.fontCascadeGeneration
@@ -115,7 +114,7 @@ DisplayList::DisplayList* GlyphDisplayListCache::getDisplayList(const LayoutRun&
     }
 
     if (auto iterator = m_entries.find<GlyphDisplayListCacheKeyTranslator>(GlyphDisplayListCacheKey { textRun, font, context }); iterator != m_entries.end()) {
-        Ref entry { iterator->get() };
+        Ref entry  = *iterator;
         auto* result = &entry->displayList();
         const_cast<LayoutRun&>(run).setIsInGlyphDisplayListCache();
         if (isFrequentlyPainted)
@@ -175,8 +174,17 @@ DisplayList::DisplayList* GlyphDisplayListCache::getIfExists(const InlineDisplay
 
 void GlyphDisplayListCache::remove(const void* run)
 {
-    m_entriesForLayoutRun.remove(run);
-    m_entriesForFrequentlyPaintedLayoutRun.remove(run);
+    RefPtr entry = m_entriesForLayoutRun.take(run);
+    ASSERT(!entry || !m_entriesForFrequentlyPaintedLayoutRun.contains(run));
+    if (!entry)
+        entry = m_entriesForFrequentlyPaintedLayoutRun.take(run);
+    // Entry is not found if the caller trying to remove a text run that inherits the "is in glyph cache"
+    // via move or copy constructor.
+    if (entry && entry->refCount() == 2) {
+        // One ref is in entry, the other is in m_entries.
+        bool didRemove = m_entries.remove(*entry);
+        ASSERT_UNUSED(didRemove, didRemove);
+    }
 }
 
 bool GlyphDisplayListCache::canShareDisplayList(const DisplayList::DisplayList& displayList)
@@ -193,11 +201,6 @@ bool GlyphDisplayListCache::canShareDisplayList(const DisplayList::DisplayList& 
             return false;
     }
     return true;
-}
-
-GlyphDisplayListCacheEntry::~GlyphDisplayListCacheEntry()
-{
-    GlyphDisplayListCache::singleton().m_entries.remove(this);
 }
 
 } // namespace WebCore
