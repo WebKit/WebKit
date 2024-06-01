@@ -39,32 +39,6 @@
 
 namespace WebCore {
 
-AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& src)
-{
-    opacity = src.opacity;
-
-    transformOperationData = src.transformOperationData;
-    transformBox = src.transformBox;
-
-    auto& transformOperations = transform.operations();
-    auto& srcTransformOperations = src.transform.operations();
-    transformOperations.appendVector(srcTransformOperations);
-
-    translate = src.translate.copyRef();
-    scale = src.scale.copyRef();
-    rotate = src.rotate.copyRef();
-    transformOrigin = src.transformOrigin;
-
-    offsetPath = src.offsetPath.copyRef();
-    offsetDistance = src.offsetDistance;
-    offsetPosition = src.offsetPosition;
-    offsetAnchor = src.offsetAnchor;
-    offsetRotate = src.offsetRotate;
-
-    filter = src.filter;
-    backdropFilter = src.backdropFilter;
-}
-
 AcceleratedEffectValues AcceleratedEffectValues::clone() const
 {
     std::optional<TransformOperationData> clonedTransformOperationData;
@@ -72,10 +46,7 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
         clonedTransformOperationData = transformOperationData;
 
     auto clonedTransformOrigin = transformOrigin;
-
-    TransformOperations clonedTransform { transform.operations().map([](const auto& operation) {
-        return RefPtr { operation->clone() };
-    }) };
+    auto clonedTransform = transform.clone();
 
     RefPtr<TransformOperation> clonedTranslate;
     if (auto* srcTranslate = translate.get())
@@ -139,13 +110,8 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
     if (renderer)
         transformOperationData = TransformOperationData(renderer->transformReferenceBoxRect(style), renderer);
 
-    auto& transformOperations = transform.operations();
-    auto& srcTransformOperations = style.transform().operations();
-    transformOperations.appendContainerWithMapping(srcTransformOperations, [&](auto& srcTransformOperation) {
-        return srcTransformOperation->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
-    });
-
     transformBox = style.transformBox();
+    transform = style.transform().selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
 
     if (auto* srcTranslate = style.translate())
         translate = srcTranslate->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
@@ -202,8 +168,7 @@ TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const
     }
 
     // 7. Multiply by each of the transform functions in transform from left to right.
-    for (auto& transformOperation : transform.operations())
-        transformOperation->apply(matrix, boundingBox.size());
+    transform.apply(matrix, boundingBox.size());
 
     // 8. Translate by the negated computed X, Y and Z values of transform-origin.
     // (not needed, the GraphicsLayer handles that)

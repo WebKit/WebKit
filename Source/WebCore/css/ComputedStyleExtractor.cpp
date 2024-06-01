@@ -880,8 +880,8 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
         return CSSPrimitiveValue::create(CSSValueNone);
 
     CSSValueListBuilder list;
-    for (auto& operation : style.transform().operations()) {
-        if (auto functionValue = transformOperationAsCSSValue(*operation, style))
+    for (auto& operation : style.transform()) {
+        if (auto functionValue = transformOperationAsCSSValue(operation, style))
             list.append(functionValue.releaseNonNull());
     }
     if (!list.isEmpty())

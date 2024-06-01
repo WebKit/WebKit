@@ -49,8 +49,8 @@ public:
     };
 
     struct TransformSyntaxValue {
-        RefPtr<TransformOperation> transform;
-        bool operator==(const TransformSyntaxValue& other) const { return arePointingToEqualData(transform, other.transform); }
+        Ref<TransformOperation> transform;
+        bool operator==(const TransformSyntaxValue& other) const { return transform.get() == other.transform.get(); }
     };
 
     using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, URL, String, TransformSyntaxValue>;

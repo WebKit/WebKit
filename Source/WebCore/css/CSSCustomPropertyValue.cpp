@@ -94,7 +94,7 @@ String CSSCustomPropertyValue::customCSSText() const
         }, [&](const String& value) {
             return value;
         }, [&](const TransformSyntaxValue& value) {
-            auto cssValue = transformOperationAsCSSValue(*value.transform, RenderStyle::defaultStyle());
+            auto cssValue = transformOperationAsCSSValue(value.transform, RenderStyle::defaultStyle());
             if (!cssValue)
                 return emptyString();
             return cssValue->cssText();

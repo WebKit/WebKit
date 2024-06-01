@@ -2844,7 +2844,7 @@ class WebCore::CAAudioStreamDescription {
 #endif
 
 class WebCore::TransformOperations {
-    Vector<RefPtr<WebCore::TransformOperation>> operations();
+    Vector<Ref<WebCore::TransformOperation>> m_operations;
 }
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Gradient::LinearData {

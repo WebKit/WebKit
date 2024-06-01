@@ -490,8 +490,8 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
 
         case CSSCustomPropertySyntax::Type::TransformFunction:
         case CSSCustomPropertySyntax::Type::TransformList:
-            if (auto transform = transformForValue(value, builderState.cssToLengthConversionData()))
-                return { CSSCustomPropertyValue::TransformSyntaxValue { transform } };
+            if (RefPtr transform = transformForValue(value, builderState.cssToLengthConversionData()))
+                return { CSSCustomPropertyValue::TransformSyntaxValue { transform.releaseNonNull() } };
             return { };
         case CSSCustomPropertySyntax::Type::Unknown:
             return { };

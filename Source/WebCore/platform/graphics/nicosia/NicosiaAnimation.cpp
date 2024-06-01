@@ -125,17 +125,17 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
 
     // First frame of an animation.
     if (!progress) {
-        from.apply(boxSize, matrix);
+        from.apply(matrix, boxSize);
         return matrix;
     }
 
     // Last frame of an animation.
     if (progress == 1) {
-        to.apply(boxSize, matrix);
+        to.apply(matrix, boxSize);
         return matrix;
     }
 
-    to.blend(from, progress, LayoutSize { boxSize }).apply(boxSize, matrix);
+    to.blend(from, progress, LayoutSize { boxSize }).apply(matrix, boxSize);
     return matrix;
 }
 
@@ -161,9 +161,8 @@ static KeyframeValueList createThreadsafeKeyFrames(const KeyframeValueList& orig
     KeyframeValueList keyframes = originalKeyframes;
     for (unsigned i = 0; i < keyframes.size(); i++) {
         const auto& transformValue = static_cast<const TransformAnimationValue&>(keyframes.at(i));
-        for (auto& operation : transformValue.value().operations()) {
-            if (is<TranslateTransformOperation>(operation)) {
-                TranslateTransformOperation* translation = static_cast<TranslateTransformOperation*>(operation.get());
+        for (auto& operation : transformValue.value()) {
+            if (RefPtr translation = dynamicDowncast<TranslateTransformOperation>(operation)) {
                 translation->setX(Length(translation->xAsFloat(boxSize), LengthType::Fixed));
                 translation->setY(Length(translation->yAsFloat(boxSize), LengthType::Fixed));
                 translation->setZ(Length(translation->zAsFloat(), LengthType::Fixed));

@@ -1481,7 +1481,7 @@ public:
     inline void setColumnSpan(ColumnSpan);
     inline void inheritColumnPropertiesFrom(const RenderStyle& parent);
 
-    inline void setTransform(const TransformOperations&);
+    inline void setTransform(TransformOperations&&);
     inline void setTransformOriginX(Length&&);
     inline void setTransformOriginY(Length&&);
     inline void setTransformOriginZ(float);

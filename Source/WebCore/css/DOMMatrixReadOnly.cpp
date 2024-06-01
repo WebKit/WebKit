@@ -242,7 +242,7 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
         return Exception { ExceptionCode::SyntaxError };
 
     AbstractMatrix matrix;
-    for (auto& operation : operations->operations()) {
+    for (auto& operation : *operations) {
         if (operation->apply(matrix.matrix, { 0, 0 }))
             return Exception { ExceptionCode::SyntaxError };
         if (operation->is3DOperation())

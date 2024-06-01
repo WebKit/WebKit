@@ -51,6 +51,7 @@
 #include "ScaleTransformOperation.h"
 #include "Settings.h"
 #include "TiledBacking.h"
+#include "TransformOperationsSharedPrimitivesPrefix.h"
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
 #include <QuartzCore/CATransform3D.h>
@@ -3566,7 +3567,7 @@ static const TransformOperations& transformationAnimationValueAt(const KeyframeV
     return static_cast<const TransformAnimationValue&>(valueList.at(i)).value();
 }
 
-static bool hasBig3DRotation(const KeyframeValueList& valueList, const SharedPrimitivesPrefix& prefix)
+static bool hasBig3DRotation(const KeyframeValueList& valueList, const TransformOperationsSharedPrimitivesPrefix& prefix)
 {
     // Hardware non-matrix animations are used for every function in the shared primitives prefix.
     // These kind of animations have issues with large rotation angles, so for every function that
@@ -3606,7 +3607,7 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     // FIXME: Currently, this only supports situations where every keyframe shares the same prefix of shared
     // transformation primitives, but the specification says direct interpolation should be determined by
     // the primitives shared between any two adjacent keyframes.
-    SharedPrimitivesPrefix prefix;
+    TransformOperationsSharedPrimitivesPrefix prefix;
     for (size_t i = 0; i < valueList.size(); ++i)
         prefix.update(transformationAnimationValueAt(valueList, i));
 
@@ -3838,8 +3839,8 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
 
     if (isMatrixAnimation) {
         TransformationMatrix fromTransform, toTransform;
-        startValue.apply(boxSize, fromTransform);
-        endValue.apply(boxSize, toTransform);
+        startValue.apply(fromTransform, boxSize);
+        endValue.apply(toTransform, boxSize);
 
         // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
         if (!fromTransform.isInvertible() || !toTransform.isInvertible())
@@ -3899,7 +3900,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
 
         if (isMatrixAnimation) {
             TransformationMatrix transform;
-            curValue.value().apply(functionIndex, boxSize, transform);
+            curValue.value().apply(transform, boxSize, functionIndex);
 
             // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
             if (!transform.isInvertible())

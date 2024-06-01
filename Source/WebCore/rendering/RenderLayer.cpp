@@ -5560,30 +5560,39 @@ RenderStyle RenderLayer::createReflectionStyle()
     newStyle.inheritFrom(renderer().style());
     
     // Map in our transform.
-    TransformOperations transform;
+    Vector<Ref<TransformOperation>> operations;
+
     switch (renderer().style().boxReflect()->direction()) {
     case ReflectionDirection::Below:
-        transform.operations().append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(100., LengthType::Percent), TransformOperation::Type::Translate));
-        transform.operations().append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), renderer().style().boxReflect()->offset(), TransformOperation::Type::Translate));
-        transform.operations().append(ScaleTransformOperation::create(1.0, -1.0, ScaleTransformOperation::Type::Scale));
+        operations = {
+            TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(100., LengthType::Percent), TransformOperation::Type::Translate),
+            TranslateTransformOperation::create(Length(0, LengthType::Fixed), renderer().style().boxReflect()->offset(), TransformOperation::Type::Translate),
+            ScaleTransformOperation::create(1.0, -1.0, ScaleTransformOperation::Type::Scale)
+        };
         break;
     case ReflectionDirection::Above:
-        transform.operations().append(ScaleTransformOperation::create(1.0, -1.0, ScaleTransformOperation::Type::Scale));
-        transform.operations().append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(100., LengthType::Percent), TransformOperation::Type::Translate));
-        transform.operations().append(TranslateTransformOperation::create(Length(0, LengthType::Fixed), renderer().style().boxReflect()->offset(), TransformOperation::Type::Translate));
+        operations = {
+            ScaleTransformOperation::create(1.0, -1.0, ScaleTransformOperation::Type::Scale),
+            TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(100., LengthType::Percent), TransformOperation::Type::Translate),
+            TranslateTransformOperation::create(Length(0, LengthType::Fixed), renderer().style().boxReflect()->offset(), TransformOperation::Type::Translate)
+        };
         break;
     case ReflectionDirection::Right:
-        transform.operations().append(TranslateTransformOperation::create(Length(100., LengthType::Percent), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
-        transform.operations().append(TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
-        transform.operations().append(ScaleTransformOperation::create(-1.0, 1.0, ScaleTransformOperation::Type::Scale));
+        operations = {
+            TranslateTransformOperation::create(Length(100., LengthType::Percent), Length(0, LengthType::Fixed), TransformOperation::Type::Translate),
+            TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, LengthType::Fixed), TransformOperation::Type::Translate),
+            ScaleTransformOperation::create(-1.0, 1.0, ScaleTransformOperation::Type::Scale)
+        };
         break;
     case ReflectionDirection::Left:
-        transform.operations().append(ScaleTransformOperation::create(-1.0, 1.0, ScaleTransformOperation::Type::Scale));
-        transform.operations().append(TranslateTransformOperation::create(Length(100., LengthType::Percent), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
-        transform.operations().append(TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, LengthType::Fixed), TransformOperation::Type::Translate));
+        operations = {
+            ScaleTransformOperation::create(-1.0, 1.0, ScaleTransformOperation::Type::Scale),
+            TranslateTransformOperation::create(Length(100., LengthType::Percent), Length(0, LengthType::Fixed), TransformOperation::Type::Translate),
+            TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, LengthType::Fixed), TransformOperation::Type::Translate)
+        };
         break;
     }
-    newStyle.setTransform(transform);
+    newStyle.setTransform(TransformOperations { WTFMove(operations) });
 
     // Map in our mask.
     newStyle.setMaskBorder(renderer().style().boxReflect()->mask());

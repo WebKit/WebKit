@@ -25,7 +25,8 @@
 
 #include "LayoutSize.h"
 #include "TransformOperation.h"
-#include <wtf/RefPtr.h>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -35,93 +36,64 @@ struct BlendingContext;
 class TransformOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TransformOperations() = default;
-    WEBCORE_EXPORT explicit TransformOperations(Vector<RefPtr<TransformOperation>>&&);
-    
-    bool operator==(const TransformOperations& o) const;
-    
-    void apply(const FloatSize& size, TransformationMatrix& matrix) const { apply(0, size, matrix); }
-    void apply(unsigned start, const FloatSize& size, TransformationMatrix& matrix) const
-    {
-        for (unsigned i = start; i < m_operations.size(); ++i)
-            m_operations[i]->apply(matrix, size);
-    }
+    using const_iterator = Vector<Ref<TransformOperation>>::const_iterator;
+    using const_reverse_iterator = Vector<Ref<TransformOperation>>::const_reverse_iterator;
+    using value_type = Vector<Ref<TransformOperation>>::value_type;
 
-    
+    TransformOperations() = default;
+
+    explicit TransformOperations(Ref<TransformOperation>&&);
+    WEBCORE_EXPORT explicit TransformOperations(Vector<Ref<TransformOperation>>&&);
+
+    bool operator==(const TransformOperations&) const;
+
+    TransformOperations clone() const;
+    TransformOperations selfOrCopyWithResolvedCalculatedValues(const FloatSize&) const;
+
+    const_iterator begin() const { return m_operations.begin(); }
+    const_iterator end() const { return m_operations.end(); }
+    const_reverse_iterator rbegin() const { return m_operations.rbegin(); }
+    const_reverse_iterator rend() const { return m_operations.rend(); }
+
+    bool isEmpty() const { return m_operations.isEmpty(); }
+    size_t size() const { return m_operations.size(); }
+    const TransformOperation* at(size_t index) const { return index < m_operations.size() ? m_operations[index].ptr() : nullptr; }
+
+    const Ref<TransformOperation>& operator[](size_t i) const { return m_operations[i]; }
+    const Ref<TransformOperation>& first() const { return m_operations.first(); }
+    const Ref<TransformOperation>& last() const { return m_operations.last(); }
+
+    void apply(TransformationMatrix&, const FloatSize&, unsigned start = 0) const;
+
     // Return true if any of the operation types are 3D operation types (even if the
     // values describe affine transforms)
-    bool has3DOperation() const
-    {
-        for (const auto& operation : m_operations) {
-            if (operation->is3DOperation())
-                return true;
-        }
-        return false;
-    }
-    
-    bool hasMatrixOperation() const
-    {
-        return std::any_of(m_operations.begin(), m_operations.end(), [](auto operation) {
-            return operation->type() == WebCore::TransformOperation::Type::Matrix;
-        });
-    }
-
-    bool isRepresentableIn2D() const
-    {
-        for (const auto& operation : m_operations) {
-            if (!operation->isRepresentableIn2D())
-                return false;
-        }
-        return true;
-    }
-
-    void clear()
-    {
-        m_operations.clear();
-    }
-
+    bool has3DOperation() const;
+    bool isRepresentableIn2D() const;
     bool affectedByTransformOrigin() const;
-    
-    Vector<RefPtr<TransformOperation>>& operations() { return m_operations; }
-    const Vector<RefPtr<TransformOperation>>& operations() const { return m_operations; }
 
-    size_t size() const { return m_operations.size(); }
-    const TransformOperation* at(size_t index) const { return index < m_operations.size() ? m_operations.at(index).get() : 0; }
-    bool isInvertible(const LayoutSize& size) const
-    {
-        TransformationMatrix transform;
-        apply(size, transform);
-        return transform.isInvertible();
-    }
-    
+    template<TransformOperation::Type operationType>
+    bool hasTransformOfType() const;
+
+    bool isInvertible(const LayoutSize&) const;
+
     bool shouldFallBackToDiscreteAnimation(const TransformOperations&, const LayoutSize&) const;
-    
-    RefPtr<TransformOperation> createBlendedMatrixOperationFromOperationsSuffix(const TransformOperations& from, unsigned start, const BlendingContext&, const LayoutSize& referenceBoxSize) const;
+
+    Ref<TransformOperation> createBlendedMatrixOperationFromOperationsSuffix(const TransformOperations& from, unsigned start, const BlendingContext&, const LayoutSize& referenceBoxSize) const;
     TransformOperations blend(const TransformOperations& from, const BlendingContext&, const LayoutSize&, std::optional<unsigned> prefixLength = std::nullopt) const;
 
 private:
-    Vector<RefPtr<TransformOperation>> m_operations;
+    friend struct IPC::ArgumentCoder<TransformOperations, void>;
+    friend WTF::TextStream& operator<<(WTF::TextStream&, const TransformOperations&);
+
+    Vector<Ref<TransformOperation>> m_operations;
 };
 
-// SharedPrimitivesPrefix is used to find a shared prefix of transform function primitives (as
-// defined by CSS Transforms Level 1 & 2). Given a series of TransformOperations in the keyframes
-// of an animation. After update() is called with the TransformOperations of every keyframe,
-// primitive() will return the prefix of primitives that are shared by all keyframes passed
-// to update().
-class SharedPrimitivesPrefix {
-public:
-    SharedPrimitivesPrefix() = default;
-    virtual ~SharedPrimitivesPrefix() = default;
-    void update(const TransformOperations&);
-    bool hadIncompatibleTransformFunctions() { return m_indexOfFirstMismatch.has_value(); }
-    const Vector<TransformOperation::Type>& primitives() const { return m_primitives; }
-
-private:
-    std::optional<size_t> m_indexOfFirstMismatch;
-    Vector<TransformOperation::Type> m_primitives;
-};
+template<TransformOperation::Type operationType>
+bool TransformOperations::hasTransformOfType() const
+{
+    return WTF::anyOf(m_operations, [](auto& op) { return op->type() == operationType; });
+}
 
 WTF::TextStream& operator<<(WTF::TextStream&, const TransformOperations&);
 
 } // namespace WebCore
-
