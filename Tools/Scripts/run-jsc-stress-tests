@@ -186,6 +186,7 @@ def usage
     puts "--jsc                (-j)   Path to JavaScriptCore build product. This option is required."
     puts "--no-copy                   Do not copy the JavaScriptCore build product before testing."
     puts "                            --jsc specifies an already present JavaScriptCore to test."
+    puts "--platform                  Indicate the target platform we are running on."
     puts "--memory-limited            Indicate that we are targeting the test for a memory limited device."
     puts "                            Skip tests tagged with //@skip if $memoryLimited"
     puts "--no-jit                    Do not run JIT specific tests."
@@ -235,6 +236,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
                ['--no-copy', GetoptLong::NO_ARGUMENT],
                ['--cloop', GetoptLong::NO_ARGUMENT],
+               ['--platform', GetoptLong::REQUIRED_ARGUMENT],
                ['--memory-limited', GetoptLong::NO_ARGUMENT],
                ['--no-jit', GetoptLong::NO_ARGUMENT],
                ['--force-collectContinuously', GetoptLong::NO_ARGUMENT],
@@ -281,6 +283,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--cloop'
         $cloop = true
         $jitTests = false
+    when '--platform'
+        $platform = arg
     when '--memory-limited'
         $memoryLimited = true
     when '--no-jit'

@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2005-2023 Apple Inc.  All rights reserved.
+# Copyright (C) 2005-2024 Apple Inc.  All rights reserved.
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -68,6 +68,7 @@ my $rubyRunner;
 my $gnuParallelRunner;
 my $gnuParallelChunkSize;
 my $testWriter;
+my $fullConfiguration;
 my $memoryLimited;
 my $reportExecutionTime;
 my $treatFailingAsFlaky;
@@ -411,7 +412,7 @@ sub enableTestOrNot {
     return $state;
 }
 
-sub configurationForUpload()
+sub computeFullConfiguration()
 {
     my $platform;
     my $sdk;
@@ -577,7 +578,7 @@ if ($archs ne nativeArchitecture($remotes) && (nativeArchitecture($remotes) ne "
     die "Cannot run tests with $archs on this machine";
 }
 
-configurationForUpload() if (defined($report));
+$fullConfiguration = computeFullConfiguration();
 
 if (defined($jsonFileName)) {
     $jsonFileName = File::Spec->rel2abs($jsonFileName);
@@ -931,6 +932,9 @@ sub runJSCStressTests
         push(@jscStressDriverCmd, $testWriter);
     }
 
+    push(@jscStressDriverCmd, "--platform");
+    push(@jscStressDriverCmd, $fullConfiguration->{"platform"});
+
     if ($memoryLimited) {
         push(@jscStressDriverCmd, "--memory-limited");
     }
@@ -1107,7 +1111,7 @@ sub uploadResults
         version => 0,
         suite => 'javascriptcore-tests',
         commits => @commits,
-        configuration => configurationForUpload(),
+        configuration => $fullConfiguration,
         test_results => {
             run_stats => {
                 start_time => $startTime,
