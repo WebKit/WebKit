@@ -70,14 +70,7 @@ template<> struct VariadicConverter<IDLAny> {
 
     static std::optional<Item> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        auto& vm = JSC::getVM(&lexicalGlobalObject);
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        auto result = WebCore::convert<IDLAny>(lexicalGlobalObject, value);
-        if (UNLIKELY(result.hasException(scope)))
-            return std::nullopt;
-
-        return Item { JSC::getVM(&lexicalGlobalObject), result.releaseReturnValue() };
+        return Item { JSC::getVM(&lexicalGlobalObject), value };
     }
 };
 

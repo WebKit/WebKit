@@ -54,13 +54,22 @@ template<typename IDL> using VariadicArguments = FixedVector<VariadicItem<IDL>>;
 template<typename IDL>
 VariadicArguments<IDL> convertVariadicArguments(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, size_t startIndex)
 {
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     size_t length = callFrame.argumentCount();
     if (startIndex >= length)
         return { };
 
-    return VariadicArguments<IDL>::createWithSizeFromGenerator(length - startIndex, [&](size_t i) -> std::optional<VariadicItem<IDL>> {
-        return VariadicConverter<IDL>::convert(lexicalGlobalObject, callFrame.uncheckedArgument(i + startIndex));
+    auto result = VariadicArguments<IDL>::createWithSizeFromGenerator(length - startIndex, [&](size_t i) -> std::optional<VariadicItem<IDL>> {
+        auto result = VariadicConverter<IDL>::convert(lexicalGlobalObject, callFrame.uncheckedArgument(i + startIndex));
+        RETURN_IF_EXCEPTION(scope, std::nullopt);
+
+        return result;
     });
+
+    RETURN_IF_EXCEPTION(scope, VariadicArguments<IDL> { });
+    return result;
 }
 
 } // namespace WebCore

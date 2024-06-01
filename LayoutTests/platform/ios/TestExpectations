@@ -7316,6 +7316,4 @@ webkit.org/b/271916 media/track/track-in-band-layout.html [ Failure ]
 
 webkit.org/b/274766 [ Debug ] http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Failure ]
 
-webkit.org/b/274732 [ Debug ] js/dom/missing-exception-check-in-convertVariadicArguments.html [ Skip ]
-
 webkit.org/b/274925 [ Debug ] ipc/dirty-region-overflow.html [ Skip ]
