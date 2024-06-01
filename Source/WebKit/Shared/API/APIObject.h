@@ -55,7 +55,6 @@ public:
         AuthenticationDecisionListener,
         CaptionUserPreferencesTestingModeToken,
         CertificateInfo,
-        Connection,
         ContextMenuItem,
         Credential,
         Data,

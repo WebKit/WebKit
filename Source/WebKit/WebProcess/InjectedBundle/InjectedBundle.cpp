@@ -34,7 +34,6 @@
 #include "NetworkSessionCreationParameters.h"
 #include "NotificationPermissionRequestManager.h"
 #include "UserData.h"
-#include "WebConnectionToUIProcess.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
@@ -140,11 +139,6 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, API::Obje
         returnData = webProcess.transformHandlesToObjects(returnUserData.object());
     } else
         returnData = nullptr;
-}
-
-WebConnection* InjectedBundle::webConnectionToUIProcess() const
-{
-    return WebProcess::singleton().webConnectionToUIProcess();
 }
 
 void InjectedBundle::addOriginAccessAllowListEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)

@@ -27,7 +27,6 @@
 #import "WKWebProcessPlugInInternal.h"
 
 #import "APIArray.h"
-#import "WKConnectionInternal.h"
 #import "WKBundle.h"
 #import "WKBundleAPICast.h"
 #import "WKRetainPtr.h"
@@ -92,13 +91,6 @@ static void setUpBundleClient(WKWebProcessPlugInController *plugInController, We
 
     setUpBundleClient(self, *_bundle);
 }
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (WKConnection *)connection
-{
-    return wrapper(*_bundle->webConnectionToUIProcess());
-}
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)parameters
 {

@@ -364,16 +364,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WKConnection {
-    header "WKConnection.h"
-    export *
-  }
-
-  explicit module WKConnectionRef {
-    header "WKConnectionRef.h"
-    export *
-  }
-
   explicit module WKContentRuleListPrivate {
     header "WKContentRuleListPrivate.h"
     export *
@@ -396,11 +386,6 @@ framework module WebKit_Private [system] {
 
   explicit module WKContextConfigurationRef {
     header "WKContextConfigurationRef.h"
-    export *
-  }
-
-  explicit module WKContextConnectionClient {
-    header "WKContextConnectionClient.h"
     export *
   }
 

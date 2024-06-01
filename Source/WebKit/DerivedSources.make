@@ -150,7 +150,6 @@ MESSAGE_RECEIVERS = \
 	Shared/ApplePay/WebPaymentCoordinatorProxy \
 	Shared/Authentication/AuthenticationManager \
 	Shared/Notifications/NotificationManagerMessageHandler \
-	Shared/WebConnection \
 	Shared/IPCConnectionTester \
 	Shared/IPCStreamTester \
 	Shared/IPCStreamTesterProxy \

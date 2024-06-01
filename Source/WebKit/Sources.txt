@@ -237,8 +237,6 @@ Shared/UserData.cpp
 Shared/WebBackForwardListItem.cpp
 Shared/WebCompiledContentRuleList.cpp
 Shared/WebCompiledContentRuleListData.cpp
-Shared/WebConnection.cpp
-Shared/WebConnectionClient.cpp
 Shared/WebContextMenuItem.cpp
 Shared/WebContextMenuItemData.cpp
 Shared/WebCoreArgumentCoders.cpp
@@ -276,7 +274,6 @@ Shared/API/RegisterTZoneTypes.cpp
 
 Shared/API/c/WKArray.cpp
 Shared/API/c/WKCertificateInfo.cpp
-Shared/API/c/WKConnectionRef.cpp
 Shared/API/c/WKContextMenuItem.cpp
 Shared/API/c/WKData.cpp
 Shared/API/c/WKDeprecatedFunctions.cpp
@@ -419,9 +416,7 @@ UIProcess/WebBackForwardCache.cpp
 UIProcess/WebBackForwardCacheEntry.cpp
 UIProcess/WebBackForwardList.cpp
 UIProcess/WebColorPicker.cpp
-UIProcess/WebConnectionToWebProcess.cpp
 UIProcess/WebContextClient.cpp
-UIProcess/WebContextConnectionClient.cpp
 UIProcess/WebContextInjectedBundleClient.cpp
 UIProcess/WebContextMenuListenerProxy.cpp
 UIProcess/WebContextMenuProxy.cpp
@@ -613,7 +608,6 @@ UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp
 
 UIProcess/XR/PlatformXRSystem.cpp
 
-WebProcess/WebConnectionToUIProcess.cpp
 WebProcess/WebProcess.cpp
 WebProcess/WebSleepDisablerClient.cpp
 WebProcess/WebSystemSoundDelegate.cpp

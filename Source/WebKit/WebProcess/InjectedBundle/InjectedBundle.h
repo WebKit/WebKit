@@ -68,7 +68,6 @@ typedef void* PlatformBundle;
 #endif
 
 class InjectedBundleScriptWorld;
-class WebConnection;
 class WebFrame;
 class WebPage;
 class WebPageGroupProxy;
@@ -90,8 +89,6 @@ public:
     void postMessage(const String&, API::Object*);
     void postSynchronousMessage(const String&, API::Object*, RefPtr<API::Object>& returnData);
     void setServiceWorkerProxyCreationCallback(void (*)(uint64_t));
-
-    WebConnection* webConnectionToUIProcess() const;
 
     // TestRunner only SPI
     void addOriginAccessAllowListEntry(const String&, const String&, const String&, bool);

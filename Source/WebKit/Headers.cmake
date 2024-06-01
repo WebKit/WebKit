@@ -2,7 +2,6 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/c/WKArray.h
     Shared/API/c/WKBase.h
     Shared/API/c/WKCertificateInfo.h
-    Shared/API/c/WKConnectionRef.h
     Shared/API/c/WKContextMenuItem.h
     Shared/API/c/WKContextMenuItemTypes.h
     Shared/API/c/WKData.h
@@ -38,7 +37,6 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/WKBackForwardListRef.h
     UIProcess/API/C/WKContext.h
     UIProcess/API/C/WKContextConfigurationRef.h
-    UIProcess/API/C/WKContextConnectionClient.h
     UIProcess/API/C/WKContextDownloadClient.h
     UIProcess/API/C/WKContextHistoryClient.h
     UIProcess/API/C/WKContextInjectedBundleClient.h

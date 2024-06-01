@@ -378,9 +378,6 @@ WebProcessProxy::~WebProcessProxy()
     for (auto& callback : isResponsiveCallbacks)
         callback(false);
 
-    if (RefPtr webConnection = m_webConnection)
-        webConnection->invalidate();
-
     while (m_numberOfTimesSuddenTerminationWasDisabled-- > 0)
         WebCore::enableSuddenTermination();
 
@@ -704,9 +701,6 @@ void WebProcessProxy::shutDown()
     }
 
     shutDownProcess();
-
-    if (RefPtr webConnection = std::exchange(m_webConnection, nullptr))
-        webConnection->invalidate();
 
     m_backgroundResponsivenessTimer.invalidate();
     m_audibleMediaActivity = std::nullopt;
@@ -1203,9 +1197,6 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     m_userMediaCaptureManagerProxy->clear();
 #endif
 
-    if (RefPtr webConnection = this->webConnection())
-        webConnection->didClose();
-
     auto pages = mainPages();
 
     Vector<WeakPtr<ProvisionalPageProxy>> provisionalPages;
@@ -1345,9 +1336,6 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     if (m_websiteDataStore)
         m_websiteDataStore->protectedNetworkProcess()->sendXPCEndpointToProcess(*this);
 #endif
-
-    RELEASE_ASSERT(!m_webConnection);
-    m_webConnection = WebConnectionToWebProcess::create(this);
 
     protectedProcessPool()->processDidFinishLaunching(*this);
     m_backgroundResponsivenessTimer.updateState();

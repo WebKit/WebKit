@@ -402,11 +402,6 @@ void WebProcessPool::setInjectedBundleClient(std::unique_ptr<API::InjectedBundle
         m_injectedBundleClient = WTFMove(client);
 }
 
-void WebProcessPool::initializeConnectionClient(const WKContextConnectionClientBase* client)
-{
-    m_connectionClient.initialize(client);
-}
-
 void WebProcessPool::setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>&& historyClient)
 {
     if (!historyClient)
@@ -1104,8 +1099,6 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
 
     if (m_configuration->ignoreSynchronousMessagingTimeoutsForTesting())
         process.protectedConnection()->ignoreTimeoutsForTesting();
-
-    m_connectionClient.didCreateConnection(this, process.protectedWebConnection().get());
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     for (auto& page : process.pages()) {

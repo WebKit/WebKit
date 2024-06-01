@@ -40,7 +40,6 @@
 #include "SpeechRecognitionServer.h"
 #include "UserContentControllerIdentifier.h"
 #include "VisibleWebPageCounter.h"
-#include "WebConnectionToWebProcess.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/CrossOriginMode.h>
 #include <WebCore/FrameIdentifier.h>
@@ -179,9 +178,6 @@ public:
     static Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies();
 
     void initializeWebProcess(WebProcessCreationParameters&&);
-
-    WebConnection* webConnection() const { return m_webConnection.get(); }
-    RefPtr<WebConnection> protectedWebConnection() const { return m_webConnection; }
 
     unsigned suspendedPageCount() const { return m_suspendedPages.computeSize(); }
     void addSuspendedPageProxy(SuspendedPageProxy&);
@@ -595,7 +591,6 @@ private:
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
     // IPC::Connection::Client
-    friend class WebConnectionToWebProcess;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) final;
@@ -678,7 +673,6 @@ private:
 
     BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;
     
-    RefPtr<WebConnectionToWebProcess> m_webConnection;
     WeakOrStrongPtr<WebProcessPool> m_processPool; // Pre-warmed and cached processes do not hold a strong reference to their pool.
 
     bool m_mayHaveUniversalFileReadSandboxExtension; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.

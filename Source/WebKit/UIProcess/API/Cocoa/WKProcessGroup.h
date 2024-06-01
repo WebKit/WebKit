@@ -26,7 +26,6 @@
 #import <WebKit/WKFoundation.h>
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WKConnection.h>
 
 @class WKProcessGroup;
 

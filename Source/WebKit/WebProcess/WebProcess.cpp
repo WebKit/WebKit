@@ -54,7 +54,6 @@
 #include "WebBroadcastChannelRegistry.h"
 #include "WebCacheStorageProvider.h"
 #include "WebChromeClient.h"
-#include "WebConnectionToUIProcess.h"
 #include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFileSystemStorageConnection.h"
@@ -404,8 +403,6 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 
     for (auto& supplement : m_supplements.values())
         supplement->initializeConnection(connection);
-
-    m_webConnection = WebConnectionToUIProcess::create(this);
 }
 
 static void scheduleLogMemoryStatistics(LogMemoryStatisticsReason reason)
@@ -953,9 +950,6 @@ void WebProcess::terminate()
     FontCache::invalidateAllFontCaches();
     MemoryCache::singleton().setDisabled(true);
 #endif
-
-    m_webConnection->invalidate();
-    m_webConnection = nullptr;
 
     platformTerminate();
 

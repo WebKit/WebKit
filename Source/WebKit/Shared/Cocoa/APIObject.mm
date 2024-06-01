@@ -29,7 +29,6 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
-#import "WKConnectionInternal.h"
 #import "WKContentRuleListInternal.h"
 #import "WKContentRuleListStoreInternal.h"
 #import "WKContentWorldInternal.h"
@@ -201,14 +200,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::BundlePage:
         wrapper = [WKWebProcessPlugInBrowserContextController alloc];
-        break;
-
-    case Type::Connection:
-        // While not actually a WKObject instance, WKConnection uses allocateWKObject to allocate extra space
-        // instead of using ObjectStorage because the wrapped C++ object is a subclass of WebConnection.
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        wrapper = allocateWKObject([WKConnection class], size);
-ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::DebuggableInfo:

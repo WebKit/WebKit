@@ -36,6 +36,7 @@
 #include <Security/SecBase.h>
 #include <Security/SecIdentity.h>
 #include <Security/SecItem.h>
+#include <WebCore/CertificateInfo.h>
 #include <wtf/cf/VectorCF.h>
 
 #if HAVE(SEC_KEYCHAIN)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "_WKTargetedElementRequestInternal.h"
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 @implementation _WKTargetedElementRequest {
     RetainPtr<NSString> _searchText;
 }
