@@ -34,6 +34,7 @@
 #include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "FontCascade.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -351,7 +352,7 @@ static Node* firstNode(const BoundaryPoint& point)
 TextIterator::TextIterator(const SimpleRange& range, TextIteratorBehaviors behaviors)
     : m_behaviors(behaviors)
 {
-    ASSERT(!m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters) || !m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly));
+    ASSERT(!m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters) || !m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImages));
 
     range.start.protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
@@ -779,8 +780,13 @@ bool TextIterator::handleReplacedElement()
         if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters))
             return true;
 
-        if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly) && is<HTMLImageElement>(m_currentNode.get()))
+        if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImages) && is<HTMLImageElement>(m_currentNode.get()))
             return true;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+        if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForAttachments) && is<HTMLAttachmentElement>(m_currentNode.get()))
+            return true;
+#endif
 
         return false;
     }();

@@ -56,6 +56,10 @@ private:
 
 class WebContentReader final : public FrameWebContentReader {
 public:
+#if PLATFORM(COCOA)
+    static constexpr auto placeholderAttachmentFilenamePrefix = "webkit-attachment-"_s;
+#endif
+
     WebContentReader(LocalFrame& frame, const SimpleRange& context, bool allowPlainText)
         : FrameWebContentReader(frame)
         , m_context(context)

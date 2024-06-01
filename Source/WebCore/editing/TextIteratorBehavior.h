@@ -64,7 +64,11 @@ enum class TextIteratorBehavior : uint16_t {
 
     IgnoresUserSelectNone = 1 << 11,
 
-    EmitsObjectReplacementCharactersForImagesOnly = 1 << 12,
+    EmitsObjectReplacementCharactersForImages = 1 << 12,
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    EmitsObjectReplacementCharactersForAttachments = 1 << 13,
+#endif
 };
 
 using TextIteratorBehaviors = OptionSet<TextIteratorBehavior>;

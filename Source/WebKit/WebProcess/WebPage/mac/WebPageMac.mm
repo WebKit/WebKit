@@ -365,7 +365,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return;
     }
 
-    auto attributedString = editingAttributedString(*range, IncludeImages::No).nsAttributedString();
+    auto attributedString = editingAttributedString(*range, { }).nsAttributedString();
 
     // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>

@@ -379,6 +379,16 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
         if (!parent)
             continue;
 
+        // If the filename begins with this sentinel value, this means that an existing attachment should be used.
+        // See `HTMLConverter.mm` for more details.
+        if (info.fileName.startsWith(WebContentReader::placeholderAttachmentFilenamePrefix)) {
+            RefPtr document = frame.document();
+            if (RefPtr existingAttachment = document->attachmentForIdentifier({ info.data->span() })) {
+                parent->replaceChild(*existingAttachment.get(), WTFMove(originalElement));
+                continue;
+            }
+        }
+
         auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
         if (supportsClientSideAttachmentData(frame)) {
             if (RefPtr image = dynamicDowncast<HTMLImageElement>(originalElement); image && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {

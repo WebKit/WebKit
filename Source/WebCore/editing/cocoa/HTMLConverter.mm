@@ -68,6 +68,7 @@
 #import "StyledElement.h"
 #import "TextIterator.h"
 #import "VisibleSelection.h"
+#import "WebContentReader.h"
 #import "WebCoreTextAttachment.h"
 #import "markup.h"
 #import <objc/runtime.h>
@@ -118,9 +119,6 @@ enum {
 #else
 static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader *, NSURL *);
 #endif
-
-static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement&);
-static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(HTMLImageElement&);
 
 // Additional control Unicode characters
 const unichar WebNextLineCharacter = 0x0085;
@@ -2370,7 +2368,7 @@ static String preferredFilenameForElement(const HTMLImageElement& element)
     return copyImageUnknownFileLabel();
 }
 
-static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
+static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLImageElement& element)
 {
     if (CachedImage* cachedImage = element.cachedImage()) {
         if (RefPtr sharedBuffer = cachedImage->resourceBuffer()) {
@@ -2393,7 +2391,23 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
     return nil;
 }
 
-static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(HTMLImageElement& element)
+static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLAttachmentElement& element)
+{
+    auto identifier = element.uniqueIdentifier();
+
+    RetainPtr data = [(NSString *)identifier dataUsingEncoding:NSUTF8StringEncoding];
+    if (!data)
+        return nil;
+
+    // Use a filename prefixed with a sentinel value to indicate that the data is corresponding
+    // to an existing HTMLAttachmentElement.
+
+    RetainPtr wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
+    [wrapper setPreferredFilename:makeString(WebContentReader::placeholderAttachmentFilenamePrefix, identifier)];
+    return wrapper;
+}
+
+static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(const HTMLImageElement& element)
 {
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     if (element.isMultiRepresentationHEIC()) {
@@ -2413,6 +2427,13 @@ static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(HT
     return [NSAttributedString attributedStringWithAttachment:attachment.get()];
 }
 
+static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(const HTMLAttachmentElement& element)
+{
+    RetainPtr fileWrapper = fileWrapperForElement(element);
+    RetainPtr attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
+    return [NSAttributedString attributedStringWithAttachment:attachment.get()];
+}
+
 namespace WebCore {
 
 // This function supports more HTML features than the editing variant below, such as tables.
@@ -2422,7 +2443,7 @@ AttributedString attributedString(const SimpleRange& range)
 }
 
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
-AttributedString editingAttributedString(const SimpleRange& range, IncludeImages includeImages)
+AttributedString editingAttributedString(const SimpleRange& range, OptionSet<IncludedElement> includedElements)
 {
 #if PLATFORM(MAC)
     auto fontManager = [NSFontManager sharedFontManager];
@@ -2434,8 +2455,14 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
     for (TextIterator it(range); !it.atEnd(); it.advance()) {
         auto node = it.node();
 
-        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(node); imageElement && includeImages == IncludeImages::Yes) {
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(node); imageElement && includedElements.contains(IncludedElement::Images)) {
             RetainPtr attachmentAttributedString = attributedStringWithAttachmentForElement(*imageElement);
+            [string appendAttributedString:attachmentAttributedString.get()];
+            stringLength += [attachmentAttributedString length];
+        }
+
+        if (RefPtr attachmentElement = dynamicDowncast<HTMLAttachmentElement>(node); attachmentElement && includedElements.contains(IncludedElement::Attachments)) {
+            RetainPtr attachmentAttributedString = attributedStringWithAttachmentForElement(*attachmentElement);
             [string appendAttributedString:attachmentAttributedString.get()];
             stringLength += [attachmentAttributedString length];
         }

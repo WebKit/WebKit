@@ -49,24 +49,31 @@ namespace WebKit {
 
 // MARK: Static utility helper methods.
 
+static constexpr auto defaultTextIteratorBehaviors = WebCore::TextIteratorBehaviors {
+    WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImages,
+#if ENABLE(ATTACHMENT_ELEMENT)
+    WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForAttachments
+#endif
+};
+
 WebCore::CharacterRange UnifiedTextReplacementController::characterRange(const WebCore::SimpleRange& scope, const WebCore::SimpleRange& range)
 {
-    return WebCore::characterRange(scope, range, { WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly });
+    return WebCore::characterRange(scope, range, defaultTextIteratorBehaviors);
 }
 
 uint64_t UnifiedTextReplacementController::characterCount(const WebCore::SimpleRange& range)
 {
-    return WebCore::characterCount(range, { WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly });
+    return WebCore::characterCount(range, defaultTextIteratorBehaviors);
 }
 
 WebCore::SimpleRange UnifiedTextReplacementController::resolveCharacterRange(const WebCore::SimpleRange& scope, WebCore::CharacterRange range)
 {
-    return WebCore::resolveCharacterRange(scope, range, { WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly });
+    return WebCore::resolveCharacterRange(scope, range, defaultTextIteratorBehaviors);
 }
 
 String UnifiedTextReplacementController::plainText(const WebCore::SimpleRange& range)
 {
-    return WebCore::plainText(range, { WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImagesOnly });
+    return WebCore::plainText(range, defaultTextIteratorBehaviors);
 }
 
 // MARK: UnifiedTextReplacementController implementation.
@@ -106,7 +113,7 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
 
     auto selectedTextRange = document->selection().selection().firstRange();
 
-    auto attributedStringFromRange = WebCore::editingAttributedString(*contextRange);
+    auto attributedStringFromRange = WebCore::editingAttributedString(*contextRange, { WebCore::IncludedElement::Images, WebCore::IncludedElement::Attachments });
     auto selectedTextCharacterRange = UnifiedTextReplacementController::characterRange(*contextRange, *selectedTextRange);
 
     if (session) {
