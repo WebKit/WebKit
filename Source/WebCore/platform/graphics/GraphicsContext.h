@@ -43,6 +43,7 @@
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
+#include <wtf/StackShot.h>
 
 namespace WebCore {
 
@@ -395,6 +396,10 @@ private:
     unsigned m_transparencyLayerCount { 0 };
     const IsDeferred m_isDeferred : 1; // NOLINT
     bool m_contentfulPaintDetected : 1 { false };
+
+#if ENABLE(CONTEXT_SAVE_STACK_CAPTURE)
+    Vector<WTF::StackShot, 1> m_saveStacks;
+#endif
 };
 
 } // namespace WebCore

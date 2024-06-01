@@ -69,6 +69,11 @@ void GraphicsContext::save(GraphicsContextState::Purpose purpose)
     ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer);
     m_stack.append(m_state);
     m_state.repurpose(purpose);
+
+#if ENABLE(CONTEXT_SAVE_STACK_CAPTURE)
+    static constexpr int maxFramesToCapture = 100;
+    m_saveStacks.append(WTF::StackShot(maxFramesToCapture));
+#endif
 }
 
 void GraphicsContext::restore(GraphicsContextState::Purpose purpose)
@@ -77,6 +82,13 @@ void GraphicsContext::restore(GraphicsContextState::Purpose purpose)
         LOG_ERROR("ERROR void GraphicsContext::restore() stack is empty");
         return;
     }
+
+#if ENABLE(CONTEXT_SAVE_STACK_CAPTURE)
+    if (purpose != m_state.purpose()) {
+        WTFLogAlways("Save stack trace for mismatched restore(): this = %p, m_stack.size() = %ld, purpose = %d", this, m_stack.size(), static_cast<int>(purpose));
+        WTFPrintBacktrace(m_saveStacks.last().array(), m_saveStacks.last().size());
+    }
+#endif
 
     ASSERT_UNUSED(purpose, purpose == m_state.purpose());
     ASSERT_UNUSED(purpose, purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer);
@@ -88,6 +100,10 @@ void GraphicsContext::restore(GraphicsContextState::Purpose purpose)
     // Canvas elements will immediately save() again, but that goes into inline capacity.
     if (m_stack.isEmpty())
         m_stack.clear();
+
+#if ENABLE(CONTEXT_SAVE_STACK_CAPTURE)
+    m_saveStacks.removeLast();
+#endif
 }
 
 void GraphicsContext::unwindStateStack(unsigned count)

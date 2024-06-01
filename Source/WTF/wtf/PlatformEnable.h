@@ -589,6 +589,9 @@
 #define ENABLE_UNPREFIXED_BACKDROP_FILTER 0
 #endif
 
+#if !defined(ENABLE_CONTEXT_SAVE_STACK_CAPTURE)
+#define ENABLE_CONTEXT_SAVE_STACK_CAPTURE 0
+#endif
 
 /* FIXME: This section of the file has not been cleaned up yet and needs major work. */
 
