@@ -30,9 +30,7 @@
 
 namespace JSC { namespace B3 {
 
-CCallValue::~CCallValue()
-{
-}
+CCallValue::~CCallValue() = default;
 
 void CCallValue::appendArgs(const Vector<Value*>& args)
 {

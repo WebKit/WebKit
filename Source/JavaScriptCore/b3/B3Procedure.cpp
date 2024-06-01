@@ -60,9 +60,7 @@ Procedure::Procedure(bool usesSIMD)
     m_code->setNumEntrypoints(m_numEntrypoints);
 }
 
-Procedure::~Procedure()
-{
-}
+Procedure::~Procedure() = default;
 
 void Procedure::printOrigin(PrintStream& out, Origin origin) const
 {

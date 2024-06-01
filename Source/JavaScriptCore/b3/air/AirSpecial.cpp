@@ -38,13 +38,9 @@ const char* const Special::dumpPrefix = "&";
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Special);
 
-Special::Special()
-{
-}
+Special::Special() = default;
 
-Special::~Special()
-{
-}
+Special::~Special() = default;
 
 CString Special::name() const
 {

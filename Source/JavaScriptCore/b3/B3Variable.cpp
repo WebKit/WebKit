@@ -34,9 +34,7 @@ namespace JSC { namespace B3 {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Variable);
 
-Variable::~Variable()
-{
-}
+Variable::~Variable() = default;
 
 void Variable::dump(PrintStream& out) const
 {

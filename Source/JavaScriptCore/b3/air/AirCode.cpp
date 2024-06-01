@@ -122,9 +122,7 @@ Code::Code(Procedure& proc)
     m_pinnedRegs.add(MacroAssembler::framePointerRegister, IgnoreVectors);
 }
 
-Code::~Code()
-{
-}
+Code::~Code() = default;
 
 void Code::emitDefaultPrologue(CCallHelpers& jit)
 {

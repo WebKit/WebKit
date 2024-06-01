@@ -113,9 +113,7 @@ void Debugger::TemporarilyDisableExceptionBreakpoints::restore()
 }
 
 
-Debugger::ProfilingClient::~ProfilingClient()
-{
-}
+Debugger::ProfilingClient::~ProfilingClient() = default;
 
 Debugger::Debugger(VM& vm)
     : m_vm(vm)

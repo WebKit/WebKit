@@ -51,9 +51,7 @@ public:
     std::unique_ptr<CallbackArgument> m_next;
 };
 
-CallbackArgument::~CallbackArgument()
-{
-}
+CallbackArgument::~CallbackArgument() = default;
 
 class CallbackArgumentBoolean final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) final

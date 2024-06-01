@@ -38,8 +38,8 @@ void FrequentExitSite::dump(PrintStream& out) const
     out.print(m_bytecodeIndex, ": ", m_kind, "/", m_jitType, "/", m_inlineKind);
 }
 
-ExitProfile::ExitProfile() { }
-ExitProfile::~ExitProfile() { }
+ExitProfile::ExitProfile() = default;
+ExitProfile::~ExitProfile() = default;
 
 bool ExitProfile::add(CodeBlock* owner, const FrequentExitSite& site)
 {
