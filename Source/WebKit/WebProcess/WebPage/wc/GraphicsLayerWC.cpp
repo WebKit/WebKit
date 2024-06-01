@@ -92,6 +92,9 @@ public:
 
     // TiledBacking override
     void setClient(TiledBackingClient*) final { }
+    PlatformLayerIdentifier layerIdentifier() const final { return m_owner.primaryLayerID(); }
+    TileGridIdentifier primaryGridIdentifier() const final { return TileGridIdentifier { 0 }; }
+    std::optional<TileGridIdentifier> secondaryGridIdentifier() const final { return { }; }
     void setVisibleRect(const FloatRect&) final { }
     FloatRect visibleRect() const final { return { }; };
     void setLayoutViewportRect(std::optional<FloatRect>) final { }

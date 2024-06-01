@@ -152,6 +152,11 @@ void TileCoverageMap::update()
     m_visibleViewportIndicatorLayer.get().setBorderColor(visibleRectIndicatorColor);
 }
 
+PlatformLayerIdentifier TileCoverageMap::platformCALayerIdentifier() const
+{
+    return m_layer->layerID();
+}
+
 void TileCoverageMap::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>)
 {
     ASSERT_UNUSED(platformCALayer, platformCALayer == m_layer.ptr());

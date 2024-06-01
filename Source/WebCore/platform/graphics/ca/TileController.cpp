@@ -94,6 +94,24 @@ void TileController::setClient(TiledBackingClient* client)
     m_client = nullptr;
 }
 
+PlatformLayerIdentifier TileController::layerIdentifier() const
+{
+    return owningGraphicsLayer()->platformCALayerIdentifier();
+}
+
+TileGridIdentifier TileController::primaryGridIdentifier() const
+{
+    return tileGrid().identifier();
+}
+
+std::optional<TileGridIdentifier> TileController::secondaryGridIdentifier() const
+{
+    if (m_zoomedOutTileGrid)
+        m_zoomedOutTileGrid->identifier();
+
+    return { };
+}
+
 void TileController::tileCacheLayerBoundsChanged()
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
@@ -153,6 +171,10 @@ void TileController::setContentsScale(float contentsScale)
         m_zoomedOutTileGrid = std::exchange(m_tileGrid, nullptr);
         m_zoomedOutTileGrid->setIsZoomedOutTileGrid(true);
         m_tileGrid = makeUnique<TileGrid>(*this);
+
+        if (m_client)
+            m_client->didAddGrid(*this, m_tileGrid->identifier());
+
         tileGridsChanged();
     }
 

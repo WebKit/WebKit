@@ -35,6 +35,8 @@ class PlatformCALayer;
 
 class PlatformCALayerClient {
 public:
+    virtual PlatformLayerIdentifier platformCALayerIdentifier() const = 0;
+
     virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) { }
     virtual bool platformCALayerRespondsToLayoutChanges() const { return false; }
 

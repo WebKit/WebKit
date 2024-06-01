@@ -218,6 +218,7 @@ private:
     bool isGraphicsLayerCA() const override { return true; }
 
     // PlatformCALayerClient overrides
+    PlatformLayerIdentifier platformCALayerIdentifier() const override { return primaryLayerID(); }
     void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) override { }
     bool platformCALayerRespondsToLayoutChanges() const override { return false; }
     WEBCORE_EXPORT void platformCALayerCustomSublayersChanged(PlatformCALayer*) override;

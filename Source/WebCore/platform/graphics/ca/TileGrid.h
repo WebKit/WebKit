@@ -142,6 +142,7 @@ private:
     void removeTiles(const Vector<TileIndex>& toRemove);
 
     // PlatformCALayerClient
+    PlatformLayerIdentifier platformCALayerIdentifier() const override;
     void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>) override;
     bool platformCALayerShowDebugBorders() const override;
     bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;

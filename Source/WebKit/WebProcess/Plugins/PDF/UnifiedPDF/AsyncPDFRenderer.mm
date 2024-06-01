@@ -285,6 +285,11 @@ void AsyncPDFRenderer::tilingScaleFactorDidChange(TiledBacking&, float)
 {
 }
 
+void AsyncPDFRenderer::didAddGrid(TiledBacking&, TileGridIdentifier)
+{
+
+}
+
 void AsyncPDFRenderer::willRemoveGrid(WebCore::TiledBacking&, TileGridIdentifier gridIdentifier)
 {
     m_rendereredTiles.removeIf([gridIdentifier](const auto& keyValuePair) {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IntPoint.h"
+#include "PlatformLayerIdentifier.h"
 #include "TileGridIdentifier.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/FastMalloc.h>
@@ -81,7 +82,10 @@ public:
     virtual void willRepaintTile(TiledBacking&, TileGridIdentifier, TileIndex, const FloatRect& tileClip, const FloatRect& paintDirtyRect) = 0;
     virtual void willRemoveTile(TiledBacking&, TileGridIdentifier, TileIndex) = 0;
     virtual void willRepaintAllTiles(TiledBacking&, TileGridIdentifier) = 0;
+
+    virtual void didAddGrid(TiledBacking&, TileGridIdentifier) = 0;
     virtual void willRemoveGrid(TiledBacking&, TileGridIdentifier) = 0;
+
     virtual void coverageRectDidChange(TiledBacking&, const FloatRect&) = 0;
     virtual void tilingScaleFactorDidChange(TiledBacking&, float) = 0;
 };
@@ -93,7 +97,14 @@ class TiledBacking : public CanMakeCheckedPtr<TiledBacking> {
 public:
     virtual ~TiledBacking() = default;
 
+    virtual PlatformLayerIdentifier layerIdentifier() const = 0;
+
     virtual void setClient(TiledBackingClient*) = 0;
+
+    // Note that the grids switch or change over time.
+    virtual TileGridIdentifier primaryGridIdentifier() const = 0;
+    // There can be a secondary grid when setZoomedOutContentsScale() has been called.
+    virtual std::optional<TileGridIdentifier> secondaryGridIdentifier() const = 0;
 
     virtual void setVisibleRect(const FloatRect&) = 0;
     virtual FloatRect visibleRect() const = 0;

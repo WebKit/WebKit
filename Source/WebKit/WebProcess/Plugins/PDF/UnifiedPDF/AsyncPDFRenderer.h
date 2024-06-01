@@ -144,6 +144,7 @@ private:
     void willRepaintAllTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
     void coverageRectDidChange(WebCore::TiledBacking&, const WebCore::FloatRect&) final;
     void tilingScaleFactorDidChange(WebCore::TiledBacking&, float) final;
+    void didAddGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
     void willRemoveGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
 
     void enqueueTilePaintIfNecessary(const TileForGrid&, const WebCore::FloatRect& tileRect, const std::optional<WebCore::FloatRect>& clipRect = { });

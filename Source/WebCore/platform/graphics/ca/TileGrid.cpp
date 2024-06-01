@@ -712,6 +712,11 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
     }
 }
 
+PlatformLayerIdentifier TileGrid::platformCALayerIdentifier() const
+{
+    return m_controller.layerIdentifier();
+}
+
 void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior> layerPaintBehavior)
 {
 #if PLATFORM(IOS_FAMILY)
