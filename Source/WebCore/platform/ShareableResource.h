@@ -71,8 +71,8 @@ public:
 
     WEBCORE_EXPORT ~ShareableResource();
 
-    const uint8_t* data() const;
     unsigned size() const;
+    std::span<const uint8_t> span() const;
 
 private:
     friend class ShareableResourceHandle;
