@@ -633,6 +633,9 @@ bool AsyncPDFRenderer::paintTilesForPage(GraphicsContext& context, float documen
             if (!pageBoundsInPaintingCoordinates.intersects(tileClipInPaintingCoordinates))
                 continue;
 
+            if (!tileClipInPaintingCoordinates.intersects(clipRect))
+                continue;
+
             LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintTilesForPage " << pageBoundsInPaintingCoordinates  << " - painting tile for " << keyValuePair.key << " with clip " << renderedTile.tileInfo.tileRect << " tiling scale " << tilingScaleFactor);
 
             context.drawImageBuffer(*renderedTile.buffer, renderedTile.tileInfo.tileRect.location());
