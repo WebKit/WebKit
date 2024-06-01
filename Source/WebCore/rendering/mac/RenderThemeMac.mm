@@ -1330,11 +1330,10 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     if (context.paintingDisabled())
         return;
 
+    attachment.attachmentElement().requestIconIfNeededWithSize(layout.iconRect.size());
     auto icon = attachment.attachmentElement().icon();
-    if (!icon) {
-        attachment.attachmentElement().requestIconWithSize(layout.iconRect.size());
+    if (!icon)
         return;
-    }
     
     if (!shouldDrawIcon(attachment.attachmentElement().attachmentTitleForDisplay()))
         return;
