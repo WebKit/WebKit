@@ -449,6 +449,7 @@ imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
 fast/loader/plain-text-document-dark-mode.html [ Pass ]
+fast/loader/image-document-dark-mode.html [ Pass ]
 
 # Tests below are copied from wk2 expectations, because we've marked
 #  as passing the whole fast/events directory.
