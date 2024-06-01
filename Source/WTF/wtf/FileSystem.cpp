@@ -480,22 +480,44 @@ void finalizeMappedFileData(MappedFileData& mappedFileData, size_t bytesSize)
 
 MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(std::span<const uint8_t>)>&)>&& apply, PlatformFileHandle* outputHandle)
 {
-    auto mappedFile = createMappedFileData(path, bytesSize, outputHandle);
-    if (!mappedFile)
+    constexpr bool failIfFileExists = true;
+    auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite, FileSystem::FileAccessPermission::User, failIfFileExists);
+
+    auto fileCloser = WTF::makeScopeExit([&handle]() {
+        FileSystem::closeFile(handle);
+    });
+
+    if (!FileSystem::isHandleValid(handle))
         return { };
 
-    void* map = const_cast<void*>(mappedFile.data());
-    uint8_t* mapData = static_cast<uint8_t*>(map);
+    if (!FileSystem::makeSafeToUseMemoryMapForPath(path))
+        return { };
 
-    apply([&mapData](std::span<const uint8_t> chunk) {
-        memcpy(mapData, chunk.data(), chunk.size());
-        mapData += chunk.size();
+    size_t totalBytesWritten = 0;
+    bool writeFailed = false;
+    apply([&](std::span<const uint8_t> chunk) {
+        auto bytesWritten = writeToFile(handle, chunk.data(), chunk.size());
+        if (bytesWritten < 0 || static_cast<size_t>(bytesWritten) != chunk.size()) {
+            writeFailed = true;
+            return false;
+        }
+        totalBytesWritten += bytesWritten;
         return true;
     });
 
-    finalizeMappedFileData(mappedFile, bytesSize);
+    if (writeFailed || totalBytesWritten > bytesSize || (totalBytesWritten < bytesSize && !FileSystem::truncateFile(handle, bytesSize)))
+        return { };
 
-    return mappedFile;
+    auto result = MappedFileData::create(handle, FileOpenMode::Read, MappedFileMode::Shared);
+    if (!result)
+        return { };
+
+    if (outputHandle) {
+        fileCloser.release();
+        *outputHandle = handle;
+    }
+
+    return WTFMove(*result);
 }
 
 static Salt makeSalt()
