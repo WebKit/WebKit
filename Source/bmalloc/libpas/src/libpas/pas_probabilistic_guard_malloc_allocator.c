@@ -186,9 +186,6 @@ void pas_probabilistic_guard_malloc_deallocate(void* mem)
     int madvise_res = madvise((void *) value->start_of_data_pages, value->size_of_data_pages, MADV_FREE);
     PAS_ASSERT(!madvise_res);
 
-    bool removed = pas_ptr_hash_map_remove(&pas_pgm_hash_map, (void*)key, NULL, &pas_large_utility_free_heap_allocation_config);
-    PAS_ASSERT(removed);
-
     free_wasted_mem  += value->mem_to_waste;
     free_virtual_mem += (2 * value->page_size) + value->allocation_size_requested + value->mem_to_waste;
 
