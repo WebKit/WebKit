@@ -52,6 +52,7 @@
 #include "TextIterator.h"
 #include "WritingMode.h"
 #include <unicode/uchar.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace TextExtraction {
@@ -453,8 +454,9 @@ Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, P
     return root;
 }
 
-struct StringsAndBlockOffset {
-    Vector<String> strings;
+using Token = std::variant<String, IntSize>;
+struct TokenAndBlockOffset {
+    Vector<Token> tokens;
     int offset { 0 };
 };
 
@@ -467,15 +469,15 @@ static IntSize reducePrecision(FloatSize size)
     };
 }
 
-static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets, ContainerNode& node, BlockFlowDirection direction, OnlyIncludeTextContent onlyIncludeTextContent)
+static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets, ContainerNode& node, BlockFlowDirection direction)
 {
     CheckedPtr renderer = node.renderer();
     if (!renderer)
         return;
 
-    auto appendStrings = [&](Vector<String>&& strings, IntRect bounds) mutable {
+    auto appendTokens = [&](Vector<Token>&& tokens, IntRect bounds) mutable {
         static constexpr auto minPixelDistanceForNearbyText = 5;
-        if (strings.isEmpty() || bounds.width() <= minPixelDistanceForNearbyText || bounds.height() <= minPixelDistanceForNearbyText)
+        if (tokens.isEmpty() || bounds.width() <= minPixelDistanceForNearbyText || bounds.height() <= minPixelDistanceForNearbyText)
             return;
 
         auto offset = [&] {
@@ -493,21 +495,21 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
             return 0;
         }();
 
-        auto foundIndex = stringsAndOffsets.reverseFindIf([&](auto& item) {
+        auto foundIndex = tokensAndOffsets.reverseFindIf([&](auto& item) {
             return std::abs(offset - item.offset) <= minPixelDistanceForNearbyText;
         });
 
         if (foundIndex == notFound) {
-            stringsAndOffsets.append({ WTFMove(strings), offset });
+            tokensAndOffsets.append({ WTFMove(tokens), offset });
             return;
         }
 
-        stringsAndOffsets[foundIndex].strings.appendVector(WTFMove(strings));
+        tokensAndOffsets[foundIndex].tokens.appendVector(WTFMove(tokens));
     };
 
     if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(*renderer)) {
         if (auto contentDocument = frameRenderer->iframeElement().protectedContentDocument())
-            extractRenderedText(stringsAndOffsets, *contentDocument, direction, onlyIncludeTextContent);
+            extractRenderedTokens(tokensAndOffsets, *contentDocument, direction);
         return;
     }
 
@@ -518,11 +520,10 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
 
         auto absoluteRect = renderer.absoluteBoundingBoxRect();
         auto roundedSize = reducePrecision(frameView->absoluteToDocumentRect(absoluteRect).size());
-        appendStrings({ makeString('{', roundedSize.width(), ',', roundedSize.height(), '}') }, frameView->contentsToRootView(absoluteRect));
+        appendTokens({ { roundedSize } }, frameView->contentsToRootView(absoluteRect));
     };
 
-    if (onlyIncludeTextContent == OnlyIncludeTextContent::No)
-        appendReplacedContentOrBackgroundImage(*renderer);
+    appendReplacedContentOrBackgroundImage(*renderer);
 
     for (auto& descendant : descendantsOfType<RenderObject>(*renderer)) {
         if (descendant.style().usedVisibility() == Visibility::Hidden)
@@ -535,38 +536,40 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
             continue;
 
         if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(descendant); textRenderer && textRenderer->hasRenderedText()) {
-            Vector<String> strings;
+            Vector<Token> tokens;
             for (auto token : textRenderer->text().simplifyWhiteSpace(isASCIIWhitespace).split(' ')) {
                 auto candidate = token.removeCharacters([](UChar character) {
                     return !u_isalpha(character) && !u_isdigit(character);
                 });
                 if (!candidate.isEmpty())
-                    strings.append(WTFMove(candidate));
+                    tokens.append({ WTFMove(candidate) });
             }
-            appendStrings(WTFMove(strings), frameView->contentsToRootView(descendant.absoluteBoundingBoxRect()));
+            appendTokens(WTFMove(tokens), frameView->contentsToRootView(descendant.absoluteBoundingBoxRect()));
             continue;
         }
 
         if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(descendant)) {
             if (auto contentDocument = frameRenderer->iframeElement().protectedContentDocument())
-                extractRenderedText(stringsAndOffsets, *contentDocument, direction, onlyIncludeTextContent);
+                extractRenderedTokens(tokensAndOffsets, *contentDocument, direction);
             continue;
         }
 
-        if (onlyIncludeTextContent == OnlyIncludeTextContent::No)
-            appendReplacedContentOrBackgroundImage(descendant);
+        appendReplacedContentOrBackgroundImage(descendant);
     }
 }
 
-String extractRenderedText(Element& element, OnlyIncludeTextContent onlyIncludeTextContent)
+RenderedText extractRenderedText(Element& element)
 {
-    if (!element.renderer())
-        return emptyString();
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
+        return { };
 
-    auto direction = element.renderer()->style().blockFlowDirection();
+    RefPtr frameView = renderer->view().protectedFrameView();
+    auto direction = renderer->style().blockFlowDirection();
+    auto elementRectInDocument = frameView->absoluteToDocumentRect(renderer->absoluteBoundingBoxRect());
 
-    Vector<StringsAndBlockOffset> stringsAndOffsets;
-    extractRenderedText(stringsAndOffsets, element, direction, onlyIncludeTextContent);
+    Vector<TokenAndBlockOffset> allTokensAndOffsets;
+    extractRenderedTokens(allTokensAndOffsets, element, direction);
 
     bool ascendingOrder = [&] {
         switch (direction) {
@@ -581,15 +584,34 @@ String extractRenderedText(Element& element, OnlyIncludeTextContent onlyIncludeT
         return true;
     }();
 
-    std::sort(stringsAndOffsets.begin(), stringsAndOffsets.end(), [&](auto& a, auto& b) {
+    std::sort(allTokensAndOffsets.begin(), allTokensAndOffsets.end(), [&](auto& a, auto& b) {
         return ascendingOrder ? a.offset < b.offset : a.offset > b.offset;
     });
 
-    auto flattenedStrings = stringsAndOffsets.map([](auto& item) {
-        return makeStringByJoining(item.strings, " "_s);
-    });
+    bool hasLargeReplacedDescendant = false;
+    StringBuilder textWithReplacedContent;
+    StringBuilder textWithoutReplacedContent;
+    auto appendText = [](StringBuilder& builder, const String& string) {
+        if (!builder.isEmpty())
+            builder.append(' ');
+        builder.append(string);
+    };
 
-    return makeStringByJoining(flattenedStrings, " "_s);
+    for (auto& [tokens, offset] : allTokensAndOffsets) {
+        for (auto& token : tokens) {
+            switchOn(token, [&](const String& text) {
+                appendText(textWithReplacedContent, text);
+                appendText(textWithoutReplacedContent, text);
+            }, [&](const IntSize& size) {
+                constexpr auto ratioToConsiderLengthAsLarge = 0.9;
+                if (size.width() > ratioToConsiderLengthAsLarge * elementRectInDocument.width() && size.height() > ratioToConsiderLengthAsLarge * elementRectInDocument.height())
+                    hasLargeReplacedDescendant = true;
+                appendText(textWithReplacedContent, makeString('{', size.width(), ',', size.height(), '}'));
+            });
+        }
+    }
+
+    return { textWithReplacedContent.toString(), textWithoutReplacedContent.toString(), hasLargeReplacedDescendant };
 }
 
 } // namespace TextExtractor

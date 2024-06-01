@@ -67,6 +67,7 @@ public:
     bool isPseudoElement() const { return m_info.isPseudoElement; }
     bool isInShadowTree() const { return m_info.isInShadowTree; }
     bool isInVisibilityAdjustmentSubtree() const { return m_info.isInVisibilityAdjustmentSubtree; }
+    bool hasLargeReplacedDescendant() const { return m_info.hasLargeReplacedDescendant; }
     bool hasAudibleMedia() const { return m_info.hasAudibleMedia; }
 
     const HashSet<WTF::URL>& mediaAndLinkURLs() const { return m_info.mediaAndLinkURLs; }

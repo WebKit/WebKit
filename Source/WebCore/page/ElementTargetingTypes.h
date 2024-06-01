@@ -69,6 +69,7 @@ struct TargetedElementInfo {
     bool isPseudoElement { false };
     bool isInShadowTree { false };
     bool isInVisibilityAdjustmentSubtree { false };
+    bool hasLargeReplacedDescendant { false };
     bool hasAudibleMedia { false };
 };
 

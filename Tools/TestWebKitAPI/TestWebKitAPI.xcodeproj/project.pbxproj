@@ -1262,6 +1262,7 @@
 		F4C2AB221DD6D95E00E06D5B /* enormous-video-with-sound.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */; };
 		F4C8797F2059D8D3009CD00B /* ScrollViewInsetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C8797E2059D8D3009CD00B /* ScrollViewInsetTests.mm */; };
 		F4CB8A7D2856462B0017ECD3 /* TestPDFHostViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4CB8A7C285644FB0017ECD3 /* TestPDFHostViewController.mm */; };
+		F4CC8F4D2C0A759D00D7E76E /* element-targeting-9.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4CC8F452C0A74BA00D7E76E /* element-targeting-9.html */; };
 		F4CD74C620FDACFA00DE3794 /* text-with-async-script.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4CD74C520FDACF500DE3794 /* text-with-async-script.html */; };
 		F4CDF3D227E97C7E00191928 /* SpellCheckerDocumentTag.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4CDF3D127E97C7E00191928 /* SpellCheckerDocumentTag.mm */; };
 		F4CEF1572A1030A400A370BE /* editable-body-mixed-text.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4CEF1562A102F4E00A370BE /* editable-body-mixed-text.html */; };
@@ -1647,6 +1648,7 @@
 				F41289A92BCC97E700D6E0E7 /* element-targeting-6.html in Copy Resources */,
 				F405F8AD2BD1D4DC0020E6AB /* element-targeting-7.html in Copy Resources */,
 				F44CD9D12BD6ABFD0080A6C7 /* element-targeting-8.html in Copy Resources */,
+				F4CC8F4D2C0A759D00D7E76E /* element-targeting-9.html in Copy Resources */,
 				51C8E1A91F27F49600BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist in Copy Resources */,
 				49D902B328209B3300E2C3B8 /* emptyTable.html in Copy Resources */,
 				A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */,
@@ -3675,6 +3677,7 @@
 		F4C8797E2059D8D3009CD00B /* ScrollViewInsetTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewInsetTests.mm; sourceTree = "<group>"; };
 		F4CB8A7B2856447F0017ECD3 /* TestPDFHostViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestPDFHostViewController.h; sourceTree = "<group>"; };
 		F4CB8A7C285644FB0017ECD3 /* TestPDFHostViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestPDFHostViewController.mm; sourceTree = "<group>"; };
+		F4CC8F452C0A74BA00D7E76E /* element-targeting-9.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "element-targeting-9.html"; sourceTree = "<group>"; };
 		F4CD74C520FDACF500DE3794 /* text-with-async-script.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "text-with-async-script.html"; sourceTree = "<group>"; };
 		F4CD74C720FDB49600DE3794 /* TestURLSchemeHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestURLSchemeHandler.h; sourceTree = "<group>"; };
 		F4CD74C820FDB49600DE3794 /* TestURLSchemeHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestURLSchemeHandler.mm; sourceTree = "<group>"; };
@@ -4885,6 +4888,7 @@
 				F41289A12BCC97DA00D6E0E7 /* element-targeting-6.html */,
 				F405F8A42BD1D1B90020E6AB /* element-targeting-7.html */,
 				F44CD9C92BD6ABF00080A6C7 /* element-targeting-8.html */,
+				F4CC8F452C0A74BA00D7E76E /* element-targeting-9.html */,
 				51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */,
 				F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */,
 				F407FE381F1D0DE60017CF25 /* enormous.svg */,

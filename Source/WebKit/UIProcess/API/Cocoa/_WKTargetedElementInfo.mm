@@ -159,6 +159,11 @@
     return _info->isInVisibilityAdjustmentSubtree();
 }
 
+- (BOOL)hasLargeReplacedDescendant
+{
+    return _info->hasLargeReplacedDescendant();
+}
+
 - (NSSet<NSURL *> *)mediaAndLinkURLs
 {
     RetainPtr result = adoptNS([NSMutableSet<NSURL *> new]);

@@ -47,6 +47,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @property (nonatomic, readonly, getter=isPseudoElement) BOOL pseudoElement;
 @property (nonatomic, readonly, getter=isInShadowTree) BOOL inShadowTree;
 @property (nonatomic, readonly, getter=isInVisibilityAdjustmentSubtree) BOOL inVisibilityAdjustmentSubtree;
+@property (nonatomic, readonly) BOOL hasLargeReplacedDescendant;
 @property (nonatomic, readonly) BOOL hasAudibleMedia;
 @property (nonatomic, readonly) NSSet<NSURL *> *mediaAndLinkURLs;
 

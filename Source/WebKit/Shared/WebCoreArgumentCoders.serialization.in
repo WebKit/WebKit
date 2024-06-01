@@ -921,6 +921,7 @@ header: <WebCore/ElementTargetingTypes.h>
     bool isPseudoElement
     bool isInShadowTree
     bool isInVisibilityAdjustmentSubtree
+    bool hasLargeReplacedDescendant
     bool hasAudibleMedia
 };
 

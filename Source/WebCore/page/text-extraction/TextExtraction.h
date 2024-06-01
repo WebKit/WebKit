@@ -37,11 +37,15 @@ enum class ExceptionCode : uint8_t;
 
 namespace TextExtraction {
 
-enum class OnlyIncludeTextContent : bool { No, Yes };
-
 WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
 
-String extractRenderedText(Element&, OnlyIncludeTextContent);
+struct RenderedText {
+    String textWithReplacedContent;
+    String textWithoutReplacedContent;
+    bool hasLargeReplacedDescendant { false };
+};
+
+RenderedText extractRenderedText(Element&);
 
 } // namespace TextExtraction
 } // namespace WebCore
