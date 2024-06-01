@@ -130,7 +130,7 @@ public:
     void focusPreviousAnnotation() final;
 #if PLATFORM(MAC)
     RetainPtr<PDFAnnotation> nextTextAnnotation(AnnotationSearchDirection) const;
-    void handlePDFActionForAnnotation(PDFAnnotation *, unsigned currentPageIndex);
+    void handlePDFActionForAnnotation(PDFAnnotation *, PDFDocumentLayout::PageIndex currentPageIndex);
 #endif
     enum class IsAnnotationCommit : bool { No, Yes };
     static RepaintRequirements repaintRequirementsForAnnotation(PDFAnnotation *, IsAnnotationCommit = IsAnnotationCommit::No);
@@ -632,7 +632,7 @@ private:
     Vector<WebCore::ElementIdentifier> m_scrollSnapIdentifiers;
     std::optional<PDFDocumentLayout::PageIndex> m_currentlySnappedPage;
 
-    Vector<WebCore::FloatRect> m_findMatchRectsInDocumentCoordinates;
+    PDFPageCoverage m_findMatchRects;
 
     RefPtr<AsyncPDFRenderer> m_asyncRenderer;
 

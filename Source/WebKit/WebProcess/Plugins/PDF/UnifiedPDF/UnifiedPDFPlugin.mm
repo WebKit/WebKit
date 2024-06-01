@@ -3533,7 +3533,7 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
     if (target.isEmpty()) {
         m_lastFindString = target;
         setCurrentSelection(nullptr);
-        m_findMatchRectsInDocumentCoordinates.clear();
+        m_findMatchRects.clear();
         return false;
     }
 
@@ -3586,7 +3586,7 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
 
 void UnifiedPDFPlugin::collectFindMatchRects(const String& target, WebCore::FindOptions options)
 {
-    m_findMatchRectsInDocumentCoordinates.clear();
+    m_findMatchRects.clear();
 
     RetainPtr foundSelections = [m_pdfDocument findString:target withOptions:compareOptionsForFindOptions(options)];
     for (PDFSelection *selection in foundSelections.get()) {
@@ -3595,9 +3595,8 @@ void UnifiedPDFPlugin::collectFindMatchRects(const String& target, WebCore::Find
             if (!pageIndex)
                 continue;
 
-            auto bounds = FloatRect { [selection boundsForPage:page] };
-            auto boundsInDocumentSpace = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::PDFDocumentLayout, bounds, *pageIndex);
-            m_findMatchRectsInDocumentCoordinates.append(boundsInDocumentSpace);
+            auto perPageInfo = PerPageInfo { *pageIndex, [selection boundsForPage:page] };
+            m_findMatchRects.append(WTFMove(perPageInfo));
         }
     }
 
@@ -3614,9 +3613,13 @@ void UnifiedPDFPlugin::updateFindOverlay(HideFindIndicator hideFindIndicator)
 
 Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatchesInRect(const IntRect&) const
 {
-    return m_findMatchRectsInDocumentCoordinates.map([&](FloatRect rect) {
-        return convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::Plugin, rect);
-    });
+    Vector<FloatRect> rectsInPluginCoordinates;
+    for (auto& perPageInfo : m_findMatchRects) {
+        auto pluginRect = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::Plugin, perPageInfo.pageBounds, perPageInfo.pageIndex);
+        rectsInPluginCoordinates.append(pluginRect);
+    }
+
+    return rectsInPluginCoordinates;
 }
 
 RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption> options, WebCore::TextIndicatorPresentationTransition transition)
@@ -3971,7 +3974,7 @@ void UnifiedPDFPlugin::revealAnnotation(PDFAnnotation *annotation)
 }
 
 #if PLATFORM(MAC)
-void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, unsigned currentPageIndex)
+void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, PDFDocumentLayout::PageIndex currentPageIndex)
 {
     if (!annotation)
         return;
