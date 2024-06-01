@@ -102,7 +102,8 @@ void LibWebRTCProviderCocoa::setActive(bool value)
 
 bool WebRTCProvider::webRTCAvailable()
 {
-#if (PLATFORM(IOS) || PLATFORM(VISION)) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    ASSERT_WITH_MESSAGE(!!webrtc::setApplicationStatus, "Failed to find or load libwebrtc");
     return true;
 #else
     return !!webrtc::setApplicationStatus;
