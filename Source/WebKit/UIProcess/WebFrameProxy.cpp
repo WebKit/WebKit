@@ -37,7 +37,6 @@
 #include "LoadedWebArchive.h"
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
-#include "ProvisionalFrameCreationParameters.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
@@ -429,28 +428,14 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
     if (isMainFrame())
         return completionHandler();
 
-    if (m_provisionalFrame && m_provisionalFrame->process().processID() == process.processID())
-        return completionHandler();
-
-    if (process.coreProcessIdentifier() == this->process().coreProcessIdentifier()) {
-        m_provisionalFrame = nullptr;
-        return completionHandler();
-    }
-
     RegistrableDomain navigationDomain(navigation.currentRequest().url());
-    // addAllowedFirstPartyForCookies can be sync, but we need completionHander to be invoked after this function.
-    auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    if (!m_provisionalFrame || m_provisionalFrame->process().coreProcessIdentifier() != process.coreProcessIdentifier() || navigation.currentRequestIsCrossSiteRedirect()) {
-        RefPtr page = m_page.get();
-        // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
-        RegistrableDomain mainFrameDomain(page->mainFrame()->url());
+    RefPtr page = m_page.get();
+    // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
+    RegistrableDomain mainFrameDomain(page->mainFrame()->url());
 
-        m_provisionalFrame = ProvisionalFrameProxy::create(*this, group.ensureProcessForDomain(navigationDomain, process, page->preferences()));
-        page->websiteDataStore().protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, [aggregator] { });
-    }
-
-    if (this->process().processID() != process.processID())
-        process.send(Messages::WebPage::CreateProvisionalFrame({ m_layerHostingContextIdentifier }, frameID()), page()->webPageIDInProcess(process));
+    m_provisionalFrame = nullptr;
+    m_provisionalFrame = ProvisionalFrameProxy::create(*this, group.ensureProcessForDomain(navigationDomain, process, page->preferences()));
+    page->websiteDataStore().protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, WTFMove(completionHandler));
 }
 
 void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent hasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)

@@ -2456,7 +2456,6 @@ public:
     bool hasAllowedToRunInTheBackgroundActivity() const;
 
     template<typename M> void sendToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&);
-    template<typename M> void sendToWebPageInProcess(WebProcessProxy&, M&&);
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setDefaultSpatialTrackingLabel(const String&);

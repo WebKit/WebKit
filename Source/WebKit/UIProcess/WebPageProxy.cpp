@@ -4450,8 +4450,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
 
         Ref pageClientProtector = pageClient();
 
-        Ref processNavigatingFrom = frame->provisionalFrame() ? frame->provisionalFrame()->process()
-            : preferences().siteIsolationEnabled() && frame->isMainFrame() && m_provisionalPage ? m_provisionalPage->process() : frame->process();
+        Ref processNavigatingFrom = preferences().siteIsolationEnabled() && frame->isMainFrame() && m_provisionalPage ? m_provisionalPage->process() : frame->process();
 
         const bool navigationChangesFrameProcess = processNavigatingTo->coreProcessIdentifier() != processNavigatingFrom->coreProcessIdentifier();
         const bool loadContinuingInNonInitiatingProcess = processInitiatingNavigation->coreProcessIdentifier() != processNavigatingTo->coreProcessIdentifier();
@@ -4459,8 +4458,10 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             policyAction = PolicyAction::LoadWillContinueInAnotherProcess;
             WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason=%" PUBLIC_LOG_STRING, processID(), processNavigatingTo->processID(), reason.characters());
             LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processID(), processNavigatingTo->processID(), navigation->navigationID(), navigation->loggingString().utf8().data());
-        } else
+        } else {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason=%" PUBLIC_LOG_STRING, processID(), reason.characters());
+            frame->takeProvisionalFrame();
+        }
 
         if (navigationChangesFrameProcess) {
             // Make sure the process to be used for the navigation does not get shutDown now due to destroying SuspendedPageProxy or ProvisionalPageProxy objects.
@@ -4674,26 +4675,16 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
         loadParameters.navigationID = navigation.navigationID();
 
-        auto& processNavigatingFrom = frame.provisionalFrame() ? frame.provisionalFrame()->process() : frame.isMainFrame() && m_provisionalPage ? m_provisionalPage->process() : frame.process();
+        Ref processNavigatingFrom = frame.isMainFrame() && m_provisionalPage ? m_provisionalPage->process() : frame.process();
         frame.setHasPendingBackForwardItem(frame.parentFrame() && frame.parentFrame()->process() == processNavigatingFrom);
 
         auto webPageID = webPageIDInProcess(newProcess);
         frame.prepareForProvisionalLoadInProcess(newProcess, navigation, m_browsingContextGroup, [
-            this,
-            protectedThis = Ref { *this },
-            frame = Ref { frame },
             loadParameters = WTFMove(loadParameters),
             newProcess = newProcess.copyRef(),
             webPageID,
-            preventProcessShutdownScope = newProcess->shutdownPreventingScope(),
-            navigation = Ref { navigation },
-            previousProvisionalLoadProcess = Ref { frame.provisionalLoadProcess() }
+            preventProcessShutdownScope = newProcess->shutdownPreventingScope()
         ] () mutable {
-            if (frame->frameLoadState().state() == FrameLoadState::State::Provisional) {
-                sendToWebPageInProcess(previousProvisionalLoadProcess, Messages::WebPage::DestroyProvisionalFrame(frame->frameID()));
-                if (!navigation->currentRequestIsCrossSiteRedirect())
-                    frame->didFailProvisionalLoad();
-            }
             newProcess->send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), webPageID);
         });
         return;
@@ -6035,10 +6026,16 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     MESSAGE_CHECK_URL(process, unreachableURL);
 
     // If a provisional load has since been started in another process, ignore this message.
-    if (frame->provisionalLoadProcess().coreProcessIdentifier() != process->coreProcessIdentifier() && m_preferences->siteIsolationEnabled()) {
-        // FIXME: The API test ProcessSwap.DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted
-        // is probably not handled correctly with site isolation on.
-        return;
+    if (m_preferences->siteIsolationEnabled()) {
+        if (frame->provisionalLoadProcess().coreProcessIdentifier() != process->coreProcessIdentifier()) {
+            // FIXME: The API test ProcessSwap.DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted
+            // is probably not handled correctly with site isolation on.
+            return;
+        }
+        if (frame->frameLoadState().state() == FrameLoadState::State::Provisional) {
+            // FIXME: We need to actually notify m_navigationClient somehow.
+            frame->frameLoadState().didFailProvisionalLoad();
+        }
     }
 
     // If the page starts a new main frame provisional load, then cancel any pending one in a provisional process.
@@ -6217,21 +6214,6 @@ void WebPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameInfo, Web
 
     didFailProvisionalLoadForFrameShared(protectedProcess(), *frame, WTFMove(frameInfo), WTFMove(request), navigationID, provisionalURL, error, willContinueLoading, userData, willInternallyHandleFailure);
 }
-
-template<typename M>
-void WebPageProxy::sendToWebPageInProcess(WebProcessProxy& process, M&& message)
-{
-    if (auto* remotePage = m_browsingContextGroup->remotePageInProcess(*this, process))
-        return remotePage->send(std::forward<M>(message));
-    if (process.coreProcessIdentifier() != this->process().coreProcessIdentifier()) {
-        // If there is no longer a remote page in a process that is not the main frame process,
-        // not sending the message is the correct thing to do.
-        return;
-    }
-    send(std::forward<M>(message));
-}
-
-template void WebPageProxy::sendToWebPageInProcess<Messages::WebPage::DestroyProvisionalFrame>(WebProcessProxy&, Messages::WebPage::DestroyProvisionalFrame&&);
 
 void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, WillContinueLoading willContinueLoading, const UserData& userData, WillInternallyHandleFailure willInternallyHandleFailure)
 {

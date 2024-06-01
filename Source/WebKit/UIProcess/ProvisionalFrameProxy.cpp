@@ -27,6 +27,7 @@
 #include "ProvisionalFrameProxy.h"
 
 #include "FrameProcess.h"
+#include "ProvisionalFrameCreationParameters.h"
 #include "VisitedLinkStore.h"
 #include "WebFrameProxy.h"
 #include "WebPageMessages.h"
@@ -45,12 +46,13 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProc
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
 {
     process().markProcessAsRecentlyUsed();
+    process().send(Messages::WebPage::CreateProvisionalFrame({ frame.layerHostingContextIdentifier() }, frame.frameID()), frame.page()->webPageIDInProcess(process()));
 }
 
 ProvisionalFrameProxy::~ProvisionalFrameProxy()
 {
     if (m_frameProcess && m_frame->page())
-        m_frame->page()->sendToWebPageInProcess(m_frameProcess->process(), Messages::WebPage::DestroyProvisionalFrame(m_frame->frameID()));
+        process().send(Messages::WebPage::DestroyProvisionalFrame(m_frame->frameID()), m_frame->page()->webPageIDInProcess(process()));
 }
 
 RefPtr<FrameProcess> ProvisionalFrameProxy::takeFrameProcess()
@@ -61,6 +63,7 @@ RefPtr<FrameProcess> ProvisionalFrameProxy::takeFrameProcess()
 
 WebProcessProxy& ProvisionalFrameProxy::process() const
 {
+    ASSERT(m_frameProcess);
     return m_frameProcess->process();
 }
 

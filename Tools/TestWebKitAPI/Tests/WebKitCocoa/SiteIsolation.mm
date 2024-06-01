@@ -153,7 +153,7 @@ static void printTree(const ExpectedFrameTree& n, size_t indent = 0)
         printTree(c, indent + 1);
 }
 
-static void checkFrameTreesInProcesses(NSSet<_WKFrameTreeNode *> *actualTrees, Vector<ExpectedFrameTree>&& expectedFrameTrees)
+static void checkFrameTreesInProcesses(NSSet<_WKFrameTreeNode *> *actualTrees, const Vector<ExpectedFrameTree>& expectedFrameTrees)
 {
     bool result = frameTreesMatch(actualTrees, Vector<ExpectedFrameTree> { expectedFrameTrees });
     if (!result) {
@@ -2692,10 +2692,15 @@ TEST(SiteIsolation, CancelProvisionalLoad)
         },
     });
 
-    // FIXME: Test loading https://apple.com/never_respond then https://apple.com/respond_quickly
-    // FrameLoader::continueLoadAfterNavigationPolicy returns early because the page is disconnected by something.
-    // We may need to destroy a provisional frame then make a new one if there's already a provisional frame in a process.
-    // WebProcessProxy::shutDown is also being called in the middle of loading, which isn't great.
+    checkStateAfterSequentialFrameLoads(@"https://apple.com/never_respond", @"https://apple.com/respond_quickly", {
+        { "https://webkit.org"_s,
+            { { RemoteFrame }, { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://example.com"_s }, { RemoteFrame } }
+        }, { RemoteFrame,
+            { { RemoteFrame }, { "https://apple.com"_s } }
+        }
+    });
 
     // FIXME: Test cases for provisional loads that respond after a short delay to give a chance
     // that the load commits during the time another provisional navigation starts.
