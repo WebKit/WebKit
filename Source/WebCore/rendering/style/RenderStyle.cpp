@@ -1912,6 +1912,10 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyViewTransitionName);
         if (first.contentVisibility != second.contentVisibility)
             changingProperties.m_properties.set(CSSPropertyContentVisibility);
+        if (first.anchorNames != second.anchorNames)
+            changingProperties.m_properties.set(CSSPropertyAnchorName);
+        if (first.positionAnchor != second.positionAnchor)
+            changingProperties.m_properties.set(CSSPropertyPositionAnchor);
 
         // Non animated styles are followings.
         // customProperties

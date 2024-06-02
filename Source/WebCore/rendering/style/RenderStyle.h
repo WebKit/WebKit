@@ -2191,6 +2191,14 @@ public:
     bool scrollAnchoringSuppressionStyleDidChange(const RenderStyle*) const;
     bool outOfFlowPositionStyleDidChange(const RenderStyle*) const;
 
+    static Vector<AtomString> initialAnchorNames();
+    inline const Vector<AtomString>& anchorNames() const;
+    inline void setAnchorNames(const Vector<AtomString>&);
+
+    static inline const AtomString& initialPositionAnchor();
+    inline const AtomString& positionAnchor() const;
+    inline void setPositionAnchor(const AtomString&);
+
 private:
     struct NonInheritedFlags {
         friend bool operator==(const NonInheritedFlags&, const NonInheritedFlags&) = default;

@@ -9278,6 +9278,29 @@
                 "url": "https://drafts.csswg.org/css-view-transitions/#view-transition-name-prop"
             }
         },
+        "anchor-name": {
+            "codegen-properties": {
+                "converter": "AnchorName",
+                "name-for-methods": "AnchorNames",
+                "parser-grammar": "none | <dashed-ident>#",
+                "settings-flag": "cssAnchorPositioningEnabled"
+            },
+            "specification": {
+                "category": "css-anchor-position",
+                "url": "https://drafts.csswg.org/css-anchor-position-1/#name"
+            }
+        },
+        "position-anchor": {
+            "codegen-properties": {
+                "converter": "StringOrAutoAtom",
+                "parser-grammar": "auto | <dashed-ident>",
+                "settings-flag": "cssAnchorPositioningEnabled"
+            },
+            "specification": {
+                "category": "css-anchor-position",
+                "url": "https://drafts.csswg.org/css-anchor-position-1/#name"
+            }
+        },
         "-webkit-tap-highlight-color": {
             "inherited": true,
             "codegen-properties": {
@@ -9915,6 +9938,11 @@
             "shortname": "CSS Box Alignment",
             "longname": "CSS Box Alignment Module",
             "url": "https://www.w3.org/TR/css-align-3/"
+        },
+        "css-anchor-position": {
+            "shortname": "CSS Anchor Positioning",
+            "longname": "CSS Anchor Positioning",
+            "url": "https://www.w3.org/TR/css-anchor-position-1/"
         },
         "css-animations": {
             "shortname": "CSS Animations",
