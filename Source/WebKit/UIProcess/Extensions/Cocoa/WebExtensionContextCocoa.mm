@@ -3501,6 +3501,9 @@ void WebExtensionContext::reportWebViewConfigurationErrorIfNeeded(const WebExten
     if (!extensionController())
         return;
 
+    if (!tab.isOpen())
+        return;
+
     for (WKWebView *webView in tab.webViews()) {
         if (webView.configuration._webExtensionController != extensionController()->wrapper()) {
             RELEASE_LOG_ERROR(Extensions, "WKWebView is not configured with the same _WKWebExtensionController as the extension context; please file a bug.");
