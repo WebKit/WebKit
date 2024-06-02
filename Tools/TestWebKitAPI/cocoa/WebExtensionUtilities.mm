@@ -735,9 +735,6 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     [oldTab.mainWebView _close];
     oldTab.mainWebView = nil;
 
-    if (_activeTab == oldTab)
-        _activeTab = newTab;
-
     [_tabs replaceObjectAtIndex:[_tabs indexOfObject:oldTab] withObject:newTab];
     [_extensionController didReplaceTab:oldTab withTab:newTab];
 }

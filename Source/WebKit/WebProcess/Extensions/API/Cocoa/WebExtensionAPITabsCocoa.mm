@@ -146,7 +146,7 @@ NSDictionary *toWebAPI(const WebExtensionTabParameters& parameters)
         result[windowIdKey] = @(toWebAPI(parameters.windowIdentifier.value()));
 
     if (parameters.index)
-        result[indexKey] = toWebAPI(parameters.index.value());
+        result[indexKey] = @(parameters.index.value());
 
     if (parameters.size) {
         auto size = parameters.size.value();

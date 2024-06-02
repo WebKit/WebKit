@@ -2138,10 +2138,8 @@ void WebExtensionContext::didCloseTab(WebExtensionTab& tab, WindowIsClosing wind
     ASSERT(isValidTab(tab));
 
     // The tab might already be closed, don't log an error.
-    if (!tab.isOpen()) {
-        forgetTab(tab.identifier());
+    if (!tab.isOpen())
         return;
-    }
 
     RELEASE_LOG_DEBUG(Extensions, "Closed tab %{public}llu %{public}s", tab.identifier().toUInt64(), windowIsClosing == WindowIsClosing::Yes ? "(window closing)" : "");
 
@@ -2271,32 +2269,25 @@ void WebExtensionContext::didMoveTab(WebExtensionTab& tab, size_t oldIndex, cons
     }
 }
 
-void WebExtensionContext::didReplaceTab(WebExtensionTab& oldTab, WebExtensionTab& newTab, SuppressEvents suppressEvents)
+void WebExtensionContext::didReplaceTab(WebExtensionTab& oldTab, WebExtensionTab& newTab)
 {
     ASSERT(isValidTab(oldTab));
     ASSERT(isValidTab(newTab));
 
-    if (oldTab == newTab) {
-        RELEASE_LOG_ERROR(Extensions, "Replaced tab %{public}llu with the same tab", newTab.identifier().toUInt64());
-        return;
-    }
-
-    Ref protectedOldTab { oldTab };
-
-    didOpenTab(newTab, suppressEvents);
-
     if (!oldTab.isOpen()) {
         RELEASE_LOG_ERROR(Extensions, "Replaced tab %{public}llu with tab %{public}llu, but old tab is not open", oldTab.identifier().toUInt64(), newTab.identifier().toUInt64());
-        forgetTab(oldTab.identifier());
         return;
     }
+
+    didCloseTab(oldTab, WindowIsClosing::No, SuppressEvents::Yes);
+    didOpenTab(newTab, SuppressEvents::Yes);
 
     RELEASE_LOG_DEBUG(Extensions, "Replaced tab %{public}llu with tab %{public}llu", oldTab.identifier().toUInt64(), newTab.identifier().toUInt64());
 
-    if (isLoaded() && newTab.extensionHasAccess() && suppressEvents == SuppressEvents::No)
-        fireTabsReplacedEventIfNeeded(oldTab.identifier(), newTab.identifier());
+    if (!isLoaded() || !newTab.extensionHasAccess())
+        return;
 
-    didCloseTab(oldTab, WindowIsClosing::No, suppressEvents);
+    fireTabsReplacedEventIfNeeded(oldTab.identifier(), newTab.identifier());
 }
 
 void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet<WebExtensionTab::ChangedProperties> properties)

@@ -1171,23 +1171,9 @@ TEST(WKWebExtensionAPITabs, RemovedEvent)
 TEST(WKWebExtensionAPITabs, ReplacedEvent)
 {
     auto backgroundScript = Util::constructScript(@[
-        @"let createdTabId = null",
-        @"let removedTabId = null",
-
-        @"browser.tabs.onCreated.addListener((tab) => {",
-        @"  browser.test.assertEq(createdTabId, null, 'No tab should be created yet')",
-        @"  createdTabId = tab.id",
-        @"})",
-
-        @"browser.tabs.onRemoved.addListener((tabId) => {",
-        @"  browser.test.assertEq(removedTabId, null, 'No tab should be removed yet')",
-        @"  removedTabId = tabId",
-        @"})",
-
         @"browser.tabs.onReplaced.addListener((addedTabId, removedTabId) => {",
-        @"  browser.test.assertTrue(addedTabId !== removedTabId, 'The added tab should not match the removed tab')",
-        @"  browser.test.assertEq(addedTabId, createdTabId, 'The added tab should match the created tab')",
-        @"  browser.test.assertEq(removedTabId, initialTabId, 'The removed tab should match the initial tab')",
+        @"  browser.test.assertTrue(addedTabId !== removedTabId, 'The addedTabId should not match the removedTabId')",
+        @"  browser.test.assertEq(removedTabId, initialTabId, 'The initial tab id should match the removedTabId')",
 
         @"  browser.test.notifyPass()",
         @"})",

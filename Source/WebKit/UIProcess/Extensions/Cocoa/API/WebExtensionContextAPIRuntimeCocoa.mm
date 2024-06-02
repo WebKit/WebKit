@@ -132,11 +132,6 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
     if (RefPtr tab = getTab(senderParameters.pageProxyIdentifier))
         completeSenderParameters.tabParameters = tab->parameters();
-    else if (senderParameters.contentWorldType == WebExtensionContentWorldType::ContentScript) {
-        RELEASE_LOG_ERROR(Extensions, "Tab not found for message for content script message");
-        completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
-        return;
-    }
 
     constexpr auto targetContentWorldType = WebExtensionContentWorldType::Main;
     constexpr auto eventType = WebExtensionEventListenerType::RuntimeOnMessage;
@@ -182,11 +177,6 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
     if (RefPtr tab = getTab(senderParameters.pageProxyIdentifier))
         completeSenderParameters.tabParameters = tab->parameters();
-    else if (senderParameters.contentWorldType == WebExtensionContentWorldType::ContentScript) {
-        RELEASE_LOG_ERROR(Extensions, "Tab not found for message for content script port");
-        completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
-        return;
-    }
 
     constexpr auto eventType = WebExtensionEventListenerType::RuntimeOnConnect;
 

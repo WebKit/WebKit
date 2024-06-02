@@ -120,9 +120,9 @@ WebExtensionTabParameters WebExtensionTab::parameters() const
         hasPermission ? url() : URL { },
         hasPermission ? title() : nullString(),
 
-        window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier,
-        index,
+        window ? std::optional(window->identifier()) : std::nullopt,
 
+        index != notFound ? std::optional(index) : std::nullopt,
         size(),
 
         parentTab ? std::optional(parentTab->identifier()) : std::nullopt,
