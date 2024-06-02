@@ -7616,9 +7616,6 @@ void HTMLMediaElement::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 
 bool HTMLMediaElement::shouldForceControlsDisplay() const
 {
-    if (isFullscreen() && videoUsesElementFullscreen())
-        return true;
-
     // Always create controls for autoplay video that requires user gesture due to being in low power mode.
     return isVideo() && autoplay() && mediaSession().hasBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoDueToLowPowerMode);
 }
