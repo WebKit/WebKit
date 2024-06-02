@@ -472,12 +472,14 @@ private:
     WebCore::ScrollingCoordinator* scrollingCoordinator();
     void createScrollingNodeIfNecessary();
 
-    void revealRectInContentsSpace(WebCore::FloatRect);
+    void revealPDFDestination(PDFDestination *);
+    void revealPointInPage(WebCore::FloatPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex);
+    void revealRectInPage(const WebCore::FloatRect& rectInPDFPageSpace, PDFDocumentLayout::PageIndex);
+    void revealPage(PDFDocumentLayout::PageIndex);
+    void revealFragmentIfNeeded();
+
+    // Only use this if some other functio has ensured that the correct page is visible.
     void scrollToPointInContentsSpace(WebCore::FloatPoint);
-    void scrollToPDFDestination(PDFDestination *);
-    void scrollToPointInPage(WebCore::FloatPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex);
-    void scrollToPage(PDFDocumentLayout::PageIndex);
-    void scrollToFragmentIfNeeded();
 
     // ScrollableArea
     bool requestScrollToPosition(const WebCore::ScrollPosition&, const WebCore::ScrollPositionChangeOptions& = WebCore::ScrollPositionChangeOptions::createProgrammatic()) override;
