@@ -1125,6 +1125,12 @@ css-typedom [ Skip ]
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
 
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-getComputedStyle-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-007.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-008.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-010.html [ Pass ]
+
 ################################################################################
 ##############################   End CSS Issues   ##############################
 ################################################################################
