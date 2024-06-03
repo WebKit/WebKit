@@ -722,7 +722,12 @@ static void repaintAndMarkContainingBlockDirtyBeforeTearDown(const Element& root
         container->setNeedsSimplifiedNormalFlowLayout();
     };
 
-    auto repaint = [&](auto& renderer) {
+    auto repaintBackdropIfApplicable = [&](auto& renderer) {
+        if (auto backdropRenderer = renderer.backdropRenderer())
+            backdropRenderer->repaint(RenderObject::ForceRepaint::Yes);
+    };
+
+    auto repaintRoot = [&](auto& renderer) {
         if (renderer.isBody()) {
             renderer.view().repaintRootContents();
             return;
@@ -737,7 +742,8 @@ static void repaintAndMarkContainingBlockDirtyBeforeTearDown(const Element& root
     };
 
     if (destroyRootRenderer) {
-        repaint(*destroyRootRenderer);
+        repaintRoot(*destroyRootRenderer);
+        repaintBackdropIfApplicable(*destroyRootRenderer);
         markContainingBlockDirty(*destroyRootRenderer);
     }
 
@@ -757,6 +763,7 @@ static void repaintAndMarkContainingBlockDirtyBeforeTearDown(const Element& root
         };
         if (shouldRepaint())
             renderer.repaint();
+        repaintBackdropIfApplicable(renderer);
         if (renderer.isOutOfFlowPositioned()) {
             // FIXME: Ideally we would check if containing block is the destory root or a descendent of the destroy root.
             markContainingBlockDirty(renderer);
@@ -819,6 +826,8 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             }
 
             if (auto* renderer = element.renderer()) {
+                if (auto backdropRenderer = renderer->backdropRenderer())
+                    builder.destroyAndCleanUpAnonymousWrappers(*backdropRenderer, root.renderer());
                 builder.destroyAndCleanUpAnonymousWrappers(*renderer, root.renderer());
                 element.setRenderer(nullptr);
             }

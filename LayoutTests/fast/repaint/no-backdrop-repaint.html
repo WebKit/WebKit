@@ -1,0 +1,58 @@
+<style>
+[popover] {
+  margin: 50px;
+  border: none;
+}
+:popover-open {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  background-color: red;
+}
+
+.container {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  left: 200px;
+  top: 200px;
+}
+input {
+  display: none;
+}
+</style>
+<!-- PASS if no red -->
+<input type="button" popovertarget="mypopover" popovertargetaction="show">
+<div class=container><div id="mypopover" popover=""></div></div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+const popover = document.querySelector('[popover]')
+popover.showPopover();
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  popover.hidePopover();
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+  
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>
