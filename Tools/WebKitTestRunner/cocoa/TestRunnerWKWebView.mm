@@ -50,8 +50,10 @@
 
 @end
 
+#if HAVE(UI_EDIT_MENU_INTERACTION)
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIEditMenuInteraction)
+#endif
 #endif // PLATFORM(IOS_FAMILY)
 
 struct CustomMenuActionInfo {
