@@ -722,7 +722,7 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
                     if (RefPtr frame = document()->frame(); !viewTransitionCapture->canUseExistingLayers()) {
                         image = snapshotElementVisualOverflowClippedToViewport(*frame, *renderer, overflowRect);
                         changed = true;
-                    } else if (CheckedPtr layer = renderer->layer())
+                    } else if (CheckedPtr layer = renderer->isDocumentElementRenderer() ? renderer->view().layer() : renderer->layer())
                         layer->setNeedsCompositingGeometryUpdate();
                     viewTransitionCapture->setImage(image);
                 }

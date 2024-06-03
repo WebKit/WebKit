@@ -1308,25 +1308,31 @@ void KeyframeEffect::didChangeTargetStyleable(const std::optional<const Styleabl
         newTargetStyleable->ensureKeyframeEffectStack().addEffect(*this);
 }
 
-void KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
+OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
 {
+    OptionSet<AnimationImpact> impact;
     if (!m_target)
-        return;
+        return impact;
 
     updateBlendingKeyframes(targetStyle, resolutionContext);
 
     auto computedTiming = getComputedTiming(startTime);
     if (!startTime) {
-        m_phaseAtLastApplication = computedTiming.phase;
+        if (m_phaseAtLastApplication != computedTiming.phase) {
+            m_phaseAtLastApplication = computedTiming.phase;
+            impact.add(AnimationImpact::RequiresRecomposite);
+        }
+
         if (auto target = targetStyleable())
             InspectorInstrumentation::willApplyKeyframeEffect(*target, *this, computedTiming);
     }
 
     if (!computedTiming.progress)
-        return;
+        return impact;
 
     ASSERT(computedTiming.currentIteration);
     setAnimatedPropertiesInStyle(targetStyle, *computedTiming.progress, *computedTiming.currentIteration);
+    return impact;
 }
 
 bool KeyframeEffect::isRunningAccelerated() const
