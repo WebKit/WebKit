@@ -531,10 +531,6 @@ void WebGLRenderingContextBase::initializeContextState()
     m_stencilEnabled = false;
     m_stencilMask = 0xFFFFFFFF;
     m_stencilMaskBack = 0xFFFFFFFF;
-    m_stencilFuncRef = 0;
-    m_stencilFuncRefBack = 0;
-    m_stencilFuncMask = 0xFFFFFFFF;
-    m_stencilFuncMaskBack = 0xFFFFFFFF;
 
     m_rasterizerDiscardEnabled = false;
 
@@ -3092,10 +3088,6 @@ void WebGLRenderingContextBase::stencilFunc(GCGLenum func, GCGLint ref, GCGLuint
         return;
     if (!validateStencilFunc("stencilFunc"_s, func))
         return;
-    m_stencilFuncRef = ref;
-    m_stencilFuncRefBack = ref;
-    m_stencilFuncMask = mask;
-    m_stencilFuncMaskBack = mask;
     m_context->stencilFunc(func, ref, mask);
 }
 
@@ -3107,18 +3099,8 @@ void WebGLRenderingContextBase::stencilFuncSeparate(GCGLenum face, GCGLenum func
         return;
     switch (face) {
     case GraphicsContextGL::FRONT_AND_BACK:
-        m_stencilFuncRef = ref;
-        m_stencilFuncRefBack = ref;
-        m_stencilFuncMask = mask;
-        m_stencilFuncMaskBack = mask;
-        break;
     case GraphicsContextGL::FRONT:
-        m_stencilFuncRef = ref;
-        m_stencilFuncMask = mask;
-        break;
     case GraphicsContextGL::BACK:
-        m_stencilFuncRefBack = ref;
-        m_stencilFuncMaskBack = mask;
         break;
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "stencilFuncSeparate"_s, "invalid face"_s);
@@ -4971,15 +4953,6 @@ bool WebGLRenderingContextBase::validateDrawMode(ASCIILiteral functionName, GCGL
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid draw mode"_s);
         return false;
     }
-}
-
-bool WebGLRenderingContextBase::validateStencilSettings(ASCIILiteral functionName)
-{
-    if (m_stencilMask != m_stencilMaskBack || m_stencilFuncRef != m_stencilFuncRefBack || m_stencilFuncMask != m_stencilFuncMaskBack) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "front and back stencils settings do not match"_s);
-        return false;
-    }
-    return true;
 }
 
 bool WebGLRenderingContextBase::validateStencilFunc(ASCIILiteral functionName, GCGLenum func)

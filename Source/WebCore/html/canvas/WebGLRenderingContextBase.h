@@ -707,8 +707,6 @@ protected:
 
     bool m_stencilEnabled;
     GCGLuint m_stencilMask, m_stencilMaskBack;
-    GCGLint m_stencilFuncRef, m_stencilFuncRefBack; // Note that these are the user specified values, not the internal clamped value.
-    GCGLuint m_stencilFuncMask, m_stencilFuncMaskBack;
 
     bool m_rasterizerDiscardEnabled { false };
 
@@ -951,9 +949,6 @@ protected:
 
     // Helper function to validate mode for draw{Arrays/Elements}.
     bool validateDrawMode(ASCIILiteral functionName, GCGLenum);
-
-    // Helper function to validate if front/back stencilMask and stencilFunc settings are the same.
-    bool validateStencilSettings(ASCIILiteral functionName);
 
     // Helper function to validate stencil func.
     bool validateStencilFunc(ASCIILiteral functionName, GCGLenum);
