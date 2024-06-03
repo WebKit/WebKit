@@ -1807,6 +1807,6 @@ webkit.org/b/274709 imported/w3c/web-platform-tests/pointerevents/pointer-events
 
 webkit.org/b/274766 http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Failure ]
 
-webkit.org/b/258228 [ Sonoma+ ] accessibility/mac/text-input-session-notifications.html [ Pass ]
+webkit.org/b/258228 [ Sonoma+ Debug ] accessibility/mac/text-input-session-notifications.html [ Skip ]
 
 webkit.org/b/274852 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-flat-transform-ancestor.html [ ImageOnlyFailure ]
