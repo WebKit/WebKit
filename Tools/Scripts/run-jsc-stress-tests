@@ -608,6 +608,22 @@ $isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architec
 $isWasmPlatform = (not $cloop) && $jitTests && ($isFTLPlatform || $architecture == "arm" || ($hostOS == "windows" && $architecture == "x86_64"))
 $isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture == "x86_64")
 
+$skipLockdown = false
+$skipMiniMode = false
+
+if $platform == "watchos"
+    $jitTests = false
+    $isFTLPlatform = false
+    $isWasmPlatform = false
+    $skipLockdown = true
+    $skipMiniMode = true
+    $memoryLimited = true
+end
+
+if not $jitTests
+    $isWasmPlatform = false
+end
+
 # This is meant for skipping execution of tests than require a lot of address
 # space. Cf. $memoryLimited, which is meant for tests that actually make use of
 # a lot of memory.
@@ -1544,8 +1560,8 @@ def defaultRunCfg(cfg, subsetOptions, *optionalTestSpecificOptions)
     else
         runDefaultCfg(cfg, *optionalTestSpecificOptions)
         runBytecodeCacheCfg(cfg, *optionalTestSpecificOptions)
-        runMiniModeCfg(cfg, *optionalTestSpecificOptions)
-        runLockdownCfg(cfg, *optionalTestSpecificOptions) unless $skipModes.include?(:lockdown)
+        runMiniModeCfg(cfg, *optionalTestSpecificOptions) unless $skipMiniMode
+        runLockdownCfg(cfg, *optionalTestSpecificOptions) unless $skipLockdown or $skipModes.include?(:lockdown)
         if $jitTests
             if not subsetOptions.has_key?(:skipNoLLInt)
                 runNoLLIntCfg(cfg, *optionalTestSpecificOptions)
@@ -1608,10 +1624,11 @@ end
 
 def defaultSpotCheckNoMaximalFlush
     defaultQuickRun
+
+    return if !$jitTests
     runNoCJITNoAccessInlining
 
     return if !$isFTLPlatform
-
     runFTLNoCJITOSRValidation
     runFTLNoCJITNoAccessInlining
     runFTLNoCJITB3O0
@@ -1619,7 +1636,7 @@ end
 
 def defaultSpotCheck
     defaultSpotCheckNoMaximalFlush
-    runEagerJettisonNoCJIT
+    runEagerJettisonNoCJIT if $jitTests
 end
 
 # This is expected to not do eager runs because eager runs can have a lot of recompilations
@@ -1789,8 +1806,7 @@ def noNoLLIntRunModules
 end
 
 def runWebAssembly
-    return if !$jitTests
-    return if !$isWasmPlatform
+    return unless $isWasmPlatform
     run("default-wasm", "-m", *FTL_OPTIONS)
     if $mode != "quick"
         run("wasm-no-cjit", "-m", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
@@ -1808,8 +1824,7 @@ def runWebAssembly
 end
 
 def runWebAssemblyJetStream2
-    return if !$jitTests
-    return if !$isWasmPlatform
+    return unless $isWasmPlatform
 
     if $memoryLimited
         skip
@@ -1837,9 +1852,13 @@ def runWebAssemblyJetStream2
     end
 end
 
+def runDefaultWasm(*optionalTestSpecificOptions)
+    return unless $isWasmPlatform
+    run("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
+end
+
 def runWebAssemblySuite(*optionalTestSpecificOptions)
-    return if !$jitTests
-    return if !$isWasmPlatform
+    return unless $isWasmPlatform
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
@@ -1848,7 +1867,7 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
     else
       optionalTestSpecificOptions.unshift "-m"
     end
-    run("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
+    runDefaultWasm(*optionalTestSpecificOptions)
     if $mode != "quick"
         run("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
         run("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
@@ -1865,15 +1884,14 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
 end
 
 def runV8WebAssemblySuite(*optionalTestSpecificOptions)
-    return if !$jitTests
-    return if !$isWasmPlatform
+    return unless $isWasmPlatform
     prepareExtraAbsoluteFiles(Pathname.new(WASMTESTS_PATH).join("v8", "resources"), ["async-compile.js", "mjsunit.js", "trap-location.js", "user-properties-common.js", "wasm-module-builder.js"])
     if optionalTestSpecificOptions[0] == :no_module
       optionalTestSpecificOptions.shift
     else
       optionalTestSpecificOptions.unshift "-m"
     end
-    run("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
+    runDefaultWasm(*optionalTestSpecificOptions)
     if $mode != "quick"
         run("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
         run("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
@@ -1890,18 +1908,19 @@ def runV8WebAssemblySuite(*optionalTestSpecificOptions)
 end
 
 def runV8WebAssemblySuiteQuick(*optionalTestSpecificOptions)
-    return if !$jitTests
-    return if !$isWasmPlatform
+    return unless $isWasmPlatform
     prepareExtraAbsoluteFiles(Pathname.new(WASMTESTS_PATH).join("v8", "resources"), ["async-compile.js", "mjsunit.js", "trap-location.js", "user-properties-common.js", "wasm-module-builder.js"])
     if optionalTestSpecificOptions[0] == :no_module
       optionalTestSpecificOptions.shift
     else
       optionalTestSpecificOptions.unshift "-m"
     end
-    run("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
+    runDefaultWasm(*optionalTestSpecificOptions)
 end
 
-def runHarnessTest(kind, *options)
+def runWasmHarnessTest(kind, *options)
+    raise unless $isWasmPlatform
+
     wasmFiles = allWasmFiles($collection)
     wasmFiles.each {
         | file |
@@ -1912,24 +1931,23 @@ end
 
 def runWebAssemblyWithHarness(*optionalTestSpecificOptions)
     raise unless $benchmark.to_s =~ /harness\.m?js/
-    return if !$jitTests
-    return if !$isWasmPlatform
+    return unless $isWasmPlatform
 
     wasmFiles = allWasmFiles($collection)
     prepareExtraRelativeFiles(wasmFiles.map { |f| f.basename }, $collection)
 
-    runHarnessTest("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
+    runWasmHarnessTest("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
     if $mode != "quick"
-        runHarnessTest("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-        runHarnessTest("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
-        runHarnessTest("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        runHarnessTest("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        runHarnessTest("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
-        runHarnessTest("wasm-bbq", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
+        runWasmHarnessTest("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+        runWasmHarnessTest("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+        runWasmHarnessTest("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runWasmHarnessTest("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runWasmHarnessTest("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+        runWasmHarnessTest("wasm-bbq", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
         if $isFTLPlatform
-            runHarnessTest("wasm-omg", "--useWasmLLInt=true", "--useBBQJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
-            runHarnessTest("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
-            runHarnessTest("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS)) unless $skipModes.include?(:wasm_agressive_inline)
+            runWasmHarnessTest("wasm-omg", "--useWasmLLInt=true", "--useBBQJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            runWasmHarnessTest("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
+            runWasmHarnessTest("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS)) unless $skipModes.include?(:wasm_agressive_inline)
         end
     end
 end
@@ -1939,8 +1957,7 @@ def runWebAssemblyEmscripten(mode)
     when :skip
         return
     end
-    return if !$jitTests
-    return if !$isWasmPlatform
+    return unless $isWasmPlatform
     wasm = $benchmark.to_s.sub! '.js', '.wasm'
     prepareExtraRelativeFiles([Pathname('..') + wasm], $collection)
     run("default-wasm", *FTL_OPTIONS)
@@ -1962,8 +1979,7 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, postfix, *optionalTestSpec
     when :skip
         return
     end
-    return if !$jitTests
-    return if !$isWasmPlatform
+    return unless $isWasmPlatform
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
 
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
@@ -2017,8 +2033,7 @@ def runWebAssemblyExtendedConstSpecTest(mode)
 end
 
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
-    return if !$jitTests
-    return if !$isWasmPlatform
+    return unless $isWasmPlatform
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)

@@ -1,7 +1,6 @@
-//@runDefault("--useWebAssembly=1")
-
-if (typeof WebAssembly == "undefined")
-    $vm.exit();
+//@ skip unless $isWasmPlatform
+//@ $skipModes << :lockdown
+//@ runDefaultWasm("--useWebAssembly=1")
 
 var wasm_code;
 try {

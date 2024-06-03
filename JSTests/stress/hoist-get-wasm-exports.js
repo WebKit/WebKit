@@ -1,3 +1,5 @@
+//@ skip unless $isWasmPlatform
+
 function opt(access, instance, transition) {
     let result;
     instance.x;

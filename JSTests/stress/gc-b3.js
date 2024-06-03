@@ -1,5 +1,7 @@
 //@ skip if $architecture == "arm" and !$cloop
 
+const verbose = false;
+
 function main() {
     noDFG(main);
 
@@ -21,7 +23,8 @@ function main() {
         gc();
 
         setTimeout(() => {
-            print('Should\'ve crashed.');
+            if (verbose)
+                print('Should\'ve crashed.');
         }, 1000);
     }, 300);
 }

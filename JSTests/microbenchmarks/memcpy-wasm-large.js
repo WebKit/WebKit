@@ -1,8 +1,7 @@
-//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
-//@ skip if !$isFTLPlatform
+//@ skip unless $isWasmPlatform
+//@ $skipModes << :lockdown
 //@ requireOptions("--useExecutableAllocationFuzz=false")
 // Source in wasm/stress/memcpy-wasm
-if (typeof WebAssembly === "object") {
 
 function eq(a, b) {
     if (a !== b)
@@ -37,5 +36,4 @@ try {
 } catch (e) {
     if (jscOptions().useExecutableAllocationFuzz === false)
         throw e
-}
 }

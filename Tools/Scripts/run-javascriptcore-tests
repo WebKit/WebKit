@@ -244,6 +244,7 @@ my $failFastDefault = $failFast ? "fail fast" : "don't fail fast";
 my $coverageDefault = $coverage ? "coverage enabled" : "coverage disabled";
 my $copyJSCDefault = $copyJSC ? "copy" : "do not copy";
 my $filter;
+my $platform;
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
@@ -274,6 +275,7 @@ Usage: $programName [options] [options to pass to build system]
   --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
   --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
   --remote-config-file=         Same as remote, but read config from JSON file.
+  --platform                    Pretend to be running on the specified platform for testing.
   --model=                      Specify remote hardware model, this info used for determine what jsc tests should run on remote
   --version                     Specify the version number of the device running tests.
   --version-name                Specify the version name of the hardware running tests.
@@ -375,6 +377,7 @@ GetOptions(
     'report-execution-time' => \$reportExecutionTime,
     'treat-failing-as-flaky=s' => \$treatFailingAsFlaky,
     'filter=s' => \$filter,
+    'platform=s' => \$platform,
     'help' => \$showHelp,
     'env-vars=s' => \$envVars,
     'gmalloc:s' => \$gmallocPath,
@@ -933,7 +936,13 @@ sub runJSCStressTests
     }
 
     push(@jscStressDriverCmd, "--platform");
-    push(@jscStressDriverCmd, $fullConfiguration->{"platform"});
+    if ($platform) {
+        # Use --platform override value if available.
+        push(@jscStressDriverCmd, $platform);
+    } else {
+        # Else use default computed platform.
+        push(@jscStressDriverCmd, $fullConfiguration->{"platform"});
+    }
 
     if ($memoryLimited) {
         push(@jscStressDriverCmd, "--memory-limited");
