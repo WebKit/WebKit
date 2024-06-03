@@ -141,6 +141,7 @@ public:
     void setAncestorLineBoxDirty(bool f = true);
 
     void setChildNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
+    void setOutOfFlowChildNeedsStaticPositionLayout();
     void clearChildNeedsLayout();
     void setNeedsPositionedMovementLayout(const RenderStyle* oldStyle);
     void setNeedsSimplifiedNormalFlowLayout();

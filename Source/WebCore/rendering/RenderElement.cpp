@@ -1191,6 +1191,7 @@ void RenderElement::clearChildNeedsLayout()
     setPosChildNeedsLayoutBit(false);
     setNeedsSimplifiedNormalFlowLayoutBit(false);
     setNeedsPositionedMovementLayoutBit(false);
+    setOutOfFlowChildNeedsStaticPositionLayoutBit(false);
 }
 
 void RenderElement::setNeedsSimplifiedNormalFlowLayout()
@@ -1202,6 +1203,16 @@ void RenderElement::setNeedsSimplifiedNormalFlowLayout()
     scheduleLayout(markContainingBlocksForLayout());
     if (hasLayer())
         setLayerNeedsFullRepaint();
+}
+
+void RenderElement::setOutOfFlowChildNeedsStaticPositionLayout()
+{
+    // FIXME: Currently this dirty bit has a very limited useage but should be expanded to
+    // optimize all kinds of out-of-flow cases.
+    // It's also assumed that regular, positioned child related bits are already set.
+    ASSERT(!isSetNeedsLayoutForbidden());
+    ASSERT(posChildNeedsLayout() || selfNeedsLayout() || !parent());
+    setOutOfFlowChildNeedsStaticPositionLayoutBit(true);
 }
 
 static inline void paintPhase(RenderElement& element, PaintPhase phase, PaintInfo& paintInfo, const LayoutPoint& childPoint)

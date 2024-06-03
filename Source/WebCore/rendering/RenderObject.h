@@ -705,6 +705,7 @@ public:
     bool needsSimplifiedNormalFlowLayout() const { return m_stateBitfields.hasFlag(StateFlag::NeedsSimplifiedNormalFlowLayout); }
     bool needsSimplifiedNormalFlowLayoutOnly() const;
     bool normalChildNeedsLayout() const { return m_stateBitfields.hasFlag(StateFlag::NormalChildNeedsLayout); }
+    bool outOfFlowChildNeedsStaticPositionLayout() const { return m_stateBitfields.hasFlag(StateFlag::OutOfFlowChildNeedsStaticPositionLayout); }
     
     bool preferredLogicalWidthsDirty() const { return m_stateBitfields.hasFlag(StateFlag::PreferredLogicalWidthsDirty); }
 
@@ -1152,6 +1153,7 @@ protected:
     void setNormalChildNeedsLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NormalChildNeedsLayout, b); }
     void setPosChildNeedsLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::PosChildNeedsLayout, b); }
     void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NeedsSimplifiedNormalFlowLayout, b); }
+    void setOutOfFlowChildNeedsStaticPositionLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::OutOfFlowChildNeedsStaticPositionLayout, b); }
 
     virtual RenderFragmentedFlow* locateEnclosingFragmentedFlow() const;
 
@@ -1210,20 +1212,21 @@ private:
         NormalChildNeedsLayout = 1 << 5,
         PosChildNeedsLayout = 1 << 6,
         NeedsSimplifiedNormalFlowLayout = 1 << 7,
-        EverHadLayout = 1 << 8,
-        IsExcludedFromNormalLayout = 1 << 9,
-        Floating = 1 << 10,
-        VerticalWritingMode = 1 << 11,
-        PreferredLogicalWidthsDirty = 1 << 12,
-        HasRareData = 1 << 13,
-        HasLayer = 1 << 14,
-        HasNonVisibleOverflow = 1 << 15,
-        HasTransformRelatedProperty = 1 << 16,
-        ChildrenInline = 1 << 17,
-        PaintContainmentApplies = 1 << 18,
-        HasSVGTransform = 1 << 19,
-        EverHadSkippedContentLayout = 1 << 20,
-        CapturedInViewTransition = 1 << 21
+        OutOfFlowChildNeedsStaticPositionLayout = 1 << 8,
+        EverHadLayout = 1 << 9,
+        IsExcludedFromNormalLayout = 1 << 10,
+        Floating = 1 << 11,
+        VerticalWritingMode = 1 << 12,
+        PreferredLogicalWidthsDirty = 1 << 13,
+        HasRareData = 1 << 14,
+        HasLayer = 1 << 15,
+        HasNonVisibleOverflow = 1 << 16,
+        HasTransformRelatedProperty = 1 << 17,
+        ChildrenInline = 1 << 18,
+        PaintContainmentApplies = 1 << 19,
+        HasSVGTransform = 1 << 20,
+        EverHadSkippedContentLayout = 1 << 21,
+        CapturedInViewTransition = 1 << 22
     };
 
     class StateBitfields {
@@ -1235,12 +1238,12 @@ private:
         };
 
     private:
-        uint32_t m_flags : 22 { 0 };
+        uint32_t m_flags : 23 { 0 };
         uint32_t m_positionedState : 2 { IsStaticallyPositioned }; // PositionedState
         uint32_t m_selectionState : 3 { enumToUnderlyingType(HighlightState::None) }; // HighlightState
         uint32_t m_fragmentedFlowState : 1 { enumToUnderlyingType(FragmentedFlowState::NotInsideFlow) }; // FragmentedFlowState
         uint32_t m_boxDecorationState : 2 { enumToUnderlyingType(BoxDecorationState::None) }; // BoxDecorationState
-        // 3 bits free
+        // 1 bit free
 
     public:
         OptionSet<StateFlag> flags() const { return OptionSet<StateFlag>::fromRaw(m_flags); }

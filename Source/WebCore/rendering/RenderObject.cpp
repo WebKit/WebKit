@@ -573,6 +573,7 @@ void RenderObject::clearNeedsLayout(EverHadSkippedContentLayout everHadSkippedCo
     setPosChildNeedsLayoutBit(false);
     setNeedsSimplifiedNormalFlowLayoutBit(false);
     setNormalChildNeedsLayoutBit(false);
+    setOutOfFlowChildNeedsStaticPositionLayoutBit(false);
     setNeedsPositionedMovementLayoutBit(false);
     if (auto* renderElement = dynamicDowncast<RenderElement>(*this))
         renderElement->setAncestorLineBoxDirty(false);
@@ -1460,6 +1461,8 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
             stream << "[simplified]";
         if (needsPositionedMovementLayout())
             stream << "[positioned movement]";
+        if (outOfFlowChildNeedsStaticPositionLayout())
+            stream << "[out of flow child needs parent layout]";
     }
     stream.nextLine();
 }
