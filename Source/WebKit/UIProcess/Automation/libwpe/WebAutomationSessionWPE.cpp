@@ -230,16 +230,16 @@ static void doKeyStrokeEvent(WebPageProxy &page, bool pressed, uint32_t keyVal, 
         return;
     }
 
-    WPEKeymapEntry* entries;
+    GUniqueOutPtr<WPEKeymapEntry> entries;
     guint entriesCount;
-    if (!wpe_keymap_get_entries_for_keyval(keymap, keyVal, &entries, &entriesCount)) {
+    if (!wpe_keymap_get_entries_for_keyval(keymap, keyVal, &entries.outPtr(), &entriesCount)) {
         LOG(Automation, "WebAutomationSession::doKeyStrokeEvent: Failed to get keymap entries for keyval %u. Ignoring event.", keyVal);
         return;
     }
-    unsigned keyCode = entries[0].keycode;
+    unsigned keyCode = entries.get()[0].keycode;
 
     WPEModifiers consumedModifiers;
-    if (!wpe_keymap_translate_keyboard_state(keymap, keyCode, static_cast<WPEModifiers>(modifiers), entries[0].group, &keyVal, nullptr, nullptr, &consumedModifiers)) {
+    if (!wpe_keymap_translate_keyboard_state(keymap, keyCode, static_cast<WPEModifiers>(modifiers), entries.get()[0].group, &keyVal, nullptr, nullptr, &consumedModifiers)) {
         LOG(Automation, "WebAutomationSession::doKeyStrokeEvent: Failed to translate keyboard state for keycode %u. Ignoring event.", keyCode);
         return;
     }
