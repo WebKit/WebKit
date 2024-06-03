@@ -366,9 +366,13 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#fraction-precision
                 skeletonBuilder.append(" ."_s);
 
-                unsigned fractionalDigits = durationFormat->fractionalDigits() == fractionalDigitsUndefinedValue ? 0 : durationFormat->fractionalDigits();
-                for (unsigned i = 0; i < fractionalDigits; ++i)
-                    skeletonBuilder.append('0');
+                unsigned fractionalDigits = durationFormat->fractionalDigits();
+                if (fractionalDigits == fractionalDigitsUndefinedValue)
+                    skeletonBuilder.append("#########"_s);
+                else {
+                    for (unsigned i = 0; i < fractionalDigits; ++i)
+                        skeletonBuilder.append('0');
+                }
                 done = true;
             }
             break;
