@@ -119,6 +119,12 @@ typedef NS_ENUM(NSInteger, WKDisplayCapturePermissionDecision) {
     WKDisplayCapturePermissionDecisionWindowPrompt,
 } WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
+typedef NS_ENUM(NSInteger, _WKXRSessionEndReason) {
+    _WKXRSessionEndReasonNoError,
+    _WKXRSessionEndReasonNoFrameUpdateScheduled,
+    _WKXRSessionEndReasonUnknownError,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 @protocol WKUIDelegatePrivate <WKUIDelegate>
 
 #ifdef FOUNDATION_HAS_DIRECTIONAL_GEOMETRY
@@ -198,6 +204,7 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView startXRSessionWithCompletionHandler:(void (^)(id))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(10.13.4), ios(16.0));
 - (void)_webViewEndXRSession:(WKWebView *)webView WK_API_AVAILABLE(macos(13.0), ios(16.0));
+- (void)_webViewEndXRSession:(WKWebView *)webView withReason:(_WKXRSessionEndReason)endReason WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 - (void)_webView:(WKWebView *)webView requestCookieConsentWithMoreInfoHandler:(void (^)(void))moreInfoHandler decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 

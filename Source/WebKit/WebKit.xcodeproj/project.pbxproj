@@ -5789,6 +5789,7 @@
 		51FB0902163A3B1C00EC324A /* NetworkProcessConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = NetworkProcessConnection.messages.in; path = Network/NetworkProcessConnection.messages.in; sourceTree = "<group>"; };
 		51FD18B31651FBAD00DBE1CE /* NetworkResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkResourceLoader.cpp; sourceTree = "<group>"; };
 		51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoader.h; sourceTree = "<group>"; };
+		522746C92C01C02200304409 /* PlatformXRSessionEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformXRSessionEnums.h; sourceTree = "<group>"; };
 		523475D32B68470D0029B9AE /* CoreIPCCFCharacterSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCFCharacterSet.h; sourceTree = "<group>"; };
 		523475D42B6849A70029B9AE /* CoreIPCCFCharacterSet.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCCFCharacterSet.serialization.in; sourceTree = "<group>"; };
 		523ADC8A2AFC2C2000B352C3 /* AuthenticationServicesSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationServicesSoftLink.h; sourceTree = "<group>"; };
@@ -8802,6 +8803,7 @@
 			children = (
 				3AEE89902AA5954000D4DF44 /* ios */,
 				1185025B2673B07100A6425E /* PlatformXRCoordinator.h */,
+				522746C92C01C02200304409 /* PlatformXRSessionEnums.h */,
 				1185025A2673B07100A6425E /* PlatformXRSystem.cpp */,
 				1185025C2673B07100A6425E /* PlatformXRSystem.h */,
 				1185025D2673B07100A6425E /* PlatformXRSystem.messages.in */,

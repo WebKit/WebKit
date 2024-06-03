@@ -224,7 +224,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #endif
         m_delegateMethods.webViewStartXRSessionWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:startXRSessionWithCompletionHandler:)];
 
-    m_delegateMethods.webViewEndXRSession = [delegate respondsToSelector:@selector(_webViewEndXRSession:)];
+    m_delegateMethods.webViewEndXRSession = [delegate respondsToSelector:@selector(_webViewEndXRSession:withReason:)] || [delegate respondsToSelector:@selector(_webViewEndXRSession:)];
 #endif // ENABLE(WEBXR)
 
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
@@ -2103,7 +2103,7 @@ void UIDelegate::UIClient::startXRSession(WebPageProxy&, const PlatformXR::Devic
     }).get()];
 }
 
-void UIDelegate::UIClient::endXRSession(WebPageProxy&)
+void UIDelegate::UIClient::endXRSession(WebPageProxy&, PlatformXRSessionEndReason reason)
 {
     if (!m_uiDelegate || !m_uiDelegate->m_delegateMethods.webViewEndXRSession)
         return;
@@ -2111,6 +2111,11 @@ void UIDelegate::UIClient::endXRSession(WebPageProxy&)
     auto delegate = (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
     if (!delegate)
         return;
+
+    if ([delegate respondsToSelector:@selector(_webViewEndXRSession:withReason:)]) {
+        [delegate _webViewEndXRSession:m_uiDelegate->m_webView.get().get() withReason:static_cast<_WKXRSessionEndReason>(reason)];
+        return;
+    }
 
     [delegate _webViewEndXRSession:m_uiDelegate->m_webView.get().get()];
 }
