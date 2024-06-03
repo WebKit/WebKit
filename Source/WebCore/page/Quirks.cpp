@@ -1863,21 +1863,13 @@ bool Quirks::needsRelaxedCorsMixedContentCheckQuirk() const
 }
 
 // rdar://127398734
-bool Quirks::needsLaxSameSiteCookieQuirk() const
+bool Quirks::needsLaxSameSiteCookieQuirk(const URL& requestURL) const
 {
     if (!needsQuirks())
         return false;
 
-    if (m_needsLaxSameSiteCookieQuirk)
-        return *m_needsLaxSameSiteCookieQuirk;
-
-    m_needsLaxSameSiteCookieQuirk = false;
-
     auto url = m_document->url();
-    if (url.protocolIs("https"_s) && url.host() == "www.bing.com"_s)
-        m_needsLaxSameSiteCookieQuirk = true;
-
-    return *m_needsLaxSameSiteCookieQuirk;
+    return url.protocolIs("https"_s) && url.host() == "login.microsoftonline.com"_s && requestURL.protocolIs("https"_s) && requestURL.host() == "www.bing.com"_s;
 }
 
 }

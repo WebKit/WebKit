@@ -3352,7 +3352,7 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
         request.setIsSameSite(true);
         return;
     }
-    if (initiator->quirks().needsLaxSameSiteCookieQuirk()) {
+    if (initiator->quirks().needsLaxSameSiteCookieQuirk(request.url())) {
         request.setIsSameSite(true);
         return;
     }
