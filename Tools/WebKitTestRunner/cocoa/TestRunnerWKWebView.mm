@@ -505,8 +505,8 @@ IGNORE_WARNINGS_END
 {
     _overrideSafeAreaInsets = insets;
 
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
     [self _updateSafeAreaInsets];
 #endif
 }

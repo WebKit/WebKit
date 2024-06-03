@@ -9300,8 +9300,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return NO;
 }
 
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
 - (CGRect)unoccludedWindowBoundsForActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
     UIEdgeInsets contentInset = [[_webView scrollView] adjustedContentInset];
