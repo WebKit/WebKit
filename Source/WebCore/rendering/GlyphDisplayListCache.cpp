@@ -80,7 +80,6 @@ GlyphDisplayListCache& GlyphDisplayListCache::singleton()
 void GlyphDisplayListCache::clear()
 {
     m_entriesForLayoutRun.clear();
-    m_entriesForFrequentlyPaintedLayoutRun.clear();
     m_entries.clear();
 }
 
@@ -118,10 +117,7 @@ DisplayList::DisplayList* GlyphDisplayListCache::getDisplayList(const LayoutRun&
         Ref entry { iterator->get() };
         auto* result = &entry->displayList();
         const_cast<LayoutRun&>(run).setIsInGlyphDisplayListCache();
-        if (isFrequentlyPainted)
-            m_entriesForFrequentlyPaintedLayoutRun.add(&run, WTFMove(entry));
-        else
-            m_entriesForLayoutRun.add(&run, WTFMove(entry));
+        m_entriesForLayoutRun.add(&run, WTFMove(entry));
         return result;
     }
 
@@ -131,10 +127,7 @@ DisplayList::DisplayList* GlyphDisplayListCache::getDisplayList(const LayoutRun&
         if (canShareDisplayList(*result))
             m_entries.add(entry.get());
         const_cast<LayoutRun&>(run).setIsInGlyphDisplayListCache();
-        if (isFrequentlyPainted)
-            m_entriesForFrequentlyPaintedLayoutRun.add(&run, WTFMove(entry));
-        else
-            m_entriesForLayoutRun.add(&run, WTFMove(entry));
+        m_entriesForLayoutRun.add(&run, WTFMove(entry));
         return result;
     }
 
@@ -158,8 +151,6 @@ DisplayList::DisplayList* GlyphDisplayListCache::getIfExistsImpl(const LayoutRun
         return nullptr;
     if (auto entry = m_entriesForLayoutRun.get(&run))
         return &entry->displayList();
-    if (auto entry = m_entriesForFrequentlyPaintedLayoutRun.get(&run))
-        return &entry->displayList();
     return nullptr;
 }
 
@@ -176,7 +167,6 @@ DisplayList::DisplayList* GlyphDisplayListCache::getIfExists(const InlineDisplay
 void GlyphDisplayListCache::remove(const void* run)
 {
     m_entriesForLayoutRun.remove(run);
-    m_entriesForFrequentlyPaintedLayoutRun.remove(run);
 }
 
 bool GlyphDisplayListCache::canShareDisplayList(const DisplayList::DisplayList& displayList)

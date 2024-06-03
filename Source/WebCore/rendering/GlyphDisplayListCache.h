@@ -132,7 +132,6 @@ private:
     void remove(const void* run);
 
     HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
-    HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForFrequentlyPaintedLayoutRun;
     HashSet<SingleThreadWeakRef<GlyphDisplayListCacheEntry>> m_entries;
     bool m_forceUseGlyphDisplayListForTesting { false };
 };
