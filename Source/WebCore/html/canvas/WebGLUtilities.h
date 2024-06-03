@@ -326,7 +326,7 @@ private:
 class ScopedClearStencilAndMask {
     WTF_MAKE_NONCOPYABLE(ScopedClearStencilAndMask);
 public:
-    explicit ScopedClearStencilAndMask(WebGLRenderingContextBase& context, GCGLint clear, GCGLenum face, GCGLuint mask, bool enabled)
+    explicit ScopedClearStencilAndMask(WebGLRenderingContextBase& context, GCGLint clear, GCGLuint mask, bool enabled)
         : m_context(enabled ? &context : nullptr) // NOLINT
     {
         if (!m_context)
@@ -334,7 +334,7 @@ public:
 
         RefPtr gl = m_context->protectedGraphicsContextGL();
         gl->clearStencil(clear);
-        gl->stencilMaskSeparate(face, mask);
+        gl->stencilMaskSeparate(GraphicsContextGL::FRONT, mask);
     }
 
     ~ScopedClearStencilAndMask()

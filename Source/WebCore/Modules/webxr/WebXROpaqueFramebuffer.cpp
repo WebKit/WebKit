@@ -110,7 +110,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
     ScopedDisableScissorTest disableScissorTest { m_context };
     ScopedClearColorAndMask zeroClear { m_context, 0.f, 0.f, 0.f, 0.f, true, true, true, true, };
     ScopedClearDepthAndMask zeroDepth { m_context, 1.0f, true, m_attributes.depth };
-    ScopedClearStencilAndMask zeroStencil { m_context, 0, GL::FRONT, 0xFFFFFFFF, m_attributes.stencil };
+    ScopedClearStencilAndMask zeroStencil { m_context, 0, 0xFFFFFFFF, m_attributes.stencil };
     GCGLenum clearMask = GL::COLOR_BUFFER_BIT;
     if (m_attributes.depth)
         clearMask |= GL::DEPTH_BUFFER_BIT;
