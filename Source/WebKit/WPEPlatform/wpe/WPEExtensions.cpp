@@ -29,6 +29,7 @@
 #include "WPEDisplay.h"
 #include <gio/gio.h>
 #include <mutex>
+#include <wtf/glib/GUniquePtr.h>
 
 #if ENABLE(WPE_PLATFORM_DRM)
 #include "wpe/drm/WPEDisplayDRM.h"
@@ -57,7 +58,16 @@ void wpeEnsureExtensionPointsLoaded()
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        // FIXME: load external modules.
+        GIOModuleScope* scope = g_io_module_scope_new(G_IO_MODULE_SCOPE_BLOCK_DUPLICATES);
+        const char* path = g_getenv("WPE_PLATFORMS_PATH");
+        if (path && *path) {
+            GUniquePtr<char*> paths(g_strsplit(path, G_SEARCHPATH_SEPARATOR_S, 0));
+            for (size_t i = 0; paths.get()[i]; ++i)
+                g_io_modules_scan_all_in_directory_with_scope(paths.get()[i], scope);
+        }
+
+        g_io_modules_scan_all_in_directory_with_scope(WPE_PLATFORM_MODULE_DIR, scope);
+        g_io_module_scope_free(scope);
 
         // Initialize types of builtin extensions.
 #if ENABLE(WPE_PLATFORM_DRM)

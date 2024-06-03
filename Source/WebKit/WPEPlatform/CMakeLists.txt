@@ -1,5 +1,8 @@
 set_property(DIRECTORY . PROPERTY FOLDER "WPEPlatform")
 
+set(WPE_PLATFORM_MODULE_DIR ${LIB_INSTALL_DIR}/wpe-platform-${WPE_API_VERSION}/modules)
+add_definitions(-DWPE_PLATFORM_MODULE_DIR="${WPE_PLATFORM_MODULE_DIR}")
+
 file(MAKE_DIRECTORY ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe)
 
 configure_file(wpe-platform.pc.in ${CMAKE_BINARY_DIR}/wpe-platform-${WPE_API_VERSION}.pc @ONLY)
