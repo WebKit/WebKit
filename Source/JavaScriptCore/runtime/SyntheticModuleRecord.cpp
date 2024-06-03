@@ -152,4 +152,12 @@ SyntheticModuleRecord* SyntheticModuleRecord::parseJSONModule(JSGlobalObject* gl
     RELEASE_AND_RETURN(scope, SyntheticModuleRecord::tryCreateDefaultExportSyntheticModule(globalObject, moduleKey, result));
 }
 
+SyntheticModuleRecord* SyntheticModuleRecord::createDefaultExport(JSGlobalObject* globalObject, const Identifier& moduleKey, JSValue defaultExport)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    RELEASE_AND_RETURN(scope, SyntheticModuleRecord::tryCreateDefaultExportSyntheticModule(globalObject, moduleKey, defaultExport));
+}
+
 } // namespace JSC

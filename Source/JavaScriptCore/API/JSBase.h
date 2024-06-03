@@ -30,6 +30,8 @@
 #include <stdbool.h>
 #endif
 
+#include <stddef.h> /* for size_t */
+
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
 #endif
@@ -97,6 +99,80 @@ typedef struct OpaqueJSValue* JSObjectRef;
 extern "C" {
 #endif
 
+/* Script Module */
+
+/*!
+@typedef JSModuleLoaderResolve
+@abstract The callback invoked when resolving a module specifier.
+@param ctx The execution context to use.
+@param keyValue A JSValue containing the module specifier to resolve.
+@param referrerValue A JSValue containing the referrer URL.
+@param scriptFetcher A JSValue containing the script fetcher.
+@result A JSString containing the resolved module specifier.
+*/
+typedef JSStringRef
+(*JSModuleLoaderResolve) (JSContextRef ctx, JSValueRef keyValue, JSValueRef referrerValue, JSValueRef scriptFetcher);
+
+
+/*!
+@typedef JSModuleLoaderEvaluate
+@abstract The callback invoked when evaluating a module.
+@param ctx The execution context to use.
+@param key A JSValue containing the module specifier to evaluate.
+@param scriptFetcher A JSValue containing the script fetcher.
+@param sentValue A JSValue containing the value to send to the module.
+@param resumeMode A JSValue containing the resume mode.
+@result A JSValue containing the result of evaluating the module.
+*/
+typedef JSValueRef
+(*JSModuleLoaderEvaluate) (JSContextRef ctx, JSValueRef key);
+
+/*!
+@typedef JSModuleLoaderFetch
+@abstract The callback invoked when fetching a module.
+@param ctx The execution context to use.
+@param key A JSValue containing the module specifier to fetch.
+@param attributesValue A JSValue containing the attributes.
+@param scriptFetcher A JSValue containing the script fetcher.
+@result A JSStringRef containing the fetched module.
+*/
+typedef JSStringRef
+(*JSModuleLoaderFetch) (JSContextRef ctx, JSValueRef key, JSValueRef attributesValue, JSValueRef scriptFetcher);
+
+/*!
+@typedef JSModuleLoaderCreateImportMetaProperties
+@abstract The callback invoked when creating import meta properties.
+@param ctx The execution context to use.
+@param key A JSValue containing the module specifier.
+@param scriptFetcher A JSValue containing the script fetcher.
+@result A JSObjectRef containing the import meta properties.
+*/
+typedef JSObjectRef
+(*JSModuleLoaderCreateImportMetaProperties) (JSContextRef ctx, JSValueRef key, JSValueRef scriptFetcher);
+
+/*!
+@struct JSAPIModuleLoader
+@abstract The callbacks used to load and evaluate modules.
+@field moduleLoaderResolve The callback used to resolve a module specifier.
+@field moduleLoaderEvaluate The callback used to evaluate a module.
+@field moduleLoaderFetch The callback used to fetch a module.
+*/
+typedef struct {
+    bool disableBuiltinFileSystemLoader;
+    JSModuleLoaderResolve moduleLoaderResolve;
+    JSModuleLoaderEvaluate moduleLoaderEvaluate;
+    JSModuleLoaderFetch moduleLoaderFetch;
+    JSModuleLoaderCreateImportMetaProperties moduleLoaderCreateImportMetaProperties;
+} JSAPIModuleLoader;
+
+/*!
+@function JSSetAPIModuleLoader
+@abstract Sets the moduleLoader used to load and evaluate modules.
+@param ctx The execution context to use.
+@param moduleLoader A JSAPIModuleLoader structure containing the callbacks to use.
+*/
+JS_EXPORT void JSSetAPIModuleLoader(JSContextRef ctx, JSAPIModuleLoader moduleLoader);
+
 /* Script Evaluation */
 
 /*!
@@ -121,6 +197,56 @@ JS_EXPORT JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSOb
 @param filename A JSString containing the path to the module to evaluate.
 */
 JS_EXPORT void JSLoadAndEvaluateModule(JSContextRef ctx, JSStringRef filename, JSValueRef* exception);
+
+/*!
+@function JSLoadAndEvaluateModuleFromSource
+@abstract Evaluates a string of JavaScript as a module.
+@param ctx The execution context to use.
+@param module A JSString containing the module code to evaluate.
+@param sourceURLString A JSString containing a URL for the script's source file. This is used by debuggers and when reporting exceptions. Pass NULL if you do not care to include source file information.
+@param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions. The value is one-based, so the first line is line 1 and invalid values are clamped to 1.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+*/
+JS_EXPORT void JSLoadAndEvaluateModuleFromSource(JSContextRef ctx, JSStringRef module, JSStringRef sourceURLString, int startingLineNumber, JSValueRef* exception);
+
+/*!
+@function JSLoadModule
+@abstract Loads a module.
+@param ctx The execution context to use.
+@param moduleKey A JSString containing the module key to load.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+*/
+JS_EXPORT void JSLoadModule(JSContextRef ctx, JSStringRef moduleKey, JSValueRef* exception);
+
+/*!
+@function JSLoadModuleFromSource
+@abstract Loads a module from a string of JavaScript.
+@param ctx The execution context to use.
+@param module A JSString containing the module code to load.
+@param sourceURLString A JSString containing a URL for the script's source file. This is used by debuggers and when reporting exceptions. Pass NULL if you do not care to include source file information.
+@param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions. The value is one-based, so the first line is line 1 and invalid values are clamped to 1.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+*/
+JS_EXPORT void JSLoadModuleFromSource(JSContextRef ctx, JSStringRef module, JSStringRef sourceURLString, int startingLineNumber, JSValueRef* exception);
+
+/*!
+@function JSLinkAndEvaluateModule
+@abstract Links and evaluates a module.
+@param ctx The execution context to use.
+@param moduleKey A JSString containing the module key to link and evaluate.
+@result The JSValue that results from evaluating the module, or NULL if an exception is thrown.
+*/
+JS_EXPORT JSValueRef JSLinkAndEvaluateModule(JSContextRef ctx, JSStringRef moduleKey);
+
+/*!
+@function JSSetSyntheticModuleKeys
+@abstract Sets the synthetic module keys.
+@param ctx The execution context to use.
+@param argumentCount The number of keys.
+@param keys An array of JSString containing the keys.
+@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+*/
+JS_EXPORT void JSSetSyntheticModuleKeys(JSContextRef ctx, size_t argumentCount, const JSStringRef keys[]);
 
 /*!
 @function JSCheckScriptSyntax

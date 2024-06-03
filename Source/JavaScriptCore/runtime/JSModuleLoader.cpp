@@ -28,10 +28,12 @@
 #include "JSModuleLoader.h"
 #include "ProgramExecutable.h"
 
+#include "APICast.h"
 #include "BuiltinNames.h"
 #include "Completion.h"
 #include "GlobalObjectMethodTable.h"
 #include "JSCInlines.h"
+#include "JSAPIGlobalObject.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
 #include "JSPromise.h"
@@ -1010,10 +1012,31 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const SourceCode& sourceCode = jsSourceCode->sourceCode();
-
     JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
     promise->markAsHandled();
+
+    if (auto* apiGlobalObject = jsDynamicCast<JSAPIGlobalObject*>(globalObject); apiGlobalObject && apiGlobalObject->isSyntheticModuleKey(moduleKey.string())) {
+        if (!apiGlobalObject->hasAPIModuleLoaderEvaluate()) {
+            promise->reject(vm, globalObject, createError(globalObject, makeString("Synthetic module '"_s, moduleKey.string(), "' does not have an evaluate callback."_s)));
+            RELEASE_AND_RETURN(scope, promise);
+        }
+
+        JSValue keyValue = identifierToJSValue(vm, moduleKey);
+        RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
+        JSContextRef contextRef = toRef(globalObject);
+        JSValueRef resultRef = apiGlobalObject->api_moduleLoader.moduleLoaderEvaluate(contextRef, toRef(globalObject, keyValue));
+        RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+        JSValue defaultExport = resultRef ? toJS(globalObject, resultRef) : jsUndefined();
+        auto* moduleRecord = SyntheticModuleRecord::createDefaultExport(globalObject, moduleKey, defaultExport);
+        RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
+        scope.release();
+        promise->fulfill(vm, globalObject, moduleRecord);
+        return promise;
+    }
+
+    const SourceCode& sourceCode = jsSourceCode->sourceCode();
 
 #if ENABLE(WEBASSEMBLY)
     if (sourceCode.provider()->sourceType() == SourceProviderSourceType::WebAssembly)

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSAPIGlobalObject.h"
 
+#include "APICast.h"
 #include "BytecodeCacheError.h"
 #include "Completion.h"
 #include "GlobalObjectMethodTable.h"
@@ -190,6 +191,10 @@ static bool isDottedRelativePath(StringView path)
 #endif
 }
 
+static bool isFileModule(StringView path)
+{
+    return path.startsWith("file://"_s) || isAbsolutePath(path) || isDottedRelativePath(path);
+}
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -366,7 +371,7 @@ const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
         &moduleLoaderResolve,
         &moduleLoaderFetch,
         &moduleLoaderCreateImportMetaProperties,
-        nullptr, // moduleLoaderEvaluate
+        &moduleLoaderEvaluate,
         &promiseRejectionTracker,
         &reportUncaughtExceptionAtEventLoop,
         &currentScriptExecutionOwner,
@@ -451,6 +456,23 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
     if (key.isSymbol())
         return key;
 
+    auto* apiGlobalObject = jsCast<JSAPIGlobalObject*>(globalObject);
+    if (apiGlobalObject->hasAPIModuleLoaderResolve()) {
+        String specifier = key.impl();
+        if (apiGlobalObject->api_moduleLoader.disableBuiltinFileSystemLoader || !isFileModule(specifier)) {
+            JSContextRef contextRef = toRef(globalObject);
+            JSStringRef resolved = apiGlobalObject->api_moduleLoader.moduleLoaderResolve(contextRef, toRef(globalObject, keyValue), toRef(globalObject, referrerValue), toRef(globalObject, jsUndefined()));
+            if (!resolved) {
+                throwTypeError(globalObject, scope, "Module resolver returned null"_s);
+                return { };
+            }
+
+            Identifier resolvedKey = Identifier::fromString(vm, resolved->string());
+            resolved->deref();
+            return resolvedKey;
+        }
+    }
+
     auto resolvePath = [&] (const URL& directoryURL) -> Identifier {
         String specifier = key.impl();
         auto filePrefix = "file://"_s;
@@ -493,6 +515,10 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
     return resolvePath(url);
 }
 
+JSValue JSAPIGlobalObject::moduleLoaderEvaluate(JSGlobalObject* globalObject, JSModuleLoader* moduleLoader, JSValue key, JSValue moduleRecordValue, RefPtr<ScriptFetcher> scriptFetcher, JSValue sentValue, JSValue resumeMode)
+{
+    return moduleLoader->evaluateNonVirtual(globalObject, key, moduleRecordValue, WTF::move(scriptFetcher), sentValue, resumeMode);
+}
 
 JSPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, RefPtr<ScriptFetchParameters> attributes, RefPtr<ScriptFetcher>)
 {
@@ -510,6 +536,40 @@ JSPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JS
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     URL moduleURL({ }, moduleKey);
+    auto* apiGlobalObject = jsCast<JSAPIGlobalObject*>(globalObject);
+
+    if (apiGlobalObject->isSyntheticModuleKey(moduleKey) && apiGlobalObject->hasAPIModuleLoaderEvaluate()) {
+        auto sourceCode = JSSourceCode::create(vm, jscSource(String(), SourceOrigin { moduleURL }, String { moduleKey }, TextPosition(), SourceProviderSourceType::Module));
+        scope.release();
+        promise->resolve(globalObject, vm, sourceCode);
+        return promise;
+    }
+
+    if (apiGlobalObject->hasAPIModuleLoaderFetch() && (apiGlobalObject->api_moduleLoader.disableBuiltinFileSystemLoader || !moduleURL.protocolIsFile())) {
+        JSContextRef contextRef = toRef(globalObject);
+        JSStringRef sourceRef = apiGlobalObject->api_moduleLoader.moduleLoaderFetch(contextRef, toRef(globalObject, key), toRef(globalObject, jsUndefined()), toRef(globalObject, jsUndefined()));
+        RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
+        if (!sourceRef)
+            RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, "Module fetcher returned null"_s)));
+
+        String sourceString = sourceRef->string();
+        sourceRef->deref();
+
+        if ((attributes && attributes->type() == ScriptFetchParameters::Type::JSON) || moduleKey.endsWith(".json"_s)) {
+            auto source = SourceCode(StringSourceProvider::create(sourceString, SourceOrigin { moduleURL }, String { moduleKey }, SourceTaintedOrigin::Untainted, TextPosition(), SourceProviderSourceType::JSON));
+            auto sourceCode = JSSourceCode::create(vm, WTF::move(source));
+            scope.release();
+            promise->resolve(globalObject, vm, sourceCode);
+            return promise;
+        }
+
+        auto sourceCode = JSSourceCode::create(vm, jscSource(sourceString, SourceOrigin { moduleURL }, String { moduleKey }, TextPosition(), SourceProviderSourceType::Module));
+        scope.release();
+        promise->resolve(globalObject, vm, sourceCode);
+        return promise;
+    }
+
     ASSERT(moduleURL.protocolIsFile());
     // Strip the URI from our key so Errors print canonical system paths.
     moduleKey = moduleURL.fileSystemPath();
@@ -537,13 +597,37 @@ JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    auto* apiGlobalObject = jsCast<JSAPIGlobalObject*>(globalObject);
+    if (apiGlobalObject->hasAPIModuleLoaderCreateImportMetaProperties()) {
+        JSContextRef contextRef = toRef(globalObject);
+        JSObjectRef object = apiGlobalObject->api_moduleLoader.moduleLoaderCreateImportMetaProperties(contextRef, toRef(globalObject, key), toRef(globalObject, jsUndefined()));
+        if (object)
+            return toJS(object);
+    }
+
     JSObject* metaProperties = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    metaProperties->putDirect(vm, Identifier::fromString(vm, "filename"_s), key);
+    String modulePath = key.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
+    String dirname;
+    String filename = modulePath;
+    URL moduleURL({ }, modulePath);
+    if (moduleURL.protocolIsFile()) {
+        modulePath = moduleURL.fileSystemPath();
+        if (auto separatorIndex = modulePath.reverseFind(pathSeparator()); separatorIndex != notFound) {
+            dirname = modulePath.substring(0, separatorIndex);
+            filename = modulePath.substring(separatorIndex + 1);
+        } else
+            filename = modulePath;
+    }
+
     metaProperties->putDirect(vm, Identifier::fromString(vm, "url"_s), key);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    metaProperties->putDirect(vm, Identifier::fromString(vm, "dir"_s), jsString(vm, dirname));
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    metaProperties->putDirect(vm, Identifier::fromString(vm, "filename"_s), jsString(vm, filename));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return metaProperties;
@@ -554,17 +638,7 @@ JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObje
 JSValue JSAPIGlobalObject::loadAndEvaluateJSScriptModule(const JSLockHolder&, JSScript *script)
 {
     UNUSED_PARAM(script);
-//    ASSERT(script.type == kJSScriptTypeModule);
-//    VM& vm = this->vm();
-//    auto scope = DECLARE_THROW_SCOPE(vm);
-//
-//    Identifier key = Identifier::fromString(vm, String { [[script sourceURL] absoluteString] });
-//    JSInternalPromise* promise = importModule(this, key, jsUndefined(), jsUndefined(), jsUndefined());
-//    RETURN_IF_EXCEPTION(scope, { });
-//    auto* result = JSPromise::create(vm, this->promiseStructure());
-//    result->resolve(this, promise);
-//    RETURN_IF_EXCEPTION(scope, { });
-//    return result;
+    // FIXME: Implement JSScript module evaluation for the C API.
     return jsUndefined();
 }
 

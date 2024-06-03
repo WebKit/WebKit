@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "JSBase.h"
 #include "JSGlobalObject.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
 OBJC_CLASS JSScript;
@@ -41,6 +43,9 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    JSAPIModuleLoader api_moduleLoader { };
+    HashSet<String> m_syntheticModuleKeys;
+
     static constexpr DestructionMode needsDestruction = NeedsDestruction;
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -54,6 +59,26 @@ public:
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
 
     JSValue loadAndEvaluateJSScriptModule(const JSLockHolder&, JSScript *);
+
+    void registerSyntheticModuleKey(const String& key)
+    {
+        m_syntheticModuleKeys.add(key);
+    }
+
+    void unregisterSyntheticModuleKey(const String& key)
+    {
+        m_syntheticModuleKeys.remove(key);
+    }
+
+    bool isSyntheticModuleKey(const String& key) const
+    {
+        return m_syntheticModuleKeys.contains(key);
+    }
+
+    bool hasAPIModuleLoaderResolve() const { return !!api_moduleLoader.moduleLoaderResolve; }
+    bool hasAPIModuleLoaderEvaluate() const { return !!api_moduleLoader.moduleLoaderEvaluate; }
+    bool hasAPIModuleLoaderFetch() const { return !!api_moduleLoader.moduleLoaderFetch; }
+    bool hasAPIModuleLoaderCreateImportMetaProperties() const { return !!api_moduleLoader.moduleLoaderCreateImportMetaProperties; }
 
 private:
     static const GlobalObjectMethodTable* globalObjectMethodTable();
