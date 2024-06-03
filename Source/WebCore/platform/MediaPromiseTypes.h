@@ -34,4 +34,24 @@ namespace WebCore {
 using MediaPromise = NativePromise<void, PlatformMediaError>;
 using MediaTimePromise = NativePromise<MediaTime, PlatformMediaError>;
 
+template<typename P>
+struct MediaErrorPromiseConverter {
+    using Promise = P;
+
+    template<typename T>
+    static typename Promise::Result convertResult(T&& result)
+    {
+        if constexpr (std::is_void<typename Promise::ResolveValueType>::value)
+            return { };
+        else
+            return { WTFMove(result) };
+    }
+
+    template<typename E>
+    static typename Promise::RejectValueType convertError(E) { return WebCore::PlatformMediaError::IPCError; }
+};
+
+using MediaPromiseConverter = MediaErrorPromiseConverter<MediaPromise>;
+using MediaTimePromiseConverter = MediaErrorPromiseConverter<MediaTimePromise>;
+
 } // namespace WebCore

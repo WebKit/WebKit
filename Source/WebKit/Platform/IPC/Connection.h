@@ -359,10 +359,10 @@ public:
     }
 
     // Thread-safe.
-    template<typename T, typename RawValue>
-    Ref<typename T::Promise> sendWithPromisedReply(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<SendOption> sendOptions = { })
+    template<typename T, typename PC = PromiseConverter<typename T::Promise>, typename M = T, typename RawValue>
+    Ref<typename PC::Promise> sendWithPromisedReply(M&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<SendOption> sendOptions = { })
     {
-        return sendWithPromisedReply<T>(WTFMove(message), destinationID.toUInt64(), sendOptions);
+        return sendWithPromisedReply<T, PC, M>(std::forward<M>(message), destinationID.toUInt64(), sendOptions);
     }
     template<typename T, typename RawValue>
     Ref<typename T::Promise> sendWithPromisedReplyOnDispatcher(T&& message, RefCountedSerialFunctionDispatcher& dispatcher, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<SendOption> sendOptions = { })

@@ -213,9 +213,8 @@ private:
     void rangeRemoval(const MediaTime&, const MediaTime&);
 
     friend class Internals;
-    using SamplesPromise = NativePromise<Vector<String>, int>;
-    WEBCORE_EXPORT Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID);
-    WEBCORE_EXPORT Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID);
+    WEBCORE_EXPORT Ref<SourceBufferPrivate::SamplesPromise> bufferedSamplesForTrackId(TrackID);
+    WEBCORE_EXPORT Ref<SourceBufferPrivate::SamplesPromise> enqueuedSamplesForTrackID(TrackID);
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID);
     WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
     WEBCORE_EXPORT Ref<GenericPromise> setMaximumSourceBufferSize(uint64_t);

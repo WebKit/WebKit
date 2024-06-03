@@ -145,7 +145,7 @@ public:
     WEBCORE_EXPORT virtual void memoryPressure(const MediaTime& currentTime);
 
     // Internals Utility methods
-    using SamplesPromise = NativePromise<Vector<String>, int>;
+    using SamplesPromise = NativePromise<Vector<String>, PlatformMediaError>;
     WEBCORE_EXPORT virtual Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID);
     WEBCORE_EXPORT virtual Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID);
     virtual MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID) { return MediaTime::invalidTime(); }

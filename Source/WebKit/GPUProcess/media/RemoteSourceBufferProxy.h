@@ -41,6 +41,7 @@ namespace IPC {
 class Connection;
 class Decoder;
 class SharedBufferReference;
+enum class Error : uint8_t;
 }
 
 namespace WebCore {

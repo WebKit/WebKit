@@ -143,9 +143,10 @@ private:
 
     void ensureOnDispatcherSync(Function<void()>&&);
     void ensureWeakOnDispatcher(Function<void()>&&);
-    template<typename T> Ref<typename T::Promise> sendWithPromisedReply(T&& message)
+
+    template<typename T, typename PC = IPC::Connection::PromiseConverter<typename T::Promise>, typename M = T> Ref<typename PC::Promise> sendWithPromisedReply(M&& message)
     {
-        return m_gpuProcessConnection.get()->connection().sendWithPromisedReply(std::forward<T>(message), m_remoteSourceBufferIdentifier);
+        return m_gpuProcessConnection.get()->connection().sendWithPromisedReply<T, PC, M>(std::forward<M>(message), m_remoteSourceBufferIdentifier);
     }
 
     friend class MessageReceiver;

@@ -1299,7 +1299,7 @@ void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
     scriptExecutionContext()->vm().heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
 }
 
-Ref<SourceBuffer::SamplesPromise> SourceBuffer::bufferedSamplesForTrackId(TrackID trackID)
+Ref<SourceBufferPrivate::SamplesPromise> SourceBuffer::bufferedSamplesForTrackId(TrackID trackID)
 {
     // Internals only API
     assertIsMainThread();
@@ -1307,7 +1307,7 @@ Ref<SourceBuffer::SamplesPromise> SourceBuffer::bufferedSamplesForTrackId(TrackI
     return m_private->bufferedSamplesForTrackId(trackID);
 }
 
-Ref<SourceBuffer::SamplesPromise> SourceBuffer::enqueuedSamplesForTrackID(TrackID trackID)
+Ref<SourceBufferPrivate::SamplesPromise> SourceBuffer::enqueuedSamplesForTrackID(TrackID trackID)
 {
     // Internals only API
     assertIsMainThread();
