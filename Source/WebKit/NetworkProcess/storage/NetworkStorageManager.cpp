@@ -1807,16 +1807,15 @@ void NetworkStorageManager::cacheStoragePutRecords(WebCore::DOMCacheIdentifier c
     cache->putRecords(WTFMove(records), WTFMove(callback));
 }
 
-void NetworkStorageManager::cacheStorageClearMemoryRepresentation(const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&& callback)
+void NetworkStorageManager::cacheStorageClearMemoryRepresentation(const WebCore::ClientOrigin& origin, CompletionHandler<void()>&& callback)
 {
     assertIsCurrent(workQueue());
 
     auto iterator = m_originStorageManagers.find(origin);
-    if (iterator == m_originStorageManagers.end())
-        return callback(std::nullopt);
+    if (iterator != m_originStorageManagers.end())
+        iterator->value->closeCacheStorageManager();
 
-    iterator->value->closeCacheStorageManager();
-    callback(std::nullopt);
+    callback();
 }
 
 void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(String&&)>&& callback)

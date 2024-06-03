@@ -684,7 +684,7 @@ template<typename Frame> int32_t LibWebRTCCodecs::encodeFrameInternal(Encoder& e
         return WEBRTC_VIDEO_CODEC_ERROR;
 
     SharedVideoFrame sharedVideoFrame { mediaTime, false, rotation, WTFMove(*buffer) };
-    encoder.connection->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, WTFMove(sharedVideoFrame), timestamp, duration, shouldEncodeAsKeyFrame }, 0)->whenSettled(workQueue(), [callback = WTFMove(callback)] (auto&& result) mutable {
+    encoder.connection->sendWithPromisedReply<Messages::LibWebRTCCodecsProxy::EncodeFrame>({ encoder.identifier, WTFMove(sharedVideoFrame), timestamp, duration, shouldEncodeAsKeyFrame })->whenSettled(workQueue(), [callback = WTFMove(callback)] (auto&& result) mutable {
         callback(result ? result.value() : false);
     });
     return WEBRTC_VIDEO_CODEC_OK;
@@ -709,7 +709,7 @@ void LibWebRTCCodecs::flushEncoder(Encoder& encoder, Function<void()>&& callback
         return;
     }
 
-    connection->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::FlushEncoder { encoder.identifier })->whenSettled(workQueue(), WTFMove(callback));
+    connection->sendWithPromisedReply<Messages::LibWebRTCCodecsProxy::FlushEncoder>(encoder.identifier)->whenSettled(workQueue(), WTFMove(callback));
 }
 
 void LibWebRTCCodecs::registerEncodeFrameCallback(Encoder& encoder, void* encodedImageCallback)

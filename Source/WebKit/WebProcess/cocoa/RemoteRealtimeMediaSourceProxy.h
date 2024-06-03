@@ -91,6 +91,8 @@ public:
     void updateConnection();
 
 private:
+    template<typename P> struct PromiseConverter;
+
     WebCore::RealtimeMediaSourceIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
     WebCore::CaptureDevice m_device;

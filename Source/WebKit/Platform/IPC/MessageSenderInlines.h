@@ -172,7 +172,7 @@ template<typename MessageType> Ref<typename MessageType::Promise> inline Message
 {
     static_assert(!MessageType::isSync);
     if (RefPtr connection = messageSenderConnection())
-        return connection->sendWithPromisedReply(std::forward<MessageType>(message), destinationID, options);
+        return connection->sendWithPromisedReply<MessageType>(std::forward<MessageType>(message), destinationID, options);
     return MessageType::Promise::createAndReject(Error::NoMessageSenderConnection);
 }
 

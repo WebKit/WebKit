@@ -52,6 +52,8 @@ public:
 private:
     explicit WebCacheStorageConnection(WebCacheStorageProvider&);
 
+    template<typename P> struct PromiseConverter;
+
     IPC::Connection& connection();
 
     // WebCore::CacheStorageConnection
