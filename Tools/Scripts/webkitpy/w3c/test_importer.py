@@ -35,7 +35,7 @@
 
     - Tests will be imported into a directory tree that mirrors WPT repository in LayoutTests/imported/w3c/web-platform-tests.
 
-    - By default, only reftests and jstest are imported. This can be overridden with a -a or --all
+    - By default, only manual, reftests, jstest and crash tests are imported. This can be overridden with a -a or --all
       argument
 
     - Also by default, if test files by the same name already exist in the destination directory,
@@ -131,32 +131,33 @@ To import a web-platform-tests suite from a local copy of web platform tests:
     parser = argparse.ArgumentParser(description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
-        help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
+                        help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
 
     parser.add_argument('-t', '--tip-of-tree', dest='use_tip_of_tree', action='store_true', default=False,
-        help='Import all tests using the latest repository revision')
+                        help='Import all tests using the latest repository revision')
 
     parser.add_argument('-a', '--all', action='store_true', default=False,
-        help='Import all tests including reftests, JS tests, and manual/pixel tests. By default, only reftests and JS tests are imported')
+                        help='Import all tests. By default, only manual, reftests, JS and crash tests are imported.')
+
     fs = FileSystem()
     parser.add_argument('-d', '--dest-dir', dest='destination', default=fs.join('imported', 'w3c'),
-        help='Import into a specified directory relative to the LayoutTests root. By default, imports into imported/w3c')
+                        help='Import into a specified directory relative to the LayoutTests root. By default, imports into imported/w3c')
 
     parser.add_argument('-s', '--src-dir', dest='source', default=None,
-        help='Import from a specific folder which contains web-platform-tests folder. If not provided, the script will clone the necessary repositories.')
+                        help='Import from a specific folder which contains web-platform-tests folder. If not provided, the script will clone the necessary repositories.')
 
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
-         help='Print maximal log')
+                        help='Print maximal log')
     parser.add_argument('--no-fetch', action='store_false', dest='fetch', default=True,
-         help='Do not fetch the repositories. By default, repositories are fetched if a source directory is not provided')
+                        help='Do not fetch the repositories. By default, repositories are fetched if a source directory is not provided')
     parser.add_argument('--import-all', action='store_true', default=False,
-         help='Ignore the import-expectations.json file. All tests will be imported. This option only applies when tests are downloaded from W3C repository')
+                        help='Ignore the import-expectations.json file. All tests will be imported. This option only applies when tests are downloaded from W3C repository')
 
     parser.add_argument('--clean-dest-dir', action='store_true', dest='clean_destination_directory', default=False,
-        help='Clean destination directory. All files in the destination directory will be deleted except for WebKit specific files (test expectations, .gitignore...) before new tests import. Dangling test expectations (expectation file that is no longer related to a test) are removed after tests import.')
+                        help='Clean destination directory. All files in the destination directory will be deleted except for WebKit specific files (test expectations, .gitignore...) before new tests import. Dangling test expectations (expectation file that is no longer related to a test) are removed after tests import.')
 
     parser.add_argument('test_paths', metavar='web-platform-tests/test_path', nargs='*',
-        help='directories to import')
+                        help='directories to import')
 
     args = parser.parse_args(args)
     return args, args.test_paths
