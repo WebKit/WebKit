@@ -394,8 +394,9 @@ void WebAuthenticatorCoordinatorProxy::pauseConditionalAssertion(CompletionHandl
         completionHandler();
         return;
     }
-    m_paused = true;
+
     if (m_isConditionalAssertion) {
+        m_paused = true;
         m_cancelHandler = WTFMove(completionHandler);
         [m_controller cancel];
     } else
@@ -406,8 +407,10 @@ void WebAuthenticatorCoordinatorProxy::unpauseConditionalAssertion()
 {
     if (!m_paused)
         return;
-    if (m_controller && m_isConditionalAssertion)
+    if (m_controller && m_isConditionalAssertion) {
+        activeConditionalMediationProxy() = *this;
         [m_controller performAutoFillAssistedRequests];
+    }
 
     m_paused = false;
 }
@@ -415,14 +418,16 @@ void WebAuthenticatorCoordinatorProxy::unpauseConditionalAssertion()
 void WebAuthenticatorCoordinatorProxy::makeActiveConditionalAssertion()
 {
     if (auto& activeProxy = activeConditionalMediationProxy()) {
-        if (activeProxy == this)
+        if (activeProxy == this && !m_paused)
             return;
         activeProxy->pauseConditionalAssertion([weakThis = WeakPtr { *this }] () {
             if (!weakThis)
                 return;
             weakThis->unpauseConditionalAssertion();
         });
+        return;
     }
+    unpauseConditionalAssertion();
 }
 
 inline static Vector<AuthenticatorTransport> toTransports(NSArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport> *asTransports)
