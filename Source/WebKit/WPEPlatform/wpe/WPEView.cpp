@@ -50,6 +50,7 @@ struct _WPEViewPrivate {
     int height;
     gdouble scale { 1 };
     WPEViewState state;
+    bool closed;
 #if USE(LIBDRM)
     GRefPtr<WPEBufferDMABufFormats> overridenDMABufFormats;
 #endif
@@ -90,6 +91,7 @@ enum {
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 enum {
+    CLOSED,
     RESIZED,
     BUFFER_RENDERED,
     BUFFER_RELEASED,
@@ -236,6 +238,20 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
             WEBKIT_PARAM_READABLE);
 
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
+
+    /**
+     * WPEView::closed:
+     * @view: a #WPEView
+     *
+     * Emitted when @view has been closed.
+     */
+    signals[CLOSED] = g_signal_new(
+        "closed",
+        G_TYPE_FROM_CLASS(viewClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 0);
 
     /**
      * WPEView::resized:
@@ -422,6 +438,27 @@ int wpe_view_get_height(WPEView* view)
     g_return_val_if_fail(WPE_IS_VIEW(view), 0);
 
     return view->priv->height;
+}
+
+/**
+ * wpe_view_closed:
+ * @view: a #WPEView
+ *
+ * Emit #WPEView::closed signal if @view is not already closed.
+ *
+ * This function should only be called by #WPEView derived classes
+ * in platform implementations.
+ */
+void wpe_view_closed(WPEView* view)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+
+    auto* priv = view->priv;
+    if (priv->closed)
+        return;
+
+    priv->closed = true;
+    g_signal_emit(view, signals[CLOSED], 0);
 }
 
 /**

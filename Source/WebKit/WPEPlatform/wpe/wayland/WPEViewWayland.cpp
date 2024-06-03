@@ -334,8 +334,9 @@ const struct xdg_toplevel_listener xdgToplevelListener = {
         view->priv->pendingState.state = static_cast<WPEViewState>(view->priv->pendingState.state | pendingState);
     },
     // close
-    [](void*, struct xdg_toplevel*)
+    [](void* data, struct xdg_toplevel*)
     {
+        wpe_view_closed(WPE_VIEW(data));
     },
 #ifdef XDG_TOPLEVEL_CONFIGURE_BOUNDS_SINCE_VERSION
     // configure_bounds

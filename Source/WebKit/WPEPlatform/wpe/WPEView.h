@@ -109,6 +109,7 @@ WPE_API WPEView                *wpe_view_new                           (WPEDispl
 WPE_API WPEDisplay             *wpe_view_get_display                   (WPEView      *view);
 WPE_API int                     wpe_view_get_width                     (WPEView      *view);
 WPE_API int                     wpe_view_get_height                    (WPEView      *view);
+WPE_API void                    wpe_view_closed                        (WPEView      *view);
 WPE_API gboolean                wpe_view_resize                        (WPEView      *view,
                                                                         int           width,
                                                                         int           height);
