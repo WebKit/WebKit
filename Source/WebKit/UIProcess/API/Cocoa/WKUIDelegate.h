@@ -256,6 +256,10 @@ WK_SWIFT_UI_ACTOR
  */
 - (void)webView:(WKWebView *)webView showLockdownModeFirstUseMessage:(NSString *)message completionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKDialogResult))completionHandler WK_API_AVAILABLE(ios(13.0));
 
+#endif // TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
+
+#if TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION) || (defined(TARGET_OS_TV) && TARGET_OS_TV)
+
 /**
  * @abstract Called when the web view is about to present its edit menu.
  *
@@ -272,7 +276,7 @@ WK_SWIFT_UI_ACTOR
  */
 - (void)webView:(WKWebView *)webView willDismissEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator WK_API_AVAILABLE(ios(16.4));
 
-#endif // TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
+#endif // TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION) || (defined(TARGET_OS_TV) && TARGET_OS_TV)
 
 #if !TARGET_OS_IPHONE
 

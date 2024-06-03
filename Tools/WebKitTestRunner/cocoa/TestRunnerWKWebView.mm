@@ -34,6 +34,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
@@ -48,7 +49,10 @@
 - (void)_scheduleVisibleContentRectUpdate;
 
 @end
-#endif
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIEditMenuInteraction)
+#endif // PLATFORM(IOS_FAMILY)
 
 struct CustomMenuActionInfo {
     RetainPtr<NSString> name;
@@ -640,8 +644,8 @@ static bool isQuickboardViewController(UIViewController *viewController)
 
     [UIView performWithoutAnimation:^{
         for (id<UIInteraction> interaction in self.contentView.interactions) {
-            if (auto *editMenuInteraction = dynamic_objc_cast<UIEditMenuInteraction>(interaction))
-                [editMenuInteraction dismissMenu];
+            if ([interaction isKindOfClass:getUIEditMenuInteractionClass()])
+                [(UIEditMenuInteraction *)interaction dismissMenu];
         }
     }];
 }
