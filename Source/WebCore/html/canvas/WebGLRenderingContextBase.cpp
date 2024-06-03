@@ -1094,14 +1094,14 @@ void WebGLRenderingContextBase::blendColor(GCGLfloat red, GCGLfloat green, GCGLf
 
 void WebGLRenderingContextBase::blendEquation(GCGLenum mode)
 {
-    if (isContextLost() || !validateBlendEquation("blendEquation"_s, mode))
+    if (isContextLost())
         return;
     m_context->blendEquation(mode);
 }
 
 void WebGLRenderingContextBase::blendEquationSeparate(GCGLenum modeRGB, GCGLenum modeAlpha)
 {
-    if (isContextLost() || !validateBlendEquation("blendEquation"_s, modeRGB) || !validateBlendEquation("blendEquation"_s, modeAlpha))
+    if (isContextLost())
         return;
     m_context->blendEquationSeparate(modeRGB, modeAlpha);
 }

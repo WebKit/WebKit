@@ -3229,21 +3229,6 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     }
 }
 
-bool WebGL2RenderingContext::validateBlendEquation(ASCIILiteral functionName, GCGLenum mode)
-{
-    switch (mode) {
-    case GraphicsContextGL::FUNC_ADD:
-    case GraphicsContextGL::FUNC_SUBTRACT:
-    case GraphicsContextGL::FUNC_REVERSE_SUBTRACT:
-    case GraphicsContextGL::MIN:
-    case GraphicsContextGL::MAX:
-        return true;
-    default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid mode"_s);
-        return false;
-    }
-}
-
 bool WebGL2RenderingContext::validateCapability(ASCIILiteral functionName, GCGLenum cap)
 {
     switch (cap) {

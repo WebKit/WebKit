@@ -280,7 +280,6 @@ private:
     bool validateAndCacheBufferBinding(const AbstractLocker&, ASCIILiteral functionName, GCGLenum target, WebGLBuffer*) final;
     GCGLint maxDrawBuffers() final;
     GCGLint maxColorAttachments() final;
-    bool validateBlendEquation(ASCIILiteral functionName, GCGLenum mode) final;
     bool validateCapability(ASCIILiteral functionName, GCGLenum cap) final;
     template<typename T, typename TypedArrayType>
     std::optional<std::span<const T>> validateClearBuffer(ASCIILiteral functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset);

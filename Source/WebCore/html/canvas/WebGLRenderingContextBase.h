@@ -976,9 +976,6 @@ protected:
     // Generate GL error if parameters are illegal.
     bool validateFramebufferFuncParameters(ASCIILiteral functionName, GCGLenum target, GCGLenum attachment);
 
-    // Helper function to validate blend equation mode.
-    virtual bool validateBlendEquation(ASCIILiteral functionName, GCGLenum) = 0;
-
     // Helper function to validate a GL capability.
     virtual bool validateCapability(ASCIILiteral functionName, GCGLenum);
 

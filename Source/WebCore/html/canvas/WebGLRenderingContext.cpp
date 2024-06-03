@@ -342,26 +342,6 @@ GCGLint WebGLRenderingContext::maxColorAttachments()
     return m_maxColorAttachments;
 }
 
-bool WebGLRenderingContext::validateBlendEquation(ASCIILiteral functionName, GCGLenum mode)
-{
-    switch (mode) {
-    case GraphicsContextGL::FUNC_ADD:
-    case GraphicsContextGL::FUNC_SUBTRACT:
-    case GraphicsContextGL::FUNC_REVERSE_SUBTRACT:
-    case GraphicsContextGL::MIN_EXT:
-    case GraphicsContextGL::MAX_EXT:
-        if ((mode == GraphicsContextGL::MIN_EXT || mode == GraphicsContextGL::MAX_EXT) && !m_extBlendMinMax) {
-            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid mode"_s);
-            return false;
-        }
-        return true;
-        break;
-    default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid mode"_s);
-        return false;
-    }
-}
-
 void WebGLRenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& visitor)
 {
     WebGLRenderingContextBase::addMembersToOpaqueRoots(visitor);
