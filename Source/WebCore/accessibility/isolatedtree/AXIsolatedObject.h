@@ -110,6 +110,7 @@ private:
     // FIXME: consolidate all AttributeValue retrieval in a single template method.
     bool boolAttributeValue(AXPropertyName) const;
     String stringAttributeValue(AXPropertyName) const;
+    String stringAttributeValueNullIfMissing(AXPropertyName) const;
     int intAttributeValue(AXPropertyName) const;
     unsigned unsignedAttributeValue(AXPropertyName) const;
     double doubleAttributeValue(AXPropertyName) const;
@@ -292,7 +293,7 @@ private:
     AutoFillButtonType valueAutofillButtonType() const final { return static_cast<AutoFillButtonType>(intAttributeValue(AXPropertyName::ValueAutofillButtonType)); }
     AccessibilityChildrenVector ariaTreeRows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ARIATreeRows)); }
     URL url() const final { return urlAttributeValue(AXPropertyName::URL); }
-    String accessKey() const final { return stringAttributeValue(AXPropertyName::AccessKey); }
+    String accessKey() const final { return stringAttributeValueNullIfMissing(AXPropertyName::AccessKey); }
     String localizedActionVerb() const final { return stringAttributeValue(AXPropertyName::LocalizedActionVerb); }
     String actionVerb() const final { return stringAttributeValue(AXPropertyName::ActionVerb); }
     String autoCompleteValue() const final { return stringAttributeValue(AXPropertyName::AutoCompleteValue); }

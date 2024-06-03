@@ -449,7 +449,12 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
     bool isDefaultValue = WTF::switchOn(value,
         [](std::nullptr_t&) { return true; },
         [](AXID typedValue) { return !typedValue.isValid(); },
-        [](String& typedValue) { return typedValue == emptyString(); },
+        [&](String& typedValue) {
+            // We use a null stringValue to indicate when the string value is different than the text content.
+            if (propertyName == AXPropertyName::StringValue)
+                return typedValue == emptyString(); // Only compares empty, not null
+            return typedValue.isEmpty(); // null or empty
+        },
         [](bool typedValue) { return !typedValue; },
         [](int typedValue) { return !typedValue; },
         [](unsigned typedValue) { return !typedValue; },
@@ -1020,6 +1025,15 @@ String AXIsolatedObject::stringAttributeValue(AXPropertyName propertyName) const
     return WTF::switchOn(value,
         [] (String& typedValue) { return typedValue; },
         [] (auto&) { return emptyString(); }
+    );
+}
+
+String AXIsolatedObject::stringAttributeValueNullIfMissing(AXPropertyName propertyName) const
+{
+    auto value = m_propertyMap.get(propertyName);
+    return WTF::switchOn(value,
+        [] (String& typedValue) { return typedValue; },
+        [] (auto&) { return nullString(); }
     );
 }
 
