@@ -200,4 +200,9 @@ Color DragData::asColor() const
     return Color();
 }
 
+bool DragData::shouldMatchStyleOnDrop() const
+{
+    return false;
+}
+
 }

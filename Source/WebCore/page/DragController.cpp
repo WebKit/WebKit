@@ -645,7 +645,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
                 OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::PreventNesting };
                 if (dragData.canSmartReplace())
                     options.add(ReplaceSelectionCommand::SmartReplace);
-                if (chosePlainText)
+                if (chosePlainText || dragData.shouldMatchStyleOnDrop())
                     options.add(ReplaceSelectionCommand::MatchStyle);
                 ReplaceSelectionCommand::create(protectedDocumentUnderMouse().releaseNonNull(), fragment.releaseNonNull(), options, EditAction::InsertFromDrop)->apply();
             }

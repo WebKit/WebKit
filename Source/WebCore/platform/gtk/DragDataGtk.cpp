@@ -89,4 +89,9 @@ String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) c
     return m_platformDragData->url().string();
 }
 
+bool DragData::shouldMatchStyleOnDrop() const
+{
+    return false;
+}
+
 }

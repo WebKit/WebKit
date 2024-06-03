@@ -43,6 +43,10 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/MultiRepresentationHEICAdditions.h>
+#endif
+
 namespace WebCore {
 
 static inline String rtfPasteboardType()
@@ -182,6 +186,18 @@ bool DragData::containsURLTypeIdentifier() const
 bool DragData::canSmartReplace() const
 {
     return Pasteboard(createPasteboardContext(), m_pasteboardName).canSmartReplace();
+}
+
+bool DragData::shouldMatchStyleOnDrop() const
+{
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    Vector<String> types;
+    auto context = createPasteboardContext();
+    platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName, context.get());
+    return types.contains(MULTI_REPRESENTATION_HEIC_PASTEBOARD_TYPE_STRING);
+#else
+    return false;
+#endif
 }
 
 bool DragData::containsColor() const
