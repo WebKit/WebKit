@@ -471,6 +471,34 @@ ALWAYS_INLINE simde_uint64x2_t greaterThanOrEqual(simde_uint64x2_t lhs, simde_ui
     return simde_vcgeq_u64(lhs, rhs);
 }
 
+template<typename CharacterType, size_t threshold = SIMD::stride<CharacterType>>
+ALWAYS_INLINE const CharacterType* find(std::span<const CharacterType> span, const auto& vectorMatch, const auto& scalarMatch)
+{
+    constexpr size_t stride = SIMD::stride<CharacterType>;
+    using UnsignedType = std::make_unsigned_t<CharacterType>;
+    static_assert(threshold >= stride);
+    const auto* cursor = span.data();
+    const auto* end = span.data() + span.size();
+    if (span.size() >= threshold) {
+        for (; cursor + (stride - 1) < end; cursor += stride) {
+            if (auto index = vectorMatch(SIMD::load(bitwise_cast<const UnsignedType*>(cursor))))
+                return cursor + index.value();
+        }
+        if (cursor < end) {
+            if (auto index = vectorMatch(SIMD::load(bitwise_cast<const UnsignedType*>(end - stride))))
+                return end - stride + index.value();
+        }
+        return end;
+    }
+
+    for (; cursor != end; ++cursor) {
+        auto character = *cursor;
+        if (scalarMatch(character))
+            return cursor;
+    }
+    return end;
+}
+
 }
 
 namespace SIMD = WTF::SIMD;

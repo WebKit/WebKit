@@ -591,36 +591,22 @@ ALWAYS_INLINE const uint8_t* find8(const uint8_t* pointer, uint8_t character, si
 template<typename UnsignedType>
 ALWAYS_INLINE const UnsignedType* findImpl(const UnsignedType* pointer, UnsignedType character, size_t length)
 {
-    // We take `size_t` length instead of `unsigned` because it is aligned to memchr.
-    constexpr size_t thresholdLength = 32;
-    const auto* cursor = pointer;
-    const auto* end = pointer + length;
+    auto charactersVector = SIMD::splat<UnsignedType>(character);
+    auto vectorMatch = [&](auto value) ALWAYS_INLINE_LAMBDA {
+        auto mask = SIMD::equal(value, charactersVector);
+        return SIMD::findFirstNonZeroIndex(mask);
+    };
 
-    if (length >= thresholdLength) {
-        constexpr size_t stride = SIMD::stride<UnsignedType>;
-        static_assert(stride <= thresholdLength);
-        auto charactersVector = SIMD::splat<UnsignedType>(character);
-        for (; cursor + (stride - 1) < end; cursor += stride) {
-            auto value = SIMD::load(cursor);
-            auto mask = SIMD::equal(value, charactersVector);
-            if (auto index = SIMD::findFirstNonZeroIndex(mask))
-                return cursor + index.value();
-        }
+    auto scalarMatch = [&](auto current) ALWAYS_INLINE_LAMBDA {
+        return current == character;
+    };
 
-        if (cursor < end) {
-            auto value = SIMD::load(end - stride);
-            auto mask = SIMD::equal(value, charactersVector);
-            if (auto index = SIMD::findFirstNonZeroIndex(mask))
-                return end - stride + index.value();
-        }
+    constexpr size_t threshold = 32;
+    auto* end = pointer + length;
+    auto* cursor = SIMD::find<UnsignedType, threshold>(std::span { pointer, end }, vectorMatch, scalarMatch);
+    if (cursor == end)
         return nullptr;
-    }
-
-    for (; cursor < end; ++cursor) {
-        if (*cursor == character)
-            return cursor;
-    }
-    return nullptr;
+    return cursor;
 }
 
 ALWAYS_INLINE const uint16_t* find16(const uint16_t* pointer, uint16_t character, size_t length)

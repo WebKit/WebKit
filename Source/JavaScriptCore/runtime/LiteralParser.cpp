@@ -867,42 +867,23 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserT
             while (m_ptr < m_end && isSafeStringCharacterForIdentifier<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
                 ++m_ptr;
         } else {
-            ([&]() ALWAYS_INLINE_LAMBDA {
-#if CPU(ARM64) || CPU(X86_64)
-                constexpr size_t stride = SIMD::stride<CharType>;
-                using UnsignedType = std::make_unsigned_t<CharType>;
-                if (static_cast<size_t>(m_end - m_ptr) >= stride) {
-                    constexpr auto quoteMask = SIMD::splat<UnsignedType>('"');
-                    constexpr auto escapeMask = SIMD::splat<UnsignedType>('\\');
-                    constexpr auto controlMask = SIMD::splat<UnsignedType>(' ');
-                    auto match = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
-                        auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
-                        auto quotes = SIMD::equal(input, quoteMask);
-                        auto escapes = SIMD::equal(input, escapeMask);
-                        auto controls = SIMD::lessThan(input, controlMask);
-                        auto mask = SIMD::bitOr(quotes, escapes, controls);
-                        return SIMD::findFirstNonZeroIndex(mask);
-                    };
+            using UnsignedType = std::make_unsigned_t<CharType>;
+            constexpr auto quoteMask = SIMD::splat<UnsignedType>('"');
+            constexpr auto escapeMask = SIMD::splat<UnsignedType>('\\');
+            constexpr auto controlMask = SIMD::splat<UnsignedType>(' ');
+            auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+                auto quotes = SIMD::equal(input, quoteMask);
+                auto escapes = SIMD::equal(input, escapeMask);
+                auto controls = SIMD::lessThan(input, controlMask);
+                auto mask = SIMD::bitOr(quotes, escapes, controls);
+                return SIMD::findFirstNonZeroIndex(mask);
+            };
 
-                    for (; m_ptr + (stride - 1) < m_end; m_ptr += stride) {
-                        if (auto index = match(m_ptr)) {
-                            m_ptr += index.value();
-                            return;
-                        }
-                    }
-                    if (m_ptr < m_end) {
-                        if (auto index = match(m_end - stride)) {
-                            m_ptr = m_end - stride + index.value();
-                            return;
-                        }
-                        m_ptr = m_end;
-                    }
-                    return;
-                }
-#endif
-                while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
-                    ++m_ptr;
-            }());
+            auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
+                return !isSafeStringCharacter<SafeStringCharacterSet::Strict>(character, '"');
+            };
+
+            m_ptr = SIMD::find(std::span { m_ptr, m_end }, vectorMatch, scalarMatch);
         }
     } else {
         while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Sloppy>(*m_ptr, terminator))

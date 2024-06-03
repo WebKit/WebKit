@@ -476,50 +476,27 @@ private:
     // `LChar` parser.
     String scanText()
     {
+        using UnsignedType = std::make_unsigned_t<CharacterType>;
+        constexpr auto quoteMask = SIMD::splat<UnsignedType>('<');
+        constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
+        constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
+        constexpr auto zeroMask = SIMD::splat<UnsignedType>(0);
+        auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+            auto quotes = SIMD::equal(input, quoteMask);
+            auto escapes = SIMD::equal(input, escapeMask);
+            auto newlines = SIMD::equal(input, newlineMask);
+            auto zeros = SIMD::equal(input, zeroMask);
+            auto mask = SIMD::bitOr(zeros, quotes, escapes, newlines);
+            return SIMD::findFirstNonZeroIndex(mask);
+        };
+
+        auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
+            return character == '<' || character == '&' || character == '\r' || character == '\0';
+        };
+
         auto* start = m_parsingBuffer.position();
-        auto* cursor = start;
         const auto* end = start + m_parsingBuffer.lengthRemaining();
-        ([&]() ALWAYS_INLINE_LAMBDA {
-            constexpr size_t stride = SIMD::stride<CharacterType>;
-            using UnsignedType = std::make_unsigned_t<CharacterType>;
-            if (static_cast<size_t>(end - cursor) >= stride) {
-                constexpr auto quoteMask = SIMD::splat<UnsignedType>('<');
-                constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
-                constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
-                constexpr auto zeroMask = SIMD::splat<UnsignedType>(0);
-
-                auto match = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
-                    auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
-                    auto quotes = SIMD::equal(input, quoteMask);
-                    auto escapes = SIMD::equal(input, escapeMask);
-                    auto newlines = SIMD::equal(input, newlineMask);
-                    auto zeros = SIMD::equal(input, zeroMask);
-                    auto mask = SIMD::bitOr(zeros, quotes, escapes, newlines);
-                    return SIMD::findFirstNonZeroIndex(mask);
-                };
-
-                for (; cursor + (stride - 1) < end; cursor += stride) {
-                    if (auto index = match(cursor)) {
-                        cursor += index.value();
-                        return;
-                    }
-                }
-                if (cursor < end) {
-                    if (auto index = match(end - stride)) {
-                        cursor = end - stride + index.value();
-                        return;
-                    }
-                    cursor = end;
-                }
-                return;
-            }
-
-            for (; cursor != end; ++cursor) {
-                auto character = *cursor;
-                if (character == '<' || character == '&' || character == '\r' || character == '\0')
-                    return;
-            }
-        }());
+        auto* cursor = SIMD::find(std::span { start, end }, vectorMatch, scalarMatch);
         m_parsingBuffer.setPosition(cursor);
 
         if (cursor != end) {
@@ -639,49 +616,26 @@ private:
         size_t length = 0;
         if (m_parsingBuffer.hasCharactersRemaining() && isQuoteCharacter(*m_parsingBuffer)) {
             auto quoteChar = m_parsingBuffer.consume();
+
+            using UnsignedType = std::make_unsigned_t<CharacterType>;
+            const auto quoteMask = SIMD::splat<UnsignedType>(quoteChar);
+            constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
+            constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
+            auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+                auto quotes = SIMD::equal(input, quoteMask);
+                auto escapes = SIMD::equal(input, escapeMask);
+                auto newlines = SIMD::equal(input, newlineMask);
+                auto mask = SIMD::bitOr(quotes, escapes, newlines);
+                return SIMD::findFirstNonZeroIndex(mask);
+            };
+
+            auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
+                return character == quoteChar || character == '&' || character == '\r';
+            };
+
             start = m_parsingBuffer.position();
-            auto* cursor = start;
             const auto* end = start + m_parsingBuffer.lengthRemaining();
-            ([&]() ALWAYS_INLINE_LAMBDA {
-                constexpr size_t stride = SIMD::stride<CharacterType>;
-                using UnsignedType = std::make_unsigned_t<CharacterType>;
-                if (static_cast<size_t>(end - cursor) >= stride) {
-                    const auto quoteMask = SIMD::splat<UnsignedType>(quoteChar);
-                    constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
-                    constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
-
-                    auto match = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
-                        auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
-                        auto quotes = SIMD::equal(input, quoteMask);
-                        auto escapes = SIMD::equal(input, escapeMask);
-                        auto newlines = SIMD::equal(input, newlineMask);
-                        auto mask = SIMD::bitOr(quotes, escapes, newlines);
-                        return SIMD::findFirstNonZeroIndex(mask);
-                    };
-
-                    for (; cursor + (stride - 1) < end; cursor += stride) {
-                        if (auto index = match(cursor)) {
-                            cursor += index.value();
-                            return;
-                        }
-                    }
-                    if (cursor < end) {
-                        if (auto index = match(end - stride)) {
-                            cursor = end - stride + index.value();
-                            return;
-                        }
-                        cursor = end;
-                    }
-                    return;
-                }
-
-                for (; cursor != end; ++cursor) {
-                    auto character = *cursor;
-                    if (character == quoteChar || character == '&' || character == '\r')
-                        return;
-                }
-            }());
-
+            auto* cursor = SIMD::find(std::span { start, end }, vectorMatch, scalarMatch);
             if (UNLIKELY(cursor == end))
                 return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, emptyAtom());
 
