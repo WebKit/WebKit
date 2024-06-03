@@ -9433,7 +9433,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_shouldUseContextMenus
 {
-#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU)
     return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::HasUIContextMenuInteraction);
 #endif
     return NO;
@@ -10885,7 +10885,11 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
 - (BOOL)positionInformationHasImageOverlayDataDetector
 {
+#if ENABLE(DATA_DETECTION)
     return _positionInformation.isImageOverlayText && [_positionInformation.dataDetectorResults count];
+#else
+    return NO;
+#endif
 }
 
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible
@@ -10911,7 +10915,14 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     }
 
     if (!targetedPreview) {
-        auto boundsForFallbackPreview = self.positionInformationHasImageOverlayDataDetector ? _positionInformation.dataDetectorBounds : _positionInformation.bounds;
+        auto boundsForFallbackPreview = [&] {
+#if ENABLE(DATA_DETECTION)
+            if (self.positionInformationHasImageOverlayDataDetector)
+                return _positionInformation.dataDetectorBounds;
+#endif
+            return _positionInformation.bounds;
+        }();
+
         targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, boundsForFallbackPreview, nil);
     }
 
