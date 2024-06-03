@@ -2480,10 +2480,17 @@ AttributedString editingAttributedString(const SimpleRange& range, OptionSet<Inc
         if (!renderer)
             continue;
         auto& style = renderer->style();
+
         if (style.textDecorationsInEffect() & TextDecorationLine::Underline)
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+        else
+            [attrs removeObjectForKey:NSUnderlineStyleAttributeName];
+
         if (style.textDecorationsInEffect() & TextDecorationLine::LineThrough)
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
+        else
+            [attrs removeObjectForKey:NSStrikethroughStyleAttributeName];
+
         if (auto ctFont = style.fontCascade().primaryFont().getCTFont())
             [attrs setObject:(__bridge PlatformFont *)ctFont forKey:NSFontAttributeName];
         else {
