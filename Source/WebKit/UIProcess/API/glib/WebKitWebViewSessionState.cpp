@@ -125,8 +125,8 @@ static inline void encodeHTTPBody(GVariantBuilder* sessionBuilder, const HTTPBod
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("(sa" HTTP_BODY_ELEMENT_TYPE_STRING_V1 ")"));
     g_variant_builder_add(sessionBuilder, "s", httpBody.contentType.utf8().data());
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("a" HTTP_BODY_ELEMENT_TYPE_STRING_V1));
-    g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE(HTTP_BODY_ELEMENT_TYPE_STRING_V1));
     for (const auto& element : httpBody.elements) {
+        g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE(HTTP_BODY_ELEMENT_TYPE_STRING_V1));
         g_variant_builder_add(sessionBuilder, "u", toHTMLBodyElementType(element.data.index()));
 
         g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("ay"));
@@ -159,8 +159,9 @@ static inline void encodeHTTPBody(GVariantBuilder* sessionBuilder, const HTTPBod
             g_variant_builder_add(sessionBuilder, "s", blobURLString->utf8().data());
         else
             g_variant_builder_add(sessionBuilder, "s", "");
+
+        g_variant_builder_close(sessionBuilder);
     }
-    g_variant_builder_close(sessionBuilder);
     g_variant_builder_close(sessionBuilder);
     g_variant_builder_close(sessionBuilder);
 }
