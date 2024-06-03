@@ -31,6 +31,7 @@
 #include "WebUnifiedTextReplacementSessionData.h"
 
 #include <WebCore/DocumentFragment.h>
+#include <WebCore/Editor.h>
 #include <WebCore/Node.h>
 #include <WebCore/Range.h>
 #include <wtf/FastMalloc.h>
@@ -42,7 +43,6 @@ namespace WebCore {
 struct TextIndicatorData;
 enum class TextIndicatorOption : uint16_t;
 class DocumentMarker;
-class Editor;
 }
 
 namespace WebKit {
@@ -95,7 +95,7 @@ private:
 
     void replaceContentsOfRangeInSessionInternal(const WTF::UUID&, const WebCore::SimpleRange&, WTF::Function<void(WebCore::Editor&)>&&);
     void replaceContentsOfRangeInSession(const WTF::UUID&, const WebCore::SimpleRange&, const String&);
-    void replaceContentsOfRangeInSession(const WTF::UUID&, const WebCore::SimpleRange&, WebCore::DocumentFragment&);
+    void replaceContentsOfRangeInSession(const WTF::UUID&, const WebCore::SimpleRange&, WebCore::DocumentFragment&, WebCore::Editor::MatchStyle = WebCore::Editor::MatchStyle::No);
 
     void textReplacementSessionPerformEditActionForPlainText(WebCore::Document&, const WebUnifiedTextReplacementSessionData&, WebTextReplacementData::EditAction);
     void textReplacementSessionPerformEditActionForRichText(WebCore::Document&, const WebUnifiedTextReplacementSessionData&, WebTextReplacementData::EditAction);

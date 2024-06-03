@@ -116,6 +116,9 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
     auto attributedStringFromRange = WebCore::editingAttributedString(*contextRange, { WebCore::IncludedElement::Images, WebCore::IncludedElement::Attachments });
     auto selectedTextCharacterRange = UnifiedTextReplacementController::characterRange(*contextRange, *selectedTextRange);
 
+    if (attributedStringFromRange.string.isEmpty())
+        RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string is empty", session ? session->uuid.toString().utf8().data() : "");
+
     if (session) {
         auto attributedStringCharacterCount = attributedStringFromRange.string.length();
         auto contextRangeCharacterCount = UnifiedTextReplacementController::characterCount(*contextRange);
@@ -389,7 +392,11 @@ void UnifiedTextReplacementController::removeTransparentMarkersForSession(const 
 
 void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange(const WebUnifiedTextReplacementSessionData& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context, bool finished)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) [range: %llu, %llu]", session.uuid.toString().utf8().data(), range.location, range.length);
+    auto hasAttributes = attributedText.attributes.containsIf([](const auto& rangeAndAttributeValues) {
+        return !rangeAndAttributeValues.second.isEmpty();
+    });
+
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) [range: %llu, %llu; has attributes: %d; finished: %d]", session.uuid.toString().utf8().data(), range.location, range.length, hasAttributes, finished);
 
     auto contextTextCharacterCount = context.attributedText.string.length();
 
@@ -481,7 +488,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
     });
 #endif
 
-    replaceContentsOfRangeInSession(session.uuid, resolvedRange, *fragment);
+    replaceContentsOfRangeInSession(session.uuid, resolvedRange, *fragment, hasAttributes ? WebCore::Editor::MatchStyle::No : WebCore::Editor::MatchStyle::Yes);
 
     auto finalTextIndicatorUUID = WTF::UUID::createVersion4();
     auto characterRangeAfterReplace = WebCore::CharacterRange(range.location, range.length + characterCountDelta);
@@ -891,10 +898,10 @@ void UnifiedTextReplacementController::replaceContentsOfRangeInSession(const WTF
     });
 }
 
-void UnifiedTextReplacementController::replaceContentsOfRangeInSession(const WTF::UUID& uuid, const WebCore::SimpleRange& range, WebCore::DocumentFragment& fragment)
+void UnifiedTextReplacementController::replaceContentsOfRangeInSession(const WTF::UUID& uuid, const WebCore::SimpleRange& range, WebCore::DocumentFragment& fragment, WebCore::Editor::MatchStyle matchStyle)
 {
-    replaceContentsOfRangeInSessionInternal(uuid, range, [&fragment](WebCore::Editor& editor) {
-        editor.replaceSelectionWithFragment(fragment, WebCore::Editor::SelectReplacement::Yes, WebCore::Editor::SmartReplace::No, WebCore::Editor::MatchStyle::No, WebCore::EditAction::InsertReplacement);
+    replaceContentsOfRangeInSessionInternal(uuid, range, [&fragment, matchStyle](WebCore::Editor& editor) {
+        editor.replaceSelectionWithFragment(fragment, WebCore::Editor::SelectReplacement::Yes, WebCore::Editor::SmartReplace::No, matchStyle, WebCore::EditAction::InsertReplacement);
     });
 }
 
