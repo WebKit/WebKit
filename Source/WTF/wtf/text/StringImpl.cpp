@@ -280,7 +280,7 @@ Ref<StringImpl> StringImpl::createStaticStringImpl(std::span<const LChar> charac
         return *empty();
     Ref<StringImpl> result = createInternal(characters);
     result->hash();
-    result->m_refCount |= s_refCountFlagIsStaticString;
+    result->m_refCount.exchangeOr(s_refCountFlagIsStaticString, std::memory_order_relaxed);
     return result;
 }
 
@@ -290,7 +290,7 @@ Ref<StringImpl> StringImpl::createStaticStringImpl(std::span<const UChar> charac
         return *empty();
     Ref<StringImpl> result = create8BitIfPossible(characters);
     result->hash();
-    result->m_refCount |= s_refCountFlagIsStaticString;
+    result->m_refCount.exchangeOr(s_refCountFlagIsStaticString, std::memory_order_relaxed);
     return result;
 }
 
