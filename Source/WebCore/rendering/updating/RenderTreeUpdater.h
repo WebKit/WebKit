@@ -77,6 +77,7 @@ private:
 
         bool didCreateOrDestroyChildRenderer { false };
         RenderObject* previousChildRenderer { nullptr };
+        bool hasPrecedingInFlowChild { false };
 
         Parent(ContainerNode& root);
         Parent(Element&, const Style::ElementUpdate*);

@@ -2506,7 +2506,7 @@ webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-d
 [ Sonoma ] svg/as-image/img-with-svg-resource-not-in-dom-and-drawImage.html [ ImageOnlyFailure ]
 [ Sonoma ] svg/as-image/img-with-svg-resource-not-in-dom-no-size-and-drawImage.html [ ImageOnlyFailure ]
 
-webkit.org/b/270195 [ Debug ] fast/text/emoji-num-glyphs.html [ Timeout ]
+fast/text/emoji-num-glyphs.html [ Pass ]
 
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 

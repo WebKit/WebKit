@@ -330,6 +330,9 @@ void RenderTreeUpdater::updateBeforeDescendants(Element& element, const Style::E
 {
     if (update)
         generatedContent().updatePseudoElement(element, *update, PseudoId::Before);
+
+    if (auto* before = element.beforePseudoElement())
+        storePreviousRenderer(*before);
 }
 
 void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::ElementUpdate* update)
@@ -556,20 +559,14 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
         // <span><div/> <div/></span>
         if (previousRenderer && !previousRenderer->isInline() && !previousRenderer->isOutOfFlowPositioned())
             return false;
-    } else {
-        if (parentRenderer.isRenderBlock() && !parentRenderer.childrenInline() && (!previousRenderer || !previousRenderer->isInline()))
-            return false;
 
-        RenderObject* first = parentRenderer.firstChild();
-        while (first && first->isFloatingOrOutOfFlowPositioned())
-            first = first->nextSibling();
-        RenderObject* nextRenderer = textNode.renderer() ? textNode.renderer() :  renderTreePosition().nextSiblingRenderer(textNode);
-        if (!first || nextRenderer == first) {
-            // Whitespace at the start of a block just goes away. Don't even make a render object for this text.
-            return false;
-        }
+        return true;
     }
-    return true;
+
+    if (parentRenderer.isRenderBlock() && !parentRenderer.childrenInline() && (!previousRenderer || !previousRenderer->isInline()))
+        return false;
+
+    return renderingParent.hasPrecedingInFlowChild;
 }
 
 void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpdate* textUpdate)
@@ -642,6 +639,8 @@ void RenderTreeUpdater::storePreviousRenderer(Node& node)
         return;
     ASSERT(renderingParent().previousChildRenderer != renderer);
     renderingParent().previousChildRenderer = renderer;
+    if (renderer->isInFlow())
+        renderingParent().hasPrecedingInFlowChild = true;
 }
 
 void RenderTreeUpdater::updateRenderViewStyle()
