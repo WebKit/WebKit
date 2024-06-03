@@ -245,15 +245,10 @@ sub wyhash {
 sub GenerateHashValue($$) {
     my ($string, $useWYHash) = @_;
     my @chars = split(/ */, $string);
-    my $charCount = scalar @chars;
     if ($useWYHash) {
-        if ($charCount <= 48) {
-            return superFastHash(@chars);
-        }
         return wyhash(@chars);
-    } else {
-        return superFastHash(@chars);
     }
+    return superFastHash(@chars);
 }
 
 1;

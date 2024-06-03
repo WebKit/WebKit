@@ -57,6 +57,25 @@ static JSC_DECLARE_CUSTOM_GETTER(jsPaintWorkletGlobalScope_PaintWorkletGlobalSco
 using JSPaintWorkletGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSPaintWorkletGlobalScope>;
 
 /* Hash table */
+#if ENABLE(WYHASH_STRING_HASHER)
+
+static const struct CompactHashIndex JSPaintWorkletGlobalScopeTableIndex[5] = {
+    { -1, -1 },
+    { 0, 4 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+};
+
+
+static const HashTableValue JSPaintWorkletGlobalScopeTableValues[] =
+{
+    { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsPaintWorkletGlobalScope_ExposedStarConstructor, 0 } },
+    { "PaintWorkletGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor, 0 } },
+};
+
+static const HashTable JSPaintWorkletGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopeTableValues, JSPaintWorkletGlobalScopeTableIndex };
+#else
 
 static const struct CompactHashIndex JSPaintWorkletGlobalScopeTableIndex[4] = {
     { -1, -1 },
@@ -73,6 +92,7 @@ static const HashTableValue JSPaintWorkletGlobalScopeTableValues[] =
 };
 
 static const HashTable JSPaintWorkletGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopeTableValues, JSPaintWorkletGlobalScopeTableIndex };
+#endif
 template<> const ClassInfo JSPaintWorkletGlobalScopeDOMConstructor::s_info = { "PaintWorkletGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopeDOMConstructor) };
 
 template<> JSValue JSPaintWorkletGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

@@ -84,6 +84,68 @@ static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_TestPromiseRejectionEventConstructo
 using JSDOMWindowDOMConstructor = JSDOMConstructorNotConstructable<JSDOMWindow>;
 
 /* Hash table */
+#if ENABLE(WYHASH_STRING_HASHER)
+
+static const struct CompactHashIndex JSDOMWindowTableIndex[34] = {
+    { 3, 32 },
+    { 6, -1 },
+    { 5, 33 },
+    { -1, -1 },
+    { -1, -1 },
+    { 10, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { 9, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { 8, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 7, -1 },
+    { 11, -1 },
+};
+
+
+static const HashTableValue JSDOMWindowTableValues[] =
+{
+    { "DOMWindow"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_DOMWindowConstructor, 0 } },
+    { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_ExposedStarConstructor, 0 } },
+    { "ExposedToWorkerAndWindow"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_ExposedToWorkerAndWindowConstructor, 0 } },
+    { "TestConditionalIncludes"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestConditionalIncludesConstructor, 0 } },
+    { "TestConditionallyReadWrite"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestConditionallyReadWriteConstructor, 0 } },
+    { "TestDefaultToJSON"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestDefaultToJSONConstructor, 0 } },
+    { "TestDefaultToJSONFilteredByExposed"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestDefaultToJSONFilteredByExposedConstructor, 0 } },
+    { "TestEnabledBySetting"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestEnabledBySettingConstructor, 0 } },
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    { "TestInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestInterfaceConstructor, 0 } },
+#else
+    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+#endif
+    { "TestNode"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestNodeConstructor, 0 } },
+    { "TestObject"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestObjectConstructor, 0 } },
+    { "TestPromiseRejectionEvent"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestPromiseRejectionEventConstructor, 0 } },
+};
+
+static const HashTable JSDOMWindowTable = { 12, 31, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
+#else
 
 static const struct CompactHashIndex JSDOMWindowTableIndex[37] = {
     { -1, -1 },
@@ -147,6 +209,7 @@ static const HashTableValue JSDOMWindowTableValues[] =
 };
 
 static const HashTable JSDOMWindowTable = { 12, 31, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
+#endif
 template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
 
 template<> JSValue JSDOMWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

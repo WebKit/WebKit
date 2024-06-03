@@ -57,6 +57,25 @@ static JSC_DECLARE_CUSTOM_GETTER(jsSharedWorkerGlobalScope_SharedWorkerGlobalSco
 using JSSharedWorkerGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSSharedWorkerGlobalScope>;
 
 /* Hash table */
+#if ENABLE(WYHASH_STRING_HASHER)
+
+static const struct CompactHashIndex JSSharedWorkerGlobalScopeTableIndex[5] = {
+    { -1, -1 },
+    { 0, 4 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+};
+
+
+static const HashTableValue JSSharedWorkerGlobalScopeTableValues[] =
+{
+    { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsSharedWorkerGlobalScope_ExposedStarConstructor, 0 } },
+    { "SharedWorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsSharedWorkerGlobalScope_SharedWorkerGlobalScopeConstructor, 0 } },
+};
+
+static const HashTable JSSharedWorkerGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSSharedWorkerGlobalScope::info(), JSSharedWorkerGlobalScopeTableValues, JSSharedWorkerGlobalScopeTableIndex };
+#else
 
 static const struct CompactHashIndex JSSharedWorkerGlobalScopeTableIndex[5] = {
     { -1, -1 },
@@ -74,6 +93,7 @@ static const HashTableValue JSSharedWorkerGlobalScopeTableValues[] =
 };
 
 static const HashTable JSSharedWorkerGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSSharedWorkerGlobalScope::info(), JSSharedWorkerGlobalScopeTableValues, JSSharedWorkerGlobalScopeTableIndex };
+#endif
 template<> const ClassInfo JSSharedWorkerGlobalScopeDOMConstructor::s_info = { "SharedWorkerGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSharedWorkerGlobalScopeDOMConstructor) };
 
 template<> JSValue JSSharedWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

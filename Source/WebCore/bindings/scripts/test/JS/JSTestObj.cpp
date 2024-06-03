@@ -2121,6 +2121,52 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestObjPrototype, JSTestObjPrototype::Base
 using JSTestObjDOMConstructor = JSDOMConstructor<JSTestObj>;
 
 /* Hash table */
+#if ENABLE(WYHASH_STRING_HASHER)
+
+static const struct CompactHashIndex JSTestObjTableIndex[17] = {
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 0, 16 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { 4, -1 },
+};
+
+
+static const HashTableValue JSTestObjTableValues[] =
+{
+    { "unforgeableAttr"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_unforgeableAttr, 0 } },
+#if ENABLE(Condition1)
+    { "conditionalAttr4"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_conditionalAttr4Constructor, 0 } },
+#else
+    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    { "conditionalAttr5"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_conditionalAttr5Constructor, 0 } },
+#else
+    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    { "conditionalAttr6"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_conditionalAttr6Constructor, 0 } },
+#else
+    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+#endif
+    { "unforgeableMethod"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::Function, NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjInstanceFunction_unforgeableMethod, 0 } },
+};
+
+static const HashTable JSTestObjTable = { 5, 15, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function | JSC::PropertyAttribute::ReadOnly), JSTestObj::info(), JSTestObjTableValues, JSTestObjTableIndex };
+#else
 
 static const struct CompactHashIndex JSTestObjTableIndex[16] = {
     { -1, -1 },
@@ -2164,6 +2210,7 @@ static const HashTableValue JSTestObjTableValues[] =
 };
 
 static const HashTable JSTestObjTable = { 5, 15, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function | JSC::PropertyAttribute::ReadOnly), JSTestObj::info(), JSTestObjTableValues, JSTestObjTableIndex };
+#endif
 /* Hash table for constructor */
 
 static const HashTableValue JSTestObjConstructorTableValues[] =
