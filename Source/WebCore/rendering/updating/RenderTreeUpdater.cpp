@@ -826,7 +826,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
 
             if (auto* renderer = element.renderer()) {
                 if (auto backdropRenderer = renderer->backdropRenderer())
-                    builder.destroyAndCleanUpAnonymousWrappers(*backdropRenderer, root.renderer());
+                    builder.destroyAndCleanUpAnonymousWrappers(*backdropRenderer, { });
                 builder.destroyAndCleanUpAnonymousWrappers(*renderer, root.renderer());
                 element.setRenderer(nullptr);
             }
