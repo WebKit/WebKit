@@ -111,15 +111,6 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 - (nullable WKWebView *)mainWebViewForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
- @abstract Called when the web views for the tab are needed.
- @param context The context in which the web extension is running.
- @return An array of web views for the tab.
- @discussion Defaults to an array containing the main web view if not implemented.
- @seealso mainWebViewForWebExtensionContext:
- */
-- (NSArray<WKWebView *> *)webViewsForWebExtensionContext:(_WKWebExtensionContext *)context;
-
-/*!
  @abstract Called when the title of the tab is needed.
  @param context The context in which the web extension is running.
  @return The title of the tab.
