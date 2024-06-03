@@ -620,6 +620,7 @@ const ProcEntry g_procTable[] = {
     {"glGetFramebufferPixelLocalStorageParameterivRobustANGLE", P(GL_GetFramebufferPixelLocalStorageParameterivRobustANGLE)},
     {"glGetGraphicsResetStatus", P(GL_GetGraphicsResetStatus)},
     {"glGetGraphicsResetStatusEXT", P(GL_GetGraphicsResetStatusEXT)},
+    {"glGetGraphicsResetStatusKHR", P(GL_GetGraphicsResetStatusKHR)},
     {"glGetInteger64i_v", P(GL_GetInteger64i_v)},
     {"glGetInteger64i_vRobustANGLE", P(GL_GetInteger64i_vRobustANGLE)},
     {"glGetInteger64v", P(GL_GetInteger64v)},
@@ -823,11 +824,14 @@ const ProcEntry g_procTable[] = {
     DESKTOP_ONLY("glGetnUniformdv", GL_GetnUniformdv)
     {"glGetnUniformfv", P(GL_GetnUniformfv)},
     {"glGetnUniformfvEXT", P(GL_GetnUniformfvEXT)},
+    {"glGetnUniformfvKHR", P(GL_GetnUniformfvKHR)},
     {"glGetnUniformfvRobustANGLE", P(GL_GetnUniformfvRobustANGLE)},
     {"glGetnUniformiv", P(GL_GetnUniformiv)},
     {"glGetnUniformivEXT", P(GL_GetnUniformivEXT)},
+    {"glGetnUniformivKHR", P(GL_GetnUniformivKHR)},
     {"glGetnUniformivRobustANGLE", P(GL_GetnUniformivRobustANGLE)},
     {"glGetnUniformuiv", P(GL_GetnUniformuiv)},
+    {"glGetnUniformuivKHR", P(GL_GetnUniformuivKHR)},
     {"glGetnUniformuivRobustANGLE", P(GL_GetnUniformuivRobustANGLE)},
     {"glHint", P(GL_Hint)},
     {"glImportMemoryFdEXT", P(GL_ImportMemoryFdEXT)},
@@ -1208,6 +1212,7 @@ const ProcEntry g_procTable[] = {
     {"glReadPixelsRobustANGLE", P(GL_ReadPixelsRobustANGLE)},
     {"glReadnPixels", P(GL_ReadnPixels)},
     {"glReadnPixelsEXT", P(GL_ReadnPixelsEXT)},
+    {"glReadnPixelsKHR", P(GL_ReadnPixelsKHR)},
     {"glReadnPixelsRobustANGLE", P(GL_ReadnPixelsRobustANGLE)},
     DESKTOP_ONLY("glRectd", GL_Rectd)
     DESKTOP_ONLY("glRectdv", GL_Rectdv)

@@ -1209,6 +1209,12 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
         mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
     }
 
+    // Stash the mRefCountedEventRecycler in vk::Context for ImageHelper to conveniently access
+    mShareGroupRefCountedEventsGarbageRecycler =
+        mShareGroupVk->getRefCountedEventsGarbageRecycler();
+
+    mDeviceQueueIndex = renderer->getDeviceQueueIndex(mContextPriority);
+
     angle::PerfMonitorCounterGroup vulkanGroup;
     vulkanGroup.name = "vulkan";
 
@@ -1254,6 +1260,8 @@ void ContextVk::onDestroy(const gl::Context *context)
     ASSERT(mRenderer->hasResourceUseFinished(mSubmittedResourceUse));
 
     VkDevice device = getDevice();
+
+    mShareGroupVk->cleanupRefCountedEventGarbage(mRenderer);
 
     mDefaultUniformStorage.release(mRenderer);
     mEmptyBuffer.release(mRenderer);
@@ -1403,10 +1411,10 @@ angle::Result ContextVk::initialize(const angle::ImageLoadContext &imageLoadCont
 
     // Assign initial command buffers from queue
     ANGLE_TRY(vk::OutsideRenderPassCommandBuffer::InitializeCommandPool(
-        this, &mCommandPools.outsideRenderPassPool, mRenderer->getDeviceQueueIndex(),
+        this, &mCommandPools.outsideRenderPassPool, mRenderer->getQueueFamilyIndex(),
         getProtectionType()));
     ANGLE_TRY(vk::RenderPassCommandBuffer::InitializeCommandPool(
-        this, &mCommandPools.renderPassPool, mRenderer->getDeviceQueueIndex(),
+        this, &mCommandPools.renderPassPool, mRenderer->getQueueFamilyIndex(),
         getProtectionType()));
     ANGLE_TRY(mRenderer->getOutsideRenderPassCommandBufferHelper(
         this, &mCommandPools.outsideRenderPassPool, &mOutsideRenderPassCommandsAllocator,
@@ -1559,7 +1567,7 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
     }
 
     ProgramExecutableVk *executableVk = vk::GetImpl(mState.getProgramExecutable());
-    if (executableVk->hasDirtyUniforms())
+    if (executableVk->updateAndCheckDirtyUniforms())
     {
         mGraphicsDirtyBits.set(DIRTY_BIT_UNIFORMS);
     }
@@ -1810,10 +1818,9 @@ angle::Result ContextVk::setupDispatch(const gl::Context *context)
     ANGLE_TRY(flushOutsideRenderPassCommands());
 
     ProgramExecutableVk *executableVk = vk::GetImpl(mState.getProgramExecutable());
-    if (executableVk->hasDirtyUniforms())
+    if (executableVk->updateAndCheckDirtyUniforms())
     {
         mComputeDirtyBits.set(DIRTY_BIT_UNIFORMS);
-        mComputeDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
     }
 
     DirtyBits dirtyBits = mComputeDirtyBits;
@@ -3067,17 +3074,19 @@ angle::Result ContextVk::handleDirtyGraphicsDescriptorSets(DirtyBits::Iterator *
 angle::Result ContextVk::handleDirtyGraphicsUniforms(DirtyBits::Iterator *dirtyBitsIterator,
                                                      DirtyBits dirtyBitMask)
 {
-    dirtyBitsIterator->setLaterBit(DIRTY_BIT_DESCRIPTOR_SETS);
-    return handleDirtyUniformsImpl(mRenderPassCommands);
+    return handleDirtyUniformsImpl(dirtyBitsIterator, mRenderPassCommands);
 }
 
 angle::Result ContextVk::handleDirtyComputeUniforms(DirtyBits::Iterator *dirtyBitsIterator)
 {
-    return handleDirtyUniformsImpl(mOutsideRenderPassCommands);
+    return handleDirtyUniformsImpl(dirtyBitsIterator, mOutsideRenderPassCommands);
 }
 
-angle::Result ContextVk::handleDirtyUniformsImpl(vk::CommandBufferHelperCommon *commandBufferHelper)
+angle::Result ContextVk::handleDirtyUniformsImpl(DirtyBits::Iterator *dirtyBitsIterator,
+                                                 vk::CommandBufferHelperCommon *commandBufferHelper)
 {
+    dirtyBitsIterator->setLaterBit(DIRTY_BIT_DESCRIPTOR_SETS);
+
     ProgramExecutableVk *executableVk = vk::GetImpl(mState.getProgramExecutable());
     TransformFeedbackVk *transformFeedbackVk =
         vk::SafeGetImpl(mState.getCurrentTransformFeedback());
@@ -3648,6 +3657,9 @@ angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore,
     // Now that we have submitted commands, some of pending garbage may no longer pending
     // and should be moved to garbage list.
     mRenderer->cleanupPendingSubmissionGarbage();
+    // In case of big amount of render/submission within one frame, if we accumulate excessive
+    // amount of garbage, also trigger the cleanup.
+    mShareGroupVk->cleanupExcessiveRefCountedEventGarbage(mRenderer);
 
     mComputeDirtyBits |= mNewComputeCommandBufferDirtyBits;
 
@@ -5388,22 +5400,6 @@ angle::Result ContextVk::invalidateProgramExecutableHelper(const gl::Context *co
     return angle::Result::Continue;
 }
 
-void ContextVk::updateFoveatedRendering()
-{
-    const bool previousFoveationMode = mGraphicsPipelineDesc->getRenderPassFoveation();
-    FramebufferVk *drawFramebufferVk = vk::GetImpl(mState.getDrawFramebuffer());
-    const bool currentFoveationMode  = drawFramebufferVk->isFoveationEnabled();
-    if (previousFoveationMode != currentFoveationMode)
-    {
-        // Perform required state changes
-        mGraphicsPipelineDesc->setRenderPassFoveation(currentFoveationMode);
-        invalidateCurrentGraphicsPipeline();
-        mGraphicsDirtyBits.set(DIRTY_BIT_RENDER_PASS);
-        // Opening a new renderpass will trigger an update to shading rate dynamic state.
-        ASSERT(getFeatures().supportsFragmentShadingRate.enabled);
-    }
-}
-
 angle::Result ContextVk::syncState(const gl::Context *context,
                                    const gl::state::DirtyBits dirtyBits,
                                    const gl::state::DirtyBits bitMask,
@@ -5695,7 +5691,6 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 updateScissor(glState);
                 updateDepthStencil(glState);
                 updateDither();
-                updateFoveatedRendering();
 
                 // Clear the blend funcs/equations for color attachment indices that no longer
                 // exist.
@@ -6430,9 +6425,6 @@ angle::Result ContextVk::onFramebufferChange(FramebufferVk *framebufferVk, gl::C
     // Update dither based on attachment formats.
     updateDither();
 
-    // Updated foveated rendering
-    updateFoveatedRendering();
-
     // Attachments might have changed.
     updateMissingOutputsMask();
 
@@ -6448,6 +6440,9 @@ angle::Result ContextVk::onFramebufferChange(FramebufferVk *framebufferVk, gl::C
 void ContextVk::onDrawFramebufferRenderPassDescChange(FramebufferVk *framebufferVk,
                                                       bool *renderPassDescChangedOut)
 {
+    ASSERT(getFeatures().supportsFragmentShadingRate.enabled ||
+           !framebufferVk->isFoveationEnabled());
+
     mGraphicsPipelineDesc->updateRenderPassDesc(&mGraphicsPipelineTransition,
                                                 framebufferVk->getRenderPassDesc());
 
@@ -7694,12 +7689,17 @@ angle::Result ContextVk::flushImpl(const vk::Semaphore *signalSemaphore,
 
     // Try to detect frame boundary for both on screen and offscreen usage by detecting
     // fush/finish/swap.
-    if ((renderPassClosureReason == RenderPassClosureReason::GLFlush ||
-         renderPassClosureReason == RenderPassClosureReason::GLFinish ||
-         renderPassClosureReason == RenderPassClosureReason::EGLSwapBuffers) &&
-        mShareGroupVk->isDueForBufferPoolPrune(mRenderer))
+    bool frameBoundary = renderPassClosureReason == RenderPassClosureReason::GLFlush ||
+                         renderPassClosureReason == RenderPassClosureReason::GLFinish ||
+                         renderPassClosureReason == RenderPassClosureReason::EGLSwapBuffers;
+    if (frameBoundary)
     {
-        mShareGroupVk->pruneDefaultBufferPools(mRenderer);
+        if (mShareGroupVk->isDueForBufferPoolPrune(mRenderer))
+        {
+            mShareGroupVk->pruneDefaultBufferPools(mRenderer);
+        }
+        // Always clean up grabage and destroy the excessive free list at frame boundary.
+        mShareGroupVk->cleanupRefCountedEventGarbage(mRenderer);
     }
 
     // Since we just flushed, deferred flush is no longer deferred.
@@ -7995,6 +7995,9 @@ angle::Result ContextVk::flushCommandsAndEndRenderPassWithoutSubmit(RenderPassCl
                                    mRenderPassCommands->getAttachmentOps(), &renderPass));
 
     flushDescriptorSetUpdates();
+    // Collect RefCountedEvent garbage before submitting to renderer
+    mRenderPassCommands->collectRefCountedEventsGarbage(
+        mShareGroupVk->getRefCountedEventsGarbageRecycler());
 
     // Save the queueSerial before calling flushRenderPassCommands, which may return a new
     // mRenderPassCommands
@@ -8275,6 +8278,11 @@ angle::Result ContextVk::flushOutsideRenderPassCommands()
     }
 
     flushDescriptorSetUpdates();
+
+    // Track completion of this command buffer.
+    mOutsideRenderPassCommands->flushSetEvents(this);
+    mOutsideRenderPassCommands->collectRefCountedEventsGarbage(
+        mShareGroupVk->getRefCountedEventsGarbageRecycler());
 
     // Save the queueSerial before calling flushOutsideRPCommands, which may return a new
     // mOutsideRenderPassCommands

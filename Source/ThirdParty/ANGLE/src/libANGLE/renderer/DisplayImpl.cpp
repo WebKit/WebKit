@@ -27,11 +27,6 @@ class MockDevice : public DeviceImpl
         UNREACHABLE();
         return egl::EglBadAttribute();
     }
-    EGLint getType() override
-    {
-        UNREACHABLE();
-        return EGL_NONE;
-    }
     void generateExtensions(egl::DeviceExtensions *outExtensions) const override
     {
         *outExtensions = egl::DeviceExtensions();

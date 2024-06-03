@@ -250,6 +250,7 @@
     /* GL_KHR_parallel_shader_compile */                                                           \
     void maxShaderCompilerThreads(GLuint count);                                                   \
     /* GL_KHR_robust_buffer_access_behavior */                                                     \
+    /* GL_KHR_robustness */                                                                        \
     /* GL_KHR_texture_compression_astc_hdr */                                                      \
     /* GL_KHR_texture_compression_astc_ldr */                                                      \
     /* GL_KHR_texture_compression_astc_sliced_3d */                                                \

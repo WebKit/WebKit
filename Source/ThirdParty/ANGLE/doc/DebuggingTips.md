@@ -51,6 +51,12 @@ To log all GLES and EGL commands submitted by an application, including the foll
 angle_enable_trace_events = true
 ```
 
+If you want to enable `INFO`-level logs (and up) without incuring the log spam
+of `angle_enable_trace`, you can instead use the following flag:
+```
+angle_always_log_info = true
+```
+
 ## Debug Angle on Android
 
 Android is built as an Android APK, which makes it more difficult to debug an APK that is using ANGLE.  The following information can allow you to debug ANGLE with LLDB.

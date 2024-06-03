@@ -203,15 +203,14 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
     VkImageAspectFlags aspect = vk::GetFormatAspectFlags(textureFormat);
 
     // Transfer the image to this queue if needed
-    uint32_t rendererQueueFamilyIndex = contextVk->getRenderer()->getQueueFamilyIndex();
-    if (mImage->isQueueChangeNeccesary(rendererQueueFamilyIndex))
+    if (mImage->isQueueFamilyChangeNeccesary(contextVk->getDeviceQueueIndex()))
     {
         vk::OutsideRenderPassCommandBuffer *commandBuffer;
         vk::CommandBufferAccess access;
         access.onExternalAcquireRelease(mImage);
         ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
         mImage->changeLayoutAndQueue(contextVk, aspect, vk::ImageLayout::ColorWrite,
-                                     rendererQueueFamilyIndex, commandBuffer);
+                                     contextVk->getDeviceQueueIndex(), commandBuffer);
 
         ANGLE_TRY(contextVk->onEGLImageQueueChange());
     }

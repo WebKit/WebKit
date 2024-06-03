@@ -54,6 +54,9 @@ class MultisampleTest : public ANGLETest<>
 class MultisampleTestES3 : public MultisampleTest
 {};
 
+class MultisampleTestES32 : public MultisampleTest
+{};
+
 // Test point rendering on a multisampled surface.  GLES2 section 3.3.1.
 TEST_P(MultisampleTest, Point)
 {
@@ -825,6 +828,25 @@ TEST_P(MultisampleTestES3, DISABLED_ClearMSAAReachesWindow)
     angle::Sleep(2000);
 }
 
+// According to the spec, the minimum value for the multisample line width range limits is one.
+TEST_P(MultisampleTestES32, MultisampleLineWidthRangeCheck)
+{
+    GLfloat range[2] = {0, 0};
+    glGetFloatv(GL_MULTISAMPLE_LINE_WIDTH_RANGE, range);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_GE(range[0], 1.0f);
+    EXPECT_GE(range[1], 1.0f);
+}
+
+// The multisample line width granularity should not be negative.
+TEST_P(MultisampleTestES32, MultisampleLineWidthGranularityCheck)
+{
+    GLfloat granularity = -1.0f;
+    glGetFloatv(GL_MULTISAMPLE_LINE_WIDTH_GRANULARITY, &granularity);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_GE(granularity, 0.0f);
+}
+
 // These colors match the shader in resolveToFBO which returns (0.5, 0.6, 0.7, 0.8).
 const GLColor MultisampleResolveTest::kEXPECTED_R8(128, 0, 0, 255);
 const GLColor MultisampleResolveTest::kEXPECTED_RG8(128, 153, 0, 255);
@@ -1145,6 +1167,12 @@ ANGLE_INSTANTIATE_TEST_ES3_AND_ES31_AND(MultisampleTestES3,
                                         ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
                                         ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
                                         ES3_VULKAN().enable(Feature::EmulatedPrerotation270));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampleTestES32);
+ANGLE_INSTANTIATE_TEST_ES32_AND(MultisampleTestES32,
+                                ES32_VULKAN().enable(Feature::EmulatedPrerotation90),
+                                ES32_VULKAN().enable(Feature::EmulatedPrerotation180),
+                                ES32_VULKAN().enable(Feature::EmulatedPrerotation270));
 
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     MultisampleResolveTest,

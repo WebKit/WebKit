@@ -1469,6 +1469,29 @@ ANGLE_EXPORT void GL_APIENTRY GL_MaxShaderCompilerThreadsKHR(GLuint count);
 
 // GL_KHR_robust_buffer_access_behavior
 
+// GL_KHR_robustness
+ANGLE_EXPORT GLenum GL_APIENTRY GL_GetGraphicsResetStatusKHR();
+ANGLE_EXPORT void GL_APIENTRY GL_GetnUniformfvKHR(GLuint program,
+                                                  GLint location,
+                                                  GLsizei bufSize,
+                                                  GLfloat *params);
+ANGLE_EXPORT void GL_APIENTRY GL_GetnUniformivKHR(GLuint program,
+                                                  GLint location,
+                                                  GLsizei bufSize,
+                                                  GLint *params);
+ANGLE_EXPORT void GL_APIENTRY GL_GetnUniformuivKHR(GLuint program,
+                                                   GLint location,
+                                                   GLsizei bufSize,
+                                                   GLuint *params);
+ANGLE_EXPORT void GL_APIENTRY GL_ReadnPixelsKHR(GLint x,
+                                                GLint y,
+                                                GLsizei width,
+                                                GLsizei height,
+                                                GLenum format,
+                                                GLenum type,
+                                                GLsizei bufSize,
+                                                void *data);
+
 // GL_KHR_texture_compression_astc_hdr
 
 // GL_KHR_texture_compression_astc_ldr

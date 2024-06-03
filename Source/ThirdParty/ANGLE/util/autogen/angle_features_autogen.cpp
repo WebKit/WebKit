@@ -365,6 +365,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::SupportsShaderPixelLocalStorageEXT, "supportsShaderPixelLocalStorageEXT"},
     {Feature::SupportsShaderStencilExport, "supportsShaderStencilExport"},
     {Feature::SupportsSharedPresentableImageExtension, "supportsSharedPresentableImageExtension"},
+    {Feature::SupportsSPIRV14, "supportsSPIRV14"},
     {Feature::SupportsSurfaceCapabilities2Extension, "supportsSurfaceCapabilities2Extension"},
     {Feature::SupportsSurfacelessQueryExtension, "supportsSurfacelessQueryExtension"},
     {Feature::SupportsSurfaceMaintenance1, "supportsSurfaceMaintenance1"},

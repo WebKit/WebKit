@@ -100,6 +100,8 @@ struct ValidateASTOptions
     // Check that swizzle is not applied to swizzle.  Swizzles of swizzles are folded in
     // TIntermSwizzle::fold.
     bool validateNoSwizzleOfSwizzle = true;
+    // Check that constructors' types don't have qualifiers such as invariant, row_major etc.
+    bool validateNoQualifiersOnConstructors = true;
 
     // Once set, disallows any further transformations on the tree.  Used before AST post-processing
     // which requires that the tree remains unmodified.

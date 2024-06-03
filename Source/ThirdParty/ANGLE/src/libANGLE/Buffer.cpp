@@ -67,6 +67,13 @@ void Buffer::onDestroy(const Context *context)
 
 void Buffer::onBind(const Context *context, BufferBinding target)
 {
+    // Note: this function is called from glBindBuffer, which does not hold the share group lock.
+    // However, it only affects webgl contexts, where browsers already guarantees thread safety.
+    if (!context->isWebGL())
+    {
+        return;
+    }
+
     if (mState.mWebGLType == WebGLBufferType::Undefined)
     {
         if (target == BufferBinding::ElementArray)

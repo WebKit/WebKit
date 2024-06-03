@@ -119,11 +119,11 @@ template("angle_vulkan_backend_template") {
     if (angle_enable_cl) {
       deps += [
         "$angle_root/third_party/clspv/:clspv_core_shared",
-        "$angle_root/third_party/vulkan-deps/spirv-tools/src/:spvtools",
-        "$angle_root/third_party/vulkan-deps/spirv-tools/src/:spvtools_opt",
+        "$angle_root/third_party/spirv-tools/src/:spvtools",
+        "$angle_root/third_party/spirv-tools/src/:spvtools_opt",
       ]
       include_dirs = [
-        "$angle_root/third_party/vulkan-deps/spirv-tools/src/include",
+        "$angle_root/third_party/spirv-tools/src/include",
         "$angle_root/third_party/clspv/src/include",
       ]
     }

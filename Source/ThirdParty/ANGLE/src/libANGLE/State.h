@@ -1461,45 +1461,46 @@ class State : angle::NonCopyable
     angle::Result syncProgramPipelineObject(const Context *context, Command command);
 
     using DirtyObjectHandler = angle::Result (State::*)(const Context *context, Command command);
+    using DirtyObjectHandlerArray = std::array<DirtyObjectHandler, state::DIRTY_OBJECT_MAX>;
 
-    static constexpr std::array<DirtyObjectHandler, state::DIRTY_OBJECT_MAX> kDirtyObjectHandlers =
-        []() {
-            // Work around C++'s lack of array element support in designated initializers
-            std::array<DirtyObjectHandler, state::DIRTY_OBJECT_MAX> handlers{};
+    static constexpr DirtyObjectHandlerArray MakeDirtyObjectHandlers()
+    {
+        // Work around C++'s lack of array element support in designated initializers
+        // This function cannot be a lambda due to MSVC C++17 limitations b/330910097#comment5
+        DirtyObjectHandlerArray handlers{};
 
-            handlers[state::DIRTY_OBJECT_ACTIVE_TEXTURES]  = &State::syncActiveTextures;
-            handlers[state::DIRTY_OBJECT_TEXTURES_INIT]    = &State::syncTexturesInit;
-            handlers[state::DIRTY_OBJECT_IMAGES_INIT]      = &State::syncImagesInit;
-            handlers[state::DIRTY_OBJECT_READ_ATTACHMENTS] = &State::syncReadAttachments;
-            handlers[state::DIRTY_OBJECT_DRAW_ATTACHMENTS] = &State::syncDrawAttachments;
-            handlers[state::DIRTY_OBJECT_READ_FRAMEBUFFER] = &State::syncReadFramebuffer;
-            handlers[state::DIRTY_OBJECT_DRAW_FRAMEBUFFER] = &State::syncDrawFramebuffer;
-            handlers[state::DIRTY_OBJECT_VERTEX_ARRAY]     = &State::syncVertexArray;
-            handlers[state::DIRTY_OBJECT_TEXTURES]         = &State::syncTextures;
-            handlers[state::DIRTY_OBJECT_IMAGES]           = &State::syncImages;
-            handlers[state::DIRTY_OBJECT_SAMPLERS]         = &State::syncSamplers;
-            handlers[state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT] =
-                &State::syncProgramPipelineObject;
+        handlers[state::DIRTY_OBJECT_ACTIVE_TEXTURES]         = &State::syncActiveTextures;
+        handlers[state::DIRTY_OBJECT_TEXTURES_INIT]           = &State::syncTexturesInit;
+        handlers[state::DIRTY_OBJECT_IMAGES_INIT]             = &State::syncImagesInit;
+        handlers[state::DIRTY_OBJECT_READ_ATTACHMENTS]        = &State::syncReadAttachments;
+        handlers[state::DIRTY_OBJECT_DRAW_ATTACHMENTS]        = &State::syncDrawAttachments;
+        handlers[state::DIRTY_OBJECT_READ_FRAMEBUFFER]        = &State::syncReadFramebuffer;
+        handlers[state::DIRTY_OBJECT_DRAW_FRAMEBUFFER]        = &State::syncDrawFramebuffer;
+        handlers[state::DIRTY_OBJECT_VERTEX_ARRAY]            = &State::syncVertexArray;
+        handlers[state::DIRTY_OBJECT_TEXTURES]                = &State::syncTextures;
+        handlers[state::DIRTY_OBJECT_IMAGES]                  = &State::syncImages;
+        handlers[state::DIRTY_OBJECT_SAMPLERS]                = &State::syncSamplers;
+        handlers[state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT] = &State::syncProgramPipelineObject;
 
-            return handlers;
-        }();
-
-    // FIXME(djg): On our GCC builds, handler is not a constant expression and
-    // the static_assert fails to compile.
-#if 0
-    static_assert(
-        []() {
-            for (auto handler : kDirtyObjectHandlers)
+        // If a handler is missing, reset everything for ease of static_assert
+        for (auto handler : handlers)
+        {
+            if (handler == nullptr)
             {
-                if (handler == nullptr)
-                {
-                    return false;
-                }
+                return DirtyObjectHandlerArray();
             }
-            return true;
-        }(),
-        "kDirtyObjectHandlers missing a handler");
-#endif
+        }
+
+        return handlers;
+    }
+
+    angle::Result dirtyObjectHandler(size_t dirtyObject, const Context *context, Command command)
+    {
+        static constexpr DirtyObjectHandlerArray handlers = MakeDirtyObjectHandlers();
+        static_assert(handlers[0] != nullptr, "MakeDirtyObjectHandlers missing a handler");
+
+        return (this->*handlers[dirtyObject])(context, command);
+    }
 
     // Robust init must happen before Framebuffer init for the Vulkan back-end.
     static_assert(state::DIRTY_OBJECT_ACTIVE_TEXTURES < state::DIRTY_OBJECT_TEXTURES_INIT,
@@ -1624,7 +1625,7 @@ ANGLE_INLINE angle::Result State::syncDirtyObjects(const Context *context,
 
     for (size_t dirtyObject : dirtyObjects)
     {
-        ANGLE_TRY((this->*kDirtyObjectHandlers[dirtyObject])(context, command));
+        ANGLE_TRY(dirtyObjectHandler(dirtyObject, context, command));
     }
 
     mDirtyObjects &= ~dirtyObjects;

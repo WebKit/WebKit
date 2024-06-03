@@ -91,6 +91,7 @@ angle_end2end_tests_sources = [
   "gl_tests/GetImageTest.cpp",
   "gl_tests/GetTexLevelParameterTest.cpp",
   "gl_tests/ImageTest.cpp",
+  "gl_tests/IncompatibleTextureTest.cpp",
   "gl_tests/IncompleteTextureTest.cpp",
   "gl_tests/IndexBufferOffsetTest.cpp",
   "gl_tests/IndexedPointsTest.cpp",

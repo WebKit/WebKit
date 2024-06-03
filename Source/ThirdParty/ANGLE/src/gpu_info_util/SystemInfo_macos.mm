@@ -13,9 +13,7 @@
 #import <Metal/Metal.h>
 
 #include "common/apple_platform_utils.h"
-#if ANGLE_ENABLE_CGL
 #include "common/gl/cgl/FunctionsCGL.h"
-#endif
 
 #if !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
 #    define HAVE_MAIN_PORT_DEFAULT 1
@@ -29,10 +27,8 @@ namespace angle
 namespace
 {
 
-#if ANGLE_ENABLE_CGL
 constexpr CGLRendererProperty kCGLRPRegistryIDLow  = static_cast<CGLRendererProperty>(140);
 constexpr CGLRendererProperty kCGLRPRegistryIDHigh = static_cast<CGLRendererProperty>(141);
-#endif
 
 // Extracts one integer property from a registry entry.
 bool GetEntryProperty(io_registry_entry_t entry, CFStringRef name, uint32_t *value)
@@ -231,14 +227,9 @@ uint64_t GetGpuIDFromDisplayID(uint32_t displayID)
         }
     }
 
-#if ANGLE_ENABLE_CGL
     return GetGpuIDFromOpenGLDisplayMask(CGDisplayIDToOpenGLDisplayMask(displayID));
-#else
-    return 0;
-#endif
 }
 
-#if ANGLE_ENABLE_CGL
 // Code from WebKit to query the GPU ID given an OpenGL display mask.
 // https://trac.webkit.org/browser/webkit/trunk/Source/WebCore/platform/mac/PlatformScreenMac.mm
 // Used with permission.
@@ -285,7 +276,6 @@ uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask)
 
     return 0;
 }
-#endif // ANGLE_ENABLE_CGL
 
 // Get VendorID from metal device's registry ID
 VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID)

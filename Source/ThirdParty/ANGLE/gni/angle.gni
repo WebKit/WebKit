@@ -258,6 +258,8 @@ declare_args() {
   angle_enable_trace_events = false
   angle_dump_pipeline_cache_graph = false
 
+  angle_always_log_info = false
+
   # Unwind backtrace support. This feature is currently only implemented
   # on Android for debugging purposes. Disabled by default.
   angle_enable_unwind_backtrace_support = false
@@ -293,14 +295,11 @@ declare_args() {
   # Directory where to find wayland source files
   angle_wayland_dir = "$angle_root/third_party/wayland"
 
-  angle_vulkan_headers_dir =
-      "$angle_root/third_party/vulkan-deps/vulkan-headers/src"
-  angle_vulkan_loader_dir =
-      "$angle_root/third_party/vulkan-deps/vulkan-loader/src"
-  angle_vulkan_tools_dir =
-      "$angle_root/third_party/vulkan-deps/vulkan-tools/src"
+  angle_vulkan_headers_dir = "$angle_root/third_party/vulkan-headers/src"
+  angle_vulkan_loader_dir = "$angle_root/third_party/vulkan-loader/src"
+  angle_vulkan_tools_dir = "$angle_root/third_party/vulkan-tools/src"
   angle_vulkan_validation_layers_dir =
-      "$angle_root/third_party/vulkan-deps/vulkan-validation-layers/src"
+      "$angle_root/third_party/vulkan-validation-layers/src"
 
   angle_build_vulkan_system_info = angle_has_build && !angle_is_winuwp
 

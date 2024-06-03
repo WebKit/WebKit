@@ -1368,7 +1368,7 @@ bool TParseContext::checkIsValidTypeAndQualifierForArray(const TSourceLoc &index
 
 void TParseContext::checkNestingLevel(const TSourceLoc &line)
 {
-    if (static_cast<size_t>(mLoopNestingLevel) > mMaxStatementDepth)
+    if (static_cast<size_t>(mLoopNestingLevel + mSwitchNestingLevel) > mMaxStatementDepth)
     {
         error(line, "statement is too deeply nested", "");
     }
@@ -7859,13 +7859,20 @@ TIntermTyped *TParseContext::addTernarySelection(TIntermTyped *cond,
 
     // ESSL 1.00.17 sections 5.2 and 5.7:
     // Ternary operator is not among the operators allowed for structures/arrays.
-    // ESSL 3.00.6 section 5.7:
-    // Ternary operator support is optional for arrays. No certainty that it works across all
-    // devices with struct either, so we err on the side of caution here. TODO (oetuaho@nvidia.com):
-    // Would be nice to make the spec and implementation agree completely here.
-    if (trueExpression->isArray() || trueExpression->getBasicType() == EbtStruct)
+    // ESSL 3.00 and ESSL 3.10 section 5.7:
+    // Ternary operator supports structs, but array support is optional for arrays.
+    // ESSL 3.20 section 5.7:
+    // Ternary operator supports structs and arrays unconditionally.
+    // In WebGL2 section 5.26, ternary is banned for both arrays and structs.
+    if ((mShaderVersion < 300 || mShaderSpec == SH_WEBGL2_SPEC) && trueExpression->isArray())
     {
-        error(loc, "ternary operator is not allowed for structures or arrays", "?:");
+        error(loc, "ternary operator is not allowed for arrays in ESSL 1.0 and webgl", "?:");
+        return falseExpression;
+    }
+    if ((mShaderVersion < 300 || mShaderSpec == SH_WEBGL2_SPEC) &&
+        trueExpression->getBasicType() == EbtStruct)
+    {
+        error(loc, "ternary operator is not allowed for structures in ESSL 1.0 and webgl", "?:");
         return falseExpression;
     }
     if (trueExpression->getBasicType() == EbtInterfaceBlock)

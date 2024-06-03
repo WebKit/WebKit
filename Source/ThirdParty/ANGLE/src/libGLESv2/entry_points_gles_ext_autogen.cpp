@@ -10350,6 +10350,176 @@ void GL_APIENTRY GL_MaxShaderCompilerThreadsKHR(GLuint count)
 
 // GL_KHR_robust_buffer_access_behavior
 
+// GL_KHR_robustness
+GLenum GL_APIENTRY GL_GetGraphicsResetStatusKHR()
+{
+    Context *context = GetGlobalContext();
+    EVENT(context, GLGetGraphicsResetStatusKHR, "context = %d", CID(context));
+
+    GLenum returnValue;
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateGetGraphicsResetStatusKHR(
+                                context, angle::EntryPoint::GLGetGraphicsResetStatusKHR));
+        if (isCallValid)
+        {
+            returnValue = context->getGraphicsResetStatus();
+        }
+        else
+        {
+            returnValue =
+                GetDefaultReturnValue<angle::EntryPoint::GLGetGraphicsResetStatusKHR, GLenum>();
+        }
+        ANGLE_CAPTURE_GL(GetGraphicsResetStatusKHR, isCallValid, context, returnValue);
+    }
+    else
+    {
+
+        returnValue =
+            GetDefaultReturnValue<angle::EntryPoint::GLGetGraphicsResetStatusKHR, GLenum>();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    return returnValue;
+}
+
+void GL_APIENTRY GL_GetnUniformfvKHR(GLuint program,
+                                     GLint location,
+                                     GLsizei bufSize,
+                                     GLfloat *params)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetnUniformfvKHR,
+          "context = %d, program = %u, location = %d, bufSize = %d, params = 0x%016" PRIxPTR "",
+          CID(context), program, location, bufSize, (uintptr_t)params);
+
+    if (context)
+    {
+        ShaderProgramID programPacked  = PackParam<ShaderProgramID>(program);
+        UniformLocation locationPacked = PackParam<UniformLocation>(location);
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateGetnUniformfvKHR(context, angle::EntryPoint::GLGetnUniformfvKHR, programPacked,
+                                      locationPacked, bufSize, params));
+        if (isCallValid)
+        {
+            context->getnUniformfv(programPacked, locationPacked, bufSize, params);
+        }
+        ANGLE_CAPTURE_GL(GetnUniformfvKHR, isCallValid, context, programPacked, locationPacked,
+                         bufSize, params);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
+void GL_APIENTRY GL_GetnUniformivKHR(GLuint program, GLint location, GLsizei bufSize, GLint *params)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetnUniformivKHR,
+          "context = %d, program = %u, location = %d, bufSize = %d, params = 0x%016" PRIxPTR "",
+          CID(context), program, location, bufSize, (uintptr_t)params);
+
+    if (context)
+    {
+        ShaderProgramID programPacked  = PackParam<ShaderProgramID>(program);
+        UniformLocation locationPacked = PackParam<UniformLocation>(location);
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateGetnUniformivKHR(context, angle::EntryPoint::GLGetnUniformivKHR, programPacked,
+                                      locationPacked, bufSize, params));
+        if (isCallValid)
+        {
+            context->getnUniformiv(programPacked, locationPacked, bufSize, params);
+        }
+        ANGLE_CAPTURE_GL(GetnUniformivKHR, isCallValid, context, programPacked, locationPacked,
+                         bufSize, params);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
+void GL_APIENTRY GL_GetnUniformuivKHR(GLuint program,
+                                      GLint location,
+                                      GLsizei bufSize,
+                                      GLuint *params)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetnUniformuivKHR,
+          "context = %d, program = %u, location = %d, bufSize = %d, params = 0x%016" PRIxPTR "",
+          CID(context), program, location, bufSize, (uintptr_t)params);
+
+    if (context)
+    {
+        ShaderProgramID programPacked  = PackParam<ShaderProgramID>(program);
+        UniformLocation locationPacked = PackParam<UniformLocation>(location);
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateGetnUniformuivKHR(context, angle::EntryPoint::GLGetnUniformuivKHR,
+                                       programPacked, locationPacked, bufSize, params));
+        if (isCallValid)
+        {
+            context->getnUniformuiv(programPacked, locationPacked, bufSize, params);
+        }
+        ANGLE_CAPTURE_GL(GetnUniformuivKHR, isCallValid, context, programPacked, locationPacked,
+                         bufSize, params);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
+void GL_APIENTRY GL_ReadnPixelsKHR(GLint x,
+                                   GLint y,
+                                   GLsizei width,
+                                   GLsizei height,
+                                   GLenum format,
+                                   GLenum type,
+                                   GLsizei bufSize,
+                                   void *data)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLReadnPixelsKHR,
+          "context = %d, x = %d, y = %d, width = %d, height = %d, format = %s, type = %s, bufSize "
+          "= %d, data = 0x%016" PRIxPTR "",
+          CID(context), x, y, width, height, GLenumToString(GLESEnum::PixelFormat, format),
+          GLenumToString(GLESEnum::PixelType, type), bufSize, (uintptr_t)data);
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context->getPrivateState(),
+                                                context->getMutableErrorSetForValidation(),
+                                                angle::EntryPoint::GLReadnPixelsKHR) &&
+              ValidateReadnPixelsKHR(context, angle::EntryPoint::GLReadnPixelsKHR, x, y, width,
+                                     height, format, type, bufSize, data)));
+        if (isCallValid)
+        {
+            context->readnPixels(x, y, width, height, format, type, bufSize, data);
+        }
+        ANGLE_CAPTURE_GL(ReadnPixelsKHR, isCallValid, context, x, y, width, height, format, type,
+                         bufSize, data);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
 // GL_KHR_texture_compression_astc_hdr
 
 // GL_KHR_texture_compression_astc_ldr

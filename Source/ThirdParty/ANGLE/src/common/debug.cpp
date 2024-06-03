@@ -59,6 +59,9 @@ bool ShouldCreateLogMessage(LogSeverity severity)
 {
 #if defined(ANGLE_TRACE_ENABLED)
     return true;
+#elif defined(ANGLE_ALWAYS_LOG_INFO)
+    return severity == LOG_FATAL || severity == LOG_ERR || severity == LOG_WARN ||
+           severity == LOG_INFO;
 #elif defined(ANGLE_ENABLE_ASSERTS)
     return severity == LOG_FATAL || severity == LOG_ERR || severity == LOG_WARN;
 #else

@@ -986,6 +986,7 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.debugMarkerEXT = true;
 
     mNativeExtensions.robustnessEXT               = true;
+    mNativeExtensions.robustnessKHR               = true;
     mNativeExtensions.textureBorderClampOES       = false;  // not implemented yet
     mNativeExtensions.multiDrawIndirectEXT        = true;
     mNativeExtensions.translatedShaderSourceANGLE = true;

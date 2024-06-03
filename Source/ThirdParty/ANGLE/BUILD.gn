@@ -86,6 +86,9 @@ declare_args() {
       is_android && !build_with_chromium
 
   angle_enable_context_mutex = true
+
+  # Prefix where the artifacts should be installed on the system
+  install_prefix = ""
 }
 
 declare_args() {
@@ -216,6 +219,11 @@ config("internal_config") {
   # When used with angle_enable_trace, enables logging every GLES/EGL API command to the terminal
   if (angle_enable_trace_events) {
     defines += [ "ANGLE_ENABLE_TRACE_EVENTS=1" ]
+  }
+
+  # Output `INFO`-level logs and up.
+  if (angle_always_log_info) {
+    defines += [ "ANGLE_ALWAYS_LOG_INFO" ]
   }
 
   # Enables pipeline cache graph dump functionality.
@@ -1244,9 +1252,9 @@ config("angle_abseil_config") {
 group("angle_abseil") {
   if (angle_enable_abseil) {
     # When build_with_chromium=true we need to include "//third_party/abseil-cpp:absl" while
-    # we can be more specific when building standalone ANGLE.
+    # we can be more specific when building standalone non-component ANGLE.
     # Also build the combined target when building Dawn to avoid multiply defined globals.
-    if (build_with_chromium || angle_enable_wgpu) {
+    if (build_with_chromium || angle_enable_wgpu || is_component_build) {
       public_deps = [ "$angle_abseil_cpp_dir:absl" ]
     } else {
       public_deps = [
@@ -1820,6 +1828,60 @@ if ((angle_standalone || build_with_chromium) && is_android &&
       ":angle_agi_chromium_apk",
       ":angle_chromium_apk",
     ]
+  }
+}
+
+if (install_prefix != "") {
+  template("install_target") {
+    install_deps = []
+
+    foreach(_lib, invoker.libs) {
+      install_deps += [ ":install_${_lib}" ]
+
+      source = "${root_build_dir}/${_lib}${angle_libs_suffix}${shlib_extension}"
+
+      action("install_${_lib}") {
+        deps = [ ":${_lib}" ]
+        script = "scripts/install_target.py"
+        sources = [ source ]
+
+        outputs = [ "${target_gen_dir}/install_${_lib}.stamp" ]
+        args = [
+          "--name",
+          _lib,
+          "--prefix",
+          "$install_prefix",
+          "--libs",
+          rebase_path(source),
+        ]
+      }
+    }
+
+    install_deps += [ ":install_includes" ]
+    action("install_includes") {
+      script = "scripts/install_target.py"
+      configs = invoker.configs
+
+      outputs = [ "${target_gen_dir}/install_${target_name}.stamp" ]
+      args = [
+        "--prefix",
+        "$install_prefix",
+        "{{include_dirs}}",
+      ]
+    }
+
+    group("install_${target_name}") {
+      deps = install_deps
+    }
+  }
+
+  install_target("angle") {
+    libs = [
+      "libEGL",
+      "libGLESv1_CM",
+      "libGLESv2",
+    ]
+    configs = [ ":includes_config" ]
   }
 }
 

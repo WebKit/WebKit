@@ -115,18 +115,6 @@ bool IsRADV(uint32_t vendorId, uint32_t driverId, const char *deviceName)
     return IsAMD(vendorId) && strstr(deviceName, "RADV") != nullptr;
 }
 
-bool IsVenus(uint32_t driverId, const char *deviceName)
-{
-    // Where driver id is available, check against Venus driver id:
-    if (driverId != 0)
-    {
-        return driverId == VK_DRIVER_ID_MESA_VENUS;
-    }
-
-    // Otherwise, look for Venus in the device name.
-    return strstr(deviceName, "Venus") != nullptr;
-}
-
 bool IsQualcommOpenSource(uint32_t vendorId, uint32_t driverId, const char *deviceName)
 {
     if (!IsQualcomm(vendorId))
@@ -159,6 +147,12 @@ bool IsXclipse()
 
     // Improve this when more Xclipse devices are available
     return strstr(modelName.c_str(), "SM-S901B") != nullptr;
+}
+
+bool ShouldUseEventForImageBarrier()
+{
+    // Disabled for now while performance is under investigation
+    return false;
 }
 
 bool StrLess(const char *a, const char *b)
@@ -291,6 +285,12 @@ constexpr const char *kSkippedMessages[] = {
 constexpr const char *kNoListRestartSkippedMessages[] = {
     // http://anglebug.com/3832
     "VUID-VkPipelineInputAssemblyStateCreateInfo-topology-06252",
+};
+
+// VVL appears has a bug tracking stageMask on VkEvent with secondary command buffer.
+// https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/7849
+constexpr const char *kSkippedMessagesWithVulkanSecondaryCommandBuffer[] = {
+    "VUID-vkCmdWaitEvents-srcStageMask-parameter",
 };
 
 // Some syncval errors are resolved in the presence of the NONE load or store render pass ops.  For
@@ -1494,8 +1494,7 @@ Renderer::~Renderer() {}
 
 bool Renderer::hasSharedGarbage()
 {
-    return !mSharedGarbageList.empty() || !mSuballocationGarbageList.empty() ||
-           !mRefCountedEventGarbageList.empty();
+    return !mSharedGarbageList.empty() || !mSuballocationGarbageList.empty();
 }
 
 void Renderer::onDestroy(vk::Context *context)
@@ -1512,6 +1511,8 @@ void Renderer::onDestroy(vk::Context *context)
     cleanupGarbage();
     ASSERT(!hasSharedGarbage());
     ASSERT(mOrphanedBufferBlockList.empty());
+
+    mRefCountedEventRecycler.destroy(mDevice);
 
     for (OneOffCommandPool &oneOffCommandPool : mOneOffCommandPoolMap)
     {
@@ -1884,7 +1885,11 @@ angle::Result Renderer::initialize(vk::Context *context,
     // Fine grain control of validation layer features
     const char *name                     = "VK_LAYER_KHRONOS_validation";
     const VkBool32 setting_validate_core = VK_TRUE;
-    const VkBool32 setting_validate_sync = IsAndroid() ? VK_FALSE : VK_TRUE;
+    // SyncVal is very slow (https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/7285)
+    // for VkEvent which causes a few tests fail on the bots. Disable syncVal if VkEvent is enabled
+    // for now.
+    const VkBool32 setting_validate_sync =
+        IsAndroid() || ShouldUseEventForImageBarrier() ? VK_FALSE : VK_TRUE;
     const VkBool32 setting_thread_safety = VK_TRUE;
     // http://anglebug.com/7050 - Shader validation caching is broken on Android
     const VkBool32 setting_check_shaders = IsAndroid() ? VK_FALSE : VK_TRUE;
@@ -2097,8 +2102,8 @@ angle::Result Renderer::initializeMemoryAllocator(vk::Context *context)
 
     // Cached coherent staging buffer.  Note coherent is preferred but not required, which means we
     // may get non-coherent memory type.
-    requiredFlags  = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-    preferredFlags = VK_MEMORY_PROPERTY_HOST_CACHED_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+    requiredFlags  = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+    preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
     ANGLE_VK_TRY(context,
                  mAllocator.findMemoryTypeIndexForBufferInfo(
                      createInfo, requiredFlags, preferredFlags, persistentlyMapped,
@@ -3148,6 +3153,12 @@ void Renderer::enableDeviceExtensionsPromotedTo12(const vk::ExtensionNameList &d
         mEnabledDeviceExtensions.push_back(VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME);
     }
 
+    if (mFeatures.supportsSPIRV14.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);
+        mEnabledDeviceExtensions.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);
+    }
+
     if (mFeatures.supportsSamplerMirrorClampToEdge.enabled)
     {
         mEnabledDeviceExtensions.push_back(VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME);
@@ -3559,10 +3570,7 @@ angle::Result Renderer::createDeviceAndQueue(vk::Context *context, uint32_t queu
 
     initDeviceExtensionEntryPoints();
 
-    vk::DeviceQueueMap graphicsQueueMap =
-        queueFamily.initializeQueueMap(mDevice, enableProtectedContent, 0, queueCount);
-
-    ANGLE_TRY(mCommandQueue.init(context, graphicsQueueMap));
+    ANGLE_TRY(mCommandQueue.init(context, queueFamily, enableProtectedContent, queueCount));
     ANGLE_TRY(mCommandProcessor.init());
 
     if (mFeatures.forceMaxUniformBufferSize16KB.enabled)
@@ -3643,6 +3651,16 @@ void Renderer::initializeValidationMessageSuppressions()
         mSkippedValidationMessages.insert(
             mSkippedValidationMessages.end(), kNoListRestartSkippedMessages,
             kNoListRestartSkippedMessages + ArraySize(kNoListRestartSkippedMessages));
+    }
+
+    if (getFeatures().useVkEventForImageBarrier.enabled &&
+        (!vk::OutsideRenderPassCommandBuffer::ExecutesInline() ||
+         !vk::RenderPassCommandBuffer::ExecutesInline()))
+    {
+        mSkippedValidationMessages.insert(
+            mSkippedValidationMessages.end(), kSkippedMessagesWithVulkanSecondaryCommandBuffer,
+            kSkippedMessagesWithVulkanSecondaryCommandBuffer +
+                ArraySize(kSkippedMessagesWithVulkanSecondaryCommandBuffer));
     }
 
     // Build the list of syncval errors that are currently expected and should be skipped.
@@ -3788,14 +3806,9 @@ gl::Version Renderer::getMaxSupportedESVersion() const
     }
 
     // Limit to ES3.1 if there are any blockers for 3.2.
-    if (!vk::CanSupportGPUShader5EXT(mPhysicalDeviceFeatures) &&
-        !mFeatures.exposeNonConformantExtensionsAndVersions.enabled)
-    {
-        maxVersion = LimitVersionTo(maxVersion, {3, 1});
-    }
-
-    // TODO: more extension checks for 3.2.  http://anglebug.com/5366
-    if (!mFeatures.exposeNonConformantExtensionsAndVersions.enabled)
+    ensureCapsInitialized();
+    if (!mFeatures.exposeNonConformantExtensionsAndVersions.enabled &&
+        !CanSupportGLES32(mNativeExtensions))
     {
         maxVersion = LimitVersionTo(maxVersion, {3, 1});
     }
@@ -4046,9 +4059,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         return;
     }
 
-    constexpr uint32_t kPixel2DriverWithRelaxedPrecision        = 0x801EA000;
-    constexpr uint32_t kPixel4DriverWithWorkingSpecConstSupport = 0x80201000;
-
     const bool isAMD      = IsAMD(mPhysicalDeviceProperties.vendorID);
     const bool isApple    = IsAppleGPU(mPhysicalDeviceProperties.vendorID);
     const bool isARM      = IsARM(mPhysicalDeviceProperties.vendorID);
@@ -4060,9 +4070,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     const bool isSamsung  = IsSamsung(mPhysicalDeviceProperties.vendorID);
     const bool isSwiftShader =
         IsSwiftshader(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID);
-
-    // MESA Virtio-GPU Venus driver: https://docs.mesa3d.org/drivers/venus.html
-    const bool isVenus = IsVenus(mDriverProperties.driverID, mPhysicalDeviceProperties.deviceName);
 
     const bool isGalaxyS23 =
         IsGalaxyS23(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID);
@@ -4080,7 +4087,11 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         isARM && getPhysicalDeviceProperties().limits.maxDrawIndirectCount <= 1;
     // Parse the ARM driver version to be readable/comparable
     const ARMDriverVersion armDriverVersion =
-        ParseARMDriverVersion(mPhysicalDeviceProperties.driverVersion);
+        ParseARMVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
+
+    // Parse the Qualcomm driver version.
+    const QualcommDriverVersion qualcommDriverVersion =
+        ParseQualcommVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
 
     // Parse the Intel driver version. (Currently it only supports the Windows driver.)
     const IntelDriverVersion intelDriverVersion =
@@ -4435,10 +4446,11 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, enablePreRotateSurfaces, IsAndroid());
 
     // http://anglebug.com/3078
+    // Precision qualifiers are disabled for Pixel 2 before the driver included relaxed precision.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, enablePrecisionQualifiers,
         !(IsPixel2(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID) &&
-          (mPhysicalDeviceProperties.driverVersion < kPixel2DriverWithRelaxedPrecision)) &&
+          (qualcommDriverVersion < QualcommDriverVersion(512, 490, 0))) &&
             !IsPixel4(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID));
 
     // http://anglebug.com/7488
@@ -4468,7 +4480,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
 
     // Prefer driver uniforms over specialization constants in the following:
     //
-    // - Older Qualcomm drivers where specialization constants severly degrade the performance of
+    // - Older Qualcomm drivers where specialization constants severely degrade the performance of
     //   pipeline creation.  http://issuetracker.google.com/173636783
     // - ARM hardware
     // - Imagination hardware
@@ -4476,8 +4488,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     //
     ANGLE_FEATURE_CONDITION(
         &mFeatures, preferDriverUniformOverSpecConst,
-        (isQualcommProprietary &&
-         mPhysicalDeviceProperties.driverVersion < kPixel4DriverWithWorkingSpecConstSupport) ||
+        (isQualcommProprietary && qualcommDriverVersion < QualcommDriverVersion(512, 513, 0)) ||
             isARM || isPowerVR || isSwiftShader);
 
     // The compute shader used to generate mipmaps needs -
@@ -4560,17 +4571,17 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
 
     // vkCmdClearAttachments races with draw calls on Qualcomm hardware as observed on Pixel2 and
     // Pixel4.  https://issuetracker.google.com/issues/166809097
-    ANGLE_FEATURE_CONDITION(&mFeatures, preferDrawClearOverVkCmdClearAttachments,
-                            isQualcommProprietary);
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, preferDrawClearOverVkCmdClearAttachments,
+        isQualcommProprietary && qualcommDriverVersion < QualcommDriverVersion(512, 762, 12));
 
     // r32f image emulation is done unconditionally so VK_FORMAT_FEATURE_STORAGE_*_ATOMIC_BIT is not
     // required.
     ANGLE_FEATURE_CONDITION(&mFeatures, emulateR32fImageAtomicExchange, true);
 
-    // Whether non-conformant configurations and extensions should be exposed. Always disable for
-    // MESA Virtio-GPU Venus driver for production purpose.
+    // Whether non-conformant configurations and extensions should be exposed.
     ANGLE_FEATURE_CONDITION(&mFeatures, exposeNonConformantExtensionsAndVersions,
-                            kExposeNonConformantExtensionsAndVersions && !isVenus);
+                            kExposeNonConformantExtensionsAndVersions);
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsMemoryBudget,
@@ -4650,10 +4661,10 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
 
     // Important games are not checking supported extensions properly, and are confusing the
     // GL_EXT_shader_framebuffer_fetch_non_coherent as the GL_EXT_shader_framebuffer_fetch
-    // extension.  Therefore, don't enable the extension on Arm and Qualcomm by default.
+    // extension.  Therefore, don't enable the extension on Android by default.
     // https://issuetracker.google.com/issues/186643966
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFramebufferFetchNonCoherent,
-                            (IsAndroid() && !(isARM || isQualcomm)) || isSwiftShader);
+    // https://issuetracker.google.com/issues/340665604
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFramebufferFetchNonCoherent, isSwiftShader);
 
     // On tile-based renderers, breaking the render pass is costly.  Changing into and out of
     // framebuffer fetch causes the render pass to break so that the layout of the color attachments
@@ -4676,15 +4687,15 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // usable.  Additionally, the following platforms don't support INPUT_ATTACHMENT usage for the
     // swapchain, so they are excluded:
     //
-    // - Intel
-    //
-    // The above platforms are not excluded if behind MESA Virtio-GPU Venus driver since WSI is
-    // implemented with external memory there.
+    // - Intel on windows
+    // - Intel on Linux before mesa 22.0
     //
     // Without VK_GOOGLE_surfaceless_query, there is no way to automatically deduce this support.
+    const bool isMesaAtLeast22_0_0 = mesaVersion.major >= 22;
     ANGLE_FEATURE_CONDITION(
         &mFeatures, emulateAdvancedBlendEquations,
-        !mFeatures.supportsBlendOperationAdvanced.enabled && (isVenus || !isIntel));
+        !mFeatures.supportsBlendOperationAdvanced.enabled &&
+            (IsAndroid() || !isIntel || (isIntel && IsLinux() && isMesaAtLeast22_0_0)));
 
     // http://anglebug.com/6933
     // Android expects VkPresentRegionsKHR rectangles with a bottom-left origin, while spec
@@ -4693,6 +4704,20 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
 
     // Use VMA for image suballocation.
     ANGLE_FEATURE_CONDITION(&mFeatures, useVmaForImageSuballocation, true);
+
+    // Emit SPIR-V 1.4 when supported.  The following old drivers have various bugs with SPIR-V 1.4:
+    //
+    // - Nvidia drivers - Crashes when creating pipelines, not using any SPIR-V 1.4 features.  Known
+    //                    good since at least version 525.  http://anglebug.com/343249127
+    // - Qualcomm drivers - Crashes when creating pipelines in the presence of OpCopyLogical with
+    //                      some types.  http://anglebug.com/343218484
+    // - ARM drivers - Fail tests when OpSelect uses a scalar to select between vectors.  Known good
+    //                 since at least version 47.  http://anglebug.com/343218491
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsSPIRV14,
+                            ExtensionFound(VK_KHR_SPIRV_1_4_EXTENSION_NAME, deviceExtensionNames) &&
+                                !(isNvidia && nvidiaVersion.major < 525) &&
+                                !isQualcommProprietary &&
+                                !(isARM && armDriverVersion < ARMDriverVersion(47, 0, 0)));
 
     // Retain debug info in SPIR-V blob.
     ANGLE_FEATURE_CONDITION(&mFeatures, retainSPIRVDebugInfo, getEnableValidationLayers());
@@ -5000,10 +5025,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT flag.
     ANGLE_FEATURE_CONDITION(&mFeatures, useResetCommandBufferBitForSecondaryPools, isARM);
 
-    // Required to pass android.media.cts.DecodeAccuracyTest with MESA Virtio-GPU Venus driver in
-    // virtualized environment. https://issuetracker.google.com/246378938
-    ANGLE_FEATURE_CONDITION(&mFeatures, preferLinearFilterForYUV, isVenus);
-
     // Intel and AMD mesa drivers need depthBiasConstantFactor to be doubled to align with GL.
     ANGLE_FEATURE_CONDITION(&mFeatures, doubleDepthBiasConstantFactor,
                             (isIntel && !IsWindows()) || isRADV || isNvidia);
@@ -5049,9 +5070,9 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsExternalFormatResolve, false);
 #endif
 
-    // Disable use of VkCmdWaitEvent for image barriers for now.
-    // https://issuetracker.google.com/336844257
-    ANGLE_FEATURE_CONDITION(&mFeatures, useVkEventForImageBarrier, false);
+    // initialize() is disabling syncval if event is used, which comes before feature flag is set.
+    // Use ShouldUseEventForImageBarrier to enable/disable event for certain config if needed.
+    ANGLE_FEATURE_CONDITION(&mFeatures, useVkEventForImageBarrier, ShouldUseEventForImageBarrier());
 
     // Disable memory report feature overrides if extension is not supported.
     if ((mFeatures.logMemoryReportCallbacks.enabled || mFeatures.logMemoryReportStats.enabled) &&
@@ -5506,8 +5527,8 @@ void Renderer::cleanupGarbage()
     // Note: do this after clean up mSuballocationGarbageList so that we will have more chances to
     // find orphaned blocks being empty.
     mOrphanedBufferBlockList.pruneEmptyBufferBlocks(this);
-    // Clean up event garbages
-    mRefCountedEventGarbageList.cleanupSubmittedGarbage(this);
+    // Clean up RefCountedEvent that are done resetting
+    mRefCountedEventRecycler.cleanupResettingEvents(this);
 }
 
 void Renderer::cleanupPendingSubmissionGarbage()
@@ -5515,7 +5536,6 @@ void Renderer::cleanupPendingSubmissionGarbage()
     // Check if pending garbage is still pending. If not, move them to the garbage list.
     mSharedGarbageList.cleanupUnsubmittedGarbage(this);
     mSuballocationGarbageList.cleanupUnsubmittedGarbage(this);
-    mRefCountedEventGarbageList.cleanupUnsubmittedGarbage(this);
 }
 
 void Renderer::onNewValidationMessage(const std::string &message)

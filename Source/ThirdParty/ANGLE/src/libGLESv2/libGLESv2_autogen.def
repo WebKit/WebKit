@@ -1015,6 +1015,13 @@ EXPORTS
 
     ; GL_KHR_robust_buffer_access_behavior
 
+    ; GL_KHR_robustness
+    glGetGraphicsResetStatusKHR
+    glGetnUniformfvKHR
+    glGetnUniformivKHR
+    glGetnUniformuivKHR
+    glReadnPixelsKHR
+
     ; GL_KHR_texture_compression_astc_hdr
 
     ; GL_KHR_texture_compression_astc_ldr

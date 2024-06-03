@@ -179,6 +179,8 @@ egl::Error DisplayVk::initialize(egl::Display *display)
         getWSIExtension(), getWSILayer(), getWindowSystem(), mState.featureOverrides);
     ANGLE_TRY(angle::ToEGL(result, EGL_NOT_INITIALIZED));
 
+    mDeviceQueueIndex = mRenderer->getDeviceQueueIndex(egl::ContextPriority::Medium);
+
     InstallDebugAnnotator(display, mRenderer);
 
     // Query and cache supported surface format and colorspace for later use.
@@ -508,10 +510,10 @@ ExternalImageSiblingImpl *DisplayVk::createExternalImageSibling(const gl::Contex
 
 void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
-    outExtensions->createContextRobustness    = getRenderer()->getNativeExtensions().robustnessEXT;
-    outExtensions->surfaceOrientation         = true;
-    outExtensions->displayTextureShareGroup   = true;
-    outExtensions->displaySemaphoreShareGroup = true;
+    outExtensions->createContextRobustness  = getRenderer()->getNativeExtensions().robustnessAny();
+    outExtensions->surfaceOrientation       = true;
+    outExtensions->displayTextureShareGroup = true;
+    outExtensions->displaySemaphoreShareGroup        = true;
     outExtensions->robustResourceInitializationANGLE = true;
 
     // The Vulkan implementation will always say that EGL_KHR_swap_buffers_with_damage is supported.

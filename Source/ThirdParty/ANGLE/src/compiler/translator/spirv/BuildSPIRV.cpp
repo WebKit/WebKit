@@ -1716,6 +1716,17 @@ spirv::IdRef SPIRVBuilder::declareVariable(spirv::IdRef typeId,
         writeDebugName(variableId, name);
     }
 
+    if (!isFunctionLocal)
+    {
+        // With SPIR-V 1.4, every global variable must be specified in OpEntryPoint
+        // With SPIR-V 1.3, only the Input and Output variables must be specified.
+        if (mCompileOptions.emitSPIRV14 || storageClass == spv::StorageClassInput ||
+            storageClass == spv::StorageClassOutput)
+        {
+            addEntryPointInterfaceVariableId(variableId);
+        }
+    }
+
     return variableId;
 }
 
@@ -2321,7 +2332,9 @@ spirv::Blob SPIRVBuilder::getSpirv()
                    mSpirvFunctions.size());
 
     // Generate the SPIR-V header.
-    spirv::WriteSpirvHeader(&result, mNextAvailableId);
+    spirv::WriteSpirvHeader(&result,
+                            mCompileOptions.emitSPIRV14 ? spirv::kVersion_1_4 : spirv::kVersion_1_3,
+                            mNextAvailableId);
 
     // Generate metadata in the following order:
     //

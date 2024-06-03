@@ -95,17 +95,12 @@
 3577 VULKAN PIXEL4ORXL : KHR-GLES32.core.gpu_shader5.*clamp*_edge = SKIP
 
 // Desktop cards without native etc support
-5276 AMD VULKAN LINUX : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
-5276 AMD VULKAN WIN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
 5276 NVIDIA VULKAN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
 
 // Validation errors
 6441 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.api.copy_compressed_to_uncompressed = FAIL
 6441 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.api.copy_uncompressed_to_compressed = FAIL
 6441 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.api.copy_compressed_to_compressed = FAIL
-// Looks like test error where ASTC support is not queried
-6441 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.format.*astc* = FAIL
-6441 VULKAN AMD : KHR-GLES32.core.compressed_format.format.*astc* = FAIL
 
 // Pixel 4 expectations.
 5990 PIXEL4ORXL VULKAN : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP

@@ -50,7 +50,7 @@ unsigned int convertRGBFloatsTo999E5(float red, float green, float blue)
     const float green_c = std::max<float>(0, std::min(g_sharedexp_max, green));
     const float blue_c  = std::max<float>(0, std::min(g_sharedexp_max, blue));
 
-    const float max_c = std::max<float>(std::max<float>(red_c, green_c), blue_c);
+    const float max_c = std::max<float>({red_c, green_c, blue_c});
     const float exp_p =
         std::max<float>(-g_sharedexp_bias - 1, floor(log(max_c))) + 1 + g_sharedexp_bias;
     const int max_s = static_cast<int>(

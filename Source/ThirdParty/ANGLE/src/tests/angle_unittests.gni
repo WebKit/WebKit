@@ -169,6 +169,8 @@ angle_unittests_gl_sources =
 
 angle_unittests_msl_sources = [ "../tests/compiler_tests/MSLOutput_test.cpp" ]
 
+angle_unittests_wgsl_sources = [ "../tests/compiler_tests/WGSLOutput_test.cpp" ]
+
 if (!angle_enable_desktop_glsl) {
   angle_unittests_sources +=
       [ "compiler_tests/ImmutableString_test_ESSL_autogen.cpp" ]

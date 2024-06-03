@@ -200,14 +200,22 @@ target_blockist = [
 
 third_party_target_allowlist = [
     '//third_party/abseil-cpp',
-    '//third_party/vulkan-deps',
+    '//third_party/glslang/src',
+    '//third_party/spirv-cross/src',
+    '//third_party/spirv-headers/src',
+    '//third_party/spirv-tools/src',
+    '//third_party/vulkan-headers/src',
+    '//third_party/vulkan-loader/src',
+    '//third_party/vulkan-tools/src',
+    '//third_party/vulkan-utility-libraries/src',
+    '//third_party/vulkan-validation-layers/src',
     '//third_party/vulkan_memory_allocator',
 ]
 
 include_blocklist = [
     '//buildtools/third_party/libc++/',
     '//third_party/libc++/src/',
-    '//out/Android/gen/third_party/vulkan-deps/glslang/src/include/',
+    '//out/Android/gen/third_party/glslang/src/include/',
     '//third_party/zlib/',
     '//third_party/zlib/google/',
 ]
@@ -391,10 +399,8 @@ def gn_action_args_to_blueprint_args(blueprint_inputs, blueprint_outputs, args):
     # path. b/150457277
     remap_folders = [
         # Specific special-cases first, since the other will strip the prefixes.
-        ('gen/third_party/vulkan-deps/glslang/src/include/glslang/build_info.h',
-         'glslang/build_info.h'),
-        ('third_party/vulkan-deps/glslang/src',
-         'external/angle/third_party/vulkan-deps/glslang/src'),
+        ('gen/third_party/glslang/src/include/glslang/build_info.h', 'glslang/build_info.h'),
+        ('third_party/glslang/src', 'external/angle/third_party/glslang/src'),
         ('../../', ''),
         ('gen/', ''),
     ]
@@ -696,16 +702,15 @@ def main():
             'third_party/proguard/LICENSE',
             'third_party/r8/LICENSE',
             'third_party/turbine/LICENSE',
-            'third_party/vulkan-deps/glslang/LICENSE',
-            'third_party/vulkan-deps/glslang/src/LICENSE.txt',
-            'third_party/vulkan-deps/LICENSE',
-            'third_party/vulkan-deps/spirv-headers/LICENSE',
-            'third_party/vulkan-deps/spirv-headers/src/LICENSE',
-            'third_party/vulkan-deps/spirv-tools/LICENSE',
-            'third_party/vulkan-deps/spirv-tools/src/LICENSE',
-            'third_party/vulkan-deps/spirv-tools/src/utils/vscode/src/lsp/LICENSE',
-            'third_party/vulkan-deps/vulkan-headers/LICENSE.txt',
-            'third_party/vulkan-deps/vulkan-headers/src/LICENSE.md',
+            'third_party/glslang/LICENSE',
+            'third_party/glslang/src/LICENSE.txt',
+            'third_party/spirv-headers/LICENSE',
+            'third_party/spirv-headers/src/LICENSE',
+            'third_party/spirv-tools/LICENSE',
+            'third_party/spirv-tools/src/LICENSE',
+            'third_party/spirv-tools/src/utils/vscode/src/lsp/LICENSE',
+            'third_party/vulkan-headers/LICENSE.txt',
+            'third_party/vulkan-headers/src/LICENSE.md',
             'third_party/vulkan_memory_allocator/LICENSE.txt',
             'tools/flex-bison/third_party/m4sugar/LICENSE',
             'tools/flex-bison/third_party/skeletons/LICENSE',

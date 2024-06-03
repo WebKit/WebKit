@@ -3096,6 +3096,15 @@ def get_context_lock(api, cmd_name):
     if api == apis.GLES and cmd_name.startswith("glEGLImage"):
         return "SCOPED_EGL_IMAGE_SHARE_CONTEXT_LOCK(context, imagePacked);"
 
+    # The following commands do not need to hold the share group lock.  Both
+    # validation and their implementation in the context are limited to
+    # context-local state.
+    #
+    # - glBindBuffer: This function looks up the ID in the buffer manager,
+    #   access to which is thread-safe for buffers.
+    if cmd_name in ['glBindBuffer']:
+        return ""
+
     return "SCOPED_SHARE_CONTEXT_LOCK(context);"
 
 
@@ -3160,7 +3169,8 @@ def get_unlocked_tail_call(api, cmd_name):
     # - glCompileShader and glLinkProgram -> May perform the compilation / link
     #   in tail call
     #
-    # - eglCreateSync, eglCreateImage, eglDestroySync, eglDestroyImage -> Calls
+    # - eglCreateSync, eglCreateImage, eglDestroySync, eglDestroyImage,
+    #   eglGetCompositorTimingANDROID, eglGetFrameTimestampsANDROID -> Calls
     #   native EGL function in tail call
     #
     if (cmd_name in [
@@ -3185,6 +3195,8 @@ def get_unlocked_tail_call(api, cmd_name):
             'eglCreateSync',
             'eglDestroySyncKHR',
             'eglDestroySync',
+            'eglGetCompositorTimingANDROID',
+            'eglGetFrameTimestampsANDROID',
             'eglSwapBuffers',
             'eglSwapBuffersWithDamageKHR',
             'eglWaitSyncKHR',

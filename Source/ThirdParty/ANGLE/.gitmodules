@@ -92,7 +92,7 @@
 [submodule "third_party/libdrm"]
 	path = third_party/libdrm
 	url = https://chromium.googlesource.com/chromiumos/third_party/libdrm
-	gclient-condition = checkout_angle_mesa
+	gclient-condition = checkout_angle_mesa or not build_with_chromium
 [submodule "third_party/libjpeg_turbo"]
 	path = third_party/libjpeg_turbo
 	url = https://chromium.googlesource.com/chromium/deps/libjpeg_turbo
@@ -108,7 +108,7 @@
 [submodule "third_party/jinja2"]
 	path = third_party/jinja2
 	url = https://chromium.googlesource.com/chromium/src/third_party/jinja2
-	gclient-condition = checkout_android and not build_with_chromium
+	gclient-condition = not build_with_chromium
 [submodule "third_party/jsoncpp"]
 	path = third_party/jsoncpp
 	url = https://chromium.googlesource.com/chromium/src/third_party/jsoncpp
@@ -128,7 +128,7 @@
 [submodule "third_party/markupsafe"]
 	path = third_party/markupsafe
 	url = https://chromium.googlesource.com/chromium/src/third_party/markupsafe
-	gclient-condition = checkout_android and not build_with_chromium
+	gclient-condition = not build_with_chromium
 [submodule "third_party/mesa/src"]
 	path = third_party/mesa/src
 	url = https://chromium.googlesource.com/external/github.com/Mesa3D/mesa
@@ -160,7 +160,7 @@
 [submodule "third_party/perfetto"]
 	path = third_party/perfetto
 	url = https://android.googlesource.com/platform/external/perfetto
-	gclient-condition = not build_with_chromium and checkout_angle_restricted_traces
+	gclient-condition = not build_with_chromium and checkout_angle_perfetto
 [submodule "third_party/protobuf"]
 	path = third_party/protobuf
 	url = https://chromium.googlesource.com/chromium/src/third_party/protobuf
@@ -190,6 +190,42 @@
 [submodule "third_party/vulkan-deps"]
 	path = third_party/vulkan-deps
 	url = https://chromium.googlesource.com/vulkan-deps
+	gclient-condition = not build_with_chromium
+[submodule "third_party/glslang/src"]
+	path = third_party/glslang/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang
+	gclient-condition = not build_with_chromium
+[submodule "third_party/spirv-cross/src"]
+	path = third_party/spirv-cross/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross
+	gclient-condition = not build_with_chromium
+[submodule "third_party/spirv-headers/src"]
+	path = third_party/spirv-headers/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers
+	gclient-condition = not build_with_chromium
+[submodule "third_party/spirv-tools/src"]
+	path = third_party/spirv-tools/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools
+	gclient-condition = not build_with_chromium
+[submodule "third_party/vulkan-headers/src"]
+	path = third_party/vulkan-headers/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers
+	gclient-condition = not build_with_chromium
+[submodule "third_party/vulkan-loader/src"]
+	path = third_party/vulkan-loader/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Loader
+	gclient-condition = not build_with_chromium
+[submodule "third_party/vulkan-tools/src"]
+	path = third_party/vulkan-tools/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools
+	gclient-condition = not build_with_chromium
+[submodule "third_party/vulkan-utility-libraries/src"]
+	path = third_party/vulkan-utility-libraries/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries
+	gclient-condition = not build_with_chromium
+[submodule "third_party/vulkan-validation-layers/src"]
+	path = third_party/vulkan-validation-layers/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-ValidationLayers
 	gclient-condition = not build_with_chromium
 [submodule "third_party/vulkan_memory_allocator"]
 	path = third_party/vulkan_memory_allocator

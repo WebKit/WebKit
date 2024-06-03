@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 351
+#define ANGLE_SH_VERSION 352
 
 enum ShShaderSpec
 {
@@ -447,6 +447,9 @@ struct ShCompileOptions
 
     // Workaround for a driver bug with the use of the OpSelect SPIR-V instruction.
     uint64_t avoidOpSelectWithMismatchingRelaxedPrecision : 1;
+
+    // Whether SPIR-V 1.4 can be emitted.  If not set, SPIR-V 1.3 is emitted.
+    uint64_t emitSPIRV14 : 1;
 
     ShCompileOptionsMetal metal;
     ShPixelLocalStorageOptions pls;

@@ -859,3 +859,7 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.uniform_api.value.assigned.
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.array_element.interleaved.* = FAIL
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.array_element.separate.* = FAIL
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.random.* = FAIL
+
+// BGRA failures
+8692 : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer*bgra = FAIL
+8692 MAC : dEQP-GLES3.functional.texture.filtering.2d_array.formats.bgra* = FAIL

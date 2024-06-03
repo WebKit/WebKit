@@ -193,6 +193,10 @@ angle_test("angle_unittests") {
     sources += angle_unittests_gl_sources
   }
 
+  if (angle_enable_wgpu) {
+    sources += angle_unittests_wgsl_sources
+  }
+
   deps = [
     ":angle_test_expectations",
     "$angle_root:angle_json_serializer",

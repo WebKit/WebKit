@@ -218,13 +218,107 @@ uint32_t GetTimestampValidBits(const std::vector<VkQueueFamilyProperties> &queue
     }
     return timestampValidBits;
 }
-}  // namespace
-}  // namespace vk
 
-void vk::Renderer::ensureCapsInitialized() const
+bool CanSupportGPUShader5EXT(const VkPhysicalDeviceFeatures &features)
+{
+    // We use the following Vulkan features to implement EXT_gpu_shader5:
+    // - shaderImageGatherExtended: textureGatherOffset with non-constant offset and
+    //   textureGatherOffsets family of functions.
+    // - shaderSampledImageArrayDynamicIndexing and shaderUniformBufferArrayDynamicIndexing:
+    //   dynamically uniform indices for samplers and uniform buffers.
+    return features.shaderImageGatherExtended && features.shaderSampledImageArrayDynamicIndexing &&
+           features.shaderUniformBufferArrayDynamicIndexing;
+}
+
+ANGLE_INLINE std::vector<bool> GetRequiredGLES32ExtensionList(
+    const gl::Extensions &nativeExtensions)
+{
+    // From the GLES 3.2 spec: Almost all features of [ANDROID_extension_pack_es31a], incorporating
+    // by reference all of the following features - with the exception of the sRGB decode features
+    // of EXT_texture_sRGB_decode.
+
+    // The extension debugKHR (also required for the Android extension pack) is a frontend feature
+    // and is unconditionally enabled as a supported feature (in generateSupportedExtensions()).
+    // Therefore, it is not included here.
+    return {
+        // From ANDROID_extension_pack_es31a
+        nativeExtensions.textureCompressionAstcLdrKHR,
+        nativeExtensions.blendEquationAdvancedKHR,
+        nativeExtensions.sampleShadingOES,
+        nativeExtensions.sampleVariablesOES,
+        nativeExtensions.shaderImageAtomicOES,
+        nativeExtensions.shaderMultisampleInterpolationOES,
+        nativeExtensions.textureStencil8OES,
+        nativeExtensions.textureStorageMultisample2dArrayOES,
+        nativeExtensions.copyImageEXT,
+        nativeExtensions.drawBuffersIndexedEXT,
+        nativeExtensions.geometryShaderEXT,
+        nativeExtensions.gpuShader5EXT,
+        nativeExtensions.primitiveBoundingBoxEXT,
+        nativeExtensions.shaderIoBlocksEXT,
+        nativeExtensions.tessellationShaderEXT,
+        nativeExtensions.textureBorderClampEXT,
+        nativeExtensions.textureBufferEXT,
+        nativeExtensions.textureCubeMapArrayEXT,
+
+        // Other extensions
+        nativeExtensions.drawElementsBaseVertexOES,
+        nativeExtensions.colorBufferFloatEXT,
+        nativeExtensions.robustnessKHR,
+    };
+}
+
+void LogMissingExtensionsForGLES32(const gl::Extensions &nativeExtensions)
+{
+    std::vector<bool> requiredExtensions = GetRequiredGLES32ExtensionList(nativeExtensions);
+
+    constexpr const char *kRequiredExtensionNames[] = {
+        // From ANDROID_extension_pack_es31a
+        "textureCompressionAstcLdrKHR",
+        "blendEquationAdvancedKHR",
+        "sampleShadingOES",
+        "sampleVariablesOES",
+        "shaderImageAtomicOES",
+        "shaderMultisampleInterpolationOES",
+        "textureStencil8OES",
+        "textureStorageMultisample2dArrayOES",
+        "copyImageEXT",
+        "drawBuffersIndexedEXT",
+        "geometryShaderEXT",
+        "gpuShader5EXT",
+        "primitiveBoundingBoxEXT",
+        "shaderIoBlocksEXT",
+        "tessellationShaderEXT",
+        "textureBorderClampEXT",
+        "textureBufferEXT",
+        "textureCubeMapArrayEXT",
+
+        // Other extensions
+        "drawElementsBaseVertexOES",
+        "colorBufferFloatEXT",
+        "robustnessKHR",
+    };
+    ASSERT(std::end(kRequiredExtensionNames) - std::begin(kRequiredExtensionNames) ==
+           requiredExtensions.size());
+
+    for (uint32_t index = 0; index < requiredExtensions.size(); index++)
+    {
+        if (!requiredExtensions[index])
+        {
+            INFO() << "The following extension is required for GLES 3.2: "
+                   << kRequiredExtensionNames[index];
+        }
+    }
+}
+
+}  // namespace
+
+void Renderer::ensureCapsInitialized() const
 {
     if (mCapsInitialized)
+    {
         return;
+    }
     mCapsInitialized = true;
 
     const VkPhysicalDeviceLimits &limitsVk = mPhysicalDeviceProperties.limits;
@@ -289,6 +383,7 @@ void vk::Renderer::ensureCapsInitialized() const
     mNativeExtensions.copyCompressedTextureCHROMIUM = true;
     mNativeExtensions.debugMarkerEXT                = true;
     mNativeExtensions.robustnessEXT                 = true;
+    mNativeExtensions.robustnessKHR                 = true;
     mNativeExtensions.translatedShaderSourceANGLE   = true;
     mNativeExtensions.discardFramebufferEXT         = true;
     mNativeExtensions.stencilTexturingANGLE         = true;
@@ -436,7 +531,7 @@ void vk::Renderer::ensureCapsInitialized() const
     mNativeExtensions.shaderIoBlocksOES = true;
     mNativeExtensions.shaderIoBlocksEXT = true;
 
-    mNativeExtensions.gpuShader5EXT = vk::CanSupportGPUShader5EXT(mPhysicalDeviceFeatures);
+    mNativeExtensions.gpuShader5EXT = CanSupportGPUShader5EXT(mPhysicalDeviceFeatures);
 
     // Only expose texture cubemap array if the physical device supports it.
     mNativeExtensions.textureCubeMapArrayOES = getFeatures().supportsImageCubeArray.enabled;
@@ -535,6 +630,7 @@ void vk::Renderer::ensureCapsInitialized() const
     mNativeCaps.minAliasedPointSize = std::max(1.0f, limitsVk.pointSizeRange[0]);
     mNativeCaps.maxAliasedPointSize = limitsVk.pointSizeRange[1];
 
+    // Line width ranges and granularity
     if (mPhysicalDeviceFeatures.wideLines && mFeatures.bresenhamLineRasterization.enabled)
     {
         mNativeCaps.minAliasedLineWidth = std::max(1.0f, limitsVk.lineWidthRange[0]);
@@ -545,6 +641,9 @@ void vk::Renderer::ensureCapsInitialized() const
         mNativeCaps.minAliasedLineWidth = 1.0f;
         mNativeCaps.maxAliasedLineWidth = 1.0f;
     }
+    mNativeCaps.minMultisampleLineWidth = mNativeCaps.minAliasedLineWidth;
+    mNativeCaps.maxMultisampleLineWidth = mNativeCaps.maxAliasedLineWidth;
+    mNativeCaps.lineWidthGranularity    = limitsVk.lineWidthGranularity;
 
     mNativeCaps.maxDrawBuffers =
         std::min(limitsVk.maxColorAttachments, limitsVk.maxFragmentOutputAttachments);
@@ -1196,10 +1295,24 @@ void vk::Renderer::ensureCapsInitialized() const
     mNativeExtensions.logicOpANGLE = mPhysicalDeviceFeatures.logicOp == VK_TRUE;
 
     mNativeExtensions.YUVTargetEXT = mFeatures.supportsExternalFormatResolve.enabled;
+
+    // Log any missing extensions required for GLES 3.2.
+    LogMissingExtensionsForGLES32(mNativeExtensions);
 }
 
-namespace vk
+bool CanSupportGLES32(const gl::Extensions &nativeExtensions)
 {
+    std::vector<bool> requiredExtensions = GetRequiredGLES32ExtensionList(nativeExtensions);
+    for (uint32_t index = 0; index < requiredExtensions.size(); index++)
+    {
+        if (!requiredExtensions[index])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 bool CanSupportTransformFeedbackExtension(
     const VkPhysicalDeviceTransformFeedbackFeaturesEXT &xfbFeatures)
@@ -1210,17 +1323,6 @@ bool CanSupportTransformFeedbackExtension(
 bool CanSupportTransformFeedbackEmulation(const VkPhysicalDeviceFeatures &features)
 {
     return features.vertexPipelineStoresAndAtomics == VK_TRUE;
-}
-
-bool CanSupportGPUShader5EXT(const VkPhysicalDeviceFeatures &features)
-{
-    // We use the following Vulkan features to implement EXT_gpu_shader5:
-    // - shaderImageGatherExtended: textureGatherOffset with non-constant offset and
-    //   textureGatherOffsets family of functions.
-    // - shaderSampledImageArrayDynamicIndexing and shaderUniformBufferArrayDynamicIndexing:
-    //   dynamically uniform indices for samplers and uniform buffers.
-    return features.shaderImageGatherExtended && features.shaderSampledImageArrayDynamicIndexing &&
-           features.shaderUniformBufferArrayDynamicIndexing;
 }
 
 }  // namespace vk

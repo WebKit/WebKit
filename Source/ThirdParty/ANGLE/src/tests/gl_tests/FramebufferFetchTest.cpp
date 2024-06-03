@@ -3533,5 +3533,6 @@ TEST_P(FramebufferFetchES31, MultipleRenderTarget_Both_Complex)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferFetchES31);
-ANGLE_INSTANTIATE_TEST_ES31(FramebufferFetchES31);
+ANGLE_INSTANTIATE_TEST_ES31_AND(FramebufferFetchES31,
+                                ES31_VULKAN().disable(Feature::SupportsSPIRV14));
 }  // namespace angle

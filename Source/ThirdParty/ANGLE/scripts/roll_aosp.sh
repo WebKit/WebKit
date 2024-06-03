@@ -115,10 +115,10 @@ export PATH=`pwd`/${DEPOT_TOOLS_DIR}:$PATH
 third_party_deps=(
     "build"
     "third_party/abseil-cpp"
-    "third_party/vulkan-deps/glslang/src"
-    "third_party/vulkan-deps/spirv-headers/src"
-    "third_party/vulkan-deps/spirv-tools/src"
-    "third_party/vulkan-deps/vulkan-headers/src"
+    "third_party/glslang/src"
+    "third_party/spirv-headers/src"
+    "third_party/spirv-tools/src"
+    "third_party/vulkan-headers/src"
     "third_party/vulkan_memory_allocator"
 )
 
@@ -127,9 +127,7 @@ root_add_deps=(
   "third_party"
 )
 
-# Only add the parts of NDK and vulkan-deps that are required by ANGLE. The entire dep is too large.
 delete_only_deps=(
-    "third_party/vulkan-deps"
     "third_party/zlib"  # Replaced by Android's zlib; delete for gclient to work https://crbug.com/skia/14155#c3
 )
 
@@ -192,10 +190,10 @@ extra_removal_files=(
    # Remove Android.mk files to prevent automated CLs:
    #   "[LSC] Add LOCAL_LICENSE_KINDS to external/angle"
    "Android.mk"
-   "third_party/vulkan-deps/glslang/src/Android.mk"
-   "third_party/vulkan-deps/glslang/src/ndk_test/Android.mk"
-   "third_party/vulkan-deps/spirv-tools/src/Android.mk"
-   "third_party/vulkan-deps/spirv-tools/src/android_test/Android.mk"
+   "third_party/glslang/src/Android.mk"
+   "third_party/glslang/src/ndk_test/Android.mk"
+   "third_party/spirv-tools/src/Android.mk"
+   "third_party/spirv-tools/src/android_test/Android.mk"
    "third_party/siso" # Not needed
 )
 

@@ -2797,10 +2797,7 @@ angle::Result TextureVk::flushImageStagedUpdates(ContextVk *contextVk)
 
 angle::Result TextureVk::performImageQueueTransferIfNecessary(ContextVk *contextVk)
 {
-    const vk::Renderer *renderer = contextVk->getRenderer();
-
-    const uint32_t rendererQueueFamilyIndex = renderer->getQueueFamilyIndex();
-    if (mImage->valid() && mImage->isQueueChangeNeccesary(rendererQueueFamilyIndex))
+    if (mImage->valid() && mImage->isQueueFamilyChangeNeccesary(contextVk->getDeviceQueueIndex()))
     {
         vk::ImageLayout newLayout = vk::ImageLayout::AllGraphicsShadersWrite;
         if (mImage->getUsage() & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
@@ -2822,7 +2819,7 @@ angle::Result TextureVk::performImageQueueTransferIfNecessary(ContextVk *context
         access.onExternalAcquireRelease(mImage);
         ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
         mImage->changeLayoutAndQueue(contextVk, mImage->getAspectFlags(), newLayout,
-                                     rendererQueueFamilyIndex, commandBuffer);
+                                     contextVk->getDeviceQueueIndex(), commandBuffer);
         ANGLE_TRY(contextVk->onEGLImageQueueChange());
     }
 

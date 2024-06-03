@@ -1631,6 +1631,7 @@ void GenerateCaps(ID3D11Device *device,
     extensions->fenceNV                     = GetEventQuerySupport(featureLevel);
     extensions->disjointTimerQueryEXT       = true;
     extensions->robustnessEXT               = true;
+    extensions->robustnessKHR               = true;
     // Direct3D guarantees to return zero for any resource that is accessed out of bounds.
     // See https://msdn.microsoft.com/en-us/library/windows/desktop/ff476332(v=vs.85).aspx
     // and https://msdn.microsoft.com/en-us/library/windows/desktop/ff476900(v=vs.85).aspx

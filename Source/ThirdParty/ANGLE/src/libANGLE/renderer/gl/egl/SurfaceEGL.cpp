@@ -194,11 +194,17 @@ egl::Error SurfaceEGL::getCompositorTiming(EGLint numTimestamps,
 {
     ASSERT(mEGL->hasExtension("EGL_ANDROID_get_frame_timestamps"));
 
-    EGLBoolean success = mEGL->getCompositorTimingANDROID(mSurface, numTimestamps, names, values);
-    if (success == EGL_FALSE)
-    {
-        return egl::Error(mEGL->getError(), "eglGetCompositorTimingANDROID failed");
-    }
+    egl::Display::GetCurrentThreadUnlockedTailCall()->add(
+        [egl = mEGL, surface = mSurface, numTimestamps, names, values](void *resultOut) {
+            EGLBoolean success =
+                egl->getCompositorTimingANDROID(surface, numTimestamps, names, values);
+            if (!success)
+            {
+                ERR() << "eglGetCompositorTimingANDROID failed: " << egl::Error(egl->getError());
+            }
+            *static_cast<EGLBoolean *>(resultOut) = success;
+        });
+
     return egl::NoError();
 }
 
@@ -234,13 +240,20 @@ egl::Error SurfaceEGL::getFrameTimestamps(EGLuint64KHR frameId,
 {
     ASSERT(mEGL->hasExtension("EGL_ANDROID_get_frame_timestamps"));
 
-    // The driver may return EGL_BAD_ACCESS at any time if the requested frame is no longer stored.
-    EGLBoolean success =
-        mEGL->getFrameTimestampsANDROID(mSurface, frameId, numTimestamps, timestamps, values);
-    if (success == EGL_FALSE)
-    {
-        return egl::Error(mEGL->getError(), "eglGetFrameTimestampsANDROID failed");
-    }
+    egl::Display::GetCurrentThreadUnlockedTailCall()->add([egl = mEGL, surface = mSurface, frameId,
+                                                           numTimestamps, timestamps,
+                                                           values](void *resultOut) {
+        EGLBoolean success =
+            egl->getFrameTimestampsANDROID(surface, frameId, numTimestamps, timestamps, values);
+        if (!success)
+        {
+            // The driver may return EGL_BAD_ACCESS at any time if the requested frame is no longer
+            // stored.
+            ERR() << "eglGetFrameTimestampsANDROID failed: " << egl::Error(egl->getError());
+        }
+        *static_cast<EGLBoolean *>(resultOut) = success;
+    });
+
     return egl::NoError();
 }
 

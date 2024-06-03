@@ -1400,6 +1400,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glGetGraphicsResetStatus";
         case EntryPoint::GLGetGraphicsResetStatusEXT:
             return "glGetGraphicsResetStatusEXT";
+        case EntryPoint::GLGetGraphicsResetStatusKHR:
+            return "glGetGraphicsResetStatusKHR";
         case EntryPoint::GLGetInteger64i_v:
             return "glGetInteger64i_v";
         case EntryPoint::GLGetInteger64i_vRobustANGLE:
@@ -1806,16 +1808,22 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glGetnUniformfv";
         case EntryPoint::GLGetnUniformfvEXT:
             return "glGetnUniformfvEXT";
+        case EntryPoint::GLGetnUniformfvKHR:
+            return "glGetnUniformfvKHR";
         case EntryPoint::GLGetnUniformfvRobustANGLE:
             return "glGetnUniformfvRobustANGLE";
         case EntryPoint::GLGetnUniformiv:
             return "glGetnUniformiv";
         case EntryPoint::GLGetnUniformivEXT:
             return "glGetnUniformivEXT";
+        case EntryPoint::GLGetnUniformivKHR:
+            return "glGetnUniformivKHR";
         case EntryPoint::GLGetnUniformivRobustANGLE:
             return "glGetnUniformivRobustANGLE";
         case EntryPoint::GLGetnUniformuiv:
             return "glGetnUniformuiv";
+        case EntryPoint::GLGetnUniformuivKHR:
+            return "glGetnUniformuivKHR";
         case EntryPoint::GLGetnUniformuivRobustANGLE:
             return "glGetnUniformuivRobustANGLE";
         case EntryPoint::GLHint:
@@ -2576,6 +2584,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glReadnPixels";
         case EntryPoint::GLReadnPixelsEXT:
             return "glReadnPixelsEXT";
+        case EntryPoint::GLReadnPixelsKHR:
+            return "glReadnPixelsKHR";
         case EntryPoint::GLReadnPixelsRobustANGLE:
             return "glReadnPixelsRobustANGLE";
         case EntryPoint::GLRectd:

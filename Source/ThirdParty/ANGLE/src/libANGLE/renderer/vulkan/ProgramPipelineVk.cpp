@@ -113,8 +113,4 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
     return result;
 }  // namespace rx
 
-void ProgramPipelineVk::onProgramUniformUpdate(gl::ShaderType shaderType)
-{
-    getExecutable()->mDefaultUniformBlocksDirty.set(shaderType);
-}
 }  // namespace rx

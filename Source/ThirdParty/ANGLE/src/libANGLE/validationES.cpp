@@ -3020,6 +3020,7 @@ bool ValidateStateQuery(const Context *context,
         case GL_TEXTURE_BINDING_2D_ARRAY:
         case GL_TEXTURE_BINDING_2D_MULTISAMPLE:
             break;
+
         case GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY:
             if (!context->getExtensions().textureStorageMultisample2dArrayOES)
             {
@@ -3027,6 +3028,7 @@ bool ValidateStateQuery(const Context *context,
                 return false;
             }
             break;
+
         case GL_TEXTURE_BINDING_RECTANGLE_ANGLE:
             if (!context->getExtensions().textureRectangleANGLE)
             {
@@ -3034,6 +3036,7 @@ bool ValidateStateQuery(const Context *context,
                 return false;
             }
             break;
+
         case GL_TEXTURE_BINDING_EXTERNAL_OES:
             if (!context->getExtensions().EGLStreamConsumerExternalNV &&
                 !context->getExtensions().EGLImageExternalOES)
@@ -3042,6 +3045,7 @@ bool ValidateStateQuery(const Context *context,
                 return false;
             }
             break;
+
         case GL_TEXTURE_BUFFER_BINDING:
         case GL_TEXTURE_BINDING_BUFFER:
         case GL_TEXTURE_BUFFER_OFFSET_ALIGNMENT:
@@ -3078,8 +3082,8 @@ bool ValidateStateQuery(const Context *context,
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kReadBufferNotAttached);
                 return false;
             }
+            break;
         }
-        break;
 
         case GL_PRIMITIVE_BOUNDING_BOX:
             if (!context->getExtensions().primitiveBoundingBoxAny())
@@ -3093,6 +3097,22 @@ bool ValidateStateQuery(const Context *context,
             if (!context->getExtensions().shadingRateQCOM)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kExtensionNotEnabled);
+                return false;
+            }
+            break;
+
+        case GL_MULTISAMPLE_LINE_WIDTH_RANGE:
+            if (context->getClientVersion() < Version(3, 2))
+            {
+                ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kEnumNotSupported, pname);
+                return false;
+            }
+            break;
+
+        case GL_MULTISAMPLE_LINE_WIDTH_GRANULARITY:
+            if (context->getClientVersion() < Version(3, 2))
+            {
+                ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kEnumNotSupported, pname);
                 return false;
             }
             break;

@@ -25,7 +25,7 @@ ProgramPipelineState::ProgramPipelineState(rx::GLImplFactory *factory)
     : mLabel(),
       mActiveShaderProgram(nullptr),
       mValid(false),
-      mExecutable(new ProgramExecutable(factory, &mInfoLog)),
+      mExecutable(makeNewExecutable(factory, {})),
       mIsLinked(false)
 {
     for (const ShaderType shaderType : AllShaderTypes())
@@ -44,6 +44,16 @@ const std::string &ProgramPipelineState::getLabel() const
 void ProgramPipelineState::activeShaderProgram(Program *shaderProgram)
 {
     mActiveShaderProgram = shaderProgram;
+}
+
+SharedProgramExecutable ProgramPipelineState::makeNewExecutable(
+    rx::GLImplFactory *factory,
+    ShaderMap<SharedProgramExecutable> &&ppoProgramExecutables)
+{
+    SharedProgramExecutable newExecutable = std::make_shared<ProgramExecutable>(factory, &mInfoLog);
+    newExecutable->mIsPPO                 = true;
+    newExecutable->mPPOProgramExecutables = std::move(ppoProgramExecutables);
+    return newExecutable;
 }
 
 void ProgramPipelineState::useProgramStage(const Context *context,
@@ -66,10 +76,11 @@ void ProgramPipelineState::useProgramStage(const Context *context,
     {
         mPrograms[shaderType] = shaderProgram;
         // Install the program executable, if not already
-        if (shaderProgram->getSharedExecutable().get() != mProgramExecutables[shaderType].get())
+        if (shaderProgram->getSharedExecutable().get() !=
+            mExecutable->mPPOProgramExecutables[shaderType].get())
         {
             InstallExecutable(context, shaderProgram->getSharedExecutable(),
-                              &mProgramExecutables[shaderType]);
+                              &mExecutable->mPPOProgramExecutables[shaderType]);
         }
         shaderProgram->addRef();
     }
@@ -79,11 +90,11 @@ void ProgramPipelineState::useProgramStage(const Context *context,
         // given stage, it is as if the pipeline object has no programmable stage configured for the
         // indicated shader stage.
         mPrograms[shaderType] = nullptr;
-        UninstallExecutable(context, &mProgramExecutables[shaderType]);
+        UninstallExecutable(context, &mExecutable->mPPOProgramExecutables[shaderType]);
     }
 
     programObserverBinding->bind(mPrograms[shaderType]);
-    programExecutableObserverBinding->bind(mProgramExecutables[shaderType].get());
+    programExecutableObserverBinding->bind(mExecutable->mPPOProgramExecutables[shaderType].get());
 }
 
 void ProgramPipelineState::useProgramStages(
@@ -174,14 +185,6 @@ void ProgramPipeline::onDestroy(const Context *context)
 
     getImplementation()->destroy(context);
     UninstallExecutable(context, &mState.mExecutable);
-
-    for (SharedProgramExecutable &executable : mState.mProgramExecutables)
-    {
-        if (executable)
-        {
-            mState.mProgramExecutablesToDiscard.emplace_back(std::move(executable));
-        }
-    }
 
     mState.destroyDiscardedExecutables(context);
 }
@@ -505,10 +508,10 @@ angle::Result ProgramPipeline::link(const Context *context)
     mState.destroyDiscardedExecutables(context);
 
     // Make a new executable to hold the result of the link.
-    InstallExecutable(
-        context,
-        std::make_shared<ProgramExecutable>(context->getImplementation(), &mState.mInfoLog),
-        &mState.mExecutable);
+    SharedProgramExecutable newExecutable = mState.makeNewExecutable(
+        context->getImplementation(), std::move(mState.mExecutable->mPPOProgramExecutables));
+
+    InstallExecutable(context, newExecutable, &mState.mExecutable);
     onStateChange(angle::SubjectMessage::ProgramUnlinked);
 
     updateLinkedShaderStages();
@@ -597,7 +600,7 @@ angle::Result ProgramPipeline::link(const Context *context)
     }
 
     // Merge uniforms.
-    mState.mExecutable->copyUniformsFromProgramMap(mState.mProgramExecutables);
+    mState.mExecutable->copyUniformsFromProgramMap(mState.mExecutable->mPPOProgramExecutables);
 
     if (mState.mExecutable->hasLinkedShaderStage(ShaderType::Vertex))
     {
@@ -785,12 +788,12 @@ void ProgramPipeline::onSubjectStateChange(angle::SubjectIndex index, angle::Sub
         {
             ShaderType shaderType = static_cast<ShaderType>(index);
             ASSERT(mState.mPrograms[shaderType] != nullptr);
-            ASSERT(mState.mProgramExecutables[shaderType]);
+            ASSERT(mState.mExecutable->mPPOProgramExecutables[shaderType]);
 
             mState.mIsLinked = false;
             mState.mProgramExecutablesToDiscard.emplace_back(
-                std::move(mState.mProgramExecutables[shaderType]));
-            mState.mProgramExecutables[shaderType] =
+                std::move(mState.mExecutable->mPPOProgramExecutables[shaderType]));
+            mState.mExecutable->mPPOProgramExecutables[shaderType] =
                 mState.mPrograms[shaderType]->getSharedExecutable();
 
             break;
@@ -804,9 +807,6 @@ void ProgramPipeline::onSubjectStateChange(angle::SubjectIndex index, angle::Sub
             }
             mState.mExecutable->mActiveSamplerRefCounts.fill(0);
             mState.updateExecutableTextures();
-            break;
-        case angle::SubjectMessage::ProgramUniformUpdated:
-            mProgramPipelineImpl->onProgramUniformUpdate(static_cast<ShaderType>(index));
             break;
         default:
             if (angle::IsProgramUniformBlockBindingUpdatedMessage(message))

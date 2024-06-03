@@ -587,6 +587,7 @@ angle::Result BufferVk::handleDeviceLocalBufferMap(ContextVk *contextVk,
     vk::Renderer *renderer = contextVk->getRenderer();
     ANGLE_TRY(
         allocStagingBuffer(contextVk, vk::MemoryCoherency::CachedPreferCoherent, size, mapPtr));
+    ANGLE_TRY(mStagingBuffer.flush(renderer));
 
     // Copy data from device local buffer to host visible staging buffer.
     VkBufferCopy copyRegion = {mBuffer.getOffset() + offset, mStagingBuffer.getOffset(), size};

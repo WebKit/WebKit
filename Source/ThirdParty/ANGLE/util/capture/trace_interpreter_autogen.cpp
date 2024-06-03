@@ -2782,6 +2782,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
                 paramTokens, strings);
         return CallCapture(EntryPoint::GLGetGraphicsResetStatusEXT, std::move(params));
     }
+    if (strcmp(nameToken, "glGetGraphicsResetStatusKHR") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLGETGRAPHICSRESETSTATUSKHRPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::GLGetGraphicsResetStatusKHR, std::move(params));
+    }
     if (strcmp(nameToken, "glGetInteger64i_v") == 0)
     {
         ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLGETINTEGER64I_VPROC>::type>(
@@ -3695,6 +3702,12 @@ CallCapture ParseCallCapture(const Token &nameToken,
             paramTokens, strings);
         return CallCapture(EntryPoint::GLGetnUniformfvEXT, std::move(params));
     }
+    if (strcmp(nameToken, "glGetnUniformfvKHR") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLGETNUNIFORMFVKHRPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLGetnUniformfvKHR, std::move(params));
+    }
     if (strcmp(nameToken, "glGetnUniformfvRobustANGLE") == 0)
     {
         ParamBuffer params =
@@ -3714,6 +3727,12 @@ CallCapture ParseCallCapture(const Token &nameToken,
             paramTokens, strings);
         return CallCapture(EntryPoint::GLGetnUniformivEXT, std::move(params));
     }
+    if (strcmp(nameToken, "glGetnUniformivKHR") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLGETNUNIFORMIVKHRPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLGetnUniformivKHR, std::move(params));
+    }
     if (strcmp(nameToken, "glGetnUniformivRobustANGLE") == 0)
     {
         ParamBuffer params =
@@ -3726,6 +3745,12 @@ CallCapture ParseCallCapture(const Token &nameToken,
         ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLGETNUNIFORMUIVPROC>::type>(
             paramTokens, strings);
         return CallCapture(EntryPoint::GLGetnUniformuiv, std::move(params));
+    }
+    if (strcmp(nameToken, "glGetnUniformuivKHR") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLGETNUNIFORMUIVKHRPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLGetnUniformuivKHR, std::move(params));
     }
     if (strcmp(nameToken, "glGetnUniformuivRobustANGLE") == 0)
     {
@@ -4995,6 +5020,12 @@ CallCapture ParseCallCapture(const Token &nameToken,
         ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLREADNPIXELSEXTPROC>::type>(
             paramTokens, strings);
         return CallCapture(EntryPoint::GLReadnPixelsEXT, std::move(params));
+    }
+    if (strcmp(nameToken, "glReadnPixelsKHR") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLREADNPIXELSKHRPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLReadnPixelsKHR, std::move(params));
     }
     if (strcmp(nameToken, "glReadnPixelsRobustANGLE") == 0)
     {

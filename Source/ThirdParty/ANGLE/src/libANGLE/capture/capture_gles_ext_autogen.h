@@ -2127,6 +2127,39 @@ angle::CallCapture CaptureMaxShaderCompilerThreadsKHR(const State &glState,
 
 // GL_KHR_robust_buffer_access_behavior
 
+// GL_KHR_robustness
+angle::CallCapture CaptureGetGraphicsResetStatusKHR(const State &glState,
+                                                    bool isCallValid,
+                                                    GLenum returnValue);
+angle::CallCapture CaptureGetnUniformfvKHR(const State &glState,
+                                           bool isCallValid,
+                                           ShaderProgramID programPacked,
+                                           UniformLocation locationPacked,
+                                           GLsizei bufSize,
+                                           GLfloat *params);
+angle::CallCapture CaptureGetnUniformivKHR(const State &glState,
+                                           bool isCallValid,
+                                           ShaderProgramID programPacked,
+                                           UniformLocation locationPacked,
+                                           GLsizei bufSize,
+                                           GLint *params);
+angle::CallCapture CaptureGetnUniformuivKHR(const State &glState,
+                                            bool isCallValid,
+                                            ShaderProgramID programPacked,
+                                            UniformLocation locationPacked,
+                                            GLsizei bufSize,
+                                            GLuint *params);
+angle::CallCapture CaptureReadnPixelsKHR(const State &glState,
+                                         bool isCallValid,
+                                         GLint x,
+                                         GLint y,
+                                         GLsizei width,
+                                         GLsizei height,
+                                         GLenum format,
+                                         GLenum type,
+                                         GLsizei bufSize,
+                                         void *data);
+
 // GL_KHR_texture_compression_astc_hdr
 
 // GL_KHR_texture_compression_astc_ldr
@@ -5118,6 +5151,38 @@ void CapturePushDebugGroupKHR_message(const State &glState,
                                       GLsizei length,
                                       const GLchar *message,
                                       angle::ParamCapture *paramCapture);
+void CaptureGetnUniformfvKHR_params(const State &glState,
+                                    bool isCallValid,
+                                    ShaderProgramID programPacked,
+                                    UniformLocation locationPacked,
+                                    GLsizei bufSize,
+                                    GLfloat *params,
+                                    angle::ParamCapture *paramCapture);
+void CaptureGetnUniformivKHR_params(const State &glState,
+                                    bool isCallValid,
+                                    ShaderProgramID programPacked,
+                                    UniformLocation locationPacked,
+                                    GLsizei bufSize,
+                                    GLint *params,
+                                    angle::ParamCapture *paramCapture);
+void CaptureGetnUniformuivKHR_params(const State &glState,
+                                     bool isCallValid,
+                                     ShaderProgramID programPacked,
+                                     UniformLocation locationPacked,
+                                     GLsizei bufSize,
+                                     GLuint *params,
+                                     angle::ParamCapture *paramCapture);
+void CaptureReadnPixelsKHR_data(const State &glState,
+                                bool isCallValid,
+                                GLint x,
+                                GLint y,
+                                GLsizei width,
+                                GLsizei height,
+                                GLenum format,
+                                GLenum type,
+                                GLsizei bufSize,
+                                void *data,
+                                angle::ParamCapture *paramCapture);
 void CaptureGetFramebufferParameterivMESA_params(const State &glState,
                                                  bool isCallValid,
                                                  GLenum target,

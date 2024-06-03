@@ -81,3 +81,4 @@
 
 7566 SWIFTSHADER UBSAN : KHR-GL46.shader_bitfield_operation.bitfieldInsert.int_3 = SKIP
 
+8693 SWIFTSHADER : KHR-GL46.buffer_objects.* = FAIL

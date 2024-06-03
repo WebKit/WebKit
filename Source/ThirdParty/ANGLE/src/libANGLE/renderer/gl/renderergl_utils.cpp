@@ -1679,6 +1679,10 @@ void GenerateCaps(const FunctionsGL *functions,
                                 functions->isAtLeastGLES(gl::Version(3, 2)) ||
                                 functions->hasGLESExtension("GL_KHR_robustness") ||
                                 functions->hasGLESExtension("GL_EXT_robustness");
+    extensions->robustnessKHR = functions->isAtLeastGL(gl::Version(4, 5)) ||
+                                functions->hasGLExtension("GL_KHR_robustness") ||
+                                functions->isAtLeastGLES(gl::Version(3, 2)) ||
+                                functions->hasGLESExtension("GL_KHR_robustness");
 
     extensions->robustBufferAccessBehaviorKHR =
         extensions->robustnessEXT &&

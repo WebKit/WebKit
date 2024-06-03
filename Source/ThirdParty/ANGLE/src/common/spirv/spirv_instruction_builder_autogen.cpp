@@ -38,12 +38,12 @@ uint32_t MakeLengthOp(size_t length, spv::Op op)
 }
 }  // anonymous namespace
 
-void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t idCount)
+void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t version, uint32_t idCount)
 {
     // Header:
     //
     //  - Magic number
-    //  - Version (1.0)
+    //  - Version (1.X)
     //  - ANGLE's Generator number:
     //     * 24 for tool id (higher 16 bits)
     //     * 1 for tool version (lower 16 bits))
@@ -55,7 +55,7 @@ void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t idCount)
     ASSERT(blob->empty());
 
     blob->push_back(spv::MagicNumber);
-    blob->push_back(0x00010000);
+    blob->push_back(version);
     blob->push_back(kANGLEGeneratorId << 16 | kANGLEGeneratorVersion);
     blob->push_back(idCount);
     blob->push_back(0x00000000);
@@ -68,12 +68,12 @@ void WriteNop(Blob *blob)
 
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpNop);
 }
-void WriteUndef(Blob *blob, IdResultType idResultType, IdResult idResult)
+void WriteUndef(Blob *blob, IdResultType idResultType1, IdResult idResult2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpUndef);
 }
 void WriteSourceContinued(Blob *blob, LiteralString continuedSource)
@@ -89,14 +89,14 @@ void WriteSourceContinued(Blob *blob, LiteralString continuedSource)
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSourceContinued);
 }
 void WriteSource(Blob *blob,
-                 spv::SourceLanguage sourceLanguage,
+                 spv::SourceLanguage sourceLanguage1,
                  LiteralInteger version,
                  const IdRef *file,
                  const LiteralString *source)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(sourceLanguage);
+    blob->push_back(sourceLanguage1);
     blob->push_back(version);
     if (file)
     {
@@ -152,11 +152,11 @@ void WriteMemberName(Blob *blob, IdRef type, LiteralInteger member, LiteralStrin
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpMemberName);
 }
-void WriteString(Blob *blob, IdResult idResult, LiteralString string)
+void WriteString(Blob *blob, IdResult idResult1, LiteralString string)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     {
         size_t d = blob->size();
         blob->resize(d + strlen(string) / 4 + 1, 0);
@@ -186,11 +186,11 @@ void WriteExtension(Blob *blob, LiteralString name)
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpExtension);
 }
-void WriteExtInstImport(Blob *blob, IdResult idResult, LiteralString name)
+void WriteExtInstImport(Blob *blob, IdResult idResult1, LiteralString name)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     {
         size_t d = blob->size();
         blob->resize(d + strlen(name) / 4 + 1, 0);
@@ -200,16 +200,16 @@ void WriteExtInstImport(Blob *blob, IdResult idResult, LiteralString name)
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpExtInstImport);
 }
 void WriteExtInst(Blob *blob,
-                  IdResultType idResultType,
-                  IdResult idResult,
+                  IdResultType idResultType1,
+                  IdResult idResult2,
                   IdRef set,
                   LiteralExtInstInteger instruction,
                   const IdRefList &operandList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(set);
     blob->push_back(instruction);
     for (const auto &operand : operandList)
@@ -219,24 +219,24 @@ void WriteExtInst(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpExtInst);
 }
 void WriteMemoryModel(Blob *blob,
-                      spv::AddressingModel addressingModel,
-                      spv::MemoryModel memoryModel)
+                      spv::AddressingModel addressingModel1,
+                      spv::MemoryModel memoryModel2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(addressingModel);
-    blob->push_back(memoryModel);
+    blob->push_back(addressingModel1);
+    blob->push_back(memoryModel2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpMemoryModel);
 }
 void WriteEntryPoint(Blob *blob,
-                     spv::ExecutionModel executionModel,
+                     spv::ExecutionModel executionModel1,
                      IdRef entryPoint,
                      LiteralString name,
                      const IdRefList &interfaceList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(executionModel);
+    blob->push_back(executionModel1);
     blob->push_back(entryPoint);
     {
         size_t d = blob->size();
@@ -272,145 +272,145 @@ void WriteCapability(Blob *blob, spv::Capability capability)
     blob->push_back(capability);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpCapability);
 }
-void WriteTypeVoid(Blob *blob, IdResult idResult)
+void WriteTypeVoid(Blob *blob, IdResult idResult1)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeVoid);
 }
-void WriteTypeBool(Blob *blob, IdResult idResult)
+void WriteTypeBool(Blob *blob, IdResult idResult1)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeBool);
 }
-void WriteTypeInt(Blob *blob, IdResult idResult, LiteralInteger width, LiteralInteger signedness)
+void WriteTypeInt(Blob *blob, IdResult idResult1, LiteralInteger width, LiteralInteger signedness)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     blob->push_back(width);
     blob->push_back(signedness);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeInt);
 }
-void WriteTypeFloat(Blob *blob, IdResult idResult, LiteralInteger width)
+void WriteTypeFloat(Blob *blob, IdResult idResult1, LiteralInteger width)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     blob->push_back(width);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeFloat);
 }
 void WriteTypeVector(Blob *blob,
-                     IdResult idResult,
+                     IdResult idResult1,
                      IdRef componentType,
                      LiteralInteger componentCount)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     blob->push_back(componentType);
     blob->push_back(componentCount);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeVector);
 }
-void WriteTypeMatrix(Blob *blob, IdResult idResult, IdRef columnType, LiteralInteger columnCount)
+void WriteTypeMatrix(Blob *blob, IdResult idResult1, IdRef columnType, LiteralInteger columnCount)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     blob->push_back(columnType);
     blob->push_back(columnCount);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeMatrix);
 }
 void WriteTypeImage(Blob *blob,
-                    IdResult idResult,
+                    IdResult idResult1,
                     IdRef sampledType,
-                    spv::Dim dim,
+                    spv::Dim dim3,
                     LiteralInteger depth,
                     LiteralInteger arrayed,
                     LiteralInteger mS,
                     LiteralInteger sampled,
-                    spv::ImageFormat imageFormat,
-                    const spv::AccessQualifier *accessQualifier)
+                    spv::ImageFormat imageFormat8,
+                    const spv::AccessQualifier *accessQualifier9)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     blob->push_back(sampledType);
-    blob->push_back(dim);
+    blob->push_back(dim3);
     blob->push_back(depth);
     blob->push_back(arrayed);
     blob->push_back(mS);
     blob->push_back(sampled);
-    blob->push_back(imageFormat);
-    if (accessQualifier)
+    blob->push_back(imageFormat8);
+    if (accessQualifier9)
     {
-        blob->push_back(*accessQualifier);
+        blob->push_back(*accessQualifier9);
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeImage);
 }
-void WriteTypeSampler(Blob *blob, IdResult idResult)
+void WriteTypeSampler(Blob *blob, IdResult idResult1)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeSampler);
 }
-void WriteTypeSampledImage(Blob *blob, IdResult idResult, IdRef imageType)
+void WriteTypeSampledImage(Blob *blob, IdResult idResult1, IdRef imageType)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     blob->push_back(imageType);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeSampledImage);
 }
-void WriteTypeArray(Blob *blob, IdResult idResult, IdRef elementType, IdRef length)
+void WriteTypeArray(Blob *blob, IdResult idResult1, IdRef elementType, IdRef length)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     blob->push_back(elementType);
     blob->push_back(length);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeArray);
 }
-void WriteTypeRuntimeArray(Blob *blob, IdResult idResult, IdRef elementType)
+void WriteTypeRuntimeArray(Blob *blob, IdResult idResult1, IdRef elementType)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     blob->push_back(elementType);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeRuntimeArray);
 }
-void WriteTypeStruct(Blob *blob, IdResult idResult, const IdRefList &memberList)
+void WriteTypeStruct(Blob *blob, IdResult idResult1, const IdRefList &memberList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     for (const auto &operand : memberList)
     {
         blob->push_back(operand);
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeStruct);
 }
-void WriteTypePointer(Blob *blob, IdResult idResult, spv::StorageClass storageClass, IdRef type)
+void WriteTypePointer(Blob *blob, IdResult idResult1, spv::StorageClass storageClass2, IdRef type)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
-    blob->push_back(storageClass);
+    blob->push_back(idResult1);
+    blob->push_back(storageClass2);
     blob->push_back(type);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypePointer);
 }
 void WriteTypeFunction(Blob *blob,
-                       IdResult idResult,
+                       IdResult idResult1,
                        IdRef returnType,
                        const IdRefList &parameterList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     blob->push_back(returnType);
     for (const auto &operand : parameterList)
     {
@@ -418,94 +418,94 @@ void WriteTypeFunction(Blob *blob,
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeFunction);
 }
-void WriteConstantTrue(Blob *blob, IdResultType idResultType, IdResult idResult)
+void WriteConstantTrue(Blob *blob, IdResultType idResultType1, IdResult idResult2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpConstantTrue);
 }
-void WriteConstantFalse(Blob *blob, IdResultType idResultType, IdResult idResult)
+void WriteConstantFalse(Blob *blob, IdResultType idResultType1, IdResult idResult2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpConstantFalse);
 }
 void WriteConstant(Blob *blob,
-                   IdResultType idResultType,
-                   IdResult idResult,
+                   IdResultType idResultType1,
+                   IdResult idResult2,
                    LiteralContextDependentNumber value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpConstant);
 }
 void WriteConstantComposite(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             const IdRefList &constituentsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     for (const auto &operand : constituentsList)
     {
         blob->push_back(operand);
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpConstantComposite);
 }
-void WriteConstantNull(Blob *blob, IdResultType idResultType, IdResult idResult)
+void WriteConstantNull(Blob *blob, IdResultType idResultType1, IdResult idResult2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpConstantNull);
 }
-void WriteSpecConstantTrue(Blob *blob, IdResultType idResultType, IdResult idResult)
+void WriteSpecConstantTrue(Blob *blob, IdResultType idResultType1, IdResult idResult2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSpecConstantTrue);
 }
-void WriteSpecConstantFalse(Blob *blob, IdResultType idResultType, IdResult idResult)
+void WriteSpecConstantFalse(Blob *blob, IdResultType idResultType1, IdResult idResult2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSpecConstantFalse);
 }
 void WriteSpecConstant(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        LiteralContextDependentNumber value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSpecConstant);
 }
 void WriteSpecConstantComposite(Blob *blob,
-                                IdResultType idResultType,
-                                IdResult idResult,
+                                IdResultType idResultType1,
+                                IdResult idResult2,
                                 const IdRefList &constituentsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     for (const auto &operand : constituentsList)
     {
         blob->push_back(operand);
@@ -513,25 +513,25 @@ void WriteSpecConstantComposite(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSpecConstantComposite);
 }
 void WriteFunction(Blob *blob,
-                   IdResultType idResultType,
-                   IdResult idResult,
-                   spv::FunctionControlMask functionControl,
+                   IdResultType idResultType1,
+                   IdResult idResult2,
+                   spv::FunctionControlMask functionControl3,
                    IdRef functionType)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(functionControl);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(functionControl3);
     blob->push_back(functionType);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFunction);
 }
-void WriteFunctionParameter(Blob *blob, IdResultType idResultType, IdResult idResult)
+void WriteFunctionParameter(Blob *blob, IdResultType idResultType1, IdResult idResult2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFunctionParameter);
 }
 void WriteFunctionEnd(Blob *blob)
@@ -542,15 +542,15 @@ void WriteFunctionEnd(Blob *blob)
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFunctionEnd);
 }
 void WriteFunctionCall(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        IdRef function,
                        const IdRefList &argumentList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(function);
     for (const auto &operand : argumentList)
     {
@@ -559,16 +559,16 @@ void WriteFunctionCall(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFunctionCall);
 }
 void WriteVariable(Blob *blob,
-                   IdResultType idResultType,
-                   IdResult idResult,
-                   spv::StorageClass storageClass,
+                   IdResultType idResultType1,
+                   IdResult idResult2,
+                   spv::StorageClass storageClass3,
                    const IdRef *initializer)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(storageClass);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(storageClass3);
     if (initializer)
     {
         blob->push_back(*initializer);
@@ -576,75 +576,80 @@ void WriteVariable(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpVariable);
 }
 void WriteImageTexelPointer(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef image,
                             IdRef coordinate,
                             IdRef sample)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(image);
     blob->push_back(coordinate);
     blob->push_back(sample);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageTexelPointer);
 }
 void WriteLoad(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef pointer,
-               const spv::MemoryAccessMask *memoryAccess)
+               const spv::MemoryAccessMask *memoryAccess4)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    if (memoryAccess)
+    if (memoryAccess4)
     {
-        blob->push_back(*memoryAccess);
+        blob->push_back(*memoryAccess4);
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpLoad);
 }
-void WriteStore(Blob *blob, IdRef pointer, IdRef object, const spv::MemoryAccessMask *memoryAccess)
+void WriteStore(Blob *blob, IdRef pointer, IdRef object, const spv::MemoryAccessMask *memoryAccess3)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
     blob->push_back(pointer);
     blob->push_back(object);
-    if (memoryAccess)
+    if (memoryAccess3)
     {
-        blob->push_back(*memoryAccess);
+        blob->push_back(*memoryAccess3);
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpStore);
 }
 void WriteCopyMemory(Blob *blob,
                      IdRef target,
                      IdRef source,
-                     const spv::MemoryAccessMask *memoryAccess)
+                     const spv::MemoryAccessMask *memoryAccess3,
+                     const spv::MemoryAccessMask *memoryAccess4)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
     blob->push_back(target);
     blob->push_back(source);
-    if (memoryAccess)
+    if (memoryAccess3)
     {
-        blob->push_back(*memoryAccess);
+        blob->push_back(*memoryAccess3);
+    }
+    if (memoryAccess4)
+    {
+        blob->push_back(*memoryAccess4);
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpCopyMemory);
 }
 void WriteAccessChain(Blob *blob,
-                      IdResultType idResultType,
-                      IdResult idResult,
+                      IdResultType idResultType1,
+                      IdResult idResult2,
                       IdRef base,
                       const IdRefList &indexesList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(base);
     for (const auto &operand : indexesList)
     {
@@ -653,15 +658,15 @@ void WriteAccessChain(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAccessChain);
 }
 void WriteInBoundsAccessChain(Blob *blob,
-                              IdResultType idResultType,
-                              IdResult idResult,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
                               IdRef base,
                               const IdRefList &indexesList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(base);
     for (const auto &operand : indexesList)
     {
@@ -670,28 +675,28 @@ void WriteInBoundsAccessChain(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpInBoundsAccessChain);
 }
 void WriteArrayLength(Blob *blob,
-                      IdResultType idResultType,
-                      IdResult idResult,
+                      IdResultType idResultType1,
+                      IdResult idResult2,
                       IdRef structure,
                       LiteralInteger arraymember)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(structure);
     blob->push_back(arraymember);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpArrayLength);
 }
 void WriteDecorate(Blob *blob,
                    IdRef target,
-                   spv::Decoration decoration,
+                   spv::Decoration decoration2,
                    const LiteralIntegerList &valuesList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
     blob->push_back(target);
-    blob->push_back(decoration);
+    blob->push_back(decoration2);
     for (const auto &operand : valuesList)
     {
         blob->push_back(operand);
@@ -701,25 +706,25 @@ void WriteDecorate(Blob *blob,
 void WriteMemberDecorate(Blob *blob,
                          IdRef structureType,
                          LiteralInteger member,
-                         spv::Decoration decoration,
+                         spv::Decoration decoration3,
                          const LiteralIntegerList &valuesList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
     blob->push_back(structureType);
     blob->push_back(member);
-    blob->push_back(decoration);
+    blob->push_back(decoration3);
     for (const auto &operand : valuesList)
     {
         blob->push_back(operand);
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpMemberDecorate);
 }
-void WriteDecorationGroup(Blob *blob, IdResult idResult)
+void WriteDecorationGroup(Blob *blob, IdResult idResult1)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpDecorationGroup);
 }
 void WriteGroupDecorate(Blob *blob, IdRef decorationGroup, const IdRefList &targetsList)
@@ -748,46 +753,46 @@ void WriteGroupMemberDecorate(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupMemberDecorate);
 }
 void WriteVectorExtractDynamic(Blob *blob,
-                               IdResultType idResultType,
-                               IdResult idResult,
+                               IdResultType idResultType1,
+                               IdResult idResult2,
                                IdRef vector,
                                IdRef index)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(vector);
     blob->push_back(index);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpVectorExtractDynamic);
 }
 void WriteVectorInsertDynamic(Blob *blob,
-                              IdResultType idResultType,
-                              IdResult idResult,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
                               IdRef vector,
                               IdRef component,
                               IdRef index)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(vector);
     blob->push_back(component);
     blob->push_back(index);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpVectorInsertDynamic);
 }
 void WriteVectorShuffle(Blob *blob,
-                        IdResultType idResultType,
-                        IdResult idResult,
+                        IdResultType idResultType1,
+                        IdResult idResult2,
                         IdRef vector1,
                         IdRef vector2,
                         const LiteralIntegerList &componentsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(vector1);
     blob->push_back(vector2);
     for (const auto &operand : componentsList)
@@ -797,14 +802,14 @@ void WriteVectorShuffle(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpVectorShuffle);
 }
 void WriteCompositeConstruct(Blob *blob,
-                             IdResultType idResultType,
-                             IdResult idResult,
+                             IdResultType idResultType1,
+                             IdResult idResult2,
                              const IdRefList &constituentsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     for (const auto &operand : constituentsList)
     {
         blob->push_back(operand);
@@ -812,15 +817,15 @@ void WriteCompositeConstruct(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpCompositeConstruct);
 }
 void WriteCompositeExtract(Blob *blob,
-                           IdResultType idResultType,
-                           IdResult idResult,
+                           IdResultType idResultType1,
+                           IdResult idResult2,
                            IdRef composite,
                            const LiteralIntegerList &indexesList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(composite);
     for (const auto &operand : indexesList)
     {
@@ -829,16 +834,16 @@ void WriteCompositeExtract(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpCompositeExtract);
 }
 void WriteCompositeInsert(Blob *blob,
-                          IdResultType idResultType,
-                          IdResult idResult,
+                          IdResultType idResultType1,
+                          IdResult idResult2,
                           IdRef object,
                           IdRef composite,
                           const LiteralIntegerList &indexesList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(object);
     blob->push_back(composite);
     for (const auto &operand : indexesList)
@@ -847,55 +852,55 @@ void WriteCompositeInsert(Blob *blob,
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpCompositeInsert);
 }
-void WriteCopyObject(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef operand)
+void WriteCopyObject(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef operand)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpCopyObject);
 }
-void WriteTranspose(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef matrix)
+void WriteTranspose(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef matrix)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(matrix);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTranspose);
 }
 void WriteSampledImage(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        IdRef image,
                        IdRef sampler)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(image);
     blob->push_back(sampler);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSampledImage);
 }
 void WriteImageSampleImplicitLod(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
+                                 IdResultType idResultType1,
+                                 IdResult idResult2,
                                  IdRef sampledImage,
                                  IdRef coordinate,
-                                 const spv::ImageOperandsMask *imageOperands,
+                                 const spv::ImageOperandsMask *imageOperands5,
                                  const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
-    if (imageOperands)
+    if (imageOperands5)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands5);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -904,20 +909,20 @@ void WriteImageSampleImplicitLod(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSampleImplicitLod);
 }
 void WriteImageSampleExplicitLod(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
+                                 IdResultType idResultType1,
+                                 IdResult idResult2,
                                  IdRef sampledImage,
                                  IdRef coordinate,
-                                 spv::ImageOperandsMask imageOperands,
+                                 spv::ImageOperandsMask imageOperands5,
                                  const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
-    blob->push_back(imageOperands);
+    blob->push_back(imageOperands5);
     for (const auto &operand : imageOperandIdsList)
     {
         blob->push_back(operand);
@@ -925,24 +930,24 @@ void WriteImageSampleExplicitLod(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSampleExplicitLod);
 }
 void WriteImageSampleDrefImplicitLod(Blob *blob,
-                                     IdResultType idResultType,
-                                     IdResult idResult,
+                                     IdResultType idResultType1,
+                                     IdResult idResult2,
                                      IdRef sampledImage,
                                      IdRef coordinate,
                                      IdRef dref,
-                                     const spv::ImageOperandsMask *imageOperands,
+                                     const spv::ImageOperandsMask *imageOperands6,
                                      const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(dref);
-    if (imageOperands)
+    if (imageOperands6)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands6);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -951,22 +956,22 @@ void WriteImageSampleDrefImplicitLod(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSampleDrefImplicitLod);
 }
 void WriteImageSampleDrefExplicitLod(Blob *blob,
-                                     IdResultType idResultType,
-                                     IdResult idResult,
+                                     IdResultType idResultType1,
+                                     IdResult idResult2,
                                      IdRef sampledImage,
                                      IdRef coordinate,
                                      IdRef dref,
-                                     spv::ImageOperandsMask imageOperands,
+                                     spv::ImageOperandsMask imageOperands6,
                                      const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(dref);
-    blob->push_back(imageOperands);
+    blob->push_back(imageOperands6);
     for (const auto &operand : imageOperandIdsList)
     {
         blob->push_back(operand);
@@ -974,22 +979,22 @@ void WriteImageSampleDrefExplicitLod(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSampleDrefExplicitLod);
 }
 void WriteImageSampleProjImplicitLod(Blob *blob,
-                                     IdResultType idResultType,
-                                     IdResult idResult,
+                                     IdResultType idResultType1,
+                                     IdResult idResult2,
                                      IdRef sampledImage,
                                      IdRef coordinate,
-                                     const spv::ImageOperandsMask *imageOperands,
+                                     const spv::ImageOperandsMask *imageOperands5,
                                      const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
-    if (imageOperands)
+    if (imageOperands5)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands5);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -998,20 +1003,20 @@ void WriteImageSampleProjImplicitLod(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSampleProjImplicitLod);
 }
 void WriteImageSampleProjExplicitLod(Blob *blob,
-                                     IdResultType idResultType,
-                                     IdResult idResult,
+                                     IdResultType idResultType1,
+                                     IdResult idResult2,
                                      IdRef sampledImage,
                                      IdRef coordinate,
-                                     spv::ImageOperandsMask imageOperands,
+                                     spv::ImageOperandsMask imageOperands5,
                                      const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
-    blob->push_back(imageOperands);
+    blob->push_back(imageOperands5);
     for (const auto &operand : imageOperandIdsList)
     {
         blob->push_back(operand);
@@ -1019,24 +1024,24 @@ void WriteImageSampleProjExplicitLod(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSampleProjExplicitLod);
 }
 void WriteImageSampleProjDrefImplicitLod(Blob *blob,
-                                         IdResultType idResultType,
-                                         IdResult idResult,
+                                         IdResultType idResultType1,
+                                         IdResult idResult2,
                                          IdRef sampledImage,
                                          IdRef coordinate,
                                          IdRef dref,
-                                         const spv::ImageOperandsMask *imageOperands,
+                                         const spv::ImageOperandsMask *imageOperands6,
                                          const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(dref);
-    if (imageOperands)
+    if (imageOperands6)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands6);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -1046,22 +1051,22 @@ void WriteImageSampleProjDrefImplicitLod(Blob *blob,
         MakeLengthOp(blob->size() - startSize, spv::OpImageSampleProjDrefImplicitLod);
 }
 void WriteImageSampleProjDrefExplicitLod(Blob *blob,
-                                         IdResultType idResultType,
-                                         IdResult idResult,
+                                         IdResultType idResultType1,
+                                         IdResult idResult2,
                                          IdRef sampledImage,
                                          IdRef coordinate,
                                          IdRef dref,
-                                         spv::ImageOperandsMask imageOperands,
+                                         spv::ImageOperandsMask imageOperands6,
                                          const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(dref);
-    blob->push_back(imageOperands);
+    blob->push_back(imageOperands6);
     for (const auto &operand : imageOperandIdsList)
     {
         blob->push_back(operand);
@@ -1070,22 +1075,22 @@ void WriteImageSampleProjDrefExplicitLod(Blob *blob,
         MakeLengthOp(blob->size() - startSize, spv::OpImageSampleProjDrefExplicitLod);
 }
 void WriteImageFetch(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef image,
                      IdRef coordinate,
-                     const spv::ImageOperandsMask *imageOperands,
+                     const spv::ImageOperandsMask *imageOperands5,
                      const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(image);
     blob->push_back(coordinate);
-    if (imageOperands)
+    if (imageOperands5)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands5);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -1094,24 +1099,24 @@ void WriteImageFetch(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageFetch);
 }
 void WriteImageGather(Blob *blob,
-                      IdResultType idResultType,
-                      IdResult idResult,
+                      IdResultType idResultType1,
+                      IdResult idResult2,
                       IdRef sampledImage,
                       IdRef coordinate,
                       IdRef component,
-                      const spv::ImageOperandsMask *imageOperands,
+                      const spv::ImageOperandsMask *imageOperands6,
                       const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(component);
-    if (imageOperands)
+    if (imageOperands6)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands6);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -1120,24 +1125,24 @@ void WriteImageGather(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageGather);
 }
 void WriteImageDrefGather(Blob *blob,
-                          IdResultType idResultType,
-                          IdResult idResult,
+                          IdResultType idResultType1,
+                          IdResult idResult2,
                           IdRef sampledImage,
                           IdRef coordinate,
                           IdRef dref,
-                          const spv::ImageOperandsMask *imageOperands,
+                          const spv::ImageOperandsMask *imageOperands6,
                           const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(dref);
-    if (imageOperands)
+    if (imageOperands6)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands6);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -1146,22 +1151,22 @@ void WriteImageDrefGather(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageDrefGather);
 }
 void WriteImageRead(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
+                    IdResultType idResultType1,
+                    IdResult idResult2,
                     IdRef image,
                     IdRef coordinate,
-                    const spv::ImageOperandsMask *imageOperands,
+                    const spv::ImageOperandsMask *imageOperands5,
                     const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(image);
     blob->push_back(coordinate);
-    if (imageOperands)
+    if (imageOperands5)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands5);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -1173,7 +1178,7 @@ void WriteImageWrite(Blob *blob,
                      IdRef image,
                      IdRef coordinate,
                      IdRef texel,
-                     const spv::ImageOperandsMask *imageOperands,
+                     const spv::ImageOperandsMask *imageOperands4,
                      const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
@@ -1181,9 +1186,9 @@ void WriteImageWrite(Blob *blob,
     blob->push_back(image);
     blob->push_back(coordinate);
     blob->push_back(texel);
-    if (imageOperands)
+    if (imageOperands4)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands4);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -1191,1040 +1196,1043 @@ void WriteImageWrite(Blob *blob,
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageWrite);
 }
-void WriteImage(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef sampledImage)
+void WriteImage(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef sampledImage)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImage);
 }
 void WriteImageQuerySizeLod(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef image,
                             IdRef levelofDetail)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(image);
     blob->push_back(levelofDetail);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageQuerySizeLod);
 }
-void WriteImageQuerySize(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef image)
+void WriteImageQuerySize(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef image)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(image);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageQuerySize);
 }
 void WriteImageQueryLod(Blob *blob,
-                        IdResultType idResultType,
-                        IdResult idResult,
+                        IdResultType idResultType1,
+                        IdResult idResult2,
                         IdRef sampledImage,
                         IdRef coordinate)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageQueryLod);
 }
-void WriteImageQueryLevels(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef image)
+void WriteImageQueryLevels(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef image)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(image);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageQueryLevels);
 }
-void WriteImageQuerySamples(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef image)
+void WriteImageQuerySamples(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef image)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(image);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageQuerySamples);
 }
-void WriteConvertFToU(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef floatValue)
+void WriteConvertFToU(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef floatValue)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(floatValue);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpConvertFToU);
 }
-void WriteConvertFToS(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef floatValue)
+void WriteConvertFToS(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef floatValue)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(floatValue);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpConvertFToS);
 }
-void WriteConvertSToF(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef signedValue)
+void WriteConvertSToF(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef signedValue)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(signedValue);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpConvertSToF);
 }
-void WriteConvertUToF(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef unsignedValue)
+void WriteConvertUToF(Blob *blob,
+                      IdResultType idResultType1,
+                      IdResult idResult2,
+                      IdRef unsignedValue)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(unsignedValue);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpConvertUToF);
 }
-void WriteUConvert(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef unsignedValue)
+void WriteUConvert(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef unsignedValue)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(unsignedValue);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpUConvert);
 }
-void WriteSConvert(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef signedValue)
+void WriteSConvert(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef signedValue)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(signedValue);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSConvert);
 }
-void WriteFConvert(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef floatValue)
+void WriteFConvert(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef floatValue)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(floatValue);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFConvert);
 }
-void WriteQuantizeToF16(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef value)
+void WriteQuantizeToF16(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpQuantizeToF16);
 }
-void WriteBitcast(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef operand)
+void WriteBitcast(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef operand)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpBitcast);
 }
-void WriteSNegate(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef operand)
+void WriteSNegate(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef operand)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSNegate);
 }
-void WriteFNegate(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef operand)
+void WriteFNegate(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef operand)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFNegate);
 }
 void WriteIAdd(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpIAdd);
 }
 void WriteFAdd(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFAdd);
 }
 void WriteISub(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpISub);
 }
 void WriteFSub(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFSub);
 }
 void WriteIMul(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpIMul);
 }
 void WriteFMul(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFMul);
 }
 void WriteUDiv(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpUDiv);
 }
 void WriteSDiv(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSDiv);
 }
 void WriteFDiv(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFDiv);
 }
 void WriteUMod(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpUMod);
 }
 void WriteSRem(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSRem);
 }
 void WriteSMod(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSMod);
 }
 void WriteFRem(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFRem);
 }
 void WriteFMod(Blob *blob,
-               IdResultType idResultType,
-               IdResult idResult,
+               IdResultType idResultType1,
+               IdResult idResult2,
                IdRef operand1,
                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFMod);
 }
 void WriteVectorTimesScalar(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef vector,
                             IdRef scalar)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(vector);
     blob->push_back(scalar);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpVectorTimesScalar);
 }
 void WriteMatrixTimesScalar(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef matrix,
                             IdRef scalar)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(matrix);
     blob->push_back(scalar);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpMatrixTimesScalar);
 }
 void WriteVectorTimesMatrix(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef vector,
                             IdRef matrix)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(vector);
     blob->push_back(matrix);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpVectorTimesMatrix);
 }
 void WriteMatrixTimesVector(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef matrix,
                             IdRef vector)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(matrix);
     blob->push_back(vector);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpMatrixTimesVector);
 }
 void WriteMatrixTimesMatrix(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef leftMatrix,
                             IdRef rightMatrix)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(leftMatrix);
     blob->push_back(rightMatrix);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpMatrixTimesMatrix);
 }
 void WriteOuterProduct(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        IdRef vector1,
                        IdRef vector2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(vector1);
     blob->push_back(vector2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpOuterProduct);
 }
 void WriteDot(Blob *blob,
-              IdResultType idResultType,
-              IdResult idResult,
+              IdResultType idResultType1,
+              IdResult idResult2,
               IdRef vector1,
               IdRef vector2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(vector1);
     blob->push_back(vector2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpDot);
 }
 void WriteIAddCarry(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
+                    IdResultType idResultType1,
+                    IdResult idResult2,
                     IdRef operand1,
                     IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpIAddCarry);
 }
 void WriteISubBorrow(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef operand1,
                      IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpISubBorrow);
 }
 void WriteUMulExtended(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        IdRef operand1,
                        IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpUMulExtended);
 }
 void WriteSMulExtended(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        IdRef operand1,
                        IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSMulExtended);
 }
-void WriteAny(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef vector)
+void WriteAny(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef vector)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(vector);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAny);
 }
-void WriteAll(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef vector)
+void WriteAll(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef vector)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(vector);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAll);
 }
-void WriteIsNan(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef x)
+void WriteIsNan(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef x)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(x);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpIsNan);
 }
-void WriteIsInf(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef x)
+void WriteIsInf(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef x)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(x);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpIsInf);
 }
 void WriteLogicalEqual(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        IdRef operand1,
                        IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpLogicalEqual);
 }
 void WriteLogicalNotEqual(Blob *blob,
-                          IdResultType idResultType,
-                          IdResult idResult,
+                          IdResultType idResultType1,
+                          IdResult idResult2,
                           IdRef operand1,
                           IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpLogicalNotEqual);
 }
 void WriteLogicalOr(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
+                    IdResultType idResultType1,
+                    IdResult idResult2,
                     IdRef operand1,
                     IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpLogicalOr);
 }
 void WriteLogicalAnd(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef operand1,
                      IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpLogicalAnd);
 }
-void WriteLogicalNot(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef operand)
+void WriteLogicalNot(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef operand)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpLogicalNot);
 }
 void WriteSelect(Blob *blob,
-                 IdResultType idResultType,
-                 IdResult idResult,
+                 IdResultType idResultType1,
+                 IdResult idResult2,
                  IdRef condition,
                  IdRef object1,
                  IdRef object2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(condition);
     blob->push_back(object1);
     blob->push_back(object2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSelect);
 }
 void WriteIEqual(Blob *blob,
-                 IdResultType idResultType,
-                 IdResult idResult,
+                 IdResultType idResultType1,
+                 IdResult idResult2,
                  IdRef operand1,
                  IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpIEqual);
 }
 void WriteINotEqual(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
+                    IdResultType idResultType1,
+                    IdResult idResult2,
                     IdRef operand1,
                     IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpINotEqual);
 }
 void WriteUGreaterThan(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        IdRef operand1,
                        IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpUGreaterThan);
 }
 void WriteSGreaterThan(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        IdRef operand1,
                        IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSGreaterThan);
 }
 void WriteUGreaterThanEqual(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef operand1,
                             IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpUGreaterThanEqual);
 }
 void WriteSGreaterThanEqual(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef operand1,
                             IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSGreaterThanEqual);
 }
 void WriteULessThan(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
+                    IdResultType idResultType1,
+                    IdResult idResult2,
                     IdRef operand1,
                     IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpULessThan);
 }
 void WriteSLessThan(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
+                    IdResultType idResultType1,
+                    IdResult idResult2,
                     IdRef operand1,
                     IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSLessThan);
 }
 void WriteULessThanEqual(Blob *blob,
-                         IdResultType idResultType,
-                         IdResult idResult,
+                         IdResultType idResultType1,
+                         IdResult idResult2,
                          IdRef operand1,
                          IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpULessThanEqual);
 }
 void WriteSLessThanEqual(Blob *blob,
-                         IdResultType idResultType,
-                         IdResult idResult,
+                         IdResultType idResultType1,
+                         IdResult idResult2,
                          IdRef operand1,
                          IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSLessThanEqual);
 }
 void WriteFOrdEqual(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
+                    IdResultType idResultType1,
+                    IdResult idResult2,
                     IdRef operand1,
                     IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFOrdEqual);
 }
 void WriteFUnordEqual(Blob *blob,
-                      IdResultType idResultType,
-                      IdResult idResult,
+                      IdResultType idResultType1,
+                      IdResult idResult2,
                       IdRef operand1,
                       IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFUnordEqual);
 }
 void WriteFOrdNotEqual(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        IdRef operand1,
                        IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFOrdNotEqual);
 }
 void WriteFUnordNotEqual(Blob *blob,
-                         IdResultType idResultType,
-                         IdResult idResult,
+                         IdResultType idResultType1,
+                         IdResult idResult2,
                          IdRef operand1,
                          IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFUnordNotEqual);
 }
 void WriteFOrdLessThan(Blob *blob,
-                       IdResultType idResultType,
-                       IdResult idResult,
+                       IdResultType idResultType1,
+                       IdResult idResult2,
                        IdRef operand1,
                        IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFOrdLessThan);
 }
 void WriteFUnordLessThan(Blob *blob,
-                         IdResultType idResultType,
-                         IdResult idResult,
+                         IdResultType idResultType1,
+                         IdResult idResult2,
                          IdRef operand1,
                          IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFUnordLessThan);
 }
 void WriteFOrdGreaterThan(Blob *blob,
-                          IdResultType idResultType,
-                          IdResult idResult,
+                          IdResultType idResultType1,
+                          IdResult idResult2,
                           IdRef operand1,
                           IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFOrdGreaterThan);
 }
 void WriteFUnordGreaterThan(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef operand1,
                             IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFUnordGreaterThan);
 }
 void WriteFOrdLessThanEqual(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef operand1,
                             IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFOrdLessThanEqual);
 }
 void WriteFUnordLessThanEqual(Blob *blob,
-                              IdResultType idResultType,
-                              IdResult idResult,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
                               IdRef operand1,
                               IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFUnordLessThanEqual);
 }
 void WriteFOrdGreaterThanEqual(Blob *blob,
-                               IdResultType idResultType,
-                               IdResult idResult,
+                               IdResultType idResultType1,
+                               IdResult idResult2,
                                IdRef operand1,
                                IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFOrdGreaterThanEqual);
 }
 void WriteFUnordGreaterThanEqual(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
+                                 IdResultType idResultType1,
+                                 IdResult idResult2,
                                  IdRef operand1,
                                  IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFUnordGreaterThanEqual);
 }
 void WriteShiftRightLogical(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef base,
                             IdRef shift)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(base);
     blob->push_back(shift);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpShiftRightLogical);
 }
 void WriteShiftRightArithmetic(Blob *blob,
-                               IdResultType idResultType,
-                               IdResult idResult,
+                               IdResultType idResultType1,
+                               IdResult idResult2,
                                IdRef base,
                                IdRef shift)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(base);
     blob->push_back(shift);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpShiftRightArithmetic);
 }
 void WriteShiftLeftLogical(Blob *blob,
-                           IdResultType idResultType,
-                           IdResult idResult,
+                           IdResultType idResultType1,
+                           IdResult idResult2,
                            IdRef base,
                            IdRef shift)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(base);
     blob->push_back(shift);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpShiftLeftLogical);
 }
 void WriteBitwiseOr(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
+                    IdResultType idResultType1,
+                    IdResult idResult2,
                     IdRef operand1,
                     IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpBitwiseOr);
 }
 void WriteBitwiseXor(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef operand1,
                      IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpBitwiseXor);
 }
 void WriteBitwiseAnd(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef operand1,
                      IdRef operand2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand1);
     blob->push_back(operand2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpBitwiseAnd);
 }
-void WriteNot(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef operand)
+void WriteNot(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef operand)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(operand);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpNot);
 }
 void WriteBitFieldInsert(Blob *blob,
-                         IdResultType idResultType,
-                         IdResult idResult,
+                         IdResultType idResultType1,
+                         IdResult idResult2,
                          IdRef base,
                          IdRef insert,
                          IdRef offset,
@@ -2232,8 +2240,8 @@ void WriteBitFieldInsert(Blob *blob,
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(base);
     blob->push_back(insert);
     blob->push_back(offset);
@@ -2241,133 +2249,133 @@ void WriteBitFieldInsert(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpBitFieldInsert);
 }
 void WriteBitFieldSExtract(Blob *blob,
-                           IdResultType idResultType,
-                           IdResult idResult,
+                           IdResultType idResultType1,
+                           IdResult idResult2,
                            IdRef base,
                            IdRef offset,
                            IdRef count)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(base);
     blob->push_back(offset);
     blob->push_back(count);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpBitFieldSExtract);
 }
 void WriteBitFieldUExtract(Blob *blob,
-                           IdResultType idResultType,
-                           IdResult idResult,
+                           IdResultType idResultType1,
+                           IdResult idResult2,
                            IdRef base,
                            IdRef offset,
                            IdRef count)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(base);
     blob->push_back(offset);
     blob->push_back(count);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpBitFieldUExtract);
 }
-void WriteBitReverse(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef base)
+void WriteBitReverse(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef base)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(base);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpBitReverse);
 }
-void WriteBitCount(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef base)
+void WriteBitCount(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef base)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(base);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpBitCount);
 }
-void WriteDPdx(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef p)
+void WriteDPdx(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef p)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(p);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpDPdx);
 }
-void WriteDPdy(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef p)
+void WriteDPdy(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef p)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(p);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpDPdy);
 }
-void WriteFwidth(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef p)
+void WriteFwidth(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef p)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(p);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFwidth);
 }
-void WriteDPdxFine(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef p)
+void WriteDPdxFine(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef p)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(p);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpDPdxFine);
 }
-void WriteDPdyFine(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef p)
+void WriteDPdyFine(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef p)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(p);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpDPdyFine);
 }
-void WriteFwidthFine(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef p)
+void WriteFwidthFine(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef p)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(p);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFwidthFine);
 }
-void WriteDPdxCoarse(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef p)
+void WriteDPdxCoarse(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef p)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(p);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpDPdxCoarse);
 }
-void WriteDPdyCoarse(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef p)
+void WriteDPdyCoarse(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef p)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(p);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpDPdyCoarse);
 }
-void WriteFwidthCoarse(Blob *blob, IdResultType idResultType, IdResult idResult, IdRef p)
+void WriteFwidthCoarse(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef p)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(p);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpFwidthCoarse);
 }
@@ -2417,58 +2425,58 @@ void WriteMemoryBarrier(Blob *blob, IdScope memory, IdMemorySemantics semantics)
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpMemoryBarrier);
 }
 void WriteAtomicLoad(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef pointer,
-                     IdScope scope,
+                     IdScope memory,
                      IdMemorySemantics semantics)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicLoad);
 }
 void WriteAtomicStore(Blob *blob,
                       IdRef pointer,
-                      IdScope scope,
+                      IdScope memory,
                       IdMemorySemantics semantics,
                       IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicStore);
 }
 void WriteAtomicExchange(Blob *blob,
-                         IdResultType idResultType,
-                         IdResult idResult,
+                         IdResultType idResultType1,
+                         IdResult idResult2,
                          IdRef pointer,
-                         IdScope scope,
+                         IdScope memory,
                          IdMemorySemantics semantics,
                          IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicExchange);
 }
 void WriteAtomicCompareExchange(Blob *blob,
-                                IdResultType idResultType,
-                                IdResult idResult,
+                                IdResultType idResultType1,
+                                IdResult idResult2,
                                 IdRef pointer,
-                                IdScope scope,
+                                IdScope memory,
                                 IdMemorySemantics equal,
                                 IdMemorySemantics unequal,
                                 IdRef value,
@@ -2476,10 +2484,10 @@ void WriteAtomicCompareExchange(Blob *blob,
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(equal);
     blob->push_back(unequal);
     blob->push_back(value);
@@ -2487,208 +2495,208 @@ void WriteAtomicCompareExchange(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicCompareExchange);
 }
 void WriteAtomicIIncrement(Blob *blob,
-                           IdResultType idResultType,
-                           IdResult idResult,
+                           IdResultType idResultType1,
+                           IdResult idResult2,
                            IdRef pointer,
-                           IdScope scope,
+                           IdScope memory,
                            IdMemorySemantics semantics)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicIIncrement);
 }
 void WriteAtomicIDecrement(Blob *blob,
-                           IdResultType idResultType,
-                           IdResult idResult,
+                           IdResultType idResultType1,
+                           IdResult idResult2,
                            IdRef pointer,
-                           IdScope scope,
+                           IdScope memory,
                            IdMemorySemantics semantics)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicIDecrement);
 }
 void WriteAtomicIAdd(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef pointer,
-                     IdScope scope,
+                     IdScope memory,
                      IdMemorySemantics semantics,
                      IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicIAdd);
 }
 void WriteAtomicISub(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef pointer,
-                     IdScope scope,
+                     IdScope memory,
                      IdMemorySemantics semantics,
                      IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicISub);
 }
 void WriteAtomicSMin(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef pointer,
-                     IdScope scope,
+                     IdScope memory,
                      IdMemorySemantics semantics,
                      IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicSMin);
 }
 void WriteAtomicUMin(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef pointer,
-                     IdScope scope,
+                     IdScope memory,
                      IdMemorySemantics semantics,
                      IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicUMin);
 }
 void WriteAtomicSMax(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef pointer,
-                     IdScope scope,
+                     IdScope memory,
                      IdMemorySemantics semantics,
                      IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicSMax);
 }
 void WriteAtomicUMax(Blob *blob,
-                     IdResultType idResultType,
-                     IdResult idResult,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
                      IdRef pointer,
-                     IdScope scope,
+                     IdScope memory,
                      IdMemorySemantics semantics,
                      IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicUMax);
 }
 void WriteAtomicAnd(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
+                    IdResultType idResultType1,
+                    IdResult idResult2,
                     IdRef pointer,
-                    IdScope scope,
+                    IdScope memory,
                     IdMemorySemantics semantics,
                     IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicAnd);
 }
 void WriteAtomicOr(Blob *blob,
-                   IdResultType idResultType,
-                   IdResult idResult,
+                   IdResultType idResultType1,
+                   IdResult idResult2,
                    IdRef pointer,
-                   IdScope scope,
+                   IdScope memory,
                    IdMemorySemantics semantics,
                    IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicOr);
 }
 void WriteAtomicXor(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
+                    IdResultType idResultType1,
+                    IdResult idResult2,
                     IdRef pointer,
-                    IdScope scope,
+                    IdScope memory,
                     IdMemorySemantics semantics,
                     IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(pointer);
-    blob->push_back(scope);
+    blob->push_back(memory);
     blob->push_back(semantics);
     blob->push_back(value);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpAtomicXor);
 }
 void WritePhi(Blob *blob,
-              IdResultType idResultType,
-              IdResult idResult,
+              IdResultType idResultType1,
+              IdResult idResult2,
               const PairIdRefIdRefList &variableParentPairList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     for (const auto &operand : variableParentPairList)
     {
         blob->push_back(operand.id1);
@@ -2699,28 +2707,28 @@ void WritePhi(Blob *blob,
 void WriteLoopMerge(Blob *blob,
                     IdRef mergeBlock,
                     IdRef continueTarget,
-                    spv::LoopControlMask loopControl)
+                    spv::LoopControlMask loopControl3)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
     blob->push_back(mergeBlock);
     blob->push_back(continueTarget);
-    blob->push_back(loopControl);
+    blob->push_back(loopControl3);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpLoopMerge);
 }
-void WriteSelectionMerge(Blob *blob, IdRef mergeBlock, spv::SelectionControlMask selectionControl)
+void WriteSelectionMerge(Blob *blob, IdRef mergeBlock, spv::SelectionControlMask selectionControl2)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
     blob->push_back(mergeBlock);
-    blob->push_back(selectionControl);
+    blob->push_back(selectionControl2);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSelectionMerge);
 }
-void WriteLabel(Blob *blob, IdResult idResult)
+void WriteLabel(Blob *blob, IdResult idResult1)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResult);
+    blob->push_back(idResult1);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpLabel);
 }
 void WriteBranch(Blob *blob, IdRef targetLabel)
@@ -2791,195 +2799,23 @@ void WriteUnreachable(Blob *blob)
 
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpUnreachable);
 }
-void WriteGroupAll(Blob *blob,
-                   IdResultType idResultType,
-                   IdResult idResult,
-                   IdScope execution,
-                   IdRef predicate)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(predicate);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupAll);
-}
-void WriteGroupAny(Blob *blob,
-                   IdResultType idResultType,
-                   IdResult idResult,
-                   IdScope execution,
-                   IdRef predicate)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(predicate);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupAny);
-}
-void WriteGroupBroadcast(Blob *blob,
-                         IdResultType idResultType,
-                         IdResult idResult,
-                         IdScope execution,
-                         IdRef value,
-                         IdRef localId)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(value);
-    blob->push_back(localId);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupBroadcast);
-}
-void WriteGroupIAdd(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
-                    IdScope execution,
-                    spv::GroupOperation operation,
-                    IdRef x)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupIAdd);
-}
-void WriteGroupFAdd(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
-                    IdScope execution,
-                    spv::GroupOperation operation,
-                    IdRef x)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupFAdd);
-}
-void WriteGroupFMin(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
-                    IdScope execution,
-                    spv::GroupOperation operation,
-                    IdRef x)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupFMin);
-}
-void WriteGroupUMin(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
-                    IdScope execution,
-                    spv::GroupOperation operation,
-                    IdRef x)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupUMin);
-}
-void WriteGroupSMin(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
-                    IdScope execution,
-                    spv::GroupOperation operation,
-                    IdRef x)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupSMin);
-}
-void WriteGroupFMax(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
-                    IdScope execution,
-                    spv::GroupOperation operation,
-                    IdRef x)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupFMax);
-}
-void WriteGroupUMax(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
-                    IdScope execution,
-                    spv::GroupOperation operation,
-                    IdRef x)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupUMax);
-}
-void WriteGroupSMax(Blob *blob,
-                    IdResultType idResultType,
-                    IdResult idResult,
-                    IdScope execution,
-                    spv::GroupOperation operation,
-                    IdRef x)
-{
-    const size_t startSize = blob->size();
-    blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupSMax);
-}
 void WriteImageSparseSampleImplicitLod(Blob *blob,
-                                       IdResultType idResultType,
-                                       IdResult idResult,
+                                       IdResultType idResultType1,
+                                       IdResult idResult2,
                                        IdRef sampledImage,
                                        IdRef coordinate,
-                                       const spv::ImageOperandsMask *imageOperands,
+                                       const spv::ImageOperandsMask *imageOperands5,
                                        const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
-    if (imageOperands)
+    if (imageOperands5)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands5);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -2989,20 +2825,20 @@ void WriteImageSparseSampleImplicitLod(Blob *blob,
         MakeLengthOp(blob->size() - startSize, spv::OpImageSparseSampleImplicitLod);
 }
 void WriteImageSparseSampleExplicitLod(Blob *blob,
-                                       IdResultType idResultType,
-                                       IdResult idResult,
+                                       IdResultType idResultType1,
+                                       IdResult idResult2,
                                        IdRef sampledImage,
                                        IdRef coordinate,
-                                       spv::ImageOperandsMask imageOperands,
+                                       spv::ImageOperandsMask imageOperands5,
                                        const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
-    blob->push_back(imageOperands);
+    blob->push_back(imageOperands5);
     for (const auto &operand : imageOperandIdsList)
     {
         blob->push_back(operand);
@@ -3011,24 +2847,24 @@ void WriteImageSparseSampleExplicitLod(Blob *blob,
         MakeLengthOp(blob->size() - startSize, spv::OpImageSparseSampleExplicitLod);
 }
 void WriteImageSparseSampleDrefImplicitLod(Blob *blob,
-                                           IdResultType idResultType,
-                                           IdResult idResult,
+                                           IdResultType idResultType1,
+                                           IdResult idResult2,
                                            IdRef sampledImage,
                                            IdRef coordinate,
                                            IdRef dref,
-                                           const spv::ImageOperandsMask *imageOperands,
+                                           const spv::ImageOperandsMask *imageOperands6,
                                            const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(dref);
-    if (imageOperands)
+    if (imageOperands6)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands6);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -3038,22 +2874,22 @@ void WriteImageSparseSampleDrefImplicitLod(Blob *blob,
         MakeLengthOp(blob->size() - startSize, spv::OpImageSparseSampleDrefImplicitLod);
 }
 void WriteImageSparseSampleDrefExplicitLod(Blob *blob,
-                                           IdResultType idResultType,
-                                           IdResult idResult,
+                                           IdResultType idResultType1,
+                                           IdResult idResult2,
                                            IdRef sampledImage,
                                            IdRef coordinate,
                                            IdRef dref,
-                                           spv::ImageOperandsMask imageOperands,
+                                           spv::ImageOperandsMask imageOperands6,
                                            const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(dref);
-    blob->push_back(imageOperands);
+    blob->push_back(imageOperands6);
     for (const auto &operand : imageOperandIdsList)
     {
         blob->push_back(operand);
@@ -3062,22 +2898,22 @@ void WriteImageSparseSampleDrefExplicitLod(Blob *blob,
         MakeLengthOp(blob->size() - startSize, spv::OpImageSparseSampleDrefExplicitLod);
 }
 void WriteImageSparseSampleProjImplicitLod(Blob *blob,
-                                           IdResultType idResultType,
-                                           IdResult idResult,
+                                           IdResultType idResultType1,
+                                           IdResult idResult2,
                                            IdRef sampledImage,
                                            IdRef coordinate,
-                                           const spv::ImageOperandsMask *imageOperands,
+                                           const spv::ImageOperandsMask *imageOperands5,
                                            const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
-    if (imageOperands)
+    if (imageOperands5)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands5);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -3087,20 +2923,20 @@ void WriteImageSparseSampleProjImplicitLod(Blob *blob,
         MakeLengthOp(blob->size() - startSize, spv::OpImageSparseSampleProjImplicitLod);
 }
 void WriteImageSparseSampleProjExplicitLod(Blob *blob,
-                                           IdResultType idResultType,
-                                           IdResult idResult,
+                                           IdResultType idResultType1,
+                                           IdResult idResult2,
                                            IdRef sampledImage,
                                            IdRef coordinate,
-                                           spv::ImageOperandsMask imageOperands,
+                                           spv::ImageOperandsMask imageOperands5,
                                            const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
-    blob->push_back(imageOperands);
+    blob->push_back(imageOperands5);
     for (const auto &operand : imageOperandIdsList)
     {
         blob->push_back(operand);
@@ -3109,24 +2945,24 @@ void WriteImageSparseSampleProjExplicitLod(Blob *blob,
         MakeLengthOp(blob->size() - startSize, spv::OpImageSparseSampleProjExplicitLod);
 }
 void WriteImageSparseSampleProjDrefImplicitLod(Blob *blob,
-                                               IdResultType idResultType,
-                                               IdResult idResult,
+                                               IdResultType idResultType1,
+                                               IdResult idResult2,
                                                IdRef sampledImage,
                                                IdRef coordinate,
                                                IdRef dref,
-                                               const spv::ImageOperandsMask *imageOperands,
+                                               const spv::ImageOperandsMask *imageOperands6,
                                                const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(dref);
-    if (imageOperands)
+    if (imageOperands6)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands6);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -3136,22 +2972,22 @@ void WriteImageSparseSampleProjDrefImplicitLod(Blob *blob,
         MakeLengthOp(blob->size() - startSize, spv::OpImageSparseSampleProjDrefImplicitLod);
 }
 void WriteImageSparseSampleProjDrefExplicitLod(Blob *blob,
-                                               IdResultType idResultType,
-                                               IdResult idResult,
+                                               IdResultType idResultType1,
+                                               IdResult idResult2,
                                                IdRef sampledImage,
                                                IdRef coordinate,
                                                IdRef dref,
-                                               spv::ImageOperandsMask imageOperands,
+                                               spv::ImageOperandsMask imageOperands6,
                                                const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(dref);
-    blob->push_back(imageOperands);
+    blob->push_back(imageOperands6);
     for (const auto &operand : imageOperandIdsList)
     {
         blob->push_back(operand);
@@ -3160,22 +2996,22 @@ void WriteImageSparseSampleProjDrefExplicitLod(Blob *blob,
         MakeLengthOp(blob->size() - startSize, spv::OpImageSparseSampleProjDrefExplicitLod);
 }
 void WriteImageSparseFetch(Blob *blob,
-                           IdResultType idResultType,
-                           IdResult idResult,
+                           IdResultType idResultType1,
+                           IdResult idResult2,
                            IdRef image,
                            IdRef coordinate,
-                           const spv::ImageOperandsMask *imageOperands,
+                           const spv::ImageOperandsMask *imageOperands5,
                            const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(image);
     blob->push_back(coordinate);
-    if (imageOperands)
+    if (imageOperands5)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands5);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -3184,24 +3020,24 @@ void WriteImageSparseFetch(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSparseFetch);
 }
 void WriteImageSparseGather(Blob *blob,
-                            IdResultType idResultType,
-                            IdResult idResult,
+                            IdResultType idResultType1,
+                            IdResult idResult2,
                             IdRef sampledImage,
                             IdRef coordinate,
                             IdRef component,
-                            const spv::ImageOperandsMask *imageOperands,
+                            const spv::ImageOperandsMask *imageOperands6,
                             const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(component);
-    if (imageOperands)
+    if (imageOperands6)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands6);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -3210,24 +3046,24 @@ void WriteImageSparseGather(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSparseGather);
 }
 void WriteImageSparseDrefGather(Blob *blob,
-                                IdResultType idResultType,
-                                IdResult idResult,
+                                IdResultType idResultType1,
+                                IdResult idResult2,
                                 IdRef sampledImage,
                                 IdRef coordinate,
                                 IdRef dref,
-                                const spv::ImageOperandsMask *imageOperands,
+                                const spv::ImageOperandsMask *imageOperands6,
                                 const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(sampledImage);
     blob->push_back(coordinate);
     blob->push_back(dref);
-    if (imageOperands)
+    if (imageOperands6)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands6);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -3236,14 +3072,14 @@ void WriteImageSparseDrefGather(Blob *blob,
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSparseDrefGather);
 }
 void WriteImageSparseTexelsResident(Blob *blob,
-                                    IdResultType idResultType,
-                                    IdResult idResult,
+                                    IdResultType idResultType1,
+                                    IdResult idResult2,
                                     IdRef residentCode)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(residentCode);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSparseTexelsResident);
 }
@@ -3255,22 +3091,22 @@ void WriteNoLine(Blob *blob)
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpNoLine);
 }
 void WriteImageSparseRead(Blob *blob,
-                          IdResultType idResultType,
-                          IdResult idResult,
+                          IdResultType idResultType1,
+                          IdResult idResult2,
                           IdRef image,
                           IdRef coordinate,
-                          const spv::ImageOperandsMask *imageOperands,
+                          const spv::ImageOperandsMask *imageOperands5,
                           const IdRefList &imageOperandIdsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(image);
     blob->push_back(coordinate);
-    if (imageOperands)
+    if (imageOperands5)
     {
-        blob->push_back(*imageOperands);
+        blob->push_back(*imageOperands5);
     }
     for (const auto &operand : imageOperandIdsList)
     {
@@ -3278,133 +3114,800 @@ void WriteImageSparseRead(Blob *blob,
     }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpImageSparseRead);
 }
-void WriteGroupIAddNonUniformAMD(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
-                                 IdScope execution,
-                                 spv::GroupOperation operation,
-                                 IdRef x)
+void WriteModuleProcessed(Blob *blob, LiteralString process)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupIAddNonUniformAMD);
+    {
+        size_t d = blob->size();
+        blob->resize(d + strlen(process) / 4 + 1, 0);
+        ASSERT(IsLittleEndian());
+        strcpy(reinterpret_cast<char *>(blob->data() + d), process);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpModuleProcessed);
 }
-void WriteGroupFAddNonUniformAMD(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
-                                 IdScope execution,
-                                 spv::GroupOperation operation,
-                                 IdRef x)
+void WriteExecutionModeId(Blob *blob,
+                          IdRef entryPoint,
+                          spv::ExecutionMode mode,
+                          const LiteralIntegerList &operandsList)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
-    blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupFAddNonUniformAMD);
+    blob->push_back(entryPoint);
+    blob->push_back(mode);
+    for (const auto &operand : operandsList)
+    {
+        blob->push_back(operand);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpExecutionModeId);
 }
-void WriteGroupFMinNonUniformAMD(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
-                                 IdScope execution,
-                                 spv::GroupOperation operation,
-                                 IdRef x)
+void WriteGroupNonUniformElect(Blob *blob,
+                               IdResultType idResultType1,
+                               IdResult idResult2,
+                               IdScope execution)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupFMinNonUniformAMD);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformElect);
 }
-void WriteGroupUMinNonUniformAMD(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
-                                 IdScope execution,
-                                 spv::GroupOperation operation,
-                                 IdRef x)
+void WriteGroupNonUniformAll(Blob *blob,
+                             IdResultType idResultType1,
+                             IdResult idResult2,
+                             IdScope execution,
+                             IdRef predicate)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupUMinNonUniformAMD);
+    blob->push_back(predicate);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformAll);
 }
-void WriteGroupSMinNonUniformAMD(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
-                                 IdScope execution,
-                                 spv::GroupOperation operation,
-                                 IdRef x)
+void WriteGroupNonUniformAny(Blob *blob,
+                             IdResultType idResultType1,
+                             IdResult idResult2,
+                             IdScope execution,
+                             IdRef predicate)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupSMinNonUniformAMD);
+    blob->push_back(predicate);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformAny);
 }
-void WriteGroupFMaxNonUniformAMD(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
-                                 IdScope execution,
-                                 spv::GroupOperation operation,
-                                 IdRef x)
+void WriteGroupNonUniformAllEqual(Blob *blob,
+                                  IdResultType idResultType1,
+                                  IdResult idResult2,
+                                  IdScope execution,
+                                  IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupFMaxNonUniformAMD);
+    blob->push_back(value);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformAllEqual);
 }
-void WriteGroupUMaxNonUniformAMD(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
-                                 IdScope execution,
-                                 spv::GroupOperation operation,
-                                 IdRef x)
+void WriteGroupNonUniformBroadcast(Blob *blob,
+                                   IdResultType idResultType1,
+                                   IdResult idResult2,
+                                   IdScope execution,
+                                   IdRef value,
+                                   IdRef id)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(execution);
-    blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupUMaxNonUniformAMD);
+    blob->push_back(value);
+    blob->push_back(id);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBroadcast);
 }
-void WriteGroupSMaxNonUniformAMD(Blob *blob,
-                                 IdResultType idResultType,
-                                 IdResult idResult,
-                                 IdScope execution,
-                                 spv::GroupOperation operation,
-                                 IdRef x)
+void WriteGroupNonUniformBroadcastFirst(Blob *blob,
+                                        IdResultType idResultType1,
+                                        IdResult idResult2,
+                                        IdScope execution,
+                                        IdRef value)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
-    blob->push_back(idResultType);
-    blob->push_back(idResult);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    (*blob)[startSize] =
+        MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBroadcastFirst);
+}
+void WriteGroupNonUniformBallot(Blob *blob,
+                                IdResultType idResultType1,
+                                IdResult idResult2,
+                                IdScope execution,
+                                IdRef predicate)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(predicate);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBallot);
+}
+void WriteGroupNonUniformInverseBallot(Blob *blob,
+                                       IdResultType idResultType1,
+                                       IdResult idResult2,
+                                       IdScope execution,
+                                       IdRef value)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    (*blob)[startSize] =
+        MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformInverseBallot);
+}
+void WriteGroupNonUniformBallotBitExtract(Blob *blob,
+                                          IdResultType idResultType1,
+                                          IdResult idResult2,
+                                          IdScope execution,
+                                          IdRef value,
+                                          IdRef index)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    blob->push_back(index);
+    (*blob)[startSize] =
+        MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBallotBitExtract);
+}
+void WriteGroupNonUniformBallotBitCount(Blob *blob,
+                                        IdResultType idResultType1,
+                                        IdResult idResult2,
+                                        IdScope execution,
+                                        spv::GroupOperation operation,
+                                        IdRef value)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
     blob->push_back(execution);
     blob->push_back(operation);
-    blob->push_back(x);
-    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupSMaxNonUniformAMD);
+    blob->push_back(value);
+    (*blob)[startSize] =
+        MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBallotBitCount);
+}
+void WriteGroupNonUniformBallotFindLSB(Blob *blob,
+                                       IdResultType idResultType1,
+                                       IdResult idResult2,
+                                       IdScope execution,
+                                       IdRef value)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    (*blob)[startSize] =
+        MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBallotFindLSB);
+}
+void WriteGroupNonUniformBallotFindMSB(Blob *blob,
+                                       IdResultType idResultType1,
+                                       IdResult idResult2,
+                                       IdScope execution,
+                                       IdRef value)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    (*blob)[startSize] =
+        MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBallotFindMSB);
+}
+void WriteGroupNonUniformShuffle(Blob *blob,
+                                 IdResultType idResultType1,
+                                 IdResult idResult2,
+                                 IdScope execution,
+                                 IdRef value,
+                                 IdRef id)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    blob->push_back(id);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformShuffle);
+}
+void WriteGroupNonUniformShuffleXor(Blob *blob,
+                                    IdResultType idResultType1,
+                                    IdResult idResult2,
+                                    IdScope execution,
+                                    IdRef value,
+                                    IdRef mask)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    blob->push_back(mask);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformShuffleXor);
+}
+void WriteGroupNonUniformShuffleUp(Blob *blob,
+                                   IdResultType idResultType1,
+                                   IdResult idResult2,
+                                   IdScope execution,
+                                   IdRef value,
+                                   IdRef delta)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    blob->push_back(delta);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformShuffleUp);
+}
+void WriteGroupNonUniformShuffleDown(Blob *blob,
+                                     IdResultType idResultType1,
+                                     IdResult idResult2,
+                                     IdScope execution,
+                                     IdRef value,
+                                     IdRef delta)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    blob->push_back(delta);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformShuffleDown);
+}
+void WriteGroupNonUniformIAdd(Blob *blob,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
+                              IdScope execution,
+                              spv::GroupOperation operation,
+                              IdRef value,
+                              const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformIAdd);
+}
+void WriteGroupNonUniformFAdd(Blob *blob,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
+                              IdScope execution,
+                              spv::GroupOperation operation,
+                              IdRef value,
+                              const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformFAdd);
+}
+void WriteGroupNonUniformIMul(Blob *blob,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
+                              IdScope execution,
+                              spv::GroupOperation operation,
+                              IdRef value,
+                              const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformIMul);
+}
+void WriteGroupNonUniformFMul(Blob *blob,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
+                              IdScope execution,
+                              spv::GroupOperation operation,
+                              IdRef value,
+                              const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformFMul);
+}
+void WriteGroupNonUniformSMin(Blob *blob,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
+                              IdScope execution,
+                              spv::GroupOperation operation,
+                              IdRef value,
+                              const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformSMin);
+}
+void WriteGroupNonUniformUMin(Blob *blob,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
+                              IdScope execution,
+                              spv::GroupOperation operation,
+                              IdRef value,
+                              const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformUMin);
+}
+void WriteGroupNonUniformFMin(Blob *blob,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
+                              IdScope execution,
+                              spv::GroupOperation operation,
+                              IdRef value,
+                              const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformFMin);
+}
+void WriteGroupNonUniformSMax(Blob *blob,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
+                              IdScope execution,
+                              spv::GroupOperation operation,
+                              IdRef value,
+                              const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformSMax);
+}
+void WriteGroupNonUniformUMax(Blob *blob,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
+                              IdScope execution,
+                              spv::GroupOperation operation,
+                              IdRef value,
+                              const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformUMax);
+}
+void WriteGroupNonUniformFMax(Blob *blob,
+                              IdResultType idResultType1,
+                              IdResult idResult2,
+                              IdScope execution,
+                              spv::GroupOperation operation,
+                              IdRef value,
+                              const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformFMax);
+}
+void WriteGroupNonUniformBitwiseAnd(Blob *blob,
+                                    IdResultType idResultType1,
+                                    IdResult idResult2,
+                                    IdScope execution,
+                                    spv::GroupOperation operation,
+                                    IdRef value,
+                                    const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBitwiseAnd);
+}
+void WriteGroupNonUniformBitwiseOr(Blob *blob,
+                                   IdResultType idResultType1,
+                                   IdResult idResult2,
+                                   IdScope execution,
+                                   spv::GroupOperation operation,
+                                   IdRef value,
+                                   const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBitwiseOr);
+}
+void WriteGroupNonUniformBitwiseXor(Blob *blob,
+                                    IdResultType idResultType1,
+                                    IdResult idResult2,
+                                    IdScope execution,
+                                    spv::GroupOperation operation,
+                                    IdRef value,
+                                    const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformBitwiseXor);
+}
+void WriteGroupNonUniformLogicalAnd(Blob *blob,
+                                    IdResultType idResultType1,
+                                    IdResult idResult2,
+                                    IdScope execution,
+                                    spv::GroupOperation operation,
+                                    IdRef value,
+                                    const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformLogicalAnd);
+}
+void WriteGroupNonUniformLogicalOr(Blob *blob,
+                                   IdResultType idResultType1,
+                                   IdResult idResult2,
+                                   IdScope execution,
+                                   spv::GroupOperation operation,
+                                   IdRef value,
+                                   const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformLogicalOr);
+}
+void WriteGroupNonUniformLogicalXor(Blob *blob,
+                                    IdResultType idResultType1,
+                                    IdResult idResult2,
+                                    IdScope execution,
+                                    spv::GroupOperation operation,
+                                    IdRef value,
+                                    const IdRef *clusterSize)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(operation);
+    blob->push_back(value);
+    if (clusterSize)
+    {
+        blob->push_back(*clusterSize);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformLogicalXor);
+}
+void WriteGroupNonUniformQuadBroadcast(Blob *blob,
+                                       IdResultType idResultType1,
+                                       IdResult idResult2,
+                                       IdScope execution,
+                                       IdRef value,
+                                       IdRef index)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    blob->push_back(index);
+    (*blob)[startSize] =
+        MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformQuadBroadcast);
+}
+void WriteGroupNonUniformQuadSwap(Blob *blob,
+                                  IdResultType idResultType1,
+                                  IdResult idResult2,
+                                  IdScope execution,
+                                  IdRef value,
+                                  IdRef direction)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(execution);
+    blob->push_back(value);
+    blob->push_back(direction);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpGroupNonUniformQuadSwap);
+}
+void WriteCopyLogical(Blob *blob, IdResultType idResultType1, IdResult idResult2, IdRef operand)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(operand);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpCopyLogical);
+}
+void WritePtrEqual(Blob *blob,
+                   IdResultType idResultType1,
+                   IdResult idResult2,
+                   IdRef operand1,
+                   IdRef operand2)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(operand1);
+    blob->push_back(operand2);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpPtrEqual);
+}
+void WritePtrNotEqual(Blob *blob,
+                      IdResultType idResultType1,
+                      IdResult idResult2,
+                      IdRef operand1,
+                      IdRef operand2)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(operand1);
+    blob->push_back(operand2);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpPtrNotEqual);
+}
+void WriteSDot(Blob *blob,
+               IdResultType idResultType1,
+               IdResult idResult2,
+               IdRef vector1,
+               IdRef vector2,
+               const spv::PackedVectorFormat *packedVectorFormat)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(vector1);
+    blob->push_back(vector2);
+    if (packedVectorFormat)
+    {
+        blob->push_back(*packedVectorFormat);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSDot);
+}
+void WriteUDot(Blob *blob,
+               IdResultType idResultType1,
+               IdResult idResult2,
+               IdRef vector1,
+               IdRef vector2,
+               const spv::PackedVectorFormat *packedVectorFormat)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(vector1);
+    blob->push_back(vector2);
+    if (packedVectorFormat)
+    {
+        blob->push_back(*packedVectorFormat);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpUDot);
+}
+void WriteSUDot(Blob *blob,
+                IdResultType idResultType1,
+                IdResult idResult2,
+                IdRef vector1,
+                IdRef vector2,
+                const spv::PackedVectorFormat *packedVectorFormat)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(vector1);
+    blob->push_back(vector2);
+    if (packedVectorFormat)
+    {
+        blob->push_back(*packedVectorFormat);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSUDot);
+}
+void WriteSDotAccSat(Blob *blob,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
+                     IdRef vector1,
+                     IdRef vector2,
+                     IdRef accumulator,
+                     const spv::PackedVectorFormat *packedVectorFormat)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(vector1);
+    blob->push_back(vector2);
+    blob->push_back(accumulator);
+    if (packedVectorFormat)
+    {
+        blob->push_back(*packedVectorFormat);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSDotAccSat);
+}
+void WriteUDotAccSat(Blob *blob,
+                     IdResultType idResultType1,
+                     IdResult idResult2,
+                     IdRef vector1,
+                     IdRef vector2,
+                     IdRef accumulator,
+                     const spv::PackedVectorFormat *packedVectorFormat)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(vector1);
+    blob->push_back(vector2);
+    blob->push_back(accumulator);
+    if (packedVectorFormat)
+    {
+        blob->push_back(*packedVectorFormat);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpUDotAccSat);
+}
+void WriteSUDotAccSat(Blob *blob,
+                      IdResultType idResultType1,
+                      IdResult idResult2,
+                      IdRef vector1,
+                      IdRef vector2,
+                      IdRef accumulator,
+                      const spv::PackedVectorFormat *packedVectorFormat)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    blob->push_back(vector1);
+    blob->push_back(vector2);
+    blob->push_back(accumulator);
+    if (packedVectorFormat)
+    {
+        blob->push_back(*packedVectorFormat);
+    }
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpSUDotAccSat);
 }
 void WriteBeginInvocationInterlockEXT(Blob *blob)
 {
@@ -3419,6 +3922,13 @@ void WriteEndInvocationInterlockEXT(Blob *blob)
     blob->push_back(0);
 
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpEndInvocationInterlockEXT);
+}
+void WriteDemoteToHelperInvocation(Blob *blob)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpDemoteToHelperInvocation);
 }
 
 }  // namespace spirv

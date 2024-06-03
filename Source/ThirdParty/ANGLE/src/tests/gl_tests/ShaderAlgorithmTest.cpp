@@ -118,7 +118,7 @@ TEST_P(ShaderAlgorithmTest, rgb_to_hsl_vertex_shader)
 
             ASSERT_GL_NO_ERROR();
 
-            float maxVal = std::max(sx, std::max(sy, 0.33f * sx + 0.5f * sy));
+            float maxVal = std::max({sx, sy, 0.33f * sx + 0.5f * sy});
             if (abs(maxVal - sx) <= epsilon)
             {
                 EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);

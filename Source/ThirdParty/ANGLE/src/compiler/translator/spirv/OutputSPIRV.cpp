@@ -398,7 +398,9 @@ class OutputSPIRVTraverser : public TIntermTraverser
     spirv::IdRef mCurrentFunctionId;
 };
 
-spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
+spv::StorageClass GetStorageClass(const ShCompileOptions &compileOptions,
+                                  const TType &type,
+                                  GLenum shaderType)
 {
     // Opaque uniforms (samplers, images and subpass inputs) have the UniformConstant storage class
     if (IsOpaqueType(type.getBasicType()))
@@ -488,9 +490,10 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
                                                     : spv::StorageClassInput;
 
         default:
-            // Uniform and storage buffers have the Uniform storage class.  Default uniforms are
-            // gathered in a uniform block as well. Push constants use the PushConstant storage
-            // class instead.
+            // Uniform buffers have the Uniform storage class.  Storage buffers have the Uniform
+            // storage class in SPIR-V 1.3, and the StorageBuffer storage class in SPIR-V 1.4.
+            // Default uniforms are gathered in a uniform block as well.  Push constants use the
+            // PushConstant storage class instead.
             ASSERT(type.getInterfaceBlock() != nullptr || qualifier == EvqUniform);
             // I/O blocks must have already been classified as input or output above.
             ASSERT(!IsShaderIoBlock(qualifier));
@@ -500,7 +503,9 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
                 ASSERT(type.getInterfaceBlock() != nullptr);
                 return spv::StorageClassPushConstant;
             }
-            return spv::StorageClassUniform;
+            return compileOptions.emitSPIRV14 && qualifier == EvqBuffer
+                       ? spv::StorageClassStorageBuffer
+                       : spv::StorageClassUniform;
     }
 }
 
@@ -523,7 +528,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
                                                               const TType &type,
                                                               spv::StorageClass *storageClass)
 {
-    *storageClass = GetStorageClass(type, mCompiler->getShaderType());
+    *storageClass = GetStorageClass(mCompileOptions, type, mCompiler->getShaderType());
     auto iter     = mSymbolIdMap.find(symbol);
     if (iter != mSymbolIdMap.end())
     {
@@ -701,7 +706,6 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
     const spirv::IdRef varId  = mBuilder.declareVariable(
         typeId, *storageClass, mBuilder.getDecorations(type), nullptr, name, uniqueId);
 
-    mBuilder.addEntryPointInterfaceVariableId(varId);
     spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationBuiltIn,
                          {spirv::LiteralInteger(builtInDecoration)});
 
@@ -4360,9 +4364,29 @@ spirv::IdRef OutputSPIRVTraverser::cast(spirv::IdRef value,
     // At this point, a value is loaded with the |valueType| GLSL type which is of a SPIR-V type
     // specialized by |valueTypeSpec|.  However, it's being assigned (for example through operator=,
     // used in a constructor or passed as a function argument) where the same GLSL type is expected
-    // but with different SPIR-V type specialization (|expectedTypeSpec|).  SPIR-V 1.4 has
-    // OpCopyLogical that does exactly that, but we generate SPIR-V 1.0 at the moment.
+    // but with different SPIR-V type specialization (|expectedTypeSpec|).
     //
+    // If SPIR-V 1.4 is available, use OpCopyLogical if possible.  OpCopyLogical works on arrays and
+    // structs, and only if the types are logically the same.  This means that arrays and structs
+    // can be copied with this instruction despite their SpirvTypeSpec being different.  The only
+    // exception is if there is a mismatch in the isOrHasBoolInInterfaceBlock type specialization
+    // as it actually changes the type of the struct members.
+    if (mCompileOptions.emitSPIRV14 && (valueType.isArray() || valueType.getStruct() != nullptr) &&
+        valueTypeSpec.isOrHasBoolInInterfaceBlock == expectedTypeSpec.isOrHasBoolInInterfaceBlock)
+    {
+        const spirv::IdRef expectedTypeId =
+            mBuilder.getTypeDataOverrideTypeSpec(valueType, expectedTypeSpec).id;
+        const spirv::IdRef expectedId = mBuilder.getNewId(mBuilder.getDecorations(valueType));
+
+        spirv::WriteCopyLogical(mBuilder.getSpirvCurrentFunctionBlock(), expectedTypeId, expectedId,
+                                value);
+        if (resultTypeIdOut)
+        {
+            *resultTypeIdOut = expectedTypeId;
+        }
+        return expectedId;
+    }
+
     // The following code recursively copies the array elements or struct fields and then constructs
     // the final result with the expected SPIR-V type.
 
@@ -5142,10 +5166,10 @@ bool OutputSPIRVTraverser::visitTernary(Visit visit, TIntermTernary *node)
     size_t lastChildIndex = getLastTraversedChildIndex(visit);
 
     // If the condition was just visited, evaluate it and decide if OpSelect could be used or an
-    // if-else must be emitted.  OpSelect is only used if the type is scalar or vector (required by
-    // OpSelect) and if neither side has a side effect.
+    // if-else must be emitted.  OpSelect is only used if neither side has a side effect.  SPIR-V
+    // prior to 1.4 requires the type to be either scalar or vector.
     const TType &type   = node->getType();
-    bool canUseOpSelect = (type.isScalar() || type.isVector()) &&
+    bool canUseOpSelect = (type.isScalar() || type.isVector() || mCompileOptions.emitSPIRV14) &&
                           !node->getTrueExpression()->hasSideEffects() &&
                           !node->getFalseExpression()->hasSideEffects();
 
@@ -5166,9 +5190,9 @@ bool OutputSPIRVTraverser::visitTernary(Visit visit, TIntermTernary *node)
         // If OpSelect can be used, keep the condition for later usage.
         if (canUseOpSelect)
         {
-            // SPIR-V 1.0 requires that the condition value have as many components as the result.
-            // So when selecting between vectors, we must replicate the condition scalar.
-            if (type.isVector())
+            // SPIR-V prior to 1.4 requires that the condition value have as many components as the
+            // result.  So when selecting between vectors, we must replicate the condition scalar.
+            if (!mCompileOptions.emitSPIRV14 && type.isVector())
             {
                 const TType &boolVectorType =
                     *StaticType::GetForVec<EbtBool, EbpUndefined>(EvqGlobal, type.getNominalSize());
@@ -6056,7 +6080,8 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
 
     const spirv::IdRef typeId = mBuilder.getTypeData(type, {}).id;
 
-    spv::StorageClass storageClass = GetStorageClass(type, mCompiler->getShaderType());
+    spv::StorageClass storageClass =
+        GetStorageClass(mCompileOptions, type, mCompiler->getShaderType());
 
     SpirvDecorations decorations = mBuilder.getDecorations(type);
     if (mBuilder.isInvariantOutput(type))
@@ -6122,9 +6147,6 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
 
     if (isShaderInOut)
     {
-        // Add in and out variables to the list of interface variables.
-        mBuilder.addEntryPointInterfaceVariableId(variableId);
-
         if (IsShaderIoBlock(type.getQualifier()) && type.isInterfaceBlock())
         {
             // For gl_PerVertex in particular, write the necessary BuiltIn decorations
@@ -6147,9 +6169,12 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
     }
     else if (isInterfaceBlock)
     {
-        // For uniform and buffer variables, add Block and BufferBlock decorations respectively.
+        // For uniform and buffer variables, with SPIR-V 1.3 add Block and BufferBlock decorations
+        // respectively.  With SPIR-V 1.4, always add Block.
         const spv::Decoration decoration =
-            type.getQualifier() == EvqUniform ? spv::DecorationBlock : spv::DecorationBufferBlock;
+            mCompileOptions.emitSPIRV14 || type.getQualifier() == EvqUniform
+                ? spv::DecorationBlock
+                : spv::DecorationBufferBlock;
         spirv::WriteDecorate(mBuilder.getSpirvDecorations(), nonArrayTypeId, decoration, {});
 
         if (type.getQualifier() == EvqBuffer && !memoryQualifier.restrictQualifier &&
@@ -6522,7 +6547,8 @@ spirv::Blob OutputSPIRVTraverser::getSpirv()
 
 #if ANGLE_DEBUG_SPIRV_GENERATION
     // Disassemble and log the generated SPIR-V for debugging.
-    spvtools::SpirvTools spirvTools(SPV_ENV_VULKAN_1_1);
+    spvtools::SpirvTools spirvTools(mCompileOptions.emitSPIRV14 ? SPV_ENV_VULKAN_1_1_SPIRV_1_4
+                                                                : SPV_ENV_VULKAN_1_1);
     std::string readableSpirv;
     spirvTools.Disassemble(result, &readableSpirv, 0);
     fprintf(stderr, "%s\n", readableSpirv.c_str());

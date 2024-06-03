@@ -365,6 +365,7 @@ enum class Feature
     SupportsShaderPixelLocalStorageEXT,
     SupportsShaderStencilExport,
     SupportsSharedPresentableImageExtension,
+    SupportsSPIRV14,
     SupportsSurfaceCapabilities2Extension,
     SupportsSurfacelessQueryExtension,
     SupportsSurfaceMaintenance1,

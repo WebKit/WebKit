@@ -11,7 +11,7 @@
             "name": "append_aliased_memory_decorations",
             "category": "Workarounds",
             "description": [
-                "Append aliased memory decoration to ssbo and image in SpirV if they are not declared with restrict memory qualifier in GLSL"
+                "Append aliased memory decoration to ssbo and image in SPIR-V if they are not declared with restrict memory qualifier in GLSL"
             ],
             "issue": "b/266235549"
         },
@@ -407,7 +407,7 @@
             "name": "varyings_require_matching_precision_in_spirv",
             "category": "Workarounds",
             "description": [
-                "Add additional SPIRV instructions to make sure precision ",
+                "Add additional SPIR-V instructions to make sure precision ",
                 "between shader stages match with each other"
             ],
             "issue": "http://anglebug.com/7488"
@@ -862,6 +862,14 @@
                 "Force submit updates to immutable textures"
             ],
             "issue": "http://anglebug.com/6929"
+        },
+        {
+            "name": "supports_SPIRV_1_4",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_KHR_spirv_1_4 extension"
+            ],
+            "issue": "http://anglebug.com/342316794"
         },
         {
             "name": "retain_SPIRV_debug_info",

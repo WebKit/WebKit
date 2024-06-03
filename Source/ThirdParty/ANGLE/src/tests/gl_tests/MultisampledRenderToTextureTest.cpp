@@ -4243,6 +4243,7 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN().disable(Feature::SupportsSPIRV14),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture),
     ES3_VULKAN_SWIFTSHADER()
         .enable(Feature::EnableMultisampledRenderToTexture)
@@ -4259,6 +4260,7 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN().disable(Feature::SupportsSPIRV14),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture),
     ES3_VULKAN_SWIFTSHADER()
         .enable(Feature::EnableMultisampledRenderToTexture)
@@ -4274,6 +4276,7 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES31_VULKAN().disable(Feature::SupportsSPIRV14),
     ES31_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture),
     ES31_VULKAN_SWIFTSHADER()
         .enable(Feature::EnableMultisampledRenderToTexture)
@@ -4286,6 +4289,7 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(
     testing::Bool(),
     ANGLE_ALL_TEST_PLATFORMS_ES3,
     ANGLE_ALL_TEST_PLATFORMS_ES31,
+    ES3_VULKAN().disable(Feature::SupportsSPIRV14),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture),
     ES3_VULKAN_SWIFTSHADER()
         .enable(Feature::EnableMultisampledRenderToTexture)

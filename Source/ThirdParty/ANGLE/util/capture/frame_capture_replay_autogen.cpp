@@ -1375,6 +1375,9 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
         case angle::EntryPoint::GLGetGraphicsResetStatusEXT:
             glGetGraphicsResetStatusEXT();
             break;
+        case angle::EntryPoint::GLGetGraphicsResetStatusKHR:
+            glGetGraphicsResetStatusKHR();
+            break;
         case angle::EntryPoint::GLGetInteger64i_v:
             glGetInteger64i_v(captures[0].value.GLenumVal, captures[1].value.GLuintVal,
                               captures[2].value.GLint64PointerVal);
@@ -2047,6 +2050,11 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
                                gUniformLocations[gCurrentProgram][captures[1].value.GLintVal],
                                captures[2].value.GLsizeiVal, captures[3].value.GLfloatPointerVal);
             break;
+        case angle::EntryPoint::GLGetnUniformfvKHR:
+            glGetnUniformfvKHR(gShaderProgramMap[captures[0].value.GLuintVal],
+                               gUniformLocations[gCurrentProgram][captures[1].value.GLintVal],
+                               captures[2].value.GLsizeiVal, captures[3].value.GLfloatPointerVal);
+            break;
         case angle::EntryPoint::GLGetnUniformfvRobustANGLE:
             glGetnUniformfvRobustANGLE(
                 gShaderProgramMap[captures[0].value.GLuintVal],
@@ -2064,6 +2072,11 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
                                gUniformLocations[gCurrentProgram][captures[1].value.GLintVal],
                                captures[2].value.GLsizeiVal, captures[3].value.GLintPointerVal);
             break;
+        case angle::EntryPoint::GLGetnUniformivKHR:
+            glGetnUniformivKHR(gShaderProgramMap[captures[0].value.GLuintVal],
+                               gUniformLocations[gCurrentProgram][captures[1].value.GLintVal],
+                               captures[2].value.GLsizeiVal, captures[3].value.GLintPointerVal);
+            break;
         case angle::EntryPoint::GLGetnUniformivRobustANGLE:
             glGetnUniformivRobustANGLE(
                 gShaderProgramMap[captures[0].value.GLuintVal],
@@ -2075,6 +2088,11 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
             glGetnUniformuiv(gShaderProgramMap[captures[0].value.GLuintVal],
                              gUniformLocations[gCurrentProgram][captures[1].value.GLintVal],
                              captures[2].value.GLsizeiVal, captures[3].value.GLuintPointerVal);
+            break;
+        case angle::EntryPoint::GLGetnUniformuivKHR:
+            glGetnUniformuivKHR(gShaderProgramMap[captures[0].value.GLuintVal],
+                                gUniformLocations[gCurrentProgram][captures[1].value.GLintVal],
+                                captures[2].value.GLsizeiVal, captures[3].value.GLuintPointerVal);
             break;
         case angle::EntryPoint::GLGetnUniformuivRobustANGLE:
             glGetnUniformuivRobustANGLE(
@@ -2981,6 +2999,12 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
             break;
         case angle::EntryPoint::GLReadnPixelsEXT:
             glReadnPixelsEXT(captures[0].value.GLintVal, captures[1].value.GLintVal,
+                             captures[2].value.GLsizeiVal, captures[3].value.GLsizeiVal,
+                             captures[4].value.GLenumVal, captures[5].value.GLenumVal,
+                             captures[6].value.GLsizeiVal, captures[7].value.voidPointerVal);
+            break;
+        case angle::EntryPoint::GLReadnPixelsKHR:
+            glReadnPixelsKHR(captures[0].value.GLintVal, captures[1].value.GLintVal,
                              captures[2].value.GLsizeiVal, captures[3].value.GLsizeiVal,
                              captures[4].value.GLenumVal, captures[5].value.GLenumVal,
                              captures[6].value.GLsizeiVal, captures[7].value.voidPointerVal);

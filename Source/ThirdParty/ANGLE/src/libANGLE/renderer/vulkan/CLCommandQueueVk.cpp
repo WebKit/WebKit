@@ -58,7 +58,7 @@ angle::Result CLCommandQueueVk::init()
     ANGLE_CL_IMPL_TRY_ERROR(
         vk::OutsideRenderPassCommandBuffer::InitializeCommandPool(
             mContext, &mCommandPool.outsideRenderPassPool,
-            mContext->getRenderer()->getDeviceQueueIndex(), getProtectionType()),
+            mContext->getRenderer()->getQueueFamilyIndex(), getProtectionType()),
         CL_OUT_OF_RESOURCES);
 
     ANGLE_CL_IMPL_TRY_ERROR(mContext->getRenderer()->getOutsideRenderPassCommandBufferHelper(

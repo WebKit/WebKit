@@ -114,6 +114,7 @@ MSG kEnumNotSupported = "Enum 0x%04X is currently not supported.";
 MSG kEnumRequiresGLES30 = "Enum requires GLES 3.0";
 MSG kEnumRequiresGLES31 = "Enum requires GLES 3.1";
 MSG kES1or32Required = "OpenGL ES 1.x or 3.2 Required";
+MSG kES2Required = "OpenGL ES 2.0 Required.";
 MSG kES31Required = "OpenGL ES 3.1 Required";
 MSG kES32Required = "OpenGL ES 3.2 Required";
 MSG kES3Required = "OpenGL ES 3.0 Required.";

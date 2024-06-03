@@ -91,7 +91,8 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
 Resource::Resource() : mUsageRef(std::make_shared<UsageRef>()) {}
 
 // Share the GPU usage ref with other resource
-Resource::Resource(Resource *other) : mUsageRef(other->mUsageRef)
+Resource::Resource(Resource *other) : Resource(other->mUsageRef) {}
+Resource::Resource(std::shared_ptr<UsageRef> otherUsageRef) : mUsageRef(std::move(otherUsageRef))
 {
     ASSERT(mUsageRef);
 }
@@ -269,8 +270,7 @@ angle::Result Texture::Make3DTexture(ContextMtl *context,
     ANGLE_MTL_OBJC_SCOPE
     {
         // Use texture2DDescriptorWithPixelFormat to calculate full range mipmap range:
-        uint32_t maxDimen = std::max(width, height);
-        maxDimen          = std::max(maxDimen, depth);
+        const uint32_t maxDimen = std::max({width, height, depth});
         MTLTextureDescriptor *desc =
             [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:format.metalFormat
                                                                width:maxDimen
@@ -379,6 +379,14 @@ TextureRef Texture::MakeFromMetal(id<MTLTexture> metalTexture)
 
 Texture::Texture(id<MTLTexture> metalTexture)
     : mColorWritableMask(std::make_shared<MTLColorWriteMask>(MTLColorWriteMaskAll))
+{
+    set(metalTexture);
+}
+
+Texture::Texture(std::shared_ptr<UsageRef> usageRef,
+                 id<MTLTexture> metalTexture,
+                 std::shared_ptr<MTLColorWriteMask> colorWriteMask)
+    : Resource(std::move(usageRef)), mColorWritableMask(std::move(colorWriteMask))
 {
     set(metalTexture);
 }
@@ -729,6 +737,17 @@ TextureRef Texture::createMipView(const MipmapNativeLevel &level)
     }
 }
 
+TextureRef Texture::createMipsView(const MipmapNativeLevel &baseLevel, uint32_t levels)
+{
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        NSUInteger slices = cubeFacesOrArrayLength();
+        return TextureRef(new Texture(this, pixelFormat(), textureType(),
+                                      NSMakeRange(baseLevel.get(), levels),
+                                      NSMakeRange(0, slices)));
+    }
+}
+
 TextureRef Texture::createViewWithDifferentFormat(MTLPixelFormat format)
 {
     ASSERT(supportFormatView());
@@ -751,15 +770,18 @@ TextureRef Texture::createViewWithCompatibleFormat(MTLPixelFormat format)
     return TextureRef(new Texture(this, format));
 }
 
-TextureRef Texture::createSwizzleView(MTLPixelFormat format, const TextureSwizzleChannels &swizzle)
+TextureRef Texture::createMipsSwizzleView(const MipmapNativeLevel &baseLevel,
+                                          uint32_t levels,
+                                          MTLPixelFormat format,
+                                          const TextureSwizzleChannels &swizzle)
 {
 #if ANGLE_MTL_SWIZZLE_AVAILABLE
-    return TextureRef(new Texture(this, format, textureType(), NSMakeRange(0, mipmapLevels()),
+    return TextureRef(new Texture(this, format, textureType(), NSMakeRange(baseLevel.get(), levels),
                                   NSMakeRange(0, cubeFacesOrArrayLength()), swizzle));
 #else
     WARN() << "Texture swizzle is not supported on pre iOS 13.0 and macOS 15.0";
     UNIMPLEMENTED();
-    return shared_from_this();
+    return createMipsView(baseLevel, levels);
 #endif
 }
 
@@ -781,6 +803,15 @@ uint32_t Texture::mipmapLevels() const
 uint32_t Texture::arrayLength() const
 {
     return static_cast<uint32_t>(get().arrayLength);
+}
+
+uint32_t Texture::cubeFaces() const
+{
+    if (textureType() == MTLTextureTypeCube)
+    {
+        return 6;
+    }
+    return 1;
 }
 
 uint32_t Texture::cubeFacesOrArrayLength() const
@@ -963,12 +994,52 @@ TextureRef Texture::getStencilView()
     return mStencilView;
 }
 
+TextureRef Texture::parentTexture()
+{
+    if (mParentTexture)
+    {
+        return mParentTexture;
+    }
+
+    if (!get().parentTexture)
+    {
+        // Doesn't have parent.
+        return nullptr;
+    }
+
+    // Lazily construct parent's Texture object from parent's MTLTexture.
+    // Note that the constructed Texture object is not the same as the same original object that
+    // creates this view. However, it will share the same usageRef and MTLTexture with the
+    // original Texture object. We do this to avoid cyclic reference between original Texture
+    // and its view.
+    //
+    // For example, the original Texture object might keep a ref to its stencil view. Had we
+    // kept the original object's ref in the stencil view, there would have been a cyclic
+    // reference.
+    //
+    // This is OK because even though the Texture objects are not the same, they refer to same
+    // MTLTexture and usageRef.
+    mParentTexture.reset(new Texture(mUsageRef, get().parentTexture, mColorWritableMask));
+
+    return mParentTexture;
+}
+MipmapNativeLevel Texture::parentRelativeLevel()
+{
+    return mtl::GetNativeMipLevel(static_cast<uint32_t>(get().parentRelativeLevel), 0);
+}
+uint32_t Texture::parentRelativeSlice()
+{
+    return static_cast<uint32_t>(get().parentRelativeSlice);
+}
+
 void Texture::set(id<MTLTexture> metalTexture)
 {
     ParentClass::set(metalTexture);
     // Reset stencil view
     mStencilView     = nullptr;
     mLinearColorView = nullptr;
+
+    mParentTexture = nullptr;
 }
 
 // Buffer implementation

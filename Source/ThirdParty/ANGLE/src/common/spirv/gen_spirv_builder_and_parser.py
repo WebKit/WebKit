@@ -12,11 +12,8 @@ import json
 import os
 import sys
 
-# ANGLE uses SPIR-V 1.0 currently, so there's no reason to generate code for newer instructions.
-SPIRV_GRAMMAR_FILE = '../../../third_party/vulkan-deps/spirv-headers/src/include/spirv/1.0/spirv.core.grammar.json'
-
-# Cherry pick some extra extensions from here that aren't in SPIR-V 1.0.
-SPIRV_CHERRY_PICKED_EXTENSIONS_FILE = '../../../third_party/vulkan-deps/spirv-headers/src/include/spirv/unified1/spirv.core.grammar.json'
+# ANGLE uses instructions from SPIR-V 1.0 mostly, but also OpCopyLogical from SPIR-V 1.4.
+SPIRV_GRAMMAR_FILE = '../../../third_party/spirv-headers/src/include/spirv/unified1/spirv.core.grammar.json'
 
 # The script has two sets of outputs, a header and source file for SPIR-V code generation, and a
 # header and source file for SPIR-V parsing.
@@ -106,12 +103,12 @@ uint32_t MakeLengthOp(size_t length, spv::Op op)
 }
 }  // anonymous namespace
 
-void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t idCount)
+void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t version, uint32_t idCount)
 {
     // Header:
     //
     //  - Magic number
-    //  - Version (1.0)
+    //  - Version (1.X)
     //  - ANGLE's Generator number:
     //     * 24 for tool id (higher 16 bits)
     //     * 1 for tool version (lower 16 bits))
@@ -123,7 +120,7 @@ void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t idCount)
     ASSERT(blob->empty());
 
     blob->push_back(spv::MagicNumber);
-    blob->push_back(0x00010000);
+    blob->push_back(version);
     blob->push_back(kANGLEGeneratorId << 16 | kANGLEGeneratorVersion);
     blob->push_back(idCount);
     blob->push_back(0x00000000);
@@ -131,7 +128,7 @@ void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t idCount)
 """
 
 BUILDER_HELPER_FUNCTION_PROTOTYPE = """
-    void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t idCount);
+    void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t version, uint32_t idCount);
 """
 
 PARSER_FIXED_FUNCTIONS_PROTOTYPES = """void GetInstructionOpAndLength(const uint32_t *_instruction,
@@ -189,14 +186,8 @@ class Writer:
         self.path_prefix = os.path.dirname(os.path.realpath(__file__)) + os.path.sep
         self.grammar = load_grammar(self.path_prefix + SPIRV_GRAMMAR_FILE)
 
-        # We need some extensions that aren't in SPIR-V 1.0. Cherry pick them into our grammar.
+        # List of extensions needed by ANGLE
         cherry_picked_extensions = {'SPV_EXT_fragment_shader_interlock'}
-        cherry_picked_extensions_grammar = load_grammar(self.path_prefix +
-                                                        SPIRV_CHERRY_PICKED_EXTENSIONS_FILE)
-        self.grammar['instructions'] += [
-            i for i in cherry_picked_extensions_grammar['instructions']
-            if 'extensions' in i and set(i['extensions']) & cherry_picked_extensions
-        ]
 
         # If an instruction has a parameter of these types, the instruction is ignored
         self.unsupported_kinds = set(['LiteralSpecConstantOpInteger'])
@@ -299,14 +290,14 @@ class Writer:
         for bitEnumEntry in filter(lambda entry: entry['category'] == 'BitEnum', operand_kinds):
             self.bit_mask_types.add(bitEnumEntry['kind'])
 
-    def get_operand_name(self, operand):
+    def get_operand_name(self, operand, operand_distinguisher):
         kind = operand['kind']
         name = operand.get('name')
 
         # If no name is given, derive the name from the kind
         if name is None:
             assert (kind.find(' ') == -1)
-            return make_camel_case(kind)
+            return make_camel_case(kind) + str(operand_distinguisher)
 
         quantifier = operand.get('quantifier', '')
         name = remove_chars(name, "'")
@@ -467,9 +458,9 @@ class Writer:
 
         return pre + line + post
 
-    def process_operand(self, operand, cpp_operands_in, cpp_operands_out, cpp_in_parse_lines,
-                        cpp_out_push_back_lines):
-        operand_name = self.get_operand_name(operand)
+    def process_operand(self, operand, operand_distinguisher, cpp_operands_in, cpp_operands_out,
+                        cpp_in_parse_lines, cpp_out_push_back_lines):
+        operand_name = self.get_operand_name(operand, operand_distinguisher)
         type_in, type_out, is_array, is_optional = self.get_operand_type_in_and_out(operand)
 
         # Make the parameter list
@@ -506,9 +497,12 @@ class Writer:
         cpp_in_parse_lines = []
         cpp_out_push_back_lines = []
 
+        operand_distinguisher = 0
         for operand in operands:
-            self.process_operand(operand, cpp_operands_in, cpp_operands_out, cpp_in_parse_lines,
-                                 cpp_out_push_back_lines)
+            operand_distinguisher += 1
+
+            self.process_operand(operand, operand_distinguisher, cpp_operands_in, cpp_operands_out,
+                                 cpp_in_parse_lines, cpp_out_push_back_lines)
 
             # get_operand_parse_line relies on there only being one array parameter, and it being
             # the last.
@@ -524,8 +518,8 @@ class Writer:
                     'kind': 'LiteralInteger',
                     'quantifier': '*'
                 }
-                self.process_operand(decoration_operands, cpp_operands_in, cpp_operands_out,
-                                     cpp_in_parse_lines, cpp_out_push_back_lines)
+                self.process_operand(decoration_operands, operand_distinguisher, cpp_operands_in,
+                                     cpp_operands_out, cpp_in_parse_lines, cpp_out_push_back_lines)
 
             elif operand['kind'] == 'ExecutionMode':
                 # Special handling of OpExecutionMode instruction with an ExecutionMode operand.
@@ -537,8 +531,9 @@ class Writer:
                     'kind': 'LiteralInteger',
                     'quantifier': '*'
                 }
-                self.process_operand(execution_mode_operands, cpp_operands_in, cpp_operands_out,
-                                     cpp_in_parse_lines, cpp_out_push_back_lines)
+                self.process_operand(execution_mode_operands, operand_distinguisher,
+                                     cpp_operands_in, cpp_operands_out, cpp_in_parse_lines,
+                                     cpp_out_push_back_lines)
 
             elif operand['kind'] == 'ImageOperands':
                 # Special handling of OpImage* instructions with an ImageOperands operand.  That
@@ -547,8 +542,8 @@ class Writer:
                 assert (len(cpp_in_parse_lines) == len(operands))
 
                 image_operands = {'name': 'imageOperandIds', 'kind': 'IdRef', 'quantifier': '*'}
-                self.process_operand(image_operands, cpp_operands_in, cpp_operands_out,
-                                     cpp_in_parse_lines, cpp_out_push_back_lines)
+                self.process_operand(image_operands, operand_distinguisher, cpp_operands_in,
+                                     cpp_operands_out, cpp_in_parse_lines, cpp_out_push_back_lines)
 
         # Make the builder prototype body
         builder_prototype = TEMPLATE_BUILDER_FUNCTION_PROTOTYPE.format(

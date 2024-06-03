@@ -295,7 +295,27 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         return mDefaultUniformBlocks[shaderType];
     }
 
-    bool hasDirtyUniforms() const { return mDefaultUniformBlocksDirty.any(); }
+    bool updateAndCheckDirtyUniforms()
+    {
+        if (ANGLE_LIKELY(!mExecutable->IsPPO()))
+        {
+            return mDefaultUniformBlocksDirty.any();
+        }
+
+        const auto &ppoExecutables = mExecutable->getPPOProgramExecutables();
+        for (gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
+        {
+            ProgramExecutableVk *executableVk = vk::GetImpl(ppoExecutables[shaderType].get());
+            if (executableVk->mDefaultUniformBlocksDirty.test(shaderType))
+            {
+                mDefaultUniformBlocksDirty.set(shaderType);
+                // Note: this relies on onProgramBind marking everything as dirty
+                executableVk->mDefaultUniformBlocksDirty.reset(shaderType);
+            }
+        }
+
+        return mDefaultUniformBlocksDirty.any();
+    }
 
     void setAllDefaultUniformsDirty();
     angle::Result updateUniforms(vk::Context *context,
@@ -389,9 +409,6 @@ class ProgramExecutableVk : public ProgramExecutableImpl
 
     template <class T>
     void getUniformImpl(GLint location, T *v, GLenum entryPointType) const;
-
-    template <typename T>
-    void setUniformImpl(GLint location, GLsizei count, const T *v, GLenum entryPointType);
 
     void addInterfaceBlockDescriptorSetDesc(const std::vector<gl::InterfaceBlock> &blocks,
                                             gl::ShaderBitSet shaderTypes,

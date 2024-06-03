@@ -92,13 +92,15 @@ class Resource : angle::NonCopyable
     virtual id getID() const                 = 0;
 
   protected:
+    struct UsageRef;
+
     Resource();
     // Share the GPU usage ref with other resource
     Resource(Resource *other);
+    Resource(std::shared_ptr<UsageRef> otherUsageRef);
 
     void reset();
 
-  private:
     struct UsageRef
     {
         // The id of the last command buffer that is using this resource.
@@ -225,11 +227,13 @@ class Texture final : public Resource,
     TextureRef createCubeFaceView(uint32_t face);
     // Create a view of one slice at a level.
     TextureRef createSliceMipView(uint32_t slice, const MipmapNativeLevel &level);
-    // Same as above but the target format must be compatible, for example sRGB to linear. In this
+    // Same as createSliceMipView but the target format must be compatible, for example sRGB to linear. In this
     // case texture doesn't need format view usage flag.
     TextureRef createSliceMipViewWithCompatibleFormat(uint32_t slice,
                                                       const MipmapNativeLevel &level,
                                                       MTLPixelFormat format);
+    // Create a levels range view
+    TextureRef createMipsView(const MipmapNativeLevel &baseLevel, uint32_t levels);
     // Create a view of a level.
     TextureRef createMipView(const MipmapNativeLevel &level);
     // Create a view with different format
@@ -242,13 +246,17 @@ class Texture final : public Resource,
     // this case texture doesn't need format view usage flag.
     TextureRef createViewWithCompatibleFormat(MTLPixelFormat format);
     // Create a swizzled view
-    TextureRef createSwizzleView(MTLPixelFormat format, const TextureSwizzleChannels &swizzle);
+    TextureRef createMipsSwizzleView(const MipmapNativeLevel &baseLevel,
+                                     uint32_t levels,
+                                     MTLPixelFormat format,
+                                     const TextureSwizzleChannels &swizzle);
 
     MTLTextureType textureType() const;
     MTLPixelFormat pixelFormat() const;
 
     uint32_t mipmapLevels() const;
     uint32_t arrayLength() const;
+    uint32_t cubeFaces() const;
     uint32_t cubeFacesOrArrayLength() const;
 
     uint32_t width(const MipmapNativeLevel &level) const;
@@ -293,6 +301,10 @@ class Texture final : public Resource,
     // Get linear color
     TextureRef getLinearColorView();
 
+    TextureRef parentTexture();
+    MipmapNativeLevel parentRelativeLevel();
+    uint32_t parentRelativeSlice();
+
     // Change the wrapped metal object. Special case for swapchain image
     void set(id<MTLTexture> metalTexture);
 
@@ -331,6 +343,13 @@ class Texture final : public Resource,
                                      TextureRef *refOut);
 
     Texture(id<MTLTexture> metalTexture);
+
+    // Create a texture that shares ownership of usageRef, underlying MTLTexture and colorWriteMask
+    // with the original texture.
+    Texture(std::shared_ptr<UsageRef> usageRef,
+            id<MTLTexture> metalTexture,
+            std::shared_ptr<MTLColorWriteMask> colorWriteMask);
+
     Texture(ContextMtl *context,
             MTLTextureDescriptor *desc,
             uint32_t mips,
@@ -376,6 +395,8 @@ class Texture final : public Resource,
     TextureRef mStencilView;
     // Readable copy of texture
     TextureRef mReadCopy;
+
+    TextureRef mParentTexture;
 
     size_t mEstimatedByteSize = 0;
 };

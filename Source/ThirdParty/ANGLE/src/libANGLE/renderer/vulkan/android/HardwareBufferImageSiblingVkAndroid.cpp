@@ -446,7 +446,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
 
     ANGLE_TRY(mImage->initExternalMemory(displayVk, renderer->getMemoryProperties(),
                                          externalMemoryRequirements, 1, &dedicatedAllocInfoPtr,
-                                         VK_QUEUE_FAMILY_FOREIGN_EXT, flags));
+                                         vk::kForeignDeviceQueueIndex, flags));
 
     if (isExternal)
     {
@@ -460,7 +460,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     {
         constexpr uint32_t kColorRenderableRequiredBits = VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
         constexpr uint32_t kDepthStencilRenderableRequiredBits =
-            VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
+            VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
         mRenderable =
             renderer->hasImageFormatFeatureBits(vkFormat->getActualRenderableImageFormatID(),
                                                 kColorRenderableRequiredBits) ||

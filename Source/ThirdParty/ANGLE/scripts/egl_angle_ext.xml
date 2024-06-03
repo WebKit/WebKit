@@ -302,6 +302,16 @@
                 <enum name="EGL_CGL_PIXEL_FORMAT_ANGLE"/>
             </require>
         </extension>
+        <extension name="EGL_ANGLE_device_d3d9" supported="egl">
+            <require>
+                <enum name="EGL_D3D9_DEVICE_ANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_device_d3d1" supported="egl">
+            <require>
+                <enum name="EGL_D3D11_DEVICE_ANGLE"/>
+            </require>
+        </extension>
         <extension name="EGL_ANGLE_device_eagl" supported="egl">
             <require>
                 <enum name="EGL_EAGL_CONTEXT_ANGLE"/>

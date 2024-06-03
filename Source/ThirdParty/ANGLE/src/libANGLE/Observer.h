@@ -71,8 +71,6 @@ enum class SubjectMessage
     ProgramRelinked,
     // Indicates a separable program's sampler uniforms were updated.
     SamplerUniformsUpdated,
-    // Other types of uniform change.
-    ProgramUniformUpdated,
     // Indicates a program's uniform block binding has changed (one message per binding)
     ProgramUniformBlockBindingZeroUpdated,
     ProgramUniformBlockBindingLastUpdated = ProgramUniformBlockBindingZeroUpdated +

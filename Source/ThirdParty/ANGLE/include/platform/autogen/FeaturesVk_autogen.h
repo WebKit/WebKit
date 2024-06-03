@@ -23,7 +23,7 @@ struct FeaturesVk : FeatureSetBase
     FeatureInfo appendAliasedMemoryDecorations = {
         "appendAliasedMemoryDecorations",
         FeatureCategory::VulkanWorkarounds,
-        "Append aliased memory decoration to ssbo and image in SpirV if they are not declared with restrict memory qualifier in GLSL",
+        "Append aliased memory decoration to ssbo and image in SPIR-V if they are not declared with restrict memory qualifier in GLSL",
         &members, "b/266235549"
     };
 
@@ -388,7 +388,7 @@ struct FeaturesVk : FeatureSetBase
     FeatureInfo varyingsRequireMatchingPrecisionInSpirv = {
         "varyingsRequireMatchingPrecisionInSpirv",
         FeatureCategory::VulkanWorkarounds,
-        "Add additional SPIRV instructions to make sure precision "
+        "Add additional SPIR-V instructions to make sure precision "
         "between shader stages match with each other",
         &members, "http://anglebug.com/7488"
     };
@@ -803,6 +803,13 @@ struct FeaturesVk : FeatureSetBase
         FeatureCategory::VulkanAppWorkarounds,
         "Force submit updates to immutable textures",
         &members, "http://anglebug.com/6929"
+    };
+
+    FeatureInfo supportsSPIRV14 = {
+        "supportsSPIRV14",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_KHR_spirv_1_4 extension",
+        &members, "http://anglebug.com/342316794"
     };
 
     FeatureInfo retainSPIRVDebugInfo = {

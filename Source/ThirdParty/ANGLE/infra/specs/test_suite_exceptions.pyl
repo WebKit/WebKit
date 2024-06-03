@@ -18,11 +18,17 @@
         'args': [
           '--max-processes=1',
         ],
+        'swarming': {
+          'shards': 4,
+        },
       },
       'win10-x64-intel': {
         'args': [
           '--max-processes=1',
         ],
+        'swarming': {
+          'shards': 4,
+        },
       },
     },
   },

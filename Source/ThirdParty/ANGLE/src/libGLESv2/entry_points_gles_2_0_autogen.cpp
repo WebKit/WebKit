@@ -121,7 +121,7 @@ void GL_APIENTRY GL_BindBuffer(GLenum target, GLuint buffer)
     {
         BufferBinding targetPacked = PackParam<BufferBinding>(target);
         BufferID bufferPacked      = PackParam<BufferID>(buffer);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateBindBuffer(context, angle::EntryPoint::GLBindBuffer,
                                                targetPacked, bufferPacked));

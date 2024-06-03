@@ -247,7 +247,7 @@ angle::Result MemoryObjectVk::createImage(ContextVk *contextVk,
     VkMemoryPropertyFlags flags = hasProtectedContent ? VK_MEMORY_PROPERTY_PROTECTED_BIT : 0;
     ANGLE_TRY(image->initExternalMemory(contextVk, renderer->getMemoryProperties(),
                                         externalMemoryRequirements, 1, &importMemoryInfo,
-                                        renderer->getQueueFamilyIndex(), flags));
+                                        contextVk->getDeviceQueueIndex(), flags));
 
     return angle::Result::Continue;
 }
