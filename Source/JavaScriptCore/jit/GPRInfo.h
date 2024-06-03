@@ -87,7 +87,7 @@ public:
 
     void dump(PrintStream&) const;
     
-private:
+    // Intentionally public to make JSValueRegs usable for template parameters.
     GPRReg m_gpr;
 };
 
@@ -225,7 +225,7 @@ public:
 
     void dump(PrintStream&) const;
     
-private:
+    // Intentionally public to make JSValueRegs usable for template parameters.
     GPRReg m_tagGPR;
     GPRReg m_payloadGPR;
 };
@@ -491,7 +491,7 @@ public:
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = ARMRegisters::r5;
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = ARMRegisters::r4;
 
-    static constexpr GPRReg handlerGPR = InvalidGPRReg;
+    static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR1;
 
     static constexpr GPRReg wasmScratchGPR0 = regT5;
     static constexpr GPRReg wasmScratchGPR1 = regT6;
@@ -1036,6 +1036,52 @@ preferredArgumentJSR()
 {
     return PreferredArgumentImpl::preferredArgumentJSR<OperationType, ArgNum>();
 }
+
+template<typename RegisterBank, auto... registers>
+struct StaticScratchRegisterAllocator {
+    static constexpr size_t countRegisters(JSValueRegs)
+    {
+#if USE(JSVALUE32_64)
+        return 2;
+#else
+        return 1;
+#endif
+    }
+
+    static constexpr size_t countRegisters(typename RegisterBank::RegisterType)
+    {
+        return 1;
+    }
+
+    template<auto reg, auto... args>
+    static constexpr size_t countRegisters()
+    {
+        if constexpr (!sizeof...(args))
+            return countRegisters(reg);
+        else
+            return countRegisters(reg) + countRegisters<args...>();
+    }
+
+    static constexpr size_t size = RegisterBank::numberOfRegisters - countRegisters<registers...>();
+    using ArrayType = std::array<typename RegisterBank::RegisterType, size>;
+
+    static constexpr ArrayType constructScratchRegisters()
+    {
+        ArrayType array { };
+        unsigned resultIndex = 0;
+        for (unsigned index = 0; index < RegisterBank::numberOfRegisters; ++index) {
+            auto reg = RegisterBank::toRegister(index);
+            if (noOverlap(registers..., reg))
+                array[resultIndex++] = reg;
+        }
+        return array;
+    }
+
+    static constexpr ArrayType values { constructScratchRegisters() };
+};
+
+template<typename RegisterBank, auto... registers>
+inline constexpr auto allocatedScratchRegisters = StaticScratchRegisterAllocator<RegisterBank, registers...>::values;
 
 #endif // ENABLE(ASSEMBLER)
 

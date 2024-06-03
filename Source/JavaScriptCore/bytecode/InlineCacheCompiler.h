@@ -197,11 +197,13 @@ public:
 
     static constexpr ptrdiff_t offsetOfUid() { return OBJECT_OFFSETOF(InlineCacheHandler, m_uid); }
     static constexpr ptrdiff_t offsetOfStructureID() { return OBJECT_OFFSETOF(InlineCacheHandler, m_structureID); }
-    static constexpr ptrdiff_t offsetOfNewStructureID() { return OBJECT_OFFSETOF(InlineCacheHandler, m_newStructureID); }
-    static constexpr ptrdiff_t offsetOfNewSize() { return OBJECT_OFFSETOF(InlineCacheHandler, m_newSize); }
-    static constexpr ptrdiff_t offsetOfOldSize() { return OBJECT_OFFSETOF(InlineCacheHandler, m_oldSize); }
     static constexpr ptrdiff_t offsetOfOffset() { return OBJECT_OFFSETOF(InlineCacheHandler, m_offset); }
-    static constexpr ptrdiff_t offsetOfHolder() { return OBJECT_OFFSETOF(InlineCacheHandler, m_holder); }
+    static constexpr ptrdiff_t offsetOfNewStructureID() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s2.m_newStructureID); }
+    static constexpr ptrdiff_t offsetOfNewSize() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s2.m_newSize); }
+    static constexpr ptrdiff_t offsetOfOldSize() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s2.m_oldSize); }
+    static constexpr ptrdiff_t offsetOfHolder() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s1.m_holder); }
+    static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s1.m_globalObject); }
+    static constexpr ptrdiff_t offsetOfCustomAccessor() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s1.m_customAccessor); }
     static constexpr ptrdiff_t offsetOfCallLinkInfos() { return Base::offsetOfData(); }
 
 private:
@@ -218,10 +220,18 @@ private:
     StructureID m_structureID { };
     PropertyOffset m_offset { invalidOffset };
     UniquedStringImpl* m_uid { nullptr };
-    JSCell* m_holder { nullptr };
-    StructureID m_newStructureID { };
-    unsigned m_newSize { 0 };
-    unsigned m_oldSize { 0 };
+    union {
+        struct {
+            StructureID m_newStructureID { };
+            unsigned m_newSize { };
+            unsigned m_oldSize { };
+        } s2 { };
+        struct {
+            JSCell* m_holder;
+            JSGlobalObject* m_globalObject;
+            void* m_customAccessor;
+        } s1;
+    } u;
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     std::unique_ptr<StructureStubInfoClearingWatchpoint> m_watchpoint;
     RefPtr<InlineCacheHandler> m_next;
@@ -385,10 +395,17 @@ private:
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandlerCodeGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandlerCodeGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomAccessorHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandlerCodeGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandlerCodeGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomAccessorHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomValueHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdStrictSetterHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSloppySetterHandler(VM&);
 
 } // namespace JSC
 
