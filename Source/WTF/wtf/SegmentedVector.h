@@ -262,7 +262,7 @@ namespace WTF {
 
         void allocateSegment()
         {
-            m_segments.append(static_cast<Segment*>(SegmentedVectorMalloc::malloc(sizeof(T) * SegmentSize)));
+            m_segments.append(bitwise_cast<Segment*>(SegmentedVectorMalloc::malloc(sizeof(T) * SegmentSize)));
         }
 
         size_t m_size { 0 };

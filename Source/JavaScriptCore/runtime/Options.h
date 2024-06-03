@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,7 +96,7 @@ public:
         }
 
     private:
-        bool m_savedAllowUnfinalizedUse;
+        bool m_savedAllowUnfinalizedUse { false };
 #else
         ALWAYS_INLINE AllowUnfinalizedAccessScope() = default;
         ALWAYS_INLINE ~AllowUnfinalizedAccessScope() { }

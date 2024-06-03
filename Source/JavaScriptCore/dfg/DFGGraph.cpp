@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1168,10 +1168,9 @@ bool Graph::isLiveInBytecode(Operand operand, CodeOrigin codeOrigin)
     bool isCallerOrigin = false;
 
     CodeOrigin* codeOriginPtr = &codeOrigin;
-    auto* inlineCallFrame = codeOriginPtr->inlineCallFrame();
     // We need to handle tail callers because we may decide to exit to the
     // the return bytecode following the tail call.
-    for (; codeOriginPtr; codeOriginPtr = inlineCallFrame ? &inlineCallFrame->directCaller : nullptr) {
+    for (InlineCallFrame* inlineCallFrame; codeOriginPtr; codeOriginPtr = inlineCallFrame ? &inlineCallFrame->directCaller : nullptr) {
         inlineCallFrame = codeOriginPtr->inlineCallFrame();
         if (operand.isTmp()) {
             unsigned tmpOffset = inlineCallFrame ? inlineCallFrame->tmpOffset : 0;

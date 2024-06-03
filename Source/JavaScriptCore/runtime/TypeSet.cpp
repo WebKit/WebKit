@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -299,6 +299,7 @@ String TypeSet::toJSONString() const
         json.append("\"Symbol\""_s);
     }
     json.append(']');
+    UNUSED_PARAM(hasAnItem); // placate clang static analyzer.
 
     json.append(',');
 

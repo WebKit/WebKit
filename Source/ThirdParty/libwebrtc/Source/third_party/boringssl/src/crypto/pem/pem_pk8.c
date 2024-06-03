@@ -112,7 +112,7 @@ static int do_pk8pkey(BIO *bp, const EVP_PKEY *x, int isder, int nid,
   }
   if (enc || (nid != -1)) {
     if (!kstr) {
-      klen = 0;
+      // klen = 0; // Unneeded: removed to placate clang static analyzer.
       if (!cb) {
         cb = PEM_def_callback;
       }
@@ -160,7 +160,7 @@ EVP_PKEY *d2i_PKCS8PrivateKey_bio(BIO *bp, EVP_PKEY **x, pem_password_cb *cb,
     return NULL;
   }
 
-  klen = 0;
+  // klen = 0; // Unneeded: removed to placate clang static analyzer.
   if (!cb) {
     cb = PEM_def_callback;
   }

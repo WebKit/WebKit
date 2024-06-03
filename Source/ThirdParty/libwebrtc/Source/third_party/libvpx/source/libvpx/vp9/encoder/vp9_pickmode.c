@@ -1412,6 +1412,7 @@ static void recheck_zeromv_after_denoising(
     // is higher than best_ref mode (on original source).
     if (this_rdc.rdcost > best_rdc->rdcost) {
       this_rdc = *best_rdc;
+      (void)this_rdc; // placate clang static analyzer.
       mi->mode = ctx_den->best_mode;
       mi->ref_frame[0] = ctx_den->best_ref_frame;
       set_ref_ptrs(cm, xd, mi->ref_frame[0], NO_REF_FRAME);

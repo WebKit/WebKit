@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -401,7 +401,9 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
 
     auto types = JSON::ArrayOf<Protocol::Runtime::TypeDescription>::create();
 
-    MonotonicTime start = MonotonicTime::now();
+    MonotonicTime start;
+    if (verbose)
+        start = MonotonicTime::now();
     m_vm.typeProfilerLog()->processLogEntries(m_vm, "User Query"_s);
 
     for (size_t i = 0; i < locations->length(); i++) {
@@ -438,9 +440,10 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
         types->addItem(WTFMove(description));
     }
 
-    MonotonicTime end = MonotonicTime::now();
-    if (verbose)
+    if (verbose) {
+        MonotonicTime end = MonotonicTime::now();
         dataLogF("Inspector::getRuntimeTypesForVariablesAtOffsets took %lfms\n", (end - start).milliseconds());
+    }
 
     return types;
 }

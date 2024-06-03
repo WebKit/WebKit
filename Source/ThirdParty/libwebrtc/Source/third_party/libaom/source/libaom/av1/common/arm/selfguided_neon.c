@@ -306,9 +306,9 @@ static INLINE void boxsum2(int16_t *src, const int src_stride, int16_t *dst16,
   const int dst_stride_2 = (dst_stride << 1);
   const int dst_stride_8 = (dst_stride << 3);
 
-  dst1_16_ptr = dst16;
-  dst2_ptr = dst2;
-  src_ptr = src;
+  // dst1_16_ptr = dst16; // Unneeded: removed to placate clang static analyzer.
+  // dst2_ptr = dst2; // Unneeded: removed to placate clang static analyzer.
+  // src_ptr = src; // Unneeded: removed to placate clang static analyzer.
   w = width;
   {
     int16x8_t t1, t2, t3, t4, t5, t6, t7;
@@ -835,7 +835,7 @@ static INLINE void boxsum1(int16_t *src, const int src_stride, uint16_t *dst1,
     uint16_t *src1_ptr;
     count = 0;
     h = height;
-    w = width;
+    // w = width; // Unneeded: removed to placate clang static analyzer.
     do {
       dst1_ptr = dst1 + (count << 2) * dst_stride;
       dst2_ptr = dst2 + (count << 2) * dst_stride;
@@ -1055,10 +1055,10 @@ static void final_filter_fast_internal(uint16_t *A, int32_t *B,
   assert(SGRPROJ_SGR_BITS == 8);
   assert(SGRPROJ_RST_BITS == 4);
 
-  A_tmp = A;
-  B_tmp = B;
-  src_ptr = src;
-  dst_ptr = dst;
+  // A_tmp = A; // Unneeded: removed to placate clang static analyzer.
+  // B_tmp = B; // Unneeded: removed to placate clang static analyzer.
+  // src_ptr = src; // Unneeded: removed to placate clang static analyzer.
+  // dst_ptr = dst; // Unneeded: removed to placate clang static analyzer.
   h = height;
   do {
     A_tmp = (A + count * buf_stride);

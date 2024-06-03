@@ -498,6 +498,7 @@ yasm_errwarns_output_all(yasm_errwarns *errwarns, yasm_linemap *lm,
                     yasm_gettext_hook(N_("warnings being treated as errors")),
                     NULL, 0, NULL);
         warning_as_error = 2;
+        (void)warning_as_error; /* placate clang static analyzer. */
     }
 
     /* Output error/warnings. */

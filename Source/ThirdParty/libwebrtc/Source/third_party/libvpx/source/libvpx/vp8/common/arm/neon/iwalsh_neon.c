@@ -97,6 +97,6 @@ void vp8_short_inv_walsh4x4_neon(int16_t *input, int16_t *mb_dqcoeff) {
   vst1_lane_s16(mb_dqcoeff, vget_low_s16(q1s16), 3);
   mb_dqcoeff += 16;
   vst1_lane_s16(mb_dqcoeff, vget_high_s16(q1s16), 3);
-  mb_dqcoeff += 16;
+  // mb_dqcoeff += 16; // Unneeded: removed to placate clang static analyzer.
   return;
 }

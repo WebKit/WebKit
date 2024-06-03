@@ -4120,11 +4120,10 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
 
         // Flush batching here. Note that it is possible that offsets.size() is not equal to size, if we stop batching due to transition-watchpoint-firing.
 
-        Butterfly* newButterfly = butterfly();
         auto* oldStructure = this->structure();
         if (oldStructure->outOfLineCapacity() != structure->outOfLineCapacity()) {
             ASSERT(structure != oldStructure);
-            newButterfly = allocateMoreOutOfLineStorage(vm, oldStructure->outOfLineCapacity(), structure->outOfLineCapacity());
+            Butterfly* newButterfly = allocateMoreOutOfLineStorage(vm, oldStructure->outOfLineCapacity(), structure->outOfLineCapacity());
             nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3607,7 +3607,6 @@ void InlineCacheCompiler::emitDOMJITGetter(GetterSetterAccessCase& accessCase, c
 {
     CCallHelpers& jit = *m_jit;
     JSValueRegs valueRegs = m_stubInfo->valueRegs();
-    GPRReg baseGPR = m_stubInfo->m_baseGPR;
     GPRReg scratchGPR = m_scratchGPR;
 
     if (jit.codeBlock()->useDataIC()) {
@@ -3674,7 +3673,7 @@ void InlineCacheCompiler::emitDOMJITGetter(GetterSetterAccessCase& accessCase, c
         allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
     if (InlineCacheCompilerInternal::verbose) {
-        dataLog("baseGPR = ", baseGPR, "\n");
+        dataLog("baseGPR = ", m_stubInfo->m_baseGPR, "\n");
         dataLog("valueRegs = ", valueRegs, "\n");
         dataLog("scratchGPR = ", scratchGPR, "\n");
         dataLog("paramBaseGPR = ", paramBaseGPR, "\n");

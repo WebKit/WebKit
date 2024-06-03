@@ -960,8 +960,8 @@ angle::Result FramebufferGL::adjustSrcDstRegion(const gl::Context *context,
 
         GLuint destXHalvings = 0;
         GLuint destYHalvings = 0;
-        GLint destOriginX    = bounds.destRegion.x;
-        GLint destOriginY    = bounds.destRegion.y;
+        GLint destOriginX; // Removed unneeded initializer to placate clang static analyzer.
+        GLint destOriginY; // Removed unneeded initializer to placate clang static analyzer.
 
         GLint destClippedWidth = bounds.destRegion.width;
         while (destClippedWidth > 2 * bounds.destBounds.width)
@@ -1084,8 +1084,8 @@ angle::Result FramebufferGL::adjustSrcDstRegion(const gl::Context *context,
 
         GLuint sourceXHalvings = 0;
         GLuint sourceYHalvings = 0;
-        GLint sourceOriginX    = bounds.sourceRegion.x;
-        GLint sourceOriginY    = bounds.sourceRegion.y;
+        GLint sourceOriginX; // Removed unneeded initializer to placate clang static analyzer.
+        GLint sourceOriginY; // Removed unneeded initializer to placate clang static analyzer.
 
         GLint sourceClippedWidth = bounds.sourceRegion.width;
         while (sourceClippedWidth > 2 * bounds.sourceBounds.width)

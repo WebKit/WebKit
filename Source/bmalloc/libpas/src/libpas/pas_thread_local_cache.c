@@ -679,7 +679,8 @@ process_deallocation_log_with_config(pas_thread_local_cache* cache,
             break;
 
         default:
-            last_held_lock = *held_lock;
+            if (verbose)
+                last_held_lock = *held_lock;
             pas_segregated_page_deallocate(begin, held_lock, deallocation_mode, cache, page_config, role);
             if (verbose && *held_lock != last_held_lock && last_held_lock)
                 pas_log("Switched lock from %p to %p.\n", last_held_lock, *held_lock);

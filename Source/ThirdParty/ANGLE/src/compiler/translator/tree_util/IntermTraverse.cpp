@@ -372,6 +372,7 @@ void TLValueTrackingTraverser::traverseBinary(TIntermBinary *node)
             // hasn't been cancelled yet.
             if (postVisit)
                 visit = node->visit(PostVisit, this);
+            (void)visit; // placate clang static analyzer.
         }
     }
 }
@@ -413,6 +414,7 @@ void TLValueTrackingTraverser::traverseUnary(TIntermUnary *node)
 
         if (postVisit)
             visit = node->visit(PostVisit, this);
+        (void)visit; // placate clang static analyzer.
     }
 }
 
@@ -445,6 +447,7 @@ void TIntermTraverser::traverseFunctionDefinition(TIntermFunctionDefinition *nod
             mInGlobalScope     = true;
             if (postVisit)
                 visit = node->visit(PostVisit, this);
+            (void)visit; // placate clang static analyzer.
         }
     }
 }
@@ -489,6 +492,7 @@ void TIntermTraverser::traverseBlock(TIntermBlock *node)
 
         if (visit && postVisit)
             visit = node->visit(PostVisit, this);
+        (void)visit; // placate clang static analyzer.
     }
 
     popParentBlock();
@@ -698,6 +702,7 @@ void TLValueTrackingTraverser::traverseAggregate(TIntermAggregate *node)
 
         if (visit && postVisit)
             visit = node->visit(PostVisit, this);
+        (void)visit; // placate clang static analyzer.
     }
 }
 

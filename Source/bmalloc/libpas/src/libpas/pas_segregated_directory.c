@@ -172,9 +172,6 @@ pas_segregated_directory_get_sharing_payload(pas_segregated_directory* directory
             payload = (pas_page_sharing_participant_payload*)(
                 encoded_payload & ~PAS_SEGREGATED_DIRECTORY_SHARING_PAYLOAD_IS_INITIALIZED_BIT);
         } else {
-            payload = (pas_page_sharing_participant_payload*)(
-                encoded_payload & ~PAS_SEGREGATED_DIRECTORY_SHARING_PAYLOAD_IS_INITIALIZED_BIT);
-            
             payload = pas_immortal_heap_allocate(
                 sizeof(pas_page_sharing_participant_payload),
                 "pas_segregated_directory_data/sharing_payload",

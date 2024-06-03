@@ -110,25 +110,20 @@ static void validate_min_heap(void)
 {
     size_t index;
     
-    if (verbose)
+    if (verbose) {
         pas_log("min_heap:");
-    
-    for (index = 1; index <= pas_large_sharing_min_heap_instance.size; ++index) {
-        pas_large_sharing_node* node;
+        for (index = 1; index <= pas_large_sharing_min_heap_instance.size; ++index) {
+            pas_large_sharing_node* node;
+            node = *pas_large_sharing_min_heap_get_ptr_by_index(
+                &pas_large_sharing_min_heap_instance, index);
 
-        node = *pas_large_sharing_min_heap_get_ptr_by_index(
-            &pas_large_sharing_min_heap_instance, index);
-        
-        if (verbose) {
             pas_log(" %d:%p:%lu-%lu:%llu",
                     node->index_in_min_heap,
                     node, node->range.begin, node->range.end,
                     (unsigned long long)node->use_epoch);
         }
-    }
-    
-    if (verbose)
         pas_log("\n");
+    }
 
     for (index = 1; index <= pas_large_sharing_min_heap_instance.size; ++index) {
         pas_large_sharing_node* node;

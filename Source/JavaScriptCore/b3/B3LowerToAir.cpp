@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2580,7 +2580,6 @@ private:
         bool isBranch = m_value->opcode() == Branch;
         bool isStrong = atomic->opcode() == AtomicStrongCAS;
         bool returnsOldValue = m_value->opcode() == AtomicStrongCAS;
-        bool hasFence = atomic->hasFence();
         
         Width width = atomic->accessWidth();
         Arg address = addr(atomic);
@@ -2699,6 +2698,7 @@ private:
             failure = failBlock;
         }
         Air::BasicBlock* strongFailBlock = nullptr;
+        bool hasFence = atomic->hasFence();
         if (isStrong && hasFence)
             strongFailBlock = newBlock();
         Air::FrequentedBlock comparisonFail = failure;

@@ -1,7 +1,7 @@
 /*
 *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
 *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
-*  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+*  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
 *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
 *  Copyright (C) 2007 Maks Orlovich
 *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -3283,7 +3283,7 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
 
             // Since the both sides only accept Int32, replacing operands is not observable to users.
             bool replaceOperands = false;
-            OpcodeID resultOp = opcodeID;
+            OpcodeID resultOp;
             switch (opcodeID) {
             case op_less:
                 resultOp = op_below;

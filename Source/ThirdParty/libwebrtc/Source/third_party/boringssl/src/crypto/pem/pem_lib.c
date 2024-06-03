@@ -296,6 +296,7 @@ int PEM_ASN1_write_bio(i2d_of_void *i2d, const char *name, BIO *bp, void *x,
   if ((dsize = i2d(x, NULL)) < 0) {
     OPENSSL_PUT_ERROR(PEM, ERR_R_ASN1_LIB);
     dsize = 0;
+    (void)dsize; // placate clang static analyzer.
     goto err;
   }
   // dzise + 8 bytes are needed
@@ -311,7 +312,7 @@ int PEM_ASN1_write_bio(i2d_of_void *i2d, const char *name, BIO *bp, void *x,
     const unsigned iv_len = EVP_CIPHER_iv_length(enc);
 
     if (kstr == NULL) {
-      klen = 0;
+      // klen = 0; // Unneeded: removed to placate clang static analyzer.
       if (!callback) {
         callback = PEM_def_callback;
       }
@@ -387,7 +388,7 @@ int PEM_do_header(EVP_CIPHER_INFO *cipher, unsigned char *data, long *plen,
     return 1;
   }
 
-  klen = 0;
+  // klen = 0; // Unneeded: removed to placate clang static analyzer.
   if (!callback) {
     callback = PEM_def_callback;
   }

@@ -57,7 +57,6 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
     pas_segregated_partial_view* partial;
     pas_segregated_view ineligible_owning_view;
     pas_segregated_size_directory* size_directory;
-    pas_segregated_directory* size_directory_base;
     pas_lock_hold_mode heap_lock_hold_mode;
     pas_segregated_shared_page_directory* shared_page_directory;
     pas_segregated_heap* heap;
@@ -67,6 +66,8 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
     switch (pas_segregated_view_get_kind(view)) {
     case pas_segregated_exclusive_view_kind:
     case pas_segregated_ineligible_exclusive_view_kind: {
+        pas_segregated_directory* size_directory_base;
+
         exclusive = (pas_segregated_exclusive_view*)pas_segregated_view_get_ptr(view);
         ineligible_owning_view = pas_segregated_exclusive_view_as_ineligible_view_non_null(exclusive);
 
@@ -231,7 +232,6 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
         partial = pas_segregated_view_get_partial(view);
     
         size_directory = pas_compact_segregated_size_directory_ptr_load_non_null(&partial->directory);
-        size_directory_base = &size_directory->base;
         heap = size_directory->heap;
         shared_page_directory = page_config.shared_page_directory_selector(heap, size_directory);
         heap_lock_hold_mode = pas_segregated_page_config_heap_lock_hold_mode(page_config);

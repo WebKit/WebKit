@@ -949,6 +949,7 @@ macho_objfmt_output_symtable(yasm_symrec *sym, /*@null@*/ void *d)
         YASM_WRITE_16_L(localbuf, n_desc);      /* extra description */
         yasm_intnum_get_sized(val, localbuf, long_int_bytes, ((long_int_bytes) << 3), 0, 0, 0); /* value/argument */
         localbuf += long_int_bytes;
+        (void)localbuf; /* placate clang static analyzer. */
         if (symd)
             symd->value = val;
         else
@@ -1426,6 +1427,7 @@ macho_objfmt_section_switch(yasm_object *object, yasm_valparamhead *valparams,
             align = 0;
 
             sectname = s;
+            (void)sectname; /* placate clang static analyzer. */
             vp = yasm_vps_next(vp);
         } else {
             data.f_segname = NULL;

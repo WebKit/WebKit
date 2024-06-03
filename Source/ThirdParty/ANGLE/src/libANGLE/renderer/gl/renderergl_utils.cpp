@@ -2266,6 +2266,8 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
         qualcommVersion = GetQualcommVersion(functions);
     }
 
+    (void)isVMWare; // placate clang static analyzer.
+
     // Don't use 1-bit alpha formats on desktop GL with AMD drivers.
     ANGLE_FEATURE_CONDITION(features, avoid1BitAlphaTextureFormats,
                             functions->standard == STANDARD_GL_DESKTOP && isAMD);

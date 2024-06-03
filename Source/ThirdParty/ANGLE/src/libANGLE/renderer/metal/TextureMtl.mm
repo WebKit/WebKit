@@ -1442,7 +1442,7 @@ angle::Result TextureMtl::generateMipmapCPU(const gl::Context *context)
 
             prevLevelWidth      = dstWidth;
             prevLevelHeight     = dstHeight;
-            prevLevelDepth      = dstDepth;
+            // prevLevelDepth      = dstDepth; // Unneeded: removed to placate clang static analyzer.
             prevLevelRowPitch   = dstRowPitch;
             prevLevelDepthPitch = dstDepthPitch;
             std::swap(prevLevelData, dstLevelData);

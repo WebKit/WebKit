@@ -127,7 +127,7 @@ static __inline int top_bit(unsigned int bits) {
     i += 2;
   }
   if (bits & 0xAAAAAAAA) {
-    bits &= 0xAAAAAAAA;
+    /* bits &= 0xAAAAAAAA; // Unneeded: removed to placate clang static analyzer. */
     i += 1;
   }
   return i;
@@ -157,7 +157,7 @@ static __inline int bottom_bit(unsigned int bits) {
     i -= 2;
   }
   if (bits & 0x55555555) {
-    bits &= 0x55555555;
+    /* bits &= 0x55555555; // Unneeded: removed to placate clang static analyzer. */
     i -= 1;
   }
   return i;

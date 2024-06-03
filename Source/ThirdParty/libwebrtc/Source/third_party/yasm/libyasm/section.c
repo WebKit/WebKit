@@ -1557,6 +1557,7 @@ yasm_object_optimize(yasm_object *object, yasm_errwarns *errwarns)
             retval = yasm_bc_expand(os->bc, 1, (long)os->cur_val,
                                     (long)os->new_val, &neg_thres_temp,
                                     (long *)&os->thres);
+            (void)retval; // placate clang static analyzer.
             yasm_errwarn_propagate(errwarns, os->bc->line);
 
             offset_diff = os->new_val + os->bc->len - old_next_offset;

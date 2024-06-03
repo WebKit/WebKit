@@ -973,6 +973,7 @@ static bool ssl_cipher_process_rulestr(const char *rule_str,
 
       if (ch == '|') {
         rule = CIPHER_ADD;
+        (void)rule; // placate clang static analyzer.
         l++;
         continue;
       } else if (!OPENSSL_isalnum(ch)) {

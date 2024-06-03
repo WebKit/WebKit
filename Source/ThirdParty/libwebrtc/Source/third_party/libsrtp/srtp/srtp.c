@@ -1050,6 +1050,7 @@ srtp_err_status_t srtp_stream_init_keys(srtp_stream_ctx_t *srtp,
         } else {
             /* Reuse main KDF. */
             rtp_xtn_hdr_keylen = rtp_keylen;
+            (void)rtp_xtn_hdr_keylen; /* placate clang static analyzer. */
             rtp_xtn_hdr_base_key_len = rtp_base_key_len;
             rtp_xtn_hdr_salt_len = rtp_salt_len;
             xtn_hdr_kdf = &kdf;

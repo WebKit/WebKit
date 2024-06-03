@@ -216,7 +216,7 @@ static INLINE uint8x16_t load_unaligned_u8q(const uint8_t *buf,
   buf += stride;
   a_u32 = vsetq_lane_u32(a, a_u32, 2);
   memcpy(&a, buf, 4);
-  buf += stride;
+  // buf += stride; // Unneeded: removed to placate clang static analyzer.
   a_u32 = vsetq_lane_u32(a, a_u32, 3);
   return vreinterpretq_u8_u32(a_u32);
 }

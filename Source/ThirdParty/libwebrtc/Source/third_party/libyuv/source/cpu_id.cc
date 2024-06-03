@@ -337,6 +337,7 @@ static SAFEBUFFERS int GetCpuFlags(void) {
 // For Linux, /proc/cpuinfo can be tested but without that assume Neon.
 #if defined(__ARM_NEON__) || defined(__native_client__) || !defined(__linux__)
   cpu_info = kCpuHasNEON;
+  (void)cpu_info; // placate clang static analyzer.
 // For aarch64(arm64), /proc/cpuinfo's feature is not complete, e.g. no neon
 // flag in it.
 // So for aarch64, neon enabling is hard coded here.

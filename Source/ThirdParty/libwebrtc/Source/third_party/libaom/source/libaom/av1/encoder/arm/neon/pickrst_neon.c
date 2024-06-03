@@ -178,6 +178,7 @@ static INLINE uint8_t find_average_neon(const uint8_t *src, int src_stride,
           avg_u16 = vaddw_u8(avg_u16, s);
           j -= 8;
           src_ptr += 8;
+          (void)src_ptr; // placate clang static analyzer.
         }
         // Scalar tail case.
         while (j > 0) {
@@ -188,7 +189,7 @@ static INLINE uint8_t find_average_neon(const uint8_t *src, int src_stride,
       } while (++h < h_limit);
       avg_u32 = vpadalq_u16(avg_u32, avg_u16);
 
-      h_limit += h_overflow;
+      // h_limit += h_overflow; // Unneeded: removed to placate clang static analyzer.
       h_limit = height > h_overflow ? h_overflow : height;
     } while (h < height);
     return (uint8_t)((horizontal_long_add_u32x4(avg_u32) + sum) /
@@ -212,6 +213,7 @@ static INLINE uint8_t find_average_neon(const uint8_t *src, int src_stride,
         avg_u16 = vpadal_u8(avg_u16, s);
         j -= 8;
         src_ptr += 8;
+        (void)src_ptr; // placate clang static analyzer.
         // Scalar tail case.
         while (j > 0) {
           sum += src[width - j];
@@ -221,7 +223,7 @@ static INLINE uint8_t find_average_neon(const uint8_t *src, int src_stride,
       } while (++h < h_limit);
       avg_u32 = vpadal_u16(avg_u32, avg_u16);
 
-      h_limit += h_overflow;
+      // h_limit += h_overflow; // Unneeded: removed to placate clang static analyzer.
       h_limit = height > h_overflow ? h_overflow : height;
     } while (h < height);
     return (uint8_t)((horizontal_long_add_u32x2(avg_u32) + sum) /

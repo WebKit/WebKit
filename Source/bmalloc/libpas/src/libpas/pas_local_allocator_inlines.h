@@ -918,7 +918,6 @@ pas_local_allocator_refill_with_known_config(
     pas_segregated_page* old_page;
     pas_segregated_page* new_page;
     pas_segregated_size_directory* size_directory;
-    pas_segregated_directory* directory;
     pas_thread_local_cache_node* cache_node;
     pas_segregated_exclusive_view* exclusive;
     pas_segregated_partial_view* partial;
@@ -932,10 +931,9 @@ pas_local_allocator_refill_with_known_config(
     size_directory = pas_segregated_view_get_size_directory(allocator->view);
 
     pas_segregated_heap_touch_lookup_tables(size_directory->heap, pas_expendable_memory_touch_to_note_use);
-    
-    directory = &size_directory->base;
 
     if (verbose) {
+        pas_segregated_directory* directory = &size_directory->base;
         pas_log("Refilling allocator = %p with size = %u and mode = %s\n",
                 allocator,
                 allocator->object_size,
@@ -1043,7 +1041,6 @@ pas_local_allocator_refill_with_known_config(
             PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
             partial = (pas_segregated_partial_view*)pas_segregated_view_get_ptr(old_view);
             if (partial->eligibility_has_been_noted) {
-                new_view = old_view;
                 new_page = old_page;
                 pas_segregated_page_switch_lock(new_page, &held_lock, page_config);
                 partial->eligibility_has_been_noted = false;

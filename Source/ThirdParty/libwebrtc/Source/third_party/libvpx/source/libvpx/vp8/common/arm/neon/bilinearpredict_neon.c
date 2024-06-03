@@ -632,6 +632,7 @@ void vp8_bilinear_predict16x16_neon(unsigned char *src_ptr,
   d15u8 = vld1_u8(src_ptr + 8);
   d16u8 = vld1_u8(src_ptr + 16);
   src_ptr += src_pixels_per_line;
+  (void)src_ptr; // placate clang static analyzer.
 
   q9u16 = vmull_u8(d2u8, d0u8);
   q10u16 = vmull_u8(d3u8, d0u8);
