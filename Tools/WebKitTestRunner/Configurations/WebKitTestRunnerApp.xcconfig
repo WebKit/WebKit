@@ -37,7 +37,7 @@ STRIP_STYLE = debugging;
 
 SKIP_INSTALL[sdk=macosx*] = YES;
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = ios/* AppDelegate.m *.appex;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = ios/* AppDelegate.m;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletv*] = ios/Launch.storyboard;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=watch*] = ios/Launch.storyboard;
 
@@ -47,5 +47,3 @@ CODE_SIGN_ENTITLEMENTS[sdk=iphone*] = Configurations/WebKitTestRunnerApp-iOS.ent
 CODE_SIGN_ENTITLEMENTS[sdk=appletv*] = Configurations/WebKitTestRunnerApp-watchOS.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=watch*] = Configurations/WebKitTestRunnerApp-watchOS.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=xr*] = Configurations/WebKitTestRunnerApp-iOS.entitlements;
-
-APPLY_RULES_IN_COPY_FILES = YES
