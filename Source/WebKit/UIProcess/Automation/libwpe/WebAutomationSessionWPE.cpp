@@ -24,12 +24,15 @@
  */
 
 #include "config.h"
+#include "AutomationProtocolObjects.h"
+#include "SimulatedInputDispatcher.h"
 #include "WebAutomationSession.h"
 
 #include "WebAutomationSessionLibWPE.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebEventModifier.h"
 #include "WebPageProxy.h"
+#include <optional>
 #include <wpe/wpe.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -484,5 +487,44 @@ void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, 
 #endif
 }
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+
+#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+
+void WebAutomationSession::platformSimulateTouchInteraction(WebPageProxy&page, TouchInteraction interaction, const WebCore::IntPoint& locationInView, std::optional<Seconds> duration, AutomationCompletionHandler&& completionHandler)
+{
+
+    if (page.viewBackend()) {
+        LOG(Automation, "Touch event emulation is not supported for the legacy libwpe API");
+        completionHandler(AutomationCommandError(Inspector::Protocol::Automation::ErrorMessage::InternalError, "Touch event emulation is not supported for the legacy libwpe API"_s));
+        return;
+    }
+
+    auto location = deviceScaleLocationInView(page, locationInView);
+
+#if ENABLE(WPE_PLATFORM)
+    GRefPtr<WPEEvent> event;
+
+    switch (interaction) {
+    case TouchInteraction::TouchDown:
+        event = adoptGRef(wpe_event_touch_new(WPE_EVENT_TOUCH_DOWN, page.wpeView(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0,
+            static_cast<WPEModifiers>(m_currentModifiers), 0, location.x(), location.y()));
+        break;
+    case TouchInteraction::LiftUp:
+        event = adoptGRef(wpe_event_touch_new(WPE_EVENT_TOUCH_UP, page.wpeView(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0,
+            static_cast<WPEModifiers>(m_currentModifiers), 0, location.x(), location.y()));
+        break;
+    case TouchInteraction::MoveTo:
+        // TODO: Spread over intermediate points based on the duration, like iOS's WKTouchEventGenerator::moveToPoints
+        // See https://bugs.webkit.org/show_bug.cgi?id=275031
+        event = adoptGRef(wpe_event_touch_new(WPE_EVENT_TOUCH_MOVE, page.wpeView(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0,
+            static_cast<WPEModifiers>(m_currentModifiers), 0, location.x(), location.y()));
+        break;
+    }
+
+    wpe_view_event(page.wpeView(), event.get());
+#endif
+    completionHandler(std::nullopt);
+}
+#endif
 
 } // namespace WebKit
