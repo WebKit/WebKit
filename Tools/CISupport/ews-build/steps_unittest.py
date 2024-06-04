@@ -2737,7 +2737,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('second_results_exceed_failure_limit', True)
         self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 30)])
         self.setProperty('clean_tree_run_failures', [f'test{i}' for i in range(0, 10)])
-        self.expectOutcome(result=FAILURE, state_string='Found 30 new test failures: test0, test1, test10, test11, test12, test13, test14, test15, test16, test17 ... (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found 30 new test failures: test0 test1 test10 test11 test12 test13 test14 test15 test16 test17 ... (failure)')
         return self.runStep()
 
     def test_clean_tree_has_lot_of_failures_and_no_new_failure(self):
@@ -2757,7 +2757,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 300)])
         self.setProperty('second_results_exceed_failure_limit', True)
         self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 300)])
-        failure_message = 'Found 300 new test failures: test0, test1, test10, test100, test101, test102, test103, test104, test105, test106 ...'
+        failure_message = 'Found 300 new test failures: test0 test1 test10 test100 test101 test102 test103 test104 test105 test106 ...'
         self.expectOutcome(result=FAILURE, state_string=failure_message + ' (failure)')
         rc = self.runStep()
         self.assertEqual(self.getProperty('comment_text'), failure_message)
@@ -3294,7 +3294,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('with_change_repeat_failures_timedout', True)
         self.setProperty('without_change_repeat_failures_results_nonflaky_failures', ["test/pre-existent/failure.html"])
         self.setProperty('without_change_repeat_failures_results_flakies', ["test/pre-existent/flaky.html"])
-        self.expectOutcome(result=FAILURE, state_string='Found 2 new test failures: test/failure1.html, test/failure2.html (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found 2 new test failures: test/failure1.html test/failure2.html (failure)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 2)
         expected_infrastructure_error = 'The step "layout-tests-repeat-failures-with-change" reached the timeout but the step "layout-tests-repeat-failures-without-change" ended. Not trying to repeat this. Reporting 2 failures from the first run.'

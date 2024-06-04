@@ -4461,7 +4461,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                 message = 'Failure limit exceed. At least found'
             else:
                 message = 'Found'
-            new_failures_string = ', '.join(sorted(new_failures)[:self.NUM_FAILURES_TO_DISPLAY])
+            new_failures_string = ' '.join(sorted(new_failures)[:self.NUM_FAILURES_TO_DISPLAY])
             message += ' {} new test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
             if len(new_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'
