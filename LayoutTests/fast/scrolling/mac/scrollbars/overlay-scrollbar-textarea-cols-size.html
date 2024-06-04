@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<textarea cols="3" id="textareaA" style="overflow-x: scroll"></textarea>
+<textarea cols="3" style="overflow: hidden" id="textareaB"></textarea>
+
+    <script>
+        jsTestIsAsync = true;
+        
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test textarea cols size');
+            if (!window.internals) {
+                finishJSTest();
+                return;
+            }
+            
+            debug('Initial state');
+
+            shouldBe("textareaA.width", "textareaB.width");
+            shouldBe("textareaA.height", "textareaB.height");
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

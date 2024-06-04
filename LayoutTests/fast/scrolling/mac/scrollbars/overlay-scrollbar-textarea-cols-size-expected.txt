@@ -1,0 +1,12 @@
+Test textarea cols size
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state
+PASS textareaA.width is textareaB.width
+PASS textareaA.height is textareaB.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
