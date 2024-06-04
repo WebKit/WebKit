@@ -1247,7 +1247,7 @@ double UnifiedPDFPlugin::initialScale() const
 void UnifiedPDFPlugin::computeNormalizationFactor()
 {
     auto actualSizeScale = scaleForActualSize();
-    m_scaleNormalizationFactor = 1.0 / actualSizeScale;
+    m_scaleNormalizationFactor = std::max(1.0, actualSizeScale) / actualSizeScale;
 }
 
 double UnifiedPDFPlugin::fromNormalizedScaleFactor(double normalizedScale) const
