@@ -1,0 +1,80 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  const format = 'bgra8unorm';
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let videoFrame = new VideoFrame(new ArrayBuffer(4), {
+      codedWidth: 1, codedHeight: 1,
+      format: 'BGRA',
+      timestamp: 0,
+    });
+    let externalTexture0 = device.importExternalTexture({source: videoFrame});
+    let vertexesF32 = new Float32Array([1, -1, 1, 1, -1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1, 1, 1, 1, 1, -1, 1, 1, 1]);
+    let vertexBuffer = device.createBuffer({size: vertexesF32.byteLength, usage: GPUBufferUsage.VERTEX, mappedAtCreation: true});
+    new Float32Array(vertexBuffer.getMappedRange()).set(vertexesF32);
+    vertexBuffer.unmap();
+
+    let vertexShader = `
+@vertex
+fn v(@location(0) position : vec4f) -> @builtin(position) vec4f {
+  return position;
+}
+
+@group(0) @binding(1) var et: texture_external;
+
+@fragment
+fn f() -> @location(0) vec4f {
+  return textureLoad(et, vec2());
+}
+`;
+    let bindGroupLayout = device.createBindGroupLayout({
+      entries: [{binding: 1, externalTexture: {}, texture: {}, visibility: GPUShaderStage.FRAGMENT}],
+    });
+    let module = device.createShaderModule({code: vertexShader});
+    let pipeline = device.createRenderPipeline({
+      layout: device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout]}),
+      vertex: {
+        module,
+        buffers: [{arrayStride: 16, attributes: [{shaderLocation: 0, offset: 0, format: 'float32x4'}]}],
+      },
+      fragment: {module, targets: [{format}]},
+    });
+
+    let textureBindGroup = device.createBindGroup({
+      layout: bindGroupLayout,
+      entries: [{binding: 1, resource: externalTexture0}],
+    });
+
+    let renderPassDescriptor = {
+      colorAttachments: [{
+        view: device.createTexture({format, size: [1], usage: GPUTextureUsage.RENDER_ATTACHMENT}).createView(),
+        clearValue: [0.5, 0.5, 0.5, 1],
+        loadOp: 'clear', storeOp: 'store',
+      }],
+    };
+
+    let commandEncoder = device.createCommandEncoder();
+    let passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+
+    passEncoder.setPipeline(pipeline);
+    passEncoder.setBindGroup(0, textureBindGroup);
+    passEncoder.setVertexBuffer(0, vertexBuffer);
+    passEncoder.draw(6);
+    passEncoder.end();
+    device.queue.submit([commandEncoder.finish()]);
+
+    await device.queue.onSubmittedWorkDone();
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log('no validation error');
+    }
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

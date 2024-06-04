@@ -2144,6 +2144,7 @@ fast/webgpu/regression [ Pass ]
 [ Release ] fast/webgpu/fuzz-128396311.html [ Pass Failure Timeout ]
 [ Debug ] fast/webgpu/fuzz-274622.html [ Skip ]
 [ Release ] fast/webgpu/fuzz-274622.html [ Pass Failure Timeout ]
+fast/webgpu/regression/repro_274977.html [ Pass Failure ]
 
 # Imported W3C HTML/DOM ref tests that are failing.
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ ImageOnlyFailure ]

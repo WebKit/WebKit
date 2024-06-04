@@ -191,7 +191,7 @@ static simd::float4x3 colorSpaceConversionMatrixForPixelBuffer(CVPixelBufferRef 
     } }
 }
 
-static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plane)
+static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plane, std::optional<MTLTextureSwizzleChannels>& swizzle)
 {
     auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
     auto biplanarFormat = [](int plane) {
@@ -219,14 +219,21 @@ static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plan
         return MTLPixelFormatB5G6R5Unorm;
 
     case kCVPixelFormatType_24RGB: /* 24 bit RGB */
-    case kCVPixelFormatType_24BGR:     /* 24 bit BGR */
+        return MTLPixelFormatRGBA8Unorm;
+    case kCVPixelFormatType_32ABGR:     /* 32 bit ABGR */
+        swizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleZero, MTLTextureSwizzleZero, MTLTextureSwizzleZero);
+        return MTLPixelFormatBGRA8Unorm;
     case kCVPixelFormatType_32ARGB: /* 32 bit ARGB */
+        swizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleZero, MTLTextureSwizzleZero, MTLTextureSwizzleZero);
+        return MTLPixelFormatRGBA8Unorm;
+    case kCVPixelFormatType_24BGR:     /* 24 bit BGR */
     case kCVPixelFormatType_32BGRA:     /* 32 bit BGRA */
         return MTLPixelFormatBGRA8Unorm;
-    case kCVPixelFormatType_32ABGR:     /* 32 bit ABGR */
     case kCVPixelFormatType_32RGBA:     /* 32 bit RGBA */
         return MTLPixelFormatRGBA8Unorm;
     case kCVPixelFormatType_64ARGB:     /* 64 bit ARGB, 16-bit big-endian samples */
+        swizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleZero, MTLTextureSwizzleZero, MTLTextureSwizzleZero);
+        FALLTHROUGH;
     case kCVPixelFormatType_64RGBALE:     /* 64 bit RGBA, 16-bit little-endian full-range (0-65535) samples */
         return MTLPixelFormatRGBA16Unorm;
 
@@ -296,7 +303,9 @@ static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plan
         return MTLPixelFormatRG8Unorm;
 
     case kCVPixelFormatType_30RGBLEPackedWideGamut: /* little-endian RGB101010, 2 MSB are zero, wide-gamut (384-895) */
+        return MTLPixelFormatRGB10A2Unorm;
     case kCVPixelFormatType_ARGB2101010LEPacked:     /* little-endian ARGB2101010 full-range ARGB */
+        swizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleZero, MTLTextureSwizzleZero, MTLTextureSwizzleZero);
         return MTLPixelFormatRGB10A2Unorm;
 
     case kCVPixelFormatType_40ARGBLEWideGamut: /* little-endian ARGB10101010, each 10 bits in the MSBs of 16bits, wide-gamut (384-895, including alpha) */
@@ -406,12 +415,18 @@ static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plan
 
     return MTLPixelFormatInvalid;
 }
+
 #endif
 
 Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixelBufferRef pixelBuffer, WGPUColorSpace colorSpace) const
 {
 #if HAVE(COREVIDEO_METAL_SUPPORT)
     UNUSED_PARAM(colorSpace);
+
+    std::optional<MTLTextureSwizzleChannels> firstPlaneSwizzle;
+    auto gbTextureFromRGB = ^(id<MTLTexture> texture, bool alphaFirst) {
+        return [texture newTextureViewWithPixelFormat:texture.pixelFormat textureType:texture.textureType levels:NSMakeRange(0, texture.mipmapLevelCount) slices:NSMakeRange(0, texture.arrayLength) swizzle:alphaFirst ? MTLTextureSwizzleChannelsMake(MTLTextureSwizzleBlue, MTLTextureSwizzleAlpha, MTLTextureSwizzleZero, MTLTextureSwizzleZero) : MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleBlue, MTLTextureSwizzleZero, MTLTextureSwizzleZero)];
+    };
 
     if (!CVPixelBufferGetIOSurface(pixelBuffer)) {
         auto planeCount = std::max<size_t>(CVPixelBufferGetPlaneCount(pixelBuffer), 1);
@@ -435,7 +450,9 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
             textureDescriptor.textureType = MTLTextureType2D;
             textureDescriptor.width = width;
             textureDescriptor.height = height;
-            textureDescriptor.pixelFormat = metalPixelFormat(pixelBuffer, plane);
+            textureDescriptor.pixelFormat = metalPixelFormat(pixelBuffer, plane, firstPlaneSwizzle);
+            if (firstPlaneSwizzle)
+                textureDescriptor.swizzle = *firstPlaneSwizzle;
             textureDescriptor.mipmapLevelCount = 1;
             textureDescriptor.sampleCount = 1;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -462,20 +479,27 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
             colorSpaceConversionMatrix = colorSpaceConversionMatrixForPixelBuffer(pixelBuffer);
         else {
             colorSpaceConversionMatrix = simd::float4x3(1.f);
-            mtlTextures[1] = mtlTextures[0];
+            mtlTextures[1] = gbTextureFromRGB(mtlTextures[0], firstPlaneSwizzle.has_value());
         }
 
         return { mtlTextures[0], mtlTextures[1], simd::float3x2(1.f), colorSpaceConversionMatrix };
     }
 
+    id<MTLTexture> baseTexture = nil;
     id<MTLTexture> mtlTexture0 = nil;
     id<MTLTexture> mtlTexture1 = nil;
 
     CVMetalTextureRef plane0 = nullptr;
     CVMetalTextureRef plane1 = nullptr;
-
-    CVReturn status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, MTLPixelFormatR8Unorm, CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
-    CVReturn status2 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, MTLPixelFormatRG8Unorm, CVPixelBufferGetWidthOfPlane(pixelBuffer, 1), CVPixelBufferGetHeightOfPlane(pixelBuffer, 1), 1, &plane1);
+    auto planeCount = CVPixelBufferGetPlaneCount(pixelBuffer);
+    CVReturn status1;
+    CVReturn status2 = kCVReturnInvalidPixelFormat;
+    if (planeCount < 2)
+        status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, metalPixelFormat(pixelBuffer, 0, firstPlaneSwizzle), CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
+    else {
+        status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, MTLPixelFormatR8Unorm, CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
+        status2 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, MTLPixelFormatRG8Unorm, CVPixelBufferGetWidthOfPlane(pixelBuffer, 1), CVPixelBufferGetHeightOfPlane(pixelBuffer, 1), 1, &plane1);
+    }
 
     float lowerLeft[2];
     float lowerRight[2];
@@ -483,8 +507,10 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
     float upperLeft[2];
 
     if (status1 == kCVReturnSuccess) {
-        mtlTexture0 = CVMetalTextureGetTexture(plane0);
+        baseTexture = mtlTexture0 = CVMetalTextureGetTexture(plane0);
         CVMetalTextureGetCleanTexCoords(plane0, lowerLeft, lowerRight, upperRight, upperLeft);
+        if (firstPlaneSwizzle)
+            mtlTexture0 = [mtlTexture0 newTextureViewWithPixelFormat:mtlTexture0.pixelFormat textureType:mtlTexture0.textureType levels:NSMakeRange(0, mtlTexture0.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture0.arrayLength) swizzle:*firstPlaneSwizzle];
     } else {
         if (plane1)
             CFRelease(plane1);
@@ -507,7 +533,9 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
     float Ay = 1.f / (lowerRight[1] - upperLeft[1]);
     float By = -Ay * upperLeft[1];
     simd::float3x2 uvRemappingMatrix = simd::float3x2(simd::make_float2(Ax, 0.f), simd::make_float2(0.f, Ay), simd::make_float2(Bx, By));
-    simd::float4x3 colorSpaceConversionMatrix = colorSpaceConversionMatrixForPixelBuffer(pixelBuffer);
+    simd::float4x3 colorSpaceConversionMatrix = mtlTexture1 ? colorSpaceConversionMatrixForPixelBuffer(pixelBuffer) : simd::float4x3(1.f);
+    if (!mtlTexture1)
+        mtlTexture1 = gbTextureFromRGB(baseTexture, firstPlaneSwizzle.has_value());
 
     return { mtlTexture0, mtlTexture1, uvRemappingMatrix, colorSpaceConversionMatrix };
 #else
