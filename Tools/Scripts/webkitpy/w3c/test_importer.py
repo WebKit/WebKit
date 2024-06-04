@@ -79,6 +79,7 @@ except ImportError:
 
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.port.factory import PortFactory
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
@@ -209,7 +210,14 @@ class TestImporter(object):
         }
 
     def do_import(self):
-        if not self.source_directory:
+        if self.source_directory:
+            source_path = str(Path(self.source_directory) / 'web-platform-tests')
+            try:
+                git = self.test_downloader().git(source_path)
+                self.upstream_revision = git.rev_parse('HEAD')
+            except (OSError, ScriptError):
+                pass
+        else:
             _log.info('Downloading W3C test repositories')
             self.filesystem.maybe_make_directory(self.tests_download_path)
             self.test_downloader().download_tests(self.options.use_tip_of_tree)
