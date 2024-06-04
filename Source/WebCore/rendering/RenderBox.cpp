@@ -847,8 +847,7 @@ FloatQuad RenderBox::absoluteContentQuad() const
 LayoutRect RenderBox::localOutlineBoundsRepaintRect() const
 {
     auto box = borderBoundingBox();
-    applyVisualEffectOverflow(box);
-    return box;
+    return applyVisualEffectOverflow(box);
 }
 
 LayoutRect RenderBox::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* geometryMap) const
