@@ -135,10 +135,12 @@ webkit.org/b/274931 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_viewports
 
 webkit.org/b/274980 imported/w3c/web-platform-tests/webxr/xrViewport_valid.https.html [ Failure ]
 
-# webkit.org/b/275009 [VisionOS] 3 tests in fast/events/pointer/iOS tests are timing out constantly
+imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html275009 [VisionOS] 3 tests in fast/events/pointer/iOS tests are timing out constantly
 fast/events/pointer/ios/drag-gives-pointerdown-pointermove-pointerup.html [ Timeout ]
 fast/events/pointer/ios/drag-populates-pointer-events-with-movementxy-fields.html [ Timeout ]
 fast/events/pointer/ios/tap-gives-pointerdown-pointerup.html [ Timeout ]
+
+webkit.org/b/275115 imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html [ Skip ]
 
 ### END OF Triaged failures
 ###################################################################################################
