@@ -2131,7 +2131,7 @@ void WebPageProxy::stopLoading()
     WEBPAGEPROXY_RELEASE_LOG(Loading, "stopLoading:");
 
     if (!hasRunningProcess()) {
-        WEBPAGEPROXY_RELEASE_LOG(Loading, "navigateToPDFLinkWithSimulatedClick: page is not valid");
+        WEBPAGEPROXY_RELEASE_LOG(Loading, "stopLoading: page is not valid");
         return;
     }
 
