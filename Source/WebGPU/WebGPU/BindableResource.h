@@ -61,6 +61,7 @@ struct BindGroupEntryUsageData {
     uint32_t binding { 0 };
     using Resource = std::variant<RefPtr<Buffer>, RefPtr<const TextureView>, RefPtr<const ExternalTexture>>;
     Resource resource;
+    uint64_t entryOffset { 0 };
     static constexpr uint32_t invalidBindingIndex = INT_MAX;
     static constexpr BindGroupEntryUsage invalidBindGroupUsage = static_cast<BindGroupEntryUsage>(std::numeric_limits<std::underlying_type<BindGroupEntryUsage>::type>::max());
 };

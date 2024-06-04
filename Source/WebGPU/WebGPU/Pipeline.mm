@@ -195,8 +195,9 @@ NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindi
             }
 
             if (bufferSize && buffer->get()) {
-                if (buffer->get()->buffer().length < bufferSize)
-                    return [NSString stringWithFormat:@"buffer length is %zu which is less than required bufferSize of %llu", buffer->get()->buffer().length, bufferSize];
+                auto mtlBufferLength = buffer->get()->buffer().length;
+                if (resource.entryOffset > mtlBufferLength || (mtlBufferLength - resource.entryOffset) < bufferSize)
+                    return [NSString stringWithFormat:@"buffer length is %zu minus offset %llu which is less than required bufferSize of %llu", mtlBufferLength, resource.entryOffset, bufferSize];
             }
         }
     }
