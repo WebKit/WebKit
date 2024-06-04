@@ -46,6 +46,7 @@ JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, JSValue, const String&,
 JS_EXPORT_PRIVATE JSObject* createStackOverflowError(JSGlobalObject*);
 JSObject* createUndefinedVariableError(JSGlobalObject*, const Identifier&);
 JSObject* createTDZError(JSGlobalObject*);
+JSObject* createTDZError(JSGlobalObject*, const Identifier&);
 JS_EXPORT_PRIVATE JSObject* createNotAnObjectError(JSGlobalObject*, JSValue);
 JSObject* createInvalidFunctionApplyParameterError(JSGlobalObject*, JSValue);
 JSObject* createInvalidInParameterError(JSGlobalObject*, JSValue);
