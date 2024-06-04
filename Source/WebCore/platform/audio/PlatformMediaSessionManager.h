@@ -234,6 +234,11 @@ private:
 
     Vector<WeakPtr<PlatformMediaSession>> sessionsMatching(const Function<bool(const PlatformMediaSession&)>&) const;
 
+#if !RELEASE_LOG_DISABLED
+    void scheduleStateLog();
+    void dumpSessionStates();
+#endif
+
     SessionRestrictions m_restrictions[static_cast<unsigned>(PlatformMediaSession::MediaType::WebAudio) + 1];
     mutable Vector<WeakPtr<PlatformMediaSession>> m_sessions;
 
@@ -281,6 +286,7 @@ private:
 #endif
 
 #if !RELEASE_LOG_DISABLED
+    UniqueRef<Timer> m_stateLogTimer;
     Ref<AggregateLogger> m_logger;
 #endif
 };

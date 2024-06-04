@@ -79,6 +79,25 @@ String convertEnumerationToString(PlatformMediaSession::InterruptionType type)
     return values[static_cast<size_t>(type)];
 }
 
+String convertEnumerationToString(PlatformMediaSession::MediaType mediaType)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("None"),
+        MAKE_STATIC_STRING_IMPL("Video"),
+        MAKE_STATIC_STRING_IMPL("VideoAudio"),
+        MAKE_STATIC_STRING_IMPL("Audio"),
+        MAKE_STATIC_STRING_IMPL("WebAudio"),
+    };
+    static_assert(!static_cast<size_t>(PlatformMediaSession::MediaType::None), "PlatformMediaSession::MediaType::None is not 0 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::MediaType::Video) == 1, "PlatformMediaSession::MediaType::Video is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::MediaType::VideoAudio) == 2, "PlatformMediaSession::MediaType::VideoAudio is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::MediaType::Audio) == 3, "PlatformMediaSession::MediaType::Audio is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::MediaType::WebAudio) == 4, "PlatformMediaSession::MediaType::WebAudio is not 4 as expected");
+
+    ASSERT(static_cast<size_t>(mediaType) < std::size(values));
+    return values[static_cast<size_t>(mediaType)];
+}
+
 String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType command)
 {
     static const NeverDestroyed<String> values[] = {
@@ -128,10 +147,6 @@ std::unique_ptr<PlatformMediaSession> PlatformMediaSession::create(PlatformMedia
 PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionManager&, PlatformMediaSessionClient& client)
     : m_client(client)
     , m_mediaSessionIdentifier(MediaSessionIdentifier::generate())
-#if !RELEASE_LOG_DISABLED
-    , m_logger(client.logger())
-    , m_logIdentifier(uniqueLogIdentifier())
-#endif
 {
 }
 
@@ -266,7 +281,7 @@ bool PlatformMediaSession::processClientWillPausePlayback(DelayCallingUpdateNowP
         ALWAYS_LOG(LOGIDENTIFIER, "      setting stateToRestore to \"Paused\"");
         return false;
     }
-    
+
     setState(State::Paused);
     PlatformMediaSessionManager::sharedManager().sessionWillEndPlayback(*this, shouldDelayCallingUpdateNowPlaying);
     return true;
@@ -453,9 +468,24 @@ WeakPtr<PlatformMediaSession> PlatformMediaSession::selectBestMediaSession(const
 }
 
 #if !RELEASE_LOG_DISABLED
+const Logger& PlatformMediaSession::logger() const
+{
+    return client().logger();
+}
+
+const void* PlatformMediaSession::logIdentifier() const
+{
+    return client().logIdentifier();
+}
+
 WTFLogChannel& PlatformMediaSession::logChannel() const
 {
     return LogMedia;
+}
+
+String PlatformMediaSession::description() const
+{
+    return makeString(convertEnumerationToString(mediaType()), ", "_s, convertEnumerationToString(state()));
 }
 #endif
 

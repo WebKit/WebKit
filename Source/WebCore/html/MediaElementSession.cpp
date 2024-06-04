@@ -29,6 +29,9 @@
 
 #include "MediaElementSession.h"
 
+#include "AudioTrack.h"
+#include "AudioTrackConfiguration.h"
+#include "AudioTrackList.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocumentInlines.h"
@@ -55,6 +58,11 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "SourceBuffer.h"
+#include "TextTrack.h"
+#include "TextTrackList.h"
+#include "VideoTrack.h"
+#include "VideoTrackConfiguration.h"
+#include "VideoTrackList.h"
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(MEDIA_SESSION)
@@ -171,9 +179,6 @@ MediaElementSession::MediaElementSession(HTMLMediaElement& element)
 #endif
     , m_mainContentCheckTimer(*this, &MediaElementSession::mainContentCheckTimerFired)
     , m_clientDataBufferingTimer(*this, &MediaElementSession::clientDataBufferingTimerFired)
-#if !RELEASE_LOG_DISABLED
-    , m_logIdentifier(element.logIdentifier())
-#endif
 {
 }
 
@@ -1451,6 +1456,42 @@ void MediaElementSession::clientCharacteristicsChanged(bool positionChanged)
 #endif
     PlatformMediaSession::clientCharacteristicsChanged(positionChanged);
 }
+
+#if !RELEASE_LOG_DISABLED
+String MediaElementSession::description() const
+{
+    StringBuilder builder;
+    builder.append(PlatformMediaSession::description());
+
+    builder.append(", "_s, m_element.localizedSourceType());
+
+    if (RefPtr videoTracks = m_element.videoTracks()) {
+        if (RefPtr selectedVideoTrack = videoTracks->selectedItem()) {
+            builder.append(", "_s, selectedVideoTrack->configuration().width(), 'x', selectedVideoTrack->configuration().height());
+            if (!selectedVideoTrack->configuration().codec().isEmpty())
+                builder.append(' ', selectedVideoTrack->configuration().codec());
+        }
+    }
+
+    if (RefPtr audioTracks = m_element.audioTracks()) {
+        if (RefPtr enabledAudioTrack = audioTracks->firstEnabled()) {
+            if (!enabledAudioTrack->configuration().codec().isEmpty())
+                builder.append(", "_s, enabledAudioTrack->configuration().codec());
+        }
+    }
+
+    if (RefPtr textTracks = m_element.textTracks()) {
+        for (unsigned i = 0, length = textTracks->length(); i < length; ++i) {
+            RefPtr textTrack = textTracks->item(i);
+            if (textTrack->mode() != TextTrack::Mode::Showing)
+                continue;
+            builder.append(", "_s, textTrack->kind(), ' ', textTrack->language());
+        }
+    }
+
+    return builder.toString();
+}
+#endif
 
 }
 

@@ -175,7 +175,7 @@ public:
     std::optional<MediaUsageInfo> mediaUsageInfo() const { return m_mediaUsageInfo; }
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    String description() const final;
     ASCIILiteral logClassName() const final { return "MediaElementSession"_s; }
 #endif
 

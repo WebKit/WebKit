@@ -108,7 +108,8 @@ void PlatformMediaSessionManager::updateAudioSessionCategoryIfNecessary()
 
 PlatformMediaSessionManager::PlatformMediaSessionManager()
 #if !RELEASE_LOG_DISABLED
-    : m_logger(AggregateLogger::create(this))
+    : m_stateLogTimer(makeUniqueRef<Timer>(*this, &PlatformMediaSessionManager::dumpSessionStates))
+    , m_logger(AggregateLogger::create(this))
 #endif
 {
 }
@@ -331,6 +332,10 @@ void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession& sess
         updateSessionState();
     else
         scheduleUpdateSessionState();
+
+#if !RELEASE_LOG_DISABLED
+    scheduleStateLog();
+#endif
 }
 
 void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& session)
@@ -885,6 +890,26 @@ void PlatformMediaSessionManager::nowPlayingMetadataChanged(const NowPlayingMeta
 WTFLogChannel& PlatformMediaSessionManager::logChannel() const
 {
     return LogMedia;
+}
+
+void PlatformMediaSessionManager::scheduleStateLog()
+{
+    if (m_stateLogTimer->isActive())
+        return;
+
+    static constexpr Seconds StateLogDelay { 5_s };
+    m_stateLogTimer->startOneShot(StateLogDelay);
+}
+
+void PlatformMediaSessionManager::dumpSessionStates()
+{
+    StringBuilder builder;
+
+    forEachSession([&](auto& session) {
+        builder.append('(', hex(reinterpret_cast<uintptr_t>(session.logIdentifier())), "): "_s, session.description(), "\n"_s);
+    });
+
+    ALWAYS_LOG(LOGIDENTIFIER, " Sessions:\n", builder.toString());
 }
 #endif
 
