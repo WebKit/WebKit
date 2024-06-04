@@ -92,6 +92,9 @@ public:
     void setIsRootChildFrameItem(bool rootChildFrameItem) { m_isRootChildFrameItem = rootChildFrameItem; }
     bool isRootChildFrameItem() const { return m_isRootChildFrameItem; }
 
+    void setFrameID(WebCore::FrameIdentifier frameID) { m_frameID = frameID; }
+    WebCore::FrameIdentifier frameID() const { return m_frameID; }
+
 #if !LOG_DISABLED
     String loggingString();
 #endif
@@ -111,6 +114,7 @@ private:
     URL m_resourceDirectoryURL;
     WebPageProxyIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
+    WebCore::FrameIdentifier m_frameID;
     std::unique_ptr<WebBackForwardCacheEntry> m_backForwardCacheEntry;
     bool m_isRootChildFrameItem { false };
 };
