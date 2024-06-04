@@ -168,7 +168,7 @@ id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::E
     return function;
 }
 
-NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindingSizesForBindGroup* mininumBufferSizes)
+NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindingSizesForBindGroup* mininumBufferSizes, const Vector<uint32_t>* dynamicOffsets)
 {
     auto bindGroupLayout = bindGroup.bindGroupLayout();
     if (!bindGroupLayout)
@@ -195,9 +195,11 @@ NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindi
             }
 
             if (bufferSize && buffer->get()) {
+                auto dynamicOffset = bindGroup.dynamicOffset(bindingIndex, dynamicOffsets);
+                auto totalOffset = resource.entryOffset + dynamicOffset;
                 auto mtlBufferLength = buffer->get()->buffer().length;
-                if (resource.entryOffset > mtlBufferLength || (mtlBufferLength - resource.entryOffset) < bufferSize)
-                    return [NSString stringWithFormat:@"buffer length is %zu minus offset %llu which is less than required bufferSize of %llu", mtlBufferLength, resource.entryOffset, bufferSize];
+                if (totalOffset > mtlBufferLength || (mtlBufferLength - totalOffset) < bufferSize)
+                    return [NSString stringWithFormat:@"buffer length(%zu) minus offset(%llu), (resourceOffset(%llu) + dynamicOffset(%u)), is less than required bufferSize(%llu)", mtlBufferLength, totalOffset, resource.entryOffset, dynamicOffset, bufferSize];
             }
         }
     }

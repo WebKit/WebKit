@@ -48,6 +48,7 @@ public:
         WGPUBufferBindingType type;
         uint64_t bindingSize;
         uint64_t bufferSize;
+        uint32_t bindingIndex;
     };
     using DynamicBuffersContainer = Vector<BufferAndType>;
 
@@ -81,6 +82,7 @@ public:
 
     const BindGroupLayout* bindGroupLayout() const;
     const BufferAndType* dynamicBuffer(uint32_t) const;
+    uint32_t dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>*) const;
 private:
     BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&&, const BindGroupLayout&, DynamicBuffersContainer&&, Device&);
     BindGroup(Device&);
@@ -93,6 +95,7 @@ private:
     Vector<BindableResources> m_resources;
     RefPtr<const BindGroupLayout> m_bindGroupLayout;
     DynamicBuffersContainer m_dynamicBuffers;
+    HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_dynamicOffsetsIndices;
 };
 
 } // namespace WebGPU

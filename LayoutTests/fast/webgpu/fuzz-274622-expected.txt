@@ -1,9 +1,5 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
-     0                0
-     8                0
-validation error:
-buffer length is 16 which is less than required bufferSize of 4294967295
-done
-
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 784x584

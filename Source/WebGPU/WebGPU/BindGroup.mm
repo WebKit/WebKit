@@ -947,8 +947,8 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
 
         bool bindingContainedInStage = false;
         bool appendedBufferToDynamicBuffers = false;
+        auto bindingIndex = entry.binding;
         for (ShaderStage stage : stagesPlusUndefined) {
-            auto bindingIndex = entry.binding;
             auto index = bindGroupLayout.argumentBufferIndexForEntryIndex(bindingIndex, stage);
             if (index == NSNotFound)
                 continue;
@@ -971,7 +971,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 auto bufferLengthMinusOffset = buffer.length > entryOffset ? (buffer.length - entryOffset) : 0;
                 auto entrySize = entry.size == WGPU_WHOLE_MAP_SIZE ? bufferLengthMinusOffset : entry.size;
                 if (layoutBinding->hasDynamicOffset && !appendedBufferToDynamicBuffers) {
-                    dynamicBuffers.append({ .type = layoutBinding->type, .bindingSize = entrySize, .bufferSize = apiBuffer.currentSize() });
+                    dynamicBuffers.append({ .type = layoutBinding->type, .bindingSize = entrySize, .bufferSize = bufferLengthMinusOffset, .bindingIndex = bindingIndex });
                     appendedBufferToDynamicBuffers = true;
                 }
 
@@ -1188,6 +1188,8 @@ BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentA
     , m_bindGroupLayout(&bindGroupLayout)
     , m_dynamicBuffers(WTFMove(dynamicBuffers))
 {
+    for (size_t index = 0, maxIndex = m_dynamicBuffers.size(); index < maxIndex; ++index)
+        m_dynamicOffsetsIndices.add(m_dynamicBuffers[index].bindingIndex, index);
 }
 
 BindGroup::BindGroup(Device& device)
@@ -1201,6 +1203,14 @@ const BindGroup::BufferAndType* BindGroup::dynamicBuffer(uint32_t i) const
 {
     ASSERT(i < m_dynamicBuffers.size());
     return i < m_dynamicBuffers.size() ? &m_dynamicBuffers[i] : nullptr;
+}
+
+uint32_t BindGroup::dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>* dynamicOffsets) const
+{
+    if (auto it = m_dynamicOffsetsIndices.find(bindingIndex); it != m_dynamicOffsetsIndices.end())
+        return dynamicOffsets && it->value < dynamicOffsets->size() ? (*dynamicOffsets)[it->value] : 0u;
+
+    return 0u;
 }
 
 void BindGroup::setLabel(String&& label)

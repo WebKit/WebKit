@@ -44,6 +44,6 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice>, const ShaderMo
 
 id<MTLFunction> createFunction(id<MTLLibrary>, const WGSL::Reflection::EntryPointInformation&, NSString *label);
 
-NSString* errorValidatingBindGroup(const BindGroup&, const BufferBindingSizesForBindGroup*);
+NSString* errorValidatingBindGroup(const BindGroup&, const BufferBindingSizesForBindGroup*, const Vector<uint32_t>*);
 
 } // namespace WebGPU

@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: 0
 CONSOLE MESSAGE: validation error
-CONSOLE MESSAGE: buffer length is 260 minus offset 256 which is less than required bufferSize of 260
+CONSOLE MESSAGE: buffer length(260) minus offset(256), (resourceOffset(256) + dynamicOffset(0)), is less than required bufferSize(260)
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
