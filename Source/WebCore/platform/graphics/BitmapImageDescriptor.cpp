@@ -242,7 +242,7 @@ SubsamplingLevel BitmapImageDescriptor::subsamplingLevelForScaleFactor(GraphicsC
 #if ENABLE(QUICKLOOK_FULLSCREEN)
 bool BitmapImageDescriptor::shouldUseQuickLookForFullscreen() const
 {
-    if (auto decoder = m_source->decoderIfExists())
+    if (auto decoder = m_source.decoderIfExists())
         return decoder->shouldUseQuickLookForFullscreen();
     return false;
 }
