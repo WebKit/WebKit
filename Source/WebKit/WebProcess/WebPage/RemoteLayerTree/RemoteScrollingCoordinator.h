@@ -73,6 +73,7 @@ private:
     // ScrollingCoordinator
     bool coordinatesScrollingForFrameView(const WebCore::LocalFrameView&) const override;
     void scheduleTreeStateCommit() override;
+    void willStartRenderingUpdate() final;
 
     bool isRubberBandInProgress(WebCore::ScrollingNodeID) const final;
     bool isUserScrollInProgress(WebCore::ScrollingNodeID) const final;
@@ -107,7 +108,8 @@ private:
     NodeAndGestureState m_currentWheelGestureInfo;
 
     bool m_clearScrollLatchingInNextTransaction { false };
-    
+    bool m_hasActiveViewTransition { false };
+
     std::optional<bool> m_currentWheelEventWillStartSwipe;
 };
 

@@ -1167,6 +1167,7 @@ public:
     WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForSessionWithID(const UnifiedTextReplacement::SessionID&) const;
 #endif
 
+    bool hasActiveViewTransition() const { return m_hasActiveViewTransition; }
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1433,6 +1434,7 @@ private:
     bool m_mediaBufferingIsSuspended { false };
     bool m_hasResourceLoadClient { false };
     bool m_delegatesScaling { false };
+    bool m_hasActiveViewTransition;
 
     bool m_hasEverSetVisibilityAdjustment { false };
 

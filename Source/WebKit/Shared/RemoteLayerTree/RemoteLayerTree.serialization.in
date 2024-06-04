@@ -154,6 +154,7 @@ header: "RemoteLayerBackingStore.h"
     bool m_viewportMetaTagWidthWasExplicit;
     bool m_viewportMetaTagCameFromImageDocument;
     bool m_isInStableState;
+    bool m_hasActiveViewTransition;
 
     std::optional<WebKit::EditorState> m_editorState;
 #if PLATFORM(IOS_FAMILY)

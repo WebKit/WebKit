@@ -160,6 +160,8 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
         m_hitRenderTreeSizeThreshold = true;
         didReachLayoutMilestone(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold);
     }
+
+    m_hasActiveViewTransition = layerTreeTransaction.hasActiveViewTransition();
 }
 
 void WebPageProxy::layerTreeCommitComplete()
