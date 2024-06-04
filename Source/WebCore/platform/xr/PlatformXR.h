@@ -276,13 +276,13 @@ struct FrameData {
 
     struct ExternalTexture {
         MachSendRight handle;
-        bool isSharedTexture;
+        bool isSharedTexture { false };
     };
 
     struct ExternalTextureData {
         size_t reusableTextureIndex = 0;
-        ExternalTexture colorTexture = { MachSendRight(), false };
-        ExternalTexture depthStencilBuffer = { MachSendRight(), false };
+        ExternalTexture colorTexture;
+        ExternalTexture depthStencilBuffer;
     };
 #endif
 
