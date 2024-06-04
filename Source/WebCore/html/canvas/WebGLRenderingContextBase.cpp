@@ -4938,23 +4938,6 @@ bool WebGLRenderingContextBase::validateCompressedTexFormat(ASCIILiteral functio
     return true;
 }
 
-bool WebGLRenderingContextBase::validateDrawMode(ASCIILiteral functionName, GCGLenum mode)
-{
-    switch (mode) {
-    case GraphicsContextGL::POINTS:
-    case GraphicsContextGL::LINE_STRIP:
-    case GraphicsContextGL::LINE_LOOP:
-    case GraphicsContextGL::LINES:
-    case GraphicsContextGL::TRIANGLE_STRIP:
-    case GraphicsContextGL::TRIANGLE_FAN:
-    case GraphicsContextGL::TRIANGLES:
-        return true;
-    default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid draw mode"_s);
-        return false;
-    }
-}
-
 bool WebGLRenderingContextBase::validateStencilFunc(ASCIILiteral functionName, GCGLenum func)
 {
     switch (func) {

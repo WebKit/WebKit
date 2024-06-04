@@ -947,9 +947,6 @@ protected:
     // Helper function for validating compressed texture formats.
     bool validateCompressedTexFormat(ASCIILiteral functionName, GCGLenum format);
 
-    // Helper function to validate mode for draw{Arrays/Elements}.
-    bool validateDrawMode(ASCIILiteral functionName, GCGLenum);
-
     // Helper function to validate stencil func.
     bool validateStencilFunc(ASCIILiteral functionName, GCGLenum);
 
