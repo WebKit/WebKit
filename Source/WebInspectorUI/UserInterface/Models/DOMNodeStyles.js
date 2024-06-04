@@ -964,7 +964,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                     }
 
                 knownShorthands[property.canonicalName] = property;
-            }
+                }
 
                 let shorthandProperty = null;
 
