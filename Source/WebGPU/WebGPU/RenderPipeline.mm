@@ -1692,19 +1692,16 @@ bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescripto
         if (descriptor.colorAttachmentCount)
             return false;
     } else {
-        auto& fragment = *m_descriptor.fragment;
-        if (fragment.targetCount != descriptor.colorAttachmentCount)
-            return false;
-
-        for (size_t i = 0; i < fragment.targetCount; ++i) {
-            auto* attachmentView = colorAttachmentViews[i].get();
+        for (size_t i = 0, maxCount = std::max<size_t>(m_descriptorTargets.size(), colorAttachmentViews.size()); i < maxCount; ++i) {
+            auto* attachmentView = i < colorAttachmentViews.size() ? colorAttachmentViews[i].get() : nullptr;
+            auto descriptorTargetFormat = i < m_descriptorTargets.size() ? m_descriptorTargets[i].format : WGPUTextureFormat_Undefined;
             if (!attachmentView) {
-                if (m_descriptorTargets[i].format == WGPUTextureFormat_Undefined)
+                if (descriptorTargetFormat == WGPUTextureFormat_Undefined)
                     continue;
                 return false;
             }
             auto& texture = *attachmentView;
-            if (m_descriptorTargets[i].format != texture.format())
+            if (descriptorTargetFormat != texture.format())
                 return false;
             if (texture.sampleCount() != m_descriptor.multisample.count)
                 return false;
@@ -1750,18 +1747,11 @@ bool RenderPipeline::validateRenderBundle(const WGPURenderBundleEncoderDescripto
     }
 
     auto& fragment = *m_descriptor.fragment;
-    if (fragment.targetCount == descriptor.colorFormatCount) {
-        for (size_t i = 0; i < fragment.targetCount; ++i) {
-            auto colorFormat = descriptor.colorFormats[i];
-            if (m_descriptorTargets[i].format != colorFormat)
-                return false;
-        }
-    } else {
-        for (size_t i = 0; i < descriptor.colorFormatCount; ++i) {
-            auto colorFormat = descriptor.colorFormats[i];
-            if (colorFormat != WGPUTextureFormat_Undefined)
-                return false;
-        }
+    for (size_t i = 0, maxTargetCount = std::max<size_t>(fragment.targetCount, descriptor.colorFormatCount); i < maxTargetCount; ++i) {
+        auto colorFormat = i < descriptor.colorFormatCount ? descriptor.colorFormats[i] : WGPUTextureFormat_Undefined;
+        auto descriptorFormat = i < m_descriptorTargets.size() ? m_descriptorTargets[i].format : WGPUTextureFormat_Undefined;
+        if (descriptorFormat != colorFormat)
+            return false;
     }
 
     if (!m_descriptor.depthStencil) {
