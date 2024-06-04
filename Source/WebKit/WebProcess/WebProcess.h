@@ -125,7 +125,6 @@ class LibWebRTCNetwork;
 class ModelProcessConnection;
 class ModelProcessModelPlayerManager;
 class NetworkProcessConnection;
-class ObjCObjectGraph;
 class RemoteCDMFactory;
 class RemoteImageDecoderAVFManager;
 class RemoteLegacyCDMFactory;
@@ -323,11 +322,6 @@ public:
 
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
     static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
-
-#if PLATFORM(COCOA)
-    RefPtr<ObjCObjectGraph> transformHandlesToObjects(ObjCObjectGraph&);
-    static RefPtr<ObjCObjectGraph> transformObjectsToHandles(ObjCObjectGraph&);
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices() const { return m_hasImageServices; }

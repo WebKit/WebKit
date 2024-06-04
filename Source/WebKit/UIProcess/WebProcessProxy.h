@@ -107,7 +107,6 @@ namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
 class ModelProcessProxy;
-class ObjCObjectGraph;
 class PageClient;
 class ProvisionalPageProxy;
 class RemotePageProxy;
@@ -310,11 +309,6 @@ public:
 
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
     static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
-
-#if PLATFORM(COCOA)
-    RefPtr<ObjCObjectGraph> transformHandlesToObjects(ObjCObjectGraph&);
-    static RefPtr<ObjCObjectGraph> transformObjectsToHandles(ObjCObjectGraph&);
-#endif
 
     void windowServerConnectionStateChanged();
 

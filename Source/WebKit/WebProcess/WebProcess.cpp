@@ -162,7 +162,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "ObjCObjectGraph.h"
 #include "UserMediaCaptureManager.h"
 #endif
 
@@ -1889,11 +1888,6 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
             case API::Object::Type::PageHandle:
                 return static_cast<const API::PageHandle&>(object).isAutoconverting();
 
-#if PLATFORM(COCOA)
-            case API::Object::Type::ObjCObjectGraph:
-#endif
-                return true;
-
             default:
                 return false;
             }
@@ -1908,10 +1902,6 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
             case API::Object::Type::PageHandle:
                 return WebProcess::singleton().webPage(static_cast<const API::PageHandle&>(object).webPageID());
 
-#if PLATFORM(COCOA)
-            case API::Object::Type::ObjCObjectGraph:
-                return WebProcess::singleton().transformHandlesToObjects(static_cast<ObjCObjectGraph&>(object));
-#endif
             default:
                 return &object;
             }
@@ -1929,9 +1919,6 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
             switch (object.type()) {
             case API::Object::Type::BundleFrame:
             case API::Object::Type::BundlePage:
-#if PLATFORM(COCOA)
-            case API::Object::Type::ObjCObjectGraph:
-#endif
                 return true;
 
             default:
@@ -1947,11 +1934,6 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
 
             case API::Object::Type::BundlePage:
                 return API::PageHandle::createAutoconverting(static_cast<const WebPage&>(object).webPageProxyIdentifier(), static_cast<const WebPage&>(object).identifier());
-
-#if PLATFORM(COCOA)
-            case API::Object::Type::ObjCObjectGraph:
-                return transformObjectsToHandles(static_cast<ObjCObjectGraph&>(object));
-#endif
 
             default:
                 return &object;

@@ -33,8 +33,6 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKObjCTypeWrapperGetTypeID();
-
 WK_EXPORT id WKObjCTypeWrapperGetObject(WKObjCTypeWrapperRef wrapper);
 
 #ifdef __cplusplus

@@ -32,7 +32,6 @@
 #import "DefaultWebBrowserChecks.h"
 #import "HighPerformanceGPUManager.h"
 #import "Logging.h"
-#import "ObjCObjectGraph.h"
 #import "SandboxUtilities.h"
 #import "SharedBufferReference.h"
 #import "WKAPICast.h"
@@ -83,68 +82,6 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platform
     });
 
     return platformPathsWithAssumedReadAccess;
-}
-
-RefPtr<ObjCObjectGraph> WebProcessProxy::transformHandlesToObjects(ObjCObjectGraph& objectGraph)
-{
-    struct Transformer final : ObjCObjectGraph::Transformer {
-        Transformer(WebProcessProxy& webProcessProxy)
-            : m_webProcessProxy(webProcessProxy)
-        {
-        }
-
-        Ref<WebProcessProxy> protectedWebProcessProxy() const { return const_cast<WebProcessProxy&>(m_webProcessProxy.get()); }
-
-        bool shouldTransformObject(id object) const override
-        {
-            if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
-                return true;
-            return false;
-        }
-
-        RetainPtr<id> transformObject(id object) const override
-        {
-            if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
-                if (auto webPageProxy = protectedWebProcessProxy()->webPage(handle.pageProxyID)) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-                    return [WKBrowsingContextController _browsingContextControllerForPageRef:toAPI(webPageProxy.get())];
-ALLOW_DEPRECATED_DECLARATIONS_END
-                }
-
-                return [NSNull null];
-            }
-            return object;
-        }
-
-        WeakRef<WebProcessProxy> m_webProcessProxy;
-    };
-
-    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer(*this)).get());
-}
-
-RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGraph& objectGraph)
-{
-    struct Transformer final : ObjCObjectGraph::Transformer {
-        bool shouldTransformObject(id object) const override
-        {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (dynamic_objc_cast<WKBrowsingContextController>(object))
-                return true;
-ALLOW_DEPRECATED_DECLARATIONS_END
-            return false;
-        }
-
-        RetainPtr<id> transformObject(id object) const override
-        {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (auto* controller = dynamic_objc_cast<WKBrowsingContextController>(object))
-                return controller.handle;
-ALLOW_DEPRECATED_DECLARATIONS_END
-            return object;
-        }
-    };
-
-    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
 }
 
 static Vector<String>& mediaTypeCache()

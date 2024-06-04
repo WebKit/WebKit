@@ -218,7 +218,6 @@ public:
 
         // Platform specific
         EditCommandProxy,
-        ObjCObjectGraph,
         View,
 #if USE(SOUP)
         SoupRequestManager,

@@ -678,7 +678,6 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"CTFontDescriptorOptions",
         @"NSObject<NSSecureCoding>",
         @"PKSecureElementPass",
-        @"WebKit::ObjCObjectGraph",
         @"GCGLErrorCodeSet",
         @"NSURLRequest",
         @"MachSendRight",

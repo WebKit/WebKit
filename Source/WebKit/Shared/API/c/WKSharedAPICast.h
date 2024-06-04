@@ -76,7 +76,6 @@ class WebArchiveResource;
 
 namespace WebKit {
 
-class ObjCObjectGraph;
 class WebContextMenuItem;
 class WebImage;
 
@@ -122,7 +121,6 @@ template<> struct APITypeInfo<WKMutableDictionaryRef> {
 #if PLATFORM(COCOA)
 WK_ADD_API_MAPPING(WKWebArchiveRef, API::WebArchive)
 WK_ADD_API_MAPPING(WKWebArchiveResourceRef, API::WebArchiveResource)
-WK_ADD_API_MAPPING(WKObjCTypeWrapperRef, ObjCObjectGraph)
 #endif
 
 template<typename T, typename APIType = typename ImplTypeInfo<T>::APIType>

@@ -47,7 +47,6 @@
 #import "MediaPlaybackState.h"
 #import "MediaUtilities.h"
 #import "NavigationState.h"
-#import "ObjCObjectGraph.h"
 #import "PageClient.h"
 #import "ProvisionalPageProxy.h"
 #import "QuickLookThumbnailLoader.h"

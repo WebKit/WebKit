@@ -28,7 +28,6 @@
 
 #import "APIArray.h"
 #import "APIData.h"
-#import "ObjCObjectGraph.h"
 #import "WKBrowsingContextHandle.h"
 #import "WKBundleAPICast.h"
 #import "WKBundleInitialize.h"
@@ -198,12 +197,8 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     if (!decodeBundleParameters(parameters.bundleParameterData.get()))
         return false;
 
-    if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)]) {
-        RetainPtr<id> objCInitializationUserData;
-        if (initializationUserData && initializationUserData->type() == API::Object::Type::ObjCObjectGraph)
-            objCInitializationUserData = static_cast<ObjCObjectGraph*>(initializationUserData.get())->rootObject();
-        [instance webProcessPlugIn:plugInController initializeWithObject:objCInitializationUserData.get()];
-    }
+    if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)])
+        [instance webProcessPlugIn:plugInController initializeWithObject:nil];
 
     return true;
 }

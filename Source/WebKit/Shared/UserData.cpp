@@ -47,10 +47,6 @@
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/CheckedArithmetic.h>
 
-#if PLATFORM(COCOA)
-#include "ObjCObjectGraph.h"
-#endif
-
 namespace WebKit {
 
 UserData::UserData() = default;

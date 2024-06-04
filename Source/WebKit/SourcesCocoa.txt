@@ -213,7 +213,6 @@ Shared/mac/NativeWebGestureEventMac.mm
 Shared/mac/NativeWebKeyboardEventMac.mm
 Shared/mac/NativeWebMouseEventMac.mm
 Shared/mac/NativeWebWheelEventMac.mm
-Shared/mac/ObjCObjectGraph.mm
 Shared/mac/PasteboardTypes.mm
 Shared/mac/PrintInfoMac.mm
 Shared/mac/ScrollingAccelerationCurveMac.mm
