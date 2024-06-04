@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/Vector.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSHIDEventSetDigitizerInfo, void, (IOHIDEventRef digitizerEvent, uint32_t contextID, uint8_t systemGestureisPossible, uint8_t isSystemGestureStateChangeEvent, CFStringRef displayUUID, CFTimeInterval initialTouchTimestamp, float maxForce), (digitizerEvent, contextID, systemGestureisPossible, isSystemGestureStateChangeEvent, displayUUID, initialTouchTimestamp, maxForce));
@@ -610,12 +611,12 @@ static InterpolationType interpolationFromString(NSString *string)
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
 
-    CGPoint locations[touchCount];
+    Vector<CGPoint> locations(touchCount);
 
     for (NSUInteger index = 0; index < touchCount; ++index)
         locations[index] = location;
     
-    [self touchDownAtPoints:locations touchCount:touchCount];
+    [self touchDownAtPoints:&locations[0] touchCount:touchCount];
 }
 
 - (void)touchDown:(CGPoint)location
@@ -646,12 +647,12 @@ static InterpolationType interpolationFromString(NSString *string)
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
 
-    CGPoint locations[touchCount];
+    Vector<CGPoint> locations(touchCount);
 
     for (NSUInteger index = 0; index < touchCount; ++index)
         locations[index] = location;
     
-    [self liftUpAtPoints:locations touchCount:touchCount];
+    [self liftUpAtPoints:&locations[0] touchCount:touchCount];
 }
 
 - (void)liftUp:(CGPoint)location
@@ -663,8 +664,8 @@ static InterpolationType interpolationFromString(NSString *string)
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
 
-    CGPoint startLocations[touchCount];
-    CGPoint nextLocations[touchCount];
+    Vector<CGPoint> startLocations(touchCount);
+    Vector<CGPoint> nextLocations(touchCount);
 
     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
     CFTimeInterval elapsed = 0;
@@ -680,7 +681,7 @@ static InterpolationType interpolationFromString(NSString *string)
 
             nextLocations[i] = calculateNextCurveLocation(startLocations[i], newLocations[i], interval);
         }
-        [self _updateTouchPoints:nextLocations count:touchCount];
+        [self _updateTouchPoints:&nextLocations[0] count:touchCount];
 
         delayBetweenMove(eventIndex++, elapsed);
     }

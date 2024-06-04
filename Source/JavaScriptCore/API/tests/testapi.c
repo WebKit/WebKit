@@ -1195,13 +1195,13 @@ static void checkJSStringOOBUTF8(void)
     const size_t sourceCStringSize = 200;
     const size_t outCStringSize = 10;
 
-    char sourceCString[sourceCStringSize];
-    memset(sourceCString, 0, sizeof(sourceCString));
+    char* sourceCString = (char*)malloc(sourceCStringSize);
+    memset(sourceCString, 0, sourceCStringSize);
     for (size_t i = 0; i < sourceCStringSize - 1; ++i)
         sourceCString[i] = '0' + (i%10);
 
-    char outCString[outCStringSize + sourceCStringSize];
-    memset(outCString, 0x13, sizeof(outCString));
+    char* outCString = (char*)malloc(outCStringSize + sourceCStringSize);
+    memset(outCString, 0x13, outCStringSize + sourceCStringSize);
 
     JSStringRef str = JSStringCreateWithUTF8CString(sourceCString);
     size_t bytesWritten = JSStringGetUTF8CString(str, outCString, outCStringSize);
@@ -1218,6 +1218,8 @@ static void checkJSStringOOBUTF8(void)
     }
 
     JSStringRelease(str);
+    free(outCString);
+    free(sourceCString);
 }
 
 static void checkJSStringOOBUTF16(void)
@@ -1225,8 +1227,8 @@ static void checkJSStringOOBUTF16(void)
     const size_t sourceCStringSize = 22;
     const size_t outCStringSize = 20;
 
-    char sourceCString[sourceCStringSize];
-    memset(sourceCString, 0, sizeof(sourceCString));
+    char* sourceCString = (char*)malloc(sourceCStringSize);
+    memset(sourceCString, 0, sourceCStringSize);
     for (size_t i = 0; i < sourceCStringSize - 1; ++i)
         sourceCString[i] = '0' + (i%10);
 
@@ -1235,8 +1237,8 @@ static void checkJSStringOOBUTF16(void)
     sourceCString[5] = '\x98';
     sourceCString[6] = '\x81';
 
-    char outCString[outCStringSize + sourceCStringSize];
-    memset(outCString, 0x13, sizeof(outCString));
+    char* outCString = (char*)malloc(outCStringSize + sourceCStringSize);
+    memset(outCString, 0x13, outCStringSize + sourceCStringSize);
 
     JSStringRef str = JSStringCreateWithUTF8CString(sourceCString);
     size_t bytesWritten = JSStringGetUTF8CString(str, outCString, outCStringSize);
@@ -1253,6 +1255,8 @@ static void checkJSStringOOBUTF16(void)
     }
 
     JSStringRelease(str);
+    free(outCString);
+    free(sourceCString);
 }
 
 static void checkJSStringOOBUTF16AtEnd(void)
@@ -1260,8 +1264,8 @@ static void checkJSStringOOBUTF16AtEnd(void)
     const size_t sourceCStringSize = 22;
     const size_t outCStringSize = 20;
 
-    char sourceCString[sourceCStringSize];
-    memset(sourceCString, 0, sizeof(sourceCString));
+    char* sourceCString = (char*)malloc(sourceCStringSize);
+    memset(sourceCString, 0, sourceCStringSize);
     for (size_t i = 0; i < sourceCStringSize - 1; ++i)
         sourceCString[i] = '0' + (i%10);
 
@@ -1270,8 +1274,8 @@ static void checkJSStringOOBUTF16AtEnd(void)
     sourceCString[19] = '\x98';
     sourceCString[20] = '\x81';
 
-    char outCString[outCStringSize + sourceCStringSize];
-    memset(outCString, 0x13, sizeof(outCString));
+    char* outCString = (char*)malloc(outCStringSize + sourceCStringSize);
+    memset(outCString, 0x13, outCStringSize + sourceCStringSize);
 
     JSStringRef str = JSStringCreateWithUTF8CString(sourceCString);
     size_t bytesWritten = JSStringGetUTF8CString(str, outCString, outCStringSize);
@@ -1288,6 +1292,8 @@ static void checkJSStringOOBUTF16AtEnd(void)
     }
 
     JSStringRelease(str);
+    free(outCString);
+    free(sourceCString);
 }
 
 static void checkJSStringOOB(void)

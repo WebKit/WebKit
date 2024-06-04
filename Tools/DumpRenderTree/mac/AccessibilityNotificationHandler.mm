@@ -122,7 +122,9 @@ static JSValueRef makeValueRefForValue(JSContextRef context, id value)
 static JSObjectRef makeArrayRefForArray(JSContextRef context, NSArray *array)
 {
     NSUInteger count = array.count;
+IGNORE_WARNINGS_BEGIN("vla")
     JSValueRef arguments[count];
+IGNORE_WARNINGS_END
     for (NSUInteger i = 0; i < count; i++)
         arguments[i] = makeValueRefForValue(context, [array objectAtIndex:i]);
     return JSObjectMakeArray(context, count, arguments, nullptr);

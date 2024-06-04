@@ -77,7 +77,7 @@ WARNING_CFLAGS = $(inherited) -Wthread-safety $(WK_FIXME_WARNING_CFLAGS) -Wexit-
 
 // Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
 // -Wno-unknown-warning-option added for -Wno-unused-but-set-parameter.
-WK_FIXME_WARNING_CFLAGS = -Wno-conditional-uninitialized -Wno-missing-field-initializers -Wno-sign-compare -Wno-undef -Wno-unknown-warning-option -Wno-unused-but-set-parameter -Wno-unused-parameter -Wno-array-parameter -Wno-unused-but-set-variable -Wno-thread-safety-reference-return;
+WK_FIXME_WARNING_CFLAGS = -Wno-conditional-uninitialized -Wno-missing-field-initializers -Wno-sign-compare -Wno-undef -Wno-unknown-warning-option -Wno-unused-but-set-parameter -Wno-unused-parameter -Wno-array-parameter -Wno-unused-but-set-variable -Wno-thread-safety-reference-return -Wno-vla;
 
 ENTITLEMENTS_REQUIRED = $(ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_$(USE_INTERNAL_SDK))
 ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_ = NO;
