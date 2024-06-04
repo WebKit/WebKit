@@ -241,20 +241,16 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     bool parentHasFloats = false;
     RenderBlockFlow* previousBlock = previousSiblingWithOverhangingFloats(parentHasFloats);
     LayoutUnit logicalTopOffset = logicalTop();
-    if (parentHasFloats || (parentBlock->lowestFloatLogicalBottom() > logicalTopOffset && previousBlock && previousBlock->isSelfCollapsingBlock()))
+    bool parentHasIntrudingFloats = !parentHasFloats && (!previousBlock  || (previousBlock->isSelfCollapsingBlock() && parentBlock->lowestFloatLogicalBottom() > logicalTopOffset));
+    if (parentHasFloats || parentHasIntrudingFloats)
         addIntrudingFloats(parentBlock.get(), parentBlock.get(), parentBlock->logicalLeftOffsetForContent(), logicalTopOffset);
-    
-    LayoutUnit logicalLeftOffset;
-    if (previousBlock)
-        logicalTopOffset -= previousBlock->logicalTop();
-    else {
-        previousBlock = parentBlock.get();
-        logicalLeftOffset += parentBlock->logicalLeftOffsetForContent();
-    }
 
     // Add overhanging floats from the previous RenderBlock, but only if it has a float that intrudes into our space.    
-    if (previousBlock->m_floatingObjects && previousBlock->lowestFloatLogicalBottom() > logicalTopOffset)
-        addIntrudingFloats(previousBlock, parentBlock.get(), logicalLeftOffset, logicalTopOffset);
+    if (previousBlock) {
+        logicalTopOffset -= previousBlock->logicalTop();
+        if (previousBlock->lowestFloatLogicalBottom() > logicalTopOffset)
+            addIntrudingFloats(previousBlock, parentBlock.get(), 0, logicalTopOffset);
+    }
 
     if (!childrenInline() && !oldIntrudingFloatSet.isEmpty()) {
         // If there are previously intruding floats that no longer intrude, then children with floats
