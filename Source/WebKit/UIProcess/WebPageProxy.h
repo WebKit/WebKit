@@ -2532,7 +2532,7 @@ private:
     void didChangeProvisionalURLForFrame(WebCore::FrameIdentifier, uint64_t navigationID, URL&&);
     void didFailProvisionalLoadForFrame(FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError&, WebCore::WillContinueLoading, const UserData&, WebCore::WillInternallyHandleFailure);
     void didFinishDocumentLoadForFrame(WebCore::FrameIdentifier, uint64_t navigationID, const UserData&);
-    void didFinishLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const UserData&);
+    void didFinishLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const UserData&);
     void didFailLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const WebCore::ResourceError&, const UserData&);
     void didSameDocumentNavigationForFrame(WebCore::FrameIdentifier, uint64_t navigationID, SameDocumentNavigationType, URL&&, const UserData&);
     void didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationType, URL, NavigationActionData&&, const UserData&);

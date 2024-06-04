@@ -2701,9 +2701,6 @@ TEST(SiteIsolation, CancelProvisionalLoad)
             { { RemoteFrame }, { "https://apple.com"_s } }
         }
     });
-
-    // FIXME: Test cases for provisional loads that respond after a short delay to give a chance
-    // that the load commits during the time another provisional navigation starts.
 }
 
 // FIXME: If a provisional load happens in a RemoteFrame with frame children, does anything clear out those

@@ -6546,7 +6546,7 @@ void WebPageProxy::broadcastMainFrameURLChangeToOtherProcesses(IPC::Connection& 
     });
 }
 
-void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const UserData& userData)
+void WebPageProxy::didFinishLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const UserData& userData)
 {
     LOG(Loading, "WebPageProxy::didFinishLoadForFrame - WebPageProxy %p with navigationID %" PRIu64 " didFinishLoad", this, navigationID);
 
@@ -6554,6 +6554,10 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     MESSAGE_CHECK(m_process, frame);
+
+    // If a provisional load has since been started in another process, ignore this message.
+    if (m_preferences->siteIsolationEnabled() && !frame->provisionalLoadProcess().hasConnection(connection))
+        return;
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didFinishLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.object().toUInt64(), frame->isMainFrame());
 
