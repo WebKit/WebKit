@@ -35,6 +35,7 @@
 #include "RemoteGraphicsContextGLProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/GCGLSpan.h>
@@ -71,11 +72,12 @@ IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<Spa
 
 }
 
-RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::Connection& connection, const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend
-#if ENABLE(VIDEO)
-    , Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy
-#endif
-    )
+RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const WebCore::GraphicsContextGLAttributes& attributes, WebPage& page)
+{
+    return RemoteGraphicsContextGLProxy::create(attributes, page.ensureRemoteRenderingBackendProxy(), RunLoop::main());
+}
+
+RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend, SerialFunctionDispatcher& dispatcher)
 {
     constexpr unsigned defaultConnectionBufferSizeLog2 = 21;
     unsigned connectionBufferSizeLog2 = defaultConnectionBufferSizeLog2;
@@ -85,12 +87,8 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::C
     if (!connectionPair)
         return nullptr;
     auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
-    auto instance = platformCreate(connection, clientConnection, attributes
-#if ENABLE(VIDEO)
-        , WTFMove(videoFrameObjectHeapProxy)
-#endif
-    );
-    instance->initializeIPC(WTFMove(serverConnectionHandle), renderingBackend);
+    Ref instance = platformCreate(attributes, dispatcher);
+    instance->initializeIPC(WTFMove(clientConnection), renderingBackend.ensureBackendCreated(), WTFMove(serverConnectionHandle));
     if (attributes.failContextCreationForTesting == WebCore::GraphicsContextGLAttributes::SimulatedCreationFailure::CreationTimeout)
         instance->markContextLost();
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
@@ -99,30 +97,30 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::C
     return instance;
 }
 
-
-RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(IPC::Connection& connection, RefPtr<IPC::StreamClientConnection> streamConnection, const GraphicsContextGLAttributes& attributes
-#if ENABLE(VIDEO)
-    , Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy
-#endif
-    )
+RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(const GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher& dispatcher)
     : GraphicsContextGL(attributes)
-    , m_connection(&connection) // NOLINT
-    , m_streamConnection(WTFMove(streamConnection)) // NOLINT
-#if ENABLE(VIDEO)
-    , m_videoFrameObjectHeapProxy(WTFMove(videoFrameObjectHeapProxy))
-#endif
+    , m_dispatcher(dispatcher)
 {
-}
-
-void RemoteGraphicsContextGLProxy::initializeIPC(IPC::StreamServerConnection::Handle&& serverConnectionHandle, RemoteRenderingBackendProxy& renderingBackend)
-{
-    m_connection->send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(contextAttributes(), m_graphicsContextGLIdentifier, renderingBackend.ensureBackendCreated(), WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_streamConnection->open(*this, renderingBackend.dispatcher());
 }
 
 RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()
 {
     disconnectGpuProcessIfNeeded();
+}
+
+void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection>&& streamConnection, RenderingBackendIdentifier renderingBackend, IPC::StreamServerConnection::Handle&& serverHandle)
+{
+    m_streamConnection = WTFMove(streamConnection);
+    m_streamConnection->open(*this, *this);
+    callOnMainRunLoopAndWait([&]() {
+        auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
+        gpuProcessConnection.createGraphicsContextGL(m_identifier, contextAttributes(), renderingBackend, WTFMove(serverHandle));
+        m_gpuProcessConnection = gpuProcessConnection;
+#if ENABLE(VIDEO)
+        m_videoFrameObjectHeapProxy = &gpuProcessConnection.videoFrameObjectHeapProxy();
+#endif
+    });
+
 }
 
 void RemoteGraphicsContextGLProxy::setContextVisibility(bool)
@@ -467,13 +465,14 @@ void RemoteGraphicsContextGLProxy::waitUntilInitialized()
         return;
     if (m_didInitialize)
         return;
-    if (m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteGraphicsContextGLProxy::WasCreated>(m_graphicsContextGLIdentifier, defaultSendTimeout) == IPC::Error::NoError)
+    if (m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteGraphicsContextGLProxy::WasCreated>(m_identifier, defaultSendTimeout) == IPC::Error::NoError)
         return;
     markContextLost();
 }
 
 void RemoteGraphicsContextGLProxy::didClose(IPC::Connection&)
 {
+    WTFLogAlways("%s:%d!", __PRETTY_FUNCTION__, __LINE__);
     ASSERT(!isContextLost());
     abandonGpuProcess();
     markContextLost();
@@ -481,7 +480,11 @@ void RemoteGraphicsContextGLProxy::didClose(IPC::Connection&)
 
 void RemoteGraphicsContextGLProxy::abandonGpuProcess()
 {
-    m_connection = nullptr;
+    if (!m_streamConnection)
+        return;
+    m_streamConnection->invalidate();
+    m_streamConnection = nullptr;
+    m_gpuProcessConnection = nullptr;
 }
 
 void RemoteGraphicsContextGLProxy::disconnectGpuProcessIfNeeded()
@@ -489,11 +492,16 @@ void RemoteGraphicsContextGLProxy::disconnectGpuProcessIfNeeded()
 #if PLATFORM(COCOA)
     m_sharedVideoFrameWriter.disable();
 #endif
-    if (m_connection) {
-        m_streamConnection->invalidate();
-        m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseGraphicsContextGL(m_graphicsContextGLIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-        m_connection = nullptr;
-    }
+    if (!m_streamConnection)
+        return;
+    m_streamConnection->invalidate();
+    m_streamConnection = nullptr;
+    ensureOnMainRunLoop([identifier = m_identifier, weakGPUProcessConnection = WTFMove(m_gpuProcessConnection)]() {
+        RefPtr gpuProcessConnection = weakGPUProcessConnection.get();
+        if (!gpuProcessConnection)
+            return;
+        gpuProcessConnection->releaseGraphicsContextGL(identifier);
+    });
     ASSERT(isContextLost());
 }
 

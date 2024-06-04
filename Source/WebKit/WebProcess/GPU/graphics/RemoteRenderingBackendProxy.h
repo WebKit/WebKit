@@ -35,7 +35,6 @@
 #include "MessageSender.h"
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBufferProxy.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteResourceCacheProxy.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
@@ -89,13 +88,11 @@ class RemoteRenderingBackendProxy
     : public IPC::Connection::Client, SerialFunctionDispatcher {
 public:
     static std::unique_ptr<RemoteRenderingBackendProxy> create(WebPage&);
-    static std::unique_ptr<RemoteRenderingBackendProxy> create(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
+    static std::unique_ptr<RemoteRenderingBackendProxy> create(SerialFunctionDispatcher&);
 
     ~RemoteRenderingBackendProxy();
 
     static bool canMapRemoteImageBufferBackendBackingStore();
-
-    const RemoteRenderingBackendCreationParameters& parameters() const { return m_parameters; }
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
@@ -168,14 +165,13 @@ public:
     void didInitialize(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
 
     IPC::StreamClientConnection& streamConnection();
-    IPC::Connection* connection() { return m_connection.get(); }
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
     Ref<WorkQueue> workQueue() { return m_queue; }
 
     static constexpr Seconds defaultTimeout = 15_s;
 private:
-    explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
+    explicit RemoteRenderingBackendProxy(SerialFunctionDispatcher&);
 
     template<typename T, typename U, typename V, typename W> auto send(T&& message, ObjectIdentifierGeneric<U, V, W>);
     template<typename T> auto send(T&& message) { return send(std::forward<T>(message), renderingBackendIdentifier()); }
@@ -204,17 +200,18 @@ private:
     // SerialFunctionDispatcher
     void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
     bool isCurrent() const final { return m_dispatcher.isCurrent(); }
-    RefPtr<IPC::Connection> m_connection;
+
+    SerialFunctionDispatcher& m_dispatcher;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only for main thread operation.
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
-    RemoteRenderingBackendCreationParameters m_parameters;
+    RenderingBackendIdentifier m_identifier { RenderingBackendIdentifier::generate() };
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;
     WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
     MarkSurfacesAsVolatileRequestIdentifier m_currentVolatilityRequest;
     HashMap<MarkSurfacesAsVolatileRequestIdentifier, CompletionHandler<void(bool)>> m_markAsVolatileRequests;
     HashMap<RemoteImageBufferSetIdentifier, WeakPtr<RemoteImageBufferSetProxy>> m_bufferSets;
-    SerialFunctionDispatcher& m_dispatcher;
     Ref<WorkQueue> m_queue;
 
     RenderingUpdateID m_renderingUpdateID;

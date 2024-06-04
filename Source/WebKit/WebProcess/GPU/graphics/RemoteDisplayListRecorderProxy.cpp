@@ -79,9 +79,9 @@ ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
     auto result = m_renderingBackend->streamConnection().send(std::forward<T>(message), m_destinationBufferIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
 #if !RELEASE_LOG_DISABLED
     if (UNLIKELY(result != IPC::Error::NoError)) {
-        auto& parameters = m_renderingBackend->parameters();
-        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteDisplayListRecorderProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        auto renderingBackendIdentifier  = m_renderingBackend->renderingBackendIdentifier();
+        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteDisplayListRecorderProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            renderingBackendIdentifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
     }
 #else
     UNUSED_VARIABLE(result);

@@ -61,17 +61,20 @@ using namespace WebCore;
 
 std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(WebPage& webPage)
 {
-    return create({ RenderingBackendIdentifier::generate(), webPage.webPageProxyIdentifier(), webPage.identifier() }, RunLoop::main());
+    std::unique_ptr instance = std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy(RunLoop::main()));
+    RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] Created rendering backend for pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, instance->renderingBackendIdentifier().toUInt64(),  webPage.webPageProxyIdentifier().toUInt64(), webPage.identifier().toUInt64());
+    return instance;
 }
 
-std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(const RemoteRenderingBackendCreationParameters& parameters, SerialFunctionDispatcher& dispatcher)
+std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(SerialFunctionDispatcher& dispatcher)
 {
-    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy(parameters, dispatcher));
+    std::unique_ptr instance = std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy(dispatcher));
+    RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] Created rendering backend for a worker", instance->renderingBackendIdentifier().toUInt64());
+    return instance;
 }
 
-RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters& parameters, SerialFunctionDispatcher& dispatcher)
-    : m_parameters(parameters)
-    , m_dispatcher(dispatcher)
+RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(SerialFunctionDispatcher& dispatcher)
+    : m_dispatcher(dispatcher)
     , m_queue(WorkQueue::create("RemoteRenderingBackendProxy"_s, WorkQueue::QOS::UserInteractive))
 {
 }
@@ -84,8 +87,11 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
     if (!m_streamConnection)
         return;
 
-    ensureOnMainRunLoop([ident = renderingBackendIdentifier()]() {
-        WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(ident), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    ensureOnMainRunLoop([identifier = m_identifier, weakGPUProcessConnection = WTFMove(m_gpuProcessConnection)]() {
+        RefPtr gpuProcessConnection = weakGPUProcessConnection.get();
+        if (!gpuProcessConnection)
+            return;
+        gpuProcessConnection->releaseRenderingBackend(identifier);
     });
     m_remoteResourceCacheProxy.clear();
     disconnectGPUProcess();
@@ -93,32 +99,31 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
 
 void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
 {
-    if (!m_streamConnection) {
-        static constexpr auto connectionBufferSizeLog2 = 21;
-        auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
-        if (!connectionPair)
-            CRASH();
-        auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
-        m_streamConnection = WTFMove(streamConnection);
-        // RemoteRenderingBackendProxy behaves as the dispatcher for the connection to obtain isolated state for its
-        // connection. This prevents waits on RemoteRenderingBackendProxy to process messages from other connections.
-        m_streamConnection->open(*this, *this);
+    if (m_streamConnection)
+        return;
+    static constexpr auto connectionBufferSizeLog2 = 21;
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
+    if (!connectionPair)
+        CRASH();
+    auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
+    m_streamConnection = WTFMove(streamConnection);
+    // RemoteRenderingBackendProxy behaves as the dispatcher for the connection to obtain isolated state for its
+    // connection. This prevents waits on RemoteRenderingBackendProxy to process messages from other connections.
+    m_streamConnection->open(*this, *this);
 
-        callOnMainRunLoopAndWait([this, serverHandle = WTFMove(serverHandle)]() mutable {
-            auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
-            m_connection = &gpuProcessConnection.connection();
-            m_sharedResourceCache = gpuProcessConnection.sharedResourceCache();
-            m_connection->send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-        });
-    }
+    callOnMainRunLoopAndWait([&, serverHandle = WTFMove(serverHandle)]() mutable {
+        auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
+        gpuProcessConnection.createRenderingBackend(m_identifier, WTFMove(serverHandle));
+        m_gpuProcessConnection = gpuProcessConnection;
+        m_sharedResourceCache = gpuProcessConnection.sharedResourceCache();
+    });
 }
 template<typename T, typename U, typename V, typename W>
 auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V, W> destination)
 {
     auto result = streamConnection().send(std::forward<T>(message), destination, defaultTimeout);
     if (UNLIKELY(result != IPC::Error::NoError)) {
-        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING, m_identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
     }
     return result;
 }
@@ -128,14 +133,14 @@ auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<
 {
     auto result = streamConnection().sendSync(std::forward<T>(message), destination, defaultTimeout);
     if (UNLIKELY(!result.succeeded())) {
-        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
+        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,  m_identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
     }
     return result;
 }
 
 void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
 {
+    WTFLogAlways("%s:%d!", __PRETTY_FUNCTION__, __LINE__);
     if (!m_streamConnection)
         return;
     disconnectGPUProcess();
@@ -157,6 +162,7 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_didRenderingUpdateID = { };
     m_streamConnection->invalidate();
     m_streamConnection = nullptr;
+    m_gpuProcessConnection = nullptr;
 }
 
 void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
@@ -485,13 +491,13 @@ void RemoteRenderingBackendProxy::didFinalizeRenderingUpdate(RenderingUpdateID d
 
 RenderingBackendIdentifier RemoteRenderingBackendProxy::renderingBackendIdentifier() const
 {
-    return m_parameters.identifier;
+    return m_identifier;
 }
 
 RenderingBackendIdentifier RemoteRenderingBackendProxy::ensureBackendCreated()
 {
     ensureGPUProcessConnection();
-    return renderingBackendIdentifier();
+    return m_identifier;
 }
 
 IPC::StreamClientConnection& RemoteRenderingBackendProxy::streamConnection()

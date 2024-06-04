@@ -39,7 +39,6 @@
 #include "MessageArgumentDescriptions.h"
 #include "MessageObserver.h"
 #include "NetworkProcessConnection.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "SerializedTypeInfo.h"
 #include "StreamClientConnection.h"
 #include "StreamConnectionBuffer.h"
@@ -2061,24 +2060,6 @@ std::optional<T> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObje
     return std::optional<T> { *number };
 }
 
-static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
-{
-    auto identifier = getObjectIdentifierFromProperty<RenderingBackendIdentifier>(globalObject, jsObject, "identifier"_s, scope);
-    if (!identifier)
-        return false;
-
-    auto pageProxyID = getObjectIdentifierFromProperty<WebPageProxyIdentifier>(globalObject, jsObject, "pageProxyID"_s, scope);
-    if (!pageProxyID)
-        return false;
-
-    auto pageID = getObjectIdentifierFromProperty<WebCore::PageIdentifier>(globalObject, jsObject, "pageID"_s, scope);
-    if (!pageID)
-        return false;
-
-    RemoteRenderingBackendCreationParameters parameters { *identifier, *pageProxyID, *pageID };
-    encoder << parameters;
-    return true;
-}
 #endif
 
 static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
@@ -2288,16 +2269,6 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         }
         return true;
     }
-
-#if ENABLE(GPU_PROCESS)
-    if (type == "RemoteRenderingBackendCreationParameters"_s) {
-        if (!encodeRemoteRenderingBackendCreationParameters(encoder, globalObject, jsObject, scope)) {
-            *exception = createTypeError(context, "Failed to convert RemoteRenderingBackendCreationParameters"_s);
-            return false;
-        }
-        return true;
-    }
-#endif
 
     if (type == "SharedMemory"_s) {
         if (!encodeSharedMemory(encoder, globalObject, jsObject, scope)) {

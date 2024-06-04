@@ -36,31 +36,40 @@
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
 #include "RemotePresentationContextProxy.h"
+#include "RemoteRenderingBackendProxy.h"
 #include "WebGPUConvertToBackingContext.h"
+#include "WebPage.h"
+#include "WebProcess.h"
 #include <WebCore/WebGPUPresentationContextDescriptor.h>
 #include <WebCore/WebGPUSupportedFeatures.h>
 #include <WebCore/WebGPUSupportedLimits.h>
 
 namespace WebKit {
 
-RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(IPC::Connection& connection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackend)
+RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(WebGPU::ConvertToBackingContext& convertToBackingContext, WebPage& page)
+{
+    return RemoteGPUProxy::create(convertToBackingContext, page.ensureRemoteRenderingBackendProxy(), RunLoop::main());
+}
+
+RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(WebGPU::ConvertToBackingContext& convertToBackingContext, RemoteRenderingBackendProxy& renderingBackend, SerialFunctionDispatcher& dispatcher)
 {
     constexpr size_t connectionBufferSizeLog2 = 21;
     auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
     if (!connectionPair)
         return nullptr;
     auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);
-    auto remoteGPUProxy = adoptRef(new RemoteGPUProxy(connection, clientConnection, convertToBackingContext, identifier));
-    remoteGPUProxy->initializeIPC(WTFMove(serverConnectionHandle), renderingBackend);
-    return remoteGPUProxy;
+    Ref instance = adoptRef(*new RemoteGPUProxy(convertToBackingContext, dispatcher));
+    instance->initializeIPC(WTFMove(clientConnection), renderingBackend.ensureBackendCreated(), WTFMove(serverConnectionHandle));
+    // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
+    // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
+    instance->waitUntilInitialized();
+    return instance;
 }
 
 
-RemoteGPUProxy::RemoteGPUProxy(IPC::Connection& connection, Ref<IPC::StreamClientConnection> clientConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
-    : m_backing(identifier)
-    , m_convertToBackingContext(convertToBackingContext)
-    , m_connection(&connection)
-    , m_streamConnection(WTFMove(clientConnection))
+RemoteGPUProxy::RemoteGPUProxy(WebGPU::ConvertToBackingContext& convertToBackingContext, SerialFunctionDispatcher& dispatcher)
+    : m_convertToBackingContext(convertToBackingContext)
+    , m_dispatcher(dispatcher)
 {
 }
 
@@ -69,43 +78,51 @@ RemoteGPUProxy::~RemoteGPUProxy()
     disconnectGpuProcessIfNeeded();
 }
 
-void RemoteGPUProxy::initializeIPC(IPC::StreamServerConnection::Handle&& serverConnectionHandle, RenderingBackendIdentifier renderingBackend)
+void RemoteGPUProxy::initializeIPC(Ref<IPC::StreamClientConnection>&& streamConnection, RenderingBackendIdentifier renderingBackend, IPC::StreamServerConnection::Handle&& serverHandle)
 {
-    m_connection->send(Messages::GPUConnectionToWebProcess::CreateRemoteGPU(m_backing, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_streamConnection->open(*this);
-    // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
-    // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
-    waitUntilInitialized();
+    m_streamConnection = WTFMove(streamConnection);
+    m_streamConnection->open(*this, *this);
+    callOnMainRunLoopAndWait([&]() {
+        auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
+        gpuProcessConnection.createGPU(m_backing, renderingBackend, WTFMove(serverHandle));
+        m_gpuProcessConnection = gpuProcessConnection;
+    });
 }
 
 void RemoteGPUProxy::disconnectGpuProcessIfNeeded()
 {
-    if (m_connection) {
-        m_streamConnection->invalidate();
-        m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseRemoteGPU(m_backing), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-        m_connection = nullptr;
-    }
+    if (m_lost)
+        return;
+    m_streamConnection->invalidate();
+    // FIXME: deallocate m_streamConnection once the children work without the connection.
+    ensureOnMainRunLoop([identifier = m_backing, weakGPUProcessConnection = WTFMove(m_gpuProcessConnection)]() {
+        RefPtr gpuProcessConnection = weakGPUProcessConnection.get();
+        if (!gpuProcessConnection)
+            return;
+        gpuProcessConnection->releaseGPU(identifier);
+    });
 }
 
 void RemoteGPUProxy::didClose(IPC::Connection&)
 {
-    ASSERT(m_connection);
+    ASSERT(m_streamConnection);
     abandonGPUProcess();
 }
 
 void RemoteGPUProxy::abandonGPUProcess()
 {
     m_streamConnection->invalidate();
-    m_connection = nullptr;
     m_lost = true;
 }
 
 void RemoteGPUProxy::wasCreated(bool didSucceed, IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore)
 {
     ASSERT(!m_didInitialize);
-    m_streamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
     m_didInitialize = true;
-    m_lost = !didSucceed;
+    if (didSucceed)
+        m_streamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
+    else
+        abandonGPUProcess();
 }
 
 void RemoteGPUProxy::waitUntilInitialized()
@@ -114,7 +131,7 @@ void RemoteGPUProxy::waitUntilInitialized()
         return;
     if (m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteGPUProxy::WasCreated>(m_backing, defaultSendTimeout) == IPC::Error::NoError)
         return;
-    m_lost = true;
+    abandonGPUProcess();
 }
 
 void RemoteGPUProxy::requestAdapter(const WebCore::WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>&& callback)
@@ -134,7 +151,7 @@ void RemoteGPUProxy::requestAdapter(const WebCore::WebGPU::RequestAdapterOptions
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = sendSync(Messages::RemoteGPU::RequestAdapter(*convertedOptions, identifier));
     if (!sendResult.succeeded()) {
-        m_lost = true;
+        abandonGPUProcess();
         callback(nullptr);
         return;
     }

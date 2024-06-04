@@ -29,8 +29,12 @@
 
 #include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
 #include "Connection.h"
+#include "GraphicsContextGLIdentifier.h"
 #include "MediaOverridesForTesting.h"
 #include "MessageReceiverMap.h"
+#include "RenderingBackendIdentifier.h"
+#include "StreamServerConnection.h"
+#include "WebGPUIdentifier.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <WebCore/SharedMemory.h>
@@ -41,6 +45,7 @@
 
 namespace WebCore {
 class CAAudioStreamDescription;
+struct GraphicsContextGLAttributes;
 struct PageIdentifierType;
 using PageIdentifier = ObjectIdentifier<PageIdentifierType>;
 }
@@ -50,7 +55,6 @@ class Semaphore;
 }
 
 namespace WebKit {
-
 class RemoteAudioSourceProviderManager;
 class RemoteMediaPlayerManager;
 class RemoteSharedResourceCacheProxy;
@@ -102,6 +106,15 @@ public:
 #endif
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+
+    void createRenderingBackend(RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
+    void releaseRenderingBackend(RenderingBackendIdentifier);
+#if ENABLE(WEBGL)
+    void createGraphicsContextGL(GraphicsContextGLIdentifier, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
+    void releaseGraphicsContextGL(GraphicsContextGLIdentifier);
+#endif
+    void createGPU(WebGPUIdentifier, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
+    void releaseGPU(WebGPUIdentifier);
 
     class Client {
     public:

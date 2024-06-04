@@ -360,7 +360,6 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     GPUProcess/graphics/PathSegment.serialization.in
     GPUProcess/graphics/RemoteGraphicsContextGLInitializationState.serialization.in
-    GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
 
     GPUProcess/graphics/WebGPU/RemoteGPURequestAdapterResponse.serialization.in
 

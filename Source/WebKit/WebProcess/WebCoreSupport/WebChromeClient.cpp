@@ -1002,11 +1002,7 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
 {
 #if ENABLE(GPU_PROCESS)
     if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
-        return RemoteGraphicsContextGLProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), attributes, protectedPage()->ensureRemoteRenderingBackendProxy()
-#if ENABLE(VIDEO)
-            , WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy()
-#endif
-        );
+        return RemoteGraphicsContextGLProxy::create(attributes, protectedPage());
 #endif
     return WebCore::createWebProcessGraphicsContextGL(attributes);
 }
@@ -1016,7 +1012,7 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
 RefPtr<WebCore::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 {
 #if ENABLE(GPU_PROCESS)
-    return RemoteGPUProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), WebGPU::DowncastConvertToBackingContext::create(), WebGPUIdentifier::generate(), protectedPage()->ensureRemoteRenderingBackendProxy().ensureBackendCreated());
+    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), protectedPage());
 #else
     return WebCore::WebGPU::create([](WebCore::WebGPU::WorkItem&& workItem) {
         callOnMainRunLoop(WTFMove(workItem));
