@@ -27,6 +27,7 @@
 
 #include "JITOperationValidation.h"
 #include "ThrowScope.h"
+#include "VMTraps.h"
 
 #include <wtf/FunctionTraits.h>
 #include <wtf/StdLibExtras.h>
@@ -118,12 +119,14 @@ template<typename Scope, typename T>
 requires canMakeExceptionOperationResult<T>
 ALWAYS_INLINE ExceptionOperationImplicitResult<T> makeOperationResult(Scope& scope, T result)
 {
+    ASSERT(!scope.vm().traps().isDeferringTermination());
     return { result, scope.exception() };
 }
 
 template<typename Scope>
 ALWAYS_INLINE ExceptionOperationImplicitResult<void> makeOperationResult(Scope& scope)
 {
+    ASSERT(!scope.vm().traps().isDeferringTermination());
     return { scope.exception() };
 }
 

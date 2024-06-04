@@ -414,18 +414,21 @@ JSC_DEFINE_JIT_OPERATION(operationCreateThis, JSCell*, (JSGlobalObject* globalOb
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (constructor->type() == JSFunctionType && jsCast<JSFunction*>(constructor)->canUseAllocationProfiles()) {
-        DeferTermination deferScope(vm);
-        auto rareData = jsCast<JSFunction*>(constructor)->ensureRareDataAndObjectAllocationProfile(globalObject, inlineCapacity);
-        scope.releaseAssertNoException();
-        ObjectAllocationProfileWithPrototype* allocationProfile = rareData->objectAllocationProfile();
-        Structure* structure = allocationProfile->structure();
-        JSObject* result = constructEmptyObject(vm, structure);
-        if (structure->hasPolyProto()) {
-            JSObject* prototype = allocationProfile->prototype();
-            ASSERT(prototype == jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, globalObject));
-            result->putDirectOffset(vm, knownPolyProtoOffset, prototype);
-            prototype->didBecomePrototype(vm);
-            ASSERT_WITH_MESSAGE(!hasIndexedProperties(result->indexingType()), "We rely on JSFinalObject not starting out with an indexing type otherwise we would potentially need to convert to slow put storage");
+        JSObject* result;
+        {
+            DeferTermination deferScope(vm);
+            auto rareData = jsCast<JSFunction*>(constructor)->ensureRareDataAndObjectAllocationProfile(globalObject, inlineCapacity);
+            scope.releaseAssertNoException();
+            ObjectAllocationProfileWithPrototype* allocationProfile = rareData->objectAllocationProfile();
+            Structure* structure = allocationProfile->structure();
+            result = constructEmptyObject(vm, structure);
+            if (structure->hasPolyProto()) {
+                JSObject* prototype = allocationProfile->prototype();
+                ASSERT(prototype == jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, globalObject));
+                result->putDirectOffset(vm, knownPolyProtoOffset, prototype);
+                prototype->didBecomePrototype(vm);
+                ASSERT_WITH_MESSAGE(!hasIndexedProperties(result->indexingType()), "We rely on JSFinalObject not starting out with an indexing type otherwise we would potentially need to convert to slow put storage");
+            }
         }
         OPERATION_RETURN(scope, result);
     }
