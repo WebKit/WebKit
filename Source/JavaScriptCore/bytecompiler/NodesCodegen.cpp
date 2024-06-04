@@ -277,7 +277,7 @@ RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     else {
         RefPtr<RegisterID> uncheckedResult = generator.newTemporary();
         generator.emitGetFromScope(uncheckedResult.get(), scope.get(), var, ThrowIfNotFound);
-        generator.emitTDZCheck(uncheckedResult.get());
+        generator.emitTDZCheck(uncheckedResult.get(), m_ident);
         generator.move(finalDest, uncheckedResult.get());
     }
     generator.emitProfileType(finalDest, var, m_position, m_position + m_ident.length());

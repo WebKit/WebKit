@@ -344,6 +344,15 @@ JSObject* createTDZError(JSGlobalObject* globalObject)
     return createReferenceError(globalObject, "Cannot access uninitialized variable."_s);
 }
 
+JSObject* createTDZError(JSGlobalObject* globalObject, const Identifier &ident)
+{
+    if (ident.isSymbol() || ident.isPrivateName() || ident.isEmpty()) {
+        return createTDZError(globalObject);
+    }
+
+    return createReferenceError(globalObject, makeString("Cannot access '"_s, ident.string(), "' before initialization."_s));
+}
+
 JSObject* createInvalidPrivateNameError(JSGlobalObject* globalObject)
 {
     return createTypeError(globalObject, "Cannot access invalid private field"_s, defaultSourceAppender, TypeNothing);

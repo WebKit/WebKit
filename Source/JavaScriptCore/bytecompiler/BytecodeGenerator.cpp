@@ -3127,9 +3127,14 @@ RegisterID* BytecodeGenerator::emitInstanceFieldInitializationIfNeeded(RegisterI
     return dst;
 }
 
+void BytecodeGenerator::emitTDZCheck(RegisterID* target, const Variable& variable)
+{
+    OpCheckTdz::emit(this, target, addConstantValue(addStringConstant(variable.ident())));
+}
+
 void BytecodeGenerator::emitTDZCheck(RegisterID* target)
 {
-    OpCheckTdz::emit(this, target);
+    OpCheckTdz::emit(this, target, addConstantValue(jsUndefined()));
 }
 
 bool BytecodeGenerator::needsTDZCheck(const Variable& variable)
@@ -3156,11 +3161,11 @@ void BytecodeGenerator::emitTDZCheckIfNecessary(const Variable& variable, Regist
 {
     if (needsTDZCheck(variable)) {
         if (target)
-            emitTDZCheck(target);
+            emitTDZCheck(target, variable);
         else {
             RELEASE_ASSERT(!variable.isLocal() && scope);
             RefPtr<RegisterID> result = emitGetFromScope(newTemporary(), scope, variable, DoNotThrowIfNotFound);
-            emitTDZCheck(result.get());
+            emitTDZCheck(result.get(), variable);
         }
     }
 }

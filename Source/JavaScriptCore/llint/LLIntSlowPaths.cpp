@@ -2303,7 +2303,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
             // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
             result = slot.getValue(globalObject, ident);
             if (result == jsTDZValue())
-                return throwException(globalObject, throwScope, createTDZError(globalObject));
+                return throwException(globalObject, throwScope, createTDZError(globalObject, ident));
         }
 
         CommonSlowPaths::tryCacheGetFromScopeGlobal(globalObject, codeBlock, vm, bytecode, scope, slot, ident);
@@ -2344,7 +2344,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
         PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
         JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, globalObject, ident, slot);
         if (slot.getValue(globalObject, ident) == jsTDZValue())
-            LLINT_THROW(createTDZError(globalObject));
+            LLINT_THROW(createTDZError(globalObject, ident));
     }
 
     if (metadata.m_getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty)

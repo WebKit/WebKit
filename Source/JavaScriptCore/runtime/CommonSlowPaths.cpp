@@ -301,10 +301,19 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_check_tdz)
 {
     BEGIN();
     auto bytecode = pc->as<OpCheckTdz>();
-    if (bytecode.m_targetVirtualRegister == codeBlock->thisRegister())
+    if (bytecode.m_targetVirtualRegister == codeBlock->thisRegister())  {
         THROW(createReferenceError(globalObject, "'super()' must be called in derived constructor before accessing |this| or returning non-object."_s));
-    else
-        THROW(createTDZError(globalObject));
+    } else {
+        JSValue identifierValue = GET_C(bytecode.m_identifier).jsValue();
+        if (identifierValue.isUndefined()) {
+            THROW(createTDZError(globalObject));
+        } else {
+            RELEASE_ASSERT(identifierValue.isString());
+            String errorMessage = asString(identifierValue)->value(globalObject);
+            THROW(createTDZError(globalObject,  Identifier::fromString(vm, errorMessage)));
+        }
+    }
+    
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_strict_mode_readonly_property_write_error)
