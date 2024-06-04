@@ -54,6 +54,7 @@
 #endif
 
 namespace Nicosia {
+using namespace WebCore;
 
 Lock Buffer::s_layersMemoryUsageLock;
 double Buffer::s_currentLayersMemoryUsage = 0.0;
