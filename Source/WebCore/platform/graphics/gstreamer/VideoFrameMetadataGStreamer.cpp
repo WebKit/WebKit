@@ -47,7 +47,7 @@ typedef struct _VideoFrameMetadataGStreamer {
 GType videoFrameMetadataAPIGetType()
 {
     static GType type;
-    static const gchar* tags[] = { nullptr };
+    static const gchar* tags[] = { GST_META_TAG_VIDEO_STR, nullptr };
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
         type = gst_meta_api_type_register("WebKitVideoFrameMetadataAPI", tags);
