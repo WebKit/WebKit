@@ -85,6 +85,12 @@ public:
     void removeTransparentMarkersForSession(const WTF::UUID&, RemoveAllMarkersForSession);
 
 private:
+    struct State {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        WebUnifiedTextReplacementSessionData session;
+    };
+
     static WebCore::CharacterRange characterRange(const WebCore::SimpleRange& scope, const WebCore::SimpleRange&);
     static WebCore::SimpleRange resolveCharacterRange(const WebCore::SimpleRange& scope, WebCore::CharacterRange);
     static uint64_t characterCount(const WebCore::SimpleRange&);
@@ -113,7 +119,7 @@ private:
 
     // FIXME: Unify these states into a single `State` struct.
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_contextRanges;
-    HashMap<WTF::UUID, WebUnifiedTextReplacementSessionData::ReplacementType> m_replacementTypes;
+    HashMap<WTF::UUID, UniqueRef<State>> m_states;
     HashMap<WTF::UUID, int> m_replacementLocationOffsets;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_originalDocumentNodes;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_replacedDocumentNodes;

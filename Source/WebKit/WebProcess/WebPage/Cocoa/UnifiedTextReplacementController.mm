@@ -83,6 +83,30 @@ UnifiedTextReplacementController::UnifiedTextReplacementController(WebPage& webP
 {
 }
 
+static std::optional<WebCore::SimpleRange> contextRangeForDocument(const WebCore::Document& document)
+{
+    auto selection = document.selection().selection();
+
+    if (selection.isRange()) {
+        auto startOfFirstParagraph = WebCore::startOfParagraph(selection.start());
+        auto endOfLastParagraph = WebCore::endOfParagraph(selection.end());
+
+        auto paragraphRange = WebCore::makeSimpleRange(startOfFirstParagraph, endOfLastParagraph);
+
+        if (paragraphRange && WebCore::hasAnyPlainText(*paragraphRange, defaultTextIteratorBehaviors))
+            return paragraphRange;
+    }
+
+    auto startOfEditableContent = WebCore::startOfEditableContent(selection.start());
+    auto endOfEditableContent = WebCore::endOfEditableContent(selection.end());
+
+    auto editableContentRange = WebCore::makeSimpleRange(startOfEditableContent, endOfEditableContent);
+    if (editableContentRange && WebCore::hasAnyPlainText(*editableContentRange, defaultTextIteratorBehaviors))
+        return editableContentRange;
+
+    return selection.firstRange();
+}
+
 void UnifiedTextReplacementController::willBeginTextReplacementSession(const std::optional<WebUnifiedTextReplacementSessionData>& session, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
 {
     RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s)", session ? session->uuid.toString().utf8().data() : "");
@@ -94,7 +118,8 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
         return;
     }
 
-    auto contextRange = m_webPage->autocorrectionContextRange();
+    auto contextRange = contextRangeForDocument(*document);
+
     if (!contextRange) {
         RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => no context range", session ? session->uuid.toString().utf8().data() : "");
         completionHandler({ });
@@ -103,12 +128,12 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
 
     // If the UUID is invalid, the session is ephemeral.
     if (session) {
-        auto liveRange = createLiveRange(*contextRange);
+        auto liveRange = WebCore::createLiveRange(*contextRange);
 
         ASSERT(!m_contextRanges.contains(session->uuid));
 
         m_contextRanges.set(session->uuid, liveRange);
-        m_replacementTypes.set(session->uuid, session->replacementType);
+        m_states.set(session->uuid, WTF::makeUniqueRef<UnifiedTextReplacementController::State>(*session));
     }
 
     auto selectedTextRange = document->selection().selection().firstRange();
@@ -308,7 +333,7 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WebUni
         return;
     }
 
-    auto replacementType = m_replacementTypes.get(session.uuid);
+    auto replacementType = m_states.get(session.uuid)->session.replacementType;
     switch (replacementType) {
     case WebUnifiedTextReplacementSessionData::ReplacementType::PlainText:
         didEndTextReplacementSession<WebUnifiedTextReplacementSessionData::ReplacementType::PlainText>(session, accepted);
@@ -326,14 +351,15 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WebUni
         return;
     }
 
-    document->selection().setSelection({ *sessionRange });
+    if (m_states.get(session.uuid)->session.correctionType != WebUnifiedTextReplacementSessionData::CorrectionType::Spelling)
+        document->selection().setSelection({ *sessionRange });
 
     m_textIndicatorCharacterRangesForSessions.removeFirstMatching([&](auto& candidateSession) {
         return candidateSession.first == session.uuid;
     });
     removeTransparentMarkersForSession(session.uuid, RemoveAllMarkersForSession::Yes);
 
-    m_replacementTypes.remove(session.uuid);
+    m_states.remove(session.uuid);
     m_contextRanges.remove(session.uuid);
     m_originalDocumentNodes.remove(session.uuid);
     m_replacedDocumentNodes.remove(session.uuid);
@@ -550,7 +576,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
         return;
     }
 
-    auto replacementType = m_replacementTypes.get(session.uuid);
+    auto replacementType = m_states.get(session.uuid)->session.replacementType;
     switch (replacementType) {
     case WebUnifiedTextReplacementSessionData::ReplacementType::PlainText:
         return textReplacementSessionPerformEditActionForPlainText(*document, session, action);

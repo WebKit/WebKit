@@ -1737,10 +1737,6 @@ public:
     void setMediaEnvironment(const String&);
 #endif
 
-#if PLATFORM(COCOA)
-    std::optional<WebCore::SimpleRange> autocorrectionContextRange();
-#endif
-
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     void textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect);
 

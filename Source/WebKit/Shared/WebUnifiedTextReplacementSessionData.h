@@ -36,11 +36,20 @@ enum class WebUnifiedTextReplacementSessionDataReplacementType : uint8_t {
     RichText,
 };
 
+enum class WebUnifiedTextReplacementSessionDataCorrectionType : uint8_t {
+    None,
+    Grammar,
+    Spelling,
+};
+
 struct WebUnifiedTextReplacementSessionData {
     using ReplacementType = WebUnifiedTextReplacementSessionDataReplacementType;
 
+    using CorrectionType = WebUnifiedTextReplacementSessionDataCorrectionType;
+
     WTF::UUID uuid;
     ReplacementType replacementType { ReplacementType::RichText };
+    CorrectionType correctionType { CorrectionType::None };
 };
 
 }
