@@ -946,41 +946,31 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         }
     }
 
-    _associateRelatedProperties(styles, propertyNameToEffectiveProperty)
-    {
-        for (var i = 0; i < styles.length; ++i) {
-            var properties = styles[i].enabledProperties;
+    _associateRelatedProperties(styles, propertyNameToEffectiveProperty) {
+        for (let i = 0; i < styles.length; ++i) {
+            const properties = styles[i].enabledProperties;
+            const knownShorthands = {};
 
-            var knownShorthands = {};
-
-            for (var j = 0; j < properties.length; ++j) {
-                var property = properties[j];
+            for (let j = 0; j < properties.length; ++j) {
+                const property = properties[j];
 
                 if (!property.valid)
                     continue;
 
-                if (!WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.has(property.name))
-                    continue;
-
-                if (knownShorthands[property.canonicalName] && !knownShorthands[property.canonicalName].overridden) {
-                    console.assert(property.overridden);
-                    continue;
-                }
+                if (WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.has(property.name)) {
+                    if (knownShorthands[property.canonicalName] && !knownShorthands[property.canonicalName].overridden) {
+                        console.assert(property.overridden);
+                        continue;
+                    }
 
                 knownShorthands[property.canonicalName] = property;
             }
 
-            for (var j = 0; j < properties.length; ++j) {
-                var property = properties[j];
-
-                if (!property.valid)
-                    continue;
-
-                var shorthandProperty = null;
+                let shorthandProperty = null;
 
                 if (!isEmptyObject(knownShorthands)) {
-                    var possibleShorthands = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.get(property.canonicalName) || [];
-                    for (var k = 0; k < possibleShorthands.length; ++k) {
+                    const possibleShorthands = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.get(property.canonicalName) || [];
+                    for (let k = 0; k < possibleShorthands.length; ++k) {
                         if (possibleShorthands[k] in knownShorthands) {
                             shorthandProperty = knownShorthands[possibleShorthands[k]];
                             break;
