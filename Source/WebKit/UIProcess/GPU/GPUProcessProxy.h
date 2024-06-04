@@ -129,6 +129,9 @@ public:
     static Vector<SandboxExtensionHandle> createGPUToolsSandboxExtensionHandlesIfNeeded();
 #endif
 
+    // ResponsivenessTimer::Client
+    void didBecomeUnresponsive() final;
+
 private:
     explicit GPUProcessProxy();
 
@@ -157,9 +160,6 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override;
-
-    // ResponsivenessTimer::Client
-    void didBecomeUnresponsive() final;
 
     void terminateWebProcess(WebCore::ProcessIdentifier);
     void processIsReadyToExit();

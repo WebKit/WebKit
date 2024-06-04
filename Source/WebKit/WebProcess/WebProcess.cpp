@@ -1391,6 +1391,11 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
     return *m_gpuProcessConnection;
 }
 
+void WebProcess::terminateGPUProcess()
+{
+    parentProcessConnection()->send(Messages::WebProcessProxy::TerminateGPUProcess(), 0);
+}
+
 void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection& connection)
 {
     ASSERT(m_gpuProcessConnection);

@@ -580,6 +580,7 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     void createGPUProcessConnection(IPC::Connection::Handle&&);
+    void terminateGPUProcess();
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -788,6 +789,7 @@ private:
     mutable String m_environmentIdentifier;
 #if ENABLE(GPU_PROCESS)
     mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
+    bool m_hasTerminatedGPUProcess { false };
 #endif
     mutable std::optional<NetworkProcessPreferencesForWebProcess> m_preferencesForNetworkProcess;
 

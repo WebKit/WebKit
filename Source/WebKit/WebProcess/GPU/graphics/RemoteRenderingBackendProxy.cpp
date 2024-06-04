@@ -83,8 +83,11 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
     if (!m_streamConnection)
         return;
 
-    ensureOnMainRunLoop([ident = renderingBackendIdentifier()]() {
-        WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(ident), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    ensureOnMainRunLoop([ident = renderingBackendIdentifier(), weakGPUProcessConnection = WTFMove(m_gpuProcessConnection)]() {
+        RefPtr gpuProcessConnection = weakGPUProcessConnection.get();
+        if (!gpuProcessConnection)
+            return;
+        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(ident), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     });
     m_remoteResourceCacheProxy.clear();
     disconnectGPUProcess();
@@ -107,6 +110,7 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
             auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
             m_connection = &gpuProcessConnection.connection();
             m_sharedResourceCache = gpuProcessConnection.sharedResourceCache();
+            m_gpuProcessConnection = gpuProcessConnection;
             m_connection->send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         });
     }
@@ -118,6 +122,8 @@ auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V
     if (UNLIKELY(result != IPC::Error::NoError)) {
         RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
             m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        if (result == IPC::Error::Timeout)
+            notifyMessageDidTimeout();
     }
     return result;
 }
@@ -129,6 +135,8 @@ auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<
     if (UNLIKELY(!result.succeeded())) {
         RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
             m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
+        if (result.error() == IPC::Error::Timeout)
+            notifyMessageDidTimeout();
     }
     return result;
 }
@@ -156,6 +164,16 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_didRenderingUpdateID = { };
     m_streamConnection->invalidate();
     m_streamConnection = nullptr;
+    m_gpuProcessConnection = nullptr;
+}
+
+void RemoteRenderingBackendProxy::notifyMessageDidTimeout()
+{
+    ensureOnMainRunLoop([weakGPUProcessConnection = m_gpuProcessConnection]() {
+        RefPtr gpuProcessConnection = weakGPUProcessConnection.get();
+        if (gpuProcessConnection)
+            gpuProcessConnection->notifyMessageDidTimeout();
+    });
 }
 
 void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)

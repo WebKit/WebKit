@@ -101,6 +101,8 @@ public:
     void setMediaEnvironment(WebCore::PageIdentifier, const String&);
 #endif
 
+    void notifyMessageDidTimeout();
+
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
     class Client {
@@ -143,6 +145,7 @@ private:
     Ref<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_hasInitialized { false };
+    bool m_hasTimeout { false };
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> m_auditToken;

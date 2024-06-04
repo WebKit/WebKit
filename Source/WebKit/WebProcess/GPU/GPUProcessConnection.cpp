@@ -170,6 +170,14 @@ void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::Messa
 {
 }
 
+void GPUProcessConnection::notifyMessageDidTimeout()
+{
+    if (m_hasTimeout)
+        return;
+    m_hasTimeout = true;
+    WebProcess::singleton().terminateGPUProcess();
+}
+
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 SampleBufferDisplayLayerManager& GPUProcessConnection::sampleBufferDisplayLayerManager()
 {

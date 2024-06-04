@@ -1090,6 +1090,16 @@ void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& conne
     protectedProcessPool()->createGPUProcessConnection(*this, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
 
+void WebProcessProxy::terminateGPUProcess()
+{
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "terminateGPUProcess: hasTerminate=%d", m_hasTerminatedGPUProcess);
+    if (!m_hasTerminatedGPUProcess) {
+        m_hasTerminatedGPUProcess = true;
+        if (RefPtr process = protectedProcessPool()->gpuProcess())
+            process->didBecomeUnresponsive();
+    }
+}
+
 void WebProcessProxy::gpuProcessDidFinishLaunching()
 {
     for (Ref page : pages())
