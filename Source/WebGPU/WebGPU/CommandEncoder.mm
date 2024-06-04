@@ -56,7 +56,7 @@ namespace WebGPU {
 if (m_state == EncoderState::Ended) \
     m_device->generateAValidationError([NSString stringWithFormat:@"%s: encoder state is %@", __PRETTY_FUNCTION__, encoderStateName()]); \
 else \
-    makeInvalid(@"Encoder state is locked");
+    makeInvalid(m_lastErrorString ?: @"Encoder state is locked");
 
 static MTLLoadAction loadAction(WGPULoadOp loadOp)
 {

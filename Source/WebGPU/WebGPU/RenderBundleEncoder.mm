@@ -296,6 +296,20 @@ bool RenderBundleEncoder::executePreDrawCommands()
         return false;
     }
 
+    auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
+    for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
+        RELEASE_ASSERT(bufferIndex < m_vertexBuffers.size());
+        auto& vertexBuffer = m_vertexBuffers[bufferIndex];
+        auto bufferSize = vertexBuffer.size;
+        auto lastStride = bufferData.lastStride;
+        if (bufferData.stepMode == WGPUVertexStepMode_Vertex) {
+            if (bufferSize < lastStride) {
+                makeInvalid([NSString stringWithFormat:@"Buffer[%d] fails: bufferSize(%llu) < lastStride(%llu)", bufferIndex, bufferSize, lastStride]);
+                return false;
+            }
+        }
+    }
+
     for (size_t i = 0, sz = m_vertexBuffers.size(); i < sz; ++i) {
         if (m_vertexBuffers[i].buffer) {
             if (m_vertexBuffers[i].offset < m_vertexBuffers[i].buffer.length)
