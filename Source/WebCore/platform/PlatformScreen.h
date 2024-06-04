@@ -114,7 +114,7 @@ WEBCORE_EXPORT PlatformDisplayID primaryScreenDisplayID();
 WEBCORE_EXPORT PlatformDisplayID displayID(NSScreen *);
 
 WEBCORE_EXPORT NSScreen *screen(NSWindow *);
-NSScreen *screen(PlatformDisplayID);
+WEBCORE_EXPORT NSScreen *screen(PlatformDisplayID);
 
 FloatRect screenRectForDisplay(PlatformDisplayID);
 WEBCORE_EXPORT FloatRect screenRectForPrimaryScreen();
