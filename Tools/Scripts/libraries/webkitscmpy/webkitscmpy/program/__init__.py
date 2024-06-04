@@ -33,6 +33,7 @@ from .clean import Clean, DeletePRBranches
 from .clone import Clone
 from .command import Command
 from .commit import Commit
+from .conflict import Conflict
 from .squash import Squash
 from .checkout import Checkout
 from .classify import Classify
@@ -95,6 +96,8 @@ def main(
         Blame, Branch, Canonicalize, Checkout,
         Clean, Clone, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Review, Setup, InstallGitLFS,
+        Clean, Clone, Conflict, Find, Info, Land, Log, Pull,
+        PullRequest, Revert, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show, Publish,
         Classify, InstallHooks,
