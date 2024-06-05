@@ -667,6 +667,7 @@ ConvertFloatToDouble U:F:32, D:F:64
 # means movePtr.
 Move U:G:Ptr, D:G:Ptr
     Tmp, Tmp
+    32: TmpPair, TmpPair
     Imm, Tmp as signExtend32ToPtr
     BigImm, Tmp
     Addr, Tmp as loadPtr # This means that "Move Addr, Tmp" is code-generated as "load" not "move".
@@ -1730,8 +1731,9 @@ RetVoid /return
 Ret32 U:G:32 /return
     Tmp
 
-64: Ret64 U:G:64 /return
-    Tmp
+Ret64 U:G:64 /return
+    64: Tmp
+    32: TmpPair
 
 RetFloat U:F:32 /return
     Tmp

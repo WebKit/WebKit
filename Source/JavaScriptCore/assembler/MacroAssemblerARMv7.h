@@ -2152,6 +2152,12 @@ public:
             invalidateCachedAddressTempRegister();
     }
 
+    void move(RegisterID srcHi, RegisterID srcLo, RegisterID dstHi, RegisterID dstLo)
+    {
+        move(srcHi, dstHi);
+        move(srcLo, dstLo);
+    }
+
     void move(TrustedImmPtr imm, RegisterID dest)
     {
         move(TrustedImm32(imm), dest);

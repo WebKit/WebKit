@@ -229,7 +229,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond)|(SIMDInfo))\Z/
+    token =~ /\A((Tmp)|(TmpPair)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond)|(SIMDInfo))\Z/
 end
 
 def isArch(token)
@@ -303,7 +303,7 @@ class Parser
 
     def consumeKind
         result = token.string
-        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, ZeroReg, Tmp, SimpleAddr, Addr, ExtendedOffsetAddr, Index, PreIndex, PostIndex, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
+        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, ZeroReg, Tmp, TmpPair, SimpleAddr, Addr, ExtendedOffsetAddr, Index, PreIndex, PostIndex, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
         advance
         result
     end
@@ -586,12 +586,14 @@ def matchForms(outp, speed, forms, columnIndex, columnGetter, filter, callback)
     groups.each_pair {
         | key, value |
         outp.puts "#if USE(JSVALUE64)" if key == "BitImm64"
+        outp.puts '#if USE(JSVALUE32_64)' if key == "TmpPair"
         Kind.argKinds(key).each {
             | argKind |
             outp.puts "case Arg::#{argKind}:"
         }
         matchForms(outp, speed, value, columnIndex + 1, columnGetter, filter, callback)
         outp.puts "break;"
+        outp.puts "#endif // USE(JSVALUE32_64)" if key == "TmpPair"
         outp.puts "#endif // USE(JSVALUE64)" if key == "BitImm64"
     }
     outp.puts "default:"
@@ -933,6 +935,9 @@ writeH("OpcodeGenerated") {
                 when "Tmp"
                     outp.puts "if (!args[#{index}].tmp().is#{arg.bank}P())"
                     outp.puts "OPGEN_RETURN(false);"
+                when "TmpPair"
+                    outp.puts "if (!(args[#{index}].tmpHi().isGP() && args[#{index}].tmpLo().isGP()))"
+                    outp.puts "OPGEN_RETURN(false);"
                 when "Imm"
                     outp.puts "if (!Arg::isValidImmForm(args[#{index}].value()))"
                     outp.puts "OPGEN_RETURN(false);"
@@ -1263,6 +1268,8 @@ writeH("OpcodeGenerated") {
                     else
                         outp.print "args[#{index}].fpr()"
                     end
+                when "TmpPair"
+                    outp.print "args[#{index}].tmpHi().gpr(), args[#{index}].tmpLo().gpr()"
                 when "Imm", "BitImm"
                     outp.print "args[#{index}].asTrustedImm32()"
                 when "BigImm"

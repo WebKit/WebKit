@@ -5468,10 +5468,12 @@ private:
                 moveToTmp(Move, immOrTmpOrZeroReg(value), returnValueGPR);
                 append(Ret32, returnValueGPR);
                 break;
-            case Int64:
-                moveToTmp(Move, immOrTmpOrZeroReg(value), returnValueGPR);
-                append(Ret64, returnValueGPR);
+            case Int64: {
+                auto const ret = Arg(Tmp(GPRInfo::returnValueGPR2), Tmp(GPRInfo::returnValueGPR));
+                append(Move, immOrTmp(value), ret);
+                append(Ret64, ret);
                 break;
+            }
             case Float:
                 append(MoveFloat, tmp(value), returnValueFPR);
                 append(RetFloat, returnValueFPR);
