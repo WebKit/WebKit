@@ -415,7 +415,7 @@ bool Buffer::indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t in
     auto rangeBegin = m_indirectCache.lastBaseIndex;
     auto rangeEnd = m_indirectCache.lastBaseIndex + m_indirectCache.indexCount;
     auto newRangeEnd = baseIndex + indexCount;
-    return baseIndex < rangeBegin || newRangeEnd > rangeEnd || minVertexCount > m_indirectCache.minVertexCount || minInstanceCount > m_indirectCache.minInstanceCount || m_indirectCache.indexType != indexType;
+    return baseIndex != rangeBegin || newRangeEnd != rangeEnd || minVertexCount != m_indirectCache.minVertexCount || minInstanceCount != m_indirectCache.minInstanceCount || m_indirectCache.indexType != indexType;
 }
 
 void Buffer::indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType)
