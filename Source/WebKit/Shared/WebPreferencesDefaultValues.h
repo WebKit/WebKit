@@ -40,6 +40,12 @@
 #define Webgpu_feature_status Preview
 #endif
 
+#if defined(ENABLE_UNIFIED_PDF_BY_DEFAULT) && ENABLE_UNIFIED_PDF_BY_DEFAULT
+#define Unifiedpdf_feature_status Preview
+#else
+#define Unifiedpdf_feature_status Internal
+#endif
+
 #if defined(ENABLE_UNPREFIXED_BACKDROP_FILTER) && ENABLE_UNPREFIXED_BACKDROP_FILTER
 #define Backdropfilter_feature_status Stable
 #else

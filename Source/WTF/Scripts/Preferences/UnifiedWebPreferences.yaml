@@ -6724,20 +6724,17 @@ UndoManagerAPIEnabled:
 
 UnifiedPDFEnabled:
   type: bool
-  status: internal
+  status: Unifiedpdf_feature_status
   category: security
   humanReadableName: "Unified PDF Viewer"
   humanReadableDescription: "Enable Unified PDF Viewer"
   condition: ENABLE(UNIFIED_PDF)
   defaultValue:
     WebKitLegacy:
-      "ENABLE(UNIFIED_PDF_BY_DEFAULT)": true
       default: false
     WebKit:
-      "ENABLE(UNIFIED_PDF_BY_DEFAULT)": true
       default: false
     WebCore:
-      "ENABLE(UNIFIED_PDF_BY_DEFAULT)": true
       default: false
 
 UpgradeKnownHostsToHTTPSEnabled:
