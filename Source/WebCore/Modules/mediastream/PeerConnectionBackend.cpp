@@ -240,7 +240,8 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER);
-
+    if (transceiverStates)
+        DEBUG_LOG(LOGIDENTIFIER, "Transceiver states: ", *transceiverStates);
     ASSERT(m_setDescriptionCallback);
     m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), transceiverStates = WTFMove(transceiverStates), sctpBackend = WTFMove(sctpBackend), maxMessageSize]() mutable {
         if (m_peerConnection.isClosed())
@@ -325,6 +326,8 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description succeeded");
+    if (transceiverStates)
+        DEBUG_LOG(LOGIDENTIFIER, "Transceiver states: ", *transceiverStates);
     ASSERT(m_setDescriptionCallback);
 
     m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), transceiverStates = WTFMove(transceiverStates), sctpBackend = WTFMove(sctpBackend), maxMessageSize, events = WTFMove(m_pendingTrackEvents)]() mutable {
@@ -653,6 +656,55 @@ WTFLogChannel& PeerConnectionBackend::logChannel() const
 }
 #endif
 
+static Ref<JSON::Object> toJSONObject(const PeerConnectionBackend::TransceiverState& transceiverState)
+{
+    auto object = JSON::Object::create();
+    object->setString("mid"_s, transceiverState.mid);
+
+    auto receiverStreams = JSON::Array::create();
+    for (auto receiverStream : transceiverState.receiverStreams)
+        receiverStreams->pushString(receiverStream->id());
+    object->setArray("receiverStreams"_s, WTFMove(receiverStreams));
+
+    if (auto firedDirection = transceiverState.firedDirection)
+        object->setString("firedDirection"_s, convertEnumerationToString(*firedDirection));
+
+    return object;
+}
+
+static Ref<JSON::Array> toJSONArray(const PeerConnectionBackend::TransceiverStates& transceiverStates)
+{
+    auto array = JSON::Array::create();
+    for (auto transceiverState : transceiverStates)
+        array->pushObject(toJSONObject(transceiverState));
+
+    return array;
+}
+
+static String toJSONString(const PeerConnectionBackend::TransceiverState& transceiverState)
+{
+    return toJSONObject(transceiverState)->toJSONString();
+}
+
+static String toJSONString(const PeerConnectionBackend::TransceiverStates& transceiverStates)
+{
+    return toJSONArray(transceiverStates)->toJSONString();
+}
+
 } // namespace WebCore
+
+namespace WTF {
+
+String LogArgument<WebCore::PeerConnectionBackend::TransceiverState>::toString(const WebCore::PeerConnectionBackend::TransceiverState& transceiverState)
+{
+    return toJSONString(transceiverState);
+}
+
+String LogArgument<WebCore::PeerConnectionBackend::TransceiverStates>::toString(const WebCore::PeerConnectionBackend::TransceiverStates& transceiverStates)
+{
+    return toJSONString(transceiverStates);
+}
+
+}
 
 #endif // ENABLE(WEB_RTC)
