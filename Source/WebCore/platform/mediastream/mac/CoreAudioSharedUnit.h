@@ -104,7 +104,7 @@ public:
 
 #if PLATFORM(MAC)
     void setStoredVPIOUnit(StoredAudioUnit&&);
-    StoredAudioUnit takeStoredVPIOUnit() { return std::exchange(m_storedVPIOUnit, nullptr); }
+    StoredAudioUnit takeStoredVPIOUnit();
 #endif
 
 private:
@@ -128,6 +128,7 @@ private:
 #if PLATFORM(MAC)
     bool migrateToNewDefaultDevice(const CaptureDevice&) final;
     void prewarmAudioUnitCreation(CompletionHandler<void()>&&) final;
+    void deallocateStoredVPIOUnit();
 #endif
     int actualSampleRate() const final;
     void resetSampleRate();
@@ -193,6 +194,7 @@ private:
     bool m_shouldUseVPIO { true };
 #if PLATFORM(MAC)
     StoredAudioUnit m_storedVPIOUnit { nullptr };
+    Timer m_storedVPIOUnitDeallocationTimer;
     RefPtr<GenericNonExclusivePromise> m_audioUnitCreationWarmupPromise;
 #endif
 };
