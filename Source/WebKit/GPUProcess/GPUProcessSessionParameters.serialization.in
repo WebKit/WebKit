@@ -26,7 +26,7 @@
     String mediaCacheDirectory;
     WebKit::SandboxExtension::Handle mediaCacheDirectorySandboxExtensionHandle;
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     String mediaKeysStorageDirectory;
     WebKit::SandboxExtension::Handle mediaKeysStorageDirectorySandboxExtensionHandle;
 #endif

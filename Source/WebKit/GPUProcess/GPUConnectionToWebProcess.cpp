@@ -1034,7 +1034,7 @@ const String& GPUConnectionToWebProcess::mediaCacheDirectory() const
     return m_gpuProcess->mediaCacheDirectory(m_sessionID);
 }
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 const String& GPUConnectionToWebProcess::mediaKeysStorageDirectory() const
 {
     return m_gpuProcess->mediaKeysStorageDirectory(m_sessionID);

@@ -534,7 +534,7 @@ void GPUProcess::addSession(PAL::SessionID sessionID, GPUProcessSessionParameter
 
     m_sessions.add(sessionID, GPUSession {
         WTFMove(parameters.mediaCacheDirectory)
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
         , WTFMove(parameters.mediaKeysStorageDirectory)
 #endif
     });
@@ -552,7 +552,7 @@ const String& GPUProcess::mediaCacheDirectory(PAL::SessionID sessionID) const
     return m_sessions.find(sessionID)->value.mediaCacheDirectory;
 }
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 const String& GPUProcess::mediaKeysStorageDirectory(PAL::SessionID sessionID) const
 {
     ASSERT(m_sessions.contains(sessionID));

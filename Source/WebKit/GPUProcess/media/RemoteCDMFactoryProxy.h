@@ -75,6 +75,8 @@ public:
 
     bool allowsExitUnderMemoryPressure() const;
 
+    const String& mediaKeysStorageDirectory() const;
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;
 #endif

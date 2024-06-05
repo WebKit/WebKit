@@ -267,12 +267,15 @@ private:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const final;
     void mediaPlayerKeyNeeded(const WebCore::SharedBuffer&) final;
-    String mediaPlayerMediaKeysStorageDirectory() const final;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     void mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&) final;
     void mediaPlayerWaitingForKeyChanged() final;
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
+    String mediaPlayerMediaKeysStorageDirectory() const final;
 #endif
 
     String mediaPlayerReferrer() const final;

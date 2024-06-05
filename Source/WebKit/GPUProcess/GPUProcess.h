@@ -89,7 +89,7 @@ public:
     GPUConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
 
     const String& mediaCacheDirectory(PAL::SessionID) const;
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     const String& mediaKeysStorageDirectory(PAL::SessionID) const;
 #endif
 
@@ -222,7 +222,7 @@ private:
 
     struct GPUSession {
         String mediaCacheDirectory;
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
         String mediaKeysStorageDirectory;
 #endif
     };

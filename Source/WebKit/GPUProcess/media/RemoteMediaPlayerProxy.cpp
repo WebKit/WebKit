@@ -469,7 +469,7 @@ void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad() const
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::EngineFailedToLoad(m_player->platformErrorCode()), m_id);
 }
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 String RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory() const
 {
     ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());

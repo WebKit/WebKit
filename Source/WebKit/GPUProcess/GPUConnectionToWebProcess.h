@@ -165,7 +165,7 @@ public:
     Logger& logger();
 
     const String& mediaCacheDirectory() const;
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     const String& mediaKeysStorageDirectory() const;
 #endif
 
