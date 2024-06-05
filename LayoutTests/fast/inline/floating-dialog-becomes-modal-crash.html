@@ -1,0 +1,16 @@
+<style>
+dialog {
+  position: static;
+  float: right;
+  display: inline;
+}
+</style>
+PASS if no assert or crash.
+<dialog id=dialog>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetHeight;
+dialog.showModal();
+</script>
