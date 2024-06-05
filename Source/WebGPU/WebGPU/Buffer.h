@@ -94,8 +94,8 @@ public:
     bool isDestroyed() const;
     void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
     uint8_t* getBufferContents();
-    bool indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, MTLIndexType) const;
-    void indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, MTLIndexType);
+    bool indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType) const;
+    void indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType);
     void indirectBufferInvalidated();
 
 private:
@@ -127,6 +127,7 @@ private:
         uint32_t lastBaseIndex { 0 };
         uint32_t indexCount { 0 };
         uint32_t minVertexCount { 0 };
+        uint32_t minInstanceCount { 0 };
         MTLIndexType indexType { MTLIndexTypeUInt16 };
     } m_indirectCache;
 

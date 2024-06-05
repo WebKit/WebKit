@@ -107,7 +107,7 @@ public:
 
     static constexpr auto startIndexForFragmentDynamicOffsets = 3;
     static constexpr uint32_t defaultSampleMask = UINT32_MAX;
-    static constexpr uint32_t invalidVertexCount = UINT32_MAX;
+    static constexpr uint32_t invalidVertexInstanceCount = UINT32_MAX;
 
     bool validateDepthStencilState(bool depthReadOnly, bool stencilReadOnly) const;
     Device& device() const { return m_device; }
@@ -137,7 +137,7 @@ private:
     uint32_t maxBindGroupIndex() const;
     void recordCommand(WTF::Function<bool(void)>&&);
     void storeVertexBufferCountsForValidation(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes);
-    uint32_t computeMininumVertexCount() const;
+    std::pair<uint32_t, uint32_t> computeMininumVertexInstanceCount() const;
 
     const Ref<Device> m_device;
     WeakPtr<Buffer> m_indexBuffer;

@@ -538,26 +538,30 @@ bool RenderBundleEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32
     return true;
 }
 
-uint32_t RenderBundleEncoder::computeMininumVertexCount() const
+std::pair<uint32_t, uint32_t> RenderBundleEncoder::computeMininumVertexInstanceCount() const
 {
     if (!m_pipeline)
-        return 0;
+        return std::make_pair(0u, 0u);
 
-    uint32_t minVertexCount = invalidVertexCount;
+    uint32_t minVertexCount = invalidVertexInstanceCount;
+    uint32_t minInstanceCount = invalidVertexInstanceCount;
     auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
         if (bufferIndex >= m_vertexBuffers.size())
-            return invalidVertexCount;
+            continue;
         auto& vertexBuffer = m_vertexBuffers[bufferIndex];
         auto bufferSize = vertexBuffer.size;
-        auto stride = bufferData.stepMode == WGPUVertexStepMode_Vertex ? bufferData.stride : 1;
+        auto stride = bufferData.stride;
         auto lastStride = bufferData.lastStride;
         if (!stride || bufferSize < lastStride)
             continue;
         auto elementCount = (bufferSize - lastStride) / stride + 1;
-        minVertexCount = std::min<uint32_t>(minVertexCount, elementCount);
+        if (bufferData.stepMode == WGPUVertexStepMode_Vertex)
+            minVertexCount = std::min<uint32_t>(minVertexCount, elementCount);
+        else
+            minInstanceCount = std::min<uint32_t>(minInstanceCount, elementCount);
     }
-    return minVertexCount;
+    return std::make_pair(minVertexCount, minInstanceCount);
 }
 
 void RenderBundleEncoder::storeVertexBufferCountsForValidation(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes)
@@ -567,13 +571,15 @@ void RenderBundleEncoder::storeVertexBufferCountsForValidation(uint32_t indexCou
     if (!icbCommand || !indexBuffer)
         return;
 
+    auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
     m_minVertexCountForDrawCommand.add(m_currentCommandIndex, IndexBufferAndIndexData {
         .indexBuffer = m_indexBuffer,
         .indexType = indexType,
         .indexBufferOffsetInBytes = indexBufferOffsetInBytes,
         .indexData = IndexData {
             .renderCommand = m_currentCommandIndex,
-            .minVertexCount = computeMininumVertexCount(),
+            .minVertexCount = minVertexCount,
+            .minInstanceCount = minInstanceCount,
             .bufferGpuAddress = indexBuffer.gpuAddress,
             .indexCount = indexCount,
             .instanceCount = instanceCount,
@@ -596,8 +602,10 @@ void RenderBundleEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCoun
     auto indexBufferOffsetInBytes = m_indexBufferOffset + firstIndexOffsetInBytes;
     id<MTLBuffer> indexBuffer = m_indexBuffer ? m_indexBuffer->buffer() : nil;
     RenderPassEncoder::IndexCall useIndirectCall { RenderPassEncoder::IndexCall::Draw };
-    if (m_renderPassEncoder)
-        useIndirectCall = RenderPassEncoder::clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), computeMininumVertexCount(), m_renderPassEncoder->renderCommandEncoder(), m_device.get(), m_descriptor.sampleCount, m_primitiveType);
+    if (m_renderPassEncoder) {
+        auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
+        useIndirectCall = RenderPassEncoder::clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), minVertexCount, minInstanceCount, m_renderPassEncoder->renderCommandEncoder(), m_device.get(), m_descriptor.sampleCount, m_primitiveType);
+    }
 
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (NSString* error = errorValidatingDrawIndexed()) {
@@ -640,7 +648,8 @@ void RenderBundleEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t i
     id<MTLBuffer> mtlIndirectBuffer = nil;
     uint64_t modifiedIndirectOffset = 0;
     if (m_renderPassEncoder) {
-        auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, computeMininumVertexCount(), m_primitiveType, m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder());
+        auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
+        auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, minVertexCount, minInstanceCount, m_primitiveType, m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder());
         mtlIndirectBuffer = result.first;
         modifiedIndirectOffset = result.second;
     }
@@ -696,8 +705,10 @@ void RenderBundleEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirect
 
     m_requiresCommandReplay = true;
     id<MTLBuffer> clampedIndirectBuffer = nil;
-    if (m_renderPassEncoder)
-        clampedIndirectBuffer = RenderPassEncoder::clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, computeMininumVertexCount(), m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder());
+    if (m_renderPassEncoder) {
+        auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
+        clampedIndirectBuffer = RenderPassEncoder::clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, minVertexCount, minInstanceCount, m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder());
+    }
 
     if (!executePreDrawCommands())
         return;

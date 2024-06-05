@@ -529,9 +529,10 @@ id<MTLRenderPipelineState> Device::copyIndexIndirectArgsPipeline(NSUInteger rast
         ALLOW_DEPRECATED_DECLARATIONS_END
         /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
     using namespace metal;
-    [[vertex]] void vs(device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(0)]], constant const MTLDrawIndexedPrimitivesIndirectArguments& indirectArguments [[buffer(1)]]) {
-        indexedOutput.indexCount = indirectArguments.indexCount;
-        indexedOutput.instanceCount = indirectArguments.instanceCount;
+    [[vertex]] void vs(device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(0)]], constant const MTLDrawIndexedPrimitivesIndirectArguments& indirectArguments [[buffer(1)]], const constant uint* instanceCount [[buffer(2)]]) {
+        bool condition = indirectArguments.baseInstance + indirectArguments.instanceCount > instanceCount[0] || indirectArguments.baseInstance >= instanceCount[0];
+        indexedOutput.indexCount = metal::select(indirectArguments.indexCount, 0u, condition);
+        indexedOutput.instanceCount = metal::select(indirectArguments.instanceCount, 0u, condition);
         indexedOutput.indexStart = indirectArguments.indexStart;
         indexedOutput.baseVertex = indirectArguments.baseVertex;
         indexedOutput.baseInstance = indirectArguments.baseInstance;
@@ -649,13 +650,16 @@ id<MTLRenderPipelineState> Device::indexedIndirectBufferClampPipeline(NSUInteger
         /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
     using namespace metal;
     [[vertex]] void vs(device const MTLDrawIndexedPrimitivesIndirectArguments& input [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], device MTLDrawPrimitivesIndirectArguments& output [[buffer(2)]], const constant uint* indexBufferCount [[buffer(3)]]) {
-        indexedOutput.indexCount = metal::select(input.indexCount, 0u, input.indexCount + input.indexStart > indexBufferCount[0]);
+
+        bool condition = input.indexCount + input.indexStart > indexBufferCount[0] || input.instanceCount + input.baseInstance > indexBufferCount[1] || input.baseInstance >= indexBufferCount[1];
+
+        indexedOutput.indexCount = metal::select(input.indexCount, 0u, condition);
         indexedOutput.instanceCount = input.instanceCount;
-        indexedOutput.indexStart = metal::select(input.indexStart, 0u, input.indexCount + input.indexStart > indexBufferCount[0]);
+        indexedOutput.indexStart = metal::select(input.indexStart, 0u, condition);
         indexedOutput.baseVertex = input.baseVertex;
         indexedOutput.baseInstance = input.baseInstance;
 
-        output.vertexCount = metal::select(input.indexCount, 0u, input.indexCount + input.indexStart > indexBufferCount[0]);
+        output.vertexCount = metal::select(input.indexCount, 0u, condition);
         output.instanceCount = 1;
         output.vertexStart = input.indexStart;
         output.baseInstance = 0;
@@ -705,8 +709,11 @@ id<MTLRenderPipelineState> Device::indirectBufferClampPipeline(NSUInteger raster
         ALLOW_DEPRECATED_DECLARATIONS_END
         /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
     using namespace metal;
-    [[vertex]] void vs(device const MTLDrawPrimitivesIndirectArguments& input [[buffer(0)]], device MTLDrawPrimitivesIndirectArguments& output [[buffer(1)]], const constant uint* minVertexCount [[buffer(2)]]) {
-        output.vertexCount = metal::select(input.vertexCount, 0u, input.vertexCount + input.vertexStart > minVertexCount[0]);
+    [[vertex]] void vs(device const MTLDrawPrimitivesIndirectArguments& input [[buffer(0)]], device MTLDrawPrimitivesIndirectArguments& output [[buffer(1)]], const constant uint* minCounts [[buffer(2)]]) {
+        bool vertexCondition = input.vertexCount + input.vertexStart > minCounts[0] || input.vertexStart >= minCounts[0];
+        bool instanceCondition = input.baseInstance + input.instanceCount > minCounts[1] || input.baseInstance >= minCounts[1];
+        bool condition = vertexCondition || instanceCondition;
+        output.vertexCount = metal::select(input.vertexCount, 0u, condition);
         output.instanceCount = input.instanceCount;
         output.vertexStart = input.vertexStart;
         output.baseInstance = input.baseInstance;
@@ -764,6 +771,7 @@ id<MTLRenderPipelineState> Device::icbCommandClampPipeline(MTLIndexType indexTyp
     struct IndexDataUshort {
         uint64_t renderCommand { 0 };
         uint32_t minVertexCount { UINT32_MAX };
+        uint32_t minInstanceCount { UINT32_MAX };
         device ushort* indexBuffer;
         uint32_t indexCount { 0 };
         uint32_t instanceCount { 0 };
@@ -774,6 +782,7 @@ id<MTLRenderPipelineState> Device::icbCommandClampPipeline(MTLIndexType indexTyp
     struct IndexDataUint {
         uint64_t renderCommand { 0 };
         uint32_t minVertexCount { UINT32_MAX };
+        uint32_t minInstanceCount { UINT32_MAX };
         device uint* indexBuffer;
         uint32_t indexCount { 0 };
         uint32_t instanceCount { 0 };

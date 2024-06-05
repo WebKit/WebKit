@@ -76,6 +76,7 @@ struct BindableResources {
 struct IndexData {
     uint64_t renderCommand { 0 };
     uint32_t minVertexCount { UINT32_MAX };
+    uint32_t minInstanceCount { UINT32_MAX };
     uint64_t bufferGpuAddress { 0 };
     uint32_t indexCount { 0 };
     uint32_t instanceCount { 0 };

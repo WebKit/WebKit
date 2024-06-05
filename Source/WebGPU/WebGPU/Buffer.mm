@@ -410,25 +410,26 @@ id<MTLBuffer> Buffer::indirectIndexedBuffer() const
     return m_indirectIndexedBuffer;
 }
 
-bool Buffer::indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, MTLIndexType indexType) const
+bool Buffer::indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType) const
 {
     auto rangeBegin = m_indirectCache.lastBaseIndex;
     auto rangeEnd = m_indirectCache.lastBaseIndex + m_indirectCache.indexCount;
     auto newRangeEnd = baseIndex + indexCount;
-    return baseIndex < rangeBegin || newRangeEnd > rangeEnd || minVertexCount > m_indirectCache.minVertexCount || m_indirectCache.indexType != indexType;
+    return baseIndex < rangeBegin || newRangeEnd > rangeEnd || minVertexCount > m_indirectCache.minVertexCount || minInstanceCount > m_indirectCache.minInstanceCount || m_indirectCache.indexType != indexType;
 }
 
-void Buffer::indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, MTLIndexType indexType)
+void Buffer::indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType)
 {
     m_indirectCache.lastBaseIndex = baseIndex;
     m_indirectCache.indexCount = indexCount;
     m_indirectCache.minVertexCount = minVertexCount;
+    m_indirectCache.minInstanceCount = minInstanceCount;
     m_indirectCache.indexType = indexType;
 }
 
 void Buffer::indirectBufferInvalidated()
 {
-    indirectBufferRecomputed(0, 0, 0, MTLIndexTypeUInt16);
+    indirectBufferRecomputed(0, 0, 0, 0, MTLIndexTypeUInt16);
 }
 
 } // namespace WebGPU

@@ -102,10 +102,10 @@ public:
     static double quantizedDepthValue(double, WGPUTextureFormat);
     NSString* errorValidatingPipeline(const RenderPipeline&) const;
 
-    static std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer*, const Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, MTLPrimitiveType, Device&, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder>);
-    static id<MTLBuffer> clampIndirectBufferToValidValues(const Buffer&, uint64_t indirectOffset, uint32_t minVertexCount, Device&, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder>);
+    static std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer*, const Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, MTLPrimitiveType, Device&, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder>);
+    static id<MTLBuffer> clampIndirectBufferToValidValues(const Buffer&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, Device&, uint32_t rasterSampleCount, id<MTLRenderCommandEncoder>);
     enum class IndexCall { Draw, IndirectDraw, Skip };
-    static IndexCall clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes, Buffer*, uint32_t minVertexCount, id<MTLRenderCommandEncoder>, Device&, uint32_t rasterSampleCount, MTLPrimitiveType);
+    static IndexCall clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes, Buffer*, uint32_t minVertexCount, uint32_t minInstanceCount, id<MTLRenderCommandEncoder>, Device&, uint32_t rasterSampleCount, MTLPrimitiveType);
 
 private:
     RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, uint64_t maxDrawCount, Device&);
@@ -127,9 +127,9 @@ private:
     void incrementDrawCount(uint32_t = 1);
     bool occlusionQueryIsDestroyed() const;
     IndexCall clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes);
-    uint32_t computeMininumVertexCount() const;
-    std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(const Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount);
-    id<MTLBuffer> clampIndirectBufferToValidValues(const Buffer&, uint64_t indirectOffset, uint32_t minVertexCount);
+    std::pair<uint32_t, uint32_t> computeMininumVertexInstanceCount() const;
+    std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(const Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
+    id<MTLBuffer> clampIndirectBufferToValidValues(const Buffer&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
 
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
