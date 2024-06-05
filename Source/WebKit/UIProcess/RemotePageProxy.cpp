@@ -82,7 +82,7 @@ void RemotePageProxy::injectPageIntoNewProcess()
     m_process->send(
         Messages::WebProcess::CreateWebPage(
             m_webPageID,
-            page->creationParametersForRemotePage(m_process, *drawingArea, SubframeProcessPageParameters {
+            page->creationParametersForRemotePage(m_process, *drawingArea, RemotePageParameters {
                 URL(page->pageLoadState().url()),
                 page->mainFrame()->frameTreeCreationParameters(),
                 page->mainFrameWebsitePoliciesData() ? std::make_optional(*page->mainFrameWebsitePoliciesData()) : std::nullopt

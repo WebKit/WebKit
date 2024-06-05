@@ -244,7 +244,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;
 
-    std::optional<WebKit::SubframeProcessPageParameters> subframeProcessPageParameters;
+    std::optional<WebKit::RemotePageParameters> remotePageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 
@@ -262,7 +262,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #endif
 }
 
-[Nested] struct WebKit::SubframeProcessPageParameters {
+[Nested] struct WebKit::RemotePageParameters {
     URL initialMainDocumentURL;
     WebKit::FrameTreeCreationParameters frameTreeParameters;
     std::optional<WebKit::WebsitePoliciesData> websitePoliciesData;

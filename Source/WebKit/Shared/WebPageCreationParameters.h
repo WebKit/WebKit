@@ -87,7 +87,7 @@ class Encoder;
 
 namespace WebKit {
 
-struct SubframeProcessPageParameters {
+struct RemotePageParameters {
     URL initialMainDocumentURL;
     FrameTreeCreationParameters frameTreeParameters;
     std::optional<WebsitePoliciesData> websitePoliciesData;
@@ -316,7 +316,7 @@ struct WebPageCreationParameters {
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
-    std::optional<SubframeProcessPageParameters> subframeProcessPageParameters;
+    std::optional<RemotePageParameters> remotePageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 
