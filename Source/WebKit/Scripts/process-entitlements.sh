@@ -205,6 +205,7 @@ function notify_entitlements()
         # Keep in sync with the list in WebProcessPool::registerNotificationObservers.
         FORWARDED_NOTIFICATIONS=(
             "_NS_ctasd"
+            "LetterFeedbackEnabled.notification"
             "com.apple.CFPreferences._domainsChangedExternally"
             "com.apple.WebKit.LibraryPathDiagnostics"
             "com.apple.WebKit.deleteAllCode"
@@ -221,6 +222,7 @@ function notify_entitlements()
             "com.apple.WebKit.showMemoryCache"
             "com.apple.WebKit.showPaintOrderTree"
             "com.apple.WebKit.showRenderTree"
+            "com.apple.accessibility.defaultrouteforcall"
             "com.apple.analyticsd.running"
             "com.apple.coreaudio.list_components"
             "com.apple.distnote.locale_changed"
@@ -268,6 +270,7 @@ function notify_entitlements()
         # WebContent registers for these notifications but they are only posted in-process.
         NON_FORWARDED_NOTIFICATIONS=(
             "com.apple.accessibility.cache.app.ax"
+            "com.apple.accessibility.cache.ast"
             "com.apple.accessibility.cache.ax"
             "com.apple.accessibility.cache.enhance.text.legibility"
             "com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent"
@@ -276,6 +279,7 @@ function notify_entitlements()
             "com.apple.accessibility.cache.hearing.aid.paired"
             "com.apple.accessibility.cache.invert.colors"
             "com.apple.accessibility.cache.invert.colorscom.apple.WebKit.WebContent"
+            "com.apple.accessibility.cache.loc.caption.mode.enabled"
             "com.apple.accessibility.cache.reduce.motion"
             "com.apple.accessibility.cache.reduce.motioncom.apple.WebKit.WebContent"
             "com.apple.accessibility.cache.speech.settings.disabled.by.mc"

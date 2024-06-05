@@ -704,6 +704,7 @@ void WebProcessPool::registerNotificationObservers()
         // Keep in sync with notify_entitlements() in process-entitlements.sh.
         // FORWARDED_NOTIFICATIONS
         "_NS_ctasd"_s,
+        "LetterFeedbackEnabled.notification"_s,
         "com.apple.CFPreferences._domainsChangedExternally"_s,
         "com.apple.WebKit.LibraryPathDiagnostics"_s,
         "com.apple.WebKit.deleteAllCode"_s,
@@ -720,6 +721,7 @@ void WebProcessPool::registerNotificationObservers()
         "com.apple.WebKit.showMemoryCache"_s,
         "com.apple.WebKit.showPaintOrderTree"_s,
         "com.apple.WebKit.showRenderTree"_s,
+        "com.apple.accessibility.defaultrouteforcall"_s,
         "com.apple.analyticsd.running"_s,
         "com.apple.coreaudio.list_components"_s,
         "com.apple.distnote.locale_changed"_s,

@@ -2034,6 +2034,7 @@
         ;; Keep in sync with notify_entitlements() in process-entitlements.sh.
         ;; FORWARDED_NOTIFICATIONS
         "_NS_ctasd"
+        "LetterFeedbackEnabled.notification"
         "com.apple.CFPreferences._domainsChangedExternally"
         "com.apple.WebKit.LibraryPathDiagnostics"
         "com.apple.WebKit.deleteAllCode"
@@ -2050,6 +2051,7 @@
         "com.apple.WebKit.showMemoryCache"
         "com.apple.WebKit.showPaintOrderTree"
         "com.apple.WebKit.showRenderTree"
+        "com.apple.accessibility.defaultrouteforcall"
         "com.apple.analyticsd.running"
         "com.apple.coreaudio.list_components"
         "com.apple.distnote.locale_changed"
@@ -2086,6 +2088,7 @@
 
         ;; NON_FORWARDED_NOTIFICATIONS
         "com.apple.accessibility.cache.app.ax"
+        "com.apple.accessibility.cache.ast"
         "com.apple.accessibility.cache.ax"
         "com.apple.accessibility.cache.enhance.text.legibility"
         "com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent"
@@ -2094,8 +2097,10 @@
         "com.apple.accessibility.cache.hearing.aid.paired"
         "com.apple.accessibility.cache.invert.colors"
         "com.apple.accessibility.cache.invert.colorscom.apple.WebKit.WebContent"
+        "com.apple.accessibility.cache.loc.caption.mode.enabled"
         "com.apple.accessibility.cache.reduce.motion"
         "com.apple.accessibility.cache.reduce.motioncom.apple.WebKit.WebContent"
+        "com.apple.accessibility.cache.speak.this"
         "com.apple.accessibility.cache.speech.settings.disabled.by.mc"
         "com.apple.accessibility.cache.switch.control"
         "com.apple.accessibility.cache.vot"
