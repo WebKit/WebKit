@@ -1856,6 +1856,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/encryptedmedia/CDMFactory.h
     platform/encryptedmedia/CDMInstance.h
     platform/encryptedmedia/CDMInstanceSession.h
+    platform/encryptedmedia/CDMKeyGroupingStrategy.h
     platform/encryptedmedia/CDMKeyStatus.h
     platform/encryptedmedia/CDMKeySystemConfiguration.h
     platform/encryptedmedia/CDMMediaCapability.h

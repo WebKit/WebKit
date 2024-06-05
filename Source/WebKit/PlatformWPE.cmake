@@ -105,6 +105,7 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/glib/DMABufRendererBufferFormat.serialization.in)
 
 list(APPEND WebKit_SERIALIZATION_IN_FILES
+    Shared/glib/DMABufObject.serialization.in
     Shared/glib/DMABufRendererBufferMode.serialization.in
     Shared/glib/InputMethodState.serialization.in
     Shared/glib/UserMessage.serialization.in
