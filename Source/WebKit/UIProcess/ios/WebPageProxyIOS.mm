@@ -282,16 +282,16 @@ void WebPageProxy::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& ta
     setDeviceOrientation(target.deviceOrientation);
 }
 
-void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSize& size, double scaleFactor, double minimumEffectiveDeviceWidth)
+void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSize& size, double layoutSizeScaleFactorFromClient, double minimumEffectiveDeviceWidth)
 {
     internals().viewportConfigurationViewLayoutSize = size;
-    m_viewportConfigurationLayoutSizeScaleFactor = scaleFactor;
+    m_viewportConfigurationLayoutSizeScaleFactorFromClient = layoutSizeScaleFactorFromClient;
     m_viewportConfigurationMinimumEffectiveDeviceWidth = minimumEffectiveDeviceWidth;
 
     if (m_provisionalPage)
-        m_provisionalPage->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth));
+        m_provisionalPage->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, layoutSizeScaleFactorFromClient, minimumEffectiveDeviceWidth));
     if (hasRunningProcess())
-        m_process->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth), webPageID());
+        m_process->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, layoutSizeScaleFactorFromClient, minimumEffectiveDeviceWidth), webPageID());
 }
 
 void WebPageProxy::setSceneIdentifier(String&& sceneIdentifier)

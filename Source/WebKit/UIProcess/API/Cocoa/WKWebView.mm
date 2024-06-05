@@ -4093,7 +4093,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 #if PLATFORM(MAC)
     return _page->viewScaleFactor();
 #else
-    return _page->layoutSizeScaleFactor();
+    return _page->layoutSizeScaleFactorFromClient();
 #endif
 }
 
@@ -4106,7 +4106,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 #if PLATFORM(MAC)
     _impl->setViewScale(viewScale);
 #else
-    if (_page->layoutSizeScaleFactor() == viewScale)
+    if (_page->layoutSizeScaleFactorFromClient() == viewScale)
         return;
 
     _page->setViewportConfigurationViewLayoutSize(_page->viewLayoutSize(), viewScale, _page->minimumEffectiveDeviceWidth());
@@ -4129,7 +4129,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
         return;
 
     if (!self._shouldDeferGeometryUpdates)
-        _page->setViewportConfigurationViewLayoutSize(_page->viewLayoutSize(), _page->layoutSizeScaleFactor(), minimumEffectiveDeviceWidth);
+        _page->setViewportConfigurationViewLayoutSize(_page->viewLayoutSize(), _page->layoutSizeScaleFactorFromClient(), minimumEffectiveDeviceWidth);
     else
         _page->setMinimumEffectiveDeviceWidthWithoutViewportConfigurationUpdate(minimumEffectiveDeviceWidth);
 #endif

@@ -707,6 +707,20 @@ AutomaticLiveResizeEnabled:
     WebKit:
       default: WebKit::defaultAutomaticLiveResizeEnabled()
 
+AutomaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth:
+  type: bool
+  status: internal
+  humanReadableName: "Automatically Adjust View Scale"
+  humanReadableDescription: "Automatically Adjust View Scale to Fit Min. Effective Device Width"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(FLEXIBLE_VIEW_SCALE_FACTOR)": true
+      default: false
+    WebCore:
+      default: false
+
 BackgroundFetchAPIEnabled:
   type: bool
   status: testable

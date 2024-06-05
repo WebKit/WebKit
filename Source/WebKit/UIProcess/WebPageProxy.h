@@ -1046,7 +1046,7 @@ public:
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, OptionSet<WebEventModifier>, TapIdentifier requestID);
     void setForceAlwaysUserScalable(bool);
     bool forceAlwaysUserScalable() const { return m_forceAlwaysUserScalable; }
-    double layoutSizeScaleFactor() const { return m_viewportConfigurationLayoutSizeScaleFactor; }
+    double layoutSizeScaleFactorFromClient() const { return m_viewportConfigurationLayoutSizeScaleFactorFromClient; }
     WebCore::FloatSize viewLayoutSize() const;
     double minimumEffectiveDeviceWidth() const { return m_viewportConfigurationMinimumEffectiveDeviceWidth; }
     void setMinimumEffectiveDeviceWidthWithoutViewportConfigurationUpdate(double minimumEffectiveDeviceWidth) { m_viewportConfigurationMinimumEffectiveDeviceWidth = minimumEffectiveDeviceWidth; }
@@ -3459,7 +3459,7 @@ private:
 
 #if ENABLE(META_VIEWPORT)
     bool m_forceAlwaysUserScalable { false };
-    double m_viewportConfigurationLayoutSizeScaleFactor { 1 };
+    double m_viewportConfigurationLayoutSizeScaleFactorFromClient { 1 };
     double m_viewportConfigurationMinimumEffectiveDeviceWidth { 0 };
 #endif
 

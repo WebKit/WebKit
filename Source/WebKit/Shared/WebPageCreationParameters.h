@@ -189,7 +189,7 @@ struct WebPageCreationParameters {
 #if ENABLE(META_VIEWPORT)
     bool ignoresViewportScaleLimits;
     WebCore::FloatSize viewportConfigurationViewLayoutSize;
-    double viewportConfigurationLayoutSizeScaleFactor;
+    double viewportConfigurationLayoutSizeScaleFactorFromClient;
     double viewportConfigurationMinimumEffectiveDeviceWidth;
     WebCore::FloatSize viewportConfigurationViewSize;
     std::optional<WebCore::ViewportArguments> overrideViewportArguments;

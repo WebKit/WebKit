@@ -3876,23 +3876,28 @@ void WebPage::autofillLoginCredentials(const String& username, const String& pas
     }
 }
 
-void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, double scaleFactor, double minimumEffectiveDeviceWidth)
+void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, double layoutSizeScaleFactorFromClient, double minimumEffectiveDeviceWidth)
 {
-    LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier << " setViewportConfigurationViewLayoutSize " << size << " scaleFactor " << scaleFactor << " minimumEffectiveDeviceWidth " << minimumEffectiveDeviceWidth);
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier << " setViewportConfigurationViewLayoutSize " << size << " layoutSizeScaleFactorFromClient " << layoutSizeScaleFactorFromClient << " minimumEffectiveDeviceWidth " << minimumEffectiveDeviceWidth);
 
     if (!m_viewportConfiguration.isKnownToLayOutWiderThanViewport())
         m_viewportConfiguration.setMinimumEffectiveDeviceWidthForShrinkToFit(0);
 
+    double layoutSizeScaleFactor = layoutSizeScaleFactorFromClient;
+
+    if (m_page->settings().automaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth() && minimumEffectiveDeviceWidth && minimumEffectiveDeviceWidth < size.width())
+        layoutSizeScaleFactor = layoutSizeScaleFactorFromClient * size.width() / minimumEffectiveDeviceWidth;
+
     auto previousLayoutSizeScaleFactor = m_viewportConfiguration.layoutSizeScaleFactor();
-    if (!m_viewportConfiguration.setViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth))
+    if (!m_viewportConfiguration.setViewLayoutSize(size, layoutSizeScaleFactor, minimumEffectiveDeviceWidth))
         return;
 
     auto zoomToInitialScale = ZoomToInitialScale::No;
     auto newInitialScale = m_viewportConfiguration.initialScale();
     auto currentPageScaleFactor = pageScaleFactor();
-    if (scaleFactor > previousLayoutSizeScaleFactor && newInitialScale > currentPageScaleFactor)
+    if (layoutSizeScaleFactor > previousLayoutSizeScaleFactor && newInitialScale > currentPageScaleFactor)
         zoomToInitialScale = ZoomToInitialScale::Yes;
-    else if (scaleFactor < previousLayoutSizeScaleFactor && newInitialScale < currentPageScaleFactor)
+    else if (layoutSizeScaleFactor < previousLayoutSizeScaleFactor && newInitialScale < currentPageScaleFactor)
         zoomToInitialScale = ZoomToInitialScale::Yes;
 
     viewportConfigurationChanged(zoomToInitialScale);
