@@ -34,7 +34,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventSender.h"
-#include "FloatConversion.h"
 #include "LocalFrameView.h"
 #include "NodeName.h"
 #include "Page.h"
@@ -1063,11 +1062,11 @@ float SVGSMILElement::calculateAnimationPercentAndRepeat(SMILTime elapsed, unsig
         percent = percent - floor(percent);
         if (percent < std::numeric_limits<float>::epsilon() || 1 - percent < std::numeric_limits<float>::epsilon())
             return 1.0f;
-        return narrowPrecisionToFloat(percent);
+        return clampTo<float>(percent);
     }
     repeat = static_cast<unsigned>(activeTime.value() / simpleDuration.value());
     SMILTime simpleTime = fmod(activeTime.value(), simpleDuration.value());
-    return narrowPrecisionToFloat(simpleTime.value() / simpleDuration.value());
+    return clampTo<float>(simpleTime.value() / simpleDuration.value());
 }
     
 SMILTime SVGSMILElement::calculateNextProgressTime(SMILTime elapsed) const

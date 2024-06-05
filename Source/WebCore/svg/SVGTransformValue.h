@@ -275,8 +275,8 @@ private:
         double cosAngle = std::cos(angleInRad);
         double sinAngle = std::sin(angleInRad);
 
-        float cx = narrowPrecisionToFloat(cosAngle != 1 ? (m_matrix->e() * (1 - cosAngle) - m_matrix->f() * sinAngle) / (1 - cosAngle) / 2 : 0);
-        float cy = narrowPrecisionToFloat(cosAngle != 1 ? (m_matrix->e() * sinAngle / (1 - cosAngle) + m_matrix->f()) / 2 : 0);
+        float cx = clampTo<float>(cosAngle != 1 ? (m_matrix->e() * (1 - cosAngle) - m_matrix->f() * sinAngle) / (1 - cosAngle) / 2 : 0);
+        float cy = clampTo<float>(cosAngle != 1 ? (m_matrix->e() * sinAngle / (1 - cosAngle) + m_matrix->f()) / 2 : 0);
 
         if (cx || cy)
             appendFixedPrecisionNumbers(builder, m_angle, cx, cy);

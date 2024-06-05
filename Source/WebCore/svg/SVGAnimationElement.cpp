@@ -31,7 +31,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "Document.h"
-#include "FloatConversion.h"
 #include "NodeName.h"
 #include "RenderObject.h"
 #include "SVGAnimateElement.h"
@@ -232,12 +231,12 @@ ExceptionOr<float> SVGAnimationElement::getStartTime() const
     auto intervalBegin = this->intervalBegin();
     if (!intervalBegin.isFinite())
         return Exception { ExceptionCode::InvalidStateError, "The animation element does not have a current interval."_s };
-    return narrowPrecisionToFloat(intervalBegin.value());
+    return clampTo<float>(intervalBegin.value());
 }
 
 float SVGAnimationElement::getCurrentTime() const
 {
-    return narrowPrecisionToFloat(elapsed().value());
+    return clampTo<float>(elapsed().value());
 }
 
 ExceptionOr<float> SVGAnimationElement::getSimpleDuration() const
@@ -245,7 +244,7 @@ ExceptionOr<float> SVGAnimationElement::getSimpleDuration() const
     auto simpleDuration = this->simpleDuration();
     if (!simpleDuration.isFinite())
         return Exception { ExceptionCode::NotSupportedError, "The simple duration is not determined on the given element."_s };
-    return narrowPrecisionToFloat(simpleDuration.value());
+    return clampTo<float>(simpleDuration.value());
 }    
     
 void SVGAnimationElement::beginElement()
@@ -421,7 +420,7 @@ float SVGAnimationElement::calculatePercentForSpline(float percent, unsigned spl
     SMILTime duration = simpleDuration();
     if (!duration.isFinite())
         duration = 100.0;
-    return narrowPrecisionToFloat(bezier.solve(percent, solveEpsilon(duration.value())));
+    return clampTo<float>(bezier.solve(percent, solveEpsilon(duration.value())));
 }
 
 float SVGAnimationElement::calculatePercentFromKeyPoints(float percent) const

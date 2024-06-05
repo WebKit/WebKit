@@ -544,7 +544,7 @@ bool SVGSVGElement::hasActiveAnimation() const
 
 float SVGSVGElement::getCurrentTime() const
 {
-    return narrowPrecisionToFloat(protectedTimeContainer()->elapsed().value());
+    return clampTo<float>(protectedTimeContainer()->elapsed().value());
 }
 
 void SVGSVGElement::setCurrentTime(float seconds)
