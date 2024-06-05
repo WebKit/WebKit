@@ -61,8 +61,13 @@ bool VisualViewport::addEventListener(const AtomString& eventType, Ref<EventList
     if (!EventTarget::addEventListener(eventType, WTFMove(listener), options))
         return false;
 
-    if (auto* frame = this->frame())
+
+    if (auto* frame = this->frame()) {
         frame->document()->addListenerTypeIfNeeded(eventType);
+
+        if (eventType == eventNames().scrollEvent)
+            frame->document()->setNeedsVisualViewportScrollEvent();
+    }
     return true;
 }
 
@@ -139,8 +144,8 @@ double VisualViewport::scale() const
 
 void VisualViewport::update()
 {
-    double offsetLeft = 0;
-    double offsetTop = 0;
+    m_offsetLeft = 0;
+    m_offsetTop = 0;
     m_pageLeft = 0;
     m_pageTop = 0;
     double width = 0;
@@ -154,8 +159,8 @@ void VisualViewport::update()
             auto layoutViewportRect = view->layoutViewportRect();
             auto pageZoomFactor = frame->pageZoomFactor();
             ASSERT(pageZoomFactor);
-            offsetLeft = (visualViewportRect.x() - layoutViewportRect.x()) / pageZoomFactor;
-            offsetTop = (visualViewportRect.y() - layoutViewportRect.y()) / pageZoomFactor;
+            m_offsetLeft = (visualViewportRect.x() - layoutViewportRect.x()) / pageZoomFactor;
+            m_offsetTop = (visualViewportRect.y() - layoutViewportRect.y()) / pageZoomFactor;
             m_pageLeft = visualViewportRect.x() / pageZoomFactor;
             m_pageTop = visualViewportRect.y() / pageZoomFactor;
             width = visualViewportRect.width() / pageZoomFactor;
@@ -166,12 +171,6 @@ void VisualViewport::update()
     }
 
     RefPtr<Document> document = frame ? frame->document() : nullptr;
-    if (m_offsetLeft != offsetLeft || m_offsetTop != offsetTop) {
-        if (document)
-            document->setNeedsVisualViewportScrollEvent();
-        m_offsetLeft = offsetLeft;
-        m_offsetTop = offsetTop;
-    }
     if (m_width != width || m_height != height || m_scale != scale) {
         if (document)
             document->setNeedsVisualViewportResize();

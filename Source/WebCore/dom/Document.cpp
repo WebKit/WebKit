@@ -5159,7 +5159,6 @@ void Document::runScrollSteps()
     }
     if (m_needsVisualViewportScrollEvent) {
         LOG_WITH_STREAM(Events, stream << "Document " << this << " sending scroll events to visualViewport");
-        m_needsVisualViewportScrollEvent = false;
         if (RefPtr window = domWindow())
             window->visualViewport().dispatchEvent(Event::create(eventNames().scrollEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
