@@ -109,7 +109,7 @@ bool GStreamerRtpTransceiverBackend::stopped() const
     return m_isStopped;
 }
 
-static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(const RTCRtpCodecCapability& codec, int& dynamicPayloadType)
+static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(const RTCRtpCodecCapability& codec, int& dynamicPayloadType, const char* msid)
 {
     if (!codec.mimeType.startsWith("video/"_s) && !codec.mimeType.startsWith("audio/"_s))
         return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };
@@ -135,16 +135,33 @@ static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(cons
         }
     }
 
+    if (msid)
+        gst_caps_set_simple(caps, "a-msid", G_TYPE_STRING, msid, nullptr);
+
     GST_DEBUG("Codec capability: %" GST_PTR_FORMAT, caps);
     return caps;
+}
+
+static GUniquePtr<char> getMsidFromCurrentCodecPreferences(GstWebRTCRTPTransceiver* transceiver)
+{
+    GRefPtr<GstCaps> currentCaps;
+    GUniquePtr<char> msid;
+    g_object_get(transceiver, "codec-preferences", &currentCaps.outPtr(), nullptr);
+    GST_TRACE_OBJECT(transceiver, "Current codec preferences: %" GST_PTR_FORMAT, currentCaps.get());
+    if (gst_caps_get_size(currentCaps.get()) > 0) {
+        auto* s = gst_caps_get_structure(currentCaps.get(), 0);
+        msid = GUniquePtr<char>(g_strdup(gst_structure_get_string(s, "a-msid")));
+    }
+    return msid;
 }
 
 ExceptionOr<void> GStreamerRtpTransceiverBackend::setCodecPreferences(const Vector<RTCRtpCodecCapability>& codecs)
 {
     auto gstCodecs = adoptGRef(gst_caps_new_empty());
+    GUniquePtr<char> msid = getMsidFromCurrentCodecPreferences(m_rtcTransceiver.get());
     int dynamicPayloadType = 96;
     for (auto& codec : codecs) {
-        auto result = toRtpCodecCapability(codec, dynamicPayloadType);
+        auto result = toRtpCodecCapability(codec, dynamicPayloadType, msid.get());
         if (result.hasException())
             return result.releaseException();
         gst_caps_append(gstCodecs.get(), result.releaseReturnValue());
