@@ -101,6 +101,11 @@ unsigned Arg::jsHash() const
     case Tmp:
         result += m_base.internalValue();
         break;
+#if USE(JSVALUE32_64)
+    case TmpPair:
+        result += m_baseHi.internalValue() + m_baseLo.internalValue();
+        break;
+#endif
     case Imm:
     case BitImm:
     case ZeroReg:
@@ -154,6 +159,11 @@ void Arg::dump(PrintStream& out) const
     case Tmp:
         out.print(tmp());
         return;
+#if USE(JSVALUE32_64)
+    case TmpPair:
+        out.print("(", tmpHi(), ", ", tmpLo(), ")");
+        return;
+#endif
     case Imm:
         out.print("$", m_offset);
         return;
@@ -243,6 +253,11 @@ void printInternal(PrintStream& out, Arg::Kind kind)
     case Arg::Tmp:
         out.print("Tmp");
         return;
+#if USE(JSVALUE32_64)
+    case Arg::TmpPair:
+        out.print("TmpPair");
+        return;
+#endif
     case Arg::Imm:
         out.print("Imm");
         return;

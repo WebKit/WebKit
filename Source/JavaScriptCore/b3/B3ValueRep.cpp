@@ -57,6 +57,18 @@ void ValueRep::addUsedRegistersTo(bool isSIMDContext, RegisterSetBuilder& set) c
         set.add(MacroAssembler::stackPointerRegister, IgnoreVectors);
         set.add(GPRInfo::callFrameRegister, IgnoreVectors);
         return;
+#if USE(JSVALUE32_64)
+    case SomeRegisterPair:
+    case SomeRegisterPairWithClobber:
+    case SomeEarlyRegisterPair:
+    case SomeLateRegisterPair:
+        return;
+    case LateRegisterPair:
+    case RegisterPair:
+        set.add(regLo(), isSIMDContext ? conservativeWidth(regLo()) : conservativeWidthWithoutVectors(reg()));
+        set.add(regHi(), isSIMDContext ? conservativeWidth(regHi()) : conservativeWidthWithoutVectors(reg()));
+        return;
+#endif
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -93,6 +105,17 @@ void ValueRep::dump(PrintStream& out) const
     case Constant:
         out.print("(", value(), ")");
         return;
+#if USE(JSVALUE32_64)
+    case SomeRegisterPair:
+    case SomeRegisterPairWithClobber:
+    case SomeEarlyRegisterPair:
+    case SomeLateRegisterPair:
+        return;
+    case LateRegisterPair:
+    case RegisterPair:
+        out.print("(", regHi(), ",", regLo(), ")");
+        return;
+#endif
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -215,6 +238,26 @@ void printInternal(PrintStream& out, ValueRep::Kind kind)
     case ValueRep::Constant:
         out.print("Constant");
         return;
+#if USE(JSVALUE32_64)
+    case ValueRep::SomeRegisterPair:
+        out.print("SomeRegisterPair");
+        return;
+    case ValueRep::SomeRegisterPairWithClobber:
+        out.print("SomeRegisterPairWithClobber");
+        return;
+    case ValueRep::SomeEarlyRegisterPair:
+        out.print("SomeEarlyRegisterPair");
+        return;
+    case ValueRep::SomeLateRegisterPair:
+        out.print("SomeLateRegisterPair");
+        return;
+    case ValueRep::RegisterPair:
+        out.print("RegisterPair");
+        return;
+    case ValueRep::LateRegisterPair:
+        out.print("LateRegisterPair");
+        return;
+#endif
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

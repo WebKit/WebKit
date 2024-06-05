@@ -348,7 +348,7 @@ private:
     Vector<uint32_t> m_localInitStack;
     BitVector m_localInitFlags;
 
-    OpType m_currentOpcode;
+    OpType m_currentOpcode { 0 };
     size_t m_currentOpcodeStartingOffset { 0 };
 
     unsigned m_unreachableBlocks { 0 };

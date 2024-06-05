@@ -103,7 +103,16 @@ public:
         StackArgument,
 
         // As an output representation, this tells us that B3 constant-folded the value.
-        Constant
+        Constant,
+#if USE(JSVALUE32_64)
+        SomeRegisterPair,
+        SomeRegisterPairWithClobber,
+        SomeEarlyRegisterPair,
+        SomeLateRegisterPair,
+        RegisterPair,
+        LateRegisterPair
+#endif
+
     };
     
     ValueRep()
@@ -128,9 +137,16 @@ public:
     {
         switch (location.kind()) {
         case Wasm::ValueLocation::Kind::GPRRegister:
+#if USE(JSVALUE32_64)
+            m_kind = RegisterPair;
+            u.registerPair.regHi = location.jsr().tagGPR();
+            u.registerPair.regLo = location.jsr().payloadGPR();
+            break;
+#else
             m_kind = Register;
             u.reg = location.jsr().payloadGPR();
             break;
+#endif
         case Wasm::ValueLocation::Kind::FPRRegister:
             m_kind = Register;
             u.reg = location.fpr();
@@ -217,6 +233,38 @@ public:
     }
 
     explicit operator bool() const { return kind() != WarmAny; }
+
+#if USE(JSVALUE32_64)
+    explicit ValueRep(Reg regHi, Reg regLo)
+        : m_kind(RegisterPair)
+    {
+        u.registerPair.regHi = regHi;
+        u.registerPair.regLo = regLo;
+    }
+
+    static ValueRep regPair(Reg regHi, Reg regLo)
+    {
+        return ValueRep(regHi, regLo);
+    }
+
+    bool isRegPair() const { return kind() == RegisterPair || kind() == LateRegisterPair || kind() == SomeLateRegisterPair; }
+    Reg regLo() const
+    {
+        return u.registerPair.regLo;
+    }
+    Reg regHi() const
+    {
+        return u.registerPair.regHi;
+    }
+    bool isGPRPair() const
+    {
+        if (!isRegPair())
+            return false;
+        ASSERT(regHi().isGPR());
+        ASSERT(regLo().isGPR());
+        return true;
+    }
+#endif
 
     bool isAny() const { return kind() == WarmAny || kind() == ColdAny || kind() == LateColdAny; }
 
@@ -309,6 +357,12 @@ public:
 private:
     union U {
         Reg reg;
+#if USE(JSVALUE32_64)
+        struct {
+            Reg regLo;
+            Reg regHi;
+        } registerPair;
+#endif
         intptr_t offsetFromFP;
         intptr_t offsetFromSP;
         int64_t value;

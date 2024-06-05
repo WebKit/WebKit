@@ -810,10 +810,6 @@ void Options::notifyOptionsChanged()
         ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) > 0);
         ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()));
 
-#if CPU(ARM)
-        Options::useOMGJIT() = false;
-#endif
-
         if (!Options::useBBQJIT() && Options::useOMGJIT())
             Options::wasmLLIntTiersUpToBBQ() = false;
 

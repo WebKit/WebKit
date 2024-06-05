@@ -2004,8 +2004,10 @@ void AssemblyHelpers::loadTypedArrayLength(GPRReg baseGPR, GPRReg valueGPR, GPRR
     loadTypedArrayByteLengthImpl(baseGPR, valueGPR, scratchGPR, scratch2GPR, typedArrayType, TypedArrayField::Length);
 }
 
+#endif // ENABLE(JSVALUE64)
+
 #if ENABLE(WEBASSEMBLY)
-#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
+#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64) || CPU(ARM)
 AssemblyHelpers::JumpList AssemblyHelpers::checkWasmStackOverflow(GPRReg instanceGPR, TrustedImm32 checkSize, GPRReg framePointerGPR)
 {
 #if CPU(ARM64)
@@ -2015,7 +2017,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::checkWasmStackOverflow(GPRReg instanc
     addPtr(checkSize, memoryTempRegister); // TrustedImm32 would use dataTempRegister. Thus let's have limit in memoryTempRegister.
     overflow.append(branchPtr(Below, framePointerGPR, memoryTempRegister));
     return overflow;
-#elif CPU(X86_64)
+#elif CPU(X86_64) || CPU(ARM)
     loadPtr(Address(instanceGPR, Wasm::Instance::offsetOfSoftStackLimit()), scratchRegister());
     JumpList overflow;
     // Because address is within 48bit, this addition never causes overflow.
@@ -2032,9 +2034,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::checkWasmStackOverflow(GPRReg instanc
 #endif
 }
 #endif
-#endif
-
-#endif
+#endif // ENABLE(WEBASSEMBLY)
 
 } // namespace JSC
 

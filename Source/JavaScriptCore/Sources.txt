@@ -153,6 +153,7 @@ b3/B3LegalizeMemoryOffsets.cpp
 b3/B3LowerMacros.cpp
 b3/B3LowerMacrosAfterOptimizations.cpp
 b3/B3LowerToAir.cpp
+b3/B3LowerToAir32_64.cpp
 b3/B3MathExtras.cpp
 b3/B3MemoryValue.cpp
 b3/B3MoveConstants.cpp
@@ -1116,6 +1117,7 @@ tools/JSDollarVM.cpp
 tools/VMInspector.cpp
 
 wasm/WasmOMGIRGenerator.cpp
+wasm/WasmOMGIRGenerator32_64.cpp
 wasm/WasmBBQDisassembler.cpp
 wasm/WasmBBQJIT.cpp @no-unify
 wasm/WasmBBQJIT32_64.cpp @no-unify

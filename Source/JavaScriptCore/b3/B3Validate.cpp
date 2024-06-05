@@ -901,7 +901,32 @@ private:
                     VALIDATE(value.value()->type().isFloat() || value.value()->type().isVector(), ("At ", *context, ": ", value));
             }
             break;
-        default:
+#if USE(JSVALUE32_64)
+        case ValueRep::SomeRegisterPair:
+            break;
+        case ValueRep::SomeRegisterPairWithClobber:
+            VALIDATE(role == ConstraintRole::Use, ("At ", *context, ": ", value));
+            VALIDATE(context->as<PatchpointValue>(), ("At ", *context));
+            break;
+        case ValueRep::SomeEarlyRegisterPair:
+            VALIDATE(role == ConstraintRole::Def, ("At ", *context, ": ", value));
+            break;
+        case ValueRep::RegisterPair:
+        case ValueRep::LateRegisterPair:
+        case ValueRep::SomeLateRegisterPair:
+            if (value.rep().kind() == ValueRep::LateRegisterPair)
+                VALIDATE(role == ConstraintRole::Use, ("At ", *context, ": ", value));
+            RELEASE_ASSERT(value.rep().isGPRPair());
+            if (value.value()->type().isTuple()) {
+                Type type = m_procedure.extractFromTuple(value.value()->type(), tupleIndex);
+                VALIDATE(type == Int64, ("At ", *context, ": ", value));
+            } else
+                VALIDATE(value.value()->type().isInt(), ("At ", *context, ": ", value));
+            break;
+
+#endif
+        case ValueRep::Constant:
+        case ValueRep::Stack:
             VALIDATE(false, ("At ", *context, ": ", value));
             break;
         }
