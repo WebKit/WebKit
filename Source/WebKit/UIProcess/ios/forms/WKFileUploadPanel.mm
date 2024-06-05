@@ -836,7 +836,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 - (void)showDocumentPickerMenu
 {
     // FIXME 49961589: Support picking media with UIImagePickerController
-#if HAVE(UICONTEXTMENU_LOCATION)
+#if USE(UICONTEXTMENU)
     if (_allowedImagePickerTypes.containsAny({ WKFileUploadPanelImagePickerType::Image, WKFileUploadPanelImagePickerType::Video }))
         self.contextMenuPresenter.present(_interactionPoint);
     else // Image and Video types are not accepted so bypass the menu and open the file picker directly.
