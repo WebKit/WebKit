@@ -408,10 +408,7 @@ webkit.org/b/224105 compositing/video/video-clip-change-src.html [ ImageOnlyFail
 # WebGL ANGLE backend failures
 webkit.org/b/245840 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
 webkit.org/b/245840 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
-webkit.org/b/245840 fast/canvas/webgl/drawElements-empty-vertex-data.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
-webkit.org/b/245840 fast/canvas/webgl/largeBuffer.html [ Failure ]
-webkit.org/b/245840 fast/canvas/webgl/vertexAttribPointer-with-bad-offset.html [ Failure ]
 
 # WebGL ANGLE backed flaky tests
 webkit.org/b/245840 webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
@@ -1471,13 +1468,10 @@ Bug(GTK) fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-cyrillic.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-greek.html [ Failure ]
 Bug(GTK) fast/forms/select-type-ahead-non-latin.html [ Failure ]
-Bug(GTK) http/tests/security/cross-origin-xsl-BLOCKED.html [ Failure ]
-Bug(GTK) http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Failure ]
 
 # Selection doesn't work properly.
 Bug(GTK) editing/selection/context-menu-text-selection-lookup.html [ Failure ]
 
-Bug(GTK) http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin.html [ Failure ]
 
 Bug(GTK) fast/backgrounds/background-position-parsing.html [ Failure ]
 
@@ -1720,7 +1714,6 @@ webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-004.html [ Failure 
 
 webkit.org/b/196197 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Failure ]
 
-webkit.org/b/197708 http/wpt/beacon/beacon-async-error-logging.html [ Failure ]
 
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
 
@@ -1874,9 +1867,6 @@ webgl/2.0.0/conformance/state/state-uneffected-after-compositing.html [ Skip ]
 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ]
 webgl/2.0.y/conformance/context/context-no-alpha-fbo-with-alpha.html [ Skip ]
 
-imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.html [ Failure ]
 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash Pass ]
