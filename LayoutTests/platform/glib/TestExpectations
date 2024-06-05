@@ -2922,7 +2922,7 @@ webkit.org/b/264700 security/contentSecurityPolicy/video-with-data-url-allowed-b
 webkit.org/b/264700 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-video.html [ Pass ImageOnlyFailure ]
 webkit.org/b/264700 imported/w3c/web-platform-tests/css/css-color/filters-under-will-change-opacity.html [ Pass ImageOnlyFailure ]
 webkit.org/b/264700 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fixed-scroll.html [ Pass ImageOnlyFailure ]
-webkit.org/b/264700 imported/w3c/web-platform-tests/css/css-transforms/add-child-in-empty-layer.html [ Pass ImageOnlyFailure ]
+
 # Timeout tracked in webkit.org/b/261024
 webkit.org/b/264700 webkit.org/b/261024 imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-opacity-replaced-effect.html  [ Pass ImageOnlyFailure Timeout ]
 

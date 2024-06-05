@@ -313,7 +313,6 @@ imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-l
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/infrastructure/server/wpt-server-http.sub.html [ Failure ]
 imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
-imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-timing/test_timing_xserver_redirect.html [ Failure ]
 imported/w3c/web-platform-tests/screen-orientation/hidden_document.html [ Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html?client [ Failure ]
