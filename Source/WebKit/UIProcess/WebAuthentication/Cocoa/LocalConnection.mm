@@ -85,10 +85,12 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
     m_context = [allocLAContextInstance() init];
 
     auto options = adoptNS([[NSMutableDictionary alloc] init]);
+#if HAVE(UNIFIED_ASC_AUTH_UI)
     if ([m_context biometryType] == LABiometryTypeTouchID) {
         [options setObject:title forKey:@(LAOptionAuthenticationTitle)];
         [options setObject:@NO forKey:@(LAOptionFallbackVisible)];
     }
+#endif
 
     auto reply = makeBlockPtr([context = m_context, completionHandler = WTFMove(completionHandler)] (NSDictionary *information, NSError *error) mutable {
         UserVerification verification = UserVerification::Yes;
