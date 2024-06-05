@@ -53,11 +53,15 @@ void dataLogLn(const Types&... values)
 }
 
 #define dataLogIf(shouldLog, ...) do { \
+        using ShouldLogType = std::decay_t<decltype(shouldLog)>; \
+        static_assert(std::is_same_v<ShouldLogType, bool> || std::is_enum_v<ShouldLogType>, "You probably meant to pass a bool or enum as dataLogIf's first parameter"); \
         if (UNLIKELY(shouldLog)) \
             dataLog(__VA_ARGS__); \
     } while (0)
 
 #define dataLogLnIf(shouldLog, ...) do { \
+        using ShouldLogType = std::decay_t<decltype(shouldLog)>; \
+        static_assert(std::is_same_v<ShouldLogType, bool> || std::is_enum_v<ShouldLogType>, "You probably meant to pass a bool or enum as dataLogLnIf's first parameter"); \
         if (UNLIKELY(shouldLog)) \
             dataLogLn(__VA_ARGS__); \
     } while (0)

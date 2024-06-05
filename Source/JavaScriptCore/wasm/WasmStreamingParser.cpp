@@ -99,9 +99,9 @@ StreamingParser::StreamingParser(ModuleInformation& info, StreamingParserClient&
     dataLogLnIf(WasmStreamingParserInternal::verbose, "starting validation");
 
 #if ASSERT_ENABLED
-    dataLogLnIf(Options::dumpWasmSourceFileName(), "Wasm streaming parser created, capturing source.");
+    dataLogLnIf(!!Options::dumpWasmSourceFileName(), "Wasm streaming parser created, capturing source.");
 #else
-    dataLogLnIf(Options::dumpWasmSourceFileName(), "Wasm streaming parser created, but we can only dump source in debug builds.");
+    dataLogLnIf(!!Options::dumpWasmSourceFileName(), "Wasm streaming parser created, but we can only dump source in debug builds.");
 #endif
 }
 
