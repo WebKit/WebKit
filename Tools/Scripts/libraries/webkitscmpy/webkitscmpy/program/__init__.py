@@ -94,10 +94,8 @@ def main(
 
     programs = [
         Blame, Branch, Canonicalize, Checkout,
-        Clean, Clone, Find, Info, Land, Log, Pull,
-        PullRequest, Revert, Review, Setup, InstallGitLFS,
         Clean, Clone, Conflict, Find, Info, Land, Log, Pull,
-        PullRequest, Revert, Setup, InstallGitLFS,
+        PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show, Publish,
         Classify, InstallHooks,
