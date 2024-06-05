@@ -33,6 +33,32 @@
 #include "RTCIceTransportState.h"
 #include <wtf/KeyValuePair.h>
 
+#if USE(LIBWEBRTC)
+namespace webrtc {
+class RTCAudioPlayoutStats;
+class RTCAudioSourceStats;
+class RTCCertificateStats;
+class RTCCodecStats;
+class RTCDataChannelStats;
+class RTCIceCandidatePairStats;
+class RTCIceCandidateStats;
+class RTCInboundRtpStreamStats;
+class RTCInboundRtpStreamStats;
+class RTCMediaSourceStats;
+class RTCOutboundRtpStreamStats;
+class RTCPeerConnectionStats;
+class RTCReceivedRtpStreamStats;
+class RTCRemoteIceCandidateStats;
+class RTCRemoteInboundRtpStreamStats;
+class RTCRemoteOutboundRtpStreamStats;
+class RTCRtpStreamStats;
+class RTCSentRtpStreamStats;
+class RTCStats;
+class RTCTransportStats;
+class RTCVideoSourceStats;
+}
+#endif
+
 namespace WebCore {
 
 class DOMMapAdapter;
@@ -61,12 +87,22 @@ public:
         Certificate,
     };
     struct Stats {
+        Stats() = default;
+#if USE(LIBWEBRTC)
+        Stats(Type, const webrtc::RTCStats&);
+#endif
+
         double timestamp { 0 };
         Type type;
         String id;
     };
 
     struct RtpStreamStats : Stats {
+        RtpStreamStats() = default;
+#if USE(LIBWEBRTC)
+        RtpStreamStats(Type, const webrtc::RTCRtpStreamStats&);
+#endif
+
         uint32_t ssrc { 0 };
         String kind;
         String transportId;
@@ -74,13 +110,21 @@ public:
     };
 
     struct ReceivedRtpStreamStats : RtpStreamStats {
+        ReceivedRtpStreamStats() = default;
+#if USE(LIBWEBRTC)
+        ReceivedRtpStreamStats(Type, const webrtc::RTCReceivedRtpStreamStats&);
+#endif
+
         std::optional<uint64_t> packetsReceived;
         std::optional<int64_t> packetsLost;
         std::optional<double> jitter;
     };
 
     struct InboundRtpStreamStats : ReceivedRtpStreamStats {
-        InboundRtpStreamStats() { type = RTCStatsReport::Type::InboundRtp; }
+        InboundRtpStreamStats() = default;
+#if USE(LIBWEBRTC)
+        InboundRtpStreamStats(const webrtc::RTCInboundRtpStreamStats&);
+#endif
 
         String trackIdentifier;
         String mid;
@@ -142,7 +186,10 @@ public:
     };
 
     struct RemoteInboundRtpStreamStats : ReceivedRtpStreamStats {
-        RemoteInboundRtpStreamStats() { type = RTCStatsReport::Type::RemoteInboundRtp; }
+        RemoteInboundRtpStreamStats() = default;
+#if USE(LIBWEBRTC)
+        RemoteInboundRtpStreamStats(const webrtc::RTCRemoteInboundRtpStreamStats&);
+#endif
 
         String localId;
         std::optional<double> roundTripTime;
@@ -152,6 +199,11 @@ public:
     };
 
     struct SentRtpStreamStats : RtpStreamStats {
+        SentRtpStreamStats() = default;
+#if USE(LIBWEBRTC)
+        SentRtpStreamStats(Type, const webrtc::RTCSentRtpStreamStats&);
+#endif
+
         std::optional<uint32_t> packetsSent;
         std::optional<uint64_t> bytesSent;
     };
@@ -164,7 +216,10 @@ public:
     };
 
     struct OutboundRtpStreamStats : SentRtpStreamStats {
-        OutboundRtpStreamStats() { type = RTCStatsReport::Type::OutboundRtp; }
+        OutboundRtpStreamStats() = default;
+#if USE(LIBWEBRTC)
+        OutboundRtpStreamStats(const webrtc::RTCOutboundRtpStreamStats&);
+#endif
 
         String mid;
         String mediaSourceId;
@@ -197,7 +252,10 @@ public:
     };
 
     struct RemoteOutboundRtpStreamStats : SentRtpStreamStats {
-        RemoteOutboundRtpStreamStats() { type = RTCStatsReport::Type::RemoteOutboundRtp; }
+        RemoteOutboundRtpStreamStats() = default;
+#if USE(LIBWEBRTC)
+        RemoteOutboundRtpStreamStats(const webrtc::RTCRemoteOutboundRtpStreamStats&);
+#endif
 
         String localId;
         std::optional<double> remoteTimestamp;
@@ -208,7 +266,10 @@ public:
     };
 
     struct DataChannelStats : Stats {
-        DataChannelStats() { type = RTCStatsReport::Type::DataChannel; }
+        DataChannelStats() = default;
+#if USE(LIBWEBRTC)
+        DataChannelStats(const webrtc::RTCDataChannelStats&);
+#endif
 
         String label;
         String protocol;
@@ -229,7 +290,10 @@ public:
     };
 
     struct IceCandidatePairStats : Stats {
-        IceCandidatePairStats() { type = RTCStatsReport::Type::CandidatePair; }
+        IceCandidatePairStats() = default;
+#if USE(LIBWEBRTC)
+        IceCandidatePairStats(const webrtc::RTCIceCandidatePairStats&);
+#endif
 
         String transportId;
         String localCandidateId;
@@ -256,6 +320,11 @@ public:
     };
 
     struct IceCandidateStats : Stats {
+        IceCandidateStats() = default;
+#if USE(LIBWEBRTC)
+        IceCandidateStats(const webrtc::RTCIceCandidateStats&);
+#endif
+
         String transportId;
         String address;
         std::optional<int32_t> port;
@@ -272,7 +341,10 @@ public:
     };
 
     struct CertificateStats : Stats {
-        CertificateStats() { type = RTCStatsReport::Type::Certificate; }
+        CertificateStats() = default;
+#if USE(LIBWEBRTC)
+        CertificateStats(const webrtc::RTCCertificateStats&);
+#endif
 
         String fingerprint;
         String fingerprintAlgorithm;
@@ -286,7 +358,11 @@ public:
     };
 
     struct CodecStats : Stats {
-        CodecStats() { type = RTCStatsReport::Type::Codec; }
+        CodecStats() = default;
+
+#if USE(LIBWEBRTC)
+        CodecStats(const webrtc::RTCCodecStats&);
+#endif
 
         std::optional<uint32_t> payloadType;
         String transportId;
@@ -304,7 +380,10 @@ public:
     };
 
     struct TransportStats : Stats {
-        TransportStats() { type = RTCStatsReport::Type::Transport; }
+        TransportStats() = default;
+#if USE(LIBWEBRTC)
+        TransportStats(const webrtc::RTCTransportStats&);
+#endif
 
         std::optional<uint64_t> packetsSent;
         std::optional<uint64_t> packetsReceived;
@@ -325,7 +404,10 @@ public:
     };
 
     struct AudioPlayoutStats : Stats {
-        AudioPlayoutStats() { type = RTCStatsReport::Type::MediaPlayout; }
+        AudioPlayoutStats() = default;
+#if USE(LIBWEBRTC)
+        AudioPlayoutStats(const webrtc::RTCAudioPlayoutStats&);
+#endif
 
         String kind;
         std::optional<double> synthesizedSamplesDuration;
@@ -336,20 +418,31 @@ public:
     };
 
     struct PeerConnectionStats : Stats {
-        PeerConnectionStats() { type = RTCStatsReport::Type::PeerConnection; }
+        PeerConnectionStats() = default;
+#if USE(LIBWEBRTC)
+        PeerConnectionStats(const webrtc::RTCPeerConnectionStats&);
+#endif
 
         std::optional<uint32_t> dataChannelsOpened;
         std::optional<uint32_t> dataChannelsClosed;
     };
 
     struct MediaSourceStats : Stats {
+        MediaSourceStats() = default;
+#if USE(LIBWEBRTC)
+        MediaSourceStats(Type, const webrtc::RTCMediaSourceStats&);
+#endif
+
         String trackIdentifier;
         String kind;
         std::optional<bool> relayedSource;
     };
 
     struct AudioSourceStats : MediaSourceStats {
-        AudioSourceStats() { type = RTCStatsReport::Type::MediaSource; }
+        AudioSourceStats() = default;
+#if USE(LIBWEBRTC)
+        AudioSourceStats(const webrtc::RTCAudioSourceStats&);
+#endif
 
         std::optional<double> audioLevel;
         std::optional<double> totalAudioEnergy;
@@ -363,7 +456,10 @@ public:
     };
 
     struct VideoSourceStats : MediaSourceStats {
-        VideoSourceStats() { type = RTCStatsReport::Type::MediaSource; }
+        VideoSourceStats() = default;
+#if USE(LIBWEBRTC)
+        VideoSourceStats(const webrtc::RTCVideoSourceStats&);
+#endif
 
         std::optional<unsigned long> width;
         std::optional<unsigned long> height;
