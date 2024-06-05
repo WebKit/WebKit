@@ -677,16 +677,21 @@ TEST_P(ConnectionRunLoopTest, SendWithConvertedPromisedReply)
         a()->sendSyncReply(WTFMove(encoder));
         return true;
     });
-    HashSet<uint64_t> replies;
+    std::atomic<bool> isFinished = false;
 
     auto runLoop = createRunLoop(RUN_LOOP_NAME);
     dispatchAndWait(runLoop, [&] {
         ASSERT_TRUE(openB());
-        b()->sendWithPromisedReply<MockTestMessageWithAsyncReply1, PromiseConverter>({ }, 1)->then(runLoop, [] (String&& value) {
+        b()->sendWithPromisedReply<MockTestMessageWithAsyncReply1, PromiseConverter>({ }, 1)->then(runLoop, [&] (String&& value) {
             EXPECT_EQ(value, "1"_s);
-        }, [] (uint64_t error) {
+            isFinished = true;
+        }, [&] (uint64_t error) {
             EXPECT_EQ(error, 2u);
+            isFinished = true;
         });
+        while (!isFinished)
+            RunLoop::current().cycle();
+        b()->invalidate();
     });
 
     localReferenceBarrier();
