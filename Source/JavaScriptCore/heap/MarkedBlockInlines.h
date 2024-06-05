@@ -93,12 +93,14 @@ inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion myMarkingV
 
 inline bool MarkedBlock::Handle::isAllocated()
 {
-    return m_directory->isAllocated(NoLockingNecessary, this);
+    m_directory->assertIsMutatorOrMutatorIsStopped();
+    return m_directory->isAllocated(this);
 }
 
 ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const HeapCell* cell)
 {
-    if (directory()->isAllocated(NoLockingNecessary, this))
+    m_directory->assertIsMutatorOrMutatorIsStopped();
+    if (m_directory->isAllocated(this))
         return true;
 
     // We need to do this while holding the lock because marks might be stale. In that case, newly
@@ -284,7 +286,17 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         }
     };
 
-    m_directory->setIsDestructible(NoLockingNecessary, this, false);
+    auto setBits = [&] (bool isEmpty) ALWAYS_INLINE_LAMBDA {
+        Locker locker { m_directory->bitvectorLock() };
+        m_directory->setIsUnswept(this, false);
+        m_directory->setIsDestructible(this, false);
+        m_directory->setIsEmpty(this, false);
+        if (sweepMode == SweepToFreeList)
+            m_isFreeListed = true;
+        else if (isEmpty)
+            m_directory->setIsEmpty(this, true);
+    };
+    UNUSED_PARAM(setBits);
 
     if (Options::useBumpAllocator()
         && emptyMode == IsEmpty
@@ -306,8 +318,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         char* payloadBegin = bitwise_cast<char*>(block.atoms() + m_startAtom);
         RELEASE_ASSERT(static_cast<size_t>(payloadEnd - payloadBegin) <= payloadSize, payloadBegin, payloadEnd, &block, cellSize, m_startAtom);
 
-        if (sweepMode == SweepToFreeList)
-            setIsFreeListed();
+        setBits(true);
         if (space()->isMarking())
             header.m_lock.unlock();
         if (destructionMode != BlockHasNoDestructors) {
@@ -417,11 +428,10 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         checkForFinalInterval();
     }
 
-    if (sweepMode == SweepToFreeList) {
+    if (sweepMode == SweepToFreeList)
         freeList->initialize(head, secret, freedBytes);
-        setIsFreeListed();
-    } else if (isEmpty)
-        m_directory->setIsEmpty(NoLockingNecessary, this, true);
+    setBits(isEmpty);
+
     if (false)
         dataLog("Slowly swept block ", RawPointer(&block), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), "\n");
 }
@@ -514,7 +524,8 @@ inline MarkedBlock::Handle::SweepDestructionMode MarkedBlock::Handle::sweepDestr
 
 inline bool MarkedBlock::Handle::isEmpty()
 {
-    return m_directory->isEmpty(NoLockingNecessary, this);
+    m_directory->assertIsMutatorOrMutatorIsStopped();
+    return m_directory->isEmpty(this);
 }
 
 inline MarkedBlock::Handle::EmptyMode MarkedBlock::Handle::emptyMode()
@@ -544,12 +555,6 @@ inline MarkedBlock::Handle::MarksMode MarkedBlock::Handle::marksMode()
     if (space()->isMarking())
         marksAreUseful |= block().marksConveyLivenessDuringMarking(markingVersion);
     return marksAreUseful ? MarksNotStale : MarksStale;
-}
-
-inline void MarkedBlock::Handle::setIsFreeListed()
-{
-    m_directory->setIsEmpty(NoLockingNecessary, this, false);
-    m_isFreeListed = true;
 }
 
 template <typename Functor>

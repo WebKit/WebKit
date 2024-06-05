@@ -27,6 +27,7 @@
 
 #include "ArithProfile.h"
 #include "ArrayProfile.h"
+#include "BlockDirectory.h"
 #include "BytecodeIndices.h"
 #include "BytecodeStructs.h"
 #include "CodeBlock.h"
