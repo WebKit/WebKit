@@ -204,8 +204,8 @@ void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFro
 #endif // QUICKLOOK_FULLSCREEN
 #endif
 
-    auto videoDimensions = mediaDetails.videoDimensions;
-    m_client.enterFullScreen(videoDimensions);
+    auto mediaDimensions = mediaDetails.mediaDimensions;
+    m_client.enterFullScreen(mediaDimensions);
 #else
     UNUSED_PARAM(mediaDetails);
     m_client.enterFullScreen();

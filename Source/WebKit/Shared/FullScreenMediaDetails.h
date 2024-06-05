@@ -34,7 +34,7 @@ struct FullScreenMediaDetails {
     enum class Type : uint8_t { None, Video, ElementWithVideo, Image };
 
     Type type { Type::None };
-    WebCore::FloatSize videoDimensions { };
+    WebCore::FloatSize mediaDimensions { };
 
     String mimeType { };
     std::optional<WebCore::SharedMemory::Handle> imageHandle { std::nullopt };

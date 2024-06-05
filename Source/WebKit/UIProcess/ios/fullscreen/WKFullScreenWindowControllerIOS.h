@@ -37,9 +37,13 @@
 #if PLATFORM(VISION)
 @property (readonly, assign, nonatomic) BOOL prefersSceneDimming;
 #endif
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+@property (readonly, assign, nonatomic) BOOL isUsingQuickLook;
+@property (readonly, assign, nonatomic) CGSize imageDimensions;
+#endif
 
 - (id)initWithWebView:(WKWebView *)webView;
-- (void)enterFullScreen:(CGSize)videoDimensions;
+- (void)enterFullScreen:(CGSize)mediaDimensions;
 - (void)beganEnterFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame;
 - (void)requestRestoreFullScreen:(CompletionHandler<void(bool)>&&)completionHandler;
 - (void)requestExitFullScreen;

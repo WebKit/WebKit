@@ -67,7 +67,7 @@ public:
     virtual void closeFullScreenManager() = 0;
     virtual bool isFullScreen() = 0;
 #if PLATFORM(IOS_FAMILY)
-    virtual void enterFullScreen(WebCore::FloatSize videoDimensions) = 0;
+    virtual void enterFullScreen(WebCore::FloatSize mediaDimensions) = 0;
 #else
     virtual void enterFullScreen() = 0;
 #endif

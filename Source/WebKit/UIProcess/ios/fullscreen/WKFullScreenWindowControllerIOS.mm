@@ -33,6 +33,7 @@
 #import "WKFullScreenViewController.h"
 #import "WKFullscreenStackView.h"
 #import "WKScrollView.h"
+#import "WKUIDelegatePrivate.h"
 #import "WKWebView.h"
 #import "WKWebViewIOS.h"
 #import "WKWebViewInternal.h"
@@ -758,6 +759,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     RetainPtr<WKSPreviewWindowController> _previewWindowController;
     bool _isImageElement;
+    CGSize _imageDimensions;
 #endif // QUICKLOOK_FULLSCREEN
 #endif
 
@@ -835,6 +837,18 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     return _fullscreenViewController.get();
 }
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+- (BOOL)isUsingQuickLook
+{
+    return _isImageElement;
+}
+
+- (CGSize)imageDimensions
+{
+    return _imageDimensions;
+}
+#endif
+
 #pragma mark -
 #pragma mark External Interface
 
@@ -848,7 +862,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     [_fullscreenViewController resetSupportedOrientations];
 }
 
-- (void)enterFullScreen:(CGSize)videoDimensions
+- (void)enterFullScreen:(CGSize)mediaDimensions
 {
     if ([self isFullScreen])
         return;
@@ -859,7 +873,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     if (!page || !manager)
         return;
 
-    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, WebCore::FloatSize { videoDimensions });
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, WebCore::FloatSize { mediaDimensions });
 
     [self _invalidateEVOrganizationName];
 
@@ -886,13 +900,13 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
         CGFloat targetWidth = preferredWidth;
         CGFloat targetHeight = preferredHeight;
-        if (videoDimensions.height && videoDimensions.width) {
+        if (mediaDimensions.height && mediaDimensions.width) {
             CGFloat preferredAspectRatio = preferredWidth / preferredHeight;
-            CGFloat videoAspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : preferredAspectRatio;
+            CGFloat videoAspectRatio = mediaDimensions.height ? (mediaDimensions.width / mediaDimensions.height) : preferredAspectRatio;
             if (videoAspectRatio > preferredAspectRatio)
-                targetHeight = videoDimensions.height * preferredWidth / videoDimensions.width;
+                targetHeight = mediaDimensions.height * preferredWidth / mediaDimensions.width;
             else
-                targetWidth = videoDimensions.width * preferredHeight / videoDimensions.height;
+                targetWidth = mediaDimensions.width * preferredHeight / mediaDimensions.height;
         }
 
         [_window setFrame:CGRectMake(0, 0, floorf(targetWidth), floorf(targetHeight))];
@@ -938,6 +952,11 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     [_interactivePanDismissGestureRecognizer setCancelsTouchesInView:NO];
     [_fullscreenViewController.get().view addGestureRecognizer:_interactivePanDismissGestureRecognizer.get()];
 #endif // ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    if (_isImageElement)
+        _imageDimensions = mediaDimensions;
+#endif
 
     manager->saveScrollPosition();
 
