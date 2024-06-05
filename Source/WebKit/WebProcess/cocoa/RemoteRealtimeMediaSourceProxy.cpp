@@ -113,29 +113,26 @@ void RemoteRealtimeMediaSourceProxy::applyConstraints(const MediaConstraints& co
     m_connection->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
 }
 
-template<typename P>
 struct RemoteRealtimeMediaSourceProxy::PromiseConverter {
-    using Promise = P;
-
-    template<typename T>
-    static typename Promise::Result convertResult(T&& result) { return { WTFMove(result) }; }
-
-    static String convertError(IPC::Error) { return "IPC Connection closed"_s; }
+    static auto convertError(IPC::Error)
+    {
+        return makeUnexpected(String { "IPC Connection closed"_s });
+    }
 };
 
 Ref<WebCore::RealtimeMediaSource::TakePhotoNativePromise> RemoteRealtimeMediaSourceProxy::takePhoto(PhotoSettings&& settings)
 {
-    return m_connection->sendWithPromisedReply<Messages::UserMediaCaptureManagerProxy::TakePhoto, PromiseConverter<WebCore::RealtimeMediaSource::TakePhotoNativePromise>>({ identifier(), WTFMove(settings) });
+    return m_connection->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::TakePhoto { identifier(), WTFMove(settings) });
 }
 
 Ref<WebCore::RealtimeMediaSource::PhotoCapabilitiesNativePromise> RemoteRealtimeMediaSourceProxy::getPhotoCapabilities()
 {
-    return m_connection->sendWithPromisedReply<Messages::UserMediaCaptureManagerProxy::GetPhotoCapabilities, PromiseConverter<WebCore::RealtimeMediaSource::PhotoCapabilitiesNativePromise>>(identifier());
+    return m_connection->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::GetPhotoCapabilities { identifier() });
 }
 
 Ref<WebCore::RealtimeMediaSource::PhotoSettingsNativePromise> RemoteRealtimeMediaSourceProxy::getPhotoSettings()
 {
-    return m_connection->sendWithPromisedReply<Messages::UserMediaCaptureManagerProxy::GetPhotoSettings, PromiseConverter<WebCore::RealtimeMediaSource::PhotoSettingsNativePromise>>(identifier());
+    return m_connection->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::GetPhotoSettings { identifier() });
 }
 
 void RemoteRealtimeMediaSourceProxy::applyConstraintsSucceeded()

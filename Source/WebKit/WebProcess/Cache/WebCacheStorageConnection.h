@@ -52,7 +52,7 @@ public:
 private:
     explicit WebCacheStorageConnection(WebCacheStorageProvider&);
 
-    template<typename P> struct PromiseConverter;
+    struct PromiseConverter;
 
     IPC::Connection& connection();
 
