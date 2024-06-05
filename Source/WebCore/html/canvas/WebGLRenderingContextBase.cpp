@@ -3078,8 +3078,6 @@ void WebGLRenderingContextBase::stencilFunc(GCGLenum func, GCGLint ref, GCGLuint
 {
     if (isContextLost())
         return;
-    if (!validateStencilFunc("stencilFunc"_s, func))
-        return;
     m_context->stencilFunc(func, ref, mask);
 }
 
@@ -3087,17 +3085,6 @@ void WebGLRenderingContextBase::stencilFuncSeparate(GCGLenum face, GCGLenum func
 {
     if (isContextLost())
         return;
-    if (!validateStencilFunc("stencilFuncSeparate"_s, func))
-        return;
-    switch (face) {
-    case GraphicsContextGL::FRONT_AND_BACK:
-    case GraphicsContextGL::FRONT:
-    case GraphicsContextGL::BACK:
-        break;
-    default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "stencilFuncSeparate"_s, "invalid face"_s);
-        return;
-    }
     m_context->stencilFuncSeparate(face, func, ref, mask);
 }
 
@@ -4914,24 +4901,6 @@ bool WebGLRenderingContextBase::validateCompressedTexFormat(ASCIILiteral functio
         return false;
     }
     return true;
-}
-
-bool WebGLRenderingContextBase::validateStencilFunc(ASCIILiteral functionName, GCGLenum func)
-{
-    switch (func) {
-    case GraphicsContextGL::NEVER:
-    case GraphicsContextGL::LESS:
-    case GraphicsContextGL::LEQUAL:
-    case GraphicsContextGL::GREATER:
-    case GraphicsContextGL::GEQUAL:
-    case GraphicsContextGL::EQUAL:
-    case GraphicsContextGL::NOTEQUAL:
-    case GraphicsContextGL::ALWAYS:
-        return true;
-    default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid function"_s);
-        return false;
-    }
 }
 
 bool WebGLRenderingContextBase::shouldPrintToConsole() const

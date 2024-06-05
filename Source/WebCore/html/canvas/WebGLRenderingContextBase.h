@@ -945,9 +945,6 @@ protected:
     // Helper function for validating compressed texture formats.
     bool validateCompressedTexFormat(ASCIILiteral functionName, GCGLenum format);
 
-    // Helper function to validate stencil func.
-    bool validateStencilFunc(ASCIILiteral functionName, GCGLenum);
-
     // Helper function for texParameterf and texParameteri.
     void texParameter(GCGLenum target, GCGLenum pname, GCGLfloat paramf, GCGLint parami, bool isFloat);
 
