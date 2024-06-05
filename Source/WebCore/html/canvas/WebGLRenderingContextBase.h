@@ -703,10 +703,8 @@ protected:
     GCGLfloat m_clearDepth;
     GCGLint m_clearStencil;
     GCGLboolean m_colorMask[4];
+    GCGLuint m_stencilMask;
     GCGLboolean m_depthMask;
-
-    bool m_stencilEnabled;
-    GCGLuint m_stencilMask, m_stencilMaskBack;
 
     bool m_rasterizerDiscardEnabled { false };
 
