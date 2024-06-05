@@ -730,6 +730,8 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-label.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-label.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/tracks-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/tvos-layout-traits.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/tvos-media-controls.css
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/tvos-media-controls.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-layout-traits.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-media-controls.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-media-controls.js
