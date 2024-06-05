@@ -33,10 +33,12 @@
 #include <wpe/WPEBufferDMABuf.h>
 #include <wpe/WPEBufferDMABufFormats.h>
 #include <wpe/WPEBufferSHM.h>
+#include <wpe/WPEColor.h>
 #include <wpe/WPEConfig.h>
 #include <wpe/WPEDefines.h>
 #include <wpe/WPEDisplay.h>
 #include <wpe/WPEEGLError.h>
+#include <wpe/WPEInputMethodContext.h>
 #include <wpe/WPEKeymap.h>
 #include <wpe/WPEKeyUnicode.h>
 #include <wpe/WPEKeymapXKB.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WPEColor_h
+#define WPEColor_h
 
-#include "WPEDisplayWayland.h"
-#include "WPEMonitor.h"
-#include "WPEWaylandCursor.h"
-#include "WPEWaylandSeat.h"
+#if !defined(__WPE_PLATFORM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <wpe/wpe-platform.h> can be included directly."
+#endif
 
-struct xdg_wm_base* wpeDisplayWaylandGetXDGWMBase(WPEDisplayWayland*);
-WPE::WaylandSeat* wpeDisplayWaylandGetSeat(WPEDisplayWayland*);
-WPE::WaylandCursor* wpeDisplayWaylandGetCursor(WPEDisplayWayland*);
-WPEMonitor* wpeDisplayWaylandFindMonitor(WPEDisplayWayland*, struct wl_output*);
-struct zwp_linux_dmabuf_v1* wpeDisplayWaylandGetLinuxDMABuf(WPEDisplayWayland*);
-struct zwp_text_input_v1* wpeDisplayWaylandGetTextInputV1(WPEDisplayWayland*);
-struct zwp_text_input_v3* wpeDisplayWaylandGetTextInputV3(WPEDisplayWayland*);
+#include <glib-object.h>
+#include <wpe/WPEDefines.h>
+
+G_BEGIN_DECLS
+
+struct _WPEColor {
+    gdouble red;
+    gdouble green;
+    gdouble blue;
+    gdouble alpha;
+};
+
+typedef struct _WPEColor WPEColor;
+
+#define WPE_TYPE_COLOR (wpe_color_get_type())
+
+WPE_API GType wpe_color_get_type (void);
+
+G_END_DECLS
+
+#endif /* WPEColor_h */

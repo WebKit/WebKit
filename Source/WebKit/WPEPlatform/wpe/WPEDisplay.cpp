@@ -523,3 +523,9 @@ const char* wpe_display_get_drm_render_node(WPEDisplay* display)
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
     return wpeDisplayClass->get_drm_render_node ? wpeDisplayClass->get_drm_render_node(display) : nullptr;
 }
+
+WPEInputMethodContext* wpeDisplayCreateInputMethodContext(WPEDisplay* display)
+{
+    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
+    return wpeDisplayClass->create_input_method_context ? wpeDisplayClass->create_input_method_context(display) : nullptr;
+}

@@ -29,11 +29,15 @@
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEEGLError.h"
 #include "WPEExtensions.h"
+#include "WPEInputMethodContextWaylandV1.h"
+#include "WPEInputMethodContextWaylandV3.h"
 #include "WPEMonitorWaylandPrivate.h"
 #include "WPEViewWayland.h"
 #include "WPEWaylandCursor.h"
 #include "WPEWaylandSeat.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
+#include "text-input-unstable-v1-client-protocol.h"
+#include "text-input-unstable-v3-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
 #include <gio/gio.h>
 #include <wtf/HashSet.h>
@@ -68,6 +72,10 @@ struct _WPEDisplayWaylandPrivate {
 #if USE(LIBDRM)
     struct zwp_linux_dmabuf_feedback_v1* dmabufFeedback;
 #endif
+    struct zwp_text_input_manager_v1* textInputManagerV1;
+    struct zwp_text_input_v1* textInputV1;
+    struct zwp_text_input_manager_v3* textInputManagerV3;
+    struct zwp_text_input_v3* textInputV3;
     Vector<std::pair<uint32_t, uint64_t>> linuxDMABufFormats;
     std::unique_ptr<WPE::WaylandSeat> wlSeat;
     std::unique_ptr<WPE::WaylandCursor> wlCursor;
@@ -182,7 +190,14 @@ static void wpeDisplayWaylandDispose(GObject* object)
     g_clear_pointer(&priv->xdgWMBase, xdg_wm_base_destroy);
     g_clear_pointer(&priv->wlCompositor, wl_compositor_destroy);
     g_clear_pointer(&priv->wlDisplay, wl_display_disconnect);
-
+    if (priv->textInputManagerV1) {
+        g_clear_pointer(&priv->textInputV1, zwp_text_input_v1_destroy);
+        g_clear_pointer(&priv->textInputManagerV1, zwp_text_input_manager_v1_destroy);
+    }
+    if (priv->textInputManagerV3) {
+        g_clear_pointer(&priv->textInputV3, zwp_text_input_v3_destroy);
+        g_clear_pointer(&priv->textInputManagerV3, zwp_text_input_manager_v3_destroy);
+    }
     G_OBJECT_CLASS(wpe_display_wayland_parent_class)->dispose(object);
 }
 
@@ -209,6 +224,13 @@ const struct wl_registry_listener registryListener = {
             priv->wlSHM = static_cast<struct wl_shm*>(wl_registry_bind(registry, name, &wl_shm_interface, 1));
         else if (!std::strcmp(interface, "zwp_linux_dmabuf_v1"))
             priv->linuxDMABuf = static_cast<struct zwp_linux_dmabuf_v1*>(wl_registry_bind(registry, name, &zwp_linux_dmabuf_v1_interface, std::min<uint32_t>(version, 4)));
+        else if (!std::strcmp(interface, "zwp_text_input_manager_v1")) {
+            priv->textInputManagerV1 = static_cast<struct zwp_text_input_manager_v1*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v1_interface, 1));
+            priv->textInputV1 = zwp_text_input_manager_v1_create_text_input(priv->textInputManagerV1);
+        } else if (!std::strcmp(interface, "zwp_text_input_manager_v3")) {
+            priv->textInputManagerV3 = static_cast<struct zwp_text_input_manager_v3*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v3_interface, 1));
+            priv->textInputV3 = zwp_text_input_manager_v3_get_text_input(priv->textInputManagerV3, priv->wlSeat->seat());
+        }
     },
     // global_remove
     [](void* data, struct wl_registry*, uint32_t name)
@@ -375,6 +397,20 @@ static WPEView* wpeDisplayWaylandCreateView(WPEDisplay* display)
     return wpe_view_wayland_new(WPE_DISPLAY_WAYLAND(display));
 }
 
+static WPEInputMethodContext* wpeDisplayWaylandCreateInputMethodContext(WPEDisplay* display)
+{
+    auto* priv = WPE_DISPLAY_WAYLAND(display)->priv;
+    if (!priv->wlDisplay || !priv->wlCompositor)
+        return nullptr;
+
+    if (priv->textInputManagerV3)
+        return wpe_im_context_wayland_v3_new(WPE_DISPLAY_WAYLAND(display));
+    if (priv->textInputManagerV1)
+        return wpe_im_context_wayland_v1_new(WPE_DISPLAY_WAYLAND(display));
+
+    return nullptr;
+}
+
 static gpointer wpeDisplayWaylandGetEGLDisplay(WPEDisplay* display, GError** error)
 {
     auto* priv = WPE_DISPLAY_WAYLAND(display)->priv;
@@ -472,6 +508,16 @@ struct zwp_linux_dmabuf_v1* wpeDisplayWaylandGetLinuxDMABuf(WPEDisplayWayland* d
     return display->priv->linuxDMABuf;
 }
 
+struct zwp_text_input_v1* wpeDisplayWaylandGetTextInputV1(WPEDisplayWayland* display)
+{
+    return display->priv->textInputV1;
+}
+
+struct zwp_text_input_v3* wpeDisplayWaylandGetTextInputV3(WPEDisplayWayland* display)
+{
+    return display->priv->textInputV3;
+}
+
 static void wpe_display_wayland_class_init(WPEDisplayWaylandClass* displayWaylandClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(displayWaylandClass);
@@ -480,6 +526,7 @@ static void wpe_display_wayland_class_init(WPEDisplayWaylandClass* displayWaylan
     WPEDisplayClass* displayClass = WPE_DISPLAY_CLASS(displayWaylandClass);
     displayClass->connect = wpeDisplayWaylandConnect;
     displayClass->create_view = wpeDisplayWaylandCreateView;
+    displayClass->create_input_method_context = wpeDisplayWaylandCreateInputMethodContext;
     displayClass->get_egl_display = wpeDisplayWaylandGetEGLDisplay;
     displayClass->get_keymap = wpeDisplayWaylandGetKeymap;
     displayClass->get_preferred_dma_buf_formats = wpeDisplayWaylandGetPreferredDMABufFormats;

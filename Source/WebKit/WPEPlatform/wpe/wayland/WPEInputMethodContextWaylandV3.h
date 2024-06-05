@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WPEInputMethodContextWaylandV3_h
+#define WPEInputMethodContextWaylandV3_h
 
-#include "WPEDisplayWayland.h"
-#include "WPEMonitor.h"
-#include "WPEWaylandCursor.h"
-#include "WPEWaylandSeat.h"
+#include <glib-object.h>
+#include <wpe/wpe-platform.h>
+#include <wpe/wayland/WPEDisplayWayland.h>
 
-struct xdg_wm_base* wpeDisplayWaylandGetXDGWMBase(WPEDisplayWayland*);
-WPE::WaylandSeat* wpeDisplayWaylandGetSeat(WPEDisplayWayland*);
-WPE::WaylandCursor* wpeDisplayWaylandGetCursor(WPEDisplayWayland*);
-WPEMonitor* wpeDisplayWaylandFindMonitor(WPEDisplayWayland*, struct wl_output*);
-struct zwp_linux_dmabuf_v1* wpeDisplayWaylandGetLinuxDMABuf(WPEDisplayWayland*);
-struct zwp_text_input_v1* wpeDisplayWaylandGetTextInputV1(WPEDisplayWayland*);
-struct zwp_text_input_v3* wpeDisplayWaylandGetTextInputV3(WPEDisplayWayland*);
+G_BEGIN_DECLS
+
+#define WPE_TYPE_IM_CONTEXT_WAYLAND_V3 (wpe_im_context_wayland_v3_get_type())
+G_DECLARE_FINAL_TYPE (WPEIMContextWaylandV3, wpe_im_context_wayland_v3, WPE, IM_CONTEXT_WAYLAND_V3, WPEInputMethodContext)
+
+WPEInputMethodContext   *wpe_im_context_wayland_v3_new (WPEDisplayWayland *display);
+
+G_END_DECLS
+
+#endif /* WPEInputMethodContextWaylandV3_h */

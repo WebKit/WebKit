@@ -5,6 +5,8 @@ configure_file(wpe-platform-wayland-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-pl
 
 set(WPEPlatformWayland_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEDisplayWayland.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEInputMethodContextWaylandV1.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEInputMethodContextWaylandV3.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEMonitorWayland.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEViewWayland.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEWaylandCursor.cpp
@@ -12,6 +14,8 @@ set(WPEPlatformWayland_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEWaylandSHMPool.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEWaylandSeat.cpp
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/linux-dmabuf-unstable-v1-protocol.c
+    ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v1-protocol.c
+    ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v3-protocol.c
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/xdg-shell-protocol.c
 )
 
@@ -66,6 +70,32 @@ add_custom_command(
     OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/linux-dmabuf-unstable-v1-client-protocol.h
     MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/linux-dmabuf/linux-dmabuf-unstable-v1.xml
     COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/linux-dmabuf/linux-dmabuf-unstable-v1.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/linux-dmabuf-unstable-v1-client-protocol.h
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v1-protocol.c
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/text-input/text-input-unstable-v1.xml
+    DEPENDS ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v1-client-protocol.h
+    COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/text-input/text-input-unstable-v1.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v1-protocol.c
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v1-client-protocol.h
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/text-input/text-input-unstable-v1.xml
+    COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/text-input/text-input-unstable-v1.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v1-client-protocol.h
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v3-protocol.c
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/text-input/text-input-unstable-v3.xml
+    DEPENDS ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v3-client-protocol.h
+    COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/text-input/text-input-unstable-v3.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v3-protocol.c
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v3-client-protocol.h
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/text-input/text-input-unstable-v3.xml
+    COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/text-input/text-input-unstable-v3.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v3-client-protocol.h
     VERBATIM)
 
 add_library(WPEPlatformWayland OBJECT ${WPEPlatformWayland_SOURCES})

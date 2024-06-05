@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WPEColor.h"
 
-#include "WPEDisplayWayland.h"
-#include "WPEMonitor.h"
-#include "WPEWaylandCursor.h"
-#include "WPEWaylandSeat.h"
+/**
+ * WPEColor:
+ * @red: Red channel, between 0.0 and 1.0 inclusive
+ * @green: Green channel, between 0.0 and 1.0 inclusive
+ * @blue: Blue channel, between 0.0 and 1.0 inclusive
+ * @alpha: Alpha channel, between 0.0 and 1.0 inclusive
+ *
+ * Boxed type representing a RGBA color.
+ */
 
-struct xdg_wm_base* wpeDisplayWaylandGetXDGWMBase(WPEDisplayWayland*);
-WPE::WaylandSeat* wpeDisplayWaylandGetSeat(WPEDisplayWayland*);
-WPE::WaylandCursor* wpeDisplayWaylandGetCursor(WPEDisplayWayland*);
-WPEMonitor* wpeDisplayWaylandFindMonitor(WPEDisplayWayland*, struct wl_output*);
-struct zwp_linux_dmabuf_v1* wpeDisplayWaylandGetLinuxDMABuf(WPEDisplayWayland*);
-struct zwp_text_input_v1* wpeDisplayWaylandGetTextInputV1(WPEDisplayWayland*);
-struct zwp_text_input_v3* wpeDisplayWaylandGetTextInputV3(WPEDisplayWayland*);
+/**
+ * wpe_color_copy:
+ * @color: a #WPEColor
+ *
+ * Make a copy of @color.
+ *
+ * Returns: (transfer full): A copy of passed in #WPEColor.
+ */
+WPEColor* wpe_color_copy(WPEColor* color)
+{
+    g_return_val_if_fail(color, nullptr);
+
+    WPEColor* copy = static_cast<WPEColor*>(fastZeroedMalloc(sizeof(WPEColor)));
+    copy->red = color->red;
+    copy->green = color->green;
+    copy->blue = color->blue;
+    copy->alpha = color->alpha;
+    return copy;
+}
+
+/**
+ * wpe_color_free:
+ * @color: a #WPEColor
+ *
+ * Free the #WPEColor.
+ */
+void wpe_color_free(WPEColor* color)
+{
+    g_return_if_fail(color);
+
+    fastFree(color);
+}
+
+G_DEFINE_BOXED_TYPE(WPEColor, wpe_color, wpe_color_copy, wpe_color_free)

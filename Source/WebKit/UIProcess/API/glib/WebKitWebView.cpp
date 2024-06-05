@@ -105,6 +105,9 @@
 #include "WebKitOptionMenuPrivate.h"
 #include "WebKitWebViewBackendPrivate.h"
 #include "WebKitWebViewClient.h"
+#if ENABLE(WPE_PLATFORM)
+#include "WebKitInputMethodContextImplWPE.h"
+#endif
 #endif
 
 #if ENABLE(2022_GLIB_API)
@@ -934,6 +937,12 @@ static void webkitWebViewConstructed(GObject* object)
     GRefPtr<WebKitInputMethodContext> imContext = adoptGRef(webkitInputMethodContextImplGtkNew());
     webkitInputMethodContextSetWebView(imContext.get(), webView);
     webkitWebViewBaseSetInputMethodContext(WEBKIT_WEB_VIEW_BASE(webView), imContext.get());
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    if (priv->display) {
+        GRefPtr<WebKitInputMethodContext> imContext = adoptGRef(webkitInputMethodContextImplWPENew(priv->view->wpeView()));
+        webkitInputMethodContextSetWebView(imContext.get(), webView);
+        priv->view->setInputMethodContext(imContext.get());
+    }
 #endif
 
 #if PLATFORM(WPE)
