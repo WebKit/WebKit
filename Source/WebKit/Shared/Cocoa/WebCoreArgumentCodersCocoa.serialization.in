@@ -23,19 +23,64 @@
 headers: "ArgumentCodersCocoa.h"
 
 #if USE(CORE_TEXT)
+
 header: <WebCore/FontPlatformData.h>
+
+[CustomHeader] struct WebCore::FontPlatformSerializedTraits {
+    String uiFontDesign;
+    std::optional<RetainPtr<CFNumberRef>> weight;
+    std::optional<RetainPtr<CFNumberRef>> width;
+    std::optional<RetainPtr<CFNumberRef>> symbolic;
+    std::optional<RetainPtr<CFNumberRef>> grade;
+};
+
+[CustomHeader] struct WebCore::FontPlatformOpticalSize {
+    std::variant<RetainPtr<CFNumberRef>, String> opticalSize;
+};
+
+[CustomHeader] struct WebCore::FontPlatformSerializedAttributes {
+    String fontName;
+    String descriptorLanguage;
+    String descriptorTextStyle;
+
+    std::optional<RetainPtr<CFDataRef>> matrix;
+
+    std::optional<RetainPtr<CFBooleanRef>> ignoreLegibilityWeight;
+
+    std::optional<RetainPtr<CFNumberRef>> baselineAdjust;
+    std::optional<RetainPtr<CFNumberRef>> fallbackOption;
+    std::optional<RetainPtr<CFNumberRef>> fixedAdvance;
+    std::optional<RetainPtr<CFNumberRef>> orientation;
+    std::optional<RetainPtr<CFNumberRef>> palette;
+    std::optional<RetainPtr<CFNumberRef>> size;
+    std::optional<RetainPtr<CFNumberRef>> sizeCategory;
+    std::optional<RetainPtr<CFNumberRef>> track;
+    std::optional<RetainPtr<CFNumberRef>> unscaledTracking;
+
+    std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CGColorRef>>>> paletteColors;
+    std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CFNumberRef>>>> variations;
+
+    std::optional<WebCore::FontPlatformOpticalSize> opticalSize;
+    std::optional<WebCore::FontPlatformSerializedTraits> traits;
+
+    std::optional<RetainPtr<CFArrayRef>> featureSettings;
+
+#if HAVE(ADDITIONAL_FONT_PLATFORM_SERIALIZED_ATTRIBUTES)
+    std::optional<RetainPtr<CFNumberRef>> additionalNumber;
+#endif
+};
+
 [CustomHeader] struct WebCore::FontPlatformSerializedCreationData {
     Vector<uint8_t> fontFaceData;
-    RetainPtr<CFDictionaryRef> attributes;
+    std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
     String itemInCollection;
 };
 
-header: <WebCore/FontPlatformData.h>
 [CustomHeader] struct WebCore::FontPlatformSerializedData {
     CTFontDescriptorOptions options;
     RetainPtr<CFStringRef> referenceURL;
     RetainPtr<CFStringRef> postScriptName;
-    RetainPtr<CFDictionaryRef> attributes;
+    std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
 };
 
 header: <WebCore/FontCustomPlatformData.h>
@@ -44,7 +89,7 @@ header: <WebCore/FontCustomPlatformData.h>
     String itemInCollection;
     WebCore::RenderingResourceIdentifier renderingResourceIdentifier;
 };
-#endif
+#endif // USE(CORE_TEXT)
 
 #if ENABLE(CONTENT_FILTERING)
 class WebCore::ContentFilterUnblockHandler {
