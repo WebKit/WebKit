@@ -38,8 +38,12 @@ namespace PAL {
 
 bool deviceClassIsSmallScreen()
 {
+#if ENABLE(FORCE_DEVICE_CLASS_SMALL_SCREEN)
+    return true;
+#else
     static auto deviceClass = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
     return deviceClass == MGDeviceClassiPhone || deviceClass == MGDeviceClassiPod || deviceClass == MGDeviceClassWatch;
+#endif
 }
 
 bool deviceClassIsVision()
