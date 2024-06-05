@@ -279,7 +279,23 @@ inline PeerConnectionBackend::DescriptionStates PeerConnectionBackend::Descripti
         WTFMove(pendingRemoteDescriptionSdp).isolatedCopy()
     };
 }
-
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::PeerConnectionBackend::TransceiverState> {
+    static String toString(const WebCore::PeerConnectionBackend::TransceiverState&);
+};
+
+template <>
+struct LogArgument<WebCore::PeerConnectionBackend::TransceiverStates> {
+    static String toString(const WebCore::PeerConnectionBackend::TransceiverStates&);
+};
+
+}
 
 #endif // ENABLE(WEB_RTC)
