@@ -6951,18 +6951,13 @@ imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-repla
 imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-detach-in-onnavigate.html [ Skip ]
 
 # General flakes, almost exclusively on mac-wk2-stress.
-imported/w3c/web-platform-tests/navigation-api/currententrychange-event/anchor-click.html [ Failure Pass ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-does-not-fire-navigate.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-popstate.html [ Pass Timeout Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-replace.html [ Failure Pass ]
-imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/after-detach.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/no-referrer-url-censored.html [ Pass Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/back-forward-multiple-frames.html [ Failure Pass ]
-imported/w3c/web-platform-tests/navigation-api/navigation-methods/disambigaute-back.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-state-repeated-await.html [ Timeout Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-detach-in-onnavigate.html [ Crash Pass Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-interrupted-within-onnavigate.html [ Crash Timeout Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-pagehide-unserializablestate.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/location-href-intercept-reentrant.html?currententrychange [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/location-href-intercept-reentrant.html?no-currententrychange [ Failure Pass ]
@@ -6974,7 +6969,6 @@ imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-
 imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-after-bfcache.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/state/cross-document-away-and-back.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/state/cross-document-getState-undefined.html [ Failure Pass ]
-imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/basic.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-redirect.html [ Skip ]
 
 # -- View Transitions -- #
