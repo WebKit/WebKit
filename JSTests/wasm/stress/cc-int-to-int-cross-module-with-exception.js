@@ -1,4 +1,4 @@
-//@ skip if $architecture != "arm64" and $architecture != "x86_64" or $memoryLimited
+//@ skip
 //@ skip unless $isWasmPlatform
 //@ requireOptions("--useJITCage=0") # temporary workaround for rdar://127308350
 //@ runDefaultWasm("-m", "--wasmFunctionIndexRangeToCompile=0:5", "--useOMGJIT=0", "--useInterpretedJSEntryWrappers=1")
