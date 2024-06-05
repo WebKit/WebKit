@@ -170,13 +170,13 @@ void LocalFrameViewLayoutContext::layout()
 void LocalFrameViewLayoutContext::performLayout()
 {
     Ref frame = this->frame();
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!frame->document()->inRenderTreeUpdate());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!document()->inRenderTreeUpdate());
     ASSERT(LayoutDisallowedScope::isLayoutAllowed());
     ASSERT(!view().isPainting());
     ASSERT(frame->view() == &view());
-    ASSERT(frame->document());
-    ASSERT(frame->document()->backForwardCacheState() == Document::NotInBackForwardCache
-        || frame->document()->backForwardCacheState() == Document::AboutToEnterBackForwardCache);
+    ASSERT(document());
+    ASSERT(document()->backForwardCacheState() == Document::NotInBackForwardCache
+        || document()->backForwardCacheState() == Document::AboutToEnterBackForwardCache);
     if (!canPerformLayout()) {
         LOG(Layout, "  is not allowed, bailing");
         return;
@@ -202,7 +202,7 @@ void LocalFrameViewLayoutContext::performLayout()
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InPreLayout);
 
-        if (!frame->document()->isResolvingContainerQueriesForSelfOrAncestor()) {
+        if (!document()->isResolvingContainerQueriesForSelfOrAncestor()) {
             // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
             if (!isLayoutNested() && m_postLayoutTaskTimer.isActive())
                 runPostLayoutTasks();
@@ -279,7 +279,7 @@ void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks()
     if (m_postLayoutTaskTimer.isActive())
         return;
 
-    if (frame().document()->isResolvingContainerQueries()) {
+    if (document()->isResolvingContainerQueries()) {
         // We are doing layout from style resolution to resolve container queries.
         m_postLayoutTaskTimer.startOneShot(0_s);
         return;
@@ -348,7 +348,7 @@ void LocalFrameViewLayoutContext::setNeedsLayoutAfterViewConfigurationChange()
     }
 
     if (auto* renderView = this->renderView()) {
-        ASSERT(!frame().document()->inHitTesting());
+        ASSERT(document()->inHitTesting());
         renderView->setNeedsLayout();
         scheduleLayout();
     }
@@ -371,7 +371,7 @@ void LocalFrameViewLayoutContext::scheduleLayout()
     // FIXME: We should assert the page is not in the back/forward cache, but that is causing
     // too many false assertions. See <rdar://problem/7218118>.
     ASSERT(frame().view() == &view());
-    if (!frame().document())
+    if (!document())
         return;
 
     if (subtreeLayoutRoot())
@@ -380,14 +380,14 @@ void LocalFrameViewLayoutContext::scheduleLayout()
     if (isLayoutPending())
         return;
 
-    if (!isLayoutSchedulingEnabled() || !frame().document()->shouldScheduleLayout())
+    if (!isLayoutSchedulingEnabled() || !document()->shouldScheduleLayout())
         return;
     if (!needsLayout())
         return;
 
 #if !LOG_DISABLED
-    if (!frame().document()->ownerElement())
-        LOG(Layout, "LocalFrameView %p layout timer scheduled at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
+    if (!document()->ownerElement())
+        LOG(Layout, "LocalFrameView %p layout timer scheduled at %.3fs", this, document()->timeSinceDocumentCreation().value());
 #endif
 
     InspectorInstrumentation::didInvalidateLayout(protectedFrame());
@@ -403,8 +403,8 @@ void LocalFrameViewLayoutContext::unscheduleLayout()
         return;
 
 #if !LOG_DISABLED
-    if (!frame().document()->ownerElement())
-        LOG_WITH_STREAM(Layout, stream << "LocalFrameViewLayoutContext for LocalFrameView " << frame().view() << " layout timer unscheduled at " << frame().document()->timeSinceDocumentCreation().value());
+    if (!document()->ownerElement())
+        LOG_WITH_STREAM(Layout, stream << "LocalFrameViewLayoutContext for LocalFrameView " << frame().view() << " layout timer unscheduled at " << document()->timeSinceDocumentCreation().value());
 #endif
 
     m_layoutTimer.stop();
@@ -467,8 +467,8 @@ void LocalFrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoo
 void LocalFrameViewLayoutContext::layoutTimerFired()
 {
 #if !LOG_DISABLED
-    if (!frame().document()->ownerElement())
-        LOG_WITH_STREAM(Layout, stream << "LocalFrameViewLayoutContext for LocalFrameView " << frame().view() << " layout timer fired at " << frame().document()->timeSinceDocumentCreation().value());
+    if (!document()->ownerElement())
+        LOG_WITH_STREAM(Layout, stream << "LocalFrameViewLayoutContext for LocalFrameView " << frame().view() << " layout timer fired at " << document()->timeSinceDocumentCreation().value());
 #endif
     layout();
 }
@@ -498,7 +498,7 @@ bool LocalFrameViewLayoutContext::canPerformLayout() const
     if (view().isPainting())
         return false;
 
-    if (!subtreeLayoutRoot() && !frame().document()->renderView())
+    if (!subtreeLayoutRoot() && !document()->renderView())
         return false;
 
     return true;
@@ -530,7 +530,7 @@ void LocalFrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutR
 void LocalFrameViewLayoutContext::updateStyleForLayout()
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    Ref document = *frame().document();
+    Ref document = *this->document();
 
     // FIXME: This shouldn't be necessary, but see rdar://problem/36670246.
     if (!document->styleScope().resolverIfExists())
