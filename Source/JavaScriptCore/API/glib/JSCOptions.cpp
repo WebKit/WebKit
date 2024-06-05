@@ -180,6 +180,8 @@ static void valueToGValue(OSLogType value, GValue* gValue)
 
 static gboolean jscOptionsSetValue(const char* option, const GValue* value)
 {
+    Options::AllowUnfinalizedAccessScope scope;
+
 #define SET_OPTION_VALUE(type_, name_, defaultValue_, availability_, description_) \
     if (!g_strcmp0(#name_, option)) {                                   \
         OptionsStorage::type_ valueToSet;                                  \
@@ -198,6 +200,8 @@ static gboolean jscOptionsSetValue(const char* option, const GValue* value)
 
 static gboolean jscOptionsGetValue(const char* option, GValue* value)
 {
+    Options::AllowUnfinalizedAccessScope scope;
+
 #define GET_OPTION_VALUE(type_, name_, defaultValue_, availability_, description_) \
     if (!g_strcmp0(#name_, option)) {                                   \
         OptionsStorage::type_ valueToGet = Options::name_();               \
