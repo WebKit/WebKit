@@ -5389,22 +5389,16 @@ MockContentFilterSettings& Internals::mockContentFilterSettings()
 
 #endif
 
-static void appendOffsets(StringBuilder& builder, const Vector<SnapOffset<LayoutUnit>>& snapOffsets)
+static void serializeOffset(StringBuilder& builder, const SnapOffset<LayoutUnit>& snapOffset)
 {
-    bool justStarting = true;
+    builder.append(snapOffset.offset.toUnsigned());
+    if (snapOffset.stop == ScrollSnapStop::Always)
+        builder.append(" (always)"_s);
+}
 
-    builder.append("{ "_s);
-    for (auto& coordinate : snapOffsets) {
-        if (!justStarting)
-            builder.append(", "_s);
-        else
-            justStarting = false;
-        builder.append(coordinate.offset.toUnsigned());
-        if (coordinate.stop == ScrollSnapStop::Always)
-            builder.append(" (always)"_s);
-
-    }
-    builder.append(" }"_s);
+static void serializeOffsets(StringBuilder& builder, const Vector<SnapOffset<LayoutUnit>>& snapOffsets)
+{
+    builder.append("{ "_s, interleave(snapOffsets, serializeOffset, ", "_s), " }"_s);
 }
 
 void Internals::setPlatformMomentumScrollingPredictionEnabled(bool enabled)
@@ -5426,14 +5420,14 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
     StringBuilder result;
     if (offsetInfo && !offsetInfo->horizontalSnapOffsets.isEmpty()) {
         result.append("horizontal = "_s);
-        appendOffsets(result, offsetInfo->horizontalSnapOffsets);
+        serializeOffsets(result, offsetInfo->horizontalSnapOffsets);
     }
 
     if (offsetInfo && !offsetInfo->verticalSnapOffsets.isEmpty()) {
         if (result.length())
             result.append(", "_s);
         result.append("vertical = "_s);
-        appendOffsets(result, offsetInfo->verticalSnapOffsets);
+        serializeOffsets(result, offsetInfo->verticalSnapOffsets);
     }
 
     return result.toString();

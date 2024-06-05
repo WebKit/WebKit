@@ -298,14 +298,11 @@ String CSSLinearGradientValue::customCSSText() const
     if (appendColorInterpolationMethod(result, m_colorInterpolationMethod, wroteSomething))
         wroteSomething = true;
 
-    for (auto& stop : m_stops) {
-        if (wroteSomething)
-            result.append(", "_s);
-        wroteSomething = true;
-        writeColorStop(result, stop);
-    }
+    if (wroteSomething)
+        result.append(", "_s);
 
-    result.append(')');
+    result.append(interleave(m_stops, writeColorStop, ", "_s), ')');
+
     return result.toString();
 }
 
@@ -537,15 +534,7 @@ String CSSRadialGradientValue::customCSSText() const
     if (wroteSomething)
         result.append(", "_s);
 
-    bool wroteFirstStop = false;
-    for (auto& stop : m_stops) {
-        if (wroteFirstStop)
-            result.append(", "_s);
-        wroteFirstStop = true;
-        writeColorStop(result, stop);
-    }
-
-    result.append(')');
+    result.append(interleave(m_stops, writeColorStop, ", "_s), ')');
 
     return result.toString();
 }
@@ -729,15 +718,8 @@ String CSSConicGradientValue::customCSSText() const
     if (wroteSomething)
         result.append(", "_s);
 
-    bool wroteFirstStop = false;
-    for (auto& stop : m_stops) {
-        if (wroteFirstStop)
-            result.append(", "_s);
-        wroteFirstStop = true;
-        writeColorStop(result, stop);
-    }
+    result.append(interleave(m_stops, writeColorStop, ", "_s), ')');
 
-    result.append(')');
     return result.toString();
 }
 

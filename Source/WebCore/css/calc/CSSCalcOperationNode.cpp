@@ -1252,21 +1252,21 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
             return;
         }
 
+        auto& children = operationNode->children();
+        ASSERT(children.size());
+
         // If root is anything but a Sum, Negate, Product, or Invert node, serialize a math function for the
         // function corresponding to the node type, treating the node’s children as the function’s
         // comma-separated calculation arguments, and return the result.
-        builder.append(functionPrefixForOperator(operationNode->calcOperator()));
-
-        auto& children = operationNode->children();
-        ASSERT(children.size());
-        buildCSSTextRecursive(children.first(), builder, GroupingParens::Omit);
-
-        for (unsigned i = 1; i < children.size(); ++i) {
-            builder.append(", "_s);
-            buildCSSTextRecursive(children[i], builder, GroupingParens::Omit);
-        }
-        
-        builder.append(')');
+        builder.append(
+            functionPrefixForOperator(operationNode->calcOperator()),
+            interleave(
+                children,
+                [](auto& builder, auto& child) { buildCSSTextRecursive(child, builder, GroupingParens::Omit); },
+                ", "_s
+            ),
+            ')'
+        );
         return;
     }
     

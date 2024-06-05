@@ -31,10 +31,34 @@
 
 #include "config.h"
 
+#include "MoveOnly.h"
 #include "Test.h"
 #include "WTFTestUtilities.h"
 #include <sstream>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/unicode/CharacterNames.h>
+
+namespace WTF {
+
+template<> class StringTypeAdapter<MoveOnly, void> {
+public:
+    StringTypeAdapter(const MoveOnly& moveOnly)
+        : m_moveOnly { moveOnly }
+    {
+    }
+
+    unsigned length() const { return StringTypeAdapter<unsigned>(m_moveOnly.value()).length(); }
+    bool is8Bit() const { return StringTypeAdapter<unsigned>(m_moveOnly.value()).is8Bit(); }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    {
+        StringTypeAdapter<unsigned>(m_moveOnly.value()).writeTo(destination);
+    }
+
+private:
+    const MoveOnly& m_moveOnly;
+};
+
+} // namespace WTF
 
 namespace TestWebKitAPI {
 
@@ -184,6 +208,93 @@ TEST(StringBuilderTest, VariadicAppend)
         EXPECT_GE(builder.capacity(), builder.length() + 3);
         builder.append(String("A"_s), "B"_s, bullseye, ""_s);
         EXPECT_EQ(makeString("0123456789abcdeAB"_s, bullseye), builderContent(builder));
+    }
+}
+
+TEST(StringBuilderTest, Interleave)
+{
+    std::array strings { "a"_s, "b"_s, "c"_s };
+
+    {
+        StringBuilder builder;
+        builder.append('[', interleave(strings, [](auto& builder, auto& s) { builder.append(s); }, ", "_s), ']');
+
+        EXPECT_EQ(String("[a, b, c]"_s), builderContent(builder));
+    }
+
+    {
+        StringBuilder builder;
+        builder.append('[', interleave(strings, [](auto& s) { return s; }, ", "_s), ']');
+
+        EXPECT_EQ(String("[a, b, c]"_s), builderContent(builder));
+    }
+
+    {
+        StringBuilder builder;
+        builder.append('[', interleave(strings, ", "_s), ']');
+
+        EXPECT_EQ(String("[a, b, c]"_s), builderContent(builder));
+    }
+}
+
+struct A { int value; };
+struct B { int value; };
+
+[[maybe_unused]] static void serializeOverloadBuilder(StringBuilder& builder, const A& a)
+{
+    builder.append(a.value);
+}
+
+[[maybe_unused]] static void serializeOverloadBuilder(StringBuilder& builder, const B& b)
+{
+    builder.append(b.value);
+}
+
+[[maybe_unused]] static int serializeOverloadReturn(const A& a)
+{
+    return a.value;
+}
+
+[[maybe_unused]] static int serializeOverloadReturn(const B& b)
+{
+    return b.value;
+}
+
+TEST(StringBuilderTest, InterleaveOverload)
+{
+    std::array as { A { 1 }, A { 2 }, A { 3 } };
+
+    {
+        StringBuilder builder;
+        builder.append('[', interleave(as, serializeOverloadBuilder, ", "_s), ']');
+
+        EXPECT_EQ(String("[1, 2, 3]"_s), builderContent(builder));
+    }
+}
+
+TEST(StringBuilderTest, InterleaveNoCopies)
+{
+    std::array values { MoveOnly { 1 }, MoveOnly { 2 }, MoveOnly { 3 } };
+
+    {
+        StringBuilder builder;
+        builder.append('[', interleave(values, [](auto& builder, auto& moveOnly) { builder.append(moveOnly.value()); }, ", "_s), ']');
+
+        EXPECT_EQ(String("[1, 2, 3]"_s), builderContent(builder));
+    }
+
+    {
+        StringBuilder builder;
+        builder.append('[', interleave(values, [](auto& moveOnly) { return moveOnly.value(); }, ", "_s), ']');
+
+        EXPECT_EQ(String("[1, 2, 3]"_s), builderContent(builder));
+    }
+
+    {
+        StringBuilder builder;
+        builder.append('[', interleave(values, ", "_s), ']');
+
+        EXPECT_EQ(String("[1, 2, 3]"_s), builderContent(builder));
     }
 }
 

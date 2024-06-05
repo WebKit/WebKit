@@ -734,8 +734,8 @@ public:
     {
     }
 
-    unsigned length() { return m_string.length(); }
-    bool is8Bit() { return m_string.is8Bit(); }
+    unsigned length() const { return m_string.length(); }
+    bool is8Bit() const { return m_string.is8Bit(); }
     template<typename CharacterType> void writeTo(CharacterType* destination) { m_string.getCharacters(destination); }
 
 private:
