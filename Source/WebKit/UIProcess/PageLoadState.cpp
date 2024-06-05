@@ -448,6 +448,11 @@ void PageLoadState::didFinishProgress(const Transaction::Token& token)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     m_uncommittedState.estimatedProgress = 1;
+
+    // We want PageLoadState::isLoading to return false after loading finishes,
+    // but it won't if there is still a pending API request. It should probably
+    // be cleared prior to this point, but that doesn't always happen.
+    clearPendingAPIRequest(token);
 }
 
 void PageLoadState::setNetworkRequestsInProgress(const Transaction::Token& token, bool networkRequestsInProgress)
