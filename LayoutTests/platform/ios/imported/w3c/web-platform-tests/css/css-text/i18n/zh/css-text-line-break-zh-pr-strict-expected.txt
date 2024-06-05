@@ -1,0 +1,41 @@
+
+FAIL 00B1  PLUS-MINUS SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 86.12484741210938 +/- 1 but got 55.79484558105469
+FAIL 20AC  EURO SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 91.98422241210938 +/- 1 but got 61.65422058105469
+FAIL 2116  NUMERO SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 96.68637084960938 +/- 1 but got 66.35636901855469
+FAIL FE69  SMALL DOLLAR SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 79.50375366210938 +/- 1 but got 49.17375183105469
+FAIL FF04  FULLWIDTH DOLLAR SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 99.98999786376953 +/- 1 but got 69.66000366210938
+FAIL FFE1  FULLWIDTH POUND SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 99.66000366210938 +/- 1 but got 69.33000183105469
+FAIL FFE5  FULLWIDTH YEN SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 99.98999786376953 +/- 1 but got 69.66000366210938
+FAIL FFE6  FULLWIDTH WON SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 95.61000061035156 +/- 1 but got 65.27999877929688
+00B1
+文文文文文文±字字
+文文文文文
+文±字字
+20AC
+文文文文文文€字字
+文文文文文
+文€字字
+2116
+文文文文文文№字字
+文文文文文
+文№字字
+FE69
+文文文文文文﹩字字
+文文文文文
+文﹩字字
+FF04
+文文文文文文＄字字
+文文文文文
+文＄字字
+FFE1
+文文文文文文￡字字
+文文文文文
+文￡字字
+FFE5
+文文文文文文￥字字
+文文文文文
+文￥字字
+FFE6
+文文文文文文￦字字
+文文文文文
+文￦字字
