@@ -100,15 +100,6 @@ using namespace WebCore;
 
 namespace WebCore {
 
-static inline OSType avVideoCapturePixelBufferFormat()
-{
-#if HAVE(DISPLAY_LAYER_BIPLANAR_SUPPORT)
-    return preferedPixelBufferFormat();
-#else
-    return kCVPixelFormatType_420YpCbCr8Planar;
-#endif
-}
-
 static dispatch_queue_t globaVideoCaptureSerialQueue()
 {
     static dispatch_queue_t globalQueue;
@@ -859,7 +850,7 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 
 #if PLATFORM(MAC)
         auto settingsDictionary = @{
-            (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(avVideoCapturePixelBufferFormat()),
+            (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(preferedPixelBufferFormat()),
             (__bridge NSString *)kCVPixelBufferWidthKey: @(m_currentPreset->size().width()),
             (__bridge NSString *)kCVPixelBufferHeightKey: @(m_currentPreset->size().height()),
             (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
@@ -1096,7 +1087,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     [session() addInput:videoIn.get()];
 
     m_videoOutput = adoptNS([PAL::allocAVCaptureVideoDataOutputInstance() init]);
-    auto settingsDictionary = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys: @(avVideoCapturePixelBufferFormat()), kCVPixelBufferPixelFormatTypeKey, nil]);
+    auto settingsDictionary = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys: @(preferedPixelBufferFormat()), kCVPixelBufferPixelFormatTypeKey, nil]);
 
     [m_videoOutput setVideoSettings:settingsDictionary.get()];
     [m_videoOutput setAlwaysDiscardsLateVideoFrames:YES];
