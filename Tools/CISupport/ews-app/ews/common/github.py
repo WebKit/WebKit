@@ -248,6 +248,10 @@ class GitHubEWS(GitHub):
 
         return (regular_comment, folded_comment)
 
+    @classmethod
+    def escape_github_markdown(cls, string):
+        return string.replace('|', '\\|')
+
     def github_status_for_queue(self, change, queue):
         name = queue
         is_tester_queue = Buildbot.is_tester_queue(queue)
@@ -337,6 +341,8 @@ class GitHubEWS(GitHub):
             icon = GitHubEWS.ICON_BUILD_ERROR
             hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
 
+        # Hover-over text comes from buildbot and can conceivable contain a |, escape it
+        hover_over_text = self.escape_github_markdown(hover_over_text)
         return u'| [{icon} {name}]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
 
     @classmethod
