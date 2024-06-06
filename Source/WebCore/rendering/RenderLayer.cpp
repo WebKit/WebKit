@@ -4032,7 +4032,8 @@ void RenderLayer::establishesTopLayerDidChange()
 {
     if (auto* parentLayer = renderer().layerParent()) {
         setIsNormalFlowOnly(shouldBeNormalFlowOnly());
-        parentLayer->addChild(*this);
+        auto* beforeChild = renderer().layerNextSibling(*parentLayer);
+        parentLayer->addChild(*this, beforeChild);
     }
 }
 
