@@ -1190,6 +1190,8 @@ localizedStrings["Observer Callback"] = "Observer Callback";
 localizedStrings["Observer Handlers:"] = "Observer Handlers:";
 localizedStrings["Observers:"] = "Observers:";
 localizedStrings["Off"] = "Off";
+/* Label indicating that an input of type switch is off. */
+localizedStrings["Off @ Switch State"] = "Off";
 /* Label for a preference that is turned off. */
 localizedStrings["Off @ User Preferences Overrides"] = "Off";
 /* Input label for the x-axis of the offset of a CSS box shadow */
@@ -1198,6 +1200,8 @@ localizedStrings["Offset X @ Box Shadow Editor"] = "Offset X";
 localizedStrings["Offset Y @ Box Shadow Editor"] = "Offset Y";
 /* Property value for `font-variant-numeric: oldstyle-nums`. */
 localizedStrings["Old-Style Numerals @ Font Details Sidebar Property Value"] = "Old-Style Numerals";
+/* Label indicating that an input of type switch is on. */
+localizedStrings["On @ Switch State"] = "On";
 /* Label for a preference that is turned on. */
 localizedStrings["On @ User Preferences Overrides"] = "On";
 localizedStrings["Once"] = "Once";

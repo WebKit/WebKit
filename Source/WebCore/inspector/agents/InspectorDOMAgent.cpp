@@ -2186,6 +2186,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
     Node* activeDescendantNode = nullptr;
     bool busy = false;
     auto checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::False;
+    auto switchState = Inspector::Protocol::DOM::AccessibilityProperties::SwitchState::Off;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>> childNodeIds;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>> controlledNodeIds;
     auto currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::False;
@@ -2211,6 +2212,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
     String role;
     bool selected = false;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>> selectedChildNodeIds;
+    bool isSwitch = false;
     bool supportsChecked = false;
     bool supportsExpanded = false;
     bool supportsLiveRegion = false;
@@ -2235,17 +2237,26 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
                 current = current->parentObject();
             }
 
+            isSwitch = axObject->isSwitch();
             supportsChecked = axObject->supportsChecked();
             if (supportsChecked) {
                 AccessibilityButtonState checkValue = axObject->checkboxOrRadioValue(); // Element using aria-checked.
-                if (checkValue == AccessibilityButtonState::On)
-                    checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::True;
-                else if (checkValue == AccessibilityButtonState::Mixed)
+                if (checkValue == AccessibilityButtonState::On) {
+                    if (isSwitch)
+                        switchState = Inspector::Protocol::DOM::AccessibilityProperties::SwitchState::On;
+                    else
+                        checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::True;
+                } else if (checkValue == AccessibilityButtonState::Mixed && !isSwitch)
                     checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::Mixed;
-                else if (axObject->isChecked()) // Native checkbox.
-                    checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::True;
+                else if (axObject->isChecked()) {
+                    // Native checkbox or switch.
+                    if (isSwitch)
+                        switchState = Inspector::Protocol::DOM::AccessibilityProperties::SwitchState::On;
+                    else
+                        checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::True;
+                }
             }
-            
+
             if (!axObject->children().isEmpty()) {
                 childNodeIds = JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>::create();
                 processAccessibilityChildren(*axObject, *childNodeIds);
@@ -2423,8 +2434,14 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
         }
         if (busy)
             value->setBusy(busy);
-        if (supportsChecked)
+
+        // Switches `supportsChecked` (the underlying implementation is mostly shared with checkboxes),
+        // but should report a switch state and not a checked state.
+        if (isSwitch)
+            value->setSwitchState(switchState);
+        else if (supportsChecked)
             value->setChecked(checked);
+
         if (childNodeIds)
             value->setChildNodeIds(childNodeIds.releaseNonNull());
         if (controlledNodeIds)
