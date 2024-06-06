@@ -28,11 +28,13 @@
 
 #include "HTMLFrameOwnerElement.h"
 #include "HistoryController.h"
+#include "LocalDOMWindow.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
 #include "RemoteFrame.h"
 #include "RenderElement.h"
 #include "RenderWidget.h"
+#include "ScrollingCoordinator.h"
 #include "WindowProxy.h"
 #include <wtf/NeverDestroyed.h>
 

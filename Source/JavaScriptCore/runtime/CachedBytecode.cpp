@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CachedBytecode.h"
 
-#include "CachedTypes.h"
+#include "CachedTypesInlines.h"
 #include "UnlinkedFunctionExecutable.h"
 
 namespace JSC {

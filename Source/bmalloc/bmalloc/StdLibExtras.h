@@ -26,7 +26,7 @@
 #pragma once
 
 #include "BCompiler.h"
-#include <memory>
+#include <cstring>
 #include <type_traits>
 
 namespace bmalloc {
