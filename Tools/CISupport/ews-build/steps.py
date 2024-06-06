@@ -5398,7 +5398,7 @@ class RunAPITests(shell.TestNewStyle, AddToLogMixin, ShellMixin):
     MSG_FOR_EXCESSIVE_LOGS_API_TEST = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS_API_TESTS}'
 
     def __init__(self, **kwargs):
-        super().__init__(logEnviron=False, timeout=3600, **kwargs)
+        super().__init__(logEnviron=False, timeout=2 * 60 * 60, **kwargs)
         self.failing_tests_filtered = []
         self.preexisting_failures_in_results_db = []
         self.steps_to_add = []
