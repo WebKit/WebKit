@@ -1,3 +1,3 @@
 
-FAIL history.pushState() fires the navigate event assert_false: expected false got true
+PASS history.pushState() fires the navigate event
 
