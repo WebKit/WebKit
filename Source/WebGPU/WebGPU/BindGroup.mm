@@ -1115,18 +1115,20 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 }
                 auto& externalTexture = WebGPU::fromAPI(wgpuExternalTexture);
                 auto textureData = createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
-                if (textureData.texture0) {
-                    stageResources[metalRenderStage(stage)][resourceUsage - 1].append(textureData.texture0);
+                id<MTLTexture> texture0 = textureData.texture0 ?: placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
+                if (texture0) {
+                    stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture0);
                     stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
                 }
-                if (textureData.texture1) {
-                    stageResources[metalRenderStage(stage)][resourceUsage - 1].append(textureData.texture1);
+                id<MTLTexture> texture1 = textureData.texture1 ?: placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
+                if (texture1) {
+                    stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture1);
                     stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
                 }
 
                 if (stage != ShaderStage::Undefined) {
-                    [argumentEncoder[stage] setTexture:textureData.texture0 atIndex:index++];
-                    [argumentEncoder[stage] setTexture:textureData.texture1 atIndex:index++];
+                    [argumentEncoder[stage] setTexture:texture0 atIndex:index++];
+                    [argumentEncoder[stage] setTexture:texture1 atIndex:index++];
 
                     auto* uvRemapAddress = static_cast<simd::float3x2*>([argumentEncoder[stage] constantDataAtIndex:index++]);
                     *uvRemapAddress = textureData.uvRemappingMatrix;
