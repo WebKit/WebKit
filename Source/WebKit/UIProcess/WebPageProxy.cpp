@@ -3396,7 +3396,8 @@ void WebPageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, const
 {
     protectedProcess()->recordUserGestureAuthorizationToken(webPageID(), event.authorizationToken());
     sendToProcessContainingFrame(frameID, Messages::WebPage::MouseEvent(frameID, event, WTFMove(sandboxExtensions)), [protectedThis = Ref { *this }, weakProcess = WeakPtr { m_process }] (std::optional<WebEventType> eventType, bool handled, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
-        if (!protectedThis->m_pageClient || protectedThis->m_process.ptr() != weakProcess)
+        Ref currentProcess = protectedThis->m_process;
+        if (!protectedThis->m_pageClient || currentProcess.ptr() != weakProcess || currentProcess->wasTerminated())
             return;
         if (!eventType) {
             protectedThis->mouseEventHandlingCompleted(eventType, handled);
@@ -3739,7 +3740,8 @@ void WebPageProxy::sendKeyEvent(const NativeWebKeyboardEvent& event)
     protectedProcess()->recordUserGestureAuthorizationToken(webPageID(), event.authorizationToken());
 
     auto handleKeyEventReply = [protectedThis = Ref { *this }, weakProcess = WeakPtr { m_process }] (std::optional<WebEventType> eventType, bool handled) {
-        if (!protectedThis->m_pageClient || protectedThis->m_process.ptr() != weakProcess)
+        Ref currentProcess = protectedThis->m_process;
+        if (!protectedThis->m_pageClient || currentProcess.ptr() != weakProcess || currentProcess->wasTerminated())
             return;
         if (!eventType) {
             protectedThis->keyEventHandlingCompleted(eventType, handled);
