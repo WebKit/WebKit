@@ -773,6 +773,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 // Defaults to YES; if set to NO, WebKit will draw the grey wash and highlights itself.
 @property (nonatomic, setter=_setUsePlatformFindUI:) BOOL _usePlatformFindUI WK_API_AVAILABLE(macos(10.15));
 
+@property (nonatomic, readonly) CGFloat minimumMagnification WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 - (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress;
 - (BOOL)_canChangeFrameLayout:(_WKFrameHandle *)frameHandle WK_API_AVAILABLE(macos(10.13.4));
 - (BOOL)_tryToSwipeWithEvent:(NSEvent *)event ignoringPinnedState:(BOOL)ignoringPinnedState WK_API_AVAILABLE(macos(10.13.4));

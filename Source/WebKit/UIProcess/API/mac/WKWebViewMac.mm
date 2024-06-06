@@ -1642,6 +1642,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _impl->gestureEventWasNotHandledByWebCoreFromViewOnly(event);
 }
 
+- (double)minimumMagnification
+{
+    return _page->minPageZoomFactor();
+}
+
 - (void)_disableFrameSizeUpdates
 {
     _impl->disableFrameSizeUpdates();
