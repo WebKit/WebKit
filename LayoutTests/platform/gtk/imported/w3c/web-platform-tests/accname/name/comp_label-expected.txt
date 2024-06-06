@@ -114,9 +114,6 @@ x	x
 x	x
 
 x
-Undefined aria-label tests
-
-
 Name computation precedence tests
 
 x   x    x  x label    label  x
@@ -245,19 +242,10 @@ PASS label valid on td element
 PASS label valid on tfoot element
 PASS label valid on textarea element
 PASS label valid on list (unordered) element
-FAIL aria-label undefined on img w/ alt assert_equals: <img alt="alt" aria-label="undefined" data-expectedlabel="alt" data-testname="aria-label undefined on img w/ alt" class="ex"> expected "alt" but got "undefined"
-FAIL aria-label undefined on img w/o alt assert_equals: <img aria-label="undefined" data-expectedlabel="" data-testname="aria-label undefined on img w/o alt" class="ex"> expected "" but got "undefined"
-FAIL aria-label undefined on img w/ empty alt assert_equals: <img alt="" aria-label="undefined" data-expectedlabel="" data-testname="aria-label undefined on img w/ empty alt" class="ex"> expected "" but got "undefined"
-FAIL aria-label undefined on img w/o alt but w/ title assert_equals: <img aria-label="undefined" data-expectedlabel="title" data-testname="aria-label undefined on img w/o alt but w/ title" class="ex"> expected "title" but got "undefined"
-FAIL aria-label undefined on img w/ empty alt but w/ title assert_equals: <img alt="" aria-label="undefined" data-expectedlabel="title" data-testname="aria-label undefined on img w/ empty alt but w/ title" class="ex"> expected "title" but got "undefined"
 PASS button's hidden referenced name (display:none) supercedes aria-label
 PASS button's hidden referenced name (visibility:hidden) supercedes aria-label
-FAIL button's hidden referenced name (visibility:hidden) with hidden aria-labelledby traversal falls back to aria-label assert_equals: <button aria-labelledby="span4" aria-label="foo" data-expectedlabel="foo" data-testname="button's hidden referenced name (visibility:hidden) with hidden aria-labelledby traversal falls back to aria-label" class="ex">
-  <span id="span4">
-    <span id="span5" style="visibility:hidden;">label</span>
-  </span>
-  x
-</button> expected "foo" but got "label"
+PASS button's hidden referenced name (visibility:hidden) with hidden aria-labelledby traversal falls back to aria-label
+PASS Hidden button's label should be the empty string
 PASS link's aria-labelledby name supercedes aria-label
 PASS img's aria-label supercedes alt attribute
 PASS svg's aria-label supercedes title tag
