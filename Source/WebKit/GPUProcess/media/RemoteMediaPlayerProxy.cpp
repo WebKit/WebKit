@@ -136,11 +136,7 @@ Ref<MediaPromise> RemoteMediaPlayerProxy::commitAllTransactions()
     if (!m_manager || !m_manager->gpuConnectionToWebProcess())
         return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
 
-    return m_webProcessConnection->sendWithPromisedReply(Messages::MediaPlayerPrivateRemote::CommitAllTransactions(), m_id)->whenSettled(RunLoop::current(), [](auto&& result) {
-        if (!result)
-            return MediaPromise::createAndReject(PlatformMediaError::IPCError);
-        return MediaPromise::createAndResolve();
-    });
+    return m_webProcessConnection->sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaPlayerPrivateRemote::CommitAllTransactions { }, m_id);
 }
 
 void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& configuration)

@@ -370,15 +370,10 @@ public:
     }
 
     // Thread-safe.
-    template<typename PC = NoOpPromiseConverter, typename T, typename RawValue>
-    Ref<typename T::Promise> sendWithPromisedReply(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<SendOption> sendOptions = { })
+    template<typename PC = NoOpPromiseConverter, typename T, typename Promise = typename ConvertedPromise<PC, typename T::Promise>::Type, typename RawValue>
+    Ref<Promise> sendWithPromisedReply(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<SendOption> sendOptions = { })
     {
-        return sendWithPromisedReply<PC, T>(WTFMove(message), destinationID.toUInt64(), sendOptions);
-    }
-    template<typename T, typename RawValue>
-    Ref<typename T::Promise> sendWithPromisedReplyOnDispatcher(T&& message, RefCountedSerialFunctionDispatcher& dispatcher, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<SendOption> sendOptions = { })
-    {
-        return sendWithPromisedReplyOnDispatcher<T>(WTFMove(message), dispatcher, destinationID.toUInt64(), sendOptions);
+        return sendWithPromisedReply<PC, T, Promise>(WTFMove(message), destinationID.toUInt64(), sendOptions);
     }
 
     // Thread-safe.

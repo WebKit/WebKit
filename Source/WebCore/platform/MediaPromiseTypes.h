@@ -34,4 +34,8 @@ namespace WebCore {
 using MediaPromise = NativePromise<void, PlatformMediaError>;
 using MediaTimePromise = NativePromise<MediaTime, PlatformMediaError>;
 
+struct MediaPromiseConverter {
+    static auto convertError(auto&&) { return makeUnexpected(WebCore::PlatformMediaError::IPCError); }
+};
+
 } // namespace WebCore
