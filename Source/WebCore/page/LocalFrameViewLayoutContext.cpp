@@ -348,7 +348,7 @@ void LocalFrameViewLayoutContext::setNeedsLayoutAfterViewConfigurationChange()
     }
 
     if (auto* renderView = this->renderView()) {
-        ASSERT(document()->inHitTesting());
+        ASSERT(!document()->inHitTesting());
         renderView->setNeedsLayout();
         scheduleLayout();
     }
