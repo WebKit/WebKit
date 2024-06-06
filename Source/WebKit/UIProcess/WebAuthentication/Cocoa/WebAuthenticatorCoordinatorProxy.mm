@@ -265,8 +265,10 @@ RetainPtr<ASAuthorizationController> WebAuthenticatorCoordinatorProxy::construct
 RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(const PublicKeyCredentialCreationOptions &options, const WebCore::SecurityOriginData& callerOrigin)
 {
     RetainPtr<NSMutableArray<ASAuthorizationRequest *>> requests = adoptNS([[NSMutableArray alloc] init]);
-    bool includeSecurityKeyRequest = true;
     bool includePlatformRequest = true;
+
+#if HAVE(SECURITY_KEY_API)
+    bool includeSecurityKeyRequest = true;
     if (options.authenticatorSelection) {
         if (auto attachment = options.authenticatorSelection->authenticatorAttachment) {
             switch (*attachment) {
@@ -281,6 +283,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(con
             }
         }
     }
+#endif // HAVE(SECURITY_KEY_API)
 
     RetainPtr<NSMutableArray<ASAuthorizationPlatformPublicKeyCredentialDescriptor *>> platformExcludedCredentials = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<NSMutableArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor *>> crossPlatformExcludedCredentials = adoptNS([[NSMutableArray alloc] init]);
