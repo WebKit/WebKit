@@ -570,29 +570,24 @@ bool HTMLCanvasElement::shouldNotifyRendererOnDidDraw() const
 void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     clearCopiedImage();
-    auto adjustedRect = rect;
     if (CheckedPtr renderer = renderBox()) {
         if (shouldNotifyRendererOnDidDraw())
             renderer->contentChanged(CanvasPixelsChanged);
-        else if (adjustedRect) {
+        else if (rect) {
             FloatRect destRect;
             if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderer))
                 destRect = renderReplaced->replacedContentRect();
             else
                 destRect = renderer->contentBoxRect();
 
-            // Inflate dirty rect to cover antialiasing on image buffers.
-            if (drawingContext() && drawingContext()->shouldAntialias())
-                adjustedRect->inflate(1);
-
-            FloatRect r = mapRect(*adjustedRect, FloatRect { { }, size() }, destRect);
+            FloatRect r = mapRect(*rect, FloatRect { { }, size() }, destRect);
             r.intersect(destRect);
 
             if (!r.isEmpty())
                 renderer->repaintRectangle(enclosingIntRect(r));
         }
     }
-    CanvasBase::didDraw(adjustedRect, shouldApplyPostProcessingToDirtyRect);
+    CanvasBase::didDraw(rect, shouldApplyPostProcessingToDirtyRect);
 }
 
 void HTMLCanvasElement::reset()
