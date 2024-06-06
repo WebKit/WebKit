@@ -82,23 +82,13 @@ class DetachedOffscreenCanvas {
     friend class OffscreenCanvas;
 
 public:
-    DetachedOffscreenCanvas(std::unique_ptr<SerializedImageBuffer>, const IntSize&, bool originClean, RefPtr<OffscreenCanvasPlaceholderData>);
+    DetachedOffscreenCanvas(const IntSize&, bool originClean, RefPtr<OffscreenCanvasPlaceholderData>);
     WEBCORE_EXPORT ~DetachedOffscreenCanvas();
-
-    RefPtr<ImageBuffer> takeImageBuffer(ScriptExecutionContext&);
     const IntSize& size() const { return m_size; }
     bool originClean() const { return m_originClean; }
-    size_t memoryCost() const
-    {
-        auto* buffer = m_buffer.get();
-        if (buffer)
-            return buffer->memoryCost();
-        return 0;
-    }
     RefPtr<OffscreenCanvasPlaceholderData> takePlaceholderData();
 
 private:
-    std::unique_ptr<SerializedImageBuffer> m_buffer;
     RefPtr<OffscreenCanvasPlaceholderData> m_placeholderData;
     IntSize m_size;
     bool m_originClean;
@@ -181,7 +171,6 @@ private:
     void setSize(const IntSize&) final;
 
     void createImageBuffer() const final;
-    std::unique_ptr<SerializedImageBuffer> takeImageBuffer() const;
 
     void reset();
     void scheduleCommitToPlaceholderCanvas();

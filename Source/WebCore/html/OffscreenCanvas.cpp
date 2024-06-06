@@ -93,22 +93,14 @@ private:
     RefPtr<ImageBufferPipe::Source> m_pipeSource;
 };
 
-DetachedOffscreenCanvas::DetachedOffscreenCanvas(std::unique_ptr<SerializedImageBuffer> buffer, const IntSize& size, bool originClean, RefPtr<OffscreenCanvasPlaceholderData> placeholderData)
-    : m_buffer(WTFMove(buffer))
-    , m_placeholderData(WTFMove(placeholderData))
+DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, RefPtr<OffscreenCanvasPlaceholderData> placeholderData)
+    : m_placeholderData(WTFMove(placeholderData))
     , m_size(size)
     , m_originClean(originClean)
 {
 }
 
 DetachedOffscreenCanvas::~DetachedOffscreenCanvas() = default;
-
-RefPtr<ImageBuffer> DetachedOffscreenCanvas::takeImageBuffer(ScriptExecutionContext& context)
-{
-    if (!m_buffer)
-        return nullptr;
-    return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(m_buffer), context.graphicsClient());
-}
 
 RefPtr<OffscreenCanvasPlaceholderData> DetachedOffscreenCanvas::takePlaceholderData()
 {
@@ -138,7 +130,6 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, std::unique_ptr<DetachedOffscreenCanvas>&& detachedCanvas)
 {
     Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size(), detachedCanvas->takePlaceholderData()));
-    clone->setImageBuffer(detachedCanvas->takeImageBuffer(scriptExecutionContext));
     if (!detachedCanvas->originClean())
         clone->setOriginTainted();
     clone->suspendIfNeeded();
@@ -473,7 +464,7 @@ std::unique_ptr<DetachedOffscreenCanvas> OffscreenCanvas::detach()
 
     m_detached = true;
 
-    auto detached = makeUnique<DetachedOffscreenCanvas>(takeImageBuffer(), size(), originClean(), WTFMove(m_placeholderData));
+    auto detached = makeUnique<DetachedOffscreenCanvas>(size(), originClean(), WTFMove(m_placeholderData));
     setSize(IntSize(0, 0));
     return detached;
 }
@@ -533,20 +524,6 @@ void OffscreenCanvas::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
     setImageBuffer(WTFMove(buffer));
 
     CanvasBase::didDraw(FloatRect(FloatPoint(), size()));
-}
-
-std::unique_ptr<SerializedImageBuffer> OffscreenCanvas::takeImageBuffer() const
-{
-    ASSERT(m_detached);
-
-    if (size().isEmpty())
-        return nullptr;
-
-    clearCopiedImage();
-    RefPtr<ImageBuffer> buffer = setImageBuffer(nullptr);
-    if (!buffer)
-        return nullptr;
-    return ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(buffer));
 }
 
 void OffscreenCanvas::reset()

@@ -5873,12 +5873,6 @@ size_t SerializedScriptValue::computeMemoryCost() const
             cost += detachedImageBitmap->memoryCost();
     }
 
-#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    for (auto& canvas : m_internals.detachedOffscreenCanvases) {
-        if (canvas)
-            cost += canvas->memoryCost();
-    }
-#endif
 #if ENABLE(WEB_RTC)
     for (auto& channel : m_internals.detachedRTCDataChannels) {
         if (channel)
