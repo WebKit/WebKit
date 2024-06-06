@@ -29,6 +29,7 @@
 #include "DefaultAudioDestinationNode.h"
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
+#include "MediaUniqueIdentifier.h"
 #include "PlatformMediaSession.h"
 #include <wtf/UniqueRef.h>
 
@@ -124,8 +125,8 @@ private:
     PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::MediaType::WebAudio; }
     void mayResumePlayback(bool shouldResume) final;
     void suspendPlayback() final;
-    bool canReceiveRemoteControlCommands() const final { return false; }
-    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final { }
+    bool canReceiveRemoteControlCommands() const final;
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final;
     bool supportsSeeking() const final { return false; }
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final;
     bool canProduceAudio() const final { return true; }
@@ -133,6 +134,9 @@ private:
     bool isPlaying() const final;
     bool isAudible() const final;
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
+    bool isNowPlayingEligible() const final;
+    std::optional<NowPlayingInfo> nowPlayingInfo() const final;
+    WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) final;
 
     // MediaCanStartListener.
     void mediaCanStart(Document&) final;
@@ -145,6 +149,7 @@ private:
 
     UniqueRef<DefaultAudioDestinationNode> m_destinationNode;
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
+    MediaUniqueIdentifier m_currentIdentifier;
 
     BehaviorRestrictions m_restrictions { NoRestrictions };
 

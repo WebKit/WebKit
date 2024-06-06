@@ -73,6 +73,7 @@
 #include "PannerNode.h"
 #include "PeriodicWave.h"
 #include "PeriodicWaveOptions.h"
+#include "PlatformMediaSessionManager.h"
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
 #include "StereoPannerNode.h"
@@ -230,6 +231,7 @@ void BaseAudioContext::setState(State state)
     if (m_state != state) {
         m_state = state;
         queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+        PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
     }
 
     size_t stateIndex = static_cast<size_t>(state);

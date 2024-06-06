@@ -10,7 +10,8 @@
     <body>
         <script>
 
-promise_test(async (test) => {
+async function doTest(test, expectToStopInBackground)
+{
     if (!window.internals)
         return Promise.reject("Test requires internals API");
 
@@ -80,7 +81,7 @@ promise_test(async (test) => {
             break;
     }
 
-    assert_true(onProcessCount == oldOnProcessCount, "audio playback suspended in background");
+    assert_equals(onProcessCount == oldOnProcessCount, expectToStopInBackground, "audio playback suspended in background");
 
     // Context state changes are asynchronous, so delay the test to until the context has restarted + 100 additional milli-seconds.
     context.onstatechange = () => {
@@ -91,8 +92,30 @@ promise_test(async (test) => {
 
     if (window.internals)
         internals.applicationWillEnterForeground();
+}
 
+promise_test(async (test) => {
+    const expectToStopInBackground = true;
+    return doTest(test, expectToStopInBackground);
 }, "Ensure WebAudio stops playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set");
+
+promise_test(async (test) => {
+    navigator.audioSession.type = "playback";
+    const expectToStopInBackground = false;
+    return doTest(test, expectToStopInBackground);
+}, "Ensure WebAudio does not stop playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set and audioSession type is playback");
+
+promise_test(async (test) => {
+    navigator.audioSession.type = "play-and-record";
+    const expectToStopInBackground = false;
+    return doTest(test, expectToStopInBackground);
+}, "Ensure WebAudio does not stop playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set and audioSession type is play-and-record");
+
+promise_test(async (test) => {
+    navigator.audioSession.type = "";
+    const expectToStopInBackground = false;
+    return doTest(test, expectToStopInBackground);
+}, "Ensure WebAudio stops playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set and audioSession type is back to default");
 
         </script>
     </body>

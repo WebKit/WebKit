@@ -1,3 +1,6 @@
 
 PASS Ensure WebAudio stops playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set
+PASS Ensure WebAudio does not stop playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set and audioSession type is playback
+PASS Ensure WebAudio does not stop playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set and audioSession type is play-and-record
+PASS Ensure WebAudio stops playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set and audioSession type is back to default
 

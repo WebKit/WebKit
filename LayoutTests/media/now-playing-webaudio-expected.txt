@@ -1,0 +1,4 @@
+
+PASS AudioContext as the now playing info source
+PASS HTMLMediaElement will become the now playing info source over playing AudioContext
+

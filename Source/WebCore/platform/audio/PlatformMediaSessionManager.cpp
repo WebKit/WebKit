@@ -839,9 +839,10 @@ WeakPtr<PlatformMediaSession> PlatformMediaSessionManager::bestEligibleSessionFo
     Vector<WeakPtr<PlatformMediaSession>> eligibleAudioVideoSessions;
     Vector<WeakPtr<PlatformMediaSession>> eligibleWebAudioSessions;
     forEachMatchingSession(filterFunction, [&](auto& session) {
-        if (eligibleAudioVideoSessions.isEmpty() && session.presentationType() == PlatformMediaSession::MediaType::WebAudio)
-            eligibleWebAudioSessions.append(session);
-        else
+        if (session.presentationType() == PlatformMediaSession::MediaType::WebAudio) {
+            if (eligibleAudioVideoSessions.isEmpty())
+                eligibleWebAudioSessions.append(session);
+        } else
             eligibleAudioVideoSessions.append(session);
     });
 
