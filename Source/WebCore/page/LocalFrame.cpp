@@ -1293,19 +1293,35 @@ bool LocalFrame::requestSkipUserActivationCheckForStorageAccess(const Registrabl
 
 void LocalFrame::didAccessWindowProxyPropertyViaOpener(WindowProxyProperty property)
 {
+    // FIXME: until we support restricted openers, report all property accesses as "other" to reduce
+    // the number of events logged.
+    property = WindowProxyProperty::Other;
+
     if (m_accessedWindowProxyPropertiesViaOpener.contains(property))
         return;
+
+    auto origin = SecurityOriginData::fromFrame(this);
+    if (origin.isNull() || origin.isOpaque())
+        return;
+
+    if (!opener())
+        return;
+
+    auto openerMainFrame = dynamicDowncast<LocalFrame>(opener()->mainFrame());
+    if (!openerMainFrame)
+        return;
+
+    auto openerMainFrameOrigin = SecurityOriginData::fromFrame(openerMainFrame);
+    if (openerMainFrameOrigin.isNull() || openerMainFrameOrigin.isOpaque())
+        return;
+
+    auto site = RegistrableDomain(origin);
+    auto openerMainFrameSite = RegistrableDomain(openerMainFrameOrigin);
+    if (site == openerMainFrameSite)
+        return;
+
     m_accessedWindowProxyPropertiesViaOpener.add(property);
-
-    RefPtr parentWindow { opener() ? opener()->window() : nullptr };
-    if (!parentWindow)
-        return;
-
-    auto parentOrigin = SecurityOriginData::fromURL(parentWindow->location().url());
-    if (parentOrigin.isNull() || parentOrigin.isOpaque())
-        return;
-
-    checkedLoader()->client().didAccessWindowProxyPropertyViaOpener(WTFMove(parentOrigin), property);
+    checkedLoader()->client().didAccessWindowProxyPropertyViaOpener(WTFMove(openerMainFrameOrigin), property);
 }
 
 #endif

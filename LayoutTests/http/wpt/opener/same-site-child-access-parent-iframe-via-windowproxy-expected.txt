@@ -1,0 +1,4 @@
+
+
+PASS Test same-site child window accessing parent window's iframe via WindowProxy doesn't log.
+
