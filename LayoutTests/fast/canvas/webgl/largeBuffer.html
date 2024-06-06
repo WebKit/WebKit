@@ -4,6 +4,9 @@
 <body>
 <canvas></canvas>
 <script>
+if (window.internals)
+    internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 const canvas = document.querySelector("canvas");
 const gl = canvas.getContext("webgl");
 

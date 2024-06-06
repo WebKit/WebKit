@@ -401,6 +401,7 @@ bool GraphicsContextGLCocoa::platformInitialize()
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
     if (makeContextCurrent()) {
+        GL_Disable(DEBUG_OUTPUT);
         if (m_texture)
             GL_DeleteTextures(1, &m_texture);
         if (m_multisampleColorBuffer)

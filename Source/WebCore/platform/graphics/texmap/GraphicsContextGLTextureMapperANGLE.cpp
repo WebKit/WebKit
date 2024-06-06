@@ -65,6 +65,8 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
     if (!makeContextCurrent())
         return;
 
+    GL_Disable(DEBUG_OUTPUT);
+
     if (m_texture)
         GL_DeleteTextures(1, &m_texture);
 

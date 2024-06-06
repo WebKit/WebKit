@@ -166,6 +166,12 @@ void RemoteGraphicsContextGL::forceContextLost()
     send(Messages::RemoteGraphicsContextGLProxy::WasLost());
 }
 
+void RemoteGraphicsContextGL::addDebugMessage(GCGLenum type, GCGLenum id, GCGLenum severity, const String& message)
+{
+    assertIsCurrent(workQueue());
+    send(Messages::RemoteGraphicsContextGLProxy::addDebugMessage(type, id, severity, message));
+}
+
 void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());

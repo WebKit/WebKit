@@ -458,7 +458,8 @@ public:
     void vertexAttribDivisor(GCGLuint index, GCGLuint divisor);
 
     // GraphicsContextGL::Client
-    void forceContextLost() override;
+    void forceContextLost() final;
+    void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const String&) final;
 
     void recycleContext();
 

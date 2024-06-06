@@ -388,6 +388,26 @@ static constexpr GCGLenum errorCodeToGLenum(GCGLErrorCode error)
     return GraphicsContextGL::INVALID_OPERATION;
 }
 
+static constexpr GCGLErrorCode glEnumToErrorCode(GCGLenum error)
+{
+    switch (error) {
+    case GraphicsContextGL::INVALID_ENUM:
+        return GCGLErrorCode::InvalidEnum;
+    case GraphicsContextGL::INVALID_VALUE:
+        return GCGLErrorCode::InvalidValue;
+    case GraphicsContextGL::INVALID_OPERATION:
+        return GCGLErrorCode::InvalidOperation;
+    case GraphicsContextGL::OUT_OF_MEMORY:
+        return GCGLErrorCode::OutOfMemory;
+    case GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION:
+        return GCGLErrorCode::InvalidFramebufferOperation;
+    case GraphicsContextGL::CONTEXT_LOST_WEBGL:
+        return GCGLErrorCode::ContextLost;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return GCGLErrorCode::InvalidOperation;
+}
+
 static String ensureNotNull(const String& text)
 {
     if (text.isNull())
@@ -5533,6 +5553,72 @@ void WebGLRenderingContextBase::activityStateDidChange(OptionSet<ActivityState> 
 void WebGLRenderingContextBase::forceContextLost()
 {
     forceLostContext(WebGLRenderingContextBase::RealLostContext);
+}
+
+static ASCIILiteral debugMessageTypeToString(GCGLenum type)
+{
+    switch (type) {
+    case GraphicsContextGL::DEBUG_TYPE_ERROR:
+        return "error"_s;
+    case GraphicsContextGL::DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+        return "deprecated behavior"_s;
+    case GraphicsContextGL::DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+        return "undefined behavior"_s;
+    case GraphicsContextGL::DEBUG_TYPE_PORTABILITY:
+        return "portability"_s;
+    case GraphicsContextGL::DEBUG_TYPE_PERFORMANCE:
+        return "performance"_s;
+    case GraphicsContextGL::DEBUG_TYPE_MARKER:
+        return "marker"_s;
+    case GraphicsContextGL::DEBUG_TYPE_OTHER:
+        return "other"_s;
+    default:
+        ASSERT_NOT_REACHED();
+        return "unknown"_s;
+    }
+}
+
+static ASCIILiteral debugMessageSeverityToString(GCGLenum severity)
+{
+    switch (severity) {
+    case GraphicsContextGL::DEBUG_SEVERITY_HIGH:
+        return "high"_s;
+    case GraphicsContextGL::DEBUG_SEVERITY_MEDIUM:
+        return "medium"_s;
+    case GraphicsContextGL::DEBUG_SEVERITY_LOW:
+        return "low"_s;
+    case GraphicsContextGL::DEBUG_SEVERITY_NOTIFICATION:
+        return "notification"_s;
+    default:
+        ASSERT_NOT_REACHED();
+        return "unknown"_s;
+    }
+}
+
+void WebGLRenderingContextBase::addDebugMessage(GCGLenum type, GCGLenum id, GCGLenum severity, const String& message)
+{
+    if (!shouldPrintToConsole())
+        return;
+
+    auto* scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return;
+
+    auto level = MessageLevel::Info;
+    String formattedMessage;
+
+    if (type == GraphicsContextGL::DEBUG_TYPE_ERROR) {
+        level = MessageLevel::Error;
+        formattedMessage = makeString("WebGL: "_s, errorCodeToString(glEnumToErrorCode(id)), ": "_s, message);
+    } else
+        formattedMessage = makeString("WebGL debug message: type:"_s, debugMessageTypeToString(type), ", id:"_s, id, " severity: "_s, debugMessageSeverityToString(severity), ": "_s, message);
+
+    auto consoleMessage = makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, WTFMove(formattedMessage));
+    scriptExecutionContext->addConsoleMessage(WTFMove(consoleMessage));
+
+    --m_numGLErrorsToConsoleAllowed;
+    if (!m_numGLErrorsToConsoleAllowed)
+        scriptExecutionContext->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Warning, "WebGL: too many errors, no more errors will be reported to the console for this context."_s));
 }
 
 void WebGLRenderingContextBase::recycleContext()

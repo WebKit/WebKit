@@ -9,6 +9,10 @@ if (window.testRunner) {
   testRunner.waitUntilDone();
   window.testRunner.dumpAsText();
 }
+
+if (window.internals)
+    internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 let canvas = document.createElement('canvas');
 let ctx = canvas.getContext('webgl');
 let multiDraw = ctx.getExtension('WEBGL_multi_draw');

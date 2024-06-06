@@ -44,6 +44,7 @@ namespace {
 class MockGraphicsContextGLClient final : public WebCore::GraphicsContextGL::Client {
 public:
     void forceContextLost() final { ++m_contextLostCalls; }
+    void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const String&) final { }
 
     int contextLostCalls() { return m_contextLostCalls; }
 private:

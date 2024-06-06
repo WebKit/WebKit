@@ -162,6 +162,21 @@ bool GraphicsContextGLANGLE::initialize()
         ASSERT(m_displayObj);
         usedDisplays().add(m_displayObj);
     }
+
+    if (supportsExtension("GL_KHR_debug"_s)) {
+        ensureExtensionEnabled("GL_KHR_debug"_s);
+        GL_Enable(DEBUG_OUTPUT);
+        GL_Enable(DEBUG_OUTPUT_SYNCHRONOUS);
+        GL_DebugMessageControlKHR(DONT_CARE, DONT_CARE, DONT_CARE, 0, nullptr, 0);
+        GL_DebugMessageControlKHR(DEBUG_SOURCE_API, DONT_CARE, DONT_CARE, 0, nullptr, 1);
+        auto debugMessageCallback = [](GCGLenum, GCGLenum type, GCGLenum id, GCGLenum severity, GCGLsizei length, const GCGLchar* message, const void* context) {
+            auto* gl = reinterpret_cast<const GraphicsContextGLANGLE*>(context);
+            if (gl->m_client)
+                gl->m_client->addDebugMessage(type, id, severity, String { std::span { message, static_cast<size_t>(length) } });
+        };
+        GL_DebugMessageCallbackKHR(debugMessageCallback, this);
+    }
+
     ASSERT(GL_GetError() == NO_ERROR);
 
     return true;

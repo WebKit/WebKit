@@ -1,13 +1,3 @@
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: texImage2D: invalid texture type
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: texSubImage2D: invalid texture type
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: compressedTexImage2D: invalid format
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: compressedTexSubImage2D: invalid format
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage3D: no texture bound to target
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage3D: no texture bound to target
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texSubImage3D: no texture bound to target
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: compressedTexImage3D: no texture bound to target
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: compressedTexSubImage3D: no texture bound to target
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texSubImage2D: ArrayBufferView not big enough for request
 
 
 PASS WebGL AllowShared

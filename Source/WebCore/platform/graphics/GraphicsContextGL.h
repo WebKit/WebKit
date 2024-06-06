@@ -950,6 +950,22 @@ public:
     static constexpr GCGLenum VARIABLE_RASTERIZATION_RATE_ANGLE = 0x96BC;
     static constexpr GCGLenum METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE = 0x96BD;
 
+    // GL_KHR_debug
+    static constexpr GCGLenum DEBUG_OUTPUT = 0x92E0;
+    static constexpr GCGLenum DEBUG_OUTPUT_SYNCHRONOUS = 0x8242;
+    static constexpr GCGLenum DEBUG_TYPE_ERROR = 0x824C;
+    static constexpr GCGLenum DEBUG_TYPE_DEPRECATED_BEHAVIOR = 0x824D;
+    static constexpr GCGLenum DEBUG_TYPE_UNDEFINED_BEHAVIOR = 0x824E;
+    static constexpr GCGLenum DEBUG_TYPE_PORTABILITY = 0x824F;
+    static constexpr GCGLenum DEBUG_TYPE_PERFORMANCE = 0x8250;
+    static constexpr GCGLenum DEBUG_TYPE_OTHER = 0x8251;
+    static constexpr GCGLenum DEBUG_TYPE_MARKER = 0x8268;
+    static constexpr GCGLenum DEBUG_SEVERITY_HIGH = 0x9146;
+    static constexpr GCGLenum DEBUG_SEVERITY_MEDIUM = 0x9147;
+    static constexpr GCGLenum DEBUG_SEVERITY_LOW = 0x9148;
+    static constexpr GCGLenum DEBUG_SEVERITY_NOTIFICATION = 0x826B;
+    static constexpr GCGLenum DEBUG_SOURCE_API = 0x8246;
+
     // Attempt to enumerate all possible native image formats to
     // reduce the amount of temporary allocations during texture
     // uploading. This enum must be public because it is accessed
@@ -1193,6 +1209,7 @@ public:
         WEBCORE_EXPORT Client();
         WEBCORE_EXPORT virtual ~Client();
         virtual void forceContextLost() = 0;
+        virtual void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const String&) = 0;
     };
 
     WEBCORE_EXPORT GraphicsContextGL(GraphicsContextGLAttributes);

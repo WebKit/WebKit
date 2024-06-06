@@ -106,6 +106,7 @@ protected:
 
     // GraphicsContextGL::Client overrides.
     void forceContextLost() final;
+    void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const String&) final;
 
     // Messages to be received.
     void ensureExtensionEnabled(String&&);
