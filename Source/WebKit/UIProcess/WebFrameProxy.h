@@ -192,6 +192,7 @@ public:
     bool hasPendingBackForwardItem() { return m_hasPendingBackForwardItem; }
 
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
+    void setRemoteFrameSize(WebCore::IntSize size) { m_remoteFrameSize = size; }
 
 private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier);
@@ -225,6 +226,7 @@ private:
     CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)> m_navigateCallback;
     const WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
     bool m_hasPendingBackForwardItem { false };
+    std::optional<WebCore::IntSize> m_remoteFrameSize;
 };
 
 } // namespace WebKit

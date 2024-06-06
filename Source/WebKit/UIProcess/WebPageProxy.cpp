@@ -5972,6 +5972,9 @@ void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
 
 void WebPageProxy::updateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize size)
 {
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+        frame->setRemoteFrameSize(size);
+
     sendToProcessContainingFrame(frameID, Messages::WebPage::UpdateFrameSize(frameID, size));
 }
 
