@@ -6532,6 +6532,18 @@ TextAutosizingEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
 
+TextAutosizingEnabledAtLargeInitialScale:
+  type: bool
+  status: embedder
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  humanReadableName: "Enable Text Autosizing at Large Initial Scale"
+  humanReadableDescription: "Enable Text Autosizing at Large Initial Scale"
+  condition: ENABLE(TEXT_AUTOSIZING)
+  defaultValue:
+    WebCore:
+      "ENABLE(TEXT_AUTOSIZING_BASED_ON_INITIAL_SCALE)": false
+      default: true
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 TextAutosizingUsesIdempotentMode:
   type: bool

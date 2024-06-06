@@ -1822,6 +1822,7 @@ private:
 #if ENABLE(TEXT_AUTOSIZING)
     void textAutoSizingAdjustmentTimerFired();
     void resetIdempotentTextAutosizingIfNeeded(double previousInitialScale);
+    void updateTextAutosizingEnablementFromInitialScale(double);
 #endif
     void resetTextAutosizing();
 

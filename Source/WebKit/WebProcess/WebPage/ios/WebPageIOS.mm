@@ -4184,6 +4184,19 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
+
+void WebPage::updateTextAutosizingEnablementFromInitialScale(double initialScale)
+{
+    if (m_page->settings().textAutosizingEnabledAtLargeInitialScale())
+        return;
+
+    bool shouldEnable = initialScale <= 1;
+    if (shouldEnable == m_page->settings().textAutosizingEnabled())
+        return;
+
+    m_page->settings().setTextAutosizingEnabled(shouldEnable);
+}
+
 void WebPage::resetIdempotentTextAutosizingIfNeeded(double previousInitialScale)
 {
     if (!m_page->settings().textAutosizingEnabled() || !m_page->settings().textAutosizingUsesIdempotentMode())
@@ -4333,6 +4346,7 @@ void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale
     double previousInitialScaleIgnoringContentSize = m_page->initialScaleIgnoringContentSize();
     m_page->setInitialScaleIgnoringContentSize(initialScaleIgnoringContentSize);
     resetIdempotentTextAutosizingIfNeeded(previousInitialScaleIgnoringContentSize);
+    updateTextAutosizingEnablementFromInitialScale(initialScale);
 #endif
     if (setFixedLayoutSize(m_viewportConfiguration.layoutSize()))
         resetTextAutosizing();
