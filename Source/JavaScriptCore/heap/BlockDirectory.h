@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,8 +81,8 @@ public:
 
     bool isFreeListedCell(const void* target);
 
-    inline void forEachBlock(const std::invocable<MarkedBlock::Handle*> auto&);
-    inline void forEachNotEmptyBlock(const std::invocable<MarkedBlock::Handle*> auto&);
+    template<typename Functor> void forEachBlock(const Functor&);
+    template<typename Functor> void forEachNotEmptyBlock(const Functor&);
     
     RefPtr<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyBlockSource();
     
@@ -93,33 +93,18 @@ public:
 
     void updatePercentageOfPagedOutPages(WTF::SimpleStats&);
     
-#if ASSERT_ENABLED
-    void assertIsMutatorOrMutatorIsStopped() const WTF_ASSERTS_ACQUIRED_SHARED_LOCK(m_bitvectorLock);
-    void assertSweeperIsSuspended() const WTF_ASSERTS_ACQUIRED_LOCK(m_bitvectorLock);
-#else
-    ALWAYS_INLINE void assertIsMutatorOrMutatorIsStopped() const WTF_ASSERTS_ACQUIRED_SHARED_LOCK(m_bitvectorLock) { }
-    ALWAYS_INLINE void assertSweeperIsSuspended() const WTF_ASSERTS_ACQUIRED_LOCK(m_bitvectorLock) { }
-#endif
-    // This feels like it shouldn't be needed to go from assertIsMutatorOrMutatorIsStopped -> Locker but Clang's seems to think it is necessary
-    // to release the capability.
-    ALWAYS_INLINE void releaseAssertAcquiredBitVectorLock() const WTF_RELEASES_SHARED_CAPABILITY(m_bitvectorLock) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { }
-
     Lock& bitvectorLock() WTF_RETURNS_LOCK(m_bitvectorLock) { return m_bitvectorLock; }
 
 #define BLOCK_DIRECTORY_BIT_ACCESSORS(lowerBitName, capitalBitName)     \
-    bool is ## capitalBitName(size_t index) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return m_bits.is ## capitalBitName(index); } \
-    bool is ## capitalBitName(MarkedBlock::Handle* block) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return is ## capitalBitName(block->index()); } \
-    BlockDirectoryBits::BlockDirectoryBitVectorView<BlockDirectoryBits::Kind::capitalBitName> lowerBitName ## BitsView() const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return m_bits.lowerBitName(); } \
-    \
-    void setIs ## capitalBitName(size_t index, bool value) WTF_REQUIRES_LOCK(m_bitvectorLock) { m_bits.setIs ## capitalBitName(index, value); } \
-    void setIs ## capitalBitName(MarkedBlock::Handle* block, bool value) WTF_REQUIRES_LOCK(m_bitvectorLock) { setIs ## capitalBitName(block->index(), value); } \
-    BlockDirectoryBits::BlockDirectoryBitVectorRef<BlockDirectoryBits::Kind::capitalBitName> lowerBitName ## Bits() WTF_REQUIRES_LOCK(m_bitvectorLock) { return m_bits.lowerBitName(); }
-
+    bool is ## capitalBitName(const AbstractLocker&, size_t index) const { return m_bits.is ## capitalBitName(index); } \
+    bool is ## capitalBitName(const AbstractLocker& locker, MarkedBlock::Handle* block) const { return is ## capitalBitName(locker, block->index()); } \
+    void setIs ## capitalBitName(const AbstractLocker&, size_t index, bool value) { m_bits.setIs ## capitalBitName(index, value); } \
+    void setIs ## capitalBitName(const AbstractLocker& locker, MarkedBlock::Handle* block, bool value) { setIs ## capitalBitName(locker, block->index(), value); }
     FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_ACCESSORS)
 #undef BLOCK_DIRECTORY_BIT_ACCESSORS
 
     template<typename Func>
-    void forEachBitVector(const Func& func) WTF_REQUIRES_LOCK(m_bitvectorLock)
+    void forEachBitVector(const AbstractLocker&, const Func& func)
     {
 #define BLOCK_DIRECTORY_BIT_CALLBACK(lowerBitName, capitalBitName) \
         func(m_bits.lowerBitName());
@@ -128,7 +113,7 @@ public:
     }
     
     template<typename Func>
-    void forEachBitVectorWithName(const Func& func) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock)
+    void forEachBitVectorWithName(const AbstractLocker&, const Func& func)
     {
 #define BLOCK_DIRECTORY_BIT_CALLBACK(lowerBitName, capitalBitName) \
         func(m_bits.lowerBitName(), #capitalBitName);
@@ -146,18 +131,14 @@ public:
     
     MarkedBlock::Handle* findEmptyBlockToSteal();
     
-    MarkedBlock::Handle* findBlockToSweep() { return findBlockToSweep(m_unsweptCursor); }
-    MarkedBlock::Handle* findBlockToSweep(unsigned& unsweptCursor);
+    MarkedBlock::Handle* findBlockToSweep();
     
-    void didFinishUsingBlock(MarkedBlock::Handle*);
-    void didFinishUsingBlock(AbstractLocker&, MarkedBlock::Handle*) WTF_REQUIRES_LOCK(m_bitvectorLock);
-
     Subspace* subspace() const { return m_subspace; }
     MarkedSpace& markedSpace() const;
     
     void dump(PrintStream&) const;
-    void dumpBits(PrintStream& = WTF::dataFile()) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock);
-
+    void dumpBits(PrintStream& = WTF::dataFile());
+    
 private:
     friend class IsoCellSet;
     friend class LocalAllocator;
@@ -173,7 +154,7 @@ private:
 
     // Mutator uses this to guard resizing the bitvectors. Those things in the GC that may run
     // concurrently to the mutator must lock this when accessing the bitvectors.
-    BlockDirectoryBits m_bits WTF_GUARDED_BY_LOCK(m_bitvectorLock); // Don't access this directly use one of the accessors above.
+    BlockDirectoryBits m_bits;
     Lock m_bitvectorLock;
     Lock m_localAllocatorsLock;
     CellAttributes m_attributes;

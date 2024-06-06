@@ -31,19 +31,17 @@
 
 namespace JSC {
 
-inline void BlockDirectory::forEachBlock(const std::invocable<MarkedBlock::Handle*> auto& functor)
+template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
 {
-    assertIsMutatorOrMutatorIsStopped();
-    liveBitsView().forEachSetBit(
+    m_bits.live().forEachSetBit(
         [&] (size_t index) {
             functor(m_blocks[index]);
         });
 }
 
-inline void BlockDirectory::forEachNotEmptyBlock(const std::invocable<MarkedBlock::Handle*> auto& functor)
+template <typename Functor> inline void BlockDirectory::forEachNotEmptyBlock(const Functor& functor)
 {
-    assertIsMutatorOrMutatorIsStopped();
-    markingNotEmptyBitsView().forEachSetBit(
+    m_bits.markingNotEmpty().forEachSetBit(
         [&] (size_t index) {
             functor(m_blocks[index]);
         });

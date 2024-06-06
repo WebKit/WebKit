@@ -80,7 +80,6 @@ Vector<std::pair<ASCIILiteral, size_t>> PerformanceLogging::memoryUsageStatistic
 
 HashCountedSet<const char*> PerformanceLogging::javaScriptObjectCounts()
 {
-    JSC::JSLockHolder locker(commonVM());
     return WTFMove(*commonVM().heap.objectTypeCounts());
 }
 

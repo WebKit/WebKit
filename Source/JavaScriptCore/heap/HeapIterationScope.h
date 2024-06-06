@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,6 @@ private:
 inline HeapIterationScope::HeapIterationScope(JSC::Heap& heap)
     : m_heap(heap)
 {
-    ASSERT_WITH_MESSAGE(heap.vm().currentThreadIsHoldingAPILock(), "Trying to iterate the JS heap without the API lock");
     m_heap.willStartIterating();
 }
 

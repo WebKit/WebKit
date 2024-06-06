@@ -796,11 +796,14 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(cons
 
     auto& symbolicBreakpoint = m_symbolicBreakpoints.last();
 
-    JSC::JSLockHolder locker(m_debugger.vm());
-    m_debugger.forEachRegisteredCodeBlock([&] (JSC::CodeBlock* codeBlock) {
-        if (symbolicBreakpoint.matches(functionName(*codeBlock)))
-            codeBlock->addBreakpoint(1);
-    });
+    {
+        JSC::JSLockHolder locker(m_debugger.vm());
+
+        m_debugger.forEachRegisteredCodeBlock([&] (JSC::CodeBlock* codeBlock) {
+            if (symbolicBreakpoint.matches(functionName(*codeBlock)))
+                codeBlock->addBreakpoint(1);
+        });
+    }
 
 #if ENABLE(JIT)
     {
