@@ -109,10 +109,16 @@ static String getFileNameFromURIComponent(StringView input)
     return result.toString();
 }
 
-static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames)
+static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames, const String& extension = { })
 {
+    String suffix = extension.isEmpty() ? emptyString() : makeString('.', extension);
     auto extractedFileName = getFileNameFromURIComponent(url.lastPathComponent());
+    if (extractedFileName.endsWith(suffix))
+        extractedFileName = extractedFileName.left(extractedFileName.length() - suffix.length());
     auto fileName = extractedFileName.isEmpty() ? String::fromLatin1(defaultFileName) : extractedFileName;
+
+    RELEASE_ASSERT(suffix.length() < maxFileNameSizeInBytes);
+    unsigned maxUniqueFileNameLength = maxFileNameSizeInBytes - suffix.length();
     String uniqueFileName;
 
     unsigned count = 0;
@@ -120,8 +126,9 @@ static String generateValidFileName(const URL& url, const HashSet<String>& exist
         uniqueFileName = fileName;
         if (count)
             uniqueFileName = makeString(fileName, '-', count);
-        if (uniqueFileName.sizeInBytes() > maxFileNameSizeInBytes)
-            uniqueFileName = uniqueFileName.substring(fileName.sizeInBytes() - maxFileNameSizeInBytes, maxFileNameSizeInBytes);
+        if (uniqueFileName.sizeInBytes() > maxUniqueFileNameLength)
+            uniqueFileName = uniqueFileName.right(maxUniqueFileNameLength);
+        uniqueFileName = makeString(uniqueFileName, suffix);
         ++count;
     } while (existingFileNames.contains(uniqueFileName));
 
@@ -623,7 +630,8 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
                 subresources.remove(index);
             }
 
-            String subresourceFileName = generateValidFileName(url, uniqueFileNames);
+            auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(cssContentTypeAtom());
+            String subresourceFileName = generateValidFileName(url, uniqueFileNames, extension);
             uniqueFileNames.add(subresourceFileName);
             addResult.iterator->value = FileSystem::pathByAppendingComponent(subresourcesDirectoryName, subresourceFileName);
             relativeUniqueCSSStyleSheets.add(currentCSSStyleSheet, subresourceFileName);

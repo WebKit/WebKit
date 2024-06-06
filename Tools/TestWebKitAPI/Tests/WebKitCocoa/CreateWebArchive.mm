@@ -467,19 +467,25 @@ TEST(WebArchive, SaveResourcesValidFileName)
         [mutableFileName appendString:@"x"];
     NSArray *tests = [NSArray arrayWithObjects:[NSString stringWithString:mutableFileName], @"a/image.png", @"b/image.png", @"c/image.png", @"d/image.png", @"image.png(1)", @"webarchivetest://host/file:image.png", @"image1/", @"image2///", @"image3.png/./", @"image4/content/../", @"image5%20file.png", @"image 6.png", nil];
     NSMutableString *mutableHTMLString = [NSMutableString string];
+    NSString *styleString = @"<link rel='stylesheet' href='imagestyle'><link rel='stylesheet' href='style.css'><link rel='stylesheet' href='style'>";
     NSString *scriptString = [NSString stringWithFormat:@"<script>count = 0; function onImageLoad() { if (++count == %d) window.webkit.messageHandlers.testHandler.postMessage('done'); }</script>", (int)tests.count];
+    [mutableHTMLString appendString:styleString];
     [mutableHTMLString appendString:scriptString];
     for (NSString *item in tests)
         [mutableHTMLString appendString:[NSString stringWithFormat:@"<img src='%@' onload='onImageLoad()'>", item]];
     NSData *htmlData = [[NSString stringWithString:mutableHTMLString] dataUsingEncoding:NSUTF8StringEncoding];
     NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
-
+    NSString *cssString = @"img { width: 10px; }";
+    NSData *cssData = [cssString dataUsingEncoding:NSUTF8StringEncoding];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
         if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
             mimeType = @"text/html";
             data = htmlData;
+        } else if ([task.request.URL.absoluteString containsString:@"style"]) {
+            mimeType = @"text/css";
+            data = cssData;
         } else {
             mimeType = @"image/png";
             data = imageData;
@@ -498,7 +504,7 @@ TEST(WebArchive, SaveResourcesValidFileName)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
     Util::run(&messageReceived);
 
-    NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:[mutableFileName substringFromIndex:1], @"image.png", @"image.png-1", @"image.png-2", @"image.png-3", @"image.png-1-", @"file-image.png", @"image1", @"file", @"image3.png", @"image4", @"image5-file.png", @"image-6.png", nil]];
+    NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:[mutableFileName substringFromIndex:1], @"image.png", @"image.png-1", @"image.png-2", @"image.png-3", @"image.png-1-", @"file-image.png", @"image1", @"file", @"image3.png", @"image4", @"image5-file.png", @"image-6.png", @"imagestyle.css", @"style.css", @"style-1.css", nil]];
     static bool saved = false;
     [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
