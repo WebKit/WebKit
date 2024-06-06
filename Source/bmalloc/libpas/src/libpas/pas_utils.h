@@ -46,6 +46,8 @@
 #include <stdint.h>
 #include <string.h>
 
+PAS_IGNORE_CLANG_WARNINGS_BEGIN("qualifier-requires-header")
+
 #include "pas_utils_prefix.h"
 
 #define PAS_BEGIN_EXTERN_C __PAS_BEGIN_EXTERN_C
@@ -1196,5 +1198,7 @@ enum cpp_initialization_t { cpp_initialization };
 } while (0)
 
 PAS_END_EXTERN_C;
+
+PAS_IGNORE_CLANG_WARNINGS_END // "qualifier-requires-header"
 
 #endif /* PAS_UTILS_H */

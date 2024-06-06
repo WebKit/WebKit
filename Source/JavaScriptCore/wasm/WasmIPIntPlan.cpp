@@ -181,6 +181,8 @@ bool IPIntPlan::ensureEntrypoint(IPIntCallee& ipintCallee, unsigned functionInde
     m_entrypoints[functionIndex] = WTFMove(callee);
     return true;
 #else
+    UNUSED_PARAM(ipintCallee);
+    UNUSED_PARAM(functionIndex);
     return false;
 #endif
 }

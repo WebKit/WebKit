@@ -78,8 +78,8 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
 #if PLATFORM(GTK) || PLATFORM(WPE)
         std::unique_ptr<GLFence> fence;
 #endif // PLATFORM(GTK) || PLATFORM(WPE)
-        unsigned textureID = 0;
 #if USE(SKIA)
+        unsigned textureID = 0;
         auto image = nativeImage->platformImage();
         if (image->isTextureBacked()) {
             auto& display = PlatformDisplay::sharedDisplayForCompositing();
@@ -106,11 +106,14 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
         }
 #endif
 
+        downcast<TextureMapperPlatformLayerProxyGL>(m_nicosiaLayer->proxy()).scheduleUpdateOnCompositorThread([this
+#if USE(SKIA)
+        , textureID
+#endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-        downcast<TextureMapperPlatformLayerProxyGL>(m_nicosiaLayer->proxy()).scheduleUpdateOnCompositorThread([this, textureID, fence = WTFMove(fence)] () mutable {
-#else
-        downcast<TextureMapperPlatformLayerProxyGL>(m_nicosiaLayer->proxy()).scheduleUpdateOnCompositorThread([this, textureID] () mutable {
-#endif // PLATFORM(GTK) || PLATFORM(WPE)
+        , fence = WTFMove(fence)
+#endif
+        ] () mutable {
             auto& proxy = m_nicosiaLayer->proxy();
             Locker locker { proxy.lock() };
             if (!proxy.isActive())

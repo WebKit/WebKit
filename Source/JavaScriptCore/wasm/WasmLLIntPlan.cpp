@@ -190,6 +190,8 @@ bool LLIntPlan::ensureEntrypoint(LLIntCallee& llintCallee, unsigned functionInde
     m_entrypoints[functionIndex] = WTFMove(callee);
     return true;
 #else
+    UNUSED_PARAM(llintCallee);
+    UNUSED_PARAM(functionIndex);
     return false;
 #endif
 }
