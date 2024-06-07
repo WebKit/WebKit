@@ -844,7 +844,7 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms, bool* wasFixed
     if (useTransforms) {
         Vector<FloatQuad> quads;
         absoluteQuads(quads, wasFixed);
-        return enclosingIntRect(unitedBoundingBoxes(quads));
+        return enclosingIntRect(unitedBoundingBoxes(quads)).toRectWithExtentsClippedToNumericLimits();
     }
 
     FloatPoint absPos = localToAbsolute(FloatPoint(), { } /* ignore transforms */, wasFixed);
@@ -856,7 +856,7 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms, bool* wasFixed
         return IntRect();
 
     LayoutRect result = unionRect(rects);
-    return snappedIntRect(result);
+    return snappedIntRect(result).toRectWithExtentsClippedToNumericLimits();
 }
 
 void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
