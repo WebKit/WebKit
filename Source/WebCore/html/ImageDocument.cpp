@@ -230,7 +230,6 @@ void ImageDocument::createDocumentStructure()
 {
     auto rootElement = HTMLHtmlElement::create(*this);
     appendChild(rootElement);
-    rootElement->insertedByParser();
     rootElement->setInlineStyleProperty(CSSPropertyHeight, 100, CSSUnitType::CSS_PERCENTAGE);
 
     if (RefPtr localFrame = frame())

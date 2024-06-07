@@ -319,7 +319,6 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomHTMLToken&& toke
     m_openElements.pushHTMLHtmlElement(HTMLStackItem(element.copyRef(), WTFMove(token)));
 
     executeQueuedTasks();
-    element->insertedByParser();
     dispatchDocumentElementAvailableIfNeeded();
 }
 

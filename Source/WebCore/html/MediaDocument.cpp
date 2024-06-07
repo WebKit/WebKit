@@ -88,7 +88,6 @@ void MediaDocumentParser::createDocumentStructure()
     Ref rootElement = HTMLHtmlElement::create(document);
     document->appendChild(rootElement);
     document->setCSSTarget(rootElement.ptr());
-    rootElement->insertedByParser();
 
     if (RefPtr frame = document->frame())
         frame->injectUserScripts(UserScriptInjectionTime::DocumentStart);

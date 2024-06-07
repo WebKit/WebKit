@@ -1325,11 +1325,6 @@ DOMImplementation& Document::implementation()
     return *m_implementation;
 }
 
-bool Document::hasManifest() const
-{
-    return documentElement() && documentElement()->hasTagName(htmlTag) && documentElement()->hasAttributeWithoutSynchronization(manifestAttr);
-}
-
 DocumentType* Document::doctype() const
 {
     for (Node* node = firstChild(); node; node = node->nextSibling()) {

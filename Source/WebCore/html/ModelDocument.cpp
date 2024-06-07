@@ -82,7 +82,6 @@ void ModelDocumentParser::createDocumentStructure()
     auto rootElement = HTMLHtmlElement::create(document);
     document.appendChild(rootElement);
     document.setCSSTarget(rootElement.ptr());
-    rootElement->insertedByParser();
 
     if (document.frame())
         document.frame()->injectUserScripts(UserScriptInjectionTime::DocumentStart);

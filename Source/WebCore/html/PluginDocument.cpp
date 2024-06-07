@@ -93,7 +93,6 @@ void PluginDocumentParser::createDocumentStructure()
 
     auto rootElement = HTMLHtmlElement::create(document);
     document.appendChild(rootElement);
-    rootElement->insertedByParser();
 
     auto headElement = HTMLHeadElement::create(document);
     auto styleElement = createStyleElement(document);
