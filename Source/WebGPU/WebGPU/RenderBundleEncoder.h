@@ -144,7 +144,7 @@ private:
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
     NSUInteger m_indexBufferSize { 0 };
-    WeakPtr<RenderPipeline> m_pipeline;
+    RefPtr<const RenderPipeline> m_pipeline;
     uint32_t m_maxVertexBufferSlot { 0 };
     uint32_t m_maxBindGroupSlot { 0 };
     using UtilizedBufferIndicesContainer = HashMap<uint32_t, uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
