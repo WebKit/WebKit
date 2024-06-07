@@ -5502,6 +5502,18 @@ SKAttributionEnabled:
     WebKit:
       default: true
 
+SWVPDecodersAlwaysEnabled:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "Always enable VPx software decoders"
+  humanReadableDescription: "Always enable VPx software decoders"
+  webcoreBinding: none
+  condition: ENABLE(VP9)
+  defaultValue:
+    WebKit:
+      default: false
+
 SafeBrowsingEnabled:
   type: bool
   status: embedder
@@ -7049,18 +7061,6 @@ VP9DecoderEnabled:
       default: false
     WebKit:
       default: true
-
-VP9SWDecoderEnabledOnBattery:
-  type: bool
-  status: internal
-  category: media
-  humanReadableName: "VP9 SW decoder on battery"
-  humanReadableDescription: "Enable VP9 SW decoder on battery"
-  webcoreBinding: none
-  condition: ENABLE(VP9)
-  defaultValue:
-    WebKit:
-      default: false
 
 VerifyWindowOpenUserGestureFromUIProcess:
   type: bool

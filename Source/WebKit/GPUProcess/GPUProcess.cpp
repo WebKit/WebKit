@@ -360,12 +360,19 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
         }
 #endif
     }
-    if (updatePreference(m_preferences.vp9SWDecoderEnabled, preferences.vp9SWDecoderEnabled)) {
-        PlatformMediaSessionManager::setShouldEnableVP9SWDecoder(*m_preferences.vp9SWDecoderEnabled);
+    if (preferences.swVPDecodersAlwaysEnabled != std::exchange(m_preferences.swVPDecodersAlwaysEnabled, preferences.swVPDecodersAlwaysEnabled)) {
+        PlatformMediaSessionManager::setSWVPDecodersAlwaysEnabled(m_preferences.swVPDecodersAlwaysEnabled);
 #if PLATFORM(COCOA)
-        if (!m_haveEnabledVP9SWDecoder && *m_preferences.vp9SWDecoderEnabled) {
-            m_haveEnabledVP9SWDecoder = true;
-            WebCore::registerWebKitVP9Decoder();
+        if (!m_haveEnabledSWVPDecoders && m_preferences.swVPDecodersAlwaysEnabled) {
+            m_haveEnabledSWVPDecoders = true;
+            if (!m_haveEnabledVP9Decoder) {
+                WebCore::registerWebKitVP9Decoder();
+                m_haveEnabledVP9Decoder = true;
+            }
+            if (!m_haveEnabledVP8Decoder) {
+                WebCore::registerWebKitVP8Decoder();
+                m_haveEnabledVP8Decoder = true;
+            }
         }
 #endif
     }

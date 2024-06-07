@@ -31,6 +31,9 @@
 #include "Logging.h"
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSession.h"
+#if PLATFORM(COCOA)
+#include "VP9UtilitiesCocoa.h"
+#endif
 
 namespace WebCore {
 
@@ -59,7 +62,7 @@ bool PlatformMediaSessionManager::s_useSCContentSharingPicker;
 #if ENABLE(VP9)
 bool PlatformMediaSessionManager::m_vp9DecoderEnabled;
 bool PlatformMediaSessionManager::m_vp8DecoderEnabled;
-bool PlatformMediaSessionManager::m_vp9SWDecoderEnabled;
+bool PlatformMediaSessionManager::m_swVPDecodersAlwaysEnabled;
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -813,14 +816,17 @@ bool PlatformMediaSessionManager::shouldEnableVP8Decoder()
     return m_vp8DecoderEnabled;
 }
 
-void PlatformMediaSessionManager::setShouldEnableVP9SWDecoder(bool vp9SWDecoderEnabled)
+void PlatformMediaSessionManager::setSWVPDecodersAlwaysEnabled(bool swVPDecodersAlwaysEnabled)
 {
-    m_vp9SWDecoderEnabled = vp9SWDecoderEnabled;
+    m_swVPDecodersAlwaysEnabled = swVPDecodersAlwaysEnabled;
+#if PLATFORM(COCOA)
+    VP9TestingOverrides::singleton().setSWVPDecodersAlwaysEnabled(swVPDecodersAlwaysEnabled);
+#endif
 }
 
-bool PlatformMediaSessionManager::shouldEnableVP9SWDecoder()
+bool PlatformMediaSessionManager::swVPDecodersAlwaysEnabled()
 {
-    return m_vp9SWDecoderEnabled;
+    return m_swVPDecodersAlwaysEnabled;
 }
 #endif // ENABLE(VP9)
 

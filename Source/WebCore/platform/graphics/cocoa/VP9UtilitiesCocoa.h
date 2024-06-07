@@ -74,20 +74,24 @@ public:
     static VP9TestingOverrides& singleton();
 
     void setHardwareDecoderDisabled(std::optional<bool>&&);
-    std::optional<bool> hardwareDecoderDisabled() { return m_hardwareDecoderDisabled; }
+    std::optional<bool> hardwareDecoderDisabled() const { return m_hardwareDecoderDisabled; }
     
     void setVP9DecoderDisabled(std::optional<bool>&&);
-    std::optional<bool> vp9DecoderDisabled() { return m_vp9DecoderDisabled; }
+    std::optional<bool> vp9DecoderDisabled() const { return m_vp9DecoderDisabled; }
 
     void setVP9ScreenSizeAndScale(std::optional<ScreenDataOverrides>&&);
-    std::optional<ScreenDataOverrides> vp9ScreenSizeAndScale()  { return m_screenSizeAndScale; }
+    std::optional<ScreenDataOverrides> vp9ScreenSizeAndScale() const { return m_screenSizeAndScale; }
 
     void setConfigurationChangedCallback(std::function<void(bool)>&&);
     void resetOverridesToDefaultValues();
 
+    void setSWVPDecodersAlwaysEnabled(bool);
+    bool swVPDecodersAlwaysEnabled() const { return m_swVPDecodersAlwaysEnabled; }
+
 private:
     std::optional<bool> m_hardwareDecoderDisabled;
     std::optional<bool> m_vp9DecoderDisabled;
+    bool m_swVPDecodersAlwaysEnabled { false };
     std::optional<ScreenDataOverrides> m_screenSizeAndScale;
     Function<void(bool)> m_configurationChangedCallback;
 };

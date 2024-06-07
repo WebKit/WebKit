@@ -217,7 +217,6 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #endif
     bool shouldEnableVP8Decoder;
     bool shouldEnableVP9Decoder;
-    bool shouldEnableVP9SWDecoder;
 #if ENABLE(APP_BOUND_DOMAINS)
     bool limitsNavigationsToAppBoundDomains;
 #endif
