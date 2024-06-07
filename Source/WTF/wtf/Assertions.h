@@ -398,6 +398,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #define ASSERT(assertion, ...) do { \
     if (!(assertion)) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+        BACKTRACE(); \
         CRASH_WITH_INFO(__VA_ARGS__); \
     } \
 } while (0)
@@ -405,6 +406,8 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #define ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) do { \
     if (!(assertion)) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+        if (!std::is_constant_evaluated()) \
+            BACKTRACE(); \
         CRASH_UNDER_CONSTEXPR_CONTEXT(); \
     } \
 } while (0)
@@ -412,32 +415,39 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #define ASSERT_AT(assertion, file, line, function) do { \
     if (!(assertion)) { \
         WTFReportAssertionFailure(file, line, function, #assertion); \
+        BACKTRACE(); \
         CRASH(); \
     } \
 } while (0)
 
 #define ASSERT_NOT_REACHED(...) do { \
     WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 0); \
+    BACKTRACE(); \
     CRASH_WITH_INFO(__VA_ARGS__); \
 } while (0)
 
 #define ASSERT_NOT_REACHED_WITH_SECURITY_IMPLICATION(...) do { \
     WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 0); \
+    BACKTRACE(); \
     CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(__VA_ARGS__); \
 } while (0)
 
 #define ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT(...) do { \
+    if (!std::is_constant_evaluated()) \
+        BACKTRACE(); \
     CRASH_UNDER_CONSTEXPR_CONTEXT(); \
 } while (0)
 
 #define ASSERT_NOT_IMPLEMENTED_YET() do { \
     WTFReportNotImplementedYet(__FILE__, __LINE__, WTF_PRETTY_FUNCTION); \
+    BACKTRACE(); \
     CRASH(); \
 } while (0)
 
 #define ASSERT_IMPLIES(condition, assertion) do { \
     if ((condition) && !(assertion)) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #condition " => " #assertion); \
+        BACKTRACE(); \
         CRASH(); \
     } \
 } while (0)
@@ -455,13 +465,15 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
    template - https://bugs.webkit.org/enter_bug.cgi?product=Security.
  
 */
-#define ASSERT_WITH_SECURITY_IMPLICATION(assertion) \
-    (!(assertion) ? \
-        (WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion), \
-         CRASH_WITH_SECURITY_IMPLICATION()) : \
-        (void)0)
-#define ASSERT_WITH_SECURITY_IMPLICATION_DISABLED 0
+#define ASSERT_WITH_SECURITY_IMPLICATION(assertion) do { \
+    if (!(assertion)) { \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+        BACKTRACE(); \
+        CRASH_WITH_SECURITY_IMPLICATION(); \
+    } \
+} while (0)
 
+#define ASSERT_WITH_SECURITY_IMPLICATION_DISABLED 0
 #endif /* ASSERT_ENABLED */
 
 /* ASSERT_WITH_MESSAGE */
@@ -472,6 +484,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #define ASSERT_WITH_MESSAGE(assertion, ...) do { \
     if (!(assertion)) { \
         WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
+        BACKTRACE(); \
         CRASH(); \
     } \
 } while (0)
@@ -490,6 +503,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, ...) do { \
     if (!(assertion)) { \
         WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
+        BACKTRACE(); \
         CRASH(); \
     } \
 } while (0)
@@ -507,6 +521,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define ASSERT_ARG(argName, assertion) do { \
     if (!(assertion)) { \
         WTFReportArgumentAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #argName, #assertion); \
+        BACKTRACE(); \
         CRASH(); \
     } \
 } while (0)
@@ -530,6 +545,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #else
 #define FATAL(...) do { \
     WTFReportFatalError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, __VA_ARGS__); \
+    BACKTRACE(); \
     CRASH(); \
 } while (0)
 #endif
