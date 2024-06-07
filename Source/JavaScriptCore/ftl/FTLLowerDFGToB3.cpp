@@ -6296,9 +6296,20 @@ IGNORE_CLANG_WARNINGS_END
                     LBasicBlock lastNext = m_out.appendTo(fastCase, continuation);
                     LValue unboxedResult = loadValue();
                     LValue result = nullptr;
-                    if (isInt(type))
-                        result = boxInt32(unboxedResult);
-                    else
+                    if (isInt(type)) {
+                        auto speculateOrAdjust = [&](LValue result) {
+                            if (elementSize(type) < 4 || isSigned(type))
+                                return boxInt32(result);
+
+                            if (m_node->shouldSpeculateInt32()) {
+                                speculate(Overflow, noValue(), nullptr, m_out.lessThan(result, m_out.int32Zero));
+                                return boxInt32(result);
+                            }
+
+                            return boxDouble(m_out.unsignedToDouble(result));
+                        };
+                        result = speculateOrAdjust(unboxedResult);
+                    } else
                         result = boxDouble(purifyNaN(unboxedResult));
                     ValueFromBlock fastResult = m_out.anchor(result);
                     m_out.jump(continuation);
