@@ -2533,6 +2533,19 @@ TEST(SiteIsolation, NavigateOpenerToProvisionalNavigationFailure)
     checkFrameTreesInProcesses(opened.webView.get(), { { RemoteFrame }, { "https://webkit.org"_s } });
 }
 
+TEST(SiteIsolation, OpenProvisionalFailure)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/example", false);
+    [opened.navigationDelegate waitForDidFailProvisionalNavigation];
+    checkFrameTreesInProcesses(opener.webView.get(), { { "https://example.com"_s } });
+    checkFrameTreesInProcesses(opened.webView.get(), { { "https://example.com"_s } });
+}
+
 TEST(SiteIsolation, NavigateIframeToProvisionalNavigationFailure)
 {
     HTTPServer server({
