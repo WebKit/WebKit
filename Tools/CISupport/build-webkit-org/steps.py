@@ -123,6 +123,16 @@ class ShellMixin(object):
         return 'true'
 
 
+class AddToLogMixin(object):
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+
 class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
     """A pretty wrapper for LineConsumerLogObserver to avoid
        repeatedly setting up generator processors."""
@@ -1734,9 +1744,8 @@ class CompareStaticAnalyzerResults(shell.ShellCommandNewStyle):
 
     @defer.inlineCallbacks
     def run(self):
-        new_dir = f"smart-pointer-result-archive/{self.getProperty('buildnumber')}"
-        self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results']
-        self.command += [os.path.join(self.getProperty('builddir'), new_dir)]
+        results_dir = os.path.join(self.getProperty('builddir'), f"smart-pointer-result-archive/{self.getProperty('buildnumber')}")
+        self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results', results_dir]
         self.command += ['--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build']
         self.command += ['--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations']
 
@@ -1749,8 +1758,7 @@ class CompareStaticAnalyzerResults(shell.ShellCommandNewStyle):
 
         self.createResultMessage()
 
-        if self.getProperty('unexpected_failing_files', 0):
-            # FIXME: Add steps to upload lists to S3
+        if self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0):
             return defer.returnValue(FAILURE)
         return defer.returnValue(rc)
 
@@ -1778,6 +1786,40 @@ class CompareStaticAnalyzerResults(shell.ShellCommandNewStyle):
             status += f' ({Results[self.results]})'
 
         return {u'step': status}
+
+
+class DisplayUnexpectedResults(buildstep.BuildStep, AddToLogMixin):
+    name = 'display-unexpected-results'
+
+    @defer.inlineCallbacks
+    def run(self):
+        result_directory = f"public_html/results/{self.getProperty('buildername')}/{self.getProperty('archive_revision')} ({self.getProperty('buildnumber')})"
+        unexpected_results_json = os.path.join(result_directory, SCAN_BUILD_OUTPUT_DIR, 'unexpected_results.json')
+        with open(unexpected_results_json) as f:
+            unexpected_results_data = json.load(f)
+        yield self.getFilesPerProject(unexpected_results_data, 'passes')
+        yield self.getFilesPerProject(unexpected_results_data, 'failures')
+        if self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0):
+            return defer.returnValue(FAILURE)
+        return defer.returnValue(SUCCESS)
+
+    @defer.inlineCallbacks
+    def getFilesPerProject(self, unexpected_results_data, type):
+        for project, data in unexpected_results_data[type].items():
+            log_content = ''
+            for checker, files in data.items():
+                if files:
+                    log_content += f'\n\n=> {checker}\n\n'
+                    log_content += '\n'.join(files)
+            if log_content:
+                yield self._addToLog(f'{project}-unexpected-{type}', log_content)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return super().getResultSummary()
+        num_failures = self.getProperty('unexpected_failing_files', 0)
+        num_passes = self.getProperty('unexpected_passing_files', 0)
+        return {'step': f'Unexpected failing files: {num_failures} Unexpected passing files: {num_passes}'}
 
 
 class UpdateSmartPointerBaseline(steps.ShellSequence, ShellMixin):
@@ -1859,6 +1901,13 @@ class ExtractTestResults(master.MasterShellCommandNewStyle):
 
 class ExtractStaticAnalyzerTestResults(ExtractTestResults):
     name = 'extract-static-analyzer-test-results'
+
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
+        if self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0):
+            self.build.addStepsAfterCurrentStep([DisplayUnexpectedResults()])
+        defer.returnValue(rc)
 
     def getLastBuildStepByName(self, name):
         for step in reversed(self.build.executedSteps):

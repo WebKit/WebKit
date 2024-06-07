@@ -28,6 +28,7 @@ import json
 
 CHECKERS = ['NoUncountedMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
 PROJECTS = ['WebCore', 'WebKit']
+STATIC_ANALYZER_UNEXPECTED = 'StaticAnalyzerUnexpectedRegressions'
 
 
 def parser():
@@ -72,11 +73,11 @@ def find_diff(args, file1, file2):
             f.close()
 
     with open(file1) as baseline_file, open(file2) as new_file:
-        baseline_list = baseline_file.read().splitlines()
+        baseline_list = [line for line in baseline_file.read().splitlines() if not line.startswith('//')]  # Remove lines from the copyright
         new_file_list = new_file.read().splitlines()
         # Find new regressions
         diff_new_from_baseline = set(new_file_list) - set(baseline_list)
-         # Find fixes
+        # Find fixes
         diff_baseline_from_new = set(baseline_list) - set(new_file_list)
 
     return set(diff_new_from_baseline), set(diff_baseline_from_new)
@@ -91,7 +92,7 @@ def create_filtered_results_dir(args, project, issues, category='StaticAnalyzerR
         path_to_report = f'{args.build_output}/StaticAnalyzer/{project}/StaticAnalyzerReports/{report}'
         path_to_report_new = os.path.join(path_to_reports, report)
         subprocess.run(['ln', '-s', os.path.abspath(path_to_report), path_to_report_new])
-
+    print('\n')
     path_to_project = f'{args.build_output}/{category}/{project}'
     subprocess.run([args.scan_build, '--generate-index-only', os.path.abspath(path_to_project)])
 
@@ -100,11 +101,13 @@ def compare_project_results_to_expectations(args, new_path, project):
     unexpected_issues_total = set()
     unexpected_buggy_files = set()
     unexpected_clean_files = set()
+    project_results_passes = {}
+    project_results_failures = {}
 
     # Compare the list of dirty files to the expectations list of files
     for checker in CHECKERS:
         # Get unexpected clean and buggy files per checker
-        buggy_files, clean_files = find_diff(args, os.path.abspath(f'Source/{project}/{checker}Expectations.txt'), f'{new_path}/{project}/{checker}-files.txt')
+        buggy_files, clean_files = find_diff(args, os.path.abspath(f'Source/{project}/SmartPointerExpectations/{checker}Expectations'), f'{new_path}/{project}/{checker}Files')
         unexpected_clean_files.update(clean_files)
         unexpected_buggy_files.update(buggy_files)
 
@@ -116,21 +119,36 @@ def compare_project_results_to_expectations(args, new_path, project):
             unexpected_issues.update(issues_per_file[checker][file_name])
         unexpected_issues_total.update(unexpected_issues)
 
-        with open(f'{new_path}/{project}/UnexpectedCleanFiles{checker}.txt', 'a') as f:
-            f.write('\n'.join(clean_files))
-        with open(f'{new_path}/{project}/UnexpectedFailedFiles{checker}.txt', 'a') as f:
-            f.write('\n'.join(buggy_files))
-        with open(f'{new_path}/{project}/UnexpectedIssues{checker}.txt', 'a') as f:
+        # Set up JSON object
+        project_results_passes[checker] = list(clean_files)
+        project_results_failures[checker] = list(buggy_files)
+
+        # Create sorted files for each unexpected list - these need the .txt to be displayed in browser
+        subprocess.run(['mkdir', '-p', f'{args.build_output}/{STATIC_ANALYZER_UNEXPECTED}/{project}'])
+        with open(f'{args.build_output}/{STATIC_ANALYZER_UNEXPECTED}/{project}/UnexpectedPasses{checker}.txt', 'a') as f:
+            f.write('\n'.join(sorted(clean_files)))
+        with open(f'{args.build_output}/{STATIC_ANALYZER_UNEXPECTED}/{project}/UnexpectedFailures{checker}.txt', 'a') as f:
+            f.write('\n'.join(sorted(buggy_files)))
+        with open(f'{new_path}/{project}/UnexpectedIssues{checker}', 'a') as f:
             f.write('\n'.join(unexpected_issues))
 
-        print(f'{checker}:')
-        print(f'    Unexpected passing files: {len(clean_files)}')
-        print(f'    Unexpected failing files: {len(buggy_files)}')
-        print(f'    Unexpected issues: {len(unexpected_issues)}\n')
+        no_unexpected = True
+        print(f'\n{checker}:')
+        for type, type_list in {
+            'Unexpected passing files': clean_files,
+            'Unexpected failing files': buggy_files,
+            'Unexpected issues': unexpected_issues
+        }.items():
+            if len(type_list):
+                no_unexpected = False
+                print(f'    {type}: {len(type_list)}')
+        if no_unexpected:
+            print(f'    No unexpected results!')
 
     if unexpected_issues_total and args.scan_build:
-        create_filtered_results_dir(args, project, unexpected_issues_total, 'StaticAnalyzerUnexpectedRegressions')
-    return unexpected_buggy_files, unexpected_clean_files, unexpected_issues_total
+        create_filtered_results_dir(args, project, unexpected_issues_total, STATIC_ANALYZER_UNEXPECTED)
+
+    return unexpected_buggy_files, unexpected_clean_files, unexpected_issues_total, project_results_passes, project_results_failures
 
 
 def compare_project_results_by_run(args, archive_path, new_path, project):
@@ -141,8 +159,8 @@ def compare_project_results_by_run(args, archive_path, new_path, project):
 
     for checker in CHECKERS:
         print(f'{checker}:')
-        new_issues, fixed_issues = find_diff(args, f'{archive_path}/{checker}-issues', f'{new_path}/{project}/{checker}-issues.txt')
-        new_files, fixed_files = find_diff(args, f'{archive_path}/{checker}-files', f'{new_path}/{project}/{checker}-files.txt')
+        new_issues, fixed_issues = find_diff(args, f'{archive_path}/{checker}Issues', f'{new_path}/{project}/{checker}Issues')
+        new_files, fixed_files = find_diff(args, f'{archive_path}/{checker}Files', f'{new_path}/{project}/{checker}Files')
         fixed_issues_total.update(fixed_issues)
         fixed_files_total.update(fixed_files)
         new_issues_total.update(new_issues)
@@ -166,20 +184,29 @@ def main():
     unexpected_passes_total = set()
     unexpected_failures_total = set()
     unexpected_issues_total = set()
+    unexpected_results_data = {'passes': {}, 'failures': {}}
 
     for project in PROJECTS:
-        print(f'\n------ {project} ------\n')
+        print(f'\n------ {project} ------')
         new_path = os.path.abspath(f'{args.new_dir}')
         if args.check_expectations:
-            unexpected_failures, unexpected_passes, unexpected_issues = compare_project_results_to_expectations(args, new_path, project)
+            unexpected_failures, unexpected_passes, unexpected_issues, project_results_passes, project_results_failures = compare_project_results_to_expectations(args, new_path, project)
             unexpected_failures_total.update(unexpected_failures)
             unexpected_passes_total.update(unexpected_passes)
             unexpected_issues_total.update(unexpected_issues)
+            # JSON
+            unexpected_results_data['passes'][project] = project_results_passes
+            unexpected_results_data['failures'][project] = project_results_failures
         else:
             archive_path = os.path.abspath(f'{args.archived_dir}/{project}')
             new_issues, new_files = compare_project_results_by_run(args, archive_path, new_path, project)
             new_issues_total.update(new_issues)
             new_files_total.update(new_files)
+
+    results_data_file = os.path.abspath(f'{args.build_output}/unexpected_results.json')
+    with open(results_data_file, "w") as f:
+        results_data_obj = json.dumps(unexpected_results_data, indent=4)
+        f.write(results_data_obj)
 
     print('\n')
     for type, type_total in {

@@ -42,6 +42,7 @@ INDEX_TEMPLATE = """
 </html>
 """
 PROJECT_TEMPLATE = '<li><a href="{project_file_url}">{project_name}</a> ({project_issue_count})</li>'
+CATEGORY_TEMPLATE = '<div>{category_name}<ul>{checker_links}</ul></div>'
 STATIC_ANALYZER = 'StaticAnalyzer'
 STATIC_ANALYZER_REGRESSIONS = 'StaticAnalyzerRegressions'
 STATIC_ANALYZER_UNEXPECTED = 'StaticAnalyzerUnexpectedRegressions'
@@ -57,17 +58,47 @@ def parse_command_line(args):
     return parser.parse_args(args)
 
 
+def generate_unexpected_results_links(output_root, static_analysis_dir, project_name):
+    results_links = ''
+    for category, category_formatted in {'UnexpectedPasses': 'Unexpected Passes', 'UnexpectedFailures': 'Unexpected Failures'}.items():
+        command = 'find {} -name {}\\* -print'.format(os.path.abspath(os.path.join(static_analysis_dir, project_name)), category)
+        try:
+            result_files = subprocess.check_output(command, shell=True, text=True)
+        except subprocess.CalledProcessError as e:
+            sys.stderr.write(f'{e.output}')
+            sys.stderr.write(f'Could not find results for {project_name}\n')
+            return -1
+
+        unexpected_results_files = result_files.splitlines()
+        checker_links = ''
+        for file_path in unexpected_results_files:
+            file_name = file_path.split('/')[-1].removeprefix(category).removesuffix('.txt')
+            relative_file_path = os.path.relpath(file_path, output_root)
+            with open(os.path.abspath(os.path.join(output_root, file_path))) as f:
+                count = len(f.read().splitlines())
+            if count:
+                checker_links += PROJECT_TEMPLATE.format(project_file_url=relative_file_path, project_name=file_name, project_issue_count=count)
+        if checker_links:
+            results_links += CATEGORY_TEMPLATE.format(category_name=category_formatted, checker_links=checker_links)
+
+    return results_links
+
+
 def generate_results_page(project_dirs, id_string, output_root, static_analysis_dir, result_type=None):
     project_list = ''
     for project_name in sorted(project_dirs):
         static_analyzer_index_path = os.path.join(static_analysis_dir, project_name, INDEX_HTML)
-        project_list = project_list + PROJECT_TEMPLATE.format(
-                project_file_url=os.path.relpath(static_analyzer_index_path, output_root),
-                project_issue_count=get_project_issue_count_as_string(static_analyzer_index_path),
-                project_name=project_name)
+        project_count = get_project_issue_count_as_string(static_analyzer_index_path)
+        if int(project_count) != 0:
+            project_list = project_list + PROJECT_TEMPLATE.format(
+                        project_file_url=os.path.relpath(static_analyzer_index_path, output_root),
+                        project_issue_count=project_count,
+                        project_name=project_name)
+        if result_type == 'unexpected':
+            project_list += generate_unexpected_results_links(output_root, static_analysis_dir, project_name)
 
     if result_type:
-        heading = f'{result_type.capitalize()} issues in {id_string}'
+        heading = f'{result_type.capitalize()} results for {id_string}'
     else:
         heading = f'Results for {id_string}'
 
