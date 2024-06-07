@@ -101,7 +101,7 @@ uint64_t RenderBundle::drawCount() const
     return m_commandCount;
 }
 
-bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor& descriptor, const Vector<WeakPtr<TextureView>>& colorAttachmentViews, const WeakPtr<TextureView>& depthStencilView) const
+bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor& descriptor, const Vector<RefPtr<TextureView>>& colorAttachmentViews, const RefPtr<TextureView>& depthStencilView) const
 {
     if (depthReadOnly && !m_descriptor.depthReadOnly)
         return false;

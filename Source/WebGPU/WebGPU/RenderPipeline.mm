@@ -1686,7 +1686,7 @@ PipelineLayout& RenderPipeline::pipelineLayout() const
     return m_pipelineLayout;
 }
 
-bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescriptor& descriptor, const Vector<WeakPtr<TextureView>>& colorAttachmentViews, const WeakPtr<TextureView>& depthStencilView) const
+bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescriptor& descriptor, const Vector<RefPtr<TextureView>>& colorAttachmentViews, const RefPtr<TextureView>& depthStencilView) const
 {
     if (!m_descriptor.fragment) {
         if (descriptor.colorAttachmentCount)

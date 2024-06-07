@@ -73,9 +73,9 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     if (descriptor.timestampWrites)
         m_descriptor.timestampWrites = &m_descriptorTimestampWrites;
     for (size_t i = 0; i < descriptor.colorAttachmentCount; ++i)
-        m_colorAttachmentViews.append(WeakPtr { static_cast<TextureView*>(descriptor.colorAttachments[i].view) });
+        m_colorAttachmentViews.append(RefPtr { static_cast<TextureView*>(descriptor.colorAttachments[i].view) });
     if (descriptor.depthStencilAttachment)
-        m_depthStencilView = WeakPtr { static_cast<TextureView*>(descriptor.depthStencilAttachment->view) };
+        m_depthStencilView = RefPtr { static_cast<TextureView*>(descriptor.depthStencilAttachment->view) };
 
     m_parentEncoder->lock(true);
 
