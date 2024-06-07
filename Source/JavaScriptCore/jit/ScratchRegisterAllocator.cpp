@@ -40,7 +40,7 @@ ScratchRegisterAllocator::ScratchRegisterAllocator(const RegisterSet& usedRegist
 {
 }
 
-ScratchRegisterAllocator::~ScratchRegisterAllocator() { }
+ScratchRegisterAllocator::~ScratchRegisterAllocator() = default;
 
 void ScratchRegisterAllocator::lock(GPRReg reg)
 {

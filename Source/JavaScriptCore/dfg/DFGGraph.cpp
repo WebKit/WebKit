@@ -94,9 +94,7 @@ Graph::Graph(VM& vm, Plan& plan)
     this->symbolStructure = registerStructure(vm.symbolStructure.get());
 }
 
-Graph::~Graph()
-{
-}
+Graph::~Graph() = default;
 
 ASCIILiteral Graph::opName(NodeType op)
 {

@@ -41,9 +41,7 @@ OSRExit::OSRExit(unsigned id, const OriginStack& origin, ExitKind kind, bool isW
 {
 }
 
-OSRExit::~OSRExit()
-{
-}
+OSRExit::~OSRExit() = default;
 
 Ref<JSON::Value> OSRExit::toJSON(Dumper& dumper) const
 {

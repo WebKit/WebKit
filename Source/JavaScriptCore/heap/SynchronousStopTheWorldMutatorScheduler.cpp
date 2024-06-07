@@ -32,13 +32,9 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SynchronousStopTheWorldMutatorScheduler);
 
-SynchronousStopTheWorldMutatorScheduler::SynchronousStopTheWorldMutatorScheduler()
-{
-}
+SynchronousStopTheWorldMutatorScheduler::SynchronousStopTheWorldMutatorScheduler() = default;
 
-SynchronousStopTheWorldMutatorScheduler::~SynchronousStopTheWorldMutatorScheduler()
-{
-}
+SynchronousStopTheWorldMutatorScheduler::~SynchronousStopTheWorldMutatorScheduler() = default;
 
 MutatorScheduler::State SynchronousStopTheWorldMutatorScheduler::state() const
 {

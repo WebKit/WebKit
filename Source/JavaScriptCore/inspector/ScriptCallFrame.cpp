@@ -51,9 +51,7 @@ ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& scrip
 {
 }
 
-ScriptCallFrame::~ScriptCallFrame()
-{
-}
+ScriptCallFrame::~ScriptCallFrame() = default;
 
 bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
 {

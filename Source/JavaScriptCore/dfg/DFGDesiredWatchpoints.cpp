@@ -110,8 +110,8 @@ bool AdaptiveStructureWatchpointAdaptor::add(CodeBlock* codeBlock, const ObjectP
     return true;
 }
 
-DesiredWatchpoints::DesiredWatchpoints() { }
-DesiredWatchpoints::~DesiredWatchpoints() { }
+DesiredWatchpoints::DesiredWatchpoints() = default;
+DesiredWatchpoints::~DesiredWatchpoints() = default;
 
 void DesiredWatchpoints::addLazily(WatchpointSet& set)
 {

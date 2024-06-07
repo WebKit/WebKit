@@ -123,7 +123,7 @@ void Plan::fail(String&& errorMessage)
     complete();
 }
 
-Plan::~Plan() { }
+Plan::~Plan() = default;
 
 } } // namespace JSC::Wasm
 

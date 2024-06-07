@@ -38,7 +38,7 @@ SimpleTypedArrayController::SimpleTypedArrayController(bool allowAtomicsWait)
 {
 }
 
-SimpleTypedArrayController::~SimpleTypedArrayController() { }
+SimpleTypedArrayController::~SimpleTypedArrayController() = default;
 
 JSArrayBuffer* SimpleTypedArrayController::toJS(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, ArrayBuffer* native)
 {

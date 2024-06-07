@@ -117,9 +117,7 @@ InjectedScriptBase::InjectedScriptBase(const String& name, JSC::JSGlobalObject* 
 {
 }
 
-InjectedScriptBase::~InjectedScriptBase()
-{
-}
+InjectedScriptBase::~InjectedScriptBase() = default;
 
 bool InjectedScriptBase::hasAccessToInspectedScriptState() const
 {

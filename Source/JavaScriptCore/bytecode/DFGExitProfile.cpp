@@ -101,8 +101,8 @@ bool ExitProfile::hasExitSite(const ConcurrentJSLocker&, const FrequentExitSite&
     return false;
 }
 
-QueryableExitProfile::QueryableExitProfile() { }
-QueryableExitProfile::~QueryableExitProfile() { }
+QueryableExitProfile::QueryableExitProfile() = default;
+QueryableExitProfile::~QueryableExitProfile() = default;
 
 void QueryableExitProfile::initialize(UnlinkedCodeBlock* unlinkedCodeBlock)
 {

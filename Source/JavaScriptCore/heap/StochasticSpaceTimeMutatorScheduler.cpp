@@ -61,9 +61,7 @@ StochasticSpaceTimeMutatorScheduler::StochasticSpaceTimeMutatorScheduler(JSC::He
 {
 }
 
-StochasticSpaceTimeMutatorScheduler::~StochasticSpaceTimeMutatorScheduler()
-{
-}
+StochasticSpaceTimeMutatorScheduler::~StochasticSpaceTimeMutatorScheduler() = default;
 
 MutatorScheduler::State StochasticSpaceTimeMutatorScheduler::state() const
 {

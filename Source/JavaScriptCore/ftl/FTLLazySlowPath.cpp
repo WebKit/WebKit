@@ -35,9 +35,7 @@ namespace JSC { namespace FTL {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LazySlowPath);
 
-LazySlowPath::~LazySlowPath()
-{
-}
+LazySlowPath::~LazySlowPath() = default;
 
 void LazySlowPath::initialize(
     CodeLocationJump<JSInternalPtrTag> patchableJump, CodeLocationLabel<JSInternalPtrTag> done,

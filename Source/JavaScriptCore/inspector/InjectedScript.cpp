@@ -51,9 +51,7 @@ InjectedScript::InjectedScript(JSC::JSGlobalObject* globalObject, JSC::JSObject*
 {
 }
 
-InjectedScript::~InjectedScript()
-{
-}
+InjectedScript::~InjectedScript() = default;
 
 void InjectedScript::execute(Protocol::ErrorString& errorString, const String& functionString, ExecuteOptions&& options, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {

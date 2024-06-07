@@ -31,13 +31,9 @@
 
 namespace bmalloc {
 
-FreeList::FreeList()
-{
-}
+FreeList::FreeList() = default;
 
-FreeList::~FreeList()
-{
-}
+FreeList::~FreeList() = default;
 
 void FreeList::clear()
 {

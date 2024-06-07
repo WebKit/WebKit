@@ -320,9 +320,7 @@ SamplingProfiler::SamplingProfiler(VM& vm, Ref<Stopwatch>&& stopwatch)
     vm.heap.objectSpace().enablePreciseAllocationTracking();
 }
 
-SamplingProfiler::~SamplingProfiler()
-{
-}
+SamplingProfiler::~SamplingProfiler() = default;
 
 void SamplingProfiler::createThreadIfNecessary()
 {

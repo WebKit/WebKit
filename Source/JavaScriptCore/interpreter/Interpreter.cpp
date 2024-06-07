@@ -379,9 +379,7 @@ Interpreter::Interpreter()
 #endif // ASSERT_ENABLED
 }
 
-Interpreter::~Interpreter()
-{
-}
+Interpreter::~Interpreter() = default;
 
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED

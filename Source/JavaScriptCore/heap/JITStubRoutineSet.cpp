@@ -36,7 +36,7 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITStubRoutineSet);
 
-JITStubRoutineSet::JITStubRoutineSet() { }
+JITStubRoutineSet::JITStubRoutineSet() = default;
 JITStubRoutineSet::~JITStubRoutineSet()
 {
     for (auto& entry : m_routines) {

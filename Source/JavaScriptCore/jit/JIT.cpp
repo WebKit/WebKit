@@ -79,9 +79,7 @@ JIT::JIT(VM& vm, BaselineJITPlan& plan, CodeBlock* codeBlock)
 {
 }
 
-JIT::~JIT()
-{
-}
+JIT::~JIT() = default;
 
 JITConstantPool::Constant JIT::addToConstantPool(JITConstantPool::Type type, void* payload)
 {

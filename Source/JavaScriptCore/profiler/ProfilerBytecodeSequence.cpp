@@ -60,9 +60,7 @@ BytecodeSequence::BytecodeSequence(CodeBlock* codeBlock)
     }
 }
 
-BytecodeSequence::~BytecodeSequence()
-{
-}
+BytecodeSequence::~BytecodeSequence() = default;
 
 unsigned BytecodeSequence::indexForBytecodeIndex(unsigned bytecodeIndex) const
 {

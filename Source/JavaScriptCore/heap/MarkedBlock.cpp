@@ -101,9 +101,7 @@ MarkedBlock::Header::Header(VM& vm, Handle& handle)
 {
 }
 
-MarkedBlock::Header::~Header()
-{
-}
+MarkedBlock::Header::~Header() = default;
 
 void MarkedBlock::Handle::unsweepWithNoNewlyAllocated()
 {

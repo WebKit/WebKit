@@ -35,13 +35,9 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CodeBlockSet);
 
-CodeBlockSet::CodeBlockSet()
-{
-}
+CodeBlockSet::CodeBlockSet() = default;
 
-CodeBlockSet::~CodeBlockSet()
-{
-}
+CodeBlockSet::~CodeBlockSet() = default;
 
 bool CodeBlockSet::contains(const AbstractLocker&, void* candidateCodeBlock)
 {

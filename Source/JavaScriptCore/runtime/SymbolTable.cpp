@@ -88,7 +88,7 @@ SymbolTable::SymbolTable(VM& vm)
 {
 }
 
-SymbolTable::~SymbolTable() { }
+SymbolTable::~SymbolTable() = default;
 
 template<typename Visitor>
 void SymbolTable::visitChildrenImpl(JSCell* thisCell, Visitor& visitor)

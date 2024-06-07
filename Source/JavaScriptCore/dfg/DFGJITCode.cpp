@@ -187,9 +187,7 @@ JITCode::JITCode(bool isUnlinked)
 {
 }
 
-JITCode::~JITCode()
-{
-}
+JITCode::~JITCode() = default;
 
 CommonData* JITCode::dfgCommon()
 {
