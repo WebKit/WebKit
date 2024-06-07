@@ -58,6 +58,7 @@ public:
     HWND window() const { return m_window; }
     void setParentWindow(HWND);
     void windowAncestryDidChange();
+    WebCore::IntSize viewSize() { return m_viewSize; }
     void setIsInWindow(bool);
     void setIsVisible(bool);
     bool isWindowActive();
@@ -154,6 +155,7 @@ private:
 
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebPageProxy> m_page;
+    WebCore::IntSize m_viewSize;
 };
 
 } // namespace WebKit

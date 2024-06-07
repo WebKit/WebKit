@@ -109,7 +109,7 @@ static void doMouseButtonEvent(WebPageProxy& page, MouseInteraction interaction,
     }
 
     auto hwnd = reinterpret_cast<HWND>(page.viewWidget());
-    page.handleMouseEvent(NativeWebMouseEvent(hwnd, message, wparam, lparam, { }));
+    page.handleMouseEvent(NativeWebMouseEvent(hwnd, message, wparam, lparam, { }, page.deviceScaleFactor()));
 }
 
 void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)

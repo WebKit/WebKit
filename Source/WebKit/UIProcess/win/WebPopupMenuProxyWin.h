@@ -141,7 +141,7 @@ private:
     HWND m_popup { nullptr };
     WebCore::IntRect m_windowRect;
 
-    int m_itemHeight { 0 };
+    float m_itemHeight { 0 };
     int m_scrollOffset { 0 };
     int m_wheelDelta { 0 };
     int m_focusedIndex { 0 };

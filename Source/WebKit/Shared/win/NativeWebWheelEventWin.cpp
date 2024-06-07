@@ -31,8 +31,8 @@
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(hwnd, message, wParam, lParam))
+NativeWebWheelEvent::NativeWebWheelEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, float deviceScaleFactor)
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(hwnd, message, wParam, lParam, deviceScaleFactor))
     , m_nativeEvent(createNativeEvent(hwnd, message, wParam, lParam))
 {
 }

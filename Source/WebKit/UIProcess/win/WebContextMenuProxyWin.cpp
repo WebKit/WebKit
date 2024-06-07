@@ -94,7 +94,9 @@ void WebContextMenuProxyWin::showContextMenuWithItems(Vector<Ref<WebContextMenuI
     populate(m_context, m_menu, items);
 
     UINT flags = TPM_RIGHTBUTTON | TPM_TOPALIGN | TPM_VERPOSANIMATION | TPM_HORIZONTAL | TPM_LEFTALIGN | TPM_HORPOSANIMATION;
-    POINT pt { m_context.menuLocation().x(), m_context.menuLocation().y() };
+    auto location = m_context.menuLocation();
+    location.scale(page()->deviceScaleFactor());
+    POINT pt = location;
     HWND wnd = reinterpret_cast<HWND>(page()->viewWidget());
     ::ClientToScreen(wnd, &pt);
     ::TrackPopupMenuEx(m_menu, flags, pt.x, pt.y, wnd, nullptr);
