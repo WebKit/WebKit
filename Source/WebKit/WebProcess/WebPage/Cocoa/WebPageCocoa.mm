@@ -318,44 +318,9 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-std::optional<WebCore::SimpleRange> WebPage::getRangeForUUID(const WTF::UUID& uuid)
-{
-    auto range = m_unifiedTextReplacementController->contextRangeForSessionOrRangeWithUUID(uuid);
-    if (range)
-        return range;
-
-    RefPtr liveRange = m_textIndicatorStyleEnablementRanges.get(uuid);
-    return WebCore::makeSimpleRange(liveRange);
-}
-
-void WebPage::createTextIndicatorForRange(const WebCore::SimpleRange& range, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
-{
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
-        std::optional<TextIndicatorData> textIndicatorData;
-        constexpr OptionSet textIndicatorOptions {
-            TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
-            TextIndicatorOption::ExpandClipBeyondVisibleRect,
-            TextIndicatorOption::UseSelectionRectForSizing,
-            TextIndicatorOption::SkipReplacedContent,
-            TextIndicatorOption::RespectTextColor
-        };
-        if (auto textIndicator = TextIndicator::createWithRange(range, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
-            textIndicatorData = textIndicator->data();
-        completionHandler(WTFMove(textIndicatorData));
-        return;
-    }
-    completionHandler(std::nullopt);
-}
-
 void WebPage::createTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
-    auto sessionRange = getRangeForUUID(uuid);
-
-    if (!sessionRange) {
-        completionHandler(std::nullopt);
-        return;
-    }
-    createTextIndicatorForRange(*sessionRange, WTFMove(completionHandler));
+    m_textIndicatorStyleController->createTextIndicatorForID(uuid, WTFMove(completionHandler));
 }
 
 void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
@@ -374,94 +339,17 @@ void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID& uuid, boo
         return;
     }
 
-    auto sessionRange = getRangeForUUID(uuid);
-
-    if (!sessionRange) {
-        completionHandler();
-        return;
-    }
-
-    if (visible) {
-        // FIXME: <https://webkit.org/b/274198> Text indicator style logic in WebPage and UnifiedTextReplacementController should be shared.
-        if (m_textIndicatorStyleEnablementRanges.contains(uuid)) {
-            m_unifiedTextReplacementController->removeTransparentMarkersForUUID(uuid);
-        } else
-            m_unifiedTextReplacementController->removeTransparentMarkersForSession(uuid, RemoveAllMarkersForSession::No);
-    } else
-        document->markers().addTransparentContentMarker(*sessionRange, uuid);
-
-    completionHandler();
+    m_textIndicatorStyleController->updateTextIndicatorStyleVisibilityForID(uuid, visible, WTFMove(completionHandler));
 }
 
 void WebPage::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
-    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr document = frame->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr root = document->documentElement();
-    if (!root) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    VisibleSelection fullDocumentSelection(VisibleSelection::selectionFromContentsOfNode(root.get()));
-    auto simpleRange = fullDocumentSelection.range();
-    if (!simpleRange) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (RefPtr element = document->getElementById(elementID)) {
-        auto elementRange = makeRangeSelectingNodeContents(*element);
-        if (!elementRange.collapsed())
-            simpleRange->start = elementRange.end;
-    }
-
-    m_textIndicatorStyleEnablementRanges.add(uuid, createLiveRange(*simpleRange));
+    m_textIndicatorStyleController->enableTextIndicatorStyleAfterElementWithID(elementID, uuid);
 }
 
 void WebPage::enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
-    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr document = frame->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr root = document->documentElement();
-    if (!root) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr element = document->getElementById(elementID);
-    if (!element) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto elementRange = makeRangeSelectingNodeContents(*element);
-    if (elementRange.collapsed()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_textIndicatorStyleEnablementRanges.add(uuid, createLiveRange(elementRange));
+    m_textIndicatorStyleController->enableTextIndicatorStyleForElementWithID(elementID, uuid);
 }
 
 #endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)

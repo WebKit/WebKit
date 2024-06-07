@@ -336,6 +336,7 @@
 #include "RemoteLayerTreeTransaction.h"
 #include "RemoteObjectRegistryMessages.h"
 #include "TextCheckingControllerProxy.h"
+#include "TextIndicatorStyleController.h"
 #include "VideoPresentationManager.h"
 #include "WKStringCF.h"
 #include "WebRemoteObjectRegistry.h"
@@ -632,6 +633,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_historyItemClient(WebHistoryItemClient::create())
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     , m_unifiedTextReplacementController(makeUniqueRef<UnifiedTextReplacementController>(*this))
+    , m_textIndicatorStyleController(makeUniqueRef<TextIndicatorStyleController>(*this))
 #endif
 {
     ASSERT(m_identifier);

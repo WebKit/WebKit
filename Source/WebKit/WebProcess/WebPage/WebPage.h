@@ -339,6 +339,7 @@ class RemoteRenderingBackendProxy;
 class RemoteWebInspectorUI;
 class SharedMemoryHandle;
 class TextCheckingControllerProxy;
+class TextIndicatorStyleController;
 class UserMediaPermissionRequestManager;
 class ViewGestureGeometryCollector;
 class WebColorChooser;
@@ -860,6 +861,12 @@ public:
 #if PLATFORM(COCOA)
     void insertTextPlaceholder(const WebCore::IntSize&, CompletionHandler<void(const std::optional<WebCore::ElementContext>&)>&&);
     void removeTextPlaceholder(const WebCore::ElementContext&, CompletionHandler<void()>&&);
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    TextIndicatorStyleController& textIndicatorStyleController() { return m_textIndicatorStyleController.get(); };
+
+    UnifiedTextReplacementController& unifiedTextReplacementController() { return m_unifiedTextReplacementController.get(); };
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -2257,8 +2264,6 @@ private:
 
     void textReplacementSessionDidReceiveEditAction(const WebUnifiedTextReplacementSessionData&, WebKit::WebTextReplacementDataEditAction);
 
-    std::optional<WebCore::SimpleRange> getRangeForUUID(const WTF::UUID&);
-
     void updateTextIndicatorStyleVisibilityForID(const WTF::UUID&, bool, CompletionHandler<void()>&&);
 #endif
 
@@ -2811,7 +2816,7 @@ private:
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     UniqueRef<UnifiedTextReplacementController> m_unifiedTextReplacementController;
-    HashMap<WTF::UUID, Ref<WebCore::Range>> m_textIndicatorStyleEnablementRanges;
+    UniqueRef<TextIndicatorStyleController> m_textIndicatorStyleController;
 #endif
 
     std::unique_ptr<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObserver;

@@ -5278,6 +5278,8 @@
 		44122266296A89820057E1A5 /* SameDocumentNavigationType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SameDocumentNavigationType.serialization.in; sourceTree = "<group>"; };
 		4413795F2964F0C2003C34C6 /* CacheStoragePolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CacheStoragePolicy.h; sourceTree = "<group>"; };
 		441379602964F0C2003C34C6 /* CacheStoragePolicy.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CacheStoragePolicy.serialization.in; sourceTree = "<group>"; };
+		442C116A2C06AC48004C67CA /* TextIndicatorStyleController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextIndicatorStyleController.mm; sourceTree = "<group>"; };
+		442C116B2C06ACB1004C67CA /* TextIndicatorStyleController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextIndicatorStyleController.h; sourceTree = "<group>"; };
 		442E7BE827B4572B00C69AC1 /* RevealItem.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RevealItem.mm; sourceTree = "<group>"; };
 		442E7BEA27B4581300C69AC1 /* RevealItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RevealItem.h; sourceTree = "<group>"; };
 		4447F01F2BC833F0006988E9 /* WKTextIndicatorStyleType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTextIndicatorStyleType.h; sourceTree = "<group>"; };
@@ -10454,6 +10456,7 @@
 				2D9CD5ED21FA503F0029ACFA /* TextCheckingControllerProxy.h */,
 				2D9CD5EB21FA503F0029ACFA /* TextCheckingControllerProxy.messages.in */,
 				2D9CD5EC21FA503F0029ACFA /* TextCheckingControllerProxy.mm */,
+				442C116A2C06AC48004C67CA /* TextIndicatorStyleController.mm */,
 				074AD7202B61D58F00FFA67B /* UnifiedTextReplacementController.mm */,
 				3A8997E029B25E8E00AB88B6 /* WebCookieCacheCocoa.mm */,
 				3A36AFAF2B9667770098631A /* WebCookieJarCocoa.mm */,
@@ -13782,6 +13785,7 @@
 				2DEE709D2755A46800FBF864 /* MomentumEventDispatcher.h */,
 				7C387433172F5615001BD88A /* PageBanner.cpp */,
 				7CF47FF917275C57008ACB91 /* PageBanner.h */,
+				442C116B2C06ACB1004C67CA /* TextIndicatorStyleController.h */,
 				074AD71E2B61D51E00FFA67B /* UnifiedTextReplacementController.h */,
 				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
 				2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */,

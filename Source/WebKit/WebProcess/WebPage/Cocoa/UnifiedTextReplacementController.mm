@@ -29,6 +29,7 @@
 #include "UnifiedTextReplacementController.h"
 
 #include "TextIndicatorStyle.h"
+#include "TextIndicatorStyleController.h"
 #include "WebPage.h"
 #include "WebUnifiedTextReplacementContextData.h"
 #include <WebCore/BoundaryPoint.h>
@@ -354,66 +355,13 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const WebUni
     if (m_states.get(session.uuid)->session.correctionType != WebUnifiedTextReplacementSessionData::CorrectionType::Spelling)
         document->selection().setSelection({ *sessionRange });
 
-    m_textIndicatorCharacterRangesForSessions.removeFirstMatching([&](auto& candidateSession) {
-        return candidateSession.first == session.uuid;
-    });
-    removeTransparentMarkersForSession(session.uuid, RemoveAllMarkersForSession::Yes);
+    m_webPage->textIndicatorStyleController().cleanUpTextStylesForSessionID(session.uuid);
 
     m_states.remove(session.uuid);
     m_contextRanges.remove(session.uuid);
     m_originalDocumentNodes.remove(session.uuid);
     m_replacedDocumentNodes.remove(session.uuid);
     m_replacementLocationOffsets.remove(session.uuid);
-}
-
-void UnifiedTextReplacementController::removeTransparentMarkersForUUID(const WTF::UUID& uuid)
-{
-
-    RefPtr document = this->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    document->markers().removeMarkers({ WebCore::DocumentMarker::Type::TransparentContent }, [&](const WebCore::DocumentMarker& marker) {
-        return std::get<WebCore::DocumentMarker::TransparentContentData>(marker.data()).uuid == uuid ? WebCore::FilterMarkerResult::Remove : WebCore::FilterMarkerResult::Keep;
-    });
-}
-
-void UnifiedTextReplacementController::removeTransparentMarkersForSession(const WTF::UUID& uuid, RemoveAllMarkersForSession removeAll)
-{
-    RefPtr document = this->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    for (auto [sessionUUID, remainingRangeData] : m_remainingRangesForSessions) {
-        if ((sessionUUID == uuid && removeAll == RemoveAllMarkersForSession::Yes) || (remainingRangeData.first == uuid))
-            removeTransparentMarkersForUUID(remainingRangeData.first);
-    }
-
-    if (auto sessionRange = contextRangeForSessionWithUUID(uuid)) {
-        removeTransparentMarkersForUUID(uuid);
-        if (removeAll == RemoveAllMarkersForSession::No)
-            return;
-
-        for (auto session : m_textIndicatorCharacterRangesForSessions) {
-            if (session.first == uuid) {
-                for (auto textIndicatorCharacterRange : session.second)
-                    removeTransparentMarkersForUUID(textIndicatorCharacterRange.first);
-            }
-        }
-    }
-
-    for (auto session : m_textIndicatorCharacterRangesForSessions) {
-        for (auto textIndicatorCharacterRange : session.second) {
-            if (textIndicatorCharacterRange.first == uuid) {
-                if (auto sessionRange = contextRangeForSessionWithUUID(session.first))
-                    removeTransparentMarkersForUUID(uuid);
-            }
-        }
-    }
 }
 
 void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange(const WebUnifiedTextReplacementSessionData& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context, bool finished)
@@ -481,89 +429,12 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    auto subCharacterRange = [](WebCore::CharacterRange superRange, WebCore::CharacterRange previousRange) {
-        auto location = previousRange.location + previousRange.length;
-        auto length = superRange.length - previousRange.length;
-        if (superRange.length < previousRange.length) {
-            ASSERT_NOT_REACHED();
-            return WebCore::CharacterRange { 0, 0 };
-        }
-        return WebCore::CharacterRange { location, length };
-    };
-
-    auto replacedRange = resolvedRange;
-    for (auto [sessionUUID, sessionRangeVector] : m_textIndicatorCharacterRangesForSessions) {
-        if (sessionUUID != session.uuid)
-            continue;
-
-        // sessionRangeVector.last() will always be valid because when creating
-        // the structure we always create the vector with an element.
-        auto replaceCharacterRange = subCharacterRange(range, sessionRangeVector.last().second);
-        replacedRange = UnifiedTextReplacementController::resolveCharacterRange(*sessionRange, replaceCharacterRange);
-        break;
-    }
-
-#if PLATFORM(MAC)
-    auto sourceTextIndicatorUUID = WTF::UUID::createVersion4();
-    m_webPage->createTextIndicatorForRange(replacedRange, [sourceTextIndicatorUUID, weakWebPage = WeakPtr { m_webPage }](std::optional<WebCore::TextIndicatorData>&& textIndicatorData) {
-        if (!weakWebPage)
-            return;
-        RefPtr protectedWebPage = weakWebPage.get();
-        if (textIndicatorData)
-            protectedWebPage->addTextIndicatorStyleForID(sourceTextIndicatorUUID, { WebKit::TextIndicatorStyle::Source, WTF::UUID(WTF::UUID::emptyValue)  }, *textIndicatorData);
-    });
-#endif
+    m_webPage->textIndicatorStyleController().addSourceTextIndicatorStyle(session.uuid, range, resolvedRange);
 
     replaceContentsOfRangeInSession(session.uuid, resolvedRange, *fragment, hasAttributes ? WebCore::Editor::MatchStyle::No : WebCore::Editor::MatchStyle::Yes);
 
-    auto finalTextIndicatorUUID = WTF::UUID::createVersion4();
     auto characterRangeAfterReplace = WebCore::CharacterRange(range.location, range.length + characterCountDelta);
-
-    auto sessionRangeAfterReplace = contextRangeForSessionWithUUID(session.uuid);
-    if (!sessionRangeAfterReplace) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto replacedRangeAfterReplace = UnifiedTextReplacementController::resolveCharacterRange(*sessionRangeAfterReplace, characterRangeAfterReplace);
-
-    auto remainingRange = makeRangeSelectingNodeContents(*document);
-    remainingRange.start.container = replacedRangeAfterReplace.endContainer();
-    remainingRange.start.offset = replacedRangeAfterReplace.endOffset();
-
-    auto remainingRangeUUID = WTF::UUID::createVersion4();
-    m_remainingRangesForSessions.append({ session.uuid, { remainingRangeUUID, remainingRange } });
-
-    m_webPage->createTextIndicatorForRange(replacedRangeAfterReplace, [finalTextIndicatorUUID, remainingRangeUUID, weakWebPage = WeakPtr { m_webPage }](std::optional<WebCore::TextIndicatorData>&& textIndicatorData) {
-        if (!weakWebPage)
-            return;
-        RefPtr protectedWebPage = weakWebPage.get();
-        if (textIndicatorData)
-            protectedWebPage->addTextIndicatorStyleForID(finalTextIndicatorUUID, { TextIndicatorStyle::Final, remainingRangeUUID }, *textIndicatorData);
-    });
-
-    bool attachedToExistingSession = false;
-    for (auto& [sessionUUID, sessionRangeVector] : m_textIndicatorCharacterRangesForSessions) {
-        if (sessionUUID == session.uuid) {
-            // sessionRangeVector.last() will always be valid because when creating
-            // the structure we always create the vector with an element.
-            auto characterRange = subCharacterRange(range, sessionRangeVector.last().second);
-#if PLATFORM(MAC)
-            sessionRangeVector.append({ sourceTextIndicatorUUID, characterRange });
-#endif
-            sessionRangeVector.append({ finalTextIndicatorUUID, characterRange });
-
-            attachedToExistingSession = true;
-            break;
-        }
-    }
-    if (!attachedToExistingSession) {
-#if PLATFORM(MAC)
-        m_textIndicatorCharacterRangesForSessions.append({ session.uuid, { { sourceTextIndicatorUUID, characterRangeAfterReplace }, { finalTextIndicatorUUID , characterRangeAfterReplace } } });
-#else
-        m_textIndicatorCharacterRangesForSessions.append({ session.uuid, { { finalTextIndicatorUUID, characterRangeAfterReplace } } });
-#endif
-    }
+    m_webPage->textIndicatorStyleController().addDestinationTextIndicatorStyle(session.uuid, characterRangeAfterReplace, resolvedRange);
 }
 
 void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction(const WebUnifiedTextReplacementSessionData& session, WebTextReplacementData::EditAction action)
@@ -753,30 +624,6 @@ void UnifiedTextReplacementController::updateStateForSelectedReplacementIfNeeded
 std::optional<WebCore::SimpleRange> UnifiedTextReplacementController::contextRangeForSessionWithUUID(const WTF::UUID& uuid) const
 {
     return WebCore::makeSimpleRange(m_contextRanges.get(uuid));
-}
-
-std::optional<WebCore::SimpleRange> UnifiedTextReplacementController::contextRangeForSessionOrRangeWithUUID(const WTF::UUID& uuid) const
-{
-    auto sessionRange = contextRangeForSessionWithUUID(uuid);
-    if (sessionRange)
-        return sessionRange;
-
-    for (auto [sessionUUID, textIndicatorUUIDtoRanges] : m_textIndicatorCharacterRangesForSessions) {
-        for (auto [textIndicatorUUID, textIndicatorRange] : textIndicatorUUIDtoRanges) {
-            if (textIndicatorUUID == uuid) {
-                auto fullSessionRange = contextRangeForSessionWithUUID(sessionUUID);
-                if (fullSessionRange)
-                    return UnifiedTextReplacementController::resolveCharacterRange(*fullSessionRange, textIndicatorRange);
-            }
-        }
-    }
-
-    for (auto [sessionUUID, remainingRangeUUIDtoRanges] : m_remainingRangesForSessions) {
-        if (remainingRangeUUIDtoRanges.first == uuid)
-            return remainingRangeUUIDtoRanges.second;
-    }
-
-    return std::nullopt;
 }
 
 RefPtr<WebCore::Document> UnifiedTextReplacementController::document() const
