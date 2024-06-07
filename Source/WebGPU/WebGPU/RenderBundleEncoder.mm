@@ -980,7 +980,7 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
         }
     }
 
-    m_bindGroups.set(groupIndex, group);
+    m_bindGroups.set(groupIndex, &group);
     if (group.vertexArgumentBuffer()) {
         addResource(m_resources, group.vertexArgumentBuffer(), MTLRenderStageVertex);
         m_vertexBuffers[m_device->vertexBufferIndexForBindGroup(groupIndex)] = { .buffer = group.vertexArgumentBuffer(), .offset = 0, .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->data(), .size = group.vertexArgumentBuffer().length };

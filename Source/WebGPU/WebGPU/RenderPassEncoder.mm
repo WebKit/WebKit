@@ -1064,7 +1064,7 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
         }
     }
 
-    m_bindGroups.set(groupIndex, group);
+    m_bindGroups.set(groupIndex, &group);
 }
 
 void RenderPassEncoder::setBlendConstant(const WGPUColor& color)

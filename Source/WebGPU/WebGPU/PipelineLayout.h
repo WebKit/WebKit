@@ -80,7 +80,7 @@ public:
     const Vector<uint32_t>* vertexOffsets(uint32_t, const Vector<uint32_t>&);
     const Vector<uint32_t>* fragmentOffsets(uint32_t, const Vector<uint32_t>&);
     const Vector<uint32_t>* computeOffsets(uint32_t, const Vector<uint32_t>&);
-    using BindGroupHashMap = HashMap<uint32_t, WeakPtr<BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using BindGroupHashMap = HashMap<uint32_t, RefPtr<const BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     NSString* errorValidatingBindGroupCompatibility(const BindGroupHashMap&) const;
 private:
     PipelineLayout(std::optional<Vector<Ref<BindGroupLayout>>>&&, bool, Device&);
