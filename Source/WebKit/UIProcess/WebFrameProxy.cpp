@@ -428,13 +428,13 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
     if (isMainFrame())
         return completionHandler();
 
-    RegistrableDomain navigationDomain(navigation.currentRequest().url());
+    Site navigationSite(navigation.currentRequest().url());
     RefPtr page = m_page.get();
     // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
     RegistrableDomain mainFrameDomain(page->mainFrame()->url());
 
     m_provisionalFrame = nullptr;
-    m_provisionalFrame = ProvisionalFrameProxy::create(*this, group.ensureProcessForDomain(navigationDomain, process, page->preferences()));
+    m_provisionalFrame = ProvisionalFrameProxy::create(*this, group.ensureProcessForSite(navigationSite, process, page->preferences()));
     page->websiteDataStore().protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, WTFMove(completionHandler));
 }
 

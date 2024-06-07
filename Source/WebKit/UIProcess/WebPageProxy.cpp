@@ -4676,7 +4676,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     RefPtr websitePolicies = navigation.websitePolicies();
     bool isServerSideRedirect = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision && navigation.currentRequestIsRedirect();
     bool isProcessSwappingOnNavigationResponse = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted;
-    RegistrableDomain navigationDomain { navigation.currentRequest().url() };
+    Site navigationSite { navigation.currentRequest().url() };
 
     if (preferences().siteIsolationEnabled() && (!frame.isMainFrame() || newProcess->coreProcessIdentifier() == frame.process().coreProcessIdentifier())) {
 
@@ -4705,7 +4705,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     }
 
     Ref browsingContextGroup = newProcess->websiteDataStore() == &websiteDataStore() ? m_browsingContextGroup : BrowsingContextGroup::create();
-    Ref frameProcess = browsingContextGroup->ensureProcessForDomain(navigationDomain, newProcess, preferences());
+    Ref frameProcess = browsingContextGroup->ensureProcessForSite(navigationSite, newProcess, preferences());
     m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, WTFMove(frameProcess), WTFMove(browsingContextGroup), WTFMove(suspendedPage), navigation, isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, isProcessSwappingOnNavigationResponse, websitePolicies.get(), replacedDataStoreForWebArchiveLoad);
 
     // FIXME: This should be a CompletionHandler, but http/tests/inspector/target/provisional-load-cancels-previous-load.html doesn't call it.
@@ -6367,10 +6367,11 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
             m_mainFrameWebsitePoliciesData = makeUnique<WebsitePoliciesData>(websitePolicies->data());
     }
 
-    if (frame->frameProcess().domain().isEmpty() && m_preferences->siteIsolationEnabled()) {
-        RegistrableDomain navigationDomain(request.url());
-        if (!navigationDomain.isEmpty())
-            frame->setProcess(m_browsingContextGroup->ensureProcessForDomain(navigationDomain, m_process, preferences()));
+    // FIXME: We ought to be able to know what site a navigation is to even before it commits, even for the first navigation.
+    if (frame->frameProcess().site().isEmpty() && m_preferences->siteIsolationEnabled()) {
+        Site navigationSite(request.url());
+        if (!navigationSite.isEmpty())
+            frame->setProcess(m_browsingContextGroup->ensureProcessForSite(navigationSite, m_process, preferences()));
     }
 
     m_hasCommittedAnyProvisionalLoads = true;
@@ -13766,9 +13767,9 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
 
-WebProcessProxy* WebPageProxy::processForRegistrableDomain(const WebCore::RegistrableDomain& domain)
+WebProcessProxy* WebPageProxy::processForSite(const Site& site)
 {
-    if (auto* process = m_browsingContextGroup->processForDomain(domain))
+    if (auto* process = m_browsingContextGroup->processForSite(site))
         return &process->process();
 
     return nullptr;

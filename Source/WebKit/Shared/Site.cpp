@@ -24,30 +24,24 @@
  */
 
 #include "config.h"
-#include "FrameProcess.h"
+#include "Site.h"
 
-#include "BrowsingContextGroup.h"
-#include "WebPageProxy.h"
-#include "WebPreferences.h"
-#include "WebProcessProxy.h"
+#include <wtf/HashFunctions.h>
 
 namespace WebKit {
 
-FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group, const Site& site, const WebPreferences& preferences)
-    : m_process(process)
-    , m_browsingContextGroup(group)
-    , m_site(site)
+Site::Site(const URL& url)
+    : m_protocol(url.protocol().toString())
+    , m_domain(url) { }
+
+unsigned Site::hash() const
 {
-    if (preferences.siteIsolationEnabled())
-        group.addFrameProcess(*this);
-    else
-        m_browsingContextGroup = nullptr;
+    return WTF::pairIntHash(m_protocol.hash(), m_domain.hash());
 }
 
-FrameProcess::~FrameProcess()
+bool Site::matches(const URL& url) const
 {
-    if (m_browsingContextGroup)
-        m_browsingContextGroup->removeFrameProcess(*this);
+    return url.protocol() == m_protocol && m_domain.matches(url);
 }
 
-}
+} // namespace WebKit

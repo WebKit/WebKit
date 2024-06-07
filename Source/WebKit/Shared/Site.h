@@ -25,33 +25,49 @@
 
 #pragma once
 
-#include "Site.h"
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
+#include <WebCore/RegistrableDomain.h>
+#include <wtf/HashTraits.h>
 
 namespace WebKit {
 
-class BrowsingContextGroup;
-class WebPreferences;
-class WebProcessProxy;
-
-class FrameProcess : public RefCounted<FrameProcess>, public CanMakeWeakPtr<FrameProcess> {
+// https://html.spec.whatwg.org/multipage/browsers.html#site
+class Site {
 public:
-    ~FrameProcess();
+    explicit Site(const URL&);
 
-    const Site& site() const { return m_site; }
-    const WebProcessProxy& process() const { return m_process.get(); }
-    WebProcessProxy& process() { return m_process.get(); }
+    Site(const Site&) = default;
+    Site& operator=(const Site&) = default;
+
+    const String& protocol() const { return m_protocol; }
+    const WebCore::RegistrableDomain& domain() const { return m_domain; }
+    bool isEmpty() const { return m_domain.isEmpty(); }
+    bool matches(const URL&) const;
+
+    Site(WTF::HashTableEmptyValueType) { }
+    Site(WTF::HashTableDeletedValueType deleted)
+        : m_protocol(deleted) { }
+    bool isHashTableDeletedValue() const { return m_protocol.isHashTableDeletedValue(); }
+    unsigned hash() const;
+
+    bool operator==(const Site&) const = default;
+    bool operator!=(const Site&) const = default;
+
+    struct Hash {
+        static unsigned hash(const Site& site) { return site.hash(); }
+        static bool equal(const Site& a, const Site& b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
 
 private:
-    friend class BrowsingContextGroup; // FrameProcess should not be created except by BrowsingContextGroup.
-    static Ref<FrameProcess> create(WebProcessProxy& process, BrowsingContextGroup& group, const Site& site, const WebPreferences& preferences) { return adoptRef(*new FrameProcess(process, group, site, preferences)); }
-    FrameProcess(WebProcessProxy&, BrowsingContextGroup&, const Site&, const WebPreferences&);
-
-    Ref<WebProcessProxy> m_process;
-    WeakPtr<BrowsingContextGroup> m_browsingContextGroup;
-    const Site m_site;
+    String m_protocol;
+    WebCore::RegistrableDomain m_domain;
 };
 
+}
+
+namespace WTF {
+template<> struct DefaultHash<WebKit::Site> : WebKit::Site::Hash { };
+template<> struct HashTraits<WebKit::Site> : SimpleClassHashTraits<WebKit::Site> {
+    static WebKit::Site emptyValue() { return { WTF::HashTableEmptyValue }; }
+};
 }

@@ -383,7 +383,7 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameI
     // When site isolation is enabled, we use the same WebFrameProxy so we don't need this duplicate call.
     // didFailProvisionalLoadForFrameShared will call didFailProvisionalLoad on the same main frame.
     if (m_page->preferences().siteIsolationEnabled()) {
-        m_browsingContextGroup->transitionProvisionalPageToRemotePage(*this, RegistrableDomain(request.url()));
+        m_browsingContextGroup->transitionProvisionalPageToRemotePage(*this, Site(request.url()));
         m_shouldClosePage = false;
     } else if (auto* pageMainFrame = m_page->mainFrame())
         pageMainFrame->didFailProvisionalLoad();
@@ -404,11 +404,11 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
         RefPtr openerFrame = m_page->openerFrame();
         page->mainFrame()->setProcess(m_frameProcess);
         if (RefPtr openerPage = openerFrame ? openerFrame->page() : nullptr) {
-            RegistrableDomain openerDomain(openerFrame->url());
-            RegistrableDomain openedDomain(request.url());
-            if (openerDomain != openedDomain) {
+            Site openerSite(openerFrame->url());
+            Site openedSite(request.url());
+            if (openerSite != openedSite) {
                 page->send(Messages::WebPage::LoadDidCommitInAnotherProcess(page->mainFrame()->frameID(), std::nullopt));
-                m_browsingContextGroup->transitionPageToRemotePage(page, openerDomain);
+                m_browsingContextGroup->transitionPageToRemotePage(page, openerSite);
             }
         }
     }

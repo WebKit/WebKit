@@ -75,7 +75,7 @@ static bool processStillRunning(pid_t pid)
     return !kill(pid, 0);
 }
 
-static bool frameTreesMatch(_WKFrameTreeNode *actualRoot, const ExpectedFrameTree& expectedRoot)
+static bool frameTreesMatch(_WKFrameTreeNode *actualRoot, ExpectedFrameTree&& expectedRoot)
 {
     WKFrameInfo *info = actualRoot.info;
     if (info._isLocalFrame != std::holds_alternative<String>(expectedRoot.remoteOrOrigin))
@@ -90,11 +90,15 @@ static bool frameTreesMatch(_WKFrameTreeNode *actualRoot, const ExpectedFrameTre
 
     if (actualRoot.childFrames.count != expectedRoot.children.size())
         return false;
-    for (size_t i = 0; i < expectedRoot.children.size(); i++) {
-        if (!frameTreesMatch(actualRoot.childFrames[i], expectedRoot.children[i]))
+    for (_WKFrameTreeNode *actualChild in actualRoot.childFrames) {
+        auto index = expectedRoot.children.findIf([&] (auto& expectedFrameTree) {
+            return frameTreesMatch(actualChild, ExpectedFrameTree { expectedFrameTree });
+        });
+        if (index == WTF::notFound)
             return false;
+        expectedRoot.children.remove(index);
     }
-    return true;
+    return expectedRoot.children.isEmpty();
 }
 
 static bool frameTreesMatch(NSSet<_WKFrameTreeNode *> *actualFrameTrees, Vector<ExpectedFrameTree>&& expectedFrameTrees)
@@ -104,7 +108,7 @@ static bool frameTreesMatch(NSSet<_WKFrameTreeNode *> *actualFrameTrees, Vector<
 
     for (_WKFrameTreeNode *root in actualFrameTrees) {
         auto index = expectedFrameTrees.findIf([&] (auto& expectedFrameTree) {
-            return frameTreesMatch(root, expectedFrameTree);
+            return frameTreesMatch(root, ExpectedFrameTree { expectedFrameTree });
         });
         if (index == WTF::notFound)
             return false;
@@ -3296,6 +3300,43 @@ TEST(SiteIsolation, NavigateIframeCrossOriginBackForward)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "a");
     [webView goForward];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
+}
+
+TEST(SiteIsolation, ProtocolProcessSeparation)
+{
+    HTTPServer secureServer({
+        { "/subdomain"_s, { "hi"_s } },
+        { "/no_subdomain"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    HTTPServer plaintextServer({
+        { "http://a.com/"_s, {
+            "<iframe src='https://a.com/no_subdomain'></iframe>"
+            "<iframe src='https://subdomain.a.com/subdomain'></iframe>"_s
+        } }
+    });
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", secureServer.port()]]];
+    [storeConfiguration setHTTPProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", plaintextServer.port()]]];
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    enableSiteIsolation(viewConfiguration.get());
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://a.com/"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "http://a.com"_s,
+            { { RemoteFrame }, { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://subdomain.a.com"_s }, { "https://a.com"_s } }
+        },
+    });
 }
 
 }

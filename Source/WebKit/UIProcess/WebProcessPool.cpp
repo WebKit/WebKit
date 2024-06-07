@@ -1952,18 +1952,18 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
 
 void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler)
 {
-    RegistrableDomain registrableDomain { navigation.currentRequest().url() };
-    if (page.preferences().siteIsolationEnabled() && !registrableDomain.isEmpty()) {
-        auto mainFrameDomain = frameInfo.isMainFrame ? registrableDomain : RegistrableDomain(URL(page.pageLoadState().activeURL()));
-        if (!frame.isMainFrame() && registrableDomain == mainFrameDomain) {
+    Site site { navigation.currentRequest().url() };
+    if (page.preferences().siteIsolationEnabled() && !site.isEmpty()) {
+        auto mainFrameSite = frameInfo.isMainFrame ? site : Site(URL(page.pageLoadState().activeURL()));
+        if (!frame.isMainFrame() && site == mainFrameSite) {
             Ref mainFrameProcess = page.mainFrame()->protectedProcess();
             if (!mainFrameProcess->isInProcessCache())
-                return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same registration domain as mainFrame domain"_s);
+                return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same site as main frame"_s);
         }
-        RefPtr process = &page.websiteDataStore() == dataStore.ptr() ? page.processForRegistrableDomain(registrableDomain) : nullptr;
+        RefPtr process = &page.websiteDataStore() == dataStore.ptr() ? page.processForSite(site) : nullptr;
         if (process && !process->isInProcessCache()) {
-            dataStore->networkProcess().addAllowedFirstPartyForCookies(*process, mainFrameDomain, LoadedWebArchive::No, [completionHandler = WTFMove(completionHandler), process] () mutable {
-                completionHandler(process.releaseNonNull(), nullptr, "Found process for the same registration domain"_s);
+            dataStore->networkProcess().addAllowedFirstPartyForCookies(*process, mainFrameSite.domain(), LoadedWebArchive::No, [completionHandler = WTFMove(completionHandler), process] () mutable {
+                completionHandler(process.releaseNonNull(), nullptr, "Found process for the same site"_s);
             });
             return;
         }
@@ -1995,7 +1995,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         return completionHandler(WTFMove(process), suspendedPage, reason);
 
     ASSERT(process->state() != AuxiliaryProcessProxy::State::Terminated);
-    prepareProcessForNavigation(WTFMove(process), page, suspendedPage, reason, registrableDomain, navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler));
+    prepareProcessForNavigation(WTFMove(process), page, suspendedPage, reason, site.domain(), navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler));
 }
 
 void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process, WebPageProxy& page, SuspendedPageProxy* suspendedPage, ASCIILiteral reason, const RegistrableDomain& registrableDomain, const API::Navigation& navigation, WebProcessProxy::LockdownMode lockdownMode, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler, unsigned previousAttemptsCount)
@@ -2032,10 +2032,10 @@ void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process,
 std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& pageSourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore)
 {
     auto& targetURL = navigation.currentRequest().url();
-    auto targetRegistrableDomain = WebCore::RegistrableDomain { targetURL };
+    auto targetSite = Site { targetURL };
 
     auto createNewProcess = [&] () -> Ref<WebProcessProxy> {
-        return processForRegistrableDomain(dataStore, targetRegistrableDomain, lockdownMode, page.protectedConfiguration());
+        return processForRegistrableDomain(dataStore, targetSite.domain(), lockdownMode, page.protectedConfiguration());
     };
 
     if (usesSingleWebProcess())
@@ -2063,8 +2063,9 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
         return { createNewProcess(), nullptr, "Redirect to a different scheme for which the app registered a custom handler"_s };
 
     // FIXME: We ought to be able to re-use processes that haven't committed anything with site isolation enabled, but cross-site redirects are tricky. <rdar://116203552>
-    if (!sourceProcess->hasCommittedAnyProvisionalLoads() && !page.preferences().siteIsolationEnabled()) {
-        tryPrewarmWithDomainInformation(sourceProcess, targetRegistrableDomain);
+    bool siteIsolationEnabled = page.preferences().siteIsolationEnabled();
+    if (!sourceProcess->hasCommittedAnyProvisionalLoads() && !siteIsolationEnabled) {
+        tryPrewarmWithDomainInformation(sourceProcess, targetSite.domain());
         return { WTFMove(sourceProcess), nullptr, "Process has not yet committed any provisional loads"_s };
     }
 
@@ -2075,13 +2076,17 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
     // (e.g. a location bar navigation as opposed to a link click). If there's substitute data, then the response
     // may be a response generated by the engine, so consider those navigations as non-client-initiated.
     bool isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput() && !navigation.substituteData();
-    if (navigation.openedByDOMWithOpener() && !!page.openerFrame() && !(isRequestFromClientOrUserInput || page.preferences().siteIsolationEnabled() || page.websiteDataStore().openerTypeForDomain(targetRegistrableDomain) == RestrictedOpenerType::NoOpener))
+    if (navigation.openedByDOMWithOpener()
+        && !!page.openerFrame()
+        && !(isRequestFromClientOrUserInput || siteIsolationEnabled || page.websiteDataStore().openerTypeForDomain(targetSite.domain()) == RestrictedOpenerType::NoOpener))
         return { WTFMove(sourceProcess), nullptr, "Browsing context been opened by DOM without 'noopener'"_s };
 
     // FIXME: We should support process swap when a window has opened other windows via window.open.
     // Currently we only allow the swap if the user has performed some manual navigation action
     // (e.g. navigated via typing in the location bar).
-    if (navigation.hasOpenedFrames() && page.hasOpenedPage() && !(isRequestFromClientOrUserInput || page.preferences().siteIsolationEnabled()))
+    if (navigation.hasOpenedFrames()
+        && page.hasOpenedPage()
+        && !(isRequestFromClientOrUserInput || siteIsolationEnabled))
         return { WTFMove(sourceProcess), nullptr, "Browsing context has opened other windows"_s };
 
     if (RefPtr targetItem = navigation.targetItem()) {
@@ -2128,15 +2133,19 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
     if (!m_configuration->processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol() && !sourceURL.protocolIsInHTTPFamily() && sourceURL.protocol() == targetURL.protocol())
         return { WTFMove(sourceProcess), nullptr, "Navigation within the same non-HTTP(s) protocol"_s };
 
-    if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || targetRegistrableDomain.matches(sourceURL) || (sourceURL.protocolIsAbout() && (!sourceProcess->hasCommittedAnyMeaningfulProvisionalLoads() || sourceProcess->registrableDomain().matches(targetURL))) || targetRegistrableDomain.matches(sourceURL))
+    if (!sourceURL.isValid()
+        || !targetURL.isValid()
+        || sourceURL.isEmpty()
+        || (siteIsolationEnabled ? targetSite.matches(sourceURL) : targetSite.domain().matches(sourceURL))
+        || (sourceURL.protocolIsAbout() && (!sourceProcess->hasCommittedAnyMeaningfulProvisionalLoads() || sourceProcess->registrableDomain().matches(targetURL))))
         return { WTFMove(sourceProcess), nullptr, "Navigation is same-site"_s };
 
     auto reason = "Navigation is cross-site"_s;
     
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
-        LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process for domain %s", targetRegistrableDomain.string().utf8().data());
+        LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process for domain %s", targetSite.domain().string().utf8().data());
 
-        if (RefPtr process = m_swappedProcessesPerRegistrableDomain.get(targetRegistrableDomain)) {
+        if (RefPtr process = m_swappedProcessesPerRegistrableDomain.get(targetSite.domain())) {
             if (process->websiteDataStore() == dataStore.ptr() && process->state() != AuxiliaryProcessProxy::State::Terminated) {
                 LOG(ProcessSwapping, "(ProcessSwapping) Reusing a previously cached process with pid %i to continue navigation to URL %s", process->processID(), targetURL.string().utf8().data());
 

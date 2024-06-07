@@ -27,12 +27,12 @@
 
 #include "MessageReceiver.h"
 #include "NavigationActionData.h"
+#include "Site.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/RegistrableDomain.h>
 
 namespace WebKit {
 class RemotePageProxy;
@@ -78,7 +78,7 @@ struct NavigationActionData;
 class RemotePageProxy : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::RegistrableDomain&, WebPageProxyMessageReceiverRegistration* = nullptr);
+    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const Site&, WebPageProxyMessageReceiverRegistration* = nullptr);
     ~RemotePageProxy();
 
     WebPageProxy* page() const;
@@ -97,7 +97,7 @@ public:
     WebProcessProxy& process() { return m_process.get(); }
     Ref<WebProcessProxy> protectedProcess() const;
     WebCore::PageIdentifier pageID() const { return m_webPageID; }
-    const WebCore::RegistrableDomain& domain() const { return m_domain; }
+    const Site& site() const { return m_site; }
 
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -114,7 +114,7 @@ private:
     const WebCore::PageIdentifier m_webPageID;
     const Ref<WebProcessProxy> m_process;
     WeakPtr<WebPageProxy> m_page;
-    const WebCore::RegistrableDomain m_domain;
+    const Site m_site;
     std::unique_ptr<RemotePageDrawingAreaProxy> m_drawingArea;
     std::unique_ptr<RemotePageVisitedLinkStoreRegistration> m_visitedLinkStoreRegistration;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
