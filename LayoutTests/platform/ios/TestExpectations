@@ -3097,35 +3097,6 @@ webkit.org/b/189726 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/189727 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ Pass Failure ]
 
-webkit.org/b/187557 media/media-fragments/TC0005.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0006.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0009.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0011.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0014.html [ Pass Failure ]
-webkit.org/b/187522 media/media-fragments/TC0015.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0024.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0035.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0036.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0037.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0038.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0039.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0051.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0052.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0053.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0054.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0055.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0059.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0072.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0078.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0079.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0085.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0086.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0087.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0088.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0089.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0090.html [ Pass Failure ]
-webkit.org/b/187557 media/media-fragments/TC0091.html [ Pass Failure ]
-
 webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Pass Failure ]
 
 webkit.org/b/190032 animations/stop-animation-on-suspend.html [ Failure Pass ]
@@ -3415,23 +3386,14 @@ webkit.org/b/261703 fast/forms/datalist/datalist-show-picker.html [ Skip ]
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Failure ]
 
-# <rdar://problem/63448168> [ macOS iOS Debug ] media/video-source-moved.html is a super flkay timeout
-media/video-source-moved.html [ Pass Timeout ]
-
 # <rdar://problem/64273358> REGRESSION: [ iOS ] imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html is flaky timing out.
 imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html [ Slow ]
-
-# <rdar://problem/64546452> [ iOS ] mathml/opentype/munderover-stretch-width.html is flaky failing.
-mathml/opentype/munderover-stretch-width.html [ Pass Failure ]
 
 # <rdar://problem/64816264> [ iOS wk2 ] streams/pipe-to.html is flaky failing.
 streams/pipe-to.html [ Pass Failure ]
 
 # <rdar://problem/63255266> [ iOS wk2 ] animations/suspend-resume-animation-events.html is a flaky failure
 animations/suspend-resume-animation-events.html [ Pass Failure ]
-
-# <rdar://problem/63399079> [ iOS Debug ] imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm is a flaky failure
-imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm [ Pass Failure ]
 
 webkit.org/b/215515 imported/w3c/web-platform-tests/user-timing/measure_navigation_timing.html [ Pass Failure ]
 
@@ -3758,10 +3720,6 @@ webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Tim
 webkit.org/b/240918 [ Debug ] fast/loader/create-frame-in-DOMContentLoaded.html [ Pass Failure ]
 webkit.org/b/240918 [ Debug ] fast/loader/user-style-sheet-resource-load-callbacks.html [ Pass Failure ]
 
-webkit.org/b/240927 [ Debug ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
-
-webkit.org/b/240929 [ Debug ] resize-observer/resize-observer-with-zoom.html [ Pass Timeout ]
-
 webkit.org/b/241253 fast/text/bulgarian-system-language-shaping.html [ Pass ]
 
 # These tests have different results on iOS
@@ -4029,8 +3987,6 @@ webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/244501 [ Debug ] webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Pass Timeout ]
 
 webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-view.html [ Pass Timeout ]
-
-webkit.org/b/248065 imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/selectors/selection-image-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selection-image-002.html [ ImageOnlyFailure ]
@@ -6393,9 +6349,6 @@ webkit.org/b/216298 imported/w3c/web-platform-tests/IndexedDB/blob-valid-after-d
 webkit.org/b/231387 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Pass Failure ]
 
 webkit.org/b/209619 compositing/clipping/border-radius-async-overflow-stacking.html [ Pass ImageOnlyFailure ]
-
-#<rdar://problem/63026283> [ macOS iOS ] media/modern-media-controls/playback-support/playback-support-autoplay.html is a flaky failure/timeout
-media/modern-media-controls/playback-support/playback-support-autoplay.html [ Pass Timeout ]
 
 http/tests/resourceLoadStatistics/exemptDomains/ [ Pass ]
 

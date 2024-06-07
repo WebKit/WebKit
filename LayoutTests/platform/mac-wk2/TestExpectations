@@ -1362,25 +1362,6 @@ webkit.org/b/239095 http/wpt/cache-storage/cache-storage-networkprocess-crash.ht
 
 webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Failure ]
 
-# WebGL conformance tests are a flaky time out
-webkit.org/b/239388 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance2/textures/canvas/tex-2d-r8ui-red_integer-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance2/textures/canvas/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/uniforms/uniform-default-values.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Timeout ]
-
 webkit.org/b/239546 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Pass Failure ]
 
 webkit.org/b/239554 fast/scrolling/overflow-scroll-past-max.html [ Pass Failure ]
@@ -1461,8 +1442,6 @@ imported/mozilla/svg/blend-luminosity.svg [ Pass ImageOnlyFailure ]
 [ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down.html [ Failure ]
 [ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state.html [ Failure ]
 fast/speechrecognition/start-recognition-then-stop.html [ Pass Failure ]
-[ x86_64 ] fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Pass Timeout Crash ]
-[ x86_64 ] fast/frames/message-port-postMessage-unload-event.html [ Pass Failure ]
 [ x86_64 ] fast/mediastream/getUserMedia-to-canvas-1.html [ Pass Timeout ]
 [ x86_64 ] fast/mediastream/getUserMedia-to-canvas-2.html [ Pass Timeout ]
 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
@@ -1470,31 +1449,17 @@ fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
 [ x86_64 ] css3/blending/background-blend-mode-body-image.html [ ImageOnlyFailure ]
 [ Ventura+ ] fast/images/animated-heics-draw.html [ Pass Timeout ]
 [ Ventura+ ]  http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html [ Failure ]
-streams/readable-stream-default-controller-error.html [ Pass Crash ]
 fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure Timeout ]
-[ x86_64 ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
-[ x86_64 ] http/wpt/webrtc/audiovideo-script-transform.html [ Pass Failure ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/block-local-documents-inheriting-none.https.html [ Pass Failure ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Pass Failure ]
-[ x86_64 ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html [ Pass Failure ]
-[ x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Pass Failure ]
-[ x86_64 ] scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
-[ x86_64 ] scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
 [ x86_64 ] scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Pass Failure ]
 [ Ventura+ ] platform/mac-wk2/plugins/asynchronous-destroy-before-initialization.html [ Pass Failure ]
-[ x86_64 ] media/restricted-audio-playback-with-multiple-settimeouts.html [ Pass Failure ]
 imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
-[ x86_64 ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure ]
 [ Ventura+ Debug x86_64 ] webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Pass Failure ]
 [ Ventura Debug x86_64 ] editing/caret/color-span-inside-editable-background.html [ Pass ImageOnlyFailure ]
 [ Ventura+ x86_64 ] fast/css/text-overflow-input-focus-placeholder.html [ Pass ImageOnlyFailure ]
-[ x86_64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Pass Failure Timeout ]
 [ Ventura+ x86_64 Debug ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rg32f-rg-float.html [ Pass Timeout ]
 [ Ventura+ Debug x86_64 ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Pass Timeout ]
-[ Debug x86_64 ] webgl/2.0.0/conformance/context/context-release-with-workers.html [ Pass Timeout ]
-[ x86_64 ] resize-observer/resize-observer-with-zoom.html [ Pass Timeout ]
-[ Debug x86_64 ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Pass Failure Crash ]
 
 # WebGL in OffscreenCanvas requires the GPUP.
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html [ Skip ]
@@ -1611,8 +1576,6 @@ webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pa
 # rdar://108846032 (REGRESSION (263506@main): [ Sonoma wk2 ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html: WebCore::Layout::Line::TrimmableTrailingContent::remove)
 [ Sonoma+ ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
 
-webkit.org/b/260867 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Failure ]
-
 webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gesture.html [ Pass Failure ]
 
 webkit.org/b/260917 [ Ventura ] fast/forms/border-color-relayout.html [ Pass ImageOnlyFailure ]
@@ -1652,13 +1615,8 @@ webkit.org/b/261226 [ Sonoma+ ] fast/images/mac/play-pause-individual-animation-
 # The test takes an incredibly long time to run and typically times out when run in stress-test.
 webkit.org/b/263044 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Pass Failure ]
 
-# webkit.org/b/261304 Batch mark expectations for flaky media tests
-media/media-source/media-source-evict-codedframe-large-currenttime.html [ Pass Failure ]
-
 # webkit.org/b/261308 Batch mark expectations for flaky imported/w3c/web-platform-tests
-[ X86_64 ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Pass Failure ]
-
 
 webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer.html [ Pass Failure ]
 
@@ -1673,14 +1631,7 @@ http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Pass F
 
 webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.html [ Pass Crash ]
 
-# webkit.org/b/262425 (REGRESSION(268433@main): [ iOS17 Sonoma ] 5 tests under http/wpt/mediarecorder are constantly crashing.)
-[ Sonoma ] http/wpt/mediarecorder/MediaRecorder-dataavailable.html [ Crash ]
-[ Sonoma ] http/wpt/mediarecorder/MediaRecorder-multiple-start-stop.html [ Crash ]
-[ Sonoma ] http/wpt/mediarecorder/MediaRecorder-requestData.html [ Crash ]
-http/wpt/mediarecorder/pause-recording.html [ Pass Failure Crash ]
-[ Sonoma ] http/wpt/mediarecorder/record-96KHz-sources.html [ Crash ]
-
-[ Ventura ] media/media-vp8-webm.html [ ImageOnlyFailure ] # Missing AVSampleBufferDisplayLayer's ReadyForDisplayDidChangeNotification
+[ Ventura+ ] media/media-vp8-webm.html [ ImageOnlyFailure ] # Missing AVSampleBufferDisplayLayer's ReadyForDisplayDidChangeNotification
 
 webkit.org/b/263136 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
 
