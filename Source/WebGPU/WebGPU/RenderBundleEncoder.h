@@ -140,7 +140,7 @@ private:
     std::pair<uint32_t, uint32_t> computeMininumVertexInstanceCount() const;
 
     const Ref<Device> m_device;
-    WeakPtr<Buffer> m_indexBuffer;
+    RefPtr<Buffer> m_indexBuffer;
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
     NSUInteger m_indexBufferSize { 0 };

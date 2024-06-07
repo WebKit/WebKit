@@ -1074,7 +1074,7 @@ void RenderPassEncoder::setBlendConstant(const WGPUColor& color)
     [renderCommandEncoder() setBlendColorRed:color.r green:color.g blue:color.b alpha:color.a];
 }
 
-void RenderPassEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
+void RenderPassEncoder::setIndexBuffer(Buffer& buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
     RETURN_IF_FINISHED();
     if (!isValidToUseWith(buffer, *this)) {
@@ -1097,7 +1097,7 @@ void RenderPassEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat for
         return;
     }
 
-    m_indexBuffer = buffer;
+    m_indexBuffer = &buffer;
     m_indexBufferSize = size;
     m_indexType = format == WGPUIndexFormat_Uint32 ? MTLIndexTypeUInt32 : MTLIndexTypeUInt16;
     m_indexBufferOffset = offset;

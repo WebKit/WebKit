@@ -82,7 +82,7 @@ public:
     void pushDebugGroup(String&& groupLabel);
     void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
     void setBlendConstant(const WGPUColor&);
-    void setIndexBuffer(const Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
+    void setIndexBuffer(Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
     void setPipeline(const RenderPipeline&);
     void setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
     void setStencilReference(uint32_t);
@@ -140,7 +140,7 @@ private:
     };
 
     const Ref<Device> m_device;
-    WeakPtr<Buffer> m_indexBuffer;
+    RefPtr<Buffer> m_indexBuffer;
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
     NSUInteger m_indexBufferSize { 0 };
