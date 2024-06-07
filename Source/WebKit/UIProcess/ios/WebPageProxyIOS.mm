@@ -1351,6 +1351,9 @@ static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedFo
     if (Quirks::needsIPhoneUserAgent(request.url()))
         return RecommendDesktopClassBrowsingForRequest::No;
 
+    if (Quirks::needsDesktopUserAgent(request.url()))
+        return RecommendDesktopClassBrowsingForRequest::Yes;
+
     return RecommendDesktopClassBrowsingForRequest::Auto;
 }
 

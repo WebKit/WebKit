@@ -105,6 +105,12 @@ static inline bool isYahooMail(Document& document)
 }
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/QuirksAdditions.cpp>
+#else
+static inline bool needsDesktopUserAgentInternal(const URL&) { return false; }
+#endif
+
 Quirks::Quirks(Document& document)
     : m_document(document)
 {
@@ -1798,6 +1804,11 @@ bool Quirks::needsIPhoneUserAgent(const URL& url)
     UNUSED_PARAM(url);
 #endif
     return false;
+}
+
+bool Quirks::needsDesktopUserAgent(const URL& url)
+{
+    return needsDesktopUserAgentInternal(url);
 }
 
 bool Quirks::shouldIgnorePlaysInlineRequirementQuirk() const
