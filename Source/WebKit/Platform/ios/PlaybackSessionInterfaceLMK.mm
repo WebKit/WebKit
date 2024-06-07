@@ -112,6 +112,15 @@
     return destination;
 }
 
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player seekThumbnailToTime:(NSTimeInterval)time
+{
+    // FIXME: The intent of this method is to seek the contents of LinearMediaPlayer's thumbnailLayer,
+    // which LMPlayableViewController displays in a popover when scrubbing. Since we don't currently
+    // provide a thumbnail layer, fast seek the main content instead.
+    if (auto model = _model.get())
+        model->fastSeek(time);
+}
+
 - (void)linearMediaPlayerBeginScrubbing:(WKSLinearMediaPlayer *)player
 {
     if (auto model = _model.get())
