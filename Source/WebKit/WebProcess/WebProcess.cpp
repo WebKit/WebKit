@@ -1033,21 +1033,6 @@ void WebProcess::removeWebFrame(FrameIdentifier frameID, std::optional<WebPagePr
     parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyFrame(frameID, *pageID), 0);
 }
 
-WebPageGroupProxy* WebProcess::webPageGroup(PageGroup* pageGroup)
-{
-    for (auto& page : m_pageGroupMap.values()) {
-        if (page->corePageGroup() == pageGroup)
-            return page.get();
-    }
-
-    return 0;
-}
-
-WebPageGroupProxy* WebProcess::webPageGroup(PageGroupIdentifier pageGroupID)
-{
-    return m_pageGroupMap.get(pageGroupID);
-}
-
 WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupData)
 {
     auto result = m_pageGroupMap.add(pageGroupData.pageGroupID, nullptr);

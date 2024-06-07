@@ -732,7 +732,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     WebProcessPool::statistics().wkPageCount++;
 
     protectedPreferences()->addPage(*this);
-    protectedPageGroup()->addPage(*this);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     if (RefPtr webExtensionController = this->webExtensionController())
@@ -808,7 +807,6 @@ WebPageProxy::~WebPageProxy()
 
     Ref preferences = this->preferences();
     preferences->removePage(*this);
-    protectedPageGroup()->removePage(*this);
 
 #ifndef NDEBUG
     webPageProxyCounter.decrement();

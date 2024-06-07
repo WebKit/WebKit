@@ -31,6 +31,7 @@
 #include "APIContentWorld.h"
 #include "APILoaderClient.h"
 #include "APINavigation.h"
+#include "APIPageConfiguration.h"
 #include "PageLoadState.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
@@ -188,7 +189,7 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
 
     // Setup target postMessage listener
     auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector"_s, API::ContentWorld::pageContentWorld());
-    pageProxy.pageGroup().userContentController().addUserScriptMessageHandler(handler.get());
+    pageProxy.configuration().userContentController().addUserScriptMessageHandler(handler.get());
 
     // Setup loader client to get notified of page load
     m_page.setLoaderClient(makeUnique<LoaderClient>([this] {

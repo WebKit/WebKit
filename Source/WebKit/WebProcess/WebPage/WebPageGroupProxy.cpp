@@ -50,4 +50,9 @@ WebPageGroupProxy::~WebPageGroupProxy()
 {
 }
 
+WebCore::PageGroup* WebPageGroupProxy::corePageGroup() const
+{
+    return m_pageGroup.get();
+}
+
 } // namespace WebKit
