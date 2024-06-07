@@ -101,7 +101,6 @@ Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheEngine.cpp
 Modules/cache/DOMCacheStorage.cpp
 Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp
-Modules/cache/WorkerCacheStorageConnection.cpp
 Modules/compression/CompressionStreamEncoder.cpp
 Modules/compression/DecompressionStreamDecoder.cpp
 Modules/contact-picker/ContactsManager.cpp

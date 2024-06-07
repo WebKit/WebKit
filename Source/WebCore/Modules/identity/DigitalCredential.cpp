@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DigitalCredential.h"
 
+#include <JavaScriptCore/Uint8Array.h>
 #include <wtf/text/Base64.h>
 
 #if ENABLE(WEB_AUTHN)
