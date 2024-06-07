@@ -197,16 +197,23 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         {
             IndentationScope scope(m_indent);
             m_stringBuilder.append(
-                m_indent, "packed_vec<T, 3> vec3;\n"_s,
+                m_indent, "T x;\n"_s,
+                m_indent, "T y;\n"_s,
+                m_indent, "T z;\n"_s,
                 m_indent, "uint8_t __padding[sizeof(T)];\n"_s,
                 m_indent, "\n"_s,
-                m_indent, "PackedVec3() : vec3() { }\n"_s,
+                m_indent, "PackedVec3() { }\n"_s,
                 m_indent, "\n"_s,
-                m_indent, "PackedVec3(packed_vec<T, 3> v) : vec3(v) { }\n"_s,
+                m_indent, "PackedVec3(packed_vec<T, 3> v) : x(v.x), y(v.y), z(v.z) { }\n"_s,
                 m_indent, "\n"_s,
-                m_indent, "operator packed_vec<T, 3>() { return vec3; }\n"_s,
+                m_indent, "operator vec<T, 3>() { return vec<T, 3>(x, y, z); }\n"_s,
+                m_indent, "operator packed_vec<T, 3>() { return packed_vec<T, 3>(x, y, z); }\n"_s,
                 m_indent, "\n"_s,
-                m_indent, "operator float3() { return as_type<vec<float, 3>>(vec<T, 3>(vec3)); }\n"_s
+                m_indent, "T operator[](int i) const { return i ? i == 2 ? z : y : x; }\n"_s,
+                m_indent, "device T& operator[](int i) device { return i ? i == 2 ? z : y : x; }\n"_s,
+                m_indent, "constant T& operator[](int i) constant { return i ? i == 2 ? z : y : x; }\n"_s,
+                m_indent, "thread T& operator[](int i) thread { return i ? i == 2 ? z : y : x; }\n"_s,
+                m_indent, "threadgroup T& operator[](int i) threadgroup { return i ? i == 2 ? z : y : x; }\n"_s
             );
         }
         m_stringBuilder.append(m_indent, "};\n\n"_s);

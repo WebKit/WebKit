@@ -467,6 +467,8 @@ Packing RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expressio
     auto* baseType = expression.base().inferredType();
     if (auto* referenceType = std::get_if<Types::Reference>(baseType))
         baseType = referenceType->element;
+    if (auto* pointerType = std::get_if<Types::Pointer>(baseType))
+        baseType = pointerType->element;
     if (std::holds_alternative<Types::Vector>(*baseType))
         return Packing::Unpacked;
     ASSERT(std::holds_alternative<Types::Struct>(*baseType));

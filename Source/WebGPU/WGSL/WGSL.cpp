@@ -103,8 +103,8 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
         HashMap<String, Reflection::EntryPointInformation> entryPoints;
 
         RUN_PASS(mangleNames, shaderModule);
-        RUN_PASS(rewritePointers, shaderModule);
         RUN_PASS(insertBoundsChecks, shaderModule);
+        RUN_PASS(rewritePointers, shaderModule);
         RUN_PASS(rewriteEntryPoints, shaderModule, pipelineLayouts);
         CHECK_PASS(rewriteGlobalVariables, shaderModule, pipelineLayouts, entryPoints);
 
