@@ -317,7 +317,13 @@ void AttributeValidator::visit(AST::Structure& structure)
         previousMember = &member;
         previousSize = UNLIKELY(size.hasOverflowed()) ? currentSize : offset + typeSize;
     }
-    auto finalSize = UNLIKELY(size.hasOverflowed()) ? std::numeric_limits<unsigned>::max() : WTF::roundUpToMultipleOf(alignment, size.value());
+    unsigned finalSize;
+    if (UNLIKELY(size.hasOverflowed()))
+        finalSize = std::numeric_limits<unsigned>::max();
+    else {
+        CheckedUint32 checkedFinalSize = WTF::roundUpToMultipleOf(alignment, static_cast<uint64_t>(size.value()));
+        finalSize = UNLIKELY(checkedFinalSize.hasOverflowed()) ? std::numeric_limits<unsigned>::max() : checkedFinalSize.value();
+    }
     previousMember->m_padding = finalSize - previousSize;
     structure.m_alignment = alignment;
     structure.m_size = finalSize;

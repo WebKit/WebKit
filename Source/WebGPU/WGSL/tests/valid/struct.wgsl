@@ -5,6 +5,8 @@ struct S {
     @align(16) y: i32,
 }
 
+struct T{ x:array<i32,4294063007u> }
+
 fn testStructConstructor() -> i32
 {
     _ = S(0, 0);
