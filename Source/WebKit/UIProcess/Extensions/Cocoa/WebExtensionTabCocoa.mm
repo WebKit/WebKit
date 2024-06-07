@@ -935,7 +935,7 @@ WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEvent
     if (!extensionContext()->pageListensForEvent(*webView._page, type, contentWorldType))
         return { };
 
-    Ref process = webView._page->process();
+    Ref process = webView._page->legacyMainFrameProcess();
     if (!process->canSendMessage())
         return { };
 

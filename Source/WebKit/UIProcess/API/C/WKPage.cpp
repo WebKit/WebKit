@@ -183,7 +183,7 @@ WKTypeID WKPageGetTypeID()
 
 WKContextRef WKPageGetContext(WKPageRef pageRef)
 {
-    return toAPI(&toImpl(pageRef)->process().processPool());
+    return toAPI(&toImpl(pageRef)->legacyMainFrameProcess().processPool());
 }
 
 WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
@@ -529,14 +529,14 @@ void WKPageSetCustomTextEncodingName(WKPageRef pageRef, WKStringRef encodingName
 void WKPageTerminate(WKPageRef pageRef)
 {
     CRASH_IF_SUSPENDED;
-    Ref<WebProcessProxy> protectedProcessProxy(toImpl(pageRef)->process());
+    Ref<WebProcessProxy> protectedProcessProxy(toImpl(pageRef)->legacyMainFrameProcess());
     protectedProcessProxy->requestTermination(ProcessTerminationReason::RequestedByClient);
 }
 
 void WKPageResetProcessState(WKPageRef pageRef)
 {
     CRASH_IF_SUSPENDED;
-    Ref<WebProcessProxy> protectedProcessProxy(toImpl(pageRef)->process());
+    Ref<WebProcessProxy> protectedProcessProxy(toImpl(pageRef)->legacyMainFrameProcess());
     protectedProcessProxy->resetState();
 }
 
@@ -2881,7 +2881,7 @@ WKArrayRef WKPageCopyRelatedPages(WKPageRef pageRef)
 {
     Vector<RefPtr<API::Object>> relatedPages;
 
-    for (Ref page : toImpl(pageRef)->process().pages()) {
+    for (Ref page : toImpl(pageRef)->legacyMainFrameProcess().pages()) {
         if (page.ptr() != toImpl(pageRef))
             relatedPages.append(WTFMove(page));
     }
@@ -3025,13 +3025,13 @@ void WKPageSetIgnoresViewportScaleLimits(WKPageRef pageRef, bool ignoresViewport
 
 ProcessID WKPageGetProcessIdentifier(WKPageRef page)
 {
-    return toImpl(page)->processID();
+    return toImpl(page)->legacyMainFrameProcessID();
 }
 
 ProcessID WKPageGetGPUProcessIdentifier(WKPageRef page)
 {
 #if ENABLE(GPU_PROCESS)
-    auto* gpuProcess = toImpl(page)->process().processPool().gpuProcess();
+    auto* gpuProcess = toImpl(page)->legacyMainFrameProcess().processPool().gpuProcess();
     if (!gpuProcess)
         return 0;
     return gpuProcess->processID();
@@ -3168,7 +3168,7 @@ void WKPageSetMockCaptureDevicesInterrupted(WKPageRef pageRef, bool isCameraInte
 {
     CRASH_IF_SUSPENDED;
 #if ENABLE(MEDIA_STREAM) && ENABLE(GPU_PROCESS)
-    auto& gpuProcess = toImpl(pageRef)->process().processPool().ensureGPUProcess();
+    auto& gpuProcess = toImpl(pageRef)->legacyMainFrameProcess().processPool().ensureGPUProcess();
     gpuProcess.setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
 #endif
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
@@ -3183,7 +3183,7 @@ void WKPageTriggerMockCaptureConfigurationChange(WKPageRef pageRef, bool forMicr
     MockRealtimeMediaSourceCenter::singleton().triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
 
 #if ENABLE(GPU_PROCESS)
-    auto& gpuProcess = toImpl(pageRef)->process().processPool().ensureGPUProcess();
+    auto& gpuProcess = toImpl(pageRef)->legacyMainFrameProcess().processPool().ensureGPUProcess();
     gpuProcess.triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
 #endif // ENABLE(GPU_PROCESS)
 

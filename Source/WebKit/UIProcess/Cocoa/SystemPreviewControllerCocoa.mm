@@ -565,7 +565,7 @@ void SystemPreviewController::takeActivityToken()
 #if USE(RUNNINGBOARD)
     RELEASE_LOG(ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
     ASSERT(!m_activity);
-    m_activity = page().process().throttler().backgroundActivity("System preview download"_s).moveToUniquePtr();
+    m_activity = page().legacyMainFrameProcess().throttler().backgroundActivity("System preview download"_s).moveToUniquePtr();
 #endif
 }
 
@@ -600,7 +600,7 @@ void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uin
 
     m_systemPreviewInfo.isPreview = true;
     m_systemPreviewInfo.element.elementIdentifier = ObjectIdentifier<WebCore::ElementIdentifierType>(elementID);
-    m_systemPreviewInfo.element.documentIdentifier = { *uuid, m_webPageProxy.process().coreProcessIdentifier() };
+    m_systemPreviewInfo.element.documentIdentifier = { *uuid, m_webPageProxy.legacyMainFrameProcess().coreProcessIdentifier() };
     m_systemPreviewInfo.element.webPageIdentifier = ObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
 }

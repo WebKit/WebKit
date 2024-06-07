@@ -743,12 +743,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (pid_t)processIdentifier
 {
-    return _page->processID();
+    return _page->legacyMainFrameProcessID();
 }
 
 - (BOOL)_webProcessIsResponsive
 {
-    return _page->process().isResponsive();
+    return _page->legacyMainFrameProcess().isResponsive();
 }
 
 @end

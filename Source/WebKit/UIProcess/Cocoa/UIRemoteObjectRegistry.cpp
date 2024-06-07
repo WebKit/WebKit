@@ -33,7 +33,7 @@ namespace WebKit {
 
 std::unique_ptr<ProcessThrottler::BackgroundActivity> UIRemoteObjectRegistry::backgroundActivity(ASCIILiteral name)
 {
-    return protectedPage()->process().throttler().backgroundActivity(name).moveToUniquePtr();
+    return protectedPage()->legacyMainFrameProcess().throttler().backgroundActivity(name).moveToUniquePtr();
 }
 
 UIRemoteObjectRegistry::UIRemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)

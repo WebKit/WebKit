@@ -1548,9 +1548,9 @@ public:
 #endif
 
     WebProcessProxy& ensureRunningProcess();
-    WebProcessProxy& process() const { return m_process; }
-    Ref<WebProcessProxy> protectedProcess() const;
-    ProcessID processID() const;
+    WebProcessProxy& legacyMainFrameProcess() const { return m_legacyMainFrameProcess; }
+    Ref<WebProcessProxy> protectedLegacyMainFrameProcess() const;
+    ProcessID legacyMainFrameProcessID() const;
 
     ProcessID gpuProcessID() const;
     ProcessID modelProcessID() const;
@@ -3147,7 +3147,7 @@ private:
 #if PLATFORM(COCOA) && ENABLE(ASYNC_SCROLLING)
     std::unique_ptr<RemoteScrollingCoordinatorProxy> m_scrollingCoordinatorProxy;
 #endif
-    Ref<WebProcessProxy> m_process;
+    Ref<WebProcessProxy> m_legacyMainFrameProcess;
     Ref<WebPageGroup> m_pageGroup;
     Ref<WebPreferences> m_preferences;
 
@@ -3260,7 +3260,7 @@ private:
 #endif
     bool m_allowsMediaDocumentInlinePlayback { false };
 
-    ProcessActivityState m_processActivityState;
+    ProcessActivityState m_legacyMainFrameProcessActivityState;
 
     bool m_initialCapitalizationEnabled { false };
     std::optional<double> m_cpuLimit;

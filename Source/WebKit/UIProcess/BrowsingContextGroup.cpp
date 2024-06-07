@@ -62,7 +62,7 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForConnection(IPC::Connecti
                 return *process;
         }
     }
-    return FrameProcess::create(page.process(), *this, Site(URL(page.currentURL())), preferences);
+    return FrameProcess::create(page.legacyMainFrameProcess(), *this, Site(URL(page.currentURL())), preferences);
 }
 
 FrameProcess* BrowsingContextGroup::processForSite(const Site& site)
@@ -127,7 +127,7 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
             return true;
         }
 
-        if (process->process().coreProcessIdentifier() == page.process().coreProcessIdentifier())
+        if (process->process().coreProcessIdentifier() == page.legacyMainFrameProcess().coreProcessIdentifier())
             return false;
         auto newRemotePage = makeUnique<RemotePageProxy>(page, process->process(), site);
         newRemotePage->injectPageIntoNewProcess();
@@ -189,7 +189,7 @@ void BrowsingContextGroup::transitionPageToRemotePage(WebPageProxy& page, const 
         return HashSet<std::unique_ptr<RemotePageProxy>> { };
     }).iterator->value;
 
-    auto newRemotePage = makeUnique<RemotePageProxy>(page, page.process(), openerSite, &page.messageReceiverRegistration());
+    auto newRemotePage = makeUnique<RemotePageProxy>(page, page.legacyMainFrameProcess(), openerSite, &page.messageReceiverRegistration());
 #if ASSERT_ENABLED
     for (auto& existingPage : set) {
         ASSERT(existingPage->process().coreProcessIdentifier() != newRemotePage->process().coreProcessIdentifier() || existingPage->site() != newRemotePage->site());

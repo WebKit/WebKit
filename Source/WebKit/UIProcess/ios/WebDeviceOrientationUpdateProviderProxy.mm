@@ -40,12 +40,12 @@ namespace WebKit {
 WebDeviceOrientationUpdateProviderProxy::WebDeviceOrientationUpdateProviderProxy(WebPageProxy& page)
     : m_page(page)
 {
-    m_page.process().addMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), m_page.webPageID(), *this);
+    m_page.legacyMainFrameProcess().addMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), m_page.webPageID(), *this);
 }
 
 WebDeviceOrientationUpdateProviderProxy::~WebDeviceOrientationUpdateProviderProxy()
 {
-    m_page.process().removeMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), m_page.webPageID());
+    m_page.legacyMainFrameProcess().removeMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), m_page.webPageID());
 }
 
 void WebDeviceOrientationUpdateProviderProxy::startUpdatingDeviceOrientation()

@@ -42,14 +42,14 @@ WebScreenOrientationManagerProxy::WebScreenOrientationManagerProxy(WebPageProxy&
     : m_page(page)
     , m_currentOrientation(orientation)
 {
-    m_page.process().addMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), m_page.webPageID(), *this);
+    m_page.legacyMainFrameProcess().addMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), m_page.webPageID(), *this);
 }
 
 WebScreenOrientationManagerProxy::~WebScreenOrientationManagerProxy()
 {
     unlockIfNecessary();
 
-    m_page.process().removeMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), m_page.webPageID());
+    m_page.legacyMainFrameProcess().removeMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), m_page.webPageID());
 }
 
 void WebScreenOrientationManagerProxy::currentOrientation(CompletionHandler<void(WebCore::ScreenOrientationType)>&& completionHandler)

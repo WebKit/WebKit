@@ -190,7 +190,7 @@ void WebPreferences::updateBoolValueForKey(const String& key, bool value, bool e
     
     if (key == WebPreferencesKey::processSwapOnCrossSiteNavigationEnabledKey()) {
         for (auto& page : m_pages)
-            page.process().processPool().configuration().setProcessSwapsOnNavigation(value);
+            page.legacyMainFrameProcess().processPool().configuration().setProcessSwapsOnNavigation(value);
 
         return;
     }

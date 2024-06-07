@@ -122,10 +122,10 @@ SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(AppleMediaServicesUI)
 SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 #endif
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
-#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process().connection(), completion)
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, legacyMainFrameProcess().connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, legacyMainFrameProcess().connection(), completion)
 
-#define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageID().toUInt64(), m_process->processID(), ##__VA_ARGS__)
+#define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageID().toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -205,7 +205,7 @@ void WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardNa
             return;
         }
     }
-    WebPasteboardProxy::singleton().grantAccessToCurrentData(m_process, pasteboardName);
+    WebPasteboardProxy::singleton().grantAccessToCurrentData(m_legacyMainFrameProcess, pasteboardName);
 }
 
 void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavigation, WebFramePolicyListenerProxy& listener)
@@ -238,7 +238,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavig
 #if ENABLE(CONTENT_FILTERING)
 void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, FrameIdentifier frameID)
 {
-    contentFilterDidBlockLoadForFrameShared(m_process.copyRef(), unblockHandler, frameID);
+    contentFilterDidBlockLoadForFrameShared(m_legacyMainFrameProcess.copyRef(), unblockHandler, frameID);
 }
 
 void WebPageProxy::contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&& process, const WebCore::ContentFilterUnblockHandler& unblockHandler, FrameIdentifier frameID)
@@ -261,13 +261,13 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
     if (files.size() == 1) {
         BOOL isDirectory;
         if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && !isDirectory) {
-            ASSERT(process().connection() && process().connection()->getAuditToken());
-            if (process().connection() && process().connection()->getAuditToken()) {
-                if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/"_s, *(process().connection()->getAuditToken())))
+            ASSERT(legacyMainFrameProcess().connection() && legacyMainFrameProcess().connection()->getAuditToken());
+            if (legacyMainFrameProcess().connection() && legacyMainFrameProcess().connection()->getAuditToken()) {
+                if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/"_s, *(legacyMainFrameProcess().connection()->getAuditToken())))
                     fileReadHandle = WTFMove(*handle);
             } else if (auto handle = SandboxExtension::createHandle("/"_s, SandboxExtension::Type::ReadOnly))
                 fileReadHandle = WTFMove(*handle);
-            willAcquireUniversalFileReadSandboxExtension(m_process);
+            willAcquireUniversalFileReadSandboxExtension(m_legacyMainFrameProcess);
         }
     }
 
@@ -470,12 +470,12 @@ const String& WebPageProxy::Internals::paymentCoordinatorSourceApplicationSecond
 
 void WebPageProxy::Internals::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName receiverName, IPC::MessageReceiver& messageReceiver)
 {
-    page.process().addMessageReceiver(receiverName, webPageID, messageReceiver);
+    page.legacyMainFrameProcess().addMessageReceiver(receiverName, webPageID, messageReceiver);
 }
 
 void WebPageProxy::Internals::paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName receiverName)
 {
-    page.process().removeMessageReceiver(receiverName, webPageID);
+    page.legacyMainFrameProcess().removeMessageReceiver(receiverName, webPageID);
 }
 
 #endif
@@ -901,24 +901,24 @@ void WebPageProxy::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&
 
 void WebPageProxy::grantAccessToAssetServices()
 {
-    auto handles = SandboxExtension::createHandlesForMachLookup({ "com.apple.mobileassetd.v2"_s }, process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
-    process().send(Messages::WebProcess::GrantAccessToAssetServices(WTFMove(handles)), 0);
+    auto handles = SandboxExtension::createHandlesForMachLookup({ "com.apple.mobileassetd.v2"_s }, legacyMainFrameProcess().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
+    legacyMainFrameProcess().send(Messages::WebProcess::GrantAccessToAssetServices(WTFMove(handles)), 0);
 }
 
 void WebPageProxy::revokeAccessToAssetServices()
 {
-    process().send(Messages::WebProcess::RevokeAccessToAssetServices(), 0);
+    legacyMainFrameProcess().send(Messages::WebProcess::RevokeAccessToAssetServices(), 0);
 }
 
 void WebPageProxy::disableURLSchemeCheckInDataDetectors() const
 {
-    process().send(Messages::WebProcess::DisableURLSchemeCheckInDataDetectors(), 0);
+    legacyMainFrameProcess().send(Messages::WebProcess::DisableURLSchemeCheckInDataDetectors(), 0);
 }
 
 void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 {
-    if (auto handles = process().fontdMachExtensionHandles())
-        process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(WTFMove(*handles)), 0);
+    if (auto handles = legacyMainFrameProcess().fontdMachExtensionHandles())
+        legacyMainFrameProcess().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(WTFMove(*handles)), 0);
 }
 
 NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceItem)
@@ -1073,7 +1073,7 @@ void WebPageProxy::setMediaCapability(std::optional<MediaCapability>&& capabilit
 void WebPageProxy::deactivateMediaCapability(MediaCapability& capability)
 {
     WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateMediaCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", capability.environmentIdentifier().utf8().data(), capability.webPageURL().string().utf8().data());
-    Ref processPool { protectedProcess()->protectedProcessPool() };
+    Ref processPool { protectedLegacyMainFrameProcess()->protectedProcessPool() };
     processPool->extensionCapabilityGranter().setMediaCapabilityActive(capability, false);
     processPool->extensionCapabilityGranter().revoke(capability);
 }
@@ -1105,7 +1105,7 @@ void WebPageProxy::updateMediaCapability()
         return;
     }
 
-    Ref processPool { protectedProcess()->protectedProcessPool() };
+    Ref processPool { protectedLegacyMainFrameProcess()->protectedProcessPool() };
 
     if (shouldActivateMediaCapability())
         processPool->extensionCapabilityGranter().setMediaCapabilityActive(*mediaCapability, true);

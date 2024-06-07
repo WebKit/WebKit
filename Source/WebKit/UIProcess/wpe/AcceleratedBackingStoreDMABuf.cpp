@@ -78,12 +78,12 @@ void AcceleratedBackingStoreDMABuf::updateSurfaceID(uint64_t surfaceID)
         }
         m_buffers.clear();
         m_bufferIDs.clear();
-        m_webPage.process().removeMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID);
+        m_webPage.legacyMainFrameProcess().removeMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID);
     }
 
     m_surfaceID = surfaceID;
     if (m_surfaceID)
-        m_webPage.process().addMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID, *this);
+        m_webPage.legacyMainFrameProcess().addMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID, *this);
 
 }
 
@@ -143,7 +143,7 @@ void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID)
 
 void AcceleratedBackingStoreDMABuf::frameDone()
 {
-    m_webPage.process().send(Messages::AcceleratedSurfaceDMABuf::FrameDone(), m_surfaceID);
+    m_webPage.legacyMainFrameProcess().send(Messages::AcceleratedSurfaceDMABuf::FrameDone(), m_surfaceID);
 }
 
 void AcceleratedBackingStoreDMABuf::bufferRendered()
@@ -155,7 +155,7 @@ void AcceleratedBackingStoreDMABuf::bufferRendered()
 void AcceleratedBackingStoreDMABuf::bufferReleased(WPEBuffer* buffer)
 {
     if (auto id = m_bufferIDs.get(buffer))
-        m_webPage.process().send(Messages::AcceleratedSurfaceDMABuf::ReleaseBuffer(id), m_surfaceID);
+        m_webPage.legacyMainFrameProcess().send(Messages::AcceleratedSurfaceDMABuf::ReleaseBuffer(id), m_surfaceID);
 }
 
 RendererBufferFormat AcceleratedBackingStoreDMABuf::bufferFormat() const

@@ -1330,7 +1330,7 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 WebViewImpl::~WebViewImpl()
 {
     if (m_remoteObjectRegistry) {
-        m_page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page->identifier());
+        m_page->legacyMainFrameProcess().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page->identifier());
         [m_remoteObjectRegistry _invalidate];
         m_remoteObjectRegistry = nil;
     }
@@ -2142,7 +2142,7 @@ void WebViewImpl::windowDidChangeOcclusionState()
 
 void WebViewImpl::screenDidChangeColorSpace()
 {
-    m_page->process().processPool().screenPropertiesChanged();
+    m_page->legacyMainFrameProcess().processPool().screenPropertiesChanged();
 }
 
 bool WebViewImpl::mightBeginDragWhileInactive()
@@ -3083,7 +3083,7 @@ void WebViewImpl::setContinuousSpellCheckingEnabled(bool enabled)
         return;
 
     TextChecker::setContinuousSpellCheckingEnabled(enabled);
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 void WebViewImpl::toggleContinuousSpellChecking()
@@ -3091,7 +3091,7 @@ void WebViewImpl::toggleContinuousSpellChecking()
     bool spellCheckingEnabled = !TextChecker::state().isContinuousSpellCheckingEnabled;
     TextChecker::setContinuousSpellCheckingEnabled(spellCheckingEnabled);
 
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 bool WebViewImpl::isGrammarCheckingEnabled()
@@ -3105,7 +3105,7 @@ void WebViewImpl::setGrammarCheckingEnabled(bool flag)
         return;
 
     TextChecker::setGrammarCheckingEnabled(flag);
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 void WebViewImpl::toggleGrammarChecking()
@@ -3113,14 +3113,14 @@ void WebViewImpl::toggleGrammarChecking()
     bool grammarCheckingEnabled = !TextChecker::state().isGrammarCheckingEnabled;
     TextChecker::setGrammarCheckingEnabled(grammarCheckingEnabled);
 
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 void WebViewImpl::toggleAutomaticSpellingCorrection()
 {
     TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().isAutomaticSpellingCorrectionEnabled);
 
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 void WebViewImpl::orderFrontSubstitutionsPanel(id sender)
@@ -3155,13 +3155,13 @@ void WebViewImpl::setAutomaticQuoteSubstitutionEnabled(bool flag)
         return;
 
     TextChecker::setAutomaticQuoteSubstitutionEnabled(flag);
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 void WebViewImpl::toggleAutomaticQuoteSubstitution()
 {
     TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 bool WebViewImpl::isAutomaticDashSubstitutionEnabled()
@@ -3175,13 +3175,13 @@ void WebViewImpl::setAutomaticDashSubstitutionEnabled(bool flag)
         return;
 
     TextChecker::setAutomaticDashSubstitutionEnabled(flag);
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 void WebViewImpl::toggleAutomaticDashSubstitution()
 {
     TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 bool WebViewImpl::isAutomaticLinkDetectionEnabled()
@@ -3195,13 +3195,13 @@ void WebViewImpl::setAutomaticLinkDetectionEnabled(bool flag)
         return;
 
     TextChecker::setAutomaticLinkDetectionEnabled(flag);
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 void WebViewImpl::toggleAutomaticLinkDetection()
 {
     TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 bool WebViewImpl::isAutomaticTextReplacementEnabled()
@@ -3215,13 +3215,13 @@ void WebViewImpl::setAutomaticTextReplacementEnabled(bool flag)
         return;
 
     TextChecker::setAutomaticTextReplacementEnabled(flag);
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 void WebViewImpl::toggleAutomaticTextReplacement()
 {
     TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
-    m_page->process().updateTextCheckerState();
+    m_page->legacyMainFrameProcess().updateTextCheckerState();
 }
 
 void WebViewImpl::uppercaseWord()
@@ -3604,7 +3604,7 @@ void WebViewImpl::setIgnoresMouseDraggedEvents(bool ignoresMouseDraggedEvents)
 
 void WebViewImpl::setAccessibilityWebProcessToken(NSData *data, WebCore::FrameIdentifier frameID, pid_t pid)
 {
-    if (pid == m_page->process().processID()) {
+    if (pid == m_page->legacyMainFrameProcess().processID()) {
         m_remoteAccessibilityChild = data.length ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:data]) : nil;
         updateRemoteAccessibilityRegistration(true);
     }
@@ -3617,7 +3617,7 @@ void WebViewImpl::updateRemoteAccessibilityRegistration(bool registerProcess)
     // away, that information is not present in WebProcess
     pid_t pid = 0;
     if (registerProcess)
-        pid = m_page->process().processID();
+        pid = m_page->legacyMainFrameProcess().processID();
     else if (!registerProcess) {
         pid = [m_remoteAccessibilityChild processIdentifier];
         m_remoteAccessibilityChild = nil;
@@ -3959,7 +3959,7 @@ _WKRemoteObjectRegistry *WebViewImpl::remoteObjectRegistry()
 {
     if (!m_remoteObjectRegistry) {
         m_remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithWebPageProxy:m_page.get()]);
-        m_page->process().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page->identifier(), [m_remoteObjectRegistry remoteObjectRegistry]);
+        m_page->legacyMainFrameProcess().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page->identifier(), [m_remoteObjectRegistry remoteObjectRegistry]);
     }
 
     return m_remoteObjectRegistry.get();

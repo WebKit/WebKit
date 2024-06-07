@@ -103,7 +103,7 @@ void ViewGestureController::disconnectFromProcess()
     if (!m_isConnectedToProcess)
         return;
 
-    m_webPageProxy.process().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageID());
+    m_webPageProxy.legacyMainFrameProcess().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageID());
     m_isConnectedToProcess = false;
 }
 
@@ -112,7 +112,7 @@ void ViewGestureController::connectToProcess()
     if (m_isConnectedToProcess)
         return;
 
-    m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageID(), *this);
+    m_webPageProxy.legacyMainFrameProcess().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageID(), *this);
     m_isConnectedToProcess = true;
 }
 

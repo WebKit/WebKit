@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitProtocolHandler.h"
 
+#include "APIPageConfiguration.h"
 #include "BuildRevision.h"
 #include "DMABufRendererBufferMode.h"
 #include "DisplayVBlankMonitor.h"
@@ -428,7 +429,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #endif
 
     if (displayID) {
-        if (auto* displayLink = page.process().processPool().displayLinks().existingDisplayLinkForDisplay(*displayID)) {
+        if (auto* displayLink = page.configuration().processPool().displayLinks().existingDisplayLinkForDisplay(*displayID)) {
             auto& vblankMonitor = displayLink->vblankMonitor();
             addTableRow(displayObject, "VBlank type"_s, vblankMonitor.type() == DisplayVBlankMonitor::Type::Timer ? "Timer"_s : "DRM"_s);
             addTableRow(displayObject, "VBlank refresh rate"_s, makeString(vblankMonitor.refreshRate(), "Hz"_s));

@@ -3011,7 +3011,7 @@ void WebExtensionContext::addPopupPage(WebPageProxy& page, WebExtensionAction& a
     auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
     auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-    page.process().send(Messages::WebExtensionContextProxy::AddPopupPageIdentifier(page.webPageID(), tabIdentifier, windowIdentifier), identifier());
+    page.legacyMainFrameProcess().send(Messages::WebExtensionContextProxy::AddPopupPageIdentifier(page.webPageID(), tabIdentifier, windowIdentifier), identifier());
 }
 
 void WebExtensionContext::addExtensionTabPage(WebPageProxy& page, WebExtensionTab& tab)
@@ -3021,7 +3021,7 @@ void WebExtensionContext::addExtensionTabPage(WebPageProxy& page, WebExtensionTa
     RefPtr window = tab.window();
     auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-    page.process().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageID(), tab.identifier(), windowIdentifier), identifier());
+    page.legacyMainFrameProcess().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageID(), tab.identifier(), windowIdentifier), identifier());
 }
 
 void WebExtensionContext::enumerateExtensionPages(Function<void(WebPageProxy&, bool&)>&& action)
@@ -3236,7 +3236,7 @@ void WebExtensionContext::loadBackgroundWebView()
 
     if (!extension().backgroundContentIsServiceWorker()) {
         auto backgroundPage = m_backgroundWebView.get()._page;
-        backgroundPage->process().send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageID()), identifier());
+        backgroundPage->legacyMainFrameProcess().send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageID()), identifier());
 
         [m_backgroundWebView loadRequest:[NSURLRequest requestWithURL:backgroundContentURL()]];
         return;
@@ -3679,7 +3679,7 @@ HashSet<Ref<WebProcessProxy>> WebExtensionContext::processes(const API::Inspecto
     auto [tabIdentifier, webView] = m_inspectorBackgroundPageMap.get(*inspectorProxy);
     ASSERT(webView);
 
-    result.add(webView->_page->process());
+    result.add(webView->_page->legacyMainFrameProcess());
 
     return result;
 }
@@ -3838,8 +3838,8 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
 
         auto appearance = inspector->inspectorPage()->useDarkAppearance() ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
 
-        Ref process = webView._page->process();
-        ASSERT(inspectorWebView._page->process() == process);
+        Ref process = webView._page->legacyMainFrameProcess();
+        ASSERT(inspectorWebView._page->legacyMainFrameProcess() == process);
         process->send(Messages::WebExtensionContextProxy::AddInspectorPageIdentifier(inspectorWebView._page->webPageID(), tab->identifier(), windowIdentifier), identifier());
         process->send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(webView._page->webPageID(), tab->identifier(), windowIdentifier), identifier());
         process->send(Messages::WebExtensionContextProxy::DispatchDevToolsPanelsThemeChangedEvent(appearance), identifier());

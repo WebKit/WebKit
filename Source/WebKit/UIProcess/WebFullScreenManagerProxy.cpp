@@ -60,12 +60,12 @@ WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy& page, WebFull
     , m_logIdentifier(page.logIdentifier())
 #endif
 {
-    m_page.process().addMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page.webPageID(), *this);
+    m_page.legacyMainFrameProcess().addMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page.webPageID(), *this);
 }
 
 WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
 {
-    m_page.process().removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page.webPageID());
+    m_page.legacyMainFrameProcess().removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page.webPageID());
     m_client.closeFullScreenManager();
     callCloseCompletionHandlers();
 }
@@ -86,7 +86,7 @@ void WebFullScreenManagerProxy::didEnterFullScreen()
     m_page.send(Messages::WebFullScreenManager::DidEnterFullScreen());
 
     if (m_page.isControlledByAutomation()) {
-        if (WebAutomationSession* automationSession = m_page.process().processPool().automationSession())
+        if (WebAutomationSession* automationSession = m_page.legacyMainFrameProcess().processPool().automationSession())
             automationSession->didEnterFullScreenForPage(m_page);
     }
 }
@@ -120,7 +120,7 @@ void WebFullScreenManagerProxy::didExitFullScreen()
     m_page.send(Messages::WebFullScreenManager::DidExitFullScreen());
     
     if (m_page.isControlledByAutomation()) {
-        if (WebAutomationSession* automationSession = m_page.process().processPool().automationSession())
+        if (WebAutomationSession* automationSession = m_page.legacyMainFrameProcess().processPool().automationSession())
             automationSession->didExitFullScreenForPage(m_page);
     }
     callCloseCompletionHandlers();

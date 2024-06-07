@@ -221,7 +221,7 @@ void RemoteWebInspectorUIProxy::createFrontendPageAndWindow()
 
     trackInspectorPage(inspectorPage.get(), nullptr);
 
-    inspectorPage->process().addMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), inspectorPage->webPageID(), *this);
+    inspectorPage->legacyMainFrameProcess().addMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), inspectorPage->webPageID(), *this);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     m_extensionController = WebInspectorUIExtensionControllerProxy::create(*inspectorPage);
@@ -234,7 +234,7 @@ void RemoteWebInspectorUIProxy::closeFrontendPageAndWindow()
     if (!inspectorPage)
         return;
 
-    inspectorPage->process().removeMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), inspectorPage->webPageID());
+    inspectorPage->legacyMainFrameProcess().removeMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), inspectorPage->webPageID());
 
     untrackInspectorPage(inspectorPage.get());
 

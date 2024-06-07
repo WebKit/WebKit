@@ -972,7 +972,7 @@ void WebAutomationSession::evaluateJavaScriptFunction(const Inspector::Protocol:
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(page->webPageID(), frameID, function, argumentsVector, expectsImplicitCallbackArgument.value_or(false), WTFMove(callbackTimeout), callbackID), 0);
+    page->legacyMainFrameProcess().send(Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(page->webPageID(), frameID, function, argumentsVector, expectsImplicitCallbackArgument.value_or(false), WTFMove(callbackTimeout), callbackID), 0);
 }
 
 void WebAutomationSession::didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType)
@@ -1011,17 +1011,17 @@ void WebAutomationSession::resolveChildFrameHandle(const Inspector::Protocol::Au
     };
 
     if (!!optionalNodeHandle) {
-        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle(page->webPageID(), frameID, optionalNodeHandle), WTFMove(completionHandler));
+        page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle(page->webPageID(), frameID, optionalNodeHandle), WTFMove(completionHandler));
         return;
     }
 
     if (!!optionalName) {
-        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithName(page->webPageID(), frameID, optionalName), WTFMove(completionHandler));
+        page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithName(page->webPageID(), frameID, optionalName), WTFMove(completionHandler));
         return;
     }
 
     if (optionalOrdinal) {
-        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithOrdinal(page->webPageID(), frameID, *optionalOrdinal), WTFMove(completionHandler));
+        page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithOrdinal(page->webPageID(), frameID, *optionalOrdinal), WTFMove(completionHandler));
         return;
     }
 
@@ -1048,7 +1048,7 @@ void WebAutomationSession::resolveParentFrameHandle(const Inspector::Protocol::A
         callback->sendSuccess(handleForWebFrameID(frameID));
     };
 
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveParentFrame(page->webPageID(), frameID), WTFMove(completionHandler));
+    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveParentFrame(page->webPageID(), frameID), WTFMove(completionHandler));
 }
 
 static std::optional<CoordinateSystem> protocolStringToCoordinateSystem(Inspector::Protocol::Automation::CoordinateSystem coordinateSystem)
@@ -1116,7 +1116,7 @@ void WebAutomationSession::computeElementLayout(const Inspector::Protocol::Autom
     };
 
     bool scrollIntoViewIfNeeded = optionalScrollIntoViewIfNeeded ? *optionalScrollIntoViewIfNeeded : false;
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, coordinateSystem.value()), WTFMove(completionHandler));
+    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, coordinateSystem.value()), WTFMove(completionHandler));
 }
 
 void WebAutomationSession::getComputedRole(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, Ref<GetComputedRoleCallback>&& callback)
@@ -1139,7 +1139,7 @@ void WebAutomationSession::getComputedRole(const Inspector::Protocol::Automation
         callback->sendSuccess(*role);
     };
 
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetComputedRole(page->webPageID(), frameID, nodeHandle), WTFMove(completionHandler));
+    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetComputedRole(page->webPageID(), frameID, nodeHandle), WTFMove(completionHandler));
 }
 
 void WebAutomationSession::getComputedLabel(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, Ref<GetComputedLabelCallback>&& callback)
@@ -1162,7 +1162,7 @@ void WebAutomationSession::getComputedLabel(const Inspector::Protocol::Automatio
         callback->sendSuccess(*label);
     };
 
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetComputedLabel(page->webPageID(), frameID, nodeHandle), WTFMove(completionHandler));
+    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetComputedLabel(page->webPageID(), frameID, nodeHandle), WTFMove(completionHandler));
 }
 
 void WebAutomationSession::selectOptionElement(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, Ref<SelectOptionElementCallback>&& callback)
@@ -1185,7 +1185,7 @@ void WebAutomationSession::selectOptionElement(const Inspector::Protocol::Automa
         callback->sendSuccess();
     };
 
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::SelectOptionElement(page->webPageID(), frameID, nodeHandle), WTFMove(completionHandler));
+    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::SelectOptionElement(page->webPageID(), frameID, nodeHandle), WTFMove(completionHandler));
 }
 
 Inspector::Protocol::ErrorStringOr<bool> WebAutomationSession::isShowingJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle)
@@ -1353,7 +1353,7 @@ void WebAutomationSession::setFilesForInputFileUpload(const Inspector::Protocol:
         callback->sendSuccess();
     };
 
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::SetFilesForInputFileUpload(page->webPageID(), frameID, nodeHandle, WTFMove(newFileList)), WTFMove(completionHandler));
+    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::SetFilesForInputFileUpload(page->webPageID(), frameID, nodeHandle, WTFMove(newFileList)), WTFMove(completionHandler));
 }
 
 static inline Inspector::Protocol::Automation::CookieSameSitePolicy toProtocolSameSitePolicy(WebCore::Cookie::SameSitePolicy policy)
@@ -1423,7 +1423,7 @@ void WebAutomationSession::getAllCookies(const Inspector::Protocol::Automation::
         callback->sendSuccess(buildArrayForCookies(cookies));
     };
 
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->webPageID(), std::nullopt), WTFMove(completionHandler));
+    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->webPageID(), std::nullopt), WTFMove(completionHandler));
 }
 
 void WebAutomationSession::deleteSingleCookie(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&& callback)
@@ -1441,7 +1441,7 @@ void WebAutomationSession::deleteSingleCookie(const Inspector::Protocol::Automat
         callback->sendSuccess();
     };
 
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::DeleteCookie(page->webPageID(), std::nullopt, cookieName), WTFMove(completionHandler));
+    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::DeleteCookie(page->webPageID(), std::nullopt, cookieName), WTFMove(completionHandler));
 }
 
 static String domainByAddingDotPrefixIfNeeded(String domain)
@@ -1748,7 +1748,7 @@ void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page
         completionHandler(inViewCenterPoint, std::nullopt);
     };
 
-    page.process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ComputeElementLayout(page.webPageID(), frameID, nodeHandle, false, CoordinateSystem::LayoutViewport), WTFMove(didComputeElementLayoutHandler));
+    page.legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ComputeElementLayout(page.webPageID(), frameID, nodeHandle, false, CoordinateSystem::LayoutViewport), WTFMove(didComputeElementLayoutHandler));
 }
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
@@ -2393,7 +2393,7 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
         uint64_t callbackID = m_nextScreenshotCallbackID++;
         m_screenshotCallbacks.set(callbackID, WTFMove(callback));
 
-        page->process().send(Messages::WebAutomationSessionProxy::TakeScreenshot(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, callbackID), 0);
+        page->legacyMainFrameProcess().send(Messages::WebAutomationSessionProxy::TakeScreenshot(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, callbackID), 0);
         return;
     }
 #endif
@@ -2426,12 +2426,12 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
         takeViewSnapsot(page.get(), WTFMove(rect), WTFMove(callback));
     };
 
-    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::SnapshotRectForScreenshot(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport), WTFMove(completionHandler));
+    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::SnapshotRectForScreenshot(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport), WTFMove(completionHandler));
 #else
     uint64_t callbackID = m_nextScreenshotCallbackID++;
     m_screenshotCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::TakeScreenshot(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, callbackID), 0);
+    page->legacyMainFrameProcess().send(Messages::WebAutomationSessionProxy::TakeScreenshot(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, callbackID), 0);
 #endif
 }
 

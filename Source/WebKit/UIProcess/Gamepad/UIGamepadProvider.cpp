@@ -62,7 +62,7 @@ UIGamepadProvider::~UIGamepadProvider()
 void UIGamepadProvider::gamepadSyncTimerFired()
 {
     RefPtr webPageProxy = platformWebPageProxyForGamepadInput();
-    if (!webPageProxy || !m_processPoolsUsingGamepads.contains(webPageProxy->process().processPool()))
+    if (!webPageProxy || !m_processPoolsUsingGamepads.contains(webPageProxy->legacyMainFrameProcess().processPool()))
         return;
 
     webPageProxy->gamepadActivity(snapshotGamepads(), m_shouldMakeGamepadsVisibleOnSync ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No);
@@ -149,7 +149,7 @@ void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
 
 void UIGamepadProvider::viewBecameActive(WebPageProxy& page)
 {
-    if (!m_processPoolsUsingGamepads.contains(page.process().processPool()))
+    if (!m_processPoolsUsingGamepads.contains(page.legacyMainFrameProcess().processPool()))
         return;
 
     if (!m_isMonitoringGamepads)

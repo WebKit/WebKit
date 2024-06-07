@@ -42,7 +42,7 @@ namespace WebKit {
 WebInspectorUIExtensionControllerProxy::WebInspectorUIExtensionControllerProxy(WebPageProxy& inspectorPage)
     : m_inspectorPage(inspectorPage)
 {
-    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorUIExtensionControllerProxy::messageReceiverName(), m_inspectorPage->webPageID(), *this);
+    m_inspectorPage->legacyMainFrameProcess().addMessageReceiver(Messages::WebInspectorUIExtensionControllerProxy::messageReceiverName(), m_inspectorPage->webPageID(), *this);
 }
 
 WebInspectorUIExtensionControllerProxy::~WebInspectorUIExtensionControllerProxy()
@@ -86,7 +86,7 @@ void WebInspectorUIExtensionControllerProxy::inspectorFrontendWillClose()
     if (!m_inspectorPage)
         return;
 
-    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorUIExtensionControllerProxy::messageReceiverName(), m_inspectorPage->webPageID());
+    m_inspectorPage->legacyMainFrameProcess().removeMessageReceiver(Messages::WebInspectorUIExtensionControllerProxy::messageReceiverName(), m_inspectorPage->webPageID());
     m_inspectorPage = nullptr;
 
     m_extensionAPIObjectMap.clear();

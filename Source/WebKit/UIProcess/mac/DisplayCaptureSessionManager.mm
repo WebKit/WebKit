@@ -214,7 +214,7 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
             return;
         }
 
-        Ref gpuProcess = page.process().processPool().ensureGPUProcess();
+        Ref gpuProcess = page.legacyMainFrameProcess().processPool().ensureGPUProcess();
         gpuProcess->updateSandboxAccess(false, false, true);
         gpuProcess->promptForGetDisplayMedia(toScreenCaptureKitPromptType(promptType), WTFMove(completionHandler));
         return;
@@ -263,7 +263,7 @@ void DisplayCaptureSessionManager::cancelGetDisplayMediaPrompt(WebPageProxy& pag
         return;
     }
 
-    auto gpuProcess = page.process().processPool().gpuProcess();
+    auto gpuProcess = page.legacyMainFrameProcess().processPool().gpuProcess();
     if (!gpuProcess)
         return;
 

@@ -649,7 +649,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     [_contentView _webViewDestroyed];
 
     if (_page && _remoteObjectRegistry)
-        _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->identifier());
+        _page->legacyMainFrameProcess().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->identifier());
 #endif
 
     if (_page)
@@ -2558,7 +2558,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #else
     if (!_remoteObjectRegistry) {
         _remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithWebPageProxy:*_page]);
-        _page->process().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->identifier(), [_remoteObjectRegistry remoteObjectRegistry]);
+        _page->legacyMainFrameProcess().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->identifier(), [_remoteObjectRegistry remoteObjectRegistry]);
     }
 
     return _remoteObjectRegistry.get();
@@ -2596,7 +2596,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (BOOL)_isSuspended
 {
-    return _page->process().throttler().isSuspended();
+    return _page->legacyMainFrameProcess().throttler().isSuspended();
 }
 
 - (BOOL)_canTogglePictureInPicture
@@ -3097,7 +3097,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     if (![self _isValid])
         return 0;
 
-    return _page->processID();
+    return _page->legacyMainFrameProcessID();
 }
 
 - (pid_t)_provisionalWebProcessIdentifier
@@ -3131,7 +3131,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (BOOL)_webProcessIsResponsive
 {
-    return _page->process().isResponsive();
+    return _page->legacyMainFrameProcess().isResponsive();
 }
 
 - (void)_killWebContentProcess
@@ -3140,7 +3140,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     if (![self _isValid])
         return;
 
-    _page->process().terminate();
+    _page->legacyMainFrameProcess().terminate();
 }
 
 - (WKNavigation *)_reloadWithoutContentBlockers
@@ -3158,7 +3158,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 - (void)_killWebContentProcessAndResetState
 {
     THROW_IF_SUSPENDED;
-    Ref<WebKit::WebProcessProxy> protectedProcessProxy(_page->process());
+    Ref<WebKit::WebProcessProxy> protectedProcessProxy(_page->legacyMainFrameProcess());
     protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
 
     if (auto* provisionalPageProxy = _page->provisionalPageProxy()) {
@@ -3306,7 +3306,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 - (void)_clearBackForwardCache
 {
     THROW_IF_SUSPENDED;
-    _page->process().processPool().backForwardCache().removeEntriesForPage(*_page);
+    _page->legacyMainFrameProcess().processPool().backForwardCache().removeEntriesForPage(*_page);
 }
 
 + (BOOL)_handlesSafeBrowsing
@@ -3599,7 +3599,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_getContentsAsStringWithCompletionHandlerKeepIPCConnectionAliveForTesting:(void (^)(NSString *, NSError *))completionHandler
 {
     THROW_IF_SUSPENDED;
-    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler = makeBlockPtr(completionHandler), connection = RefPtr { _page->process().connection() }](String string) {
+    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler = makeBlockPtr(completionHandler), connection = RefPtr { _page->legacyMainFrameProcess().connection() }](String string) {
         handler(string, nil);
     });
 }

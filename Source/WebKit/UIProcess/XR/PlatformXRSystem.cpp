@@ -35,19 +35,19 @@
 #include "WebProcessProxy.h"
 #include <WebCore/SecurityOriginData.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page.process().connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page.legacyMainFrameProcess().connection())
 
 namespace WebKit {
 
 PlatformXRSystem::PlatformXRSystem(WebPageProxy& page)
     : m_page(page)
 {
-    m_page.process().addMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), m_page.webPageID(), *this);
+    m_page.legacyMainFrameProcess().addMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), m_page.webPageID(), *this);
 }
 
 PlatformXRSystem::~PlatformXRSystem()
 {
-    m_page.process().removeMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), m_page.webPageID());
+    m_page.legacyMainFrameProcess().removeMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), m_page.webPageID());
 }
 
 void PlatformXRSystem::invalidate()
@@ -70,7 +70,7 @@ void PlatformXRSystem::ensureImmersiveSessionActivity()
     if (m_immersiveSessionActivity && m_immersiveSessionActivity->isValid())
         return;
 
-    m_immersiveSessionActivity = m_page.process().throttler().foregroundActivity("XR immersive session"_s).moveToUniquePtr();
+    m_immersiveSessionActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("XR immersive session"_s).moveToUniquePtr();
 }
 
 void PlatformXRSystem::enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&)>&& completionHandler)

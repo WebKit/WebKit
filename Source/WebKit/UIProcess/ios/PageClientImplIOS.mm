@@ -79,7 +79,7 @@
 
 #define MESSAGE_CHECK(assertion) do { \
     if (auto webView = this->webView()) { \
-        MESSAGE_CHECK_BASE(assertion, webView->_page->process().connection()); \
+        MESSAGE_CHECK_BASE(assertion, webView->_page->legacyMainFrameProcess().connection()); \
     } else { \
         ASSERT_NOT_REACHED(); \
     } \
@@ -298,7 +298,7 @@ void PageClientImpl::didCompleteSyntheticClick()
 void PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, const FrameInfoData& frameInfo, Function<void(bool)>& completionHandler)
 {
     if (auto webView = this->webView()) {
-        auto* geolocationProvider = [wrapper(webView->_page->process().processPool()) _geolocationProvider];
+        auto* geolocationProvider = [wrapper(webView->_page->legacyMainFrameProcess().processPool()) _geolocationProvider];
         [geolocationProvider decidePolicyForGeolocationRequestFromOrigin:FrameInfoData { frameInfo } completionHandler:std::exchange(completionHandler, nullptr) view:webView.get()];
     }
 }

@@ -61,12 +61,12 @@ RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy(WebPagePr
 #endif
 {
     m_privateCoordinator->setClient(*this);
-    m_webPageProxy.process().addMessageReceiver(Messages::RemoteMediaSessionCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID(), *this);
+    m_webPageProxy.legacyMainFrameProcess().addMessageReceiver(Messages::RemoteMediaSessionCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID(), *this);
 }
 
 RemoteMediaSessionCoordinatorProxy::~RemoteMediaSessionCoordinatorProxy()
 {
-    m_webPageProxy.process().removeMessageReceiver(Messages::RemoteMediaSessionCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID());
+    m_webPageProxy.legacyMainFrameProcess().removeMessageReceiver(Messages::RemoteMediaSessionCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID());
 }
 
 void RemoteMediaSessionCoordinatorProxy::join(MediaSessionCommandCompletionHandler&& completionHandler)

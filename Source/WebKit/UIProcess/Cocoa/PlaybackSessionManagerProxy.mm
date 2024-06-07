@@ -472,7 +472,7 @@ PlaybackSessionManagerProxy::PlaybackSessionManagerProxy(WebPageProxy& page)
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_page->process().addMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageID(), *this);
+    m_page->legacyMainFrameProcess().addMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageID(), *this);
 }
 
 PlaybackSessionManagerProxy::~PlaybackSessionManagerProxy()
@@ -486,7 +486,7 @@ PlaybackSessionManagerProxy::~PlaybackSessionManagerProxy()
 void PlaybackSessionManagerProxy::invalidate()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_page->process().removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageID());
+    m_page->legacyMainFrameProcess().removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageID());
     m_page = nullptr;
 
     auto contextMap = WTFMove(m_contextMap);
@@ -829,7 +829,7 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
     ALWAYS_LOG(LOGIDENTIFIER);
     WebCore::MediaPlayerIdentifier playerIdentifier = *interface->playerIdentifier();
 
-    Ref process = m_page->protectedProcess();
+    Ref process = m_page->protectedLegacyMainFrameProcess();
     WebCore::ProcessIdentifier processIdentifier = process->coreProcessIdentifier();
 
     Ref gpuProcess = process->processPool().ensureProtectedGPUProcess();
@@ -852,7 +852,7 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
 void PlaybackSessionManagerProxy::uncacheVideoReceiverEndpoint(PlaybackSessionContextIdentifier contextId)
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    Ref process = m_page->protectedProcess();
+    Ref process = m_page->protectedLegacyMainFrameProcess();
     WebCore::ProcessIdentifier processIdentifier = process->coreProcessIdentifier();
 
     Ref gpuProcess = process->processPool().ensureProtectedGPUProcess();

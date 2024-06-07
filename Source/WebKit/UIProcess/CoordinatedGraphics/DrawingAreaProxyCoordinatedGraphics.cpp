@@ -139,7 +139,7 @@ void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(UpdateInfo&& updateI
 std::optional<WebCore::FramesPerSecond> DrawingAreaProxyCoordinatedGraphics::displayNominalFramesPerSecond()
 {
     if (auto displayId = m_webPageProxy->displayID())
-        return m_webPageProxy->process().nominalFramesPerSecondForDisplay(displayId.value());
+        return m_webPageProxy->legacyMainFrameProcess().nominalFramesPerSecondForDisplay(displayId.value());
     return std::nullopt;
 }
 #endif

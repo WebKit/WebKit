@@ -242,7 +242,7 @@ Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> WebPro
 {
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> result;
     for (Ref page : globalPages())
-        result.append(std::make_pair(page->process().coreProcessIdentifier(), RegistrableDomain(URL(page->currentURL()))));
+        result.append(std::make_pair(page->legacyMainFrameProcess().coreProcessIdentifier(), RegistrableDomain(URL(page->currentURL()))));
     return result;
 }
 
