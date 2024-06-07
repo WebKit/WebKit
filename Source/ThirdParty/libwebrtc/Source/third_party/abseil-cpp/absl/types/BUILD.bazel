@@ -118,6 +118,7 @@ cc_library(
     deps = [
         "//absl/algorithm",
         "//absl/base:core_headers",
+        "//absl/base:nullability",
         "//absl/base:throw_delegate",
         "//absl/meta:type_traits",
     ],
@@ -137,6 +138,7 @@ cc_test(
         "//absl/container:fixed_array",
         "//absl/container:inlined_vector",
         "//absl/hash:hash_testing",
+        "//absl/meta:type_traits",
         "//absl/strings",
         "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
@@ -154,6 +156,7 @@ cc_library(
         "//absl/base:base_internal",
         "//absl/base:config",
         "//absl/base:core_headers",
+        "//absl/base:nullability",
         "//absl/memory",
         "//absl/meta:type_traits",
         "//absl/utility",
@@ -293,6 +296,7 @@ cc_library(
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
+        "//absl/base:config",
         "//absl/base:core_headers",
         "//absl/meta:type_traits",
     ],

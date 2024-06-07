@@ -31,10 +31,11 @@
 #include <xmmintrin.h>
 #endif
 
-#if defined(_MSC_VER) && _MSC_VER >= 1900 && \
-    (defined(_M_X64) || defined(_M_IX86))
+#if defined(_MSC_VER)
 #include <intrin.h>
+#if defined(ABSL_INTERNAL_HAVE_SSE)
 #pragma intrinsic(_mm_prefetch)
+#endif
 #endif
 
 namespace absl {
@@ -128,7 +129,7 @@ void PrefetchToLocalCacheNta(const void* addr);
 //
 //  void* Arena::Allocate(size_t size) {
 //    void* ptr = AllocateBlock(size);
-//    absl::PrefetchToLocalCacheForWrite(p);
+//    absl::PrefetchToLocalCacheForWrite(ptr);
 //    return ptr;
 //  }
 //
@@ -157,7 +158,7 @@ ABSL_ATTRIBUTE_ALWAYS_INLINE inline void PrefetchToLocalCacheForWrite(
   // unless -march=broadwell or newer; this is not generally the default, so we
   // manually emit prefetchw. PREFETCHW is recognized as a no-op on older Intel
   // processors and has been present on AMD processors since the K6-2.
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(__PRFCHW__)
   asm("prefetchw %0" : : "m"(*reinterpret_cast<const char*>(addr)));
 #else
   __builtin_prefetch(addr, 1, 3);
