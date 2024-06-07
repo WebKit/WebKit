@@ -886,14 +886,14 @@ void vp9_scale_and_extend_frame_ssse3(const YV12_BUFFER_CONFIG *src,
       scale_plane_1_to_2_phase_0(
           src->y_buffer, src->y_stride, dst->y_buffer, dst->y_stride, src_w,
           src_h, vp9_filter_kernels[filter_type][8], temp_buffer);
-      scale_plane_1_to_2_phase_0(src->u_buffer, src->uv_stride, dst->u_buffer,
-                                 dst->uv_stride, src_w / 2, src_h / 2,
-                                 vp9_filter_kernels[filter_type][8],
-                                 temp_buffer);
-      scale_plane_1_to_2_phase_0(src->v_buffer, src->uv_stride, dst->v_buffer,
-                                 dst->uv_stride, src_w / 2, src_h / 2,
-                                 vp9_filter_kernels[filter_type][8],
-                                 temp_buffer);
+      const int src_uv_w = src->uv_crop_width;
+      const int src_uv_h = src->uv_crop_height;
+      scale_plane_1_to_2_phase_0(
+          src->u_buffer, src->uv_stride, dst->u_buffer, dst->uv_stride,
+          src_uv_w, src_uv_h, vp9_filter_kernels[filter_type][8], temp_buffer);
+      scale_plane_1_to_2_phase_0(
+          src->v_buffer, src->uv_stride, dst->v_buffer, dst->uv_stride,
+          src_uv_w, src_uv_h, vp9_filter_kernels[filter_type][8], temp_buffer);
       free(temp_buffer);
     }
   }

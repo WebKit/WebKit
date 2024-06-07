@@ -37,6 +37,7 @@
 #include "vp9/encoder/vp9_mcomp.h"
 #include "vp9/encoder/vp9_quantize.h"
 #include "vp9/encoder/vp9_rd.h"
+#include "vpx/vpx_ext_ratectrl.h"
 #include "vpx_dsp/variance.h"
 
 #define OUTPUT_FPF 0
@@ -1164,7 +1165,7 @@ void vp9_first_pass_encode_tile_mb_row(VP9_COMP *cpi, ThreadData *td,
         v_fn_ptr.vf = get_block_variance_fn(bsize);
 #if CONFIG_VP9_HIGHBITDEPTH
         if (xd->cur_buf->flags & YV12_FLAG_HIGHBITDEPTH) {
-          v_fn_ptr.vf = highbd_get_block_variance_fn(bsize, 8);
+          v_fn_ptr.vf = highbd_get_block_variance_fn(bsize, xd->bd);
         }
 #endif  // CONFIG_VP9_HIGHBITDEPTH
         this_motion_error =
@@ -1591,8 +1592,8 @@ static int get_twopass_worst_quality(VP9_COMP *cpi, const double section_err,
     const int active_mbs = (int)VPXMAX(1, (double)num_mbs * active_pct);
     const double av_err_per_mb = section_err / active_pct;
     const double speed_term = 1.0 + 0.04 * oxcf->speed;
-    const int target_norm_bits_per_mb =
-        (int)(((uint64_t)target_rate << BPER_MB_NORMBITS) / active_mbs);
+    const uint64_t target_norm_bits_per_mb =
+        ((uint64_t)target_rate << BPER_MB_NORMBITS) / active_mbs;
     int q;
 
 // TODO(jimbankoski): remove #if here or above when this has been
@@ -1616,7 +1617,7 @@ static int get_twopass_worst_quality(VP9_COMP *cpi, const double section_err,
           INTER_FRAME, q,
           factor * speed_term * cpi->twopass.bpm_factor * noise_factor,
           cpi->common.bit_depth);
-      if (bits_per_mb <= target_norm_bits_per_mb) break;
+      if ((uint64_t)bits_per_mb <= target_norm_bits_per_mb) break;
     }
 
     // Restriction on active max q for constrained quality mode.
@@ -2301,6 +2302,63 @@ static void define_gf_group_structure(VP9_COMP *cpi) {
   gf_group->gf_group_size = frame_index;
 }
 
+static INLINE void gf_group_set_overlay_frame(GF_GROUP *gf_group,
+                                              int frame_index) {
+  gf_group->update_type[frame_index] = OVERLAY_UPDATE;
+  gf_group->arf_src_offset[frame_index] = 0;
+  gf_group->frame_gop_index[frame_index] = frame_index;
+  gf_group->rf_level[frame_index] = INTER_NORMAL;
+  gf_group->layer_depth[frame_index] = MAX_ARF_LAYERS - 1;
+}
+
+static INLINE void gf_group_set_key_frame(GF_GROUP *gf_group, int frame_index) {
+  gf_group->update_type[frame_index] = KF_UPDATE;
+  gf_group->arf_src_offset[frame_index] = 0;
+  gf_group->frame_gop_index[frame_index] = frame_index;
+  gf_group->rf_level[frame_index] = KF_STD;
+  gf_group->layer_depth[frame_index] = 0;
+}
+
+static INLINE void gf_group_set_arf_frame(GF_GROUP *gf_group, int frame_index,
+                                          int show_frame_count) {
+  gf_group->update_type[frame_index] = ARF_UPDATE;
+  gf_group->arf_src_offset[frame_index] = (unsigned char)(show_frame_count - 1);
+  gf_group->frame_gop_index[frame_index] = show_frame_count;
+  gf_group->rf_level[frame_index] = GF_ARF_STD;
+  gf_group->layer_depth[frame_index] = 1;
+}
+
+static INLINE void gf_group_set_inter_normal_frame(GF_GROUP *gf_group,
+                                                   int frame_index) {
+  gf_group->update_type[frame_index] = LF_UPDATE;
+  gf_group->arf_src_offset[frame_index] = 0;
+  gf_group->frame_gop_index[frame_index] = frame_index;
+  gf_group->rf_level[frame_index] = INTER_NORMAL;
+  gf_group->layer_depth[frame_index] = 2;
+}
+
+static void ext_rc_define_gf_group_structure(
+    const vpx_rc_gop_decision_t *gop_decision, GF_GROUP *gf_group) {
+  const int key_frame = gop_decision->use_key_frame;
+  const int show_frame_count = gop_decision->gop_coding_frames - 1;
+
+  if (key_frame) {
+    gf_group_set_key_frame(gf_group, 0);
+  } else {
+    gf_group_set_overlay_frame(gf_group, 0);
+  }
+
+  // We assume arf is always used to keep the logic simple for now.
+  gf_group_set_arf_frame(gf_group, 1, show_frame_count);
+
+  for (int frame_index = 2; frame_index < gop_decision->gop_coding_frames;
+       frame_index++) {
+    gf_group_set_inter_normal_frame(gf_group, frame_index);
+  }
+  gf_group->max_layer_depth = MAX_ARF_LAYERS - 1;
+  gf_group->gf_group_size = gop_decision->gop_coding_frames;
+}
+
 static void allocate_gf_group_bits(VP9_COMP *cpi, int64_t gf_group_bits,
                                    int gf_arf_bits) {
   VP9EncoderConfig *const oxcf = &cpi->oxcf;
@@ -2769,38 +2827,6 @@ static void define_gf_group(VP9_COMP *cpi, int gf_start_show_idx) {
     }
   }
 #endif
-  // If the external rate control model for GOP is used, the gop decisions
-  // are overwritten. Specifically, |gop_coding_frames| and |use_alt_ref|
-  // will be overwritten.
-  if (cpi->ext_ratectrl.ready &&
-      (cpi->ext_ratectrl.funcs.rc_type & VPX_RC_GOP) != 0 &&
-      cpi->ext_ratectrl.funcs.get_gop_decision != NULL && !end_of_sequence) {
-    vpx_codec_err_t codec_status;
-    vpx_rc_gop_decision_t gop_decision;
-    vpx_rc_gop_info_t gop_info;
-    gop_info.min_gf_interval = rc->min_gf_interval;
-    gop_info.max_gf_interval = rc->max_gf_interval;
-    gop_info.active_min_gf_interval = active_gf_interval.min;
-    gop_info.active_max_gf_interval = active_gf_interval.max;
-    gop_info.allow_alt_ref = allow_alt_ref;
-    gop_info.is_key_frame = is_key_frame;
-    gop_info.last_gop_use_alt_ref = rc->source_alt_ref_active;
-    gop_info.frames_since_key = rc->frames_since_key;
-    gop_info.frames_to_key = rc->frames_to_key;
-    gop_info.lag_in_frames = cpi->oxcf.lag_in_frames;
-    gop_info.show_index = cm->current_video_frame;
-    gop_info.coding_index = cm->current_frame_coding_index;
-    gop_info.gop_global_index = rc->gop_global_index;
-
-    codec_status = vp9_extrc_get_gop_decision(&cpi->ext_ratectrl, &gop_info,
-                                              &gop_decision);
-    if (codec_status != VPX_CODEC_OK) {
-      vpx_internal_error(&cm->error, codec_status,
-                         "vp9_extrc_get_gop_decision() failed");
-    }
-    gop_coding_frames = gop_decision.gop_coding_frames;
-    use_alt_ref = gop_decision.use_alt_ref;
-  }
 
   // Was the group length constrained by the requirement for a new KF?
   rc->constrained_gf_group = (gop_coding_frames >= rc->frames_to_key) ? 1 : 0;
@@ -3600,32 +3626,76 @@ void vp9_rc_get_second_pass_params(VP9_COMP *cpi) {
   else
     twopass->fr_content_type = FC_NORMAL;
 
-  // Keyframe and section processing.
-  if (rc->frames_to_key == 0 || (cpi->frame_flags & FRAMEFLAGS_KEY)) {
-    // Define next KF group and assign bits to it.
-    find_next_key_frame(cpi, show_idx);
+  // If the external rate control model for GOP is used, the gop decisions
+  // are overwritten, including whether to use key frame in this GF group,
+  // GF group length, and whether to use arf.
+  if (cpi->ext_ratectrl.ready &&
+      (cpi->ext_ratectrl.funcs.rc_type & VPX_RC_GOP) != 0 &&
+      cpi->ext_ratectrl.funcs.get_gop_decision != NULL &&
+      rc->frames_till_gf_update_due == 0) {
+    vpx_codec_err_t codec_status;
+    vpx_rc_gop_decision_t gop_decision;
+    codec_status =
+        vp9_extrc_get_gop_decision(&cpi->ext_ratectrl, &gop_decision);
+    if (codec_status != VPX_CODEC_OK) {
+      vpx_internal_error(&cm->error, codec_status,
+                         "vp9_extrc_get_gop_decision() failed");
+    }
+    if (gop_decision.use_key_frame) {
+      cpi->common.frame_type = KEY_FRAME;
+      rc->frames_since_key = 0;
+      // Clear the alt ref active flag and last group multi arf flags as they
+      // can never be set for a key frame.
+      rc->source_alt_ref_active = 0;
+      // KF is always a GF so clear frames till next gf counter.
+      rc->frames_till_gf_update_due = 0;
+    }
+
+    // A new GF group
+    if (rc->frames_till_gf_update_due == 0) {
+      vp9_zero(twopass->gf_group);
+      ++rc->gop_global_index;
+      if (gop_decision.use_alt_ref) {
+        rc->source_alt_ref_pending = 1;
+      }
+      rc->baseline_gf_interval =
+          gop_decision.gop_coding_frames - rc->source_alt_ref_pending;
+      ext_rc_define_gf_group_structure(&gop_decision, &twopass->gf_group);
+    }
   } else {
-    cm->frame_type = INTER_FRAME;
-  }
+    // Keyframe and section processing.
+    if (rc->frames_to_key == 0 || (cpi->frame_flags & FRAMEFLAGS_KEY)) {
+      // Define next KF group and assign bits to it.
+      find_next_key_frame(cpi, show_idx);
+    } else {
+      cm->frame_type = INTER_FRAME;
+    }
 
-  // Define a new GF/ARF group. (Should always enter here for key frames).
-  if (rc->frames_till_gf_update_due == 0) {
-    define_gf_group(cpi, show_idx);
-
-    rc->frames_till_gf_update_due = rc->baseline_gf_interval;
+    // Define a new GF/ARF group. (Should always enter here for key frames).
+    if (rc->frames_till_gf_update_due == 0) {
+      define_gf_group(cpi, show_idx);
 
 #if ARF_STATS_OUTPUT
-    {
-      FILE *fpfile;
-      fpfile = fopen("arf.stt", "a");
-      ++arf_count;
-      fprintf(fpfile, "%10d %10ld %10d %10d %10ld %10ld\n",
-              cm->current_video_frame, rc->frames_till_gf_update_due,
-              rc->kf_boost, arf_count, rc->gfu_boost, cm->frame_type);
+      {
+        FILE *fpfile;
+        fpfile = fopen("arf.stt", "a");
+        ++arf_count;
+        fprintf(fpfile, "%10d %10ld %10d %10d %10ld %10ld\n",
+                cm->current_video_frame, rc->baseline_gf_interval, rc->kf_boost,
+                arf_count, rc->gfu_boost, cm->frame_type);
 
-      fclose(fpfile);
-    }
+        fclose(fpfile);
+      }
 #endif
+    }
+  }
+
+  if (rc->frames_till_gf_update_due == 0) {
+    if (cpi->ext_ratectrl.ready && cpi->ext_ratectrl.log_file) {
+      fprintf(cpi->ext_ratectrl.log_file, "GOP_INFO gop_size %d\n",
+              rc->baseline_gf_interval);
+    }
+    rc->frames_till_gf_update_due = rc->baseline_gf_interval;
   }
 
   vp9_configure_buffer_updates(cpi, gf_group->index);

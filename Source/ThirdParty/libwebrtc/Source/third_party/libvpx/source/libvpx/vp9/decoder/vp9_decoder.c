@@ -21,6 +21,7 @@
 #include "vpx_ports/vpx_once.h"
 #include "vpx_ports/vpx_timer.h"
 #include "vpx_scale/vpx_scale.h"
+#include "vpx_util/vpx_pthread.h"
 #include "vpx_util/vpx_thread.h"
 
 #include "vp9/common/vp9_alloccommon.h"
@@ -210,6 +211,7 @@ VP9Decoder *vp9_decoder_create(BufferPool *const pool) {
   cm->error.setjmp = 0;
 
   vpx_get_worker_interface()->init(&pbi->lf_worker);
+  pbi->lf_worker.thread_name = "vpx lf worker";
 
   return pbi;
 }

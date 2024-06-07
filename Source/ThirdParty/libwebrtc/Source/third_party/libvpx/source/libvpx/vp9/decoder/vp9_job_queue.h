@@ -11,7 +11,7 @@
 #ifndef VPX_VP9_DECODER_VP9_JOB_QUEUE_H_
 #define VPX_VP9_DECODER_VP9_JOB_QUEUE_H_
 
-#include "vpx_util/vpx_thread.h"
+#include "vpx_util/vpx_pthread.h"
 
 typedef struct {
   // Pointer to buffer base which contains the jobs

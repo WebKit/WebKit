@@ -9,6 +9,7 @@
  */
 
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <string>
 #include <tuple>
@@ -21,9 +22,14 @@
 #include "test/clear_system_state.h"
 #include "test/register_state_check.h"
 #include "test/util.h"
+#include "vpx_mem/vpx_mem.h"
 #include "vpx_ports/mem.h"
+#include "vpx_ports/vpx_timer.h"
 
 using libvpx_test::ACMRandom;
+using ::testing::Combine;
+using ::testing::Range;
+using ::testing::ValuesIn;
 
 namespace {
 const int kNumIterations = 10000;
@@ -113,6 +119,13 @@ INSTANTIATE_TEST_SUITE_P(
                                  &vpx_sum_squares_2d_i16_neon)));
 #endif  // HAVE_NEON
 
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(
+    SVE, SumSquaresTest,
+    ::testing::Values(make_tuple(&vpx_sum_squares_2d_i16_c,
+                                 &vpx_sum_squares_2d_i16_sve)));
+#endif  // HAVE_SVE
+
 #if HAVE_SSE2
 INSTANTIATE_TEST_SUITE_P(
     SSE2, SumSquaresTest,
@@ -126,4 +139,210 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(make_tuple(&vpx_sum_squares_2d_i16_c,
                                  &vpx_sum_squares_2d_i16_msa)));
 #endif  // HAVE_MSA
+
+typedef int64_t (*SSEFunc)(const uint8_t *a, int a_stride, const uint8_t *b,
+                           int b_stride, int width, int height);
+
+struct TestSSEFuncs {
+  TestSSEFuncs(SSEFunc ref = nullptr, SSEFunc tst = nullptr, int depth = 0)
+      : ref_func(ref), tst_func(tst), bit_depth(depth) {}
+  SSEFunc ref_func;  // Pointer to reference function
+  SSEFunc tst_func;  // Pointer to tested function
+  int bit_depth;
+};
+
+typedef std::tuple<TestSSEFuncs, int> SSETestParam;
+
+class SSETest : public ::testing::TestWithParam<SSETestParam> {
+ public:
+  ~SSETest() override = default;
+  void SetUp() override {
+    params_ = GET_PARAM(0);
+    width_ = GET_PARAM(1);
+    is_hbd_ =
+#if CONFIG_VP9_HIGHBITDEPTH
+        params_.ref_func == vpx_highbd_sse_c;
+#else
+        false;
+#endif
+    rnd_.Reset(ACMRandom::DeterministicSeed());
+    src_ = reinterpret_cast<uint8_t *>(vpx_memalign(32, 256 * 256 * 2));
+    ref_ = reinterpret_cast<uint8_t *>(vpx_memalign(32, 256 * 256 * 2));
+    ASSERT_NE(src_, nullptr);
+    ASSERT_NE(ref_, nullptr);
+  }
+
+  void TearDown() override {
+    vpx_free(src_);
+    vpx_free(ref_);
+  }
+  void RunTest(bool is_random, int width, int height, int run_times);
+
+  void GenRandomData(int width, int height, int stride) {
+    uint16_t *src16 = reinterpret_cast<uint16_t *>(src_);
+    uint16_t *ref16 = reinterpret_cast<uint16_t *>(ref_);
+    const int msb = 11;  // Up to 12 bit input
+    const int limit = 1 << (msb + 1);
+    for (int ii = 0; ii < height; ii++) {
+      for (int jj = 0; jj < width; jj++) {
+        if (!is_hbd_) {
+          src_[ii * stride + jj] = rnd_.Rand8();
+          ref_[ii * stride + jj] = rnd_.Rand8();
+        } else {
+          src16[ii * stride + jj] = rnd_(limit);
+          ref16[ii * stride + jj] = rnd_(limit);
+        }
+      }
+    }
+  }
+
+  void GenExtremeData(int width, int height, int stride, uint8_t *data,
+                      int16_t val) {
+    uint16_t *data16 = reinterpret_cast<uint16_t *>(data);
+    for (int ii = 0; ii < height; ii++) {
+      for (int jj = 0; jj < width; jj++) {
+        if (!is_hbd_) {
+          data[ii * stride + jj] = static_cast<uint8_t>(val);
+        } else {
+          data16[ii * stride + jj] = val;
+        }
+      }
+    }
+  }
+
+ protected:
+  bool is_hbd_;
+  int width_;
+  TestSSEFuncs params_;
+  uint8_t *src_;
+  uint8_t *ref_;
+  ACMRandom rnd_;
+};
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SSETest);
+
+void SSETest::RunTest(bool is_random, int width, int height, int run_times) {
+  int failed = 0;
+  vpx_usec_timer ref_timer, test_timer;
+  for (int k = 0; k < 3; k++) {
+    int stride = 4 << rnd_(7);  // Up to 256 stride
+    while (stride < width) {    // Make sure it's valid
+      stride = 4 << rnd_(7);
+    }
+    if (is_random) {
+      GenRandomData(width, height, stride);
+    } else {
+      const int msb = is_hbd_ ? 12 : 8;  // Up to 12 bit input
+      const int limit = (1 << msb) - 1;
+      if (k == 0) {
+        GenExtremeData(width, height, stride, src_, 0);
+        GenExtremeData(width, height, stride, ref_, limit);
+      } else {
+        GenExtremeData(width, height, stride, src_, limit);
+        GenExtremeData(width, height, stride, ref_, 0);
+      }
+    }
+    int64_t res_ref, res_tst;
+    uint8_t *src = src_;
+    uint8_t *ref = ref_;
+#if CONFIG_VP9_HIGHBITDEPTH
+    if (is_hbd_) {
+      src = CONVERT_TO_BYTEPTR(src_);
+      ref = CONVERT_TO_BYTEPTR(ref_);
+    }
+#endif
+    res_ref = params_.ref_func(src, stride, ref, stride, width, height);
+    res_tst = params_.tst_func(src, stride, ref, stride, width, height);
+    if (run_times > 1) {
+      vpx_usec_timer_start(&ref_timer);
+      for (int j = 0; j < run_times; j++) {
+        params_.ref_func(src, stride, ref, stride, width, height);
+      }
+      vpx_usec_timer_mark(&ref_timer);
+      const int elapsed_time_c =
+          static_cast<int>(vpx_usec_timer_elapsed(&ref_timer));
+
+      vpx_usec_timer_start(&test_timer);
+      for (int j = 0; j < run_times; j++) {
+        params_.tst_func(src, stride, ref, stride, width, height);
+      }
+      vpx_usec_timer_mark(&test_timer);
+      const int elapsed_time_simd =
+          static_cast<int>(vpx_usec_timer_elapsed(&test_timer));
+
+      printf(
+          "c_time=%d \t simd_time=%d \t "
+          "gain=%d\n",
+          elapsed_time_c, elapsed_time_simd,
+          (elapsed_time_c / elapsed_time_simd));
+    } else {
+      if (!failed) {
+        failed = res_ref != res_tst;
+        EXPECT_EQ(res_ref, res_tst)
+            << "Error:" << (is_hbd_ ? "hbd " : " ") << k << " SSE Test ["
+            << width << "x" << height
+            << "] C output does not match optimized output.";
+      }
+    }
+  }
+}
+
+TEST_P(SSETest, OperationCheck) {
+  for (int height = 4; height <= 128; height += 4) {
+    RunTest(true, width_, height, 1);  // GenRandomData
+  }
+}
+
+TEST_P(SSETest, ExtremeValues) {
+  for (int height = 4; height <= 128; height += 4) {
+    RunTest(false, width_, height, 1);
+  }
+}
+
+TEST_P(SSETest, DISABLED_Speed) {
+  for (int height = 4; height <= 128; height += 4) {
+    RunTest(true, width_, height, 100);
+  }
+}
+
+#if HAVE_NEON
+TestSSEFuncs sse_neon[] = {
+  TestSSEFuncs(&vpx_sse_c, &vpx_sse_neon),
+#if CONFIG_VP9_HIGHBITDEPTH
+  TestSSEFuncs(&vpx_highbd_sse_c, &vpx_highbd_sse_neon)
+#endif
+};
+INSTANTIATE_TEST_SUITE_P(NEON, SSETest,
+                         Combine(ValuesIn(sse_neon), Range(4, 129, 4)));
+#endif  // HAVE_NEON
+
+#if HAVE_NEON_DOTPROD
+TestSSEFuncs sse_neon_dotprod[] = {
+  TestSSEFuncs(&vpx_sse_c, &vpx_sse_neon_dotprod),
+};
+INSTANTIATE_TEST_SUITE_P(NEON_DOTPROD, SSETest,
+                         Combine(ValuesIn(sse_neon_dotprod), Range(4, 129, 4)));
+#endif  // HAVE_NEON_DOTPROD
+
+#if HAVE_SSE4_1
+TestSSEFuncs sse_sse4[] = {
+  TestSSEFuncs(&vpx_sse_c, &vpx_sse_sse4_1),
+#if CONFIG_VP9_HIGHBITDEPTH
+  TestSSEFuncs(&vpx_highbd_sse_c, &vpx_highbd_sse_sse4_1)
+#endif
+};
+INSTANTIATE_TEST_SUITE_P(SSE4_1, SSETest,
+                         Combine(ValuesIn(sse_sse4), Range(4, 129, 4)));
+#endif  // HAVE_SSE4_1
+
+#if HAVE_AVX2
+
+TestSSEFuncs sse_avx2[] = {
+  TestSSEFuncs(&vpx_sse_c, &vpx_sse_avx2),
+#if CONFIG_VP9_HIGHBITDEPTH
+  TestSSEFuncs(&vpx_highbd_sse_c, &vpx_highbd_sse_avx2)
+#endif
+};
+INSTANTIATE_TEST_SUITE_P(AVX2, SSETest,
+                         Combine(ValuesIn(sse_avx2), Range(4, 129, 4)));
+#endif  // HAVE_AVX2
 }  // namespace

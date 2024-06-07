@@ -719,7 +719,8 @@ static void calc_pframe_target_size(VP8_COMP *cpi) {
         }
 
         /* lower the target bandwidth for this frame. */
-        cpi->this_frame_target -= (cpi->this_frame_target * percent_low) / 200;
+        cpi->this_frame_target -=
+            (int)(((int64_t)cpi->this_frame_target * percent_low) / 200);
 
         /* Are we using allowing control of active_worst_allowed_q
          * according to buffer level.
@@ -790,8 +791,12 @@ static void calc_pframe_target_size(VP8_COMP *cpi) {
               (int)((cpi->buffer_level - cpi->oxcf.optimal_buffer_level) /
                     one_percent_bits);
         } else if (cpi->bits_off_target > cpi->oxcf.optimal_buffer_level) {
-          percent_high =
-              (int)((100 * cpi->bits_off_target) / (cpi->total_byte_count * 8));
+          if (cpi->total_byte_count > 0) {
+            percent_high = (int)((100 * cpi->bits_off_target) /
+                                 (cpi->total_byte_count * 8));
+          } else {
+            percent_high = cpi->oxcf.over_shoot_pct;
+          }
         }
 
         if (percent_high > cpi->oxcf.over_shoot_pct) {
@@ -1189,10 +1194,13 @@ int vp8_regulate_q(VP8_COMP *cpi, int target_bits_per_frame) {
     /* Calculate required scaling factor based on target frame size and
      * size of frame produced using previous Q
      */
-    if (target_bits_per_frame >= (INT_MAX >> BPER_MB_NORMBITS)) {
-      /* Case where we would overflow int */
-      target_bits_per_mb = (target_bits_per_frame / cpi->common.MBs)
-                           << BPER_MB_NORMBITS;
+    if (target_bits_per_frame > (INT_MAX >> BPER_MB_NORMBITS)) {
+      int temp = target_bits_per_frame / cpi->common.MBs;
+      if (temp > (INT_MAX >> BPER_MB_NORMBITS)) {
+        target_bits_per_mb = INT_MAX;
+      } else {
+        target_bits_per_mb = temp << BPER_MB_NORMBITS;
+      }
     } else {
       target_bits_per_mb =
           (target_bits_per_frame << BPER_MB_NORMBITS) / cpi->common.MBs;
@@ -1533,9 +1541,13 @@ int vp8_drop_encodedframe_overshoot(VP8_COMP *cpi, int Q) {
       // undershoots significantly, and then we end up dropping every other
       // frame because the QP/rate_correction_factor may have been too low
       // before the drop and then takes too long to come up.
-      if (target_size >= (INT_MAX >> BPER_MB_NORMBITS)) {
-        target_bits_per_mb = (target_size / cpi->common.MBs)
-                             << BPER_MB_NORMBITS;
+      if (target_size > (INT_MAX >> BPER_MB_NORMBITS)) {
+        int temp = target_size / cpi->common.MBs;
+        if (temp > (INT_MAX >> BPER_MB_NORMBITS)) {
+          target_bits_per_mb = INT_MAX;
+        } else {
+          target_bits_per_mb = temp << BPER_MB_NORMBITS;
+        }
       } else {
         target_bits_per_mb =
             (target_size << BPER_MB_NORMBITS) / cpi->common.MBs;

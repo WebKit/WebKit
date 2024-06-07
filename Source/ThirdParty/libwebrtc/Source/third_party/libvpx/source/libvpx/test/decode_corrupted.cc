@@ -16,6 +16,7 @@
 #include "test/encode_test_driver.h"
 #include "test/util.h"
 #include "test/i420_video_source.h"
+#include "vpx_config.h"
 #include "vpx_mem/vpx_mem.h"
 
 namespace {

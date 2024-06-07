@@ -859,6 +859,11 @@ static void set_rt_speed_feature_framesize_independent(
   // off for now.
   if (speed <= 3 && cpi->oxcf.aq_mode == CYCLIC_REFRESH_AQ)
     cpi->oxcf.aq_mode = 0;
+  // For all speeds for rt mode: if the deadline mode changed (was good/best
+  // quality on previous frame and now is realtime) set nonrd_keyframe to 1 to
+  // avoid entering rd pickmode. This causes issues, such as: b/310663186.
+  if (cpi->oxcf.mode != cpi->deadline_mode_previous_frame)
+    sf->nonrd_keyframe = 1;
 }
 
 void vp9_set_speed_features_framesize_dependent(VP9_COMP *cpi, int speed) {

@@ -119,8 +119,8 @@ void vp9_setup_pc_tree(VP9_COMMON *cm, ThreadData *td) {
     PC_TREE *const tree = &td->pc_tree[pc_tree_index];
     tree->block_size = square[0];
     alloc_tree_contexts(cm, tree, 4);
-    tree->leaf_split[0] = this_leaf++;
-    for (j = 1; j < 4; j++) tree->leaf_split[j] = tree->leaf_split[0];
+    tree->u.leaf_split[0] = this_leaf++;
+    for (j = 1; j < 4; j++) tree->u.leaf_split[j] = tree->u.leaf_split[0];
   }
 
   // Each node has 4 leaf nodes, fill each block_size level of the tree
@@ -130,7 +130,7 @@ void vp9_setup_pc_tree(VP9_COMMON *cm, ThreadData *td) {
       PC_TREE *const tree = &td->pc_tree[pc_tree_index];
       alloc_tree_contexts(cm, tree, 4 << (2 * square_index));
       tree->block_size = square[square_index];
-      for (j = 0; j < 4; j++) tree->split[j] = this_pc++;
+      for (j = 0; j < 4; j++) tree->u.split[j] = this_pc++;
       ++pc_tree_index;
     }
     ++square_index;

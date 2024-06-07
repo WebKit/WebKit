@@ -21,9 +21,12 @@ LIBVPX_TEST_SRCS-yes += video_source.h
 ## Black box tests only use the public API.
 ##
 LIBVPX_TEST_SRCS-yes                   += ../md5_utils.h ../md5_utils.c
+LIBVPX_TEST_SRCS-yes                   += vpx_image_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_DECODERS)    += ivf_video_source.h
 LIBVPX_TEST_SRCS-$(CONFIG_ENCODERS)    += ../y4minput.h ../y4minput.c
+ifneq ($(CONFIG_REALTIME_ONLY),yes)
 LIBVPX_TEST_SRCS-$(CONFIG_ENCODERS)    += altref_test.cc
+endif
 LIBVPX_TEST_SRCS-$(CONFIG_ENCODERS)    += encode_api_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_ENCODERS)    += error_resilience_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_ENCODERS)    += i420_video_source.h
@@ -32,7 +35,9 @@ LIBVPX_TEST_SRCS-$(CONFIG_ENCODERS)    += resize_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_ENCODERS)    += y4m_video_source.h
 LIBVPX_TEST_SRCS-$(CONFIG_ENCODERS)    += yuv_video_source.h
 
+ifneq ($(CONFIG_REALTIME_ONLY),yes)
 LIBVPX_TEST_SRCS-$(CONFIG_VP8_ENCODER) += config_test.cc
+endif
 LIBVPX_TEST_SRCS-$(CONFIG_VP8_ENCODER) += cq_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP8_ENCODER) += keyframe_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP8_ENCODER) += vp8_datarate_test.cc
@@ -43,7 +48,9 @@ LIBVPX_TEST_SRCS-$(CONFIG_VP9_DECODER) += external_frame_buffer_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_DECODER) += user_priv_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += active_map_refresh_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += active_map_test.cc
+ifneq ($(CONFIG_REALTIME_ONLY),yes)
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += alt_ref_aq_segment_test.cc
+endif
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += aq_segment_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += borders_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += cpu_speed_test.cc
@@ -60,7 +67,9 @@ LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += svc_test.h
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += svc_end_to_end_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += timestamp_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += vp9_datarate_test.cc
+ifneq ($(CONFIG_REALTIME_ONLY),yes)
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += vp9_ext_ratectrl_test.cc
+endif
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += ../vp9/simple_encode.h
 
 LIBVPX_TEST_SRCS-yes                   += decode_test_driver.cc

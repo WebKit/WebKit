@@ -1834,7 +1834,7 @@ static int check_best_zero_mv(const VP9_COMP *cpi,
   return 1;
 }
 
-static INLINE int skip_iters(const int_mv iter_mvs[][2], int ite, int id) {
+static INLINE int skip_iters(int_mv iter_mvs[][2], int ite, int id) {
   if (ite >= 2 && iter_mvs[ite - 2][!id].as_int == iter_mvs[ite][!id].as_int) {
     int_mv cur_fullpel_mv, prev_fullpel_mv;
     cur_fullpel_mv.as_mv.row = iter_mvs[ite][id].as_mv.row >> 3;
@@ -3435,6 +3435,14 @@ int vp9_active_edge_sb(VP9_COMP *cpi, int mi_row, int mi_col) {
 }
 
 #if !CONFIG_REALTIME_ONLY
+static void init_frame_mv(int_mv frame_mv[MB_MODE_COUNT][MAX_REF_FRAMES]) {
+  for (int mode = 0; mode < MB_MODE_COUNT; ++mode) {
+    for (int ref_frame = 0; ref_frame < MAX_REF_FRAMES; ++ref_frame) {
+      frame_mv[mode][ref_frame].as_int = INVALID_MV;
+    }
+  }
+}
+
 void vp9_rd_pick_inter_mode_sb(VP9_COMP *cpi, TileDataEnc *tile_data,
                                MACROBLOCK *x, int mi_row, int mi_col,
                                RD_COST *rd_cost, BLOCK_SIZE bsize,
@@ -3452,7 +3460,7 @@ void vp9_rd_pick_inter_mode_sb(VP9_COMP *cpi, TileDataEnc *tile_data,
   unsigned char segment_id = mi->segment_id;
   int comp_pred, i, k;
   int_mv frame_mv[MB_MODE_COUNT][MAX_REF_FRAMES];
-  struct buf_2d yv12_mb[4][MAX_MB_PLANE];
+  struct buf_2d yv12_mb[4][MAX_MB_PLANE] = { 0 };
   int_mv single_newmv[MAX_REF_FRAMES] = { { 0 } };
   INTERP_FILTER single_inter_filter[MB_MODE_COUNT][MAX_REF_FRAMES];
   int single_skippable[MB_MODE_COUNT][MAX_REF_FRAMES];
@@ -3530,6 +3538,8 @@ void vp9_rd_pick_inter_mode_sb(VP9_COMP *cpi, TileDataEnc *tile_data,
 
   rd_cost->rate = INT_MAX;
 
+  init_frame_mv(frame_mv);
+
   for (ref_frame = LAST_FRAME; ref_frame <= ALTREF_FRAME; ++ref_frame) {
     x->pred_mv_sad[ref_frame] = INT_MAX;
     if ((cpi->ref_frame_flags & ref_frame_to_flag(ref_frame)) &&
@@ -3606,7 +3616,7 @@ void vp9_rd_pick_inter_mode_sb(VP9_COMP *cpi, TileDataEnc *tile_data,
         mode_skip_mask[GOLDEN_FRAME] |= INTER_ALL;
   }
 
-  if (bsize > sf->max_intra_bsize) {
+  if (bsize > sf->max_intra_bsize && cpi->ref_frame_flags != 0) {
     ref_frame_skip_mask[0] |= (1 << INTRA_FRAME);
     ref_frame_skip_mask[1] |= (1 << INTRA_FRAME);
   }
@@ -4297,7 +4307,7 @@ void vp9_rd_pick_inter_mode_sub8x8(VP9_COMP *cpi, TileDataEnc *tile_data,
   unsigned char segment_id = mi->segment_id;
   int comp_pred, i;
   int_mv frame_mv[MB_MODE_COUNT][MAX_REF_FRAMES];
-  struct buf_2d yv12_mb[4][MAX_MB_PLANE];
+  struct buf_2d yv12_mb[4][MAX_MB_PLANE] = { 0 };
   int64_t best_rd = best_rd_so_far;
   int64_t best_yrd = best_rd_so_far;  // FIXME(rbultje) more precise
   int64_t best_pred_diff[REFERENCE_MODES];

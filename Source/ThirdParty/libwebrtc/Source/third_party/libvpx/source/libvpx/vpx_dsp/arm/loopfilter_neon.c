@@ -162,7 +162,7 @@ FUN_FLIP_SIGN(16, q_)  // flip_sign_16
 
 #define FUN_FLIP_SIGN_BACK(w, r)                                         \
   static INLINE uint8x##w##_t flip_sign_back_##w(const int8x##w##_t v) { \
-    const int8x##w##_t sign_bit = vdup##r##n_s8(0x80);                   \
+    const int8x##w##_t sign_bit = vdup##r##n_s8((int8_t)0x80);           \
     return vreinterpret##r##u8_s8(veor##r##s8(v, sign_bit));             \
   }
 

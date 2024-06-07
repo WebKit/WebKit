@@ -18,6 +18,7 @@
 #include "test/y4m_video_source.h"
 #include "test/yuv_video_source.h"
 #include "vp9/encoder/vp9_ratectrl.h"
+#include "vpx_config.h"
 
 namespace {
 

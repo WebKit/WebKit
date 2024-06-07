@@ -9,6 +9,9 @@
  */
 
 #include <math.h>
+
+#include "./vpx_config.h"
+#include "vpx_ports/bitops.h"
 #include "vpx_mem/vpx_mem.h"
 
 #include "onyx_int.h"
@@ -162,10 +165,10 @@ static const int qzbin_factors_y2[129] = {
 static void invert_quant(int improved_quant, short *quant, short *shift,
                          short d) {
   if (improved_quant) {
-    unsigned t;
+    unsigned int t;
     int l, m;
-    t = d;
-    for (l = 0; t > 1; ++l) t >>= 1;
+    t = (unsigned int)d;
+    l = get_msb(t);
     m = 1 + (1 << (16 + l)) / d;
     *quant = (short)(m - (1 << 16));
     *shift = l;

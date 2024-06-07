@@ -12,28 +12,20 @@
 #define VPX_VP9_RATECTRL_RTC_H_
 
 #include <cstdint>
+#include <cstring>
+#include <limits>
 #include <memory>
 
-#include "vp9/common/vp9_enums.h"
-#include "vp9/vp9_iface_common.h"
-#include "vp9/encoder/vp9_aq_cyclicrefresh.h"
-#include "vp9/vp9_cx_iface.h"
+#include "vpx/vpx_encoder.h"
 #include "vpx/internal/vpx_ratectrl_rtc.h"
-#include "vpx_mem/vpx_mem.h"
 
 struct VP9_COMP;
 
 namespace libvpx {
 struct VP9RateControlRtcConfig : public VpxRateControlRtcConfig {
- public:
   VP9RateControlRtcConfig() {
-    ss_number_layers = 1;
-    vp9_zero(max_quantizers);
-    vp9_zero(min_quantizers);
-    vp9_zero(scaling_factor_den);
-    vp9_zero(scaling_factor_num);
-    vp9_zero(layer_target_bitrate);
-    vp9_zero(ts_rate_decimator);
+    memset(layer_target_bitrate, 0, sizeof(layer_target_bitrate));
+    memset(ts_rate_decimator, 0, sizeof(ts_rate_decimator));
     scaling_factor_num[0] = 1;
     scaling_factor_den[0] = 1;
     max_quantizers[0] = max_quantizer;
@@ -41,11 +33,13 @@ struct VP9RateControlRtcConfig : public VpxRateControlRtcConfig {
   }
 
   // Number of spatial layers
-  int ss_number_layers;
-  int max_quantizers[VPX_MAX_LAYERS];
-  int min_quantizers[VPX_MAX_LAYERS];
-  int scaling_factor_num[VPX_SS_MAX_LAYERS];
-  int scaling_factor_den[VPX_SS_MAX_LAYERS];
+  int ss_number_layers = 1;
+  int max_quantizers[VPX_MAX_LAYERS] = {};
+  int min_quantizers[VPX_MAX_LAYERS] = {};
+  int scaling_factor_num[VPX_SS_MAX_LAYERS] = {};
+  int scaling_factor_den[VPX_SS_MAX_LAYERS] = {};
+  // This is only for SVC for now.
+  int max_consec_drop = std::numeric_limits<int>::max();
 };
 
 struct VP9FrameParamsQpRTC {
@@ -92,15 +86,19 @@ class VP9RateControlRTC {
   int GetQP() const;
   int GetLoopfilterLevel() const;
   bool GetSegmentationData(VP9SegmentationData *segmentation_data) const;
-  void ComputeQP(const VP9FrameParamsQpRTC &frame_params);
+  // ComputeQP computes the QP if the frame is not dropped (kOk return),
+  // otherwise it returns kDrop and subsequent GetQP and PostEncodeUpdate
+  // are not to be called (vp9_rc_postencode_update_drop_frame is already
+  // called via ComputeQP if drop is decided).
+  FrameDropDecision ComputeQP(const VP9FrameParamsQpRTC &frame_params);
   // Feedback to rate control with the size of current encoded frame
   void PostEncodeUpdate(uint64_t encoded_frame_size,
                         const VP9FrameParamsQpRTC &frame_params);
 
  private:
-  VP9RateControlRTC() {}
+  VP9RateControlRTC() = default;
   bool InitRateControl(const VP9RateControlRtcConfig &cfg);
-  struct VP9_COMP *cpi_;
+  struct VP9_COMP *cpi_ = nullptr;
 };
 
 }  // namespace libvpx

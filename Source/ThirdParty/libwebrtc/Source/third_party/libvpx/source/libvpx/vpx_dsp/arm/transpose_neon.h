@@ -524,12 +524,20 @@ static INLINE void transpose_s32_8x4(int32x4_t *const a0, int32x4_t *const a1,
   *a7 = vreinterpretq_s32_s64(c3.val[1]);
 }
 
-// Note: Using 'd' registers or 'q' registers has almost identical speed. We use
-// 'q' registers here to save some instructions.
 static INLINE void transpose_u8_8x8(uint8x8_t *a0, uint8x8_t *a1, uint8x8_t *a2,
                                     uint8x8_t *a3, uint8x8_t *a4, uint8x8_t *a5,
                                     uint8x8_t *a6, uint8x8_t *a7) {
-  // Swap 8 bit elements. Goes from:
+  // Widen to 128-bit registers (usually a no-op once inlined.)
+  const uint8x16_t a0q = vcombine_u8(*a0, vdup_n_u8(0));
+  const uint8x16_t a1q = vcombine_u8(*a1, vdup_n_u8(0));
+  const uint8x16_t a2q = vcombine_u8(*a2, vdup_n_u8(0));
+  const uint8x16_t a3q = vcombine_u8(*a3, vdup_n_u8(0));
+  const uint8x16_t a4q = vcombine_u8(*a4, vdup_n_u8(0));
+  const uint8x16_t a5q = vcombine_u8(*a5, vdup_n_u8(0));
+  const uint8x16_t a6q = vcombine_u8(*a6, vdup_n_u8(0));
+  const uint8x16_t a7q = vcombine_u8(*a7, vdup_n_u8(0));
+
+  // Zip 8 bit elements. Goes from:
   // a0: 00 01 02 03 04 05 06 07
   // a1: 10 11 12 13 14 15 16 17
   // a2: 20 21 22 23 24 25 26 27
@@ -539,43 +547,41 @@ static INLINE void transpose_u8_8x8(uint8x8_t *a0, uint8x8_t *a1, uint8x8_t *a2,
   // a6: 60 61 62 63 64 65 66 67
   // a7: 70 71 72 73 74 75 76 77
   // to:
-  // b0.val[0]: 00 10 02 12 04 14 06 16  40 50 42 52 44 54 46 56
-  // b0.val[1]: 01 11 03 13 05 15 07 17  41 51 43 53 45 55 47 57
-  // b1.val[0]: 20 30 22 32 24 34 26 36  60 70 62 72 64 74 66 76
-  // b1.val[1]: 21 31 23 33 25 35 27 37  61 71 63 73 65 75 67 77
+  // b0: 00 10 01 11 02 12 03 13  04 14 05 15 06 16 07 17
+  // b1: 20 30 21 31 22 32 23 33  24 34 25 35 26 36 27 37
+  // b2: 40 50 41 51 42 52 43 53  44 54 45 55 46 56 47 57
+  // b3: 60 70 61 71 62 72 63 73  64 74 65 75 66 76 67 77
+  const uint8x16_t b0 = vzipq_u8(a0q, a1q).val[0];
+  const uint8x16_t b1 = vzipq_u8(a2q, a3q).val[0];
+  const uint8x16_t b2 = vzipq_u8(a4q, a5q).val[0];
+  const uint8x16_t b3 = vzipq_u8(a6q, a7q).val[0];
 
-  const uint8x16x2_t b0 =
-      vtrnq_u8(vcombine_u8(*a0, *a4), vcombine_u8(*a1, *a5));
-  const uint8x16x2_t b1 =
-      vtrnq_u8(vcombine_u8(*a2, *a6), vcombine_u8(*a3, *a7));
+  // Zip 16 bit elements resulting in:
+  // c0.val[0]: 00 10 20 30 01 11 21 31  02 12 22 32 03 13 23 33
+  // c0.val[1]: 04 14 24 34 05 15 25 35  06 16 26 36 07 17 27 37
+  // c1.val[0]: 40 50 60 70 41 51 61 71  42 52 62 72 43 53 63 73
+  // c1.val[1]: 44 54 64 74 45 55 65 75  46 66 56 76 47 67 57 77
+  const uint16x8x2_t c0 =
+      vzipq_u16(vreinterpretq_u16_u8(b0), vreinterpretq_u16_u8(b1));
+  const uint16x8x2_t c1 =
+      vzipq_u16(vreinterpretq_u16_u8(b2), vreinterpretq_u16_u8(b3));
 
-  // Swap 16 bit elements resulting in:
-  // c0.val[0]: 00 10 20 30 04 14 24 34  40 50 60 70 44 54 64 74
-  // c0.val[1]: 02 12 22 32 06 16 26 36  42 52 62 72 46 56 66 76
-  // c1.val[0]: 01 11 21 31 05 15 25 35  41 51 61 71 45 55 65 75
-  // c1.val[1]: 03 13 23 33 07 17 27 37  43 53 63 73 47 57 67 77
-
-  const uint16x8x2_t c0 = vtrnq_u16(vreinterpretq_u16_u8(b0.val[0]),
-                                    vreinterpretq_u16_u8(b1.val[0]));
-  const uint16x8x2_t c1 = vtrnq_u16(vreinterpretq_u16_u8(b0.val[1]),
-                                    vreinterpretq_u16_u8(b1.val[1]));
-
-  // Unzip 32 bit elements resulting in:
+  // Zip 32 bit elements resulting in:
   // d0.val[0]: 00 10 20 30 40 50 60 70  01 11 21 31 41 51 61 71
-  // d0.val[1]: 04 14 24 34 44 54 64 74  05 15 25 35 45 55 65 75
-  // d1.val[0]: 02 12 22 32 42 52 62 72  03 13 23 33 43 53 63 73
+  // d0.val[1]: 02 12 22 32 42 52 62 72  03 13 23 33 43 53 63 73
+  // d1.val[0]: 04 14 24 34 44 54 64 74  05 15 25 35 45 55 65 75
   // d1.val[1]: 06 16 26 36 46 56 66 76  07 17 27 37 47 57 67 77
-  const uint32x4x2_t d0 = vuzpq_u32(vreinterpretq_u32_u16(c0.val[0]),
+  const uint32x4x2_t d0 = vzipq_u32(vreinterpretq_u32_u16(c0.val[0]),
                                     vreinterpretq_u32_u16(c1.val[0]));
-  const uint32x4x2_t d1 = vuzpq_u32(vreinterpretq_u32_u16(c0.val[1]),
+  const uint32x4x2_t d1 = vzipq_u32(vreinterpretq_u32_u16(c0.val[1]),
                                     vreinterpretq_u32_u16(c1.val[1]));
 
   *a0 = vreinterpret_u8_u32(vget_low_u32(d0.val[0]));
   *a1 = vreinterpret_u8_u32(vget_high_u32(d0.val[0]));
-  *a2 = vreinterpret_u8_u32(vget_low_u32(d1.val[0]));
-  *a3 = vreinterpret_u8_u32(vget_high_u32(d1.val[0]));
-  *a4 = vreinterpret_u8_u32(vget_low_u32(d0.val[1]));
-  *a5 = vreinterpret_u8_u32(vget_high_u32(d0.val[1]));
+  *a2 = vreinterpret_u8_u32(vget_low_u32(d0.val[1]));
+  *a3 = vreinterpret_u8_u32(vget_high_u32(d0.val[1]));
+  *a4 = vreinterpret_u8_u32(vget_low_u32(d1.val[0]));
+  *a5 = vreinterpret_u8_u32(vget_high_u32(d1.val[0]));
   *a6 = vreinterpret_u8_u32(vget_low_u32(d1.val[1]));
   *a7 = vreinterpret_u8_u32(vget_high_u32(d1.val[1]));
 }

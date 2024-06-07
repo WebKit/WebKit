@@ -8,10 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <math.h>
-#include <new>
-#include "vp8/common/common.h"
 #include "vp8/vp8_ratectrl_rtc.h"
+
+#include <math.h>
+
+#include <new>
+
+#include "vp8/common/common.h"
 #include "vp8/encoder/onyx_int.h"
 #include "vp8/encoder/ratectrl.h"
 #include "vpx_ports/system_state.h"
@@ -133,13 +136,15 @@ bool VP8RateControlRTC::UpdateRateControl(
   cpi_->buffered_mode = oxcf->optimal_buffer_level > 0;
   oxcf->under_shoot_pct = rc_cfg.undershoot_pct;
   oxcf->over_shoot_pct = rc_cfg.overshoot_pct;
+  oxcf->drop_frames_water_mark = rc_cfg.frame_drop_thresh;
+  if (oxcf->drop_frames_water_mark > 0) cpi_->drop_frames_allowed = 1;
   cpi_->oxcf.rc_max_intra_bitrate_pct = rc_cfg.max_intra_bitrate_pct;
   cpi_->framerate = rc_cfg.framerate;
   for (int i = 0; i < KEY_FRAME_CONTEXT; ++i) {
     cpi_->prior_key_frame_distance[i] =
         static_cast<int>(cpi_->output_framerate);
   }
-
+  oxcf->screen_content_mode = rc_cfg.is_screen;
   if (oxcf->number_of_layers > 1 || prev_number_of_layers > 1) {
     memcpy(oxcf->target_bitrate, rc_cfg.layer_target_bitrate,
            sizeof(rc_cfg.layer_target_bitrate));
@@ -208,7 +213,8 @@ bool VP8RateControlRTC::UpdateRateControl(
   return true;
 }
 
-void VP8RateControlRTC::ComputeQP(const VP8FrameParamsQpRTC &frame_params) {
+FrameDropDecision VP8RateControlRTC::ComputeQP(
+    const VP8FrameParamsQpRTC &frame_params) {
   VP8_COMMON *const cm = &cpi_->common;
   vpx_clear_system_state();
   if (cpi_->oxcf.number_of_layers > 1) {
@@ -226,7 +232,20 @@ void VP8RateControlRTC::ComputeQP(const VP8FrameParamsQpRTC &frame_params) {
     cpi_->common.frame_flags |= FRAMEFLAGS_KEY;
   }
 
-  vp8_pick_frame_size(cpi_);
+  cpi_->per_frame_bandwidth = static_cast<int>(
+      round(cpi_->oxcf.target_bandwidth / cpi_->output_framerate));
+  if (vp8_check_drop_buffer(cpi_)) {
+    if (cpi_->oxcf.number_of_layers > 1) vp8_save_layer_context(cpi_);
+    return FrameDropDecision::kDrop;
+  }
+
+  if (!vp8_pick_frame_size(cpi_)) {
+    cm->current_video_frame++;
+    cpi_->frames_since_key++;
+    cpi_->ext_refresh_frame_flags_pending = 0;
+    if (cpi_->oxcf.number_of_layers > 1) vp8_save_layer_context(cpi_);
+    return FrameDropDecision::kDrop;
+  }
 
   if (cpi_->buffer_level >= cpi_->oxcf.optimal_buffer_level &&
       cpi_->buffered_mode) {
@@ -290,9 +309,18 @@ void VP8RateControlRTC::ComputeQP(const VP8FrameParamsQpRTC &frame_params) {
   q_ = vp8_regulate_q(cpi_, cpi_->this_frame_target);
   vp8_set_quantizer(cpi_, q_);
   vpx_clear_system_state();
+  return FrameDropDecision::kOk;
 }
 
 int VP8RateControlRTC::GetQP() const { return q_; }
+
+UVDeltaQP VP8RateControlRTC::GetUVDeltaQP() const {
+  VP8_COMMON *cm = &cpi_->common;
+  UVDeltaQP uv_delta_q;
+  uv_delta_q.uvdc_delta_q = cm->uvdc_delta_q;
+  uv_delta_q.uvac_delta_q = cm->uvac_delta_q;
+  return uv_delta_q;
+}
 
 int VP8RateControlRTC::GetLoopfilterLevel() const {
   VP8_COMMON *cm = &cpi_->common;

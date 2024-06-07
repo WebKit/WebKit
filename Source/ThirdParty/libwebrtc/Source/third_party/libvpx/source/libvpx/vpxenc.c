@@ -883,7 +883,7 @@ static struct stream_state *new_stream(struct VpxEncoderConfig *global,
 
     /* Default lag_in_frames is 0 in realtime mode CBR mode*/
     if (global->deadline == VPX_DL_REALTIME &&
-        stream->config.cfg.rc_end_usage == 1)
+        stream->config.cfg.rc_end_usage == VPX_CBR)
       stream->config.cfg.g_lag_in_frames = 0;
   }
 

@@ -24,6 +24,7 @@
 #include "vp9/common/vp9_reconinter.h"
 #include "vp9/encoder/vp9_context_tree.h"
 #include "vp9/encoder/vp9_denoiser.h"
+#include "vpx_config.h"
 
 using libvpx_test::ACMRandom;
 

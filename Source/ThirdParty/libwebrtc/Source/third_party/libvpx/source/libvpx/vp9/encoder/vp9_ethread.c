@@ -17,6 +17,7 @@
 #include "vp9/encoder/vp9_multi_thread.h"
 #include "vp9/encoder/vp9_temporal_filter.h"
 #include "vpx_dsp/vpx_dsp_common.h"
+#include "vpx_util/vpx_pthread.h"
 
 static void accumulate_rd_opt(ThreadData *td, ThreadData *td_t) {
   int i, j, k, l, m, n;
@@ -55,7 +56,7 @@ static int enc_worker_hook(void *arg1, void *unused) {
     vp9_encode_tile(cpi, thread_data->td, tile_row, tile_col);
   }
 
-  return 0;
+  return 1;
 }
 
 static int get_max_tile_cols(VP9_COMP *cpi) {
@@ -106,6 +107,7 @@ static void create_enc_workers(VP9_COMP *cpi, int num_workers) {
 
     ++cpi->num_workers;
     winterface->init(worker);
+    worker->thread_name = "vpx enc worker";
 
     if (i < num_workers - 1) {
       thread_data->cpi = cpi;
@@ -187,7 +189,9 @@ void vp9_encode_free_mt_data(struct VP9_COMP *cpi) {
     }
   }
   vpx_free(cpi->tile_thr_data);
+  cpi->tile_thr_data = NULL;
   vpx_free(cpi->workers);
+  cpi->workers = NULL;
   cpi->num_workers = 0;
 }
 
@@ -202,8 +206,7 @@ void vp9_encode_tiles_mt(VP9_COMP *cpi) {
   create_enc_workers(cpi, num_workers);
 
   for (i = 0; i < num_workers; i++) {
-    EncWorkerData *thread_data;
-    thread_data = &cpi->tile_thr_data[i];
+    EncWorkerData *const thread_data = &cpi->tile_thr_data[i];
 
     // Before encoding a frame, copy the thread data from cpi.
     if (thread_data->td != &cpi->td) {
@@ -454,7 +457,7 @@ static int first_pass_worker_hook(void *arg1, void *arg2) {
                                         this_tile, &best_ref_mv, mb_row);
     }
   }
-  return 0;
+  return 1;
 }
 
 void vp9_encode_fp_row_mt(VP9_COMP *cpi) {
@@ -541,7 +544,7 @@ static int temporal_filter_worker_hook(void *arg1, void *arg2) {
                                         mb_col_start, mb_col_end);
     }
   }
-  return 0;
+  return 1;
 }
 
 void vp9_temporal_filter_row_mt(VP9_COMP *cpi) {
@@ -614,7 +617,7 @@ static int enc_row_mt_worker_hook(void *arg1, void *arg2) {
       vp9_encode_sb_row(cpi, thread_data->td, tile_row, tile_col, mi_row);
     }
   }
-  return 0;
+  return 1;
 }
 
 void vp9_encode_tiles_row_mt(VP9_COMP *cpi) {

@@ -19,7 +19,7 @@ extern "C" {
 
 typedef struct VP9BitstreamWorkerData {
   uint8_t *dest;
-  int dest_size;
+  size_t dest_size;
   vpx_writer bit_writer;
   int tile_idx;
   unsigned int max_mv_magnitude;
@@ -35,7 +35,8 @@ int vp9_get_refresh_mask(VP9_COMP *cpi);
 
 void vp9_bitstream_encode_tiles_buffer_dealloc(VP9_COMP *const cpi);
 
-void vp9_pack_bitstream(VP9_COMP *cpi, uint8_t *dest, size_t *size);
+void vp9_pack_bitstream(VP9_COMP *cpi, uint8_t *dest, size_t dest_size,
+                        size_t *size);
 
 static INLINE int vp9_preserve_existing_gf(VP9_COMP *cpi) {
   return cpi->refresh_golden_frame && cpi->rc.is_src_frame_alt_ref &&

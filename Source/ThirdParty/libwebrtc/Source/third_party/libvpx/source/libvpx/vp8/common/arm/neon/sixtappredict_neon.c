@@ -16,7 +16,7 @@
 #include "vpx_ports/mem.h"
 
 static const int8_t vp8_sub_pel_filters[8][8] = {
-  { 0, 0, 128, 0, 0, 0, 0, 0 },     /* note that 1/8 pel positions are */
+  { 0, 0, -128, 0, 0, 0, 0, 0 },    /* note that 1/8 pel positions are */
   { 0, -6, 123, 12, -1, 0, 0, 0 },  /*    just as per alpha -0.5 bicubic */
   { 2, -11, 108, 36, -8, 1, 0, 0 }, /* New 1/4 pel 6 tap filter */
   { 0, -9, 93, 50, -6, 0, 0, 0 },

@@ -60,7 +60,7 @@
 
 static const char *exec_name;
 
-void usage_exit() {
+void usage_exit(void) {
   fprintf(stderr,
           "Usage: %s <width> <height> <infile> <outfile> "
           "<frame> <limit(optional)>\n",
