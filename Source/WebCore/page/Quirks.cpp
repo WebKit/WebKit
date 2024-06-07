@@ -1871,5 +1871,14 @@ bool Quirks::needsLaxSameSiteCookieQuirk(const URL& requestURL) const
     auto url = m_document->url();
     return url.protocolIs("https"_s) && url.host() == "login.microsoftonline.com"_s && requestURL.protocolIs("https"_s) && requestURL.host() == "www.bing.com"_s;
 }
+#if ENABLE(TEXT_AUTOSIZING)
+// rdar://127246368
+bool Quirks::shouldIgnoreTextAutoSizing() const
+{
+    if (!needsQuirks())
+        return false;
+    return m_document->topDocument().url().host() == "news.ycombinator.com"_s;
+}
+#endif
 
 }

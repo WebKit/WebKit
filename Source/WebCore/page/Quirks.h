@@ -159,6 +159,10 @@ public:
     bool shouldEnableFontLoadingAPIQuirk() const;
     bool needsVideoShouldMaintainAspectRatioQuirk() const;
 
+#if ENABLE(TEXT_AUTOSIZING)
+    bool shouldIgnoreTextAutoSizing() const;
+#endif
+
 #if PLATFORM(VISION)
     WEBCORE_EXPORT bool shouldDisableFullscreenVideoAspectRatioAdaptiveSizing() const;
 #endif

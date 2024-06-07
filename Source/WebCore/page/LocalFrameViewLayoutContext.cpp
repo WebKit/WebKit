@@ -32,6 +32,7 @@
 #include "LayoutDisallowedScope.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
+#include "Quirks.h"
 #include "RenderElement.h"
 #include "RenderLayoutState.h"
 #include "RenderStyleInlines.h"
@@ -507,6 +508,9 @@ bool LocalFrameViewLayoutContext::canPerformLayout() const
 #if ENABLE(TEXT_AUTOSIZING)
 void LocalFrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
 {
+    ASSERT(document());
+    if (document()->quirks().shouldIgnoreTextAutoSizing())
+        return;
     auto& settings = layoutRoot.settings();
     bool idempotentMode = settings.textAutosizingUsesIdempotentMode();
     if (!settings.textAutosizingEnabled() || idempotentMode || renderView()->printing())
