@@ -1650,16 +1650,22 @@ public:
     inline SVGRenderStyle& accessSVGStyle();
 
     inline SVGPaintType fillPaintType() const;
-    inline StyleColor fillPaintColor() const;
+    inline SVGPaintType visitedFillPaintType() const;
+    inline const StyleColor& fillPaintColor() const;
+    inline const StyleColor& visitedFillPaintColor() const;
     inline void setFillPaintColor(const StyleColor&);
+    inline void setVisitedFillPaintColor(const StyleColor&);
     inline void setHasExplicitlySetColor(bool);
     inline bool hasExplicitlySetColor() const;
     inline float fillOpacity() const;
     inline void setFillOpacity(float);
 
     inline SVGPaintType strokePaintType() const;
-    inline StyleColor strokePaintColor() const;
+    inline SVGPaintType visitedStrokePaintType() const;
+    inline const StyleColor& strokePaintColor() const;
+    inline const StyleColor& visitedStrokePaintColor() const;
     inline void setStrokePaintColor(const StyleColor&);
+    inline void setVisitedStrokePaintColor(const StyleColor&);
     inline float strokeOpacity() const;
     inline void setStrokeOpacity(float);
     inline Vector<SVGLengthValue> strokeDashArray() const;
