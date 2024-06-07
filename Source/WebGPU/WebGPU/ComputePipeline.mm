@@ -54,13 +54,15 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
     return computePipelineState;
 }
 
-static MTLSize metalSize(auto workgroupSize, const HashMap<String, WGSL::ConstantValue>& wgslConstantValues)
+static std::optional<MTLSize> metalSize(auto workgroupSize, const HashMap<String, WGSL::ConstantValue>& wgslConstantValues)
 {
-    auto width = WGSL::evaluate(*workgroupSize.width, wgslConstantValues).integerValue();
-    auto height = workgroupSize.height ? WGSL::evaluate(*workgroupSize.height, wgslConstantValues).integerValue() : 1;
-    auto depth = workgroupSize.depth ? WGSL::evaluate(*workgroupSize.depth, wgslConstantValues).integerValue() : 1;
+    auto width = WGSL::evaluate(*workgroupSize.width, wgslConstantValues);
+    auto height = workgroupSize.height ? WGSL::evaluate(*workgroupSize.height, wgslConstantValues) : 1;
+    auto depth = workgroupSize.depth ? WGSL::evaluate(*workgroupSize.depth, wgslConstantValues) : 1;
+    if (!width.has_value() || !height.has_value() || !depth.has_value())
+        return std::nullopt;
 
-    return MTLSizeMake(width, height, depth);
+    return MTLSizeMake(width->integerValue(), height->integerValue(), depth->integerValue());
 }
 
 static std::pair<Ref<ComputePipeline>, NSString*> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync, NSString* error = nil)
@@ -101,7 +103,10 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
     if (!function || function.functionType != MTLFunctionTypeKernel || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
         return returnInvalidComputePipeline(*this, isAsync);
 
-    auto size = metalSize(computeInformation.workgroupSize, wgslConstantValues);
+    auto evaluatedSize = metalSize(computeInformation.workgroupSize, wgslConstantValues);
+    if (!evaluatedSize)
+        return returnInvalidComputePipeline(*this, isAsync, @"Failed to evaluate overrides");
+    auto size = *evaluatedSize;
     if (entryPointInformation.sizeForWorkgroupVariables > deviceLimits.maxComputeWorkgroupStorageSize)
         return returnInvalidComputePipeline(*this, isAsync);
 

@@ -234,6 +234,6 @@ std::variant<PrepareResult, Error> prepare(ShaderModule&, const String& entryPoi
 
 String generate(ShaderModule&, PrepareResult&, HashMap<String, ConstantValue>&);
 
-ConstantValue evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
+std::optional<ConstantValue> evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
 
 } // namespace WGSL

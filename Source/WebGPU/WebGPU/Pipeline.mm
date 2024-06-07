@@ -73,7 +73,12 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
             continue;
 
         auto constantValue = WGSL::evaluate(*kvp.value.defaultValue, wgslConstantValues);
-        auto addResult = wgslConstantValues.add(kvp.key, constantValue);
+        if (!constantValue) {
+            if (error)
+                *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: @"Failed to evaluate override value" }];
+            return std::nullopt;
+        }
+        auto addResult = wgslConstantValues.add(kvp.key, *constantValue);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 
