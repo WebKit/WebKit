@@ -57,6 +57,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/cocoa/URLFormattingSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
@@ -758,7 +759,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     RetainPtr<WKFullScreenParentWindowState> _parentWindowState;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     RetainPtr<WKSPreviewWindowController> _previewWindowController;
-    bool _isImageElement;
+    bool _isUsingQuickLook;
     CGSize _imageDimensions;
 #endif // QUICKLOOK_FULLSCREEN
 #endif
@@ -840,7 +841,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #if ENABLE(QUICKLOOK_FULLSCREEN)
 - (BOOL)isUsingQuickLook
 {
-    return _isImageElement;
+    return _isUsingQuickLook;
 }
 
 - (CGSize)imageDimensions
@@ -881,7 +882,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     _lastKnownParentWindow = [webView window];
     _parentWindowState = adoptNS([[WKFullScreenParentWindowState alloc] initWithWindow:_lastKnownParentWindow.get()]);
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-    _isImageElement = manager->isImageElement();
+    _isUsingQuickLook = manager->isImageElement() && WTF::processHasEntitlement("com.apple.surfboard.chrome-customization"_s);
 #endif // QUICKLOOK_FULLSCREEN
 #endif
     _fullScreenState = WebKit::WaitingToEnterFullScreen;
@@ -954,7 +955,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #endif // ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-    if (_isImageElement)
+    if (_isUsingQuickLook)
         _imageDimensions = mediaDimensions;
 #endif
 
@@ -1743,7 +1744,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 - (void)_configureSpatialFullScreenTransition
 {
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-    if (_isImageElement)
+    if (_isUsingQuickLook)
         return;
 #endif // QUICKLOOK_FULLSCREEN
 
@@ -1824,7 +1825,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     auto* manager = self._manager;
-    if (manager && _isImageElement) {
+    if (manager && _isUsingQuickLook) {
         if (enter) {
             // The fullscreen window won't be displayed.
             [inWindow setHidden:YES];
@@ -1941,7 +1942,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #if PLATFORM(VISION)
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-    if (_isImageElement)
+    if (_isUsingQuickLook)
         return;
 #endif // QUICKLOOK_FULLSCREEN
 
@@ -1955,7 +1956,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 #if PLATFORM(VISION)
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-    if (_isImageElement)
+    if (_isUsingQuickLook)
         return;
 #endif // QUICKLOOK_FULLSCREEN
 
