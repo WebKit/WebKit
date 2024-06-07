@@ -5661,7 +5661,21 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                 }
                 case AccessCase::CustomAccessorGetter:
                 case AccessCase::CustomValueGetter: {
-                    if (!accessCase.viaGlobalProxy() && !accessCase.as<GetterSetterAccessCase>().domAttribute()) {
+                    if (!accessCase.viaGlobalProxy()) {
+                        auto& access = accessCase.as<GetterSetterAccessCase>();
+                        if (accessCase.m_type == AccessCase::CustomAccessorGetter && access.domAttribute()) {
+                            // We do not need to emit CheckDOM operation since structure check ensures
+                            // that the structure of the given base value is accessCase.structure()! So all we should
+                            // do is performing the CheckDOM thingy in IC compiling time here.
+                            if (!accessCase.structure()->classInfoForCells()->isSubClassOf(access.domAttribute()->classInfo))
+                                break;
+
+                            // Right now, when DOMJIT snippet is defined, we do not use the pregenerated code.
+                            // We should enhance to pregenerate DOMJIT code as a handle as well.
+                            if (Options::useDOMJIT() && access.domAttribute()->domJIT)
+                                break;
+                        }
+
                         Vector<ObjectPropertyCondition, 64> watchedConditions;
                         Vector<ObjectPropertyCondition, 64> checkingConditions;
                         collectConditions(accessCase, watchedConditions, checkingConditions);
