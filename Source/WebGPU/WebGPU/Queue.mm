@@ -124,20 +124,17 @@ std::pair<id<MTLCommandBuffer>, id<MTLSharedEvent>> Queue::commandBufferWithDesc
     if (!isValid())
         return std::make_pair(nil, nil);
 
-    constexpr auto maxCommandBufferCount = 64;
+    constexpr auto maxCommandBufferCount = 1000;
+    auto devicePtr = m_device.get();
     if (m_createdNotCommittedBuffers.count >= maxCommandBufferCount) {
-        id<MTLCommandBuffer> buffer = [m_createdNotCommittedBuffers objectAtIndex:0];
-        [m_createdNotCommittedBuffers removeObjectAtIndex:0];
-        id<MTLCommandEncoder> existingEncoder = [m_openCommandEncoders objectForKey:buffer];
-        [existingEncoder endEncoding];
-        commitMTLCommandBuffer(buffer);
-        [buffer waitUntilCompleted];
+        if (devicePtr)
+            devicePtr->loseTheDevice(WGPUDeviceLostReason_Destroyed);
+        return std::make_pair(nil, nil);
     }
 
     id<MTLCommandBuffer> buffer = [m_commandQueue commandBufferWithDescriptor:descriptor];
     if (buffer)
         [m_createdNotCommittedBuffers addObject:buffer];
-    auto devicePtr = m_device.get();
     id<MTLSharedEvent> sharedEvent = nil;
     static bool captureEnabled = false;
     static dispatch_once_t onceToken;

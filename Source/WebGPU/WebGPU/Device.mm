@@ -136,7 +136,7 @@ bool Device::isDestroyed() const
 
 Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, HardwareCapabilities&& capabilities, Adapter& adapter)
 {
-    id<MTLCommandQueue> commandQueue = [device newCommandQueue];
+    id<MTLCommandQueue> commandQueue = [device newCommandQueueWithMaxCommandBufferCount:2048];
     if (!commandQueue)
         return Device::createInvalid(adapter);
 
