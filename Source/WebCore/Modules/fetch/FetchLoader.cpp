@@ -145,7 +145,7 @@ RefPtr<FragmentedSharedBuffer> FetchLoader::startStreaming()
     return firstChunk;
 }
 
-void FetchLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
+void FetchLoader::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     m_client.didReceiveResponse(response);
 }
@@ -159,12 +159,12 @@ void FetchLoader::didReceiveData(const SharedBuffer& buffer)
     m_consumer->append(buffer);
 }
 
-void FetchLoader::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics& metrics)
+void FetchLoader::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics& metrics)
 {
     m_client.didSucceed(metrics);
 }
 
-void FetchLoader::didFail(const ResourceError& error)
+void FetchLoader::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
 {
     m_client.didFail(error);
 }

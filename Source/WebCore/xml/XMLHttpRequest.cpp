@@ -894,7 +894,7 @@ void XMLHttpRequest::handleCancellation()
     }));
 }
 
-void XMLHttpRequest::didFail(const ResourceError& error)
+void XMLHttpRequest::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
 {
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)
@@ -931,7 +931,7 @@ void XMLHttpRequest::didFail(const ResourceError& error)
     networkError();
 }
 
-void XMLHttpRequest::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void XMLHttpRequest::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&)
 {
     Ref protectedThis { *this };
 
@@ -982,7 +982,7 @@ void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long lon
     }
 }
 
-void XMLHttpRequest::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
+void XMLHttpRequest::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     m_response = response;
 }

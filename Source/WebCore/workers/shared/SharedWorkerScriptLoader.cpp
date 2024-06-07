@@ -53,16 +53,24 @@ void SharedWorkerScriptLoader::load(CompletionHandler<void(WorkerFetchResult&&, 
     m_loader->loadAsynchronously(*m_worker->scriptExecutionContext(), ResourceRequest(m_url), source, m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode(), ScriptExecutionContextIdentifier::generate());
 }
 
-void SharedWorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse&)
+void SharedWorkerScriptLoader::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIdentifier, ResourceLoaderIdentifier identifier, const ResourceResponse&)
 {
-    InspectorInstrumentation::didReceiveScriptResponse(m_worker->scriptExecutionContext(), identifier);
+    if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+        ScriptExecutionContext::ensureOnContextThread(mainContextIdentifier, [identifier] (auto& mainContext) {
+            InspectorInstrumentation::didReceiveScriptResponse(mainContext, identifier);
+        });
+    }
 }
 
-void SharedWorkerScriptLoader::notifyFinished()
+void SharedWorkerScriptLoader::notifyFinished(ScriptExecutionContextIdentifier mainContextIdentifier)
 {
     auto* scriptExecutionContext = m_worker->scriptExecutionContext();
-    if (scriptExecutionContext && !m_loader->failed())
-        InspectorInstrumentation::scriptImported(*scriptExecutionContext, m_loader->identifier(), m_loader->script().toString());
+
+    if (UNLIKELY(InspectorInstrumentation::hasFrontends()) && scriptExecutionContext && !m_loader->failed()) {
+        ScriptExecutionContext::ensureOnContextThread(mainContextIdentifier, [identifier = m_loader->identifier(), script = m_loader->script().isolatedCopy()] (auto& mainContext) {
+            InspectorInstrumentation::scriptImported(mainContext, identifier, script.toString());
+        });
+    }
 
     auto fetchResult = m_loader->fetchResult();
     if (fetchResult.referrerPolicy.isNull() && scriptExecutionContext)

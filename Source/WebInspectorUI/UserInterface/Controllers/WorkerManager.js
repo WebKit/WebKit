@@ -29,7 +29,9 @@ WI.WorkerManager = class WorkerManager extends WI.Object
     {
         super();
 
-        this._connections = new Map;
+        this._workerForId = new Map;
+
+        this._subworkersForWorker = new Multimap;
     }
 
     // Target
@@ -51,7 +53,10 @@ WI.WorkerManager = class WorkerManager extends WI.Object
 
         WI.targetManager.addTarget(workerTarget);
 
-        this._connections.set(workerId, connection);
+        this._workerForId.set(workerId, workerTarget);
+
+        if (target instanceof WI.WorkerTarget)
+            this._subworkersForWorker.add(target, workerTarget);
 
         // Unpause the worker now that we have sent all initialization messages.
         // Ignore errors if a worker went away quickly.
@@ -60,19 +65,24 @@ WI.WorkerManager = class WorkerManager extends WI.Object
 
     workerTerminated(workerId)
     {
-        let connection = this._connections.take(workerId);
+        let worker = this._workerForId.take(workerId);
+        let subworkers = this._subworkersForWorker.take(worker) || new Set;
 
-        WI.targetManager.removeTarget(connection.target);
+        WI.targetManager.removeTarget(worker);
+
+        // The main `Worker` will be destroyed before any sub-`Worker`, so manually do cleanup here.
+        for (let subworker of subworkers)
+            WI.targetManager.removeTarget(subworker);
     }
 
     dispatchMessageFromWorker(workerId, message)
     {
-        let connection = this._connections.get(workerId);
+        let worker = this._workerForId.get(workerId);
 
-        console.assert(connection);
-        if (!connection)
+        console.assert(worker);
+        if (!worker)
             return;
 
-        connection.dispatch(message);
+        worker.connection.dispatch(message);
     }
 };

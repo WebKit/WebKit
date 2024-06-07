@@ -1090,12 +1090,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker) {
             // A ServiceWorker starts with a LocalScript for the main resource but we can replace it during initialization.
             if (target.mainResource instanceof WI.LocalScript) {
-                if (script.url === target.name)
+                if (script.couldBeMainResource(target))
                     target.mainResource = script;
             }
         } else if (!target.mainResource && target !== WI.mainTarget) {
             // A Worker starts without a main resource and we insert one.
-            if (script.url === target.name) {
+            if (script.couldBeMainResource(target)) {
                 target.mainResource = script;
                 if (script.resource)
                     target.resourceCollection.remove(script.resource);

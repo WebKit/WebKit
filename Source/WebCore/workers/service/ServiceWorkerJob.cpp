@@ -150,7 +150,7 @@ ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorke
     return { };
 }
 
-void ServiceWorkerJob::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
+void ServiceWorkerJob::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT(!m_completed);
@@ -167,7 +167,7 @@ void ServiceWorkerJob::didReceiveResponse(ResourceLoaderIdentifier, const Resour
     m_client.jobFailedLoadingScript(*this, WTFMove(error), WTFMove(exception));
 }
 
-void ServiceWorkerJob::notifyFinished()
+void ServiceWorkerJob::notifyFinished(ScriptExecutionContextIdentifier)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT(m_scriptLoader);

@@ -427,8 +427,6 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<std::varian
         // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-classic-worker-imported-script (step 7).
         bool mutedErrors = scriptLoader->responseTainting() == ResourceResponse::Tainting::Opaque || scriptLoader->responseTainting() == ResourceResponse::Tainting::Opaqueredirect;
 
-        InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script().toString());
-
         WeakPtr<ScriptBufferSourceProvider> sourceProvider;
         {
             NakedPtr<JSC::Exception> exception;

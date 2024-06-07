@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/log-pause-location.js"></script>
+<script src="resources/worker-utilities.js"></script>
+<script>
+TestPage.allowUncaughtExceptions = true;
+TestPage.needToSanitizeUncaughtExceptionURLs = true;
+
+let worker = new Worker("resources/subworker-manager.js");
+worker.postMessage({url: "worker-debugger-pause.js", data: null});
+
+async function test()
+{
+    let subworkerTarget = await window.awaitTarget((target) => target instanceof WI.WorkerTarget && target.displayName.endsWith("worker-debugger-pause.js"));
+    await window.awaitTargetMainResource(subworkerTarget);
+    await window.loadLinesFromSourceCode(subworkerTarget.mainResource);
+    let subworkerDebuggerData = WI.debuggerManager.dataForTarget(subworkerTarget);
+
+    // In each test, the Worker pauses and the Main Thread is waiting to
+    // pause on the next statement. Do an InspectorTest.log, which evaluates
+    // JavaScript in the page and should pause. Then later run work.
+    // In WebKit1, because the VM is shared between the inspector and
+    // inspected page we need to put an artificial break between our
+    // Inspector JavaScript, the Page JavaScript, and back to the Inspector.
+    function pauseTheMainThread() {
+        new Promise((resolve, reject) => {
+            setTimeout(() => {
+                InspectorTest.log("");
+                setTimeout(resolve);
+            });
+        });
+    }
+
+    async function resumeAllThreads() {
+        InspectorTest.log("Resuming...");
+        let promises = [];
+        while (WI.debuggerManager.paused) {
+            // Evaluate something just in case the (sub)worker hasn't paused yet.
+            // We unfortunately can't `await` the evaluation in case we do pause.
+            promises.push(InspectorTest.evaluateInPage("worker.postMessage({})"));
+            promises.push(WI.debuggerManager.resume().catch(() => {}));
+            await Promise.delay();
+        }
+        await Promise.all(promises);
+    }
+
+    WI.debuggerManager.uncaughtExceptionsBreakpoint.disabled = false;
+    WI.debuggerManager.assertionFailuresBreakpoint.disabled = false;
+
+    let suite = InspectorTest.createAsyncSuite("Subworker.Debugger.Pause");
+
+    suite.addTestCase({
+        name: "Subworker.Debugger.Pause.DebuggerStatement",
+        description: "Subworker should pause on debugger statement.",
+        async test() {
+            InspectorTest.log("Triggering pause...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused),
+                InspectorTest.evaluateInPage(`worker.postMessage({url: "worker-debugger-pause.js", data: "triggerDebuggerStatement"})`),
+            ]);
+
+            await pauseTheMainThread();
+
+            InspectorTest.newline();
+
+            InspectorTest.expectEqual(WI.debuggerManager.activeCallFrame.target, subworkerTarget, "Should be paused in a Subworker CallFrame.");
+            InspectorTest.expectEqual(subworkerDebuggerData.pauseReason, WI.DebuggerManager.PauseReason.DebuggerStatement, "Pause reason should be a debugger statement.");
+            logPauseLocation();
+
+            await resumeAllThreads();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Subworker.Debugger.Pause.Breakpoint",
+        description: "Subworker should pause on breakpoint.",
+        async test() {
+            let location = subworkerTarget.mainResource.createSourceCodeLocation(8, 0);
+            let breakpoint = new WI.JavaScriptBreakpoint(location);
+            WI.debuggerManager.addBreakpoint(breakpoint);
+
+            InspectorTest.log("Triggering pause...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused),
+                InspectorTest.evaluateInPage(`worker.postMessage({url: "worker-debugger-pause.js", data: "triggerBreakpoint"})`),
+            ]);
+
+            await pauseTheMainThread();
+
+            InspectorTest.newline();
+
+            InspectorTest.expectEqual(WI.debuggerManager.activeCallFrame.target, subworkerTarget, "Should be paused in a Subworker CallFrame.");
+            InspectorTest.expectEqual(subworkerDebuggerData.pauseReason, WI.DebuggerManager.PauseReason.Breakpoint, "Pause reason should be a breakpoint.");
+            logPauseLocation();
+
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+
+            await resumeAllThreads();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Subworker.Debugger.Pause.Exception",
+        description: "Subworker should pause on exception.",
+        async test() {
+            InspectorTest.log("Triggering pause...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused),
+                InspectorTest.evaluateInPage(`worker.postMessage({url: "worker-debugger-pause.js", data: "triggerException"})`),
+            ]);
+
+            await pauseTheMainThread();
+
+            InspectorTest.newline();
+
+            InspectorTest.expectEqual(WI.debuggerManager.activeCallFrame.target, subworkerTarget, "Should be paused in a Subworker CallFrame.");
+            InspectorTest.expectEqual(subworkerDebuggerData.pauseReason, WI.DebuggerManager.PauseReason.Exception, "Pause reason should be an exception.");
+            logPauseLocation();
+
+            await resumeAllThreads();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SubWorker.Debugger.Pause.Assert",
+        description: "SubWorker should pause on assert.",
+        async test() {
+            InspectorTest.log("Triggering pause...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused),
+                InspectorTest.evaluateInPage(`worker.postMessage({url: "worker-debugger-pause.js", data: "triggerAssertion"})`),
+            ]);
+
+            await pauseTheMainThread();
+
+            InspectorTest.newline();
+
+            InspectorTest.expectEqual(WI.debuggerManager.activeCallFrame.target, subworkerTarget, "Should be paused in a Subworker CallFrame.");
+            InspectorTest.expectEqual(subworkerDebuggerData.pauseReason, WI.DebuggerManager.PauseReason.Assertion, "Pause reason should be an exception.");
+            logPauseLocation();
+
+            await resumeAllThreads();
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Ensure we can pause in Subworkers.</p>
+</body>
+</html>

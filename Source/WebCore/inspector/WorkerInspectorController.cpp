@@ -48,6 +48,7 @@
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
 #include "WorkerToPageFrontendChannel.h"
+#include "WorkerWorkerAgent.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendChannel.h>
@@ -210,6 +211,7 @@ void WorkerInspectorController::createLazyAgents()
     m_agents.append(makeUnique<WorkerDOMDebuggerAgent>(workerContext, debuggerAgentPtr));
     m_agents.append(makeUnique<WorkerAuditAgent>(workerContext));
     m_agents.append(makeUnique<WorkerCanvasAgent>(workerContext));
+    m_agents.append(makeUnique<WorkerWorkerAgent>(workerContext));
 
     if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
         commandLineAPIHost->init(m_instrumentingAgents.copyRef());

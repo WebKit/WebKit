@@ -89,10 +89,10 @@ private:
     void doExplicitLoadCancellation();
 
     // ThreadableLoaderClient
-    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) final;
     void didReceiveData(const SharedBuffer&) final;
-    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
-    void didFail(const ResourceError&) final;
+    void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
+    void didFail(ScriptExecutionContextIdentifier, const ResourceError&) final;
 
     // ActiveDOMObject
     void stop() final;

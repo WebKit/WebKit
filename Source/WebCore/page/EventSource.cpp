@@ -197,7 +197,7 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
     return true;
 }
 
-void EventSource::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
+void EventSource::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     ASSERT(m_state == CONNECTING);
     ASSERT(m_requestInFlight);
@@ -229,7 +229,7 @@ void EventSource::didReceiveData(const SharedBuffer& buffer)
     parseEventStream();
 }
 
-void EventSource::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void EventSource::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&)
 {
     ASSERT(m_state == OPEN);
     ASSERT(m_requestInFlight);
@@ -249,7 +249,7 @@ void EventSource::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMe
     networkRequestEnded();
 }
 
-void EventSource::didFail(const ResourceError& error)
+void EventSource::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
 {
     ASSERT(m_state != CLOSED);
 

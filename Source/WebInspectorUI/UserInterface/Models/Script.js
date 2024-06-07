@@ -183,6 +183,13 @@ WI.Script = class Script extends WI.SourceCode
         return this._scriptSyntaxTree;
     }
 
+    couldBeMainResource(target)
+    {
+        console.assert(target instanceof WI.Target, target);
+
+        return this._url === target.name;
+    }
+
     isMainResource()
     {
         return this._target && this._target.mainResource === this;
@@ -307,42 +314,47 @@ WI.Script = class Script extends WI.SourceCode
         if (!this._url)
             return null;
 
-        let resolver = WI.networkManager;
-        if (this._target && this._target !== WI.mainTarget)
-            resolver = this._target.resourceCollection;
+        let isOtherTarget = this._target && this._target !== WI.mainTarget;
+        let resolver = isOtherTarget ? this._target.resourceCollection : WI.networkManager;
 
-        function isScriptResource(item) {
-            return item.type === WI.Resource.Type.Document || item.type === WI.Resource.Type.Script;
-        }
+        let filters = [
+            (item) => item.type === WI.Resource.Type.Document || item.type === WI.Resource.Type.Script,
+        ];
+
+        // For `Worker`, the main resource might not get marked as a script by the time it's sent to the frontend.
+        if (isOtherTarget && this._target instanceof WI.WorkerTarget && this.couldBeMainResource(this._target))
+            filters.push((item) => WI.Resource.typeFromMIMEType(item.mimeType) === WI.Resource.Type.Script);
 
         try {
-            // Try with the Script's full URL.
-            let resource = resolver.resourcesForURL(this._url).find(isScriptResource);
-            if (resource)
-                return resource;
-
-            // Try with the Script's full decoded URL.
-            let decodedURL = decodeURI(this._url);
-            if (decodedURL !== this._url) {
-                resource = resolver.resourcesForURL(decodedURL).find(isScriptResource);
+            for (let filter of filters) {
+                // Try with the Script's full URL.
+                let resource = resolver.resourcesForURL(this._url).find(filter);
                 if (resource)
                     return resource;
-            }
 
-            // Next try removing any fragment in the original URL.
-            let urlWithoutFragment = removeURLFragment(this._url);
-            if (urlWithoutFragment !== this._url) {
-                resource = resolver.resourcesForURL(urlWithoutFragment).find(isScriptResource);
-                if (resource)
-                    return resource;
-            }
+                // Try with the Script's full decoded URL.
+                let decodedURL = decodeURI(this._url);
+                if (decodedURL !== this._url) {
+                    resource = resolver.resourcesForURL(decodedURL).find(filter);
+                    if (resource)
+                        return resource;
+                }
 
-            // Finally try removing any fragment in the decoded URL.
-            let decodedURLWithoutFragment = removeURLFragment(decodedURL);
-            if (decodedURLWithoutFragment !== decodedURL) {
-                resource = resolver.resourcesForURL(decodedURLWithoutFragment).find(isScriptResource);
-                if (resource)
-                    return resource;
+                // Next try removing any fragment in the original URL.
+                let urlWithoutFragment = removeURLFragment(this._url);
+                if (urlWithoutFragment !== this._url) {
+                    resource = resolver.resourcesForURL(urlWithoutFragment).find(filter);
+                    if (resource)
+                        return resource;
+                }
+
+                // Finally try removing any fragment in the decoded URL.
+                let decodedURLWithoutFragment = removeURLFragment(decodedURL);
+                if (decodedURLWithoutFragment !== decodedURL) {
+                    resource = resolver.resourcesForURL(decodedURLWithoutFragment).find(filter);
+                    if (resource)
+                        return resource;
+                }
             }
         } catch { }
 

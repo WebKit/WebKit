@@ -113,7 +113,7 @@ public:
 
     ~InspectorThreadableLoaderClient() override = default;
 
-    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response) override
+    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response) override
     {
         m_mimeType = response.mimeType();
         m_statusCode = response.httpStatusCode();
@@ -137,7 +137,7 @@ public:
         m_responseText.append(m_decoder->decode(buffer.span()));
     }
 
-    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override
+    void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) override
     {
         if (m_decoder)
             m_responseText.append(m_decoder->flush());
@@ -146,7 +146,7 @@ public:
         dispose();
     }
 
-    void didFail(const ResourceError& error) override
+    void didFail(ScriptExecutionContextIdentifier, const ResourceError& error) override
     {
         m_callback->sendFailure(error.isAccessControl() ? "Loading resource for inspector failed access control check"_s : "Loading resource for inspector failed"_s);
         dispose();

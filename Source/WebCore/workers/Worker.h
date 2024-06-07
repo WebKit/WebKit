@@ -99,8 +99,8 @@ private:
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::Worker; }
 
-    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
-    void notifyFinished() final;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) final;
+    void notifyFinished(ScriptExecutionContextIdentifier) final;
 
     // ActiveDOMObject.
     void stop() final;

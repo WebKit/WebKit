@@ -186,15 +186,20 @@ bool Worker::virtualHasPendingActivity() const
     return m_scriptLoader || (m_didStartWorkerGlobalScope && !m_contextProxy.askedToTerminate());
 }
 
-void Worker::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
+void Worker::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIdentifier, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     const URL& responseURL = response.url();
     if (!responseURL.protocolIsBlob() && !responseURL.protocolIsFile() && !SecurityOrigin::create(responseURL)->isOpaque())
         m_contentSecurityPolicyResponseHeaders = ContentSecurityPolicyResponseHeaders(response);
-    InspectorInstrumentation::didReceiveScriptResponse(scriptExecutionContext(), identifier);
+
+    if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+        ScriptExecutionContext::ensureOnContextThread(mainContextIdentifier, [identifier] (auto& mainContext) {
+            InspectorInstrumentation::didReceiveScriptResponse(mainContext, identifier);
+        });
+    }
 }
 
-void Worker::notifyFinished()
+void Worker::notifyFinished(ScriptExecutionContextIdentifier mainContextIdentifier)
 {
     auto clearLoader = makeScopeExit([this] {
         m_scriptLoader = nullptr;
@@ -226,7 +231,12 @@ void Worker::notifyFinished()
         context->userAgent(m_scriptLoader->responseURL())
     };
     m_contextProxy.startWorkerGlobalScope(m_scriptLoader->responseURL(), *sessionID, m_options.name, WTFMove(initializationData), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);
-    InspectorInstrumentation::scriptImported(*context, m_scriptLoader->identifier(), m_scriptLoader->script().toString());
+
+    if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+        ScriptExecutionContext::ensureOnContextThread(mainContextIdentifier, [identifier = m_scriptLoader->identifier(), script = m_scriptLoader->script().isolatedCopy()] (auto& mainContext) {
+            InspectorInstrumentation::scriptImported(mainContext, identifier, script.toString());
+        });
+    }
 }
 
 void Worker::dispatchEvent(Event& event)
