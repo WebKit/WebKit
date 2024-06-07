@@ -2231,6 +2231,11 @@ RefPtr<API::Navigation> WebPageProxy::goBack()
     if (!backItem)
         return nullptr;
 
+    if (auto* currentItem = m_backForwardList->currentItem()) {
+        if (auto* childItem = backItem->childItemForFrameID(currentItem->frameID()))
+            backItem = childItem;
+    }
+
     return goToBackForwardItem(*backItem, FrameLoadType::Back);
 }
 
@@ -2305,9 +2310,6 @@ void WebPageProxy::tryRestoreScrollPosition()
 
 void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<Ref<WebBackForwardListItem>>&& removed)
 {
-    if (added && added->isRootChildFrameItem())
-        return;
-
     Ref protectedPageClient { pageClient() };
 
     if (!m_navigationClient->didChangeBackForwardList(*this, added, removed) && m_loaderClient)
@@ -8597,9 +8599,10 @@ void WebPageProxy::backForwardAddItemShared(Ref<WebProcessProxy>&& process, Fram
     item->setFrameID(targetFrameID);
     if (loadedWebArchive == LoadedWebArchive::Yes)
         item->setDataStoreForWebArchive(process->websiteDataStore());
-    if (auto* targetFrame = WebFrameProxy::webFrame(targetFrameID)) {
-        item->setIsRootChildFrameItem(targetFrame->hasPendingBackForwardItem());
+    if (auto* targetFrame = WebFrameProxy::webFrame(targetFrameID); targetFrame && targetFrame->hasPendingBackForwardItem()) {
         targetFrame->setHasPendingBackForwardItem(false);
+        m_backForwardList->addRootChildFrameItem(WTFMove(item));
+        return;
     }
     m_backForwardList->addItem(WTFMove(item));
 }
@@ -8633,11 +8636,16 @@ void WebPageProxy::backForwardGoToItemShared(const BackForwardItemIdentifier& it
     completionHandler(backForwardList->counts());
 }
 
-void WebPageProxy::backForwardItemAtIndex(int32_t index, CompletionHandler<void(std::optional<BackForwardItemIdentifier>&&)>&& completionHandler)
+void WebPageProxy::backForwardItemAtIndex(IPC::Connection& connection, int32_t index, CompletionHandler<void(std::optional<BackForwardItemIdentifier>&&)>&& completionHandler)
 {
-    if (RefPtr item = m_backForwardList->itemAtIndex(index))
+    if (RefPtr item = m_backForwardList->itemAtIndex(index)) {
+        if (auto* process = AuxiliaryProcessProxy::fromConnection(connection)) {
+            // FIXME: This will not always select the correct child item if there are multiple root frames in the same process.
+            if (auto* remoteChildFrameItem = item->childItemForProcessID(process->coreProcessIdentifier()))
+                return completionHandler(remoteChildFrameItem->itemID());
+        }
         completionHandler(item->itemID());
-    else
+    } else
         completionHandler(std::nullopt);
 }
 

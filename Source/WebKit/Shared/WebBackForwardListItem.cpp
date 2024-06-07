@@ -29,6 +29,7 @@
 #include "SuspendedPageProxy.h"
 #include "WebBackForwardCache.h"
 #include "WebBackForwardCacheEntry.h"
+#include "WebFrameProxy.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <wtf/DebugUtilities.h>
@@ -183,6 +184,28 @@ void WebBackForwardListItem::setBackForwardCacheEntry(std::unique_ptr<WebBackFor
 SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
 {
     return m_backForwardCacheEntry ? m_backForwardCacheEntry->suspendedPage() : nullptr;
+}
+
+WebBackForwardListItem* WebBackForwardListItem::childItemForFrameID(WebCore::FrameIdentifier frameID) const
+{
+    auto* frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return nullptr;
+    auto rootFrameID = frame->rootFrame().frameID();
+    for (auto& child : m_rootChildFrameItems) {
+        if (child->frameID() == rootFrameID)
+            return child.ptr();
+    }
+    return nullptr;
+}
+
+WebBackForwardListItem* WebBackForwardListItem::childItemForProcessID(WebCore::ProcessIdentifier processID) const
+{
+    for (auto& child : m_rootChildFrameItems) {
+        if (child->lastProcessIdentifier() == processID)
+            return child.ptr();
+    }
+    return nullptr;
 }
 
 #if !LOG_DISABLED

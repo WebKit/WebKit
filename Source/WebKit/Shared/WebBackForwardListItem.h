@@ -89,11 +89,15 @@ public:
     WebBackForwardCacheEntry* backForwardCacheEntry() const { return m_backForwardCacheEntry.get(); }
     SuspendedPageProxy* suspendedPage() const;
 
-    void setIsRootChildFrameItem(bool rootChildFrameItem) { m_isRootChildFrameItem = rootChildFrameItem; }
-    bool isRootChildFrameItem() const { return m_isRootChildFrameItem; }
-
     void setFrameID(WebCore::FrameIdentifier frameID) { m_frameID = frameID; }
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
+
+    void addRootChildFrameItem(Ref<WebBackForwardListItem>&& item) { m_rootChildFrameItems.append(WTFMove(item)); }
+    WebBackForwardListItem* childItemForFrameID(WebCore::FrameIdentifier) const;
+    WebBackForwardListItem* childItemForProcessID(WebCore::ProcessIdentifier) const;
+
+    void setMainFrameItem(WebBackForwardListItem* item) { m_mainFrameItem = item; }
+    WebBackForwardListItem* mainFrameItem() { return m_mainFrameItem.get(); }
 
 #if !LOG_DISABLED
     String loggingString();
@@ -116,7 +120,8 @@ private:
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
     WebCore::FrameIdentifier m_frameID;
     std::unique_ptr<WebBackForwardCacheEntry> m_backForwardCacheEntry;
-    bool m_isRootChildFrameItem { false };
+    WeakPtr<WebBackForwardListItem> m_mainFrameItem;
+    Vector<Ref<WebBackForwardListItem>> m_rootChildFrameItems;
 };
 
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;
