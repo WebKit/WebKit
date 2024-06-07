@@ -798,7 +798,9 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
         }
         if (m_waitingForMessage->messageWaitingInterrupted) {
             m_waitingForMessage = nullptr;
-            return makeUnexpected(Error::SyncMessageInterruptedWait);
+            if (m_shouldWaitForMessages)
+                return makeUnexpected(Error::SyncMessageInterruptedWait);
+            return makeUnexpected(Error::AttemptingToWaitOnClosedConnection);
         }
     }
 

@@ -62,7 +62,8 @@ public:
 
     ThreadSafeImageBufferSetFlusher() = default;
     virtual ~ThreadSafeImageBufferSetFlusher() = default;
-    virtual void flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) = 0;
+    // Returns true if flush succeeded, false if it failed.
+    virtual bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) = 0;
 };
 
 // A RemoteImageBufferSet is a set of three ImageBuffers (front, back,
@@ -113,8 +114,10 @@ public:
     void close();
 
 private:
-    template<typename T> void send(T&& message);
+    template<typename T> auto send(T&& message);
     template<typename T> auto sendSync(T&& message);
+    RefPtr<IPC::StreamClientConnection> connection() const;
+    void didBecomeUnresponsive() const;
 
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 

@@ -4982,7 +4982,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction, 
     }
 }
 
-void WebPage::didFlushLayerTreeAtTime(MonotonicTime timestamp)
+void WebPage::didFlushLayerTreeAtTime(MonotonicTime timestamp, bool flushSucceeded)
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_oldestNonStableUpdateVisibleContentRectsTimestamp != MonotonicTime()) {
@@ -4993,6 +4993,10 @@ void WebPage::didFlushLayerTreeAtTime(MonotonicTime timestamp)
     }
 #else
     UNUSED_PARAM(timestamp);
+#endif
+#if ENABLE(GPU_PROCESS)
+    if (!flushSucceeded && m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy->didBecomeUnresponsive();
 #endif
 }
 #endif

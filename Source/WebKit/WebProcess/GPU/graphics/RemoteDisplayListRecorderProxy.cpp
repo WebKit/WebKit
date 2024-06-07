@@ -35,6 +35,7 @@
 #include "SharedVideoFrame.h"
 #include "StreamClientConnection.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebProcess.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListDrawingContext.h>
 #include <WebCore/DisplayListItems.h>
@@ -70,22 +71,35 @@ RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteRenderingBa
 template<typename T>
 ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
 {
-    auto imageBuffer = m_imageBuffer.get();
-    if (UNLIKELY(!m_renderingBackend))
+    RefPtr connection = this->connection();
+    if (UNLIKELY(!connection))
         return;
 
-    if (imageBuffer)
+    RefPtr imageBuffer = m_imageBuffer.get();
+    if (LIKELY(imageBuffer))
         imageBuffer->backingStoreWillChange();
-    auto result = m_renderingBackend->streamConnection().send(std::forward<T>(message), m_destinationBufferIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
-#if !RELEASE_LOG_DISABLED
+    auto result = connection->send(std::forward<T>(message), m_destinationBufferIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
     if (UNLIKELY(result != IPC::Error::NoError)) {
-        auto renderingBackendIdentifier  = m_renderingBackend->renderingBackendIdentifier();
-        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteDisplayListRecorderProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            renderingBackendIdentifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        RELEASE_LOG(RemoteLayerBuffers, "RemoteDisplayListRecorderProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        didBecomeUnresponsive();
     }
-#else
-    UNUSED_VARIABLE(result);
-#endif
+}
+
+ALWAYS_INLINE RefPtr<IPC::StreamClientConnection> RemoteDisplayListRecorderProxy::connection() const
+{
+    auto* backend = m_renderingBackend.get();
+    if (UNLIKELY(!backend))
+        return nullptr;
+    return backend->connection();
+}
+
+void RemoteDisplayListRecorderProxy::didBecomeUnresponsive() const
+{
+    auto* backend = m_renderingBackend.get();
+    if (UNLIKELY(!backend))
+        return;
+    backend->didBecomeUnresponsive();
 }
 
 RenderingMode RemoteDisplayListRecorderProxy::renderingMode() const

@@ -81,33 +81,46 @@ void RemoteImageBufferProxy::assertDispatcherIsCurrent() const
 template<typename T>
 ALWAYS_INLINE void RemoteImageBufferProxy::send(T&& message)
 {
-    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+    RefPtr connection = this->connection();
+    if (UNLIKELY(!connection))
         return;
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().send(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
-#if !RELEASE_LOG_DISABLED
+    auto result = connection->send(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
     if (UNLIKELY(result != IPC::Error::NoError)) {
-        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        RELEASE_LOG(RemoteLayerBuffers, "RemoteImageBufferProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING, IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        didBecomeUnresponsive();
     }
-#else
-    UNUSED_VARIABLE(result);
-#endif
 }
 
 template<typename T>
 ALWAYS_INLINE auto RemoteImageBufferProxy::sendSync(T&& message)
 {
-    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+    RefPtr connection = this->connection();
+    if (UNLIKELY(!connection))
         return IPC::StreamClientConnection::SendSyncResult<T> { IPC::Error::InvalidConnection };
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
-#if !RELEASE_LOG_DISABLED
+    auto result = connection->sendSync(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
     if (UNLIKELY(!result.succeeded())) {
-        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteDisplayListRecorderProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING, m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
+        RELEASE_LOG(RemoteLayerBuffers, "RemoteDisplayListRecorderProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING, IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
+        didBecomeUnresponsive();
     }
-#endif
     return result;
+}
+
+ALWAYS_INLINE RefPtr<IPC::StreamClientConnection> RemoteImageBufferProxy::connection() const
+{
+    auto* backend = m_remoteRenderingBackendProxy.get();
+    if (UNLIKELY(!backend))
+        return nullptr;
+    return backend->connection();
+}
+
+void RemoteImageBufferProxy::didBecomeUnresponsive() const
+{
+    auto* backend = m_remoteRenderingBackendProxy.get();
+    if (UNLIKELY(!backend))
+        return;
+    backend->didBecomeUnresponsive();
 }
 
 void RemoteImageBufferProxy::backingStoreWillChange()
@@ -160,11 +173,15 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
 
 ImageBufferBackend* RemoteImageBufferProxy::ensureBackend() const
 {
-    if (!m_backend && m_remoteRenderingBackendProxy) {
-        auto error = streamConnection().waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
+    if (m_backend)
+        return m_backend.get();
+    RefPtr connection = this->connection();
+    if (connection) {
+        auto error = connection->waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
         if (error != IPC::Error::NoError) {
             RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::ensureBackendCreated - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING,
                 m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64(), IPC::errorAsString(error).characters());
+            didBecomeUnresponsive();
             return nullptr;
         }
     }
@@ -356,12 +373,6 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 
     std::unique_ptr<SerializedImageBuffer> ret = WTFMove(result);
     return ret;
-}
-
-IPC::StreamClientConnection& RemoteImageBufferProxy::streamConnection() const
-{
-    ASSERT(m_remoteRenderingBackendProxy);
-    return m_remoteRenderingBackendProxy->streamConnection();
 }
 
 RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)

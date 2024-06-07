@@ -117,6 +117,8 @@ public:
     void updatePreferences(WebProcessProxy&);
     void updateScreenPropertiesIfNeeded();
 
+    void childConnectionDidBecomeUnresponsive();
+
     void terminateForTesting();
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 

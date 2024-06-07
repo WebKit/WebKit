@@ -160,14 +160,16 @@ public:
 
     RenderingBackendIdentifier ensureBackendCreated();
 
-    bool isGPUProcessConnectionClosed() const { return !m_streamConnection; }
+    bool isGPUProcessConnectionClosed() const { return !m_connection; }
 
     void didInitialize(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
 
-    IPC::StreamClientConnection& streamConnection();
+    RefPtr<IPC::StreamClientConnection> connection();
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
     Ref<WorkQueue> workQueue() { return m_queue; }
+
+    void didBecomeUnresponsive();
 
     static constexpr Seconds defaultTimeout = 15_s;
 private:
@@ -203,7 +205,7 @@ private:
 
     SerialFunctionDispatcher& m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only for main thread operation.
-    RefPtr<IPC::StreamClientConnection> m_streamConnection;
+    RefPtr<IPC::StreamClientConnection> m_connection;
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
     RenderingBackendIdentifier m_identifier { RenderingBackendIdentifier::generate() };
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
@@ -216,6 +218,7 @@ private:
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;
+    bool m_isResponsive { true };
 };
 
 } // namespace WebKit

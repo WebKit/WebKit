@@ -250,8 +250,9 @@ public:
 
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
-    void gpuProcessConnectionClosed(GPUProcessConnection&);
     GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
+    void gpuProcessConnectionClosed();
+    void gpuProcessConnectionDidBecomeUnresponsive();
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     LibWebRTCCodecs& libWebRTCCodecs();

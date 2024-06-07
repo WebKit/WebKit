@@ -570,6 +570,7 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     void createGPUProcessConnection(IPC::Connection::Handle&&);
+    void gpuProcessConnectionDidBecomeUnresponsive();
 #endif
 
 #if ENABLE(MODEL_PROCESS)

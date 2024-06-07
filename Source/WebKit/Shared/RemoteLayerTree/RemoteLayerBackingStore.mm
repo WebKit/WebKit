@@ -80,9 +80,9 @@ public:
         return std::unique_ptr<DelegatedContentsFenceFlusher> { new DelegatedContentsFenceFlusher(WTFMove(fence)) };
     }
 
-    void flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) final
+    bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) final
     {
-        m_fence->waitFor(delegatedContentsFinishedTimeout);
+        return m_fence->waitFor(delegatedContentsFinishedTimeout);
     }
 
 private:
@@ -447,7 +447,8 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
     m_layer->owner()->platformCALayerLayerDidDisplay(m_layer);
 
     m_previouslyPaintedRect = dirtyBounds;
-    m_frontBufferFlushers.append(createFlusher());
+    if (auto flusher = createFlusher())
+        m_frontBufferFlushers.append(WTFMove(flusher));
 }
 
 void RemoteLayerBackingStore::enumerateRectsBeingDrawn(GraphicsContext& context, void (^block)(FloatRect))

@@ -98,8 +98,8 @@ private:
     void assertDispatcherIsCurrent() const;
     template<typename T> void send(T&& message);
     template<typename T> auto sendSync(T&& message);
-
-    IPC::StreamClientConnection& streamConnection() const;
+    RefPtr<IPC::StreamClientConnection> connection() const;
+    void didBecomeUnresponsive() const;
 
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteDisplayListRecorderProxy m_remoteDisplayList;

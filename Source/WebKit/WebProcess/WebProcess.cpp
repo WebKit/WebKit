@@ -1369,11 +1369,9 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
     return *m_gpuProcessConnection;
 }
 
-void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection& connection)
+void WebProcess::gpuProcessConnectionClosed()
 {
     ASSERT(m_gpuProcessConnection);
-    ASSERT_UNUSED(connection, m_gpuProcessConnection == &connection);
-
     m_gpuProcessConnection = nullptr;
 
     for (auto& page : m_pageMap.values()) {
@@ -1385,6 +1383,12 @@ void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection& connection)
     if (m_audioMediaStreamTrackRendererInternalUnitManager)
         m_audioMediaStreamTrackRendererInternalUnitManager->restartAllUnits();
 #endif
+}
+
+void WebProcess::gpuProcessConnectionDidBecomeUnresponsive()
+{
+    ASSERT(m_gpuProcessConnection);
+    parentProcessConnection()->send(Messages::WebProcessProxy::GPUProcessConnectionDidBecomeUnresponsive(), 0);
 }
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)

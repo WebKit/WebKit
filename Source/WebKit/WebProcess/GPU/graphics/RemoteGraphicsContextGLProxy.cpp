@@ -479,7 +479,6 @@ void RemoteGraphicsContextGLProxy::waitUntilInitialized()
 
 void RemoteGraphicsContextGLProxy::didClose(IPC::Connection&)
 {
-    WTFLogAlways("%s:%d!", __PRETTY_FUNCTION__, __LINE__);
     ASSERT(!isContextLost());
     abandonGpuProcess();
     markContextLost();

@@ -56,7 +56,8 @@ public:
 
 private:
     template<typename T> void send(T&& message);
-
+    RefPtr<IPC::StreamClientConnection> connection() const;
+    void didBecomeUnresponsive() const;
     friend class WebCore::DrawGlyphsRecorder;
 
     WebCore::RenderingMode renderingMode() const final;

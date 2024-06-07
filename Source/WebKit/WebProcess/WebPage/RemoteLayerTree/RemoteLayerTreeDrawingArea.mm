@@ -414,12 +414,12 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
     auto pageID = webPage->identifier();
     m_commitQueue->dispatch([backingStoreFlusher = m_backingStoreFlusher, commitEncoder = WTFMove(commitEncoder), flushers = WTFMove(flushers), pageID] () mutable {
-        backingStoreFlusher->flush(WTFMove(commitEncoder), WTFMove(flushers));
+        bool flushSucceeded = backingStoreFlusher->flush(WTFMove(commitEncoder), WTFMove(flushers));
 
-        RunLoop::main().dispatch([pageID] () mutable {
+        RunLoop::main().dispatch([pageID, flushSucceeded] () mutable {
             if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
                 if (auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(webPage->drawingArea())) {
-                    drawingArea->didCompleteRenderingUpdateDisplay();
+                    drawingArea->didCompleteRenderingUpdateDisplayFlush(flushSucceeded);
                     drawingArea->didCompleteRenderingFrame();
                 }
             }
@@ -427,10 +427,10 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     });
 }
 
-void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplay()
+void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplayFlush(bool flushSucceeded)
 {
-    m_webPage->didFlushLayerTreeAtTime(MonotonicTime::now());
-    DrawingArea::didCompleteRenderingUpdateDisplay();
+    m_webPage->didFlushLayerTreeAtTime(MonotonicTime::now(), flushSucceeded);
+    didCompleteRenderingUpdateDisplay();
 }
 
 void RemoteLayerTreeDrawingArea::displayDidRefresh()
@@ -489,21 +489,25 @@ RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(Ref<IPC::Co
 {
 }
 
-void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush(UniqueRef<IPC::Encoder>&& commitEncoder, Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>>&& flushers)
+bool RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush(UniqueRef<IPC::Encoder>&& commitEncoder, Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>>&& flushers)
 {
     ASSERT(m_hasPendingFlush);
 
     TraceScope tracingScope(BackingStoreFlushStart, BackingStoreFlushEnd);
-    
+    bool flushSucceeded = true;
     HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>> handles;
-    for (auto& flusher : flushers)
-        flusher->flushAndCollectHandles(handles);
-
+    for (auto& flusher : flushers) {
+        flushSucceeded = flusher->flushAndCollectHandles(handles);
+        if (!flushSucceeded)
+            break;
+    }
+    // FIXME: Currently we send the transaction even if the flush timed out.
     commitEncoder.get() << WTFMove(handles);
 
     m_hasPendingFlush = false;
 
     m_connection->sendMessage(WTFMove(commitEncoder), { });
+    return flushSucceeded;
 }
 
 void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::ActivityState>, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& callback)

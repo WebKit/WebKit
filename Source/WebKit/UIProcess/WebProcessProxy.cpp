@@ -1083,6 +1083,13 @@ void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& conne
     protectedProcessPool()->createGPUProcessConnection(*this, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
 
+void WebProcessProxy::gpuProcessConnectionDidBecomeUnresponsive()
+{
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessConnectionDidBecomeUnresponsive");
+    if (RefPtr process = protectedProcessPool()->gpuProcess())
+        process->childConnectionDidBecomeUnresponsive();
+}
+
 void WebProcessProxy::gpuProcessDidFinishLaunching()
 {
     for (Ref page : pages())

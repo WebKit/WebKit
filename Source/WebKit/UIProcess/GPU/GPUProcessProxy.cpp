@@ -549,6 +549,11 @@ void GPUProcessProxy::processIsReadyToExit()
     gpuProcessExited(ProcessTerminationReason::IdleExit); // May cause |this| to get deleted.
 }
 
+void GPUProcessProxy::childConnectionDidBecomeUnresponsive()
+{
+    didBecomeUnresponsive();
+}
+
 void GPUProcessProxy::terminateForTesting()
 {
     processIsReadyToExit();

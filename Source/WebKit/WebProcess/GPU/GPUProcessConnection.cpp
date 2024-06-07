@@ -127,6 +127,18 @@ GPUProcessConnection::~GPUProcessConnection()
 #endif
 }
 
+
+void GPUProcessConnection::didBecomeUnresponsive()
+{
+    auto& webProcess = WebProcess::singleton();
+    // The function call might have been posted asynchronously from other thread.
+    // Guard against notifying a problem for a GPUProcessConnection that has already been
+    // switched away.
+    if (webProcess.existingGPUProcessConnection() != this)
+        return;
+    webProcess.gpuProcessConnectionDidBecomeUnresponsive();
+}
+
 #if HAVE(AUDIT_TOKEN)
 std::optional<audit_token_t> GPUProcessConnection::auditToken()
 {
@@ -153,7 +165,9 @@ void GPUProcessConnection::didClose(IPC::Connection&)
 {
     RELEASE_LOG_ERROR(Process, "%p - GPUProcessConnection::didClose", this);
     auto protector = Ref { *this };
-    WebProcess::singleton().gpuProcessConnectionClosed(*this);
+    auto& webProcess = WebProcess::singleton();
+    ASSERT(webProcess.existingGPUProcessConnection() == this);
+    webProcess.gpuProcessConnectionClosed();
 
 #if ENABLE(ROUTING_ARBITRATION)
     if (auto* arbitrator = WebProcess::singleton().supplement<AudioSessionRoutingArbitrator>())

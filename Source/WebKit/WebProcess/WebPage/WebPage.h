@@ -486,7 +486,7 @@ public:
 
 #if PLATFORM(COCOA)
     void willCommitLayerTree(RemoteLayerTreeTransaction&, WebCore::FrameIdentifier);
-    void didFlushLayerTreeAtTime(MonotonicTime);
+    void didFlushLayerTreeAtTime(MonotonicTime, bool flushSucceeded);
 #endif
 
     void layoutIfNeeded();
