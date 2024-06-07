@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../resources/ui-helper.js"></script>
+<style>
+    textarea {
+        width: 200px;
+        height: 200px;
+        background: green;
+    }
+</style>
+</head>
+<body>
+
+<textarea></textarea>
+<pre id="results"></pre>
+
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+(async () => {
+    element = document.querySelector("textarea");
+
+    await UIHelper.activateElementAndWaitForInputSession(element);
+    await UIHelper.typeCharacter("a");
+
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+
+    results.textContent = element.value + "\n";
+
+    if (window.internals)
+       results.textContent += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    await UIHelper.waitForInputSessionToDismiss();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+</body>
+</html>

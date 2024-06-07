@@ -162,8 +162,8 @@ static bool shouldAllowNonInteractiveCursorForElement(const Element& element)
         return true;
 #endif
 
-    if (is<HTMLTextFormControlElement>(element))
-        return !element.focused();
+    if (RefPtr textElement = dynamicDowncast<HTMLTextFormControlElement>(element))
+        return !textElement->focused() || !textElement->lastChangeWasUserEdit() || textElement->value().isEmpty();
 
     if (is<HTMLFormControlElement>(element))
         return true;
