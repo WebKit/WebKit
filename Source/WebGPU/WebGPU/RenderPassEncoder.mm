@@ -848,10 +848,9 @@ void RenderPassEncoder::endPass()
     bool hasTexturesToClear = m_allColorAttachments.count || m_attachmentsToClear.count || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment));
 
     if ((!issuedDraw || useDiscardTextures) && hasTexturesToClear) {
-        if (m_depthStencilAttachmentToClear && !issuedDraw && !useDiscardTextures) {
-            auto pixelFormat = m_depthStencilAttachmentToClear.pixelFormat;
-            m_clearDepthAttachment = !Device::isStencilOnlyFormat(pixelFormat);
-            m_clearStencilAttachment = pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || pixelFormat == MTLPixelFormatStencil8 || pixelFormat == MTLPixelFormatX32_Stencil8;
+        if (m_depthStencilView && m_depthStencilAttachmentToClear && !issuedDraw && !useDiscardTextures) {
+            m_clearDepthAttachment = Texture::containsDepthAspect(m_depthStencilView->format());
+            m_clearStencilAttachment = Texture::containsStencilAspect(m_depthStencilView->format());
         }
         if (useDiscardTextures)
             endEncoder();
