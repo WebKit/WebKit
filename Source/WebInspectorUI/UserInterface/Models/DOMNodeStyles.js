@@ -49,6 +49,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._propertyNameToEffectivePropertyMap = {};
         this._usedCSSVariables = new Set;
         this._allCSSVariables = new Set;
+        this._customFonts = [];
 
         this._pendingRefreshTask = null;
         this.refresh();
@@ -134,6 +135,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     get computedPrimaryFont() { return this._computedPrimaryFont; }
     get usedCSSVariables() { return this._usedCSSVariables; }
     get allCSSVariables() { return this._allCSSVariables; }
+    get customFonts() { return this._customFonts; }
 
     set ignoreNextContentDidChangeForStyleSheet(ignoreNextContentDidChangeForStyleSheet) { this._ignoreNextContentDidChangeForStyleSheet = ignoreNextContentDidChangeForStyleSheet; }
 
@@ -181,12 +183,12 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         }
 
         let parseRuleMatchArrayPayload = (matchArray, node, inherited, pseudoId) => {
-            var result = [];
+            let result = [];
 
             // Iterate in reverse order to match the cascade order.
-            var ruleOccurrences = {};
-            for (var i = matchArray.length - 1; i >= 0; --i) {
-                var rule = this._parseRulePayload(matchArray[i].rule, matchArray[i].matchingSelectors, node, inherited, pseudoId, ruleOccurrences);
+            let ruleOccurrences = {};
+            for (let i = matchArray.length - 1; i >= 0; --i) {
+                let rule = this._parseRulePayload(matchArray[i].rule, matchArray[i].matchingSelectors, node, inherited, pseudoId, ruleOccurrences);
                 if (!rule)
                     continue;
                 result.push(rule);
@@ -215,12 +217,12 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
             this._inheritedRules = [];
 
-            var i = 0;
-            var currentNode = this._node.parentNode;
+            let i = 0;
+            let currentNode = this._node.parentNode;
             while (currentNode && i < inheritedRulesPayload.length) {
-                var inheritedRulePayload = inheritedRulesPayload[i];
+                let inheritedRulePayload = inheritedRulesPayload[i];
 
-                var inheritedRuleInfo = {node: currentNode};
+                let inheritedRuleInfo = {node: currentNode};
                 inheritedRuleInfo.inlineStyle = inheritedRulePayload.inlineStyle ? this._parseStyleDeclarationPayload(inheritedRulePayload.inlineStyle, currentNode, true, null, WI.CSSStyleDeclaration.Type.Inline) : null;
                 inheritedRuleInfo.matchedRules = inheritedRulePayload.matchedCSSRules ? parseRuleMatchArrayPayload(inheritedRulePayload.matchedCSSRules, currentNode, true) : [];
 
@@ -246,14 +248,14 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         function fetchedComputedStyle(error, computedPropertiesPayload)
         {
-            var properties = [];
-            for (var i = 0; computedPropertiesPayload && i < computedPropertiesPayload.length; ++i) {
-                var propertyPayload = computedPropertiesPayload[i];
+            let properties = [];
+            for (let i = 0; computedPropertiesPayload && i < computedPropertiesPayload.length; ++i) {
+                let propertyPayload = computedPropertiesPayload[i];
 
-                var canonicalName = WI.cssManager.canonicalNameForPropertyName(propertyPayload.name);
+                let canonicalName = WI.cssManager.canonicalNameForPropertyName(propertyPayload.name);
                 propertyPayload.implicit = !this._propertyNameToEffectivePropertyMap[canonicalName];
 
-                var property = this._parseStylePropertyPayload(propertyPayload, NaN, this._computedStyle);
+                let property = this._parseStylePropertyPayload(propertyPayload, NaN, this._computedStyle);
                 if (!property.implicit)
                     property.implicit = !this._isPropertyFoundInMatchingRules(property.name);
                 properties.push(property);
@@ -339,6 +341,15 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         target.CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, wrap.call(this, fetchedMatchedStyles, fetchedMatchedStylesPromise));
         target.CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedInlineStyles, fetchedInlineStylesPromise));
         target.CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedComputedStyle, fetchedComputedStylesPromise));
+
+
+        if (InspectorBackend.hasCommand("CSS.getCustomFonts")) {
+            target.CSSAgent.getCustomFonts((error, fontFamilyNames) =>{
+                if (error)
+                    return;
+                this._customFonts = fontFamilyNames;
+            });
+        }
 
         // COMPATIBILITY (iOS 14.0): `CSS.getFontDataForNode` did not exist yet.
         if (InspectorBackend.hasCommand("CSS.getFontDataForNode"))
@@ -463,7 +474,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
             target.DOMAgent.markUndoableState();
 
-            // Do a full refresh incase the rule no longer matches the node or the
+            // Do a full refresh in case the rule no longer matches the node or the
             // matched selector indices changed.
             this.refresh().then(() => {
                 result.resolve(rulePayload);
@@ -517,17 +528,17 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
     _parseStylePropertyPayload(payload, index, styleDeclaration)
     {
-        var text = payload.text || "";
-        var name = payload.name;
-        var value = payload.value || "";
-        var priority = payload.priority || "";
+        let text = payload.text || "";
+        let name = payload.name;
+        let value = payload.value || "";
+        let priority = payload.priority || "";
         let range = payload.range || null;
 
-        var enabled = true;
-        var overridden = false;
-        var implicit = payload.implicit || false;
-        var anonymous = false;
-        var valid = "parsedOk" in payload ? payload.parsedOk : true;
+        let enabled = true;
+        let overridden = false;
+        let implicit = payload.implicit || false;
+        let anonymous = false;
+        let valid = "parsedOk" in payload ? payload.parsedOk : true;
 
         switch (payload.status || "style") {
         case "active":
@@ -559,11 +570,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             }
         }
 
-        var styleSheetTextRange = this._parseSourceRangePayload(payload.range);
+        let styleSheetTextRange = this._parseSourceRangePayload(payload.range);
 
         if (styleDeclaration) {
             // Use propertyForName when the index is NaN since propertyForName is fast in that case.
-            var property = isNaN(index) ? styleDeclaration.propertyForName(name) : styleDeclaration.properties[index];
+            let property = isNaN(index) ? styleDeclaration.propertyForName(name) : styleDeclaration.properties[index];
 
             // Reuse a property if the index and name matches. Otherwise it is a different property
             // and should be created from scratch. This works in the simple cases where only existing
@@ -576,10 +587,10 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             }
 
             // Reuse a pending property with the same name. These properties are pending being committed,
-            // so if we find a match that likely means it got committed and we should use it.
-            var pendingProperties = styleDeclaration.pendingProperties;
-            for (var i = 0; i < pendingProperties.length; ++i) {
-                var pendingProperty = pendingProperties[i];
+            // so if we find a match that likely means it got committed, and we should use it.
+            let pendingProperties = styleDeclaration.pendingProperties;
+            for (let i = 0; i < pendingProperties.length; ++i) {
+                let pendingProperty = pendingProperties[i];
                 if (pendingProperty.name === name && isNaN(pendingProperty.index)) {
                     pendingProperty.index = index;
                     pendingProperty.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
@@ -599,8 +610,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         rule = rule || null;
         inherited = inherited || false;
 
-        var id = payload.styleId;
-        var mapKey = id ? id.styleSheetId + ":" + id.ordinal : null;
+        let id = payload.styleId;
+        let mapKey = id ? id.styleSheetId + ":" + id.ordinal : null;
         if (pseudoId)
             mapKey += ":" + pseudoId;
         if (type === WI.CSSStyleDeclaration.Type.Attribute)
@@ -625,11 +636,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 this._stylesMap.add(mapKey, style);
         }
 
-        var inheritedPropertyCount = 0;
+        let inheritedPropertyCount = 0;
 
-        var properties = [];
-        for (var i = 0; payload.cssProperties && i < payload.cssProperties.length; ++i) {
-            var propertyPayload = payload.cssProperties[i];
+        let properties = [];
+        for (let i = 0; payload.cssProperties && i < payload.cssProperties.length; ++i) {
+            let propertyPayload = payload.cssProperties[i];
 
             if (inherited && WI.CSSProperty.isInheritedPropertyName(propertyPayload.name))
                 ++inheritedPropertyCount;
@@ -639,7 +650,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         }
 
         let text = payload.cssText;
-        var styleSheetTextRange = this._parseSourceRangePayload(payload.range);
+        let styleSheetTextRange = this._parseSourceRangePayload(payload.range);
 
         if (style) {
             style.update(text, properties, styleSheetTextRange);
@@ -649,7 +660,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         if (!matchesNode)
             return null;
 
-        var styleSheet = id ? WI.cssManager.styleSheetForIdentifier(id.styleSheetId) : null;
+        let styleSheet = id ? WI.cssManager.styleSheetForIdentifier(id.styleSheetId) : null;
         if (styleSheet) {
             if (type === WI.CSSStyleDeclaration.Type.Inline)
                 styleSheet.markAsInlineStyleAttributeStyleSheet();
@@ -676,13 +687,13 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         // 'styleId' is the same identifier the backend uses for Author rule identifiers, so do the same here.
         // They are excluded by the backend because they are not editable, however our front-end does not determine
         // editability solely based on the existence of the id like the open source front-end does.
-        var id = payload.ruleId || payload.style.styleId;
+        let id = payload.ruleId || payload.style.styleId;
 
-        var mapKey = id ? id.styleSheetId + ":" + id.ordinal + ":" + (inherited ? "I" : "N") + ":" + (pseudoId ? pseudoId + ":" : "") + node.id : null;
+        let mapKey = id ? id.styleSheetId + ":" + id.ordinal + ":" + (inherited ? "I" : "N") + ":" + (pseudoId ? pseudoId + ":" : "") + node.id : null;
 
         // Rules can match multiple times if they have multiple selectors or because of inheritance. We keep a count
-        // of occurrences so we have unique rules per occurrence, that way properties will be correctly marked as overridden.
-        var occurrence = 0;
+        // of occurrences, so we have unique rules per occurrence, that way properties will be correctly marked as overridden.
+        let occurrence = 0;
         if (mapKey) {
             if (mapKey in ruleOccurrences)
                 occurrence = ++ruleOccurrences[mapKey];
@@ -695,18 +706,18 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         let rule = this._rulesMap.get(mapKey);
 
-        var style = this._parseStyleDeclarationPayload(payload.style, node, inherited, pseudoId, WI.CSSStyleDeclaration.Type.Rule, rule);
+        let style = this._parseStyleDeclarationPayload(payload.style, node, inherited, pseudoId, WI.CSSStyleDeclaration.Type.Rule, rule);
         if (!style)
             return null;
 
-        var styleSheet = id ? WI.cssManager.styleSheetForIdentifier(id.styleSheetId) : null;
+        let styleSheet = id ? WI.cssManager.styleSheetForIdentifier(id.styleSheetId) : null;
 
-        var selectorText = payload.selectorList.text;
+        let selectorText = payload.selectorList.text;
         let selectors = DOMNodeStyles.parseSelectorListPayload(payload.selectorList);
-        var type = WI.CSSManager.protocolStyleSheetOriginToEnum(payload.origin);
+        let type = WI.CSSManager.protocolStyleSheetOriginToEnum(payload.origin);
 
-        var sourceCodeLocation = null;
-        var sourceRange = payload.selectorList.range;
+        let sourceCodeLocation = null;
+        let sourceRange = payload.selectorList.range;
         if (sourceRange) {
             sourceCodeLocation = DOMNodeStyles.createSourceCodeLocation(payload.sourceURL, {
                 line: sourceRange.startLine,
@@ -813,11 +824,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
     _updateStyleCascade()
     {
-        var cascadeOrderedStyleDeclarations = this._collectStylesInCascadeOrder(this._matchedRules, this._inlineStyle, this._attributesStyle);
+        let cascadeOrderedStyleDeclarations = this._collectStylesInCascadeOrder(this._matchedRules, this._inlineStyle, this._attributesStyle);
 
-        for (var i = 0; i < this._inheritedRules.length; ++i) {
-            var inheritedStyleInfo = this._inheritedRules[i];
-            var inheritedCascadeOrder = this._collectStylesInCascadeOrder(inheritedStyleInfo.matchedRules, inheritedStyleInfo.inlineStyle, null);
+        for (let i = 0; i < this._inheritedRules.length; ++i) {
+            let inheritedStyleInfo = this._inheritedRules[i];
+            let inheritedCascadeOrder = this._collectStylesInCascadeOrder(inheritedStyleInfo.matchedRules, inheritedStyleInfo.inlineStyle, null);
             cascadeOrderedStyleDeclarations.pushAll(inheritedCascadeOrder);
         }
 
@@ -838,16 +849,16 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
     _collectStylesInCascadeOrder(matchedRules, inlineStyle, attributesStyle)
     {
-        var result = [];
+        let result = [];
 
         // Inline style has the greatest specificity. So it goes first in the cascade order.
         if (inlineStyle)
             result.push(inlineStyle);
 
-        var userAndUserAgentStyles = [];
+        let userAndUserAgentStyles = [];
 
-        for (var i = 0; i < matchedRules.length; ++i) {
-            var rule = matchedRules[i];
+        for (let i = 0; i < matchedRules.length; ++i) {
+            let rule = matchedRules[i];
 
             // Only append to the result array here for author and inspector rules since attribute
             // styles come between author rules and user/user agent rules.
@@ -897,12 +908,12 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             return shorthandStyleIndex > propertyStyleIndex;
         }
 
-        for (var i = 0; i < styles.length; ++i) {
-            var style = styles[i];
-            var properties = style.enabledProperties;
+        for (let i = 0; i < styles.length; ++i) {
+            let style = styles[i];
+            let properties = style.enabledProperties;
 
-            for (var j = 0; j < properties.length; ++j) {
-                var property = properties[j];
+            for (let j = 0; j < properties.length; ++j) {
+                let property = properties[j];
                 if (!property.attached || !property.valid) {
                     property.overridden = false;
                     continue;
@@ -913,9 +924,9 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                     continue;
                 }
 
-                var canonicalName = property.canonicalName;
+                let canonicalName = property.canonicalName;
                 if (canonicalName in propertyNameToEffectiveProperty) {
-                    var effectiveProperty = propertyNameToEffectiveProperty[canonicalName];
+                    let effectiveProperty = propertyNameToEffectiveProperty[canonicalName];
 
                     if (effectiveProperty.ownerStyle === property.ownerStyle) {
                         if (effectiveProperty.important && !property.important) {
@@ -948,13 +959,13 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
     _associateRelatedProperties(styles, propertyNameToEffectiveProperty)
     {
-        for (var i = 0; i < styles.length; ++i) {
-            var properties = styles[i].enabledProperties;
+        for (let i = 0; i < styles.length; ++i) {
+            let properties = styles[i].enabledProperties;
 
-            var knownShorthands = {};
+            let knownShorthands = {};
 
-            for (var j = 0; j < properties.length; ++j) {
-                var property = properties[j];
+            for (let j = 0; j < properties.length; ++j) {
+                let property = properties[j];
 
                 if (!property.valid)
                     continue;
@@ -970,17 +981,17 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 knownShorthands[property.canonicalName] = property;
             }
 
-            for (var j = 0; j < properties.length; ++j) {
-                var property = properties[j];
+            for (let j = 0; j < properties.length; ++j) {
+                let property = properties[j];
 
                 if (!property.valid)
                     continue;
 
-                var shorthandProperty = null;
+                let shorthandProperty = null;
 
                 if (!isEmptyObject(knownShorthands)) {
-                    var possibleShorthands = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.get(property.canonicalName) || [];
-                    for (var k = 0; k < possibleShorthands.length; ++k) {
+                    let possibleShorthands = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.get(property.canonicalName) || [];
+                    for (let k = 0; k < possibleShorthands.length; ++k) {
                         if (possibleShorthands[k] in knownShorthands) {
                             shorthandProperty = knownShorthands[possibleShorthands[k]];
                             break;

@@ -57,8 +57,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         this._throttledUpdate.fire();
     }
 
-    update()
-    {
+    update() {
         if (this._skipNextUpdate)
             return;
 
@@ -121,6 +120,50 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             emptyRow.showEmptyMessage();
 
             this._fontVariationsGroup.rows = [emptyRow];
+        }
+
+        // Custom Font Properties
+
+        // Display message when we have no custom fonts.
+        if (!this.nodeStyles.customFonts.length) {
+            this._customFontsRow.showEmptyMessage();
+            this._customFontsRow.dataGrid = null;
+        }
+
+        // We can have no dataGrid if we navigate to a page
+        // with no custom fonts. This will trigger it to force
+        // rebuild the table, also with constantly updating webpages.
+        else {
+            if (!this._customFontsRow.dataGrid) {
+                this._customFontsRow.dataGrid = this._customFontsDataGrid;
+
+                this._customFontsRow.dataGrid.removeChildren();
+
+                for (let customFont of this.nodeStyles.customFonts) {
+
+                    // The backend can return empty font families, which we should ignore.
+                    if (customFont.family === "")
+                        continue;
+
+                    let dataGridNode = new WI.DataGridNode({
+                        family: customFont.family,
+                        weight: customFont.weight,
+                        stretch: customFont.stretch,
+                        style: customFont.stretch,
+                        loaded: customFont.loaded
+                    });
+
+                    this._customFontsRow.dataGrid.appendChild(dataGridNode);
+                }
+
+                if (!this.nodeStyles.customFonts.length) {
+                    this._customFontsRow.showEmptyMessage();
+                    this._customFontsRow.dataGrid = null;
+                }
+
+                this._sortCustomFontsDataGrid();
+                this._customFontsRow.dataGrid.updateLayoutIfNeeded();
+            }
         }
     }
 
@@ -220,9 +263,77 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
         let fontVariationPropertiesSection = new WI.DetailsSection("font-variation-properties", WI.UIString("Variation Properties", "Variation Properties @ Font Details Sidebar Section", "Section title for font variation properties."), [this._fontVariationsGroup]);
         this.element.appendChild(fontVariationPropertiesSection.element);
+
+        // Custom Fonts Properties
+        this._createCustomFontsDataGrid();
+        this._customFontsRow = new WI.DetailsSectionDataGridRow(null, WI.UIString("No Custom Fonts", "No Custom Fonts @ Font Details Sidebar Property", "Message shown when there are no custom fonts."));
+        this._customFontsRow.dataGrid = this._customFontsDataGrid;
+
+        this._customFontsGroup = new WI.DetailsSectionGroup([this._customFontsRow]);
+
+        let customFontsSection = new WI.DetailsSection("custom-fonts-properties", WI.UIString("Custom Fonts", "Custom Fonts @ Font Details Sidebar Section", "Section title for all custom fonts."), [this._customFontsGroup], null, true);
+
+        this.element.appendChild(customFontsSection.element);
     }
 
     // Private
+
+    _createCustomFontsDataGrid()
+    {
+        let customFontsColumns = {
+            family: {
+                title: WI.UIString("Family"),
+                sortable: true,
+                aligned: "centered",
+                width: "50%",
+            },
+            weight: {
+                title: WI.UIString("Weight"),
+                sortable: true,
+                aligned: "centered",
+            },
+            stretch: {
+                title: WI.UIString("Stretch"),
+                sortable: true,
+                aligned: "centered",
+            },
+            style: {
+                title: WI.UIString("Style"),
+                sortable: true,
+                aligned: "centered",
+            },
+            loaded: {
+                title: WI.UIString("loaded"),
+                sortable: true,
+                aligned: "centered"
+            }
+        };
+
+        this._customFontsDataGrid = new WI.DataGrid(customFontsColumns);
+        this._customFontsDataGrid.inline = true;
+        this._customFontsDataGrid.sortColumnIdentifier = "family";
+        this._customFontsDataGrid.sortOrder = WI.DataGrid.SortOrder.Ascending;
+        this._customFontsDataGrid.createSettings("font-details-panel-all-fonts");
+        this._customFontsDataGrid.addEventListener(WI.DataGrid.Event.SortChanged, this._sortCustomFontsDataGrid, this);
+    }
+
+    _sortCustomFontsDataGrid()
+    {
+        let sortColumnIdentifier = this._customFontsDataGrid.sortColumnIdentifier;
+
+        function comparator(a, b)
+        {
+            let item1 = a.data[sortColumnIdentifier] || 0;
+            let item2 = b.data[sortColumnIdentifier] || 0;
+
+            if (typeof(item1) === "string" && typeof(item2) === "string")
+                return item1.localeCompare(item2);
+
+            return item1 - item2;
+        }
+
+        this._customFontsDataGrid.sortNodes(comparator);
+    }
 
     get _fontPropertiesMap()
     {
@@ -242,6 +353,10 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
     _createDetailsSectionRowForProperty(propertyName)
     {
         let fontProperty = this._fontPropertiesMap.get(propertyName);
+        if (!fontProperty) {
+            return null;
+        }
+
         const labelForTag = {
             "ital": WI.UIString("Italic", "Italic @ Font Details Sidebar Property Value", "Property title for `font-style` italic and `ital` variation axis."),
             "slnt": WI.UIString("Oblique", "Oblique @ Font Details Sidebar Property Value", "Property title for `font-style` oblique and `slnt` variation axis."),
@@ -250,7 +365,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             "wdth": WI.UIString("Width", "Width @ Font Details Sidebar Property", "Property title for `font-stretch` and `wdth` variation axis."),
         }
 
-        let fontVariationAxis = fontProperty.variations?.values().next().value;
+        let fontVariationAxis = fontProperty.variations ? fontProperty.variations.values().next().value : null;
         if (fontVariationAxis) {
             // Ensure registered axes have a name; fallback to labels for their corresponding font properties.
             fontVariationAxis.name ??= labelForTag[fontVariationAxis.tag];
@@ -264,16 +379,12 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         switch (propertyName) {
         case "font-size":
             return new WI.DetailsSectionSimpleRow(WI.UIString("Size", "Size @ Font Details Sidebar Property", "Property title for `font-size`."));
-            break;
         case "font-style":
             return new WI.DetailsSectionSimpleRow(WI.UIString("Style", "Style @ Font Details Sidebar Property", "Property title for `font-style`."));
-            break;
         case "font-weight":
             return new WI.DetailsSectionSimpleRow(WI.UIString("Weight", "Weight @ Font Details Sidebar Property", "Property title for `font-weight` and `wght` variation axis."));
-            break;
         case "font-stretch":
             return new WI.DetailsSectionSimpleRow(WI.UIString("Stretch", "Stretch @ Font Details Sidebar Property", "Property title for `font-stretch`."));
-            break;
         }
 
         console.assert(false, "Should not be reached.", propertyName);
@@ -332,7 +443,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         else
             results.push(WI.UIString("Common", "Common @ Font Details Sidebar Property Value", "Property value for `font-variant-ligatures: common-ligatures`."));
 
-        // Add the other ligature features only if there was at least one to avoid concatinating with an empty string.
+        // Add the other ligature features only if there was at least one to avoid concatenating with an empty string.
         let otherResults = this._formatSimpleFeatureValues(property, [
             {
                 tag: WI.unlocalizedString("dlig"),

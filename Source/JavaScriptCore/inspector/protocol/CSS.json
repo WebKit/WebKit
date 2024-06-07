@@ -269,6 +269,21 @@
             ]
         },
         {
+          "id": "FontFace",
+          "type": "object",
+          "description": "A FontFace",
+          "properties": [
+              { "name": "family", "type": "string", "description": "Font Family Name"},
+              { "name": "weight", "type": "string", "description": "Font Stretch"},
+              { "name": "stretch", "type": "string", "description": "Font Family Name"},
+              { "name": "unicodeRange", "type": "string", "description": "Font Unicode Range"},
+              { "name": "featureSettings", "type": "string", "description": "Font Feature Settings"},
+              { "name": "display", "type": "string", "description": "Font Display"},
+              { "name": "sizeAdjust", "type": "string", "description": "Font Size Adjust"},
+              { "name": "loaded", "type": "string", "description": "Font Loaded"}
+          ]
+        },
+        {
             "id": "FontVariationAxis",
             "type": "object",
             "description": "A single variation axis associated with a Font.",
@@ -460,6 +475,14 @@
             "targetTypes": ["page"],
             "returns": [
                 { "name": "fontFamilyNames", "type": "array", "items": { "type": "string" }, "description": "Supported system font families." }
+            ]
+        },
+        {
+            "name": "getCustomFonts",
+            "description": "Returns all loaded fonts (system and custom).",
+            "targetTypes": ["page"],
+            "returns": [
+                { "name": "fontFamilies", "type": "array", "items": { "$ref": "FontFace" }, "description": "Loaded font families." }
             ]
         },
         {

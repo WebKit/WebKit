@@ -47,6 +47,8 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontCascade.h"
+#include "FontFace.h"
+#include "FontFaceSet.h"
 #include "FontPlatformData.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
@@ -765,7 +767,6 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Grouping>> Insp
     return makeUnexpected("Internal error: missing grouping payload"_s);
 }
 
-
 Inspector::Protocol::ErrorStringOr<Inspector::Protocol::CSS::StyleSheetId> InspectorCSSAgent::createStyleSheet(const Inspector::Protocol::Network::FrameId& frameId)
 {
     Inspector::Protocol::ErrorString errorString;
@@ -916,6 +917,42 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent
     return fontFamilyNames;
 }
 
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::FontFace>>> InspectorCSSAgent::getCustomFonts()
+{
+    auto customFonts = JSON::ArrayOf<Inspector::Protocol::CSS::FontFace>::create();
+    if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
+        for (auto* document : domAgent->documents()) {
+        auto iterator = document->fonts().document->fonts()->.createIterator(document->scriptExecutionContext());
+        while (auto font = iterator.next()) {
+            switch (font->status()) {
+            case FontFace::LoadStatus::Unloaded:
+                status = "unloaded";
+            case FontFace::LoadStatus::Loading:
+                status = "loading";
+            case FontFace::LoadStatus::Error:
+                status = "error";
+            case FontFace::LoadStatus::Loaded:
+                status = "loaded";
+            }
+
+            Ref<Inspector::Protocol::CSS::FontFace> result = Inspector::Protocol::CSS::FontFace::create()
+                .setFamily(font->family())
+                .setWeight(font->weight())
+                .setStretch(font->stretch())
+                .setUnicodeRange(font->unicodeRange())
+                .setFeatureSettings(font->featureSettings())
+                .setDisplay(font->display())
+                .setSizeAdjust(font->sizeAdjust())
+                .setLoaded(status)
+                .release();
+                customFonts->addItem(WTFMove(result))
+            }
+        }
+    }
+
+    return customFonts;
+}
+
 Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Inspector::Protocol::DOM::NodeId nodeId, Ref<JSON::Array>&& forcedPseudoClasses)
 {
     Inspector::Protocol::ErrorString errorString;
@@ -941,31 +978,18 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Ins
         switch (*pseudoClass) {
         case Inspector::Protocol::CSS::ForceablePseudoClass::Active:
             forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Active);
-            break;
-
         case Inspector::Protocol::CSS::ForceablePseudoClass::Hover:
             forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Hover);
-            break;
-
         case Inspector::Protocol::CSS::ForceablePseudoClass::Focus:
             forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Focus);
-            break;
-
         case Inspector::Protocol::CSS::ForceablePseudoClass::FocusVisible:
             forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::FocusVisible);
-            break;
-
         case Inspector::Protocol::CSS::ForceablePseudoClass::FocusWithin:
             forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::FocusWithin);
-            break;
-
         case Inspector::Protocol::CSS::ForceablePseudoClass::Target:
             forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Target);
-            break;
-
         case Inspector::Protocol::CSS::ForceablePseudoClass::Visited:
             forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Visited);
-            break;
         }
     }
 
@@ -1260,7 +1284,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
         styleResolver.inspectorCSSOMWrappers().collectDocumentWrappers(*extensionStyleSheets);
     styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(Style::Scope::forNode(element));
 
-    // Possiblity of :host styles if this element has a shadow root.
+    // Possibility of :host styles if this element has a shadow root.
     if (ShadowRoot* shadowRoot = element.shadowRoot())
         styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(shadowRoot->styleScope());
 

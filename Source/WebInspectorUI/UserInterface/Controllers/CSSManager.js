@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -316,8 +317,6 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     get defaultUserPreferences() { return this._defaultUserPreferences; }
 
-    get overriddenUserPreferences() { return this._overriddenUserPreferences; }
-
     get preferredColorFormat()
     {
         return this._colorFormatSetting.value;
@@ -437,20 +436,16 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (!name || name.length < 4 || name.charAt(0) !== "-")
             return false;
 
-        var match = name.match(/^(?:-moz-|-ms-|-o-|-epub-)/);
+        let match = name.match(/^(?:-moz-|-ms-|-o-|-epub-)/);
         if (!match)
             return false;
-
-        return true;
     }
 
     propertyValueHasOtherVendorKeyword(value)
     {
-        var match = value.match(/(?:-moz-|-ms-|-o-|-epub-)[-\w]+/);
+        let match = value.match(/(?:-moz-|-ms-|-o-|-epub-)[-\w]+/);
         if (!match)
             return false;
-
-        return true;
     }
 
     canonicalNameForPropertyName(name)
@@ -459,7 +454,7 @@ WI.CSSManager = class CSSManager extends WI.Object
             return name;
 
         // Keep in sync with prefix list from Source/WebInspectorUI/Scripts/update-inspector-css-documentation
-        var match = name.match(/^(?:-webkit-|-khtml-|-apple-)(.+)/);
+        let match = name.match(/^(?:-webkit-|-khtml-|-apple-)(.+)/);
         if (!match)
             return name;
 
@@ -482,7 +477,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (node.id in this._nodeStylesMap)
             return this._nodeStylesMap[node.id];
 
-        var styles = new WI.DOMNodeStyles(node);
+        let styles = new WI.DOMNodeStyles(node);
         this._nodeStylesMap[node.id] = styles;
         return styles;
     }
@@ -494,7 +489,7 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     preferredInspectorStyleSheetForFrame(frame, callback)
     {
-        var inspectorStyleSheets = this.inspectorStyleSheetsForFrame(frame);
+        let inspectorStyleSheets = this.inspectorStyleSheetsForFrame(frame);
         for (let styleSheet of inspectorStyleSheets) {
             if (styleSheet[WI.CSSManager.PreferredInspectorStyleSheetSymbol]) {
                 callback(styleSheet);
@@ -589,13 +584,13 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     mediaQueryResultChanged()
     {
-        for (var key in this._nodeStylesMap)
+        for (let key in this._nodeStylesMap)
             this._nodeStylesMap[key].mediaQueryResultDidChange();
     }
 
     styleSheetChanged(styleSheetIdentifier)
     {
-        var styleSheet = this.styleSheetForIdentifier(styleSheetIdentifier);
+        let styleSheet = this.styleSheetForIdentifier(styleSheetIdentifier);
         console.assert(styleSheet);
 
         // Do not observe inline styles
@@ -635,10 +630,10 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     _nodePseudoClassesDidChange(event)
     {
-        var node = event.target;
+        let node = event.target;
 
-        for (var key in this._nodeStylesMap) {
-            var nodeStyles = this._nodeStylesMap[key];
+        for (let key in this._nodeStylesMap) {
+            let nodeStyles = this._nodeStylesMap[key];
             if (nodeStyles.node !== node && !nodeStyles.node.isDescendant(node))
                 continue;
             nodeStyles.pseudoClassesDidChange(node);
@@ -647,10 +642,10 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     _nodeAttributesDidChange(event)
     {
-        var node = event.target;
+        let node = event.target;
 
-        for (var key in this._nodeStylesMap) {
-            var nodeStyles = this._nodeStylesMap[key];
+        for (let key in this._nodeStylesMap) {
+            let nodeStyles = this._nodeStylesMap[key];
             if (nodeStyles.node !== node && !nodeStyles.node.isDescendant(node))
                 continue;
             nodeStyles.attributeDidChange(node, event.data.name);
@@ -685,7 +680,7 @@ WI.CSSManager = class CSSManager extends WI.Object
     {
         console.assert(event.target instanceof WI.Frame);
 
-        var resource = event.data.resource;
+        let resource = event.data.resource;
         console.assert(resource);
 
         if (resource.type !== WI.Resource.Type.StyleSheet)
@@ -698,7 +693,7 @@ WI.CSSManager = class CSSManager extends WI.Object
     {
         console.assert(event.target instanceof WI.Resource);
 
-        var resource = event.target;
+        let resource = event.target;
         if (resource.type !== WI.Resource.Type.StyleSheet)
             return;
 
@@ -773,7 +768,7 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     _resourceContentDidChange(event)
     {
-        var resource = event.target;
+        let resource = event.target;
         if (resource === this._ignoreResourceContentDidChangeEventForResource)
             return;
 

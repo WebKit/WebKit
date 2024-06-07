@@ -489,6 +489,8 @@ localizedStrings["Create audit:"] = "Create audit:";
 localizedStrings["Current"] = "Current";
 localizedStrings["Current State"] = "Current State";
 localizedStrings["Custom"] = "Custom";
+/* Section title for all custom fonts. */
+localizedStrings["Custom Fonts @ Font Details Sidebar Section"] = "Custom Fonts";
 localizedStrings["DNS"] = "DNS";
 localizedStrings["DOM"] = "DOM";
 localizedStrings["DOM Content Loaded \u2014 %s"] = "DOM Content Loaded \u2014 %s";
@@ -763,6 +765,7 @@ localizedStrings["Fade unexecuted code"] = "Fade unexecuted code";
 localizedStrings["Fail @ Audit Tab - Test Case"] = "Fail";
 localizedStrings["Failed to upgrade"] = "Failed to upgrade";
 localizedStrings["Failure status code"] = "Failure status code";
+localizedStrings["Family"] = "Family";
 /* Section title for font feature properties. */
 localizedStrings["Feature Properties @ Font Details Sidebar Section"] = "Feature Properties";
 /* Resource loaded via 'fetch' method */
@@ -1010,6 +1013,7 @@ localizedStrings["Live Activity"] = "Live Activity";
 localizedStrings["Live Size"] = "Live Size";
 localizedStrings["Load \u2014 %s"] = "Load \u2014 %s";
 localizedStrings["Load cancelled"] = "Load cancelled";
+localizedStrings["Loaded"] = "Loaded";
 localizedStrings["Loaded in %s"] = "Loaded in %s";
 localizedStrings["Loading for %s"] = "Loading for %s";
 localizedStrings["Local File"] = "Local File";
@@ -1124,6 +1128,8 @@ localizedStrings["No Canvas Selected"] = "No Canvas Selected";
 localizedStrings["No Chart Available"] = "No Chart Available";
 localizedStrings["No Child Layers"] = "No Child Layers";
 localizedStrings["No Console Snippets"] = "No Console Snippets";
+/* Message shown when there are no custom fonts. */
+localizedStrings["No Custom Fonts @ Font Details Sidebar Property"] = "No Custom Fonts";
 localizedStrings["No Data Bindings"] = "No Data Bindings";
 localizedStrings["No Enabled Audits"] = "No Enabled Audits";
 localizedStrings["No Entries"] = "No Entries";
@@ -1667,8 +1673,10 @@ localizedStrings["Stopping the \u201C%s\u201D audit"] = "Stopping the \u201C%s\u
 localizedStrings["Storage"] = "Storage";
 /* Name of Storage Tab */
 localizedStrings["Storage Tab Name"] = "Storage";
+localizedStrings["Stretch"] = "Stretch";
 /* Property title for `font-stretch`. */
 localizedStrings["Stretch @ Font Details Sidebar Property"] = "Stretch";
+localizedStrings["Style"] = "Style";
 /* Property title for `font-style`. */
 localizedStrings["Style @ Font Details Sidebar Property"] = "Style";
 /* CSS properties defined via HTML style attribute */
@@ -1977,6 +1985,7 @@ localizedStrings["WebP"] = "WebP";
 localizedStrings["WebRTC"] = "WebRTC";
 localizedStrings["WebRTC Logging:"] = "WebRTC Logging:";
 localizedStrings["WebSocket Connection Established"] = "WebSocket Connection Established";
+localizedStrings["Weight"] = "Weight";
 /* Property title for `font-weight` and `wght` variation axis. */
 localizedStrings["Weight @ Font Details Sidebar Property"] = "Weight";
 localizedStrings["Whitespace characters"] = "Whitespace characters";
