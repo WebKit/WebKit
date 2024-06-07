@@ -77,6 +77,7 @@ class NativeExecutable;
     macro(GetByIdCustomAccessorHandler, getByIdCustomAccessorHandler) \
     macro(GetByIdCustomValueHandler, getByIdCustomValueHandler) \
     macro(GetByIdGetterHandler, getByIdGetterHandler) \
+    macro(GetByIdProxyObjectLoadHandler, getByIdProxyObjectLoadHandler) \
     macro(PutByIdReplaceHandler, putByIdReplaceHandlerCodeGenerator) \
     macro(PutByIdTransitionNonAllocatingHandler, putByIdTransitionNonAllocatingHandlerCodeGenerator) \
     macro(PutByIdTransitionNewlyAllocatingHandler, putByIdTransitionNewlyAllocatingHandlerCodeGenerator) \

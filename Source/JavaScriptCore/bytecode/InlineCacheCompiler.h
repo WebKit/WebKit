@@ -398,6 +398,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandlerCodeGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomAccessorHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandlerCodeGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandlerCodeGenerator(VM&);

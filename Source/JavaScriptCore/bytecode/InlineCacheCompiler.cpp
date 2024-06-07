@@ -1527,6 +1527,10 @@ Ref<InlineCacheHandler> InlineCacheHandler::createPreCompiled(CodeBlock* codeBlo
             result->u.s1.m_holder = holder;
         break;
     }
+    case AccessCase::ProxyObjectLoad: {
+        result->u.s1.m_holder = accessCase.identifier().cell();
+        break;
+    }
     case AccessCase::Transition: {
         result->u.s2.m_newStructureID = accessCase.newStructureID();
         result->u.s2.m_newSize = accessCase.newStructure()->outOfLineCapacity() * sizeof(JSValue);
@@ -5118,6 +5122,82 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM& vm)
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetById Getter handler"_s, "GetById Getter handler");
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM& vm)
+{
+    CCallHelpers jit;
+
+    using BaselineJITRegisters::GetById::baseJSR;
+    using BaselineJITRegisters::GetById::stubInfoGPR;
+    using BaselineJITRegisters::GetById::scratch1GPR;
+    using BaselineJITRegisters::GetById::resultJSR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    CCallHelpers::JumpList fallThrough;
+
+    // Default structure guard for the instance.
+    JIT_COMMENT(jit, "check structure");
+    jit.load32(CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::structureIDOffset()), scratch1GPR);
+    fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfStructureID())));
+
+    jit.transfer32(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+
+    // Create a JS call using a JS call inline cache. Assume that:
+    //
+    // - SP is aligned and represents the extent of the calling compiler's stack usage.
+    //
+    // - FP is set correctly (i.e. it points to the caller's call frame header).
+    //
+    // - SP - FP is an aligned difference.
+    //
+    // - Any byte between FP (exclusive) and SP (inclusive) could be live in the calling
+    //   code.
+    //
+    // Therefore, we temporarily grow the stack for the purpose of the call and then
+    // shrink it after.
+
+    // There is a "this" argument.
+    // ... and a value argument if we're calling a setter.
+    constexpr unsigned numberOfParameters = 3;
+    constexpr unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + roundArgumentCountToAlignFrame(numberOfParameters);
+    static_assert(!(numberOfRegsForCall % stackAlignmentRegisters()));
+    constexpr unsigned numberOfBytesForCall = numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
+    constexpr unsigned alignedNumberOfBytesForCall = WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
+
+    jit.subPtr(CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall), CCallHelpers::stackPointerRegister);
+    CCallHelpers::Address calleeFrame = CCallHelpers::Address(CCallHelpers::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
+    jit.store32(CCallHelpers::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + PayloadOffset));
+    jit.storeCell(baseJSR.payloadGPR(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
+    jit.transferPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfHolder()), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
+    jit.storeCell(baseJSR.payloadGPR(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratch1GPR);
+    jit.loadPtr(CCallHelpers::Address(scratch1GPR, JSGlobalObject::offsetOfPerformProxyObjectGetFunction()), scratch1GPR);
+    jit.storeCell(scratch1GPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
+
+    // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
+    if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
+        jit.swap(scratch1GPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+        jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos()), scratch1GPR, BaselineJITRegisters::Call::callLinkInfoGPR);
+    } else {
+        jit.move(scratch1GPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+        jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos()), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
+    }
+    CallLinkInfo::emitDataICFastPath(jit);
+    jit.setupResults(resultJSR);
+
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), scratch1GPR);
+    jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall)), scratch1GPR);
+    jit.addPtr(scratch1GPR, GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    fallThrough.linkThunk(CodeLocationLabel(CodePtr<NoPtrTag> { (InlineCacheCompiler::generateSlowPathCode(vm, AccessType::GetById).retaggedCode<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC) }), &jit);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetById ProxyObjectLoad handler"_s, "GetById ProxyObjectLoad handler");
+}
+
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM& vm)
 {
@@ -5624,7 +5704,25 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                     }
                     break;
                 }
-                case AccessCase::ProxyObjectLoad:
+                case AccessCase::ProxyObjectLoad: {
+                    ASSERT(!accessCase.viaGlobalProxy());
+                    Vector<ObjectPropertyCondition, 64> watchedConditions;
+                    Vector<ObjectPropertyCondition, 64> checkingConditions;
+                    collectConditions(accessCase, watchedConditions, checkingConditions);
+                    if (checkingConditions.isEmpty()) {
+                        Structure* currStructure = accessCase.structure();
+                        if (auto* object = accessCase.tryGetAlternateBase())
+                            currStructure = object->structure();
+                        if (isValidOffset(accessCase.m_offset))
+                            currStructure->startWatchingPropertyForReplacements(vm, accessCase.offset());
+
+                        auto code = vm.getCTIStub(CommonJITThunkID::GetByIdProxyObjectLoadHandler).retagged<JITStubRoutinePtrTag>();
+                        auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
+                        connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
+                        return finishPreCompiledCodeGeneration(WTFMove(stub));
+                    }
+                    break;
+                }
                 case AccessCase::IntrinsicGetter:
                 case AccessCase::ModuleNamespaceLoad:
                     break;
@@ -5883,6 +5981,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandlerCodeGenerator(VM&) { ret
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomAccessorHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandlerCodeGenerator(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandlerCodeGenerator(VM&) { return { }; }
