@@ -812,7 +812,7 @@ void RenderBundleEncoder::endCurrentICB()
 
 bool RenderBundleEncoder::validToEncodeCommand() const
 {
-    return !m_finished || m_renderPassEncoder;
+    return !m_finished || (m_renderPassEncoder && m_renderPassEncoder->renderCommandEncoder());
 }
 
 Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
