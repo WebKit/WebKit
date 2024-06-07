@@ -36,6 +36,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "DNS.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -408,7 +409,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
 
             urls.removeAllMatching([&](auto& urlString) {
                 URL url { URL { }, urlString };
-                if (url.path().endsWithIgnoringASCIICase(".local"_s) || !portAllowed(url)) {
+                if (url.path().endsWithIgnoringASCIICase(".local"_s) || !portAllowed(url) || isIPAddressDisallowed(url)) {
                     queueTaskToDispatchEvent(*this, TaskSource::MediaElement, RTCPeerConnectionIceErrorEvent::create(Event::CanBubble::No, Event::IsCancelable::No, { }, { }, WTFMove(urlString), 701, "URL is not allowed"_s));
                     return true;
                 }

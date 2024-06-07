@@ -34,6 +34,7 @@
 #include "SubframeLoader.h"
 
 #include "ContentSecurityPolicy.h"
+#include "DNS.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DocumentInlines.h"
@@ -138,7 +139,7 @@ bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url)
             return false;
         }
 
-        if (!portAllowed(url)) {
+        if (!portAllowed(url) || isIPAddressDisallowed(url)) {
             FrameLoader::reportBlockedLoadFailed(protectedFrame(), url);
             return false;
         }
@@ -287,7 +288,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
         return nullptr;
     }
 
-    if (!portAllowed(url)) {
+    if (!portAllowed(url) || isIPAddressDisallowed(url)) {
         FrameLoader::reportBlockedLoadFailed(frame, url);
         return nullptr;
     }

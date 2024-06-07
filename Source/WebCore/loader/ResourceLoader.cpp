@@ -33,6 +33,7 @@
 #include "ApplicationCacheHost.h"
 #include "AuthenticationChallenge.h"
 #include "ContentRuleListResults.h"
+#include "DNS.h"
 #include "DataURLDecoder.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
@@ -161,6 +162,13 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
 
     if (!portAllowed(clientRequest.url())) {
         RESOURCELOADER_RELEASE_LOG("init: Cancelling load to a blocked port.");
+        FrameLoader::reportBlockedLoadFailed(*protectedFrame(), clientRequest.url());
+        releaseResources();
+        return completionHandler(false);
+    }
+
+    if (isIPAddressDisallowed(clientRequest.url())) {
+        RESOURCELOADER_RELEASE_LOG("init: Cancelling load to disallowed IP address.");
         FrameLoader::reportBlockedLoadFailed(*protectedFrame(), clientRequest.url());
         releaseResources();
         return completionHandler(false);

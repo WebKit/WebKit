@@ -41,6 +41,7 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginOpenerPolicy.h"
 #include "CustomHeaderFields.h"
+#include "DNS.h"
 #include "DocumentInlines.h"
 #include "DocumentParser.h"
 #include "DocumentWriter.h"
@@ -696,6 +697,13 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         }
         if (!portAllowed(newRequest.url())) {
             DOCUMENTLOADER_RELEASE_LOG("willSendRequest: canceling - redirecting to a URL with a blocked port");
+            if (m_frame)
+                FrameLoader::reportBlockedLoadFailed(*m_frame, newRequest.url());
+            cancelMainResourceLoad(frameLoader()->blockedError(newRequest));
+            return completionHandler(WTFMove(newRequest));
+        }
+        if (isIPAddressDisallowed(newRequest.url())) {
+            DOCUMENTLOADER_RELEASE_LOG("willSendRequest: canceling - redirecting to a URL with a disallowed IP address");
             if (m_frame)
                 FrameLoader::reportBlockedLoadFailed(*m_frame, newRequest.url());
             cancelMainResourceLoad(frameLoader()->blockedError(newRequest));

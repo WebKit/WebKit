@@ -93,7 +93,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
         return;
     }
 
-    if (!portAllowed(requestWithCredentials.url())) {
+    if (!portAllowed(requestWithCredentials.url()) || isIPAddressDisallowed(requestWithCredentials.url())) {
         scheduleFailure(FailureType::Blocked);
         return;
     }

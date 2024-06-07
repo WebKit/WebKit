@@ -47,6 +47,7 @@
 #include "CookieJar.h"
 #include "CrossOriginAccessControl.h"
 #include "CustomHeaderFields.h"
+#include "DNS.h"
 #include "DateComponents.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
@@ -1056,6 +1057,12 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         if (forPreload == ForPreload::No)
             FrameLoader::reportBlockedLoadFailed(frame, url);
         CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("CachedResourceLoader::requestResource URL has a blocked port", frame.get());
+        return makeUnexpected(frame->checkedLoader()->blockedError(request.resourceRequest()));
+    }
+
+    if (isIPAddressDisallowed(url)) {
+        FrameLoader::reportBlockedLoadFailed(frame, url);
+        CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("CachedResourceLoader::requestResource URL has a disallowd address", frame.get());
         return makeUnexpected(frame->checkedLoader()->blockedError(request.resourceRequest()));
     }
 

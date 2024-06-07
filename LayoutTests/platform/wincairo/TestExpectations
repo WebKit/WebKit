@@ -910,6 +910,12 @@ http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ] # Timeo
 # Timeout on local PC
 http/tests/websocket/tests/hybi/frame-lengths.html [ Pass Timeout ]
 
+# Connections need additional validation
+http/tests/security/block-iframe-to-all-zero-address.html [ Failure ]
+http/tests/security/block-popup-to-all-zero-address.html [ Failure ]
+http/tests/security/redirect-BLOCKED-to-all-zero-address.html [ Failure ]
+http/tests/websocket/connection-to-all-zero-address-blocked.html [ Failure ]
+
 # Failure on Buildbot
 http/tests/websocket/tests/hybi/inspector/binary.html [ Pass Failure ]
 

@@ -64,6 +64,14 @@ void stopResolveDNS(uint64_t identifier)
     WebCore::DNSResolveQueue::singleton().stopResolve(identifier);
 }
 
+// FIXME: Temporary fix until we have rdar://63797758
+bool isIPAddressDisallowed(const URL& url)
+{
+    if (auto address = IPAddress::fromString(url.host().toStringWithoutCopying()))
+        return address->containsOnlyZeros();
+    return false;
+}
+
 bool IPAddress::containsOnlyZeros() const
 {
     return std::visit(WTF::makeVisitor([] (const WTF::HashTableEmptyValueType&) {

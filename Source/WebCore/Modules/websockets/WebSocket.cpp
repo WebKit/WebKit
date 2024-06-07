@@ -35,6 +35,7 @@
 #include "Blob.h"
 #include "CloseEvent.h"
 #include "ContentSecurityPolicy.h"
+#include "DNS.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -257,9 +258,11 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
 
     contentSecurityPolicy->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    if (!portAllowed(m_url)) {
+    if (!portAllowed(m_url) || isIPAddressDisallowed(m_url)) {
         String message;
-        if (m_url.port())
+        if (isIPAddressDisallowed(m_url))
+            message = makeString("WebSocket address "_s, m_url.host(), " blocked"_s);
+        else if (m_url.port())
             message = makeString("WebSocket port "_s, m_url.port().value(), " blocked"_s);
         else
             message = "WebSocket without port blocked"_s;

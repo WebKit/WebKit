@@ -110,6 +110,7 @@ using DNSCompletionHandler = CompletionHandler<void(DNSAddressesOrError&&)>;
 WEBCORE_EXPORT void prefetchDNS(const String& hostname);
 WEBCORE_EXPORT void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandler&&);
 WEBCORE_EXPORT void stopResolveDNS(uint64_t identifier);
+WEBCORE_EXPORT bool isIPAddressDisallowed(const URL&);
 
 } // namespace WebCore
 

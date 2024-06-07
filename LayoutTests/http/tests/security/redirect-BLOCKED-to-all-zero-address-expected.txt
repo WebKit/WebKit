@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Not allowed to use restricted network host "0.0.0.0": http://0.0.0.0:8000/security/resources/file-redirect-target.html
+
+This attempts to open a redirect link to the all-zeroes address, which should be blocked.

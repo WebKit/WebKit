@@ -51,6 +51,7 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginEmbedderPolicy.h"
+#include "DNS.h"
 #include "DatabaseManager.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
@@ -1384,6 +1385,12 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
         reportBlockedLoadFailed(frame, url);
         return;
     }
+
+    if (isIPAddressDisallowed(url)) {
+        FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadFrameRequest: canceling - IP address is not allowed");
+        reportBlockedLoadFailed(frame, url);
+        return;
+    }
     
     URL argsReferrer;
     String argsReferrerString = request.resourceRequest().httpReferrer();
@@ -1841,7 +1848,8 @@ void FrameLoader::reportLocalLoadFailed(LocalFrame* frame, const String& url)
 void FrameLoader::reportBlockedLoadFailed(LocalFrame& frame, const URL& url)
 {
     ASSERT(!url.isEmpty());
-    auto message = makeString("Not allowed to use restricted network port "_s, url.port().value(), ": "_s, url.stringCenterEllipsizedToLength());
+    auto restrictedHostPort = isIPAddressDisallowed(url) ? makeString("host \""_s, url.host(), "\""_s) : makeString("port "_s, url.port().value());
+    auto message = makeString("Not allowed to use restricted network "_s, restrictedHostPort, ": "_s, url.stringCenterEllipsizedToLength());
     frame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
 }
 

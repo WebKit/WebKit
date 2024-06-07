@@ -27,6 +27,7 @@
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
 
+#include "DNS.h"
 #include "Logging.h"
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
@@ -85,7 +86,7 @@ ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest
         return;
     }
 
-    if (!portAllowed(request.url())) {
+    if (!portAllowed(request.url()) || isIPAddressDisallowed(request.url())) {
         scheduleFailure(BlockedFailure);
         return;
     }
