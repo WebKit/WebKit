@@ -9,7 +9,6 @@
 #   example usage:
 #       ./scripts/apply_clang_format_on_all_sources.py src
 
-from __future__ import print_function
 
 import os
 import sys

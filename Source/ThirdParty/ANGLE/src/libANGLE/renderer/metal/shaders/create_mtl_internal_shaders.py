@@ -9,7 +9,6 @@
 
 import os
 import sys
-import json
 from datetime import datetime
 
 sys.path.append('../..')
@@ -29,11 +28,11 @@ template_header_boilerplate = """// GENERATED FILE - DO NOT EDIT.
 # filename: the file whose content will be converted to C++ byte array.
 # dest_src_file: destination header file that will contain the byte array.
 def append_file_as_byte_array_string(variable_name, filename, dest_src_file):
-    string = '// Generated from {0}:\n'.format(filename)
-    string += 'constexpr uint8_t {0}[]={{\n'.format(variable_name)
+    string = f'// Generated from {filename}:\n'
+    string += f'constexpr uint8_t {variable_name}[]={{\n'
     bytes_ = open(filename, "rb").read()
     for byte in bytes_:
-        string += '0x{:02x}'.format(byte) + ", "
+        string += f'0x{byte:02x}' + ", "
     string += "\n};\n"
     with open(dest_src_file, "a") as out_file:
         out_file.write(string)
@@ -49,16 +48,16 @@ def main():
 
     # -------- Compile shaders -----------
     # boiler plate code
-    os.system("echo \"{0}\" > \"{1}\"".format(boilerplate_code, output_file))
+    os.system(f"echo \"{boilerplate_code}\" > \"{output_file}\"")
     os.system(
-        'echo "// Compiled binary for Metal default shaders.\n\n" >>  \"{0}\"'.format(output_file))
-    os.system('echo "#include <TargetConditionals.h>\n\n" >>  \"{0}\"'.format(output_file))
+        f'echo "// Compiled binary for Metal default shaders.\n\n" >>  \"{output_file}\"')
+    os.system(f'echo "#include <TargetConditionals.h>\n\n" >>  \"{output_file}\"')
 
-    os.system('echo "// clang-format off" >> \"{0}\"'.format(output_file))
+    os.system(f'echo "// clang-format off" >> \"{output_file}\"')
 
     append_file_as_byte_array_string('gDefaultMetallib', input_file, output_file)
 
-    os.system('echo "// clang-format on" >> \"{0}\"'.format(output_file))
+    os.system(f'echo "// clang-format on" >> \"{output_file}\"')
 
 
 if __name__ == '__main__':

@@ -96,7 +96,7 @@ class BuiltinsWrapperHeaderGenerator(BuiltinsGenerator):
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), member_init))
         lines.append("    {")
         for object in self.model().objects:
-            if not 'internal' in object.annotations:
+            if 'internal' not in object.annotations:
                 continue
             internal_export_names = "        %s.exportNames();" % self.member_name(object)
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), internal_export_names))
@@ -106,7 +106,7 @@ class BuiltinsWrapperHeaderGenerator(BuiltinsGenerator):
     def generate_accessors(self):
         lines = []
         for object in self.model().objects:
-            accessor = "    %s& %s() { return %s; }" % (self.member_type(object), self.accessor_name(object), self.member_name(object))
+            accessor = "    {}& {}() {{ return {}; }}".format(self.member_type(object), self.accessor_name(object), self.member_name(object))
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), accessor))
         lines.append("")
         return '\n'.join(lines)
@@ -114,6 +114,6 @@ class BuiltinsWrapperHeaderGenerator(BuiltinsGenerator):
     def generate_members(self):
         lines = ["    JSC::VM& m_vm;"]
         for object in self.model().objects:
-            member = "    %s %s;" % (self.member_type(object), self.member_name(object))
+            member = "    {} {};".format(self.member_type(object), self.member_name(object))
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), member))
         return '\n'.join(lines)

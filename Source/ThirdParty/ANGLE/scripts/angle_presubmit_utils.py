@@ -38,7 +38,7 @@ class InputAPI_mock():
         return self.source_files
 
 
-class _PresubmitResult(object):
+class _PresubmitResult:
     """Base class for result objects."""
     fatal = False
     should_prompt = False

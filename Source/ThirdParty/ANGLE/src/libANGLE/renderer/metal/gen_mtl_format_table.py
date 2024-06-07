@@ -14,11 +14,7 @@
 # for MTLPixelFormatR8Unorm_sRGB, MTLPixelFormatR8G8Unorm_sRGB,
 # and packed 16 bit formats when building for a Simulator target.
 
-import json
-import math
 import os
-import pprint
-import re
 import sys
 
 sys.path.append('..')
@@ -240,7 +236,7 @@ def get_vertex_copy_function_and_default_alpha(src_format, dst_format):
                                        ' not to ' + dst_format)
         is_signed = 'true' if 'SINT' in src_format or 'SNORM' in src_format or 'SSCALED' in src_format else 'false'
         is_normal = 'true' if 'NORM' in src_format else 'false'
-        return 'CopyXYZ10W2ToXYZWFloatVertexData<%s, %s, true, false>' % (is_signed,
+        return 'CopyXYZ10W2ToXYZWFloatVertexData<{}, {}, true, false>'.format(is_signed,
                                                                           is_normal), 0, "false"
 
     return angle_format_utils.get_vertex_copy_function(src_format, dst_format), 0, "false"
@@ -657,7 +653,7 @@ def gen_mtl_format_caps_init_string(map_image):
             multisample = cap_to_param(caps, 'multisample')
             resolve = cap_to_param(caps, 'resolve')
 
-            init_str += "    setFormatCaps({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7});\n\n".format(
+            init_str += "    setFormatCaps({}, {}, {}, {}, {}, {}, {}, {});\n\n".format(
                 mtl_format, filterable, writable, blendable, multisample, resolve, colorRenderable,
                 depthRenderable)
 
@@ -718,7 +714,7 @@ def main():
         mtl_pixel_format_switch=image_mtl_to_angle_switch_data,
         angle_vertex_format_switch=vertex_switch_data,
         metal_format_caps=caps_init_str)
-    with open('mtl_format_table_autogen.mm', 'wt') as out_file:
+    with open('mtl_format_table_autogen.mm', 'w') as out_file:
         out_file.write(output_cpp)
         out_file.close()
 

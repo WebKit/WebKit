@@ -34,7 +34,7 @@ try:
     from .models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 except ImportError:
     from generator_templates import GeneratorTemplates as Templates
-    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
+    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType
 
 log = logging.getLogger('global')
 
@@ -45,8 +45,8 @@ def ucfirst(str):
     return str[:1].upper() + str[1:]
 
 
-_ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS = set(['2D', 'API', 'CSS', 'DOM', 'HTML', 'JIT', 'SRGB', 'XHR', 'XML', 'IOS', 'MacOS', 'JavaScript', 'ServiceWorker'])
-_ALWAYS_SPECIALCASED_ENUM_VALUE_LOOKUP_TABLE = dict([(s.upper(), s) for s in _ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS])
+_ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS = {'2D', 'API', 'CSS', 'DOM', 'HTML', 'JIT', 'SRGB', 'XHR', 'XML', 'IOS', 'MacOS', 'JavaScript', 'ServiceWorker'}
+_ALWAYS_SPECIALCASED_ENUM_VALUE_LOOKUP_TABLE = {s.upper(): s for s in _ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS}
 
 _ENUM_IDENTIFIER_RENAME_MAP = {
     # Recording.Type
@@ -78,7 +78,7 @@ _ENUM_IDENTIFIER_RENAME_MAP = {
 # Calculating necessary assertions is annoying, and adds a lot of complexity to the generator.
 
 # FIXME: This should be converted into a property in JSON.
-_TYPES_NEEDING_RUNTIME_CASTS = set([
+_TYPES_NEEDING_RUNTIME_CASTS = {
     "Runtime.ObjectPreview",
     "Runtime.RemoteObject",
     "Runtime.PropertyDescriptor",
@@ -90,7 +90,7 @@ _TYPES_NEEDING_RUNTIME_CASTS = set([
     "Timeline.TimelineEvent",
     # For testing purposes only.
     "Test.TypeNeedingCast"
-])
+}
 
 # FIXME: This should be converted into a property in JSON.
 _TYPES_WITH_OPEN_FIELDS = {
@@ -158,7 +158,7 @@ class Generator:
             if framework_name == "WTF" or framework_name == "std":
                 includes.add("#include <%s>" % header_path)
             elif self.model().framework.name != framework_name:
-                includes.add("#include <%s/%s>" % (framework_name, os.path.basename(header_path)))
+                includes.add("#include <{}/{}>".format(framework_name, os.path.basename(header_path)))
             else:
                 includes.add("#include \"%s\"" % os.path.basename(header_path))
 
@@ -326,4 +326,4 @@ class Generator:
         if file_framework is target_framework:
             return '"%s"' % filename
         else:
-            return '<%s/%s>' % (file_framework.name, filename)
+            return '<{}/{}>'.format(file_framework.name, filename)

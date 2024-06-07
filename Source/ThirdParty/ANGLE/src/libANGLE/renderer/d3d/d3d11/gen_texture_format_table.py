@@ -8,9 +8,7 @@
 #  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 #
 
-import json
 import math
-import pprint
 import os
 import sys
 
@@ -318,7 +316,7 @@ def main():
         script_name=os.path.basename(sys.argv[0]),
         angle_format_info_cases=angle_format_cases,
         data_source_name=data_source_name)
-    with open('texture_format_table_autogen.cpp', 'wt') as out_file:
+    with open('texture_format_table_autogen.cpp', 'w') as out_file:
         out_file.write(output_cpp)
         out_file.close()
     return 0

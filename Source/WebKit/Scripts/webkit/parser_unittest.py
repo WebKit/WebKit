@@ -26,14 +26,10 @@
 # cd Source/WebKit/Scripts && python3 -m unittest discover -p '*_unittest.py'
 
 import os
-import re
 import sys
 import unittest
 
-if sys.version_info > (3, 0):
-    from io import StringIO
-else:
-    from StringIO import StringIO
+from io import StringIO
 
 module_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -306,7 +302,7 @@ _parsing_test_cases = [
 
 
 def parse_receiver(receiver_name):
-    with open(os.path.join(tests_directory, '{}.messages.in'.format(receiver_name))) as in_file:
+    with open(os.path.join(tests_directory, f'{receiver_name}.messages.in')) as in_file:
         return parser.parse(in_file)
     assert(False)
 
@@ -349,10 +345,10 @@ class ParsingTest(unittest.TestCase):
 class UnsupportedPrecompilerDirectiveTest(unittest.TestCase):
     def assertRaisesRegex(self, *args, **kwargs):
         try:
-            return super(UnsupportedPrecompilerDirectiveTest, self).assertRaisesRegex(*args, **kwargs)
+            return super().assertRaisesRegex(*args, **kwargs)
         except AttributeError:
             # Python 2
-            return self.assertRaisesRegexp(*args, **kwargs)
+            return self.assertRaisesRegex(*args, **kwargs)
 
     def test_error_at_else(self):
         with self.assertRaisesRegex(Exception, r"ERROR: '#else.*' is not supported in the \*\.in files"):

@@ -15,7 +15,7 @@ def GenerateHashOfAffectedFiles(angle_code_files):
     hash_md5 = hashlib.md5()
     for file in angle_code_files:
         hash_md5.update(file.encode(encoding='utf-8'))
-        with open(file, 'r', encoding='utf-8') as f:
+        with open(file, encoding='utf-8') as f:
             for chunk in iter(lambda: f.read(4096), ""):
                 hash_md5.update(chunk.encode())
     return hash_md5.hexdigest(), hash_md5.digest_size
@@ -41,7 +41,7 @@ args = parser.parse_args()
 output_file = args.output_file
 response_file_name = args.response_file_name
 
-with open(response_file_name, "r") as input_files_for_hash_generation:
+with open(response_file_name) as input_files_for_hash_generation:
     angle_code_files = shlex.split(input_files_for_hash_generation)
 digest, digest_size = GenerateHashOfAffectedFiles(angle_code_files)
 hfile = open(output_file, 'w')

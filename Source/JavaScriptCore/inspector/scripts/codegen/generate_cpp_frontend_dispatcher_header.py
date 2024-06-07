@@ -26,8 +26,6 @@
 
 
 import logging
-import re
-import string
 from string import Template
 
 try:
@@ -97,7 +95,7 @@ class CppFrontendDispatcherHeaderGenerator(CppGenerator):
         if exportMacro is not None:
             classComponents.append(exportMacro)
 
-        used_enum_names = set([])
+        used_enum_names = set()
 
         events = self.events_for_domain(domain)
         event_declarations = []
@@ -120,11 +118,11 @@ class CppFrontendDispatcherHeaderGenerator(CppGenerator):
             if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
 
-            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_event_parameter(parameter.type, parameter.is_optional), parameter_name))
+            formal_parameters.append('{} {}'.format(CppGenerator.cpp_type_for_event_parameter(parameter.type, parameter.is_optional), parameter_name))
 
             if isinstance(parameter.type, EnumType) and parameter.type.is_anonymous and parameter.parameter_name not in used_enum_names:
                 lines.append(self._generate_anonymous_enum_for_parameter(parameter, event))
                 used_enum_names.add(parameter.parameter_name)
 
-        lines.append("    void %s(%s);" % (event.event_name, ", ".join(formal_parameters)))
+        lines.append("    void {}({});".format(event.event_name, ", ".join(formal_parameters)))
         return self.wrap_with_guard_for_condition(event.condition, "\n".join(lines))

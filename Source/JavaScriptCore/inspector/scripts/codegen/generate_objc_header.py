@@ -26,7 +26,6 @@
 
 
 import logging
-import string
 from string import Template
 
 try:
@@ -57,17 +56,17 @@ class ObjCHeaderGenerator(ObjCGenerator):
         return '%s.h' % self.protocol_name()
 
     def generate_output(self):
-        headerPreludeHeaders = set([
+        headerPreludeHeaders = {
             '<WebInspector/%sJSONObject.h>' % ObjCGenerator.OBJC_STATIC_PREFIX,
-        ])
+        }
 
         headerPrelude_args = {
             'includes': '\n'.join(['#import ' + header for header in sorted(headerPreludeHeaders)]),
         }
 
-        headerPostludeHeaders = set([
+        headerPostludeHeaders = {
             '<WebInspector/%sBuildCompatibilityObjects.h>' % ObjCGenerator.OBJC_STATIC_PREFIX,
-        ])
+        }
 
         headerPostlude_args = {
             'includes': '\n'.join(['#import ' + header for header in sorted(headerPostludeHeaders)]),
@@ -183,7 +182,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
         lines = []
         lines.append('typedef NS_ENUM(NSInteger, %s) {' % enum_name)
         for enum_value in enum_values:
-            lines.append('    %s%s,' % (enum_name, Generator.stylized_name_for_enum_value(enum_value)))
+            lines.append('    {}{},'.format(enum_name, Generator.stylized_name_for_enum_value(enum_value)))
         lines.append('};')
         return '\n'.join(lines)
 
@@ -191,7 +190,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
         lines = []
         objc_name = self.objc_name_for_type(declaration.type)
         lines.append('__attribute__((visibility ("default")))')
-        lines.append('@interface %s : %sJSONObject' % (objc_name, ObjCGenerator.OBJC_STATIC_PREFIX))
+        lines.append('@interface {} : {}JSONObject'.format(objc_name, ObjCGenerator.OBJC_STATIC_PREFIX))
 
         # The initializers that take a payload or protocol object are only needed by the frontend.
         if self.get_generator_setting('generate_frontend', False):
@@ -214,20 +213,20 @@ class ObjCHeaderGenerator(ObjCGenerator):
         for member in required_members:
             objc_type = self.objc_type_for_member(declaration, member)
             var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
-            pairs.append('%s:(%s)%s' % (var_name, objc_type, var_name))
+            pairs.append('{}:({}){}'.format(var_name, objc_type, var_name))
         pairs[0] = ucfirst(pairs[0])
         return '- (instancetype)initWith%s;' % ' '.join(pairs)
 
     def _generate_member_property(self, declaration, member):
         accessor_type = self.objc_accessor_type_for_member(member)
         objc_type = self.objc_type_for_member(declaration, member)
-        return '@property (nonatomic, %s) %s;' % (accessor_type, join_type_and_name(objc_type, ObjCGenerator.identifier_to_objc_identifier(member.member_name)))
+        return '@property (nonatomic, {}) {};'.format(accessor_type, join_type_and_name(objc_type, ObjCGenerator.identifier_to_objc_identifier(member.member_name)))
 
     def _generate_command_protocols(self, domain):
         lines = []
 
         if self.commands_for_domain(domain):
-            objc_name = '%s%sDomainHandler' % (self.objc_prefix(), domain.domain_name)
+            objc_name = '{}{}DomainHandler'.format(self.objc_prefix(), domain.domain_name)
             lines.append('@protocol %s <NSObject>' % objc_name)
             lines.append('@optional')
             for command in self.commands_for_domain(domain):
@@ -244,8 +243,8 @@ class ObjCHeaderGenerator(ObjCGenerator):
         pairs.append('successCallback:(%s)successCallback' % self._callback_block_for_command(domain, command))
         for parameter in command.call_parameters:
             param_name = parameter.parameter_name
-            pairs.append('%s:(%s)%s' % (param_name, self.objc_type_for_param(domain, command.command_name, parameter), param_name))
-        return self.wrap_with_guard_for_condition(command.condition, '- (void)%sWith%s;' % (command.command_name, ' '.join(pairs)))
+            pairs.append('{}:({}){}'.format(param_name, self.objc_type_for_param(domain, command.command_name, parameter), param_name))
+        return self.wrap_with_guard_for_condition(command.condition, '- (void){}With{};'.format(command.command_name, ' '.join(pairs)))
 
     def _callback_block_for_command(self, domain, command):
         pairs = []
@@ -261,7 +260,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
 
         events = self.events_for_domain(domain)
         if len(events):
-            objc_name = '%s%sDomainEventDispatcher' % (self.objc_prefix(), domain.domain_name)
+            objc_name = '{}{}DomainEventDispatcher'.format(self.objc_prefix(), domain.domain_name)
             lines.append('__attribute__((visibility ("default")))')
             lines.append('@interface %s : NSObject' % objc_name)
             for event in events:
@@ -279,6 +278,6 @@ class ObjCHeaderGenerator(ObjCGenerator):
         pairs = []
         for parameter in event.event_parameters:
             param_name = parameter.parameter_name
-            pairs.append('%s:(%s)%s' % (param_name, self.objc_type_for_param(domain, event.event_name, parameter), param_name))
+            pairs.append('{}:({}){}'.format(param_name, self.objc_type_for_param(domain, event.event_name, parameter), param_name))
         pairs[0] = ucfirst(pairs[0])
-        return self.wrap_with_guard_for_condition(event.condition, '- (void)%sWith%s;' % (event.event_name, ' '.join(pairs)))
+        return self.wrap_with_guard_for_condition(event.condition, '- (void){}With{};'.format(event.event_name, ' '.join(pairs)))

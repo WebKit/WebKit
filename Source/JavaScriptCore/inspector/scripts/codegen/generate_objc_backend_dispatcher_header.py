@@ -26,8 +26,6 @@
 
 
 import logging
-import string
-import re
 from string import Template
 
 try:
@@ -39,7 +37,7 @@ try:
 except ImportError:
     from cpp_generator import CppGenerator
     from generator import Generator
-    from models import EnumType, AliasedType, Frameworks
+    from models import EnumType, AliasedType
     from objc_generator import ObjCGenerator
     from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
@@ -81,7 +79,7 @@ class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
         lines = []
         for domain in self.domains_to_generate():
             if self.commands_for_domain(domain):
-                lines.append(self.wrap_with_guard_for_condition(domain.condition, '@protocol %s%sDomainHandler;' % (self.objc_prefix(), domain.domain_name)))
+                lines.append(self.wrap_with_guard_for_condition(domain.condition, '@protocol {}{}DomainHandler;'.format(self.objc_prefix(), domain.domain_name)))
         return '\n'.join(lines)
 
     def _generate_objc_handler_declarations_for_domain(self, domain):
@@ -115,7 +113,7 @@ class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
             if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
 
-            parameters.append('%s %s' % (CppGenerator.cpp_type_for_command_parameter(parameter_type, parameter.is_optional), parameter_name))
+            parameters.append('{} {}'.format(CppGenerator.cpp_type_for_command_parameter(parameter_type, parameter.is_optional), parameter_name))
 
         command_args = {
             'commandName': command.command_name,

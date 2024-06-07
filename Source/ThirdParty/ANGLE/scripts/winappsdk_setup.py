@@ -23,7 +23,7 @@ package_id = "Microsoft.WindowsAppSDK"
 uap_version = "10.0.18362"
 
 default_version = "1.3.230724000"
-default_output = "third_party\WindowsAppSDK"
+default_output = r"third_party\WindowsAppSDK"
 
 
 def download_and_extract_nuget_package(force, version, output_path):

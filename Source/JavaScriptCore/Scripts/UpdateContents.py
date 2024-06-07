@@ -37,7 +37,7 @@ filename = sys.argv[2]
 t = False
 
 if os.path.isfile(filename):
-    f = open(filename, 'r')
+    f = open(filename)
     comparator = f.read()
     f.close()
     t = True

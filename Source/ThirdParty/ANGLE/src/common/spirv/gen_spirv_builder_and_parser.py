@@ -190,13 +190,13 @@ class Writer:
         cherry_picked_extensions = {'SPV_EXT_fragment_shader_interlock'}
 
         # If an instruction has a parameter of these types, the instruction is ignored
-        self.unsupported_kinds = set(['LiteralSpecConstantOpInteger'])
+        self.unsupported_kinds = {'LiteralSpecConstantOpInteger'}
         # If an instruction requires a capability of these kinds, the instruction is ignored
-        self.unsupported_capabilities = set(['Kernel', 'Addresses'])
+        self.unsupported_capabilities = {'Kernel', 'Addresses'}
         # If an instruction requires an extension other than these, the instruction is ignored
-        self.supported_extensions = set([]) | cherry_picked_extensions
+        self.supported_extensions = set() | cherry_picked_extensions
         # List of bit masks.  These have 'Mask' added to their typename in SPIR-V headers.
-        self.bit_mask_types = set([])
+        self.bit_mask_types = set()
 
         # List of generated instructions builder/parser functions so far.
         self.instruction_builder_prototypes = [BUILDER_HELPER_FUNCTION_PROTOTYPE]

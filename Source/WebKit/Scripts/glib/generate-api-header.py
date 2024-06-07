@@ -97,7 +97,7 @@ def main(args):
         port = "wpe2"
 
     input_data = ""
-    with open(input, "r", encoding="utf-8") as fd:
+    with open(input, encoding="utf-8") as fd:
         for line in fd.readlines():
             if line[0] == "@":
                 if line == "@API_SINGLE_HEADER_CHECK@\n":

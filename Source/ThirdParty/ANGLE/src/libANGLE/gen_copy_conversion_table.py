@@ -101,7 +101,7 @@ def main():
     for texture_format, framebuffer_formats in sorted(format_map.items()):
         texture_format_cases += parse_texture_format_case(texture_format, framebuffer_formats)
 
-    with open(out_file_name, 'wt') as out_file:
+    with open(out_file_name, 'w') as out_file:
         output_cpp = template_cpp.format(
             script_name=os.path.basename(sys.argv[0]),
             data_source_name=data_source_name,

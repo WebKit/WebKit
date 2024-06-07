@@ -39,7 +39,7 @@ def get_json_description(gn_out, target_name):
     try:
         json_out = json.loads(text_desc)
     except ValueError:
-        raise ValueError("Unable to decode JSON\ncmd: %s\noutput:\n%s" % (subprocess.list2cmdline(
+        raise ValueError("Unable to decode JSON\ncmd: {}\noutput:\n{}".format(subprocess.list2cmdline(
             ['gn', 'desc', '--format=json', gn_out, target_name]), text_desc))
 
     return json_out
@@ -59,12 +59,12 @@ def load_json_deps(desc, gn_out, target_name, all_desc, indent="  "):
     text_descriptions = []
     for dep in target.get('deps', []):
         if dep not in all_desc:
-            logging.debug("dep: %s%s" % (indent, dep))
+            logging.debug("dep: {}{}".format(indent, dep))
             new_desc = get_json_description(gn_out, dep)
             all_desc[dep] = new_desc[dep]
             load_json_deps(new_desc, gn_out, dep, all_desc, indent + "  ")
         else:
-            logging.debug("dup: %s%s" % (indent, dep))
+            logging.debug("dup: {}{}".format(indent, dep))
 
 
 def create_build_description(gn_out, targets):

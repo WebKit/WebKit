@@ -52,7 +52,7 @@ for filename in os.listdir('.'):
         continue
     if not (filename.endswith('.h') or filename.endswith('.inc')):
         continue
-    lines = open(filename, 'r').readlines()
+    lines = open(filename).readlines()
     newLines = [replace(line) for line in lines]
     if lines != newLines:
         open(filename, 'w').writelines(newLines)

@@ -14,7 +14,6 @@
 
 import os
 import platform
-import shutil
 import sys
 
 sys.path.append('tools/')

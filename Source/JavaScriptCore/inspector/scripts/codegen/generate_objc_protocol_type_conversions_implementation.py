@@ -25,7 +25,6 @@
 
 
 import logging
-import string
 from string import Template
 
 try:
@@ -84,7 +83,7 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
         lines = []
         for domain in domains:
             domain_lines = []
-            domain_lines.append('@interface %sTypeConversions (%sDomain)' % (self.protocol_name(), domain.domain_name))
+            domain_lines.append('@interface {}TypeConversions ({}Domain)'.format(self.protocol_name(), domain.domain_name))
             add_newline(domain_lines)
 
             for declaration in self.type_declarations_for_domain(domain):
@@ -101,7 +100,7 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
             resolved_type = resolved_type.aliased_type
         if isinstance(resolved_type, (ObjectType, ArrayType, PrimitiveType)):
             objc_type = self.objc_class_for_type(resolved_type)
-            return self.wrap_with_guard_for_condition(declaration.condition, '+ (void)_parse%s:(%s **)outValue fromPayload:(id)payload;' % (declaration.type.raw_name(), objc_type))
+            return self.wrap_with_guard_for_condition(declaration.condition, '+ (void)_parse{}:({} **)outValue fromPayload:(id)payload;'.format(declaration.type.raw_name(), objc_type))
         if isinstance(resolved_type, EnumType):
             return self.wrap_with_guard_for_condition(declaration.condition, '+ (void)_parse%s:(NSNumber **)outValue fromPayload:(id)payload;' % declaration.type.raw_name())
 
@@ -109,7 +108,7 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
         lines = []
         for domain in domains:
             domain_lines = []
-            domain_lines.append('@implementation %sTypeConversions (%sDomain)' % (self.protocol_name(), domain.domain_name))
+            domain_lines.append('@implementation {}TypeConversions ({}Domain)'.format(self.protocol_name(), domain.domain_name))
             add_newline(domain_lines)
 
             for declaration in self.type_declarations_for_domain(domain):
@@ -128,14 +127,14 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
 
         objc_class = self.objc_class_for_type(resolved_type)
         if isinstance(resolved_type, (ObjectType, ArrayType, PrimitiveType)):
-            lines.append('+ (void)_parse%s:(%s **)outValue fromPayload:(id)payload' % (declaration.type.raw_name(), objc_class))
+            lines.append('+ (void)_parse{}:({} **)outValue fromPayload:(id)payload'.format(declaration.type.raw_name(), objc_class))
         if isinstance(resolved_type, EnumType):
             lines.append('+ (void)_parse%s:(NSNumber **)outValue fromPayload:(id)payload' % declaration.type.raw_name())
 
         lines.append('{')
         if isinstance(resolved_type, EnumType):
             lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);')
-            lines.append('    auto result = Inspector::fromProtocolString<%(type)s>((__bridge CFStringRef)payload);' % {'type': self.objc_name_for_type(resolved_type)})
+            lines.append('    auto result = Inspector::fromProtocolString<{type}>((__bridge CFStringRef)payload);'.format(type=self.objc_name_for_type(resolved_type)))
             lines.append('    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"%s");' % declaration.type.raw_name())
             lines.append('    *outValue = @(result.value());')
         elif isinstance(resolved_type, (ArrayType, PrimitiveType)):

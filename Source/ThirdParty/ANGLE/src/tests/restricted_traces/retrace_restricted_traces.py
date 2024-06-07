@@ -25,13 +25,11 @@ import time
 from gen_restricted_traces import read_json as read_json, write_json as write_json
 from pathlib import Path
 
-from gen_restricted_traces import read_json as read_json
 
 SCRIPT_DIR = str(pathlib.Path(__file__).resolve().parent)
 PY_UTILS = str(pathlib.Path(SCRIPT_DIR) / '..' / 'py_utils')
 if PY_UTILS not in sys.path:
     os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
-import android_helper
 import angle_test_util
 
 DEFAULT_TEST_SUITE = angle_test_util.ANGLE_TRACE_TEST_SUITE
@@ -69,7 +67,7 @@ def get_script_dir():
 
 def context_header(trace, trace_path):
     context_id = get_context(trace)
-    header = '%s_context%s.h' % (trace, context_id)
+    header = '{}_context{}.h'.format(trace, context_id)
     return os.path.join(trace_path, header)
 
 
@@ -121,7 +119,7 @@ def ensure_rmdir(directory):
 
 
 def copy_trace_folder(old_path, new_path):
-    logging.info('%s -> %s' % (old_path, new_path))
+    logging.info('{} -> {}'.format(old_path, new_path))
     ensure_rmdir(new_path)
     shutil.copytree(old_path, new_path)
 
@@ -187,7 +185,7 @@ def run_test_suite(args, trace_binary, trace, max_steps, additional_args, additi
     if env_string:
         env_string += ' '
 
-    logging.info('%s%s' % (env_string, ' '.join(run_args)))
+    logging.info('{}{}'.format(env_string, ' '.join(run_args)))
     p = subprocess.run(run_args, env=env, capture_output=True, check=True)
     if args.show_test_stdout:
         logging.info('Test stdout:\n%s' % p.stdout.decode())
@@ -237,7 +235,7 @@ def upgrade_single_trace(args, trace_binary, trace, out_path, no_overwrite, c_so
 
         run_test_suite(args, trace_binary, trace, max_steps, additional_args, additional_env)
 
-        json_file = "{}/{}.json".format(trace_path, trace)
+        json_file = f"{trace_path}/{trace}.json"
         if not os.path.exists(json_file):
             logging.error(
                 f'There was a problem tracing "{trace}", could not find json file: {json_file}')
@@ -250,7 +248,7 @@ def upgrade_single_trace(args, trace_binary, trace, out_path, no_overwrite, c_so
             write_json(json_file, new_data)
 
     except subprocess.CalledProcessError as e:
-        logging.exception('There was an exception running "%s":\n%s' % (trace, e.output.decode()))
+        logging.exception('There was an exception running "{}":\n{}'.format(trace, e.output.decode()))
         return False
 
     return True
@@ -282,7 +280,7 @@ def validate_single_trace(args, trace_binary, trace, additional_args, additional
     try:
         run_test_suite(args, trace_binary, trace, max_steps, additional_args, additional_env)
     except subprocess.CalledProcessError as e:
-        logging.error('There was a failure running "%s":\n%s' % (trace, e.output.decode()))
+        logging.error('There was a failure running "{}":\n{}'.format(trace, e.output.decode()))
         return False
     return True
 
@@ -405,7 +403,7 @@ def get_min_reqs(args, traces):
 
             try:
                 run_test_suite(args, trace_binary, trace, max_steps, additional_args, env)
-            except subprocess.CalledProcessError as error:
+            except subprocess.CalledProcessError:
                 return False
             return True
 
@@ -440,7 +438,7 @@ def get_min_reqs(args, traces):
                 save_trace_json(trace, json_data)
                 try:
                     run_test_suite(args, trace_binary, trace, max_steps, default_args, env)
-                except subprocess.CalledProcessError as error:
+                except subprocess.CalledProcessError:
                     continue
                 break
 

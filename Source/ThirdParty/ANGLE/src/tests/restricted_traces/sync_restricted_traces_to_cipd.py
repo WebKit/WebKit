@@ -16,7 +16,6 @@ import logging
 import json
 import os
 import platform
-import signal
 import subprocess
 import sys
 
@@ -50,7 +49,7 @@ def cipd_name_and_version(trace, trace_version):
     else:
         trace_prefix = CIPD_PREFIX
 
-    trace_name = '%s/%s' % (trace_prefix, trace)
+    trace_name = '{}/{}'.format(trace_prefix, trace)
 
     return trace_name, trace_version
 
@@ -80,12 +79,12 @@ def upload_trace(args, trace, trace_version):
 def check_trace_before_upload(trace):
     for root, dirs, files in os.walk(os.path.join(SCRIPT_DIR, trace)):
         if dirs:
-            logging.error('Sub-directories detected for trace %s: %s' % (trace, dirs))
+            logging.error('Sub-directories detected for trace {}: {}'.format(trace, dirs))
             sys.exit(1)
         trace_json = trace + '.json'
         with open(os.path.join(root, trace_json)) as f:
             jtrace = json.load(f)
-        additional_files = set([trace_json, trace + '.angledata.gz'])
+        additional_files = {trace_json, trace + '.angledata.gz'}
         extra_files = set(files) - set(jtrace['TraceFiles']) - additional_files
         if extra_files:
             logging.error('Unexpected files, not listed in %s.json [TraceFiles]:\n%s', trace,

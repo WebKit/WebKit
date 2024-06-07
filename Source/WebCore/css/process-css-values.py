@@ -207,22 +207,22 @@ class GenerationContext:
         to.write("%%\n")
 
     def _generate_name_string_tables(self, *, to):
-        to.write(f"constexpr ASCIILiteral valueList[] = {{\n")
-        to.write(f"    \"\"_s,\n")
+        to.write("constexpr ASCIILiteral valueList[] = {\n")
+        to.write("    \"\"_s,\n")
 
         for value in self.values:
             to.write(f"    \"{value.name}\"_s,\n")
 
-        to.write(f"    ASCIILiteral()\n")
-        to.write(f"}};\n")
-        to.write(f"constexpr ASCIILiteral valueListForSerialization[] = {{\n")
-        to.write(f"    \"\"_s,\n")
+        to.write("    ASCIILiteral()\n")
+        to.write("};\n")
+        to.write("constexpr ASCIILiteral valueListForSerialization[] = {\n")
+        to.write("    \"\"_s,\n")
 
         for value in self.values:
             to.write(f"    \"{value.name_lowercase}\"_s,\n")
 
-        to.write(f"    ASCIILiteral()\n")
-        to.write(f"}};\n")
+        to.write("    ASCIILiteral()\n")
+        to.write("};\n")
 
     def _generate_lookup_functions(self, *, to):
         to.write(textwrap.dedent("""
@@ -315,8 +315,8 @@ class GenerationContext:
             """))
 
     def _generate_css_value_keywords_h_property_constants(self, *, to):
-        to.write(f"enum CSSValueID : uint16_t {{\n")
-        to.write(f"    CSSValueInvalid = 0,\n")
+        to.write("enum CSSValueID : uint16_t {\n")
+        to.write("    CSSValueInvalid = 0,\n")
 
         count = GenerationContext.number_of_predefined_values
         max_length = 0
@@ -329,7 +329,7 @@ class GenerationContext:
 
         last = count - 1
 
-        to.write(f"}};\n\n")
+        to.write("};\n\n")
 
         to.write(f"constexpr uint16_t numCSSValueKeywords = {count};\n")
         to.write(f"constexpr uint16_t lastCSSValueKeyword = {last};\n")
@@ -424,7 +424,7 @@ def main():
 
     parsed_values = []
     for values_file_path in args.values:
-        with open(values_file_path, "r") as values_file:
+        with open(values_file_path) as values_file:
             parsed_values += values_for_values_file(parsing_context, values_file)
 
     if args.verbose:

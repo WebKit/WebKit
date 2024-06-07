@@ -56,7 +56,7 @@ import sys
 # SupportWKKeyedCoder - For webkit_secure_coding types, in addition to the preferred property list code path, support SupportWKKeyedCoder
 # Precondition - Used to fail early from a decoder, for example if a soft linked framework is not present to decode a member
 
-class Template(object):
+class Template:
     def __init__(self, template_type, namespace, name, enum_storage=None):
         self.type = template_type
         self.namespace = namespace
@@ -72,7 +72,7 @@ class Template(object):
         return self.namespace + '::' + self.name
 
 
-class SerializedType(object):
+class SerializedType:
     def __init__(self, struct_or_class, cf_type, namespace, name, parent_class_name, members, dictionary_members, condition, attributes, templates, other_metadata=None):
         self.struct_or_class = struct_or_class
         self.cf_type = cf_type
@@ -237,7 +237,7 @@ class SerializedType(object):
         return copied_type
 
 
-class SerializedEnum(object):
+class SerializedEnum:
     def __init__(self, namespace, name, underlying_type, valid_values, condition, attributes):
         self.namespace = namespace
         self.name = name
@@ -276,7 +276,7 @@ class SerializedEnum(object):
         return 'WebKitPlatform' in self.attributes
 
 
-class MemberVariable(object):
+class MemberVariable:
     def __init__(self, type, name, condition, attributes, namespace=None, is_subclass=False):
         assert type == type.strip(), "MemberVariable(" + type + " " + name + ") has invalid type '" + type + "'"
         assert name == name.strip(), "MemberVariable(" + type + " " + name + ") has invalid name '" + name + "'"
@@ -397,13 +397,13 @@ class MemberVariable(object):
         return self.name.endswith('?')
 
 
-class EnumMember(object):
+class EnumMember:
     def __init__(self, name, condition):
         self.name = name
         self.condition = condition
 
 
-class ConditionalForwardDeclaration(object):
+class ConditionalForwardDeclaration:
     def __init__(self, declaration, condition):
         self.declaration = declaration
         self.condition = condition
@@ -422,7 +422,7 @@ class ConditionalForwardDeclaration(object):
         return hash((self.declaration, self.condition))
 
 
-class ConditionalHeader(object):
+class ConditionalHeader:
     def __init__(self, header, condition, webkit_platform=False, secure_coding=False):
         self.header = header
         self.condition = condition
@@ -443,14 +443,14 @@ class ConditionalHeader(object):
         return hash((self.header, self.condition))
 
 
-class UsingStatement(object):
+class UsingStatement:
     def __init__(self, name, alias, condition):
         self.name = name
         self.alias = alias
         self.condition = condition
 
 
-class ObjCWrappedType(object):
+class ObjCWrappedType:
     def __init__(self, ns_type, wrapper, condition):
         self.ns_type = ns_type
         self.wrapper = wrapper
@@ -1417,7 +1417,7 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
     return '\n'.join(result)
 
 
-class ConditionStackEntry(object):
+class ConditionStackEntry:
     def __init__(self, expression):
         self._base_expression = expression
         self.should_negate = False

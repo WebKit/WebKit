@@ -123,7 +123,7 @@ def name_os(bot_os, device_os):
 
 def get_props_string(gpu, bot_os, device_os, device_type):
     d = {'gpu': gpu, 'os': bot_os, 'device os': device_os, 'device': device_type}
-    return ', '.join('%s %s' % (k, v) for (k, v) in d.items() if v)
+    return ', '.join('{} {}'.format(k, v) for (k, v) in d.items() if v)
 
 
 def collect_task_and_update_json(task_id, found_dims):
@@ -133,7 +133,7 @@ def collect_task_and_update_json(task_id, found_dims):
     device_type = found_dims.get('device_type', None)
     logging.info('Found task with ID: %s, %s' %
                  (task_id, get_props_string(gpu, bot_os, device_os, device_type)))
-    target_file_name = '%s_%s.json' % (name_device(gpu, device_type), name_os(bot_os, device_os))
+    target_file_name = '{}_{}.json'.format(name_device(gpu, device_type), name_os(bot_os, device_os))
     target_file = os.path.join(THIS_DIR, 'extension_data', target_file_name)
     with tempfile.TemporaryDirectory() as tempdirname:
         run_swarming('collect', '-S', SWARMING_SERVER, '-output-dir=%s' % tempdirname, task_id)
@@ -145,7 +145,7 @@ def collect_task_and_update_json(task_id, found_dims):
                     logging.warning('Multiple candidates found for %s' % target_file_name)
                     return
                 else:
-                    logging.info('%s -> %s' % (fname, target_file))
+                    logging.info('{} -> {}'.format(fname, target_file))
                     found = True
                     source_file = os.path.join(task_dir, fname)
                     shutil.copy(source_file, target_file)
@@ -175,7 +175,7 @@ def main():
         # We list two builds using 'bb ls' and take the second, to ensure the build is finished.
         ls_output = run_bb_and_get_output('ls', builder, '-n', '2', '-id')
         build_id = ls_output.splitlines()[1]
-        logging.info('%s: build id %s' % (builder, build_id))
+        logging.info('{}: build id {}'.format(builder, build_id))
 
         # Step 2: Get the test suite swarm hashes.
         # 'bb get' returns build properties, including cloud storage identifiers for this test suite.
@@ -202,7 +202,7 @@ def main():
             for bot_dim in task['bot_dimensions']:
                 key, value = bot_dim['key'], bot_dim['value']
                 if key in dim_map:
-                    logging.debug('%s=%s' % (key, value))
+                    logging.debug('{}={}'.format(key, value))
                     mapped_values = dim_map[key]
                     found_dim = get_intersect_or_none(mapped_values, value)
                     if found_dim:

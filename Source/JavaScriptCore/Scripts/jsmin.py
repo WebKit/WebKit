@@ -61,7 +61,7 @@ def jsmin(js):
     return outs.getvalue()
 
 
-class JavascriptMinify(object):
+class JavascriptMinify:
     """
     Minify an input stream of javascript, writing
     to an output stream

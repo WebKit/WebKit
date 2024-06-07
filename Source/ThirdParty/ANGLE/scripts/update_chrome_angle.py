@@ -15,7 +15,10 @@
 #    - /Applications/Google\ Chrome\ Canary.app on macOS
 #
 
-import glob, sys, os, shutil
+import glob
+import sys
+import os
+import shutil
 
 # Set of search paths.
 script_dir = os.path.dirname(sys.argv[0])
@@ -113,6 +116,6 @@ for filename in optional_libs_to_copy:
 
 if is_macos:
     # Clear all attributes, codesign doesn't work otherwise
-    os.system('xattr -cr /Applications/Google\ Chrome\ Canary.app')
+    os.system(r'xattr -cr /Applications/Google\ Chrome\ Canary.app')
     # Re-sign the bundle
-    os.system('codesign --force --sign - --deep /Applications/Google\ Chrome\ Canary.app')
+    os.system(r'codesign --force --sign - --deep /Applications/Google\ Chrome\ Canary.app')

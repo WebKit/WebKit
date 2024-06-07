@@ -25,15 +25,13 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import os.path
-import re
 
 try:
     from .generator import ucfirst, Generator
     from .models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 except ImportError:
     from generator import ucfirst, Generator
-    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
+    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType
 
 log = logging.getLogger('global')
 
@@ -124,7 +122,7 @@ class CppGenerator(Generator):
             # Fallthrough.
 
         if isinstance(_type, (ObjectType, EnumType, ArrayType)):
-            return 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            return 'Protocol::{}::{}'.format(_type.type_domain().domain_name, _type.raw_name())
 
         if isinstance(_type, PrimitiveType):
             return CppGenerator.cpp_name_for_primitive_type(_type)
@@ -155,7 +153,7 @@ class CppGenerator(Generator):
         if isinstance(_type, EnumType):
             if _type.is_anonymous:
                 return ucfirst(name)
-            return 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            return 'Protocol::{}::{}'.format(_type.type_domain().domain_name, _type.raw_name())
 
         if isinstance(_type, PrimitiveType):
             return CppGenerator.cpp_name_for_primitive_type(_type)
@@ -193,7 +191,7 @@ class CppGenerator(Generator):
             return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
 
         if isinstance(_type, EnumType):
-            cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            cpp_name = 'Protocol::{}::{}'.format(_type.type_domain().domain_name, _type.raw_name())
         elif isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
         else:
@@ -237,7 +235,7 @@ class CppGenerator(Generator):
             return CppGenerator.cpp_name_for_primitive_type(_type)
 
         if isinstance(_type, EnumType):
-            cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            cpp_name = 'Protocol::{}::{}'.format(_type.type_domain().domain_name, _type.raw_name())
         elif isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
         else:
@@ -281,7 +279,7 @@ class CppGenerator(Generator):
             return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
 
         if isinstance(_type, EnumType):
-            cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            cpp_name = 'Protocol::{}::{}'.format(_type.type_domain().domain_name, _type.raw_name())
         elif isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
         else:
@@ -325,7 +323,7 @@ class CppGenerator(Generator):
             return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
 
         if isinstance(_type, EnumType):
-            cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            cpp_name = 'Protocol::{}::{}'.format(_type.type_domain().domain_name, _type.raw_name())
         elif isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
         else:
@@ -338,8 +336,8 @@ class CppGenerator(Generator):
     @staticmethod
     def cpp_type_for_enum(enum_type, name):
         if enum_type.is_anonymous:
-            return 'Protocol::%s::%s' % (enum_type.type_domain().domain_name, ucfirst(name))
-        return 'Protocol::%s::%s' % (enum_type.type_domain().domain_name, enum_type.raw_name())
+            return 'Protocol::{}::{}'.format(enum_type.type_domain().domain_name, ucfirst(name))
+        return 'Protocol::{}::{}'.format(enum_type.type_domain().domain_name, enum_type.raw_name())
 
     @staticmethod
     def cpp_name_for_primitive_type(_type):

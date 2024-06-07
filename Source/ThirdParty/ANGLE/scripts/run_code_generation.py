@@ -28,7 +28,7 @@ def get_child_script_dirname(script):
 
 
 def get_executable_name(script):
-    with open(script, 'r') as f:
+    with open(script) as f:
         # Check shebang
         binary = os.path.basename(f.readline().strip().replace(' ', '/'))
         assert binary in ['python3', 'vpython3']
@@ -46,7 +46,7 @@ def paths_from_auto_script(script, param):
         res = subprocess.check_output([exe, os.path.basename(script), param],
                                       cwd=script_dir).decode().strip()
     except Exception:
-        print('Error with auto_script %s: %s, executable %s' % (param, script, exe))
+        print('Error with auto_script {}: {}, executable {}'.format(param, script, exe))
         raise
     if res == '':
         return []
@@ -159,12 +159,12 @@ def any_hash_dirty(name, filenames, new_hashes, old_hashes):
 
     for fname in filenames:
         if not os.path.isfile(os.path.join(root_dir, fname)):
-            print('File not found: "%s". Code gen dirty for %s' % (fname, name))
+            print('File not found: "{}". Code gen dirty for {}'.format(fname, name))
             found_dirty_hash = True
         else:
             new_hashes[fname] = md5(fname)
-            if (not fname in old_hashes) or (old_hashes[fname] != new_hashes[fname]):
-                print('Hash for "%s" dirty for %s generator.' % (fname, name))
+            if (fname not in old_hashes) or (old_hashes[fname] != new_hashes[fname]):
+                print('Hash for "{}" dirty for {} generator.'.format(fname, name))
                 found_dirty_hash = True
     return found_dirty_hash
 
@@ -178,7 +178,7 @@ def any_old_hash_missing(all_new_hashes, all_old_hashes):
         else:
             for name, _ in old_hashes.items():
                 if name not in all_new_hashes[file]:
-                    print('Hash for %s is missing from "%s". Code gen is dirty.' % (name, file))
+                    print('Hash for {} is missing from "{}". Code gen is dirty.'.format(name, file))
                     result = True
     return result
 
@@ -186,7 +186,7 @@ def any_old_hash_missing(all_new_hashes, all_old_hashes):
 def update_output_hashes(script, outputs, new_hashes):
     for output in outputs:
         if not os.path.isfile(output):
-            print('Output is missing from %s: %s' % (script, output))
+            print('Output is missing from {}: {}'.format(script, output))
             sys.exit(1)
         new_hashes[output] = md5(output)
 

@@ -145,7 +145,7 @@ def main():
         else:
             format_cases += undefined_case(dxgi_format)
 
-    with open('dxgi_format_map_autogen.cpp', 'wt') as out_file:
+    with open('dxgi_format_map_autogen.cpp', 'w') as out_file:
         output_cpp = template_cpp.format(
             script_name=os.path.basename(sys.argv[0]),
             data_source_name=input_data,

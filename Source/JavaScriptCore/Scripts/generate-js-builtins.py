@@ -169,7 +169,7 @@ if __name__ == '__main__':
     log.debug("Generating code for builtins.")
     log.debug("Parsed options:")
     for option, value in list(options.items()):
-        log.debug("    %s: %s" % (option, value))
+        log.debug("    {}: {}".format(option, value))
     log.debug("")
     log.debug("Input files:")
     for filepath in input_filepaths:

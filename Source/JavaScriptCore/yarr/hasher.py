@@ -242,7 +242,7 @@ def createHashTable(keys, hashTableName):
             if depth > maxDepth:
                 maxDepth = depth
 
-        string = "static const struct CompactHashIndex {}[{}] = {{\n".format(hashTableName, compactSize)
+        string = f"static const struct CompactHashIndex {hashTableName}[{compactSize}] = {{\n"
         for i in range(compactSize):
             T = -1
             if i in table:
@@ -250,7 +250,7 @@ def createHashTable(keys, hashTableName):
             L = -1
             if i in links:
                 L = links[i]
-            string += '    {{ {}, {} }},\n'.format(T, L)
+            string += f'    {{ {T}, {L} }},\n'
         string += '};\n'
         return string
 
@@ -258,6 +258,6 @@ def createHashTable(keys, hashTableName):
     hashTableForSFHash = createHashTableHelper(keys, hashTableName, False)
     result = hashTableForWYHash
     if hashTableForWYHash != hashTableForSFHash:
-        result = "#if ENABLE(WYHASH_STRING_HASHER)\n{}#else\n{}#endif".format(hashTableForWYHash, hashTableForSFHash)
+        result = f"#if ENABLE(WYHASH_STRING_HASHER)\n{hashTableForWYHash}#else\n{hashTableForSFHash}#endif"
     print(result)
 

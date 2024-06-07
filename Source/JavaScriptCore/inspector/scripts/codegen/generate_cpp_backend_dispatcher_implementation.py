@@ -26,7 +26,6 @@
 
 
 import logging
-import string
 from string import Template
 
 try:
@@ -38,7 +37,7 @@ except ImportError:
     from cpp_generator import CppGenerator
     from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
     from generator import Generator, ucfirst
-    from models import ObjectType, ArrayType, AliasedType, EnumType
+    from models import AliasedType, EnumType
 
 log = logging.getLogger('global')
 
@@ -181,7 +180,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             if _type.is_enum():
                 if parameter.is_optional:
                     parameter_value = '*' + parameter_value
-                parameter_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), parameter_value)
+                parameter_value = 'Protocol::{}::getEnumConstantValue({})'.format(self.helpers_namespace(), parameter_value)
             elif CppGenerator.should_release_argument(_type, parameter.is_optional):
                 parameter_value = parameter_value + '.releaseNonNull()'
             elif CppGenerator.should_dereference_argument(_type, parameter.is_optional):
@@ -196,7 +195,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 'parameterValue': parameter_value,
             }
 
-            callback_parameters.append('%s %s' % (CppGenerator.cpp_type_for_command_return_argument(_type, parameter.is_optional), parameter_name))
+            callback_parameters.append('{} {}'.format(CppGenerator.cpp_type_for_command_return_argument(_type, parameter.is_optional), parameter_name))
 
             if parameter.is_optional:
                 return_assignments.append('    if (!!%(parameterName)s)' % param_args)
@@ -277,7 +276,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             parameter_declarations.append('    auto %(parameterName)s = m_backendDispatcher->%(keyedGetMethod)s(protocol_parameters.get(), "%(parameterKey)s"_s, %(required)s);' % param_args)
 
         if command.is_async:
-            method_parameters.append('adoptRef(*new %sBackendDispatcherHandler::%s(m_backendDispatcher.copyRef(), protocol_requestId))' % (domain.domain_name, '%sCallback' % ucfirst(command.command_name)))
+            method_parameters.append('adoptRef(*new {}BackendDispatcherHandler::{}(m_backendDispatcher.copyRef(), protocol_requestId))'.format(domain.domain_name, '%sCallback' % ucfirst(command.command_name)))
 
         command_args = {
             'domainName': domain.domain_name,
@@ -334,7 +333,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 if _type.is_enum():
                     if parameter.is_optional:
                         parameter_value = '*' + parameter_value
-                    parameter_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), parameter_value)
+                    parameter_value = 'Protocol::{}::getEnumConstantValue({})'.format(self.helpers_namespace(), parameter_value)
                 elif CppGenerator.should_release_argument(_type, parameter.is_optional):
                     parameter_value = parameter_value + '.releaseNonNull()'
                 elif CppGenerator.should_dereference_argument(_type, parameter.is_optional):

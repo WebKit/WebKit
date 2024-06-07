@@ -2,9 +2,7 @@
 # Use of this source code is governed under the Apache License, Version 2.0
 # that can be found in the LICENSE file.
 
-import os
 import struct
-import sys
 
 
 def write_uvarint(w, val):

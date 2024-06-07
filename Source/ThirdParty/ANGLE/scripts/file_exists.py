@@ -5,9 +5,9 @@
 #
 # Simple helper for use in 'gn' files to check if a file exists.
 
-from __future__ import print_function
 
-import os, shutil, sys
+import os
+import sys
 
 
 def main():

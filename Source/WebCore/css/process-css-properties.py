@@ -32,7 +32,6 @@ import json
 import os
 import re
 import subprocess
-import sys
 import textwrap
 
 
@@ -88,7 +87,7 @@ class Writer:
         return self
 
     def newline(self):
-        self.output.write(f'\n')
+        self.output.write('\n')
         return self
 
     class Indent:
@@ -156,7 +155,7 @@ class Schema:
         self.apply_conversions(parsing_context, key_path, dictionary, label=label)
 
 
-class Name(object):
+class Name:
     special_case_name_to_id = {
         "url": "URL",
     }
@@ -251,7 +250,7 @@ class Status:
             return Status(status=json_value)
 
         assert(type(json_value) is dict)
-        Status.schema.validate_dictionary(parsing_context, f"{key_path}.status", json_value, label=f"Status")
+        Status.schema.validate_dictionary(parsing_context, f"{key_path}.status", json_value, label="Status")
 
         return Status(**json_value)
 
@@ -281,7 +280,7 @@ class Specification:
     @staticmethod
     def from_json(parsing_context, key_path, json_value):
         assert(type(json_value) is dict)
-        Specification.schema.validate_dictionary(parsing_context, f"{key_path}.specification", json_value, label=f"Specification")
+        Specification.schema.validate_dictionary(parsing_context, f"{key_path}.specification", json_value, label="Specification")
         return Specification(**json_value)
 
 
@@ -321,7 +320,7 @@ class Value:
             return Value.from_json(parsing_context, key_path, {"value": json_value})
 
         assert(type(json_value) is dict)
-        Value.schema.validate_dictionary(parsing_context, f"{key_path}.values", json_value, label=f"Value")
+        Value.schema.validate_dictionary(parsing_context, f"{key_path}.values", json_value, label="Value")
 
         if "enable-if" in json_value and not parsing_context.is_enabled(conditional=json_value["enable-if"]):
             if parsing_context.verbose:
@@ -411,7 +410,7 @@ class LogicalPropertyGroup:
     @staticmethod
     def from_json(parsing_context, key_path, json_value):
         assert(type(json_value) is dict)
-        LogicalPropertyGroup.schema.validate_dictionary(parsing_context, f"{key_path}.logical-property-group", json_value, label=f"LogicalPropertyGroup")
+        LogicalPropertyGroup.schema.validate_dictionary(parsing_context, f"{key_path}.logical-property-group", json_value, label="LogicalPropertyGroup")
         return LogicalPropertyGroup(**json_value)
 
 
@@ -436,7 +435,7 @@ class Longhand:
             return Longhand.from_json(parsing_context, key_path, {"value": json_value})
 
         assert(type(json_value) is dict)
-        Longhand.schema.validate_dictionary(parsing_context, f"{key_path}.longhands", json_value, label=f"Longhand")
+        Longhand.schema.validate_dictionary(parsing_context, f"{key_path}.longhands", json_value, label="Longhand")
 
         if "enable-if" in json_value and not parsing_context.is_enabled(conditional=json_value["enable-if"]):
             if parsing_context.verbose:
@@ -513,7 +512,7 @@ class StylePropertyCodeGenProperties:
             json_value = parsing_context.select_enabled_variant(json_value, label=f"{key_path}.codegen-properties")
 
         assert(type(json_value) is dict)
-        StylePropertyCodeGenProperties.schema.validate_dictionary(parsing_context, f"{key_path}.codegen-properties", json_value, label=f"StylePropertyCodeGenProperties")
+        StylePropertyCodeGenProperties.schema.validate_dictionary(parsing_context, f"{key_path}.codegen-properties", json_value, label="StylePropertyCodeGenProperties")
 
         property_name = PropertyName(name, name_for_methods=json_value.get("name-for-methods"))
 
@@ -650,7 +649,7 @@ class StyleProperty:
     @staticmethod
     def from_json(parsing_context, key_path, name, json_value):
         assert(type(json_value) is dict)
-        StyleProperty.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label=f"Property")
+        StyleProperty.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label="Property")
 
         codegen_properties = StylePropertyCodeGenProperties.from_json(parsing_context, f"{key_path}.{name}", name, json_value.get("codegen-properties", {}))
         json_value["codegen-properties"] = codegen_properties
@@ -1037,7 +1036,7 @@ class DescriptorCodeGenProperties:
             json_value = parsing_context.select_enabled_variant(json_value, label=f"{key_path}.codegen-properties")
 
         assert(type(json_value) is dict)
-        DescriptorCodeGenProperties.schema.validate_dictionary(parsing_context, f"{key_path}.codegen-properties", json_value, label=f"DescriptorCodeGenProperties")
+        DescriptorCodeGenProperties.schema.validate_dictionary(parsing_context, f"{key_path}.codegen-properties", json_value, label="DescriptorCodeGenProperties")
 
         descriptor_name = PropertyName(name)
 
@@ -1099,7 +1098,7 @@ class Descriptor:
     @staticmethod
     def from_json(parsing_context, key_path, name, json_value, descriptor_set_name):
         assert(type(json_value) is dict)
-        Descriptor.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label=f"Descriptor")
+        Descriptor.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label="Descriptor")
 
         codegen_properties = DescriptorCodeGenProperties.from_json(parsing_context, f"{key_path}.{name}", name, json_value.get("codegen-properties", {}))
         json_value["codegen-properties"] = codegen_properties
@@ -1228,7 +1227,7 @@ class Descriptors:
             setattr(self, descriptor_set.name.replace('@', 'at-').replace('-', '_'), descriptor_set)
 
     def __str__(self):
-        return f"Descriptors"
+        return "Descriptors"
 
     def __repr__(self):
         return self.__str__()
@@ -1352,7 +1351,7 @@ class PropertiesAndDescriptors:
     @property
     def settings_flags(self):
         if not self._settings_flags:
-            self._settings_flags = sorted(list(set([property.codegen_properties.settings_flag for property in self.all_properties_and_descriptors if property.codegen_properties.settings_flag])))
+            self._settings_flags = sorted(list({property.codegen_properties.settings_flag for property in self.all_properties_and_descriptors if property.codegen_properties.settings_flag}))
         return self._settings_flags
 
 
@@ -2190,7 +2189,7 @@ class SharedGrammarRule:
     @staticmethod
     def from_json(parsing_context, key_path, name, json_value):
         assert(type(json_value) is dict)
-        SharedGrammarRule.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label=f"SharedGrammarRule")
+        SharedGrammarRule.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label="SharedGrammarRule")
 
         grammar = Grammar.from_string(parsing_context, f"{key_path}.{name}", name, json_value["grammar"])
 
@@ -2302,13 +2301,13 @@ class GenerationContext:
         to.newline()
 
     def generate_required_header_pragma(self, *, to):
-        to.write(f"#pragma once")
+        to.write("#pragma once")
         to.newline()
 
     def generate_open_namespaces(self, *, to, namespaces):
         for namespace in namespaces:
             if not namespace:
-                to.write(f"namespace {{")
+                to.write("namespace {")
             else:
                 to.write(f"namespace {namespace} {{")
         to.newline()
@@ -2316,7 +2315,7 @@ class GenerationContext:
     def generate_close_namespaces(self, *, to, namespaces):
         for namespace in namespaces:
             if not namespace:
-                to.write(f"}} // namespace (anonymous)")
+                to.write("} // namespace (anonymous)")
             else:
                 to.write(f"}} // namespace {namespace}")
         to.newline()
@@ -2369,62 +2368,62 @@ class GenerationContext:
 
     def generate_property_id_switch_function(self, *, to, signature, iterable, mapping, default, mapping_to_property=lambda p: p, prologue=None, epilogue=None):
         to.write(f"{signature}")
-        to.write(f"{{")
+        to.write("{")
 
         with to.indent():
             if prologue:
                 to.write(prologue)
 
-            to.write(f"switch (id) {{")
+            to.write("switch (id) {")
 
             for item in iterable:
                 to.write(f"case {mapping_to_property(item).id}:")
                 with to.indent():
                     to.write(f"{mapping(item)}")
 
-            to.write(f"default:")
+            to.write("default:")
             with to.indent():
                 to.write(f"{default}")
-            to.write(f"}}")
+            to.write("}")
 
             if epilogue:
                 to.write(epilogue)
 
-        to.write(f"}}")
+        to.write("}")
         to.newline()
 
     def generate_property_id_switch_function_bool(self, *, to, signature, iterable, mapping_to_property=lambda p: p):
         to.write(f"{signature}")
-        to.write(f"{{")
+        to.write("{")
 
         with to.indent():
-            to.write(f"switch (id) {{")
+            to.write("switch (id) {")
 
             for item in iterable:
                 to.write(f"case {mapping_to_property(item).id}:")
 
             with to.indent():
-                to.write(f"return true;")
+                to.write("return true;")
 
-            to.write(f"default:")
+            to.write("default:")
             with to.indent():
-                to.write(f"return false;")
+                to.write("return false;")
 
-            to.write(f"}}")
-        to.write(f"}}")
+            to.write("}")
+        to.write("}")
         to.newline()
 
     def generate_property_id_bit_set(self, *, to, name, iterable, mapping_to_property=lambda p: p):
         to.write(f"const WTF::BitSet<numCSSProperties> {name} = ([]() -> WTF::BitSet<numCSSProperties> {{")
 
         with to.indent():
-            to.write(f"WTF::BitSet<numCSSProperties> result;")
+            to.write("WTF::BitSet<numCSSProperties> result;")
 
             for item in iterable:
                 to.write(f"result.set({mapping_to_property(item).id});")
 
-            to.write(f"return result;")
-        to.write(f"}})();")
+            to.write("return result;")
+        to.write("})();")
         to.newline()
 
 # Generates `CSSPropertyNames.h` and `CSSPropertyNames.cpp`.
@@ -2507,7 +2506,7 @@ class GenerateCSSPropertyNames:
         to.newline()
 
         all_property_name_strings = quote_iterable((f"{property.name}" for property in self.properties_and_descriptors.all_unique), suffix="_s,")
-        to.write(f"constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {{")
+        to.write("constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {")
         with to.indent():
             to.write_lines(all_property_name_strings)
         to.write("};")
@@ -2611,10 +2610,10 @@ class GenerateCSSPropertyNames:
         destination_as_id = PropertyName.convert_name_to_id(destination)
 
         to.write(f"{signature}")
-        to.write(f"{{")
+        to.write("{")
         with to.indent():
-            to.write(f"auto textflow = makeTextFlow(writingMode, direction);")
-            to.write(f"switch (id) {{")
+            to.write("auto textflow = makeTextFlow(writingMode, direction);")
+            to.write("switch (id) {")
 
             for group_name, property_group in sorted(self.properties_and_descriptors.style_properties.logical_property_groups.items(), key=lambda x: x[0]):
                 kind = property_group["kind"]
@@ -2631,14 +2630,14 @@ class GenerateCSSPropertyNames:
                     with to.indent():
                         to.write(f"static constexpr CSSPropertyID properties[{len(properties)}] = {{ {', '.join(properties)} }};")
                         to.write(f"return properties[static_cast<size_t>(map{source_as_id}{kind_as_id}To{destination_as_id}{kind_as_id}(textflow, {resolver_enum}))];")
-                    to.write(f"}}")
+                    to.write("}")
 
-            to.write(f"default:")
+            to.write("default:")
             with to.indent():
-                to.write(f"return id;")
+                to.write("return id;")
 
-            to.write(f"}}")
-        to.write(f"}}")
+            to.write("}")
+        to.write("}")
         to.newline()
 
     def _generate_is_exposed_functions(self, *, to):
@@ -2697,10 +2696,10 @@ class GenerateCSSPropertyNames:
 
         to.write(f"constexpr bool isInheritedPropertyTable[numCSSProperties + {GenerationContext.number_of_predefined_properties}] = {{")
         with to.indent():
-            to.write(f"false, // CSSPropertyID::CSSPropertyInvalid")
-            to.write(f"true , // CSSPropertyID::CSSPropertyCustom")
+            to.write("false, // CSSPropertyID::CSSPropertyInvalid")
+            to.write("true , // CSSPropertyID::CSSPropertyCustom")
             to.write_lines(all_inherited_and_ids)
-        to.write(f"}};")
+        to.write("};")
 
         to.write_block("""
             bool CSSProperty::isInheritedProperty(CSSPropertyID id)
@@ -2712,10 +2711,10 @@ class GenerateCSSPropertyNames:
             """)
 
     def _generate_are_in_same_logical_property_group_with_different_mappings_logic(self, *, to):
-        to.write(f"bool CSSProperty::areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSPropertyID id1, CSSPropertyID id2)")
-        to.write(f"{{")
+        to.write("bool CSSProperty::areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSPropertyID id1, CSSPropertyID id2)")
+        to.write("{")
         with to.indent():
-            to.write(f"switch (id1) {{")
+            to.write("switch (id1) {")
 
             for group_name, property_group in sorted(self.properties_and_descriptors.style_properties.logical_property_groups.items(), key=lambda x: x[0]):
                 logical = property_group["logical"]
@@ -2726,62 +2725,62 @@ class GenerateCSSPropertyNames:
                         to.write(f"case {property.id}:")
 
                     with to.indent():
-                        to.write(f"switch (id2) {{")
+                        to.write("switch (id2) {")
                         to.write_lines((f"case {property.id}:" for _, property in sorted(second.items(), key=lambda x: x[1].name)))
 
                         with to.indent():
-                            to.write(f"return true;")
-                        to.write(f"default:")
+                            to.write("return true;")
+                        to.write("default:")
                         with to.indent():
-                            to.write(f"return false;")
-                        to.write(f"}}")
+                            to.write("return false;")
+                        to.write("}")
 
-            to.write(f"default:")
+            to.write("default:")
             with to.indent():
-                to.write(f"return false;")
-            to.write(f"}}")
-        to.write(f"}}")
+                to.write("return false;")
+            to.write("}")
+        to.write("}")
         to.newline()
 
     def _generate_css_property_settings_constructor(self, *, to):
-        first_settings_initializer, *remaining_settings_initializers = [f"{flag} {{ settings.{flag}() }}" for flag in self.properties_and_descriptors.settings_flags]
+        first_settings_initializer, *remaining_settings_initializers = (f"{flag} {{ settings.{flag}() }}" for flag in self.properties_and_descriptors.settings_flags)
 
-        to.write(f"CSSPropertySettings::CSSPropertySettings(const Settings& settings)")
+        to.write("CSSPropertySettings::CSSPropertySettings(const Settings& settings)")
         with to.indent():
             to.write(f": {first_settings_initializer}")
-            to.write_lines((f", {initializer}" for initializer in remaining_settings_initializers))
+            to.write_lines(f", {initializer}" for initializer in remaining_settings_initializers)
 
-        to.write(f"{{")
-        to.write(f"}}")
+        to.write("{")
+        to.write("}")
         to.newline()
 
     def _generate_css_property_settings_operator_equal(self, *, to):
         first, *middle, last = (f"a.{flag} == b.{flag}" for flag in self.properties_and_descriptors.settings_flags)
 
-        to.write(f"bool operator==(const CSSPropertySettings& a, const CSSPropertySettings& b)")
-        to.write(f"{{")
+        to.write("bool operator==(const CSSPropertySettings& a, const CSSPropertySettings& b)")
+        to.write("{")
         with to.indent():
             to.write(f"return {first}")
             with to.indent():
-                to.write_lines((f"&& {expression}" for expression in middle))
+                to.write_lines(f"&& {expression}" for expression in middle)
                 to.write(f"&& {last};")
 
-        to.write(f"}}")
+        to.write("}")
         to.newline()
 
     def _generate_css_property_settings_hasher(self, *, to):
         first, *middle, last = (f'{"(uint64_t) " if i >= 32 else ""}settings.{flag} << {i}' for (i, flag) in enumerate(self.properties_and_descriptors.settings_flags))
 
-        to.write(f"void add(Hasher& hasher, const CSSPropertySettings& settings)")
-        to.write(f"{{")
+        to.write("void add(Hasher& hasher, const CSSPropertySettings& settings)")
+        to.write("{")
         with to.indent():
             to.write(f"uint64_t bits = {first}")
             with to.indent():
-                to.write_lines((f"| {expression}" for expression in middle))
+                to.write_lines(f"| {expression}" for expression in middle)
                 to.write(f"| {last};")
 
-            to.write(f"add(hasher, bits);")
-        to.write(f"}}")
+            to.write("add(hasher, bits);")
+        to.write("}")
         to.newline()
 
     def _term_matches_number_or_integer(self, term):
@@ -2944,10 +2943,10 @@ class GenerateCSSPropertyNames:
     # MARK: - Helper generator functions for CSSPropertyNames.h
 
     def _generate_css_property_names_h_property_constants(self, *, to):
-        to.write(f"enum CSSPropertyID : uint16_t {{")
+        to.write("enum CSSPropertyID : uint16_t {")
         with to.indent():
-            to.write(f"CSSPropertyInvalid = 0,")
-            to.write(f"CSSPropertyCustom = 1,")
+            to.write("CSSPropertyInvalid = 0,")
+            to.write("CSSPropertyCustom = 1,")
 
             first = GenerationContext.number_of_predefined_properties
             count = GenerationContext.number_of_predefined_properties
@@ -2992,7 +2991,7 @@ class GenerateCSSPropertyNames:
 
             num = count - first
 
-        to.write(f"}};")
+        to.write("};")
         to.newline()
 
         to.write(f"constexpr uint16_t firstCSSProperty = {first};")
@@ -3008,7 +3007,7 @@ class GenerateCSSPropertyNames:
         to.write(f"constexpr auto lastDeferredProperty = {last_deferred_property.id};")
         to.write(f"constexpr auto firstShorthandProperty = {first_shorthand_property.id};")
         to.write(f"constexpr auto lastShorthandProperty = {last_shorthand_property.id};")
-        to.write(f"constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSProperty;")
+        to.write("constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSProperty;")
 
         to.write(f"extern const std::array<CSSPropertyID, {count_iterable(self.properties_and_descriptors.style_properties.all_computed)}> computedPropertyIDs;")
         to.newline()
@@ -3016,21 +3015,21 @@ class GenerateCSSPropertyNames:
     def _generate_css_property_names_h_property_settings(self, *, to):
         settings_variable_declarations = (f"bool {flag} : 1 {{ false }};" for flag in self.properties_and_descriptors.settings_flags)
 
-        to.write(f"struct CSSPropertySettings {{")
+        to.write("struct CSSPropertySettings {")
         with to.indent():
-            to.write(f"WTF_MAKE_STRUCT_FAST_ALLOCATED;")
+            to.write("WTF_MAKE_STRUCT_FAST_ALLOCATED;")
             to.newline()
 
             to.write_lines(settings_variable_declarations)
             to.newline()
 
-            to.write(f"CSSPropertySettings() = default;")
-            to.write(f"explicit CSSPropertySettings(const Settings&);")
-        to.write(f"}};")
+            to.write("CSSPropertySettings() = default;")
+            to.write("explicit CSSPropertySettings(const Settings&);")
+        to.write("};")
         to.newline()
 
-        to.write(f"bool operator==(const CSSPropertySettings&, const CSSPropertySettings&);")
-        to.write(f"void add(Hasher&, const CSSPropertySettings&);")
+        to.write("bool operator==(const CSSPropertySettings&, const CSSPropertySettings&);")
+        to.write("void add(Hasher&, const CSSPropertySettings&);")
         to.newline()
 
     def _generate_css_property_names_h_declarations(self, *, to):
@@ -3317,135 +3316,135 @@ class GenerateStyleBuilderGenerated:
             initial_function = "StyleColor::currentColor"
         else:
             initial_function = "RenderStyle::" + property.codegen_properties.initial
-        to.write(f"if (builderState.applyPropertyToRegularStyle())")
+        to.write("if (builderState.applyPropertyToRegularStyle())")
         to.write(f"    builderState.style().{property.codegen_properties.setter}({initial_function}());")
-        to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
+        to.write("if (builderState.applyPropertyToVisitedLinkStyle())")
         to.write(f"    builderState.style().setVisitedLink{property.name_for_methods}({initial_function}());")
 
     def _generate_color_property_inherit_value_setter(self, to, property):
-        to.write(f"if (builderState.applyPropertyToRegularStyle())")
+        to.write("if (builderState.applyPropertyToRegularStyle())")
         to.write(f"    builderState.style().{property.codegen_properties.setter}(builderState.parentStyle().{property.codegen_properties.getter}());")
-        to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
+        to.write("if (builderState.applyPropertyToVisitedLinkStyle())")
         to.write(f"    builderState.style().setVisitedLink{property.name_for_methods}(builderState.parentStyle().{property.codegen_properties.getter}());")
 
     def _generate_color_property_value_setter(self, to, property, value):
-        to.write(f"if (builderState.applyPropertyToRegularStyle())")
+        to.write("if (builderState.applyPropertyToRegularStyle())")
         to.write(f"    builderState.style().{property.codegen_properties.setter}(builderState.colorFromPrimitiveValue({value}, ForVisitedLink::No));")
-        to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
+        to.write("if (builderState.applyPropertyToVisitedLinkStyle())")
         to.write(f"    builderState.style().setVisitedLink{property.name_for_methods}(builderState.colorFromPrimitiveValue({value}, ForVisitedLink::Yes));")
 
     # Animation property setters.
 
     def _generate_animation_property_initial_value_setter(self, to, property):
         to.write(f"auto& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();")
-        to.write(f"if (list.isEmpty())")
-        to.write(f"    list.append(Animation::create());")
+        to.write("if (list.isEmpty())")
+        to.write("    list.append(Animation::create());")
         to.write(f"list.animation(0).{property.codegen_properties.setter}(Animation::{property.codegen_properties.initial}());")
-        to.write(f"for (auto& animation : list)")
+        to.write("for (auto& animation : list)")
         to.write(f"    animation->clear{property.name_for_methods}();")
 
     def _generate_animation_property_inherit_value_setter(self, to, property):
         to.write(f"auto& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();")
         to.write(f"auto* parentList = builderState.parentStyle().{property.method_name_for_animations_or_transitions}();")
-        to.write(f"size_t i = 0, parentSize = parentList ? parentList->size() : 0;")
+        to.write("size_t i = 0, parentSize = parentList ? parentList->size() : 0;")
         to.write(f"for ( ; i < parentSize && parentList->animation(i).is{property.name_for_methods}Set(); ++i) {{")
-        to.write(f"    if (list.size() <= i)")
-        to.write(f"        list.append(Animation::create());")
+        to.write("    if (list.size() <= i)")
+        to.write("        list.append(Animation::create());")
         to.write(f"    list.animation(i).{property.codegen_properties.setter}(parentList->animation(i).{property.codegen_properties.getter}());")
-        to.write(f"}}")
-        to.write(f"// Reset any remaining animations to not have the property set.")
-        to.write(f"for ( ; i < list.size(); ++i)")
+        to.write("}")
+        to.write("// Reset any remaining animations to not have the property set.")
+        to.write("for ( ; i < list.size(); ++i)")
         to.write(f"    list.animation(i).clear{property.name_for_methods}();")
 
     def _generate_animation_property_value_setter(self, to, property):
         to.write(f"auto& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();")
-        to.write(f"size_t childIndex = 0;")
-        to.write(f"if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {{")
-        to.write(f"    // Walk each value and put it into an animation, creating new animations as needed.")
-        to.write(f"    for (auto& currentValue : *valueList) {{")
-        to.write(f"        if (childIndex >= list.size())")
-        to.write(f"            list.append(Animation::create());")
+        to.write("size_t childIndex = 0;")
+        to.write("if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {")
+        to.write("    // Walk each value and put it into an animation, creating new animations as needed.")
+        to.write("    for (auto& currentValue : *valueList) {")
+        to.write("        if (childIndex >= list.size())")
+        to.write("            list.append(Animation::create());")
         to.write(f"        builderState.styleMap().mapAnimation{property.name_for_methods}(list.animation(childIndex), currentValue);")
-        to.write(f"        ++childIndex;")
-        to.write(f"    }}")
-        to.write(f"}} else {{")
-        to.write(f"    if (list.isEmpty())")
-        to.write(f"        list.append(Animation::create());")
+        to.write("        ++childIndex;")
+        to.write("    }")
+        to.write("} else {")
+        to.write("    if (list.isEmpty())")
+        to.write("        list.append(Animation::create());")
         to.write(f"    builderState.styleMap().mapAnimation{property.name_for_methods}(list.animation(childIndex), value);")
-        to.write(f"    childIndex = 1;")
-        to.write(f"}}")
-        to.write(f"for ( ; childIndex < list.size(); ++childIndex) {{")
-        to.write(f"    // Reset all remaining animations to not have the property set.")
+        to.write("    childIndex = 1;")
+        to.write("}")
+        to.write("for ( ; childIndex < list.size(); ++childIndex) {")
+        to.write("    // Reset all remaining animations to not have the property set.")
         to.write(f"    list.animation(childIndex).clear{property.name_for_methods}();")
-        to.write(f"}}")
+        to.write("}")
 
     # Font property setters.
 
     def _generate_font_property_initial_value_setter(self, to, property):
-        to.write(f"auto fontDescription = builderState.fontDescription();")
+        to.write("auto fontDescription = builderState.fontDescription();")
         to.write(f"fontDescription.{property.codegen_properties.setter}(FontCascadeDescription::{property.codegen_properties.initial}());")
-        to.write(f"builderState.setFontDescription(WTFMove(fontDescription));")
+        to.write("builderState.setFontDescription(WTFMove(fontDescription));")
 
     def _generate_font_property_inherit_value_setter(self, to, property):
-        to.write(f"auto fontDescription = builderState.fontDescription();")
+        to.write("auto fontDescription = builderState.fontDescription();")
         to.write(f"fontDescription.{property.codegen_properties.setter}(builderState.parentFontDescription().{property.codegen_properties.getter}());")
-        to.write(f"builderState.setFontDescription(WTFMove(fontDescription));")
+        to.write("builderState.setFontDescription(WTFMove(fontDescription));")
 
     def _generate_font_property_value_setter(self, to, property, value):
-        to.write(f"auto fontDescription = builderState.fontDescription();")
+        to.write("auto fontDescription = builderState.fontDescription();")
         to.write(f"fontDescription.{property.codegen_properties.setter}({value});")
-        to.write(f"builderState.setFontDescription(WTFMove(fontDescription));")
+        to.write("builderState.setFontDescription(WTFMove(fontDescription));")
 
     # Fill Layer property setters.
 
     def _generate_fill_layer_property_initial_value_setter(self, to, property):
         initial = f"FillLayer::{property.codegen_properties.initial}({property.enum_name_for_layers_type})"
-        to.write(f"// Check for (single-layer) no-op before clearing anything.")
+        to.write("// Check for (single-layer) no-op before clearing anything.")
         to.write(f"auto& layers = builderState.style().{property.method_name_for_layers}();")
         to.write(f"if (!layers.next() && (!layers.is{property.name_for_methods}Set() || layers.{property.codegen_properties.getter}() == {initial}))")
-        to.write(f"    return;")
+        to.write("    return;")
         to.write(f"auto* child = &builderState.style().{property.method_name_for_ensure_layers}();")
         to.write(f"child->{property.codegen_properties.setter}({initial});")
-        to.write(f"for (child = child->next(); child; child = child->next())")
+        to.write("for (child = child->next(); child; child = child->next())")
         to.write(f"    child->clear{property.name_for_methods}();")
 
     def _generate_fill_layer_property_inherit_value_setter(self, to, property):
-        to.write(f"// Check for no-op before copying anything.")
+        to.write("// Check for no-op before copying anything.")
         to.write(f"if (builderState.parentStyle().{property.method_name_for_layers}() == builderState.style().{property.method_name_for_layers}())")
-        to.write(f"    return;")
+        to.write("    return;")
         to.write(f"auto* child = &builderState.style().{property.method_name_for_ensure_layers}();")
-        to.write(f"FillLayer* previousChild = nullptr;")
+        to.write("FillLayer* previousChild = nullptr;")
         to.write(f"for (auto* parent = &builderState.parentStyle().{property.method_name_for_layers}(); parent && parent->is{property.name_for_methods}Set(); parent = parent->next()) {{")
-        to.write(f"    if (!child) {{")
+        to.write("    if (!child) {")
         to.write(f"        previousChild->setNext(FillLayer::create({property.enum_name_for_layers_type}));")
-        to.write(f"        child = previousChild->next();")
-        to.write(f"    }}")
+        to.write("        child = previousChild->next();")
+        to.write("    }")
         to.write(f"    child->{property.codegen_properties.setter}(parent->{property.codegen_properties.getter}());")
-        to.write(f"    previousChild = child;")
-        to.write(f"    child = previousChild->next();")
-        to.write(f"}}")
-        to.write(f"for (; child; child = child->next())")
+        to.write("    previousChild = child;")
+        to.write("    child = previousChild->next();")
+        to.write("}")
+        to.write("for (; child; child = child->next())")
         to.write(f"    child->clear{property.name_for_methods}();")
 
     def _generate_fill_layer_property_value_setter(self, to, property):
         to.write(f"auto* child = &builderState.style().{property.method_name_for_ensure_layers}();")
-        to.write(f"FillLayer* previousChild = nullptr;")
-        to.write(f"if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {{")
-        to.write(f"    // Walk each value and put it into a layer, creating new layers as needed.")
-        to.write(f"    for (auto& item : *valueList) {{")
-        to.write(f"        if (!child) {{")
+        to.write("FillLayer* previousChild = nullptr;")
+        to.write("if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {")
+        to.write("    // Walk each value and put it into a layer, creating new layers as needed.")
+        to.write("    for (auto& item : *valueList) {")
+        to.write("        if (!child) {")
         to.write(f"            previousChild->setNext(FillLayer::create({property.enum_name_for_layers_type}));")
-        to.write(f"            child = previousChild->next();")
-        to.write(f"        }}")
+        to.write("            child = previousChild->next();")
+        to.write("        }")
         to.write(f"        builderState.styleMap().mapFill{property.name_for_methods}(id, *child, item);")
-        to.write(f"        previousChild = child;")
-        to.write(f"        child = child->next();")
-        to.write(f"    }}")
-        to.write(f"}} else {{")
+        to.write("        previousChild = child;")
+        to.write("        child = child->next();")
+        to.write("    }")
+        to.write("} else {")
         to.write(f"    builderState.styleMap().mapFill{property.name_for_methods}(id, *child, value);")
-        to.write(f"    child = child->next();")
-        to.write(f"}}")
-        to.write(f"for (; child; child = child->next())")
+        to.write("    child = child->next();")
+        to.write("}")
+        to.write("for (; child; child = child->next())")
         to.write(f"    child->clear{property.name_for_methods}();")
 
     # SVG property setters.
@@ -3474,7 +3473,7 @@ class GenerateStyleBuilderGenerated:
 
     def _generate_style_builder_generated_cpp_initial_value_setter(self, to, property):
         to.write(f"static void applyInitial{property.id_without_prefix}(BuilderState& builderState)")
-        to.write(f"{{")
+        to.write("{")
 
         with to.indent():
             if property.codegen_properties.auto_functions:
@@ -3493,21 +3492,21 @@ class GenerateStyleBuilderGenerated:
                 self._generate_property_initial_value_setter(to, property)
 
             if property.codegen_properties.fast_path_inherited:
-                to.write(f"builderState.style().setDisallowsFastPathInheritance();")
+                to.write("builderState.style().setDisallowsFastPathInheritance();")
 
-        to.write(f"}}")
+        to.write("}")
 
     def _generate_style_builder_generated_cpp_inherit_value_setter(self, to, property):
         to.write(f"static void applyInherit{property.id_without_prefix}(BuilderState& builderState)")
-        to.write(f"{{")
+        to.write("{")
 
         with to.indent():
             if property.codegen_properties.auto_functions:
                 to.write(f"if (builderState.parentStyle().hasAuto{property.name_for_methods}()) {{")
                 with to.indent():
                     to.write(f"builderState.style().setHasAuto{property.name_for_methods}();")
-                    to.write(f"return;")
-                to.write(f"}}")
+                    to.write("return;")
+                to.write("}")
 
                 if property.codegen_properties.svg:
                     self._generate_svg_property_inherit_value_setter(to, property)
@@ -3527,41 +3526,41 @@ class GenerateStyleBuilderGenerated:
                 self._generate_property_inherit_value_setter(to, property)
 
             if property.codegen_properties.fast_path_inherited:
-                to.write(f"builderState.style().setDisallowsFastPathInheritance();")
+                to.write("builderState.style().setDisallowsFastPathInheritance();")
 
-        to.write(f"}}")
+        to.write("}")
 
     def _generate_style_builder_generated_cpp_value_setter(self, to, property):
         if property.codegen_properties.fill_layer_property:
             to.write(f"static void applyValue{property.id_without_prefix}(CSSPropertyID id, BuilderState& builderState, CSSValue& value)")
         else:
             to.write(f"static void applyValue{property.id_without_prefix}(BuilderState& builderState, CSSValue& value)")
-        to.write(f"{{")
+        to.write("{")
 
         with to.indent():
             def converted_value(property):
                 if property.codegen_properties.converter:
                     return f"BuilderConverter::convert{property.codegen_properties.converter}(builderState, value)"
                 elif property.codegen_properties.conditional_converter:
-                    return f"WTFMove(convertedValue.value())"
+                    return "WTFMove(convertedValue.value())"
                 elif property.codegen_properties.color_property and not property.codegen_properties.visited_link_color_support:
-                    return f"builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value), ForVisitedLink::No)"
+                    return "builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value), ForVisitedLink::No)"
                 else:
                     return "fromCSSValueDeducingType(value)"
 
             if property in self.style_properties.all_by_name["font"].codegen_properties.longhands and "Initial" not in property.codegen_properties.custom and not property.codegen_properties.converter:
-                to.write(f"if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {{")
+                to.write("if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {")
                 with to.indent():
                     to.write(f"applyInitial{property.id_without_prefix}(builderState);")
-                    to.write(f"return;")
-                to.write(f"}}")
+                    to.write("return;")
+                to.write("}")
 
             if property.codegen_properties.auto_functions:
-                to.write(f"if (value.valueID() == CSSValueAuto) {{")
+                to.write("if (value.valueID() == CSSValueAuto) {")
                 with to.indent():
                     to.write(f"builderState.style().setHasAuto{property.name_for_methods}();")
-                    to.write(f"return;")
-                to.write(f"}}")
+                    to.write("return;")
+                to.write("}")
                 if property.codegen_properties.svg:
                     self._generate_svg_property_value_setter(to, property, converted_value(property))
                 else:
@@ -3577,7 +3576,7 @@ class GenerateStyleBuilderGenerated:
             else:
                 if property.codegen_properties.conditional_converter:
                     to.write(f"auto convertedValue = BuilderConverter::convert{property.codegen_properties.conditional_converter}(builderState, value);")
-                    to.write(f"if (convertedValue)")
+                    to.write("if (convertedValue)")
                     with to.indent():
                         if property.codegen_properties.svg:
                             self._generate_svg_property_value_setter(to, property, converted_value(property))
@@ -3590,13 +3589,13 @@ class GenerateStyleBuilderGenerated:
                         self._generate_property_value_setter(to, property, converted_value(property))
 
             if property.codegen_properties.fast_path_inherited:
-                to.write(f"builderState.style().setDisallowsFastPathInheritance();")
+                to.write("builderState.style().setDisallowsFastPathInheritance();")
 
-        to.write(f"}}")
+        to.write("}")
 
     def _generate_style_builder_generated_cpp_builder_functions_class(self, *, to):
-        to.write(f"class BuilderFunctions {{")
-        to.write(f"public:")
+        to.write("class BuilderFunctions {")
+        to.write("public:")
 
         with to.indent():
             for property in self.style_properties.all:
@@ -3617,7 +3616,7 @@ class GenerateStyleBuilderGenerated:
                 if "Value" not in property.codegen_properties.custom:
                     self._generate_style_builder_generated_cpp_value_setter(to, property)
 
-        to.write(f"}};")
+        to.write("};")
 
     def _generate_style_builder_generated_cpp_builder_generated_apply(self, *, to):
         to.write_block("""
@@ -3640,7 +3639,7 @@ class GenerateStyleBuilderGenerated:
                 if not isinstance(property, StyleProperty):
                     to.write(f"case {property.id}:")
                     with to.indent():
-                        to.write(f"break;")
+                        to.write("break;")
                     continue
                 
                 if property.codegen_properties.synonym:
@@ -3653,8 +3652,8 @@ class GenerateStyleBuilderGenerated:
 
                 with to.indent():
                     if property.codegen_properties.longhands:
-                        to.write(f"ASSERT(isShorthand(id));")
-                        to.write(f"ASSERT_NOT_REACHED();")
+                        to.write("ASSERT(isShorthand(id));")
+                        to.write("ASSERT_NOT_REACHED();")
                     elif not property.codegen_properties.skip_builder:
                         apply_initial_arguments = ["builderState"]
                         apply_inherit_arguments = ["builderState"]
@@ -3662,25 +3661,25 @@ class GenerateStyleBuilderGenerated:
                         if property.codegen_properties.fill_layer_property:
                             apply_value_arguments.insert(0, "id")
 
-                        to.write(f"switch (valueType) {{")
-                        to.write(f"case ApplyValueType::Initial:")
+                        to.write("switch (valueType) {")
+                        to.write("case ApplyValueType::Initial:")
                         with to.indent():
                             to.write(f"{scope_for_function(property, 'Initial')}::applyInitial{property.id_without_prefix}({', '.join(apply_initial_arguments)});")
-                            to.write(f"break;")
-                        to.write(f"case ApplyValueType::Inherit:")
+                            to.write("break;")
+                        to.write("case ApplyValueType::Inherit:")
                         with to.indent():
                             to.write(f"{scope_for_function(property, 'Inherit')}::applyInherit{property.id_without_prefix}({', '.join(apply_inherit_arguments)});")
-                            to.write(f"break;")
+                            to.write("break;")
                         to.write("case ApplyValueType::Value:")
                         with to.indent():
                             to.write(f"{scope_for_function(property, 'Value')}::applyValue{property.id_without_prefix}({', '.join(apply_value_arguments)});")
-                            to.write(f"break;")
-                        to.write(f"}}")
+                            to.write("break;")
+                        to.write("}")
 
-                    to.write(f"break;")
+                    to.write("break;")
 
-            to.write(f"}}")
-        to.write(f"}}")
+            to.write("}")
+        to.write("}")
         to.newline()
 
     def generate_style_builder_generated_cpp(self):
@@ -3767,7 +3766,7 @@ class GenerateStylePropertyShorthandFunctions:
     def _generate_style_property_shorthand_functions_accessors(self, *, to, longhand_to_shorthands, shorthand_to_longhand_count):
         for property in self.style_properties.all_shorthands:
             to.write(f"StylePropertyShorthand {property.id_without_prefix_with_lowercase_first_letter}Shorthand()")
-            to.write(f"{{")
+            to.write("{")
             with to.indent():
                 to.write(f"static const CSSPropertyID {property.id_without_prefix_with_lowercase_first_letter}Properties[] = {{")
 
@@ -3788,16 +3787,16 @@ class GenerateStylePropertyShorthandFunctions:
                             shorthand_to_longhand_count[property] += 1
                             to.write(f"{longhand.id},")
 
-                to.write(f"}};")
+                to.write("};")
                 to.write(f"return StylePropertyShorthand({property.id}, {property.id_without_prefix_with_lowercase_first_letter}Properties);")
-            to.write(f"}}")
+            to.write("}")
             to.newline()
 
     def _generate_style_property_shorthand_functions_matching_shorthands_for_longhand(self, *, to, longhand_to_shorthands, shorthand_to_longhand_count):
-        to.write(f"StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)")
-        to.write(f"{{")
+        to.write("StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)")
+        to.write("{")
         with to.indent():
-            to.write(f"switch (id) {{")
+            to.write("switch (id) {")
 
             vector_to_longhands = {}
 
@@ -3817,11 +3816,11 @@ class GenerateStylePropertyShorthandFunctions:
                 with to.indent():
                     to.write(f"return {vector};")
 
-            to.write(f"default:")
+            to.write("default:")
             with to.indent():
-                to.write(f"return {{ }};")
-            to.write(f"}}")
-        to.write(f"}}")
+                to.write("return { };")
+            to.write("}")
+        to.write("}")
         to.newline()
 
     def generate_style_property_shorthand_functions_cpp(self):
@@ -3911,7 +3910,7 @@ class GenerateCSSPropertyParsing:
     def all_consumers_grouped_by_kind(self):
         ConsumerCollection = collections.namedtuple('ConsumerCollection', ['description', 'consumers'])
 
-        return [ConsumerCollection(f'{parsing_collection.name} {parsing_collection.noun}', parsing_collection.consumers) for parsing_collection in self.all_property_parsing_collections] + [ConsumerCollection(f'shared', list(self.all_shared_grammar_rule_consumers))]
+        return [ConsumerCollection(f'{parsing_collection.name} {parsing_collection.noun}', parsing_collection.consumers) for parsing_collection in self.all_property_parsing_collections] + [ConsumerCollection('shared', list(self.all_shared_grammar_rule_consumers))]
 
     def generate_css_property_parsing_h(self):
         with open('CSSPropertyParsing.h', 'w') as output_file:
@@ -4018,7 +4017,7 @@ class GenerateCSSPropertyParsing:
     # MARK: - Helper generator functions for CSSPropertyParsing.h
 
     def _generate_css_property_parsing_h_property_parsing_declaration(self, *, to):
-        to.write(f"struct CSSPropertyParsing {{")
+        to.write("struct CSSPropertyParsing {")
 
         with to.indent():
             for parsing_collection in self.all_property_parsing_collections:
@@ -4027,12 +4026,12 @@ class GenerateCSSPropertyParsing:
                     to.write(f"static RefPtr<CSSValue> parse{parsing_collection.id}(CSSParserTokenRange&, CSSPropertyID id, CSSPropertyID currentShorthand, const CSSParserContext&);")
                 else:
                     to.write(f"static RefPtr<CSSValue> parse{parsing_collection.id}(CSSParserTokenRange&, CSSPropertyID id, const CSSParserContext&);")
-                to.write(f"// Fast path bare-keyword support.")
+                to.write("// Fast path bare-keyword support.")
                 to.write(f"static bool isKeywordValidFor{parsing_collection.id}(CSSPropertyID, CSSValueID, const CSSParserContext&);")
                 to.write(f"static bool isKeywordFastPathEligible{parsing_collection.id}(CSSPropertyID);")
                 to.newline()
 
-            to.write(f"// Direct consumers.")
+            to.write("// Direct consumers.")
 
             for description, consumers in self.all_consumers_grouped_by_kind:
                 if any(consumer.is_exported for consumer in consumers):
@@ -4041,7 +4040,7 @@ class GenerateCSSPropertyParsing:
                     for consumer in (consumer for consumer in consumers if consumer.is_exported):
                         consumer.generate_export_declaration(to=to)
 
-        to.write(f"}};")
+        to.write("};")
         to.newline()
 
     # MARK: - Helper generator functions for CSSPropertyParsing.cpp
@@ -4049,10 +4048,10 @@ class GenerateCSSPropertyParsing:
     def _generate_css_property_parsing_cpp_is_keyword_valid_for_property(self, *, to, parsing_collection, keyword_fast_path_eligible_property_consumers):
         if not keyword_fast_path_eligible_property_consumers:
             to.write(f"bool CSSPropertyParsing::isKeywordValidFor{parsing_collection.id}(CSSPropertyID, CSSValueID, const CSSParserContext&)")
-            to.write(f"{{")
+            to.write("{")
             with to.indent():
-                to.write(f"return false;")
-            to.write(f"}}")
+                to.write("return false;")
+            to.write("}")
             to.newline()
             return
 
@@ -4070,10 +4069,10 @@ class GenerateCSSPropertyParsing:
     def _generate_css_property_parsing_cpp_is_keyword_fast_path_eligible_for_property(self, *, to, parsing_collection, keyword_fast_path_eligible_property_consumers):
         if not keyword_fast_path_eligible_property_consumers:
             to.write(f"bool CSSPropertyParsing::isKeywordFastPathEligible{parsing_collection.id}(CSSPropertyID)")
-            to.write(f"{{")
+            to.write("{")
             with to.indent():
-                to.write(f"return false;")
-            to.write(f"}}")
+                to.write("return false;")
+            to.write("}")
             to.newline()
             return
 
@@ -4114,15 +4113,15 @@ class GenerateCSSPropertyParsing:
             to.write(f"RefPtr<CSSValue> CSSPropertyParsing::parse{parsing_collection.id}(CSSParserTokenRange& range, CSSPropertyID id, const CSSParserContext& context)")
             current_shorthand_string = None
 
-        to.write(f"{{")
+        to.write("{")
         with to.indent():
-            to.write(f"if (!isExposed(id, context.propertySettings) && !isInternal(id)) {{")
+            to.write("if (!isExposed(id, context.propertySettings) && !isInternal(id)) {")
             with to.indent():
-                to.write(f"// Allow internal properties as we use them to parse several internal-only-shorthands (e.g. background-repeat),")
-                to.write(f"// and to handle certain DOM-exposed values (e.g. -webkit-font-size-delta from execCommand('FontSizeDelta')).")
-                to.write(f"ASSERT_NOT_REACHED();")
-                to.write(f"return nullptr;")
-            to.write(f"}}")
+                to.write("// Allow internal properties as we use them to parse several internal-only-shorthands (e.g. background-repeat),")
+                to.write("// and to handle certain DOM-exposed values (e.g. -webkit-font-size-delta from execCommand('FontSizeDelta')).")
+                to.write("ASSERT_NOT_REACHED();")
+                to.write("return nullptr;")
+            to.write("}")
 
             # Build up a list of pairs of (property, return-expression-to-use-for-property).
 
@@ -4157,7 +4156,7 @@ class GenerateCSSPropertyParsing:
             def _sort_by_first_property(a, b):
                 return StyleProperties._sort_by_descending_priority_and_name(a.properties[0], b.properties[0])
 
-            to.write(f"switch (id) {{")
+            to.write("switch (id) {")
             for properties, return_expression in sorted(property_and_return_expressions_grouped_by_expression, key=functools.cmp_to_key(_sort_by_first_property)):
                 for property in properties:
                     to.write(f"case {property.id}:")
@@ -4165,11 +4164,11 @@ class GenerateCSSPropertyParsing:
                 with to.indent():
                     to.write(f"return {return_expression};")
 
-            to.write(f"default:")
+            to.write("default:")
             with to.indent():
-                to.write(f"return nullptr;")
-            to.write(f"}}")
-        to.write(f"}}")
+                to.write("return nullptr;")
+            to.write("}")
+        to.write("}")
         to.newline()
 
 
@@ -4226,7 +4225,7 @@ class FunctionSignature:
 
 # The `TermGenerator` classes help generate parser functions by providing
 # generation of parsing text for a term or set of terms.
-class TermGenerator(object):
+class TermGenerator:
     def make(term, keyword_fast_path_generator=None):
         if isinstance(term, MatchOneTerm):
             return TermGeneratorMatchOneTerm(term, keyword_fast_path_generator)
@@ -4317,7 +4316,7 @@ class TermGeneratorUnboundedRepetitionTerm(TermGenerator):
         self._generate_lambda(to=to, range_string=range_string, context_string=context_string)
         to.write(f"if (auto result = {self._generate_call_string(range_string=range_string, context_string=context_string)})")
         with to.indent():
-            to.write(f"return result;")
+            to.write("return result;")
 
     def generate_unconditional(self, *, to, range_string, context_string):
         self._generate_lambda(to=to, range_string=range_string, context_string=context_string)
@@ -4331,7 +4330,7 @@ class TermGeneratorUnboundedRepetitionTerm(TermGenerator):
         to.write(f"auto lambda = []({', '.join(lambda_declaration_paramaters)}) -> RefPtr<CSSValue> {{")
         with to.indent():
             self.repeated_term_generator.generate_unconditional(to=to, range_string="range", context_string="context")
-        to.write(f"}};")
+        to.write("};")
 
     def _generate_call_string(self, *, range_string, context_string):
         parameters = [range_string, "lambda"]
@@ -4422,7 +4421,7 @@ class TermGeneratorReferenceTerm(TermGenerator):
     def generate_conditional(self, *, to, range_string, context_string):
         to.write(f"if (auto result = {self.generate_call_string(range_string=range_string, context_string=context_string)})")
         with to.indent():
-            to.write(f"return result;")
+            to.write("return result;")
 
     def generate_unconditional(self, *, to, range_string, context_string):
         to.write(f"return {self.generate_call_string(range_string=range_string, context_string=context_string)};")
@@ -4553,11 +4552,11 @@ class TermGeneratorNonFastPathKeywordTerm(TermGenerator):
                 to.write(f"{range_string}.consumeIncludingWhitespace();")
                 to.write(f"return CSSPrimitiveValue::create({return_expression.return_value});")
 
-        to.write(f"default:")
+        to.write("default:")
         with to.indent():
             to.write(f"{default_string};")
 
-        to.write(f"}}")
+        to.write("}")
 
 
 # Generation support for a properties fast path eligable keyword terms.
@@ -4569,7 +4568,7 @@ class TermGeneratorFastPathKeywordTerms(TermGenerator):
     def generate_conditional(self, *, to, range_string, context_string):
         to.write(f"if (auto result = {self.generate_call_string(range_string=range_string, context_string=context_string)})")
         with to.indent():
-            to.write(f"return result;")
+            to.write("return result;")
 
     def generate_unconditional(self, *, to, range_string, context_string):
         to.write(f"return {self.generate_call_string(range_string=range_string, context_string=context_string)};")
@@ -4618,7 +4617,7 @@ class KeywordFastPathGenerator:
 
     def generate_definition(self, *, to):
         to.write(f"static {self.signature.definition_string}")
-        to.write(f"{{")
+        to.write("{")
 
         with to.indent():
             # Build up a list of pairs of (value, return-expression-to-use-for-value), taking
@@ -4643,19 +4642,19 @@ class KeywordFastPathGenerator:
             # Take the list of pairs of (value, return-expression-to-use-for-value), and
             # group them by their 'return-expression' to avoid unnecessary duplication of
             # return statements.
-            to.write(f"switch (keyword) {{")
+            to.write("switch (keyword) {")
             for return_expression, group in itertools.groupby(sorted(keyword_term_and_return_expressions, key=lambda x: x.return_expression), lambda x: x.return_expression):
                 for keyword_term, _ in group:
                     to.write(f"case {keyword_term.value.id}:")
                 with to.indent():
                     to.write(f"return {' && '.join(return_expression or ['true'])};")
 
-            to.write(f"default:")
+            to.write("default:")
             with to.indent():
-                to.write(f"return false;")
+                to.write("return false;")
 
-            to.write(f"}}")
-        to.write(f"}}")
+            to.write("}")
+        to.write("}")
         to.newline()
 
 
@@ -4682,7 +4681,7 @@ class KeywordFastPathGenerator:
 #   def generate_definition(self, *, to):
 #   var is_exported
 #
-class SharedGrammarRuleConsumer(object):
+class SharedGrammarRuleConsumer:
     @staticmethod
     def make(shared_grammar_rule):
         if not shared_grammar_rule.exported:
@@ -4747,10 +4746,10 @@ class GeneratedSharedGrammarRuleConsumer(SharedGrammarRuleConsumer):
 
     def generate_definition(self, *, to):
         to.write(f"{self.signature.definition_string}")
-        to.write(f"{{")
+        to.write("{")
         with to.indent():
             self.term_generator.generate_unconditional(to=to, range_string='range', context_string='context')
-        to.write(f"}}")
+        to.write("}")
         to.newline()
 
 
@@ -4799,7 +4798,7 @@ class GeneratedSharedGrammarRuleConsumer(SharedGrammarRuleConsumer):
 #   var is_exported
 #   var keyword_fast_path_generator
 
-class PropertyConsumer(object):
+class PropertyConsumer:
     @staticmethod
     def make(property):
         if property.codegen_properties.longhands or property.codegen_properties.skip_parser:
@@ -4949,10 +4948,10 @@ class FastPathKeywordOnlyPropertyConsumer(PropertyConsumer):
     def generate_definition(self, *, to):
         if self.is_exported:
             to.write(f"{self.signature.definition_string}")
-            to.write(f"{{")
+            to.write("{")
             with to.indent():
                 to.write(f"return {self.generate_call_string(range_string='range', context_string='context')};")
-            to.write(f"}}")
+            to.write("}")
             to.newline()
 
 
@@ -5011,10 +5010,10 @@ class DirectPropertyConsumer(PropertyConsumer):
     def generate_definition(self, *, to):
         if self.is_exported:
             to.write(f"{self.signature.definition_string}")
-            to.write(f"{{")
+            to.write("{")
             with to.indent():
                 self.term_generator.generate_unconditional(to=to, range_string='range', context_string='context')
-            to.write(f"}}")
+            to.write("}")
             to.newline()
 
     @property
@@ -5083,10 +5082,10 @@ class GeneratedPropertyConsumer(PropertyConsumer):
             to.write(f"{self.signature.definition_string}")
         else:
             to.write(f"static {self.signature.definition_string}")
-        to.write(f"{{")
+        to.write("{")
         with to.indent():
             self.term_generator.generate_unconditional(to=to, range_string='range', context_string='context')
-        to.write(f"}}")
+        to.write("}")
         to.newline()
 
 
@@ -6145,7 +6144,7 @@ def main():
     parser.add_argument('--check-unused-grammars-values', action='store_true')
     args = parser.parse_args()
 
-    with open(args.properties, "r", encoding="utf-8") as properties_file:
+    with open(args.properties, encoding="utf-8") as properties_file:
         properties_json = json.load(properties_file)
 
     parsing_context = ParsingContext(properties_json, defines_string=args.defines, parsing_for_codegen=True, check_unused_grammars_values=args.check_unused_grammars_values, verbose=args.verbose)

@@ -1,11 +1,10 @@
 import os
-import re
 import sys
 
 
 def ReadFileAsLines(filename):
     """Reads a file, removing blank lines and lines that start with #"""
-    file = open(filename, "r")
+    file = open(filename)
     raw_lines = file.readlines()
     file.close()
     lines = []
@@ -38,7 +37,7 @@ def GenerateTests(outFile, testNames):
 
     for test in testNames:
         testSuite = GetSuiteName(test)
-        if not testSuite in testSuites:
+        if testSuite not in testSuites:
             outFile.write("DEFINE_CONFORMANCE_TEST_CLASS(" + testSuite + ");\n\n")
             testSuites.append(testSuite)
 

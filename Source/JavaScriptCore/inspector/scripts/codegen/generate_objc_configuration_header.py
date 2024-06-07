@@ -26,7 +26,6 @@
 
 
 import logging
-import string
 from string import Template
 
 try:
@@ -34,7 +33,6 @@ try:
     from .objc_generator import ObjCGenerator
     from .objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 except ImportError:
-    from generator import Generator
     from objc_generator import ObjCGenerator
     from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 

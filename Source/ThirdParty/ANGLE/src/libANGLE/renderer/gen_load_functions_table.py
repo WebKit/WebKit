@@ -10,7 +10,7 @@
 #  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 #
 
-import json, sys
+import sys
 
 sys.path.append('../..')
 import angle_format
@@ -222,7 +222,7 @@ def main():
         switch_data=switch_data,
         load_functions_data=load_functions_data)
 
-    with open('load_functions_table_autogen.cpp', 'wt') as out_file:
+    with open('load_functions_table_autogen.cpp', 'w') as out_file:
         out_file.write(output)
         out_file.close()
     return 0

@@ -32,7 +32,7 @@ try:
     import ply.yacc as yacc
 except ImportError:
     import sys
-    sys.exit('Please run `pip3 install ply`');
+    sys.exit('Please run `pip3 install ply`')
 
 
 # --- Parse Tree
@@ -527,7 +527,7 @@ class CMakeWriter:
                     return
                 self.writef('\n%sif(', indent)
                 self.visit(ast[0], indent)
-                self.writef(f')\n')
+                self.writef(')\n')
                 self.visit(ast[1], nindent)
                 if ast[2]:
                     self.writef('%selse()\n', indent)
@@ -539,7 +539,7 @@ class CMakeWriter:
                 self.visit(ast[0][0], indent)
                 self.writef(' IN LISTS ')
                 self.visit(ast[0][1], indent)
-                self.writef(f')\n')
+                self.writef(')\n')
                 self.visit(ast[1], nindent)
                 self.writef('%sendforeach()\n', indent)
         # Unknown - These should have been removed by previous passes over the AST

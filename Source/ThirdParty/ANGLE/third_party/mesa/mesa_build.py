@@ -209,7 +209,7 @@ def GenerateGni(args):
                                                                libdrm_outputs_filter)
 
     fmt_list = lambda l, rp: ''.join(
-        sorted(list(set(['  "%s",\n' % os.path.relpath(li, rp) for li in l]))))
+        sorted(list({'  "%s",\n' % os.path.relpath(li, rp) for li in l})))
 
     format_args = {
         'script_name': os.path.basename(__file__),
@@ -257,7 +257,7 @@ def Meson(build_dir, command, args, extra_env={}, stdout=None):
         env[k] = v
     # TODO: Remove when crbug.com/1373441 is fixed.
     env['VPYTHON_DEFAULT_SPEC'] = os.path.join(ANGLE_DIR, '.vpython3')
-    logging.info(' '.join(['%s=%s' % (k, v) for (k, v) in extra_env.items()] + meson_cmd))
+    logging.info(' '.join(['{}={}'.format(k, v) for (k, v) in extra_env.items()] + meson_cmd))
     completed = subprocess.run(meson_cmd, env=env, stdout=stdout)
     if completed.returncode != EXIT_SUCCESS:
         logging.fatal('Got error from meson:')
@@ -323,7 +323,7 @@ def SameStamps(in_stamp, out_stamp):
 
 
 def ReadFile(path):
-    with open(path, 'rt') as inf:
+    with open(path) as inf:
         all_data = inf.read()
         inf.close()
         return all_data

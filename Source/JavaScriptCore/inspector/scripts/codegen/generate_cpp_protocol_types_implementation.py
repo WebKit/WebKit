@@ -26,7 +26,6 @@
 
 
 import logging
-import string
 from string import Template
 from operator import methodcaller
 
@@ -39,7 +38,7 @@ except ImportError:
     from cpp_generator import CppGenerator
     from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
     from generator import Generator, ucfirst
-    from models import AliasedType, ArrayType, EnumType, ObjectType
+    from models import AliasedType, EnumType, ObjectType
 
 log = logging.getLogger('global')
 
@@ -108,14 +107,14 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         def generate_conversion_method_body(enum_type, cpp_protocol_type):
             body_lines = []
             body_lines.extend([
-                'template<> std::optional<%s> parseEnumValueFromString<%s>(const String& protocolString)' % (cpp_protocol_type, cpp_protocol_type),
+                'template<> std::optional<{}> parseEnumValueFromString<{}>(const String& protocolString)'.format(cpp_protocol_type, cpp_protocol_type),
                 '{',
                 '    static const size_t constantValues[] = {',
             ])
 
             enum_values = enum_type.enum_values()
             for enum_value in enum_values:
-                body_lines.append('        (size_t)%s::%s,' % (cpp_protocol_type, Generator.stylized_name_for_enum_value(enum_value)))
+                body_lines.append('        (size_t){}::{},'.format(cpp_protocol_type, Generator.stylized_name_for_enum_value(enum_value)))
 
             body_lines.extend([
                 '    };',
@@ -148,7 +147,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         for object_type in object_types:
             object_lines = []
             for enum_member in filter(type_member_is_anonymous_enum_type, object_type.members):
-                cpp_protocol_type = CppGenerator.cpp_type_for_enum(enum_member.type, '%s::%s' % (object_type.raw_name(), ucfirst(enum_member.member_name)))
+                cpp_protocol_type = CppGenerator.cpp_type_for_enum(enum_member.type, '{}::{}'.format(object_type.raw_name(), ucfirst(enum_member.member_name)))
                 object_lines.append(generate_conversion_method_body(enum_member.type, cpp_protocol_type))
             if len(object_lines):
                 if len(lines):
@@ -180,7 +179,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             for type_declaration in [decl for decl in type_declarations if Generator.type_has_open_fields(decl.type)]:
                 open_members = Generator.open_fields(type_declaration)
                 for type_member in sorted(open_members, key=lambda member: member.member_name):
-                    domain_lines.append('const ASCIILiteral Protocol::%s::%s::%sKey = "%s"_s;' % (domain.domain_name, ucfirst(type_declaration.type_name), type_member.member_name, type_member.member_name))
+                    domain_lines.append('const ASCIILiteral Protocol::{}::{}::{}Key = "{}"_s;'.format(domain.domain_name, ucfirst(type_declaration.type_name), type_member.member_name, type_member.member_name))
             if len(domain_lines):
                 lines.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))
 
@@ -233,7 +232,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
                 member_type = member_type.aliased_type
 
             if isinstance(member_type, EnumType):
-                member_type = CppGenerator.cpp_type_for_enum(member_type, '%s::%s' % (object_declaration.type_name, ucfirst(type_member.member_name)))
+                member_type = CppGenerator.cpp_type_for_enum(member_type, '{}::{}'.format(object_declaration.type_name, ucfirst(type_member.member_name)))
             else:
                 member_type = CppGenerator.cpp_protocol_type_for_type(member_type)
 
@@ -258,7 +257,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
                 member_type = member_type.aliased_type
 
             if isinstance(member_type, EnumType):
-                member_type = CppGenerator.cpp_type_for_enum(member_type, '%s::%s' % (object_declaration.type_name, ucfirst(type_member.member_name)))
+                member_type = CppGenerator.cpp_type_for_enum(member_type, '{}::{}'.format(object_declaration.type_name, ucfirst(type_member.member_name)))
             else:
                 member_type = CppGenerator.cpp_protocol_type_for_type(member_type)
 
@@ -286,7 +285,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
 
     def _generate_assertion_for_enum(self, enum_member, object_declaration):
         lines = []
-        lines.append('void BindingTraits<%s>::assertValueHasExpectedType(JSON::Value* value)' % CppGenerator.cpp_type_for_enum(enum_member.type, '%s::%s' % (object_declaration.type_name, ucfirst(enum_member.member_name))))
+        lines.append('void BindingTraits<%s>::assertValueHasExpectedType(JSON::Value* value)' % CppGenerator.cpp_type_for_enum(enum_member.type, '{}::{}'.format(object_declaration.type_name, ucfirst(enum_member.member_name))))
         lines.append('{')
         lines.append('    ASSERT_UNUSED(value, value);')
         lines.append('#if ASSERT_ENABLED')

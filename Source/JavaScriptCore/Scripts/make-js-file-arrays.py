@@ -21,7 +21,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import print_function
 import io
 import os
 from optparse import OptionParser
@@ -32,9 +31,9 @@ is_3 = sys.version_info >= (3, 0)
 
 def stringifyCodepoint(code):
     if code < 128:
-        return '{0:d}'.format(code)
+        return f'{code:d}'
     else:
-        return "'\\x{0:02x}'".format(code)
+        return f"'\\x{code:02x}'"
 
 
 def chunk(list, chunkSize):
@@ -63,18 +62,18 @@ def main():
     inputPaths = arguments[2:]
 
     headerFile = open(headerPath, 'w')
-    print('namespace {0:s} {{'.format(namespace), file=headerFile)
+    print(f'namespace {namespace:s} {{', file=headerFile)
 
     sourceFile = open(sourcePath, 'w')
-    print('#include "{0:s}"'.format(os.path.basename(headerPath)), file=sourceFile)
-    print('namespace {0:s} {{'.format(namespace), file=sourceFile)
+    print(f'#include "{os.path.basename(headerPath):s}"', file=sourceFile)
+    print(f'namespace {namespace:s} {{', file=sourceFile)
 
     for inputFileName in inputPaths:
         variableName = os.path.splitext(os.path.basename(inputFileName))[0]
         sourceURLDirective = "//# sourceURL=__InjectedScript_" + variableName + ".js\n"
 
         if is_3:
-            inputStream = io.open(inputFileName, encoding='utf-8')
+            inputStream = open(inputFileName, encoding='utf-8')
         else:
             inputStream = io.FileIO(inputFileName)
 
@@ -99,16 +98,16 @@ def main():
         # because UTF-8 characters may need more than one byte.
         size = len(codepoints)
 
-        print('extern const char {0:s}JavaScript[{1:d}];'.format(variableName, size), file=headerFile)
-        print('const char {0:s}JavaScript[{1:d}] = {{'.format(variableName, size), file=sourceFile)
+        print(f'extern const char {variableName:s}JavaScript[{size:d}];', file=headerFile)
+        print(f'const char {variableName:s}JavaScript[{size:d}] = {{', file=sourceFile)
 
         for codepointChunk in chunk(codepoints, 16):
-            print('    {0:s},'.format(','.join(map(stringifyCodepoint, codepointChunk))), file=sourceFile)
+            print('    {:s},'.format(','.join(map(stringifyCodepoint, codepointChunk))), file=sourceFile)
 
         print('};', file=sourceFile)
 
-    print('}} // namespace {0:s}'.format(namespace), file=headerFile)
-    print('}} // namespace {0:s}'.format(namespace), file=sourceFile)
+    print(f'}} // namespace {namespace:s}', file=headerFile)
+    print(f'}} // namespace {namespace:s}', file=sourceFile)
 
 if __name__ == '__main__':
     main()

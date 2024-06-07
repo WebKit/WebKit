@@ -34,14 +34,11 @@ Of the 5 runs, the high and low for each data point will be dropped, average of 
 '''
 
 import argparse
-import copy
 import csv
-import fcntl
 import fnmatch
 import json
 import logging
 import os
-import re
 import statistics
 import subprocess
 import sys
@@ -50,7 +47,6 @@ import time
 
 from collections import defaultdict, namedtuple
 from datetime import datetime
-from psutil import process_iter
 
 DEFAULT_TEST_DIR = '.'
 DEFAULT_TEST_JSON = 'restricted_traces.json'
@@ -149,7 +145,7 @@ def select_device(device_arg):
         exit()
 
     if device_serial is not None and device_serial not in result_dev_out:
-        logging.error('DeviceError: Device with serial {} not detected.'.format(device_serial))
+        logging.error(f'DeviceError: Device with serial {device_serial} not detected.')
         if device_arg != '':
             logging.error('Please update the --device input and try again.')
         else:
@@ -159,11 +155,11 @@ def select_device(device_arg):
 
     # Select device
     if device_serial is not None:
-        logging.info('Device with serial {} selected.'.format(device_serial))
+        logging.info(f'Device with serial {device_serial} selected.')
         os.environ['ANDROID_SERIAL'] = device_serial
 
     else:
-        logging.info('Default device ({}) selected.'.format(result_dev_out[0]))
+        logging.info(f'Default device ({result_dev_out[0]}) selected.')
 
 
 def get_mode(args):
@@ -460,11 +456,11 @@ class GPUPowerStats():
                 if mid in line:
                     value = int(line.split()[1])
                     logging.debug('Power metric %s (%s): %d', mid, m, value)
-                    assert self.power[m] == 0, 'Duplicate power metric: %s (%s)' % (mid, m)
+                    assert self.power[m] == 0, 'Duplicate power metric: {} ({})'.format(mid, m)
                     self.power[m] = value
 
         for mid, m in id_map.items():
-            assert self.power[m] != 0, 'Power metric not found: %s (%s)' % (mid, m)
+            assert self.power[m] != 0, 'Power metric not found: {} ({})'.format(mid, m)
 
 
 def wait_for_test_warmup(done_event):
@@ -790,7 +786,7 @@ def run_traces(args):
             run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
             run_adb_command('shell settings delete global angle_gl_driver_selection_values')
         else:
-            logging.error('Unsupported renderer {}'.format(renderer))
+            logging.error(f'Unsupported renderer {renderer}')
             exit()
 
         for i in range(int(args.loop_count)):

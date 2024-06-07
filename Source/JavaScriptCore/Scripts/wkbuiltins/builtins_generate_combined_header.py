@@ -26,8 +26,6 @@
 
 
 import logging
-import re
-import string
 from string import Template
 
 from builtins_generator import BuiltinsGenerator
@@ -61,8 +59,8 @@ class BuiltinsCombinedHeaderGenerator(BuiltinsGenerator):
         sections.append(Template(Templates.HeaderIncludeGuard).substitute(args))
         sections.append(self.generate_forward_declarations())
         sections.append(Template(Templates.NamespaceTop).substitute(args))
-        sections.append("extern const char s_%(namespace)sCombinedCode[];" % args);
-        sections.append("extern const unsigned s_%(namespace)sCombinedCodeLength;" % args);
+        sections.append("extern const char s_%(namespace)sCombinedCode[];" % args)
+        sections.append("extern const unsigned s_%(namespace)sCombinedCodeLength;" % args)
         for object in self.model().objects:
             sections.append(self.generate_section_for_object(object))
         sections.append(self.generate_section_for_code_table_macro())
@@ -155,7 +153,7 @@ extern const JSC::InlineAttribute s_%(codeName)sInlineAttribute;""" % function_a
 
         lines = []
         lines.append("#define %(macroPrefix)s_FOREACH_BUILTIN_FUNCTION_NAME(macro) \\" % args)
-        unique_names = list(set([function.function_name for function in self.model().all_functions()]))
+        unique_names = list({function.function_name for function in self.model().all_functions()})
         unique_names.sort()
         for function_name in unique_names:
             function_args = {

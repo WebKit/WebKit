@@ -54,7 +54,7 @@ _OBJC_IDENTIFIER_RENAME_MAP = {
     'id': 'identifier',  # Page.Frame.id, Runtime.ExecutionContextDescription.id, Debugger.BreakpointAction.id
 }
 
-_OBJC_IDENTIFIER_REVERSE_RENAME_MAP = dict((v, k) for k, v in _OBJC_IDENTIFIER_RENAME_MAP.items())
+_OBJC_IDENTIFIER_REVERSE_RENAME_MAP = {v: k for k, v in _OBJC_IDENTIFIER_RENAME_MAP.items()}
 
 
 class ObjCTypeCategory:
@@ -91,7 +91,7 @@ class ObjCGenerator(Generator):
     # base class and needs a consistent Objective-C prefix to be in a reusable framework.
     OBJC_HELPER_PREFIX = 'RWI'
     OBJC_SHARED_PREFIX = 'Protocol'
-    OBJC_STATIC_PREFIX = '%s%s' % (OBJC_HELPER_PREFIX, OBJC_SHARED_PREFIX)
+    OBJC_STATIC_PREFIX = '{}{}'.format(OBJC_HELPER_PREFIX, OBJC_SHARED_PREFIX)
 
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
@@ -99,7 +99,7 @@ class ObjCGenerator(Generator):
     # The 'protocol name' is used to prefix filenames for a protocol group (a set of domains generated together).
     def protocol_name(self):
         protocol_group = self.model().framework.setting('objc_protocol_group', '')
-        return '%s%s' % (protocol_group, ObjCGenerator.OBJC_SHARED_PREFIX)
+        return '{}{}'.format(protocol_group, ObjCGenerator.OBJC_SHARED_PREFIX)
 
     # The 'ObjC prefix' is used to prefix Objective-C class names and enums with a
     # framework-specific prefix. It is separate from filename prefixes.
@@ -108,7 +108,7 @@ class ObjCGenerator(Generator):
         if not framework_prefix:
             return ''
         else:
-            return '%s%s' % (framework_prefix, ObjCGenerator.OBJC_SHARED_PREFIX)
+            return '{}{}'.format(framework_prefix, ObjCGenerator.OBJC_SHARED_PREFIX)
 
     # Adjust identifier names that collide with ObjC keywords.
 
@@ -132,7 +132,7 @@ class ObjCGenerator(Generator):
             return True
 
         allowlist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
-        allowlist.update(set(['Console', 'Debugger', 'Runtime']))
+        allowlist.update({'Console', 'Debugger', 'Runtime'})
         return domain.domain_name in allowlist
 
     def should_generate_commands_for_domain(self, domain):
@@ -161,31 +161,31 @@ class ObjCGenerator(Generator):
     def objc_name_for_type(self, type):
         name = type.qualified_name().replace('.', '')
         name = remove_duplicate_from_str(name, type.type_domain().domain_name)
-        return '%s%s' % (self.objc_prefix(), name)
+        return '{}{}'.format(self.objc_prefix(), name)
 
     def objc_enum_name_for_anonymous_enum_declaration(self, declaration):
         domain_name = declaration.type.type_domain().domain_name
-        name = '%s%s' % (domain_name, declaration.type.raw_name())
+        name = '{}{}'.format(domain_name, declaration.type.raw_name())
         name = remove_duplicate_from_str(name, domain_name)
-        return '%s%s' % (self.objc_prefix(), name)
+        return '{}{}'.format(self.objc_prefix(), name)
 
     def objc_enum_name_for_anonymous_enum_member(self, declaration, member):
         domain_name = member.type.type_domain().domain_name
-        name = '%s%s%s' % (domain_name, declaration.type.raw_name(), ucfirst(member.member_name))
+        name = '{}{}{}'.format(domain_name, declaration.type.raw_name(), ucfirst(member.member_name))
         name = remove_duplicate_from_str(name, domain_name)
-        return '%s%s' % (self.objc_prefix(), name)
+        return '{}{}'.format(self.objc_prefix(), name)
 
     def objc_enum_name_for_anonymous_enum_parameter(self, domain, event_or_command_name, parameter):
         domain_name = domain.domain_name
-        name = '%s%s%s' % (domain_name, ucfirst(event_or_command_name), ucfirst(parameter.parameter_name))
+        name = '{}{}{}'.format(domain_name, ucfirst(event_or_command_name), ucfirst(parameter.parameter_name))
         name = remove_duplicate_from_str(name, domain_name)
-        return '%s%s' % (self.objc_prefix(), name)
+        return '{}{}'.format(self.objc_prefix(), name)
 
     def objc_enum_name_for_non_anonymous_enum(self, _type):
         domain_name = _type.type_domain().domain_name
         name = _type.qualified_name().replace('.', '')
         name = remove_duplicate_from_str(name, domain_name)
-        return '%s%s' % (self.objc_prefix(), name)
+        return '{}{}'.format(self.objc_prefix(), name)
 
     # Miscellaneous name handling.
 
@@ -263,7 +263,7 @@ class ObjCGenerator(Generator):
         if (isinstance(_type, EnumType)):
             return ObjCGenerator.protocol_type_for_type(_type.primitive_type)
         if (isinstance(_type, ObjectType)):
-            return 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            return 'Protocol::{}::{}'.format(_type.type_domain().domain_name, _type.raw_name())
         if (isinstance(_type, ArrayType)):
             sub_type = ObjCGenerator.protocol_type_for_type(_type.element_type)
             return 'JSON::ArrayOf<%s>' % sub_type
@@ -390,13 +390,13 @@ class ObjCGenerator(Generator):
     def objc_protocol_import_expression_for_member(self, name, declaration, member):
         if isinstance(member.type, EnumType):
             if member.type.is_anonymous:
-                return 'fromProtocolString<%s>((__bridge CFStringRef)%s)' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), name)
-            return 'fromProtocolString<%s>((__bridge CFStringRef)%s)' % (self.objc_enum_name_for_non_anonymous_enum(member.type), name)
+                return 'fromProtocolString<{}>((__bridge CFStringRef){})'.format(self.objc_enum_name_for_anonymous_enum_member(declaration, member), name)
+            return 'fromProtocolString<{}>((__bridge CFStringRef){})'.format(self.objc_enum_name_for_non_anonymous_enum(member.type), name)
         return self.objc_protocol_import_expression_for_variable(member.type, name)
 
     def objc_protocol_import_expression_for_parameter(self, name, domain, event_or_command_name, parameter):
         if isinstance(parameter.type, EnumType):
-            return 'fromProtocolString<%s>(%s)' % (self.objc_enum_name_for_non_anonymous_enum(parameter.type), name)
+            return 'fromProtocolString<{}>({})'.format(self.objc_enum_name_for_non_anonymous_enum(parameter.type), name)
         return self.objc_protocol_import_expression_for_variable(parameter.type, name)
 
     def objc_protocol_import_expression_for_variable(self, var_type, var_name):
@@ -405,14 +405,14 @@ class ObjCGenerator(Generator):
             return var_name
         if category == ObjCTypeCategory.Object:
             objc_class = self.objc_class_for_type(var_type)
-            return 'adoptNS([[%s alloc] initWithJSONObject:%s]).autorelease()' % (objc_class, var_name)
+            return 'adoptNS([[{} alloc] initWithJSONObject:{}]).autorelease()'.format(objc_class, var_name)
         if category == ObjCTypeCategory.Array:
             objc_class = self.objc_class_for_type(var_type.element_type)
             if objc_class == 'NSString':
                 return 'toObjCStringArray(%s)' % var_name
             if objc_class == 'NSNumber':  # FIXME: Integer or Double?
                 return 'toObjCIntegerArray(%s)' % var_name
-            return 'toObjCArray<%s>(%s)' % (objc_class, var_name)
+            return 'toObjCArray<{}>({})'.format(objc_class, var_name)
 
     # ObjC <-> JSON object conversion for types getters/setters.
     #   - convert a member setter from ObjC API to JSON object setter
@@ -442,8 +442,8 @@ class ObjCGenerator(Generator):
         if category in [ObjCTypeCategory.Simple, ObjCTypeCategory.String]:
             if isinstance(member.type, EnumType):
                 if member.type.is_anonymous:
-                    return 'fromProtocolString<%s>((__bridge CFStringRef)%s).value()' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
-                return 'fromProtocolString<%s>((__bridge CFStringRef)%s).value()' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
+                    return 'fromProtocolString<{}>((__bridge CFStringRef){}).value()'.format(self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
+                return 'fromProtocolString<{}>((__bridge CFStringRef){}).value()'.format(self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
             return sub_expression
         if category == ObjCTypeCategory.Object:
             raise Exception("protocol_to_objc_expression_for_member does not support an Object type. See: protocol_to_objc_code_block_for_object_member")
@@ -457,15 +457,15 @@ class ObjCGenerator(Generator):
                 if protocol_type == 'double':
                     return 'toObjCDoubleArray(%s)' % sub_expression
                 return 'toObjCIntegerArray(%s)' % sub_expression
-            return 'toObjCArray<%s>(%s)' % (objc_class, sub_expression)
+            return 'toObjCArray<{}>({})'.format(objc_class, sub_expression)
 
     def protocol_to_objc_code_block_for_object_member(self, declaration, member, sub_expression):
         objc_class = self.objc_class_for_type(member.type)
         lines = []
-        lines.append('    %sJSONObject *object = %s;' % (ObjCGenerator.OBJC_STATIC_PREFIX, sub_expression))
+        lines.append('    {}JSONObject *object = {};'.format(ObjCGenerator.OBJC_STATIC_PREFIX, sub_expression))
         lines.append('    if (!object)')
         lines.append('        return nil;')
-        lines.append('    return [[%s alloc] initWithJSONObject:[%s toJSONObject].get()];' % (objc_class, sub_expression))
+        lines.append('    return [[{} alloc] initWithJSONObject:[{} toJSONObject].get()];'.format(objc_class, sub_expression))
         return '\n'.join(lines)
 
     def payload_to_objc_expression_for_member(self, declaration, member):
@@ -487,12 +487,12 @@ class ObjCGenerator(Generator):
         if isinstance(member.type, EnumType):
             sub_expression = 'payload[@"%s"]' % member.member_name
             if member.type.is_anonymous:
-                return 'fromProtocolString<%s>((__bridge CFStringRef)%s)' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
+                return 'fromProtocolString<{}>((__bridge CFStringRef){})'.format(self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
             else:
-                return 'fromProtocolString<%s>((__bridge CFStringRef)%s)' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
+                return 'fromProtocolString<{}>((__bridge CFStringRef){})'.format(self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
         if isinstance(_type, ObjectType):
             objc_class = self.objc_class_for_type(member.type)
-            return '[[%s alloc] initWithPayload:payload[@"%s"]]' % (objc_class, member.member_name)
+            return '[[{} alloc] initWithPayload:payload[@"{}"]]'.format(objc_class, member.member_name)
         if isinstance(_type, ArrayType):
             element_type = member.type.element_type
             if isinstance(element_type, EnumType):
@@ -503,7 +503,7 @@ class ObjCGenerator(Generator):
                 return 'payload[@"%s"]' % member.member_name
             else:
                 objc_class = self.objc_class_for_type(element_type)
-                return 'objcArrayFromPayload<%s>(payload[@"%s"])' % (objc_class, member.member_name)
+                return 'objcArrayFromPayload<{}>(payload[@"{}"])'.format(objc_class, member.member_name)
 
     # JSON object setter/getter selectors for types.
 

@@ -26,8 +26,6 @@
 
 
 import logging
-import string
-import re
 from string import Template
 
 try:
@@ -105,7 +103,7 @@ class CppAlternateBackendDispatcherHeaderGenerator(CppGenerator):
             if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
 
-            parameters.append('%s %s' % (CppGenerator.cpp_type_for_command_parameter(parameter_type, parameter.is_optional), parameter_name))
+            parameters.append('{} {}'.format(CppGenerator.cpp_type_for_command_parameter(parameter_type, parameter.is_optional), parameter_name))
 
         command_args = {
             'commandName': command.command_name,

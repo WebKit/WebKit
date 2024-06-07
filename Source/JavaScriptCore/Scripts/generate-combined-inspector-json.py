@@ -63,7 +63,7 @@ for file in files:
     try:
         regex = re.compile(r"\/\*.*?\*\/", re.DOTALL)
         dictionary = json.loads(re.sub(regex, "", string))
-        if not "domain" in dictionary:
+        if "domain" not in dictionary:
             raise Exception("File \"%s\" does not contains a \"domain\" key." % file)
     except ValueError:
         sys.stderr.write("File \"%s\" does not contain valid JSON:\n" % file)

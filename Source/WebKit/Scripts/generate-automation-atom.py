@@ -35,7 +35,7 @@ def collect_utils(data):
 def parse_utils(utils):
     functions = {}
     current_function = None
-    with open(utils, "r") as fd:
+    with open(utils) as fd:
         for line in fd.readlines():
             if line.startswith("utils."):
                 current_function = line.split(" ", 1)[0]
@@ -75,7 +75,7 @@ def main(args):
     output = args[1]
     utils = os.path.join(os.path.dirname(input), "utils.js")
 
-    with open(input, "r", encoding="utf-8") as fd:
+    with open(input, encoding="utf-8") as fd:
         input_data = fd.read()
 
     util_functions = collect_utils(input_data)

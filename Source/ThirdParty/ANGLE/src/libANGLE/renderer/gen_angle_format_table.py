@@ -9,11 +9,7 @@
 #
 
 import angle_format
-import json
-import math
 import os
-import pprint
-import re
 import sys
 
 template_autogen_h = """// GENERATED FILE - DO NOT EDIT.
@@ -98,7 +94,7 @@ def ceil_int(value, mod):
 
 
 def is_depth_stencil(angle_format):
-    if not 'channels' in angle_format or not angle_format['channels']:
+    if 'channels' not in angle_format or not angle_format['channels']:
         return False
     return 'd' in angle_format['channels'] or 's' in angle_format['channels']
 
@@ -434,7 +430,7 @@ def main():
         angle_format_info_cases=angle_format_cases,
         angle_format_switch=switch_data,
         data_source_name=data_source_name)
-    with open('Format_table_autogen.cpp', 'wt') as out_file:
+    with open('Format_table_autogen.cpp', 'w') as out_file:
         out_file.write(output_cpp)
         out_file.close()
 
@@ -445,7 +441,7 @@ def main():
         angle_format_enum=enum_data,
         data_source_name=data_source_name,
         num_angle_formats=num_angle_formats)
-    with open('FormatID_autogen.h', 'wt') as out_file:
+    with open('FormatID_autogen.h', 'w') as out_file:
         out_file.write(output_h)
         out_file.close()
 

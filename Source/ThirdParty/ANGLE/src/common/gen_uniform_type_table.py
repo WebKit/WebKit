@@ -163,7 +163,7 @@ def get_bool_type(uniform_type):
 
 
 def get_sampler_format(uniform_type):
-    if not "_SAMPLER_" in uniform_type:
+    if "_SAMPLER_" not in uniform_type:
         return "SamplerFormat::InvalidEnum"
     elif "_SHADOW" in uniform_type:
         return "SamplerFormat::Shadow"
@@ -281,7 +281,7 @@ def main():
         for index, uniform_type in enumerate(all_uniform_types)
     ])
 
-    with open('uniform_type_info_autogen.cpp', 'wt') as out_file:
+    with open('uniform_type_info_autogen.cpp', 'w') as out_file:
         output_cpp = template_cpp.format(
             script_name=os.path.basename(sys.argv[0]),
             total_count=len(all_uniform_types),

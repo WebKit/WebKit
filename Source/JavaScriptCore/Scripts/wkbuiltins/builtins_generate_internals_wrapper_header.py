@@ -100,7 +100,7 @@ class BuiltinsInternalsWrapperHeaderGenerator(BuiltinsGenerator):
     def generate_accessors(self):
         lines = []
         for object in self.internals:
-            accessor = "    %s& %s() { return %s; }" % (self.member_type(object), self.accessor_name(object), self.member_name(object))
+            accessor = "    {}& {}() {{ return {}; }}".format(self.member_type(object), self.accessor_name(object), self.member_name(object))
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), accessor))
         lines.append("")
         return '\n'.join(lines)
@@ -108,6 +108,6 @@ class BuiltinsInternalsWrapperHeaderGenerator(BuiltinsGenerator):
     def generate_members(self):
         lines = ["    JSC::VM& m_vm;"]
         for object in self.internals:
-            member = "    %s %s;" % (self.member_type(object), self.member_name(object))
+            member = "    {} {};".format(self.member_type(object), self.member_name(object))
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), member))
         return '\n'.join(lines)

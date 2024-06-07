@@ -26,7 +26,6 @@
 
 
 import logging
-import string
 from string import Template
 
 try:
@@ -34,7 +33,6 @@ try:
     from .objc_generator import ObjCGenerator
     from .objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 except ImportError:
-    from generator import Generator, ucfirst
     from objc_generator import ObjCGenerator
     from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
@@ -49,12 +47,12 @@ class ObjCInternalHeaderGenerator(ObjCGenerator):
         return '%sInternal.h' % self.protocol_name()
 
     def generate_output(self):
-        headers = set([
+        headers = {
             '"%s.h"' % self.protocol_name(),
             '"%sJSONObjectPrivate.h"' % self.protocol_name(),
             '<JavaScriptCore/AugmentableInspectorController.h>',
             '<wtf/JSONValues.h>',
-        ])
+        }
 
         header_args = {
             'includes': '\n'.join(['#import ' + header for header in sorted(headers)]),
@@ -74,7 +72,7 @@ class ObjCInternalHeaderGenerator(ObjCGenerator):
             return ''
 
         lines = []
-        lines.append('@interface %s%sDomainEventDispatcher (Private)' % (self.objc_prefix(), domain.domain_name))
+        lines.append('@interface {}{}DomainEventDispatcher (Private)'.format(self.objc_prefix(), domain.domain_name))
         lines.append('- (instancetype)initWithController:(Inspector::AugmentableInspectorController*)controller;')
         lines.append('@end')
         return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))

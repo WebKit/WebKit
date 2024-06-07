@@ -7,7 +7,6 @@
 #   Code generation for Metal backend's default shaders.
 #   NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
-import json
 import os
 import subprocess
 import sys
@@ -78,7 +77,7 @@ def generate_metal_autogen_header(dest_metal_header):
     angle_to_gl = angle_format.load_inverse_table('../../angle_format_map.json')
     shader_autogen_header = gen_shader_enums_code(angle_to_gl.keys())
 
-    with open(dest_metal_header, 'wt') as out_file:
+    with open(dest_metal_header, 'w') as out_file:
         out_file.write(shader_autogen_header)
         out_file.close()
 
@@ -107,7 +106,7 @@ def generate_combined_metal_src(metal_src_files):
     os.remove(autogen_header_file)
 
     # Remove '@@' tokens
-    final_combined_src_string = combined_source.replace('@@'.encode('utf-8'), ''.encode('utf-8'))
+    final_combined_src_string = combined_source.replace(b'@@', b'')
 
     return final_combined_src_string
 
@@ -116,7 +115,7 @@ def generate_combined_metal_src_header(combined_metal_src, dest_header):
     boilerplate_code = template_header_boilerplate.format(
         script_name=os.path.basename(sys.argv[0]))
 
-    with open(dest_header, 'wt') as out_file:
+    with open(dest_header, 'w') as out_file:
         out_file.write(boilerplate_code)
         out_file.write('\n')
         out_file.write('// C++ string version of combined Metal default shaders.\n\n')
@@ -131,7 +130,7 @@ def generate_combined_metal_shader_file(combined_metal_src, dest_file):
     boilerplate_code = template_header_boilerplate.format(
         script_name=os.path.basename(sys.argv[0]))
 
-    with open(dest_file, 'wt') as out_file:
+    with open(dest_file, 'w') as out_file:
         out_file.write(boilerplate_code)
         out_file.write('\n')
         out_file.write('// Combined Metal default shaders.\n\n')

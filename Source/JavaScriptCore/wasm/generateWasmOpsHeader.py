@@ -172,7 +172,7 @@ defines.append("\n\n")
 
 defines = "".join(defines)
 
-opValueSet = set([op for op in wasm.opcodeIterator(lambda op: True, lambda op: opcodes[op]["value"])])
+opValueSet = {op for op in wasm.opcodeIterator(lambda op: True, lambda op: opcodes[op]["value"])}
 opValueSet.add(0xFD)  # ExtSIMD
 maxOpValue = max(opValueSet)
 

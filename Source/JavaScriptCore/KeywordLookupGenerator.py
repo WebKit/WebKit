@@ -62,7 +62,7 @@ keyWordWeights = {
 
 def allWhitespace(str):
     for c in str:
-        if not(c in string.whitespace):
+        if c not in string.whitespace:
             return False
     return True
 
@@ -104,7 +104,7 @@ class Trie:
         if len(key) == 0:
             self.value = value
             return
-        if not (key[0] in self.keys):
+        if key[0] not in self.keys:
             self.keys[key[0]] = Trie(key[0])
         self.keys[key[0]].insert(key[1:], value)
 
@@ -161,7 +161,7 @@ class Trie:
                 base = "code"
                 if baseIndex > 0:
                     base = "code + %d" % baseIndex
-                comparison = ("compareCharacters(%s, " % (base,)) + ", ".join(test) + ")"
+                comparison = ("compareCharacters({}, ".format(base)) + ", ".join(test) + ")"
             if itemCount == 0:
                 print(str + "if (" + comparison + ") {")
             else:

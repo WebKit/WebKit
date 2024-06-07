@@ -29,9 +29,6 @@
 
 import os
 import re
-import sys
-import string
-from string import Template
 import optparse
 import logging
 import subprocess
@@ -49,7 +46,7 @@ try:
 
 # When copying generator files to JavaScriptCore's private headers on Mac,
 # the codegen/ module directory is flattened. So, import directly.
-except ImportError as e:
+except ImportError:
     #log.error(e) # Uncomment this to debug early import errors.
     import models
     from models import *
@@ -95,7 +92,7 @@ class IncrementalFileWriter:
             if self.force_output:
                 raise
 
-            read_file = open(self._filepath, "r")
+            read_file = open(self._filepath)
             old_text = read_file.read()
             read_file.close()
             text_changed = old_text != self._output
@@ -123,7 +120,7 @@ def generate_from_specification(primary_specification_filepath=None,
 
     def load_specification(protocol, filepath, isSupplemental=False):
         try:
-            with open(filepath, "r") as input_file:
+            with open(filepath) as input_file:
                 regex = re.compile(r"\/\*.*?\*\/", re.DOTALL)
                 parsed_json = json.loads(re.sub(regex, "", input_file.read()))
                 protocol.parse_specification(parsed_json, isSupplemental)
@@ -232,7 +229,7 @@ def generate_from_specification(primary_specification_filepath=None,
 
             subprocess.check_call(["perl", os.path.join(os.path.dirname(__file__), "codegen", "preprocess.pl"), "--input", temporary_input_filepath, "--defines", protocol.condition_flags, "--output", temporary_output_filepath])
 
-            temporary_output_file = open(temporary_output_filepath, "r")
+            temporary_output_file = open(temporary_output_filepath)
             output = temporary_output_file.read()
             temporary_output_file.close()
 
@@ -284,8 +281,8 @@ if __name__ == '__main__':
     if arg_options.debug:
         log.setLevel(logging.DEBUG)
 
-    generate_backend = arg_options.backend;
-    generate_frontend = arg_options.frontend;
+    generate_backend = arg_options.backend
+    generate_frontend = arg_options.frontend
     # Default to generating both the frontend and backend if neither is specified.
     if not generate_backend and not generate_frontend:
         generate_backend = True

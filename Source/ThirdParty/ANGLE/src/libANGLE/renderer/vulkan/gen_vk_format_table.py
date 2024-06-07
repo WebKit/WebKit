@@ -7,9 +7,6 @@
 #  Code generation for vk format map. See vk_format_map.json for data source.
 #  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
-import json
-import math
-import pprint
 import os
 import re
 import sys
@@ -124,7 +121,7 @@ def verify_vk_map_keys(angle_to_gl, vk_json_data):
     no_error = True
     for table in ["map", "fallbacks"]:
         for angle_format in vk_json_data[table].keys():
-            if not angle_format in angle_to_gl.keys():
+            if angle_format not in angle_to_gl.keys():
                 print("Invalid format " + angle_format + " in vk_format_map.json in " + table)
                 no_error = False
 
@@ -151,7 +148,7 @@ def get_vertex_copy_function(src_format, dst_format, vk_format):
         normalized = 'true' if 'NORM' in src_format else 'false'
         to_float = 'false' if 'INT' in src_format else 'true'
         to_half = to_float
-        return 'CopyXYZ10W2ToXYZWFloatVertexData<%s, %s, %s, %s>' % (is_signed, normalized,
+        return 'CopyXYZ10W2ToXYZWFloatVertexData<{}, {}, {}, {}>'.format(is_signed, normalized,
                                                                      to_float, to_half)
     return angle_format.get_vertex_copy_function(src_format, dst_format)
 
@@ -228,7 +225,7 @@ def gen_format_case(angle, internal_format, vk_json_data):
 
 
 def get_format_id_case(format_id, vk_format):
-    return "{angle::FormatID::%s, %s}" % (format_id, vk_format)
+    return "{{angle::FormatID::{}, {}}}".format(format_id, vk_format)
 
 
 def get_vk_format_case(format_id, vk_format):
@@ -237,9 +234,9 @@ def get_vk_format_case(format_id, vk_format):
     if 'EXTERNAL' in format_id:
         return ''
     return """\
-        case %s:
-            return angle::FormatID::%s;
-""" % (vk_format, format_id)
+        case {}:
+            return angle::FormatID::{};
+""".format(vk_format, format_id)
 
 
 def main():
@@ -289,7 +286,7 @@ def main():
         out_file_name=out_file_name,
         input_file_name=input_file_name)
 
-    with open(out_file_name, 'wt') as out_file:
+    with open(out_file_name, 'w') as out_file:
         out_file.write(output_cpp)
         out_file.close()
     return 0

@@ -10,8 +10,6 @@
 import argparse
 import contextlib
 import glob
-import importlib
-import io
 import json
 import logging
 import tempfile
@@ -36,7 +34,6 @@ angle_path_util.AddDepsDirToPath('testing/scripts')
 import common
 
 angle_path_util.AddDepsDirToPath('third_party/catapult/tracing')
-from tracing.value import histogram
 from tracing.value import histogram_set
 from tracing.value import merge_histograms
 
@@ -80,7 +77,7 @@ def _get_results_from_output(output, result):
     logging.debug('Searching for %s in output' % pattern)
     m = re.findall(pattern, output)
     if not m:
-        logging.warning('Did not find the result "%s" in the test output:\n%s' % (result, output))
+        logging.warning('Did not find the result "{}" in the test output:\n{}'.format(result, output))
         return None
 
     return [float(value) for value in m]
@@ -274,7 +271,7 @@ def _run_perf(args, common_args, env, steps_per_trial=None):
 
         exit_code, output, json_results = _run_test_suite(args, run_args, env)
         if exit_code != EXIT_SUCCESS:
-            raise RuntimeError('%s failed. Output:\n%s' % (args.test_suite, output))
+            raise RuntimeError('{} failed. Output:\n{}'.format(args.test_suite, output))
         if SKIP in json_results['num_failures_by_type']:
             return SKIP, None, None
 
@@ -429,7 +426,7 @@ def _find_test_suite_directory(test_suite):
                 newest_mtime = binary_mtime
 
     if newest_binary:
-        logging.info('Found %s in %s' % (test_suite, os.path.dirname(newest_binary)))
+        logging.info('Found {} in {}'.format(test_suite, os.path.dirname(newest_binary)))
         return os.path.dirname(newest_binary)
     return None
 

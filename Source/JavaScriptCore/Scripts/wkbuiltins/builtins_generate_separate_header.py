@@ -26,8 +26,6 @@
 
 
 import logging
-import re
-import string
 from string import Template
 
 from builtins_generator import BuiltinsGenerator
@@ -190,7 +188,7 @@ extern const JSC::InlineAttribute s_%(codeName)sInlineAttribute;""" % function_a
 
         lines = []
         lines.append("#define %(macroPrefix)s_FOREACH_%(objectMacro)s_BUILTIN_FUNCTION_NAME(macro) \\" % args)
-        unique_names = list(set([function.function_name for function in self.object.functions]))
+        unique_names = list({function.function_name for function in self.object.functions})
         unique_names.sort()
         for function_name in unique_names:
             function_args = {

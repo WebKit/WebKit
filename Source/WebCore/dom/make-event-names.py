@@ -36,7 +36,7 @@ def main():
     parser.add_argument('--event-names')
     args = parser.parse_args()
 
-    with open(args.event_names, 'r', encoding='utf-8') as event_names_file:
+    with open(args.event_names, encoding='utf-8') as event_names_file:
         event_names_input = json.load(event_names_file)
 
     with open('EventNames.h', 'w') as output_file:
@@ -245,7 +245,7 @@ EventNames::EventNames()''')
                 writeln(f'#if {conditional}')
             writeln(f'        {name}Event,')
             if conditional:
-                writeln(f'#endif')
+                writeln('#endif')
         writeln('''    } };
 }
 

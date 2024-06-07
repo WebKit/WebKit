@@ -26,12 +26,10 @@
 
 
 import logging
-import re
-import string
 from string import Template
 
 from builtins_generator import BuiltinsGenerator
-from builtins_model import Framework, Frameworks
+from builtins_model import Frameworks
 from builtins_templates import BuiltinsGeneratorTemplates as Templates
 
 log = logging.getLogger('global')
@@ -71,8 +69,8 @@ class BuiltinsCombinedImplementationGenerator(BuiltinsGenerator):
         for ch in combinedCode:
             combinedCharacters.append(str(ord(ch)))
 
-        sections.append("const char s_%sCombinedCode[] = { %s };" % (args['namespace'], (", ".join(combinedCharacters))));
-        sections.append("const unsigned s_%sCombinedCodeLength = %d;" % (args['namespace'], len(combinedCharacters)));
+        sections.append("const char s_{}CombinedCode[] = {{ {} }};".format(args['namespace'], (", ".join(combinedCharacters))))
+        sections.append("const unsigned s_%sCombinedCodeLength = %d;" % (args['namespace'], len(combinedCharacters)))
 
         for data in function_data:
             sections.append(self.generate_embedded_code_string_section_for_data(data))

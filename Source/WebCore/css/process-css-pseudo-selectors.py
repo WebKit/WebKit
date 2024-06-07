@@ -24,11 +24,9 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 import argparse
-import itertools
 import json
 import os
 import subprocess
-import sys
 import textwrap
 
 # - MARK: Input file validation.
@@ -176,7 +174,7 @@ class Writer:
         return self
 
     def newline(self):
-        self.output.write(f'\n')
+        self.output.write('\n')
         return self
 
     class Indent:
@@ -917,7 +915,7 @@ def main():
     parser.add_argument('--defines')
     args = parser.parse_args()
 
-    input_file = open(args.selectors, 'r', encoding='utf-8')
+    input_file = open(args.selectors, encoding='utf-8')
     input_data = json.load(input_file)
     webcore_defines = [i.strip() for i in args.defines.split(' ')]
 

@@ -268,7 +268,7 @@ def ReadUrlContent(url):
     conn = urllib.request.urlopen(url)
     try:
         return conn.readlines()
-    except IOError as e:
+    except OSError as e:
         logging.exception('Error connecting to %s. Error: %s', url, e)
         raise
     finally:
@@ -449,21 +449,21 @@ def GenerateCommitMessage(
 ):
     current_cr_rev = rev_update.current_chromium_rev[0:10]
     new_cr_rev = rev_update.new_chromium_rev[0:10]
-    rev_interval = '%s..%s' % (current_cr_rev, new_cr_rev)
-    git_number_interval = '%s:%s' % (current_commit_pos, new_commit_pos)
+    rev_interval = '{}..{}'.format(current_cr_rev, new_cr_rev)
+    git_number_interval = '{}:{}'.format(current_commit_pos, new_commit_pos)
 
     commit_msg = []
     # Autoroll already adds chromium_revision changes to commit message
     if not autoroll:
         commit_msg.extend([
-            'Roll chromium_revision %s (%s)\n' % (rev_interval, git_number_interval),
+            'Roll chromium_revision {} ({})\n'.format(rev_interval, git_number_interval),
             'Change log: %s' % (CHROMIUM_LOG_TEMPLATE % rev_interval),
             'Full diff: %s\n' % (CHROMIUM_COMMIT_TEMPLATE % rev_interval)
         ])
 
     def Section(adjective, deps):
         noun = 'dependency' if len(deps) == 1 else 'dependencies'
-        commit_msg.append('%s %s' % (adjective, noun))
+        commit_msg.append('{} {}'.format(adjective, noun))
 
     tbr_authors = ''
     if changed_deps_list:
@@ -471,7 +471,7 @@ def GenerateCommitMessage(
 
         for c in changed_deps_list:
             if isinstance(c, ChangedCipdPackage):
-                commit_msg.append('* %s: %s..%s' % (c.path, c.current_version, c.new_version))
+                commit_msg.append('* {}: {}..{}'.format(c.path, c.current_version, c.new_version))
             else:
                 commit_msg.append('* %s: %s/+log/%s..%s' %
                                   (c.path, c.url, c.current_rev[0:10], c.new_rev[0:10]))
@@ -490,7 +490,7 @@ def GenerateCommitMessage(
         commit_msg.append('Clang version changed %s:%s' %
                           (c.clang_change.current_rev, c.clang_change.new_rev))
 
-        rev_clang = rev_interval = '%s..%s' % (c.mirror_change.current_rev,
+        rev_clang = rev_interval = '{}..{}'.format(c.mirror_change.current_rev,
                                                c.mirror_change.new_rev)
         change_url = CLANG_FILE_TEMPLATE % (rev_clang, CLANG_UPDATE_SCRIPT_URL_PATH)
         commit_msg.append('Details: %s\n' % change_url)
@@ -556,9 +556,9 @@ def UpdateDepsFile(deps_filename, rev_update, changed_deps, new_cr_content, auto
                                 'Then run "gclient sync" again.' % local_dep_dir)
         if isinstance(dep, ChangedCipdPackage):
             package = dep.package.format()  # Eliminate double curly brackets
-            update = '%s:%s@%s' % (dep.path, package, dep.new_version)
+            update = '{}:{}@{}'.format(dep.path, package, dep.new_version)
         else:
-            update = '%s@%s' % (dep.path, dep.new_rev)
+            update = '{}@{}'.format(dep.path, dep.new_rev)
         gclient_cmd = 'gclient'
         if platform.system() == 'Windows':
             gclient_cmd += '.bat'

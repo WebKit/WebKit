@@ -19,7 +19,7 @@ if sys.platform == "win32":
     from ctypes import GetLastError
 
 _PY2 = sys.version_info[0] == 2
-_MAPPING = collections.Mapping if _PY2 else collections.abc.Mapping
+_MAPPING = collections.abc.Mapping if _PY2 else collections.abc.Mapping
 
 _StreamParamsBase = collections.namedtuple('_StreamParamsBase',
                                            ('name', 'type', 'content_type', 'tags'))
@@ -58,11 +58,11 @@ class StreamParams(_StreamParamsBase):
         streamname.validate_stream_name(self.name)
 
         if self.type not in (self.TEXT, self.BINARY, self.DATAGRAM):
-            raise ValueError('Invalid type (%s)' % (self.type,))
+            raise ValueError('Invalid type ({})'.format(self.type))
 
         if self.tags is not None:
             if not isinstance(self.tags, _MAPPING):
-                raise ValueError('Invalid tags type (%s)' % (self.tags,))
+                raise ValueError('Invalid tags type ({})'.format(self.tags))
             for k, v in self.tags.items():
                 streamname.validate_tag(k, v)
 
@@ -92,7 +92,7 @@ class StreamParams(_StreamParamsBase):
         return json.dumps(obj, sort_keys=True, ensure_ascii=True, indent=None)
 
 
-class StreamProtocolRegistry(object):
+class StreamProtocolRegistry:
     """Registry of streamserver URI protocols and their client classes.
   """
 
@@ -122,12 +122,12 @@ class StreamProtocolRegistry(object):
     """
         uri = uri.split(':', 1)
         if len(uri) != 2:
-            raise ValueError('Invalid stream server URI [%s]' % (uri,))
+            raise ValueError('Invalid stream server URI [{}]'.format(uri))
         protocol, value = uri
 
         client_cls = self._registry.get(protocol)
         if not client_cls:
-            raise ValueError('Unknown stream client protocol (%s)' % (protocol,))
+            raise ValueError('Unknown stream client protocol ({})'.format(protocol))
         return client_cls._create(value, **kwargs)
 
 
@@ -136,11 +136,11 @@ _default_registry = StreamProtocolRegistry()
 create = _default_registry.create
 
 
-class StreamClient(object):
+class StreamClient:
     """Abstract base class for a streamserver client.
   """
 
-    class _StreamBase(object):
+    class _StreamBase:
         """ABC for StreamClient streams."""
 
         def __init__(self, stream_client, params):
@@ -176,7 +176,7 @@ class StreamClient(object):
         """Wraps a basic file descriptor, offering "write" and "close"."""
 
         def __init__(self, stream_client, params, fd):
-            super(StreamClient._BasicStream, self).__init__(stream_client, params)
+            super().__init__(stream_client, params)
             self._fd = fd
 
         @property
@@ -196,7 +196,7 @@ class StreamClient(object):
         """Extends _BasicStream, ensuring data written is UTF-8 text."""
 
         def __init__(self, stream_client, params, fd):
-            super(StreamClient._TextStream, self).__init__(stream_client, params, fd)
+            super().__init__(stream_client, params, fd)
             self._fd = fd
 
         def write(self, data):
@@ -211,7 +211,7 @@ class StreamClient(object):
             elif not _PY2 and isinstance(data, str):
                 return self._fd.write(data.encode('utf-8'))
             else:
-                raise ValueError('expect str, got %r that is type %s' % (
+                raise ValueError('expect str, got {!r} that is type {}'.format(
                     data,
                     type(data),
                 ))
@@ -220,7 +220,7 @@ class StreamClient(object):
         """Wraps a stream object to write length-prefixed datagrams."""
 
         def __init__(self, stream_client, params, fd):
-            super(StreamClient._DatagramStream, self).__init__(stream_client, params)
+            super().__init__(stream_client, params)
             self._fd = fd
 
         def send(self, data):
@@ -326,7 +326,7 @@ class StreamClient(object):
     """
         with self._name_lock:
             if name in self._names:
-                raise ValueError("Duplicate stream name [%s]" % (name,))
+                raise ValueError("Duplicate stream name [{}]".format(name))
             self._names.add(name)
 
     @classmethod
@@ -520,7 +520,7 @@ class _NamedPipeStreamClient(StreamClient):
     Args:
       name (str): The name of the Windows named pipe to use (e.g., "\\.\name")
     """
-        super(_NamedPipeStreamClient, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self._name = '\\\\.\\pipe\\' + name
 
     @classmethod
@@ -535,7 +535,7 @@ class _NamedPipeStreamClient(StreamClient):
         while True:
             try:
                 return open(self._name, 'wb+', buffering=0)
-            except (OSError, IOError):
+            except OSError:
                 if GetLastError() != self.ERROR_PIPE_BUSY:
                     raise
             time.sleep(0.001)  # 1ms
@@ -548,7 +548,7 @@ class _UnixDomainSocketStreamClient(StreamClient):
     """A StreamClient implementation that uses a UNIX domain socket.
   """
 
-    class SocketFile(object):
+    class SocketFile:
         """A write-only file-like object that writes to a UNIX socket."""
 
         def __init__(self, sock):
@@ -572,13 +572,13 @@ class _UnixDomainSocketStreamClient(StreamClient):
     Args:
       path (str): The path to the named UNIX domain socket.
     """
-        super(_UnixDomainSocketStreamClient, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self._path = path
 
     @classmethod
     def _create(cls, value, **kwargs):
         if not os.path.exists(value):
-            raise ValueError('UNIX domain socket [%s] does not exist.' % (value,))
+            raise ValueError('UNIX domain socket [{}] does not exist.'.format(value))
         return cls(value, **kwargs)
 
     def _connect_raw(self):

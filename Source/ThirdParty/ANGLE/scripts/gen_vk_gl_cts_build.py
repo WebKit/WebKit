@@ -8,10 +8,8 @@
 #  - src/tests/deqp_data.gni
 #  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
-import errno
 import os
 import sys
-import shutil
 
 
 def initDataDirectories(dataDirectories):

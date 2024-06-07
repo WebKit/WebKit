@@ -326,7 +326,7 @@ def format_exts(ext_infos):
 def format_helper_function(ext_name, vendors):
     return _HELPER_TEMPLATE.format(
         ext_name=ext_name,
-        expression=' || '.join(['%s%s' % (ext_name, vendor) for vendor in vendors]),
+        expression=' || '.join(['{}{}'.format(ext_name, vendor) for vendor in vendors]),
     )
 
 
@@ -370,7 +370,7 @@ def format_md_link(ext_info, link_template):
 
 
 def format_md_ext(ext_info, gpu_json_data, link_template):
-    return '| %s | %s |' % (format_md_link(
+    return '| {} | {} |'.format(format_md_link(
         ext_info, link_template), get_ext_support(ext_info['full_name'], gpu_json_data))
 
 

@@ -53,7 +53,7 @@ class ButlerBootstrap(_ButlerBootstrapBase):
                 streamname.validate_stream_name(val)
                 return val
             except ValueError as exp:
-                raise NotBootstrappedError('%s (%s) is invalid: %s' % (kind, val, exp))
+                raise NotBootstrappedError('{} ({}) is invalid: {}'.format(kind, val, exp))
 
         streamserver_uri = env.get(cls._ENV_STREAM_SERVER_PATH)
         if not streamserver_uri:

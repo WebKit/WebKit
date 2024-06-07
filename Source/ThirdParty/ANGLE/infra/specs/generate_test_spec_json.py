@@ -12,7 +12,6 @@ Run scripts/run_code_generation.py instead to update necessary hashes.
 import os
 import pprint
 import sys
-import subprocess
 import tempfile
 
 d = os.path.dirname
