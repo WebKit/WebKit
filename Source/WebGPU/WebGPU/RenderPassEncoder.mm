@@ -656,7 +656,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
         return std::make_pair(indexedIndirectBuffer.buffer(), indirectOffset);
 
     id<MTLBuffer> indexBuffer = apiIndexBuffer ? apiIndexBuffer->buffer() : nil;
-    if (!indexBuffer || apiIndexBuffer->isDestroyed())
+    if (!indexBuffer || apiIndexBuffer->isDestroyed() || indexedIndirectBuffer.isDestroyed())
         return std::make_pair(nil, 0ull);
 
     id<MTLBuffer> indirectBuffer = indexedIndirectBuffer.indirectBuffer();
