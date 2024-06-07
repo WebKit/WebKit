@@ -657,6 +657,8 @@ public:
     virtual void gamepadsRecentlyAccessed() { }
 #endif
 
+    virtual double baseViewportLayoutSizeScaleFactor() const { return 1; }
+
     WEBCORE_EXPORT virtual ~ChromeClient();
 
 protected:

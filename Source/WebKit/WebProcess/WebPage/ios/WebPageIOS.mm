@@ -3883,10 +3883,20 @@ void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, doub
     if (!m_viewportConfiguration.isKnownToLayOutWiderThanViewport())
         m_viewportConfiguration.setMinimumEffectiveDeviceWidthForShrinkToFit(0);
 
-    double layoutSizeScaleFactor = layoutSizeScaleFactorFromClient;
+    m_baseViewportLayoutSizeScaleFactor = [&] {
+        if (!m_page->settings().automaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth())
+            return 1.0;
 
-    if (m_page->settings().automaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth() && minimumEffectiveDeviceWidth && minimumEffectiveDeviceWidth < size.width())
-        layoutSizeScaleFactor = layoutSizeScaleFactorFromClient * size.width() / minimumEffectiveDeviceWidth;
+        if (!minimumEffectiveDeviceWidth)
+            return 1.0;
+
+        if (minimumEffectiveDeviceWidth >= size.width())
+            return 1.0;
+
+        return size.width() / minimumEffectiveDeviceWidth;
+    }();
+
+    double layoutSizeScaleFactor = layoutSizeScaleFactorFromClient * m_baseViewportLayoutSizeScaleFactor;
 
     auto previousLayoutSizeScaleFactor = m_viewportConfiguration.layoutSizeScaleFactor();
     if (!m_viewportConfiguration.setViewLayoutSize(size, layoutSizeScaleFactor, minimumEffectiveDeviceWidth))

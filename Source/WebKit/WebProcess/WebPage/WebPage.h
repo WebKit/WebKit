@@ -1671,6 +1671,10 @@ public:
     void textAutosizingUsesIdempotentModeChanged();
 #endif
 
+#if ENABLE(META_VIEWPORT)
+    double baseViewportLayoutSizeScaleFactor() const { return m_baseViewportLayoutSizeScaleFactor; }
+#endif
+
 #if ENABLE(WEBXR) && !USE(OPENXR)
     PlatformXRSystemProxy& xrSystemProxy();
 #endif
@@ -2586,6 +2590,7 @@ private:
 
 #if ENABLE(META_VIEWPORT)
     WebCore::ViewportConfiguration m_viewportConfiguration;
+    double m_baseViewportLayoutSizeScaleFactor { 1 };
     bool m_useTestingViewportConfiguration { false };
     bool m_forceAlwaysUserScalable { false };
 #endif

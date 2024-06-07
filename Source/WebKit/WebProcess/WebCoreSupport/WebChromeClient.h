@@ -467,6 +467,10 @@ private:
     void textAutosizingUsesIdempotentModeChanged() final;
 #endif
 
+#if ENABLE(META_VIEWPORT)
+    double baseViewportLayoutSizeScaleFactor() const final;
+#endif
+
     std::pair<URL, WebCore::DidFilterLinkDecoration> applyLinkDecorationFilteringWithResult(const URL&, WebCore::LinkDecorationFilteringTrigger) const final;
     URL allowedQueryParametersForAdvancedPrivacyProtections(const URL&) const final;
 

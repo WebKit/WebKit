@@ -101,6 +101,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextRecognitionOptions.h>
+#include <WebCore/ViewportConfiguration.h>
 #include <WebCore/WindowFeatures.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
@@ -1734,6 +1735,15 @@ URL WebChromeClient::allowedQueryParametersForAdvancedPrivacyProtections(const U
 void WebChromeClient::textAutosizingUsesIdempotentModeChanged()
 {
     protectedPage()->textAutosizingUsesIdempotentModeChanged();
+}
+
+#endif
+
+#if ENABLE(META_VIEWPORT)
+
+double WebChromeClient::baseViewportLayoutSizeScaleFactor() const
+{
+    return protectedPage()->baseViewportLayoutSizeScaleFactor();
 }
 
 #endif
