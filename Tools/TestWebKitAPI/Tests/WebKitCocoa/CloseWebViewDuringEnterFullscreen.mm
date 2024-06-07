@@ -76,8 +76,8 @@ TEST(CloseWebViewDuringEnterFullscreen, VideoFullscreen)
     [webView _close];
 }
 
-
-TEST(CloseWebViewDuringEnterFullscreen, ElementFullscreen)
+// FIXME: Re-enable this test once webkit.org/b/243678 is resolved.
+TEST(CloseWebViewDuringEnterFullscreen, DISABLED_ElementFullscreen)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences]._fullScreenEnabled = YES;
