@@ -52,6 +52,12 @@ if (!m_renderCommandEncoder || !m_parentEncoder->isValid() || !m_parentEncoder->
     return; \
 }
 
+#define CHECKED_SET_PSO(commandEncoder, makePso, ...) \
+if (id<MTLRenderPipelineState> pso = makePso) \
+    [commandEncoder setRenderPipelineState:pso]; \
+else \
+    return __VA_ARGS__;
+
 RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, uint64_t maxDrawCount, Device& device)
     : m_renderCommandEncoder(renderCommandEncoder)
     , m_device(device)
@@ -624,14 +630,14 @@ RenderPassEncoder::IndexCall RenderPassEncoder::clampIndexBufferToValidValues(ui
         .baseInstance = firstInstance
     };
 
-    [renderCommandEncoder setRenderPipelineState:device.copyIndexIndirectArgsPipeline(rasterSampleCount)];
+    CHECKED_SET_PSO(renderCommandEncoder, device.copyIndexIndirectArgsPipeline(rasterSampleCount), IndexCall::Skip);
     [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer offset:0 atIndex:0];
     [renderCommandEncoder setVertexBytes:&indirectArguments length:sizeof(indirectArguments) atIndex:1];
     [renderCommandEncoder setVertexBytes:&minInstanceCount length:sizeof(minInstanceCount) atIndex:2];
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
     [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
 
-    [renderCommandEncoder setRenderPipelineState:device.indexBufferClampPipeline(indexType, rasterSampleCount)];
+    CHECKED_SET_PSO(renderCommandEncoder, device.indexBufferClampPipeline(indexType, rasterSampleCount), IndexCall::Skip);
     [renderCommandEncoder setVertexBuffer:indexBuffer offset:indexBufferOffsetInBytes atIndex:0];
     [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer offset:0 atIndex:1];
     uint32_t data[] = { minVertexCount, primitiveType == MTLPrimitiveTypeLineStrip || primitiveType == MTLPrimitiveTypeTriangleStrip ? 1u : 0u };
@@ -663,7 +669,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     if (!indirectBuffer || !minVertexCount || !minInstanceCount || indexBufferOffsetInBytes >= indexBuffer.length)
         return std::make_pair(nil, 0ull);
 
-    [renderCommandEncoder setRenderPipelineState:device.indexedIndirectBufferClampPipeline(rasterSampleCount)];
+    CHECKED_SET_PSO(renderCommandEncoder, device.indexedIndirectBufferClampPipeline(rasterSampleCount), std::make_pair(nil, 0ull));
     uint32_t indexBufferCount = static_cast<uint32_t>(indexBuffer.length / (indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t)));
     [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.buffer() offset:indirectOffset atIndex:0];
     [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.indirectIndexedBuffer() offset:0 atIndex:1];
@@ -673,7 +679,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
     [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
 
-    [renderCommandEncoder setRenderPipelineState:device.indexBufferClampPipeline(indexType, rasterSampleCount)];
+    CHECKED_SET_PSO(renderCommandEncoder, device.indexBufferClampPipeline(indexType, rasterSampleCount), std::make_pair(nil, 0ull));
     [renderCommandEncoder setVertexBuffer:indexBuffer offset:indexBufferOffsetInBytes atIndex:0];
     [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.indirectIndexedBuffer() offset:0 atIndex:1];
     uint32_t data[] = { minVertexCount, primitiveType == MTLPrimitiveTypeLineStrip || primitiveType == MTLPrimitiveTypeTriangleStrip ? 1u : 0u };
@@ -696,7 +702,7 @@ id<MTLBuffer> RenderPassEncoder::clampIndirectBufferToValidValues(const Buffer& 
         return nil;
 
     id<MTLRenderPipelineState> renderPipelineState = device.indirectBufferClampPipeline(rasterSampleCount);
-    [renderCommandEncoder setRenderPipelineState:renderPipelineState];
+    CHECKED_SET_PSO(renderCommandEncoder, renderPipelineState, nil);
     [renderCommandEncoder setVertexBuffer:indirectBuffer.buffer() offset:indirectOffset atIndex:0];
     [renderCommandEncoder setVertexBuffer:indirectBuffer.indirectBuffer() offset:0 atIndex:1];
     uint32_t data[] = { minVertexCount, minInstanceCount };
@@ -911,7 +917,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
                     continue;
 
                 id<MTLRenderPipelineState> renderPipelineState = m_device->icbCommandClampPipeline(data.indexType, m_rasterSampleCount);
-                [m_renderCommandEncoder setRenderPipelineState:renderPipelineState];
+                CHECKED_SET_PSO(m_renderCommandEncoder, renderPipelineState);
                 [m_renderCommandEncoder setVertexBytes:&data.indexData length:sizeof(data.indexData) atIndex:0];
                 [m_renderCommandEncoder setVertexBuffer:icb.indirectCommandBufferContainer offset:0 atIndex:1];
 
@@ -1217,6 +1223,7 @@ void RenderPassEncoder::setLabel(String&& label)
     m_renderCommandEncoder.label = label;
 }
 
+#undef CHECKED_SET_PSO
 #undef RETURN_IF_FINISHED
 
 } // namespace WebGPU
