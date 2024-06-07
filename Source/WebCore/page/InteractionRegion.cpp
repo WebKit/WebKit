@@ -304,13 +304,6 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (!regionRenderer.node())
         return std::nullopt;
 
-    Ref mainFrameView = *regionRenderer.document().frame()->mainFrame().virtualView();
-
-    FloatSize frameViewSize = mainFrameView->size();
-    auto scale = 1 / mainFrameView->visibleContentScaleFactor();
-    frameViewSize.scale(scale, scale);
-    auto frameViewArea = frameViewSize.area();
-
     auto originalElement = dynamicDowncast<Element>(regionRenderer.node());
     if (originalElement && originalElement->isPseudoElement())
         return std::nullopt;
@@ -353,8 +346,22 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     // FIXME: Consider also allowing elements that only receive touch events.
     bool hasListener = renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick);
     bool hasPointer = hasInteractiveCursorType(*matchedElement) || shouldAllowNonInteractiveCursorForElement(*matchedElement);
-    bool isTooBigForInteraction = bounds.area() > frameViewArea / 3;
-    bool isTooBigForOcclusion = bounds.area() > frameViewArea * 3;
+
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(regionRenderer.document().frame()->mainFrame());
+    if (!localMainFrame) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+    RefPtr pageView = localMainFrame->view();
+    if (!pageView) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    auto viewportSize = FloatSize(pageView->baseLayoutViewportSize());
+    auto viewportArea = viewportSize.area();
+    bool isTooBigForInteraction = bounds.area() > viewportArea / 3;
+    bool isTooBigForOcclusion = bounds.area() > viewportArea * 3;
 
     auto elementIdentifier = matchedElement->identifier();
 
@@ -397,7 +404,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     bool isInlineNonBlock = renderer.isInline() && !renderer.isReplacedOrInlineBlock();
     bool isPhoto = false;
 
-    float minimumContentHintArea = 200 / scale * 200 / scale;
+    float minimumContentHintArea = 200 * 200;
     bool needsContentHint = bounds.area() > minimumContentHintArea;
     if (needsContentHint) {
         if (auto* renderImage = dynamicDowncast<RenderImage>(regionRenderer)) {

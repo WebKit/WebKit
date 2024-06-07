@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1">
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-color: purple;
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+<div class="spacer">
+    <div id="dynamic" class="overlay"></div>
+</div>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    if (window.internals)
+        internals.setPageZoomFactor(2);
+    await UIHelper.renderingUpdate();
+
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
