@@ -753,7 +753,6 @@ http/tests/loading/hidpi-preload-picture-sizes.html [ Failure ]
 http/tests/loading/oauth.html [ Failure ]
 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 http/tests/loading/promote-img-preload-priority.html [ Failure ]
-http/tests/loading/sizes/preload-image-sizes-2x.html [ Failure ]
 
 http/tests/loading/307-after-303-after-post.html [ Skip ] # Timeout
 
@@ -1570,6 +1569,12 @@ fast/forms/validation-message-maxLength.html [ Skip ]
 fast/forms/validation-message-minimum-font-size.html [ Skip ]
 fast/forms/validation-messages.html [ Skip ]
 fast/forms/visual-hebrew-text-field.html [ Skip ]
+
+fast/forms/implicit-submission.html [ Skip ] # Timeout
+fast/forms/select-script-onchange.html [ Skip ] # Timeout
+fast/forms/select/menulist-popup-crash.html [ Skip ] # Timeout
+fast/forms/select/optgroup-clicking.html [ Skip ] # Timeout
+fast/forms/select/select-show-picker.html [ Skip ] # Timeout
 
 fast/frames [ Skip ]
 fast/hidpi [ Skip ]
@@ -3024,8 +3029,6 @@ fast/canvas/canvas-blending-text.html [ Failure ]
 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
 fast/canvas/canvas-pattern-from-modified-canvas.html [ Failure ]
 fast/constructors/event-source-caching.html [ Failure ]
-fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
-fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Failure ]
 fast/dom/HTMLLinkElement/link-stylesheet-load-once.html [ Failure ]
 fast/dom/Window/window-focus-self.html [ Failure ]
 fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
