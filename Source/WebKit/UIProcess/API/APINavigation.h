@@ -46,7 +46,6 @@ class ResourceResponse;
 }
 
 namespace WebKit {
-class ProvisionalFrameProxy;
 class WebNavigationState;
 }
 
@@ -176,9 +175,6 @@ public:
     WebCore::ProcessIdentifier processID() const { return m_processID; }
     void setProcessID(WebCore::ProcessIdentifier processID) { m_processID = processID; }
 
-    void setProvisionalFrame(WebKit::ProvisionalFrameProxy*);
-    WebKit::ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
-
 private:
     Navigation(WebKit::WebNavigationState&, WebCore::ProcessIdentifier);
     Navigation(WebKit::WebNavigationState&, WebCore::ProcessIdentifier, RefPtr<WebKit::WebBackForwardListItem>&&);
@@ -208,7 +204,6 @@ private:
     bool m_isLoadedWithNavigationShared { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     OptionSet<WebCore::AdvancedPrivacyProtections> m_originatorAdvancedPrivacyProtections;
-    RefPtr<WebKit::ProvisionalFrameProxy> m_provisionalFrame;
 };
 
 } // namespace API

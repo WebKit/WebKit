@@ -35,11 +35,6 @@
 
 namespace WebKit {
 
-Ref<ProvisionalFrameProxy> ProvisionalFrameProxy::create(WebFrameProxy& frame, Ref<FrameProcess>&& frameProcess)
-{
-    return adoptRef(*new ProvisionalFrameProxy(frame, WTFMove(frameProcess)));
-}
-
 ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProcess>&& frameProcess)
     : m_frame(frame)
     , m_frameProcess(WTFMove(frameProcess))

@@ -122,7 +122,7 @@ RefPtr<WebPageProxy> WebFrameProxy::protectedPage() const
     return m_page.get();
 }
 
-RefPtr<ProvisionalFrameProxy> WebFrameProxy::takeProvisionalFrame()
+std::unique_ptr<ProvisionalFrameProxy> WebFrameProxy::takeProvisionalFrame()
 {
     return std::exchange(m_provisionalFrame, nullptr);
 }
@@ -434,7 +434,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
     RegistrableDomain mainFrameDomain(page->mainFrame()->url());
 
     m_provisionalFrame = nullptr;
-    m_provisionalFrame = ProvisionalFrameProxy::create(*this, group.ensureProcessForSite(navigationSite, process, page->preferences()));
+    m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, group.ensureProcessForSite(navigationSite, process, page->preferences()));
     page->websiteDataStore().protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, WTFMove(completionHandler));
 }
 

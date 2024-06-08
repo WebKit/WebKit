@@ -36,10 +36,10 @@ class VisitedLinkStore;
 class WebFrameProxy;
 class WebProcessProxy;
 
-class ProvisionalFrameProxy : public RefCounted<ProvisionalFrameProxy>, public CanMakeWeakPtr<ProvisionalFrameProxy> {
+class ProvisionalFrameProxy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ProvisionalFrameProxy> create(WebFrameProxy&, Ref<FrameProcess>&&);
+    explicit ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&);
 
     ~ProvisionalFrameProxy();
 
@@ -49,8 +49,6 @@ public:
     RefPtr<FrameProcess> takeFrameProcess();
 
 private:
-    ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&);
-
     WeakRef<WebFrameProxy> m_frame;
     RefPtr<FrameProcess> m_frameProcess;
     Ref<VisitedLinkStore> m_visitedLinkStore;

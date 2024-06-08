@@ -121,11 +121,6 @@ bool Navigation::currentRequestIsCrossSiteRedirect() const
         && RegistrableDomain(m_lastNavigationAction.redirectResponse.url()) != RegistrableDomain(m_currentRequest.url());
 }
 
-void Navigation::setProvisionalFrame(WebKit::ProvisionalFrameProxy* provisionalFrame)
-{
-    m_provisionalFrame = provisionalFrame;
-}
-
 #if !LOG_DISABLED
 
 WTF::String Navigation::loggingString() const
