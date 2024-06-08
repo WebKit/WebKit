@@ -25,22 +25,20 @@
 
 #pragma once
 
-#include "JSCast.h"
 #include "JSRunLoopTimer.h"
-#include "Strong.h"
+#include "WeakInlines.h"
 
 #include <wtf/Deque.h>
 #include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
-#include <wtf/Lock.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
-class JSPromise;
 class VM;
 class JSCell;
+class JSObject;
+class JSGlobalObject;
 
 class DeferredWorkTimer final : public JSRunLoopTimer {
 public:
@@ -49,28 +47,33 @@ public:
     struct TicketData {
     private:
         WTF_MAKE_TZONE_ALLOCATED(TicketData);
+        WTF_MAKE_NONCOPYABLE(TicketData);
     public:
-        inline TicketData(VM&, JSObject* scriptExecutionOwner, Vector<Strong<JSCell>>&& dependencies);
+        inline TicketData(JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
+        inline ~TicketData();
 
         inline VM& vm();
         JSObject* target();
 
+        void clearGlobalObject();
         inline void cancel();
-        bool isCancelled() const { return !scriptExecutionOwner.get(); }
+        bool isCancelled() const { return !scriptExecutionOwner.get() || !globalObject.get(); }
 
-        FixedVector<Strong<JSCell>> dependencies;
-        Strong<JSObject> scriptExecutionOwner;
+        FixedVector<Weak<JSCell>> dependencies;
+        Weak<JSObject> scriptExecutionOwner;
+        Weak<JSGlobalObject> globalObject;
     };
 
     using Ticket = TicketData*;
 
     void doWork(VM&) final;
 
-    JS_EXPORT_PRIVATE Ticket addPendingWork(VM&, JSObject* target, Vector<Strong<JSCell>>&& dependencies);
+    JS_EXPORT_PRIVATE Ticket addPendingWork(VM&, JSObject* target, Vector<Weak<JSCell>>&& dependencies);
     bool hasAnyPendingWork() const;
     bool hasPendingWork(Ticket);
-    bool hasDependancyInPendingWork(Ticket, JSCell* dependency);
+    bool hasDependencyInPendingWork(Ticket, JSCell* dependency);
     bool cancelPendingWork(Ticket);
+    void cancelPendingWorkSafe(JSGlobalObject*);
 
     // If the script execution owner your ticket is associated with gets canceled
     // the Task will not be called and will be deallocated. So it's important

@@ -451,7 +451,7 @@ VM::~VM()
     Locker destructionLocker { s_destructionLock.read() };
 
     if (Options::useAtomicsWaitAsync() && vmType == Default)
-        WaiterListManager::singleton().unregisterVM(this);
+        WaiterListManager::singleton().unregister(this);
 
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
     deferredWorkTimer->stopRunningTasks();

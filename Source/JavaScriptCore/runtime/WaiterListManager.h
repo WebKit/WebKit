@@ -41,18 +41,9 @@ class Waiter final : public WTF::BasicRawSentinelNode<Waiter>, public ThreadSafe
     WTF_MAKE_TZONE_ALLOCATED(Waiter);
 
 public:
-    Waiter(VM* vm)
-        : m_vm(vm)
-        , m_isAsync(false)
-    {
-    }
-
-    Waiter(JSPromise* promise)
-        : m_vm(&promise->vm())
-        , m_ticket(m_vm->deferredWorkTimer->addPendingWork(*m_vm, promise, { }))
-        , m_isAsync(true)
-    {
-    }
+    Waiter(VM*);
+    Waiter(JSPromise*);
+    ~Waiter();
 
     bool isAsync() const
     {
@@ -86,11 +77,7 @@ public:
         return m_ticket;
     }
 
-    DeferredWorkTimer::Ticket takeTicket(const AbstractLocker&)
-    {
-        ASSERT(m_isAsync);
-        return std::exchange(m_ticket, nullptr);
-    }
+    void scheduleWorkAndClearTicket(DeferredWorkTimer::Task&&);
 
     void setTimer(const AbstractLocker&, Ref<RunLoop::DispatchTimer>&& timer)
     {
@@ -110,9 +97,11 @@ public:
         if (!m_timer)
             return;
         m_timer->stop();
+        // This releases the strong reference to the Waiter in the timer.
         m_timer = nullptr;
     }
 
+    void dump(PrintStream&) const;
 private:
     VM* m_vm { nullptr };
     DeferredWorkTimer::Ticket m_ticket { nullptr };
@@ -224,9 +213,11 @@ public:
 
     size_t waiterListSize(void* ptr);
 
-    void unregisterVM(VM*);
+    size_t totalWaiterCount();
 
-    void unregisterSharedArrayBuffer(uint8_t* arrayPtr, size_t);
+    void unregister(VM*);
+    void unregister(JSGlobalObject*);
+    void unregister(uint8_t* arrayPtr, size_t);
 
 private:
     template <typename ValueType>

@@ -155,7 +155,7 @@ void ArrayBufferContents::makeShared()
 
 SharedArrayBufferContents::~SharedArrayBufferContents()
 {
-    WaiterListManager::singleton().unregisterSharedArrayBuffer(bitwise_cast<uint8_t*>(data()), m_sizeInBytes);
+    WaiterListManager::singleton().unregister(bitwise_cast<uint8_t*>(data()), m_sizeInBytes);
     if (m_destructor) {
         // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
         m_destructor->run(m_data.getUnsafe());

@@ -47,14 +47,14 @@ StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobal
     , m_info(Wasm::ModuleInformation::create())
     , m_parser(m_info.get(), *this)
 {
-    Vector<Strong<JSCell>> dependencies;
-    dependencies.append(Strong<JSCell>(vm, globalObject));
+    Vector<Weak<JSCell>> dependencies;
+    dependencies.append(Weak<JSCell>(globalObject));
     if (importObject)
-        dependencies.append(Strong<JSCell>(vm, importObject));
+        dependencies.append(Weak<JSCell>(importObject));
     m_ticket = vm.deferredWorkTimer->addPendingWork(vm, promise, WTFMove(dependencies));
     ASSERT(vm.deferredWorkTimer->hasPendingWork(m_ticket));
-    ASSERT(vm.deferredWorkTimer->hasDependancyInPendingWork(m_ticket, globalObject));
-    ASSERT(!importObject || vm.deferredWorkTimer->hasDependancyInPendingWork(m_ticket, importObject));
+    ASSERT(vm.deferredWorkTimer->hasDependencyInPendingWork(m_ticket, globalObject));
+    ASSERT(!importObject || vm.deferredWorkTimer->hasDependencyInPendingWork(m_ticket, importObject));
 }
 
 StreamingCompiler::~StreamingCompiler()

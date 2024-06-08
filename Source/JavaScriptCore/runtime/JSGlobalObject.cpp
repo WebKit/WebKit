@@ -242,6 +242,7 @@
 #include "TemporalTimeZone.h"
 #include "TemporalTimeZonePrototype.h"
 #include "VMTrapsInlines.h"
+#include "WaiterListManager.h"
 #include "WasmCapabilities.h"
 #include "WeakMapConstructorInlines.h"
 #include "WeakMapPrototypeInlines.h"
@@ -275,7 +276,9 @@
 #include "WebAssemblyTablePrototype.h"
 #include "WebAssemblyTagConstructor.h"
 #include "WebAssemblyTagPrototype.h"
+#include "runtime/VM.h"
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/FixedVector.h>
 #include <wtf/SystemTracing.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -706,6 +709,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
 
 JSGlobalObject::~JSGlobalObject()
 {
+    clearObjectsForTicket();
 #if ENABLE(REMOTE_INSPECTOR)
     m_inspectorController->globalObjectDestroyed();
 #endif
@@ -2633,6 +2637,16 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_typedArrayProto.visit(visitor);
     thisObject->m_typedArraySuperConstructor.visit(visitor);
     thisObject->m_regExpGlobalData.visitAggregate(visitor);
+
+    {
+        if (thisObject->m_objectsForTicket) {
+            Locker locker { thisObject->cellLock() };
+            for (auto& entry : *thisObject->m_objectsForTicket) {
+                for (auto& cell : entry.value)
+                    visitor.append(cell);
+            }
+        }
+    }
 }
 
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSGlobalObject);
@@ -3267,5 +3281,34 @@ void JSGlobalObject::setWrapperMap(std::unique_ptr<WrapperMap>&& map)
     m_wrapperMap = WTFMove(map);
 }
 #endif
+
+void JSGlobalObject::addObjectsForTicket(DeferredWorkTimer::Ticket ticket, JSObject* scriptExecutionOwner, FixedVector<Weak<JSCell>>& dependencies)
+{
+    Locker locker { cellLock() };
+    if (!m_objectsForTicket)
+        m_objectsForTicket = makeUnique<HashMap<DeferredWorkTimer::Ticket, FixedVector<WriteBarrier<JSCell>>>>();
+
+    FixedVector<WriteBarrier<JSCell>> value(dependencies.size() + 1, WriteBarrier<JSCell>());
+    auto addResult = m_objectsForTicket->add(ticket, WTFMove(value));
+
+    unsigned i = 0;
+    for (auto& dependency : dependencies)
+        addResult.iterator->value.at(i++).set(vm(), this, dependency.get());
+    addResult.iterator->value.at(i).set(vm(), this, scriptExecutionOwner);
+}
+void JSGlobalObject::removeObjectsForTicket(DeferredWorkTimer::Ticket ticket)
+{
+    Locker locker { cellLock() };
+    m_objectsForTicket->remove(ticket);
+}
+void JSGlobalObject::clearObjectsForTicket()
+{
+    if (!m_objectsForTicket)
+        return;
+
+    WaiterListManager::singleton().unregister(this);
+    // Clear the rest tickets safely.
+    vm().deferredWorkTimer->cancelPendingWorkSafe(this);
+}
 
 } // namespace JSC

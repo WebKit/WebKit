@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "DeferredWorkTimer.h"
 #include "JSSegmentedVariableObject.h"
 #include "LazyClassStructure.h"
 #include "RegExpGlobalData.h"
@@ -504,6 +505,11 @@ public:
     FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE_WATCHPOINT)
 #undef DECLARE_TYPED_ARRAY_TYPE_WATCHPOINT
     Vector<std::unique_ptr<ObjectAdaptiveStructureWatchpoint>> m_missWatchpoints;
+
+    void addObjectsForTicket(DeferredWorkTimer::Ticket, JSObject* scriptExecutionOwner, FixedVector<Weak<JSCell>>& dependencies);
+    void removeObjectsForTicket(DeferredWorkTimer::Ticket);
+    void clearObjectsForTicket();
+    std::unique_ptr<HashMap<DeferredWorkTimer::Ticket, FixedVector<WriteBarrier<JSCell>>>> m_objectsForTicket;
 
     inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayConstructorSpeciesAbsenceWatchpoint(TypedArrayType);
     inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(TypedArrayType);

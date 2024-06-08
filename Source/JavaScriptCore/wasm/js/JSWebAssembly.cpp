@@ -145,8 +145,8 @@ void JSWebAssembly::webAssemblyModuleValidateAsync(JSGlobalObject* globalObject,
 {
     VM& vm = globalObject->vm();
 
-    Vector<Strong<JSCell>> dependencies;
-    dependencies.append(Strong<JSCell>(vm, globalObject));
+    Vector<Weak<JSCell>> dependencies;
+    dependencies.append(Weak<JSCell>(globalObject));
 
     auto ticket = vm.deferredWorkTimer->addPendingWork(vm, promise, WTFMove(dependencies));
     Wasm::Module::validateAsync(vm, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([ticket, promise, globalObject, &vm] (Wasm::Module::ValidationResult&& result) mutable {
@@ -185,9 +185,9 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
         return;
     }
 
-    Vector<Strong<JSCell>> dependencies;
+    Vector<Weak<JSCell>> dependencies;
     // The instance keeps the module alive.
-    dependencies.append(Strong<JSCell>(vm, promise));
+    dependencies.append(Weak<JSCell>(promise));
 
     scope.release();
     auto ticket = vm.deferredWorkTimer->addPendingWork(vm, instance, WTFMove(dependencies));
@@ -239,9 +239,10 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
     }
 
     JSCell* moduleKeyCell = identifierToJSValue(vm, moduleKey).asCell();
-    Vector<Strong<JSCell>> dependencies;
-    dependencies.append(Strong<JSCell>(vm, importObject));
-    dependencies.append(Strong<JSCell>(vm, moduleKeyCell));
+    Vector<Weak<JSCell>> dependencies;
+    if (importObject)
+        dependencies.append(Weak<JSCell>(importObject));
+    dependencies.append(Weak<JSCell>(moduleKeyCell));
     auto ticket = vm.deferredWorkTimer->addPendingWork(vm, promise, WTFMove(dependencies));
     Wasm::Module::validateAsync(vm, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([ticket, promise, importObject, moduleKeyCell, globalObject, resolveKind, creationMode, &vm] (Wasm::Module::ValidationResult&& result) mutable {
         vm.deferredWorkTimer->scheduleWorkSoon(ticket, [promise, importObject, moduleKeyCell, globalObject, result = WTFMove(result), resolveKind, creationMode, &vm](DeferredWorkTimer::Ticket) mutable {

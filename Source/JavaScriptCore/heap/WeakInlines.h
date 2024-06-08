@@ -126,6 +126,16 @@ template <typename T> inline bool operator==(const Weak<T>& lhs, const Weak<T>& 
     return lhs.get() == rhs.get();
 }
 
+template<typename T> inline bool operator==(const Weak<T>& lhs, const T* rhs)
+{
+    return lhs.get() == rhs;
+}
+
+template<typename T> inline bool operator==(const T* lhs, const Weak<T>& rhs)
+{
+    return lhs == rhs.get();
+}
+
 // This function helps avoid modifying a weak table while holding an iterator into it. (Object allocation
 // can run a finalizer that modifies the table. We avoid that by requiring a pre-constructed object as our value.)
 template<typename Map, typename Key, typename Value> inline void weakAdd(Map& map, const Key& key, Value&& value)
