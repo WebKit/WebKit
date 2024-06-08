@@ -38,7 +38,7 @@ swipe [ Pass ]
 view-gestures [ Pass ]
 http/tests/swipe [ Pass ]
 http/tests/pdf [ Pass ]
-pdf/unifiedpdf [ Pass ]
+[ Sonoma+ ] pdf/unifiedpdf [ Pass ]
 tiled-drawing [ Pass ]
 ipc/restrictedendpoints/mac [ Pass ]
 
@@ -1772,12 +1772,6 @@ webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallbac
 webkit.org/b/268398 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-iframe-scrolling-tree-after-back.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/inline-element-size.html [ ImageOnlyFailure ]
-
-# webkit.org/b/270092  (REGRESSION (275274@main): [ Sonoma+ wk2 ] Multiple compositing/plugins/pdf/pdf are constant failures)
-[ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
-[ Sonoma+ ] compositing/plugins/pdf/pdf-in-styled-embed.html [ Failure ]
-[ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree-dynamic.html [ Failure Timeout ]
-[ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree.html [ Failure ]
 
 [ Sonoma ] compositing/plugins/pdf/pdf-in-embed-with-root-page-zoom.html [ Failure ]
 
