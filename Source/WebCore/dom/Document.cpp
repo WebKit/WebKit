@@ -9181,8 +9181,15 @@ void Document::updateIntersectionObservations(const Vector<WeakPtr<IntersectionO
         return;
 
     bool needsLayout = frameView->layoutContext().isLayoutPending() || (renderView() && renderView()->needsLayout());
-    if (needsLayout || hasPendingStyleRecalc())
+    if (needsLayout || hasPendingStyleRecalc()) {
+        if (!intersectionObservers.isEmpty()) {
+            LOG_WITH_STREAM(IntersectionObserver, stream << "Document " << this << " updateIntersectionObservations - needsLayout " << needsLayout << " or has pending style recalc " << hasPendingStyleRecalc() << "; scheduling another update");
+            scheduleRenderingUpdate(RenderingUpdateStep::IntersectionObservations);
+        }
         return;
+    }
+
+    LOG_WITH_STREAM(IntersectionObserver, stream << "Document " << this << " updateIntersectionObservations - notifying observers");
 
     Vector<WeakPtr<IntersectionObserver>> intersectionObserversWithPendingNotifications;
 
