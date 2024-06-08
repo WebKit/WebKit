@@ -871,3 +871,20 @@ TEST(WKBackForwardList, BackForwardListRemoveAndAddSubframes)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+TEST(WKBackForwardList, SessionStateTitleTruncation)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { "<script>document.title='a'.repeat(10000);window.history.pushState({}, '', window.location+'?a=b');</script>"_s } }
+    });
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView loadRequest:server.request()];
+    while (!webView.get().canGoBack)
+        TestWebKitAPI::Util::spinRunLoop();
+    while (webView.get()._sessionState.data.length < 1000u)
+        TestWebKitAPI::Util::spinRunLoop();
+    _WKSessionState *sessionState = webView.get()._sessionState;
+    NSData *stateData = sessionState.data;
+    EXPECT_LT(stateData.length, 2000u);
+}

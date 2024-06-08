@@ -659,6 +659,13 @@ void HistoryController::setCurrentItem(Ref<HistoryItem>&& item)
     m_previousItem = std::exchange(m_currentItem, WTFMove(item));
 }
 
+void HistoryController::setCurrentItemTitle(const StringWithDirection& title)
+{
+    // FIXME: This ignores the title's direction.
+    if (RefPtr currentItem = m_currentItem)
+        currentItem->setTitle(title.string);
+}
+
 bool HistoryController::currentItemShouldBeReplaced() const
 {
     // From the HTML5 spec for location.assign():
@@ -713,9 +720,13 @@ void HistoryController::initializeItem(HistoryItem& item)
     if (originalURL.isEmpty())
         originalURL = aboutBlankURL();
     
+    StringWithDirection title = documentLoader->title();
+
     item.setURL(url);
     item.setTarget(frame->tree().uniqueName());
     item.setFrameID(frame->frameID());
+    // FIXME: Should store the title direction as well.
+    item.setTitle(title.string);
     item.setOriginalURLString(originalURL.string());
 
     if (!unreachableURL.isEmpty() || documentLoader->response().httpStatusCode() >= 400)

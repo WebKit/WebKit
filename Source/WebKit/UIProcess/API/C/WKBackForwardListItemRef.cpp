@@ -27,7 +27,6 @@
 #include "WKBackForwardListItemRef.h"
 
 #include "WKAPICast.h"
-#include "WKString.h"
 #include "WebBackForwardListItem.h"
 
 using namespace WebKit;
@@ -44,7 +43,7 @@ WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef itemRef)
 
 WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef itemRef)
 {
-    return WKStringCreateWithUTF8CString("");
+    return WebKit::toCopiedAPI(toImpl(itemRef)->title());
 }
 
 WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef itemRef)

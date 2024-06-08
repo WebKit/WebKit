@@ -1,38 +1,4 @@
 Test should not crash.
 Click to test pushState through a user gesture
-Successfully added item: 1 times
-Successfully added item: 2 times
-Successfully added item: 3 times
-Successfully added item: 4 times
-Successfully added item: 5 times
-Successfully added item: 6 times
-Successfully added item: 7 times
-Successfully added item: 8 times
-Successfully added item: 9 times
-Successfully added item: 10 times
-Successfully added item: 11 times
-Successfully added item: 12 times
-Successfully added item: 13 times
-Successfully added item: 14 times
-Successfully added item: 15 times
-Successfully added item: 16 times
-Successfully added item: 17 times
-Successfully added item: 18 times
-Successfully added item: 19 times
-Successfully added item: 20 times
-Successfully added item: 21 times
-Successfully added item: 22 times
-Successfully added item: 23 times
-Successfully added item: 24 times
-Successfully added item: 25 times
-Successfully added item: 26 times
-Successfully added item: 27 times
-Successfully added item: 28 times
-Successfully added item: 29 times
-Successfully added item: 30 times
-Successfully added item: 31 times
-Successfully added item: 32 times
-Successfully added item: 33 times
-Successfully added item: 34 times
 User gesture: QuotaExceededError: Attempt to store more data than allowed using history.pushState()
 
