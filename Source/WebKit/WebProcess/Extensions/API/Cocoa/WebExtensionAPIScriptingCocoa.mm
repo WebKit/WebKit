@@ -401,7 +401,7 @@ bool WebExtensionAPIScripting::validateTarget(NSDictionary *targetInfo, NSString
     if (!validateDictionary(targetInfo, targetKey, requiredKeys, keyTypes, outExceptionString))
         return false;
 
-    if (targetInfo[allFramesKey] && targetInfo[frameIDsKey]) {
+    if (objectForKey<NSNumber>(targetInfo, allFramesKey).boolValue && targetInfo[frameIDsKey]) {
         *outExceptionString = toErrorString(nil, targetKey, @"it cannot specify both 'allFrames' and 'frameIds'");
         return false;
     }

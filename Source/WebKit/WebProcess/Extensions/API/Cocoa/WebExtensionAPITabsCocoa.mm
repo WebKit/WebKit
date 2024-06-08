@@ -506,7 +506,7 @@ bool WebExtensionAPITabs::parseScriptOptions(NSDictionary *options, WebExtension
         return false;
     }
 
-    if (options[allFramesKey] && options[frameIdKey]) {
+    if (objectForKey<NSNumber>(options, allFramesKey).boolValue && options[frameIdKey]) {
         *outExceptionString = toErrorString(nil, @"details", @"it cannot specify both 'allFrames' and 'frameId'");
         return false;
     }
