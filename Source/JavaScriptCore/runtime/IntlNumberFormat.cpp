@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2016 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1041,7 +1041,7 @@ void IntlNumberFormat::formatRangeToPartsInternal(JSGlobalObject* globalObject, 
 
     for (auto& field : flatten) {
         bool sign = false;
-        IntlMathematicalValue::NumberType numberType = start.numberType();
+        IntlMathematicalValue::NumberType numberType;
         if (startRange.contains(field.m_range.begin())) {
             numberType = start.numberType();
             sign = start.sign();

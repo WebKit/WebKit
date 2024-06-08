@@ -776,7 +776,7 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
 
 bool TOutputGLSLBase::visitUnary(Visit visit, TIntermUnary *node)
 {
-    const char *preString  = "";
+    const char *preString; // Removed unneeded initializer to placate clang static analyzer.
     const char *postString = ")";
 
     switch (node->getOp())

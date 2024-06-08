@@ -2217,6 +2217,7 @@ if_condition(Token * tline, int i)
             if (tline && tok_is_(tline->next, "+"))
             {
                 tline = tline->next;
+                (void)tline; /* placate clang static analyzer. */
                 searching.plus = TRUE;
             }
             mmac = mmacros[hash(searching.name)];
@@ -2518,6 +2519,7 @@ do_directive(Token * tline)
             {
                 char *arg, directive[256];
                 int size = StackSize;
+                (void)size; /* placate clang static analyzer. */
 
                 /* Find the argument name */
                 tline = tline->next;
@@ -2614,6 +2616,7 @@ do_directive(Token * tline)
             {
                 char *local, directive[256];
                 int size = StackSize;
+                (void)size; /* placate clang static analyzer. */
 
                 /* Find the argument name */
                 tline = tline->next;
@@ -3264,6 +3267,7 @@ do_directive(Token * tline)
 
             list->uplevel(defining->nolist ? LIST_MACRO_NOLIST : LIST_MACRO);
             tmp_defining = defining;
+            (void)tmp_defining; /* placate clang static analyzer. */
             defining = defining->rep_nest;
             free_tlist(origline);
             return DIRECTIVE_FOUND;

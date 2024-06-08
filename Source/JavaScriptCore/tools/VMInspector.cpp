@@ -688,6 +688,7 @@ void VMInspector::dumpCellMemoryToStream(JSCell* cell, PrintStream& out)
 
                 index = dumpSection(index, endOfIndexedPropertiesIndex, "indexedProperties");
                 index = dumpSection(index, endOfButterflyIndex, "unallocated capacity");
+                UNUSED_PARAM(index); // placate clang static analyzer.
             }
         }
     }

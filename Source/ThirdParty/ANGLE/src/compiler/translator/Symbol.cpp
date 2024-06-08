@@ -77,7 +77,7 @@ ImmutableString TSymbol::name() const
     int uniqueId = mUniqueId.get();
     ImmutableStringBuilder symbolNameOut(sizeof(uniqueId) * 2u + 1u);
     symbolNameOut << 's';
-    symbolNameOut.appendHex(mUniqueId.get());
+    symbolNameOut.appendHex(uniqueId); // Use the already read value to placate clang static analyzer.
     return symbolNameOut;
 }
 

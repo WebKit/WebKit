@@ -239,7 +239,7 @@ x86_expr_checkea_distcheck_reg(yasm_expr **ep, unsigned int bits)
         ne = e->terms[havereg_expr].data.expn;
         e->terms[havereg_expr].type = YASM_EXPR_NONE;   /* don't delete it! */
         yasm_expr_destroy(e);                       /* but everything else */
-        e = ne;
+        /* e = ne; // Unneeded: removed to placate clang static analyzer. */
         /*@-onlytrans@*/
         *ep = ne;
         /*@=onlytrans@*/
@@ -401,6 +401,8 @@ x86_expr_checkea_getregusage(yasm_expr **ep, /*@null@*/ int *indexreg,
                         *indexreg = -1;
                         indexval = 0;
                         indexmult = 0;
+                        (void)indexval; /* placate clang static analyzer. */
+                        (void)indexmult; /* placate clang static analyzer. */
                     }
                     else
                         *indexreg = regnum;

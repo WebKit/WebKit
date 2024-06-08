@@ -422,7 +422,7 @@ yasm_expr *nasm_evaluate (scanner sc, void *scprivate, struct tokenval *tv,
                           int critical, efunc report_error)
 {
     if (critical & CRITICAL) {
-        critical &= ~CRITICAL;
+        /* critical &= ~CRITICAL; // Unneeded: removed to placate clang static analyzer. */
         bexpr = rexp0;
     } else
         bexpr = expr0;

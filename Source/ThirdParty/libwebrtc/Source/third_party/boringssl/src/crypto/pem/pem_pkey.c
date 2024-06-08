@@ -105,7 +105,7 @@ EVP_PKEY *PEM_read_bio_PrivateKey(BIO *bp, EVP_PKEY **x, pem_password_cb *cb,
       goto p8err;
     }
 
-    klen = 0;
+    // klen = 0; // Unneeded: removed to placate clang static analyzer.
     if (!cb) {
       cb = PEM_def_callback;
     }

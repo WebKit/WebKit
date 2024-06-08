@@ -416,6 +416,7 @@ parse_line(yasm_parser_nasm *parser_nasm)
 
                 if (parser_nasm->tasm && curtok == SIZE_OVERRIDE) {
                     size = SIZE_OVERRIDE_val;
+                    (void)size; /* placate clang static analyzer. */
                     get_next_token();
                 }
 

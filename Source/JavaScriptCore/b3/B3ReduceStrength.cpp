@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2181,6 +2181,7 @@ private:
                     m_changed = true;
                 }
             }
+            UNUSED_PARAM(address); // placate clang static analyzer.
 
             if (m_value->opcode() == Store) {
                 // Turn this: Store(float-constant, address)

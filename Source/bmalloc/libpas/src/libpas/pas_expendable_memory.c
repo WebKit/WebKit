@@ -174,7 +174,9 @@ bool pas_expendable_memory_commit_if_necessary(pas_expendable_memory* header,
 
     header_version = ((pas_expendable_memory_state_version*)object)[-1];
     first_state = header->states[first];
+#if PAS_ENABLE_TESTING
     first_kind = pas_expendable_memory_state_get_kind(first_state);
+#endif
     first_version = pas_expendable_memory_state_get_version(first_state);
 
     PAS_TESTING_ASSERT(first_kind != PAS_EXPENDABLE_MEMORY_STATE_KIND_INTERIOR);

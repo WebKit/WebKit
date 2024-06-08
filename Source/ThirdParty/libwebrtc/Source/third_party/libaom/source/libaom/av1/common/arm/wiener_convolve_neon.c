@@ -172,6 +172,7 @@ static INLINE void process_row_for_horz_filtering(
       uint8x8_t tt5 = vext_u8(ttemp_0, tt7, 5);  // a5 a6 a7 a8 a9 a10 a11 a12
       uint8x8_t tt6 = vext_u8(ttemp_0, tt7, 6);  // a6 a7 a8 a9 a10 a11 a12 a13
       tt7 = vext_u8(ttemp_0, tt7, 7);            // a7 a8 a9 a10 a11 a12 a13 a14
+      (void)tt7; // placate clang static analyzer.
 
       int16x8_t ttt0 = vreinterpretq_s16_u16(vaddl_u8(ttemp_0, tt6));
       int16x8_t ttt1 = vreinterpretq_s16_u16(vaddl_u8(tt1, tt5));
@@ -332,8 +333,8 @@ void av1_wiener_convolve_add_src_neon(const uint8_t *src, ptrdiff_t src_stride,
   {
     int16_t *src_tmp_ptr, *s;
     uint8_t *dst_tmp_ptr;
-    height = h;
-    width = w;
+    // height = h; // Unneeded: removed to placate clang static analyzer.
+    // width = w; // Unneeded: removed to placate clang static analyzer.
     src_tmp_ptr = (int16_t *)temp;
     dst_tmp_ptr = dst;
     src_stride = MAX_SB_SIZE;

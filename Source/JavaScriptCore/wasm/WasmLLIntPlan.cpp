@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -241,8 +241,6 @@ RefPtr<JSEntrypointCallee> LLIntPlan::tryCreateInterpretedJSToWasmCallee(unsigne
         if (wasmFrameConvention.params[i].location.isStackArgument()) {
             auto wasmParam = static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(
                 (wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(PayloadOffset)) / 8));
-            auto wasmParamTag = static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(
-                (wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(TagOffset)) / 8));
             auto loadType = (type.width() == Width32) ? JSEntrypointInterpreterCalleeMetadata::LoadI32 : JSEntrypointInterpreterCalleeMetadata::LoadI64;
             auto storeType = (type.width() == Width32) ? JSEntrypointInterpreterCalleeMetadata::StoreI32 : JSEntrypointInterpreterCalleeMetadata::StoreI64;
             metadata.append(loadType);
@@ -251,6 +249,9 @@ RefPtr<JSEntrypointCallee> LLIntPlan::tryCreateInterpretedJSToWasmCallee(unsigne
             metadata.append(wasmParam);
 
             if (!is64Bit() && loadType == JSEntrypointInterpreterCalleeMetadata::LoadI32) {
+                auto wasmParamTag = static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(
+                    (wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(TagOffset)) / 8));
+
                 metadata.append(JSEntrypointInterpreterCalleeMetadata::Zero);
                 metadata.append(JSEntrypointInterpreterCalleeMetadata::StoreI32);
                 metadata.append(wasmParamTag);

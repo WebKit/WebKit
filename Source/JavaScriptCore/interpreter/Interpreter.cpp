@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -891,7 +891,7 @@ NEVER_INLINE CatchInfo Interpreter::unwind(VM& vm, CallFrame*& callFrame, Except
     if (seenRemoteFunction) {
         ASSERT(!vm.isTerminationException(exception));
         sanitizeRemoteFunctionException(vm, seenRemoteFunction, exception);
-        exception = scope.exception(); // clear m_needExceptionCheck
+        scope.exception(); // clear m_needExceptionCheck
     }
 
     if (vm.hasCheckpointOSRSideState())

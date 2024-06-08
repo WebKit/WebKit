@@ -3089,19 +3089,19 @@ private:
                     unsure(continuation), unsure(notLessThan));
 
                 // The spec for Math.min and Math.max states that +0 is considered to be larger than -0.
-                LBasicBlock lastNext = m_out.appendTo(notLessThan, isEqual);
+                m_out.appendTo(notLessThan, isEqual);
                 m_out.branch(
                     m_out.doubleEqual(left, right),
                         rarely(isEqual), usually(notEqual));
 
-                lastNext = m_out.appendTo(isEqual, notEqual);
+                m_out.appendTo(isEqual, notEqual);
                 results.append(m_out.anchor(
                     m_node->op() == ArithMin
                         ? m_out.bitOr(left, right)
                         : m_out.bitAnd(left, right)));
                 m_out.jump(continuation);
 
-                lastNext = m_out.appendTo(notEqual, continuation);
+                LBasicBlock lastNext = m_out.appendTo(notEqual, continuation);
                 results.append(
                     m_out.anchor(
                         m_out.select(

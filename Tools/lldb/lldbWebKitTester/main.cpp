@@ -59,15 +59,19 @@ static void testSummaryProviders()
 {
     String aNullString { ""_s };
     StringImpl* aNullStringImpl = aNullString.impl();
+    (void)aNullStringImpl; // placate clang static analyzer.
 
     String anEmptyString { ""_s };
     StringImpl* anEmptyStringImpl = anEmptyString.impl();
+    (void)anEmptyStringImpl; // placate clang static analyzer.
 
     auto an8BitString = String::fromLatin1("résumé");
     StringImpl* an8BitStringImpl = an8BitString.impl();
+    (void)an8BitStringImpl; // placate clang static analyzer.
 
     String a16BitString = utf16String(u"\u1680Cappuccino\u1680");
     StringImpl* a16BitStringImpl = a16BitString.impl();
+    (void)a16BitStringImpl; // placate clang static analyzer.
 
     Vector<int> anEmptyVector;
     Vector<int> aVectorWithOneItem;

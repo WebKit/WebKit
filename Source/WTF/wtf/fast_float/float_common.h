@@ -227,7 +227,7 @@ int leading_zeroes_generic(uint64_t input_num, int last_bit = 0) {
   if(input_num & uint64_t(            0xff00)) { input_num >>=  8; last_bit |=  8; }
   if(input_num & uint64_t(              0xf0)) { input_num >>=  4; last_bit |=  4; }
   if(input_num & uint64_t(               0xc)) { input_num >>=  2; last_bit |=  2; }
-  if(input_num & uint64_t(               0x2)) { input_num >>=  1; last_bit |=  1; }
+  if(input_num & uint64_t(               0x2)) { last_bit |=  1; }
   return 63 - last_bit;
 }
 

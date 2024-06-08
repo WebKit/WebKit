@@ -453,6 +453,7 @@ static inline void delayed_fg_task(const Dav1dContext *const c,
         }
         row = atomic_fetch_add(&ttd->delayed_fg.progress[0], 1);
         int done = atomic_fetch_add(&ttd->delayed_fg.progress[1], 1) + 1;
+        (void)done; // placate clang static analyzer.
         if (row < progmax) goto fg_apply_loop;
         pthread_mutex_lock(&ttd->lock);
         ttd->delayed_fg.exec = 0;

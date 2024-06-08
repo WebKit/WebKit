@@ -239,7 +239,7 @@ void ReceiveStatisticsProxy::UpdateHistograms(
   std::map<VideoContentType, ContentSpecificStats> aggregated_stats;
   for (const auto& it : content_specific_stats_) {
     // Calculate simulcast specific metrics (".S0" ... ".S2" suffixes).
-    VideoContentType content_type = it.first;
+    VideoContentType content_type; // Removed unneeded initialization to placate clang static analyzer.
     // Calculate aggregated metrics (no suffixes. Aggregated on everything).
     content_type = it.first;
     aggregated_stats[content_type].Add(it.second);

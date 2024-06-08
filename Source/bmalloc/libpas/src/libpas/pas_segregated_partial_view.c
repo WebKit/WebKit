@@ -110,16 +110,9 @@ void pas_segregated_partial_view_set_is_in_use_for_allocation(
     pas_segregated_shared_handle* shared_handle)
 {
     static const bool verbose = false;
-    
-    pas_segregated_shared_page_directory* shared_page_directory;
-    size_t index;
-
-    shared_page_directory = shared_handle->directory;
-    index = shared_view->index;
-
-    PAS_UNUSED_PARAM(shared_page_directory);
-
+    PAS_UNUSED_PARAM(shared_handle);
     if (verbose) {
+        size_t index = shared_view->index;
         pas_log("Setting partial %p, shared %p (index %zu) as in use for allocation.\n",
                 view, shared_view, index);
     }
@@ -175,7 +168,6 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
     pas_segregated_page* page;
     unsigned* full_alloc_bits;
     unsigned* alloc_bits;
-    uintptr_t page_boundary;
     size_t object_size;
     size_t index;
     size_t begin_index;
@@ -193,7 +185,7 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
     full_alloc_bits = pas_lenient_compact_unsigned_ptr_load(&view->alloc_bits);
 
     if (shared_view->is_owned) {
-        page_boundary = (uintptr_t)pas_shared_handle_or_page_boundary_get_page_boundary(
+        uintptr_t page_boundary = (uintptr_t)pas_shared_handle_or_page_boundary_get_page_boundary(
             shared_view->shared_handle_or_page_boundary, page_config);
         page = pas_segregated_page_for_boundary((void*)page_boundary, page_config);
         alloc_bits = page->alloc_bits;
@@ -205,7 +197,6 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
     } else {
         page = NULL;
         alloc_bits = NULL;
-        page_boundary = 0;
     }
 
     /* This doesn't have to be optimized since this is just for internal introspection.

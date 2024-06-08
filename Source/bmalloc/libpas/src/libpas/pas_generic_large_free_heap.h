@@ -194,7 +194,6 @@ pas_generic_large_free_heap_try_allocate(
     
     pas_alignment_validate(alignment);
     pas_heap_lock_assert_held();
-    result = pas_allocation_result_create_failure();
     
     test_allocation_candidate_data.heap = heap;
     test_allocation_candidate_data.size = size;

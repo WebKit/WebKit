@@ -261,6 +261,7 @@ static int get_cert_by_subject(X509_LOOKUP *xl, int type, X509_NAME *name,
   BUF_MEM *b = NULL;
   X509_OBJECT stmp, *tmp;
   const char *postfix = "";
+  (void)postfix; // placate clang static analyzer.
 
   if (name == NULL) {
     return 0;

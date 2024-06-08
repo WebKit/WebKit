@@ -430,7 +430,9 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
                             break;
                         }
                     } else {
+#if PAS_ENABLE_TESTING
                         num_available_leading_bits = PAS_BITVECTOR_BITS_PER_WORD64;
+#endif
                         if (num_remaining_needed_bits > PAS_BITVECTOR_BITS_PER_WORD64) {
                             num_remaining_needed_bits -= PAS_BITVECTOR_BITS_PER_WORD64;
                             continue;
