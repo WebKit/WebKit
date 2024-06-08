@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
+#import "APIPageConfiguration.h"
 #import "APIUIClient.h"
 #import "DrawingAreaProxy.h"
 #import "GPUProcessProxy.h"
@@ -798,7 +799,7 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
 
 #if USE(EXTENSIONKIT)
     RefPtr page = m_page.get();
-    if (RefPtr gpuProcess = page ? page->legacyMainFrameProcess().processPool().gpuProcess() : nullptr) {
+    if (RefPtr gpuProcess = page ? page->configuration().processPool().gpuProcess() : nullptr) {
         RetainPtr handle = LayerHostingContext::createHostingHandle(gpuProcess->processID(), videoLayerID);
         [view->_hostingView setHandle:handle.get()];
     } else

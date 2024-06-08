@@ -29,6 +29,7 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "APIFullscreenClient.h"
+#include "APIPageConfiguration.h"
 #include "MessageSenderInlines.h"
 #include "WebAutomationSession.h"
 #include "WebFullScreenManagerMessages.h"
@@ -86,7 +87,7 @@ void WebFullScreenManagerProxy::didEnterFullScreen()
     m_page.send(Messages::WebFullScreenManager::DidEnterFullScreen());
 
     if (m_page.isControlledByAutomation()) {
-        if (WebAutomationSession* automationSession = m_page.legacyMainFrameProcess().processPool().automationSession())
+        if (WebAutomationSession* automationSession = m_page.configuration().processPool().automationSession())
             automationSession->didEnterFullScreenForPage(m_page);
     }
 }
@@ -120,7 +121,7 @@ void WebFullScreenManagerProxy::didExitFullScreen()
     m_page.send(Messages::WebFullScreenManager::DidExitFullScreen());
     
     if (m_page.isControlledByAutomation()) {
-        if (WebAutomationSession* automationSession = m_page.legacyMainFrameProcess().processPool().automationSession())
+        if (WebAutomationSession* automationSession = m_page.configuration().processPool().automationSession())
             automationSession->didExitFullScreenForPage(m_page);
     }
     callCloseCompletionHandlers();

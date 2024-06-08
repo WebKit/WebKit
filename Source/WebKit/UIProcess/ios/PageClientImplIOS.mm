@@ -298,7 +298,7 @@ void PageClientImpl::didCompleteSyntheticClick()
 void PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, const FrameInfoData& frameInfo, Function<void(bool)>& completionHandler)
 {
     if (auto webView = this->webView()) {
-        auto* geolocationProvider = [wrapper(webView->_page->legacyMainFrameProcess().processPool()) _geolocationProvider];
+        auto* geolocationProvider = [wrapper(webView->_page->configuration().processPool()) _geolocationProvider];
         [geolocationProvider decidePolicyForGeolocationRequestFromOrigin:FrameInfoData { frameInfo } completionHandler:std::exchange(completionHandler, nullptr) view:webView.get()];
     }
 }

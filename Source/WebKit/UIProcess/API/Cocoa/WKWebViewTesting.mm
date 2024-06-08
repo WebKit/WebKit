@@ -371,12 +371,12 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (BOOL)_hasServiceWorkerBackgroundActivityForTesting
 {
-    return _page ? _page->legacyMainFrameProcess().processPool().hasServiceWorkerBackgroundActivityForTesting() : false;
+    return _page ? _page->configuration().processPool().hasServiceWorkerBackgroundActivityForTesting() : false;
 }
 
 - (BOOL)_hasServiceWorkerForegroundActivityForTesting
 {
-    return _page ? _page->legacyMainFrameProcess().processPool().hasServiceWorkerForegroundActivityForTesting() : false;
+    return _page ? _page->configuration().processPool().hasServiceWorkerForegroundActivityForTesting() : false;
 }
 
 - (void)_denyNextUserMediaRequest
@@ -612,7 +612,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_gpuToWebProcessConnectionCountForTesting:(void(^)(NSUInteger))completionHandler
 {
-    RefPtr gpuProcess = _page->legacyMainFrameProcess().processPool().gpuProcess();
+    RefPtr gpuProcess = _page->configuration().processPool().gpuProcess();
     if (!gpuProcess) {
         completionHandler(0);
         return;

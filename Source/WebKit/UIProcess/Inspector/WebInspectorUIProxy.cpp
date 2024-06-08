@@ -29,6 +29,7 @@
 
 #include "APIInspectorClient.h"
 #include "APINavigation.h"
+#include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIUIClient.h"
 #include "InspectorBrowserAgent.h"
@@ -606,7 +607,7 @@ void WebInspectorUIProxy::frontendLoaded()
     if (!inspectedPage)
         return;
 
-    if (auto* automationSession = inspectedPage->legacyMainFrameProcess().processPool().automationSession())
+    if (auto* automationSession = inspectedPage->configuration().processPool().automationSession())
         automationSession->inspectorFrontendLoaded(*inspectedPage);
     
 #if ENABLE(INSPECTOR_EXTENSIONS)

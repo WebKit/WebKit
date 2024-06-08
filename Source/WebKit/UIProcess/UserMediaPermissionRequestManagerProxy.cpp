@@ -20,6 +20,7 @@
 #include "config.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
 
+#include "APIPageConfiguration.h"
 #include "APISecurityOrigin.h"
 #include "APIUIClient.h"
 #include "DeviceIdHashSaltStorage.h"
@@ -678,7 +679,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
     }
 
     if (page->isControlledByAutomation()) {
-        if (WebAutomationSession* automationSession = page->legacyMainFrameProcess().processPool().automationSession()) {
+        if (WebAutomationSession* automationSession = page->configuration().processPool().automationSession()) {
             ALWAYS_LOG(LOGIDENTIFIER, currentUserMediaRequest->userMediaID().toUInt64(), ", page controlled by automation");
             if (automationSession->shouldAllowGetUserMediaForPage(page))
                 grantRequest(*currentUserMediaRequest);

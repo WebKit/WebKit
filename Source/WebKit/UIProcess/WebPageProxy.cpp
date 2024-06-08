@@ -911,7 +911,7 @@ ProcessID WebPageProxy::gpuProcessID() const
         return 0;
 
 #if ENABLE(GPU_PROCESS)
-    if (auto* gpuProcess = legacyMainFrameProcess().processPool().gpuProcess())
+    if (auto* gpuProcess = configuration().processPool().gpuProcess())
         return gpuProcess->processID();
 #endif
 
@@ -929,7 +929,7 @@ ProcessID WebPageProxy::modelProcessID() const
         return 0;
 
 #if ENABLE(MODEL_PROCESS)
-    if (auto* modelProcess = legacyMainFrameProcess().processPool().modelProcess())
+    if (auto* modelProcess = configuration().processPool().modelProcess())
         return modelProcess->processID();
 #endif
 
@@ -1263,7 +1263,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Ref
 
 WebBackForwardCache& WebPageProxy::backForwardCache() const
 {
-    return legacyMainFrameProcess().processPool().backForwardCache();
+    return configuration().processPool().backForwardCache();
 }
 
 bool WebPageProxy::shouldUseBackForwardCache() const
@@ -1538,7 +1538,7 @@ void WebPageProxy::close()
         activePopupMenu->cancelTracking();
 
     if (m_controlledByAutomation) {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->willClosePage(*this);
     }
 
@@ -2149,7 +2149,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
     // processes is hung.
     websiteDataStore().protectedNetworkProcess()->checkForResponsiveness();
 #if ENABLE(GPU_PROCESS)
-    if (RefPtr gpuProcess = legacyMainFrameProcess().processPool().gpuProcess())
+    if (RefPtr gpuProcess = configuration().processPool().gpuProcess())
         gpuProcess->checkForResponsiveness();
 #endif
 
@@ -3768,7 +3768,7 @@ void WebPageProxy::wheelEventHandlingCompleted(bool wasHandled)
         return;
     }
     
-    if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+    if (RefPtr automationSession = configuration().processPool().automationSession())
         automationSession->wheelEventsFlushedForPage(*this);
 }
 
@@ -4524,7 +4524,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         receivedPolicyDecision(policyAction, navigation.ptr(), navigation->websitePolicies(), WTFMove(navigationAction), WillContinueLoadInNewProcess::No, WTFMove(optionalHandle), WTFMove(message), WTFMove(completionHandler));
     };
 
-    legacyMainFrameProcess().processPool().processForNavigation(*this, frame, *navigation, sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, WTFMove(websiteDataStore), WTFMove(continueWithProcessForNavigation));
+    configuration().processPool().processForNavigation(*this, frame, *navigation, sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, WTFMove(websiteDataStore), WTFMove(continueWithProcessForNavigation));
 }
 
 void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, RefPtr<API::WebsitePolicies>&& websitePolicies, Ref<API::NavigationAction>&& navigationAction, WillContinueLoadInNewProcess willContinueLoadInNewProcess, std::optional<SandboxExtension::Handle> sandboxExtensionHandle, std::optional<PolicyDecisionConsoleMessage>&& consoleMessage, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
@@ -5909,7 +5909,7 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
 #if ENABLE(WEB_AUTHN)
     protectedWebsiteDataStore()->authenticatorManager().cancelRequest(webPageID(), frameID);
 #endif
-    if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+    if (RefPtr automationSession = configuration().processPool().automationSession())
         automationSession->didDestroyFrame(frameID);
     if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         frame->disconnect();
@@ -6514,7 +6514,7 @@ void WebPageProxy::didFinishDocumentLoadForFrame(FrameIdentifier frameID, uint64
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didFinishDocumentLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.object().toUInt64(), frame->isMainFrame());
 
     if (m_controlledByAutomation) {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->documentLoadedForFrame(*frame);
     }
 
@@ -6592,7 +6592,7 @@ void WebPageProxy::didFinishLoadForFrame(IPC::Connection& connection, FrameIdent
             internals().pageLoadState.didFinishLoad(transaction);
 
         if (m_controlledByAutomation) {
-            if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+            if (RefPtr automationSession = configuration().processPool().automationSession())
                 automationSession->navigationOccurredForFrame(*frame);
         }
 
@@ -6654,7 +6654,7 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
     }
 
     if (m_controlledByAutomation) {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->navigationOccurredForFrame(*frame);
     }
 
@@ -6701,7 +6701,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(FrameIdentifier frameID, ui
         internals().pageLoadState.didSameDocumentNavigation(transaction, url.string());
 
     if (m_controlledByAutomation) {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->navigationOccurredForFrame(*frame);
     }
 
@@ -6742,7 +6742,7 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocument
         internals().pageLoadState.didSameDocumentNavigation(transaction, url.string());
 
     if (m_controlledByAutomation) {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->navigationOccurredForFrame(*frame);
     }
 
@@ -7582,7 +7582,7 @@ void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url,
 
     if (frame->isMainFrame())
         m_historyClient->didUpdateHistoryTitle(*this, title, url);
-    Ref processPool = legacyMainFrameProcess().processPool();
+    Ref processPool = configuration().processPool();
     processPool->historyClient().didUpdateHistoryTitle(processPool, *this, title, url, *frame);
 }
 
@@ -7807,7 +7807,7 @@ void WebPageProxy::runJavaScriptAlert(FrameIdentifier frameID, FrameInfoData&& f
     protectedLegacyMainFrameProcess()->stopResponsivenessTimer();
 
     if (m_controlledByAutomation) {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
 
@@ -7830,7 +7830,7 @@ void WebPageProxy::runJavaScriptConfirm(FrameIdentifier frameID, FrameInfoData&&
     protectedLegacyMainFrameProcess()->stopResponsivenessTimer();
 
     if (m_controlledByAutomation) {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
 
@@ -7853,7 +7853,7 @@ void WebPageProxy::runJavaScriptPrompt(FrameIdentifier frameID, FrameInfoData&& 
     protectedLegacyMainFrameProcess()->stopResponsivenessTimer();
 
     if (m_controlledByAutomation) {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
 
@@ -7967,7 +7967,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(FrameIdentifier frameID, FrameInf
     // event handlers, are dismissed implicitly upon navigation or close window, regardless of the
     // defined user prompt handler." So, always allow the unload to proceed if the page is being automated.
     if (m_controlledByAutomation) {
-        if (!!legacyMainFrameProcess().processPool().automationSession()) {
+        if (!!configuration().processPool().automationSession()) {
             reply(true);
             return;
         }
@@ -8029,7 +8029,7 @@ void WebPageProxy::runOpenPanel(FrameIdentifier frameID, FrameInfoData&& frameIn
     m_openPanelResultListener = openPanelResultListener.copyRef();
 
     if (m_controlledByAutomation) {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->handleRunOpenPanel(*this, *frame, parameters.get(), openPanelResultListener);
 
         // Don't show a file chooser, since automation will be unable to interact with it.
@@ -8219,14 +8219,14 @@ void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
 
 void WebPageProxy::resumeDownload(const API::Data& resumeData, const String& path, CompletionHandler<void(DownloadProxy*)>&& completionHandler)
 {
-    Ref download = legacyMainFrameProcess().processPool().resumeDownload(websiteDataStore(), this, resumeData, path, CallDownloadDidStart::Yes);
+    Ref download = configuration().processPool().resumeDownload(websiteDataStore(), this, resumeData, path, CallDownloadDidStart::Yes);
     download->setDestinationFilename(path);
     download->setDidStartCallback(WTFMove(completionHandler));
 }
 
 void WebPageProxy::downloadRequest(WebCore::ResourceRequest&& request, CompletionHandler<void(DownloadProxy*)>&& completionHandler)
 {
-    Ref download = legacyMainFrameProcess().processPool().download(websiteDataStore(), this, request, { });
+    Ref download = configuration().processPool().download(websiteDataStore(), this, request, { });
     download->setDidStartCallback(WTFMove(completionHandler));
 }
 
@@ -8864,7 +8864,7 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
     // If the page is controlled by automation, entering a nested run loop while the menu is open
     // can hang the page / WebDriver test. Since <option> elements are selected via a different
     // code path anyway, just don't show the native popup menu.
-    if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession()) {
+    if (RefPtr automationSession = configuration().processPool().automationSession()) {
         if (m_controlledByAutomation && automationSession->isSimulatingUserInteraction())
             return;
     }
@@ -8922,7 +8922,7 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
 
     // If the page is controlled by automation, entering a nested run loop while the menu is open
     // can hang the page / WebDriver test. Pretend to show and immediately dismiss the context menu.
-    if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession()) {
+    if (RefPtr automationSession = configuration().processPool().automationSession()) {
         if (m_controlledByAutomation && automationSession->isSimulatingUserInteraction())
             return;
     }
@@ -9421,7 +9421,7 @@ void WebPageProxy::mouseEventHandlingCompleted(std::optional<WebEventType> event
         LOG(MouseHandling, " UIProcess: handling a queued mouse event from mouseEventHandlingCompleted");
         processNextQueuedMouseEvent();
     } else {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->mouseEventsFlushedForPage(*this);
         didFinishProcessingAllPendingMouseEvents();
     }
@@ -9456,7 +9456,7 @@ void WebPageProxy::keyEventHandlingCompleted(std::optional<WebEventType> eventTy
 
     // Notify the session after -[NSApp sendEvent:] has a crack at turning the event into an action.
     if (!canProcessMoreKeyEvents) {
-        if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+        if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->keyboardEventsFlushedForPage(*this);
     }
 }
@@ -9828,7 +9828,7 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
         navigationState().clearAllNavigations();
 
         if (m_controlledByAutomation) {
-            if (RefPtr automationSession = legacyMainFrameProcess().processPool().automationSession())
+            if (RefPtr automationSession = configuration().processPool().automationSession())
                 automationSession->terminate();
         }
     }
@@ -10821,7 +10821,7 @@ void WebPageProxy::willStartCapture(const UserMediaPermissionRequestProxy& reque
     if (!preferences().captureVideoInGPUProcessEnabled() && !preferences().captureAudioInGPUProcessEnabled())
         return callback();
 
-    Ref gpuProcess = legacyMainFrameProcess().processPool().ensureGPUProcess();
+    Ref gpuProcess = configuration().processPool().ensureGPUProcess();
     gpuProcess->updateCaptureAccess(request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture(), m_legacyMainFrameProcess->coreProcessIdentifier(), WTFMove(callback));
     gpuProcess->updateCaptureOrigin(request.topLevelDocumentSecurityOrigin().data(), m_legacyMainFrameProcess->coreProcessIdentifier());
 #if PLATFORM(IOS_FAMILY)
@@ -13351,7 +13351,7 @@ void WebPageProxy::gpuProcessExited(ProcessTerminationReason)
     bool activeVideoCapture = isCapturingVideo() && preferences().captureVideoInGPUProcessEnabled();
     bool activeDisplayCapture = false;
     if (activeAudioCapture || activeVideoCapture) {
-        auto& gpuProcess = legacyMainFrameProcess().processPool().ensureGPUProcess();
+        auto& gpuProcess = configuration().processPool().ensureGPUProcess();
         gpuProcess.updateCaptureAccess(activeAudioCapture, activeVideoCapture, activeDisplayCapture, m_legacyMainFrameProcess->coreProcessIdentifier(), [] { });
 #if PLATFORM(IOS_FAMILY)
         gpuProcess.setOrientationForMediaCapture(m_orientationForMediaCapture);

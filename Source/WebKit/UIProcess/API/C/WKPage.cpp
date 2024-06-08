@@ -183,7 +183,7 @@ WKTypeID WKPageGetTypeID()
 
 WKContextRef WKPageGetContext(WKPageRef pageRef)
 {
-    return toAPI(&toImpl(pageRef)->legacyMainFrameProcess().processPool());
+    return toAPI(&toImpl(pageRef)->configuration().processPool());
 }
 
 WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
@@ -3031,7 +3031,7 @@ ProcessID WKPageGetProcessIdentifier(WKPageRef page)
 ProcessID WKPageGetGPUProcessIdentifier(WKPageRef page)
 {
 #if ENABLE(GPU_PROCESS)
-    auto* gpuProcess = toImpl(page)->legacyMainFrameProcess().processPool().gpuProcess();
+    auto* gpuProcess = toImpl(page)->configuration().processPool().gpuProcess();
     if (!gpuProcess)
         return 0;
     return gpuProcess->processID();
@@ -3168,7 +3168,7 @@ void WKPageSetMockCaptureDevicesInterrupted(WKPageRef pageRef, bool isCameraInte
 {
     CRASH_IF_SUSPENDED;
 #if ENABLE(MEDIA_STREAM) && ENABLE(GPU_PROCESS)
-    auto& gpuProcess = toImpl(pageRef)->legacyMainFrameProcess().processPool().ensureGPUProcess();
+    auto& gpuProcess = toImpl(pageRef)->configuration().processPool().ensureGPUProcess();
     gpuProcess.setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
 #endif
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
@@ -3183,7 +3183,7 @@ void WKPageTriggerMockCaptureConfigurationChange(WKPageRef pageRef, bool forMicr
     MockRealtimeMediaSourceCenter::singleton().triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
 
 #if ENABLE(GPU_PROCESS)
-    auto& gpuProcess = toImpl(pageRef)->legacyMainFrameProcess().processPool().ensureGPUProcess();
+    auto& gpuProcess = toImpl(pageRef)->configuration().processPool().ensureGPUProcess();
     gpuProcess.triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
 #endif // ENABLE(GPU_PROCESS)
 

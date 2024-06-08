@@ -344,7 +344,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #if ENABLE(GPU_PROCESS)
 - (void)_setupVisibilityPropagationForGPUProcess
 {
-    auto* gpuProcess = _page->legacyMainFrameProcess().processPool().gpuProcess();
+    auto* gpuProcess = _page->configuration().processPool().gpuProcess();
     if (!gpuProcess)
         return;
 
@@ -371,7 +371,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #if ENABLE(MODEL_PROCESS)
 - (void)_setupVisibilityPropagationForModelProcess
 {
-    auto* modelProcess = _page->legacyMainFrameProcess().processPool().modelProcess();
+    auto* modelProcess = _page->configuration().processPool().modelProcess();
     if (!modelProcess)
         return;
     auto processIdentifier = modelProcess->processID();
@@ -410,7 +410,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 {
 #if USE(EXTENSIONKIT)
     auto page = _page.get();
-    if (auto gpuProcess = page ? page->legacyMainFrameProcess().processPool().gpuProcess() : nullptr) {
+    if (auto gpuProcess = page ? page->configuration().processPool().gpuProcess() : nullptr) {
         for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
             [visibilityPropagationView stopPropagatingVisibilityToProcess:*gpuProcess];
     }
