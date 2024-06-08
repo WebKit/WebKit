@@ -30,3 +30,80 @@ function symbolIteratorGetter()
 
     return this;
 }
+
+// https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.map
+function map(mapper)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.map requires |this| be an object");
+
+    if (!@isCallable(mapper))
+        @throwTypeError("Iterator.prototype.map requires a function argument");
+
+    var iterated = this;
+    var nextMethod = iterated.next;
+    var counter = 0;
+    var closure = function () {
+        var step = nextMethod.@call(iterated);
+        if (step.done)
+            return { done: true };
+        var value = step.value;
+        try {
+            var mapped = mapper.@call(@undefined, value, counter++);
+            // SUSPENDED-YEILD
+            @putByIdDirectPrivate(this,  "generatorState",  0b01);
+            return { done: false, value: mapped };
+        } catch (error) {
+            try {
+                iterated.return();
+            } catch {
+                // Ignore the error
+            }
+            throw error;
+        }
+    };
+
+    return new @IteratorHelper(iterated, closure);
+}
+
+// https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.filter
+function filter(predicate)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.filter requires |this| be an object");
+
+    if (!@isCallable(predicate))
+        @throwTypeError("Iterator.prototype.filter requires a function argument");
+
+    var iterated = this;
+    var nextMethod = iterated.next;
+    var counter = 0;
+    var closure = function () {
+        while(true) {
+            var step = nextMethod.@call(iterated);
+            if (step.done)
+                return { done: true };
+            var value = step.value;
+            try {
+                var selected = predicate.@call(@undefined, value, counter++);
+                // SUSPENDED-YEILD
+                @putByIdDirectPrivate(this,  "generatorState",  0b01);
+                if (selected)
+                    return { done: false, value: value };
+            } catch (error) {
+                try {
+                    iterated.return();
+                } catch {
+                    // Ignore the error
+                }
+                throw error;
+            }
+        }
+    };
+
+    return new @IteratorHelper(iterated, closure);
+}

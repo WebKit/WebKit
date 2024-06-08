@@ -106,6 +106,9 @@
 #include "IntlSegmenterPrototype.h"
 #include "IntlSegments.h"
 #include "IntlSegmentsPrototype.h"
+#include "IteratorConstructor.h"
+#include "IteratorConstructorInlines.h"
+#include "IteratorHelperPrototypeInlines.h"
 #include "IteratorPrototypeInlines.h"
 #include "JSAPIWrapperObject.h"
 #include "JSArrayBuffer.h"
@@ -140,6 +143,8 @@
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
 #include "JSInternalPromisePrototype.h"
+#include "JSIterator.h"
+#include "JSIteratorInlines.h"
 #include "JSLexicalEnvironmentInlines.h"
 #include "JSMapInlines.h"
 #include "JSMapIteratorInlines.h"
@@ -1244,7 +1249,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_arrayPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, arrayConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_regExpPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, regExpConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_shadowRealmPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, shadowRealmConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    
+
     putDirectWithoutTransition(vm, vm.propertyNames->Object, objectConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->Function, functionConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->Array, arrayConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -1502,6 +1507,16 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     JSObject* regExpStringIteratorPrototype = RegExpStringIteratorPrototype::create(vm, this, RegExpStringIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
     jsCast<JSObject*>(linkTimeConstant(LinkTimeConstant::RegExpStringIterator))->putDirect(vm, vm.propertyNames->prototype, regExpStringIteratorPrototype);
+
+    if (Options::useIteratorHelpers()) {
+        m_iteratorStructure.set(vm, this, JSIterator::createStructure(vm, this, m_iteratorPrototype.get()));
+        IteratorConstructor* iteratorConstructor = IteratorConstructor::create(vm, IteratorConstructor::createStructure(vm, this, m_functionPrototype.get()), m_iteratorPrototype.get());
+        m_iteratorConstructor.set(vm, this, iteratorConstructor);
+        putDirectWithoutTransition(vm, vm.propertyNames->Iterator, iteratorConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+        JSObject* iteratorHelperPrototype = IteratorHelperPrototype::create(vm, this, IteratorHelperPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
+        jsCast<JSObject*>(linkTimeConstant(LinkTimeConstant::IteratorHelper))->putDirect(vm, vm.propertyNames->prototype, iteratorHelperPrototype);
+    }
 
     // Map and Set helpers.
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Set)].initLater([] (const Initializer<JSCell>& init) {
@@ -2469,6 +2484,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_promiseConstructor);
     visitor.append(thisObject->m_internalPromiseConstructor);
     visitor.append(thisObject->m_stringConstructor);
+    visitor.append(thisObject->m_iteratorConstructor);
 
     thisObject->m_defaultCollator.visit(visitor);
     thisObject->m_defaultNumberFormat.visit(visitor);

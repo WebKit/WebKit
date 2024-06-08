@@ -355,6 +355,7 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/GlobalOperations.js
     ${JAVASCRIPTCORE_DIR}/builtins/InternalPromiseConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/IteratorHelpers.js
+    ${JAVASCRIPTCORE_DIR}/builtins/IteratorHelperPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/IteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/MapConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/MapIteratorPrototype.js
@@ -1043,6 +1044,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Int8Array.h
     runtime/InternalFunction.h
     runtime/Intrinsic.h
+    runtime/IteratorConstructor.h
+    runtime/IteratorConstructorInlines.h
+    runtime/IteratorHelperPrototype.h
+    runtime/IteratorHelperPrototypeInlines.h
     runtime/IterationKind.h
     runtime/IteratorOperations.h
     runtime/IteratorPrototype.h
@@ -1089,6 +1094,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSImmutableButterfly.h
     runtime/JSInternalFieldObjectImpl.h
     runtime/JSInternalPromise.h
+    runtime/JSIterator.h
     runtime/JSLexicalEnvironment.h
     runtime/JSLock.h
     runtime/JSMap.h

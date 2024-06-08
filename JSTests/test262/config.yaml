@@ -13,12 +13,12 @@ flags:
   json-modules: useImportAttributes
   promise-with-resolvers: usePromiseWithResolversMethod
   promise-try: usePromiseTryMethod
+  iterator-helpers: useIteratorHelpers
 skip:
   features:
     - callable-boundary-realms
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
-    - iterator-helpers
     - Float16Array
     - explicit-resource-management
     - regexp-modifiers

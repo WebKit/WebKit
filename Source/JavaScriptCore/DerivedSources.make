@@ -115,6 +115,7 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/GlobalOperations.js \
     $(JavaScriptCore)/builtins/InternalPromiseConstructor.js \
     $(JavaScriptCore)/builtins/IteratorHelpers.js \
+    $(JavaScriptCore)/builtins/IteratorHelperPrototype.js \
     $(JavaScriptCore)/builtins/IteratorPrototype.js \
     $(JavaScriptCore)/builtins/MapConstructor.js \
     $(JavaScriptCore)/builtins/MapIteratorPrototype.js \

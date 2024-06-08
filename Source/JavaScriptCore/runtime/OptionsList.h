@@ -600,6 +600,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useStringWellFormed, true, Normal, "Expose the String well-formed methods."_s) \
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object."_s) \
     v(Bool, useTrustedTypes, false, Normal, "Enable trusted types eval protection feature."_s) \
+    v(Bool, useIteratorHelpers, false, Normal, "Expose the Iterator Helpers."_s) \
     v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec."_s) \
     v(Bool, useWebAssemblyTypedFunctionReferences, true, Normal, "Allow function types from the wasm typed function references spec."_s) \
     v(Bool, useWebAssemblyGC, false, Normal, "Allow gc types from the wasm gc proposal."_s) \
