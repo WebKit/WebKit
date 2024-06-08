@@ -77,7 +77,7 @@ static std::pair<RefPtr<Node>, size_t> findNodeStartingAtPathComponentIndex(cons
         if (!nextNode)
             return { nullptr, currentPathIndex };
 
-        auto* chararacterData = dynamicDowncast<CharacterData>(*nextNode);
+        RefPtr chararacterData = dynamicDowncast<CharacterData>(*nextNode);
         if (chararacterData && chararacterData->data() != component.textData)
             return { nullptr, currentPathIndex };
 
@@ -88,10 +88,11 @@ static std::pair<RefPtr<Node>, size_t> findNodeStartingAtPathComponentIndex(cons
 
 static RefPtr<Node> findNode(const AppHighlightRangeData::NodePath& path, Document& document)
 {
-    if (path.isEmpty() || !document.body())
+    Ref documentRef = document;
+    if (path.isEmpty() || !documentRef->body())
         return nullptr;
 
-    auto [foundNode, nextIndex] = findNodeStartingAtPathComponentIndex(path, *document.body(), 0);
+    auto [foundNode, nextIndex] = findNodeStartingAtPathComponentIndex(path, *documentRef->body(), 0);
     if (foundNode)
         return foundNode;
 
@@ -100,7 +101,7 @@ static RefPtr<Node> findNode(const AppHighlightRangeData::NodePath& path, Docume
         if (component.identifier.isEmpty())
             continue;
 
-        RefPtr elementWithIdentifier = document.getElementById(component.identifier);
+        RefPtr elementWithIdentifier = documentRef->getElementById(component.identifier);
         if (!elementWithIdentifier || elementWithIdentifier->nodeName() != component.nodeName)
             continue;
 
@@ -194,7 +195,7 @@ static AppHighlightRangeData::NodePathComponent createNodePathComponent(const No
 static AppHighlightRangeData::NodePath makeNodePath(RefPtr<Node>&& node)
 {
     AppHighlightRangeData::NodePath components;
-    auto body = node->document().body();
+    RefPtr body = node->protectedDocument()->body();
     for (auto ancestor = node; ancestor && ancestor != body; ancestor = ancestor->parentNode())
         components.append(createNodePathComponent(*ancestor));
     components.reverse();
@@ -263,7 +264,7 @@ bool AppHighlightStorage::attemptToRestoreHighlightAndScroll(AppHighlightRangeDa
     if (!range)
         return false;
     
-    strongDocument->appHighlightRegistry().addAnnotationHighlightWithRange(StaticRange::create(*range));
+    strongDocument->protectedAppHighlightRegistry()->addAnnotationHighlightWithRange(StaticRange::create(*range));
     
     if (scroll == ScrollToHighlight::Yes) {
         auto textIndicator = TextIndicator::createWithRange(range.value(), { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);

@@ -3431,6 +3431,11 @@ HighlightRegistry& Document::appHighlightRegistry()
     return *m_appHighlightRegistry;
 }
 
+Ref<HighlightRegistry> Document::protectedAppHighlightRegistry()
+{
+    return appHighlightRegistry();
+}
+
 AppHighlightStorage& Document::appHighlightStorage()
 {
     if (!m_appHighlightStorage)
