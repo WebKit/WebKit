@@ -226,6 +226,8 @@ void LocalFrameViewLayoutContext::performLayout()
         protectedView()->willDoLayout(layoutRoot);
         m_firstLayout = false;
     }
+
+    auto isSimplifiedLayout = layoutRoot->needsSimplifiedNormalFlowLayoutOnly();
     {
         TraceScope tracingScope(RenderTreeLayoutStart, RenderTreeLayoutEnd);
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
@@ -235,6 +237,7 @@ void LocalFrameViewLayoutContext::performLayout()
 #ifndef NDEBUG
         RenderTreeNeedsLayoutChecker checker(*renderView());
 #endif
+        ++m_layoutIdentifier;
         layoutRoot->layout();
         ++m_layoutCount;
 #if ENABLE(TEXT_AUTOSIZING)
@@ -268,7 +271,7 @@ void LocalFrameViewLayoutContext::performLayout()
         if (m_needsFullRepaint)
             renderView()->repaintRootContents();
         ASSERT(!layoutRoot->needsLayout());
-        protectedView()->didLayout(layoutRoot);
+        protectedView()->didLayout(layoutRoot, isSimplifiedLayout);
         runOrScheduleAsynchronousTasks();
     }
     InspectorInstrumentation::didLayout(frame, *layoutRoot);

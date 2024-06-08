@@ -567,16 +567,19 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
 
 void RenderObject::clearNeedsLayout(EverHadSkippedContentLayout everHadSkippedContentLayout)
 {
-    m_stateBitfields.clearFlag(StateFlag::NeedsLayout);
     setEverHadLayout();
     setEverHadSkippedContentLayout(everHadSkippedContentLayout == EverHadSkippedContentLayout::Yes);
+
+    if (auto* renderElement = dynamicDowncast<RenderElement>(*this)) {
+        renderElement->setAncestorLineBoxDirty(false);
+        renderElement->setLayoutIdentifier(renderElement->view().frameView().layoutContext().layoutIdentifier());
+    }
+    m_stateBitfields.clearFlag(StateFlag::NeedsLayout);
     setPosChildNeedsLayoutBit(false);
     setNeedsSimplifiedNormalFlowLayoutBit(false);
     setNormalChildNeedsLayoutBit(false);
     setOutOfFlowChildNeedsStaticPositionLayoutBit(false);
     setNeedsPositionedMovementLayoutBit(false);
-    if (auto* renderElement = dynamicDowncast<RenderElement>(*this))
-        renderElement->setAncestorLineBoxDirty(false);
 #if ASSERT_ENABLED
     checkBlockPositionedObjectsNeedLayout();
 #endif
@@ -1464,6 +1467,11 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         if (outOfFlowChildNeedsStaticPositionLayout())
             stream << "[out of flow child needs parent layout]";
     }
+    stream << " layout id->";
+    if (auto* renderElement = dynamicDowncast<RenderElement>(*this))
+        stream << "[" << renderElement->layoutIdentifier() << "]";
+    else
+        stream << "[n/a]";
     stream.nextLine();
 }
 

@@ -303,6 +303,11 @@ public:
     bool renderBoxHasShapeOutsideInfo() const { return m_renderBoxHasShapeOutsideInfo; }
     bool hasCachedSVGResource() const { return m_hasCachedSVGResource; }
 
+    using LayoutIdentifier = unsigned;
+    void setLayoutIdentifier(LayoutIdentifier layoutIdentifier) { m_layoutIdentifier = layoutIdentifier; }
+    LayoutIdentifier layoutIdentifier() const { return m_layoutIdentifier; }
+    bool didVisitDuringLastLayout() const;
+
 protected:
     RenderElement(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     RenderElement(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
@@ -403,26 +408,22 @@ private:
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_hasContinuationChainNode : 1;
 
-    // 11 bits free.
-
-    SingleThreadPackedWeakPtr<RenderObject> m_lastChild;
-
     unsigned m_isContinuation : 1;
     unsigned m_isFirstLetter : 1;
-
     unsigned m_renderBlockHasMarginBeforeQuirk : 1;
     unsigned m_renderBlockHasMarginAfterQuirk : 1;
     unsigned m_renderBlockShouldForceRelayoutChildren : 1;
-    unsigned m_renderBlockFlowLineLayoutPath : 3;
     unsigned m_renderBlockHasRareData : 1 { false };
     unsigned m_renderBoxHasShapeOutsideInfo : 1 { false };
     unsigned m_hasCachedSVGResource : 1 { false };
+    unsigned m_renderBlockFlowLineLayoutPath : 3;
+
+    SingleThreadPackedWeakPtr<RenderObject> m_lastChild;
 
     unsigned m_isRegisteredForVisibleInViewportCallback : 1;
     unsigned m_visibleInViewportState : 2;
     unsigned m_didContributeToVisuallyNonEmptyPixelCount : 1;
-
-    // 1 bits free.
+    LayoutIdentifier m_layoutIdentifier : 12 { 0 };
 
     RenderStyle m_style;
 };

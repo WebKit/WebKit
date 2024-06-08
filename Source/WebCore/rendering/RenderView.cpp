@@ -201,7 +201,6 @@ void RenderView::layout()
 #ifndef NDEBUG
     frameView().layoutContext().checkLayoutState();
 #endif
-    clearNeedsLayout();
 }
 
 void RenderView::updateQuirksMode()

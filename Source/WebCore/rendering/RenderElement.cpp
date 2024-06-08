@@ -127,13 +127,13 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     , m_hasPausedImageAnimations(false)
     , m_hasCounterNodeMap(false)
     , m_hasContinuationChainNode(false)
-    , m_lastChild(nullptr)
     , m_isContinuation(false)
     , m_isFirstLetter(false)
     , m_renderBlockHasMarginBeforeQuirk(false)
     , m_renderBlockHasMarginAfterQuirk(false)
     , m_renderBlockShouldForceRelayoutChildren(false)
     , m_renderBlockFlowLineLayoutPath(RenderBlockFlow::UndeterminedPath)
+    , m_lastChild(nullptr)
     , m_isRegisteredForVisibleInViewportCallback(false)
     , m_visibleInViewportState(static_cast<unsigned>(VisibleInViewportState::Unknown))
     , m_didContributeToVisuallyNonEmptyPixelCount(false)
@@ -1099,6 +1099,11 @@ void RenderElement::willBeRemovedFromTree()
         checkedParent()->dirtyLinesFromChangedChild(*this);
 
     RenderObject::willBeRemovedFromTree();
+}
+
+bool RenderElement::didVisitDuringLastLayout() const
+{
+    return layoutIdentifier() == view().frameView().layoutContext().layoutIdentifier();
 }
 
 inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const

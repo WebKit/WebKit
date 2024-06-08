@@ -961,7 +961,7 @@ void RenderLayer::updateLayerPositionsAfterStyleChange()
     recursiveUpdateLayerPositions(flagsForUpdateLayerPositions(*this));
 }
 
-void RenderLayer::updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint)
+void RenderLayer::updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint, CanUseSimplifiedRepaintPass canUseSimplifiedRepaintPass)
 {
     auto updateLayerPositionFlags = [&](bool isRelayoutingSubtree, bool didFullRepaint) {
         auto flags = flagsForUpdateLayerPositions(*this);
@@ -977,10 +977,10 @@ void RenderLayer::updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, boo
     LOG(Compositing, "RenderLayer %p updateLayerPositionsAfterLayout", this);
     willUpdateLayerPositions();
 
-    recursiveUpdateLayerPositions(updateLayerPositionFlags(isRelayoutingSubtree, didFullRepaint));
+    recursiveUpdateLayerPositions(updateLayerPositionFlags(isRelayoutingSubtree, didFullRepaint), canUseSimplifiedRepaintPass);
 }
 
-void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFlag> flags)
+void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFlag> flags, CanUseSimplifiedRepaintPass canUseSimplifiedRepaintPass)
 {
     updateLayerPosition(&flags);
     if (m_scrollableArea)
@@ -1018,6 +1018,10 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
             clearRepaintRects();
             return;
         }
+
+        auto mayNeedRepaintRectUpdate = canUseSimplifiedRepaintPass == CanUseSimplifiedRepaintPass::No || renderer().didVisitDuringLastLayout();
+        if (!mayNeedRepaintRectUpdate)
+            return;
 
         // FIXME: Paint offset cache does not work with RenderLayers as there is not a 1-to-1
         // mapping between them and the RenderObjects. It would be neat to enable
@@ -1075,7 +1079,7 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
         flags.add(SeenCompositedScrollingLayer);
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->recursiveUpdateLayerPositions(flags);
+        child->recursiveUpdateLayerPositions(flags, canUseSimplifiedRepaintPass);
 
     if (m_scrollableArea)
         m_scrollableArea->updateMarqueePosition();
