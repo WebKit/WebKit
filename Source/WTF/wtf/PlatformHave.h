@@ -116,7 +116,7 @@
 #endif
 #endif
 
-#if PLATFORM(PLAYSTATION)
+#if !defined(HAVE_MISSING_U8STRING) && PLATFORM(PLAYSTATION)
 #define HAVE_MISSING_U8STRING 1
 #endif
 

@@ -2772,7 +2772,7 @@ sub generateBuildSystemFromCMakeProject
     push @args, "-DLTO_MODE=$ltoMode" if ltoMode();
 
     if (isPlayStation()) {
-        my $toolChainFile = $ENV{'CMAKE_TOOLCHAIN_FILE'} || "Platform/PlayStation";
+        my $toolChainFile = $ENV{'CMAKE_TOOLCHAIN_FILE'} || "Platform/PlayStation5";
         push @args, '-DCMAKE_TOOLCHAIN_FILE=' . $toolChainFile;
     }
 
