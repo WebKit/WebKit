@@ -29,7 +29,6 @@
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "Symbol.h"
-#include <stdio.h>
 
 namespace JSC {
 
