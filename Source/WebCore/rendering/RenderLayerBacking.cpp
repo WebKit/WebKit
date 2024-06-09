@@ -1975,7 +1975,7 @@ void RenderLayerBacking::updateEventRegion()
             eventRegionContext.unite(FloatRoundedRect(FloatRect({ }, graphicsLayer->size())), renderer(), renderer().style());
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        eventRegionContext.copyInteractionRegionsToEventRegion();
+        eventRegionContext.copyInteractionRegionsToEventRegion(renderer().document().settings().interactionRegionMinimumCornerRadius());
 #endif
         graphicsLayer->setEventRegion(WTFMove(eventRegion));
     };
@@ -2008,7 +2008,7 @@ void RenderLayerBacking::updateEventRegion()
         paintIntoLayer(&graphicsLayer, nullContext, dirtyRect, { }, &eventRegionContext);
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        eventRegionContext.copyInteractionRegionsToEventRegion();
+        eventRegionContext.copyInteractionRegionsToEventRegion(renderer().document().settings().interactionRegionMinimumCornerRadius());
 #endif
         eventRegion.translate(toIntSize(roundedIntPoint(layerOffset)));
         graphicsLayer.setEventRegion(WTFMove(eventRegion));
