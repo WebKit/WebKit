@@ -29,6 +29,7 @@
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "Symbol.h"
+#include <stdio.h>
 
 namespace JSC {
 
@@ -554,14 +555,11 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
     return JSValue::encode(entries);
 }
 
-JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject, CallFrame* callFrame))
+EncodedJSValue objectValues(JSGlobalObject* globalObject, JSValue targetValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue targetValue = callFrame->argument(0);
-    if (targetValue.isUndefinedOrNull())
-        return throwVMTypeError(globalObject, scope, "Object.values requires that input parameter not be null or undefined"_s);
     JSObject* target = targetValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -650,6 +648,18 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
     }
 
     return JSValue::encode(values);
+}
+
+JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue targetValue = callFrame->argument(0);
+    if (targetValue.isUndefinedOrNull())
+        return throwVMTypeError(globalObject, scope, "Object.values requires that input parameter not be null or undefined"_s);
+
+    return objectValues(globalObject, targetValue);
 }
 
 // https://tc39.github.io/ecma262/#sec-topropertydescriptor
