@@ -1216,7 +1216,7 @@ void RenderElement::setOutOfFlowChildNeedsStaticPositionLayout()
     // optimize all kinds of out-of-flow cases.
     // It's also assumed that regular, positioned child related bits are already set.
     ASSERT(!isSetNeedsLayoutForbidden());
-    ASSERT(posChildNeedsLayout() || selfNeedsLayout() || !parent());
+    ASSERT(posChildNeedsLayout() || selfNeedsLayout() || needsSimplifiedNormalFlowLayout() || !parent());
     setOutOfFlowChildNeedsStaticPositionLayoutBit(true);
 }
 
