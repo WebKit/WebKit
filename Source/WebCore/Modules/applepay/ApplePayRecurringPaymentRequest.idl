@@ -27,6 +27,7 @@
     Conditional=APPLE_PAY_RECURRING_PAYMENTS,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary ApplePayRecurringPaymentRequest {
     required DOMString paymentDescription;
     required ApplePayLineItem regularBilling; // must be `paymentTiming: "recurring"

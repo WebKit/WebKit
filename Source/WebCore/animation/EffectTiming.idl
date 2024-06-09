@@ -24,7 +24,8 @@
  */
 
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary EffectTiming {
     double delay = 0;
     double endDelay = 0;

@@ -30,6 +30,7 @@ typedef [EnforceRange] unsigned long long WebCodecsVideoEncoderConfigBitrate;
 [
     Conditional=WEB_CODECS,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary WebCodecsVideoEncoderConfig {
     required DOMString codec;
     required WebCodecsVideoEncoderConfigSize width;

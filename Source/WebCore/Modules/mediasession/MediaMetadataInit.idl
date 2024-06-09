@@ -25,7 +25,6 @@
 
 [
     Conditional=MEDIA_SESSION,
-    JSGenerateToJSObject,
 ] dictionary MediaMetadataInit {
     DOMString title = "";
     DOMString artist = "";

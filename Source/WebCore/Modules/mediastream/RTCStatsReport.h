@@ -87,7 +87,6 @@ public:
         Certificate,
     };
     struct Stats {
-        Stats() = default;
 #if USE(LIBWEBRTC)
         Stats(Type, const webrtc::RTCStats&);
 #endif
@@ -98,7 +97,6 @@ public:
     };
 
     struct RtpStreamStats : Stats {
-        RtpStreamStats() = default;
 #if USE(LIBWEBRTC)
         RtpStreamStats(Type, const webrtc::RTCRtpStreamStats&);
 #endif
@@ -110,7 +108,6 @@ public:
     };
 
     struct ReceivedRtpStreamStats : RtpStreamStats {
-        ReceivedRtpStreamStats() = default;
 #if USE(LIBWEBRTC)
         ReceivedRtpStreamStats(Type, const webrtc::RTCReceivedRtpStreamStats&);
 #endif
@@ -121,7 +118,6 @@ public:
     };
 
     struct InboundRtpStreamStats : ReceivedRtpStreamStats {
-        InboundRtpStreamStats() = default;
 #if USE(LIBWEBRTC)
         InboundRtpStreamStats(const webrtc::RTCInboundRtpStreamStats&);
 #endif
@@ -186,7 +182,6 @@ public:
     };
 
     struct RemoteInboundRtpStreamStats : ReceivedRtpStreamStats {
-        RemoteInboundRtpStreamStats() = default;
 #if USE(LIBWEBRTC)
         RemoteInboundRtpStreamStats(const webrtc::RTCRemoteInboundRtpStreamStats&);
 #endif
@@ -199,7 +194,6 @@ public:
     };
 
     struct SentRtpStreamStats : RtpStreamStats {
-        SentRtpStreamStats() = default;
 #if USE(LIBWEBRTC)
         SentRtpStreamStats(Type, const webrtc::RTCSentRtpStreamStats&);
 #endif
@@ -216,7 +210,6 @@ public:
     };
 
     struct OutboundRtpStreamStats : SentRtpStreamStats {
-        OutboundRtpStreamStats() = default;
 #if USE(LIBWEBRTC)
         OutboundRtpStreamStats(const webrtc::RTCOutboundRtpStreamStats&);
 #endif
@@ -252,7 +245,6 @@ public:
     };
 
     struct RemoteOutboundRtpStreamStats : SentRtpStreamStats {
-        RemoteOutboundRtpStreamStats() = default;
 #if USE(LIBWEBRTC)
         RemoteOutboundRtpStreamStats(const webrtc::RTCRemoteOutboundRtpStreamStats&);
 #endif
@@ -266,7 +258,6 @@ public:
     };
 
     struct DataChannelStats : Stats {
-        DataChannelStats() = default;
 #if USE(LIBWEBRTC)
         DataChannelStats(const webrtc::RTCDataChannelStats&);
 #endif
@@ -290,7 +281,6 @@ public:
     };
 
     struct IceCandidatePairStats : Stats {
-        IceCandidatePairStats() = default;
 #if USE(LIBWEBRTC)
         IceCandidatePairStats(const webrtc::RTCIceCandidatePairStats&);
 #endif
@@ -320,7 +310,6 @@ public:
     };
 
     struct IceCandidateStats : Stats {
-        IceCandidateStats() = default;
 #if USE(LIBWEBRTC)
         IceCandidateStats(const webrtc::RTCIceCandidateStats&);
 #endif
@@ -341,7 +330,6 @@ public:
     };
 
     struct CertificateStats : Stats {
-        CertificateStats() = default;
 #if USE(LIBWEBRTC)
         CertificateStats(const webrtc::RTCCertificateStats&);
 #endif
@@ -358,8 +346,6 @@ public:
     };
 
     struct CodecStats : Stats {
-        CodecStats() = default;
-
 #if USE(LIBWEBRTC)
         CodecStats(const webrtc::RTCCodecStats&);
 #endif
@@ -380,7 +366,6 @@ public:
     };
 
     struct TransportStats : Stats {
-        TransportStats() = default;
 #if USE(LIBWEBRTC)
         TransportStats(const webrtc::RTCTransportStats&);
 #endif
@@ -404,7 +389,6 @@ public:
     };
 
     struct AudioPlayoutStats : Stats {
-        AudioPlayoutStats() = default;
 #if USE(LIBWEBRTC)
         AudioPlayoutStats(const webrtc::RTCAudioPlayoutStats&);
 #endif
@@ -418,7 +402,6 @@ public:
     };
 
     struct PeerConnectionStats : Stats {
-        PeerConnectionStats() = default;
 #if USE(LIBWEBRTC)
         PeerConnectionStats(const webrtc::RTCPeerConnectionStats&);
 #endif
@@ -428,7 +411,6 @@ public:
     };
 
     struct MediaSourceStats : Stats {
-        MediaSourceStats() = default;
 #if USE(LIBWEBRTC)
         MediaSourceStats(Type, const webrtc::RTCMediaSourceStats&);
 #endif
@@ -439,7 +421,6 @@ public:
     };
 
     struct AudioSourceStats : MediaSourceStats {
-        AudioSourceStats() = default;
 #if USE(LIBWEBRTC)
         AudioSourceStats(const webrtc::RTCAudioSourceStats&);
 #endif
@@ -456,7 +437,6 @@ public:
     };
 
     struct VideoSourceStats : MediaSourceStats {
-        VideoSourceStats() = default;
 #if USE(LIBWEBRTC)
         VideoSourceStats(const webrtc::RTCVideoSourceStats&);
 #endif

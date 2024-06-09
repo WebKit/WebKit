@@ -26,7 +26,8 @@
 // https://drafts.css-houdini.org/css-properties-values-api/#registering-custom-properties
 
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary DOMCSSCustomPropertyDescriptor {
     required [AtomString] DOMString name;
              DOMString syntax       = "*";

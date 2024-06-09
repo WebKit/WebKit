@@ -27,6 +27,7 @@
     Conditional=APPLE_PAY_DISBURSEMENTS,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary ApplePayDisbursementRequest {
     sequence<ApplePayContactField> requiredRecipientContactFields;
 };
