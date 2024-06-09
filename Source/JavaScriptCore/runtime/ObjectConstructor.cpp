@@ -554,9 +554,8 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
     return JSValue::encode(entries);
 }
 
-EncodedJSValue objectValues(JSGlobalObject* globalObject, JSValue targetValue)
+JSValue objectValues(VM& vm, JSGlobalObject* globalObject, JSValue targetValue)
 {
-    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* target = targetValue.toObject(globalObject);
@@ -606,7 +605,7 @@ EncodedJSValue objectValues(JSGlobalObject* globalObject, JSValue targetValue)
                         result->initializeIndex(initializationScope, i, indexedPropertyValues.at(i));
                     for (unsigned i = 0; i < namedPropertyValues.size(); ++i)
                         result->initializeIndex(initializationScope, indexedPropertyValues.size() + i, namedPropertyValues.at(i));
-                    return JSValue::encode(result);
+                    return result;
                 }
             }
             throwOutOfMemoryError(globalObject, scope);
@@ -646,7 +645,7 @@ EncodedJSValue objectValues(JSGlobalObject* globalObject, JSValue targetValue)
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    return JSValue::encode(values);
+    return values;
 }
 
 JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -658,7 +657,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
     if (targetValue.isUndefinedOrNull())
         return throwVMTypeError(globalObject, scope, "Object.values requires that input parameter not be null or undefined"_s);
 
-    return objectValues(globalObject, targetValue);
+    return JSValue::encode(objectValues(vm, globalObject, targetValue));
 }
 
 // https://tc39.github.io/ecma262/#sec-topropertydescriptor
