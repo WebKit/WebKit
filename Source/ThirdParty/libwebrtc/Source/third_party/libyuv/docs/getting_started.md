@@ -238,6 +238,18 @@ After running script, clang & qemu are built in `build-toolchain-qemu/riscv-clan
           -DUSE_RVV=ON .
     cmake --build out/Release/
 
+#### Customized Compiler Flags
+
+Customized compiler flags are supported by `-DRISCV_COMPILER_FLAGS="xxx"`.
+If `-DRISCV_COMPILER_FLAGS="xxx"` is manually assigned, other compile flags(e.g disable -march=xxx) will not be appended.
+
+Example:
+
+    cmake -B out/Release/ -DUNIT_TEST=ON \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_TOOLCHAIN_FILE="./riscv_script/riscv-clang.cmake" \
+          -DRISCV_COMPILER_FLAGS="-mcpu=sifive-x280" \
+          .
 
 ### Run on QEMU
 

@@ -52,19 +52,26 @@ static int I420ToI4xx(const uint8_t* src_y,
   const int dst_y_height = Abs(src_y_height);
   const int src_uv_width = SUBSAMPLE(src_y_width, 1, 1);
   const int src_uv_height = SUBSAMPLE(src_y_height, 1, 1);
+  int r;
   if (src_y_width == 0 || src_y_height == 0 || dst_uv_width <= 0 ||
       dst_uv_height <= 0) {
     return -1;
   }
   if (dst_y) {
-    ScalePlane(src_y, src_stride_y, src_y_width, src_y_height, dst_y,
-               dst_stride_y, dst_y_width, dst_y_height, kFilterBilinear);
+    r = ScalePlane(src_y, src_stride_y, src_y_width, src_y_height, dst_y,
+                   dst_stride_y, dst_y_width, dst_y_height, kFilterBilinear);
+    if (r != 0) {
+      return r;
+    }
   }
-  ScalePlane(src_u, src_stride_u, src_uv_width, src_uv_height, dst_u,
-             dst_stride_u, dst_uv_width, dst_uv_height, kFilterBilinear);
-  ScalePlane(src_v, src_stride_v, src_uv_width, src_uv_height, dst_v,
-             dst_stride_v, dst_uv_width, dst_uv_height, kFilterBilinear);
-  return 0;
+  r = ScalePlane(src_u, src_stride_u, src_uv_width, src_uv_height, dst_u,
+                 dst_stride_u, dst_uv_width, dst_uv_height, kFilterBilinear);
+  if (r != 0) {
+    return r;
+  }
+  r = ScalePlane(src_v, src_stride_v, src_uv_width, src_uv_height, dst_v,
+                 dst_stride_v, dst_uv_width, dst_uv_height, kFilterBilinear);
+  return r;
 }
 
 // Convert 8 bit YUV to 10 bit.
@@ -223,21 +230,28 @@ int I010ToI410(const uint16_t* src_y,
                int dst_stride_v,
                int width,
                int height) {
+  int r;
   if (width == 0 || height == 0) {
     return -1;
   }
 
   if (dst_y) {
-    ScalePlane_12(src_y, src_stride_y, width, height, dst_y, dst_stride_y,
-                  Abs(width), Abs(height), kFilterBilinear);
+    r = ScalePlane_12(src_y, src_stride_y, width, height, dst_y, dst_stride_y,
+                      Abs(width), Abs(height), kFilterBilinear);
+    if (r != 0) {
+      return r;
+    }
   }
-  ScalePlane_12(src_u, src_stride_u, SUBSAMPLE(width, 1, 1),
-                SUBSAMPLE(height, 1, 1), dst_u, dst_stride_u, Abs(width),
-                Abs(height), kFilterBilinear);
-  ScalePlane_12(src_v, src_stride_v, SUBSAMPLE(width, 1, 1),
-                SUBSAMPLE(height, 1, 1), dst_v, dst_stride_v, Abs(width),
-                Abs(height), kFilterBilinear);
-  return 0;
+  r = ScalePlane_12(src_u, src_stride_u, SUBSAMPLE(width, 1, 1),
+                    SUBSAMPLE(height, 1, 1), dst_u, dst_stride_u, Abs(width),
+                    Abs(height), kFilterBilinear);
+  if (r != 0) {
+    return r;
+  }
+  r = ScalePlane_12(src_v, src_stride_v, SUBSAMPLE(width, 1, 1),
+                    SUBSAMPLE(height, 1, 1), dst_v, dst_stride_v, Abs(width),
+                    Abs(height), kFilterBilinear);
+  return r;
 }
 
 // 422 chroma to 444 chroma, 10/12 bit version
@@ -256,19 +270,26 @@ int I210ToI410(const uint16_t* src_y,
                int dst_stride_v,
                int width,
                int height) {
+  int r;
   if (width == 0 || height == 0) {
     return -1;
   }
 
   if (dst_y) {
-    ScalePlane_12(src_y, src_stride_y, width, height, dst_y, dst_stride_y,
-                  Abs(width), Abs(height), kFilterBilinear);
+    r = ScalePlane_12(src_y, src_stride_y, width, height, dst_y, dst_stride_y,
+                      Abs(width), Abs(height), kFilterBilinear);
+    if (r != 0) {
+      return r;
+    }
   }
-  ScalePlane_12(src_u, src_stride_u, SUBSAMPLE(width, 1, 1), height, dst_u,
-                dst_stride_u, Abs(width), Abs(height), kFilterBilinear);
-  ScalePlane_12(src_v, src_stride_v, SUBSAMPLE(width, 1, 1), height, dst_v,
-                dst_stride_v, Abs(width), Abs(height), kFilterBilinear);
-  return 0;
+  r = ScalePlane_12(src_u, src_stride_u, SUBSAMPLE(width, 1, 1), height, dst_u,
+                    dst_stride_u, Abs(width), Abs(height), kFilterBilinear);
+  if (r != 0) {
+    return r;
+  }
+  r = ScalePlane_12(src_v, src_stride_v, SUBSAMPLE(width, 1, 1), height, dst_v,
+                    dst_stride_v, Abs(width), Abs(height), kFilterBilinear);
+  return r;
 }
 
 // 422 chroma is 1/2 width, 1x height
@@ -288,19 +309,26 @@ int I422ToI444(const uint8_t* src_y,
                int dst_stride_v,
                int width,
                int height) {
+  int r;
   if (width == 0 || height == 0) {
     return -1;
   }
 
   if (dst_y) {
-    ScalePlane(src_y, src_stride_y, width, height, dst_y, dst_stride_y,
-               Abs(width), Abs(height), kFilterBilinear);
+    r = ScalePlane(src_y, src_stride_y, width, height, dst_y, dst_stride_y,
+                   Abs(width), Abs(height), kFilterBilinear);
+    if (r != 0) {
+      return r;
+    }
   }
-  ScalePlane(src_u, src_stride_u, SUBSAMPLE(width, 1, 1), height, dst_u,
-             dst_stride_u, Abs(width), Abs(height), kFilterBilinear);
-  ScalePlane(src_v, src_stride_v, SUBSAMPLE(width, 1, 1), height, dst_v,
-             dst_stride_v, Abs(width), Abs(height), kFilterBilinear);
-  return 0;
+  r = ScalePlane(src_u, src_stride_u, SUBSAMPLE(width, 1, 1), height, dst_u,
+                 dst_stride_u, Abs(width), Abs(height), kFilterBilinear);
+  if (r != 0) {
+    return r;
+  }
+  r = ScalePlane(src_v, src_stride_v, SUBSAMPLE(width, 1, 1), height, dst_v,
+                 dst_stride_v, Abs(width), Abs(height), kFilterBilinear);
+  return r;
 }
 
 // Copy to I400. Source can be I420,422,444,400,NV12,NV21

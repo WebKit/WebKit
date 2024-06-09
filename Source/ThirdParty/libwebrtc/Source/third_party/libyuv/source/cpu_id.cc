@@ -292,10 +292,12 @@ static SAFEBUFFERS int GetCpuFlags(void) {
   int cpu_info0[4] = {0, 0, 0, 0};
   int cpu_info1[4] = {0, 0, 0, 0};
   int cpu_info7[4] = {0, 0, 0, 0};
+  int cpu_einfo7[4] = {0, 0, 0, 0};
   CpuId(0, 0, cpu_info0);
   CpuId(1, 0, cpu_info1);
   if (cpu_info0[0] >= 7) {
     CpuId(7, 0, cpu_info7);
+    CpuId(7, 1, cpu_einfo7);
   }
   cpu_info = kCpuHasX86 | ((cpu_info1[3] & 0x04000000) ? kCpuHasSSE2 : 0) |
              ((cpu_info1[2] & 0x00000200) ? kCpuHasSSSE3 : 0) |
@@ -308,7 +310,9 @@ static SAFEBUFFERS int GetCpuFlags(void) {
       ((GetXCR0() & 6) == 6)) {  // Test OS saves YMM registers
     cpu_info |= kCpuHasAVX | ((cpu_info7[1] & 0x00000020) ? kCpuHasAVX2 : 0) |
                 ((cpu_info1[2] & 0x00001000) ? kCpuHasFMA3 : 0) |
-                ((cpu_info1[2] & 0x20000000) ? kCpuHasF16C : 0);
+                ((cpu_info1[2] & 0x20000000) ? kCpuHasF16C : 0) |
+                ((cpu_einfo7[0] & 0x00000010) ? kCpuHasAVXVNNI : 0) |
+                ((cpu_einfo7[3] & 0x00000010) ? kCpuHasAVXVNNIINT8 : 0);
 
     // Detect AVX512bw
     if ((GetXCR0() & 0xe0) == 0xe0) {
@@ -318,8 +322,8 @@ static SAFEBUFFERS int GetCpuFlags(void) {
       cpu_info |= (cpu_info7[2] & 0x00000040) ? kCpuHasAVX512VBMI2 : 0;
       cpu_info |= (cpu_info7[2] & 0x00000800) ? kCpuHasAVX512VNNI : 0;
       cpu_info |= (cpu_info7[2] & 0x00001000) ? kCpuHasAVX512VBITALG : 0;
-      cpu_info |= (cpu_info7[2] & 0x00004000) ? kCpuHasAVX512VPOPCNTDQ : 0;
-      cpu_info |= (cpu_info7[2] & 0x00000100) ? kCpuHasGFNI : 0;
+      cpu_info |= (cpu_einfo7[3] & 0x00080000) ? kCpuHasAVX10 : 0;
+      cpu_info |= (cpu_info7[3] & 0x02000000) ? kCpuHasAMXINT8 : 0;
     }
   }
 #endif

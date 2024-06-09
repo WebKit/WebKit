@@ -2783,17 +2783,38 @@ int RGB24Mirror(const uint8_t* src_rgb24,
   return 0;
 }
 
-// Get a blender that optimized for the CPU and pixel count.
-// As there are 6 blenders to choose from, the caller should try to use
-// the same blend function for all pixels if possible.
+// Alpha Blend 2 ARGB images and store to destination.
 LIBYUV_API
-ARGBBlendRow GetARGBBlend() {
+int ARGBBlend(const uint8_t* src_argb0,
+              int src_stride_argb0,
+              const uint8_t* src_argb1,
+              int src_stride_argb1,
+              uint8_t* dst_argb,
+              int dst_stride_argb,
+              int width,
+              int height) {
+  int y;
   void (*ARGBBlendRow)(const uint8_t* src_argb, const uint8_t* src_argb1,
                        uint8_t* dst_argb, int width) = ARGBBlendRow_C;
+  if (!src_argb0 || !src_argb1 || !dst_argb || width <= 0 || height == 0) {
+    return -1;
+  }
+  // Negative height means invert the image.
+  if (height < 0) {
+    height = -height;
+    dst_argb = dst_argb + (height - 1) * dst_stride_argb;
+    dst_stride_argb = -dst_stride_argb;
+  }
+  // Coalesce rows.
+  if (src_stride_argb0 == width * 4 && src_stride_argb1 == width * 4 &&
+      dst_stride_argb == width * 4) {
+    width *= height;
+    height = 1;
+    src_stride_argb0 = src_stride_argb1 = dst_stride_argb = 0;
+  }
 #if defined(HAS_ARGBBLENDROW_SSSE3)
   if (TestCpuFlag(kCpuHasSSSE3)) {
     ARGBBlendRow = ARGBBlendRow_SSSE3;
-    return ARGBBlendRow;
   }
 #endif
 #if defined(HAS_ARGBBLENDROW_NEON)
@@ -2811,39 +2832,11 @@ ARGBBlendRow GetARGBBlend() {
     ARGBBlendRow = ARGBBlendRow_LSX;
   }
 #endif
-  return ARGBBlendRow;
-}
-
-// Alpha Blend 2 ARGB images and store to destination.
-LIBYUV_API
-int ARGBBlend(const uint8_t* src_argb0,
-              int src_stride_argb0,
-              const uint8_t* src_argb1,
-              int src_stride_argb1,
-              uint8_t* dst_argb,
-              int dst_stride_argb,
-              int width,
-              int height) {
-  int y;
-  void (*ARGBBlendRow)(const uint8_t* src_argb, const uint8_t* src_argb1,
-                       uint8_t* dst_argb, int width) = GetARGBBlend();
-  if (!src_argb0 || !src_argb1 || !dst_argb || width <= 0 || height == 0) {
-    return -1;
+#if defined(HAS_ARGBBLENDROW_RVV)
+  if (TestCpuFlag(kCpuHasRVV)) {
+    ARGBBlendRow = ARGBBlendRow_RVV;
   }
-  // Negative height means invert the image.
-  if (height < 0) {
-    height = -height;
-    dst_argb = dst_argb + (height - 1) * dst_stride_argb;
-    dst_stride_argb = -dst_stride_argb;
-  }
-  // Coalesce rows.
-  if (src_stride_argb0 == width * 4 && src_stride_argb1 == width * 4 &&
-      dst_stride_argb == width * 4) {
-    width *= height;
-    height = 1;
-    src_stride_argb0 = src_stride_argb1 = dst_stride_argb = 0;
-  }
-
+#endif
   for (y = 0; y < height; ++y) {
     ARGBBlendRow(src_argb0, src_argb1, dst_argb, width);
     src_argb0 += src_stride_argb0;
@@ -2901,6 +2894,11 @@ int BlendPlane(const uint8_t* src_y0,
     if (IS_ALIGNED(width, 32)) {
       BlendPlaneRow = BlendPlaneRow_AVX2;
     }
+  }
+#endif
+#if defined(HAS_BLENDPLANEROW_RVV)
+  if (TestCpuFlag(kCpuHasRVV)) {
+    BlendPlaneRow = BlendPlaneRow_RVV;
   }
 #endif
 
@@ -2980,6 +2978,11 @@ int I420Blend(const uint8_t* src_y0,
     }
   }
 #endif
+#if defined(HAS_BLENDPLANEROW_RVV)
+  if (TestCpuFlag(kCpuHasRVV)) {
+    BlendPlaneRow = BlendPlaneRow_RVV;
+  }
+#endif
   if (!IS_ALIGNED(width, 2)) {
     ScaleRowDown2 = ScaleRowDown2Box_Odd_C;
   }
@@ -3016,9 +3019,16 @@ int I420Blend(const uint8_t* src_y0,
     }
   }
 #endif
+#if defined(HAS_SCALEROWDOWN2_RVV)
+  if (TestCpuFlag(kCpuHasRVV)) {
+    ScaleRowDown2 = ScaleRowDown2Box_RVV;
+  }
+#endif
 
   // Row buffer for intermediate alpha pixels.
   align_buffer_64(halfalpha, halfwidth);
+  if (!halfalpha)
+    return 1;
   for (y = 0; y < height; y += 2) {
     // last row of odd height image use 1 row of alpha instead of 2.
     if (y == (height - 1)) {
@@ -4702,6 +4712,8 @@ int GaussPlane_F32(const float* src,
   {
     // 2 pixels on each side, but aligned out to 16 bytes.
     align_buffer_64(rowbuf, (4 + width + 4) * 4);
+    if (!rowbuf)
+      return 1;
     memset(rowbuf, 0, 16);
     memset(rowbuf + (4 + width) * 4, 0, 16);
     float* row = (float*)(rowbuf + 16);
@@ -4860,6 +4872,8 @@ static int ARGBSobelize(const uint8_t* src_argb,
     uint8_t* row_y0 = row_y + kEdge;
     uint8_t* row_y1 = row_y0 + row_size;
     uint8_t* row_y2 = row_y1 + row_size;
+    if (!rows)
+      return 1;
     ARGBToYJRow(src_argb, row_y0, width);
     row_y0[-1] = row_y0[0];
     memset(row_y0 + width, row_y0[width - 1], 16);  // Extrude 16 for valgrind.
@@ -5646,6 +5660,8 @@ int UYVYToNV12(const uint8_t* src_uyvy,
     int awidth = halfwidth * 2;
     // row of y and 2 rows of uv
     align_buffer_64(rows, awidth * 3);
+    if (!rows)
+      return 1;
 
     for (y = 0; y < height - 1; y += 2) {
       // Split Y from UV.

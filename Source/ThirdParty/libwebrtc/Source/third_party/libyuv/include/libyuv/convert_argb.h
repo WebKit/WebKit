@@ -1904,6 +1904,26 @@ int NV21ToRGB24Matrix(const uint8_t* src_y,
                       int width,
                       int height);
 
+// Convert YUY2 to ARGB with matrix.
+LIBYUV_API
+int YUY2ToARGBMatrix(const uint8_t* src_yuy2,
+                     int src_stride_yuy2,
+                     uint8_t* dst_argb,
+                     int dst_stride_argb,
+                     const struct YuvConstants* yuvconstants,
+                     int width,
+                     int height);
+
+// Convert UYVY to ARGB with matrix.
+LIBYUV_API
+int UYVYToARGBMatrix(const uint8_t* src_uyvy,
+                     int src_stride_uyvy,
+                     uint8_t* dst_argb,
+                     int dst_stride_argb,
+                     const struct YuvConstants* yuvconstants,
+                     int width,
+                     int height);
+
 // Convert Android420 to ARGB with matrix.
 LIBYUV_API
 int Android420ToARGBMatrix(const uint8_t* src_y,

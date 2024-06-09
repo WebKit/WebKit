@@ -47,14 +47,16 @@ TEST_F(LibYUVBaseTest, TestCpuHas) {
   int has_erms = TestCpuFlag(kCpuHasERMS);
   int has_fma3 = TestCpuFlag(kCpuHasFMA3);
   int has_f16c = TestCpuFlag(kCpuHasF16C);
-  int has_gfni = TestCpuFlag(kCpuHasGFNI);
   int has_avx512bw = TestCpuFlag(kCpuHasAVX512BW);
   int has_avx512vl = TestCpuFlag(kCpuHasAVX512VL);
   int has_avx512vnni = TestCpuFlag(kCpuHasAVX512VNNI);
   int has_avx512vbmi = TestCpuFlag(kCpuHasAVX512VBMI);
   int has_avx512vbmi2 = TestCpuFlag(kCpuHasAVX512VBMI2);
   int has_avx512vbitalg = TestCpuFlag(kCpuHasAVX512VBITALG);
-  int has_avx512vpopcntdq = TestCpuFlag(kCpuHasAVX512VPOPCNTDQ);
+  int has_avx10 = TestCpuFlag(kCpuHasAVX10);
+  int has_avxvnni = TestCpuFlag(kCpuHasAVXVNNI);
+  int has_avxvnniint8 = TestCpuFlag(kCpuHasAVXVNNIINT8);
+  int has_amxint8 = TestCpuFlag(kCpuHasAMXINT8);
   printf("Has X86 0x%x\n", has_x86);
   printf("Has SSE2 0x%x\n", has_sse2);
   printf("Has SSSE3 0x%x\n", has_ssse3);
@@ -65,14 +67,16 @@ TEST_F(LibYUVBaseTest, TestCpuHas) {
   printf("Has ERMS 0x%x\n", has_erms);
   printf("Has FMA3 0x%x\n", has_fma3);
   printf("Has F16C 0x%x\n", has_f16c);
-  printf("Has GFNI 0x%x\n", has_gfni);
   printf("Has AVX512BW 0x%x\n", has_avx512bw);
   printf("Has AVX512VL 0x%x\n", has_avx512vl);
   printf("Has AVX512VNNI 0x%x\n", has_avx512vnni);
   printf("Has AVX512VBMI 0x%x\n", has_avx512vbmi);
   printf("Has AVX512VBMI2 0x%x\n", has_avx512vbmi2);
   printf("Has AVX512VBITALG 0x%x\n", has_avx512vbitalg);
-  printf("Has AVX512VPOPCNTDQ 0x%x\n", has_avx512vpopcntdq);
+  printf("Has AVX10 0x%x\n", has_avx10);
+  printf("HAS AVXVNNI 0x%x\n", has_avxvnni);
+  printf("Has AVXVNNIINT8 0x%x\n", has_avxvnniint8);
+  printf("Has AMXINT8 0x%x\n", has_amxint8);
 #endif
 #if defined(__mips__)
   int has_mips = TestCpuFlag(kCpuHasMIPS);
@@ -137,6 +141,9 @@ TEST_F(LibYUVBaseTest, TestCompilerMacros) {
 #ifdef __riscv_vector
   printf("__riscv_vector %d\n", __riscv_vector);
 #endif
+#ifdef __riscv_v_intrinsic
+  printf("__riscv_v_intrinsic %d\n", __riscv_v_intrinsic);
+#endif
 #ifdef __APPLE__
   printf("__APPLE__ %d\n", __APPLE__);
 #endif
@@ -180,7 +187,7 @@ TEST_F(LibYUVBaseTest, TestCompilerMacros) {
   printf("__pnacl__ %d\n", __pnacl__);
 #endif
 #ifdef GG_LONGLONG
-  printf("GG_LONGLONG %d\n", GG_LONGLONG);
+  printf("GG_LONGLONG %lld\n", GG_LONGLONG(1));
 #endif
 #ifdef INT_TYPES_DEFINED
   printf("INT_TYPES_DEFINED\n");
