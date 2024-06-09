@@ -1725,6 +1725,8 @@ webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallbac
 webkit.org/b/268398 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-iframe-scrolling-tree-after-back.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/inline-element-size.html [ ImageOnlyFailure ]
+webkit.org/b/274852 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-flat-transform-ancestor.html [ ImageOnlyFailure ]
+webkit.org/b/273613 [ Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/no-painting-while-render-blocked.html [ Skip ]
 
 # webkit.org/b/270092  (REGRESSION (275274@main): [ Sonoma+ wk2 ] Multiple compositing/plugins/pdf/pdf are constant failures)
 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
@@ -1761,8 +1763,6 @@ webkit.org/b/274709 imported/w3c/web-platform-tests/pointerevents/pointer-events
 webkit.org/b/274766 http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Failure ]
 
 webkit.org/b/258228 [ Sonoma+ Debug ] accessibility/mac/text-input-session-notifications.html [ Skip ]
-
-webkit.org/b/274852 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-flat-transform-ancestor.html [ ImageOnlyFailure ]
 
 # rdar://129424261 (REGRESSION (279443@main): [ Sonoma Release ] WindowServer watchdog timeout on Intel machine)
 [ Release x86_64 ] http/tests/webgpu/webgpu/idl/constructable.html [ Skip ]

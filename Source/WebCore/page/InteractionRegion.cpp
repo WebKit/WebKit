@@ -338,7 +338,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         return std::nullopt;
     auto& renderer = *matchedElement->renderer();
 
-    if (renderer.style().usedPointerEvents() == PointerEvents::None)
+    if (renderer.usedPointerEvents() == PointerEvents::None)
         return std::nullopt;
 
     bool isOriginalMatch = matchedElement == originalElement;

@@ -2435,6 +2435,13 @@ bool RenderObject::effectiveCapturedInViewTransition() const
     return capturedInViewTransition();
 }
 
+PointerEvents RenderObject::usedPointerEvents() const
+{
+    if (document().renderingIsSuppressedForViewTransition() && !isDocumentElementRenderer())
+        return PointerEvents::None;
+    return style().usedPointerEvents();
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 static bool intervalsSufficientlyOverlap(int startA, int endA, int startB, int endB)

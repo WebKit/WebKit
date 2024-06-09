@@ -1020,6 +1020,7 @@ public:
 #endif
 
     WEBCORE_EXPORT void forEachDocument(const Function<void(Document&)>&) const;
+    void forEachRenderableDocument(const Function<void(Document&)>&) const;
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
     static void forEachDocumentFromMainFrame(const Frame&, const Function<void(Document&)>&);
     void forEachLocalFrame(const Function<void(LocalFrame&)>&);

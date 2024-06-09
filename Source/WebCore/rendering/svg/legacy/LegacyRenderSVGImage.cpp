@@ -226,7 +226,7 @@ bool LegacyRenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTe
     if (hitTestAction != HitTestForeground)
         return false;
 
-    PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGImage, request, style().usedPointerEvents());
+    PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGImage, request, usedPointerEvents());
     if (isVisibleToHitTesting(style(), request) || !hitRules.requireVisible) {
         static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 

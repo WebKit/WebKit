@@ -1869,7 +1869,7 @@ void Page::updateRendering()
 
     auto runProcessingStep = [&](RenderingUpdateStep step, const Function<void(Document&)>& perDocumentFunction) {
         m_renderingUpdateRemainingSteps.last().remove(step);
-        forEachDocument(perDocumentFunction);
+        forEachRenderableDocument(perDocumentFunction);
     };
 
     runProcessingStep(RenderingUpdateStep::RestoreScrollPositionAndViewState, [] (Document& document) {
@@ -1999,7 +1999,7 @@ void Page::doAfterUpdateRendering()
 
     auto runProcessingStep = [&](RenderingUpdateStep step, const Function<void(Document&)>& perDocumentFunction) {
         m_renderingUpdateRemainingSteps.last().remove(step);
-        forEachDocument(perDocumentFunction);
+        forEachRenderableDocument(perDocumentFunction);
     };
 
     runProcessingStep(RenderingUpdateStep::CursorUpdate, [] (Document& document) {
@@ -2007,19 +2007,19 @@ void Page::doAfterUpdateRendering()
             frame->checkedEventHandler()->updateCursorIfNeeded();
     });
 
-    forEachDocument([] (Document& document) {
+    forEachRenderableDocument([] (Document& document) {
         document.enqueuePaintTimingEntryIfNeeded();
     });
 
-    forEachDocument([] (Document& document) {
+    forEachRenderableDocument([] (Document& document) {
         document.checkedSelection()->updateAppearanceAfterUpdatingRendering();
     });
 
-    forEachDocument([] (Document& document) {
+    forEachRenderableDocument([] (Document& document) {
         document.updateHighlightPositions();
     });
 #if ENABLE(APP_HIGHLIGHTS)
-    forEachDocument([] (Document& document) {
+    forEachRenderableDocument([] (Document& document) {
         auto appHighlightStorage = document.appHighlightStorageIfExists();
         if (!appHighlightStorage)
             return;
@@ -2039,7 +2039,7 @@ void Page::doAfterUpdateRendering()
 #endif
 
 #if ENABLE(VIDEO)
-    forEachDocument([] (Document& document) {
+    forEachRenderableDocument([] (Document& document) {
         document.updateTextTrackRepresentationImageIfNeeded();
     });
 #endif
@@ -2068,7 +2068,7 @@ void Page::doAfterUpdateRendering()
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::AccessibilityRegionUpdate);
     if (shouldUpdateAccessibilityRegions()) {
         m_lastAccessibilityObjectRegionsUpdate = m_lastRenderingUpdateTimestamp;
-        forEachDocument([] (Document& document) {
+        forEachRenderableDocument([] (Document& document) {
             document.updateAccessibilityObjectRegions();
         });
     }
@@ -2078,7 +2078,7 @@ void Page::doAfterUpdateRendering()
 
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush);
 
-    forEachDocument([] (Document& document) {
+    forEachRenderableDocument([] (Document& document) {
         document.prepareCanvasesForDisplayOrFlushIfNeeded();
     });
 
@@ -2195,6 +2195,10 @@ void Page::didCompleteRenderingFrame()
     // FIXME: Run WindowEventLoop tasks from here: webkit.org/b/249684.
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
         InspectorInstrumentation::didCompleteRenderingFrame(*localMainFrame);
+
+    forEachDocument([&] (Document& document) {
+        document.flushDeferredRenderingIsSuppressedForViewTransitionChanges();
+    });
 }
 
 void Page::prioritizeVisibleResources()
@@ -2209,7 +2213,7 @@ void Page::prioritizeVisibleResources()
 
     Vector<CachedResourceHandle<CachedResource>> toPrioritize;
 
-    forEachDocument([&] (Document& document) {
+    forEachRenderableDocument([&] (Document& document) {
         toPrioritize.appendVector(document.protectedCachedResourceLoader()->visibleResourcesToPrioritize());
     });
     
@@ -3975,6 +3979,24 @@ void Page::forEachDocumentFromMainFrame(const Frame& mainFrame, const Function<v
 void Page::forEachDocument(const Function<void(Document&)>& functor) const
 {
     forEachDocumentFromMainFrame(protectedMainFrame(), functor);
+}
+
+void Page::forEachRenderableDocument(const Function<void(Document&)>& functor) const
+{
+    Vector<Ref<Document>> documents;
+    for (const auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        auto* document = localFrame->document();
+        if (!document)
+            continue;
+        if (document->renderingIsSuppressedForViewTransition())
+            continue;
+        documents.append(*document);
+    }
+    for (auto& document : documents)
+        functor(document);
 }
 
 void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)

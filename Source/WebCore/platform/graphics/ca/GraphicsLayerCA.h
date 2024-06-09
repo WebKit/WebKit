@@ -234,6 +234,7 @@ private:
 
     bool platformCALayerContentsOpaque() const override { return contentsOpaque(); }
     bool platformCALayerDrawsContent() const override { return drawsContent(); }
+    bool platformCALayerRenderingIsSuppressedIncludingDescendants() const override { return renderingIsSuppressedIncludingDescendants(); }
     WEBCORE_EXPORT bool platformCALayerDelegatesDisplay(PlatformCALayer*) const override;
     WEBCORE_EXPORT void platformCALayerLayerDisplay(PlatformCALayer*) override;
     void platformCALayerLayerDidDisplay(PlatformCALayer* layer) override { return layerDidDisplay(layer); }

@@ -1771,6 +1771,9 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
 
 bool GraphicsLayerCA::needsCommit(const CommitState& commitState)
 {
+    if (renderingIsSuppressedIncludingDescendants())
+        return false;
+
     if (commitState.ancestorHadChanges)
         return true;
     if (m_uncommittedChanges)

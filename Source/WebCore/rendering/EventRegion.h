@@ -106,7 +106,7 @@ public:
 
     friend bool operator==(const EventRegion&, const EventRegion&) = default;
 
-    void unite(const Region&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
+    void unite(const Region&, RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
     void translate(const IntSize&);
 
     bool contains(const IntPoint& point) const { return m_region.contains(point); }

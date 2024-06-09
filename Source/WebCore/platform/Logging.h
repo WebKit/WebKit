@@ -135,6 +135,7 @@ namespace WebCore {
     M(Threading) \
     M(URLParser) \
     M(Viewports) \
+    M(ViewTransitions) \
     M(VirtualMemory) \
     M(WebAudio) \
     M(WebGL) \
