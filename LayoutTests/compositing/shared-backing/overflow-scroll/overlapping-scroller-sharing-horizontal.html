@@ -1,0 +1,16 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<div id="other-provider-candidate" style="top: 0; left: 0; width: 100px; height: 100px; transform: translateZ(0);"></div>
+<div id="provider" style="margin-top: -20px; width: 100px; height: 100px; overflow-x: scroll; overflow-y: hidden;">
+  <div id="subject" style="top: 50px; width: 10px; height: 10px; position: relative;"></div>
+  <div id="spacer" style="width: 1000px; height: 1000px;"></div>
+</div>
+<pre id="layers"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', () => {
+    if (window.internals)
+        layers.textContent = internals.layerTreeAsText(document);
+}, false);
+</script>

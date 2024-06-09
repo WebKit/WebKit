@@ -4813,6 +4813,21 @@ OpusDecoderEnabled:
     WebKit:
       default: true
 
+
+OverlappingBackingStoreProvidersEnabled:
+  type: bool
+  status: stable
+  humanReadableName: "Overlapping backing stores"
+  humanReadableDescription: "Enable overlapping backing stores compositor optimization"
+  category: css
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 OverscrollBehaviorEnabled:
   type: bool
   status: stable
