@@ -52,10 +52,20 @@ bool RenderViewTransitionCapture::setCapturedSize(const LayoutSize& size, const 
 {
     if (m_overflowRect == overflowRect && intrinsicSize() == size && m_layerToLayoutOffset == layerToLayoutOffset)
         return false;
+    m_imageIntrinsicSize = size;
     setIntrinsicSize(size);
     m_overflowRect = overflowRect;
     m_layerToLayoutOffset = layerToLayoutOffset;
     return true;
+}
+
+void RenderViewTransitionCapture::intrinsicSizeChanged()
+{
+    if (intrinsicSize() == m_imageIntrinsicSize)
+        return;
+    setIntrinsicSize(m_imageIntrinsicSize);
+    setPreferredLogicalWidthsDirty(true);
+    setNeedsLayout();
 }
 
 void RenderViewTransitionCapture::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

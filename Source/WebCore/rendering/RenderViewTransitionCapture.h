@@ -40,6 +40,7 @@ public:
     bool setCapturedSize(const LayoutSize&, const LayoutRect& overflowRect, const LayoutPoint& layerToLayoutOffset);
 
     void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) override;
+    void intrinsicSizeChanged() override;
 
     void layout() override;
 
@@ -70,6 +71,7 @@ private:
     // The overflow rect of the snapshot (replaced content), scaled and positioned
     // so that the intrinsic size of the image fits the replaced content rect.
     LayoutRect m_localOverflowRect;
+    LayoutSize m_imageIntrinsicSize;
     // Scale factor between the intrinsic size and the replaced content rect size.
     FloatSize m_scale;
 };
