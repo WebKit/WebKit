@@ -12,7 +12,7 @@ To execute the Test262 Runner script, just call it through your shell.
 
 If you need to customize the execution, check out `runner.pl --help` for extra commands.
 
-### test262-config.yaml
+### [JSTests/test262/config.yaml](https://github.com/WebKit/WebKit/blob/main/JSTests/test262/config.yaml)
 
 This yaml file can be used to skip tests. An example file:
 ```
@@ -28,7 +28,7 @@ skip:
     - test/built-ins/Array/prototype/unshift/length-near-integer-limit.js
 ```
 
-### test262-expectation.yaml
+### [JSTets/test262/expectations.yaml](https://github.com/WebKit/WebKit/blob/main/JSTests/test262/expectations.yaml)
 
 This file contains all exected failures. If JSC or Test262 is updated, this file should be updated with the new set of expected tests in order for developers to only see errors they introduce.
 
@@ -37,7 +37,7 @@ To update this file, run:
 runner.pl --save-expectations
 ```
 
-### test262-results.yaml
+### test262-results/results.yaml
 
 This file contains results for all tests. It is updated on every run.
 
