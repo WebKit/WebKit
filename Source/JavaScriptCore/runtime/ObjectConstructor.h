@@ -162,6 +162,7 @@ JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject*, JSObject*);
 JSArray* ownPropertyKeys(JSGlobalObject*, JSObject*, PropertyNameMode, DontEnumPropertiesMode);
 bool toPropertyDescriptor(JSGlobalObject*, JSValue, PropertyDescriptor&);
 void objectAssignGeneric(JSGlobalObject*, VM&, JSObject* target, JSObject* source);
+JSValue objectValues(VM&, JSGlobalObject*, JSValue);
 
 JSC_DECLARE_HOST_FUNCTION(objectConstructorIs);
 

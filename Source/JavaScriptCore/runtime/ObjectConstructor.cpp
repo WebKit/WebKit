@@ -554,14 +554,10 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
     return JSValue::encode(entries);
 }
 
-JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSValue objectValues(VM& vm, JSGlobalObject* globalObject, JSValue targetValue)
 {
-    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue targetValue = callFrame->argument(0);
-    if (targetValue.isUndefinedOrNull())
-        return throwVMTypeError(globalObject, scope, "Object.values requires that input parameter not be null or undefined"_s);
     JSObject* target = targetValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -609,7 +605,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
                         result->initializeIndex(initializationScope, i, indexedPropertyValues.at(i));
                     for (unsigned i = 0; i < namedPropertyValues.size(); ++i)
                         result->initializeIndex(initializationScope, indexedPropertyValues.size() + i, namedPropertyValues.at(i));
-                    return JSValue::encode(result);
+                    return result;
                 }
             }
             throwOutOfMemoryError(globalObject, scope);
@@ -649,7 +645,19 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    return JSValue::encode(values);
+    return values;
+}
+
+JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue targetValue = callFrame->argument(0);
+    if (targetValue.isUndefinedOrNull())
+        return throwVMTypeError(globalObject, scope, "Object.values requires that input parameter not be null or undefined"_s);
+
+    return JSValue::encode(objectValues(vm, globalObject, targetValue));
 }
 
 // https://tc39.github.io/ecma262/#sec-topropertydescriptor
