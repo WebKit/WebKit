@@ -1,0 +1,27 @@
+<style>
+.non_intrusive {
+  float: left;
+  height: 50px;
+  width: 80px;
+  background-color: green;
+}
+
+.content_box_offset {
+  margin-left: 80px;
+  height: 50px;
+  width: 30px;
+  background-color: red;
+}
+
+.float_inside {
+  float: right;
+  width: 110px;
+  height: 50px;
+  background-color: green;
+}
+</style>
+<!-- PASS if no red -->
+<div>
+  <div class=non_intrusive></div>
+  <div class=content_box_offset><div class=float_inside></div></div>
+</div>

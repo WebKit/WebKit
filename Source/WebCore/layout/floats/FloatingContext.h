@@ -84,7 +84,7 @@ private:
     // FIXME: Turn this into an actual geometry cache.
     const LayoutState& containingBlockGeometries() const { return m_layoutState; }
 
-    void findPositionForFormattingContextRoot(FloatAvoider&) const;
+    void findPositionForFormattingContextRoot(FloatAvoider&, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const;
 
     struct AbsoluteCoordinateValuesForFloatAvoider;
     AbsoluteCoordinateValuesForFloatAvoider absoluteCoordinates(const Box&, LayoutPoint borderBoxTopLeft) const;
