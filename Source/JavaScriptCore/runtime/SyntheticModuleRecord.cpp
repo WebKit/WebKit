@@ -37,7 +37,6 @@ namespace JSC {
 
 const ClassInfo SyntheticModuleRecord::s_info = { "ModuleRecord"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(SyntheticModuleRecord) };
 
-
 Structure* SyntheticModuleRecord::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
@@ -87,7 +86,6 @@ JSValue SyntheticModuleRecord::evaluate(JSGlobalObject*)
     return jsUndefined();
 }
 
-
 SyntheticModuleRecord* SyntheticModuleRecord::tryCreateWithExportNamesAndValues(JSGlobalObject* globalObject, const Identifier& moduleKey, const Vector<Identifier, 4>& exportNames, const MarkedArgumentBuffer& exportValues)
 {
     VM& vm = globalObject->vm();
@@ -110,7 +108,7 @@ SyntheticModuleRecord* SyntheticModuleRecord::tryCreateWithExportNamesAndValues(
 
     JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(vm, globalObject, nullptr, exportSymbolTable, jsTDZValue(), moduleRecord);
     moduleRecord->setModuleEnvironment(globalObject, moduleEnvironment);
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(scope, {});
 
     for (unsigned index = 0; index < exportNames.size(); ++index) {
         PropertyName exportName = exportNames[index];
@@ -119,12 +117,11 @@ SyntheticModuleRecord* SyntheticModuleRecord::tryCreateWithExportNamesAndValues(
         constexpr bool ignoreReadOnlyErrors = true;
         bool putResult = false;
         symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, exportName, exportValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
-        RETURN_IF_EXCEPTION(scope, { });
+        RETURN_IF_EXCEPTION(scope, {});
         ASSERT(putResult);
     }
 
     return moduleRecord;
-
 }
 
 SyntheticModuleRecord* SyntheticModuleRecord::tryCreateDefaultExportSyntheticModule(JSGlobalObject* globalObject, const Identifier& moduleKey, JSValue defaultExport)
@@ -147,9 +144,17 @@ SyntheticModuleRecord* SyntheticModuleRecord::parseJSONModule(JSGlobalObject* gl
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue result = JSONParseWithException(globalObject, sourceCode.view());
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(scope, {});
 
     RELEASE_AND_RETURN(scope, SyntheticModuleRecord::tryCreateDefaultExportSyntheticModule(globalObject, moduleKey, result));
+}
+
+SyntheticModuleRecord* SyntheticModuleRecord::createWithExportNamesAndValues(JSGlobalObject* globalObject, const Identifier& moduleKey, const Vector<Identifier, 4>& exportNames, const MarkedArgumentBuffer& exportValues)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    RELEASE_AND_RETURN(scope, SyntheticModuleRecord::tryCreateWithExportNamesAndValues(globalObject, moduleKey, exportNames, exportValues));
 }
 
 SyntheticModuleRecord* SyntheticModuleRecord::createDefaultExport(JSGlobalObject* globalObject, const Identifier& moduleKey, JSValue defaultExport)

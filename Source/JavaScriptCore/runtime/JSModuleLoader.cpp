@@ -37,6 +37,7 @@
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
 #include "JSPromise.h"
+#include "PropertyNameArray.h"
 #include "JSSourceCode.h"
 #include "JSWebAssembly.h"
 #include "Microtask.h"
@@ -1027,8 +1028,36 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
         JSContextRef contextRef = toRef(globalObject);
         JSValueRef resultRef = apiGlobalObject->api_moduleLoader.moduleLoaderEvaluate(contextRef, toRef(globalObject, keyValue));
         RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
-        JSValue defaultExport = resultRef ? toJS(globalObject, resultRef) : jsUndefined();
-        auto* moduleRecord = SyntheticModuleRecord::createDefaultExport(globalObject, moduleKey, defaultExport);
+        JSValue value = resultRef ? toJS(globalObject, resultRef) : jsUndefined();
+
+        if (!value.isObject()) {
+            promise->reject(vm, globalObject, createError(globalObject, "Synthetic module evaluate callback must return an object"_s));
+            RELEASE_AND_RETURN(scope, promise);
+        }
+
+        Vector<Identifier, 4> exportNames;
+        MarkedArgumentBuffer exportValues;
+
+        JSObject* exportObject = jsCast<JSObject*>(value);
+        PropertyNameArrayBuilder propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+        JSObject::getOwnPropertyNames(exportObject, globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
+        RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
+        for (const auto& propertyName : propertyNames) {
+            JSValue exportValue = exportObject->get(globalObject, propertyName);
+            RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
+            if (propertyName.string() == "default"_s) {
+                exportNames.append(vm.propertyNames->defaultKeyword);
+                exportValues.appendWithCrashOnOverflow(exportValue);
+                continue;
+            }
+
+            exportNames.append(propertyName);
+            exportValues.appendWithCrashOnOverflow(exportValue);
+        }
+
+        auto* moduleRecord = SyntheticModuleRecord::createWithExportNamesAndValues(globalObject, moduleKey, exportNames, exportValues);
         RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
         scope.release();

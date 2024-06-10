@@ -57,6 +57,7 @@ public:
 
     static SyntheticModuleRecord* parseJSONModule(JSGlobalObject*, const Identifier& moduleKey, SourceCode&&);
     static SyntheticModuleRecord* createDefaultExport(JSGlobalObject*, const Identifier& moduleKey, JSValue);
+    static SyntheticModuleRecord* createWithExportNamesAndValues(JSGlobalObject*, const Identifier& moduleKey, const Vector<Identifier, 4>& exportNames, const MarkedArgumentBuffer& exportValues);
 
     Synchronousness link(JSGlobalObject*, RefPtr<ScriptFetcher> = nullptr);
     JS_EXPORT_PRIVATE JSValue NODELETE evaluate(JSGlobalObject*);
