@@ -101,7 +101,7 @@ private:
     std::optional<Error> collectGlobals();
     std::optional<Error> visitEntryPoint(const CallGraph::EntryPoint&);
     void visitCallee(const CallGraph::Callee&);
-    Result<UsedGlobals> determineUsedGlobals();
+    Result<UsedGlobals> determineUsedGlobals(const AST::Function&);
     void collectDynamicOffsetGlobals(const PipelineLayout&);
     void usesOverride(AST::Variable&);
     Vector<unsigned> insertStructs(const UsedResources&);
@@ -173,6 +173,7 @@ private:
     AST::Function* m_currentFunction { nullptr };
     HashMap<std::pair<unsigned, unsigned>, unsigned> m_globalsUsingDynamicOffset;
     HashSet<AST::Expression*> m_doNotUnpack;
+    CheckedUint32 m_combinedFunctionVariablesSize;
 };
 
 std::optional<Error> RewriteGlobalVariables::run()
@@ -311,16 +312,26 @@ void RewriteGlobalVariables::visit(AST::Function& function)
     ListHashSet<String> reads;
     for (auto& callee : m_shaderModule.callGraph().callees(function)) {
         visitCallee(callee);
+
+        if (hasError())
+            return;
+
         for (const auto& read : m_reads)
             reads.add(read);
     }
     m_reads = WTFMove(reads);
     m_defs.clear();
+    m_combinedFunctionVariablesSize = 0;
 
     def(function.name(), nullptr);
     m_currentFunction = &function;
     AST::Visitor::visit(function);
     m_currentFunction = nullptr;
+
+    // https://www.w3.org/TR/WGSL/#limits
+    constexpr unsigned maximumCombinedFunctionVariablesSize = 8192;
+    if (UNLIKELY(m_combinedFunctionVariablesSize.hasOverflowed() || m_combinedFunctionVariablesSize.value() > maximumCombinedFunctionVariablesSize))
+        setError(Error(makeString("The combined byte size of all variables in this function exceeds "_s, String::number(maximumCombinedFunctionVariablesSize), " bytes"_s), function.span()));
 }
 
 void RewriteGlobalVariables::visit(AST::Parameter& parameter)
@@ -363,6 +374,8 @@ void RewriteGlobalVariables::visit(AST::AssignmentStatement& statement)
 
 void RewriteGlobalVariables::visit(AST::VariableStatement& statement)
 {
+    if (statement.variable().flavor() == AST::VariableFlavor::Var)
+        m_combinedFunctionVariablesSize += statement.variable().storeType()->size();
     if (auto* initializer = statement.variable().maybeInitializer())
         pack(static_cast<Packing>(Packing::Unpacked), *initializer);
 }
@@ -944,12 +957,15 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
     }
 
     visit(entryPoint.function);
+    if (hasError())
+        return AST::Visitor::result().error();
+
     if (m_reads.isEmpty()) {
         insertDynamicOffsetsBufferIfNeeded(entryPoint.function);
         return std::nullopt;
     }
 
-    auto maybeUsedGlobals = determineUsedGlobals();
+    auto maybeUsedGlobals = determineUsedGlobals(entryPoint.function);
     if (!maybeUsedGlobals) {
         insertDynamicOffsetsBufferIfNeeded(entryPoint.function);
         return maybeUsedGlobals.error();
@@ -1205,9 +1221,16 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
     });
 }
 
-auto RewriteGlobalVariables::determineUsedGlobals() -> Result<UsedGlobals>
+auto RewriteGlobalVariables::determineUsedGlobals(const AST::Function& function) -> Result<UsedGlobals>
 {
     UsedGlobals usedGlobals;
+
+    // https://www.w3.org/TR/WGSL/#limits
+    CheckedUint32 combinedPrivateVariablesSize = 0;
+    CheckedUint32 combinedWorkgroupVariablesSize = 0;
+    constexpr unsigned maximumCombinedPrivateVariablesSize = 8192;
+    constexpr unsigned maximumCombinedWorkgroupVariablesSize = 16384;
+
     for (const auto& globalName : m_reads) {
         auto it = m_globals.find(globalName);
         RELEASE_ASSERT(it != m_globals.end());
@@ -1222,6 +1245,11 @@ auto RewriteGlobalVariables::determineUsedGlobals() -> Result<UsedGlobals>
         case AST::VariableFlavor::Const:
             if (!global.resource.has_value()) {
                 usedGlobals.privateGlobals.append(&global);
+
+                if (auto* qualifier = variable.maybeQualifier(); qualifier && qualifier->addressSpace() == AddressSpace::Workgroup)
+                    combinedWorkgroupVariablesSize += variable.storeType()->size();
+                else
+                    combinedPrivateVariablesSize += variable.storeType()->size();
                 continue;
             }
             break;
@@ -1234,8 +1262,15 @@ auto RewriteGlobalVariables::determineUsedGlobals() -> Result<UsedGlobals>
 
         // FIXME: this check needs to occur during WGSL::staticCheck
         if (!bindingResult.isNewEntry)
-            return makeUnexpected(Error(makeString("entry point '"_s, m_entryPointInformation->originalName, "' uses variables '"_s, bindingResult.iterator->value->declaration->originalName(), "' and '"_s, variable.originalName(), "', both which use the same resource binding: @group("_s, group, ") @binding("_s, binding, ')'), SourceSpan::empty()));
+            return makeUnexpected(Error(makeString("entry point '"_s, m_entryPointInformation->originalName, "' uses variables '"_s, bindingResult.iterator->value->declaration->originalName(), "' and '"_s, variable.originalName(), "', both which use the same resource binding: @group("_s, group, ") @binding("_s, binding, ')'), variable.span()));
     }
+
+    if (UNLIKELY(combinedPrivateVariablesSize.hasOverflowed() || combinedPrivateVariablesSize.value() > maximumCombinedPrivateVariablesSize))
+        return makeUnexpected(Error(makeString("The combined byte size of all variables in the private address space exceeds "_s, String::number(maximumCombinedPrivateVariablesSize), " bytes"_s), function.span()));
+
+    if (UNLIKELY(combinedWorkgroupVariablesSize.hasOverflowed() || combinedWorkgroupVariablesSize.value() > maximumCombinedWorkgroupVariablesSize))
+        return makeUnexpected(Error(makeString("The combined byte size of all variables in the workgroup address space exceeds "_s, String::number(maximumCombinedWorkgroupVariablesSize), " bytes"_s), function.span()));
+
     return usedGlobals;
 }
 

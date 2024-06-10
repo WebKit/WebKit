@@ -1523,9 +1523,13 @@ void TypeChecker::visit(AST::CallExpression& call)
             arguments[i] = *value;
     }
     if (isConstant) {
-        if (argumentCount)
+        if (argumentCount) {
+            // https://www.w3.org/TR/WGSL/#limits
+            constexpr unsigned maximumConstantArraySize = 2047;
+            if (UNLIKELY(argumentCount > maximumConstantArraySize))
+                typeError(InferBottom::No, call.span(), "constant array cannot have more than "_s, String::number(maximumConstantArraySize), " elements"_s);
             setConstantValue(call, result, ConstantArray(WTFMove(arguments)));
-        else
+        } else
             setConstantValue(call, result, zeroValue(result));
     }
 }
