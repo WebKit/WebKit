@@ -237,6 +237,8 @@ std::unique_ptr<RemoteDisplayListRecorderProxy> RemoteRenderingBackendProxy::cre
 
 void RemoteRenderingBackendProxy::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseImageBuffer(renderingResourceIdentifier));
 }
 
@@ -254,6 +256,8 @@ void RemoteRenderingBackendProxy::releaseRemoteImageBufferSet(RemoteImageBufferS
 {
     bool success = m_bufferSets.remove(bufferSet.identifier());
     ASSERT_UNUSED(success, success);
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseRemoteImageBufferSet(bufferSet.identifier()));
 }
 
@@ -369,16 +373,22 @@ void RemoteRenderingBackendProxy::cacheFilter(Ref<Filter>&& filter)
 
 void RemoteRenderingBackendProxy::releaseAllDrawingResources()
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseAllDrawingResources());
 }
 
 void RemoteRenderingBackendProxy::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseRenderingResource(renderingResourceIdentifier));
 }
 
 void RemoteRenderingBackendProxy::releaseAllImageResources()
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseAllImageResources());
 }
 
@@ -466,6 +476,8 @@ void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatile
 
 void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
 {
+    if (!m_connection)
+        return;
     send(Messages::RemoteRenderingBackend::FinalizeRenderingUpdate(m_renderingUpdateID));
     m_renderingUpdateID.increment();
 }
