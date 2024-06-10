@@ -10,15 +10,21 @@ $ErrorActionPreference = "Stop"
 # Set up MSVC environment variables. This is taken from Bun's 'scripts\env.ps1'
 if ($env:VSINSTALLDIR -eq $null) {
     Write-Host "Loading Visual Studio environment, this may take a second..."
-    $vsDir = Get-ChildItem -Path "C:\Program Files\Microsoft Visual Studio\2022" -Directory
-    if ($vsDir -eq $null) {
-        throw "Visual Studio directory not found."
-    } 
-    Push-Location $vsDir
     try {
-        . (Join-Path -Path $vsDir.FullName -ChildPath "Common7\Tools\Launch-VsDevShell.ps1") -Arch amd64 -HostArch amd64
+        Import-Module 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\Microsoft.VisualStudio.DevShell.dll'
+        Enter-VsDevShell -VsInstallPath 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools' -DevCmdArguments '-arch=amd64 -host_arch=amd64'
+    } catch {
+        $vsDir = Get-ChildItem -Path "C:\Program Files\Microsoft Visual Studio\2022" -Directory
+        if ($vsDir -eq $null) {
+            throw "Visual Studio directory not found."
+        } 
+        Push-Location $vsDir
+        try {
+            . (Join-Path -Path $vsDir.FullName -ChildPath "Common7\Tools\Launch-VsDevShell.ps1") -Arch amd64 -HostArch amd64
+        } finally {
+            Pop-Location
+        }
     }
-    finally { Pop-Location }
 }
 
 if ($Env:VSCMD_ARG_TGT_ARCH -eq "x86") {
