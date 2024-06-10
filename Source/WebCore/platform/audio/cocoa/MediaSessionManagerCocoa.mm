@@ -267,7 +267,7 @@ String MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorre
 
 void MediaSessionManagerCocoa::scheduleSessionStatusUpdate()
 {
-    callOnMainThread([this] () mutable {
+    enqueueTaskOnMainThread([this] () mutable {
         m_nowPlayingManager->setSupportsSeeking(computeSupportsSeeking());
         updateNowPlayingInfo();
 
@@ -326,7 +326,7 @@ void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& sess
 {
     PlatformMediaSessionManager::sessionWillEndPlayback(session, delayCallingUpdateNowPlaying);
 
-    callOnMainThread([weakSession = WeakPtr { session }] {
+    enqueueTaskOnMainThread([weakSession = WeakPtr { session }] {
         if (weakSession)
             weakSession->updateMediaUsageIfChanged();
     });
@@ -334,7 +334,7 @@ void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& sess
     if (delayCallingUpdateNowPlaying == DelayCallingUpdateNowPlaying::No)
         updateNowPlayingInfo();
     else {
-        callOnMainThread([this] {
+        enqueueTaskOnMainThread([this] {
             updateNowPlayingInfo();
         });
     }

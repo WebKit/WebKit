@@ -112,6 +112,11 @@ PlatformMediaSessionManager::PlatformMediaSessionManager()
 {
 }
 
+PlatformMediaSessionManager::~PlatformMediaSessionManager()
+{
+    m_taskGroup.cancel();
+}
+
 static inline unsigned indexFromMediaType(PlatformMediaSession::MediaType type)
 {
     return static_cast<unsigned>(type);
@@ -469,7 +474,7 @@ void PlatformMediaSessionManager::sessionCanProduceAudioChanged()
         return;
 
     m_alreadyScheduledSessionStatedUpdate = true;
-    callOnMainThread([this] {
+    enqueueTaskOnMainThread([this] {
         m_alreadyScheduledSessionStatedUpdate = false;
         maybeActivateAudioSession();
         updateSessionState();
@@ -633,7 +638,7 @@ void PlatformMediaSessionManager::scheduleUpdateSessionState()
         return;
 
     m_hasScheduledSessionStateUpdate = true;
-    callOnMainThread([this] {
+    enqueueTaskOnMainThread([this] {
         updateSessionState();
         m_hasScheduledSessionStateUpdate = false;
     });
@@ -822,6 +827,13 @@ void PlatformMediaSessionManager::setMediaCapabilityGrantsEnabled(bool mediaCapa
     s_mediaCapabilityGrantsEnabled = mediaCapabilityGrantsEnabled;
 }
 #endif
+
+void PlatformMediaSessionManager::enqueueTaskOnMainThread(Function<void()>&& task)
+{
+    callOnMainThread(CancellableTask(m_taskGroup, [task = WTFMove(task)] () mutable {
+        task();
+    }));
+}
 
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& PlatformMediaSessionManager::logChannel() const
