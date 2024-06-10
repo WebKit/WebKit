@@ -69,9 +69,26 @@ GStreamerPeerConnectionBackend::GStreamerPeerConnectionBackend(RTCPeerConnection
     , m_endpoint(GStreamerMediaEndpoint::create(*this))
 {
     disableICECandidateFiltering();
+    logger().addObserver(*this);
 }
 
-GStreamerPeerConnectionBackend::~GStreamerPeerConnectionBackend() = default;
+GStreamerPeerConnectionBackend::~GStreamerPeerConnectionBackend()
+{
+    logger().removeObserver(*this);
+}
+
+void GStreamerPeerConnectionBackend::didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&& values)
+{
+#ifndef GST_DISABLE_GST_DEBUG
+    StringBuilder builder;
+    for (auto& [_, value] : values)
+        builder.append(value);
+
+    GST_DEBUG_OBJECT(m_endpoint->pipeline(), "%s", builder.toString().utf8().data());
+#else
+    UNUSED_PARAM(values);
+#endif
+}
 
 void GStreamerPeerConnectionBackend::suspend()
 {

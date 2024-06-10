@@ -351,13 +351,17 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
 
         if (descriptionStates) {
             m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));
-            if (m_peerConnection.isClosed())
+            if (m_peerConnection.isClosed()) {
+                DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed after descriptions update");
                 return;
+            }
         }
 
         m_peerConnection.processIceTransportChanges();
-        if (m_peerConnection.isClosed())
+        if (m_peerConnection.isClosed()) {
+            DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed after ICE transport changes");
             return;
+        }
 
         if (transceiverStates) {
             // Compute track related events.
@@ -376,31 +380,43 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
                     processRemoteTracks(*transceiver, WTFMove(transceiverState), addList, removeList, trackEventList, muteTrackList);
             }
 
+            DEBUG_LOG(LOGIDENTIFIER, "Processing ", muteTrackList.size(), " muted tracks");
             for (auto& track : muteTrackList) {
                 track->setShouldFireMuteEventImmediately(true);
                 track->source().setMuted(true);
                 track->setShouldFireMuteEventImmediately(false);
-                if (m_peerConnection.isClosed())
+                if (m_peerConnection.isClosed()) {
+                    DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed while processing muted tracks");
                     return;
+                }
             }
 
+            DEBUG_LOG(LOGIDENTIFIER, "Removing ", removeList.size(), " tracks");
             for (auto& pair : removeList) {
                 pair.stream->privateStream().removeTrack(pair.track->privateTrack());
-                if (m_peerConnection.isClosed())
+                if (m_peerConnection.isClosed()) {
+                    DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed while removing tracks");
                     return;
+                }
             }
 
+            DEBUG_LOG(LOGIDENTIFIER, "Adding ", addList.size(), " tracks");
             for (auto& pair : addList) {
                 pair.stream->addTrackFromPlatform(pair.track.copyRef());
-                if (m_peerConnection.isClosed())
+                if (m_peerConnection.isClosed()) {
+                    DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed while adding tracks");
                     return;
+                }
             }
 
+            DEBUG_LOG(LOGIDENTIFIER, "Dispatching ", trackEventList.size(), " track events");
             for (auto& event : trackEventList) {
                 RefPtr track = event->track();
                 m_peerConnection.dispatchEvent(event);
-                if (m_peerConnection.isClosed())
+                if (m_peerConnection.isClosed()) {
+                    DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed while dispatching track events");
                     return;
+                }
 
                 track->source().setMuted(false);
             }
