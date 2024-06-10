@@ -132,37 +132,37 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
-static _WKUnifiedTextReplacementBehavior convertToPlatformBehavior(WebKit::WebUnifiedTextReplacementBehavior behavior)
+static _WKUnifiedTextReplacementBehavior convertToPlatform(WebCore::UnifiedTextReplacement::ReplacementBehavior behavior)
 {
     switch (behavior) {
-    case WebKit::WebUnifiedTextReplacementBehavior::None:
+    case WebCore::UnifiedTextReplacement::ReplacementBehavior::None:
         return _WKUnifiedTextReplacementBehaviorNone;
 
-    case WebKit::WebUnifiedTextReplacementBehavior::Default:
+    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Default:
         return _WKUnifiedTextReplacementBehaviorDefault;
 
-    case WebKit::WebUnifiedTextReplacementBehavior::Limited:
+    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Limited:
         return _WKUnifiedTextReplacementBehaviorLimited;
 
-    case WebKit::WebUnifiedTextReplacementBehavior::Complete:
+    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Complete:
         return _WKUnifiedTextReplacementBehaviorComplete;
     }
 }
 
-static WebKit::WebUnifiedTextReplacementBehavior convertToWebBehavior(_WKUnifiedTextReplacementBehavior behavior)
+static WebCore::UnifiedTextReplacement::ReplacementBehavior convertToWeb(_WKUnifiedTextReplacementBehavior behavior)
 {
     switch (behavior) {
     case _WKUnifiedTextReplacementBehaviorNone:
-        return WebKit::WebUnifiedTextReplacementBehavior::None;
+        return WebCore::UnifiedTextReplacement::ReplacementBehavior::None;
 
     case _WKUnifiedTextReplacementBehaviorDefault:
-        return WebKit::WebUnifiedTextReplacementBehavior::Default;
+        return WebCore::UnifiedTextReplacement::ReplacementBehavior::Default;
 
     case _WKUnifiedTextReplacementBehaviorLimited:
-        return WebKit::WebUnifiedTextReplacementBehavior::Limited;
+        return WebCore::UnifiedTextReplacement::ReplacementBehavior::Limited;
 
     case _WKUnifiedTextReplacementBehaviorComplete:
-        return WebKit::WebUnifiedTextReplacementBehavior::Complete;
+        return WebCore::UnifiedTextReplacement::ReplacementBehavior::Complete;
     }
 }
 
@@ -171,14 +171,14 @@ static WebKit::WebUnifiedTextReplacementBehavior convertToWebBehavior(_WKUnified
 - (void)_setUnifiedTextReplacementBehavior:(_WKUnifiedTextReplacementBehavior)behavior
 {
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    _pageConfiguration->setUnifiedTextReplacementBehavior(convertToWebBehavior(behavior));
+    _pageConfiguration->setUnifiedTextReplacementBehavior(convertToWeb(behavior));
 #endif
 }
 
 - (_WKUnifiedTextReplacementBehavior)_unifiedTextReplacementBehavior
 {
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    return convertToPlatformBehavior(_pageConfiguration->unifiedTextReplacementBehavior());
+    return convertToPlatform(_pageConfiguration->unifiedTextReplacementBehavior());
 #else
     return _WKUnifiedTextReplacementBehaviorNone;
 #endif

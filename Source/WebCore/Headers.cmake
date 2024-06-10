@@ -1662,6 +1662,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/text-extraction/TextExtraction.h
     page/text-extraction/TextExtractionTypes.h
 
+    page/unified-text-replacement/UnifiedTextReplacementTypes.h
+
     platform/AbortableTaskQueue.h
     platform/AudioSampleFormat.h
     platform/CaretAnimator.h

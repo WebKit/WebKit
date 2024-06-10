@@ -287,14 +287,14 @@ WindowKind PageClientImplCocoa::windowKind()
 }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void PageClientImplCocoa::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+void PageClientImplCocoa::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::Session::ID& sessionID, const WebCore::UnifiedTextReplacement::Replacement::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
-    [m_webView _textReplacementSession:sessionUUID showInformationForReplacementWithUUID:replacementUUID relativeToRect:selectionBoundsInRootView];
+    [m_webView _textReplacementSession:sessionID showInformationForReplacementWithUUID:replacementID relativeToRect:selectionBoundsInRootView];
 }
 
-void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState state, const WTF::UUID& replacementUUID)
+void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::Session::ID& sessionID, WebCore::UnifiedTextReplacement::Replacement::State state, const WebCore::UnifiedTextReplacement::Replacement::ID& replacementID)
 {
-    [m_webView _textReplacementSession:sessionUUID updateState:state forReplacementWithUUID:replacementUUID];
+    [m_webView _textReplacementSession:sessionID updateState:state forReplacementWithUUID:replacementID];
 }
 
 void PageClientImplCocoa::unifiedTextReplacementActiveWillChange()

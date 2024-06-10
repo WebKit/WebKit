@@ -215,6 +215,10 @@
 #include "AccessibilityRootAtspi.h"
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#include "UnifiedTextReplacementController.h"
+#endif
+
 #if ENABLE(WEBXR)
 #include "NavigatorWebXR.h"
 #include "WebXRSession.h"
@@ -408,6 +412,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_contentSecurityPolicyModeForExtension(WTFMove(pageConfiguration.contentSecurityPolicyModeForExtension))
     , m_badgeClient(WTFMove(pageConfiguration.badgeClient))
     , m_historyItemClient(WTFMove(pageConfiguration.historyItemClient))
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    , m_unifiedTextReplacementController(makeUniqueRef<UnifiedTextReplacementController>(*this))
+#endif
 {
     updateTimerThrottlingState();
 
@@ -4848,6 +4855,48 @@ void Page::gamepadsRecentlyAccessed()
 
     chrome().client().gamepadsRecentlyAccessed();
     m_lastAccessNotificationTime = MonotonicTime::now();
+}
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void Page::willBeginTextReplacementSession(const std::optional<UnifiedTextReplacement::Session>& session, CompletionHandler<void(const Vector<UnifiedTextReplacement::Context>&)>&& completionHandler)
+{
+    m_unifiedTextReplacementController->willBeginTextReplacementSession(session, WTFMove(completionHandler));
+}
+
+void Page::didBeginTextReplacementSession(const UnifiedTextReplacement::Session& session, const Vector<UnifiedTextReplacement::Context>& contexts)
+{
+    m_unifiedTextReplacementController->didBeginTextReplacementSession(session, contexts);
+}
+
+void Page::textReplacementSessionDidReceiveReplacements(const UnifiedTextReplacement::Session& session, const Vector<UnifiedTextReplacement::Replacement>& replacements, const UnifiedTextReplacement::Context& context, bool finished)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveReplacements(session, replacements, context, finished);
+}
+
+void Page::textReplacementSessionDidUpdateStateForReplacement(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::Replacement::State state, const UnifiedTextReplacement::Replacement& replacement, const UnifiedTextReplacement::Context& context)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context);
+}
+
+void Page::didEndTextReplacementSession(const UnifiedTextReplacement::Session& session, bool accepted)
+{
+    m_unifiedTextReplacementController->didEndTextReplacementSession(session, accepted);
+}
+
+void Page::textReplacementSessionDidReceiveTextWithReplacementRange(const UnifiedTextReplacement::Session& session, const AttributedString& attributedText, const CharacterRange& range, const UnifiedTextReplacement::Context& context, bool finished)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
+}
+
+void Page::updateStateForSelectedReplacementIfNeeded()
+{
+    m_unifiedTextReplacementController->updateStateForSelectedReplacementIfNeeded();
+}
+
+void Page::textReplacementSessionDidReceiveEditAction(const UnifiedTextReplacement::Session& session, WebCore::UnifiedTextReplacement::EditAction action)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveEditAction(session, action);
 }
 #endif
 

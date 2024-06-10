@@ -28,10 +28,10 @@
 #include "APIObject.h"
 #include "WebPreferencesDefaultValues.h"
 #include "WebURLSchemeHandler.h"
-#include "WebUnifiedTextReplacementContextData.h"
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
+#include <WebCore/UnifiedTextReplacementTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashMap.h>
@@ -383,8 +383,8 @@ public:
     void setAllowsInlinePredictions(bool allows) { m_data.allowsInlinePredictions = allows; }
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    WebKit::WebUnifiedTextReplacementBehavior unifiedTextReplacementBehavior() const { return m_data.unifiedTextReplacementBehavior; }
-    void setUnifiedTextReplacementBehavior(WebKit::WebUnifiedTextReplacementBehavior behavior) { m_data.unifiedTextReplacementBehavior = behavior; }
+    WebCore::UnifiedTextReplacement::ReplacementBehavior unifiedTextReplacementBehavior() const { return m_data.unifiedTextReplacementBehavior; }
+    void setUnifiedTextReplacementBehavior(WebCore::UnifiedTextReplacement::ReplacementBehavior behavior) { m_data.unifiedTextReplacementBehavior = behavior; }
 #endif
 
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_data.shouldRelaxThirdPartyCookieBlocking = value; }
@@ -587,7 +587,7 @@ private:
         bool scrollToTextFragmentMarkingEnabled { true };
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-        WebKit::WebUnifiedTextReplacementBehavior unifiedTextReplacementBehavior { WebKit::WebUnifiedTextReplacementBehavior::Default };
+        WebCore::UnifiedTextReplacement::ReplacementBehavior unifiedTextReplacementBehavior { WebCore::UnifiedTextReplacement::ReplacementBehavior::Default };
 #endif
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };

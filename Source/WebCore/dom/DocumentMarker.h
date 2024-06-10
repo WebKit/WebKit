@@ -35,7 +35,13 @@
 
 namespace WebCore {
 class DocumentMarker;
+
+namespace UnifiedTextReplacement {
+using ReplacementID = WTF::UUID;
+using SessionID = WTF::UUID;
 }
+
+} // namespace WebCore
 
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
@@ -120,8 +126,8 @@ public:
         };
 
         String originalText;
-        WTF::UUID uuid;
-        WTF::UUID sessionUUID;
+        UnifiedTextReplacement::ReplacementID replacementID;
+        UnifiedTextReplacement::SessionID sessionID;
         State state { State::Pending };
     };
 #endif

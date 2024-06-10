@@ -157,6 +157,10 @@ enum class RouteSharingPolicy : uint8_t;
 
 enum class DidFilterLinkDecoration : bool { No, Yes };
 
+namespace UnifiedTextReplacement {
+using SessionID = WTF::UUID;
+}
+
 class ChromeClient {
 public:
     virtual void chromeDestroyed() = 0;
@@ -658,6 +662,20 @@ public:
 #endif
 
     virtual double baseViewportLayoutSizeScaleFactor() const { return 1; }
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const UnifiedTextReplacement::SessionID&, const UnifiedTextReplacement::ReplacementID&, IntRect) { }
+
+    virtual void textReplacementSessionUpdateStateForReplacementWithID(const UnifiedTextReplacement::SessionID&, UnifiedTextReplacement::ReplacementState, const UnifiedTextReplacement::ReplacementID&) { }
+
+    virtual void removeTextIndicatorStyleForID(const UnifiedTextReplacement::SessionID&) { }
+
+    virtual void cleanUpTextStylesForSessionID(const UnifiedTextReplacement::SessionID&) { }
+
+    virtual void addSourceTextIndicatorStyle(const UnifiedTextReplacement::SessionID&, const CharacterRange&) { }
+
+    virtual void addDestinationTextIndicatorStyle(const UnifiedTextReplacement::SessionID&, const CharacterRange&) { }
+#endif
 
     WEBCORE_EXPORT virtual ~ChromeClient();
 

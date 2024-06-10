@@ -1844,4 +1844,38 @@ void WebChromeClient::gamepadsRecentlyAccessed()
 }
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+void WebChromeClient::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::Session::ID& sessionID, const WebCore::UnifiedTextReplacement::Replacement::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
+{
+    protectedPage()->textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(sessionID, replacementID, selectionBoundsInRootView);
+}
+
+void WebChromeClient::textReplacementSessionUpdateStateForReplacementWithID(const UnifiedTextReplacement::Session::ID& sessionID, UnifiedTextReplacement::Replacement::State state, const UnifiedTextReplacement::Replacement::ID& replacementID)
+{
+    protectedPage()->textReplacementSessionUpdateStateForReplacementWithID(sessionID, state, replacementID);
+}
+
+void WebChromeClient::removeTextIndicatorStyleForID(const UnifiedTextReplacement::Session::ID& sessionID)
+{
+    protectedPage()->removeTextIndicatorStyleForID(sessionID);
+}
+
+void WebChromeClient::cleanUpTextStylesForSessionID(const UnifiedTextReplacement::Session::ID& sessionID)
+{
+    protectedPage()->cleanUpTextStylesForSessionID(sessionID);
+}
+
+void WebChromeClient::addSourceTextIndicatorStyle(const UnifiedTextReplacement::Session::ID& sessionID, const CharacterRange& range)
+{
+    protectedPage()->addSourceTextIndicatorStyle(sessionID, range);
+}
+
+void WebChromeClient::addDestinationTextIndicatorStyle(const UnifiedTextReplacement::Session::ID& sessionID, const CharacterRange& range)
+{
+    protectedPage()->addDestinationTextIndicatorStyle(sessionID, range);
+}
+
+#endif
+
 } // namespace WebKit

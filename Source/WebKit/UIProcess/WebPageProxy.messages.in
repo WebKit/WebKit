@@ -238,9 +238,9 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    TextReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(WTF::UUID sessionUUID, WTF::UUID replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+    TextReplacementSessionShowInformationForReplacementWithIDRelativeToRect(struct WebCore::UnifiedTextReplacement::Session::ID sessionID, struct WebCore::UnifiedTextReplacement::Replacement::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
 
-    TextReplacementSessionUpdateStateForReplacementWithUUID(WTF::UUID sessionUUID, enum:uint8_t WebKit::WebTextReplacementDataState state, WTF::UUID replacementUUID)
+    TextReplacementSessionUpdateStateForReplacementWithID(struct WebCore::UnifiedTextReplacement::Session::ID sessionID, enum:uint8_t WebCore::UnifiedTextReplacement::Replacement::State state, struct WebCore::UnifiedTextReplacement::Replacement::ID replacementID)
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

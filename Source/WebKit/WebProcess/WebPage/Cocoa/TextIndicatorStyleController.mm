@@ -29,18 +29,19 @@
 #include "TextIndicatorStyleController.h"
 
 #include "TextIndicatorStyle.h"
-#include "UnifiedTextReplacementController.h"
 #include "WebPage.h"
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/Range.h>
 #include <WebCore/RenderedDocumentMarker.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextIterator.h>
+#include <WebCore/UnifiedTextReplacementController.h>
 
 namespace WebKit {
 
-// This should mirror what is in UnifiedTextIndicatorController, and eventually not be copied.
+// This should mirror what is in UnifiedTextReplacementController, and eventually not be copied.
 static constexpr auto defaultTextIndicatorStyleControllerTextIteratorBehaviors = WebCore::TextIteratorBehaviors {
     WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImages,
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -75,18 +76,35 @@ RefPtr<WebCore::Document> TextIndicatorStyleController::document() const
     return frame->document();
 }
 
+// FIXME: This is a layering violation.
+std::optional<WebCore::SimpleRange> TextIndicatorStyleController::contextRangeForSessionWithID(const WebCore::UnifiedTextReplacement::Session::ID& sessionID) const
+{
+    if (!m_webPage) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    RefPtr corePage = m_webPage->corePage();
+    if (!corePage) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    return corePage->unifiedTextReplacementController().contextRangeForSessionWithID(sessionID);
+}
+
 std::optional<WebCore::SimpleRange> TextIndicatorStyleController::contextRangeForTextIndicatorStyle(const WTF::UUID& uuid) const
 {
-    if (auto sessionRange = m_webPage->unifiedTextReplacementController().contextRangeForSessionWithUUID(uuid))
+    if (auto sessionRange = contextRangeForSessionWithID(uuid))
         return sessionRange;
 
     if (m_textIndicatorStyleEnablementRanges.contains(uuid))
-        return makeSimpleRange(m_textIndicatorStyleEnablementRanges.find(uuid)->value.get());
+        return WebCore::makeSimpleRange(m_textIndicatorStyleEnablementRanges.find(uuid)->value.get());
 
     for (auto sessionUUID : m_activeTextIndicatorStyles.keys()) {
         for (auto styleState : m_activeTextIndicatorStyles.get(sessionUUID)) {
             if (styleState.styleID == uuid) {
-                if (auto fullSessionRange = m_webPage->unifiedTextReplacementController().contextRangeForSessionWithUUID(sessionUUID))
+                if (auto fullSessionRange = contextRangeForSessionWithID(sessionUUID))
                     return WebCore::resolveCharacterRange(*fullSessionRange, styleState.range, defaultTextIndicatorStyleControllerTextIteratorBehaviors);
             }
         }
@@ -133,16 +151,21 @@ static WebCore::CharacterRange newlyReplacedCharacterRange(WebCore::CharacterRan
 };
 #endif
 
-void TextIndicatorStyleController::addSourceTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& currentReplacedRange, const WebCore::SimpleRange& resolvedRange)
+void TextIndicatorStyleController::addSourceTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& currentReplacedRange)
 {
-    auto replacedRange = resolvedRange;
+#if PLATFORM(MAC)
     auto currentlyStyledRange = m_currentlyStyledRange.getOptional(sessionUUID);
     if (!currentlyStyledRange)
         return;
-#if PLATFORM(MAC)
+
     auto replaceCharacterRange = newlyReplacedCharacterRange(currentReplacedRange, *currentlyStyledRange);
-    auto sessionRange = m_webPage->unifiedTextReplacementController().contextRangeForSessionWithUUID(sessionUUID);
-    replacedRange = WebCore::resolveCharacterRange(*sessionRange, *currentlyStyledRange, defaultTextIndicatorStyleControllerTextIteratorBehaviors);
+    auto sessionRange = contextRangeForSessionWithID(sessionUUID);
+    if (!sessionRange) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto replacedRange = WebCore::resolveCharacterRange(*sessionRange, *currentlyStyledRange, defaultTextIndicatorStyleControllerTextIteratorBehaviors);
 
     auto sourceTextIndicatorUUID = WTF::UUID::createVersion4();
     createTextIndicatorForRange(replacedRange, [sourceTextIndicatorUUID, weakWebPage = WeakPtr { m_webPage }](std::optional<WebCore::TextIndicatorData>&& textIndicatorData) {
@@ -162,10 +185,11 @@ void TextIndicatorStyleController::addSourceTextIndicatorStyle(const WTF::UUID& 
     m_currentlyStyledRange.set(sessionUUID, currentReplacedRange);
 #endif
 }
-void TextIndicatorStyleController::addDestinationTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& characterRangeAfterReplace, const WebCore::SimpleRange& resolvedRange)
+
+void TextIndicatorStyleController::addDestinationTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& characterRangeAfterReplace)
 {
     auto finalTextIndicatorUUID = WTF::UUID::createVersion4();
-    auto sessionRange = m_webPage->unifiedTextReplacementController().contextRangeForSessionWithUUID(sessionUUID);
+    auto sessionRange = contextRangeForSessionWithID(sessionUUID);
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
         return;
@@ -225,20 +249,22 @@ void TextIndicatorStyleController::updateTextIndicatorStyleVisibilityForID(const
     completionHandler();
 }
 
-
 void TextIndicatorStyleController::createTextIndicatorForRange(const WebCore::SimpleRange& range, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
     if (!m_webPage) {
         ASSERT_NOT_REACHED();
+        completionHandler(std::nullopt);
         return;
     }
 
     RefPtr corePage = m_webPage->corePage();
     if (!corePage) {
         ASSERT_NOT_REACHED();
+        completionHandler(std::nullopt);
         return;
     }
 
+    // FIXME: Why is this if statement needed? `localMainFrame` is unused.
     if (RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage->mainFrame())) {
         std::optional<WebCore::TextIndicatorData> textIndicatorData;
         constexpr OptionSet textIndicatorOptions {
@@ -253,6 +279,7 @@ void TextIndicatorStyleController::createTextIndicatorForRange(const WebCore::Si
         completionHandler(WTFMove(textIndicatorData));
         return;
     }
+
     completionHandler(std::nullopt);
 }
 

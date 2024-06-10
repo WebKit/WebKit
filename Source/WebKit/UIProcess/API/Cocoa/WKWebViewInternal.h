@@ -90,7 +90,6 @@ enum class WheelScrollGestureState : uint8_t;
 
 namespace WebKit {
 enum class ContinueUnsafeLoad : bool;
-enum class WebTextReplacementDataState : uint8_t;
 class IconLoadingDelegate;
 class NavigationState;
 class ResourceLoadDelegate;
@@ -398,7 +397,7 @@ struct PerWebProcessState {
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 - (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
 
-- (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebKit::WebTextReplacementDataState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
+- (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebCore::UnifiedTextReplacement::ReplacementState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
 - (void)_addTextIndicatorStyleForID:(NSUUID *)uuid withData:(const WebKit::TextIndicatorStyleData&)styleData;
 - (void)_removeTextIndicatorStyleForID:(NSUUID *)uuid;
 

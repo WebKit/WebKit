@@ -445,10 +445,6 @@
 #import <WebCore/AcceleratedTimeline.h>
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-#include "UnifiedTextReplacementController.h"
-#endif
-
 #if ENABLE(PDF_HUD)
 #include "PDFPluginBase.h"
 #endif
@@ -632,7 +628,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
     , m_historyItemClient(WebHistoryItemClient::create())
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    , m_unifiedTextReplacementController(makeUniqueRef<UnifiedTextReplacementController>(*this))
     , m_textIndicatorStyleController(makeUniqueRef<TextIndicatorStyleController>(*this))
 #endif
 {
@@ -7056,7 +7051,7 @@ void WebPage::didChangeSelection(LocalFrame& frame)
     didChangeSelectionOrOverflowScrollPosition();
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    m_unifiedTextReplacementController->updateStateForSelectedReplacementIfNeeded();
+    corePage()->updateStateForSelectedReplacementIfNeeded();
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -9165,6 +9160,21 @@ void WebPage::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKit::Te
 void WebPage::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
 {
     send(Messages::WebPageProxy::RemoveTextIndicatorStyleForID(uuid));
+}
+
+void WebPage::cleanUpTextStylesForSessionID(const WTF::UUID& uuid)
+{
+    m_textIndicatorStyleController->cleanUpTextStylesForSessionID(uuid);
+}
+
+void WebPage::addSourceTextIndicatorStyle(const WTF::UUID& uuid, const CharacterRange& range)
+{
+    m_textIndicatorStyleController->addSourceTextIndicatorStyle(uuid, range);
+}
+
+void WebPage::addDestinationTextIndicatorStyle(const WTF::UUID& uuid, const CharacterRange& range)
+{
+    m_textIndicatorStyleController->addDestinationTextIndicatorStyle(uuid, range);
 }
 
 #endif

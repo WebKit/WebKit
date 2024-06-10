@@ -4432,7 +4432,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     if (action == @selector(_swapCharacters:))
-        return [self unifiedTextReplacementBehavior] != WebKit::WebUnifiedTextReplacementBehavior::None && [super canPerformAction:action withSender:sender];
+        return [self unifiedTextReplacementBehavior] != WebCore::UnifiedTextReplacement::ReplacementBehavior::None && [super canPerformAction:action withSender:sender];
 #endif
 
     if (action == @selector(paste:) || action == @selector(_pasteAsQuotation:) || action == @selector(_pasteAndMatchStyle:) || action == @selector(pasteAndMatchStyle:)) {
@@ -11776,7 +11776,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     [_textStyleManager removeTextIndicatorStyleForID:uuid];
 }
 
-- (WebKit::WebUnifiedTextReplacementBehavior)unifiedTextReplacementBehavior
+- (WebCore::UnifiedTextReplacement::ReplacementBehavior)unifiedTextReplacementBehavior
 {
     return _page->configuration().unifiedTextReplacementBehavior();
 }

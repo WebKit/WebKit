@@ -119,7 +119,12 @@ struct TextRecognitionResult;
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 struct TranslationContextMenuInfo;
 #endif
+
+namespace UnifiedTextReplacement {
+enum class ReplacementBehavior : uint8_t;
 }
+
+} // namespace WebCore
 
 @protocol WebViewImplDelegate
 
@@ -189,10 +194,6 @@ struct WebHitTestResultData;
 
 enum class ContinueUnsafeLoad : bool;
 enum class UndoOrRedo : bool;
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-enum class WebUnifiedTextReplacementBehavior : uint8_t;
-#endif
 
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
@@ -714,7 +715,7 @@ public:
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    WebUnifiedTextReplacementBehavior unifiedTextReplacementBehavior() const;
+    WebCore::UnifiedTextReplacement::ReplacementBehavior unifiedTextReplacementBehavior() const;
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)

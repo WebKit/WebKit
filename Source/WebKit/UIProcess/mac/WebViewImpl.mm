@@ -80,7 +80,6 @@
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
-#import "WebTextReplacementData.h"
 #import "_WKDragActionsInternal.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
@@ -6449,7 +6448,7 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-WebUnifiedTextReplacementBehavior WebViewImpl::unifiedTextReplacementBehavior() const
+WebCore::UnifiedTextReplacement::ReplacementBehavior WebViewImpl::unifiedTextReplacementBehavior() const
 {
     return m_page->configuration().unifiedTextReplacementBehavior();
 }
@@ -6464,7 +6463,7 @@ bool WebViewImpl::wantsCompleteUnifiedTextReplacementBehavior() const
 
 bool WebViewImpl::canHandleSwapCharacters() const
 {
-    return webViewCanHandleSwapCharacters() && unifiedTextReplacementBehavior() != WebUnifiedTextReplacementBehavior::None;
+    return webViewCanHandleSwapCharacters() && unifiedTextReplacementBehavior() != WebCore::UnifiedTextReplacement::ReplacementBehavior::None;
 }
 
 void WebViewImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootView)

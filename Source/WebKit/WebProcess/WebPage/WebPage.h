@@ -314,13 +314,24 @@ namespace TextExtraction {
 struct Item;
 }
 
+namespace UnifiedTextReplacement {
+enum class EditAction : uint8_t;
+enum class ReplacementState : uint8_t;
+
+struct Context;
+struct Replacement;
+struct Session;
+
+using ReplacementID = WTF::UUID;
+using SessionID = WTF::UUID;
+}
+
 } // namespace WebCore
 
 namespace WebKit {
 
 class DrawingArea;
 class FindController;
-class UnifiedTextReplacementController;
 class GPUProcessConnection;
 class GamepadData;
 class GeolocationPermissionRequestManager;
@@ -386,8 +397,6 @@ enum class NavigatingToAppBoundDomain : bool;
 enum class SyntheticEditingCommandType : uint8_t;
 enum class TextRecognitionUpdateResult : uint8_t;
 enum class TextIndicatorStyle : uint8_t;
-enum class WebTextReplacementDataEditAction : uint8_t;
-enum class WebTextReplacementDataState : uint8_t;
 
 struct BackForwardListItemState;
 struct DataDetectionResult;
@@ -414,7 +423,6 @@ struct WebAutocorrectionContext;
 struct WebFoundTextRange;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
-struct WebTextReplacementData;
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 class VisibleContentRectUpdateInfo;
@@ -861,12 +869,6 @@ public:
 #if PLATFORM(COCOA)
     void insertTextPlaceholder(const WebCore::IntSize&, CompletionHandler<void(const std::optional<WebCore::ElementContext>&)>&&);
     void removeTextPlaceholder(const WebCore::ElementContext&, CompletionHandler<void()>&&);
-#endif
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    TextIndicatorStyleController& textIndicatorStyleController() { return m_textIndicatorStyleController.get(); };
-
-    UnifiedTextReplacementController& unifiedTextReplacementController() { return m_unifiedTextReplacementController.get(); };
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -1749,14 +1751,20 @@ public:
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    void textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect);
+    void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::UnifiedTextReplacement::ReplacementID&, WebCore::IntRect);
 
-    void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID);
+    void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::SessionID&, WebCore::UnifiedTextReplacement::ReplacementState, const WebCore::UnifiedTextReplacement::ReplacementID&);
 
     void enableTextIndicatorStyleAfterElementWithID(const String&, const WTF::UUID&);
     void enableTextIndicatorStyleForElementWithID(const String&, const WTF::UUID&);
+
     void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyleData&, const WebCore::TextIndicatorData&);
-    void removeTextIndicatorStyleForID(const WTF::UUID&);
+    void removeTextIndicatorStyleForID(const WebCore::UnifiedTextReplacement::SessionID&);
+    void cleanUpTextStylesForSessionID(const WebCore::UnifiedTextReplacement::SessionID&);
+
+    void addSourceTextIndicatorStyle(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&);
+    void addDestinationTextIndicatorStyle(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&);
+
     void createTextIndicatorForRange(const WebCore::SimpleRange&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
     void createTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
 #endif
@@ -2254,19 +2262,19 @@ private:
     void frameWasFocusedInAnotherProcess(WebCore::FrameIdentifier);
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    void willBeginTextReplacementSession(const std::optional<WebUnifiedTextReplacementSessionData>&, CompletionHandler<void(const Vector<WebKit::WebUnifiedTextReplacementContextData>&)>&&);
+    void willBeginTextReplacementSession(const std::optional<WebCore::UnifiedTextReplacement::Session>&, CompletionHandler<void(const Vector<WebCore::UnifiedTextReplacement::Context>&)>&&);
 
-    void didBeginTextReplacementSession(const WebUnifiedTextReplacementSessionData&, const Vector<WebKit::WebUnifiedTextReplacementContextData>&);
+    void didBeginTextReplacementSession(const WebCore::UnifiedTextReplacement::Session&, const Vector<WebCore::UnifiedTextReplacement::Context>&);
 
-    void textReplacementSessionDidReceiveReplacements(const WebUnifiedTextReplacementSessionData&, const Vector<WebKit::WebTextReplacementData>&, const WebKit::WebUnifiedTextReplacementContextData&, bool finished);
+    void textReplacementSessionDidReceiveReplacements(const WebCore::UnifiedTextReplacement::Session&, const Vector<WebCore::UnifiedTextReplacement::Replacement>&, const WebCore::UnifiedTextReplacement::Context&, bool finished);
 
-    void textReplacementSessionDidUpdateStateForReplacement(const WebUnifiedTextReplacementSessionData&, WebKit::WebTextReplacementDataState, const WebKit::WebTextReplacementData&, const WebKit::WebUnifiedTextReplacementContextData&);
+    void textReplacementSessionDidUpdateStateForReplacement(const WebCore::UnifiedTextReplacement::Session&, WebCore::UnifiedTextReplacement::ReplacementState, const WebCore::UnifiedTextReplacement::Replacement&, const WebCore::UnifiedTextReplacement::Context&);
 
-    void didEndTextReplacementSession(const WebUnifiedTextReplacementSessionData&, bool accepted);
+    void didEndTextReplacementSession(const WebCore::UnifiedTextReplacement::Session&, bool accepted);
 
-    void textReplacementSessionDidReceiveTextWithReplacementRange(const WebUnifiedTextReplacementSessionData&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebKit::WebUnifiedTextReplacementContextData&, bool finished);
+    void textReplacementSessionDidReceiveTextWithReplacementRange(const WebCore::UnifiedTextReplacement::Session&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebCore::UnifiedTextReplacement::Context&, bool finished);
 
-    void textReplacementSessionDidReceiveEditAction(const WebUnifiedTextReplacementSessionData&, WebKit::WebTextReplacementDataEditAction);
+    void textReplacementSessionDidReceiveEditAction(const WebCore::UnifiedTextReplacement::Session&, WebCore::UnifiedTextReplacement::EditAction);
 
     void updateTextIndicatorStyleVisibilityForID(const WTF::UUID&, bool, CompletionHandler<void()>&&);
 #endif
@@ -2820,7 +2828,6 @@ private:
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    UniqueRef<UnifiedTextReplacementController> m_unifiedTextReplacementController;
     UniqueRef<TextIndicatorStyleController> m_textIndicatorStyleController;
 #endif
 

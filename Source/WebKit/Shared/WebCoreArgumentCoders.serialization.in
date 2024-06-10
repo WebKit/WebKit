@@ -6402,6 +6402,72 @@ header: <WebCore/TextExtractionTypes.h>
     Vector<WebCore::TextExtraction::Item> children;
 };
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+header: <WebCore/UnifiedTextReplacementTypes.h>
+[CustomHeader] enum class WebCore::UnifiedTextReplacement::ReplacementBehavior : uint8_t {
+    None,
+    Default,
+    Limited,
+    Complete
+};
+
+header: <WebCore/UnifiedTextReplacementTypes.h>
+[CustomHeader] enum class WebCore::UnifiedTextReplacement::EditAction : uint8_t {
+    Undo,
+    Redo,
+    UndoAll
+};
+
+header: <WebCore/UnifiedTextReplacementTypes.h>
+[CustomHeader] enum class WebCore::UnifiedTextReplacement::SessionReplacementType : uint8_t {
+    PlainText,
+    RichText
+};
+
+header: <WebCore/UnifiedTextReplacementTypes.h>
+[CustomHeader] enum class WebCore::UnifiedTextReplacement::SessionCorrectionType : uint8_t {
+    None,
+    Grammar,
+    Spelling
+};
+
+using WebCore::UnifiedTextReplacement::SessionID = WTF::UUID;
+
+header: <WebCore/UnifiedTextReplacementTypes.h>
+[CustomHeader] struct WebCore::UnifiedTextReplacement::Session {
+    WebCore::UnifiedTextReplacement::SessionID identifier;
+    WebCore::UnifiedTextReplacement::SessionReplacementType replacementType;
+    WebCore::UnifiedTextReplacement::SessionCorrectionType correctionType;
+};
+
+using WebCore::UnifiedTextReplacement::ContextID = WTF::UUID;
+
+header: <WebCore/UnifiedTextReplacementTypes.h>
+[CustomHeader] struct WebCore::UnifiedTextReplacement::Context {
+    WebCore::UnifiedTextReplacement::ContextID identifier;
+    WebCore::AttributedString attributedText;
+    WebCore::CharacterRange range;
+};
+
+header: <WebCore/UnifiedTextReplacementTypes.h>
+[CustomHeader] enum class WebCore::UnifiedTextReplacement::ReplacementState : uint8_t {
+    Pending,
+    Active,
+    Reverted,
+    Invalid
+};
+
+using WebCore::UnifiedTextReplacement::ReplacementID = WTF::UUID;
+
+header: <WebCore/UnifiedTextReplacementTypes.h>
+[CustomHeader] struct WebCore::UnifiedTextReplacement::Replacement {
+    WebCore::UnifiedTextReplacement::ReplacementID identifier;
+    WebCore::CharacterRange originalRange;
+    String replacement;
+    WebCore::UnifiedTextReplacement::ReplacementState state;
+};
+#endif
+
 header: <WebCore/WebGPUTextureFormat.h>
 enum class WebCore::WebGPU::TextureFormat : uint8_t {
     R8unorm,

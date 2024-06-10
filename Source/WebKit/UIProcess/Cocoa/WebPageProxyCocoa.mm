@@ -1159,37 +1159,37 @@ void WebPageProxy::setUnifiedTextReplacementActive(bool active)
     protectedPageClient()->unifiedTextReplacementActiveDidChange();
 }
 
-void WebPageProxy::willBeginTextReplacementSession(const std::optional<WebUnifiedTextReplacementSessionData>& session, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
+void WebPageProxy::willBeginTextReplacementSession(const std::optional<WebCore::UnifiedTextReplacement::Session>& session, CompletionHandler<void(const Vector<WebCore::UnifiedTextReplacement::Context>&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPage::WillBeginTextReplacementSession(session), WTFMove(completionHandler));
 }
 
-void WebPageProxy::didBeginTextReplacementSession(const WebUnifiedTextReplacementSessionData& session, const Vector<WebKit::WebUnifiedTextReplacementContextData>& contexts)
+void WebPageProxy::didBeginTextReplacementSession(const WebCore::UnifiedTextReplacement::Session& session, const Vector<WebCore::UnifiedTextReplacement::Context>& contexts)
 {
     send(Messages::WebPage::DidBeginTextReplacementSession(session, contexts));
 }
 
-void WebPageProxy::textReplacementSessionDidReceiveReplacements(const WebUnifiedTextReplacementSessionData& session, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
+void WebPageProxy::textReplacementSessionDidReceiveReplacements(const WebCore::UnifiedTextReplacement::Session& session, const Vector<WebCore::UnifiedTextReplacement::Replacement>& replacements, const WebCore::UnifiedTextReplacement::Context& context, bool finished)
 {
     send(Messages::WebPage::TextReplacementSessionDidReceiveReplacements(session, replacements, context, finished));
 }
 
-void WebPageProxy::textReplacementSessionDidUpdateStateForReplacement(const WebUnifiedTextReplacementSessionData& session, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
+void WebPageProxy::textReplacementSessionDidUpdateStateForReplacement(const WebCore::UnifiedTextReplacement::Session& session, WebCore::UnifiedTextReplacement::Replacement::State state, const WebCore::UnifiedTextReplacement::Replacement& replacement, const WebCore::UnifiedTextReplacement::Context& context)
 {
     send(Messages::WebPage::TextReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context));
 }
 
-void WebPageProxy::didEndTextReplacementSession(const WebUnifiedTextReplacementSessionData& session, bool accepted)
+void WebPageProxy::didEndTextReplacementSession(const WebCore::UnifiedTextReplacement::Session& session, bool accepted)
 {
     send(Messages::WebPage::DidEndTextReplacementSession(session, accepted));
 }
 
-void WebPageProxy::textReplacementSessionDidReceiveTextWithReplacementRange(const WebUnifiedTextReplacementSessionData& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context, bool finished)
+void WebPageProxy::textReplacementSessionDidReceiveTextWithReplacementRange(const WebCore::UnifiedTextReplacement::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::UnifiedTextReplacement::Context& context, bool finished)
 {
     send(Messages::WebPage::TextReplacementSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished));
 }
 
-void WebPageProxy::textReplacementSessionDidReceiveEditAction(const WebUnifiedTextReplacementSessionData& session, WebTextReplacementData::EditAction action)
+void WebPageProxy::textReplacementSessionDidReceiveEditAction(const WebCore::UnifiedTextReplacement::Session& session, WebCore::UnifiedTextReplacement::EditAction action)
 {
     send(Messages::WebPage::TextReplacementSessionDidReceiveEditAction(session, action));
 }
@@ -1246,18 +1246,18 @@ void WebPageProxy::updateTextIndicatorStyleVisibilityForID(const WTF::UUID& uuid
     sendWithAsyncReply(Messages::WebPage::UpdateTextIndicatorStyleVisibilityForID(uuid, visible), WTFMove(completionHandler));
 }
 
-void WebPageProxy::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+void WebPageProxy::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::Session::ID& sessionID, const WebCore::UnifiedTextReplacement::Replacement::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
-    MESSAGE_CHECK(sessionUUID.isValid());
+    MESSAGE_CHECK(sessionID.isValid());
 
-    protectedPageClient()->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(sessionUUID, replacementUUID, selectionBoundsInRootView);
+    protectedPageClient()->textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(sessionID, replacementID, selectionBoundsInRootView);
 }
 
-void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementData::State state, const WTF::UUID& replacementUUID)
+void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::Session::ID& sessionID, WebCore::UnifiedTextReplacement::Replacement::State state, const WebCore::UnifiedTextReplacement::Replacement::ID& replacementID)
 {
-    MESSAGE_CHECK(sessionUUID.isValid());
+    MESSAGE_CHECK(sessionID.isValid());
 
-    protectedPageClient()->textReplacementSessionUpdateStateForReplacementWithUUID(sessionUUID, state, replacementUUID);
+    protectedPageClient()->textReplacementSessionUpdateStateForReplacementWithID(sessionID, state, replacementID);
 }
 
 void WebPageProxy::removeTextIndicatorStyleForID(const WTF::UUID& uuid)

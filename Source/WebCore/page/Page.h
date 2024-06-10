@@ -174,12 +174,30 @@ class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 class WindowEventLoop;
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+class UnifiedTextReplacementController;
+
+namespace UnifiedTextReplacement {
+enum class EditAction : uint8_t;
+enum class ReplacementState : uint8_t;
+
+struct Context;
+struct Replacement;
+struct Session;
+
+using ReplacementID = WTF::UUID;
+using SessionID = WTF::UUID;
+}
+#endif
+
 #if ENABLE(WEBXR)
 class WebXRSession;
 #endif
 
 struct AXTreeData;
 struct ApplePayAMSUIRequest;
+struct AttributedString;
+struct CharacterRange;
 struct SimpleRange;
 struct TextRecognitionResult;
 
@@ -1129,6 +1147,26 @@ public:
     void gamepadsRecentlyAccessed();
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    WEBCORE_EXPORT void willBeginTextReplacementSession(const std::optional<UnifiedTextReplacement::Session>&, CompletionHandler<void(const Vector<UnifiedTextReplacement::Context>&)>&&);
+
+    WEBCORE_EXPORT void didBeginTextReplacementSession(const UnifiedTextReplacement::Session&, const Vector<UnifiedTextReplacement::Context>&);
+
+    WEBCORE_EXPORT void textReplacementSessionDidReceiveReplacements(const UnifiedTextReplacement::Session&, const Vector<UnifiedTextReplacement::Replacement>&, const UnifiedTextReplacement::Context&, bool finished);
+
+    WEBCORE_EXPORT void textReplacementSessionDidUpdateStateForReplacement(const UnifiedTextReplacement::Session&, UnifiedTextReplacement::ReplacementState, const UnifiedTextReplacement::Replacement&, const UnifiedTextReplacement::Context&);
+
+    WEBCORE_EXPORT void didEndTextReplacementSession(const UnifiedTextReplacement::Session&, bool accepted);
+
+    WEBCORE_EXPORT void textReplacementSessionDidReceiveTextWithReplacementRange(const UnifiedTextReplacement::Session&, const AttributedString&, const CharacterRange&, const UnifiedTextReplacement::Context&, bool finished);
+
+    WEBCORE_EXPORT void textReplacementSessionDidReceiveEditAction(const UnifiedTextReplacement::Session&, UnifiedTextReplacement::EditAction);
+
+    WEBCORE_EXPORT void updateStateForSelectedReplacementIfNeeded();
+
+    const UnifiedTextReplacementController& unifiedTextReplacementController() const { return m_unifiedTextReplacementController.get(); }
+#endif
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1530,6 +1568,10 @@ private:
 
 #if ENABLE(GAMEPAD)
     MonotonicTime m_lastAccessNotificationTime;
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    UniqueRef<UnifiedTextReplacementController> m_unifiedTextReplacementController;
 #endif
 }; // class Page
 

@@ -42,6 +42,10 @@ struct TextIndicatorData;
 
 enum class TextIndicatorOption : uint16_t;
 
+namespace UnifiedTextReplacement {
+using SessionID = WTF::UUID;
+}
+
 }
 
 namespace WebKit {
@@ -65,19 +69,24 @@ class TextIndicatorStyleController final {
 public:
     explicit TextIndicatorStyleController(WebPage&);
 
-    std::optional<WebCore::SimpleRange> contextRangeForRangeWithIdentifier(const WTF::UUID&) const;
-    std::optional<WebCore::SimpleRange> contextRangeForTextIndicatorStyle(const WTF::UUID&) const;
     void cleanUpTextStylesForSessionID(const WTF::UUID& sessionUUID);
     void removeTransparentMarkersForUUID(const WTF::UUID&);
-    void addSourceTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& currentReplacedRange, const WebCore::SimpleRange& resolvedRange);
-    void addDestinationTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& characterRangeAfterReplace, const WebCore::SimpleRange& resolvedRange);
+
+    void addSourceTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&);
+    void addDestinationTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&);
+
     void updateTextIndicatorStyleVisibilityForID(const WTF::UUID&, bool visible, CompletionHandler<void()>&&);
+
     void createTextIndicatorForRange(const WebCore::SimpleRange&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
     void createTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
+
     void enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID&);
     void enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID&);
 
 private:
+    std::optional<WebCore::SimpleRange> contextRangeForTextIndicatorStyle(const WTF::UUID&) const;
+    std::optional<WebCore::SimpleRange> contextRangeForSessionWithID(const WebCore::UnifiedTextReplacement::SessionID&) const;
+
     RefPtr<WebCore::Document> document() const;
     WeakPtr<WebPage> m_webPage;
 

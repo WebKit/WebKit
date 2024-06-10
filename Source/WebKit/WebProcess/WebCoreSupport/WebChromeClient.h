@@ -506,6 +506,20 @@ private:
     void gamepadsRecentlyAccessed() final;
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::UnifiedTextReplacement::ReplacementID&, WebCore::IntRect selectionBoundsInRootView) final;
+
+    void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::SessionID&, WebCore::UnifiedTextReplacement::ReplacementState, const WebCore::UnifiedTextReplacement::ReplacementID&) final;
+
+    void removeTextIndicatorStyleForID(const WebCore::UnifiedTextReplacement::SessionID&) final;
+
+    void cleanUpTextStylesForSessionID(const WebCore::UnifiedTextReplacement::SessionID&) final;
+
+    void addSourceTextIndicatorStyle(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&) final;
+
+    void addDestinationTextIndicatorStyle(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&) final;
+#endif
+
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 
