@@ -1474,6 +1474,13 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     if (m_inStopAllLoaders || m_inClearProvisionalLoadForPolicyCheck)
         return;
 
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    if ((m_policyDocumentLoader && m_policyDocumentLoader->isRequestFromClientOrUserInput()) || (m_provisionalDocumentLoader && m_provisionalDocumentLoader->isRequestFromClientOrUserInput())) {
+        FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadURL: newURL: %s is cancelled because of ongoing 'API URL change request'", frameLoadRequest.resourceRequest().url().string().utf8().data());
+        return;
+    }
+#endif
+
     Ref frame = m_frame.get();
 
     // Anchor target is ignored when the download attribute is set since it will download the hyperlink rather than follow it.
