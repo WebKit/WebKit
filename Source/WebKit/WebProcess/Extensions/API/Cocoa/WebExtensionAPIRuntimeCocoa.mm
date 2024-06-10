@@ -151,7 +151,7 @@ bool WebExtensionAPIRuntime::parseConnectOptions(NSDictionary *options, std::opt
     return true;
 }
 
-bool WebExtensionAPIRuntime::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
+bool WebExtensionAPIRuntime::isPropertyAllowed(const ASCIILiteral& name, WebPage*)
 {
     if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), name)))
         return false;

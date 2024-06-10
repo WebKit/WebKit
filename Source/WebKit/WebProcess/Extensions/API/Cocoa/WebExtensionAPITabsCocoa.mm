@@ -559,7 +559,7 @@ bool isValid(std::optional<WebExtensionTabIdentifier> identifier, NSString **out
     return true;
 }
 
-bool WebExtensionAPITabs::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
+bool WebExtensionAPITabs::isPropertyAllowed(const ASCIILiteral& name, WebPage*)
 {
     if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), name)))
         return false;

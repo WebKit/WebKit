@@ -86,7 +86,7 @@ bool WebExtensionAPIExtension::parseViewFilters(NSDictionary *filter, std::optio
     return true;
 }
 
-bool WebExtensionAPIExtension::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
+bool WebExtensionAPIExtension::isPropertyAllowed(const ASCIILiteral& name, WebPage*)
 {
     if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), name)))
         return false;

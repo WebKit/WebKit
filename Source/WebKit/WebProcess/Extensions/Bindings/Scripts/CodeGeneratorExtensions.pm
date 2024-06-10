@@ -480,10 +480,8 @@ EOF
 
 {
     RefPtr impl = to${implementationClassName}(context, thisObject);
-    if (UNLIKELY(${functionEarlyReturnCondition})) {
-        RELEASE_LOG_ERROR(Extensions, "Page could not be found for JSContextRef");
+    if (UNLIKELY(${functionEarlyReturnCondition}))
         return ${defaultEarlyReturnValue};
-    }
 
     RELEASE_LOG_DEBUG(Extensions, "Called function ${call} (%{public}lu %{public}s) in %{public}s world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8().data());
 EOF
@@ -520,22 +518,6 @@ EOF
             my $hasOptionalAsLastArgument = 1 if $lastParameter && $lastParameter->extendedAttributes->{"Optional"};
             my $hasSimpleOptionalArgumentHandling = !$optionalArgumentCount || ($hasOptionalAsLastArgument && ($argumentCount <= 2 || $requiredArgumentCount >= $argumentCount - 1));
             my $argumentIndexConditon = undef;
-
-            if ($needsPage) {
-                push(@contents, "    RefPtr page = toWebPage(context);\n");
-                push(@contents, "    if (UNLIKELY(!page)) {\n");
-                push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Page could not be found for JSContextRef\");\n");
-                push(@contents, "        return ${defaultEarlyReturnValue};\n");
-                push(@contents, "    }\n\n");
-            }
-
-            if ($needsFrame) {
-                push(@contents, "    RefPtr frame = toWebFrame(context);\n");
-                push(@contents, "    if (UNLIKELY(!frame)) {\n");
-                push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Frame could not be found for JSContextRef\");\n");
-                push(@contents, "        return ${defaultEarlyReturnValue};\n");
-                push(@contents, "    }\n\n");
-            }
 
             if (!$hasSimpleOptionalArgumentHandling) {
                 push(@contents, "    ssize_t argumentIndex = -1;\n") unless $processArgumentsLeftToRight;
@@ -711,7 +693,8 @@ EOF
 
             push(@contents, "\n");
 
-            if ($callbackHandlerArgument && $returnsPromiseIfNoCallback) {
+            my $returnsPromise = $callbackHandlerArgument && $returnsPromiseIfNoCallback;
+            if ($returnsPromise) {
                 die "Returning a Promise is only allowed for void functions" unless $isVoidReturn;
 
                 $defaultReturnValue = "promiseResult ?: $defaultReturnValue";
@@ -733,6 +716,26 @@ EOF
         ${callbackHandlerArgument} = toJSErrorCallbackHandler(context, impl->runtime());
 
 EOF
+            }
+
+            if ($needsPage) {
+                push(@contents, "    RefPtr page = toWebPage(context);\n");
+                push(@contents, "    if (UNLIKELY(!page)) {\n");
+                push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Page could not be found for JSContextRef\");\n");
+                push(@contents, "        if (promiseResult)\n") if $returnsPromise;
+                push(@contents, "            promiseResult = toJSRejectedPromise(context, @\"${call}\", nil, @\"an unknown error occurred\");\n") if $returnsPromise;
+                push(@contents, "        return ${defaultReturnValue};\n");
+                push(@contents, "    }\n\n");
+            }
+
+            if ($needsFrame) {
+                push(@contents, "    RefPtr frame = toWebFrame(context);\n");
+                push(@contents, "    if (UNLIKELY(!frame)) {\n");
+                push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Frame could not be found for JSContextRef\");\n");
+                push(@contents, "        if (promiseResult)\n") if $returnsPromise;
+                push(@contents, "            promiseResult = toJSRejectedPromise(context, @\"${call}\", nil, @\"an unknown error occurred\");\n") if $returnsPromise;
+                push(@contents, "        return ${defaultReturnValue};\n");
+                push(@contents, "    }\n\n");
             }
 
             if ($needsExceptionString && !$isVoidReturn) {
@@ -1020,12 +1023,10 @@ sub _implementationClassName
     return $idlType->name;
 }
 
-sub _callString
+sub _scriptClassName
 {
-    my ($classIDLType, $functionOrAttribute, $isFunction) = @_;
-
+    my ($classIDLType) = @_;
     my $className = CodeGenerator::WK_lcfirst(undef, _publicClassName($classIDLType));
-    my $name = $functionOrAttribute->name;
 
     # Some cases make more sense to not include the parent name,
     # those are represented with empty strings, and it excludes
@@ -1039,6 +1040,7 @@ sub _callString
         localization => "i18n",
         namespace => "browser",
         webNavigationEvent => "",
+        webPageNamespace => "browser",
         webRequestEvent => "",
         windowEvent => "",
     );
@@ -1047,6 +1049,16 @@ sub _callString
 
     # Transform all other devTools classes from devToolFoo to devtools.foo
     $className =~ s/^(devTools)(\w)/\L$1.\L$2/g;
+
+    return $className;
+}
+
+sub _callString
+{
+    my ($classIDLType, $functionOrAttribute, $isFunction) = @_;
+
+    my $className = _scriptClassName($classIDLType);
+    my $name = $functionOrAttribute->name;
 
     my $call = "${className}.${name}";
     $call = $name unless $className;
@@ -1654,11 +1666,6 @@ void ${className}::getPropertyNames(JSContextRef context, JSObjectRef thisObject
         return;
 
     RefPtr page = toWebPage(context);
-    if (UNLIKELY(!page)) {
-        RELEASE_LOG_ERROR(Extensions, "Page could not be found for JSContextRef");
-        return;
-    }
-
 EOF
     my $generateCondition = sub {
         my ($interface, $middleCondition) = @_;
@@ -1666,7 +1673,7 @@ EOF
         my @conditions = ();
         push(@conditions, "isForMainWorld") if $interface->extendedAttributes->{"MainWorldOnly"};
         push(@conditions, $middleCondition) if $middleCondition;
-        push(@conditions, "impl->isPropertyAllowed(\"${name}\"_s, *page)") if $interface->extendedAttributes->{"Dynamic"};
+        push(@conditions, "impl->isPropertyAllowed(\"${name}\"_s, page.get())") if $interface->extendedAttributes->{"Dynamic"};
         return join(" && ", @conditions);
     };
 
@@ -1709,11 +1716,6 @@ bool ${className}::hasProperty(JSContextRef context, JSObjectRef thisObject, JSS
         return false;
 
     RefPtr page = toWebPage(context);
-    if (UNLIKELY(!page)) {
-        RELEASE_LOG_ERROR(Extensions, "Page could not be found for JSContextRef");
-        return false;
-    }
-
 EOF
 
     push(@contents, "    bool isForMainWorld = impl->isForMainWorld();\n\n") if $hasMainWorldOnlyProperties;
@@ -1749,11 +1751,6 @@ JSValueRef ${className}::getProperty(JSContextRef context, JSObjectRef thisObjec
         return JSValueMakeUndefined(context);
 
     RefPtr page = toWebPage(context);
-    if (UNLIKELY(!page)) {
-        RELEASE_LOG_ERROR(Extensions, "Page could not be found for JSContextRef");
-        return JSValueMakeUndefined(context);
-    }
-
 EOF
 
     push(@contents, "    bool isForMainWorld = impl->isForMainWorld();\n") if $hasMainWorldOnlyProperties;

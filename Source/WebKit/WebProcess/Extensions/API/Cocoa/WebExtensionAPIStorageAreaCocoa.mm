@@ -49,7 +49,7 @@ static NSString * const accessLevelTrustedAndUntrustedContexts = @"TRUSTED_AND_U
 
 namespace WebKit {
 
-bool WebExtensionAPIStorageArea::isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&)
+bool WebExtensionAPIStorageArea::isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*)
 {
     if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), propertyName)))
         return false;
