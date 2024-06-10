@@ -70,6 +70,13 @@ struct pas_pgm_storage {
     uint16_t mem_to_waste;
     uint16_t page_size;
 
+    /*
+     * Alignment direction within the allocated page, if right_align true then
+     * aligned up to "upper_guard page" so could catch overflow
+     * else left_aligned and will start after "lower_guard page" to catch underflow
+     */
+    bool right_align;
+
     pas_large_heap* large_heap;
 };
 

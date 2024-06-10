@@ -124,8 +124,13 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     /*
      * the key is the location where the user's starting memory address is located.
      * allocations are right aligned, so the end backs up to the upper guard page.
+     *
+     * Take random decision to right align or left align in order to be able to catch
+     * overflow and underflow conditions with equal probability.
      */
-    uintptr_t key = result.begin + page_size + mem_to_waste;
+    uint8_t right_align = pas_get_fast_random(2);
+
+    uintptr_t key = (right_align ? (result.begin + page_size + mem_to_waste) : (result.begin + page_size));
     PAS_PROFILE(PGM_ALLOCATE, key);
 
     /* create struct to hold hash map value */
@@ -138,6 +143,7 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     value->allocation_size_requested = size;
     value->page_size                 = page_size;
     value->large_heap                = large_heap;
+    value->right_align               = right_align;
 
     pas_ptr_hash_map_add_result add_result = pas_ptr_hash_map_add(&pas_pgm_hash_map, (void*)key, NULL, &pas_large_utility_free_heap_allocation_config);
     PAS_ASSERT(add_result.is_new_entry);
