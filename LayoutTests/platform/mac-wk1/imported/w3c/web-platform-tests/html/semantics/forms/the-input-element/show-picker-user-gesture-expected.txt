@@ -1,4 +1,5 @@
 OPEN FILE PANEL
+OPEN FILE PANEL
 
 PASS input[type=button] showPicker() requires a user gesture
 PASS input[type=checkbox] showPicker() requires a user gesture

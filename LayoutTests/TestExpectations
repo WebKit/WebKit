@@ -6243,7 +6243,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/delay-load-event-until-move-to-empty-source.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submit-file.sub.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-cross-origin-iframe.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-cross-origin-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker-cross-origin-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/proxy-modifier-click-to-associated-element.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/028.html [ Skip ]

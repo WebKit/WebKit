@@ -4010,6 +4010,9 @@
     "imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/click-user-gesture.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-pointer.html": [
         "slow"
     ],
@@ -4019,13 +4022,13 @@
     "imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-multiple.tentative.html": [
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-multiple.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-size.tentative.html": [
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-size.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.tentative.html": [
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-button-event-dispatch.tentative.html": [
