@@ -3,8 +3,8 @@ X
 FAIL Element can be anchor positioned assert_equals: expected "125px" but got "0px"
 FAIL Element can use <length> fallback if present assert_equals: expected "17px" but got "0px"
 PASS Invalid anchor function, left
-PASS Invalid anchor function, right
-PASS Invalid anchor function, bottom
+FAIL Invalid anchor function, right assert_equals: left expected "0px" but got "188.4375px"
+FAIL Invalid anchor function, bottom assert_equals: top expected "0px" but got "182px"
 PASS Invalid anchor function, top
 PASS Invalid anchor function, width
 PASS Invalid anchor function, height

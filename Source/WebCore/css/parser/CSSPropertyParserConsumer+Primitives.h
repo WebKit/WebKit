@@ -35,6 +35,7 @@ class CSSParserTokenRange;
 
 namespace CSSPropertyParserHelpers {
 
+enum class AnchorPolicy : bool { Forbid, Allow };
 enum class NegativePercentagePolicy : bool { Forbid, Allow };
 enum class UnitlessQuirk : bool { Allow, Forbid };
 enum class UnitlessZeroQuirk : bool { Allow, Forbid };
@@ -42,6 +43,7 @@ enum class UnitlessZeroQuirk : bool { Allow, Forbid };
 struct CSSPropertyParserOptions {
     CSSParserMode parserMode                    { HTMLStandardMode };
     ValueRange valueRange                       { ValueRange::All };
+    AnchorPolicy anchorPolicy                   { AnchorPolicy::Forbid };
     NegativePercentagePolicy negativePercentage { NegativePercentagePolicy::Forbid };
     UnitlessQuirk unitless                      { UnitlessQuirk::Forbid };
     UnitlessZeroQuirk unitlessZero              { UnitlessZeroQuirk::Forbid };

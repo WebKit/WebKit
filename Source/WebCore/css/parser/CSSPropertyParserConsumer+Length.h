@@ -42,7 +42,7 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange&, CSSParserMode, Val
 
 // MARK: - Length or Percent
 std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Allow, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
+RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Allow, NegativePercentagePolicy = NegativePercentagePolicy::Forbid, AnchorPolicy = AnchorPolicy::Forbid);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

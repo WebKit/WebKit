@@ -21,6 +21,7 @@
 #include "config.h"
 #include "CSSPrimitiveValue.h"
 
+#include "CSSAnchorValue.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSHelper.h"
@@ -54,6 +55,7 @@ namespace WebCore {
 static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
 {
     switch (unitType) {
+    case CSSUnitType::CSS_ANCHOR:
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
@@ -155,6 +157,7 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_FONT_FAMILY:
         return true;
+    case CSSUnitType::CSS_ANCHOR:
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
@@ -368,6 +371,13 @@ CSSPrimitiveValue::CSSPrimitiveValue(CSSUnresolvedColor unresolvedColor)
     m_value.unresolvedColor = new CSSUnresolvedColor(WTFMove(unresolvedColor));
 }
 
+CSSPrimitiveValue::CSSPrimitiveValue(Ref<CSSAnchorValue> value)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_ANCHOR);
+    m_value.anchor = &value.leakRef();
+}
+
 CSSPrimitiveValue::~CSSPrimitiveValue()
 {
     auto type = primitiveUnitType();
@@ -379,6 +389,9 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
     case CSSUnitType::CSS_FONT_FAMILY:
         if (m_value.string)
             m_value.string->deref();
+        break;
+    case CSSUnitType::CSS_ANCHOR:
+        m_value.anchor->deref();
         break;
     case CSSUnitType::CSS_CALC:
         m_value.calc->deref();
@@ -588,6 +601,11 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<CSSCalcValue> value)
 }
 
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(CSSUnresolvedColor value)
+{
+    return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<CSSAnchorValue> value)
 {
     return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
 }
@@ -1325,6 +1343,7 @@ ASCIILiteral CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
     case CSSUnitType::CSS_VW: return "vw"_s;
     case CSSUnitType::CSS_X: return "x"_s;
 
+    case CSSUnitType::CSS_ANCHOR:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
@@ -1419,6 +1438,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
     case CSSUnitType::CSS_X:
         return formatNumberValue(unitTypeString(type));
 
+    case CSSUnitType::CSS_ANCHOR:
+        return m_value.anchor->customCSSText();
     case CSSUnitType::CSS_ATTR:
         return makeString("attr("_s, m_value.string, ')');
     case CSSUnitType::CSS_CALC:
@@ -1571,6 +1592,8 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
         return m_value.calc->equals(*other.m_value.calc);
     case CSSUnitType::CSS_UNRESOLVED_COLOR:
         return m_value.unresolvedColor->equals(*other.m_value.unresolvedColor);
+    case CSSUnitType::CSS_ANCHOR:
+        return m_value.anchor->equals(*other.m_value.anchor);
     case CSSUnitType::CSS_IDENT:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
@@ -1679,6 +1702,9 @@ bool CSSPrimitiveValue::addDerivedHash(Hasher& hasher) const
     case CSSUnitType::CSS_UNRESOLVED_COLOR:
         add(hasher, m_value.unresolvedColor);
         break;
+    case CSSUnitType::CSS_ANCHOR:
+        add(hasher, m_value.anchor);
+        break;
     case CSSUnitType::CSS_IDENT:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
@@ -1725,6 +1751,9 @@ void CSSPrimitiveValue::collectComputedStyleDependencies(ComputedStyleDependenci
         break;
     case CSSUnitType::CSS_CALC:
         m_value.calc->collectComputedStyleDependencies(dependencies);
+        break;
+    case CSSUnitType::CSS_ANCHOR:
+        m_value.anchor->collectComputedStyleDependencies(dependencies);
         break;
     case CSSUnitType::CSS_VW:
     case CSSUnitType::CSS_VH:

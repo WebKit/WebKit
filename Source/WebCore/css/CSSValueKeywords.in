@@ -1760,3 +1760,6 @@ allow-discrete
 // block
 // inline
 -internal-textarea-auto
+
+// anchor()
+anchor

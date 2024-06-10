@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "CSSAnchorValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSUnits.h"
 #include "CSSValue.h"
@@ -96,6 +97,7 @@ public:
     bool isResolution() const { return unitCategory(primitiveType()) == CSSUnitCategory::Resolution; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
+    bool isAnchor() const { return primitiveType() == CSSUnitType::CSS_ANCHOR; }
 
     static Ref<CSSPrimitiveValue> create(double);
     static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
@@ -103,6 +105,7 @@ public:
     static Ref<CSSPrimitiveValue> create(const Length&);
     static Ref<CSSPrimitiveValue> create(const Length&, const RenderStyle&);
     static Ref<CSSPrimitiveValue> create(Ref<CSSCalcValue>);
+    static Ref<CSSPrimitiveValue> create(Ref<CSSAnchorValue>);
 
     static inline Ref<CSSPrimitiveValue> create(CSSValueID);
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
@@ -210,6 +213,7 @@ private:
     CSSPrimitiveValue(double, CSSUnitType);
     explicit CSSPrimitiveValue(Ref<CSSCalcValue>);
     explicit CSSPrimitiveValue(CSSUnresolvedColor);
+    explicit CSSPrimitiveValue(Ref<CSSAnchorValue>);
 
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
     CSSPrimitiveValue(StaticCSSValueTag, Color);
@@ -242,6 +246,7 @@ private:
         uint64_t colorAsInteger;
         const CSSUnresolvedColor* unresolvedColor;
         const CSSCalcValue* calc;
+        const CSSAnchorValue* anchor;
     } m_value;
 };
 

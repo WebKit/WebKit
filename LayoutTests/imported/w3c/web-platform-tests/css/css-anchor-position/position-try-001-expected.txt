@@ -4,7 +4,7 @@ FAIL .target 1 assert_equals:
 offsetLeft expected 150 but got 5
 FAIL .target 2 assert_equals:
 <div class="target" data-offset-x="5" data-offset-y="25" data-expected-width="40" data-expected-height="15"></div>
-offsetTop expected 25 but got 55
+offsetTop expected 25 but got 5
 FAIL .target 3 assert_equals:
 <div class="target" data-offset-x="50" data-offset-y="35" data-expected-width="40" data-expected-height="15"></div>
 offsetLeft expected 50 but got 5

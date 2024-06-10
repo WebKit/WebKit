@@ -2934,7 +2934,7 @@
                     "resolver": "bottom"
                 },
                 "parser-function": "consumeSide",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
@@ -3716,7 +3716,10 @@
                     "name": "inset",
                     "resolver": "block-end"
                 },
-                "parser-grammar": "<inset-logical-start-end>"
+                "parser-function": "consumeInsetLogicalStartEnd",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3730,7 +3733,10 @@
                     "name": "inset",
                     "resolver": "block-start"
                 },
-                "parser-grammar": "<inset-logical-start-end>"
+                "parser-function": "consumeInsetLogicalStartEnd",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3756,7 +3762,10 @@
                     "name": "inset",
                     "resolver": "inline-end"
                 },
-                "parser-grammar": "<inset-logical-start-end>"
+                "parser-function": "consumeInsetLogicalStartEnd",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3770,7 +3779,10 @@
                     "name": "inset",
                     "resolver": "inline-start"
                 },
-                "parser-grammar": "<inset-logical-start-end>"
+                "parser-function": "consumeInsetLogicalStartEnd",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3801,7 +3813,7 @@
                     "resolver": "left"
                 },
                 "parser-function": "consumeSide",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
@@ -5462,7 +5474,7 @@
                     "resolver": "right"
                 },
                 "parser-function": "consumeSide",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
@@ -6018,7 +6030,7 @@
                     "resolver": "top"
                 },
                 "parser-function": "consumeSide",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
@@ -9298,7 +9310,7 @@
             },
             "specification": {
                 "category": "css-anchor-position",
-                "url": "https://drafts.csswg.org/css-anchor-position-1/#name"
+                "url": "https://drafts.csswg.org/css-anchor-position-1/#position-anchor"
             }
         },
         "-webkit-tap-highlight-color": {
@@ -10383,13 +10395,6 @@
             
             }
         },
-        "<inset-logical-start-end>": {
-            "grammar": "auto | <length-percentage>",
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#inset-properties"
-            }
-        },
         "<margin-logical-start-end>": {
             "grammar": "auto | <length-percentage>",
             "specification": {
@@ -11171,6 +11176,14 @@
             "specification": {
                 "category": "scroll-animations",
                 "url": "https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset"
+            }
+        },
+        "<anchor-side>": {
+            "grammar": "inside | outside | top | left | right | bottom | start | end | self-start | self-end | <percentage> | center",
+            "exported": true,
+            "specification": {
+                "category": "css-anchor-position",
+                "url": "https://drafts.csswg.org/css-anchor-position-1/#typedef-anchor-side"
             }
         }
     }

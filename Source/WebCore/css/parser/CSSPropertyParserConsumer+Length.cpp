@@ -26,6 +26,7 @@
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
 
+#include "CSSAnchorValue.h"
 #include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcSymbolsAllowed.h"
@@ -34,6 +35,7 @@
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+PercentDefinitions.h"
 #include "CSSPropertyParserConsumer+RawResolver.h"
+#include "CSSPropertyParserHelpers.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -172,13 +174,14 @@ std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange&
 }
 
 // FIXME: This doesn't work with the current scheme due to the NegativePercentagePolicy parameter
-RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentage)
+RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentage, AnchorPolicy anchorPolicy)
 {
     auto& token = range.peek();
 
     const auto options = CSSPropertyParserOptions {
         .parserMode = parserMode,
         .valueRange = valueRange,
+        .anchorPolicy = anchorPolicy,
         .negativePercentage = negativePercentage,
         .unitless = unitless,
         .unitlessZero = unitlessZero
@@ -186,6 +189,12 @@ RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSS
 
     switch (token.type()) {
     case FunctionToken: {
+        if (range.peek().functionId() == CSSValueAnchor) {
+            if (anchorPolicy == AnchorPolicy::Allow)
+                return consumeAnchor(range, parserMode);
+            return nullptr;
+        }
+
         // FIXME: Should this be using trying to generate the calc with both Length and Percent destination category types?
         CalcParser parser(range, CalculationCategory::Length, { }, options);
         if (auto calculation = parser.value(); calculation && canConsumeCalcValue(calculation->category(), options))
