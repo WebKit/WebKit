@@ -7171,7 +7171,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
         if (isContextStopped())
             return;
 
-        if (document().hidden()) {
+        if (document().hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
             ALWAYS_LOG(logIdentifier, " returning because document is hidden");
             m_changingVideoFullscreenMode = false;
             return;
