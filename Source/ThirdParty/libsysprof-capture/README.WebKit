@@ -1,0 +1,30 @@
+This directory contains a copy of libsysprof-capture from the
+official Sysprof repository.
+
+  - URL: https://gitlab.gnome.org/GNOME/sysprof
+  - Commit: 594a3037c0e7cc1bf97f162a392aa4f8989c9dce (tag: 46.0)
+
+The simplest way of updating its contents is to re-create the directory
+from scratch, and restoring the needed files with Git. Example commands:
+
+  rm -rf Source/ThirdParty/libsysprof-capture
+  cp -ar ../path/to/sysprof/src/libsysprof-capture Source/ThirdParty/
+  git checkout -- \
+      Source/ThirdParty/libsysprof-capture/README.WebKit \
+      Source/ThirdParty/libsysprof-capture/CMakeLists.txt \
+      Source/ThirdParty/libsysprof-capture/include/config.h
+  git add -A Source/ThirdParty/libsysprof-capture
+
+The sysprof-version.h file has to be generated to be included in this
+directory, instead of including only the .h.in template. To obtain it,
+run the following at the Sysprof source tree:
+
+  meson setup build \
+  	-Dhelp=false -Dsysprofd=none -Dlibsysprof=false \
+	-Dtools=false -Dtests=false -Dexamples=false -Dgtk=false
+  cp build/src/libsysprof-capture/sysprof-version.h \
+    ../path/to/WebKit/Source/ThirdParty/libsysprof-capture/
+
+Then check whether the updated sources require any changes to the CMake
+build system, and update the Sysprof commit identifier and tag in this
+file.

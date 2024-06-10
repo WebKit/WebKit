@@ -89,3 +89,9 @@ if (USE_LIBBACKTRACE)
         LIBBACKTRACE::LIBBACKTRACE
     )
 endif ()
+
+if (USE_SYSPROF_CAPTURE)
+    list(APPEND WTF_LIBRARIES
+        SysProfCapture::SysProfCapture
+    )
+endif ()
