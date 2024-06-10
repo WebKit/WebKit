@@ -9096,7 +9096,8 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 
     platformDidSelectItemFromActiveContextMenu(item);
 
-    send(Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
+    auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
+    sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
 }
 
 void WebPageProxy::handleContextMenuKeyEvent()
