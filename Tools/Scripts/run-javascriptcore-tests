@@ -465,7 +465,9 @@ sub computeFullConfiguration()
         }
 
         if (!$versionName) {
-            if ($version->{major} eq 14) {
+            if ($version->{major} eq 15) {
+                $versionName = "Sequoia";
+            } elsif ($version->{major} eq 14) {
                 $versionName = "Sonoma";
             } elsif ($version->{major} eq 13) {
                 $versionName = "Ventura";
