@@ -144,7 +144,9 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
         m_outputStreams.append(WTFMove(stream));
     }
 
-    m_srcPad = gst_pad_new_from_static_template(&s_harnessSrcPadTemplate, "src");
+    static Atomic<uint64_t> uniqueStreamId;
+    auto name = makeString("src"_s, uniqueStreamId.exchangeAdd(1));
+    m_srcPad = gst_pad_new_from_static_template(&s_harnessSrcPadTemplate, name.ascii().data());
     gst_pad_set_query_function_full(m_srcPad.get(), reinterpret_cast<GstPadQueryFunction>(+[](GstPad* pad, GstObject* parent, GstQuery* query) -> gboolean {
         auto& harness = *reinterpret_cast<GStreamerElementHarness*>(pad->querydata);
         return harness.srcQuery(pad, parent, query);
@@ -156,7 +158,9 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
 
     gst_pad_set_active(m_srcPad.get(), TRUE);
     auto elementSinkPad = adoptGRef(gst_element_get_static_pad(m_element.get(), "sink"));
-    gst_pad_link(m_srcPad.get(), elementSinkPad.get());
+    auto result = gst_pad_link(m_srcPad.get(), elementSinkPad.get());
+    if (GST_PAD_LINK_FAILED(result))
+        GST_WARNING_OBJECT(m_element.get(), "Pad link failed: %s", gst_pad_link_get_name(result));
 }
 
 GStreamerElementHarness::~GStreamerElementHarness()
@@ -282,8 +286,12 @@ GStreamerElementHarness::Stream::Stream(GRefPtr<GstPad>&& pad, RefPtr<GStreamerE
     : m_pad(WTFMove(pad))
     , m_downstreamHarness(WTFMove(downstreamHarness))
 {
-    m_targetPad = gst_pad_new_from_static_template(&s_harnessSinkPadTemplate, "sink");
-    gst_pad_link(m_pad.get(), m_targetPad.get());
+    static Atomic<uint64_t> uniqueStreamId;
+    auto name = makeString("sink"_s, uniqueStreamId.exchangeAdd(1));
+    m_targetPad = gst_pad_new_from_static_template(&s_harnessSinkPadTemplate, name.ascii().data());
+    auto result = gst_pad_link(m_pad.get(), m_targetPad.get());
+    if (GST_PAD_LINK_FAILED(result))
+        GST_WARNING_OBJECT(m_pad.get(), "Pad link failed: %s", gst_pad_link_get_name(result));
 
     gst_pad_set_chain_function_full(m_targetPad.get(), reinterpret_cast<GstPadChainFunction>(+[](GstPad* pad, GstObject*, GstBuffer* buffer) -> GstFlowReturn {
         auto& stream = *reinterpret_cast<GStreamerElementHarness::Stream*>(pad->chaindata);
