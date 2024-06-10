@@ -43,7 +43,6 @@
 #include "CrossOriginOpenerPolicy.h"
 #include "Crypto.h"
 #include "CustomElementRegistry.h"
-#include "DOMApplicationCache.h"
 #include "DOMSelection.h"
 #include "DOMStringList.h"
 #include "DOMTimer.h"
@@ -752,13 +751,6 @@ BarProp& LocalDOMWindow::toolbar()
     if (!m_toolbar)
         m_toolbar = BarProp::create(*this, BarProp::Toolbar);
     return *m_toolbar;
-}
-
-DOMApplicationCache& LocalDOMWindow::applicationCache()
-{
-    if (!m_applicationCache)
-        m_applicationCache = DOMApplicationCache::create(*this);
-    return *m_applicationCache;
 }
 
 Navigator& LocalDOMWindow::navigator()

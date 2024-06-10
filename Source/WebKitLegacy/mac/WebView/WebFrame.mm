@@ -191,7 +191,6 @@ NSString *WebFrameHasPlugins = @"WebFrameHasPluginsKey";
 NSString *WebFrameHasUnloadListener = @"WebFrameHasUnloadListenerKey";
 NSString *WebFrameUsesDatabases = @"WebFrameUsesDatabasesKey";
 NSString *WebFrameUsesGeolocation = @"WebFrameUsesGeolocationKey";
-NSString *WebFrameUsesApplicationCache = @"WebFrameUsesApplicationCacheKey";
 NSString *WebFrameCanSuspendActiveDOMObjects = @"WebFrameCanSuspendActiveDOMObjectsKey";
 
 // FIXME: Remove when this key becomes publicly defined
@@ -2040,8 +2039,6 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (auto* domWindow = _private->coreFrame->document()->domWindow()) {
         if (domWindow->hasEventListeners(WebCore::eventNames().unloadEvent))
             [result setObject:@YES forKey:WebFrameHasUnloadListener];
-        if (domWindow->optionalApplicationCache())
-            [result setObject:@YES forKey:WebFrameUsesApplicationCache];
     }
     
     if (auto* document = _private->coreFrame->document()) {

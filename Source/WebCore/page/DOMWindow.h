@@ -41,7 +41,6 @@ class CSSStyleDeclaration;
 class CookieStore;
 class Crypto;
 class CustomElementRegistry;
-class DOMApplicationCache;
 class DOMSelection;
 class DOMWrapperWorld;
 class Document;
@@ -157,7 +156,6 @@ public:
     ExceptionOr<int> scrollY() const;
     ExceptionOr<HTMLFrameOwnerElement*> frameElement() const;
     ExceptionOr<Navigator&> navigator();
-    ExceptionOr<DOMApplicationCache&> applicationCache();
     ExceptionOr<bool> offscreenBuffering() const;
     ExceptionOr<CookieStore&> cookieStore();
     ExceptionOr<Screen&> screen();

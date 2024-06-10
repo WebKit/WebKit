@@ -415,14 +415,6 @@ ExceptionOr<Navigator&> DOMWindow::navigator()
     return localThis->navigator();
 }
 
-ExceptionOr<DOMApplicationCache&> DOMWindow::applicationCache()
-{
-    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
-    if (!localThis)
-        return Exception { ExceptionCode::SecurityError };
-    return localThis->applicationCache();
-}
-
 ExceptionOr<bool> DOMWindow::offscreenBuffering() const
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);

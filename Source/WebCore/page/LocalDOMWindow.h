@@ -280,9 +280,6 @@ public:
     Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
     Storage* optionalLocalStorage() const { return m_localStorage.get(); }
 
-    DOMApplicationCache& applicationCache();
-    DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
-
     CustomElementRegistry* customElementRegistry() { return m_customElementRegistry.get(); }
     CustomElementRegistry& ensureCustomElementRegistry();
 
@@ -432,7 +429,6 @@ private:
 
     mutable RefPtr<Storage> m_sessionStorage;
     mutable RefPtr<Storage> m_localStorage;
-    mutable RefPtr<DOMApplicationCache> m_applicationCache;
 
     RefPtr<CustomElementRegistry> m_customElementRegistry;
 

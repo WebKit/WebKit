@@ -205,7 +205,6 @@ _WebFrameCanSuspendActiveDOMObjects
 _WebFrameHasPlugins
 _WebFrameHasUnloadListener
 _WebFrameMainDocumentError
-_WebFrameUsesApplicationCache
 _WebFrameUsesDatabases
 _WebFrameUsesGeolocation
 _WebHistoryAllItemsRemovedNotification
