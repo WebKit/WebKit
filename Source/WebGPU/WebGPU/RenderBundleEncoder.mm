@@ -91,6 +91,10 @@ bool RenderBundleEncoder::returnIfEncodingIsFinished(NSString* errorString)
 if (returnIfEncodingIsFinished([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]) || !m_icbDescriptor) \
     return;
 
+#define RETURN_IF_FINISHED_RENDER_COMMAND() \
+if (returnIfEncodingIsFinished([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]) || !m_icbDescriptor) \
+    return finalizeRenderCommand();
+
 static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, RenderBundle::ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, id<MTLBuffer> fragmentDynamicOffsetsBuffer, const RenderPipeline* pipeline, Device& device)
 {
     constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
@@ -376,16 +380,16 @@ bool RenderBundleEncoder::executePreDrawCommands()
     return true;
 }
 
-void RenderBundleEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
+RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
-    RETURN_IF_FINISHED();
+    RETURN_IF_FINISHED_RENDER_COMMAND();
     if (!executePreDrawCommands())
-        return;
+        return finalizeRenderCommand();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (!runVertexBufferValidation(vertexCount, instanceCount, firstVertex, firstInstance))
-            return;
+            return finalizeRenderCommand();
         if (!vertexCount || !instanceCount)
-            return;
+            return finalizeRenderCommand();
 
         [icbCommand drawPrimitives:m_primitiveType vertexStart:firstVertex vertexCount:vertexCount instanceCount:instanceCount baseInstance:firstInstance];
     } else {
@@ -395,7 +399,7 @@ void RenderBundleEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uin
         });
     }
 
-    finalizeRenderCommand(MTLIndirectCommandTypeDraw);
+    return finalizeRenderCommand(MTLIndirectCommandTypeDraw);
 }
 
 uint32_t RenderBundleEncoder::maxVertexBufferIndex() const
@@ -444,13 +448,18 @@ NSString* RenderBundleEncoder::errorValidatingDrawIndexed() const
     return nil;
 }
 
-void RenderBundleEncoder::finalizeRenderCommand(MTLIndirectCommandType commandTypes)
+RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::finalizeRenderCommand(MTLIndirectCommandType commandTypes)
+{
+    m_icbDescriptor.commandTypes |= commandTypes;
+    return finalizeRenderCommand();
+}
+
+RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::finalizeRenderCommand()
 {
     m_currentCommand = nil;
     ++m_currentCommandIndex;
-    m_icbDescriptor.commandTypes |= commandTypes;
+    return FinalizeRenderCommand { };
 }
-
 
 bool RenderBundleEncoder::runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount)
 {
@@ -591,11 +600,11 @@ void RenderBundleEncoder::storeVertexBufferCountsForValidation(uint32_t indexCou
     });
 }
 
-void RenderBundleEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
+RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
-    RETURN_IF_FINISHED();
+    RETURN_IF_FINISHED_RENDER_COMMAND();
     if (!executePreDrawCommands())
-        return;
+        return finalizeRenderCommand();
 
     auto indexSizeInBytes = (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
     auto firstIndexOffsetInBytes = firstIndex * indexSizeInBytes;
@@ -610,18 +619,18 @@ void RenderBundleEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCoun
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (NSString* error = errorValidatingDrawIndexed()) {
             makeInvalid(error);
-            return;
+            return finalizeRenderCommand();
         }
         if (firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize) {
             makeInvalid(@"firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize");
-            return;
+            return finalizeRenderCommand();
         }
 
         if (!runIndexBufferValidation(firstInstance, instanceCount))
-            return;
+            return finalizeRenderCommand();
 
-        if (!indexCount || !instanceCount)
-            return;
+        if (!indexCount || !instanceCount || !indexBuffer || m_indexBuffer->isDestroyed())
+            return finalizeRenderCommand();
 
         storeVertexBufferCountsForValidation(indexCount, instanceCount, firstIndex, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes);
 
@@ -637,12 +646,12 @@ void RenderBundleEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCoun
         });
     }
 
-    finalizeRenderCommand(MTLIndirectCommandTypeDrawIndexed);
+    return finalizeRenderCommand(MTLIndirectCommandTypeDrawIndexed);
 }
 
-void RenderBundleEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset)
+RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    RETURN_IF_FINISHED();
+    RETURN_IF_FINISHED_RENDER_COMMAND();
 
     m_requiresCommandReplay = true;
     id<MTLBuffer> mtlIndirectBuffer = nil;
@@ -655,11 +664,11 @@ void RenderBundleEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t i
     }
 
     if (!executePreDrawCommands())
-        return;
+        return finalizeRenderCommand();
     id<MTLBuffer> indexBuffer = m_indexBuffer ? m_indexBuffer->buffer() : nil;
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (!indexBuffer.length)
-            return;
+            return finalizeRenderCommand();
 
         if (m_renderPassEncoder) {
             indirectBuffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
@@ -668,7 +677,7 @@ void RenderBundleEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t i
         } else {
             auto contents = (MTLDrawIndexedPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
             if (!contents || !contents->indexCount || !contents->instanceCount)
-                return;
+                return finalizeRenderCommand();
 
             ASSERT(m_indexBufferOffset == contents->indexStart);
             addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
@@ -677,17 +686,17 @@ void RenderBundleEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t i
     } else {
         if (!isValidToUseWith(indirectBuffer, *this)) {
             makeInvalid(@"drawIndexedIndirect: buffer was invalid");
-            return;
+            return finalizeRenderCommand();
         }
 
         if (!(indirectBuffer.usage() & WGPUBufferUsage_Indirect) || (indirectOffset % 4)) {
             makeInvalid(@"drawIndexedIndirect: validation failed");
-            return;
+            return finalizeRenderCommand();
         }
 
         if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments)) {
             makeInvalid(@"drawIndexedIndirect: validation failed");
-            return;
+            return finalizeRenderCommand();
         }
 
         recordCommand([indirectBuffer = Ref { indirectBuffer }, indirectOffset, protectedThis = Ref { *this }] {
@@ -696,12 +705,12 @@ void RenderBundleEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t i
         });
     }
 
-    finalizeRenderCommand(MTLIndirectCommandTypeDrawIndexed);
+    return finalizeRenderCommand(MTLIndirectCommandTypeDrawIndexed);
 }
 
-void RenderBundleEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset)
+RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    RETURN_IF_FINISHED();
+    RETURN_IF_FINISHED_RENDER_COMMAND();
 
     m_requiresCommandReplay = true;
     id<MTLBuffer> clampedIndirectBuffer = nil;
@@ -711,7 +720,7 @@ void RenderBundleEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirect
     }
 
     if (!executePreDrawCommands())
-        return;
+        return finalizeRenderCommand();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (m_renderPassEncoder) {
             indirectBuffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
@@ -720,7 +729,7 @@ void RenderBundleEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirect
         } else {
             auto contents = (MTLDrawPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
             if (!contents || !contents->instanceCount || !contents->vertexCount)
-                return;
+                return finalizeRenderCommand();
 
             addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
             [icbCommand drawPrimitives:m_primitiveType vertexStart:contents->vertexStart vertexCount:contents->vertexCount instanceCount:contents->instanceCount baseInstance:contents->baseInstance];
@@ -728,17 +737,17 @@ void RenderBundleEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirect
     } else {
         if (!isValidToUseWith(indirectBuffer, *this)) {
             makeInvalid(@"drawIndirect: buffer was invalid");
-            return;
+            return finalizeRenderCommand();
         }
 
         if (!(indirectBuffer.usage() & WGPUBufferUsage_Indirect) || (indirectOffset % 4)) {
             makeInvalid(@"drawIndirect: validation failed");
-            return;
+            return finalizeRenderCommand();
         }
 
         if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments)) {
             makeInvalid(@"drawIndirect: validation failed");
-            return;
+            return finalizeRenderCommand();
         }
 
         recordCommand([indirectBuffer = Ref { indirectBuffer }, indirectOffset, protectedThis = Ref { *this }] {
@@ -747,7 +756,7 @@ void RenderBundleEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirect
         });
     }
 
-    finalizeRenderCommand(MTLIndirectCommandTypeDraw);
+    return finalizeRenderCommand(MTLIndirectCommandTypeDraw);
 }
 
 void RenderBundleEncoder::endCurrentICB()

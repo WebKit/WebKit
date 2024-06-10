@@ -1,0 +1,57 @@
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device1.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device2.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError: map async was not successful
+CONSOLE MESSAGE: error
+CONSOLE MESSAGE: OperationError: not mapped or destroyed
+CONSOLE MESSAGE: DOMException
+CONSOLE MESSAGE: getMappedRange@[native code]
+@fuzz-275167.html:9065:43
+CONSOLE MESSAGE: not mapped or destroyed
+layer at (0,0) size 2383x959
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x959
+  RenderBlock {HTML} at (0,0) size 785x959 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 769x943
+      RenderImage {IMG} at (32,170) size 249x114
+      RenderImage {IMG} at (281,163) size 3x121
+      RenderHTMLCanvas {CANVAS} at (0,284) size 74x150
+      RenderHTMLCanvas {CANVAS} at (0,434) size 2375x150
+      RenderImage {IMG} at (0,786) size 281x21
+      RenderImage {IMG} at (497,667) size 138x140
+      RenderImage {IMG} at (635,797) size 126x10
+layer at (8,276) size 16x16
+  RenderVideo {VIDEO} at (0,268) size 16x16
+layer at (24,276) size 16x16
+  RenderVideo {VIDEO} at (16,268) size 16x16
+layer at (292,228) size 64x64
+  RenderVideo {VIDEO} at (284,220) size 64x64
+layer at (356,8) size 284x284
+  RenderVideo {VIDEO} at (348,0) size 284x284
+layer at (640,276) size 16x16
+  RenderVideo {VIDEO} at (632,268) size 16x16
+layer at (656,244) size 48x48
+  RenderVideo {VIDEO} at (648,236) size 48x48
+layer at (82,426) size 16x16
+  RenderVideo {VIDEO} at (74,418) size 16x16
+layer at (98,292) size 300x150
+  RenderHTMLCanvas {CANVAS} at (90,284) size 300x150
+layer at (398,426) size 16x16
+  RenderVideo {VIDEO} at (390,418) size 16x16
+layer at (289,592) size 216x223
+  RenderVideo {VIDEO} at (281,584) size 216x223
+layer at (8,845) size 16x16
+  RenderVideo {VIDEO} at (0,837) size 16x16
+layer at (24,815) size 753x46
+  RenderHTMLCanvas {CANVAS} at (16,807) size 753x46
+layer at (8,861) size 90x90
+  RenderVideo {VIDEO} at (0,853) size 90x90
+layer at (98,935) size 16x16
+  RenderVideo {VIDEO} at (90,927) size 16x16

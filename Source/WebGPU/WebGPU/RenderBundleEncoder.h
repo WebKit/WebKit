@@ -88,10 +88,11 @@ public:
 
     ~RenderBundleEncoder();
 
-    void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
-    void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance);
-    void drawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
-    void drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
+    enum FinalizeRenderCommand { };
+    FinalizeRenderCommand draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
+    FinalizeRenderCommand drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance);
+    FinalizeRenderCommand drawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
+    FinalizeRenderCommand drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
     Ref<RenderBundle> finish(const WGPURenderBundleDescriptor&);
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
@@ -126,7 +127,8 @@ private:
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages, const BindGroupEntryUsageData::Resource&);
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages);
     bool icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b);
-    void finalizeRenderCommand(MTLIndirectCommandType);
+    FinalizeRenderCommand finalizeRenderCommand(MTLIndirectCommandType);
+    FinalizeRenderCommand finalizeRenderCommand();
     bool validToEncodeCommand() const;
     bool returnIfEncodingIsFinished(NSString* errorString);
     bool runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount);
