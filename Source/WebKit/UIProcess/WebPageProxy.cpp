@@ -10679,7 +10679,7 @@ void WebPageProxy::requestGeolocationPermissionForFrame(GeolocationIdentifier ge
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     MESSAGE_CHECK(m_legacyMainFrameProcess, frame);
 
-    auto request = internals().geolocationPermissionRequestManager.createRequest(geolocationID);
+    auto request = internals().geolocationPermissionRequestManager.createRequest(geolocationID, frame->process());
     Function<void(bool)> completionHandler = [request = WTFMove(request)](bool allowed) {
         if (allowed)
             request->allow();
