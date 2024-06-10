@@ -72,7 +72,7 @@ public:
     ExceptionOr<void> configure(GPUCanvasConfiguration&&) override;
     void unconfigure() override;
     ExceptionOr<RefPtr<GPUTexture>> getCurrentTexture() override;
-    ExceptionOr<RefPtr<ImageBitmap>> getCurrentTextureAsImageBitmap(ImageBuffer&, bool originClean) override;
+    RefPtr<ImageBuffer> transferToImageBuffer() override;
 
     bool isWebGPU() const override { return true; }
 

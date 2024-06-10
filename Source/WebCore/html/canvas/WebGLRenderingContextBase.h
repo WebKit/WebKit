@@ -445,7 +445,7 @@ public:
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer);
 #endif
-    void markDrawingBuffersDirtyAfterTransfer();
+    RefPtr<ImageBuffer> transferToImageBuffer() final;
 
     void removeSharedObject(WebGLObject&);
     void removeContextObject(WebGLObject&);

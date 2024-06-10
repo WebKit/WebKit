@@ -826,12 +826,19 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
 }
 #endif
 
-void WebGLRenderingContextBase::markDrawingBuffersDirtyAfterTransfer()
+RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
 {
+    auto buffer = canvasBase().allocateImageBuffer();
+    if (!buffer)
+        return nullptr;
+    if (compositingResultsNeedUpdating())
+        prepareForDisplay();
+    m_context->drawSurfaceBufferToImageBuffer(GraphicsContextGL::SurfaceBuffer::DisplayBuffer, *buffer);
     // Any draw or read sees cleared drawing buffer.
     m_defaultFramebuffer->markAllBuffersDirty();
     // Next transfer uses the cleared drawing buffer.
     m_compositingResultsNeedUpdating = true;
+    return buffer;
 }
 
 void WebGLRenderingContextBase::reshape(int width, int height, int oldWidth, int oldHeight)

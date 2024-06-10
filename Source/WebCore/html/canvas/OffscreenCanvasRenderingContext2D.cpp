@@ -117,6 +117,21 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     }
 }
 
+RefPtr<ImageBuffer> OffscreenCanvasRenderingContext2D::transferToImageBuffer()
+{
+    if (!canvasBase().hasCreatedImageBuffer())
+        return canvasBase().allocateImageBuffer();
+    auto* buffer = canvasBase().buffer();
+    if (!buffer)
+        return nullptr;
+    // As the canvas context state is stored in GraphicsContext, which is owned
+    // by buffer(), to avoid resetting the context state, we have to make a copy and
+    // clear the original buffer rather than returning the original buffer.
+    RefPtr result = buffer->clone();
+    clearCanvas();
+    return result;
+}
+
 CanvasDirection OffscreenCanvasRenderingContext2D::direction() const
 {
     // FIXME: What should we do about inherit here?
