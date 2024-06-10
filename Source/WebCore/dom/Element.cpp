@@ -5850,4 +5850,52 @@ TextStream& operator<<(TextStream& ts, ContentRelevancy relevancy)
     return ts;
 }
 
+// https://html.spec.whatwg.org/#topmost-popover-ancestor
+// Consider both DOM ancestors and popovers where the given popover was invoked from as ancestors.
+// Use top layer positions to disambiguate the topmost one when both exist.
+HTMLElement* Element::topmostPopoverAncestor(TopLayerElementType topLayerType)
+{
+    // Store positions to avoid having to do O(n) search for every popover invoker.
+    HashMap<Ref<const Element>, size_t> topLayerPositions;
+    size_t i = 0;
+    for (auto& element : document().autoPopoverList())
+        topLayerPositions.add(element, i++);
+
+    if (topLayerType == TopLayerElementType::Popover)
+        topLayerPositions.add(*this, i);
+
+    i++;
+
+    RefPtr<HTMLElement> topmostAncestor;
+
+    auto checkAncestor = [&](Element* candidate) {
+        if (!candidate)
+            return;
+
+        // https://html.spec.whatwg.org/#nearest-inclusive-open-popover
+        auto nearestInclusiveOpenPopover = [](Element& candidate) -> HTMLElement* {
+            for (RefPtr element = &candidate; element; element = element->parentElementInComposedTree()) {
+                if (auto* htmlElement = dynamicDowncast<HTMLElement>(element.get())) {
+                    if (htmlElement->popoverState() == PopoverState::Auto && htmlElement->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+                        return htmlElement;
+                }
+            }
+            return nullptr;
+        };
+
+        auto* candidateAncestor = nearestInclusiveOpenPopover(*candidate);
+        if (!candidateAncestor)
+            return;
+        if (!topmostAncestor || topLayerPositions.get(*topmostAncestor) < topLayerPositions.get(*candidateAncestor))
+            topmostAncestor = candidateAncestor;
+    };
+
+    checkAncestor(parentElementInComposedTree());
+
+    if (topLayerType == TopLayerElementType::Popover)
+        checkAncestor(popoverData()->invoker());
+
+    return topmostAncestor.get();
+}
+
 } // namespace WebCore

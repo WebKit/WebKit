@@ -31,6 +31,7 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FocusOptions.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
@@ -64,7 +65,9 @@ ExceptionOr<void> HTMLDialogElement::show()
 
     m_previouslyFocusedElement = document().focusedElement();
 
-    document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
+    auto hideUntil = topmostPopoverAncestor(TopLayerElementType::Other);
+
+    document().hideAllPopoversUntil(hideUntil, FocusPreviousElement::No, FireEvents::No);
 
     runFocusingSteps();
     return { };
@@ -104,7 +107,9 @@ ExceptionOr<void> HTMLDialogElement::showModal()
 
     m_previouslyFocusedElement = document().focusedElement();
 
-    document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
+    auto hideUntil = topmostPopoverAncestor(TopLayerElementType::Other);
+
+    document().hideAllPopoversUntil(hideUntil, FocusPreviousElement::No, FireEvents::No);
 
     runFocusingSteps();
 

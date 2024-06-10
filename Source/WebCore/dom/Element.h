@@ -64,6 +64,7 @@ class ElementRareData;
 class FormAssociatedCustomElement;
 class FormListedElement;
 class HTMLDocument;
+class HTMLElement;
 class HTMLFormControlElement;
 class IntSize;
 class JSCustomElementInterface;
@@ -191,6 +192,9 @@ public:
     inline const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
     inline const AtomString& attributeWithDefaultARIA(const QualifiedName&) const;
     inline String attributeTrimmedWithDefaultARIA(const QualifiedName&) const;
+
+    enum class TopLayerElementType : bool { Other, Popover };
+    HTMLElement* topmostPopoverAncestor(TopLayerElementType topLayerType);
 
 #if DUMP_NODE_STATISTICS
     bool hasNamedNodeMap() const;

@@ -32,6 +32,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentInlines.h"
+#include "Element.h"
 #include "ElementInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -545,7 +546,9 @@ bool FullscreenManager::willEnterFullscreen(Element& element, HTMLMediaElementEn
     } while ((ancestor = ancestor->document().ownerElement()));
 
     for (auto ancestor : makeReversedRange(ancestorsInTreeOrder)) {
-        ancestor->document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
+        auto hideUntil = ancestor->topmostPopoverAncestor(Element::TopLayerElementType::Other);
+
+        ancestor->document().hideAllPopoversUntil(hideUntil, FocusPreviousElement::No, FireEvents::No);
 
         auto containingBlockBeforeStyleResolution = SingleThreadWeakPtr<RenderBlock> { };
         if (auto* renderer = ancestor->renderer())
