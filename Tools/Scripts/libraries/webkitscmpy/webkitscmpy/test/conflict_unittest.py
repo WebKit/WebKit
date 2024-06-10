@@ -85,7 +85,8 @@ class TestConflict(testing.PathTestCase):
                 reviews=[dict(user=dict(login='rreviewer'), state='CHANGES_REQUESTED')],
                 draft=False,
             )]
-            repo.commits['integration/conflict/1234'] = [
+            repo.edit_config('remote.tcontributor.url', 'https://github.com/tcontributor/WebKit')
+            repo.commits['remotes/tcontributor/integration/conflict/1234'] = [
                 repo.commits[repo.default_branch][2],
                 Commit(
                     hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',

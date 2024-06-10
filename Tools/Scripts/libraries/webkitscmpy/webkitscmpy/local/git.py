@@ -1079,24 +1079,38 @@ class Git(Scm):
                     return None
                 self.config.clear()
             branch = match.group('branch')
-            rc = run(
-                [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(name, branch)] + log_arg,
-                cwd=self.root_path,
-            ).returncode
-            if not rc:
-                return self.commit()
-            if rc == 128:
-                command = [self.executable(), 'fetch', name]
-                if prune is None:
-                    if self.config()['webkitscmpy.auto-prune'] == 'true':
-                        command.append('--prune')
-                    elif name in self.source_remotes() and self.config()['webkitscmpy.auto-prune'] == 'only-source':
-                        command.append('--prune')
-                run(command, cwd=self.root_path)
-            return None if run(
-                [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(name, branch)] + log_arg,
-                cwd=self.root_path,
-            ).returncode else self.commit()
+
+            # The names GitHub provides are often too short. If we are tracking other remotes which start
+            # with this name, we should try those too
+            candidate_remotes = [name]
+            for key in self.config().keys():
+                if key.startswith(f'remote.{name}'):
+                    candidate = key.split('.', 2)[1]
+                    if candidate not in candidate_remotes:
+                        candidate_remotes.append(candidate)
+
+            for remote_name in candidate_remotes:
+                rc = run(
+                    [self.executable(), 'checkout'] + ['-B', branch, 'remotes/{}/{}'.format(remote_name, branch)],
+                    cwd=self.root_path, capture_output=True,
+                ).returncode
+                if not rc:
+                    return self.commit()
+                if rc == 128:
+                    command = [self.executable(), 'fetch', remote_name]
+                    if prune is None:
+                        if self.config()['webkitscmpy.auto-prune'] == 'true':
+                            command.append('--prune')
+                        elif name in self.source_remotes() and self.config()['webkitscmpy.auto-prune'] == 'only-source':
+                            command.append('--prune')
+                    log.info(f'Fetching {remote_name}...')
+                    run(command, cwd=self.root_path, capture_output=True)
+                if not run(
+                    [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(remote_name, branch)] + log_arg,
+                    cwd=self.root_path,
+                ).returncode:
+                    return self.commit()
+            return None
 
         match = self.dev_branches.match(argument)
         branch_remote = self.remote_for(argument)

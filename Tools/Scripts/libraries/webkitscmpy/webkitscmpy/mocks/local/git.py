@@ -433,22 +433,22 @@ nothing to commit, working tree clean
                 self.executable, 'checkout', '-b', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], create=True) else mocks.ProcessCompletion(returncode=1)
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], source=args[4] if len(args) > 4 else None, create=True) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'checkout', '-B', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], create=True, force=True) else mocks.ProcessCompletion(returncode=1)
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], source=args[4] if len(args) > 4 else None, create=False, force=True) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'checkout', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[2], create=False) else mocks.ProcessCompletion(returncode=1)
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[2], source=args[4] if len(args) > 4 else None, create=False) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'rebase', 'HEAD', re.compile(r'.+'), '--autostash',
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], create=False) else mocks.ProcessCompletion(returncode=1)
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], source=args[4] if len(args) > 4 else None, create=False) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'filter-branch', '-f', '--env-filter', re.compile(r'.*'), '--msg-filter',
                 cwd=self.path,
@@ -802,6 +802,9 @@ nothing to commit, working tree clean
                     return all_commits[head_index - difference]
                 return None
 
+        if something in self.commits.keys():
+            return self.commits[something][-1]
+
         something = str(something).replace('refs/remotes/', '')
         something = str(something).replace('remotes/', '')
         if '..' in something:
@@ -812,8 +815,6 @@ nothing to commit, working tree clean
 
         if something == 'HEAD':
             return self.head
-        if something in self.commits.keys():
-            return self.commits[something][-1]
         if something in self.tags.keys():
             return self.tags[something]
         if something in self.remotes.keys():
@@ -854,11 +855,17 @@ nothing to commit, working tree clean
                     result.add(branch)
         return result
 
-    def checkout(self, something, create=False, force=False):
-        if something in self.modified:
+    def checkout(self, something, source=None, create=False, force=False):
+        if not source or source.startswith('--'):
+            source = something
+        if source in self.modified:
             del self.modified[something]
             return mocks.ProcessCompletion(returncode=0, stdout='Updated 1 path from the index')
-        commit = self.find(something)
+
+        commit = self.find(source)
+        if commit and source in self.commits:
+            self.commits[something] = self.commits[source]
+
         if create:
             if commit:
                 if force:
