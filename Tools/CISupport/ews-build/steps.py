@@ -6564,9 +6564,16 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             defer.returnValue(rc)
             return
 
-        self.contributors, errors = yield Contributors.load(use_network=True)
-        for error in errors:
-            self._addToLog('stdio', error)
+        retry_attempts = 3
+        for i in range(1, retry_attempts + 1):
+            self.contributors, errors = yield Contributors.load(use_network=True)
+            for error in errors:
+                self._addToLog('stdio', error)
+            self._addToLog('stdio', '\n')
+            if self.contributors:
+                break
+            if i < retry_attempts:
+                self._addToLog('stdio', f'Retrying, attempt {i + 1} of {retry_attempts}...\n')
 
         reviewers, log_text = self.extract_reviewers(self.log_observer.getStdout())
         log_text = log_text.rstrip()
@@ -6576,7 +6583,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             self.summary = 'ChangeLog modified, WebKit only allows commit messages'
             rc = FAILURE
         elif log_text:
-            self.summary = log_text
+            self.summary = log_text.split('\n')[0]  # Display the first error if there are multiple
             rc = FAILURE
         elif rc == SUCCESS:
             if reviewers and not self.contributors:
