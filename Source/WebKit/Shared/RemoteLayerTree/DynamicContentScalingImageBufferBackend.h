@@ -30,6 +30,7 @@
 #include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferCGBackend.h>
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/IsoMalloc.h>
 
 namespace WebKit {
@@ -68,6 +69,7 @@ protected:
     mutable std::unique_ptr<WebCore::GraphicsContextCG> m_context;
     RetainPtr<id> m_resourceCache;
     WebCore::RenderingMode m_renderingMode;
+    WebCore::ProcessIdentity m_resourceOwner;
 };
 
 }

@@ -33,6 +33,7 @@
 #import <WebCore/DynamicContentScalingDisplayList.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/PixelBuffer.h>
+#import <WebCore/ProcessIdentity.h>
 #import <WebCore/SharedMemory.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/IsoMallocInlines.h>
@@ -89,6 +90,7 @@ DynamicContentScalingImageBufferBackend::DynamicContentScalingImageBufferBackend
     : ImageBufferCGBackend { parameters }
     , m_resourceCache(creationContext.dynamicContentScalingResourceCache)
     , m_renderingMode(renderingMode)
+    , m_resourceOwner(creationContext.resourceOwner)
 {
     // FIXME: We should make callers always specify a cache and have an assertion here instead
     // of making a temporary one. RemoteLayerWithRemoteRenderingBackingStore currently does not.
@@ -103,11 +105,15 @@ std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend:
 
     RetainPtr<NSDictionary> options;
     RetainPtr<NSMutableArray> ports;
+    RetainPtr<CAMachPortRef> caMachPort;
     if (m_resourceCache) {
+        auto machSendRight = MachSendRight::create(m_resourceOwner.taskIdToken());
+        caMachPort = CAMachPortCreate(machSendRight.sendRight());
         ports = adoptNS([[NSMutableArray alloc] init]);
         options = @{
             @"ports": ports.get(),
-            @"cache": m_resourceCache.get()
+            @"cache": m_resourceCache.get(),
+            @"ownerIdentity": (__bridge id)caMachPort.get()
         };
     }
 
