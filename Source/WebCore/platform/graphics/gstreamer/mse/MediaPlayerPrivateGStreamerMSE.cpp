@@ -343,6 +343,8 @@ void MediaPlayerPrivateGStreamerMSE::didPreroll()
 
     if (m_isSeeking) {
         m_isSeeking = false;
+        m_canFallBackToLastFinishedSeekPosition = true;
+        invalidateCachedPosition();
         GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentMediaTime().toString().utf8().data());
         // By calling timeChanged(), m_isSeeking will be checked an a "seeked" event will be emitted.
         timeChanged(currentMediaTime());
