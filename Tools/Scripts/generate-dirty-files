@@ -87,39 +87,37 @@ def parse_results_file(args, file_path):
 
 def find_project_results(args, project, file_list, results_data):
     bug_counts = {}
-    files_per_project = {}
+    files_per_project = {key: set() for key in CHECKER_MAP.values()}
 
     for result_file in file_list:
-        if result_file:
-            file_name, issue_hash, bug_type, _ = parse_results_file(args, result_file)
-            if not file_name:
-                continue
+        file_name, issue_hash, bug_type, _ = parse_results_file(args, result_file)
+        if not file_name:
+            continue
 
-            if bug_type not in bug_counts:
-                bug_counts[bug_type] = 0
-            bug_counts[bug_type] += 1
+        if bug_type not in bug_counts:
+            bug_counts[bug_type] = 0
+        bug_counts[bug_type] += 1
 
-            # Truncate path after project name to match the expectations file
-            try:
-                file_name = file_name.split(f'{project}/')[1]
-            except IndexError:
-                continue
+        # Truncate path after project name to match the expectations file
+        try:
+            file_name = file_name.split(f'{project}/')[1]
+        except IndexError:
+            # Ignore WebKitBuild/Debug files that are included in other projects
+            continue
 
-            # Map filename to issues for each bug type
-            file_dict = results_data.get(CHECKER_MAP[bug_type], {})
-            if not file_name in file_dict:
-                file_dict[file_name] = []
-            file_dict[file_name].append(issue_hash)
-            results_data[CHECKER_MAP[bug_type]] = file_dict
+        # Map filename to issues for each bug type
+        file_dict = results_data.get(CHECKER_MAP[bug_type], {})
+        if not file_name in file_dict:
+            file_dict[file_name] = []
+        file_dict[file_name].append(issue_hash)
+        results_data[CHECKER_MAP[bug_type]] = file_dict
 
-            output_file_name = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}Issues')
-            with open(output_file_name, 'a') as f:
-                f.write(f'{issue_hash}\n')
+        output_file_name = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}Issues')
+        with open(output_file_name, 'a') as f:
+            f.write(f'{issue_hash}\n')
 
-            # Map checker to all files with bugs of that type
-            if not CHECKER_MAP[bug_type] in files_per_project:
-                files_per_project[CHECKER_MAP[bug_type]] = set()
-            files_per_project[CHECKER_MAP[bug_type]].add(file_name)
+        # Map checker to all files with bugs of that type
+        files_per_project[CHECKER_MAP[bug_type]].add(file_name)
 
     for checker in CHECKER_MAP.values():
         output_file_name_2 = os.path.abspath(f'{args.output_dir}/{project}/{checker}Files')
