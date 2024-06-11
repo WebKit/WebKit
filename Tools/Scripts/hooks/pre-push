@@ -143,7 +143,7 @@ def remote_name_mappings():
         **ENCODING_KWARGS
     ).splitlines():
         remote = line.split()
-        if len(remote) < 2:
+        if len(remote) < 2 or remote[1] == 'INVALID':
             continue
         match = REMOTE_RE.match(remote[1])
         if match:
