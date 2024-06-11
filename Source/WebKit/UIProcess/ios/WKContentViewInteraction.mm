@@ -4261,7 +4261,8 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
         if (originalTraits != newTraits) {
             RetainPtr descriptor = [[font fontDescriptor] ?: adoptNS([UIFontDescriptor new]) fontDescriptorWithSymbolicTraits:newTraits];
-            font = [UIFont fontWithDescriptor:descriptor.get() size:[font pointSize]];
+            if (RetainPtr fontWithTraits = [UIFont fontWithDescriptor:descriptor.get() size:[font pointSize]])
+                font = WTFMove(fontWithTraits);
         }
         [result setObject:font.get() forKey:NSFontAttributeName];
     }
