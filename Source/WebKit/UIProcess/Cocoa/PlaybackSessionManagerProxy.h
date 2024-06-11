@@ -81,6 +81,8 @@ public:
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
     const WebCore::VideoReceiverEndpoint& videoReceiverEndpoint() { return m_videoReceiverEndpoint; }
 
+    void invalidate();
+
 private:
     friend class PlaybackSessionManagerProxy;
     friend class VideoPresentationModelContext;

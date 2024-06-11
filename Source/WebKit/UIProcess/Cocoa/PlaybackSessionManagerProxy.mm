@@ -55,8 +55,7 @@ PlaybackSessionModelContext::PlaybackSessionModelContext(PlaybackSessionManagerP
 
 PlaybackSessionModelContext::~PlaybackSessionModelContext()
 {
-    if (m_manager && m_videoReceiverEndpoint)
-        m_manager->uncacheVideoReceiverEndpoint(m_contextId);
+    invalidate();
 }
 
 void PlaybackSessionModelContext::addClient(PlaybackSessionModelClient& client)
@@ -90,7 +89,7 @@ void PlaybackSessionModelContext::setVideoReceiverEndpoint(const WebCore::VideoR
 
     m_videoReceiverEndpoint = endpoint;
 
-    if (m_manager)
+    if (m_manager && m_videoReceiverEndpoint)
         m_manager->setVideoReceiverEndpoint(m_contextId, endpoint);
 #else
     UNUSED_PARAM(endpoint);
@@ -445,6 +444,11 @@ void PlaybackSessionModelContext::isInWindowFullscreenActiveChanged(bool active)
         client.isInWindowFullscreenActiveChanged(active);
 }
 
+void PlaybackSessionModelContext::invalidate()
+{
+    setVideoReceiverEndpoint(nullptr);
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger* PlaybackSessionModelContext::loggerPtr() const
 {
@@ -492,8 +496,10 @@ void PlaybackSessionManagerProxy::invalidate()
     auto contextMap = WTFMove(m_contextMap);
     m_clientCounts.clear();
 
-    for (auto& [model, interface] : contextMap.values())
+    for (auto& [model, interface] : contextMap.values()) {
+        model->invalidate();
         interface->invalidate();
+    }
 }
 
 PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
