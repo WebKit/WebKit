@@ -2857,7 +2857,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
 {
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
-    if (RefPtr page = document().page()) {
+    if (RefPtrAllowingPartiallyDestroyed<Page> page = document().page()) {
 #if ENABLE(POINTER_LOCK)
         page->pointerLockController().elementWasRemoved(*this);
 #endif
