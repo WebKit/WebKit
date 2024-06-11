@@ -356,9 +356,9 @@ Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(StyleRule&& styleRule)
 }
 
 StyleRuleWithNesting::StyleRuleWithNesting(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)
-    : StyleRule(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors))
+    : StyleRule(WTFMove(properties), hasDocumentSecurityOrigin, { })
     , m_nestedRules(WTFMove(nestedRules))
-    , m_originalSelectorList(selectorList())
+    , m_originalSelectorList(WTFMove(selectors))
 {
     setType(StyleRuleType::StyleWithNesting);
 }

@@ -138,8 +138,10 @@ bool StyleSheetContents::isCacheable() const
     // FIXME: Valid mime type avoids the check too.
     if (!m_hasSyntacticallyValidCSSHeader)
         return false;
+    /*
     if (m_hasNestingRules)
         return false;
+    */
     return true;
 }
 

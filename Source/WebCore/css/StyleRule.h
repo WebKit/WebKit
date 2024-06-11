@@ -476,8 +476,9 @@ inline void StyleRule::wrapperAdoptSelectorList(CSSSelectorList&& selectors)
 
 inline void StyleRuleWithNesting::wrapperAdoptOriginalSelectorList(CSSSelectorList&& selectors)
 {
-    m_originalSelectorList = CSSSelectorList { selectors };
-    StyleRule::wrapperAdoptSelectorList(WTFMove(selectors));
+    m_originalSelectorList = WTFMove(selectors);
+    // Clean the old resolved selector list, it will be resolved later.
+    wrapperAdoptSelectorList({ });
 }
 
 #if ENABLE(CSS_SELECTOR_JIT)
