@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_true: audio paused(ended) expected true got false
+EVENT(ended)
+EVENT(ended)
+
+Harness Error (FAIL), message = Unhandled rejection: assert_true: audio paused(ended) expected true got false
+
+

@@ -1,0 +1,30 @@
+<html>
+<head>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script>
+        (async () => {
+            window.audio = new Audio();
+            window.audio.src = "./content/short.mp3";
+
+            await window.audio.play();
+            await waitFor(window.audio, 'ended');
+
+            internals.setPageVisibility(false);
+
+            await window.audio.play();
+            await waitFor(window.audio, 'ended');
+
+            internals.setPageVisibility(true);
+
+            assert_true(audio.paused, "audio paused(ended)");
+            endTest();
+        })()
+    </script>
+</head>
+
+<body>
+</body>
+</html>
