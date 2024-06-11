@@ -2450,8 +2450,6 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.htm
 
 webkit.org/b/273308 http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
 
-[ Debug ] ipc/dirty-region-overflow.html [ Skip ]
-
 # webkit.org/b/274475 REGRESSION (278960@main?): [ MacOS iOS ] 8X imported/w3c/web-platform-t ests/navigation-api are consistently failing and 1 is crashing
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-navigations-in-multiple-windows.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-replace-cross-origin.html [ Failure ]
