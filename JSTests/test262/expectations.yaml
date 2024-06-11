@@ -1026,36 +1026,6 @@ test/intl402/DateTimeFormat/timezone-legacy-non-iana.js:
 test/intl402/DateTimeFormat/timezone-not-canonicalized.js:
   default: 'Test262Error: Expected SameValue(«Asia/Calcutta», «Asia/Kolkata») to be true'
   strict mode: 'Test262Error: Expected SameValue(«Asia/Calcutta», «Asia/Kolkata») to be true'
-test/intl402/DurationFormat/prototype/format/negative-duration-style-default-en.js:
-  default: 'Test262Error: DurationFormat format output using default style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4 hr, -5 min, -6 sec, -7 ms, -8 μs, -9 ns», «-1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using default style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4 hr, -5 min, -6 sec, -7 ms, -8 μs, -9 ns», «-1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns») to be true'
-test/intl402/DurationFormat/prototype/format/negative-duration-style-short-en.js:
-  default: 'Test262Error: DurationFormat format output using short style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4 hr, -5 min, -6 sec, -7 ms, -8 μs, -9 ns», «-1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using short style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4 hr, -5 min, -6 sec, -7 ms, -8 μs, -9 ns», «-1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns») to be true'
-test/intl402/DurationFormat/prototype/format/negative-duration-with-leading-zero-style-default-en.js:
-  default: 'Test262Error: DurationFormat format output using default style option Expected SameValue(«0 hr, -1 sec», «-0 hr, 1 sec») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using default style option Expected SameValue(«0 hr, -1 sec», «-0 hr, 1 sec») to be true'
-test/intl402/DurationFormat/prototype/format/negative-duration-with-leading-zero-style-digital-en.js:
-  default: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«0:00:-01», «-0:00:01») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«0:00:-01», «-0:00:01») to be true'
-test/intl402/DurationFormat/prototype/format/negative-duration-with-leading-zero-style-long-en.js:
-  default: 'Test262Error: DurationFormat format output using long style option Expected SameValue(«0 hours, -1 second», «-0 hours, 1 second») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using long style option Expected SameValue(«0 hours, -1 second», «-0 hours, 1 second») to be true'
-test/intl402/DurationFormat/prototype/format/negative-duration-with-leading-zero-style-narrow-en.js:
-  default: 'Test262Error: DurationFormat format output using narrow style option Expected SameValue(«0h -1s», «-0h 1s») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using narrow style option Expected SameValue(«0h -1s», «-0h 1s») to be true'
-test/intl402/DurationFormat/prototype/format/negative-duration-with-leading-zero-style-short-en.js:
-  default: 'Test262Error: DurationFormat format output using short style option Expected SameValue(«0 hr, -1 sec», «-0 hr, 1 sec») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using short style option Expected SameValue(«0 hr, -1 sec», «-0 hr, 1 sec») to be true'
-test/intl402/DurationFormat/prototype/format/negative-durationstyle-digital-en.js:
-  default: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06.007008009», «-1 yr, 2 mths, 3 wks, 3 days, 4:05:06.007008009») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using digital style option Expected SameValue(«-1 yr, -2 mths, -3 wks, -3 days, -4:-05:-06.007008009», «-1 yr, 2 mths, 3 wks, 3 days, 4:05:06.007008009») to be true'
-test/intl402/DurationFormat/prototype/format/negative-durationstyle-long-en.js:
-  default: 'Test262Error: DurationFormat format output using long style option Expected SameValue(«-1 year, -2 months, -3 weeks, -3 days, -4 hours, -5 minutes, -6 seconds, -7 milliseconds, -8 microseconds, -9 nanoseconds», «-1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, 9 nanoseconds») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using long style option Expected SameValue(«-1 year, -2 months, -3 weeks, -3 days, -4 hours, -5 minutes, -6 seconds, -7 milliseconds, -8 microseconds, -9 nanoseconds», «-1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, 9 nanoseconds») to be true'
-test/intl402/DurationFormat/prototype/format/negative-durationstyle-narrow-en.js:
-  default: 'Test262Error: DurationFormat format output using narrow style option Expected SameValue(«-1y -2mo -3w -3d -4h -5m -6s -7ms -8μs -9ns», «-1y 2mo 3w 3d 4h 5m 6s 7ms 8μs 9ns») to be true'
-  strict mode: 'Test262Error: DurationFormat format output using narrow style option Expected SameValue(«-1y -2mo -3w -3d -4h -5m -6s -7ms -8μs -9ns», «-1y 2mo 3w 3d 4h 5m 6s 7ms 8μs 9ns») to be true'
 test/intl402/DurationFormat/prototype/format/numeric-hour-with-zero-minutes-and-non-zero-seconds-with-auto-display-and-zero-fractional.js:
   default: 'Test262Error: Duration is {"hours":0,"minutes":0,"seconds":1} Expected SameValue(«0, 01», «0:00:01») to be true'
   strict mode: 'Test262Error: Duration is {"hours":0,"minutes":0,"seconds":1} Expected SameValue(«0, 01», «0:00:01») to be true'
@@ -1068,36 +1038,6 @@ test/intl402/DurationFormat/prototype/format/numeric-hour-with-zero-minutes-and-
 test/intl402/DurationFormat/prototype/format/precision-exact-mathematical-values.js:
   default: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000.000000002», «0:00:10,000,000.000000001») to be true'
   strict mode: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000.000000002», «0:00:10,000,000.000000001») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-default-en.js:
-  default: 'Test262Error: Using style : default: length Expected SameValue(«49», «40») to be true'
-  strict mode: 'Test262Error: Using style : default: length Expected SameValue(«49», «40») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-digital-en.js:
-  default: 'Test262Error: Using style : digital: length Expected SameValue(«30», «24») to be true'
-  strict mode: 'Test262Error: Using style : digital: length Expected SameValue(«30», «24») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-long-en.js:
-  default: 'Test262Error: Using style : long: length Expected SameValue(«49», «40») to be true'
-  strict mode: 'Test262Error: Using style : long: length Expected SameValue(«49», «40») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-narrow-en.js:
-  default: 'Test262Error: Using style : narrow: length Expected SameValue(«39», «30») to be true'
-  strict mode: 'Test262Error: Using style : narrow: length Expected SameValue(«39», «30») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/negative-duration-formatToParts-style-short-en.js:
-  default: 'Test262Error: Using style : short: length Expected SameValue(«49», «40») to be true'
-  strict mode: 'Test262Error: Using style : short: length Expected SameValue(«49», «40») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/negative-duration-with-leading-zero-style-default-en.js:
-  default: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
-  strict mode: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/negative-duration-with-leading-zero-style-digital-en.js:
-  default: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
-  strict mode: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/negative-duration-with-leading-zero-style-long-en.js:
-  default: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
-  strict mode: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/negative-duration-with-leading-zero-style-narrow-en.js:
-  default: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
-  strict mode: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
-test/intl402/DurationFormat/prototype/formatToParts/negative-duration-with-leading-zero-style-short-en.js:
-  default: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
-  strict mode: 'Test262Error: type for entry 0 Expected SameValue(«integer», «minusSign») to be true'
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
