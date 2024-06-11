@@ -55,6 +55,7 @@
 #include "WebSWServerToContextConnectionMessages.h"
 #include "WebServiceWorkerFetchTaskClient.h"
 #include "WebSocketProvider.h"
+#include "WebStorageProvider.h"
 #include "WebUserContentController.h"
 #include <WebCore/EditorClient.h>
 #include <WebCore/EmptyClients.h>
@@ -166,6 +167,8 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
 #if ENABLE(WEB_RTC)
         pageConfiguration.webRTCProvider = makeUniqueRef<RemoteWorkerLibWebRTCProvider>();
 #endif
+        pageConfiguration.storageProvider = makeUniqueRef<WebStorageProvider>(WebProcess::singleton().mediaKeysStorageDirectory(), WebProcess::singleton().mediaKeysStorageSalt());
+
         if (auto* serviceWorkerPage = m_serviceWorkerPageIdentifier ? Page::serviceWorkerPage(*m_serviceWorkerPageIdentifier) : nullptr)
             pageConfiguration.corsDisablingPatterns = serviceWorkerPage->corsDisablingPatterns();
 

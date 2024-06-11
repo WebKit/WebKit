@@ -42,6 +42,7 @@
 #include "WebProcess.h"
 #include "WebSharedWorkerServerToContextConnectionMessages.h"
 #include "WebSocketProvider.h"
+#include "WebStorageProvider.h"
 #include "WebUserContentController.h"
 #include <WebCore/EmptyClients.h>
 #include <WebCore/Page.h>
@@ -107,6 +108,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
 #if ENABLE(WEB_RTC)
     pageConfiguration.webRTCProvider = makeUniqueRef<RemoteWorkerLibWebRTCProvider>();
 #endif
+    pageConfiguration.storageProvider = makeUniqueRef<WebStorageProvider>(WebProcess::singleton().mediaKeysStorageDirectory(), WebProcess::singleton().mediaKeysStorageSalt());
 
     pageConfiguration.clientCreatorForMainFrame = CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [client = makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, m_userAgent)] (auto&) mutable {
         return WTFMove(client);
