@@ -292,7 +292,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
             auto decoder = makeUniqueRef<Decoder>(*replySpan, m_currentDestinationID);
             if (decoder->messageName() != MessageName::ProcessOutOfStreamMessage) {
                 ASSERT(decoder->messageName() == MessageName::SyncMessageReply);
-                return WTFMove(decoder);
+                return decoder;
             }
         } else
             m_buffer.resetClientOffset();
