@@ -6,7 +6,7 @@ CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the followin
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-abcdefghijkl
+abczxcvbnjkl
 
 PASS document.write with html assigned via policy (successful URL transformation).
 PASS document.write with multiple trusted arguments.
@@ -21,9 +21,9 @@ PASS `document.writeln(string, TrustedHTML)` throws
 PASS `document.write(null)` throws
 PASS `document.writeln(null)` throws
 PASS `document.write(string)` observes default policy
-FAIL `document.write(string, string)` observes default policy assert_equals: expected "abczxcvbnjkl" but got "abcdefghijkl"
-FAIL `document.write(string, TrustedHTML)` observes default policy assert_equals: expected "abczxcvbnjkl" but got "abcdefghijkl"
+PASS `document.write(string, string)` observes default policy
+PASS `document.write(string, TrustedHTML)` observes default policy
 PASS `document.writeln(string)` observes default policy
-FAIL `document.writeln(string, string)` observes default policy assert_equals: expected "abczxcvbnjkl" but got "abcdefghijkl"
-FAIL `document.writeln(string, TrustedHTML)` observes default policy assert_equals: expected "abczxcvbnjkl" but got "abcdefghijkl"
+PASS `document.writeln(string, string)` observes default policy
+PASS `document.writeln(string, TrustedHTML)` observes default policy
 

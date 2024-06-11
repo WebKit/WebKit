@@ -139,7 +139,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     Ref document = HTMLDocument::create(nullptr, m_document->protectedSettings(), URL(), { });
     document->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent });
     document->open();
-    document->write(nullptr, { "<!doctype html><html><head></head><body></body></html>"_s });
+    document->write(nullptr, FixedVector<String> { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
         auto titleElement = HTMLTitleElement::create(titleTag, document);
         titleElement->appendChild(document->createTextNode(WTFMove(title)));
