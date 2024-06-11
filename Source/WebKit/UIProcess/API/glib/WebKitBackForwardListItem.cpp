@@ -119,16 +119,22 @@ const gchar* webkit_back_forward_list_item_get_uri(WebKitBackForwardListItem* li
  * webkit_back_forward_list_item_get_title:
  * @list_item: a #WebKitBackForwardListItem
  *
- * Since 2.44, page titles are no longer stored in history. This function now returns an empty string.
+ * Obtain the title of the item.
  *
- * Returns: an empty string
- *
- * Deprecated: 2.44
+ * Returns: the page title of @list_item or %NULL
+ *    when the title is empty.
  */
 const gchar* webkit_back_forward_list_item_get_title(WebKitBackForwardListItem* listItem)
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST_ITEM(listItem), 0);
-    return "";
+
+    WebKitBackForwardListItemPrivate* priv = listItem->priv;
+    String title = priv->webListItem->title();
+    if (title.isEmpty())
+        return 0;
+
+    priv->title = title.utf8();
+    return priv->title.data();
 }
 
 /**
