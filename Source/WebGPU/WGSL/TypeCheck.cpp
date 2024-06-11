@@ -1362,6 +1362,10 @@ void TypeChecker::visit(AST::CallExpression& call)
     if (isNamedType || isParameterizedType) {
         auto* result = chooseOverload("initializer"_s, call.span(), &call, targetName, call.arguments(), typeArguments);
         if (result) {
+            target.m_inferredType = result;
+            if (isBottom(result))
+                return;
+
             // FIXME: this will go away once we track used intrinsics properly
             if (targetName == "workgroupUniformLoad"_s)
                 m_shaderModule.setUsesWorkgroupUniformLoad();
@@ -1398,7 +1402,6 @@ void TypeChecker::visit(AST::CallExpression& call)
                     }
                 }
             }
-            target.m_inferredType = result;
             return;
         }
 

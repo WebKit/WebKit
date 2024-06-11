@@ -44,3 +44,9 @@ fn testBottomOverload() {
   // CHECK-NOT-L: no matching overload for operator
   let x = m + 2;
 }
+
+fn testTextureGather()
+{
+    // CHECK-L: no matching overload for initializer textureGather()
+    _ = textureGather();
+}
