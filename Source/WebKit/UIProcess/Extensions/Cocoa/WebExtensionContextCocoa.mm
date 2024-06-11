@@ -2239,7 +2239,7 @@ void WebExtensionContext::didMoveTab(WebExtensionTab& tab, size_t oldIndex, cons
     RefPtr newWindow = tab.window();
     size_t newIndex = tab.index();
 
-    if (oldWindow == newWindow)
+    if (newWindow && oldWindow == newWindow)
         RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu from index %{public}zu to index %{public}zu (in same window)", tab.identifier().toUInt64(), oldIndex, newIndex);
     else if (oldWindow && newWindow)
         RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu to window %{public}llu at index %{public}zu", tab.identifier().toUInt64(), newWindow->identifier().toUInt64(), newIndex);
@@ -2254,12 +2254,10 @@ void WebExtensionContext::didMoveTab(WebExtensionTab& tab, size_t oldIndex, cons
     if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
-    if (oldWindow == newWindow) {
+    if (newWindow && oldWindow == newWindow) {
         // Window did not change, only the index.
-        if (newIndex == oldIndex)
-            return;
-
-        fireTabsMovedEventIfNeeded(tab.identifier(), newWindow->identifier(), oldIndex, newIndex);
+        if (newIndex != oldIndex)
+            fireTabsMovedEventIfNeeded(tab.identifier(), newWindow->identifier(), oldIndex, newIndex);
     } else if (oldWindow && newWindow) {
         // Window changed to another.
         fireTabsDetachedEventIfNeeded(tab.identifier(), oldWindow->identifier(), oldIndex);
