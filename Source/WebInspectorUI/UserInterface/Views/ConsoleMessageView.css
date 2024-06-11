@@ -302,14 +302,6 @@
     content: ' ';
 }
 
-.console-top-level-message .object-tree {
-    display: block;
-}
-
-.console-top-level-message .object-tree .object-tree {
-    display: inline-block;
-}
-
 .console-message .timestamp {
     float: right;
     margin-inline-start: 12px;

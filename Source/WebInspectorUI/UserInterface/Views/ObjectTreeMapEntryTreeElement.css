@@ -24,8 +24,8 @@
  */
 
 .object-tree-array-index.object-tree-map-entry > .titles > .title > .index-name {
-    width: 40px;
-    text-align: right;
+    min-width: 40px;
+    text-align: end;
 }
 
 .object-tree-map-entry.key:not(:first-child) {
