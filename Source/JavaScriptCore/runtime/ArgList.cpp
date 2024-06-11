@@ -45,7 +45,7 @@ void MarkedVectorBase::addMarkSet(JSValue v)
 
 void ArgList::getSlice(int startIndex, ArgList& result) const
 {
-    if (startIndex <= 0 || startIndex >= m_argCount) {
+    if (startIndex <= 0 || static_cast<unsigned>(startIndex) >= m_argCount) {
         result = ArgList();
         return;
     }
@@ -60,7 +60,7 @@ void MarkedVectorBase::markLists(Visitor& visitor, ListSet& markSet)
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
         MarkedVectorBase* list = *it;
-        for (int i = 0; i < list->m_size; ++i)
+        for (unsigned i = 0; i < list->m_size; ++i)
             visitor.appendUnbarriered(JSValue::decode(list->slotFor(i)));
     }
 }
@@ -86,7 +86,7 @@ auto MarkedVectorBase::expandCapacity() -> Status
     return expandCapacity(checkedNewCapacity);
 }
 
-auto MarkedVectorBase::expandCapacity(int newCapacity) -> Status
+auto MarkedVectorBase::expandCapacity(unsigned newCapacity) -> Status
 {
     setNeedsOverflowCheck();
     ASSERT(m_capacity < newCapacity);
@@ -96,7 +96,7 @@ auto MarkedVectorBase::expandCapacity(int newCapacity) -> Status
     EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(Gigacage::tryMalloc(Gigacage::JSValue, checkedSize));
     if (!newBuffer)
         return Status::Overflowed;
-    for (int i = 0; i < m_size; ++i) {
+    for (unsigned i = 0; i < m_size; ++i) {
         newBuffer[i] = m_buffer[i];
         addMarkSet(JSValue::decode(m_buffer[i]));
     }
