@@ -444,6 +444,8 @@ class Package(object):
 
 
 def _default_pypi_index():
+    return 'pypi.org'
+
     pypi_url = re.compile(r'\Aindex\S* = https?://(?P<host>\S+)/.*')
     pip_config = '/Library/Application Support/pip/pip.conf'
     if os.path.isfile(pip_config):

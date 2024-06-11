@@ -278,10 +278,16 @@ class Issue(object):
                 )
 
         match_strings = {self.link: match_string}
-        if self.original:
-            match_strings[self.original.link] = self.original._redaction_match
-        for dupe in self.duplicates or []:
-            match_strings[dupe.link] = dupe._redaction_match
+        duplicates = self.duplicates or []
+        originals = [self.original] if self.original else []
+        for related_issue in duplicates + originals:
+            match_string = related_issue._redaction_match
+            for key, value in self.tracker._redact_exemption.items():
+                if key.search(match_string) and value:
+                    match_string = None
+                    break
+            if match_string:
+                match_strings[related_issue.link] = match_string
 
         for m_link, m_string in match_strings.items():
             for key, value in self.tracker._redact.items():
