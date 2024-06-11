@@ -77,9 +77,6 @@ static MTLRenderStages metalRenderStage(ShaderStage shaderStage)
     }
 }
 
-template <typename T>
-using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
-
 #if HAVE(COREVIDEO_METAL_SUPPORT)
 
 enum class TransferFunctionCV {
@@ -902,8 +899,8 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         return BindGroup::createInvalid(*this);
     }
 
-    ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoder = std::array<id<MTLArgumentEncoder>, stageCount>({ bindGroupLayout.vertexArgumentEncoder(), bindGroupLayout.fragmentArgumentEncoder(), bindGroupLayout.computeArgumentEncoder() });
-    ShaderStageArray<id<MTLBuffer>> argumentBuffer;
+    BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoder = std::array<id<MTLArgumentEncoder>, stageCount>({ bindGroupLayout.vertexArgumentEncoder(), bindGroupLayout.fragmentArgumentEncoder(), bindGroupLayout.computeArgumentEncoder() });
+    BindGroup::ShaderStageArray<id<MTLBuffer>> argumentBuffer;
     for (ShaderStage stage : stages) {
         auto encodedLength = bindGroupLayout.encodedLength(stage);
         argumentBuffer[stage] = encodedLength ? safeCreateBuffer(encodedLength, MTLStorageModeShared) : nil;
@@ -920,7 +917,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         return a.binding < b.binding;
     });
     BindGroup::DynamicBuffersContainer dynamicBuffers;
-    HashSet<RefPtr<Sampler>> samplersSet;
+    BindGroup::SamplersContainer samplersSet;
 
     for (uint32_t i = 0, entryCount = descriptor.entryCount; i < entryCount; ++i) {
         const WGPUBindGroupEntry& entry = descriptor.entries[i];
@@ -1046,7 +1043,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 id<MTLSamplerState> sampler = apiSampler.samplerState();
                 if (stage != ShaderStage::Undefined) {
                     [argumentEncoder[stage] setSamplerState:sampler atIndex:index];
-                    samplersSet.add(&apiSampler);
+                    samplersSet.add(&apiSampler, BindGroup::ShaderStageArray<std::optional<uint32_t>> { }).iterator->value[stage] = index;
                 }
             } else if (textureViewIsPresent) {
                 auto it = bindGroupLayoutEntries.find(bindingIndex);
@@ -1184,7 +1181,7 @@ const BindGroupLayout* BindGroup::bindGroupLayout() const
     return m_bindGroupLayout.get();
 }
 
-BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, HashSet<RefPtr<Sampler>>&& samplers, Device& device)
+BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, Device& device)
     : m_vertexArgumentBuffer(vertexArgumentBuffer)
     , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
     , m_computeArgumentBuffer(computeArgumentBuffer)
@@ -1275,6 +1272,31 @@ uint64_t BindGroup::makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLay
 {
     RELEASE_ASSERT(aspect);
     return (static_cast<uint64_t>(aspect) - 1) | (static_cast<uint64_t>(baseMipLevel) << 1) | (static_cast<uint64_t>(baseArrayLayer) << 32);
+}
+
+void BindGroup::rebindSamplersIfNeeded() const
+{
+    for (auto& [samplerRefPtr, shaderStageArray] : m_samplers) {
+        auto* sampler = samplerRefPtr.get();
+        ASSERT(sampler);
+        if (!sampler || sampler->cachedSampler())
+            continue;
+
+        WTFLogAlways("Rebinding of samplers required, if this occurs frequently the application is using too many unique samplers");
+        id<MTLSamplerState> samplerState = sampler->samplerState();
+        if (shaderStageArray[ShaderStage::Vertex].has_value()) {
+            [m_bindGroupLayout->vertexArgumentEncoder() setArgumentBuffer:vertexArgumentBuffer() offset:0];
+            [m_bindGroupLayout->vertexArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Vertex]];
+        }
+        if (shaderStageArray[ShaderStage::Fragment].has_value()) {
+            [m_bindGroupLayout->fragmentArgumentEncoder() setArgumentBuffer:fragmentArgumentBuffer() offset:0];
+            [m_bindGroupLayout->fragmentArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Fragment]];
+        }
+        if (shaderStageArray[ShaderStage::Compute].has_value()) {
+            [m_bindGroupLayout->computeArgumentEncoder() setArgumentBuffer:computeArgumentBuffer() offset:0];
+            [m_bindGroupLayout->computeArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Compute]];
+        }
+    }
 }
 
 } // namespace WebGPU

@@ -499,6 +499,7 @@ bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
             return false;
         }
         auto& group = *weakBindGroup.get();
+        group.rebindSamplersIfNeeded();
         const Vector<uint32_t>* dynamicOffsets = nullptr;
         if (auto it = m_bindGroupDynamicOffsets.find(groupIndex); it != m_bindGroupDynamicOffsets.end())
             dynamicOffsets = &it->value;

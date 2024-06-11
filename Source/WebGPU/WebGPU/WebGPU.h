@@ -991,7 +991,11 @@ typedef struct WGPUSamplerBindingLayout {
 
 typedef struct WGPUSamplerDescriptor {
     WGPUChainedStruct const * nextInChain;
+#ifdef __cplusplus
+    WTF::String label;
+#else
     WGPU_NULLABLE char const * label;
+#endif
     WGPUAddressMode addressModeU;
     WGPUAddressMode addressModeV;
     WGPUAddressMode addressModeW;

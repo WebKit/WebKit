@@ -26,6 +26,7 @@
 #pragma once
 
 #import "BindableResource.h"
+#import "ShaderStage.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
@@ -45,6 +46,9 @@ class Sampler;
 class BindGroup : public WGPUBindGroupImpl, public RefCounted<BindGroup>, public CanMakeWeakPtr<BindGroup> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    template <typename T>
+    using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
+    using SamplersContainer = HashMap<RefPtr<Sampler>, ShaderStageArray<std::optional<uint32_t>>>;
     struct BufferAndType {
         WGPUBufferBindingType type;
         uint64_t bindingSize;
@@ -55,7 +59,7 @@ public:
 
     static constexpr MTLRenderStages MTLRenderStageCompute = static_cast<MTLRenderStages>(0);
     static constexpr MTLRenderStages MTLRenderStageUndefined = static_cast<MTLRenderStages>(MTLRenderStageFragment + 1);
-    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, HashSet<RefPtr<Sampler>>&& samplers, Device& device)
+    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, Device& device)
     {
         return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), bindGroupLayout, WTFMove(dynamicBuffers), WTFMove(samplers), device));
     }
@@ -84,8 +88,10 @@ public:
     const BindGroupLayout* bindGroupLayout() const;
     const BufferAndType* dynamicBuffer(uint32_t) const;
     uint32_t dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>*) const;
+    void rebindSamplersIfNeeded() const;
+
 private:
-    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&&, const BindGroupLayout&, DynamicBuffersContainer&&, HashSet<RefPtr<Sampler>>&&, Device&);
+    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&&, const BindGroupLayout&, DynamicBuffersContainer&&, SamplersContainer&&, Device&);
     BindGroup(Device&);
 
     const id<MTLBuffer> m_vertexArgumentBuffer { nil };
@@ -97,7 +103,7 @@ private:
     RefPtr<const BindGroupLayout> m_bindGroupLayout;
     DynamicBuffersContainer m_dynamicBuffers;
     HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_dynamicOffsetsIndices;
-    HashSet<RefPtr<Sampler>> m_samplers;
+    SamplersContainer m_samplers;
 };
 
 } // namespace WebGPU

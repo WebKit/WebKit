@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "ShaderStage.h"
 #import <wtf/EnumeratedArray.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
@@ -38,13 +39,6 @@ struct WGPUBindGroupLayoutImpl {
 };
 
 namespace WebGPU {
-
-enum class ShaderStage {
-    Vertex = 0,
-    Fragment = 1,
-    Compute = 2,
-    Undefined = 3
-};
 
 class BindGroup;
 class Device;

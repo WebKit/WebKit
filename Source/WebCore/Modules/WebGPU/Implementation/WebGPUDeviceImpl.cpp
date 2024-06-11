@@ -137,21 +137,19 @@ RefPtr<Texture> DeviceImpl::createTexture(const TextureDescriptor& descriptor)
 
 RefPtr<Sampler> DeviceImpl::createSampler(const SamplerDescriptor& descriptor)
 {
-    auto label = descriptor.label.utf8();
-
     WGPUSamplerDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        m_convertToBackingContext->convertToBacking(descriptor.addressModeU),
-        m_convertToBackingContext->convertToBacking(descriptor.addressModeV),
-        m_convertToBackingContext->convertToBacking(descriptor.addressModeW),
-        m_convertToBackingContext->convertToBacking(descriptor.magFilter),
-        m_convertToBackingContext->convertToBacking(descriptor.minFilter),
-        m_convertToBackingContext->convertToBacking(descriptor.mipmapFilter),
-        descriptor.lodMinClamp,
-        descriptor.lodMaxClamp,
-        descriptor.compare ? m_convertToBackingContext->convertToBacking(*descriptor.compare) : WGPUCompareFunction_Undefined,
-        descriptor.maxAnisotropy,
+        .nextInChain = nullptr,
+        .label = descriptor.label,
+        .addressModeU = m_convertToBackingContext->convertToBacking(descriptor.addressModeU),
+        .addressModeV = m_convertToBackingContext->convertToBacking(descriptor.addressModeV),
+        .addressModeW = m_convertToBackingContext->convertToBacking(descriptor.addressModeW),
+        .magFilter = m_convertToBackingContext->convertToBacking(descriptor.magFilter),
+        .minFilter = m_convertToBackingContext->convertToBacking(descriptor.minFilter),
+        .mipmapFilter = m_convertToBackingContext->convertToBacking(descriptor.mipmapFilter),
+        .lodMinClamp = descriptor.lodMinClamp,
+        .lodMaxClamp = descriptor.lodMaxClamp,
+        .compare = descriptor.compare ? m_convertToBackingContext->convertToBacking(*descriptor.compare) : WGPUCompareFunction_Undefined,
+        .maxAnisotropy = descriptor.maxAnisotropy,
     };
 
     return SamplerImpl::create(adoptWebGPU(wgpuDeviceCreateSampler(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);

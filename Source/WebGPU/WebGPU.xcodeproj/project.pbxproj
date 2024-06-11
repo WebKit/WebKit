@@ -12,6 +12,7 @@
 		0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */; };
 		0D30F93B29F1FBE40055D9F1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */; };
 		0D509DCD29CAB6EC00546D84 /* MetalSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D509DCC29CAB6EC00546D84 /* MetalSPI.h */; };
+		0DE2BFAD2C150DF700D04AEB /* ShaderStage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DE2BFAC2C150DF700D04AEB /* ShaderStage.h */; };
 		1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C0F41EC280940650005886D /* HardwareCapabilities.mm */; };
 		1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2CEDED271E8A7300EDC16F /* Metal.framework */; };
 		1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C582FF727E04131009B40F0 /* CommandsMixin.mm */; };
@@ -267,6 +268,7 @@
 		0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		0D4D2E80294A89CF0000A1AB /* BindableResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BindableResource.h; sourceTree = "<group>"; };
 		0D509DCC29CAB6EC00546D84 /* MetalSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalSPI.h; sourceTree = "<group>"; };
+		0DE2BFAC2C150DF700D04AEB /* ShaderStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderStage.h; sourceTree = "<group>"; };
 		1C0F41EC280940650005886D /* HardwareCapabilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HardwareCapabilities.mm; sourceTree = "<group>"; };
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
 		1C2CEDED271E8A7300EDC16F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
@@ -619,6 +621,7 @@
 				1C5ACAE8273A55FD0095F8D5 /* Sampler.mm */,
 				1CEBD80D2716C3D800A5254D /* ShaderModule.h */,
 				1C5ACAB0273A426D0095F8D5 /* ShaderModule.mm */,
+				0DE2BFAC2C150DF700D04AEB /* ShaderStage.h */,
 				1C5ACA99273A426D0095F8D5 /* Texture.h */,
 				1C5ACAB1273A426D0095F8D5 /* Texture.mm */,
 				1C5ACADD273A4F3D0095F8D5 /* TextureView.h */,
@@ -843,6 +846,7 @@
 				0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */,
 				0D509DCD29CAB6EC00546D84 /* MetalSPI.h in Headers */,
 				973F784729C8A78200166C66 /* Pipeline.h in Headers */,
+				0DE2BFAD2C150DF700D04AEB /* ShaderStage.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
