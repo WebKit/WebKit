@@ -40,8 +40,6 @@ G_BEGIN_DECLS
  * Enum values used to denote the various sources of console messages.
  *
  * Since: 2.12
- *
- * Deprecated: 2.40
  */
 typedef enum {
     WEBKIT_CONSOLE_MESSAGE_SOURCE_JAVASCRIPT,
@@ -62,8 +60,6 @@ typedef enum {
  * Enum values used to denote the various levels of console messages.
  *
  * Since: 2.12
- *
- * Deprecated: 2.40
  */
 typedef enum {
     WEBKIT_CONSOLE_MESSAGE_LEVEL_INFO,
@@ -75,30 +71,30 @@ typedef enum {
 
 typedef struct _WebKitConsoleMessage WebKitConsoleMessage;
 
-WEBKIT_DEPRECATED GType
+WEBKIT_API GType
 webkit_console_message_get_type      (void);
 
-WEBKIT_DEPRECATED WebKitConsoleMessage *
+WEBKIT_API WebKitConsoleMessage *
 webkit_console_message_copy          (WebKitConsoleMessage *console_message);
 
-WEBKIT_DEPRECATED void
+WEBKIT_API void
 webkit_console_message_free          (WebKitConsoleMessage *console_message);
 
-WEBKIT_DEPRECATED WebKitConsoleMessageSource
+WEBKIT_API WebKitConsoleMessageSource
 webkit_console_message_get_source    (WebKitConsoleMessage *console_message);
 
-WEBKIT_DEPRECATED WebKitConsoleMessageLevel
+WEBKIT_API WebKitConsoleMessageLevel
 webkit_console_message_get_level     (WebKitConsoleMessage *console_message);
 
-WEBKIT_DEPRECATED const gchar *
+WEBKIT_API const gchar *
 webkit_console_message_get_text      (WebKitConsoleMessage *console_message);
 
-WEBKIT_DEPRECATED guint
+WEBKIT_API guint
 webkit_console_message_get_line      (WebKitConsoleMessage *console_message);
 
-WEBKIT_DEPRECATED const gchar *
+WEBKIT_API const gchar *
 webkit_console_message_get_source_id (WebKitConsoleMessage *console_message);
 
 G_END_DECLS
 
-#endif
+#endif /* WebKitConsoleMessage_h */

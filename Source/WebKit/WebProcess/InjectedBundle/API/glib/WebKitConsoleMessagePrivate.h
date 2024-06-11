@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitConsoleMessagePrivate_h
-#define WebKitConsoleMessagePrivate_h
+#pragma once
 
 #include "WebKitConsoleMessage.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -50,5 +49,3 @@ struct _WebKitConsoleMessage {
     unsigned lineNumber;
     CString sourceID;
 };
-
-#endif // WebKitConsoleMessagePrivate_h

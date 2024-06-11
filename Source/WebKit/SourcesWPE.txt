@@ -265,6 +265,7 @@ WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp
 
 WebProcess/GPU/media/gstreamer/VideoLayerRemoteGStreamer.cpp
 
+WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitWebEditor.cpp @no-unify
