@@ -125,7 +125,7 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    // FIXME: Only some canvas rendering contexts need an ImageBuffer.
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=275100): Only some canvas rendering contexts need an ImageBuffer.
     // It would be better to have the contexts own the buffers.
     void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
 

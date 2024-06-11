@@ -241,7 +241,7 @@ void CanvasRenderingContext2DBase::unwindStateStack()
     if (stackSize <= 1)
         return;
     // We need to keep the last state because it is tracked by CanvasBase::m_contextStateSaver.
-    if (auto* context = canvasBase().existingDrawingContext())
+    if (auto* context = existingDrawingContext())
         context->unwindStateStack(stackSize - 1);
 }
 
@@ -255,7 +255,7 @@ CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
 bool CanvasRenderingContext2DBase::isAccelerated() const
 {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || USE(SKIA)
-    auto* context = canvasBase().existingDrawingContext();
+    auto* context = existingDrawingContext();
     return context && context->renderingMode() == RenderingMode::Accelerated;
 #else
     return false;
@@ -304,7 +304,7 @@ void CanvasRenderingContext2DBase::reset()
     m_cachedContents.emplace<CachedContentsTransparent>();
     m_hasDeferredOperations = false;
     clearAccumulatedDirtyRect();
-    if (auto* c = canvasBase().existingDrawingContext()) {
+    if (auto* c = existingDrawingContext()) {
         canvasBase().resetGraphicsContextState();
         c->clearRect(FloatRect { { }, canvasBase().size() });
     }
@@ -940,7 +940,7 @@ void CanvasRenderingContext2DBase::resetTransform()
 
     realizeSaves();
 
-    c->setCTM(canvasBase().baseTransform());
+    c->setCTM(baseTransform());
     modifiableState().transform = AffineTransform();
 
     if (hasInvertibleTransform)
@@ -1976,7 +1976,7 @@ void CanvasRenderingContext2DBase::clearCanvas()
         return;
 
     c->save();
-    c->setCTM(canvasBase().baseTransform());
+    c->setCTM(baseTransform());
     c->clearRect(FloatRect(0, 0, canvasBase().width(), canvasBase().height()));
     c->restore();
 }
@@ -1985,7 +1985,7 @@ Path CanvasRenderingContext2DBase::transformAreaToDevice(const Path& path) const
 {
     Path transformed(path);
     transformed.transform(state().transform);
-    transformed.transform(canvasBase().baseTransform());
+    transformed.transform(baseTransform());
     return transformed;
 }
 
@@ -2006,7 +2006,7 @@ bool CanvasRenderingContext2DBase::rectContainsCanvas(const FloatRect& rect) con
 template<class T> IntRect CanvasRenderingContext2DBase::calculateCompositingBufferRect(const T& area, IntSize* croppedOffset)
 {
     IntRect canvasRect(0, 0, canvasBase().width(), canvasBase().height());
-    canvasRect = canvasBase().baseTransform().mapRect(canvasRect);
+    canvasRect = baseTransform().mapRect(canvasRect);
     Path path = transformAreaToDevice(area);
     IntRect bufferRect = enclosingIntRect(path.fastBoundingRect());
     IntPoint originalLocation = bufferRect.location();
@@ -2019,7 +2019,7 @@ template<class T> IntRect CanvasRenderingContext2DBase::calculateCompositingBuff
 void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const IntRect& bufferRect, CompositeOperator op)
 {
     IntRect canvasRect(0, 0, canvasBase().width(), canvasBase().height());
-    canvasRect = canvasBase().baseTransform().mapRect(canvasRect);
+    canvasRect = baseTransform().mapRect(canvasRect);
 
     auto* c = drawingContext();
     if (!c)
@@ -2395,14 +2395,28 @@ const Vector<CanvasRenderingContext2DBase::State, 1>& CanvasRenderingContext2DBa
 
 GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
-    auto* context = canvasBase().drawingContext();
-    if (!context)
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=275100): The image buffer from CanvasBase should be moved to CanvasRenderingContext2DBase.
+    auto* buffer = canvasBase().buffer();
+    if (!buffer)
         return nullptr;
-
+    auto& context = buffer->context();
     if (UNLIKELY(m_targetSwitcher))
-        return m_targetSwitcher->drawingContext(*context);
+        return m_targetSwitcher->drawingContext(context);
+    return &context;
+}
 
-    return context;
+GraphicsContext* CanvasRenderingContext2DBase::existingDrawingContext() const
+{
+    if (!canvasBase().hasCreatedImageBuffer())
+        return nullptr;
+    return drawingContext();
+}
+
+AffineTransform CanvasRenderingContext2DBase::baseTransform() const
+{
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=275100): The image buffer from CanvasBase should be moved to CanvasRenderingContext2DBase.
+    ASSERT(canvasBase().hasCreatedImageBuffer());
+    return canvasBase().buffer()->baseTransform();
 }
 
 void CanvasRenderingContext2DBase::prepareForDisplay()

@@ -67,34 +67,11 @@ CanvasBase::~CanvasBase()
     m_canvasNoiseHashSalt = std::nullopt;
 }
 
-GraphicsContext* CanvasBase::drawingContext() const
-{
-    auto* context = renderingContext();
-    if (context && !context->is2d() && !context->isOffscreen2d())
-        return nullptr;
-
-    return buffer() ? &m_imageBuffer->context() : nullptr;
-}
-
-GraphicsContext* CanvasBase::existingDrawingContext() const
-{
-    if (!hasCreatedImageBuffer())
-        return nullptr;
-
-    return drawingContext();
-}
-
 ImageBuffer* CanvasBase::buffer() const
 {
     if (!hasCreatedImageBuffer())
         createImageBuffer();
     return m_imageBuffer.get();
-}
-
-AffineTransform CanvasBase::baseTransform() const
-{
-    ASSERT(hasCreatedImageBuffer());
-    return m_imageBuffer->baseTransform();
 }
 
 RefPtr<ImageBuffer> CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)

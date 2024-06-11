@@ -317,7 +317,10 @@ protected:
     void realizeSaves();
     State& modifiableState() { ASSERT(!m_unrealizedSaveCount || m_stateStack.size() >= MaxSaveCount); return m_stateStack.last(); }
 
-    GraphicsContext* drawingContext() const;
+    virtual GraphicsContext* drawingContext() const;
+    virtual GraphicsContext* existingDrawingContext() const;
+    virtual AffineTransform baseTransform() const;
+
     enum class DidDrawOption {
         ApplyTransform = 1 << 0,
         ApplyShadow = 1 << 1,
