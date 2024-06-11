@@ -59,8 +59,6 @@ WK_EXPORT void WKBundlePageExecuteEditingCommand(WKBundlePageRef page, WKStringR
 WK_EXPORT double WKBundlePageGetTextZoomFactor(WKBundlePageRef page);
 WK_EXPORT double WKBundlePageGetPageZoomFactor(WKBundlePageRef page);
 
-WK_EXPORT void WKBundlePageSetScaleAtOrigin(WKBundlePageRef page, double scale, WKPoint origin);
-
 WK_EXPORT void WKBundlePageForceRepaint(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageFlushPendingEditorStateUpdate(WKBundlePageRef page);
 

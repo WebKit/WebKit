@@ -497,8 +497,12 @@ void EventSendingController::zoomPageOut()
 
 void EventSendingController::scalePageBy(double scale, double x, double y)
 {
-    WKPoint origin = { x, y };
-    WKBundlePageSetScaleAtOrigin(InjectedBundle::singleton().page()->page(), scale, origin);
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "ScalePage");
+    setValue(body, "Scale", scale);
+    setValue(body, "OriginX", x);
+    setValue(body, "OriginY", y);
+    postSynchronousPageMessage("EventSender", body);
 }
 
 MonitorWheelEventsOptions* toMonitorWheelEventsOptions(JSContextRef context, JSValueRef argument)

@@ -179,6 +179,8 @@ void TestInvocation::invoke()
     WKPageSetPageZoomFactor(TestController::singleton().mainWebView()->page(), 1);
     WKPageSetTextZoomFactor(TestController::singleton().mainWebView()->page(), 1);
 
+    WKPageSetScaleFactor(TestController::singleton().mainWebView()->page(), 1, WKPointMake(0, 0));
+
     postPageMessage("BeginTest", createTestSettingsDictionary());
 
     m_startedTesting = true;

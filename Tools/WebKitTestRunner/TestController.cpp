@@ -2337,6 +2337,13 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
             return completionHandler(nullptr);
         }
 
+        if (WKStringIsEqualToUTF8CString(subMessageName, "ScalePage")) {
+            auto* page = mainWebView()->page();
+            WKPoint origin { doubleValue(dictionary, "OriginX"), doubleValue(dictionary, "OriginY") };
+            WKPageSetScaleFactor(page, doubleValue(dictionary, "Scale"), origin);
+            return completionHandler(nullptr);
+        }
+
         ASSERT_NOT_REACHED();
     }
 
