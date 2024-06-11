@@ -823,7 +823,7 @@ void InlineCacheCompiler::succeed()
         m_jit->ret();
         return;
     }
-    if (m_jit->codeBlock()->useDataIC()) {
+    if (m_stubInfo->useDataIC) {
         m_jit->farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfDoneLocation()), JSInternalPtrTag);
         return;
     }
@@ -863,7 +863,7 @@ const ScalarRegisterSet& InlineCacheCompiler::calculateLiveRegistersForCallAndEx
             RELEASE_ASSERT(JSC::JITCode::isOptimizingJIT(m_jit->codeBlock()->jitType()));
 
         auto liveRegistersForCall = RegisterSetBuilder(m_liveRegistersToPreserveAtExceptionHandlingCallSite.toRegisterSet(), m_allocator->usedRegisters());
-        if (m_jit->codeBlock()->useDataIC())
+        if (m_stubInfo->useDataIC)
             liveRegistersForCall.add(m_stubInfo->m_stubInfoGPR, IgnoreVectors);
         liveRegistersForCall.exclude(calleeSaveRegisters().buildAndValidate().includeWholeRegisterWidth());
         m_liveRegistersForCall = liveRegistersForCall.buildScalarRegisterSet();
@@ -894,7 +894,7 @@ auto InlineCacheCompiler::preserveLiveRegistersToStackForCall(const RegisterSet&
 auto InlineCacheCompiler::preserveLiveRegistersToStackForCallWithoutExceptions() -> SpillState
 {
     RegisterSetBuilder liveRegisters = m_allocator->usedRegisters();
-    if (m_jit->codeBlock()->useDataIC())
+    if (m_stubInfo->useDataIC)
         liveRegisters.add(m_stubInfo->m_stubInfoGPR, IgnoreVectors);
     liveRegisters.exclude(calleeSaveRegisters().buildAndValidate().includeWholeRegisterWidth());
     liveRegisters.filter(RegisterSetBuilder::allScalarRegisters());
@@ -2995,7 +2995,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
         // exception handling call site.
         InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall();
 
-        if (codeBlock->useDataIC()) {
+        if (m_stubInfo->useDataIC) {
             callSiteIndexForExceptionHandlingOrOriginal();
             jit.transfer32(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
         } else
@@ -3130,7 +3130,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
         // exception handling call site.
         InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall();
 
-        if (codeBlock->useDataIC()) {
+        if (m_stubInfo->useDataIC) {
             callSiteIndexForExceptionHandlingOrOriginal();
             jit.transfer32(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
         } else
@@ -3214,7 +3214,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             // We *always* know that the getter/setter, if non-null, is a cell.
             jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
-            m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+            m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, m_stubInfo->useDataIC ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
             auto* callLinkInfo = m_callLinkInfos[index].get();
             callLinkInfo->setUpCall(CallLinkInfo::Call);
             CallLinkInfo::emitFastPath(jit, callLinkInfo);
@@ -3229,7 +3229,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             done.link(&jit);
         }
 
-        if (codeBlock->useDataIC()) {
+        if (m_stubInfo->useDataIC) {
             jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), scratchGPR);
             if (useHandlerIC())
                 jit.addPtr(CCallHelpers::TrustedImm32(-(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall + m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), scratchGPR);
@@ -3368,7 +3368,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
                 extraRegistersToPreserve.add(valueRegs, IgnoreVectors);
                 InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall(extraRegistersToPreserve);
 
-                if (codeBlock->useDataIC()) {
+                if (m_stubInfo->useDataIC) {
                     callSiteIndexForExceptionHandlingOrOriginal();
                     jit.transfer32(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
                 } else
@@ -3634,7 +3634,7 @@ void InlineCacheCompiler::emitDOMJITGetter(GetterSetterAccessCase& accessCase, c
     GPRReg baseGPR = m_stubInfo->m_baseGPR;
     GPRReg scratchGPR = m_scratchGPR;
 
-    if (jit.codeBlock()->useDataIC()) {
+    if (m_stubInfo->useDataIC) {
         callSiteIndexForExceptionHandlingOrOriginal();
         jit.transfer32(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
     } else
@@ -3730,7 +3730,7 @@ void InlineCacheCompiler::emitDOMJITGetter(GetterSetterAccessCase& accessCase, c
         usedRegisters.add(reg, IgnoreVectors);
     for (FPRReg reg : fpScratch)
         usedRegisters.add(reg, IgnoreVectors);
-    if (jit.codeBlock()->useDataIC())
+    if (m_stubInfo->useDataIC)
         usedRegisters.add(m_stubInfo->m_stubInfoGPR, IgnoreVectors);
     auto registersToSpillForCCall = RegisterSetBuilder::registersToSaveForCCall(usedRegisters);
 
@@ -3779,7 +3779,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
 
     InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall();
 
-    if (codeBlock->useDataIC()) {
+    if (m_stubInfo->useDataIC) {
         callSiteIndexForExceptionHandlingOrOriginal();
         jit.transfer32(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
     } else
@@ -3901,7 +3901,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
         // We *always* know that the proxy function, if non-null, is a cell.
         jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
-        m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+        m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo->codeOrigin, m_stubInfo->useDataIC ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
         auto* callLinkInfo = m_callLinkInfos[index].get();
         callLinkInfo->setUpCall(CallLinkInfo::Call);
         CallLinkInfo::emitFastPath(jit, callLinkInfo);
@@ -3911,7 +3911,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
         jit.setupResults(valueRegs);
 
 
-    if (codeBlock->useDataIC()) {
+    if (m_stubInfo->useDataIC) {
         jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
         if (useHandlerIC())
             jit.addPtr(CCallHelpers::TrustedImm32(-(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall + m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
@@ -4514,7 +4514,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
 
 #if CPU(ADDRESS64)
     if (useHandlerIC()) {
-        ASSERT(codeBlock->useDataIC());
+        ASSERT(m_stubInfo->useDataIC);
         if (cases.size() == 1)
             return compileOneAccessCaseHandler(poly, codeBlock, cases.first().get(), WTFMove(additionalWatchpointSets));
 
@@ -4595,7 +4595,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
     if (useHandlerIC())
         emitDataICPrologue(*m_jit);
     else if (ASSERT_ENABLED) {
-        if (codeBlock->useDataIC()) {
+        if (m_stubInfo->useDataIC) {
             jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), jit.scratchRegister());
             jit.addPtr(jit.scratchRegister(), GPRInfo::callFrameRegister, jit.scratchRegister());
             if (useHandlerIC())
@@ -4751,7 +4751,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
         // of something that isn't patchable. The slow path will decrement "countdown" and will only
         // patch things if the countdown reaches zero. We increment the slow path count here to ensure
         // that the slow path does not try to patch.
-        if (codeBlock->useDataIC())
+        if (m_stubInfo->useDataIC)
             jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCountdown()));
         else {
             jit.move(CCallHelpers::TrustedImmPtr(&m_stubInfo->countdown), m_scratchGPR);
@@ -4780,7 +4780,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
         InlineCacheCompiler::SpillState spillState = this->spillStateForJSCall();
         ASSERT(!spillState.isEmpty());
         jit.loadPtr(vm().addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
-        if (codeBlock->useDataIC()) {
+        if (m_stubInfo->useDataIC) {
             ASSERT(!JITCode::isBaselineCode(m_jitType));
             jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
             jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
@@ -4812,7 +4812,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
     }
 
     CodeLocationLabel<JSInternalPtrTag> successLabel = m_stubInfo->doneLocation;
-    if (codeBlock->useDataIC()) {
+    if (m_stubInfo->useDataIC) {
         if (useHandlerIC())
             failure.linkThunk(CodeLocationLabel(CodePtr<NoPtrTag> { (generateSlowPathCode(vm(), m_stubInfo->accessType).retaggedCode<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC) }), &jit);
         else {
@@ -4832,7 +4832,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
     }
 
 
-    if (codeBlock->useDataIC())
+    if (m_stubInfo->useDataIC)
         ASSERT(m_success.empty());
 
     dataLogLnIf(InlineCacheCompilerInternal::verbose, FullCodeOrigin(codeBlock, m_stubInfo->codeOrigin), ": Generating polymorphic access stub for ", listDump(keys));
@@ -4841,7 +4841,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
 
     CodeBlock* owner = codeBlock;
     if (useHandlerIC()) {
-        ASSERT(codeBlock->useDataIC());
+        ASSERT(m_stubInfo->useDataIC);
         owner = nullptr;
     }
 
@@ -4863,7 +4863,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
     }
 
     if (useHandlerIC()) {
-        ASSERT(codeBlock->useDataIC());
+        ASSERT(m_stubInfo->useDataIC);
         dataLogLnIf(InlineCacheCompilerInternal::verbose, "Installing ", m_stubInfo->accessType, " / ", listDump(stub->cases()));
         vm().m_sharedJITStubs->add(SharedJITStubSet::Hash::Key(SharedJITStubSet::stubInfoKey(*m_stubInfo), stub.ptr()));
         stub->addedToSharedJITStubSet();

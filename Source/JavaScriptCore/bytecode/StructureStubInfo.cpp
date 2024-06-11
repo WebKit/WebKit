@@ -115,9 +115,8 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     VM& vm = codeBlock->vm();
     ASSERT(vm.heap.isDeferred());
     AccessGenerationResult result = ([&] () -> AccessGenerationResult {
-        if (StructureStubInfoInternal::verbose)
-            dataLog("Adding access case: ", accessCase, "\n");
-        
+        dataLogLnIf(StructureStubInfoInternal::verbose, "Adding access case: ", accessCase);
+
         if (!accessCase)
             return AccessGenerationResult::GaveUp;
         
@@ -125,9 +124,8 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         
         if (m_cacheType == CacheType::Stub) {
             result = m_stub->addCase(locker, vm, codeBlock, *this, accessCase.releaseNonNull());
-            
-            if (StructureStubInfoInternal::verbose)
-                dataLog("Had stub, result: ", result, "\n");
+
+            dataLogLnIf(StructureStubInfoInternal::verbose, "Had stub, result: ", result);
 
             if (result.shouldResetStubAndFireWatchpoints())
                 return result;
@@ -148,8 +146,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
 
             result = access->addCases(locker, vm, codeBlock, *this, WTFMove(accessCases));
 
-            if (StructureStubInfoInternal::verbose)
-                dataLog("Created stub, result: ", result, "\n");
+            dataLogLnIf(StructureStubInfoInternal::verbose, "Created stub, result: ", result);
 
             if (result.shouldResetStubAndFireWatchpoints())
                 return result;
@@ -169,16 +166,14 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         // If we didn't buffer any cases then bail. If this made no changes then we'll just try again
         // subject to cool-down.
         if (!result.buffered()) {
-            if (StructureStubInfoInternal::verbose)
-                dataLog("Didn't buffer anything, bailing.\n");
+            dataLogLnIf(StructureStubInfoInternal::verbose, "Didn't buffer anything, bailing.");
             clearBufferedStructures();
             return result;
         }
         
         // The buffering countdown tells us if we should be repatching now.
         if (bufferingCountdown) {
-            if (StructureStubInfoInternal::verbose)
-                dataLog("Countdown is too high: ", bufferingCountdown, ".\n");
+            dataLogLnIf(StructureStubInfoInternal::verbose, "Countdown is too high: ", bufferingCountdown, ".");
             return result;
         }
         
@@ -188,24 +183,26 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         
         InlineCacheCompiler compiler(codeBlock->jitType(), vm, globalObject, ecmaMode, *this);
         result = compiler.compile(locker, *m_stub, codeBlock);
-        
-        if (StructureStubInfoInternal::verbose)
-            dataLog("Regeneration result: ", result, "\n");
-        
+
+        dataLogLnIf(StructureStubInfoInternal::verbose, "Regeneration result: ", result);
+
         RELEASE_ASSERT(!result.buffered());
         
         if (!result.generatedSomeCode())
             return result;
 
-        // When we first transition to becoming a Stub, we might still be running the inline
-        // access code. That's because when we first transition to becoming a Stub, we may
-        // be buffered, and we have not yet generated any code. Once the Stub finally generates
-        // code, we're no longer running the inline access code, so we can then clear out
-        // m_inlineAccessBaseStructureID. The reason we don't clear m_inlineAccessBaseStructureID while
-        // we're buffered is because we rely on it to reset during GC if m_inlineAccessBaseStructureID
-        // is collected.
-        m_inlineAccessBaseStructureID.clear();
-        
+        // If we are using DataIC, we will continue using inlined code for the first case.
+        if (!useDataIC) {
+            // When we first transition to becoming a Stub, we might still be running the inline
+            // access code. That's because when we first transition to becoming a Stub, we may
+            // be buffered, and we have not yet generated any code. Once the Stub finally generates
+            // code, we're no longer running the inline access code, so we can then clear out
+            // m_inlineAccessBaseStructureID. The reason we don't clear m_inlineAccessBaseStructureID while
+            // we're buffered is because we rely on it to reset during GC if m_inlineAccessBaseStructureID
+            // is collected.
+            m_inlineAccessBaseStructureID.clear();
+        }
+
         // If we generated some code then we don't want to attempt to repatch in the future until we
         // gather enough cases.
         bufferingCountdown = Options::repatchBufferingCountdown();
@@ -226,11 +223,9 @@ void StructureStubInfo::reset(const ConcurrentJSLockerBase& locker, CodeBlock* c
     if (m_cacheType == CacheType::Unset)
         return;
 
-    if (Options::verboseOSR()) {
-        // This can be called from GC destructor calls, so we don't try to do a full dump
-        // of the CodeBlock.
-        dataLog("Clearing structure cache (kind ", static_cast<int>(accessType), ") in ", RawPointer(codeBlock), ".\n");
-    }
+    // This can be called from GC destructor calls, so we don't try to do a full dump
+    // of the CodeBlock.
+    dataLogLnIf(Options::verboseOSR(), "Clearing structure cache (kind ", static_cast<int>(accessType), ") in ", RawPointer(codeBlock), ".");
 
     switch (accessType) {
     case AccessType::TryGetById:
@@ -789,16 +784,15 @@ void StructureStubInfo::replaceHandler(CodeBlock* codeBlock, Ref<InlineCacheHand
 void StructureStubInfo::rewireStubAsJumpInAccess(CodeBlock* codeBlock, InlineCacheHandler& handler)
 {
     replaceHandler(codeBlock, Ref { handler });
-    if (codeBlock->useDataIC()) {
-        m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
-        return;
-    }
-
-    CCallHelpers::replaceWithJump(startLocation.retagged<JSInternalPtrTag>(), CodeLocationLabel { handler.callTarget() });
+    if (!useDataIC)
+        CCallHelpers::replaceWithJump(startLocation.retagged<JSInternalPtrTag>(), CodeLocationLabel { handler.callTarget() });
 }
 
 void StructureStubInfo::resetStubAsJumpInAccess(CodeBlock* codeBlock)
 {
+    if (useDataIC)
+        m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
+
     if (JITCode::isBaselineCode(codeBlock->jitType()) && Options::useHandlerIC()) {
         auto handler = InlineCacheCompiler::generateSlowPathHandler(codeBlock->vm(), accessType);
         rewireStubAsJumpInAccess(codeBlock, handler.get());
