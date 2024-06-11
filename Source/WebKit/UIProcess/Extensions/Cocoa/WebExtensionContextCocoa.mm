@@ -2156,8 +2156,7 @@ void WebExtensionContext::didCloseTab(WebExtensionTab& tab, WindowIsClosing wind
     if (!isLoaded() || !tab.extensionHasAccess() || suppressEvents == SuppressEvents::Yes)
         return;
 
-    // SkipValidation::Yes since the window might not contain the tab anymore since things are closing.
-    RefPtr window = tab.window(WebExtensionTab::SkipValidation::Yes);
+    RefPtr window = tab.window();
     auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
 
     fireTabsRemovedEventIfNeeded(tab.identifier(), windowIdentifier, windowIsClosing);

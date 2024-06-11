@@ -264,7 +264,7 @@ bool WebExtensionTab::extensionHasTemporaryPermission() const
     return temporaryPattern && temporaryPattern->matchesURL(url());
 }
 
-RefPtr<WebExtensionWindow> WebExtensionTab::window(SkipValidation skipValidation) const
+RefPtr<WebExtensionWindow> WebExtensionTab::window() const
 {
     if (!isValid() || !m_respondsToWindow)
         return nullptr;
@@ -275,17 +275,7 @@ RefPtr<WebExtensionWindow> WebExtensionTab::window(SkipValidation skipValidation
 
     THROW_UNLESS([window conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object returned by windowForWebExtensionContext: does not conform to the _WKWebExtensionWindow protocol");
 
-    Ref result = m_extensionContext->getOrCreateWindow(window);
-
-    if (skipValidation == SkipValidation::No) {
-        if (!result->tabs().contains(*this)) {
-            RELEASE_LOG_ERROR(Extensions, "%{public}@ returned by windowForWebExtensionContext: does not contain the tab %{public}@", window, delegate());
-            ASSERT_NOT_REACHED();
-            return nullptr;
-        }
-    }
-
-    return result.ptr();
+    return m_extensionContext->getOrCreateWindow(window);
 }
 
 size_t WebExtensionTab::index() const
@@ -377,8 +367,7 @@ bool WebExtensionTab::isActive() const
     if (!isValid())
         return false;
 
-    // SkipValidation::Yes for windows() since activeTab() does validation too.
-    RefPtr window = this->window(SkipValidation::Yes);
+    RefPtr window = this->window();
     return window ? window->activeTab() == this : false;
 }
 
@@ -446,9 +435,7 @@ bool WebExtensionTab::isPrivate() const
     if (!isValid())
         return false;
 
-    // SkipValidation::Yes is used to avoid a loop, and it isn't critical since this is checking
-    // the window's private state and does not care about tabs validation that window() does.
-    RefPtr window = this->window(SkipValidation::Yes);
+    RefPtr window = this->window();
     if (!window)
         return false;
 

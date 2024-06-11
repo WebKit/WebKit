@@ -98,7 +98,6 @@ public:
     using ImageFormat = WebExtensionTabImageFormat;
 
     enum class AssumeWindowMatches : bool { No, Yes };
-    enum class SkipValidation : bool { No, Yes };
 
     using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
@@ -125,7 +124,7 @@ public:
     void addChangedProperties(OptionSet<ChangedProperties> properties) { m_changedProperties.add(properties); }
     void clearChangedProperties() { m_changedProperties = { }; }
 
-    RefPtr<WebExtensionWindow> window(SkipValidation = SkipValidation::No) const;
+    RefPtr<WebExtensionWindow> window() const;
     size_t index() const;
 
     RefPtr<WebExtensionTab> parentTab() const;
