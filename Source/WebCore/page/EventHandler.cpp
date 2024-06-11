@@ -773,13 +773,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
         newSelection = expandSelectionToRespectSelectOnMouseDown(*targetNode, visiblePosition);
     }
 
-    bool handled = updateSelectionForMouseDownDispatchingSelectStart(targetNode.get(), newSelection, granularity);
-
-    if (event.event().button() == MouseButton::Middle) {
-        // Ignore handled, since we want to paste to where the caret was placed anyway.
-        handled = handlePasteGlobalSelection(event.event()) || handled;
-    }
-    return handled;
+    return updateSelectionForMouseDownDispatchingSelectStart(targetNode.get(), newSelection, granularity);
 }
 
 bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& event)
@@ -1188,9 +1182,28 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
         handled = true;
     }
 
+    // If the event was a middle click, attempt to copy global selection in after
+    // the newly set caret position.
+    //
+    // There is some debate about when the global selection is pasted:
+    //   xterm: pastes on up.
+    //   GTK: pastes on down.
+    //   Qt: pastes on up.
+    //   Firefox: pastes on up.
+    //   Chromium: pastes on up.
+    //
+    // However, WebKitGTK actually needs to paste on up to avoid clashing with
+    // mouse gestures, https://gitlab.gnome.org/GNOME/epiphany/-/issues/1814. So
+    // let's always paste on up, and forget about matching GTK.
+    //
+    // There is something of a webcompat angle to this well, as highlighted by
+    // crbug.com/14608. Pages can clear text boxes 'onclick' and, if we paste on
+    // down then the text is pasted just before the onclick handler runs and
+    // clears the text box. So it's important this happens after the event
+    // handlers have been fired.
     if (event.event().button() == MouseButton::Middle) {
         // Ignore handled, since we want to paste to where the caret was placed anyway.
-        handled = handlePasteGlobalSelection(event.event()) || handled;
+        handled = handlePasteGlobalSelection() || handled;
     }
 
     return handled;
@@ -2372,32 +2385,8 @@ bool EventHandler::handleMouseForceEvent(const PlatformMouseEvent& event)
     return swallowedEvent;
 }
 
-bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& platformMouseEvent)
+bool EventHandler::handlePasteGlobalSelection()
 {
-    // If the event was a middle click, attempt to copy global selection in after
-    // the newly set caret position.
-    //
-    // This code is called from either the mouse up or mouse down handling. There
-    // is some debate about when the global selection is pasted:
-    //   xterm: pastes on up.
-    //   GTK: pastes on down.
-    //   Qt: pastes on up.
-    //   Firefox: pastes on up.
-    //   Chromium: pastes on up.
-    //
-    // There is something of a webcompat angle to this well, as highlighted by
-    // crbug.com/14608. Pages can clear text boxes 'onclick' and, if we paste on
-    // down then the text is pasted just before the onclick handler runs and
-    // clears the text box. So it's important this happens after the event
-    // handlers have been fired.
-#if PLATFORM(GTK)
-    if (platformMouseEvent.type() != PlatformEvent::Type::MousePressed)
-        return false;
-#else
-    if (platformMouseEvent.type() != PlatformEvent::Type::MouseReleased)
-        return false;
-#endif
-
     if (!m_frame->page())
         return false;
     RefPtr focusFrame = m_frame->page()->checkedFocusController()->focusedOrMainFrame();
