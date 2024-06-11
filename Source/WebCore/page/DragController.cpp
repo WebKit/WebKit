@@ -1052,7 +1052,6 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
 
     bool mustUseLegacyDragClient = hasData == HasNonDefaultPasteboardData::Yes || client().useLegacyDragClient();
 
-    IntRect dragImageBounds;
     RefPtr image = getImage(element);
     if (state.type == DragSourceAction::Selection) {
         PasteboardWriterData pasteboardWriterData;
