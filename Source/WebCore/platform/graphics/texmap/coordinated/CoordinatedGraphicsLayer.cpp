@@ -914,10 +914,15 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 
         // Update the image contents only when the image layer is visible and the native image changed.
         auto& layerState = m_nicosia.imageBacking->layerState();
-        layerState.imageID = imageID;
-        layerState.update.isVisible = transformedVisibleRect().intersects(IntRect(contentsRect()));
-        if (layerState.update.isVisible && (!nativeImageID || layerState.update.nativeImageID != nativeImageID)) {
+        bool nativeImageChanged = layerState.update.nativeImageID != nativeImageID;
+        if (nativeImageChanged)
             layerState.update.nativeImageID = nativeImageID;
+
+        bool wasVisible = layerState.update.isVisible;
+        layerState.update.isVisible = transformedVisibleRect().intersects(IntRect(contentsRect()));
+
+        // Update the image contents only when the image layer is visible and it was previously hidden or the native image changed.
+        if (layerState.update.isVisible && (!wasVisible || nativeImageChanged)) {
             layerState.update.imageBackingStore = m_coordinator->imageBackingStore(nativeImageID,
                 [&] {
                     auto buffer = Nicosia::Buffer::create(IntSize(image.size()),
