@@ -1445,6 +1445,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     GetterSetter* regExpProtoFlagsGetter = getGetterById(this, m_regExpPrototype.get(), vm.propertyNames->flags);
     catchScope.assertNoException();
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpProtoFlagsGetter)].set(vm, this, regExpProtoFlagsGetter);
+    GetterSetter* regExpProtoHasIndicesGetter = getGetterById(this, m_regExpPrototype.get(), vm.propertyNames->hasIndices);
+    catchScope.assertNoException();
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpProtoHasIndicesGetter)].set(vm, this, regExpProtoHasIndicesGetter);
     GetterSetter* regExpProtoGlobalGetter = getGetterById(this, m_regExpPrototype.get(), vm.propertyNames->global);
     catchScope.assertNoException();
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpProtoGlobalGetter)].set(vm, this, regExpProtoGlobalGetter);
@@ -1463,6 +1466,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     GetterSetter* regExpProtoUnicodeGetter = getGetterById(this, m_regExpPrototype.get(), vm.propertyNames->unicode);
     catchScope.assertNoException();
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpProtoUnicodeGetter)].set(vm, this, regExpProtoUnicodeGetter);
+    GetterSetter* regExpProtoDotAllGetter = getGetterById(this, m_regExpPrototype.get(), vm.propertyNames->dotAll);
+    catchScope.assertNoException();
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpProtoDotAllGetter)].set(vm, this, regExpProtoDotAllGetter);
     GetterSetter* regExpProtoUnicodeSetsGetter = getGetterById(this, m_regExpPrototype.get(), vm.propertyNames->unicodeSets);
     catchScope.assertNoException();
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpProtoUnicodeSetsGetter)].set(vm, this, regExpProtoUnicodeSetsGetter);
