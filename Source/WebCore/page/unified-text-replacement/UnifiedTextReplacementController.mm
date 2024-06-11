@@ -38,6 +38,7 @@
 #include "GeometryUtilities.h"
 #include "HTMLConverter.h"
 #include "Logging.h"
+#include "NodeRenderStyle.h"
 #include "RenderedDocumentMarker.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
