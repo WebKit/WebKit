@@ -568,18 +568,6 @@ void WKBundlePageFlushPendingEditorStateUpdate(WKBundlePageRef page)
     WebKit::toImpl(page)->flushPendingEditorStateUpdate();
 }
 
-void WKBundlePageSimulateMouseDown(WKBundlePageRef, int, WKPoint, int, WKEventModifiers, double)
-{
-}
-
-void WKBundlePageSimulateMouseUp(WKBundlePageRef, int, WKPoint, int, WKEventModifiers, double)
-{
-}
-
-void WKBundlePageSimulateMouseMotion(WKBundlePageRef, WKPoint, double)
-{
-}
-
 uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef pageRef)
 {
     return WebKit::toImpl(pageRef)->renderTreeSize();
