@@ -111,7 +111,7 @@ void RenderReplaced::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
     
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this);
 
     LayoutRect oldContentRect = replacedContentRect();
     

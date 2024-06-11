@@ -240,7 +240,7 @@ void RenderMathMLBlock::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (!relayoutChildren && simplifiedLayout())
         return;
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this);
 
     if (recomputeLogicalWidth())
         relayoutChildren = true;

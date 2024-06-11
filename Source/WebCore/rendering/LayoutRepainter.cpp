@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-LayoutRepainter::LayoutRepainter(RenderElement& renderer, bool checkForRepaint, RepaintOutlineBounds repaintOutlineBounds)
+LayoutRepainter::LayoutRepainter(RenderElement& renderer, std::optional<CheckForRepaint> checkForRepaintOverride, RepaintOutlineBounds repaintOutlineBounds)
     : m_renderer(renderer)
-    , m_checkForRepaint(checkForRepaint)
+    , m_checkForRepaint(checkForRepaintOverride ? *checkForRepaintOverride == CheckForRepaint::Yes : m_renderer.checkForRepaintDuringLayout())
     , m_repaintOutlineBounds(repaintOutlineBounds)
 {
     if (!m_checkForRepaint)

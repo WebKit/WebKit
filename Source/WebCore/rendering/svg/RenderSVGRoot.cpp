@@ -201,7 +201,7 @@ void RenderSVGRoot::layout()
     // Arbitrary affine transforms are incompatible with RenderLayoutState.
     LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this);
 
     // Update layer transform before laying out children (SVG needs access to the transform matrices during layout for on-screen text font-size calculations).
     // Eventually re-update if the transform reference box, relevant for transform-origin, has changed during layout.

@@ -458,7 +458,7 @@ void RenderTable::layout()
     unsigned sectionCount = 0;
     bool shouldCacheIntrinsicContentLogicalHeightForFlexItem = true;
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
 

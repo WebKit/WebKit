@@ -306,7 +306,8 @@ void RenderSVGText::layout()
     if (shouldHandleSubtreeMutations() && !renderTreeBeingDestroyed())
         checkLayoutAttributesConsistency(this, m_layoutAttributes);
 
-    LayoutRepainter repainter(*this, isLayerBasedSVGEngineEnabled() ? checkForRepaintDuringLayout() : SVGRenderSupport::checkForSVGRepaintDuringLayout(*this));
+    auto checkForRepaintOverride = !isLayerBasedSVGEngineEnabled() ? std::make_optional(SVGRenderSupport::checkForSVGRepaintDuringLayout(*this)) : std::nullopt;
+    LayoutRepainter repainter(*this, checkForRepaintOverride);
 
     bool updateCachedBoundariesInParents = false;
     auto previousReferenceBoxRect = transformReferenceBoxRect();

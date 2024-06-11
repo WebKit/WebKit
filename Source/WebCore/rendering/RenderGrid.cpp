@@ -293,7 +293,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 void RenderGrid::layoutGrid(bool relayoutChildren)
 {
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
 
@@ -422,7 +422,7 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
 
 void RenderGrid::layoutMasonry(bool relayoutChildren)
 {
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
 

@@ -116,7 +116,7 @@ void RenderSVGImage::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this);
 
     updateImageViewport();
     setCurrentSVGLayoutRect(enclosingLayoutRect(m_objectBoundingBox));

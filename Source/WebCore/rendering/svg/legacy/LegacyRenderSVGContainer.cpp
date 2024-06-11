@@ -57,7 +57,8 @@ void LegacyRenderSVGContainer::layout()
     // LegacyRenderSVGRoot disables paint offset cache for the SVG rendering tree.
     ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
 
-    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(*this) || selfWillPaint(), RepaintOutlineBounds::No);
+    auto checkForRepaintOverride = selfWillPaint() ? LayoutRepainter::CheckForRepaint::Yes : SVGRenderSupport::checkForSVGRepaintDuringLayout(*this);
+    LayoutRepainter repainter(*this, checkForRepaintOverride, RepaintOutlineBounds::No);
 
     // Allow LegacyRenderSVGViewportContainer to update its viewport.
     calcViewport();
