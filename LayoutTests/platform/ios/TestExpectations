@@ -3336,6 +3336,7 @@ webkit.org/b/250767 imported/w3c/web-platform-tests/html/user-activation/activat
 # :hover simulation not working on iOS
 imported/w3c/web-platform-tests/css/selectors/hover-002.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text-decor/invalidation/text-decoration-thickness.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unrelated-element.html [ Skip ]
 
 # Certain versions of iOS use different text security characters.
 webkit.org/b/209692 platform/ios/fast/text/text-security-disc-bullet-pua-ios-new.html [ Pass ]
@@ -4697,9 +4698,7 @@ webkit.org/b/266356 imported/w3c/web-platform-tests/video-rvfc/request-video-fra
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ ImageOnlyFailure ]
 
-# webkit.org/b/266660 [GARDENING] NEW-TEST(270986@main):[ iOS17 ] 2X imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen are constant ImageOnlyFailures
-imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
+# Needs extra fuzziness on iOS.
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
 
 # webkit.org/b/266661 RE-IMPORT(271918@main) 3X imported/w3c/web-platform-tests/css/selectors (layout-tests) are constant text failures
@@ -6932,8 +6931,6 @@ http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-external-hash-policy.html [ Pass Failure ]
 
 webkit.org/b/271445 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Pass Failure ]
-
-webkit.org/b/271678 imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unrelated-element.html [ ImageOnlyFailure ]
 
 webkit.org/b/271682 imported/w3c/web-platform-tests/css/css-content/quotes-007.html [ ImageOnlyFailure ] # TODO: uncomment line above with explicit pass expectation for this test when issue is resolved.
 
