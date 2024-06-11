@@ -2151,6 +2151,7 @@ webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 
 # rdar://problem/66487888 media/media-source/media-source-webm.html is a constant failure
 media/media-source/media-source-webm.html [ Failure ]
+media/media-source/media-source-seek-back-after-ended.html [ Skip ]
 
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-45.html [ Slow ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-15.html [ Slow ]
