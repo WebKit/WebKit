@@ -212,6 +212,14 @@ class TestImporter(object):
     def do_import(self):
         if self.source_directory:
             source_path = str(Path(self.source_directory) / 'web-platform-tests')
+            if not Path(source_path).exists():
+                _log.error("There isn't a web-platform-tests directory in the path you have provided: %s" % source_path)
+                exit(1)
+            for test_path in self.test_paths:
+                full_test_path = Path(self.source_directory) / test_path
+                if not Path(full_test_path).exists():
+                    _log.error("The source directory doesn't exist: %s" % full_test_path)
+                    exit(1)
             try:
                 git = self.test_downloader().git(source_path)
                 self.upstream_revision = git.rev_parse('HEAD')
