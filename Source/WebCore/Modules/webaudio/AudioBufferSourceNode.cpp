@@ -328,9 +328,16 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         virtualReadIndex = readIndex;
     } else if (!pitchRate) {
         unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
+        int deltaFrames = static_cast<int>(virtualDeltaFrames);
+        maxFrame = static_cast<unsigned>(virtualMaxFrame);
+
+        if (readIndex >= maxFrame)
+            readIndex -= deltaFrames;
 
         for (unsigned i = 0; i < numberOfChannels; ++i)
             std::fill_n(destinationChannels[i] + writeIndex, framesToProcess, sourceChannels[i][readIndex]);
+
+        virtualReadIndex = readIndex;
     } else if (reverse) {
         unsigned maxFrame = static_cast<unsigned>(virtualMaxFrame);
         unsigned minFrame = static_cast<unsigned>(floorf(virtualMinFrame));
