@@ -676,6 +676,10 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     RefPtr imageForRender = BitmapImage::create(existingImageBitmap->buffer()->copyNativeImage());
+    if (!imageForRender) {
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, existingImageBitmap->originClean()));
+        return;
+    }
 
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
