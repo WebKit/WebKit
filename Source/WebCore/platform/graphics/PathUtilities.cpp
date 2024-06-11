@@ -41,7 +41,7 @@ namespace WebCore {
 class FloatPointGraph {
     WTF_MAKE_NONCOPYABLE(FloatPointGraph);
 public:
-    FloatPointGraph() { }
+    FloatPointGraph() = default;
 
     class Node : public FloatPoint {
         WTF_MAKE_NONCOPYABLE(Node);

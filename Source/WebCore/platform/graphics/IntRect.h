@@ -66,7 +66,7 @@ class LayoutRect;
 class IntRect {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    IntRect() { }
+    IntRect() = default;
     IntRect(const IntPoint& location, const IntSize& size)
         : m_location(location), m_size(size) { }
     IntRect(int x, int y, int width, int height)
