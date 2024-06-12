@@ -159,6 +159,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
 
     void needsVideoLayerChanged();
+    void setNeedsPlaceholderImage(bool);
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void setVideoTarget(const PlatformVideoTarget&) final;
@@ -236,6 +237,7 @@ private:
     RefPtr<NativeImage> nativeImageForCurrentTime() override;
     bool updateLastPixelBuffer();
     bool updateLastImage();
+    void maybePurgeLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
 #if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
@@ -293,6 +295,7 @@ private:
     void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
 
     bool shouldBePlaying() const;
+    void setSynchronizerRate(double, std::optional<MonotonicTime>&& = std::nullopt);
 
     bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
 
@@ -401,6 +404,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     uint64_t m_lastConvertedSampleCount { 0 };
     ProcessIdentity m_resourceOwner;
     bool m_shouldMaintainAspectRatio { true };
+    bool m_needsPlaceholderImage { false };
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
