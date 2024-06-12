@@ -349,6 +349,18 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-test-results',
             'set-permissions',
         ],
+        'Apple-Sonoma-Smart-Pointer-Static-Analyzer-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'prune-coresymbolicationd-cache-if-too-large',
+            'scan-build-smart-pointer'
+        ],
         'Apple-Ventura-Release-Build': [
             'configure-build',
             'configuration',

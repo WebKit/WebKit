@@ -17,7 +17,8 @@
                   { "name": "bot179", "platform": "mac-sonoma" },
                   { "name": "bot184", "platform": "mac-sonoma" },
                   { "name": "bot303", "platform": "mac-sonoma" },
-                  
+                  { "name": "bot600", "platform": "mac-sonoma" },
+
                   { "name": "bot105", "platform": "mac-ventura" },
                   { "name": "bot111", "platform": "mac-ventura" },
                   { "name": "bot183", "platform": "mac-ventura" },
@@ -52,7 +53,6 @@
                   { "name": "bot306", "platform": "ios-simulator-17" },
                   { "name": "bot307", "platform": "ios-simulator-17" },
                   { "name": "bot308", "platform": "ios-simulator-17" },
-                  { "name": "bot600", "platform": "ios-simulator-17" },
                   { "name": "bot651", "platform": "ios-simulator-17" },
                   { "name": "bot652", "platform": "ios-simulator-17" },
                   { "name": "bot653", "platform": "ios-simulator-17" },
@@ -233,6 +233,11 @@
                   { "name": "Apple-Sonoma-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory",
                   "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64"],
                   "workernames": ["bot178"]
+                  },
+                  {
+                  "name": "Apple-Sonoma-Smart-Pointer-Static-Analyzer-Build", "factory": "SmartPointerStaticAnalyzerFactory",
+                  "platform": "mac-sonoma", "configuration": "debug", "architectures": ["arm64"],
+                  "workernames": ["bot600"]
                   },
                   { "name": "Apple-Ventura-Release-Build", "factory": "BuildFactory",
                   "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -714,7 +719,7 @@
                   },
 
                   { "type": "PlatformSpecificScheduler", "platform": "mac-sonoma", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Sonoma-Release-Build", "Apple-Sonoma-Debug-Build", "Apple-Sonoma-LLINT-CLoop-BuildAndTest"]
+                  "builderNames": ["Apple-Sonoma-Release-Build", "Apple-Sonoma-Debug-Build", "Apple-Sonoma-LLINT-CLoop-BuildAndTest", "Apple-Sonoma-Smart-Pointer-Static-Analyzer-Build"]
                   },
                   { "type": "Triggerable", "name": "sonoma-release-tests-wk1",
                   "builderNames": ["Apple-Sonoma-Release-WK1-Tests"]
