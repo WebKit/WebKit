@@ -2358,8 +2358,10 @@ imported/w3c/web-platform-tests/css/css-view-transitions/input-targets-root-whil
 
 # WindowProxy property access delegate callbacks are only implemented on Mac and iOS WK2.
 http/wpt/opener/child-access-parent-via-windowproxy.html [ Pass ]
+http/wpt/opener/cross-site-child-access-parent-iframe-via-windowproxy.html [ Pass ]
 http/wpt/opener/iframe-access-top-via-windowproxy.html [ Pass ]
 http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]
+http/wpt/opener/same-site-child-access-parent-iframe-via-windowproxy.html [ Pass ]
 
 # rdar://127759603 (Mark expectations for bugs that are failing on branch, but fixed on main.
 editing/async-clipboard/clipboard-write-basic.html [ Failure ] 
