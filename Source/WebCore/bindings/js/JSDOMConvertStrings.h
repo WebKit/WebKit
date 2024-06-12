@@ -35,8 +35,6 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-enum class ShouldConvertNullToEmptyString : bool { No, Yes };
-
 WEBCORE_EXPORT String identifierToString(JSC::JSGlobalObject&, const JSC::Identifier&);
 
 WEBCORE_EXPORT String identifierToByteString(JSC::JSGlobalObject&, const JSC::Identifier&);
@@ -47,7 +45,7 @@ WEBCORE_EXPORT String identifierToUSVString(JSC::JSGlobalObject&, const JSC::Ide
 WEBCORE_EXPORT ConversionResult<IDLUSVString> valueToUSVString(JSC::JSGlobalObject&, JSC::JSValue);
 WEBCORE_EXPORT ConversionResult<IDLAtomStringAdaptor<IDLUSVString>> valueToUSVAtomString(JSC::JSGlobalObject&, JSC::JSValue);
 
-ConversionResult<IDLDOMString> trustedTypeCompliantString(TrustedType, JSC::JSGlobalObject&, JSC::JSValue, const String& sink, ShouldConvertNullToEmptyString);
+ConversionResult<IDLDOMString> trustedScriptCompliantString(JSC::JSGlobalObject&, JSC::JSValue, const String& sink);
 
 inline AtomString propertyNameToString(JSC::PropertyName propertyName)
 {
@@ -183,49 +181,8 @@ template<> struct JSConverter<IDLUSVString> {
 template<typename TrustedStringAdaptorIDL>
 struct TrustedStringAdaptorTraits;
 
-template<typename T> struct TrustedStringAdaptorTraits<IDLStringContextTrustedHTMLAdaptor<T>> {
-    static constexpr auto trustedType = TrustedType::TrustedHTML;
-    static constexpr auto shouldConvertNullToEmptyString = ShouldConvertNullToEmptyString::No;
-};
-
-template<typename T> struct TrustedStringAdaptorTraits<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<T>> {
-    static constexpr auto trustedType = TrustedType::TrustedHTML;
-    static constexpr auto shouldConvertNullToEmptyString = ShouldConvertNullToEmptyString::Yes;
-};
-
 template<typename T> struct TrustedStringAdaptorTraits<IDLStringContextTrustedScriptAdaptor<T>> {
     static constexpr auto trustedType = TrustedType::TrustedScript;
-    static constexpr auto shouldConvertNullToEmptyString = ShouldConvertNullToEmptyString::No;
-};
-
-template<typename T> struct TrustedStringAdaptorTraits<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<T>> {
-    static constexpr auto trustedType = TrustedType::TrustedScript;
-    static constexpr auto shouldConvertNullToEmptyString = ShouldConvertNullToEmptyString::Yes;
-};
-
-template<typename T> struct TrustedStringAdaptorTraits<IDLStringContextTrustedScriptURLAdaptor<T>> {
-    static constexpr auto trustedType = TrustedType::TrustedScriptURL;
-    static constexpr auto shouldConvertNullToEmptyString = ShouldConvertNullToEmptyString::No;
-};
-
-template<typename T> struct TrustedStringAdaptorTraits<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<T>> {
-    static constexpr auto trustedType = TrustedType::TrustedScriptURL;
-    static constexpr auto shouldConvertNullToEmptyString = ShouldConvertNullToEmptyString::Yes;
-};
-
-template<typename T> struct TrustedStringAdaptorTraits<IDLAtomStringStringContextTrustedHTMLAdaptor<T>> {
-    static constexpr auto trustedType = TrustedType::TrustedHTML;
-    static constexpr auto shouldConvertNullToEmptyString = ShouldConvertNullToEmptyString::No;
-};
-
-template<typename T> struct TrustedStringAdaptorTraits<IDLAtomStringStringContextTrustedScriptAdaptor<T>> {
-    static constexpr auto trustedType = TrustedType::TrustedScript;
-    static constexpr auto shouldConvertNullToEmptyString = ShouldConvertNullToEmptyString::No;
-};
-
-template<typename T> struct TrustedStringAdaptorTraits<IDLAtomStringStringContextTrustedScriptURLAdaptor<T>> {
-    static constexpr auto trustedType = TrustedType::TrustedScriptURL;
-    static constexpr auto shouldConvertNullToEmptyString = ShouldConvertNullToEmptyString::No;
 };
 
 template<typename IDL>
@@ -240,7 +197,7 @@ struct TrustedStringConverter : DefaultConverter<IDL> {
 
     static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
     {
-        return trustedTypeCompliantString(Traits::trustedType, lexicalGlobalObject, value, sink, Traits::shouldConvertNullToEmptyString);
+        return trustedScriptCompliantString(lexicalGlobalObject, value, sink);
     }
 };
 
@@ -271,35 +228,11 @@ struct JSAtomStringAdaptorConverter  {
     }
 };
 
-template<typename T> struct Converter<IDLStringContextTrustedHTMLAdaptor<T>>
-    : TrustedStringConverter<IDLStringContextTrustedHTMLAdaptor<T>> { };
-template<typename T> struct Converter<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<T>>
-    : TrustedStringConverter<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<T>> { };
 template<typename T> struct Converter<IDLStringContextTrustedScriptAdaptor<T>>
     : TrustedStringConverter<IDLStringContextTrustedScriptAdaptor<T>> { };
-template<typename T> struct Converter<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<T>>
-    : TrustedStringConverter<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<T>> { };
-template<typename T> struct Converter<IDLStringContextTrustedScriptURLAdaptor<T>>
-    : TrustedStringConverter<IDLStringContextTrustedScriptURLAdaptor<T>> { };
-template<typename T> struct Converter<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<T>>
-    : TrustedStringConverter<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<T>> { };
-template<typename T> struct Converter<IDLAtomStringStringContextTrustedHTMLAdaptor<T>>
-    : TrustedStringConverter<IDLAtomStringStringContextTrustedHTMLAdaptor<T>> { };
-template<typename T> struct Converter<IDLAtomStringStringContextTrustedScriptAdaptor<T>>
-    : TrustedStringConverter<IDLAtomStringStringContextTrustedScriptAdaptor<T>> { };
-template<typename T> struct Converter<IDLAtomStringStringContextTrustedScriptURLAdaptor<T>>
-    : TrustedStringConverter<IDLAtomStringStringContextTrustedScriptURLAdaptor<T>> { };
 
 template<typename T> struct JSConverter<IDLLegacyNullToEmptyStringAdaptor<T>> : JSStringAdaptorConverter<T> { };
-template<typename T> struct JSConverter<IDLStringContextTrustedHTMLAdaptor<T>> : JSStringAdaptorConverter<T> { };
-template<typename T> struct JSConverter<IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor<T>> : JSStringAdaptorConverter<T> { };
 template<typename T> struct JSConverter<IDLStringContextTrustedScriptAdaptor<T>> : JSStringAdaptorConverter<T> { };
-template<typename T> struct JSConverter<IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor<T>> : JSStringAdaptorConverter<T> { };
-template<typename T> struct JSConverter<IDLStringContextTrustedScriptURLAdaptor<T>> : JSStringAdaptorConverter<T> { };
-template<typename T> struct JSConverter<IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor<T>> : JSStringAdaptorConverter<T> { };
-template<typename T> struct JSConverter<IDLAtomStringStringContextTrustedHTMLAdaptor<T>> : JSAtomStringAdaptorConverter<T> { };
-template<typename T> struct JSConverter<IDLAtomStringStringContextTrustedScriptAdaptor<T>> : JSAtomStringAdaptorConverter<T> { };
-template<typename T> struct JSConverter<IDLAtomStringStringContextTrustedScriptURLAdaptor<T>> : JSAtomStringAdaptorConverter<T> { };
 template<typename T> struct JSConverter<IDLLegacyNullToEmptyAtomStringAdaptor<T>> : JSAtomStringAdaptorConverter<T> { };
 
 template<typename IDL> struct Converter<IDLLegacyNullToEmptyStringAdaptor<IDL>> : DefaultConverter<IDLLegacyNullToEmptyStringAdaptor<IDL>> {
