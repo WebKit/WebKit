@@ -166,6 +166,9 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 #endif
     , m_loader(player->createResourceLoader())
 {
+    if (auto player = m_player.get())
+        player->mediaPlayerLogger().addObserver(*this);
+
 #if USE(GLIB)
     m_pausedTimerHandler.setPriority(G_PRIORITY_DEFAULT_IDLE);
 #endif
@@ -258,6 +261,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_pipeline) {
         unregisterPipeline(m_pipeline);
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+        m_pipeline = nullptr;
     }
 
     m_player = nullptr;
@@ -301,6 +305,54 @@ void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar regis
         GST_DEBUG_CATEGORY_INIT(webkit_media_player_debug, "webkitmediaplayer", 0, "WebKit media player");
     });
     registrar(makeUnique<MediaPlayerFactoryGStreamer>());
+}
+
+void MediaPlayerPrivateGStreamer::didLogMessage(const WTFLogChannel&, WTFLogLevel level, Vector<JSONLogValue>&& values)
+{
+#ifndef GST_DISABLE_GST_DEBUG
+    StringBuilder builder;
+    for (auto& [_, value] : values)
+        builder.append(value);
+
+    auto logString = builder.toString();
+    switch (level) {
+    case WTFLogLevel::Error:
+        if (m_pipeline)
+            GST_ERROR_OBJECT(m_pipeline.get(), "%s", logString.utf8().data());
+        else
+            GST_ERROR("%s", logString.utf8().data());
+        break;
+    case WTFLogLevel::Debug:
+        if (m_pipeline)
+            GST_DEBUG_OBJECT(m_pipeline.get(), "%s", logString.utf8().data());
+        else
+            GST_DEBUG("%s", logString.utf8().data());
+        break;
+    case WTFLogLevel::Always:
+    case WTFLogLevel::Info:
+        if (m_pipeline)
+            GST_INFO_OBJECT(m_pipeline.get(), "%s", logString.utf8().data());
+        else
+            GST_INFO("%s", logString.utf8().data());
+        break;
+    case WTFLogLevel::Warning:
+        if (m_pipeline)
+            GST_WARNING_OBJECT(m_pipeline.get(), "%s", logString.utf8().data());
+        else
+            GST_WARNING("%s", logString.utf8().data());
+        break;
+    };
+#else
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(values);
+#endif
+}
+
+void MediaPlayerPrivateGStreamer::mediaPlayerWillBeDestroyed()
+{
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Parent MediaPlayer is about to be destroyed");
+    if (auto player = m_player.get())
+        player->mediaPlayerLogger().removeObserver(*this);
 }
 
 void MediaPlayerPrivateGStreamer::load(const String& urlString)

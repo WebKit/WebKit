@@ -77,15 +77,31 @@ GStreamerPeerConnectionBackend::~GStreamerPeerConnectionBackend()
     logger().removeObserver(*this);
 }
 
-void GStreamerPeerConnectionBackend::didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&& values)
+void GStreamerPeerConnectionBackend::didLogMessage(const WTFLogChannel&, WTFLogLevel level, Vector<JSONLogValue>&& values)
 {
 #ifndef GST_DISABLE_GST_DEBUG
     StringBuilder builder;
     for (auto& [_, value] : values)
         builder.append(value);
 
-    GST_DEBUG_OBJECT(m_endpoint->pipeline(), "%s", builder.toString().utf8().data());
+    auto logString = builder.toString();
+    switch (level) {
+    case WTFLogLevel::Error:
+        GST_ERROR_OBJECT(m_endpoint->pipeline(), "%s", logString.utf8().data());
+        break;
+    case WTFLogLevel::Debug:
+        GST_DEBUG_OBJECT(m_endpoint->pipeline(), "%s", logString.utf8().data());
+        break;
+    case WTFLogLevel::Always:
+    case WTFLogLevel::Info:
+        GST_INFO_OBJECT(m_endpoint->pipeline(), "%s", logString.utf8().data());
+        break;
+    case WTFLogLevel::Warning:
+        GST_WARNING_OBJECT(m_endpoint->pipeline(), "%s", logString.utf8().data());
+        break;
+    };
 #else
+    UNUSED_PARAM(level);
     UNUSED_PARAM(values);
 #endif
 }

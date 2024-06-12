@@ -352,6 +352,8 @@ public:
 
     virtual void renderVideoWillBeDestroyed() { }
 
+    virtual void mediaPlayerWillBeDestroyed() { }
+
     virtual void isLoopingChanged() { }
 
     virtual void setShouldCheckHardwareSupport(bool value) { m_shouldCheckHardwareSupport = value; }
