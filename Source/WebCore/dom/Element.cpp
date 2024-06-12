@@ -2008,19 +2008,7 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std:
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
         if (!force || *force) {
-            auto name = QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
-            if (!document().scriptExecutionContext()->settingsValues().trustedTypesEnabled)
-                setAttributeInternal(index, name, emptyAtom(), InSynchronizationOfLazyAttribute::No);
-            else {
-                auto attributeTypeAndSink = trustedTypeForAttribute(nodeName(), name.localName().convertToASCIILowercase(), this->namespaceURI(), name.namespaceURI());
-                auto attributeValue = trustedTypesCompliantAttributeValue(attributeTypeAndSink.attributeType, emptyAtom(), this, attributeTypeAndSink.sink);
-
-                if (attributeValue.hasException())
-                    return attributeValue.releaseException();
-
-                index = validateAttributeIndex(index, name);
-                setAttributeInternal(index, name, AtomString(attributeValue.releaseReturnValue()), InSynchronizationOfLazyAttribute::No);
-            }
+            setAttributeInternal(index, QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() }, emptyAtom(), InSynchronizationOfLazyAttribute::No);
             return true;
         }
         return false;
