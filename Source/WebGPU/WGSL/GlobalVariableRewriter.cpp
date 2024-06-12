@@ -1229,7 +1229,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(const AST::Function& function)
     CheckedUint32 combinedPrivateVariablesSize = 0;
     CheckedUint32 combinedWorkgroupVariablesSize = 0;
     constexpr unsigned maximumCombinedPrivateVariablesSize = 8192;
-    constexpr unsigned maximumCombinedWorkgroupVariablesSize = 16384;
+    unsigned maximumCombinedWorkgroupVariablesSize = m_shaderModule.configuration().maximumCombinedWorkgroupVariablesSize;
 
     for (const auto& globalName : m_reads) {
         auto it = m_globals.find(globalName);

@@ -76,6 +76,7 @@ struct Configuration {
     uint32_t maxBuffersPlusVertexBuffersForVertexStage = 8;
     uint32_t maxBuffersForFragmentStage = 8;
     uint32_t maxBuffersForComputeStage = 8;
+    uint32_t maximumCombinedWorkgroupVariablesSize = 16384;
     const HashSet<String> supportedFeatures = { };
 };
 

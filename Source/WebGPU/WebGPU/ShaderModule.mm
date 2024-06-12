@@ -210,6 +210,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         .maxBuffersPlusVertexBuffersForVertexStage = maxBuffersPlusVertexBuffersForVertexStage(),
         .maxBuffersForFragmentStage = maxBuffersForFragmentStage(),
         .maxBuffersForComputeStage = maxBuffersForComputeStage(),
+        .maximumCombinedWorkgroupVariablesSize = limits().maxComputeWorkgroupStorageSize,
         .supportedFeatures = WTFMove(supportedFeatures)
     });
 
