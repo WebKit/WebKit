@@ -60,7 +60,6 @@ set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/debugging/stacktrace.cc
     Source/third_party/abseil-cpp/absl/debugging/symbolize.cc
     Source/third_party/abseil-cpp/absl/flags/commandlineflag.cc
-    Source/third_party/abseil-cpp/absl/flags/flag.cc
     Source/third_party/abseil-cpp/absl/flags/flag_test_defs.cc
     Source/third_party/abseil-cpp/absl/flags/internal/commandlineflag.cc
     Source/third_party/abseil-cpp/absl/flags/internal/flag.cc
