@@ -820,7 +820,7 @@ void RenderBlock::simplifiedNormalFlowLayout()
 
 bool RenderBlock::canPerformSimplifiedLayout() const
 {
-    if (selfNeedsLayout() || normalChildNeedsLayout() || outOfFlowChildNeedsStaticPositionLayout())
+    if (selfNeedsLayout() || normalChildNeedsLayout() || outOfFlowChildNeedsStaticPositionLayout() || !everHadSkippedContentLayout())
         return false;
     return posChildNeedsLayout() || needsSimplifiedNormalFlowLayout();
 }
