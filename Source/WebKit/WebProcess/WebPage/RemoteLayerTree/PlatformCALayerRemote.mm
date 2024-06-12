@@ -190,30 +190,10 @@ void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& c
     clone.updateCustomAppearance(customAppearance());
 }
 
-void PlatformCALayerRemote::recursiveMarkWillBeDisplayed()
-{
-    if (m_properties.backingStoreOrProperties.store && m_properties.backingStoreAttached)
-        m_properties.backingStoreOrProperties.store->layerWillBeDisplayed();
-
-    for (size_t i = 0; i < m_children.size(); ++i) {
-        PlatformCALayerRemote& child = downcast<PlatformCALayerRemote>(*m_children[i]);
-        ASSERT(child.superlayer() == this);
-        child.recursiveMarkWillBeDisplayed();
-    }
-}
-
 void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& context, RemoteLayerTreeTransaction& transaction)
 {
     ASSERT(!m_properties.backingStoreOrProperties.store || owner());
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&context == m_context);
-
-    if (owner() && owner()->platformCALayerRenderingIsSuppressedIncludingDescendants()) {
-        // Rendering is suppressed, so don't include any mutations from this subtree
-        // in the transaction. We do still mark all existing layers as will be displayed though,
-        // to prevent the previous contents from being discarded.
-        recursiveMarkWillBeDisplayed();
-        return;
-    }
 
     bool usesBackingStore = owner() && (owner()->platformCALayerDrawsContent() || owner()->platformCALayerDelegatesDisplay(this));
     if (m_properties.backingStoreOrProperties.store && !usesBackingStore) {

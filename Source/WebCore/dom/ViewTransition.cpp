@@ -111,7 +111,7 @@ void ViewTransition::skipViewTransition(ExceptionOr<JSC::JSValue>&& reason)
         });
     }
 
-    document()->clearRenderingIsSuppressedForViewTransition();
+    // FIXME: Set rendering suppression for view transitions to false.
 
     if (document()->activeViewTransition() == this)
         clearViewTransition();
@@ -232,7 +232,7 @@ void ViewTransition::setupViewTransition()
         return;
     }
 
-    document()->setRenderingIsSuppressedForViewTransitionAfterUpdateRendering();
+    // FIXME: Set document’s rendering suppression for view transitions to true.
     protectedDocument()->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [this, weakThis = WeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
@@ -538,8 +538,6 @@ void ViewTransition::activateViewTransition()
 {
     if (m_phase == ViewTransitionPhase::Done)
         return;
-
-    document()->clearRenderingIsSuppressedForViewTransition();
 
     // Ensure style & render tree are up-to-date.
     protectedDocument()->updateStyleIfNeeded();

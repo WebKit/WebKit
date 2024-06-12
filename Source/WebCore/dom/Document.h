@@ -1689,11 +1689,6 @@ public:
 
     void performPendingViewTransitions();
 
-    bool renderingIsSuppressedForViewTransition() const;
-    void setRenderingIsSuppressedForViewTransitionAfterUpdateRendering();
-    void clearRenderingIsSuppressedForViewTransition();
-    void flushDeferredRenderingIsSuppressedForViewTransitionChanges();
-
 #if ENABLE(MEDIA_STREAM)
     void setHasCaptureMediaStreamTrack() { m_hasHadCaptureMediaStreamTrack = true; }
     bool hasHadCaptureMediaStreamTrack() const { return m_hasHadCaptureMediaStreamTrack; }
@@ -2589,8 +2584,6 @@ private:
 #endif
 
     bool m_hasViewTransitionPseudoElementTree { false };
-    bool m_renderingIsSuppressedForViewTransition { false };
-    bool m_enableRenderingIsSuppressedForViewTransitionAfterUpdateRendering { false };
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     bool m_mayHaveElementsWithNonAutoTouchAction { false };

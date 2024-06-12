@@ -674,9 +674,6 @@ public:
     bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
     void setShouldPaintUsingCompositeCopy(bool copy) { m_shouldPaintUsingCompositeCopy = copy; }
 
-    bool renderingIsSuppressedIncludingDescendants() const { return m_renderingIsSuppressedIncludingDescendants; }
-    void setRenderingIsSuppressedIncludingDescendants(bool suppressed) { m_renderingIsSuppressedIncludingDescendants = suppressed; }
-
     const std::optional<FloatRect>& animationExtent() const { return m_animationExtent; }
     void setAnimationExtent(std::optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
 
@@ -796,7 +793,6 @@ protected:
     bool m_userInteractionEnabled : 1;
     bool m_canDetachBackingStore : 1;
     bool m_shouldPaintUsingCompositeCopy : 1;
-    bool m_renderingIsSuppressedIncludingDescendants : 1 { false };
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     bool m_isSeparated : 1;
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)

@@ -1137,8 +1137,6 @@ public:
     bool isSkippedContentRoot() const;
     bool isSkippedContentForLayout() const;
 
-    PointerEvents usedPointerEvents() const;
-
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!

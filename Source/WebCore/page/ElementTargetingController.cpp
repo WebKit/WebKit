@@ -1008,7 +1008,7 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
 
             return targetRenderer->isOutOfFlowPositioned()
                 && (!style.hasBackground() || !style.opacity())
-                && targetRenderer->usedPointerEvents() == PointerEvents::None;
+                && style.usedPointerEvents() == PointerEvents::None;
         }();
 
         if (shouldSkipTargetThatCoversViewport)
