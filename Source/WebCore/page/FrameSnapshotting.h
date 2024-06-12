@@ -31,7 +31,7 @@
 
 #include "Color.h"
 #include "DestinationColorSpace.h"
-#include "PixelFormat.h"
+#include "ImageBufferPixelFormat.h"
 #include "SimpleRange.h"
 #include <memory>
 #include <wtf/OptionSet.h>
@@ -59,7 +59,7 @@ enum class SnapshotFlags : uint16_t {
 
 struct SnapshotOptions {
     OptionSet<SnapshotFlags> flags;
-    PixelFormat pixelFormat;
+    ImageBufferPixelFormat pixelFormat;
     DestinationColorSpace colorSpace;
 };
 

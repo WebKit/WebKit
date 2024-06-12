@@ -52,7 +52,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
     GraphicsContextCG context { cgContext.get() };
 
-    auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingPurpose::Unspecified, 1, colorSpace, ImageBufferPixelFormat::BGRA8);
     auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier();
 
     DisplayList list;

@@ -99,7 +99,7 @@ public:
 
     std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushFrontBufferAsync(ThreadSafeImageBufferSetFlusher::FlushType);
 
-    void setConfiguration(WebCore::FloatSize, float, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::RenderingMode, WebCore::RenderingPurpose);
+    void setConfiguration(WebCore::FloatSize, float, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, WebCore::RenderingMode, WebCore::RenderingPurpose);
     void willPrepareForDisplay();
     void remoteBufferSetWasDestroyed();
 
@@ -131,7 +131,7 @@ private:
     WebCore::FloatSize m_size;
     float m_scale { 1.0f };
     WebCore::DestinationColorSpace m_colorSpace { WebCore::DestinationColorSpace::SRGB() };
-    WebCore::PixelFormat m_pixelFormat;
+    WebCore::ImageBufferPixelFormat m_pixelFormat;
     WebCore::RenderingMode m_renderingMode { WebCore::RenderingMode::Unaccelerated };
     WebCore::RenderingPurpose m_renderingPurpose { WebCore::RenderingPurpose::Unspecified };
     unsigned m_generation { 0 };

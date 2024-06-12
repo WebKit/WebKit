@@ -93,7 +93,7 @@ IPC::StreamConnectionWorkQueue& RemoteImageBufferSet::workQueue() const
     return m_backend->workQueue();
 }
 
-void RemoteImageBufferSet::updateConfiguration(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat)
+void RemoteImageBufferSet::updateConfiguration(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferPixelFormat pixelFormat)
 {
     m_logicalSize = logicalSize;
     m_renderingMode = renderingMode;

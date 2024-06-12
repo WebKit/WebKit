@@ -61,7 +61,7 @@ static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const 
     FloatSize clampedSize = ImageBuffer::clampedSize(paintRect.size(), scale);
 
     UNUSED_PARAM(context);
-    auto imageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, colorSpace, ImageBufferPixelFormat::BGRA8);
     if (!imageBuffer)
         return nullptr;
 

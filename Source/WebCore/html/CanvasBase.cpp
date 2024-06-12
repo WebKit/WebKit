@@ -298,7 +298,7 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
 
     auto* context = renderingContext();
     auto colorSpace = context ? context->colorSpace() : DestinationColorSpace::SRGB();
-    auto pixelFormat = context ? context->pixelFormat() : PixelFormat::BGRA8;
+    auto pixelFormat = context ? context->pixelFormat() : ImageBufferPixelFormat::BGRA8;
     bool willReadFrequently = context ? context->willReadFrequently() : false;
 
     OptionSet<ImageBufferOptions> bufferOptions;

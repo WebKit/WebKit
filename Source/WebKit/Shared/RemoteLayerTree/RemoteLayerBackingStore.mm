@@ -255,22 +255,21 @@ bool RemoteLayerBackingStore::usesDeepColorBackingStore() const
     return false;
 }
 
-PixelFormat RemoteLayerBackingStore::pixelFormat() const
+ImageBufferPixelFormat RemoteLayerBackingStore::pixelFormat() const
 {
     if (usesDeepColorBackingStore())
-        return m_parameters.isOpaque ? PixelFormat::RGB10 : PixelFormat::RGB10A8;
+        return m_parameters.isOpaque ? ImageBufferPixelFormat::RGB10 : ImageBufferPixelFormat::RGB10A8;
 
-    return m_parameters.isOpaque ? PixelFormat::BGRX8 : PixelFormat::BGRA8;
+    return m_parameters.isOpaque ? ImageBufferPixelFormat::BGRX8 : ImageBufferPixelFormat::BGRA8;
 }
 
 unsigned RemoteLayerBackingStore::bytesPerPixel() const
 {
     switch (pixelFormat()) {
-    case PixelFormat::RGBA8: return 4;
-    case PixelFormat::BGRX8: return 4;
-    case PixelFormat::BGRA8: return 4;
-    case PixelFormat::RGB10: return 4;
-    case PixelFormat::RGB10A8: return 5;
+    case ImageBufferPixelFormat::BGRX8: return 4;
+    case ImageBufferPixelFormat::BGRA8: return 4;
+    case ImageBufferPixelFormat::RGB10: return 4;
+    case ImageBufferPixelFormat::RGB10A8: return 5;
     }
     return 4;
 }

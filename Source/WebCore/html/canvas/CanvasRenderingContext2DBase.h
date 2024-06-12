@@ -397,7 +397,7 @@ private:
     bool isEntireBackingStoreDirty() const;
     FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
-    PixelFormat pixelFormat() const final;
+    ImageBufferPixelFormat pixelFormat() const final;
     DestinationColorSpace colorSpace() const final;
     bool willReadFrequently() const final;
 

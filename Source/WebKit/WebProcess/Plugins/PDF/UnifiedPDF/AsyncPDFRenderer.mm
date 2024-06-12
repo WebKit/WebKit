@@ -134,7 +134,7 @@ void AsyncPDFRenderer::paintPagePreviewOnWorkQueue(RetainPtr<PDFDocument>&& pdfD
 {
     ASSERT(!isMainRunLoop());
 
-    auto pageImageBuffer = ImageBuffer::create(pagePreviewRequest.normalizedPageBounds.size(), RenderingPurpose::Unspecified, pagePreviewRequest.scale, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto pageImageBuffer = ImageBuffer::create(pagePreviewRequest.normalizedPageBounds.size(), RenderingPurpose::Unspecified, pagePreviewRequest.scale, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     if (!pageImageBuffer)
         return;
 
@@ -449,7 +449,7 @@ void AsyncPDFRenderer::paintTileOnWorkQueue(RetainPtr<PDFDocument>&& pdfDocument
     ASSERT(!isMainRunLoop());
 
     auto bufferRect = renderInfo.clipRect.value_or(renderInfo.tileRect);
-    auto tileBuffer = ImageBuffer::create(bufferRect.size(), RenderingPurpose::Unspecified, renderInfo.pageCoverage.deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto tileBuffer = ImageBuffer::create(bufferRect.size(), RenderingPurpose::Unspecified, renderInfo.pageCoverage.deviceScaleFactor, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     if (!tileBuffer) {
         transferBufferToMainThread(nullptr, tileInfo, renderInfo, renderIdentifier);
         return;
