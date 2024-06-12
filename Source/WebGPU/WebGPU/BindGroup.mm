@@ -30,6 +30,7 @@
 #import "BindGroupLayout.h"
 #import "Buffer.h"
 #import "Device.h"
+#import "MetalSPI.h"
 #import "Sampler.h"
 #import "TextureView.h"
 #import <wtf/EnumeratedArray.h>
@@ -38,12 +39,15 @@
 #include <CoreVideo/CVPixelBufferPrivate.h>
 #else
 
-#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
 enum {
+    kCVPixelFormatType_420YpCbCr10PackedBiPlanarVideoRange = 'p420',
+    kCVPixelFormatType_422YpCbCr10PackedBiPlanarVideoRange = 'p422',
+    kCVPixelFormatType_444YpCbCr10PackedBiPlanarVideoRange = 'p444',
+#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
     kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange = '&8v0',
     kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange = '&8f0',
-};
 #endif
+};
 #endif
 
 namespace WebGPU {
@@ -188,7 +192,7 @@ static simd::float4x3 colorSpaceConversionMatrixForPixelBuffer(CVPixelBufferRef 
     } }
 }
 
-static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plane, std::optional<MTLTextureSwizzleChannels>& swizzle)
+static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plane, std::optional<MTLTextureSwizzleChannels>& swizzle, bool supportsExtendedFormats)
 {
     auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
     auto biplanarFormat = [](int plane) {
@@ -408,6 +412,13 @@ static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plan
 
     case kCVPixelFormatType_Lossy_422YpCbCr10PackedBiPlanarVideoRange: /* Lossy-compressed form of kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. Format is compressed-packed with no padding bits between pixels. */
         return biplanarFormat(plane);
+
+    case kCVPixelFormatType_420YpCbCr10PackedBiPlanarVideoRange:
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_420_2P_PACKED) : MTLPixelFormatInvalid;
+    case kCVPixelFormatType_422YpCbCr10PackedBiPlanarVideoRange:
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_422_2P_PACKED) : MTLPixelFormatInvalid;
+    case kCVPixelFormatType_444YpCbCr10PackedBiPlanarVideoRange:
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_444_2P_PACKED) : MTLPixelFormatInvalid;
     }
 
     return MTLPixelFormatInvalid;
@@ -420,11 +431,12 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 #if HAVE(COREVIDEO_METAL_SUPPORT)
     UNUSED_PARAM(colorSpace);
 
-    std::optional<MTLTextureSwizzleChannels> firstPlaneSwizzle;
+    std::optional<MTLTextureSwizzleChannels> firstPlaneSwizzle, secondPlaneSwizzle;
     auto gbTextureFromRGB = ^(id<MTLTexture> texture, bool alphaFirst) {
         return [texture newTextureViewWithPixelFormat:texture.pixelFormat textureType:texture.textureType levels:NSMakeRange(0, texture.mipmapLevelCount) slices:NSMakeRange(0, texture.arrayLength) swizzle:alphaFirst ? MTLTextureSwizzleChannelsMake(MTLTextureSwizzleBlue, MTLTextureSwizzleAlpha, MTLTextureSwizzleZero, MTLTextureSwizzleZero) : MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleBlue, MTLTextureSwizzleZero, MTLTextureSwizzleZero)];
     };
 
+    const bool supportsExtendedFormats = [m_device supportsFamily:MTLGPUFamilyApple4];
     if (!CVPixelBufferGetIOSurface(pixelBuffer)) {
         auto planeCount = std::max<size_t>(CVPixelBufferGetPlaneCount(pixelBuffer), 1);
         if (planeCount > 2) {
@@ -447,7 +459,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
             textureDescriptor.textureType = MTLTextureType2D;
             textureDescriptor.width = width;
             textureDescriptor.height = height;
-            textureDescriptor.pixelFormat = metalPixelFormat(pixelBuffer, plane, firstPlaneSwizzle);
+            textureDescriptor.pixelFormat = metalPixelFormat(pixelBuffer, plane, firstPlaneSwizzle, supportsExtendedFormats);
             if (firstPlaneSwizzle)
                 textureDescriptor.swizzle = *firstPlaneSwizzle;
             textureDescriptor.mipmapLevelCount = 1;
@@ -489,13 +501,17 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
     CVMetalTextureRef plane0 = nullptr;
     CVMetalTextureRef plane1 = nullptr;
     auto planeCount = CVPixelBufferGetPlaneCount(pixelBuffer);
-    CVReturn status1;
+    CVReturn status1 = kCVReturnInvalidPixelFormat;
     CVReturn status2 = kCVReturnInvalidPixelFormat;
     if (planeCount < 2)
-        status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, metalPixelFormat(pixelBuffer, 0, firstPlaneSwizzle), CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
+        status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, metalPixelFormat(pixelBuffer, 0, firstPlaneSwizzle, supportsExtendedFormats), CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
     else {
-        status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, MTLPixelFormatR8Unorm, CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
-        status2 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, MTLPixelFormatRG8Unorm, CVPixelBufferGetWidthOfPlane(pixelBuffer, 1), CVPixelBufferGetHeightOfPlane(pixelBuffer, 1), 1, &plane1);
+        auto format0 = metalPixelFormat(pixelBuffer, 0, firstPlaneSwizzle, supportsExtendedFormats);
+        if (format0 != MTLPixelFormatInvalid)
+            status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, format0, CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
+        auto format1 = metalPixelFormat(pixelBuffer, 1, firstPlaneSwizzle, supportsExtendedFormats);
+        if (format1 != MTLPixelFormatInvalid)
+            status2 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, format1, CVPixelBufferGetWidthOfPlane(pixelBuffer, 1), CVPixelBufferGetHeightOfPlane(pixelBuffer, 1), 1, &plane1);
     }
 
     float lowerLeft[2];
@@ -514,8 +530,11 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
         return { };
     }
 
-    if (status2 == kCVReturnSuccess)
+    if (status2 == kCVReturnSuccess) {
         mtlTexture1 = CVMetalTextureGetTexture(plane1);
+        if (secondPlaneSwizzle)
+            mtlTexture1 = [mtlTexture1 newTextureViewWithPixelFormat:mtlTexture1.pixelFormat textureType:mtlTexture1.textureType levels:NSMakeRange(0, mtlTexture1.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture1.arrayLength) swizzle:*secondPlaneSwizzle];
+    }
 
     m_defaultQueue->onSubmittedWorkDone([plane0, plane1](WGPUQueueWorkDoneStatus) {
         if (plane0)
