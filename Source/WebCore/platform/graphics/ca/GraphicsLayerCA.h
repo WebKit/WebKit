@@ -178,6 +178,8 @@ public:
     WEBCORE_EXPORT void deviceOrPageScaleFactorChanged() override;
     void setShouldUpdateRootRelativeScaleFactor(bool value) override { m_shouldUpdateRootRelativeScaleFactor = value; }
 
+    float rootRelativeScaleFactor() { return m_rootRelativeScaleFactor; }
+
     FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 
     struct CommitState {
