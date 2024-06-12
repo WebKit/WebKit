@@ -98,14 +98,16 @@ namespace ResolveScope {
     static constexpr GPRReg metadataGPR { GPRInfo::regT2 };
     static constexpr GPRReg scopeGPR { GPRInfo::regT0 };
     static constexpr GPRReg bytecodeOffsetGPR { GPRInfo::regT3 };
-    static_assert(noOverlap(metadataGPR, scopeGPR, bytecodeOffsetGPR), "Required for call to CTI thunk");
+    static constexpr GPRReg scratch1GPR { GPRInfo::regT5 };
+    static_assert(noOverlap(metadataGPR, scopeGPR, bytecodeOffsetGPR, scratch1GPR), "Required for call to CTI thunk");
 }
 
 namespace GetFromScope {
     static constexpr GPRReg metadataGPR { GPRInfo::regT4 };
     static constexpr GPRReg scopeGPR { GPRInfo::regT2 };
     static constexpr GPRReg bytecodeOffsetGPR { GPRInfo::regT3 };
-    static_assert(noOverlap(metadataGPR, scopeGPR, bytecodeOffsetGPR), "Required for call to CTI thunk");
+    static constexpr GPRReg scratch1GPR { GPRInfo::regT5 };
+    static_assert(noOverlap(metadataGPR, scopeGPR, bytecodeOffsetGPR, scratch1GPR), "Required for call to CTI thunk");
 }
 
 namespace PutToScope {
