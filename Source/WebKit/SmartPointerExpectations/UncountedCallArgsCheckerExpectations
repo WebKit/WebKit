@@ -2,6 +2,7 @@ AutomationBackendDispatchers.cpp
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.h
 GPUProcess/GPUConnectionToWebProcess.cpp
+GPUProcess/GPUProcess.cpp
 GPUProcess/RemoteSharedResourceCache.cpp
 GPUProcess/ShapeDetection/RemoteFaceDetector.cpp
 GPUProcess/graphics/ImageBufferShareableAllocator.cpp
@@ -41,6 +42,7 @@ GPUProcess/graphics/WebGPU/RemoteSampler.cpp
 GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp
 GPUProcess/graphics/WebGPU/RemoteTexture.cpp
 GPUProcess/graphics/WebGPU/RemoteTextureView.cpp
+GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp
 GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp
 GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxy.cpp
@@ -162,6 +164,7 @@ Platform/cocoa/WebPrivacyHelpers.mm
 Shared/API/APIArray.h
 Shared/API/APISerializedScriptValue.h
 Shared/API/Cocoa/WKRemoteObjectCoder.mm
+Shared/API/Cocoa/_WKHitTestResult.mm
 Shared/API/Cocoa/_WKRemoteObjectRegistry.mm
 Shared/API/c/WKArray.cpp
 Shared/API/c/WKContextMenuItem.cpp
@@ -204,6 +207,7 @@ Shared/Cocoa/WKNSString.mm
 Shared/Cocoa/WKNSURL.mm
 Shared/Cocoa/WebKit2InitializeCocoa.mm
 Shared/ContextMenuContextData.cpp
+Shared/EditingRange.cpp
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
 Shared/Extensions/WebExtensionFrameIdentifier.h
 Shared/IPCConnectionTester.cpp
@@ -223,13 +227,13 @@ Shared/WebGPU/WebGPUComputePassTimestampWrites.cpp
 Shared/WebGPU/WebGPUImageCopyBuffer.cpp
 Shared/WebGPU/WebGPUImageCopyTexture.cpp
 Shared/WebGPU/WebGPUPipelineDescriptorBase.cpp
+Shared/WebGPU/WebGPUPipelineLayoutDescriptor.cpp
 Shared/WebGPU/WebGPUPresentationContextDescriptor.cpp
 Shared/WebGPU/WebGPUProgrammableStage.cpp
 Shared/WebGPU/WebGPURenderPassColorAttachment.cpp
 Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp
 Shared/WebGPU/WebGPURenderPassDescriptor.cpp
 Shared/WebGPU/WebGPURenderPassTimestampWrites.cpp
-Shared/WebGPU/WebGPUShaderModuleCompilationHint.cpp
 Shared/WebHitTestResultData.cpp
 Shared/WebImage.cpp
 Shared/WebMemorySampler.cpp
@@ -485,7 +489,6 @@ UIProcess/WebFullScreenManagerProxy.cpp
 UIProcess/WebGeolocationManagerProxy.cpp
 UIProcess/WebLockRegistryProxy.cpp
 UIProcess/WebOpenPanelResultListenerProxy.cpp
-UIProcess/WebPageGroup.cpp
 UIProcess/WebPageProxy.cpp
 UIProcess/WebPageProxy.h
 UIProcess/WebPageProxyInternals.h
@@ -551,7 +554,6 @@ WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteFaceDetectorProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteTextDetectorProxy.cpp
 WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp
-WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp
 WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp
 WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h
 WebProcess/GPU/graphics/RemoteImageBufferProxy.cpp
@@ -669,6 +671,8 @@ WebProcess/Network/webrtc/LibWebRTCProvider.cpp
 WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp
 WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp
 WebProcess/Network/webrtc/WebRTCMonitor.cpp
+WebProcess/Notifications/NotificationPermissionRequestManager.cpp
+WebProcess/Notifications/WebNotificationManager.cpp
 WebProcess/Plugins/PDF/PDFIncrementalLoader.mm
 WebProcess/Plugins/PDF/PDFPlugin.mm
 WebProcess/Plugins/PDF/PDFPluginAnnotation.mm
@@ -702,22 +706,27 @@ WebProcess/WebCoreSupport/WebContextMenuClient.cpp
 WebProcess/WebCoreSupport/WebCryptoClient.cpp
 WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp
 WebProcess/WebCoreSupport/WebDateTimeChooser.cpp
+WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp
 WebProcess/WebCoreSupport/WebDragClient.cpp
 WebProcess/WebCoreSupport/WebEditorClient.cpp
 WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp
 WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
 WebProcess/WebCoreSupport/WebGeolocationClient.cpp
 WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.cpp
+WebProcess/WebCoreSupport/WebMediaKeySystemClient.cpp
 WebProcess/WebCoreSupport/WebMessagePortChannelProvider.cpp
 WebProcess/WebCoreSupport/WebNotificationClient.cpp
 WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
 WebProcess/WebCoreSupport/WebPopupMenu.cpp
+WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
 WebProcess/WebCoreSupport/WebRemoteFrameClient.cpp
 WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
+WebProcess/WebCoreSupport/WebUserMediaClient.cpp
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
 WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm
 WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
 WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm
+WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm
 WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.cpp
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm
 WebProcess/WebPage/DrawingArea.cpp
@@ -728,6 +737,7 @@ WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm
+WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm

@@ -30,6 +30,8 @@ Shared/API/c/mac/WKMediaFormatReader.cpp
 Shared/APIWebArchive.mm
 Shared/Cocoa/APIObject.mm
 Shared/ContextMenuContextData.cpp
+Shared/RemoteLayerTree/RemoteLayerBackingStore.mm
+Shared/WebBackForwardListItem.cpp
 Shared/WebContextMenuItem.cpp
 Shared/WebGPU/WebGPUBindGroupDescriptor.cpp
 Shared/WebGPU/WebGPUBindGroupEntry.cpp
@@ -39,13 +41,13 @@ Shared/WebGPU/WebGPUComputePassTimestampWrites.cpp
 Shared/WebGPU/WebGPUImageCopyBuffer.cpp
 Shared/WebGPU/WebGPUImageCopyTexture.cpp
 Shared/WebGPU/WebGPUPipelineDescriptorBase.cpp
+Shared/WebGPU/WebGPUPipelineLayoutDescriptor.cpp
 Shared/WebGPU/WebGPUPresentationContextDescriptor.cpp
 Shared/WebGPU/WebGPUProgrammableStage.cpp
 Shared/WebGPU/WebGPURenderPassColorAttachment.cpp
 Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp
 Shared/WebGPU/WebGPURenderPassDescriptor.cpp
 Shared/WebGPU/WebGPURenderPassTimestampWrites.cpp
-Shared/WebGPU/WebGPUShaderModuleCompilationHint.cpp
 Shared/WebHitTestResultData.cpp
 Shared/mac/MediaFormatReader/MediaFormatReader.cpp
 Shared/mac/MediaFormatReader/MediaSampleCursor.cpp
@@ -103,6 +105,7 @@ UIProcess/VisitedLinkStore.cpp
 UIProcess/WebAuthentication/AuthenticatorManager.cpp
 UIProcess/WebBackForwardCacheEntry.cpp
 UIProcess/WebBackForwardList.cpp
+UIProcess/WebFrameProxy.cpp
 UIProcess/WebFullScreenManagerProxy.cpp
 UIProcess/WebGeolocationManagerProxy.cpp
 UIProcess/WebLockRegistryProxy.cpp
@@ -184,7 +187,6 @@ WebProcess/WebCoreSupport/WebChromeClient.cpp
 WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp
 WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
 WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.cpp
-WebProcess/WebCoreSupport/WebNotificationClient.cpp
 WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
 WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp
 WebProcess/WebCoreSupport/mac/WebDragClientMac.mm

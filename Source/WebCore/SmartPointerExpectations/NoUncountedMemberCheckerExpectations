@@ -3,6 +3,7 @@ Modules/WebGPU/InternalAPI/WebGPUPresentationContextDescriptor.h
 Modules/WebGPU/InternalAPI/WebGPUShaderModuleCompilationHint.h
 Modules/async-clipboard/ClipboardItemDataSource.h
 Modules/async-clipboard/NavigatorClipboard.h
+Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp
 Modules/encryptedmedia/MediaKeyStatusMap.h
 Modules/encryptedmedia/legacy/WebKitMediaKeySession.h
 Modules/fetch/FetchBodyOwner.h
@@ -66,7 +67,6 @@ dom/Node.h
 dom/NodeWithIndex.h
 dom/QualifiedName.h
 dom/TreeScope.h
-dom/WindowOrWorkerGlobalScopeTrustedTypes.cpp
 editing/cocoa/HTMLConverter.mm
 html/DOMTokenList.h
 html/FormListedElement.cpp
@@ -77,8 +77,10 @@ html/MediaElementSession.h
 html/ValidatedFormListedElement.h
 html/canvas/CanvasFilterTargetSwitcher.h
 html/canvas/CanvasRenderingContext.h
+html/canvas/WebGLDefaultFramebuffer.h
 html/canvas/WebGLUtilities.h
 html/parser/HTMLElementStack.h
+html/parser/HTMLParserScheduler.h
 html/parser/HTMLTreeBuilder.h
 html/shadow/DateTimeEditElement.cpp
 html/track/LoadableTextTrack.h
@@ -89,9 +91,9 @@ inspector/InspectorShaderProgram.h
 inspector/InspectorStyleSheet.cpp
 inspector/InspectorStyleSheet.h
 inspector/InspectorWebAgentBase.h
-inspector/WorkerDebugger.h
+inspector/WorkerInspectorController.h
+inspector/agents/InspectorAnimationAgent.h
 inspector/agents/InspectorIndexedDBAgent.cpp
-inspector/agents/InspectorPageAgent.h
 inspector/agents/worker/ServiceWorkerAgent.h
 layout/formattingContexts/inline/InlineItemsBuilder.h
 loader/appcache/ApplicationCacheStorage.cpp
@@ -108,12 +110,12 @@ page/scrolling/ScrollingTreeScrollingNodeDelegate.h
 page/scrolling/mac/ScrollerMac.h
 platform/PODInterval.h
 platform/encryptedmedia/CDMProxy.h
+platform/graphics/BitmapImageDescriptor.h
 platform/graphics/ComplexTextController.h
 platform/graphics/DrawGlyphsRecorder.h
 platform/graphics/GraphicsContextGLImageExtractor.h
 platform/graphics/GraphicsLayer.h
 platform/graphics/ImageBuffer.h
-platform/graphics/ImageFrameAnimator.h
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
 platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.h
 platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h
@@ -136,7 +138,6 @@ rendering/RenderQuote.cpp
 rendering/RenderScrollbarPart.h
 rendering/RenderVTTCue.h
 rendering/RenderView.h
-rendering/TextBoxPainter.h
 rendering/style/StyleCanvasImage.h
 rendering/style/StyleGeneratedImage.cpp
 rendering/svg/SVGTextLayoutAttributesBuilder.h
@@ -152,6 +153,7 @@ style/StyleResolver.cpp
 style/StyleScope.h
 style/StyleScopeRuleSets.h
 style/StyleSharingResolver.cpp
+style/StyleSharingResolver.h
 style/Styleable.h
 svg/properties/SVGAnimatedProperty.h
 svg/properties/SVGPropertyOwnerRegistry.h
@@ -164,7 +166,7 @@ workers/service/NavigationPreloadManager.h
 workers/service/ServiceWorkerContainer.h
 workers/service/background-fetch/ServiceWorkerRegistrationBackgroundFetchAPI.h
 workers/service/context/ServiceWorkerDebuggable.h
-workers/service/context/ServiceWorkerThreadProxy.h
+workers/shared/context/SharedWorkerThreadProxy.h
 xml/XMLHttpRequestProgressEventThrottle.h
 xml/XMLHttpRequestUpload.h
 xml/parser/XMLDocumentParser.h

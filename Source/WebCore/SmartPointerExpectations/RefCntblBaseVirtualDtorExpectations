@@ -1,5 +1,6 @@
 Modules/webtransport/WebTransportReceiveStream.h
 Modules/webtransport/WebTransportSendStream.h
+css/CSSAnchorValue.h
 css/CSSAspectRatioValue.h
 css/CSSBackgroundRepeatValue.h
 css/CSSBasicShapes.h
@@ -56,16 +57,12 @@ css/DOMMatrix.h
 css/DeprecatedCSSOMPrimitiveValue.h
 css/DeprecatedCSSOMValue.h
 css/DeprecatedCSSOMValueList.h
-css/ImmutableStyleProperties.h
-css/MutableStyleProperties.h
 css/StyleRule.h
 css/StyleRuleImport.h
 css/calc/CSSCalcValue.h
 dom/DOMPoint.h
 dom/DOMRect.h
 dom/Document.h
-dom/ElementData.h
-dom/EventTarget.h
 dom/ShadowRoot.cpp
 dom/ShadowRoot.h
 platform/SharedBuffer.h

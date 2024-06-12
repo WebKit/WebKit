@@ -18,7 +18,6 @@ UIProcess/WebPageProxy.h
 UIProcess/WebPageProxyInternals.h
 UIProcess/WebPermissionControllerProxy.h
 UIProcess/WebPreferences.h
-WebProcess/Cache/WebCacheStorageConnection.h
 WebProcess/GPU/media/MediaPlayerPrivateRemote.h
 WebProcess/GPU/media/RemoteImageDecoderAVF.h
 WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.h
