@@ -105,6 +105,9 @@ private:
     void setObjectProperty(AXPropertyName, AXCoreObject*);
     void setObjectVectorProperty(AXPropertyName, const AccessibilityChildrenVector&);
 
+    void setPropertyFlag(AXPropertyFlag, bool);
+    bool hasPropertyFlag(AXPropertyFlag) const;
+
     static bool canBeMultilineTextField(AccessibilityObject&, bool isNonNativeTextControl);
 
     // FIXME: consolidate all AttributeValue retrieval in a single template method.
@@ -552,6 +555,7 @@ private:
     Vector<AXID> m_childrenIDs;
     Vector<RefPtr<AXCoreObject>> m_children;
     AXPropertyMap m_propertyMap;
+    OptionSet<AXPropertyFlag> m_propertyFlags;
     // Some objects (e.g. display:contents) form their geometry through their children.
     bool m_getsGeometryFromChildren { false };
 
@@ -576,6 +580,19 @@ inline T AXIsolatedObject::propertyValue(AXPropertyName propertyName) const
         [] (auto&) { ASSERT_NOT_REACHED();
             return T(); }
     );
+}
+
+inline void AXIsolatedObject::setPropertyFlag(AXPropertyFlag flag, bool set)
+{
+    if (set)
+        m_propertyFlags.add(flag);
+    else
+        m_propertyFlags.remove(flag);
+}
+
+inline bool AXIsolatedObject::hasPropertyFlag(AXPropertyFlag flag) const
+{
+    return m_propertyFlags.contains(flag);
 }
 
 } // namespace WebCore

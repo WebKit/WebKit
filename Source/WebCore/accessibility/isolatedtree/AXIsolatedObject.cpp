@@ -60,7 +60,7 @@ AXIsolatedObject::AXIsolatedObject(const Ref<AccessibilityObject>& axObject, AXI
     m_parentID = axParent ? axParent->objectID() : AXID();
 
     // Allocate a capacity based on the minimum properties an object has (based on measurements from a real webpage).
-    m_propertyMap.reserveInitialCapacity(22);
+    m_propertyMap.reserveInitialCapacity(12);
 
     initializeProperties(axObject);
 }
@@ -446,6 +446,88 @@ void AXIsolatedObject::setObjectVectorProperty(AXPropertyName propertyName, cons
 
 void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueVariant&& value)
 {
+    if (std::holds_alternative<bool>(value)) {
+        switch (propertyName) {
+        case AXPropertyName::CanSetFocusAttribute:
+            setPropertyFlag(AXPropertyFlag::CanSetFocusAttribute, std::get<bool>(value));
+            return;
+        case AXPropertyName::CanSetSelectedAttribute:
+            setPropertyFlag(AXPropertyFlag::CanSetSelectedAttribute, std::get<bool>(value));
+            return;
+        case AXPropertyName::CanSetValueAttribute:
+            setPropertyFlag(AXPropertyFlag::CanSetValueAttribute, std::get<bool>(value));
+            return;
+        case AXPropertyName::HasBoldFont:
+            setPropertyFlag(AXPropertyFlag::HasBoldFont, std::get<bool>(value));
+            return;
+        case AXPropertyName::HasItalicFont:
+            setPropertyFlag(AXPropertyFlag::HasItalicFont, std::get<bool>(value));
+            return;
+        case AXPropertyName::HasPlainText:
+            setPropertyFlag(AXPropertyFlag::HasPlainText, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsControl:
+            setPropertyFlag(AXPropertyFlag::IsControl, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsEnabled:
+            setPropertyFlag(AXPropertyFlag::IsEnabled, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsExposedTableCell:
+            setPropertyFlag(AXPropertyFlag::IsExposedTableCell, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsGrabbed:
+            setPropertyFlag(AXPropertyFlag::IsGrabbed, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsInlineText:
+            setPropertyFlag(AXPropertyFlag::IsInlineText, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsKeyboardFocusable:
+            setPropertyFlag(AXPropertyFlag::IsKeyboardFocusable, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsLink:
+            setPropertyFlag(AXPropertyFlag::IsLink, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsList:
+            setPropertyFlag(AXPropertyFlag::IsList, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsNonLayerSVGObject:
+            setPropertyFlag(AXPropertyFlag::IsNonLayerSVGObject, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsTableColumn:
+            setPropertyFlag(AXPropertyFlag::IsTableColumn, std::get<bool>(value));
+            return;
+        case AXPropertyName::IsTableRow:
+            setPropertyFlag(AXPropertyFlag::IsTableRow, std::get<bool>(value));
+            return;
+        case AXPropertyName::SupportsCheckedState:
+            setPropertyFlag(AXPropertyFlag::SupportsCheckedState, std::get<bool>(value));
+            return;
+        case AXPropertyName::SupportsDragging:
+            setPropertyFlag(AXPropertyFlag::SupportsDragging, std::get<bool>(value));
+            return;
+        case AXPropertyName::SupportsExpanded:
+            setPropertyFlag(AXPropertyFlag::SupportsExpanded, std::get<bool>(value));
+            return;
+        case AXPropertyName::SupportsPath:
+            setPropertyFlag(AXPropertyFlag::SupportsPath, std::get<bool>(value));
+            return;
+        case AXPropertyName::SupportsPosInSet:
+            setPropertyFlag(AXPropertyFlag::SupportsPosInSet, std::get<bool>(value));
+            return;
+        case AXPropertyName::SupportsPressAction:
+            setPropertyFlag(AXPropertyFlag::SupportsPressAction, std::get<bool>(value));
+            return;
+        case AXPropertyName::SupportsRequiredAttribute:
+            setPropertyFlag(AXPropertyFlag::SupportsRequiredAttribute, std::get<bool>(value));
+            return;
+        case AXPropertyName::SupportsSetSize:
+            setPropertyFlag(AXPropertyFlag::SupportsSetSize, std::get<bool>(value));
+            return;
+        default:
+            break;
+        }
+    }
+
     bool isDefaultValue = WTF::switchOn(value,
         [](std::nullptr_t&) { return true; },
         [](AXID typedValue) { return !typedValue.isValid(); },
@@ -1012,6 +1094,61 @@ unsigned AXIsolatedObject::unsignedAttributeValue(AXPropertyName propertyName) c
 
 bool AXIsolatedObject::boolAttributeValue(AXPropertyName propertyName) const
 {
+    switch (propertyName) {
+    case AXPropertyName::CanSetFocusAttribute:
+        return hasPropertyFlag(AXPropertyFlag::CanSetFocusAttribute);
+    case AXPropertyName::CanSetSelectedAttribute:
+        return hasPropertyFlag(AXPropertyFlag::CanSetSelectedAttribute);
+    case AXPropertyName::CanSetValueAttribute:
+        return hasPropertyFlag(AXPropertyFlag::CanSetValueAttribute);
+    case AXPropertyName::HasBoldFont:
+        return hasPropertyFlag(AXPropertyFlag::HasBoldFont);
+    case AXPropertyName::HasItalicFont:
+        return hasPropertyFlag(AXPropertyFlag::HasItalicFont);
+    case AXPropertyName::HasPlainText:
+        return hasPropertyFlag(AXPropertyFlag::HasPlainText);
+    case AXPropertyName::IsControl:
+        return hasPropertyFlag(AXPropertyFlag::IsControl);
+    case AXPropertyName::IsEnabled:
+        return hasPropertyFlag(AXPropertyFlag::IsEnabled);
+    case AXPropertyName::IsExposedTableCell:
+        return hasPropertyFlag(AXPropertyFlag::IsExposedTableCell);
+    case AXPropertyName::IsGrabbed:
+        return hasPropertyFlag(AXPropertyFlag::IsGrabbed);
+    case AXPropertyName::IsInlineText:
+        return hasPropertyFlag(AXPropertyFlag::IsInlineText);
+    case AXPropertyName::IsKeyboardFocusable:
+        return hasPropertyFlag(AXPropertyFlag::IsKeyboardFocusable);
+    case AXPropertyName::IsLink:
+        return hasPropertyFlag(AXPropertyFlag::IsLink);
+    case AXPropertyName::IsList:
+        return hasPropertyFlag(AXPropertyFlag::IsList);
+    case AXPropertyName::IsNonLayerSVGObject:
+        return hasPropertyFlag(AXPropertyFlag::IsNonLayerSVGObject);
+    case AXPropertyName::IsTableColumn:
+        return hasPropertyFlag(AXPropertyFlag::IsTableColumn);
+    case AXPropertyName::IsTableRow:
+        return hasPropertyFlag(AXPropertyFlag::IsTableRow);
+    case AXPropertyName::SupportsCheckedState:
+        return hasPropertyFlag(AXPropertyFlag::SupportsCheckedState);
+    case AXPropertyName::SupportsDragging:
+        return hasPropertyFlag(AXPropertyFlag::SupportsDragging);
+    case AXPropertyName::SupportsExpanded:
+        return hasPropertyFlag(AXPropertyFlag::SupportsExpanded);
+    case AXPropertyName::SupportsPath:
+        return hasPropertyFlag(AXPropertyFlag::SupportsPath);
+    case AXPropertyName::SupportsPosInSet:
+        return hasPropertyFlag(AXPropertyFlag::SupportsPosInSet);
+    case AXPropertyName::SupportsPressAction:
+        return hasPropertyFlag(AXPropertyFlag::SupportsPressAction);
+    case AXPropertyName::SupportsRequiredAttribute:
+        return hasPropertyFlag(AXPropertyFlag::SupportsRequiredAttribute);
+    case AXPropertyName::SupportsSetSize:
+        return hasPropertyFlag(AXPropertyFlag::SupportsSetSize);
+    default:
+        break;
+    }
+
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
         [] (bool& typedValue) { return typedValue; },

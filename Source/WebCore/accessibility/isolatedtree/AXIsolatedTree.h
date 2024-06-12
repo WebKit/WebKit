@@ -54,6 +54,36 @@ class AccessibilityObject;
 class Page;
 enum class AXStreamOptions : uint8_t;
 
+// The most common boolean properties are stored in a bitfield rather than in a HashMap.
+// If you edit these, update AXIsolatedObject::boolAttributeValue and AXIsolatedObject::setProperty.
+enum class AXPropertyFlag : uint32_t {
+    CanSetFocusAttribute                          = 1 << 0,
+    CanSetSelectedAttribute                       = 1 << 1,
+    CanSetValueAttribute                          = 1 << 2,
+    HasBoldFont                                   = 1 << 3,
+    HasItalicFont                                 = 1 << 4,
+    HasPlainText                                  = 1 << 5,
+    IsControl                                     = 1 << 6,
+    IsEnabled                                     = 1 << 7,
+    IsExposedTableCell                            = 1 << 8,
+    IsGrabbed                                     = 1 << 9,
+    IsInlineText                                  = 1 << 10,
+    IsKeyboardFocusable                           = 1 << 11,
+    IsLink                                        = 1 << 12,
+    IsList                                        = 1 << 13,
+    IsNonLayerSVGObject                           = 1 << 14,
+    IsTableColumn                                 = 1 << 15,
+    IsTableRow                                    = 1 << 16,
+    SupportsCheckedState                          = 1 << 17,
+    SupportsDragging                              = 1 << 18,
+    SupportsExpanded                              = 1 << 19,
+    SupportsPath                                  = 1 << 20,
+    SupportsPosInSet                              = 1 << 21,
+    SupportsPressAction                           = 1 << 22,
+    SupportsRequiredAttribute                     = 1 << 23,
+    SupportsSetSize                               = 1 << 24
+};
+
 enum class AXPropertyName : uint16_t {
     ARIATreeRows,
     AttributedText,
