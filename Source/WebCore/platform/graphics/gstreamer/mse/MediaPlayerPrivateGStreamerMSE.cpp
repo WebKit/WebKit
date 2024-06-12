@@ -165,7 +165,46 @@ void MediaPlayerPrivateGStreamerMSE::pause()
     m_isPaused = true;
     m_playbackRatePausedState = PlaybackRatePausedState::ManuallyPaused;
     updateStates();
+
+    // HTMLMediaElement::pauseInternal() synchronously schedules the pause event right after pausing
+    // the player, so without a playbackStateChanged notification here we would still observe an
+    // active sleep disabler right after receiving the pause event on JS side.
+    RefPtr player = m_player.get();
+    if (UNLIKELY(!player))
+        return;
+    player->playbackStateChanged();
 }
+
+void MediaPlayerPrivateGStreamerMSE::checkPlayingConsistency()
+{
+    MediaPlayerPrivateGStreamer::checkPlayingConsistency();
+
+    if (!m_playbackStateChangedNotificationPending)
+        return;
+
+    m_playbackStateChangedNotificationPending = false;
+    RefPtr player = m_player.get();
+    if (UNLIKELY(!player))
+        return;
+
+    GstState state, pendingState;
+    gst_element_get_state(pipeline(), &state, &pendingState, 0);
+    if (pendingState != GST_STATE_VOID_PENDING)
+        return;
+
+    if ((state == GST_STATE_PLAYING && m_playbackRatePausedState == PlaybackRatePausedState::Playing) || (state == GST_STATE_PAUSED && m_playbackRatePausedState == PlaybackRatePausedState::ManuallyPaused)) {
+        GST_DEBUG_OBJECT(pipeline(), "Notifying MediaPlayer of pipeline state change to %s", gst_element_state_get_name(state));
+        player->playbackStateChanged();
+    }
+}
+
+#ifndef GST_DISABLE_DEBUG
+void MediaPlayerPrivateGStreamerMSE::setShouldDisableSleep(bool shouldDisableSleep)
+{
+    // This method is useful only for logging purpose. The actual sleep disabler is managed by HTMLMediaElement.
+    GST_DEBUG_OBJECT(pipeline(), "%s display sleep.", shouldDisableSleep ? "Disabling" : "Enabling");
+}
+#endif
 
 MediaTime MediaPlayerPrivateGStreamerMSE::durationMediaTime() const
 {
@@ -335,6 +374,7 @@ void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
 void MediaPlayerPrivateGStreamerMSE::updateStates()
 {
     bool isWaitingPreroll = isPipelineWaitingPreroll();
+    bool shouldUpdatePlaybackState = false;
     bool shouldBePlaying = (!m_isPaused && readyState() >= MediaPlayer::ReadyState::HaveFutureData && m_playbackRatePausedState != PlaybackRatePausedState::RatePaused)
         || m_playbackRatePausedState == PlaybackRatePausedState::ShouldMoveToPlaying;
     GST_DEBUG_OBJECT(pipeline(), "shouldBePlaying = %s, m_isPipelinePlaying = %s, is seeking %s", boolForPrinting(shouldBePlaying),
@@ -343,12 +383,22 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
         auto result = changePipelineState(GST_STATE_PLAYING);
         if (result == ChangePipelineStateResult::Failed)
             GST_ERROR_OBJECT(pipeline(), "Setting the pipeline to PLAYING failed");
-        else if (result == ChangePipelineStateResult::Ok)
+        else if (result == ChangePipelineStateResult::Ok) {
             m_playbackRatePausedState = PlaybackRatePausedState::Playing;
+            shouldUpdatePlaybackState = true;
+        }
     } else if (!isWaitingPreroll && !shouldBePlaying && m_isPipelinePlaying) {
-        if (changePipelineState(GST_STATE_PAUSED) == ChangePipelineStateResult::Failed)
+        auto result = changePipelineState(GST_STATE_PAUSED);
+        if (result == ChangePipelineStateResult::Failed)
             GST_ERROR_OBJECT(pipeline(), "Setting the pipeline to PAUSED failed");
+
+        shouldUpdatePlaybackState = result == ChangePipelineStateResult::Ok;
     }
+
+    if (!shouldUpdatePlaybackState)
+        return;
+
+    m_playbackStateChangedNotificationPending = shouldUpdatePlaybackState;
 }
 
 bool MediaPlayerPrivateGStreamerMSE::isTimeBuffered(const MediaTime &time) const
@@ -452,7 +502,12 @@ bool MediaPlayerPrivateGStreamerMSE::currentMediaTimeMayProgress() const
 {
     if (!m_mediaSourcePrivate)
         return false;
-    return m_mediaSourcePrivate->hasFutureTime(currentMediaTime());
+    bool isPaused = paused();
+    const float currentTime = this->currentTime();
+    bool hasFutureTime = m_mediaSourcePrivate->hasFutureTime(MediaTime::createWithFloat(currentTime));
+    bool isProgressing = !isPaused && hasFutureTime;
+    GST_DEBUG_OBJECT(pipeline(), "Is paused: %s, has future time for %f: %s, time is progressing: %s", boolForPrinting(isPaused), currentTime, boolForPrinting(hasFutureTime), boolForPrinting(isProgressing));
+    return isProgressing;
 }
 
 void MediaPlayerPrivateGStreamerMSE::notifyActiveSourceBuffersChanged()
@@ -465,4 +520,4 @@ void MediaPlayerPrivateGStreamerMSE::notifyActiveSourceBuffersChanged()
 
 } // namespace WebCore.
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)

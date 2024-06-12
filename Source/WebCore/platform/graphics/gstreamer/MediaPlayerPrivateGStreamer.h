@@ -335,7 +335,7 @@ protected:
     template <typename TrackPrivateType> void notifyPlayerOfTrack();
 
     void ensureAudioSourceProvider();
-    void checkPlayingConsistency();
+    virtual void checkPlayingConsistency();
 
     virtual bool doSeek(const SeekTarget& position, float rate);
     void invalidateCachedPosition() const;

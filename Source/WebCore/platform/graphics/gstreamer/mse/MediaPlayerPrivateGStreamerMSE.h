@@ -88,6 +88,11 @@ public:
     WTFLogChannel& logChannel() const final { return WebCore::LogMediaSource; }
 #endif
 
+    void checkPlayingConsistency() final;
+#ifndef GST_DISABLE_DEBUG
+    void setShouldDisableSleep(bool) final;
+#endif
+
 private:
     explicit MediaPlayerPrivateGStreamerMSE(MediaPlayer*);
 
@@ -115,6 +120,8 @@ private:
     bool m_isWaitingForPreroll = true;
     MediaPlayer::ReadyState m_mediaSourceReadyState = MediaPlayer::ReadyState::HaveNothing;
     MediaPlayer::NetworkState m_mediaSourceNetworkState = MediaPlayer::NetworkState::Empty;
+
+    bool m_playbackStateChangedNotificationPending { false };
 };
 
 } // namespace WebCore

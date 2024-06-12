@@ -3349,6 +3349,9 @@ void HTMLMediaElement::progressEventTimerFired()
     ASSERT(m_player);
     if (m_networkState != NETWORK_LOADING)
         return;
+
+    updateSleepDisabling();
+
     if (!m_player->supportsProgressMonitoring())
         return;
 
