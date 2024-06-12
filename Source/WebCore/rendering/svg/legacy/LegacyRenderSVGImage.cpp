@@ -144,7 +144,7 @@ void LegacyRenderSVGImage::layout()
     ASSERT(needsLayout());
 
     auto checkForRepaintOverride = !selfNeedsLayout() ? LayoutRepainter::CheckForRepaint::No : SVGRenderSupport::checkForSVGRepaintDuringLayout(*this);
-    LayoutRepainter repainter(*this, checkForRepaintOverride, RepaintOutlineBounds::No);
+    LayoutRepainter repainter(*this, checkForRepaintOverride, { }, RepaintOutlineBounds::No);
     updateImageViewport();
 
     bool transformOrBoundariesUpdate = m_needsTransformUpdate || m_needsBoundariesUpdate;

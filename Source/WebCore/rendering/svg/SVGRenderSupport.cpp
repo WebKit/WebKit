@@ -129,8 +129,11 @@ LayoutRepainter::CheckForRepaint SVGRenderSupport::checkForSVGRepaintDuringLayou
         return LayoutRepainter::CheckForRepaint::No;
     // When a parent container is transformed in SVG, all children will be painted automatically
     // so we are able to skip redundant repaint checks.
-    CheckedPtr parent = dynamicDowncast<LegacyRenderSVGContainer>(renderer.parent());
-    return !parent || !parent->didTransformToRootUpdate() ? LayoutRepainter::CheckForRepaint::Yes : LayoutRepainter::CheckForRepaint::No;
+    if (CheckedPtr parent = dynamicDowncast<LegacyRenderSVGContainer>(renderer.parent())) {
+        if (parent->isRepaintSuspendedForChildren() || parent->didTransformToRootUpdate())
+            return LayoutRepainter::CheckForRepaint::No;
+    }
+    return LayoutRepainter::CheckForRepaint::Yes;
 }
 
 // Update a bounding box taking into account the validity of the other bounding box.

@@ -144,7 +144,7 @@ void LegacyRenderSVGShape::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     auto checkForRepaintOverride = !selfNeedsLayout() ? LayoutRepainter::CheckForRepaint::No : SVGRenderSupport::checkForSVGRepaintDuringLayout(*this);
-    LayoutRepainter repainter(*this, checkForRepaintOverride, RepaintOutlineBounds::No);
+    LayoutRepainter repainter(*this, checkForRepaintOverride, { }, RepaintOutlineBounds::No);
 
     bool updateCachedBoundariesInParents = false;
 
