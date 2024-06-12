@@ -128,6 +128,16 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
 
     auto selectedTextRange = document->selection().selection().firstRange();
 
+    if (session && session->correctionType == UnifiedTextReplacement::Session::CorrectionType::Spelling) {
+        ASSERT(session->replacementType == UnifiedTextReplacement::Session::ReplacementType::RichText);
+
+        auto liveRange = createLiveRange(*selectedTextRange);
+        m_states.set(session->identifier, RichTextState { liveRange, { } });
+
+        completionHandler({ { WTF::UUID { 0 }, AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:@""])), CharacterRange { 0, 0 } } });
+        return;
+    }
+
     auto attributedStringFromRange = editingAttributedString(*contextRange, { IncludedElement::Images, IncludedElement::Attachments });
     auto selectedTextCharacterRange = characterRange(*contextRange, *selectedTextRange);
 
