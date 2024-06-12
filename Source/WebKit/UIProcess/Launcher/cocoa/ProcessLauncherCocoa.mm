@@ -126,19 +126,6 @@ static void launchWithExtensionKitFallback(ProcessLauncher& processLauncher, Pro
 }
 #endif // USE(LEGACY_EXTENSIONKIT_SPI)
 
-#if !USE(LEGACY_EXTENSIONKIT_SPI)
-static bool hasExtensionInAppBundle(NSString *name)
-{
-#if PLATFORM(IOS_SIMULATOR)
-    NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"appex" inDirectory:@"Extensions"];
-    return !!path;
-#else
-    UNUSED_PARAM(name);
-    return false;
-#endif
-}
-#endif // !USE(LEGACY_EXTENSIONKIT_SPI)
-
 static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLauncher::ProcessType processType, ProcessLauncher::Client* client, WTF::Function<void(ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, ExtensionProcess&& process, ASCIILiteral name, NSError *error)>&& handler)
 {
 #if USE(LEGACY_EXTENSIONKIT_SPI)
@@ -151,30 +138,21 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
         auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BEWebContentProcess *_Nullable process, NSError *_Nullable error) {
             handler(WTFMove(weakProcessLauncher), process, name, error);
         });
-        if (hasExtensionInAppBundle(@"WebContentExtension"))
-            [BEWebContentProcess webContentProcessWithInterruptionHandler:^{ } completion:block.get()];
-        else
-            [BEWebContentProcess webContentProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
+        [BEWebContentProcess webContentProcessWithBundleID:identifier.get() interruptionHandler: ^{ } completion:block.get()];
         break;
     }
     case ProcessLauncher::ProcessType::Network: {
         auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BENetworkingProcess *_Nullable process, NSError *_Nullable error) {
             handler(WTFMove(weakProcessLauncher), process, name, error);
         });
-        if (hasExtensionInAppBundle(@"NetworkingExtension"))
-            [BENetworkingProcess networkProcessWithInterruptionHandler:^{ } completion:block.get()];
-        else
-            [BENetworkingProcess networkProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
+        [BENetworkingProcess networkProcessWithBundleID:identifier.get() interruptionHandler: ^{ } completion:block.get()];
         break;
     }
     case ProcessLauncher::ProcessType::GPU: {
         auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BERenderingProcess *_Nullable process, NSError *_Nullable error) {
             handler(WTFMove(weakProcessLauncher), process, name, error);
         });
-        if (hasExtensionInAppBundle(@"GPUExtension"))
-            [BERenderingProcess renderingProcessWithInterruptionHandler:^{ } completion:block.get()];
-        else
-            [BERenderingProcess renderingProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
+        [BERenderingProcess renderingProcessWithBundleID:identifier.get() interruptionHandler: ^{ } completion:block.get()];
         break;
     }
     }
