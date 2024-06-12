@@ -834,7 +834,7 @@ bool RenderBundleEncoder::validToEncodeCommand() const
 
 Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
 {
-    if (!m_icbDescriptor || m_debugGroupStackSize) {
+    if (!m_icbDescriptor || m_debugGroupStackSize || !m_device->isValid()) {
         m_device->generateAValidationError(m_lastErrorString);
         return RenderBundle::createInvalid(m_device, m_lastErrorString);
     }
@@ -873,7 +873,7 @@ bool RenderBundleEncoder::isValid() const
 
 void RenderBundleEncoder::replayCommands(RenderPassEncoder& renderPassEncoder)
 {
-    if (!renderPassEncoder.renderCommandEncoder() || !isValid())
+    if (!renderPassEncoder.renderCommandEncoder() || !isValid() || !m_device->isValid())
         return;
 
     m_renderPassEncoder = &renderPassEncoder;
