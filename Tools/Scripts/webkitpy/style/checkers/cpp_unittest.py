@@ -1020,6 +1020,44 @@ class CppStyleTest(CppStyleTestBase):
                 , llaa_(laa_) { }''',
             '')
 
+    def test_runtime_raw_pointer(self):
+        self.assert_lint(
+            'void* m_member;',
+            'Member variable should be one of smart pointer types (Ref, RefPtr, CheckedRef, CheckedPtr, WeakPtr, or ThreadSafeWeakPtr).'
+            '  [runtime/raw_pointer] [1]')
+        self.assert_lint(
+            'void& m_member',
+                'Member variable should be one of smart pointer types (Ref, RefPtr, CheckedRef, CheckedPtr, WeakPtr, or ThreadSafeWeakPtr).'
+            '  [runtime/raw_pointer] [1]')
+        self.assert_lint(
+            'const Document& m_member { nullptr };',
+            'Member variable should be one of smart pointer types (Ref, RefPtr, CheckedRef, CheckedPtr, WeakPtr, or ThreadSafeWeakPtr).'
+            '  [runtime/raw_pointer] [1]')
+        self.assert_lint(
+            'Document* m_member { nullptr };',
+            'Member variable should be one of smart pointer types (Ref, RefPtr, CheckedRef, CheckedPtr, WeakPtr, or ThreadSafeWeakPtr).'
+            '  [runtime/raw_pointer] [1]')
+        self.assert_lint(
+            'HashMap<String, SomeType*> m_member;',
+            'Member variable should be one of smart pointer types (Ref, RefPtr, CheckedRef, CheckedPtr, WeakPtr, or ThreadSafeWeakPtr).'
+            '  [runtime/raw_pointer] [1]')
+        self.assert_lint(
+            'HashMap<Element*, OtherType> m_member;',
+            'Member variable should be one of smart pointer types (Ref, RefPtr, CheckedRef, CheckedPtr, WeakPtr, or ThreadSafeWeakPtr).'
+            '  [runtime/raw_pointer] [1]')
+        self.assert_lint(
+            'HashMap<String, String> m_member;',
+            '')
+        self.assert_lint(
+            'HashSet<String> m_member;',
+            '')
+        self.assert_lint(
+            'return (*m_string)[m_offset];',
+            '')
+        self.assert_lint(
+            'const LChar* characters8 = m_string->characters8();',
+            '')
+
     def test_runtime_rtti(self):
         statement = 'int* x = dynamic_cast<int*>(&foo);'
         error_message = (
@@ -1926,18 +1964,24 @@ class CppStyleTest(CppStyleTestBase):
     def test_retainptr_pointer(self):
         self.assert_lint(
             '''RetainPtr<CFRunLoopRef*> m_cfRunLoop;''',
+            ['Member variable should be one of smart pointer types (Ref, RefPtr, CheckedRef, CheckedPtr, WeakPtr, or ThreadSafeWeakPtr).'
+            '  [runtime/raw_pointer] [1]',
             'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.'
-            '  [runtime/retainptr] [5]')
+            '  [runtime/retainptr] [5]'])
         self.assert_lint('RetainPtr<CFRunLoopRef> m_cfRunLoop;', '')
         self.assert_lint(
             '''RetainPtr<NSRunLoop*> m_nsRunLoop;''',
+            ['Member variable should be one of smart pointer types (Ref, RefPtr, CheckedRef, CheckedPtr, WeakPtr, or ThreadSafeWeakPtr).'
+            '  [runtime/raw_pointer] [1]',
             'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.'
-            '  [runtime/retainptr] [5]')
+            '  [runtime/retainptr] [5]'])
         self.assert_lint('RetainPtr<NSRunLoop> m_nsRunLoop;', '')
         self.assert_lint(
             '''RetainPtr<NSMutableArray<NSDictionary *> *> m_editorStateHistory;''',
+            ['Member variable should be one of smart pointer types (Ref, RefPtr, CheckedRef, CheckedPtr, WeakPtr, or ThreadSafeWeakPtr).'
+            '  [runtime/raw_pointer] [1]',
             'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.'
-            '  [runtime/retainptr] [5]')
+            '  [runtime/retainptr] [5]'])
         self.assert_lint(
             '''RetainPtr<NSDictionary<NSString *, NSArray<NSString *>> *> dictionary;''',
             'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.'
