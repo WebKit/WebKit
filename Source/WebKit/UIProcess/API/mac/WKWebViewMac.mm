@@ -47,7 +47,6 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/UnifiedTextReplacementAdditions.h>
 #import <WebKitAdditions/WebMultiRepresentationHEICAttachmentAdditions.h>
 #endif
 
