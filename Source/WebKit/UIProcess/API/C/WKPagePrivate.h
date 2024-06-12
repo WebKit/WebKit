@@ -212,6 +212,8 @@ WK_EXPORT void WKPageDispatchActivityStateUpdateForTesting(WKPageRef page);
 
 WK_EXPORT void WKPagePermissionChanged(WKStringRef permissionName, WKStringRef originString);
 
+WK_EXPORT void WKPageExecuteCommandForTesting(WKPageRef pageRef, WKStringRef command, WKStringRef value);
+
 #ifdef __cplusplus
 }
 #endif

@@ -3225,3 +3225,8 @@ void WKPageClearNotificationPermissionState(WKPageRef pageRef)
     toImpl(pageRef)->clearNotificationPermissionState();
 #endif
 }
+
+void WKPageExecuteCommandForTesting(WKPageRef pageRef, WKStringRef command, WKStringRef value)
+{
+    toImpl(pageRef)->executeEditCommand(toImpl(command)->string(), toImpl(value)->string());
+}

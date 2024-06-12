@@ -306,9 +306,12 @@ void TestRunner::keepWebHistory()
     InjectedBundle::singleton().postSetAddsVisitedLinks(true);
 }
 
-void TestRunner::execCommand(JSStringRef name, JSStringRef showUI, JSStringRef value)
+void TestRunner::execCommand(JSStringRef command, JSStringRef, JSStringRef value)
 {
-    WKBundlePageExecuteEditingCommand(page(), toWK(name).get(), toWK(value).get());
+    postSynchronousPageMessage("ExecuteCommand", createWKDictionary({
+        { "Command", toWK(command) },
+        { "Value", toWK(value) },
+    }));
 }
 
 static std::optional<WKFindOptions> findOptionsFromArray(JSContextRef context, JSValueRef optionsArrayAsValue)

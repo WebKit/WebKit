@@ -54,7 +54,6 @@ WK_EXPORT void WKBundlePageClearMainFrameName(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageClose(WKBundlePageRef page);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef page, RenderTreeExternalRepresentationBehavior);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageExecuteEditingCommand(WKBundlePageRef page, WKStringRef commandName, WKStringRef argument);
 
 WK_EXPORT double WKBundlePageGetTextZoomFactor(WKBundlePageRef page);
 WK_EXPORT double WKBundlePageGetPageZoomFactor(WKBundlePageRef page);

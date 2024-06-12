@@ -373,11 +373,6 @@ WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundle
     return WebKit::toCopiedAPI(WebKit::toImpl(pageRef)->renderTreeExternalRepresentationForPrinting());
 }
 
-void WKBundlePageExecuteEditingCommand(WKBundlePageRef pageRef, WKStringRef name, WKStringRef argument)
-{
-    WebKit::toImpl(pageRef)->executeEditingCommand(WebKit::toWTFString(name), WebKit::toWTFString(argument));
-}
-
 bool WKBundlePageIsEditingCommandEnabled(WKBundlePageRef pageRef, WKStringRef name)
 {
     return WebKit::toImpl(pageRef)->isEditingCommandEnabled(WebKit::toWTFString(name));

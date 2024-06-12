@@ -1396,6 +1396,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ExecuteCommand")) {
+        auto dictionary = dictionaryValue(messageBody);
+        WKPageExecuteCommandForTesting(TestController::singleton().mainWebView()->page(), stringValue(dictionary, "Command"), stringValue(dictionary, "Value"));
+        return nullptr;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }
