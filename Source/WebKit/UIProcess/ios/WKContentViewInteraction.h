@@ -176,10 +176,6 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 #define FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M)
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/UnifiedTextReplacementAdditions.h>
-#endif
-
 #if ENABLE(WRITING_TOOLS)
 #define FOR_EACH_UNIFIED_TEXT_REPLACEMENT_PRIVATE_WKCONTENTVIEW_ACTION(M) \
     M(_startWritingTools)
