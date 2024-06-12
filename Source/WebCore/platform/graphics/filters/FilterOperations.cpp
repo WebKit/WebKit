@@ -31,6 +31,7 @@
 #include "ImageBuffer.h"
 #include "IntSize.h"
 #include "LengthFunctions.h"
+#include <ranges>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -42,26 +43,16 @@ FilterOperations::FilterOperations(Vector<Ref<FilterOperation>>&& operations)
 
 bool FilterOperations::operator==(const FilterOperations& other) const
 {
-    size_t size = m_operations.size();
-    if (size != other.m_operations.size())
-        return false;
-    for (size_t i = 0; i < size; i++) {
-        if (m_operations[i].get() != other.m_operations[i].get())
-            return false;
-    }
-    return true;
+    static_assert(std::ranges::sized_range<decltype(m_operations)>);
+
+    return std::ranges::equal(m_operations, other.m_operations, [](auto& a, auto& b) { return a.get() == b.get(); });
 }
 
 bool FilterOperations::operationsMatch(const FilterOperations& other) const
 {
-    size_t size = m_operations.size();
-    if (size != other.m_operations.size())
-        return false;
-    for (size_t i = 0; i < size; ++i) {
-        if (!m_operations[i]->isSameType(other.m_operations[i]))
-            return false;
-    }
-    return true;
+    static_assert(std::ranges::sized_range<decltype(m_operations)>);
+
+    return std::ranges::equal(m_operations, other.m_operations, [](auto& a, auto& b) { return a->isSameType(b.get()); });
 }
 
 bool FilterOperations::hasReferenceFilter() const
@@ -151,17 +142,17 @@ bool FilterOperations::inverseTransformColor(Color& color) const
 
 bool FilterOperations::hasFilterThatAffectsOpacity() const
 {
-    return WTF::anyOf(m_operations, [](auto& op) { return op->affectsOpacity(); });
+    return std::ranges::any_of(m_operations, [](auto& op) { return op->affectsOpacity(); });
 }
 
 bool FilterOperations::hasFilterThatMovesPixels() const
 {
-    return WTF::anyOf(m_operations, [](auto& op) { return op->movesPixels(); });
+    return std::ranges::any_of(m_operations, [](auto& op) { return op->movesPixels(); });
 }
 
 bool FilterOperations::hasFilterThatShouldBeRestrictedBySecurityOrigin() const
 {
-    return WTF::anyOf(m_operations, [](auto& op) { return op->shouldBeRestrictedBySecurityOrigin(); });
+    return std::ranges::any_of(m_operations, [](auto& op) { return op->shouldBeRestrictedBySecurityOrigin(); });
 }
 
 bool FilterOperations::canInterpolate(const FilterOperations& to, CompositeOperation compositeOperation) const

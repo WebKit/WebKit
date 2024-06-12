@@ -25,6 +25,7 @@
 
 #include "LayoutSize.h"
 #include "TransformOperation.h"
+#include <algorithm>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -91,7 +92,7 @@ private:
 template<TransformOperation::Type operationType>
 bool TransformOperations::hasTransformOfType() const
 {
-    return WTF::anyOf(m_operations, [](auto& op) { return op->type() == operationType; });
+    return std::ranges::any_of(m_operations, [](auto& op) { return op->type() == operationType; });
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const TransformOperations&);

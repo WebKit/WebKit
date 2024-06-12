@@ -25,6 +25,7 @@
 #include "AnimationUtilities.h"
 #include "Matrix3DTransformOperation.h"
 #include <algorithm>
+#include <ranges>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -41,16 +42,9 @@ TransformOperations::TransformOperations(Vector<Ref<TransformOperation>>&& opera
 
 bool TransformOperations::operator==(const TransformOperations& o) const
 {
-    if (m_operations.size() != o.m_operations.size())
-        return false;
+    static_assert(std::ranges::sized_range<decltype(m_operations)>);
 
-    unsigned size = m_operations.size();
-    for (unsigned i = 0; i < size; i++) {
-        if (m_operations[i].get() != o.m_operations[i].get())
-            return false;
-    }
-    
-    return true;
+    return std::ranges::equal(m_operations, o.m_operations, [](auto& a, auto& b) { return a.get() == b.get(); });
 }
 
 TransformOperations TransformOperations::clone() const
@@ -71,17 +65,17 @@ void TransformOperations::apply(TransformationMatrix& matrix, const FloatSize& s
 
 bool TransformOperations::has3DOperation() const
 {
-    return WTF::anyOf(m_operations, [](auto& op) { return op->is3DOperation(); });
+    return std::ranges::any_of(m_operations, [](auto& op) { return op->is3DOperation(); });
 }
 
 bool TransformOperations::isRepresentableIn2D() const
 {
-    return WTF::allOf(m_operations, [](auto& op) { return op->isRepresentableIn2D(); });
+    return std::ranges::all_of(m_operations, [](auto& op) { return op->isRepresentableIn2D(); });
 }
 
 bool TransformOperations::affectedByTransformOrigin() const
 {
-    return WTF::anyOf(m_operations, [](auto& op) { return op->isAffectedByTransformOrigin(); });
+    return std::ranges::any_of(m_operations, [](auto& op) { return op->isAffectedByTransformOrigin(); });
 }
 
 bool TransformOperations::isInvertible(const LayoutSize& size) const

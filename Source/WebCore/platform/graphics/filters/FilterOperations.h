@@ -27,6 +27,7 @@
 
 #include "CompositeOperation.h"
 #include "FilterOperation.h"
+#include <algorithm>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -75,10 +76,7 @@ public:
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
 
     template<FilterOperation::Type Type>
-    bool hasFilterOfType() const
-    {
-        return WTF::anyOf(m_operations, [](auto& op) { return op->type() == Type; });
-    }
+    bool hasFilterOfType() const;
 
     bool hasReferenceFilter() const;
     bool isReferenceFilter() const;
@@ -95,6 +93,11 @@ private:
 
     Vector<Ref<FilterOperation>> m_operations;
 };
+
+template<FilterOperation::Type type> bool FilterOperations::hasFilterOfType() const
+{
+    return std::ranges::any_of(m_operations, [](auto& op) { return op->type() == type; });
+}
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterOperations&);
 

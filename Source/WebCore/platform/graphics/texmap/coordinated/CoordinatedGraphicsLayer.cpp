@@ -38,6 +38,7 @@
 #include "TextureMapperPlatformLayerProxyProvider.h"
 #include "TiledBackingStore.h"
 #include "TransformOperation.h"
+#include <algorithm>
 #ifndef NDEBUG
 #include <wtf/SetForScope.h>
 #endif
@@ -1371,7 +1372,7 @@ bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
     bool isInvisibleBecauseOpacityZero = !opacity() && !m_animations.hasActiveAnimationsOfType(AnimatedProperty::Opacity);
 
     // Check if there's a filter that sets the opacity to zero.
-    bool hasOpacityZeroFilter = WTF::anyOf(filters(), [](auto& operation) {
+    bool hasOpacityZeroFilter = std::ranges::any_of(filters(), [](auto& operation) {
         return operation->type() == FilterOperation::Type::Opacity && !downcast<BasicComponentTransferFilterOperation>(operation.get()).amount();
     });
 
