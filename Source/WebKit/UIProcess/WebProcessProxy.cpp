@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2569,12 +2569,11 @@ void WebProcessProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandle
     completionHandler(std::nullopt);
 }
 
-void WebProcessProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
+void WebProcessProxy::unwrapCryptoKey(const struct WrappedCryptoKey& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
     std::optional<Vector<uint8_t>> masterKey(getWebCryptoMasterKey());
     if (masterKey) {
-        Vector<uint8_t> key;
-        if (unwrapSerializedCryptoKey(*masterKey, wrappedKey, key)) {
+        if (auto key = WebCore::unwrapCryptoKey(*masterKey, wrappedKey)) {
             completionHandler(WTFMove(key));
             return;
         }

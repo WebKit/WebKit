@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SerializedCryptoKeyWrap.h"
+#pragma once
 
-#include "NotImplemented.h"
-#include "WrappedCryptoKey.h"
+#include <array>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-std::optional<Vector<uint8_t>> defaultWebCryptoMasterKey()
-{
-    notImplemented();
-    return std::nullopt;
+struct WrappedCryptoKey {
+    std::array<uint8_t, 24> wrappedKEK;
+    Vector<uint8_t> encryptedKey;
+    std::array<uint8_t, 16> tag;
+};
+
 }
-
-// Initially these helper functions were intended to perform KEK wrapping and unwrapping,
-// but this is not required anymore, despite the function names and the Mac implementation
-// still indicating otherwise.
-// See https://bugs.webkit.org/show_bug.cgi?id=173883 for more info.
-
-bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result)
-{
-    UNUSED_PARAM(masterKey);
-
-    // No wrapping performed -- the serialized key data is copied into the `result` variable.
-    result = Vector<uint8_t>(key);
-    return true;
-}
-
-std::optional<struct WrappedCryptoKey> readSerializedCryptoKey(const Vector<uint8_t>& wrappedKey)
-{
-    std::array<uint8_t, 24> a { 0 };
-    std::array<uint8_t, 16> b { 0 };
-    struct WrappedCryptoKey k { a, wrappedKey, b };
-    return k;
-}
-
-std::optional<Vector<uint8_t>> unwrapCryptoKey([[maybe_unused]] const Vector<uint8_t>& masterKey, const struct WrappedCryptoKey& wrappedKey)
-{
-    return wrappedKey.encryptedKey;
-}
-
-} // namespace WebCore

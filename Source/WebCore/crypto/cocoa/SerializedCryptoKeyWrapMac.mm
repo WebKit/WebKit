@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #import "CommonCryptoUtilities.h"
 #import "LocalizedStrings.h"
+#import "WrappedCryptoKey.h"
 #import <CommonCrypto/CommonSymmetricKeywrap.h>
 #import <crt_externs.h>
 #import <wtf/CryptographicUtilities.h>
@@ -61,7 +62,12 @@ const NSString* wrappedKEKKey = @"wrappedKEK";
 const NSString* encryptedKeyKey = @"encryptedKey";
 const NSString* tagKey = @"tag";
 
-const size_t masterKeySizeInBytes = 16;
+constexpr size_t masterKeySizeInBytes = 16;
+constexpr size_t kekSizeInBytes = 16;
+constexpr size_t expectedTagLengthAES = 16;
+
+// https://datatracker.ietf.org/doc/html/rfc3394#section-2.2.1
+constexpr size_t wrappedKekSize = kekSizeInBytes + 8;
 
 static NSString* masterKeyAccountNameForCurrentApplication()
 {
@@ -214,7 +220,7 @@ bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint
 {
     if (masterKey.isEmpty())
         return false;
-    Vector<uint8_t> kek(16);
+    Vector<uint8_t> kek(kekSizeInBytes);
     auto rc = CCRandomGenerateBytes(kek.data(), kek.size());
     RELEASE_ASSERT(rc == kCCSuccess);
 
@@ -228,9 +234,8 @@ bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint
     wrappedKEK.shrink(wrappedKEKSize);
 
     Vector<uint8_t> encryptedKey(key.size());
-    constexpr size_t maxTagLength = 16;
-    size_t tagLength = maxTagLength;
-    uint8_t tag[maxTagLength];
+    size_t tagLength = expectedTagLengthAES;
+    uint8_t tag[expectedTagLengthAES] = { 0 };
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     status = CCCryptorGCM(kCCEncrypt, kCCAlgorithmAES128, kek.data(), kek.size(),
@@ -243,7 +248,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (status != kCCSuccess)
         return false;
-    RELEASE_ASSERT(tagLength == 16);
+    RELEASE_ASSERT(tagLength == expectedTagLengthAES);
 
     auto dictionary = @{
         versionKey: [NSNumber numberWithUnsignedInteger:currentSerializationVersion],
@@ -260,49 +265,69 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return true;
 }
 
-bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
+template<size_t size>
+static std::optional<std::array<uint8_t, size>> createArrayFromData(NSData * data)
 {
-    if (masterKey.isEmpty())
-        return false;
+    if (size != data.length)
+        return std::nullopt;
+    std::array<uint8_t, size> rv { };
+    [data getBytes:rv.data() length:size];
+    return rv;
+}
+
+std::optional<struct WrappedCryptoKey> readSerializedCryptoKey(const Vector<uint8_t>& wrappedKey)
+{
     NSDictionary* dictionary = [NSPropertyListSerialization propertyListWithData:[NSData dataWithBytesNoCopy:(void*)wrappedKey.data() length:wrappedKey.size() freeWhenDone:NO] options:0 format:nullptr error:nullptr];
     if (!dictionary)
-        return false;
+        return std::nullopt;
 
     id versionObject = [dictionary objectForKey:versionKey];
     if (![versionObject isKindOfClass:[NSNumber class]])
-        return false;
+        return std::nullopt;
     if ([versionObject unsignedIntegerValue] > currentSerializationVersion)
-        return false;
+        return std::nullopt;
 
     id wrappedKEKObject = [dictionary objectForKey:wrappedKEKKey];
     if (![wrappedKEKObject isKindOfClass:[NSData class]])
-        return false;
-    auto wrappedKEK = span(wrappedKEKObject);
+        return std::nullopt;
+    auto wrappedKEK = createArrayFromData<wrappedKekSize>(wrappedKEKObject);
+    if (!wrappedKEK)
+        return std::nullopt;
 
     id encryptedKeyObject = [dictionary objectForKey:encryptedKeyKey];
     if (![encryptedKeyObject isKindOfClass:[NSData class]])
-        return false;
-    auto encryptedKey = span(encryptedKeyObject);
+        return std::nullopt;
+    auto encryptedKey = Vector<uint8_t>(span(encryptedKeyObject));
 
     id tagObject = [dictionary objectForKey:tagKey];
     if (![tagObject isKindOfClass:[NSData class]])
-        return false;
-    auto tag = span(tagObject);
-    if (tag.size() != 16)
-        return false;
+        return std::nullopt;
+    auto tag = createArrayFromData<expectedTagLengthAES>(tagObject);
+    if (!tag)
+        return std::nullopt;
+    struct WrappedCryptoKey k { *wrappedKEK, encryptedKey, *tag };
+    return k;
+}
+
+std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>& masterKey, const struct WrappedCryptoKey& wrappedKey)
+{
+    if (masterKey.isEmpty())
+        return std::nullopt;
+    auto wrappedKEK = wrappedKey.wrappedKEK;
+    auto encryptedKey = wrappedKey.encryptedKey.span();
+    auto tag = wrappedKey.tag;
 
     Vector<uint8_t> kek(CCSymmetricUnwrappedSize(kCCWRAPAES, wrappedKEK.size()));
     size_t kekSize = kek.size();
     CCCryptorStatus status = CCSymmetricKeyUnwrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, masterKey.data(), masterKey.size(), wrappedKEK.data(), wrappedKEK.size(), kek.data(), &kekSize);
     if (status != kCCSuccess)
-        return false;
+        return std::nullopt;
     kek.shrink(kekSize);
 
-    constexpr size_t maxTagLength = 16;
-    size_t tagLength = maxTagLength;
-    uint8_t actualTag[maxTagLength];
+    size_t tagLength = expectedTagLengthAES;
+    uint8_t actualTag[expectedTagLengthAES] = { 0 };
 
-    key.resize(encryptedKey.size());
+    Vector<uint8_t> key(encryptedKey.size());
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     status = CCCryptorGCM(kCCDecrypt, kCCAlgorithmAES128, kek.data(), kek.size(),
         nullptr, 0, // iv
@@ -313,13 +338,13 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (status != kCCSuccess)
-        return false;
-    RELEASE_ASSERT(tagLength == 16);
+        return std::nullopt;
+    RELEASE_ASSERT(tagLength == expectedTagLengthAES);
 
     if (constantTimeMemcmp(tag.data(), actualTag, tagLength))
-        return false;
+        return std::nullopt;
 
-    return true;
+    return key;
 }
 
 } // namespace WebCore

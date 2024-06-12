@@ -817,6 +817,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     contentextensions/URLFilterParser.h
 
     crypto/SerializedCryptoKeyWrap.h
+    crypto/WrappedCryptoKey.h
 
     css/CSSAnchorValue.h
     css/CSSConditionRule.h

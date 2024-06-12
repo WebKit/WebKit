@@ -8236,3 +8236,9 @@ enum class WebCore::CrossOriginMode : bool
 [CreateUsing=fromRawString] class WebCore::PublicSuffix {
     String string();
 };
+
+struct WebCore::WrappedCryptoKey {
+    std::array<uint8_t, 24> wrappedKEK;
+    Vector<uint8_t> encryptedKey;
+    std::array<uint8_t, 16> tag;
+};

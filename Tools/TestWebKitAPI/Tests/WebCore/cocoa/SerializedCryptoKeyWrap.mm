@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import <WebCore/SerializedCryptoKeyWrap.h>
+#import <WebCore/WrappedCryptoKey.h>
 #import <wtf/MainThread.h>
 
 namespace TestWebKitAPI {
@@ -89,9 +90,9 @@ TEST_F(SerializedCryptoKeyWrapTest, SerializedCryptoKeyWrapUnwrap)
     }
     EXPECT_TRUE(notContained);
 
-    Vector<uint8_t> unwrappedKey;
-    EXPECT_TRUE(WebCore::unwrapSerializedCryptoKey(*masterKey, wrappedKey, unwrappedKey));
-    EXPECT_TRUE(unwrappedKey == cryptoKey);
+    auto unwrappedKey = WebCore::unwrapCryptoKey(*masterKey, *WebCore::readSerializedCryptoKey(wrappedKey));
+    EXPECT_TRUE(unwrappedKey);
+    EXPECT_TRUE(*unwrappedKey == cryptoKey);
 }
 
 } // namespace TestWebKitAPI

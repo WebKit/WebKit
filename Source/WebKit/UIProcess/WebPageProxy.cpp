@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11601,19 +11601,18 @@ void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<v
     completionHandler(std::optional<Vector<uint8_t>>());
 }
 
-void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
+void WebPageProxy::unwrapCryptoKey(const struct WrappedCryptoKey& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
     Ref protectedPageClient { pageClient() };
 
     std::optional<Vector<uint8_t>> masterKey = getWebCryptoMasterKey();
     if (masterKey) {
-        Vector<uint8_t> key;
-        if (unwrapSerializedCryptoKey(*masterKey, wrappedKey, key)) {
+        if (auto key = WebCore::unwrapCryptoKey(*masterKey, wrappedKey)) {
             completionHandler(WTFMove(key));
             return;
         }
     }
-    completionHandler(std::optional<Vector<uint8_t>>());
+    completionHandler(std::nullopt);
 }
 
 void WebPageProxy::changeFontAttributes(WebCore::FontAttributeChanges&& changes)
