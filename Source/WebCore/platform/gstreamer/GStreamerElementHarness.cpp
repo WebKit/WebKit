@@ -300,10 +300,13 @@ GStreamerElementHarness::Stream::Stream(GRefPtr<GstPad>&& pad, RefPtr<GStreamerE
 
         auto outputBuffer = adoptGRef(buffer);
         return stream.chainSample(adoptGRef(gst_sample_new(outputBuffer.get(), caps.get(), segment, nullptr)));
-    }),  this, nullptr);
-    gst_pad_set_event_function_full(m_targetPad.get(), reinterpret_cast<GstPadEventFunction>(+[](GstPad* pad, GstObject*, GstEvent* event) -> gboolean {
+    }), this, nullptr);
+    gst_pad_set_event_function_full(m_targetPad.get(), reinterpret_cast<GstPadEventFunction>(+[](GstPad* pad, GstObject*, GstEvent* eventTransferFull) -> gboolean {
+        auto event = adoptGRef(eventTransferFull);
         auto& stream = *reinterpret_cast<GStreamerElementHarness::Stream*>(pad->eventdata);
-        return stream.sinkEvent(adoptGRef(event));
+        if (auto downstreamHarness = stream.downstreamHarness())
+            return downstreamHarness->pushEvent(WTFMove(event));
+        return stream.sinkEvent(WTFMove(event));
     }), this, nullptr);
 
     gst_pad_set_active(m_targetPad.get(), TRUE);
