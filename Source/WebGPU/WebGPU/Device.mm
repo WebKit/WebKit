@@ -755,90 +755,9 @@ id<MTLRenderPipelineState> Device::icbCommandClampPipeline(MTLIndexType indexTyp
     if (result)
         return result;
 
-    static id<MTLFunction> function = nil;
-    static id<MTLFunction> functionUshort = nil;
     NSError *error = nil;
-    if (!function) {
-        MTLCompileOptions* options = [MTLCompileOptions new];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        options.fastMathEnabled = YES;
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
-    using namespace metal;
-    struct ICBContainer {
-        command_buffer commandBuffer [[ id(0) ]];
-    };
-    struct IndexDataUshort {
-        uint64_t renderCommand { 0 };
-        uint32_t minVertexCount { UINT32_MAX };
-        uint32_t minInstanceCount { UINT32_MAX };
-        device ushort* indexBuffer;
-        uint32_t indexCount { 0 };
-        uint32_t instanceCount { 0 };
-        uint32_t firstIndex { 0 };
-        int32_t baseVertex { 0 };
-        uint32_t firstInstance { 0 };
-    };
-    struct IndexDataUint {
-        uint64_t renderCommand { 0 };
-        uint32_t minVertexCount { UINT32_MAX };
-        uint32_t minInstanceCount { UINT32_MAX };
-        device uint* indexBuffer;
-        uint32_t indexCount { 0 };
-        uint32_t instanceCount { 0 };
-        uint32_t firstIndex { 0 };
-        int32_t baseVertex { 0 };
-        uint32_t firstInstance { 0 };
-        primitive_type primitiveType { primitive_type::triangle };
-    };
-
-    [[vertex]] void vs(device const IndexDataUint* indexData [[buffer(0)]],
-        device ICBContainer *icb_container [[buffer(2)]],
-        uint indexId [[vertex_id]]) {
-
-        IndexDataUint& data = *indexData;
-        uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0
-        uint32_t vertexIndex = data.indexBuffer[indexId] + k;
-        if (data.baseVertex + vertexIndex >= data.minVertexCount + k) {
-            render_command cmd(icb_container->commandBuffer, data.renderCommand);
-            cmd.draw_indexed_primitives(data.primitiveType,
-                0u,
-                data.indexBuffer,
-                data.instanceCount,
-                data.baseVertex,
-                data.baseInstance);
-        }
-    }
-
-    [[vertex]] void vsUshort(device const IndexDataUshort* indexData [[buffer(0)]],
-        device ICBContainer *icb_container [[buffer(2)]],
-        uint indexId [[vertex_id]]) {
-
-        IndexDataUshort& data = *indexData;
-        uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0
-        uint32_t vertexIndex = data.indexBuffer[indexId] + k;
-        if (data.baseVertex + vertexIndex >= data.minVertexCount + k) {
-            render_command cmd(icb_container->commandBuffer, data.renderCommand);
-            cmd.draw_indexed_primitives(data.primitiveType,
-                0u,
-                data.indexBuffer,
-                data.instanceCount,
-                data.baseVertex,
-                data.baseInstance);
-        }
-
-    })" /* NOLINT */ options:options error:&error];
-        if (error) {
-            WTFLogAlways("%@", error);
-            return nil;
-        }
-
-        function = [library newFunctionWithName:@"vs"];
-        functionUshort = [library newFunctionWithName:@"vsUshort"];
-    }
-
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
-    mtlRenderPipelineDescriptor.vertexFunction = isUint16 ? functionUshort : function;
+    mtlRenderPipelineDescriptor.vertexFunction = icbCommandClampFunction(indexType);
     mtlRenderPipelineDescriptor.rasterizationEnabled = false;
     mtlRenderPipelineDescriptor.rasterSampleCount = rasterSampleCount;
     mtlRenderPipelineDescriptor.fragmentFunction = nil;
@@ -861,6 +780,99 @@ id<MTLRenderPipelineState> Device::icbCommandClampPipeline(MTLIndexType indexTyp
         return nil;
     }
     return result;
+}
+
+int Device::bufferIndexForICBContainer() const
+{
+    return 1;
+}
+
+id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
+{
+    static id<MTLFunction> function = nil;
+    static id<MTLFunction> functionUshort = nil;
+    NSError *error = nil;
+    if (!function) {
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+    using namespace metal;
+    struct ICBContainer {
+        command_buffer commandBuffer [[ id(0) ]];
+    };
+    struct IndexDataUshort {
+        uint64_t renderCommand { 0 };
+        uint32_t minVertexCount { UINT_MAX };
+        uint32_t minInstanceCount { UINT_MAX };
+        device ushort* indexBuffer;
+        uint32_t indexCount { 0 };
+        uint32_t instanceCount { 0 };
+        uint32_t firstIndex { 0 };
+        int32_t baseVertex { 0 };
+        uint32_t baseInstance { 0 };
+        primitive_type primitiveType { primitive_type::triangle };
+    };
+    struct IndexDataUint {
+        uint64_t renderCommand { 0 };
+        uint32_t minVertexCount { UINT_MAX };
+        uint32_t minInstanceCount { UINT_MAX };
+        device uint* indexBuffer;
+        uint32_t indexCount { 0 };
+        uint32_t instanceCount { 0 };
+        uint32_t firstIndex { 0 };
+        int32_t baseVertex { 0 };
+        uint32_t baseInstance { 0 };
+        primitive_type primitiveType { primitive_type::triangle };
+    };
+
+    [[vertex]] void vs(device const IndexDataUint* indexData [[buffer(0)]],
+        device ICBContainer *icb_container [[buffer(1)]], // <-- must match Device::bufferIndexForICBContainer()
+        uint indexId [[vertex_id]]) {
+
+        device const IndexDataUint& data = *indexData;
+        uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0;
+        uint32_t vertexIndex = data.indexBuffer[indexId] + k;
+        if (data.baseVertex + vertexIndex >= data.minVertexCount + k) {
+            render_command cmd(icb_container->commandBuffer, data.renderCommand);
+            cmd.draw_indexed_primitives(data.primitiveType,
+                0u,
+                data.indexBuffer,
+                data.instanceCount,
+                data.baseVertex,
+                data.baseInstance);
+        }
+    }
+
+    [[vertex]] void vsUshort(device const IndexDataUshort* indexData [[buffer(0)]],
+        device ICBContainer *icb_container [[buffer(1)]], // <-- must match Device::bufferIndexForICBContainer()
+        uint indexId [[vertex_id]]) {
+
+        device const IndexDataUshort& data = *indexData;
+        uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0;
+        ushort vertexIndex = data.indexBuffer[indexId] + k;
+        if (data.baseVertex + vertexIndex >= data.minVertexCount + k) {
+            render_command cmd(icb_container->commandBuffer, data.renderCommand);
+            cmd.draw_indexed_primitives(data.primitiveType,
+                0u,
+                data.indexBuffer,
+                data.instanceCount,
+                data.baseVertex,
+                data.baseInstance);
+        }
+
+    })" /* NOLINT */ options:options error:&error];
+        if (error) {
+            WTFLogAlways("%@", error);
+            return nil;
+        }
+
+        function = [library newFunctionWithName:@"vs"];
+        functionUshort = [library newFunctionWithName:@"vsUshort"];
+    }
+
+    return indexType == MTLIndexTypeUInt16 ? functionUshort : function;
 }
 
 } // namespace WebGPU
