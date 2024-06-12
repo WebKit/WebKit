@@ -645,7 +645,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
 
     case ContextMenuItemTagSwapCharacters:
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
         if (RefPtr view = frame->view())
             m_client->handleSwapCharacters(view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds())));
 #endif
@@ -1040,7 +1040,7 @@ void ContextMenuController::populate()
         appendItem(translateItem, m_contextMenu.get());
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
         ContextMenuItem swapCharactersItem(ContextMenuItemType::Action, ContextMenuItemTagSwapCharacters, contextMenuItemTagSwapCharacters());
         appendItem(swapCharactersItem, m_contextMenu.get());
 #endif

@@ -861,7 +861,7 @@ void WebPageProxy::handleContextMenuTranslation(const TranslationContextMenuInfo
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 bool WebPageProxy::canHandleSwapCharacters() const
 {
@@ -873,7 +873,7 @@ void WebPageProxy::handleContextMenuSwapCharacters(WebCore::IntRect selectionBou
     protectedPageClient()->handleContextMenuSwapCharacters(selectionBoundsInRootView);
 }
 
-#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#endif // ENABLE(WRITING_TOOLS)
 
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -1147,7 +1147,7 @@ bool WebPageProxy::shouldDeactivateMediaCapability() const
 
 #endif // ENABLE(EXTENSION_CAPABILITIES)
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 void WebPageProxy::setUnifiedTextReplacementActive(bool active)
 {

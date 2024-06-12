@@ -156,7 +156,7 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 }
 #endif // ENABLE(APP_HIGHLIGHTS)
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 void PageClientImplCocoa::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKit::TextIndicatorStyleData& data)
 {
     [m_webView _addTextIndicatorStyleForID:uuid withData:data];
@@ -286,7 +286,7 @@ WindowKind PageClientImplCocoa::windowKind()
     return WindowKind::Normal;
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 void PageClientImplCocoa::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::Session::ID& sessionID, const WebCore::UnifiedTextReplacement::Replacement::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
     [m_webView _textReplacementSession:sessionID showInformationForReplacementWithUUID:replacementID relativeToRect:selectionBoundsInRootView];
@@ -297,14 +297,16 @@ void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithID(
     [m_webView _textReplacementSession:sessionID updateState:state forReplacementWithUUID:replacementID];
 }
 
+static NSString *writingToolsActiveKey = @"writingToolsActive";
+
 void PageClientImplCocoa::unifiedTextReplacementActiveWillChange()
 {
-    [m_webView willChangeValueForKey:unifiedTextReplacementActiveKey];
+    [m_webView willChangeValueForKey:writingToolsActiveKey];
 }
 
 void PageClientImplCocoa::unifiedTextReplacementActiveDidChange()
 {
-    [m_webView didChangeValueForKey:unifiedTextReplacementActiveKey];
+    [m_webView didChangeValueForKey:writingToolsActiveKey];
 }
 #endif
 

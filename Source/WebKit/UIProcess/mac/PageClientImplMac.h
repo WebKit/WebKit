@@ -308,7 +308,7 @@ private:
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&) override;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
     bool canHandleSwapCharacters() const override;
     void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView) override;
 #endif

@@ -380,7 +380,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     RemoveTextPlaceholder(struct WebCore::ElementContext placeholder) -> ()
 #endif
     
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     CreateTextIndicatorForID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
     UpdateTextIndicatorStyleVisibilityForID(WTF::UUID uuid, bool visible) -> ()
 #endif
@@ -779,7 +779,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetMediaEnvironment(String mediaEnvironment)
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     WillBeginTextReplacementSession(std::optional<WebCore::UnifiedTextReplacement::Session> session) -> (Vector<WebCore::UnifiedTextReplacement::Context> contexts)
 
     DidBeginTextReplacementSession(struct WebCore::UnifiedTextReplacement::Session session, Vector<WebCore::UnifiedTextReplacement::Context> contexts)

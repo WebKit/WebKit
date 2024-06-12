@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKTextIndicatorStyleManagerAdditions.mm>

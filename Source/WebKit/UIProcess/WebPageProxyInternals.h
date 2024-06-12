@@ -293,7 +293,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     Deque<QueuedTouchEvents> touchEventQueue;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     HashMap<WTF::UUID, WebCore::TextIndicatorData> textIndicatorDataForChunk;
 #endif
 

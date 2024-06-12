@@ -174,7 +174,7 @@ namespace WebCore {
 #if HAVE(TRANSLATION_UI_SERVICES)
     String contextMenuItemTagTranslate(const String& selectedString);
 #endif
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     String contextMenuItemTagSwapCharacters();
 #endif
 #if ENABLE(UNIFIED_PDF)

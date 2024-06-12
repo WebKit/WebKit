@@ -164,7 +164,7 @@ enum class ReplacementBehavior : uint8_t;
 - (void)_didHandleAcceptedCandidate;
 - (void)_didUpdateCandidateListVisibility:(BOOL)visible;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 - (BOOL)_web_wantsCompleteUnifiedTextReplacementBehavior;
 #endif
 
@@ -714,11 +714,11 @@ public:
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     WebCore::UnifiedTextReplacement::ReplacementBehavior unifiedTextReplacementBehavior() const;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
     bool canHandleSwapCharacters() const;
     void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView);
 #endif
@@ -744,7 +744,7 @@ public:
     bool inlinePredictionsEnabled() const { return m_inlinePredictionsEnabled; }
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     bool wantsCompleteUnifiedTextReplacementBehavior() const;
 
     void addTextIndicatorStyleForID(WTF::UUID, const WebKit::TextIndicatorStyleData&);
@@ -988,7 +988,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSInteger m_initialNumberOfValidItemsForDrop { 0 };
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+#if ENABLE(WRITING_TOOLS)
     RetainPtr<WKTextIndicatorStyleManager> m_textIndicatorStyleManager;
 #endif
 

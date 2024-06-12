@@ -198,7 +198,7 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 #import "WKSTextStyleManager.h"
 #import "WebKitSwiftSoftLink.h"
 #endif
@@ -4431,8 +4431,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (action == @selector(cut:))
         return !editorState.isInPasswordField && editorState.isContentEditable && editorState.selectionIsRange;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    if (action == @selector(_swapCharacters:))
+#if ENABLE(WRITING_TOOLS)
+    if (action == @selector(_startWritingTools:))
         return [self unifiedTextReplacementBehavior] != WebCore::UnifiedTextReplacement::ReplacementBehavior::None && [super canPerformAction:action withSender:sender];
 #endif
 
@@ -4727,10 +4727,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self lookupForWebView:sender];
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-- (void)_swapCharactersForWebView:(id)sender
+#if ENABLE(WRITING_TOOLS)
+- (void)_startWritingToolsForWebView:(id)sender
 {
-    [super _swapCharacters:sender];
+    [super _startWritingTools:sender];
 }
 #endif
 
@@ -6927,7 +6927,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     traits.inlinePredictionType = allowsInlinePredictions ? UITextInlinePredictionTypeDefault : UITextInlinePredictionTypeNo;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     [self _updateTextInputTraitsForUnifiedTextReplacement:traits];
 #endif
 
@@ -11753,7 +11753,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     }];
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 - (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType
 {
@@ -13128,7 +13128,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 #pragma mark - WKSTextStyleSourceDelegate
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 - (void)targetedPreviewForID:(NSUUID *)uuid completionHandler:(void (^)(UITargetedPreview *))completionHandler
 {
     auto textUUID = WTF::UUID::fromNSUUID(uuid);

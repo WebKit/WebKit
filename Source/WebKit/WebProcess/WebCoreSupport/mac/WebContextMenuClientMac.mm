@@ -79,7 +79,7 @@ void WebContextMenuClient::handleTranslation(const WebCore::TranslationContextMe
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 void WebContextMenuClient::handleSwapCharacters(WebCore::IntRect selectionBoundsInRootView)
 {

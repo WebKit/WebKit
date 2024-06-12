@@ -131,7 +131,7 @@
     self.selectionHandleColor = nil;
     self.selectionHighlightColor = nil;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     [self restoreDefaultUnifiedTextReplacementBehaviorValue];
 #endif
 }

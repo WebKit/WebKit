@@ -115,6 +115,11 @@ class ViewGestureController;
 @class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
 
+#if ENABLE(WRITING_TOOLS)
+@class WTTextSuggestion;
+@class WTSession;
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 @class WKFullScreenWindowController;
 @protocol WKWebViewContentProvider;
@@ -126,10 +131,6 @@ class ViewGestureController;
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/UnifiedTextReplacementAdditions.h>
-#endif
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-@class WKWebTextReplacementSession;
 #endif
 
 @protocol _WKTextManipulationDelegate;
@@ -240,9 +241,9 @@ struct PerWebProcessState {
     CocoaEdgeInsets _minimumViewportInset;
     CocoaEdgeInsets _maximumViewportInset;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    RetainPtr<NSMapTable<NSUUID *, WKWebTextReplacement *>> _unifiedTextReplacementSessionReplacements;
-    RetainPtr<NSMapTable<NSUUID *, WKWebTextReplacementSession *>> _unifiedTextReplacementSessions;
+#if ENABLE(WRITING_TOOLS)
+    RetainPtr<NSMapTable<NSUUID *, WTTextSuggestion *>> _unifiedTextReplacementSessionReplacements;
+    RetainPtr<NSMapTable<NSUUID *, WTSession *>> _unifiedTextReplacementSessions;
 #endif
 
 #if PLATFORM(MAC)
@@ -394,7 +395,7 @@ struct PerWebProcessState {
 - (void)_storeAppHighlight:(const WebCore::AppHighlight&)info;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 - (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
 
 - (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebCore::UnifiedTextReplacement::ReplacementState)state forReplacementWithUUID:(NSUUID *)replacementUUID;

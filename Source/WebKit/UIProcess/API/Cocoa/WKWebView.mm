@@ -440,7 +440,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _timeOfFirstVisibleContentRectUpdateWithPendingCommit = timeNow;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     _unifiedTextReplacementSessions = [NSMapTable strongToWeakObjectsMapTable];
     _unifiedTextReplacementSessionReplacements = [NSMapTable strongToWeakObjectsMapTable];
 #endif
@@ -1799,7 +1799,7 @@ static inline WKTextIndicatorStyleType toWKTextIndicatorStyleType(WebKit::TextIn
     }
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 - (void)_addTextIndicatorStyleForID:(NSUUID *)nsUUID withData:(const WebKit::TextIndicatorStyleData&)data
 {
 #if PLATFORM(IOS_FAMILY)
@@ -2822,16 +2822,16 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     if (!uuid)
         return nil;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     _page->enableTextIndicatorStyleAfterElementWithID(elementID, *uuid);
 
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextIndicatorStyleForID:nsUUID.get() withStyleType:WKTextIndicatorStyleTypeInitial];
-#elif PLATFORM(MAC) && ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+#elif PLATFORM(MAC)
     _impl->addTextIndicatorStyleForID(*uuid, { WebKit::TextIndicatorStyle::Initial, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
-#else // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#else // ENABLE(WRITING_TOOLS)
     return nil;
 #endif
 }
@@ -2844,26 +2844,26 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     if (!uuid)
         return nil;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     _page->enableTextIndicatorStyleForElementWithID(elementID, *uuid);
 
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextIndicatorStyleForID:nsUUID.get() withStyleType:WKTextIndicatorStyleTypeFinal];
-#elif PLATFORM(MAC) && ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+#elif PLATFORM(MAC)
     _impl->addTextIndicatorStyleForID(*uuid, { WebKit::TextIndicatorStyle::Final, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
-#else // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#else // ENABLE(WRITING_TOOLS)
     return nil;
 #endif
 }
 
 - (void)_disableTextIndicatorStylingWithUUID:(NSUUID *)nsUUID
 {
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 #if PLATFORM(IOS_FAMILY)
     [_contentView removeTextIndicatorStyleForID:nsUUID];
-#elif PLATFORM(MAC) && ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+#elif PLATFORM(MAC)
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
@@ -4418,7 +4418,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 
 - (BOOL)_isUnifiedTextReplacementActive
 {
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     return _page->isUnifiedTextReplacementActive();
 #else
     return NO;

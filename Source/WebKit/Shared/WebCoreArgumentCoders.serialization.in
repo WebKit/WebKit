@@ -6402,7 +6402,7 @@ header: <WebCore/TextExtractionTypes.h>
     Vector<WebCore::TextExtraction::Item> children;
 };
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 header: <WebCore/UnifiedTextReplacementTypes.h>
 [CustomHeader] enum class WebCore::UnifiedTextReplacement::ReplacementBehavior : uint8_t {
     None,

@@ -663,7 +663,7 @@ public:
 
     virtual double baseViewportLayoutSizeScaleFactor() const { return 1; }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const UnifiedTextReplacement::SessionID&, const UnifiedTextReplacement::ReplacementID&, IntRect) { }
 
     virtual void textReplacementSessionUpdateStateForReplacementWithID(const UnifiedTextReplacement::SessionID&, UnifiedTextReplacement::ReplacementState, const UnifiedTextReplacement::ReplacementID&) { }

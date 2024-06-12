@@ -6602,7 +6602,7 @@ TextIndicatorStylingEnabled:
   status: internal
   humanReadableName: "Text Indicator Styling"
   humanReadableDescription: "Text Indicator Styling"
-  condition: ENABLE(UNIFIED_TEXT_REPLACEMENT)
+  condition: ENABLE(WRITING_TOOLS)
   defaultValue:
     WebKitLegacy:
       default: true

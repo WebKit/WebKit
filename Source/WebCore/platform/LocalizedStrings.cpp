@@ -503,7 +503,7 @@ String contextMenuItemTagTranslate(const String& selectedString)
 }
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 String contextMenuItemTagSwapCharacters()
 {
     return WEB_UI_STRING("Swap characters", "Swap characters context menu item");

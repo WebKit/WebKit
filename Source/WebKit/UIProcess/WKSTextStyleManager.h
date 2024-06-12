@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 #import "WKTextIndicatorStyleType.h"
 
@@ -36,4 +36,4 @@
 - (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
 @end
 
-#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#endif // ENABLE(WRITING_TOOLS)

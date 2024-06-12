@@ -313,7 +313,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     return dictionaryPopupInfo;
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 void WebPage::createTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
     m_textIndicatorStyleController->createTextIndicatorForID(uuid, WTFMove(completionHandler));
@@ -334,7 +334,7 @@ void WebPage::enableTextIndicatorStyleForElementWithID(const String& elementID, 
     m_textIndicatorStyleController->enableTextIndicatorStyleForElementWithID(elementID, uuid);
 }
 
-#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#endif // ENABLE(WRITING_TOOLS)
 
 void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&& options)
 {
@@ -944,7 +944,7 @@ void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 }
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 void WebPage::willBeginTextReplacementSession(const std::optional<WebCore::UnifiedTextReplacement::Session>& session, CompletionHandler<void(const Vector<WebCore::UnifiedTextReplacement::Context>&)>&& completionHandler)
 {
     corePage()->willBeginTextReplacementSession(session, WTFMove(completionHandler));

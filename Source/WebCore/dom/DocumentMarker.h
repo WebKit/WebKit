@@ -98,7 +98,7 @@ public:
         // This marker maintains state for the platform text checker.
         PlatformTextChecking = 1 << 15,
 #endif
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
         UnifiedTextReplacement = 1 << 16,
 #endif
         TransparentContent = 1 << 17,
@@ -117,7 +117,7 @@ public:
     };
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     struct UnifiedTextReplacementData {
         enum class State: uint8_t {
             Pending,
@@ -148,7 +148,7 @@ public:
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
         , PlatformTextCheckingData // PlatformTextChecking
 #endif
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
         , UnifiedTextReplacementData // UnifiedTextReplacement
 #endif
         , TransparentContentData // TransparentContent
@@ -202,7 +202,7 @@ constexpr auto DocumentMarker::allMarkers() -> OptionSet<Type>
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
         Type::PlatformTextChecking,
 #endif
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
         Type::UnifiedTextReplacement,
 #endif
         Type::TransparentContent,
@@ -227,7 +227,7 @@ inline String DocumentMarker::description() const
     if (auto* description = std::get_if<String>(&m_data))
         return *description;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     if (auto* data = std::get_if<DocumentMarker::UnifiedTextReplacementData>(&m_data))
         return makeString("('"_s, data->originalText, "', state: "_s, enumToUnderlyingType(data->state), ')');
 #endif

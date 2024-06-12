@@ -73,7 +73,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
     case MarkedText::Type::DictationPhraseWithAlternatives:
 #endif
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     case MarkedText::Type::UnifiedTextReplacement:
 #endif
     case MarkedText::Type::Unmarked:

@@ -746,7 +746,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     }
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     if (!page()->canHandleSwapCharacters() || isPopover) {
         filteredItems.removeAllMatching([] (auto& item) {
             return item.action() == ContextMenuItemTagSwapCharacters;

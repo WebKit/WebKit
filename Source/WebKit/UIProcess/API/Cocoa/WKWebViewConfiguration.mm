@@ -130,7 +130,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return _pageConfiguration->allowsInlinePredictions();
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 static _WKUnifiedTextReplacementBehavior convertToPlatform(WebCore::UnifiedTextReplacement::ReplacementBehavior behavior)
 {
@@ -170,14 +170,14 @@ static WebCore::UnifiedTextReplacement::ReplacementBehavior convertToWeb(_WKUnif
 
 - (void)_setUnifiedTextReplacementBehavior:(_WKUnifiedTextReplacementBehavior)behavior
 {
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     _pageConfiguration->setUnifiedTextReplacementBehavior(convertToWeb(behavior));
 #endif
 }
 
 - (_WKUnifiedTextReplacementBehavior)_unifiedTextReplacementBehavior
 {
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     return convertToPlatform(_pageConfiguration->unifiedTextReplacementBehavior());
 #else
     return _WKUnifiedTextReplacementBehaviorNone;

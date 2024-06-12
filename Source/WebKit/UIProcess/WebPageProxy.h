@@ -300,7 +300,7 @@ namespace TextExtraction {
 struct Item;
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 namespace UnifiedTextReplacement {
 enum class EditAction : uint8_t;
 enum class ReplacementState : uint8_t;
@@ -2264,7 +2264,7 @@ public:
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 #if ENABLE(CONTEXT_MENUS)
     bool canHandleSwapCharacters() const;
     void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView);
@@ -2413,7 +2413,7 @@ public:
 
     void requestTextExtraction(std::optional<WebCore::FloatRect>&& collectionRectInRootView, CompletionHandler<void(WebCore::TextExtraction::Item&&)>&&);
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     void setUnifiedTextReplacementActive(bool);
 
     void willBeginTextReplacementSession(const std::optional<WebCore::UnifiedTextReplacement::Session>&, CompletionHandler<void(const Vector<WebCore::UnifiedTextReplacement::Context>&)>&&);
@@ -3613,7 +3613,7 @@ private:
     WeakHashSet<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObservers;
     std::unique_ptr<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObserverForTesting;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     bool m_isUnifiedTextReplacementActive { false };
 #endif
 

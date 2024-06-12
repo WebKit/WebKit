@@ -129,7 +129,7 @@ class EmptyContextMenuClient final : public ContextMenuClient {
     void handleTranslation(const TranslationContextMenuInfo&) final { }
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     void handleSwapCharacters(IntRect) final { };
 #endif
 

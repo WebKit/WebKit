@@ -233,11 +233,11 @@ messages -> WebPageProxy {
     HandleContextMenuTranslation(struct WebCore::TranslationContextMenuInfo info)
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
     HandleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView)
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     TextReplacementSessionShowInformationForReplacementWithIDRelativeToRect(struct WebCore::UnifiedTextReplacement::Session::ID sessionID, struct WebCore::UnifiedTextReplacement::Replacement::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
 
     TextReplacementSessionUpdateStateForReplacementWithID(struct WebCore::UnifiedTextReplacement::Session::ID sessionID, enum:uint8_t WebCore::UnifiedTextReplacement::Replacement::State state, struct WebCore::UnifiedTextReplacement::Replacement::ID replacementID)
@@ -520,7 +520,7 @@ messages -> WebPageProxy {
     [EnabledIf='attachmentElementEnabled()'] RequestAttachmentIcon(String identifier, String contentType, String path, String title, WebCore::FloatSize size)
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     AddTextIndicatorStyleForID(WTF::UUID uuid, struct WebKit::TextIndicatorStyleData styleData, struct WebCore::TextIndicatorData indicatorData)
     RemoveTextIndicatorStyleForID(WTF::UUID uuid)
 #endif

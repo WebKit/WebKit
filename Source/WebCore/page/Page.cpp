@@ -215,7 +215,7 @@
 #include "AccessibilityRootAtspi.h"
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 #include "UnifiedTextReplacementController.h"
 #endif
 
@@ -412,7 +412,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_contentSecurityPolicyModeForExtension(WTFMove(pageConfiguration.contentSecurityPolicyModeForExtension))
     , m_badgeClient(WTFMove(pageConfiguration.badgeClient))
     , m_historyItemClient(WTFMove(pageConfiguration.historyItemClient))
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     , m_unifiedTextReplacementController(makeUniqueRef<UnifiedTextReplacementController>(*this))
 #endif
 {
@@ -4858,7 +4858,7 @@ void Page::gamepadsRecentlyAccessed()
 }
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 void Page::willBeginTextReplacementSession(const std::optional<UnifiedTextReplacement::Session>& session, CompletionHandler<void(const Vector<UnifiedTextReplacement::Context>&)>&& completionHandler)
 {
     m_unifiedTextReplacementController->willBeginTextReplacementSession(session, WTFMove(completionHandler));

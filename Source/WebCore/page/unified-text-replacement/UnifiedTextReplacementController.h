@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 #include "UnifiedTextReplacementTypes.h"
 

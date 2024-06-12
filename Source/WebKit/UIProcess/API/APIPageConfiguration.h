@@ -382,7 +382,7 @@ public:
     bool allowsInlinePredictions() const { return m_data.allowsInlinePredictions; }
     void setAllowsInlinePredictions(bool allows) { m_data.allowsInlinePredictions = allows; }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     WebCore::UnifiedTextReplacement::ReplacementBehavior unifiedTextReplacementBehavior() const { return m_data.unifiedTextReplacementBehavior; }
     void setUnifiedTextReplacementBehavior(WebCore::UnifiedTextReplacement::ReplacementBehavior behavior) { m_data.unifiedTextReplacementBehavior = behavior; }
 #endif
@@ -586,7 +586,7 @@ private:
         bool scrollToTextFragmentIndicatorEnabled { true };
         bool scrollToTextFragmentMarkingEnabled { true };
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
         WebCore::UnifiedTextReplacement::ReplacementBehavior unifiedTextReplacementBehavior { WebCore::UnifiedTextReplacement::ReplacementBehavior::Default };
 #endif
 

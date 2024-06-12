@@ -174,7 +174,7 @@ class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 class WindowEventLoop;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 class UnifiedTextReplacementController;
 
 namespace UnifiedTextReplacement {
@@ -1147,7 +1147,7 @@ public:
     void gamepadsRecentlyAccessed();
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     WEBCORE_EXPORT void willBeginTextReplacementSession(const std::optional<UnifiedTextReplacement::Session>&, CompletionHandler<void(const Vector<UnifiedTextReplacement::Context>&)>&&);
 
     WEBCORE_EXPORT void didBeginTextReplacementSession(const UnifiedTextReplacement::Session&, const Vector<UnifiedTextReplacement::Context>&);
@@ -1570,7 +1570,7 @@ private:
     MonotonicTime m_lastAccessNotificationTime;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     UniqueRef<UnifiedTextReplacementController> m_unifiedTextReplacementController;
 #endif
 }; // class Page

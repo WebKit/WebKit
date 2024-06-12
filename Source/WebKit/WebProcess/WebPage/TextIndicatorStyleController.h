@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 #include <WebCore/CharacterRange.h>
 #include <WebCore/SimpleRange.h>
@@ -98,4 +98,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#endif // ENABLE(WRITING_TOOLS)

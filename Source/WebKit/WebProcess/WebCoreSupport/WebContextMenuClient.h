@@ -61,7 +61,7 @@ private:
     void handleTranslation(const WebCore::TranslationContextMenuInfo&) final;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     void handleSwapCharacters(WebCore::IntRect selectionBoundsInRootView) final;
 #endif
 

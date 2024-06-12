@@ -1615,7 +1615,7 @@ public:
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
     void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView);
 #endif
 
@@ -1750,7 +1750,7 @@ public:
     void setMediaEnvironment(const String&);
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::UnifiedTextReplacement::ReplacementID&, WebCore::IntRect);
 
     void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::SessionID&, WebCore::UnifiedTextReplacement::ReplacementState, const WebCore::UnifiedTextReplacement::ReplacementID&);
@@ -2261,7 +2261,7 @@ private:
 
     void frameWasFocusedInAnotherProcess(WebCore::FrameIdentifier);
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     void willBeginTextReplacementSession(const std::optional<WebCore::UnifiedTextReplacement::Session>&, CompletionHandler<void(const Vector<WebCore::UnifiedTextReplacement::Context>&)>&&);
 
     void didBeginTextReplacementSession(const WebCore::UnifiedTextReplacement::Session&, const Vector<WebCore::UnifiedTextReplacement::Context>&);
@@ -2827,7 +2827,7 @@ private:
     String m_mediaEnvironment;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     UniqueRef<TextIndicatorStyleController> m_textIndicatorStyleController;
 #endif
 

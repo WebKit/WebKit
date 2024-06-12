@@ -502,7 +502,7 @@ static bool markerTypeFrom(const String& markerType, DocumentMarker::Type& resul
     else if (equalLettersIgnoringASCIICase(markerType, "telephonenumber"_s))
         result = DocumentMarker::Type::TelephoneNumber;
 #endif
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     else if (equalLettersIgnoringASCIICase(markerType, "unifiedtextreplacement"_s))
         result = DocumentMarker::Type::UnifiedTextReplacement;
 #endif
@@ -2797,7 +2797,7 @@ bool Internals::hasCorrectionIndicatorMarker(int from, int length)
     return hasMarkerFor(DocumentMarker::Type::CorrectionIndicator, from, length);
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 bool Internals::hasUnifiedTextReplacementMarker(int from, int length)
 {
     return hasMarkerFor(DocumentMarker::Type::UnifiedTextReplacement, from, length);

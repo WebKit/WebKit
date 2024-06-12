@@ -62,7 +62,7 @@ public:
     virtual void handleTranslation(const TranslationContextMenuInfo&) = 0;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     virtual void handleSwapCharacters(IntRect selectionBoundsInRootView) = 0;
 #endif
 

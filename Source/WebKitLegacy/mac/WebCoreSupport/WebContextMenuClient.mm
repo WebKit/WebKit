@@ -146,7 +146,7 @@ void WebContextMenuClient::handleTranslation(const TranslationContextMenuInfo& i
 
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 void WebContextMenuClient::handleSwapCharacters(IntRect selectionBoundsInRootView)
 {

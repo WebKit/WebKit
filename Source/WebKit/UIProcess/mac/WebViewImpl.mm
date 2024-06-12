@@ -2787,7 +2787,7 @@ void WebViewImpl::selectionDidChange()
         updateCursorAccessoryPlacement();
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     if (wantsCompleteUnifiedTextReplacementBehavior()) {
         auto isRange = m_page->editorState().hasPostLayoutData() && m_page->editorState().selectionIsRange;
         auto selectionRect = isRange ? m_page->editorState().postLayoutData->selectionBoundingRect : IntRect { };
@@ -3439,7 +3439,7 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 
 bool WebViewImpl::hasContentRelativeChildViews() const
 {
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+#if ENABLE(WRITING_TOOLS)
     return [m_textIndicatorStyleManager hasActiveTextIndicatorStyle];
 #else
     return false;
@@ -3476,14 +3476,14 @@ void WebViewImpl::contentRelativeViewsHysteresisTimerFired(PAL::HysteresisState 
 
 void WebViewImpl::suppressContentRelativeChildViews()
 {
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+#if ENABLE(WRITING_TOOLS)
     [m_textIndicatorStyleManager suppressTextIndicatorStyle];
 #endif
 }
 
 void WebViewImpl::restoreContentRelativeChildViews()
 {
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+#if ENABLE(WRITING_TOOLS)
     [m_textIndicatorStyleManager restoreTextIndicatorStyle];
 #endif
 }
@@ -4605,7 +4605,7 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
         completionHandler();
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, const WebKit::TextIndicatorStyleData& data)
 {
     if (!m_page->preferences().textIndicatorStylingEnabled())
@@ -6447,7 +6447,7 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 WebCore::UnifiedTextReplacement::ReplacementBehavior WebViewImpl::unifiedTextReplacementBehavior() const
 {
     return m_page->configuration().unifiedTextReplacementBehavior();
@@ -6459,7 +6459,7 @@ bool WebViewImpl::wantsCompleteUnifiedTextReplacementBehavior() const
 }
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
 
 bool WebViewImpl::canHandleSwapCharacters() const
 {

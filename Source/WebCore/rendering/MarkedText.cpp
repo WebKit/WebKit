@@ -213,7 +213,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
             return MarkedText::Type::GrammarError;
         case DocumentMarker::Type::CorrectionIndicator:
             return MarkedText::Type::Correction;
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
         case DocumentMarker::Type::UnifiedTextReplacement:
             return MarkedText::Type::UnifiedTextReplacement;
 #endif
@@ -244,7 +244,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
                 break;
             FALLTHROUGH;
         case DocumentMarker::Type::CorrectionIndicator:
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
         case DocumentMarker::Type::UnifiedTextReplacement:
 #endif
         case DocumentMarker::Type::Replacement:
@@ -289,7 +289,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
         switch (marker->type()) {
         case DocumentMarker::Type::Spelling:
         case DocumentMarker::Type::CorrectionIndicator:
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
         case DocumentMarker::Type::UnifiedTextReplacement:
             if (marker->type() == DocumentMarker::Type::UnifiedTextReplacement && std::get<DocumentMarker::UnifiedTextReplacementData>(marker->data()).state != DocumentMarker::UnifiedTextReplacementData::State::Pending)
                 break;

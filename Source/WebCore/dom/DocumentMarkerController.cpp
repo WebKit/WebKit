@@ -262,7 +262,7 @@ static bool shouldInsertAsSeparateMarker(const DocumentMarker& marker)
         return true;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     case DocumentMarker::Type::UnifiedTextReplacement:
         return true;
 #endif
@@ -346,7 +346,7 @@ void DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
     if (CheckedPtr renderer = node.renderer())
         renderer->repaint();
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     if (newMarker.type() == DocumentMarker::Type::UnifiedTextReplacement) {
         if (!m_unifiedTextReplacementAnimationTimer.isActive())
             m_unifiedTextReplacementAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
@@ -611,7 +611,7 @@ void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::Type> typ
     for (auto& node : copyToVector(m_markers.keys()))
         removedMarkerTypes = removedMarkerTypes & removeMarkersFromList(m_markers.find(node), types, filter);
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     if (removedMarkerTypes.contains(DocumentMarker::Type::UnifiedTextReplacement))
         m_unifiedTextReplacementAnimationTimer.stop();
 #endif
@@ -765,7 +765,7 @@ void DocumentMarkerController::dismissMarkers(OptionSet<DocumentMarker::Type> ty
 
 void DocumentMarkerController::unifiedTextReplacementAnimationTimerFired()
 {
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     forEachOfTypes({ DocumentMarker::Type::UnifiedTextReplacement }, [](Node& node, RenderedDocumentMarker&) {
         if (CheckedPtr renderer = node.renderer())
             renderer->repaint();

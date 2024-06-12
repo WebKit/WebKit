@@ -99,7 +99,7 @@ public:
     void storeAppHighlight(const WebCore::AppHighlight&) final;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyleData&) final;
     void removeTextIndicatorStyleForID(const WTF::UUID&) final;
 #endif
@@ -118,7 +118,7 @@ public:
 
     WindowKind windowKind() final;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
     void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::UnifiedTextReplacement::ReplacementID&, WebCore::IntRect selectionBoundsInRootView) final;
 
     void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::SessionID&, WebCore::UnifiedTextReplacement::ReplacementState, const WTF::UUID& replacementUUID) final;

@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 #import "TextIndicatorStyle.h"
 
@@ -50,4 +50,4 @@ class WebViewImpl;
 
 @end
 
-#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#endif // ENABLE(WRITING_TOOLS)
