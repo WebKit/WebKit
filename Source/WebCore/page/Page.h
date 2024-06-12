@@ -1164,7 +1164,7 @@ public:
 
     WEBCORE_EXPORT void updateStateForSelectedReplacementIfNeeded();
 
-    const UnifiedTextReplacementController& unifiedTextReplacementController() const { return m_unifiedTextReplacementController.get(); }
+    WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForSessionWithID(const UnifiedTextReplacement::SessionID&) const;
 #endif
 
 private:

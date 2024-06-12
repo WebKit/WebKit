@@ -4894,7 +4894,12 @@ void Page::updateStateForSelectedReplacementIfNeeded()
     m_unifiedTextReplacementController->updateStateForSelectedReplacementIfNeeded();
 }
 
-void Page::textReplacementSessionDidReceiveEditAction(const UnifiedTextReplacement::Session& session, WebCore::UnifiedTextReplacement::EditAction action)
+std::optional<SimpleRange> Page::contextRangeForSessionWithID(const UnifiedTextReplacement::Session::ID& sessionID) const
+{
+    return m_unifiedTextReplacementController->contextRangeForSessionWithID(sessionID);
+}
+
+void Page::textReplacementSessionDidReceiveEditAction(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::EditAction action)
 {
     m_unifiedTextReplacementController->textReplacementSessionDidReceiveEditAction(session, action);
 }

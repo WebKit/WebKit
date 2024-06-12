@@ -30,6 +30,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "CompositeEditCommand.h"
 #include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
@@ -125,15 +126,6 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
         return;
     }
 
-    // If the session does not exist, the session is ephemeral.
-    if (session) {
-        auto liveRange = createLiveRange(*contextRange);
-
-        ASSERT(!m_contextRanges.contains(session->identifier));
-
-        m_contextRanges.set(session->identifier, liveRange);
-    }
-
     auto selectedTextRange = document->selection().selection().firstRange();
 
     auto attributedStringFromRange = editingAttributedString(*contextRange, { IncludedElement::Images, IncludedElement::Attachments });
@@ -142,19 +134,36 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
     if (attributedStringFromRange.string.isEmpty())
         RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string is empty", session ? session->identifier.toString().utf8().data() : "");
 
-    if (session) {
-        auto attributedStringCharacterCount = attributedStringFromRange.string.length();
-        auto contextRangeCharacterCount = characterCount(*contextRange);
+    if (!session) {
+        completionHandler({ { WTF::UUID { 0 }, attributedStringFromRange, selectedTextCharacterRange } });
+        return;
+    }
 
-        // Postcondition: the selected text character range must be a valid range within the
-        // attributed string formed by the context range; the length of the entire context range
-        // being equal to the length of the attributed string implies the range is valid.
-        if (UNLIKELY(attributedStringCharacterCount != contextRangeCharacterCount)) {
-            RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string length (%u) != context range length (%llu)", session->identifier.toString().utf8().data(), attributedStringCharacterCount, contextRangeCharacterCount);
-            ASSERT_NOT_REACHED();
-            completionHandler({ });
-            return;
-        }
+    ASSERT(!m_states.contains(session->identifier));
+
+    auto liveRange = createLiveRange(*contextRange);
+
+    switch (session->replacementType) {
+    case UnifiedTextReplacement::Session::ReplacementType::PlainText:
+        m_states.set(session->identifier, PlainTextState { liveRange, 0 });
+        break;
+
+    case UnifiedTextReplacement::Session::ReplacementType::RichText:
+        m_states.set(session->identifier, RichTextState { liveRange, { } });
+        break;
+    }
+
+    auto attributedStringCharacterCount = attributedStringFromRange.string.length();
+    auto contextRangeCharacterCount = characterCount(*contextRange);
+
+    // Postcondition: the selected text character range must be a valid range within the
+    // attributed string formed by the context range; the length of the entire context range
+    // being equal to the length of the attributed string implies the range is valid.
+    if (UNLIKELY(attributedStringCharacterCount != contextRangeCharacterCount)) {
+        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string length (%u) != context range length (%llu)", session->identifier.toString().utf8().data(), attributedStringCharacterCount, contextRangeCharacterCount);
+        ASSERT_NOT_REACHED();
+        completionHandler({ });
+        return;
     }
 
     completionHandler({ { WTF::UUID { 0 }, attributedStringFromRange, selectedTextCharacterRange } });
@@ -175,57 +184,51 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
         return;
     }
 
-    ASSERT(m_contextRanges.contains(session.identifier));
-
     // FIXME: Text indicator styles are not used within this method, so is this still needed?
     m_page->chrome().client().removeTextIndicatorStyleForID(session.identifier);
 
     document->selection().clear();
 
-    auto sessionRange = contextRangeForSessionWithID(session.identifier);
-    if (!sessionRange) {
+    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session);
+    if (!state) {
         ASSERT_NOT_REACHED();
         return;
     }
+
+    auto sessionRange = makeSimpleRange(state->contextRange);
 
     // The tracking of the additional replacement location offset needs to be scoped to a particular instance
     // of this class, instead of just this function, because the function may need to be called multiple times.
     // This ensures that subsequent calls of this function should effectively be treated as just more iterations
     // of the following for-loop.
 
-    auto& additionalOffset = m_replacementLocationOffsets.add(session.identifier, 0).iterator->value;
-
     for (const auto& replacementData : replacements) {
-        auto locationWithOffset = replacementData.originalRange.location + additionalOffset;
+        auto locationWithOffset = replacementData.originalRange.location + state->replacementLocationOffset;
 
-        auto resolvedRange = resolveCharacterRange(*sessionRange, { locationWithOffset, replacementData.originalRange.length });
+        auto resolvedRange = resolveCharacterRange(sessionRange, { locationWithOffset, replacementData.originalRange.length });
 
-        replaceContentsOfRangeInSession(session.identifier, resolvedRange, replacementData.replacement);
+        replaceContentsOfRangeInSession(*state, resolvedRange, replacementData.replacement);
 
-        sessionRange = contextRangeForSessionWithID(session.identifier);
-        if (!sessionRange) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
+        sessionRange = makeSimpleRange(state->contextRange);
 
         auto newRangeWithOffset = CharacterRange { locationWithOffset, replacementData.replacement.length() };
-        auto newResolvedRange = resolveCharacterRange(*sessionRange, newRangeWithOffset);
+        auto newResolvedRange = resolveCharacterRange(sessionRange, newRangeWithOffset);
 
         auto originalString = [context.attributedText.nsAttributedString() attributedSubstringFromRange:replacementData.originalRange];
 
         auto markerData = DocumentMarker::UnifiedTextReplacementData { originalString.string, replacementData.identifier, session.identifier, DocumentMarker::UnifiedTextReplacementData::State::Pending };
         addMarker(newResolvedRange, DocumentMarker::Type::UnifiedTextReplacement, markerData);
 
-        additionalOffset += static_cast<int>(replacementData.replacement.length()) - static_cast<int>(replacementData.originalRange.length);
+        state->replacementLocationOffset += static_cast<int>(replacementData.replacement.length()) - static_cast<int>(replacementData.originalRange.length);
     }
 
     if (finished)
-        document->selection().setSelection({ *sessionRange });
+        document->selection().setSelection({ sessionRange });
 }
 
-void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::Replacement::State state, const UnifiedTextReplacement::Replacement& replacement, const UnifiedTextReplacement::Context&)
+void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::Replacement::State newReplacementState, const UnifiedTextReplacement::Replacement& replacement, const UnifiedTextReplacement::Context&)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement (%s) [new state: %hhu, replacement: %s]", session.identifier.toString().utf8().data(), enumToUnderlyingType(state), replacement.identifier.toString().utf8().data());
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement (%s) [new state: %hhu, replacement: %s]", session.identifier.toString().utf8().data(), enumToUnderlyingType(newReplacementState), replacement.identifier.toString().utf8().data());
 
     RefPtr document = this->document();
     if (!document) {
@@ -233,13 +236,15 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         return;
     }
 
-    auto sessionRange = contextRangeForSessionWithID(session.identifier);
-    if (!sessionRange) {
+    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session);
+    if (!state) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto nodeAndMarker = findReplacementMarkerByID(*sessionRange, replacement.identifier);
+    auto sessionRange = makeSimpleRange(state->contextRange);
+
+    auto nodeAndMarker = findReplacementMarkerByID(sessionRange, replacement.identifier);
     if (!nodeAndMarker)
         return;
 
@@ -247,7 +252,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
 
     auto rangeToReplace = makeSimpleRange(node, marker);
 
-    switch (state) {
+    switch (newReplacementState) {
     case UnifiedTextReplacement::Replacement::State::Active: {
         document->selection().setSelection({ rangeToReplace });
         document->selection().revealSelection();
@@ -272,7 +277,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         auto offsetRange = OffsetRange { marker.startOffset(), marker.endOffset() };
         document->markers().removeMarkers(node, offsetRange, { DocumentMarker::Type::UnifiedTextReplacement });
 
-        replaceContentsOfRangeInSession(session.identifier, rangeToReplace, data.originalText);
+        replaceContentsOfRangeInSession(*state, rangeToReplace, data.originalText);
 
         return;
     }
@@ -306,8 +311,8 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    auto sessionRange = contextRangeForSessionWithID(session.identifier);
-    if (!sessionRange) {
+    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::RichText>(session);
+    if (!state) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -316,7 +321,8 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
 
     document->selection().clear();
 
-    auto sessionRangeCharacterCount = characterCount(*sessionRange);
+    auto sessionRange = makeSimpleRange(state->contextRange);
+    auto sessionRangeCharacterCount = characterCount(sessionRange);
 
     if (UNLIKELY(range.length + sessionRangeCharacterCount < contextTextCharacterCount)) {
         RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => the range offset by the character count delta must have a non-negative size (context range length: %u, range.length %llu, session length: %llu)", session.identifier.toString().utf8().data(), contextTextCharacterCount, range.length, sessionRangeCharacterCount);
@@ -329,18 +335,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
 
     auto characterCountDelta = sessionRangeCharacterCount - contextTextCharacterCount;
     auto adjustedCharacterRange = CharacterRange { range.location, range.length + characterCountDelta };
-    auto resolvedRange = resolveCharacterRange(*sessionRange, adjustedCharacterRange);
-
-    if (!m_originalDocumentNodes.contains(session.identifier)) {
-        auto contents = m_contextRanges.get(session.identifier)->cloneContents();
-        if (contents.hasException()) {
-            RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => exception when cloning contents", session.identifier.toString().utf8().data());
-            ASSERT_NOT_REACHED();
-            return;
-        }
-
-        m_originalDocumentNodes.set(session.identifier, contents.returnValue()); // Deep clone.
-    }
+    auto resolvedRange = resolveCharacterRange(sessionRange, adjustedCharacterRange);
 
     RefPtr fragment = createFragment(*document->frame(), attributedText.nsAttributedString().get(), { FragmentCreationOptions::NoInterchangeNewlines, FragmentCreationOptions::SanitizeMarkup });
     if (!fragment) {
@@ -350,7 +345,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
 
     m_page->chrome().client().addSourceTextIndicatorStyle(session.identifier, range);
 
-    replaceContentsOfRangeInSession(session.identifier, resolvedRange, *fragment, hasAttributes ? MatchStyle::No : MatchStyle::Yes);
+    replaceContentsOfRangeInSession(*state, resolvedRange, WTFMove(fragment), hasAttributes ? MatchStyle::No : MatchStyle::Yes);
 
     m_page->chrome().client().addDestinationTextIndicatorStyle(session.identifier, adjustedCharacterRange);
 }
@@ -366,15 +361,17 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
         return;
     }
 
-    auto sessionRange = contextRangeForSessionWithID(session.identifier);
-    if (!sessionRange) {
+    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session);
+    if (!state) {
         ASSERT_NOT_REACHED();
         return;
     }
 
+    auto sessionRange = makeSimpleRange(state->contextRange);
+
     auto& markers = document->markers();
 
-    markers.forEach<DocumentMarkerController::IterationDirection::Backwards>(*sessionRange, { DocumentMarker::Type::UnifiedTextReplacement }, [&](auto& node, auto& marker) {
+    markers.forEach<DocumentMarkerController::IterationDirection::Backwards>(sessionRange, { DocumentMarker::Type::UnifiedTextReplacement }, [&](auto& node, auto& marker) {
         auto rangeToReplace = makeSimpleRange(node, marker);
 
         auto currentText = plainText(rangeToReplace);
@@ -399,7 +396,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
             }
         }();
 
-        replaceContentsOfRangeInSession(session.identifier, rangeToReplace, previousText);
+        replaceContentsOfRangeInSession(*state, rangeToReplace, previousText);
 
         auto newData = DocumentMarker::UnifiedTextReplacementData { currentText, oldData.replacementID, session.identifier, newState };
         auto newOffsetRange = OffsetRange { offsetRange.start, offsetRange.end + previousText.length() - currentText.length() };
@@ -415,90 +412,35 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
 {
     RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<RichText> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
 
-    RefPtr document = this->document();
-    if (!document) {
+    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::RichText>(session);
+    if (!state) {
         ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto sessionRange = contextRangeForSessionWithID(session.identifier);
-    if (!sessionRange) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (m_originalDocumentNodes.isEmpty())
-        return;
-
-    auto contents = m_contextRanges.get(session.identifier)->cloneContents();
-    if (contents.hasException()) {
-        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) => exception when cloning contents", session.identifier.toString().utf8().data());
         return;
     }
 
     switch (action) {
     case UnifiedTextReplacement::EditAction::Undo: {
-        RefPtr originalFragment = m_originalDocumentNodes.take(session.identifier);
-        if (!originalFragment) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-
-        m_replacedDocumentNodes.set(session.identifier, contents.returnValue()); // Deep clone.
-        replaceContentsOfRangeInSession(session.identifier, *sessionRange, *originalFragment);
+        for (auto it = state->commands.rbegin(); it != state->commands.rend(); it++)
+            (*it)->ensureComposition().unapply();
 
         break;
     }
 
     case UnifiedTextReplacement::EditAction::Redo: {
-        RefPtr originalFragment = m_replacedDocumentNodes.take(session.identifier);
-        if (!originalFragment) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-
-        m_replacedDocumentNodes.set(session.identifier, contents.returnValue()); // Deep clone.
-        replaceContentsOfRangeInSession(session.identifier, *sessionRange, *originalFragment);
+        for (auto it = state->commands.begin(); it != state->commands.end(); it++)
+            (*it)->ensureComposition().reapply();
 
         break;
     }
 
     case UnifiedTextReplacement::EditAction::UndoAll: {
-        RefPtr originalFragment = m_originalDocumentNodes.take(session.identifier);
-        if (!originalFragment) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
+        for (auto it = state->commands.rbegin(); it != state->commands.rend(); it++)
+            (*it)->ensureComposition().unapply();
 
-        replaceContentsOfRangeInSession(session.identifier, *sessionRange, *originalFragment);
-        m_replacedDocumentNodes.remove(session.identifier);
+        state->commands.clear();
 
         break;
     }
-    }
-
-    RefPtr updatedLiveRange = m_contextRanges.get(session.identifier);
-    if (!updatedLiveRange) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    switch (action) {
-    case UnifiedTextReplacement::EditAction::Undo:
-    case UnifiedTextReplacement::EditAction::UndoAll: {
-        auto updatedContents = updatedLiveRange->cloneContents();
-        if (updatedContents.hasException()) {
-            RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) => exception when cloning contents after action", session.identifier.toString().utf8().data());
-            return;
-        }
-
-        m_originalDocumentNodes.set(session.identifier, updatedContents.returnValue()); // Deep clone.
-
-        break;
-    }
-
-    case UnifiedTextReplacement::EditAction::Redo:
-        break;
     }
 }
 
@@ -507,10 +449,15 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
     RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
 
     switch (session.replacementType) {
-    case UnifiedTextReplacement::Session::ReplacementType::PlainText:
-        return textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session, action);
-    case UnifiedTextReplacement::Session::ReplacementType::RichText:
-        return textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::RichText>(session, action);
+    case UnifiedTextReplacement::Session::ReplacementType::PlainText: {
+        textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session, action);
+        break;
+    }
+
+    case UnifiedTextReplacement::Session::ReplacementType::RichText: {
+        textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::RichText>(session, action);
+        break;
+    }
     }
 }
 
@@ -519,15 +466,17 @@ void UnifiedTextReplacementController::didEndTextReplacementSession<UnifiedTextR
 {
     RefPtr document = this->document();
 
-    auto sessionRange = contextRangeForSessionWithID(session.identifier);
-    if (!sessionRange) {
+    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session);
+    if (!state) {
         ASSERT_NOT_REACHED();
         return;
     }
 
+    auto sessionRange = makeSimpleRange(state->contextRange);
+
     auto& markers = document->markers();
 
-    markers.forEach<DocumentMarkerController::IterationDirection::Backwards>(*sessionRange, { DocumentMarker::Type::UnifiedTextReplacement }, [&](auto& node, auto& marker) {
+    markers.forEach<DocumentMarkerController::IterationDirection::Backwards>(sessionRange, { DocumentMarker::Type::UnifiedTextReplacement }, [&](auto& node, auto& marker) {
         auto data = std::get<DocumentMarker::UnifiedTextReplacementData>(marker.data());
 
         auto offsetRange = OffsetRange { marker.startOffset(), marker.endOffset() };
@@ -537,7 +486,7 @@ void UnifiedTextReplacementController::didEndTextReplacementSession<UnifiedTextR
         markers.removeMarkers(node, offsetRange, { DocumentMarker::Type::UnifiedTextReplacement });
 
         if (!accepted && data.state != DocumentMarker::UnifiedTextReplacementData::State::Reverted)
-            replaceContentsOfRangeInSession(session.identifier, rangeToReplace, data.originalText);
+            replaceContentsOfRangeInSession(*state, rangeToReplace, data.originalText);
 
         return false;
     });
@@ -584,17 +533,14 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const Unifie
 
     m_page->chrome().client().cleanUpTextStylesForSessionID(session.identifier);
 
-    m_contextRanges.remove(session.identifier);
-    m_originalDocumentNodes.remove(session.identifier);
-    m_replacedDocumentNodes.remove(session.identifier);
-    m_replacementLocationOffsets.remove(session.identifier);
+    m_states.remove(session.identifier);
 }
 
 void UnifiedTextReplacementController::updateStateForSelectedReplacementIfNeeded()
 {
     // Optimization: If there are no ongoing sessions, there is no need for any of this logic to
     // be executed, since there will be no relevant document markers anyways.
-    if (m_contextRanges.isEmpty())
+    if (m_states.isEmpty())
         return;
 
     RefPtr document = this->document();
@@ -624,7 +570,34 @@ void UnifiedTextReplacementController::updateStateForSelectedReplacementIfNeeded
 
 std::optional<SimpleRange> UnifiedTextReplacementController::contextRangeForSessionWithID(const UnifiedTextReplacement::Session::ID& sessionID) const
 {
-    return makeSimpleRange(m_contextRanges.get(sessionID));
+    auto it = m_states.find(sessionID);
+    if (it == m_states.end())
+        return std::nullopt;
+
+    auto range = WTF::switchOn(it->value,
+        [](std::monostate) -> Ref<Range> { RELEASE_ASSERT_NOT_REACHED(); },
+        [](const PlainTextState& state) { return state.contextRange; },
+        [](const RichTextState& state) { return state.contextRange; }
+    );
+
+    return makeSimpleRange(range);
+}
+
+template<UnifiedTextReplacement::Session::ReplacementType Type>
+UnifiedTextReplacementController::StateFromReplacementType<Type>::Value* UnifiedTextReplacementController::stateForSession(const UnifiedTextReplacement::Session& session)
+{
+    if (UNLIKELY(session.replacementType != Type)) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    auto it = m_states.find(session.identifier);
+    if (UNLIKELY(it == m_states.end())) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    return std::get_if<typename UnifiedTextReplacementController::StateFromReplacementType<Type>::Value>(&it->value);
 }
 
 RefPtr<Document> UnifiedTextReplacementController::document() const
@@ -701,7 +674,8 @@ std::optional<std::tuple<Node&, DocumentMarker&>> UnifiedTextReplacementControll
     return std::nullopt;
 }
 
-void UnifiedTextReplacementController::replaceContentsOfRangeInSessionInternal(const UnifiedTextReplacement::Session::ID& sessionID, const SimpleRange& range, WTF::Function<void(Editor&)>&& replacementOperation)
+template<typename State>
+void UnifiedTextReplacementController::replaceContentsOfRangeInSessionInternal(State& state, const SimpleRange& range, WTF::Function<void()>&& replacementOperation)
 {
     RefPtr document = this->document();
     if (!document) {
@@ -709,18 +683,13 @@ void UnifiedTextReplacementController::replaceContentsOfRangeInSessionInternal(c
         return;
     }
 
-    auto sessionRange = contextRangeForSessionWithID(sessionID);
-    if (!sessionRange) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    auto sessionRange = makeSimpleRange(state.contextRange);
+    auto sessionRangeCount = characterCount(sessionRange);
+    auto resolvedCharacterRange = characterRange(sessionRange, range);
 
-    auto sessionRangeCount = characterCount(*sessionRange);
-
-    auto resolvedCharacterRange = characterRange(*sessionRange, range);
     document->selection().setSelection({ range });
 
-    replacementOperation(document->editor());
+    replacementOperation();
 
     auto selectedTextRange = document->selection().selection().firstRange();
     if (!selectedTextRange) {
@@ -756,20 +725,34 @@ void UnifiedTextReplacementController::replaceContentsOfRangeInSessionInternal(c
     }
 
     auto updatedLiveRange = createLiveRange(*newSessionRange);
-    m_contextRanges.set(sessionID, updatedLiveRange);
+    state.contextRange = updatedLiveRange;
 }
 
-void UnifiedTextReplacementController::replaceContentsOfRangeInSession(const UnifiedTextReplacement::Session::ID& sessionID, const SimpleRange& range, const String& replacementText)
+void UnifiedTextReplacementController::replaceContentsOfRangeInSession(PlainTextState& state, const SimpleRange& range, const String& replacementText)
 {
-    replaceContentsOfRangeInSessionInternal(sessionID, range, [&replacementText](Editor& editor) {
-        editor.replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
+    replaceContentsOfRangeInSessionInternal(state, range, [&] {
+        RefPtr document = this->document();
+        document->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
     });
 }
 
-void UnifiedTextReplacementController::replaceContentsOfRangeInSession(const UnifiedTextReplacement::Session::ID& sessionID, const SimpleRange& range, DocumentFragment& fragment, MatchStyle matchStyle)
+void UnifiedTextReplacementController::replaceContentsOfRangeInSession(RichTextState& state, const SimpleRange& range, RefPtr<DocumentFragment>&& fragment, MatchStyle matchStyle)
 {
-    replaceContentsOfRangeInSessionInternal(sessionID, range, [&fragment, matchStyle](Editor& editor) {
-        editor.replaceSelectionWithFragment(fragment, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, matchStyle == MatchStyle::Yes ? Editor::MatchStyle::Yes : Editor::MatchStyle::No, EditAction::InsertReplacement);
+    OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::PreventNesting, ReplaceSelectionCommand::SanitizeFragment, ReplaceSelectionCommand::SelectReplacement };
+    if (matchStyle == MatchStyle::Yes)
+        options.add(ReplaceSelectionCommand::MatchStyle);
+
+    replaceContentsOfRangeInSessionInternal(state, range, [&] {
+        RefPtr document = this->document();
+
+        auto selection = document->selection().selection();
+        if (selection.isNone() || !selection.isContentEditable())
+            return;
+
+        auto command = WebCore::ReplaceSelectionCommand::create(Ref { *document }, WTFMove(fragment), options, WebCore::EditAction::InsertReplacement);
+        command->apply();
+
+        state.commands.append(command);
     });
 }
 
