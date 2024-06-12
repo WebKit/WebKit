@@ -151,4 +151,9 @@ void RemoteFrame::documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&
     m_client->documentURLForConsoleLog(WTFMove(completionHandler));
 }
 
+OptionSet<AdvancedPrivacyProtections> RemoteFrame::advancedPrivacyProtections() const
+{
+    return m_advancedPrivacyProtections;
+}
+
 } // namespace WebCore

@@ -50,6 +50,8 @@ class Settings;
 class WeakPtrImplWithEventTargetData;
 class WindowProxy;
 
+enum class AdvancedPrivacyProtections : uint16_t;
+
 class Frame : public ThreadSafeRefCounted<Frame, WTF::DestructionThread::Main>, public CanMakeWeakPtr<Frame> {
 public:
     virtual ~Frame();
@@ -108,6 +110,7 @@ public:
 
     virtual String customUserAgent() const = 0;
     virtual String customUserAgentAsSiteSpecificQuirks() const = 0;
+    virtual OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const = 0;
 
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 

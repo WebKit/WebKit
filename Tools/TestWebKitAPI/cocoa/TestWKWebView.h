@@ -119,6 +119,7 @@ struct AutocorrectionContext {
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
 - (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script;
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
+- (id)objectByEvaluatingJavaScript:(NSString *)script inFrame:(WKFrameInfo *)frame;
 - (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments error:(NSError **)errorOut;
 - (unsigned)waitUntilClientWidthIs:(unsigned)expectedClientWidth;
 - (CGRect)elementRectFromSelector:(NSString *)selector;

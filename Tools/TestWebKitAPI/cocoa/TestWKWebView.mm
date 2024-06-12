@@ -541,6 +541,21 @@ static WebEvent *unwrap(BEKeyEntry *event)
     return evalResult.autorelease();
 }
 
+- (id)objectByEvaluatingJavaScript:(NSString *)script inFrame:(WKFrameInfo *)frame
+{
+    bool callbackComplete = false;
+    RetainPtr<id> evalResult;
+    [self _evaluateJavaScript:script withSourceURL:nil inFrame:frame inContentWorld:WKContentWorld.pageWorld withUserGesture:NO completionHandler:[&](id result, NSError *error) {
+        evalResult = result;
+        callbackComplete = true;
+        EXPECT_TRUE(!error);
+        if (error)
+            NSLog(@"Encountered error: %@ while evaluating script: %@", error, script);
+    }];
+    TestWebKitAPI::Util::run(&callbackComplete);
+    return evalResult.autorelease();
+}
+
 - (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script
 {
     bool callbackComplete = false;

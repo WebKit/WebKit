@@ -3069,13 +3069,7 @@ void Page::setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator* animat
 
 bool Page::fingerprintingProtectionsEnabled() const
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
-    if (!document)
-        return false;
-
-    RefPtr loader = document->loader();
-    return loader && loader->fingerprintingProtectionsEnabled();
+    return protectedMainFrame()->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections);
 }
 
 #if ENABLE(REMOTE_INSPECTOR)

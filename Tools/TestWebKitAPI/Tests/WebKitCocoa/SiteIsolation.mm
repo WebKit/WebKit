@@ -3392,4 +3392,35 @@ TEST(SiteIsolation, NavigateNestedIframeSameOriginBackForward)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
 }
 
+TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
+{
+    auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.mainBundle pathForResource:@"audio-fingerprinting" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:NULL];
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://frame.com/frame'></iframe>"_s } },
+        { "/frame"_s, { frameHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences _setNetworkConnectionIntegrityPolicy:_WKWebsiteNetworkConnectionIntegrityPolicyEnhancedTelemetry | _WKWebsiteNetworkConnectionIntegrityPolicyEnabled];
+    [configuration setDefaultWebpagePreferences:preferences.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+    }];
+    while (!childFrameInfo)
+        Util::spinRunLoop();
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screenX" inFrame:childFrameInfo.get()] intValue]);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screenY" inFrame:childFrameInfo.get()] intValue]);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screen.availLeft" inFrame:childFrameInfo.get()] intValue]);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screen.availTop" inFrame:childFrameInfo.get()] intValue]);
+}
+
 }

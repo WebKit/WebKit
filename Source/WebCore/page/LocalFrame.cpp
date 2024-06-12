@@ -1340,6 +1340,13 @@ String LocalFrame::customUserAgentAsSiteSpecificQuirks() const
     return { };
 }
 
+OptionSet<AdvancedPrivacyProtections> LocalFrame::advancedPrivacyProtections() const
+{
+    if (auto* documentLoader = loader().activeDocumentLoader())
+        return documentLoader->advancedPrivacyProtections();
+    return { };
+}
+
 } // namespace WebCore
 
 #undef FRAME_RELEASE_LOG_ERROR

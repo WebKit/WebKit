@@ -316,6 +316,7 @@ public:
 
     String customUserAgent() const final;
     String customUserAgentAsSiteSpecificQuirks() const final;
+    OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
 
 protected:
     void frameWasDisconnectedFromOwner() const final;
