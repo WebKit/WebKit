@@ -541,6 +541,32 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
 
         queueSize = gst_adapter_available(members->adapter.get());
         GST_TRACE_OBJECT(src, "available %" G_GSIZE_FORMAT, queueSize);
+
+        if (!queueSize && members->doesHaveEOS && members->readPosition < members->size) {
+            // Still no data, this could mean the download ended with early FIN
+            // from buggy web server. Reset request state and send new request
+            // to download the rest of the data.
+            members->requestedPosition = members->readPosition;
+            members->wasResponseReceived = false;
+            members->doesHaveEOS = false;
+            webKitWebSrcMakeRequest(src, members);
+
+            // Wait for the response headers.
+            members->responseCondition.wait(members.mutex(), [&] () {
+                return members->wasResponseReceived || members->isFlushing;
+            });
+
+            if (members->isFlushing)
+                return GST_FLOW_FLUSHING;
+
+            // Wait for data or EOS
+            members->responseCondition.wait(members.mutex(), [&] {
+                return gst_adapter_available(members->adapter.get()) || members->doesHaveEOS;
+            });
+
+            queueSize = gst_adapter_available(members->adapter.get());
+            GST_DEBUG_OBJECT(src, "available %" G_GSIZE_FORMAT, queueSize);
+        }
     }
 
     if (queueSize) {
