@@ -146,7 +146,7 @@ public:
     {
         m_videoConstraints = constraints;
 
-        auto resultingConstraints = m_source->extractVideoFrameSizeConstraints(constraints);
+        auto resultingConstraints = m_source->extractVideoPresetConstraints(constraints);
 
         bool didChange = false;
         if (resultingConstraints.width) {

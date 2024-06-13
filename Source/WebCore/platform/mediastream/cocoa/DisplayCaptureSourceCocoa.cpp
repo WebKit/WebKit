@@ -232,12 +232,12 @@ IntSize DisplayCaptureSourceCocoa::computeResizedVideoFrameSize(IntSize desiredS
     return intrinsicSize;
 }
 
-void DisplayCaptureSourceCocoa::setSizeFrameRateAndZoom(std::optional<int>, std::optional<int>, std::optional<double> frameRate, std::optional<double>)
+void DisplayCaptureSourceCocoa::setSizeFrameRateAndZoom(const VideoPresetConstraints& constraints)
 {
     // We do not need to handle width, height or zoom here since we capture at full size and let each video frame observer resize as needed.
     // FIXME: We should set frameRate according all video frame observers.
-    if (frameRate && *frameRate > this->frameRate())
-        setFrameRate(*frameRate);
+    if (constraints.frameRate && *constraints.frameRate > this->frameRate())
+        setFrameRate(*constraints.frameRate);
 }
 
 void DisplayCaptureSourceCocoa::emitFrame()

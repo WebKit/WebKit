@@ -304,13 +304,13 @@ void GStreamerVideoCaptureSource::generatePresets()
     setSupportedPresets(WTFMove(presets));
 }
 
-void GStreamerVideoCaptureSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+void GStreamerVideoCaptureSource::setSizeFrameRateAndZoom(const VideoPresetConstraints& constraints)
 {
-    RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
-    if (!width || !height)
+    RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(constraints);
+    if (!constraints.width || !constraints.height)
         return;
 
-    m_capturer->setSize({ *width, *height });
+    m_capturer->setSize({ *constraints.width, *constraints.height });
 }
 
 #undef GST_CAT_DEFAULT

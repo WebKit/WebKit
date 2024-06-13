@@ -174,12 +174,9 @@ void RealtimeVideoCaptureSource::updateCapabilities(RealtimeMediaSourceCapabilit
     capabilities.setZoom({ minimumZoom, maximumZoom });
 }
 
-bool RealtimeVideoCaptureSource::supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+bool RealtimeVideoCaptureSource::supportsSizeFrameRateAndZoom(const VideoPresetConstraints& constraints)
 {
-    if (!width && !height && !frameRate && !zoom)
-        return true;
-
-    return !!bestSupportedSizeFrameRateAndZoom(width, height, frameRate, zoom);
+    return !constraints.hasConstraints() || !!bestSupportedSizeFrameRateAndZoom(constraints);
 }
 
 bool RealtimeVideoCaptureSource::frameRateRangeIncludesRate(const FrameRateRange& range, double frameRate)
@@ -246,8 +243,12 @@ static inline double zoomFromPreset(const VideoPreset& preset, double currentZoo
     return currentZoom;
 }
 
-std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeVideoCaptureSource::bestSupportedSizeFrameRateAndZoom(std::optional<int> requestedWidth, std::optional<int> requestedHeight, std::optional<double> requestedFrameRate, std::optional<double> requestedZoom, TryPreservingSize tryPreservingSize)
+std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeVideoCaptureSource::bestSupportedSizeFrameRateAndZoom(const VideoPresetConstraints& constraints, TryPreservingSize tryPreservingSize)
 {
+    auto requestedWidth = constraints.width;
+    auto requestedHeight = constraints.height;
+    auto requestedFrameRate = constraints.frameRate;
+    auto requestedZoom = constraints.zoom;
     if (!requestedWidth && !requestedHeight && !requestedFrameRate && !requestedZoom)
         return { };
 
@@ -345,9 +346,9 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
 
     if (!exactSizePreset && !aspectRatioPreset && !resizePreset) {
         if (tryPreservingSize == TryPreservingSize::Yes)
-            return bestSupportedSizeFrameRateAndZoom(initialRequestedWidth, initialRequestedHeight, requestedFrameRate, requestedZoom, TryPreservingSize::No);
+            return bestSupportedSizeFrameRateAndZoom({ initialRequestedWidth, initialRequestedHeight, requestedFrameRate, requestedZoom }, TryPreservingSize::No);
         if (requestedFrameRate || requestedZoom)
-            return bestSupportedSizeFrameRateAndZoom(initialRequestedWidth, initialRequestedHeight, { }, { }, TryPreservingSize::No);
+            return bestSupportedSizeFrameRateAndZoom({ initialRequestedWidth, initialRequestedHeight, { }, { } }, TryPreservingSize::No);
 
         WTFLogAlways("RealtimeVideoCaptureSource::bestSupportedSizeFrameRateAndZoom failed supporting constraints %d %d %f %f", requestedWidth ? *requestedWidth : -1, requestedHeight ? *requestedHeight : -1, requestedFrameRate ? *requestedFrameRate : -1, requestedZoom ? *requestedZoom : -1);
         for (const auto& preset : presets())
@@ -393,33 +394,34 @@ void RealtimeVideoCaptureSource::dispatchVideoFrameToObservers(VideoFrame& video
 
 void RealtimeVideoCaptureSource::clientUpdatedSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
 {
-    setSizeFrameRateAndZoom(width, height, frameRate, zoom);
+    setSizeFrameRateAndZoom({ width, height, frameRate, zoom });
 }
 
-std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeVideoCaptureSource::bestSupportedSizeFrameRateAndZoomConsideringObservers(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeVideoCaptureSource::bestSupportedSizeFrameRateAndZoomConsideringObservers(const VideoPresetConstraints& constraints)
 {
     auto& settings = this->settings();
 
+    auto updatedConstraints = constraints;
     if (hasSeveralVideoFrameObserversWithAdaptors()) {
         // FIXME: We only change settings if capture resolution is below requested one. We should get the best preset for all clients.
-        if (width && *width <= static_cast<int>(settings.width()))
-            width = { };
-        if (height && *height <= static_cast<int>(settings.height()))
-            height = { };
+        if (constraints.width && *constraints.width <= static_cast<int>(settings.width()))
+            updatedConstraints.width = { };
+        if (constraints.height && *constraints.height <= static_cast<int>(settings.height()))
+            updatedConstraints.height = { };
 
-        if (frameRate && *frameRate <= static_cast<double>(settings.frameRate()))
-            frameRate = { };
+        if (constraints.frameRate && *constraints.frameRate <= static_cast<double>(settings.frameRate()))
+            updatedConstraints.frameRate = { };
     }
 
-    if (!width && !height && !frameRate && !zoom)
+    if (!updatedConstraints.hasConstraints())
         return { };
 
-    return bestSupportedSizeFrameRateAndZoom(width, height, frameRate, zoom);
+    return bestSupportedSizeFrameRateAndZoom(updatedConstraints);
 }
 
-void RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+void RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(const VideoPresetConstraints& constraints)
 {
-    auto match = bestSupportedSizeFrameRateAndZoomConsideringObservers(width, height, frameRate, zoom);
+    auto match = bestSupportedSizeFrameRateAndZoomConsideringObservers(constraints);
     ERROR_LOG_IF(loggerPtr() && !match, LOGIDENTIFIER, "unable to find a preset that would match the size, frame rate and zoom");
     if (!match)
         return;
@@ -466,7 +468,7 @@ auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref
 
     std::optional<CaptureSizeFrameRateAndZoom> newPresetForPhoto;
     if (photoSettings.imageHeight || photoSettings.imageWidth) {
-        newPresetForPhoto = bestSupportedSizeFrameRateAndZoomConsideringObservers(photoSettings.imageWidth, photoSettings.imageHeight, { }, { });
+        newPresetForPhoto = bestSupportedSizeFrameRateAndZoomConsideringObservers({ photoSettings.imageWidth, photoSettings.imageHeight, { }, { } });
         ERROR_LOG_IF(loggerPtr() && !newPresetForPhoto, LOGIDENTIFIER, "unable to find a preset to match the size of requested photo, using current preset");
 
         if (newPresetForPhoto && m_currentPreset && m_currentPreset->size() == newPresetForPhoto->encodingPreset->size())

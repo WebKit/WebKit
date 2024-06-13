@@ -457,7 +457,7 @@ void RealtimeMediaSource::captureFailed()
     end();
 }
 
-bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<int>, std::optional<int>, std::optional<double>, std::optional<double>)
+bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(const VideoPresetConstraints&)
 {
     // The size and frame rate are within the capability limits, so they are supported.
     return true;
@@ -545,9 +545,9 @@ std::optional<MediaConstraintType> RealtimeMediaSource::hasInvalidSizeFrameRateA
     }
 
     // Each of the non-null values is supported individually, see if they all can be applied at the same time.
-    if (!supportsSizeFrameRateAndZoom(width, height, WTFMove(frameRate), WTFMove(zoom))) {
+    if (!supportsSizeFrameRateAndZoom({ width, height, frameRate, zoom })) {
         // Let's try without frame rate and zoom constraints if not mandatory.
-        if ((!frameRateConstraint || !frameRateConstraint->isMandatory()) && (!zoomConstraint || !zoomConstraint->isMandatory()) && supportsSizeFrameRateAndZoom(WTFMove(width), WTFMove(height), { }, { }))
+        if ((!frameRateConstraint || !frameRateConstraint->isMandatory()) && (!zoomConstraint || !zoomConstraint->isMandatory()) && supportsSizeFrameRateAndZoom({ width, height, { }, { } }))
             return { };
 
         if (widthConstraint)
@@ -781,18 +781,18 @@ static void applyNumericConstraint(const NumericConstraint<ValueType>& constrain
         (source.*applier)(value);
 }
 
-void RealtimeMediaSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+void RealtimeMediaSource::setSizeFrameRateAndZoom(const VideoPresetConstraints& constraints)
 {
     IntSize size;
-    if (width)
-        size.setWidth(width.value());
-    if (height)
-        size.setHeight(height.value());
+    if (constraints.width)
+        size.setWidth(*constraints.width);
+    if (constraints.height)
+        size.setHeight(*constraints.height);
     setSize(size);
-    if (frameRate)
-        setFrameRate(frameRate.value());
-    if (zoom)
-        setZoom(zoom.value());
+    if (constraints.frameRate)
+        setFrameRate(*constraints.frameRate);
+    if (constraints.zoom)
+        setZoom(*constraints.zoom);
 }
 
 void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, const MediaConstraint& constraint)
@@ -1166,17 +1166,17 @@ std::optional<MediaConstraintType> RealtimeMediaSource::hasAnyInvalidConstraint(
     return { };
 }
 
-RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideoFrameSizeConstraints(const MediaConstraints& constraints)
+RealtimeMediaSource::VideoPresetConstraints RealtimeMediaSource::extractVideoPresetConstraints(const MediaConstraints& constraints)
 {
     MediaTrackConstraintSetMap candidates;
     if (auto invalidConstraint = selectSettings(constraints, candidates))
         return { };
-    return extractVideoFrameSizeConstraints(candidates);
+    return extractVideoPresetConstraints(candidates);
 }
 
-RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideoFrameSizeConstraints(const MediaTrackConstraintSetMap& constraints)
+RealtimeMediaSource::VideoPresetConstraints RealtimeMediaSource::extractVideoPresetConstraints(const MediaTrackConstraintSetMap& constraints)
 {
-    VideoFrameSizeConstraints result;
+    VideoPresetConstraints result;
     auto& capabilities = this->capabilities();
 
     if (auto constraint = constraints.width()) {
@@ -1210,6 +1210,13 @@ RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideo
         }
     }
 
+    if (auto constraint = constraints.zoom()) {
+        if (capabilities.supportsZoom()) {
+            auto range = capabilities.zoom();
+            result.zoom = constraint->valueForCapabilityRange(this->zoom(), range);
+        }
+    }
+
     return result;
 }
 
@@ -1220,19 +1227,10 @@ void RealtimeMediaSource::applyConstraints(const MediaTrackConstraintSetMap& con
 
     startApplyingConstraints();
 
-    auto videoFrameSizeConstraints = extractVideoFrameSizeConstraints(constraints);
+    auto videoPresetConstraints = extractVideoPresetConstraints(constraints);
 
-    std::optional<double> zoom;
-    if (auto constraint = constraints.zoom()) {
-        auto& capabilities = this->capabilities();
-        if (capabilities.supportsZoom()) {
-            auto range = capabilities.zoom();
-            zoom = constraint->valueForCapabilityRange(this->zoom(), range);
-        }
-    }
-
-    if (videoFrameSizeConstraints.width || videoFrameSizeConstraints.height || videoFrameSizeConstraints.frameRate || zoom)
-        setSizeFrameRateAndZoom(videoFrameSizeConstraints.width, videoFrameSizeConstraints.height, videoFrameSizeConstraints.frameRate, WTFMove(zoom));
+    if (videoPresetConstraints.hasConstraints())
+        setSizeFrameRateAndZoom(videoPresetConstraints);
 
     constraints.forEach([&] (auto constraintType, auto& constraint) {
         if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::AspectRatio || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom)
