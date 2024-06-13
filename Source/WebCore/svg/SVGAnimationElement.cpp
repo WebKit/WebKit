@@ -247,31 +247,17 @@ ExceptionOr<float> SVGAnimationElement::getSimpleDuration() const
         return Exception { ExceptionCode::NotSupportedError, "The simple duration is not determined on the given element."_s };
     return narrowPrecisionToFloat(simpleDuration.value());
 }    
-    
-void SVGAnimationElement::beginElement()
-{
-    beginElementAt(0);
-}
 
 void SVGAnimationElement::beginElementAt(float offset)
 {
-    if (!std::isfinite(offset))
-        return;
-    SMILTime elapsed = this->elapsed();
-    addBeginTime(elapsed, elapsed + offset, SMILTimeWithOrigin::ScriptOrigin);
-}
-
-void SVGAnimationElement::endElement()
-{
-    endElementAt(0);
+    ASSERT(std::isfinite(offset));
+    addInstanceTime(Begin, elapsed() + offset, SMILTimeWithOrigin::ScriptOrigin);
 }
 
 void SVGAnimationElement::endElementAt(float offset)
 {
-    if (!std::isfinite(offset))
-        return;
-    SMILTime elapsed = this->elapsed();
-    addEndTime(elapsed, elapsed + offset, SMILTimeWithOrigin::ScriptOrigin);
+    ASSERT(std::isfinite(offset));
+    addInstanceTime(End, elapsed() + offset, SMILTimeWithOrigin::ScriptOrigin);
 }
 
 void SVGAnimationElement::updateAnimationMode()

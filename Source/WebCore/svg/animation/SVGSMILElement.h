@@ -109,9 +109,6 @@ public:
     void dispatchPendingEvent(SMILEventSender*, const AtomString& eventType);
 
 protected:
-    void addBeginTime(SMILTime eventTime, SMILTime endTime, SMILTimeWithOrigin::Origin = SMILTimeWithOrigin::ParserOrigin);
-    void addEndTime(SMILTime eventTime, SMILTime endTime, SMILTimeWithOrigin::Origin = SMILTimeWithOrigin::ParserOrigin);
-
     void setInactive() { m_activeState = Inactive; }
 
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
@@ -121,6 +118,10 @@ protected:
     virtual void setAttributeName(const QualifiedName&);
 
     void didFinishInsertingNode() override;
+
+    enum BeginOrEnd { Begin, End };
+
+    void addInstanceTime(BeginOrEnd, SMILTime, SMILTimeWithOrigin::Origin = SMILTimeWithOrigin::ParserOrigin);
 
 private:
     void buildPendingResource() override;
@@ -136,7 +137,6 @@ private:
     QualifiedName constructAttributeName() const;
     void updateAttributeName();
 
-    enum BeginOrEnd { Begin, End };
     SMILTime findInstanceTime(BeginOrEnd, SMILTime minimumTime, bool equalsMinimumOK) const;
     void resolveFirstInterval();
     bool resolveNextInterval();
@@ -166,9 +166,6 @@ private:
     RefPtr<Element> eventBaseFor(const Condition&);
 
     void disconnectConditions();
-
-    // Event base timing
-    void handleConditionEvent(Condition*);
 
     // Syncbase timing
     enum NewOrExistingInterval { NewInterval, ExistingInterval };
