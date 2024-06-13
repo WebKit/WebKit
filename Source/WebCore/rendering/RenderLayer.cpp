@@ -715,7 +715,7 @@ bool RenderLayer::willCompositeClipPath() const
     if (renderer().hasMask())
         return false;
 
-    return (clipPath->type() != PathOperation::Shape || clipPath->type() == PathOperation::Shape) && GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape);
+    return clipPath->type() != PathOperation::Shape || GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape);
 }
 
 void RenderLayer::dirtyNormalFlowList()
