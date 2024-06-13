@@ -18,3 +18,5 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=xrsimulator*][arch=x86_64] = $(ARM_FILES) $(X86_F
 EXCLUDED_SOURCE_FILE_NAMES[sdk=xros*] = $(X86_FILES) *_mmx.c *_neon_dotprod.c
 
 OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS);
+
+CONFIGURATION_BUILD_DIR = $(BUILT_PRODUCTS_DIR)/libwebrtc
