@@ -730,18 +730,12 @@ struct TextUnderElementMode {
         IncludeNameFromContentsChildren, // This corresponds to ARIA concept: nameFrom
     };
 
-    Children childrenInclusion;
-    bool includeFocusableContent;
+    Children childrenInclusion { Children::SkipIgnoredChildren };
+    bool includeFocusableContent { false };
     bool considerHiddenState { true };
     bool inHiddenSubtree { false };
     TrimWhitespace trimWhitespace { TrimWhitespace::Yes };
-    Node* ignoredChildNode;
-
-    TextUnderElementMode(Children childrenInclusion = Children::SkipIgnoredChildren, bool includeFocusable = false, Node* ignoredChild = nullptr)
-        : childrenInclusion(childrenInclusion)
-        , includeFocusableContent(includeFocusable)
-        , ignoredChildNode(ignoredChild)
-    { }
+    Node* ignoredChildNode { nullptr };
 
     bool isHidden() { return considerHiddenState && inHiddenSubtree; }
 };
@@ -1143,7 +1137,7 @@ public:
 
     // Methods for determining accessibility text.
     virtual String stringValue() const = 0;
-    virtual String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const = 0;
+    virtual String textUnderElement(TextUnderElementMode = { }) const = 0;
     virtual String text() const = 0;
     virtual unsigned textLength() const = 0;
 #if PLATFORM(COCOA)

@@ -433,7 +433,7 @@ private:
     void setPreventKeyboardDOMEventDispatch(bool) final;
 #endif
 
-    String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const final;
+    String textUnderElement(TextUnderElementMode = { }) const final;
     std::optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const final;
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const final;
     void increment() final;
