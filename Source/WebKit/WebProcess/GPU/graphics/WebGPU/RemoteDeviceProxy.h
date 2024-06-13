@@ -69,11 +69,6 @@ private:
     {
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
-    template<typename T>
-    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
-    {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
-    }
     template<typename T, typename C>
     WARN_UNUSED_RETURN IPC::StreamClientConnection::AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler)
     {

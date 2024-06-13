@@ -67,10 +67,10 @@ private:
     {
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
-    template<typename T>
-    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
+    template<typename T, typename C>
+    WARN_UNUSED_RETURN IPC::StreamClientConnection::AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing(), defaultSendTimeout);
     }
 
     void submit(Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>>&&) final;

@@ -62,10 +62,10 @@ void RemoteQueueProxy::submit(Vector<std::reference_wrapper<WebCore::WebGPU::Com
 
 void RemoteQueueProxy::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 {
-    auto sendResult = sendSync(Messages::RemoteQueue::OnSubmittedWorkDone());
-    UNUSED_VARIABLE(sendResult);
-
-    callback();
+    auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::OnSubmittedWorkDone(), [callback = WTFMove(callback)]() mutable {
+        callback();
+    });
+    UNUSED_PARAM(sendResult);
 }
 
 void RemoteQueueProxy::writeBuffer(
