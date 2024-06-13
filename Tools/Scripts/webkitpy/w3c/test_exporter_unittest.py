@@ -218,6 +218,14 @@ Subversion Revision: 231920
 diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values-expected.txt b/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values-expected.txt
 
 +change to expected
+
+diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.serviceworker.html b/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.serviceworker.html
+
++change to expected
+
+diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.sharedworker.html b/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.sharedworker.html
+
++change to expected
 """
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-b', '1234', '-c', '-n', 'USER', '-t', 'TOKEN'])
         exporter = WebPlatformTestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub, TestExporterTest.MockWPTLinter)
