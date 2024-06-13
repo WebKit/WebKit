@@ -1055,11 +1055,11 @@ void TreeResolver::resolveComposedTree()
             if (element.hasCustomStyleResolveCallbacks())
                 element.didRecalcStyle(elementUpdate.change);
 
-            style = elementUpdate.style.get();
             change = elementUpdate.change;
             descendantsToResolve = elementDescendantsToResolve;
 
-            if (style) {
+            if (elementUpdate.style && (change != Change::None || elementUpdate.recompositeLayer)) {
+                style = elementUpdate.style.get();
                 m_update->addElement(element, parent.element, WTFMove(elementUpdate));
 
                 if (&element == m_document.documentElement())
