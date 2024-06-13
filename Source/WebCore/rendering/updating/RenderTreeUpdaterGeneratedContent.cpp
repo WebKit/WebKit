@@ -304,13 +304,13 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         return;
     }
 
-    CheckedPtr nodeBeforeWritingSuggestionsTextRenderer = dynamicDowncast<RenderText>(nodeBeforeWritingSuggestions->renderer());
+    WeakPtr nodeBeforeWritingSuggestionsTextRenderer = dynamicDowncast<RenderText>(nodeBeforeWritingSuggestions->renderer());
     if (!nodeBeforeWritingSuggestionsTextRenderer) {
         destroyWritingSuggestionsIfNeeded();
         return;
     }
 
-    CheckedPtr parentForWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->parent();
+    WeakPtr parentForWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->parent();
     if (!parentForWritingSuggestions) {
         destroyWritingSuggestionsIfNeeded();
         return;
@@ -351,13 +351,18 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, renderer.document(), WTFMove(newStyle));
         newWritingSuggestionsRenderer->initializeStyle();
 
-        CheckedPtr rendererAfterWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->nextSibling();
+        WeakPtr rendererAfterWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->nextSibling();
 
         auto writingSuggestionsText = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, renderer.document(), writingSuggestionData->content());
         m_updater.m_builder.attach(*newWritingSuggestionsRenderer, WTFMove(writingSuggestionsText));
 
         editor.setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
         m_updater.m_builder.attach(*parentForWritingSuggestions, WTFMove(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
+
+        if (!parentForWritingSuggestions) {
+            destroyWritingSuggestionsIfNeeded();
+            return;
+        }
 
         auto* prefixNode = nodeBeforeWritingSuggestionsTextRenderer->textNode();
         if (!prefixNode) {
