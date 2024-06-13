@@ -187,8 +187,8 @@ class MacTest(darwin_testcase.DarwinTest):
         self.assertEqual(search_path[4], '/additional_testing_path/mac-add-mountainlion-wk1')
         self.assertEqual(search_path[5], '/mock-checkout/LayoutTests/platform/mac-mountainlion-wk1')
 
-    def test_sonoma_baseline_search_path(self):
-        search_path = self.make_port(port_name='macos-sonoma').default_baseline_search_path()
+    def test_sequoia_baseline_search_path(self):
+        search_path = self.make_port(port_name='macos-sequoia').default_baseline_search_path()
         self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-wk1')
         self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac')
 
