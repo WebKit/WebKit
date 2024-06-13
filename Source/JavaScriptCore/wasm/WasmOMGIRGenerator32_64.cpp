@@ -4371,10 +4371,12 @@ PatchpointExceptionHandle OMGIRGenerator::preparePatchpointForExceptions(BasicBl
 auto OMGIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& signature, ControlType& data, ResultList& results) -> PartialResult
 {
     Value* payload = emitCatchImpl(CatchKind::Catch, data, exceptionIndex);
+    unsigned offset = 0;
     for (unsigned i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
         Type type = signature.as<FunctionSignature>()->argumentType(i);
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(type), origin(), payload, i * sizeof(uint64_t));
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(type), origin(), payload, offset * sizeof(uint64_t));
         results.append(push(value));
+        offset += type.kind == TypeKind::V128 ? 2 : 1;
     }
     TRACE_CF("CATCH");
     return { };
@@ -4474,14 +4476,12 @@ auto OMGIRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& a
     PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin(), cloningForbidden(Patchpoint));
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
-    for (unsigned i = 0; i < args.size(); ++i) {
-        // Note: SIMD values can appear here, but should never be read at runtime because this will throw an un-catchable TypeError instead.
-        // Nonetheless, they may clobber important things if they aren't treated as doubles.
-        auto arg = get(args[i]);
-        if (args[i]->type().isVector())
-            arg = constant(Double, 0);
-        patch->append(arg, ValueRep::stackArgument(i * sizeof(EncodedJSValue)));
+    unsigned offset = 0;
+    for (auto arg : args) {
+        patch->append(get(arg), ValueRep::stackArgument(offset * sizeof(EncodedJSValue)));
+        offset += arg->type().isVector() ? 2 : 1;
     }
+    m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, offset);
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patch);
     patch->setGenerator([this, exceptionIndex, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {

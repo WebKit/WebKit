@@ -3520,20 +3520,18 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addDelegateToUnreachable(ControlType& t
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& arguments, Stack&)
 {
-    Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), arguments.size() * sizeof(uint64_t));
-    m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
 
     LOG_INSTRUCTION("Throw", arguments);
 
-    for (unsigned i = 0; i < arguments.size(); i++) {
-        Location stackLocation = Location::fromStackArgument(i * sizeof(uint64_t));
-        Value argument = arguments[i];
-        if (argument.type() == TypeKind::V128)
-            emitMove(Value::fromF64(0), stackLocation);
-        else
-            emitMove(argument, stackLocation);
-        consume(argument);
+    unsigned offset = 0;
+    for (auto arg : arguments) {
+        Location stackLocation = Location::fromStackArgument(offset * sizeof(uint64_t));
+        emitMove(arg, stackLocation);
+        consume(arg);
+        offset += arg.type() == TypeKind::V128 ? 2 : 1;
     }
+    Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), offset * sizeof(uint64_t));
+    m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
 
     ++m_callSiteIndex;
     bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
