@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DisplayLink.h"
 
-#if HAVE(DISPLAY_LINK) && !HAVE(CA_DISPLAY_LINK_MAC)
+#if HAVE(DISPLAY_LINK)
 
 #include "Logging.h"
 #include <wtf/ProcessPrivilege.h>
@@ -116,4 +116,4 @@ CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const
 
 } // namespace WebKit
 
-#endif // HAVE(DISPLAY_LINK) && !HAVE(CA_DISPLAY_LINK_MAC)
+#endif // HAVE(DISPLAY_LINK)

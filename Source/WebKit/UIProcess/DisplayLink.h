@@ -37,11 +37,7 @@
 #include <wtf/Lock.h>
 
 #if PLATFORM(MAC)
-#if HAVE(CA_DISPLAY_LINK_MAC)
-OBJC_CLASS WKDisplayLinkHandler;
-#else
 #include <CoreVideo/CVDisplayLink.h>
-#endif
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -87,16 +83,12 @@ public:
 
     void setObserverPreferredFramesPerSecond(Client&, DisplayLinkObserverID, WebCore::FramesPerSecond);
 
-#if HAVE(CA_DISPLAY_LINK_MAC)
-    void displayLinkHandlerCallbackFired();
-#endif
-
 #if PLATFORM(GTK) || PLATFORM(WPE)
     DisplayVBlankMonitor& vblankMonitor() const { return *m_vblankMonitor; }
 #endif
 
 private:
-#if PLATFORM(MAC) && !HAVE(CA_DISPLAY_LINK_MAC)
+#if PLATFORM(MAC)
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
     static WebCore::FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
 #endif
@@ -121,11 +113,7 @@ private:
     };
 
 #if PLATFORM(MAC)
-#if HAVE(CA_DISPLAY_LINK_MAC)
-    RetainPtr<WKDisplayLinkHandler> m_displayLinkHandler;
-#else
     CVDisplayLinkRef m_displayLink { nullptr };
-#endif
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::unique_ptr<DisplayVBlankMonitor> m_vblankMonitor;

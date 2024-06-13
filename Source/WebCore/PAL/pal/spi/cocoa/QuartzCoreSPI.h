@@ -65,17 +65,12 @@
 #ifdef __OBJC__
 typedef struct _CARenderContext CARenderContext;
 
-#if PLATFORM(IOS_FAMILY) || HAVE(CA_DISPLAY_LINK_MAC)
-@interface CADisplayLink ()
-@property (readonly, nonatomic) CFTimeInterval maximumRefreshRate;
-@end
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 @interface CADisplay : NSObject
 @end
 
 @interface CADisplayLink ()
+@property (readonly, nonatomic) CFTimeInterval maximumRefreshRate;
 @property (readonly, nonatomic) CADisplay *display;
 @end
 #endif

@@ -31,7 +31,6 @@
 #import "APIHitTestResult.h"
 #import "MessageSenderInlines.h"
 #import "WKNSURLExtras.h"
-#import "WebFrameProxy.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebPageProxyMessages.h"

@@ -538,9 +538,8 @@ UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
 
 UIProcess/mac/CorrectionPanel.mm
 UIProcess/mac/DisplayCaptureSessionManager.mm
-UIProcess/mac/DisplayLinkMac.mm
+UIProcess/mac/DisplayLinkMac.cpp
 UIProcess/mac/HighPerformanceGPUManager.mm
-UIProcess/mac/LegacyDisplayLinkMac.cpp
 UIProcess/mac/LegacySessionStateCoding.cpp
 UIProcess/mac/PageClientImplMac.mm
 UIProcess/mac/SecItemShimProxy.cpp
