@@ -124,7 +124,8 @@ JSC_DEFINE_HOST_FUNCTION(mapProtoFuncClear, (JSGlobalObject* globalObject, CallF
     JSMap* map = getMap(globalObject, callFrame->thisValue());
     RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
 
-    map->clear(vm);
+    map->clear(globalObject);
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
     return JSValue::encode(jsUndefined());
 }
 
@@ -184,7 +185,7 @@ inline JSValue createMapIteratorObject(JSGlobalObject* globalObject, CallFrame* 
     JSMap* map = getMap(globalObject, thisValue);
     RETURN_IF_EXCEPTION(scope, jsUndefined());
 
-    return JSMapIterator::create(vm, globalObject->mapIteratorStructure(), map, kind);
+    RELEASE_AND_RETURN(scope, JSMapIterator::create(globalObject, globalObject->mapIteratorStructure(), map, kind));
 }
 
 JSC_DEFINE_HOST_FUNCTION(mapProtoFuncValues, (JSGlobalObject* globalObject, CallFrame* callFrame))

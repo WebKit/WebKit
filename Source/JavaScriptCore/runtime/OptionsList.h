@@ -581,6 +581,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, wasmIPIntTiersUpToOMG, true, Normal, "Allow IPInt to tier up to OMG"_s) \
     v(Bool, useInterpretedJSEntryWrappers, false, Normal, "Allow some JS->Wasm wrappers to be replaced by jit-less versions."_s) \
     v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing."_s) \
+    v(Bool, dumpOrderedHashTable, false, Normal, ""_s) \
     \
     /* Feature Flags */\
     \

@@ -41,11 +41,19 @@ JSSetIterator* JSSetIterator::createWithInitialValues(VM& vm, Structure* structu
     return iterator;
 }
 
-void JSSetIterator::finishCreation(VM& vm, JSSet* iteratedObject, IterationKind kind)
+void JSSetIterator::finishCreation(JSGlobalObject* globalObject,  JSSet* iteratedObject, IterationKind kind)
 {
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     Base::finishCreation(vm);
-    internalField(Field::SetBucket).set(vm, this, iteratedObject->head());
-    internalField(Field::IteratedObject).set(vm, this, iteratedObject);
+    setEntry(vm, 0);
+    setIteratedObject(vm, iteratedObject);
+
+    JSCell* storage = iteratedObject->materialize(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+    setStorage(vm, storage);
+
     internalField(Field::Kind).set(vm, this, jsNumber(static_cast<int32_t>(kind)));
 }
 
@@ -74,6 +82,32 @@ JSValue JSSetIterator::createPair(JSGlobalObject* globalObject, JSValue key, JSV
     args.append(value);
     ASSERT(!args.hasOverflowed());
     return constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), args);
+}
+
+JSC_DEFINE_HOST_FUNCTION(setIteratorPrivateFuncSetIteratorNext, (JSGlobalObject * globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argument(0).isCell());
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    if (cell == vm.orderedHashTableSentinel())
+        return JSValue::encode(cell);
+
+    JSSetIterator* iterator = jsCast<JSSetIterator*>(cell);
+    return JSValue::encode(iterator->nextTransition(vm));
+}
+
+JSC_DEFINE_HOST_FUNCTION(setIteratorPrivateFuncSetIteratorKey, (JSGlobalObject * globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argument(0).isCell());
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    if (cell == vm.orderedHashTableSentinel())
+        return JSValue::encode(cell);
+
+    JSSetIterator* iterator = jsCast<JSSetIterator*>(cell);
+    return JSValue::encode(iterator->nextKey(vm));
 }
 
 }

@@ -44,7 +44,7 @@ class JSImmutableButterfly : public JSCell {
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue, IndexingType);
 
@@ -193,7 +193,7 @@ public:
         return offsetOfData() + numItems * sizeof(WriteBarrier<Unknown>);
     }
 
-private:
+protected:
     JSImmutableButterfly(VM& vm, Structure* structure, unsigned length)
         : Base(vm, structure)
     {

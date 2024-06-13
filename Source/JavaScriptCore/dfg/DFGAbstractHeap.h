@@ -73,7 +73,9 @@ namespace JSC { namespace DFG {
     macro(MathDotRandomState) \
     macro(JSDateFields) \
     macro(JSMapFields) \
+    macro(JSMapIteratorFields) \
     macro(JSSetFields) \
+    macro(JSSetIteratorFields) \
     macro(JSWeakMapFields) \
     macro(JSWeakSetFields) \
     macro(JSInternalFields) \

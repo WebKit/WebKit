@@ -1153,6 +1153,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Operations.h
     runtime/Options.h
     runtime/OptionsList.h
+    runtime/OrderedHashTable.h
+    runtime/OrderedHashTableAccessor.h
     runtime/PageCount.h
     runtime/ParseInt.h
     runtime/PrivateFieldPutKind.h

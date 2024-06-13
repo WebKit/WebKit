@@ -151,9 +151,13 @@ enum class LinkTimeConstant : int32_t;
     macro(arrayIteratorFieldIndex) \
     macro(arrayIteratorFieldIteratedObject) \
     macro(arrayIteratorFieldKind) \
-    macro(mapIteratorFieldMapBucket) \
+    macro(mapIteratorFieldEntry) \
+    macro(mapIteratorFieldIteratedObject) \
+    macro(mapIteratorFieldStorage) \
     macro(mapIteratorFieldKind) \
-    macro(setIteratorFieldSetBucket) \
+    macro(setIteratorFieldEntry) \
+    macro(setIteratorFieldIteratedObject) \
+    macro(setIteratorFieldStorage) \
     macro(setIteratorFieldKind) \
     macro(stringIteratorFieldIndex) \
     macro(stringIteratorFieldIteratedString) \
@@ -168,11 +172,10 @@ enum class LinkTimeConstant : int32_t;
     macro(AsyncGeneratorSuspendReasonYield) \
     macro(AsyncGeneratorSuspendReasonAwait) \
     macro(AsyncGeneratorSuspendReasonNone) \
-    macro(abstractModuleRecordFieldState) \
+    macro(abstractModuleRecordFieldState)
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_CUSTOM_EACH_NAME(macro) \
-    macro(sentinelMapBucket) \
-    macro(sentinelSetBucket) \
+    macro(orderedHashTableSentinel)
 
 class BytecodeIntrinsicRegistry {
     WTF_MAKE_NONCOPYABLE(BytecodeIntrinsicRegistry);

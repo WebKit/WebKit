@@ -25,15 +25,13 @@
 
 #pragma once
 
-#include "HashMapImpl.h"
-#include "JSObject.h"
+#include "OrderedHashTable.h"
 
 namespace JSC {
 
-class JSMap final : public HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>> {
-    using Base = HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>;
+class JSMap final : public OrderedHashMap {
+    using Base = OrderedHashMap;
 public:
-
     DECLARE_EXPORT_INFO;
 
     template<typename CellType, SubspaceAccess mode>

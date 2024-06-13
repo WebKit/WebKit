@@ -273,11 +273,16 @@ inline CapabilityLevel canCompile(Node* node)
     case IsCellWithType:
     case MapHash:
     case NormalizeMapKey:
-    case GetMapBucket:
-    case GetMapBucketHead:
-    case GetMapBucketNext:
-    case LoadKeyFromMapBucket:
-    case LoadValueFromMapBucket:
+    case GetMapKeyIndex:
+    case LoadMapValue:
+    case GetMapIterationNext:
+    case GetMapIterationEntry:
+    case GetMapIterationEntryKey:
+    case GetMapIterationEntryValue:
+    case GetMapStorage:
+    case MapIteratorNext:
+    case MapIteratorKey:
+    case MapIteratorValue:
     case ExtractValueFromWeakMapGet:
     case SetAdd:
     case MapSet:
@@ -548,7 +553,9 @@ CapabilityLevel canCompile(Graph& graph)
                 case HeapBigIntUse:
                 case DateObjectUse:
                 case MapObjectUse:
+                case MapIteratorObjectUse:
                 case SetObjectUse:
+                case SetIteratorObjectUse:
                 case WeakMapObjectUse:
                 case WeakSetObjectUse:
                 case DataViewObjectUse:

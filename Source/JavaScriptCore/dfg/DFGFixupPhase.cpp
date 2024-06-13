@@ -2723,7 +2723,13 @@ private:
             break;
         }
 
-        case GetMapBucket:
+        case LoadMapValue:
+            fixEdge<MapObjectUse>(node->child1());
+            fixEdge<Int32Use>(node->child2());
+            break;
+
+        case GetMapKeyIndex:
+            // hash table
             if (node->child1().useKind() == MapObjectUse)
                 fixEdge<MapObjectUse>(node->child1());
             else if (node->child1().useKind() == SetObjectUse)
@@ -2731,6 +2737,7 @@ private:
             else
                 RELEASE_ASSERT_NOT_REACHED();
 
+            // key
 #if USE(JSVALUE64)
             if (node->child2()->shouldSpeculateBoolean())
                 fixEdge<BooleanUse>(node->child2());
@@ -2756,10 +2763,22 @@ private:
             fixEdge<UntypedUse>(node->child2());
 #endif // USE(JSVALUE64)
 
+            // hash value
             fixEdge<Int32Use>(node->child3());
             break;
 
-        case GetMapBucketHead:
+        case GetMapIterationNext:
+            fixEdge<CellUse>(node->child1());
+            fixEdge<Int32Use>(node->child2());
+            break;
+
+        case GetMapIterationEntry:
+        case GetMapIterationEntryKey:
+        case GetMapIterationEntryValue:
+            fixEdge<CellUse>(node->child1());
+            break;
+
+        case GetMapStorage:
             if (node->child1().useKind() == MapObjectUse)
                 fixEdge<MapObjectUse>(node->child1());
             else if (node->child1().useKind() == SetObjectUse)
@@ -2768,10 +2787,15 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
             break;
 
-        case GetMapBucketNext:
-        case LoadKeyFromMapBucket:
-        case LoadValueFromMapBucket:
-            fixEdge<CellUse>(node->child1());
+        case MapIteratorNext:
+        case MapIteratorKey:
+        case MapIteratorValue:
+            if (node->child1().useKind() == MapIteratorObjectUse)
+                fixEdge<MapIteratorObjectUse>(node->child1());
+            else if (node->child1().useKind() == SetIteratorObjectUse)
+                fixEdge<SetIteratorObjectUse>(node->child1());
+            else
+                RELEASE_ASSERT_NOT_REACHED();
             break;
 
         case MapHash: {

@@ -1985,8 +1985,12 @@ public:
         case ToObject:
         case CallNumberConstructor:
         case CallObjectConstructor:
-        case LoadKeyFromMapBucket:
-        case LoadValueFromMapBucket:
+        case MapIteratorKey:
+        case MapIteratorValue:
+        case GetMapIterationEntryKey:
+        case GetMapIterationEntryValue:
+        case GetMapKeyIndex:
+        case LoadMapValue:
         case CallDOMGetter:
         case CallDOM:
         case ParseInt:
@@ -3400,7 +3404,7 @@ public:
 
     bool hasBucketOwnerType()
     {
-        return op() == GetMapBucketNext || op() == LoadKeyFromMapBucket || op() == LoadValueFromMapBucket;
+        return op() == GetMapIterationNext || op() == GetMapIterationEntry || op() == GetMapIterationEntryKey || op() == GetMapIterationEntryValue || op() == GetMapStorage;
     }
 
     unsigned numberOfBoundArguments()

@@ -70,7 +70,9 @@ public:
         case DerivedArrayUse:
         case DateObjectUse:
         case MapObjectUse:
+        case MapIteratorObjectUse:
         case SetObjectUse:
+        case SetIteratorObjectUse:
         case WeakMapObjectUse:
         case WeakSetObjectUse:
         case DataViewObjectUse:
@@ -312,11 +314,16 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case StringSlice:
     case StringSubstring:
     case ToLowerCase:
-    case GetMapBucket:
-    case GetMapBucketHead:
-    case GetMapBucketNext:
-    case LoadKeyFromMapBucket:
-    case LoadValueFromMapBucket:
+    case GetMapKeyIndex:
+    case LoadMapValue:
+    case GetMapIterationNext:
+    case GetMapIterationEntry:
+    case GetMapIterationEntryKey:
+    case GetMapIterationEntryValue:
+    case GetMapStorage:
+    case MapIteratorNext:
+    case MapIteratorKey:
+    case MapIteratorValue:
     case ExtractValueFromWeakMapGet:
     case WeakMapGet:
     case AtomicsIsLockFree:
