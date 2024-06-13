@@ -935,7 +935,8 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
             CheckedPtr previousMultiColumnSet = downcast<RenderMultiColumnSet>(renderer->previousSibling());
             CheckedPtr enclosingMultiColumnFlow = previousMultiColumnSet->multiColumnFlow();
             CheckedPtr renderMultiColumnPlaceholder = enclosingMultiColumnFlow->findColumnSpannerPlaceholder(downcast<RenderBox>(renderer.get()));
-            ASSERT(renderMultiColumnPlaceholder);
+            if (!renderMultiColumnPlaceholder)
+                return;
             renderer = WTFMove(renderMultiColumnPlaceholder);
         }
 

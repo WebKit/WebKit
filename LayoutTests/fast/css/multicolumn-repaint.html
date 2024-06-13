@@ -1,0 +1,37 @@
+<style>
+:root { columns: 0px; }
+</style>
+<script>
+function GetVariable(fuzzervars, var_type) { { return fuzzervars[var_type]; } { }}
+function SetVariable(fuzzervars, var_name, var_type) { fuzzervars[var_type] = var_name; }
+function jsfuzzer() {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    if (!window.IPC) {
+        testRunner.notifyDone();
+        return;
+    }
+    
+    var fuzzervars = {};
+    SetVariable(fuzzervars, window, 'Window');
+    try { htmlvar00017.replaceWith("foo"); } catch(e) { }
+    try { /* */ var var00052 } catch(e) { }
+    try { if (!var00052) { var00052 = GetVariable(fuzzervars, 'Window'); } { SetVariable(fuzzervars, 'Window'); } } catch(e) { }
+    try { /* */ var00080 = htmlvar00005.style; } catch(e) { }
+    try { if (!var00080) { var00080 = GetVariable(fuzzervars, 'CSSStyleDeclaration'); } { SetVariable(fuzzervars, var00080, 'CSSStyleDeclaration'); } } catch(e) { }
+    try { /* */ var var00144 = var00098.style; } catch(e) { }
+    try { if (!var00144) { var00144 = GetVariable(fuzzervars, 'CSSStyleDeclaration'); } { } } catch(e) { }
+    try { /* */ var00151 = var00052.find("foo",true); } catch(e) { }
+    try { var00144.setProperty("overflow-y", "-webkit-paged-y"); } catch(e) { }
+    
+    testRunner.notifyDone();
+}
+</script>
+<body onload=jsfuzzer()>
+</marquee>
+<dir id="htmlvar00005" contenteditable="true" baseprofile="full">
+<dl style="-webkit-column-span: all; ismap="ismap">
+<dd id="htmlvar00017" charset="UTF-16"></dd>
+<div>This test passes if it does not crash.</div>
