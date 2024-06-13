@@ -772,7 +772,6 @@ RetainPtr<WebView> createWebViewAndOffscreenWindow()
         [mainWindow orderFront:nil];
     else
         [mainWindow orderBack:nil];
-    [mainWindow setAutodisplay:NO];
 
     [(DumpRenderTreeWindow *)mainWindow.get() startListeningForAcceleratedCompositingChanges];
 #else
@@ -1785,9 +1784,6 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
     [webView _clearMainFrameName];
     [[webView undoManager] removeAllActions];
     [WebView _removeAllUserContentFromGroup:[webView groupName]];
-#if !PLATFORM(IOS_FAMILY)
-    [[webView window] setAutodisplay:NO];
-#endif
     [webView setTracksRepaints:NO];
 
     [WebCache clearCachedCredentials];
