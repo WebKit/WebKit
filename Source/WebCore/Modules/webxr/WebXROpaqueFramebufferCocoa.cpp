@@ -382,7 +382,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
     if (foveationChange) {
         if (m_usingFoveation) {
             const auto& frmd = data.foveationRateMapDesc;
-            if (!gl.addFoveation(leftPhysicalSize, rightPhysicalSize, frmd.screenSize, frmd.horizontalSamples[0], frmd.verticalSamples, frmd.horizontalSamples[1]))
+            if (!gl.addFoveation(leftPhysicalSize, rightPhysicalSize, frmd.screenSize, frmd.horizontalSamplesLeft, frmd.verticalSamples, frmd.horizontalSamplesRight))
                 return false;
             gl.enableFoveation(m_drawAttachments.colorBuffer);
         } else

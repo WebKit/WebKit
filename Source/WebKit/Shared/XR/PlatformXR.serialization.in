@@ -103,8 +103,9 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
 #if PLATFORM(COCOA)
 [Nested] struct PlatformXR::FrameData::RateMapDescription {
     WebCore::IntSize screenSize;
-    std::array<std::span<const float>, 2> horizontalSamples;
-    std::span<const float> verticalSamples;
+    Vector<float> horizontalSamplesLeft;
+    Vector<float> horizontalSamplesRight;
+    Vector<float> verticalSamples;
 };
 
 [Nested, RValue] struct PlatformXR::FrameData::LayerSetupData {
