@@ -678,7 +678,7 @@ class Hyperlight {
             );
 
 
-		if (method_exists($this->_lang,'postProcessors')) {
+		if ($this->_lang && method_exists($this->_lang,'postProcessors')) {
 			foreach ($this->_lang->postProcessors() as $ppkey => $ppvalue)
 	            $this->_postProcessors[$ppkey] = new Hyperlight($ppvalue);
 		}

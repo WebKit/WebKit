@@ -10,27 +10,30 @@ if ( ! class_exists('WP_Widget') ) return;
 
 class WebKitPostTileWidget extends WP_Widget {
 
-    public function __construct() {
-        parent::WP_Widget(false,
-            __('Post Tile'),
-            array('description' => __('Post tile for the home page'))
-        );
+    public function __construct($id_base = false, $name = null, $widget_options = null) {
+        if (is_null($name))
+            $name = __('Post Tile');
+        if (is_null($widget_options))
+            $widget_options  = array('description' => __('Post tile for the home page'));
+        parent::__construct($id_base, $name, $widget_options);
     }
 
     public function load( array $options = array() ) {
-        return Front_Page_Posts::WP_Query();
+        return Front_Page_Posts::WP_Query($options);
     }
 
     public function widget($args, $options) {
         $Query = $this->load($options);
 
+        if (! $Query) return;
+
         // Get the next post, if available
-        if ( ! $Query->have_posts() ) return;
+        if (! $Query->have_posts()) return;
 
         // Queue the post data
         $Query->the_post();
 
-        $featured = ( 'on' == $options['featured'] );
+        $featured = ( 'on' == ($options['featured'] ?? null));
         if ( ! $featured ) {
             // Prevent Safari Technology Preview release note posts from showing up when not a featured post.
             while ( in_category('safari-technology-preview') && $Query->have_posts() ) {

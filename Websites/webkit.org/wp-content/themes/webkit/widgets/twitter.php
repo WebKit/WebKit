@@ -13,11 +13,12 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
     const CACHEKEY = 'webkit_twitter_feed';
     const ENDPOINT = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
 
-    function __construct() {
-        parent::WP_Widget(false,
-            __('Twitter Tile'),
-            array('description' => __('Twitter tile for the home page'))
-        );
+    public function __construct($id_base = false, $name = null, $widget_options = null) {
+        if (is_null($name))
+            $name = __('Twitter Tile');
+        if (is_null($widget_options))
+            $widget_options  = array('description' => __('Twitter tile for the home page'));
+        parent::__construct($id_base, $name, $widget_options);
     }
 
     function widget($args, $options) {

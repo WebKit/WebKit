@@ -10,11 +10,12 @@ if ( ! class_exists('WP_Widget') ) return;
 
 class WebKitPageTileWidget extends WebKitPostTileWidget {
 
-    public function __construct() {
-        parent::WP_Widget(false,
-            __('Page Tile'),
-            array('description' => __('Page tile for the home page'))
-        );
+    public function __construct($id_base = false, $name = null, $widget_options = null) {
+        if (is_null($name))
+            $name = __('Page Tile');
+        if (is_null($widget_options))
+            $widget_options  = array('description' => __('Page tile for the home page'));
+        parent::__construct($id_base, $name, $widget_options);
     }
 
     public function load($options = array()) {

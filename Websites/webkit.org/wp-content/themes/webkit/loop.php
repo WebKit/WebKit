@@ -16,7 +16,7 @@ $classes[] = 'third-tile';
             <svg viewbox="0 0 100 100">
                 <use xlink:href="#<?php echo esc_attr(get_post_icon()); ?>" />
             </svg>
-            <?php if ( $featured ): ?><div class="background-vignette"></div><?php endif; ?>
+            <?php if ( isset($featured) && $featured ): ?><div class="background-vignette"></div><?php endif; ?>
         </div>
         <div class="tile-content">
             <h1><?php the_title(); ?></h1>

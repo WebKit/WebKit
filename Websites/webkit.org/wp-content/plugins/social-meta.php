@@ -75,7 +75,7 @@ add_action('wp_head', function() {
         $modified_time = get_the_modified_date('c');
     }
 
-    if ($image_url[0] === '/')
+    if (isset($image_url) && $image_url[0] === '/')
         $image_url = get_home_url(null, $image_url);
 ?>
 
@@ -84,7 +84,7 @@ add_action('wp_head', function() {
 <?php if ($description): ?>
     <meta itemprop="description" content="<?php echo esc_attr($description); ?>">
 <?php endif; ?>
-<?php if ($image_url): ?>
+<?php if (isset($image_url) && $image_url): ?>
     <meta itemprop="image" content="<?php echo esc_url($image_url); ?>">
 <?php endif; ?>
 
@@ -104,7 +104,7 @@ add_action('wp_head', function() {
     <meta property="og:title" content="<?php echo esc_attr($title); ?>">
     <meta property="og:type" content="<?php echo esc_attr($type); ?>">
     <meta property="og:url" content="<?php echo esc_url($url); ?>">
-<?php if ($image_url): ?>
+<?php if (isset($image_url) && $image_url): ?>
     <meta property="og:image" content="<?php echo esc_url($image_url); ?>">
 <?php endif; ?>
 <?php if ($description): ?>
