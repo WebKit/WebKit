@@ -30,6 +30,10 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WorkerClient.h>
 
+namespace WebCore {
+class Page;
+}
+
 namespace WebCore::WebGPU {
 class GPU;
 }
@@ -47,7 +51,7 @@ public:
     // happen on the worker.
     // Any details needed from the page must be copied at this
     // point, but can't hold references to any main-thread objects.
-    static UniqueRef<WebWorkerClient> create(WebPage&, SerialFunctionDispatcher&);
+    static UniqueRef<WebWorkerClient> create(WebCore::Page&, SerialFunctionDispatcher&);
 
     UniqueRef<WorkerClient> createNestedWorkerClient(SerialFunctionDispatcher&) override;
 

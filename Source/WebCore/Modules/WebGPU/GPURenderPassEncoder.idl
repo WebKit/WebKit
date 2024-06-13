@@ -33,7 +33,7 @@ typedef (sequence<double> or GPUColorDict) GPUColor;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window,DedicatedWorker),
+    Exposed=(Window,Worker),
     SecureContext
 ]
 interface GPURenderPassEncoder {

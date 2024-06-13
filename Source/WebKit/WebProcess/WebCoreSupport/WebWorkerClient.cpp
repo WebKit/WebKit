@@ -115,13 +115,13 @@ RefPtr<WebCore::WebGPU::GPU> GPUProcessWebWorkerClient::createGPUForWebGPU() con
 
 #endif
 
-UniqueRef<WebWorkerClient> WebWorkerClient::create(WebPage& page, SerialFunctionDispatcher& dispatcher)
+UniqueRef<WebWorkerClient> WebWorkerClient::create(Page& page, SerialFunctionDispatcher& dispatcher)
 {
     ASSERT(isMainRunLoop());
 #if ENABLE(GPU_PROCESS)
-    return UniqueRef<GPUProcessWebWorkerClient> { *new GPUProcessWebWorkerClient { dispatcher, page.corePage()->displayID() } };
+    return UniqueRef<GPUProcessWebWorkerClient> { *new GPUProcessWebWorkerClient { dispatcher, page.displayID() } };
 #else
-    return UniqueRef<WebWorkerClient> { *new WebWorkerClient { dispatcher, page.corePage()->displayID() } };
+    return UniqueRef<WebWorkerClient> { *new WebWorkerClient { dispatcher, page.displayID() } };
 #endif
 }
 

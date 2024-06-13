@@ -31,7 +31,7 @@ typedef (GPUOutOfMemoryError or GPUValidationError or GPUInternalError) GPUError
 
 [
     EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window,DedicatedWorker),
+    Exposed=(Window,Worker),
     SecureContext
 ]
 interface GPUUncapturedErrorEvent : Event {

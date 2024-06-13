@@ -57,6 +57,7 @@
 #include "WebSocketProvider.h"
 #include "WebStorageProvider.h"
 #include "WebUserContentController.h"
+#include "WebWorkerClient.h"
 #include <WebCore/EditorClient.h>
 #include <WebCore/EmptyClients.h>
 #include <WebCore/MessageWithMessagePorts.h>
@@ -206,7 +207,11 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
         notificationClient = makeUnique<WebNotificationClient>(nullptr);
 #endif
 
+        auto& corePage = page.get();
         auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(page), WTFMove(contextData), WTFMove(workerData), WTFMove(effectiveUserAgent), workerThreadMode, WebProcess::singleton().cacheStorageProvider(), WTFMove(notificationClient));
+
+        auto workerClient = WebWorkerClient::create(corePage, serviceWorkerThreadProxy->thread());
+        serviceWorkerThreadProxy->thread().setWorkerClient(workerClient.moveToUniquePtr());
 
         if (lastNavigationWasAppInitiated)
             serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated == WebCore::LastNavigationWasAppInitiated::Yes);

@@ -44,12 +44,14 @@
 #include "WebSocketProvider.h"
 #include "WebStorageProvider.h"
 #include "WebUserContentController.h"
+#include "WebWorkerClient.h"
 #include <WebCore/EmptyClients.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/RemoteFrameClient.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SharedWorkerContextManager.h>
+#include <WebCore/SharedWorkerThread.h>
 #include <WebCore/SharedWorkerThreadProxy.h>
 #include <WebCore/UserAgent.h>
 #include <WebCore/WorkerFetchResult.h>
@@ -130,7 +132,12 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
 
     page->setupForRemoteWorker(workerFetchResult.responseURL, origin.topOrigin, workerFetchResult.referrerPolicy, initializationData.advancedPrivacyProtections);
 
+    auto& corePage = page.get();
     auto sharedWorkerThreadProxy = WebCore::SharedWorkerThreadProxy::create(WTFMove(page), sharedWorkerIdentifier, origin, WTFMove(workerFetchResult), WTFMove(workerOptions), WTFMove(initializationData), WebProcess::singleton().cacheStorageProvider());
+
+    auto& thread = sharedWorkerThreadProxy->thread();
+    auto workerClient = WebWorkerClient::create(corePage, thread);
+    thread.setWorkerClient(workerClient.moveToUniquePtr());
 
     WebCore::SharedWorkerContextManager::singleton().registerSharedWorkerThread(WTFMove(sharedWorkerThreadProxy));
 }
