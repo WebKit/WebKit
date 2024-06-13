@@ -179,28 +179,40 @@ void PlatformMediaSession::setState(State state)
     PlatformMediaSessionManager::sharedManager().sessionStateChanged(*this);
 }
 
+size_t PlatformMediaSession::activeInterruptionCount() const
+{
+    size_t count = 0;
+    for (auto& interruption : m_interruptionStack) {
+        if (!interruption.ignored)
+            count++;
+    }
+    return count;
+}
+
 PlatformMediaSession::InterruptionType PlatformMediaSession::interruptionType() const
 {
     if (!m_interruptionStack.size())
         return InterruptionType::NoInterruption;
 
-    return m_interruptionStack.last();
+    return m_interruptionStack.last().type;
 }
 
 void PlatformMediaSession::beginInterruption(InterruptionType type)
 {
     ASSERT(type != InterruptionType::NoInterruption);
 
-    m_interruptionStack.append(type);
-    ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state, ", interruption count = ", interruptionCount(), ", type = ", type);
+    ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state, ", interruption count = ", m_interruptionStack.size(), ", type = ", type);
 
-    if (interruptionCount() > 1)
-        return;
-
-    if (client().shouldOverrideBackgroundPlaybackRestriction(type)) {
-        ALWAYS_LOG(LOGIDENTIFIER, "returning early because client says to override interruption");
+    if (activeInterruptionCount()) {
+        m_interruptionStack.append({ type, true });
         return;
     }
+    if (client().shouldOverrideBackgroundPlaybackRestriction(type)) {
+        ALWAYS_LOG(LOGIDENTIFIER, "returning early because client says to override interruption");
+        m_interruptionStack.append({ type, true });
+        return;
+    }
+    m_interruptionStack.append({ type, false });
 
     m_stateToRestore = state();
     m_notifyingClient = true;
@@ -211,15 +223,15 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
 
 void PlatformMediaSession::endInterruption(OptionSet<EndInterruptionFlags> flags)
 {
-    if (!interruptionCount()) {
+    if (m_interruptionStack.isEmpty()) {
         ALWAYS_LOG(LOGIDENTIFIER, "!! ignoring spurious interruption end !!");
         return;
     }
 
-    m_interruptionStack.removeLast();
-    ALWAYS_LOG(LOGIDENTIFIER, "flags = ", (int)flags.toRaw(), ", interruption count = ", interruptionCount(), ", type = ", interruptionType());
+    auto interruption = m_interruptionStack.takeLast();
+    ALWAYS_LOG(LOGIDENTIFIER, "flags = ", (int)flags.toRaw(), ", interruption count = ", m_interruptionStack.size(), " type = ", interruptionType());
 
-    if (interruptionCount())
+    if (activeInterruptionCount() || interruption.ignored)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, "restoring state ", m_stateToRestore);
@@ -390,7 +402,7 @@ PlatformMediaSession::DisplayType PlatformMediaSession::displayType() const
 
 bool PlatformMediaSession::blockedBySystemInterruption() const
 {
-    return interruptionCount() > 1 && interruptionType() == PlatformMediaSession::InterruptionType::SystemInterruption;
+    return activeInterruptionCount() && interruptionType() == PlatformMediaSession::InterruptionType::SystemInterruption;
 }
 
 bool PlatformMediaSession::activeAudioSessionRequired() const

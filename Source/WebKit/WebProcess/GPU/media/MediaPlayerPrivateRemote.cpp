@@ -533,6 +533,7 @@ bool MediaPlayerPrivateRemote::seeking() const
 
 void MediaPlayerPrivateRemote::rateChanged(double rate, MediaTimeUpdateData&& timeData)
 {
+    INFO_LOG(LOGIDENTIFIER, "rate:", rate, " currentTime:", timeData.currentTime, " timeIsProgressing:", timeData.timeIsProgressing);
     m_rate = rate;
     m_currentTimeEstimator.setRate(rate);
     m_currentTimeEstimator.setTime(timeData);

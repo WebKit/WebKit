@@ -261,14 +261,17 @@ protected:
 
 private:
     bool processClientWillPausePlayback(DelayCallingUpdateNowPlaying);
-    size_t interruptionCount() const { return m_interruptionStack.size(); }
+    size_t activeInterruptionCount() const;
 
     PlatformMediaSessionClient& m_client;
     MediaSessionIdentifier m_mediaSessionIdentifier;
     State m_state { State::Idle };
     State m_stateToRestore { State::Idle };
-    Vector<InterruptionType> m_interruptionStack;
-    int m_interruptionCount { 0 };
+    struct Interruption {
+        InterruptionType type { InterruptionType::NoInterruption };
+        bool ignored { false };
+    };
+    Vector<Interruption> m_interruptionStack;
     bool m_active { false };
     bool m_notifyingClient { false };
     bool m_isPlayingToWirelessPlaybackTarget { false };
