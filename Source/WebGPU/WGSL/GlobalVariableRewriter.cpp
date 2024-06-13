@@ -681,6 +681,9 @@ std::optional<Error> RewriteGlobalVariables::collectGlobals()
         }
     }
 
+    for (auto& [_, vector] : m_groupBindingMap)
+        std::sort(vector.begin(), vector.end(), [&](auto& a, auto& b) { return a.first < b.first; });
+
     if (!bufferLengths.isEmpty()) {
         for (const auto& [variable, group] : bufferLengths) {
             auto name = AST::Identifier::make(makeString("__"_s, variable->name(), "_ArrayLength"_s));
