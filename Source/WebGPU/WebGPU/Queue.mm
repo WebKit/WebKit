@@ -143,8 +143,8 @@ std::pair<id<MTLCommandBuffer>, id<MTLSharedEvent>> Queue::commandBufferWithDesc
         WTFLogAlways("Metal capture enabled: %s", captureEnabled ? "YES" : "NO");
     });
     if (devicePtr && [buffer respondsToSelector:@selector(encodeConditionalAbortEvent:)] && !captureEnabled) {
-        sharedEvent = [devicePtr->device() newSharedEvent];
-        [(id<MTLCommandBufferSPI>)buffer encodeConditionalAbortEvent:sharedEvent];
+        if ((sharedEvent = [devicePtr->device() newSharedEvent]))
+            [(id<MTLCommandBufferSPI>)buffer encodeConditionalAbortEvent:sharedEvent];
     }
 
     return std::make_pair(buffer, sharedEvent);
