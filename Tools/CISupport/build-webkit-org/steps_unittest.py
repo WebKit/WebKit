@@ -424,7 +424,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=3600,
                 logEnviron=True,
-                command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --no-fatal-warnings --release --architecture "x86_64 arm64" WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
+                command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --no-fatal-warnings --release --architecture "x86_64 arm64" WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt; exit $\\{PIPESTATUS[0]\\}'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')

@@ -436,7 +436,7 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
 
         # filter-build-webkit is specifically designed for Xcode and doesn't work generally
         if platform in self.APPLE_PLATFORMS:
-            full_command = f"{' '.join(build_command)} 2>&1 | {' '.join(self.filter_command)}"
+            full_command = f"{' '.join(build_command)} 2>&1 | {' '.join(self.filter_command)}" + "; exit $\\{PIPESTATUS[0]\\}"
             self.setCommand(['/bin/sh', '-c', full_command])
         else:
             self.setCommand(build_command)
