@@ -27,6 +27,10 @@
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(SKIA)
+#include "FEDropShadowSkiaApplier.h"
+#endif
+
 namespace WebCore {
 
 Ref<FEDropShadow> FEDropShadow::create(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, DestinationColorSpace colorSpace)
@@ -135,6 +139,9 @@ IntOutsets FEDropShadow::calculateOutsets(const FloatSize& offset, const FloatSi
 OptionSet<FilterRenderingMode> FEDropShadow::supportedFilterRenderingModes() const
 {
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(SKIA)
+    modes.add(FilterRenderingMode::Accelerated);
+#endif
 #if HAVE(CGSTYLE_CREATE_SHADOW2)
     if (m_stdX == m_stdY)
         modes.add(FilterRenderingMode::GraphicsContext);
@@ -152,9 +159,22 @@ std::optional<GraphicsStyle> FEDropShadow::createGraphicsStyle(const Filter& fil
     return GraphicsDropShadow { offset, static_cast<float>(radius.width()), m_shadowColor, ShadowRadiusMode::Default, m_shadowOpacity };
 }
 
+std::unique_ptr<FilterEffectApplier> FEDropShadow::createAcceleratedApplier() const
+{
+#if USE(SKIA)
+    return FilterEffectApplier::create<FEDropShadowSkiaApplier>(*this);
+#else
+    return nullptr;
+#endif
+}
+
 std::unique_ptr<FilterEffectApplier> FEDropShadow::createSoftwareApplier() const
 {
+#if USE(SKIA)
+    return FilterEffectApplier::create<FEDropShadowSkiaApplier>(*this);
+#else
     return FilterEffectApplier::create<FEDropShadowSoftwareApplier>(*this);
+#endif
 }
 
 TextStream& FEDropShadow::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
