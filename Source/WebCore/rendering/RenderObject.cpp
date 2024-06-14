@@ -1807,9 +1807,12 @@ void RenderObject::setCapturedInViewTransition(bool captured)
 {
     if (capturedInViewTransition() != captured) {
         m_stateBitfields.setFlag(StateFlag::CapturedInViewTransition, captured);
-        if (isDocumentElementRenderer())
+        if (isDocumentElementRenderer()) {
             view().layer()->setNeedsPostLayoutCompositingUpdate();
-        else if (hasLayer())
+
+            // Invalidate transform applied by `RenderLayerBacking::updateTransform`.
+            view().layer()->setNeedsCompositingGeometryUpdate();
+        } else if (hasLayer())
             downcast<RenderLayerModelObject>(*this).layer()->setNeedsPostLayoutCompositingUpdate();
     }
 }
