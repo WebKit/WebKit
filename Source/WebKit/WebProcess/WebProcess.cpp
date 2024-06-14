@@ -1180,7 +1180,7 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
 {
     NetworkProcessConnectionInfo connectionInfo;
     auto requestConnection = [&]() -> bool {
-        auto sendResult = connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), 0);
+        auto sendResult = connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), 0, IPC::Timeout::infinity(), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
         if (!sendResult.succeeded()) {
             RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to send message or receive invalid message: error %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()));
             failedToGetNetworkProcessConnection();
