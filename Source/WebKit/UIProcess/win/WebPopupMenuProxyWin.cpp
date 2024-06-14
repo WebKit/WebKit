@@ -493,6 +493,11 @@ WebCore::IntRect WebPopupMenuProxyWin::scrollableAreaBoundingBox(bool*) const
     return m_windowRect;
 }
 
+bool WebPopupMenuProxyWin::shouldPlaceVerticalScrollbarOnLeft() const
+{
+    return m_data.m_isRTL;
+}
+
 void WebPopupMenuProxyWin::scrollTo(int offset)
 {
     ASSERT(m_scrollbar);
@@ -517,8 +522,11 @@ void WebPopupMenuProxyWin::scrollTo(int offset)
 
     IntRect listRect = clientRect();
     float deviceScaleFactor = m_webView->page()->deviceScaleFactor();
-    if (m_scrollbar)
-        listRect.setWidth(m_scrollbar->location().x() * deviceScaleFactor);
+    if (m_scrollbar) {
+        listRect.setWidth(listRect.width() - m_scrollbar->size().width() * deviceScaleFactor);
+        if (m_data.m_isRTL)
+            listRect.setX(m_scrollbar->size().width() * deviceScaleFactor);
+    }
     RECT r = listRect;
     ::ScrollWindowEx(m_popup, 0, ceil(scrolledLines * m_itemHeight * deviceScaleFactor), &r, 0, 0, 0, flags);
     if (m_scrollbar) {
@@ -556,7 +564,8 @@ LRESULT WebPopupMenuProxyWin::onSize(HWND hWnd, UINT message, WPARAM, LPARAM lPa
     IntSize size(LOWORD(lParam), HIWORD(lParam));
     float deviceScaleFactor = m_webView->page()->deviceScaleFactor();
     IntSize scaledSize(ceil(size.width() / deviceScaleFactor), ceil(size.height() / deviceScaleFactor));
-    m_scrollbar->setFrameRect(IntRect(scaledSize.width() - m_scrollbar->width(), 0, m_scrollbar->width(), scaledSize.height()));
+    int scrollbarX = m_data.m_isRTL ? 0 : scaledSize.width() - m_scrollbar->width();
+    m_scrollbar->setFrameRect(IntRect(scrollbarX, 0, m_scrollbar->width(), scaledSize.height()));
 
     int visibleItems = this->visibleItems();
     m_scrollbar->setEnabled(visibleItems < m_items.size());
@@ -664,14 +673,14 @@ LRESULT WebPopupMenuProxyWin::onMouseMove(HWND hWnd, UINT message, WPARAM wParam
     IntPoint mousePoint(MAKEPOINTS(lParam));
     mousePoint.scale(1 / deviceScaleFactor);
     if (m_scrollbar) {
+        IntPoint scrollbarMousePoint(mousePoint);
         IntRect scrollBarRect = m_scrollbar->frameRect();
-        if (scrollbarCapturingMouse() || scrollBarRect.contains(mousePoint)) {
-            // Put the point into coordinates relative to the scroll bar
-            mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
-            PlatformMouseEvent event(hWnd, message, wParam, makeScaledPoint(mousePoint, m_scaleFactor));
-            m_scrollbar->mouseMoved(event);
+        // Put the point into coordinates relative to the scroll bar
+        scrollbarMousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
+        PlatformMouseEvent event(hWnd, message, wParam, makeScaledPoint(scrollbarMousePoint, m_scaleFactor));
+        m_scrollbar->mouseMoved(event);
+        if (scrollbarCapturingMouse())
             return 0;
-        }
     }
 
     BOOL shouldHotTrack = FALSE;
@@ -887,16 +896,21 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
 
     GraphicsContextCairo context(m_DC.get());
 
+    int moveX = 0;
+    int selectedBackingStoreWidth = m_data.m_selectedBackingStore->size().width();
+    if (m_data.m_isRTL)
+        moveX = selectedBackingStoreWidth - clientRect().width();
+
     float deviceScaleFactor = m_webView->page()->deviceScaleFactor();
     float itemHeightInDevicePixel = m_itemHeight * deviceScaleFactor;
 
     IntRect translatedDamageRect = damageRect;
-    translatedDamageRect.move(IntSize(0, m_scrollOffset * itemHeightInDevicePixel));
+    translatedDamageRect.move(IntSize(moveX, m_scrollOffset * itemHeightInDevicePixel));
     m_data.m_notSelectedBackingStore->paint(context, damageRect.location(), translatedDamageRect);
 
-    IntRect selectedIndexRectInBackingStore(0, focusedIndex() * itemHeightInDevicePixel, m_data.m_selectedBackingStore->size().width(), itemHeightInDevicePixel);
+    IntRect selectedIndexRectInBackingStore(moveX, focusedIndex() * itemHeightInDevicePixel, selectedBackingStoreWidth - moveX, itemHeightInDevicePixel);
     IntPoint selectedIndexDstPoint = selectedIndexRectInBackingStore.location();
-    selectedIndexDstPoint.move(0, -m_scrollOffset * itemHeightInDevicePixel);
+    selectedIndexDstPoint.move(-moveX, -m_scrollOffset * itemHeightInDevicePixel);
 
     m_data.m_selectedBackingStore->paint(context, selectedIndexDstPoint, selectedIndexRectInBackingStore);
 

@@ -45,6 +45,7 @@ struct PlatformPopupMenuData {
     int m_clientInsetRight { 0 };
     int m_popupWidth { 0 };
     float m_itemHeight { 0 };
+    bool m_isRTL { false };
     RefPtr<WebCore::ShareableBitmap> m_notSelectedBackingStore;
     RefPtr<WebCore::ShareableBitmap> m_selectedBackingStore;
 #endif
