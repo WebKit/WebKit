@@ -146,29 +146,33 @@ class WorkQueueMessageReceiver;
 struct AsyncReplyIDType;
 using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 
-template<typename T> struct ConnectionSendSyncResult {
-    Expected<typename T::ReplyArguments, Error> value;
-
+// Sync message sender is expected to hold this instance alive as long as the reply() is being
+// accessed. View type data types in replies, such as std::span, refer to data stored in
+// ConnectionSendSyncResult.
+template<typename T> class ConnectionSendSyncResult {
+public:
     ConnectionSendSyncResult(Error error)
         : value(makeUnexpected(error))
     {
         ASSERT(value.error() != Error::NoError);
     }
 
-    ConnectionSendSyncResult(typename T::ReplyArguments&& replyArguments)
-        : value(WTFMove(replyArguments)) { }
+    ConnectionSendSyncResult(UniqueRef<Decoder>&& decoder, typename T::ReplyArguments&& replyArguments)
+        : value({ WTFMove(decoder), WTFMove(replyArguments) })
+    {
+    }
 
     bool succeeded() const { return value.has_value(); }
     Error error() const { return value.has_value() ? Error::NoError : value.error(); }
 
     typename T::ReplyArguments& reply()
     {
-        return value.value();
+        return value.value().reply;
     }
 
     typename T::ReplyArguments takeReply()
     {
-        return WTFMove(value.value());
+        return WTFMove(value.value().reply);
     }
 
     template<typename... U>
@@ -178,6 +182,12 @@ template<typename T> struct ConnectionSendSyncResult {
             return { std::forward<U>(defaultValues)... };
         return takeReply();
     }
+private:
+    struct ReplyData {
+        UniqueRef<Decoder> decoder; // Owns the memory for reply.
+        typename T::ReplyArguments reply;
+    };
+    Expected<ReplyData, Error> value;
 };
 
 struct ConnectionAsyncReplyHandler {
@@ -689,7 +699,7 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
 
-    return { WTFMove(*replyArguments) };
+    return SendSyncResult<T> { WTFMove(replyDecoderOrError.value()), WTFMove(*replyArguments) };
 }
 
 template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)

@@ -79,7 +79,7 @@ namespace IPC {
 class Decoder;
 class FormDataReference;
 class SharedBufferReference;
-template<typename> struct ConnectionSendSyncResult;
+template<typename> class ConnectionSendSyncResult;
 using DataReference = std::span<const uint8_t>;
 }
 

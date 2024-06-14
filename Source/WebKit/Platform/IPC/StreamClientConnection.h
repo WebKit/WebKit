@@ -276,7 +276,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
         auto& decoder = decoderResult->value();
         *decoder >> replyArguments;
         if (replyArguments)
-            return { { WTFMove(*replyArguments) } };
+            return { { WTFMove(decoderResult->value()), WTFMove(*replyArguments) } };
         return { Error::FailedToDecodeReplyArguments };
     }
     return { decoderResult->error() };

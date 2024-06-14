@@ -67,6 +67,24 @@ struct MockTestSyncMessage {
     std::tuple<> m_arguments;
 };
 
+struct MockTestSyncMessageWithDataReply {
+    static constexpr bool isSync = true;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr IPC::MessageName name()  { return  IPC::MessageName::IPCTester_SyncPing; } // Needs to be sync.
+    using ReplyArguments = std::tuple<std::span<const uint8_t>>;
+    auto&& arguments()
+    {
+        return WTFMove(m_arguments);
+    }
+
+    MockTestSyncMessageWithDataReply()
+    {
+    }
+
+    std::tuple<> m_arguments;
+};
+
 namespace {
 class SimpleConnectionTest : public testing::Test {
 public:
@@ -810,6 +828,35 @@ TEST_P(ConnectionRunLoopTest, RunLoopWaitForAndDispatchImmediately)
         b()->invalidate();
     });
 
+    localReferenceBarrier();
+}
+
+TEST_P(ConnectionRunLoopTest, SendLocalSyncMessageWithDataReply)
+{
+    constexpr int iterations = 10;
+    constexpr size_t dataSize = 1e8; // 100 MB.
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    runLoop->dispatch([&] {
+        bClient().setSyncMessageHandler([&](IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) -> bool {
+            Vector<uint8_t> data(dataSize);
+            for (size_t i = 0; i < dataSize; ++i)
+                data[i] = static_cast<uint8_t>(i);
+            encoder.get() << data;
+            return false;
+        });
+        ASSERT_TRUE(openB());
+    });
+    for (int i = 0; i < iterations; ++i) {
+        auto sendResult = a()->sendSync(MockTestSyncMessageWithDataReply { }, i, IPC::Timeout::infinity());
+        ASSERT_TRUE(sendResult.succeeded());
+        auto& [replyData] = sendResult.reply();
+        for (size_t i = 0; i < replyData.size(); ++i)
+            ASSERT_EQ(static_cast<uint8_t>(i), replyData[i]);
+    }
+    runLoop->dispatch([&] {
+        b()->invalidate();
+    });
     localReferenceBarrier();
 }
 

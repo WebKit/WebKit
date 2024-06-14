@@ -119,8 +119,17 @@ public:
         m_continueWaitForMessage = true;
     }
 
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override
+    // Handler contract as IPC::MessageReceiver::didReceiveSyncMessage: false on invalid message, may adopt encoder,
+    // decoder used only during the call, if encoder not adopted it will be submitted.
+    void setSyncMessageHandler(Function<bool(IPC::Decoder&, UniqueRef<IPC::Encoder>&)>&& handler)
     {
+        m_syncMessageHandler = WTFMove(handler);
+    }
+
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) override
+    {
+        if (m_syncMessageHandler)
+            return m_syncMessageHandler(decoder, encoder);
         return false;
     }
 
@@ -140,6 +149,7 @@ private:
     Deque<MessageInfo> m_messages;
     bool m_continueWaitForMessage { false };
     Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
+    Function<bool(IPC::Decoder&, UniqueRef<IPC::Encoder>&)> m_syncMessageHandler;
 };
 
 enum class ConnectionTestDirection {

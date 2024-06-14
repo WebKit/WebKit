@@ -39,7 +39,7 @@ namespace IPC {
 class Connection;
 class Decoder;
 class Encoder;
-template<typename> struct ConnectionSendSyncResult;
+template<typename> class ConnectionSendSyncResult;
 }
 
 namespace WebCore {
