@@ -204,7 +204,7 @@ enum LinearMediaPlayerErrors: Error {
 
 extension WKSLinearMediaPlayer {
     private func presentationStateChanged(_ presentationState: WKSLinearMediaPresentationState) {
-        Logger.linearMediaPlayer.log("\(#function): \(presentationState)")
+        Logger.linearMediaPlayer.log("\(#function): \(presentationState, privacy: .public)")
 
         switch presentationState {
         case .inline:
@@ -555,12 +555,12 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func setCaptionContentInsets(_ insets: UIEdgeInsets) {
-        Logger.linearMediaPlayer.log("\(#function) \(NSCoder.string(for: insets))")
+        Logger.linearMediaPlayer.log("\(#function) \(NSCoder.string(for: insets), privacy: .public)")
         delegate?.linearMediaPlayer?(self, setCaptionContentInsets: insets)
     }
 
     public func updateVideoBounds(_ bounds: CGRect) {
-        Logger.linearMediaPlayer.log("\(#function) \(NSCoder.string(for: bounds))")
+        Logger.linearMediaPlayer.log("\(#function) \(NSCoder.string(for: bounds), privacy: .public)")
         delegate?.linearMediaPlayer?(self, updateVideoBounds: bounds)
     }
 
@@ -576,7 +576,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func toggleInlineMode() {
-        Logger.linearMediaPlayer.log("\(#function): presentationState=\(self.presentationState)")
+        Logger.linearMediaPlayer.log("\(#function): presentationState=\(self.presentationState, privacy: .public)")
 
         switch presentationState {
         case .inline:
@@ -591,7 +591,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func willEnterFullscreen() {
-        Logger.linearMediaPlayer.log("\(#function): presentationState=\(self.presentationState)")
+        Logger.linearMediaPlayer.log("\(#function): presentationState=\(self.presentationState, privacy: .public)")
 
         switch presentationState {
         case .inline:
@@ -618,7 +618,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func willExitFullscreen() {
-        Logger.linearMediaPlayer.log("\(#function): presentationState=\(self.presentationState)")
+        Logger.linearMediaPlayer.log("\(#function): presentationState=\(self.presentationState, privacy: .public)")
 
         switch presentationState {
         case .fullscreen:
@@ -666,7 +666,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func setThumbnailSize(_ size: CGSize) {
-        Logger.linearMediaPlayer.log("\(#function) \(NSCoder.string(for: size))")
+        Logger.linearMediaPlayer.log("\(#function) \(NSCoder.string(for: size), privacy: .public)")
         delegate?.linearMediaPlayer?(self, setThumbnailSize: size)
     }
 
