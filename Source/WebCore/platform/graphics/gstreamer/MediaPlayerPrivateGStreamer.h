@@ -116,7 +116,6 @@ class MediaPlayerPrivateGStreamer
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
-    , public Logger::Observer
 #if USE(TEXTURE_MAPPER)
 #if USE(NICOSIA)
     , public Nicosia::ContentLayer::Client
@@ -135,9 +134,6 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
-
-    // Logger::Observer implementation.
-    void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
 
     void mediaPlayerWillBeDestroyed() final;
 

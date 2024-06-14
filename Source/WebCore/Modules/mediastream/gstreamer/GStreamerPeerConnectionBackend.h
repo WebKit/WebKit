@@ -58,13 +58,11 @@ struct GStreamerIceCandidate {
     String candidate;
 };
 
-class GStreamerPeerConnectionBackend final : public PeerConnectionBackend, public Logger::Observer {
+class GStreamerPeerConnectionBackend final : public PeerConnectionBackend {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit GStreamerPeerConnectionBackend(RTCPeerConnection&);
     ~GStreamerPeerConnectionBackend();
-
-    void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
 
 private:
     void close() final;

@@ -27,6 +27,7 @@
 #include <gst/gst.h>
 #include <gst/video/video-format.h>
 #include <gst/video/video-info.h>
+#include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -290,6 +291,24 @@ GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>&);
 
 void registerActivePipeline(const GRefPtr<GstElement>&);
 void unregisterPipeline(const GRefPtr<GstElement>&);
+
+class WebCoreLogObserver : public Logger::Observer {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(WebCoreLogObserver);
+    friend NeverDestroyed<WebCoreLogObserver>;
+public:
+    explicit WebCoreLogObserver() = default;
+    void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
+
+    virtual GstDebugCategory* debugCategory() const = 0;
+    virtual bool shouldEmitLogMessage(const WTFLogChannel&) const = 0;
+
+    void addWatch(const Logger&);
+    void removeWatch(const Logger&);
+
+private:
+    Atomic<uint64_t> m_totalObservers;
+};
 
 } // namespace WebCore
 

@@ -142,6 +142,24 @@ using namespace std;
 
 static const FloatSize s_holePunchDefaultFrameSize(1280, 720);
 
+class MediaLogObserver : public WebCoreLogObserver {
+public:
+    GstDebugCategory* debugCategory() const final
+    {
+        return webkit_media_player_debug;
+    }
+    bool shouldEmitLogMessage(const WTFLogChannel& channel) const final
+    {
+        return g_str_has_prefix(channel.name, "Media");
+    }
+};
+
+MediaLogObserver& mediaLogObserverSingleton()
+{
+    static NeverDestroyed<MediaLogObserver> sharedInstance;
+    return sharedInstance;
+}
+
 MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_player(player)
@@ -166,8 +184,13 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 #endif
     , m_loader(player->createResourceLoader())
 {
-    if (auto player = m_player.get())
-        player->mediaPlayerLogger().addObserver(*this);
+
+    // MediaPlayer relies on the Document logger, so to prevent duplicate messages in case
+    // more than one MediaPlayer is created, we register a single observer.
+    if (auto player = m_player.get()) {
+        auto& logObserver = mediaLogObserverSingleton();
+        logObserver.addWatch(player->mediaPlayerLogger());
+    }
 
 #if USE(GLIB)
     m_pausedTimerHandler.setPriority(G_PRIORITY_DEFAULT_IDLE);
@@ -307,52 +330,13 @@ void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar regis
     registrar(makeUnique<MediaPlayerFactoryGStreamer>());
 }
 
-void MediaPlayerPrivateGStreamer::didLogMessage(const WTFLogChannel&, WTFLogLevel level, Vector<JSONLogValue>&& values)
-{
-#ifndef GST_DISABLE_GST_DEBUG
-    StringBuilder builder;
-    for (auto& [_, value] : values)
-        builder.append(value);
-
-    auto logString = builder.toString();
-    switch (level) {
-    case WTFLogLevel::Error:
-        if (m_pipeline)
-            GST_ERROR_OBJECT(m_pipeline.get(), "%s", logString.utf8().data());
-        else
-            GST_ERROR("%s", logString.utf8().data());
-        break;
-    case WTFLogLevel::Debug:
-        if (m_pipeline)
-            GST_DEBUG_OBJECT(m_pipeline.get(), "%s", logString.utf8().data());
-        else
-            GST_DEBUG("%s", logString.utf8().data());
-        break;
-    case WTFLogLevel::Always:
-    case WTFLogLevel::Info:
-        if (m_pipeline)
-            GST_INFO_OBJECT(m_pipeline.get(), "%s", logString.utf8().data());
-        else
-            GST_INFO("%s", logString.utf8().data());
-        break;
-    case WTFLogLevel::Warning:
-        if (m_pipeline)
-            GST_WARNING_OBJECT(m_pipeline.get(), "%s", logString.utf8().data());
-        else
-            GST_WARNING("%s", logString.utf8().data());
-        break;
-    };
-#else
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(values);
-#endif
-}
-
 void MediaPlayerPrivateGStreamer::mediaPlayerWillBeDestroyed()
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Parent MediaPlayer is about to be destroyed");
-    if (auto player = m_player.get())
-        player->mediaPlayerLogger().removeObserver(*this);
+    if (auto player = m_player.get()) {
+        auto& logObserver = mediaLogObserverSingleton();
+        logObserver.removeWatch(player->mediaPlayerLogger());
+    }
 }
 
 void MediaPlayerPrivateGStreamer::load(const String& urlString)
@@ -3071,6 +3055,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         return;
     }
 
+    auto logIdentifier = makeString(hex(reinterpret_cast<uintptr_t>(mediaPlayerLogIdentifier())));
+    GST_INFO_OBJECT(m_pipeline.get(), "WebCore logs identifier for this pipeline is: %s", logIdentifier.ascii().data());
     registerActivePipeline(m_pipeline);
 
     setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));

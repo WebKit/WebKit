@@ -48,6 +48,24 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_webrtc_pc_backend_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_pc_backend_debug
 
+class WebRTCLogObserver : public WebCoreLogObserver {
+public:
+    GstDebugCategory* debugCategory() const final
+    {
+        return webkit_webrtc_pc_backend_debug;
+    }
+    bool shouldEmitLogMessage(const WTFLogChannel& channel) const final
+    {
+        return g_str_has_prefix(channel.name, "WebRTC");
+    }
+};
+
+WebRTCLogObserver& webrtcLogObserverSingleton()
+{
+    static NeverDestroyed<WebRTCLogObserver> sharedInstance;
+    return sharedInstance;
+}
+
 static std::unique_ptr<PeerConnectionBackend> createGStreamerPeerConnectionBackend(RTCPeerConnection& peerConnection)
 {
     ensureGStreamerInitialized();
@@ -69,41 +87,20 @@ GStreamerPeerConnectionBackend::GStreamerPeerConnectionBackend(RTCPeerConnection
     , m_endpoint(GStreamerMediaEndpoint::create(*this))
 {
     disableICECandidateFiltering();
-    logger().addObserver(*this);
+
+    // PeerConnectionBackend relies on the Document logger, so to prevent duplicate messages in case
+    // more than one PeerConnection is created, we register a single observer.
+    auto& logObserver = webrtcLogObserverSingleton();
+    logObserver.addWatch(logger());
+
+    auto logIdentifier = makeString(hex(reinterpret_cast<uintptr_t>(this->logIdentifier())));
+    GST_INFO_OBJECT(m_endpoint->pipeline(), "WebCore logs identifier for this pipeline is: %s", logIdentifier.ascii().data());
 }
 
 GStreamerPeerConnectionBackend::~GStreamerPeerConnectionBackend()
 {
-    logger().removeObserver(*this);
-}
-
-void GStreamerPeerConnectionBackend::didLogMessage(const WTFLogChannel&, WTFLogLevel level, Vector<JSONLogValue>&& values)
-{
-#ifndef GST_DISABLE_GST_DEBUG
-    StringBuilder builder;
-    for (auto& [_, value] : values)
-        builder.append(value);
-
-    auto logString = builder.toString();
-    switch (level) {
-    case WTFLogLevel::Error:
-        GST_ERROR_OBJECT(m_endpoint->pipeline(), "%s", logString.utf8().data());
-        break;
-    case WTFLogLevel::Debug:
-        GST_DEBUG_OBJECT(m_endpoint->pipeline(), "%s", logString.utf8().data());
-        break;
-    case WTFLogLevel::Always:
-    case WTFLogLevel::Info:
-        GST_INFO_OBJECT(m_endpoint->pipeline(), "%s", logString.utf8().data());
-        break;
-    case WTFLogLevel::Warning:
-        GST_WARNING_OBJECT(m_endpoint->pipeline(), "%s", logString.utf8().data());
-        break;
-    };
-#else
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(values);
-#endif
+    auto& logObserver = webrtcLogObserverSingleton();
+    logObserver.removeWatch(logger());
 }
 
 void GStreamerPeerConnectionBackend::suspend()

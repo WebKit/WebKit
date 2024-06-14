@@ -479,6 +479,55 @@ void unregisterPipeline(const GRefPtr<GstElement>& pipeline)
     activePipelinesMap().remove(span(name.get()));
 }
 
+void WebCoreLogObserver::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Vector<JSONLogValue>&& values)
+{
+#ifndef GST_DISABLE_GST_DEBUG
+    if (!shouldEmitLogMessage(channel))
+        return;
+
+    StringBuilder builder;
+    for (auto& [_, value] : values)
+        builder.append(value);
+
+    auto logString = builder.toString();
+    GstDebugLevel gstDebugLevel;
+    switch (level) {
+    case WTFLogLevel::Error:
+        gstDebugLevel = GST_LEVEL_ERROR;
+        break;
+    case WTFLogLevel::Debug:
+        gstDebugLevel = GST_LEVEL_DEBUG;
+        break;
+    case WTFLogLevel::Always:
+    case WTFLogLevel::Info:
+        gstDebugLevel = GST_LEVEL_INFO;
+        break;
+    case WTFLogLevel::Warning:
+        gstDebugLevel = GST_LEVEL_WARNING;
+        break;
+    };
+    gst_debug_log(debugCategory(), gstDebugLevel, __FILE__, __FUNCTION__, __LINE__, nullptr, "%s", logString.utf8().data());
+#else
+    UNUSED_PARAM(channel);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(values);
+#endif
+}
+
+void WebCoreLogObserver::addWatch(const Logger& logger)
+{
+    auto totalObservers = m_totalObservers.exchangeAdd(1);
+    if (!totalObservers)
+        logger.addObserver(*this);
+}
+
+void WebCoreLogObserver::removeWatch(const Logger& logger)
+{
+    auto totalObservers = m_totalObservers.exchangeSub(1);
+    if (totalObservers <= 1)
+        logger.removeObserver(*this);
+}
+
 void deinitializeGStreamer()
 {
 #if USE(GSTREAMER_GL)
