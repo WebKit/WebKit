@@ -341,6 +341,27 @@ void PlaybackSessionInterfaceLMK::volumeChanged(double volume)
     [m_player setVolume:volume];
 }
 
+void PlaybackSessionInterfaceLMK::supportsLinearMediaPlayerChanged(bool supportsLinearMediaPlayer)
+{
+    if (supportsLinearMediaPlayer)
+        return;
+
+    switch ([m_player presentationState]) {
+    case WKSLinearMediaPresentationStateEnteringFullscreen:
+    case WKSLinearMediaPresentationStateFullscreen:
+        // If the player is in (or is entering) fullscreen but the current media engine does not
+        // support LinearMediaPlayer, exit fullscreen.
+        if (m_playbackSessionModel)
+            m_playbackSessionModel->exitFullscreen();
+        break;
+    case WKSLinearMediaPresentationStateInline:
+    case WKSLinearMediaPresentationStateExitingFullscreen:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
 void PlaybackSessionInterfaceLMK::startObservingNowPlayingMetadata()
 {
     if (m_playbackSessionModel)

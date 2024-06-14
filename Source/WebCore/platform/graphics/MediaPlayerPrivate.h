@@ -370,6 +370,10 @@ public:
 
     virtual void isInFullscreenOrPictureInPictureChanged(bool) { }
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    virtual bool supportsLinearMediaPlayer() const { return false; }
+#endif
+
 protected:
     mutable PlatformTimeRanges m_seekable;
     bool m_shouldCheckHardwareSupport { false };

@@ -166,7 +166,7 @@ private:
     BOOL _isInteractingWithSystemChrome;
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    RetainPtr<UIView> _environmentPickerButtonView;
+    RetainPtr<UIViewController> _environmentPickerButtonViewController;
 #endif
 }
 
@@ -394,28 +394,57 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)configureEnvironmentPickerButtonView
 {
     ASSERT(_valid);
-    RefPtr page = self._webView._page.get();
-    if (!page || !page->preferences().linearMediaPlayerEnabled())
-        return;
 
-    RefPtr videoPresentationInterface = page->videoPresentationManager() ? page->videoPresentationManager()->controlsManagerInterface() : nullptr;
+    RefPtr page = self._webView._page.get();
+    if (!page || !page->preferences().linearMediaPlayerEnabled()) {
+        [self _removeEnvironmentPickerButtonView];
+        return;
+    }
+
+    RefPtr playbackSessionManager = page->playbackSessionManager();
+    RefPtr playbackSessionInterface = playbackSessionManager ? playbackSessionManager->controlsManagerInterface() : nullptr;
+    auto* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
+    if (!playbackSessionModel || !playbackSessionModel->supportsLinearMediaPlayer()) {
+        [self _removeEnvironmentPickerButtonView];
+        return;
+    }
+
+    RefPtr videoPresentationManager = page->videoPresentationManager();
+    RefPtr videoPresentationInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
     LMPlayableViewController *playableViewController = videoPresentationInterface ? videoPresentationInterface->playableViewController() : nil;
     UIViewController *environmentPickerButtonViewController = playableViewController.wks_environmentPickerButtonViewController;
-    UIView *environmentPickerButtonView = environmentPickerButtonViewController.view;
 
-    if (_environmentPickerButtonView != environmentPickerButtonView)
-        [std::exchange(_environmentPickerButtonView, nil) removeFromSuperview];
+    if (_environmentPickerButtonViewController == environmentPickerButtonViewController) {
+        ASSERT(!environmentPickerButtonViewController || [[_stackView arrangedSubviews] containsObject:environmentPickerButtonViewController.view]);
+        return;
+    }
 
+    [self _removeEnvironmentPickerButtonView];
     if (!environmentPickerButtonViewController)
         return;
 
     playableViewController.wks_automaticallyDockOnFullScreenPresentation = YES;
     playableViewController.wks_dismissFullScreenOnExitingDocking = YES;
 
-    _environmentPickerButtonView = environmentPickerButtonView;
     [self addChildViewController:environmentPickerButtonViewController];
-    [_stackView insertArrangedSubview:_environmentPickerButtonView.get() atIndex:1];
+    [_stackView insertArrangedSubview:environmentPickerButtonViewController.view atIndex:1];
     [environmentPickerButtonViewController didMoveToParentViewController:self];
+    _environmentPickerButtonViewController = environmentPickerButtonViewController;
+}
+
+- (void)_removeEnvironmentPickerButtonView
+{
+    if (!_environmentPickerButtonViewController)
+        return;
+
+    UIView *environmentPickerButtonView = [_environmentPickerButtonViewController view];
+
+    [_environmentPickerButtonViewController willMoveToParentViewController:nil];
+    [_stackView removeArrangedSubview:environmentPickerButtonView];
+    [environmentPickerButtonView removeFromSuperview];
+    [self removeChildViewController:_environmentPickerButtonViewController.get()];
+
+    _environmentPickerButtonViewController = nil;
 }
 #endif // ENABLE(LINEAR_MEDIA_PLAYER)
 

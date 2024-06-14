@@ -138,6 +138,9 @@ public:
     virtual bool isInWindowFullscreenActive() const { return false; }
     virtual AudioSessionSoundStageSize soundStageSize() const = 0;
     virtual void setSoundStageSize(AudioSessionSoundStageSize) = 0;
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    virtual bool supportsLinearMediaPlayer() const { return false; }
+#endif
 
 #if !RELEASE_LOG_DISABLED
     virtual const void* logIdentifier() const { return nullptr; }
@@ -173,6 +176,9 @@ public:
     virtual void isPictureInPictureSupportedChanged(bool) { }
     virtual void pictureInPictureActiveChanged(bool) { }
     virtual void isInWindowFullscreenActiveChanged(bool) { }
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    virtual void supportsLinearMediaPlayerChanged(bool) { }
+#endif
     virtual void ensureControlsManager() { }
     virtual void modelDestroyed() { }
 };

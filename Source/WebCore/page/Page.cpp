@@ -2717,9 +2717,9 @@ void Page::playbackControlsManagerUpdateTimerFired()
         chrome().client().clearPlaybackControlsManager();
 }
 
-void Page::playbackControlsMediaEngineChanged()
+void Page::mediaEngineChanged(HTMLMediaElement& mediaElement)
 {
-    chrome().client().playbackControlsMediaEngineChanged();
+    chrome().client().mediaEngineChanged(mediaElement);
 }
 
 #endif

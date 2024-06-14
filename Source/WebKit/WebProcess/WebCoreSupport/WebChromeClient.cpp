@@ -1268,9 +1268,9 @@ void WebChromeClient::clearPlaybackControlsManager()
     protectedPage()->playbackSessionManager().clearPlaybackControlsManager();
 }
 
-void WebChromeClient::playbackControlsMediaEngineChanged()
+void WebChromeClient::mediaEngineChanged(WebCore::HTMLMediaElement& mediaElement)
 {
-    protectedPage()->playbackSessionManager().mediaEngineChanged();
+    protectedPage()->playbackSessionManager().mediaEngineChanged(mediaElement);
 }
 
 #endif

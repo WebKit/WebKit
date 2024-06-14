@@ -472,6 +472,10 @@ private:
 
     void isInFullscreenOrPictureInPictureChanged(bool) final;
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool supportsLinearMediaPlayer() const final;
+#endif
+
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
 #endif

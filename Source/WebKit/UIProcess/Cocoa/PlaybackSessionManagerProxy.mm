@@ -444,6 +444,23 @@ void PlaybackSessionModelContext::isInWindowFullscreenActiveChanged(bool active)
         client.isInWindowFullscreenActiveChanged(active);
 }
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+void PlaybackSessionModelContext::supportsLinearMediaPlayerChanged(bool supportsLinearMediaPlayer)
+{
+    if (m_supportsLinearMediaPlayer == supportsLinearMediaPlayer)
+        return;
+
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, supportsLinearMediaPlayer);
+    m_supportsLinearMediaPlayer = supportsLinearMediaPlayer;
+
+    for (auto& client : m_clients)
+        client.supportsLinearMediaPlayerChanged(supportsLinearMediaPlayer);
+
+    if (RefPtr manager = m_manager.get())
+        manager->updateVideoControlsManager(m_contextId);
+}
+#endif
+
 void PlaybackSessionModelContext::invalidate()
 {
     setVideoReceiverEndpoint(nullptr);
@@ -679,6 +696,13 @@ void PlaybackSessionManagerProxy::isInWindowFullscreenActiveChanged(PlaybackSess
 {
     ensureModel(contextId).isInWindowFullscreenActiveChanged(active);
 }
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+void PlaybackSessionManagerProxy::supportsLinearMediaPlayerChanged(PlaybackSessionContextIdentifier contextId, bool supportsLinearMediaPlayer)
+{
+    ensureModel(contextId).supportsLinearMediaPlayerChanged(supportsLinearMediaPlayer);
+}
+#endif
 
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(PlaybackSessionContextIdentifier contextId, String identifier) const
 {
@@ -934,6 +958,17 @@ bool PlaybackSessionManagerProxy::isPaused(PlaybackSessionContextIdentifier iden
 
     Ref model = *std::get<0>(iterator->value);
     return !model->isPlaying() && !model->isStalled();
+}
+
+void PlaybackSessionManagerProxy::updateVideoControlsManager(PlaybackSessionContextIdentifier identifier)
+{
+    if (m_controlsManagerContextId != identifier)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    if (RefPtr page = m_page.get())
+        page->videoControlsManagerDidChange();
 }
 
 #if !RELEASE_LOG_DISABLED

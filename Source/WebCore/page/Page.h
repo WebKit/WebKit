@@ -914,7 +914,7 @@ public:
     inline bool isMediaCaptureMuted() const;
     void schedulePlaybackControlsManagerUpdate();
 #if ENABLE(VIDEO)
-    void playbackControlsMediaEngineChanged();
+    void mediaEngineChanged(HTMLMediaElement&);
 #endif
     WEBCORE_EXPORT void setMuted(MediaProducerMutedStateFlags);
 

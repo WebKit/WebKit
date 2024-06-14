@@ -310,7 +310,7 @@ private:
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { }) final;
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&) final;
     void clearPlaybackControlsManager() final;
-    void playbackControlsMediaEngineChanged() final;
+    void mediaEngineChanged(WebCore::HTMLMediaElement&) final;
 #endif
 
 #if ENABLE(MEDIA_USAGE)

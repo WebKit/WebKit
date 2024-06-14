@@ -1800,6 +1800,33 @@ void MediaPlayerPrivateRemote::isInFullscreenOrPictureInPictureChanged(bool isIn
     connection().send(Messages::RemoteMediaPlayerProxy::IsInFullscreenOrPictureInPictureChanged(isInFullscreenOrPictureInPicture), m_id);
 }
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+bool MediaPlayerPrivateRemote::supportsLinearMediaPlayer() const
+{
+    using namespace WebCore;
+
+    switch (m_remoteEngineIdentifier) {
+    case MediaPlayerMediaEngineIdentifier::AVFoundation:
+    case MediaPlayerMediaEngineIdentifier::AVFoundationMSE:
+        return true;
+    case MediaPlayerMediaEngineIdentifier::AVFoundationMediaStream:
+    case MediaPlayerMediaEngineIdentifier::CocoaWebM:
+        // FIXME: MediaStream and WebM players don't support LinearMediaPlayer yet but should.
+        return false;
+    case MediaPlayerMediaEngineIdentifier::AVFoundationCF:
+    case MediaPlayerMediaEngineIdentifier::GStreamer:
+    case MediaPlayerMediaEngineIdentifier::GStreamerMSE:
+    case MediaPlayerMediaEngineIdentifier::HolePunch:
+    case MediaPlayerMediaEngineIdentifier::MediaFoundation:
+    case MediaPlayerMediaEngineIdentifier::MockMSE:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+#endif
+
 void MediaPlayerPrivateRemote::commitAllTransactions(CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();

@@ -5954,7 +5954,7 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 #endif
 
     if (RefPtr page = document().page())
-        page->playbackControlsMediaEngineChanged();
+        page->mediaEngineChanged(*this);
 }
 
 void HTMLMediaElement::mediaPlayerEngineUpdated()
@@ -7122,8 +7122,10 @@ bool HTMLMediaElement::videoUsesElementFullscreen() const
 {
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    if (document().settings().linearMediaPlayerEnabled())
-        return false;
+    if (document().settings().linearMediaPlayerEnabled()) {
+        if (RefPtr player = m_player; player && player->supportsLinearMediaPlayer())
+            return false;
+    }
 #endif
 
 #if PLATFORM(IOS_FAMILY)

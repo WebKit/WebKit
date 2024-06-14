@@ -384,6 +384,10 @@ private:
 
     void isInFullscreenOrPictureInPictureChanged(bool) final;
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool supportsLinearMediaPlayer() const final { return true; }
+#endif
+
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;

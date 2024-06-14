@@ -328,6 +328,10 @@ private:
 
     void isInFullscreenOrPictureInPictureChanged(bool) final;
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool supportsLinearMediaPlayer() const final { return true; }
+#endif
+
     friend class MediaSourcePrivateAVFObjC;
     void bufferedChanged();
 

@@ -1017,7 +1017,7 @@ void WebChromeClient::clearPlaybackControlsManager()
     [m_webView _clearPlaybackControlsManager];
 }
 
-void WebChromeClient::playbackControlsMediaEngineChanged()
+void WebChromeClient::mediaEngineChanged(WebCore::HTMLMediaElement&)
 {
     [m_webView _playbackControlsMediaEngineChanged];
 }

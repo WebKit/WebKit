@@ -199,7 +199,7 @@ private:
 #if ENABLE(VIDEO) && PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&) final;
     void clearPlaybackControlsManager() final;
-    void playbackControlsMediaEngineChanged() final;
+    void mediaEngineChanged(WebCore::HTMLMediaElement&) final;
 #endif
 
 #if ENABLE(VIDEO)

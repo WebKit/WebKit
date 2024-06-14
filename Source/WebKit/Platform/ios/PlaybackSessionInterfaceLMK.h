@@ -58,6 +58,7 @@ public:
     void wirelessVideoPlaybackDisabledChanged(bool) final { }
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
+    void supportsLinearMediaPlayerChanged(bool) final;
     void startObservingNowPlayingMetadata() final;
     void stopObservingNowPlayingMetadata() final;
 #if !RELEASE_LOG_DISABLED
