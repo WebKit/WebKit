@@ -964,7 +964,8 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
         frame->protectedDocument()->hitTest(HitTestRequest(), result);
 
         updateSelectionForMouseDrag(result);
-    }
+    } else
+        event.targetNode()->protectedDocument()->updateStyleIfNeeded();
     updateSelectionForMouseDrag(event.hitTestResult());
     return true;
 }
