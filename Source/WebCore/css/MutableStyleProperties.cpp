@@ -146,7 +146,6 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
     if (!isExposed(propertyID, &parserContext.propertySettings) && !isInternal(propertyID)) {
         // Allow internal properties as we use them to handle certain DOM-exposed values
         // (e.g. -webkit-font-size-delta from execCommand('FontSizeDelta')).
-        ASSERT_NOT_REACHED();
         return false;
     }
 
