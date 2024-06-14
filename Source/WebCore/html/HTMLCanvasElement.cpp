@@ -551,27 +551,11 @@ GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type, GPU* g
     return static_cast<GPUCanvasContext*>(m_context.get());
 }
 
-bool HTMLCanvasElement::shouldNotifyRendererOnDidDraw() const
-{
-    if (!renderBox()->hasAcceleratedCompositing())
-        return false;
-
-    if (isGPUBased())
-        return true;
-
-#if USE(SKIA) && USE(NICOSIA)
-    if (m_context && m_context->isAccelerated())
-        return true;
-#endif
-
-    return false;
-}
-
 void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     clearCopiedImage();
     if (CheckedPtr renderer = renderBox()) {
-        if (shouldNotifyRendererOnDidDraw())
+        if (usesContentsAsLayerContents())
             renderer->contentChanged(CanvasPixelsChanged);
         else if (rect) {
             FloatRect destRect;
@@ -635,24 +619,15 @@ void HTMLCanvasElement::reset()
     notifyObserversCanvasResized();
 }
 
-bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
+bool HTMLCanvasElement::usesContentsAsLayerContents() const
 {
-    ASSERT(m_context);
-#if USE(IOSURFACE_CANVAS_BACKING_STORE) || (USE(SKIA) && !USE(NICOSIA))
-    if (m_context->is2d() || m_context->isBitmapRenderer())
-        return true;
-#endif
-
-    if (!m_context->isAccelerated())
-        return true;
-
-    if (renderBox() && renderBox()->hasAcceleratedCompositing())
+    auto* renderBox = this->renderBox();
+    if (!renderBox)
         return false;
-
-    return true;
+    if (!m_context)
+        return false;
+    return renderBox->hasAcceleratedCompositing() && m_context->delegatesDisplay();
 }
-
-
 
 void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 {
@@ -661,7 +636,7 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
     m_context->clearAccumulatedDirtyRect();
 
     if (!context.paintingDisabled()) {
-        if (paintsIntoCanvasBuffer() || document().printing() || m_isSnapshotting) {
+        if (!usesContentsAsLayerContents() || document().printing() || m_isSnapshotting) {
             if (m_context->compositingResultsNeedUpdating())
                 m_context->prepareForDisplay();
             const bool skipTransparentBlackDraw = context.compositeMode() == CompositeMode { CompositeOperator::SourceOver, BlendMode::Normal };
@@ -675,11 +650,6 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 
     if (UNLIKELY(m_context->hasActiveInspectorCanvasCallTracer()))
         InspectorInstrumentation::didFinishRecordingCanvasFrame(*m_context);
-}
-
-bool HTMLCanvasElement::isGPUBased() const
-{
-    return m_context && m_context->isGPUBased();
 }
 
 void HTMLCanvasElement::setSurfaceSize(const IntSize& size)
@@ -792,7 +762,7 @@ ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(
         return Exception { ExceptionCode::InvalidStateError };
 
     m_context = makeUniqueWithoutRefCountedCheck<PlaceholderRenderingContext>(*this);
-    if (m_context->isAccelerated())
+    if (m_context->delegatesDisplay())
         invalidateStyleAndLayerComposition();
 
     return OffscreenCanvas::create(document(), *this);

@@ -64,11 +64,6 @@ ImageBitmapCanvas ImageBitmapRenderingContext::canvas()
     return &downcast<HTMLCanvasElement>(base);
 }
 
-bool ImageBitmapRenderingContext::isAccelerated() const
-{
-    return false;
-}
-
 void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitmap)
 {
     // 1. If a bitmap argument was not provided, then:

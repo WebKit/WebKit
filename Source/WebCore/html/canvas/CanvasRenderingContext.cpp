@@ -98,6 +98,11 @@ bool CanvasRenderingContext::isSurfaceBufferTransparentBlack(SurfaceBuffer) cons
     return false;
 }
 
+bool CanvasRenderingContext::delegatesDisplay() const
+{
+    return false;
+}
+
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext::layerContentsDisplayDelegate()
 {
     return nullptr;

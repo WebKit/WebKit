@@ -72,7 +72,6 @@ public:
     bool isWebGL() const { return isWebGL1() || isWebGL2(); }
     virtual bool isWebGPU() const { return false; }
     virtual bool isGPUBased() const { return false; }
-    virtual bool isAccelerated() const { return false; }
     virtual bool isBitmapRenderer() const { return false; }
     virtual bool isPlaceholder() const { return false; }
     virtual bool isOffscreen2d() const { return false; }
@@ -93,6 +92,7 @@ public:
     // Draws the source buffer to the canvasBase().buffer().
     virtual RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer);
     virtual bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const;
+    virtual bool delegatesDisplay() const;
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
     virtual void setContentsToLayer(GraphicsLayer&);
 

@@ -172,11 +172,7 @@ private:
 
     void setSurfaceSize(const IntSize&);
 
-    bool paintsIntoCanvasBuffer() const;
-
-    bool isGPUBased() const;
-
-    bool shouldNotifyRendererOnDidDraw() const;
+    bool usesContentsAsLayerContents() const;
 
     void refCanvasBase() const final { HTMLElement::ref(); }
     void derefCanvasBase() const final { HTMLElement::deref(); }

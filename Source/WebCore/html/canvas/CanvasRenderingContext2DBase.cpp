@@ -254,12 +254,8 @@ CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
 
 bool CanvasRenderingContext2DBase::isAccelerated() const
 {
-#if USE(IOSURFACE_CANVAS_BACKING_STORE) || USE(SKIA)
     auto* context = existingDrawingContext();
     return context && context->renderingMode() == RenderingMode::Accelerated;
-#else
-    return false;
-#endif
 }
 
 bool CanvasRenderingContext2DBase::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
@@ -269,12 +265,19 @@ bool CanvasRenderingContext2DBase::isSurfaceBufferTransparentBlack(SurfaceBuffer
     return !canvasBase().hasCreatedImageBuffer();
 }
 
+#if USE(SKIA)
+bool CanvasRenderingContext2DBase::delegatesDisplay() const
+{
+    return isAccelerated();
+}
+
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext2DBase::layerContentsDisplayDelegate()
 {
     if (auto buffer = canvasBase().buffer())
         return buffer->layerContentsDisplayDelegate();
     return nullptr;
 }
+#endif
 
 bool CanvasRenderingContext2DBase::hasDeferredOperations() const
 {

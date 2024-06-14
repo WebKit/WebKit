@@ -98,6 +98,8 @@ protected:
 public:
     virtual ~CanvasRenderingContext2DBase();
 
+    bool isAccelerated() const;
+
     const CanvasRenderingContext2DSettings& getContextAttributes() const { return m_settings; }
     using RenderingMode = WebCore::RenderingMode;
     std::optional<RenderingMode> getEffectiveRenderingModeForTesting();
@@ -458,10 +460,11 @@ private:
 
     template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator);
 
-    bool isAccelerated() const override;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
+#if USE(SKIA)
+    bool delegatesDisplay() const override;
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
-
+#endif
     bool hasDeferredOperations() const final;
     void flushDeferredOperations() final;
 

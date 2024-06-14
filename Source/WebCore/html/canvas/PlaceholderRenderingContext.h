@@ -45,9 +45,7 @@ public:
 
 private:
     bool isPlaceholder() const final { return true; }
-
-    bool isAccelerated() const final { return !!m_imageBufferPipe; }
-    bool isGPUBased() const final { return !!m_imageBufferPipe; }
+    bool delegatesDisplay() const final { return true; }
     void setContentsToLayer(GraphicsLayer&);
 
     RefPtr<ImageBufferPipe> m_imageBufferPipe;
