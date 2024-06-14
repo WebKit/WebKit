@@ -1161,6 +1161,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 
         case CSSSelector::PseudoClass::UserValid:
             return matchesUserValidPseudoClass(element);
+
+        case CSSSelector::PseudoClass::ActiveViewTransition:
+            return matchesActiveViewTransitionPseudoClass(element);
         }
         return false;
     }

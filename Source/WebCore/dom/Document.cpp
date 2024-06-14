@@ -10582,6 +10582,9 @@ bool Document::activeViewTransitionCapturedDocumentElement() const
 
 void Document::setActiveViewTransition(RefPtr<ViewTransition>&& viewTransition)
 {
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+    if (documentElement())
+        styleInvalidation.emplace(*documentElement(), CSSSelector::PseudoClass::ActiveViewTransition, !!viewTransition);
     m_activeViewTransition = WTFMove(viewTransition);
 }
 

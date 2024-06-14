@@ -6981,7 +6981,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-vie
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation [ Skip ]
 
 # View transitions Level 2 - types.
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-universal-match.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-early-mutation.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-early.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-late-mutation.html [ Skip ]

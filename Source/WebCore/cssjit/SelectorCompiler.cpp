@@ -128,6 +128,7 @@ using PseudoClassesSet = HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::
     v(operationMatchesPopoverOpenPseudoClass) \
     v(operationMatchesModalPseudoClass) \
     v(operationMatchesHtmlDocumentPseudoClass) \
+    v(operationMatchesActiveViewTransitionPseudoClass) \
     v(operationIsUserInvalid) \
     v(operationIsUserValid) \
     v(operationAddStyleRelationFunction) \
@@ -281,6 +282,7 @@ static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationHasAttac
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesHtmlDocumentPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPopoverOpenPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesModalPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesActiveViewTransitionPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserInvalid, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserValid, bool, (const Element&));
 
@@ -1024,6 +1026,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesModalPseudoClass, bool, (const
     return matchesModalPseudoClass(element);
 }
 
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesActiveViewTransitionPseudoClass, bool, (const Element& element))
+{
+    COUNT_SELECTOR_OPERATION(operationMatchesActiveViewTransitionPseudoClass);
+    return matchesActiveViewTransitionPseudoClass(element);
+}
+
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsUserInvalid, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsUserInvalid);
@@ -1189,6 +1197,10 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
     case CSSSelector::PseudoClass::UserValid:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsUserValid));
+        return FunctionType::SimpleSelectorChecker;
+
+    case CSSSelector::PseudoClass::ActiveViewTransition:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesActiveViewTransitionPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 
     // These pseudo-classes only have meaning with scrollbars.
