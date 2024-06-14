@@ -1200,9 +1200,9 @@ void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea&
     
     switch (page->drawingArea()->type()) {
     case DrawingAreaType::RemoteLayerTree: {
-        if (!area.usesAsyncScrolling() && (!currentScrollbarsController || is<RemoteScrollbarsController>(currentScrollbarsController)))
+        if (!area.usesCompositedScrolling() && (!currentScrollbarsController || is<RemoteScrollbarsController>(currentScrollbarsController)))
             area.setScrollbarsController(ScrollbarsController::create(area));
-        else if (area.usesAsyncScrolling() && (!currentScrollbarsController || !is<RemoteScrollbarsController>(currentScrollbarsController)))
+        else if (area.usesCompositedScrolling() && (!currentScrollbarsController || !is<RemoteScrollbarsController>(currentScrollbarsController)))
             area.setScrollbarsController(makeUnique<RemoteScrollbarsController>(area, corePage.scrollingCoordinator()));
         return;
     }
