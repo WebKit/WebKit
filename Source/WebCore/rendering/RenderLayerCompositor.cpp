@@ -2623,7 +2623,7 @@ void RenderLayerCompositor::updateScrollLayerClipping()
         auto eventRegionContext = eventRegion.makeContext();
         eventRegionContext.unite(FloatRoundedRect(FloatRect({ }, layerSize)), m_renderView, RenderStyle::defaultStyle());
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        eventRegionContext.copyInteractionRegionsToEventRegion(renderer().document().settings().interactionRegionMinimumCornerRadius());
+        eventRegionContext.copyInteractionRegionsToEventRegion(m_renderView.settings().interactionRegionMinimumCornerRadius());
 #endif
         m_clipLayer->setEventRegion(WTFMove(eventRegion));
     }
