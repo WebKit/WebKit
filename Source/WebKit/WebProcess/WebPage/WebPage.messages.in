@@ -380,7 +380,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     RemoveTextPlaceholder(struct WebCore::ElementContext placeholder) -> ()
 #endif
     
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
     CreateTextIndicatorForID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
     UpdateTextIndicatorStyleVisibilityForID(WTF::UUID uuid, bool visible) -> ()
 #endif
@@ -793,7 +793,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     TextReplacementSessionDidReceiveTextWithReplacementRange(struct WebCore::UnifiedTextReplacement::Session session, struct WebCore::AttributedString attributedText, struct WebCore::CharacterRange range, struct WebCore::UnifiedTextReplacement::Context context, bool finished);
 
     TextReplacementSessionDidReceiveEditAction(struct WebCore::UnifiedTextReplacement::Session session, enum:uint8_t WebCore::UnifiedTextReplacement::EditAction action);
+#endif
 
+#if ENABLE(WRITING_TOOLS_UI)
     EnableTextIndicatorStyleAfterElementWithID(String elementID, WTF::UUID uuid);
     
     EnableTextIndicatorStyleForElementWithID(String elementID, WTF::UUID uuid);

@@ -1070,6 +1070,7 @@
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
 		42057BEC2AD435E0001B963B /* DisbursementRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 42057BE92AD433C6001B963B /* DisbursementRequest.h */; };
 		440C0BE52BBCAA3C0086046E /* WKTextIndicatorStyleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 440C0BE42BBCAA180086046E /* WKTextIndicatorStyleManager.h */; };
+		440DB5B72C1914DC0021639B /* TextStyleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440DB5B62C1914DC0021639B /* TextStyleManager.swift */; };
 		441379612964F10A003C34C6 /* CacheStoragePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4413795F2964F0C2003C34C6 /* CacheStoragePolicy.h */; };
 		442E7BEB27B4586900C69AC1 /* RevealItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 442E7BEA27B4581300C69AC1 /* RevealItem.h */; };
 		4447F0202BC833F0006988E9 /* WKTextIndicatorStyleType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4447F01F2BC833F0006988E9 /* WKTextIndicatorStyleType.h */; };
@@ -1089,7 +1090,6 @@
 		44DBDA502BB23DE9004E3712 /* WKSTextStyleSourceDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DBDA4D2BAE451F004E3712 /* WKSTextStyleSourceDelegate.h */; };
 		44E936FD2447C2D8009FA3E3 /* LegacyCustomProtocolID.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E936FC2447C256009FA3E3 /* LegacyCustomProtocolID.h */; };
 		44EC3EA9247F5C090059489C /* _WKDragActionsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 44EC3EA8247F5C080059489C /* _WKDragActionsInternal.h */; };
-		44EF4AE92BB6646D0011CDB0 /* TextStyleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EF4AE82BB6646D0011CDB0 /* TextStyleManager.swift */; };
 		46088A00261FA8BC00E2500D /* RemoteRenderingBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 550640A324071A6100AAE045 /* RemoteRenderingBackend.h */; };
 		460A4BA22AFEC9EF00240DB8 /* RemoteVideoFrameProxyProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 460A4BA12AFEC9CC00240DB8 /* RemoteVideoFrameProxyProperties.h */; };
 		460F488F1F996F7100CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */; };
@@ -5267,6 +5267,7 @@
 		4253D3732AD4394700EE168C /* DisbursementRequestCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisbursementRequestCocoa.mm; sourceTree = "<group>"; };
 		440C0BE22BBCA9E00086046E /* WKTextIndicatorStyleManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTextIndicatorStyleManager.mm; sourceTree = "<group>"; };
 		440C0BE42BBCAA180086046E /* WKTextIndicatorStyleManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTextIndicatorStyleManager.h; sourceTree = "<group>"; };
+		440DB5B62C1914DC0021639B /* TextStyleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStyleManager.swift; sourceTree = "<group>"; };
 		44122266296A89820057E1A5 /* SameDocumentNavigationType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SameDocumentNavigationType.serialization.in; sourceTree = "<group>"; };
 		4413795F2964F0C2003C34C6 /* CacheStoragePolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CacheStoragePolicy.h; sourceTree = "<group>"; };
 		441379602964F0C2003C34C6 /* CacheStoragePolicy.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CacheStoragePolicy.serialization.in; sourceTree = "<group>"; };
@@ -5294,7 +5295,6 @@
 		44DBDA4D2BAE451F004E3712 /* WKSTextStyleSourceDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKSTextStyleSourceDelegate.h; sourceTree = "<group>"; };
 		44E936FC2447C256009FA3E3 /* LegacyCustomProtocolID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCustomProtocolID.h; sourceTree = "<group>"; };
 		44EC3EA8247F5C080059489C /* _WKDragActionsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDragActionsInternal.h; sourceTree = "<group>"; };
-		44EF4AE82BB6646D0011CDB0 /* TextStyleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TextStyleManager.swift; path = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/TextStyleManager.swift"; sourceTree = "<group>"; };
 		4603011A234BE31D009C8217 /* WebBackForwardCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardCache.cpp; sourceTree = "<group>"; };
 		4603011B234BE31E009C8217 /* WebBackForwardCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardCache.h; sourceTree = "<group>"; };
 		460A4BA02AFEC9CC00240DB8 /* RemoteVideoFrameProxyProperties.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteVideoFrameProxyProperties.serialization.in; sourceTree = "<group>"; };
@@ -12027,7 +12027,7 @@
 		449A79EE2BAE299C0033BF53 /* TextIndicatorStyle */ = {
 			isa = PBXGroup;
 			children = (
-				44EF4AE82BB6646D0011CDB0 /* TextStyleManager.swift */,
+				440DB5B62C1914DC0021639B /* TextStyleManager.swift */,
 				44DBDA4D2BAE451F004E3712 /* WKSTextStyleSourceDelegate.h */,
 			);
 			path = TextIndicatorStyle;
@@ -19845,7 +19845,7 @@
 				A14F9B642B686DD300AD9C56 /* LinearMediaTypes.swift in Sources */,
 				EB0FBFA72B66C61E00269CC1 /* MarketplaceKitWrapper.swift in Sources */,
 				B66F88C02B6D1F2300FB1734 /* PreviewWindowController.swift in Sources */,
-				44EF4AE92BB6646D0011CDB0 /* TextStyleManager.swift in Sources */,
+				440DB5B72C1914DC0021639B /* TextStyleManager.swift in Sources */,
 				F48EC3532B75837F00D1B886 /* WKTextExtractionItem.swift in Sources */,
 				F47AA6CA2B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift in Sources */,
 			);

@@ -627,7 +627,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_appHighlightsVisible(parameters.appHighlightsVisible)
 #endif
     , m_historyItemClient(WebHistoryItemClient::create())
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
     , m_textIndicatorStyleController(makeUniqueRef<TextIndicatorStyleController>(*this))
 #endif
 {
@@ -9150,7 +9150,7 @@ void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& comp
     return completionHandler(mainFrame->document()->loader()->lastNavigationWasAppInitiated());
 }
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 
 void WebPage::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKit::TextIndicatorStyleData& styleData, const WebCore::TextIndicatorData& indicatorData)
 {

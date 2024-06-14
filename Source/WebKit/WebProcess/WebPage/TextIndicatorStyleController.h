@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 
 #include <WebCore/CharacterRange.h>
 #include <WebCore/SimpleRange.h>

@@ -11753,7 +11753,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     }];
 }
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 
 - (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType
 {
@@ -11776,6 +11776,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
     [_textStyleManager removeTextIndicatorStyleForID:uuid];
 }
+
+#endif
+
+#if ENABLE(WRITING_TOOLS)
 
 - (WebCore::UnifiedTextReplacement::ReplacementBehavior)unifiedTextReplacementBehavior
 {
@@ -13128,7 +13132,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 #pragma mark - WKSTextStyleSourceDelegate
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 - (void)targetedPreviewForID:(NSUUID *)uuid completionHandler:(void (^)(UITargetedPreview *))completionHandler
 {
     auto textUUID = WTF::UUID::fromNSUUID(uuid);

@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 
 #import "TextIndicatorStyle.h"
 
@@ -36,8 +36,6 @@ class WebViewImpl;
 }
 
 @interface WKTextIndicatorStyleManager : NSObject
-
-+ (BOOL)supportsTextIndicatorStyle;
 
 - (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)view;
 - (void)addTextIndicatorStyleForID:(NSUUID *)uuid withData:(const WebKit::TextIndicatorStyleData&)data;
@@ -50,4 +48,4 @@ class WebViewImpl;
 
 @end
 
-#endif // ENABLE(WRITING_TOOLS)
+#endif // ENABLE(WRITING_TOOLS_UI)

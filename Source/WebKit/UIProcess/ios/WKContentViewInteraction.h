@@ -641,7 +641,7 @@ struct ImageAnalysisContextMenuActionData {
 #elif ENABLE(DRAG_SUPPORT)
     , UIDragInteractionDelegate
 #endif
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
     , WKSTextStyleSourceDelegate
 #endif
 >
@@ -841,7 +841,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)setTextIndicatorAnimationProgress:(float)NSAnimationProgress;
 - (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 - (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
 - (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
 #endif

@@ -748,7 +748,9 @@ public:
 
 #if ENABLE(WRITING_TOOLS)
     bool wantsCompleteUnifiedTextReplacementBehavior() const;
+#endif
 
+#if ENABLE(WRITING_TOOLS_UI)
     void addTextIndicatorStyleForID(WTF::UUID, const WebKit::TextIndicatorStyleData&);
     void removeTextIndicatorStyleForID(WTF::UUID);
 #endif

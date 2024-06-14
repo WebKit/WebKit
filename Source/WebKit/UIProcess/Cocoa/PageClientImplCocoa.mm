@@ -156,7 +156,7 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 }
 #endif // ENABLE(APP_HIGHLIGHTS)
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 void PageClientImplCocoa::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKit::TextIndicatorStyleData& data)
 {
     [m_webView _addTextIndicatorStyleForID:uuid withData:data];

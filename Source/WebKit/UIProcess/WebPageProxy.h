@@ -2434,7 +2434,9 @@ public:
 
     void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::UnifiedTextReplacement::ReplacementID&, WebCore::IntRect selectionBoundsInRootView);
     void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::SessionID&, WebCore::UnifiedTextReplacement::ReplacementState, const WebCore::UnifiedTextReplacement::ReplacementID&);
+#endif // ENABLE(WRITING_TOOLS)
 
+#if ENABLE(WRITING_TOOLS_UI)
     void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyleData&, const WebCore::TextIndicatorData&);
     void removeTextIndicatorStyleForID(const WTF::UUID&);
     void enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID&);

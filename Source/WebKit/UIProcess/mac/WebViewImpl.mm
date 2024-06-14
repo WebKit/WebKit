@@ -4605,13 +4605,10 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
         completionHandler();
 }
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, const WebKit::TextIndicatorStyleData& data)
 {
     if (!m_page->preferences().textIndicatorStylingEnabled())
-        return;
-
-    if (![WKTextIndicatorStyleManager supportsTextIndicatorStyle])
         return;
 
     if (!m_textIndicatorStyleManager)

@@ -1799,7 +1799,7 @@ static inline WKTextIndicatorStyleType toWKTextIndicatorStyleType(WebKit::TextIn
     }
 }
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 - (void)_addTextIndicatorStyleForID:(NSUUID *)nsUUID withData:(const WebKit::TextIndicatorStyleData&)data
 {
 #if PLATFORM(IOS_FAMILY)
@@ -2822,7 +2822,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     if (!uuid)
         return nil;
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
     _page->enableTextIndicatorStyleAfterElementWithID(elementID, *uuid);
 
 #if PLATFORM(IOS_FAMILY)
@@ -2831,7 +2831,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     _impl->addTextIndicatorStyleForID(*uuid, { WebKit::TextIndicatorStyle::Initial, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
-#else // ENABLE(WRITING_TOOLS)
+#else // ENABLE(WRITING_TOOLS_UI)
     return nil;
 #endif
 }
@@ -2844,7 +2844,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     if (!uuid)
         return nil;
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
     _page->enableTextIndicatorStyleForElementWithID(elementID, *uuid);
 
 #if PLATFORM(IOS_FAMILY)
@@ -2853,14 +2853,14 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     _impl->addTextIndicatorStyleForID(*uuid, { WebKit::TextIndicatorStyle::Final, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
-#else // ENABLE(WRITING_TOOLS)
+#else // ENABLE(WRITING_TOOLS_UI)
     return nil;
 #endif
 }
 
 - (void)_disableTextIndicatorStylingWithUUID:(NSUUID *)nsUUID
 {
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 #if PLATFORM(IOS_FAMILY)
     [_contentView removeTextIndicatorStyleForID:nsUUID];
 #elif PLATFORM(MAC)
@@ -2869,7 +2869,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
         return;
     _impl->removeTextIndicatorStyleForID(*uuid);
 #endif
-#endif
+#endif // ENABLE(WRITING_TOOLS_UI)
 }
 
 - (void)_requestTargetedElementInfo:(_WKTargetedElementRequest *)request completionHandler:(void(^)(NSArray<_WKTargetedElementInfo *> *))completion

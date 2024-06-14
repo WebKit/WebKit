@@ -1194,6 +1194,10 @@ void WebPageProxy::textReplacementSessionDidReceiveEditAction(const WebCore::Uni
     send(Messages::WebPage::TextReplacementSessionDidReceiveEditAction(session, action));
 }
 
+#endif // ENABLE(WRITING_TOOLS)
+
+#if ENABLE(WRITING_TOOLS_UI)
+
 void WebPageProxy::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
     if (!hasRunningProcess())
@@ -1246,6 +1250,17 @@ void WebPageProxy::updateTextIndicatorStyleVisibilityForID(const WTF::UUID& uuid
     sendWithAsyncReply(Messages::WebPage::UpdateTextIndicatorStyleVisibilityForID(uuid, visible), WTFMove(completionHandler));
 }
 
+void WebPageProxy::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+{
+    MESSAGE_CHECK(uuid.isValid());
+
+    protectedPageClient()->removeTextIndicatorStyleForID(uuid);
+}
+
+#endif // ENABLE(WRITING_TOOLS_UI)
+
+#if ENABLE(WRITING_TOOLS)
+
 void WebPageProxy::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::Session::ID& sessionID, const WebCore::UnifiedTextReplacement::Replacement::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
     MESSAGE_CHECK(sessionID.isValid());
@@ -1260,14 +1275,7 @@ void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithID(const W
     protectedPageClient()->textReplacementSessionUpdateStateForReplacementWithID(sessionID, state, replacementID);
 }
 
-void WebPageProxy::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
-{
-    MESSAGE_CHECK(uuid.isValid());
-
-    protectedPageClient()->removeTextIndicatorStyleForID(uuid);
-}
-
-#endif
+#endif // ENABLE(WRITING_TOOLS)
 
 } // namespace WebKit
 

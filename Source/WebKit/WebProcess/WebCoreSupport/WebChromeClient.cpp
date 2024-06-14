@@ -1856,6 +1856,10 @@ void WebChromeClient::textReplacementSessionUpdateStateForReplacementWithID(cons
     protectedPage()->textReplacementSessionUpdateStateForReplacementWithID(sessionID, state, replacementID);
 }
 
+#endif
+
+#if ENABLE(WRITING_TOOLS_UI)
+
 void WebChromeClient::removeTextIndicatorStyleForID(const UnifiedTextReplacement::Session::ID& sessionID)
 {
     protectedPage()->removeTextIndicatorStyleForID(sessionID);

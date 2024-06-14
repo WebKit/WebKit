@@ -510,7 +510,9 @@ private:
     void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::UnifiedTextReplacement::ReplacementID&, WebCore::IntRect selectionBoundsInRootView) final;
 
     void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::SessionID&, WebCore::UnifiedTextReplacement::ReplacementState, const WebCore::UnifiedTextReplacement::ReplacementID&) final;
+#endif
 
+#if ENABLE(WRITING_TOOLS_UI)
     void removeTextIndicatorStyleForID(const WebCore::UnifiedTextReplacement::SessionID&) final;
 
     void cleanUpTextStylesForSessionID(const WebCore::UnifiedTextReplacement::SessionID&) final;

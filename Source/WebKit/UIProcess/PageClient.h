@@ -716,7 +716,7 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
     virtual void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyleData&) = 0;
     virtual void removeTextIndicatorStyleForID(const WTF::UUID&) = 0;
 #endif

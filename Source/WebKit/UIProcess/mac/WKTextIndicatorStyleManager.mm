@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,220 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(WRITING_TOOLS)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKTextIndicatorStyleManagerAdditions.mm>
-#endif
+#if ENABLE(WRITING_TOOLS_UI) && PLATFORM(MAC)
 
-#endif
+#import "config.h"
+#import "WKTextIndicatorStyleManager.h"
+
+#import "TextIndicatorStyle.h"
+#import "WKTextIndicatorStyleType.h"
+#import "WebViewImpl.h"
+
+#import <WritingTools/WTSession_Private.h>
+#import <WritingToolsUI/WritingToolsUI.h>
+#import <WritingToolsUI/WritingToolsUI_Private.h>
+
+
+@interface WKTextIndicatorStyleEffectData : NSObject
+@property (nonatomic, strong, readonly) NSUUID *effectID;
+@property (nonatomic, assign, readonly) WebKit::TextIndicatorStyle type;
+@end
+
+@implementation WKTextIndicatorStyleEffectData {
+    RetainPtr<NSUUID> _effectID;
+}
+
+- (instancetype)initWithEffectID:(NSUUID *)effectID type:(WebKit::TextIndicatorStyle)type
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _effectID = effectID;
+    _type = type;
+
+    return self;
+}
+
+- (NSUUID *)effectID
+{
+    return _effectID.get();
+}
+
+@end
+
+@interface WKTextIndicatorStyleManager () <_WTTextPreviewAsyncSource>
+@end
+
+@interface _WTReplaceDestinationTextEffect (WritingTools_Staging_128304889)
+@property (copy) void (^preCompletion)(void);
+@end
+
+@implementation WKTextIndicatorStyleManager {
+    WeakPtr<WebKit::WebViewImpl> _webView;
+    RetainPtr<NSMutableDictionary<NSUUID *, WKTextIndicatorStyleEffectData *>> _chunkToEffect;
+    RetainPtr<_WTTextEffectView> _effectView;
+}
+
+- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)webView
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _webView = webView;
+    _chunkToEffect = adoptNS([[NSMutableDictionary alloc] init]);
+
+    _effectView = adoptNS([[_WTTextEffectView alloc] initWithAsyncSource:self]);
+    [_effectView setFrame:webView.view().frame];
+    [_webView->view() addSubview:_effectView.get()];
+    return self;
+}
+
+- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withData:(const WebKit::TextIndicatorStyleData&)data
+{
+    RetainPtr<id<_WTTextEffect>> effect;
+    RetainPtr chunk = adoptNS([[_WTTextChunk alloc] initChunkWithIdentifier:uuid.UUIDString]);
+    switch (data.style) {
+    case WebKit::TextIndicatorStyle::Initial:
+        effect = adoptNS([[_WTSweepTextEffect alloc] initWithChunk:chunk.get() effectView:_effectView.get()]);
+        break;
+    case WebKit::TextIndicatorStyle::Source:
+        effect = adoptNS([[_WTReplaceSourceTextEffect alloc] initWithChunk:chunk.get() effectView:_effectView.get()]);
+        break;
+    case WebKit::TextIndicatorStyle::Final:
+        effect = adoptNS([[_WTReplaceDestinationTextEffect alloc] initWithChunk:chunk.get() effectView:_effectView.get()]);
+        if ([effect respondsToSelector:@selector(setPreCompletion:)] && [effect respondsToSelector:@selector(setCompletion:)]) {
+            static_cast<_WTReplaceDestinationTextEffect *>(effect.get()).preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.remainingRangeUUID] {
+                auto strongWebView = weakWebView.get();
+                if (strongWebView)
+                    strongWebView->page().updateTextIndicatorStyleVisibilityForID(remainingID, false);
+            }).get();
+            effect.get().completion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.remainingRangeUUID] {
+                auto strongWebView = weakWebView.get();
+                if (strongWebView)
+                    strongWebView->page().updateTextIndicatorStyleVisibilityForID(remainingID, true);
+            }).get();
+        }
+        break;
+    }
+
+    RetainPtr effectID = [_effectView addEffect:effect.get()];
+    RetainPtr effectData = adoptNS([[WKTextIndicatorStyleEffectData alloc] initWithEffectID:effectID.get() type:data.style]);
+    [_chunkToEffect setObject:effectData.get() forKey:uuid];
+}
+
+- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid
+{
+    RetainPtr effectData = [_chunkToEffect objectForKey:uuid];
+    if (effectData) {
+        [_effectView removeEffect:[effectData effectID]];
+        [_chunkToEffect removeObjectForKey:uuid];
+    }
+}
+
+- (BOOL)hasActiveTextIndicatorStyle
+{
+    return [_chunkToEffect count];
+}
+
+- (void)suppressTextIndicatorStyle
+{
+    for (NSUUID *chunkID in [_chunkToEffect allKeys]) {
+        RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
+        [_effectView removeEffect:[effectData effectID]];
+
+        if ([effectData type] != WebKit::TextIndicatorStyle::Initial)
+            [_chunkToEffect removeObjectForKey:chunkID];
+    }
+}
+
+- (void)restoreTextIndicatorStyle
+{
+    for (NSUUID *chunkID in [_chunkToEffect allKeys]) {
+        RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
+        if ([effectData type] == WebKit::TextIndicatorStyle::Initial)
+            [self addTextIndicatorStyleForID:chunkID withData: { WebKit::TextIndicatorStyle::Initial, WTF::UUID(WTF::UUID::emptyValue) }];
+    }
+}
+
+#pragma mark _WTTextPreviewAsyncSource
+
+- (void)textPreviewsForChunk:(_WTTextChunk *)chunk completion:(void (^)(NSArray <_WTTextPreview *> *previews))completionHandler
+{
+    RetainPtr nsUUID = adoptNS([[NSUUID alloc] initWithUUIDString:chunk.identifier]);
+    auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
+    if (!uuid || !uuid->isValid()) {
+        completionHandler(nil);
+        return;
+    }
+
+    _webView->page().getTextIndicatorForID(*uuid, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] (std::optional<WebCore::TextIndicatorData> indicatorData) {
+
+        if (!indicatorData) {
+            completionHandler(nil);
+            return;
+        }
+
+        auto snapshot = indicatorData->contentImage;
+        if (!snapshot) {
+            completionHandler(nil);
+            return;
+        }
+
+        auto snapshotImage = snapshot->nativeImage();
+        if (!snapshotImage) {
+            completionHandler(nil);
+            return;
+        }
+
+        RetainPtr textPreviews = adoptNS([[NSMutableArray alloc] initWithCapacity:indicatorData->textRectsInBoundingRectCoordinates.size()]);
+        CGImageRef snapshotPlatformImage = snapshotImage->platformImage().get();
+        CGRect snapshotRectInBoundingRectCoordinates = indicatorData->textBoundingRectInRootViewCoordinates;
+        for (auto textRectInSnapshotCoordinates : indicatorData->textRectsInBoundingRectCoordinates) {
+            CGRect textLineFrameInBoundingRectCoordinates = CGRectOffset(textRectInSnapshotCoordinates, snapshotRectInBoundingRectCoordinates.origin.x, snapshotRectInBoundingRectCoordinates.origin.y);
+            textRectInSnapshotCoordinates.scale(indicatorData->contentImageScaleFactor);
+            [textPreviews addObject:adoptNS([[_WTTextPreview alloc] initWithSnapshotImage:adoptCF(CGImageCreateWithImageInRect(snapshotPlatformImage, textRectInSnapshotCoordinates)).get() presentationFrame:textLineFrameInBoundingRectCoordinates]).get()];
+        }
+
+        completionHandler(textPreviews.get());
+    });
+
+}
+
+- (void)textPreviewForRect:(CGRect)rect completion:(void (^)(_WTTextPreview *preview))completionHandler
+{
+    CGFloat deviceScale = _webView->page().deviceScaleFactor();
+    WebCore::IntSize bitmapSize(rect.size.width, rect.size.height);
+    bitmapSize.scale(deviceScale, deviceScale);
+
+    _webView->page().takeSnapshot(WebCore::IntRect(rect), bitmapSize, WebKit::SnapshotOptionsShareable, [rect, completionHandler = makeBlockPtr(completionHandler)](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
+        if (!imageHandle) {
+            completionHandler(nil);
+            return;
+        }
+        auto bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
+        RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
+        RetainPtr textPreview = adoptNS([[_WTTextPreview alloc] initWithSnapshotImage:cgImage.get() presentationFrame:rect]);
+        completionHandler(textPreview.get());
+    });
+}
+
+- (void)updateIsTextVisible:(BOOL)isTextVisible forChunk:(_WTTextChunk *)chunk completion:(void (^)(void))completionHandler
+{
+    RetainPtr nsUUID = adoptNS([[NSUUID alloc] initWithUUIDString:chunk.identifier]);
+    auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
+    if (!uuid || !uuid->isValid()) {
+        if (completionHandler)
+            completionHandler();
+        return;
+    }
+    _webView->page().updateTextIndicatorStyleVisibilityForID(*uuid, isTextVisible, [completionHandler = makeBlockPtr(completionHandler)] () {
+        if (completionHandler)
+            completionHandler();
+    });
+}
+
+@end
+
+#endif // ENABLE(WRITING_TOOLS_UI) && PLATFORM(MAC)
+

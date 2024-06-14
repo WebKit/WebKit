@@ -313,7 +313,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     return dictionaryPopupInfo;
 }
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
 void WebPage::createTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
     m_textIndicatorStyleController->createTextIndicatorForID(uuid, WTFMove(completionHandler));

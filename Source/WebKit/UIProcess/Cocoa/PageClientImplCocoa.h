@@ -99,7 +99,7 @@ public:
     void storeAppHighlight(const WebCore::AppHighlight&) final;
 #endif
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS_UI)
     void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyleData&) final;
     void removeTextIndicatorStyleForID(const WTF::UUID&) final;
 #endif
