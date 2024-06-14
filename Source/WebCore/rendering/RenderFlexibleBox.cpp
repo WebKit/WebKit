@@ -1805,6 +1805,16 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, FlexItems& fle
     return !totalViolation;
 }
 
+inline ContentPosition resolveLeftRightAlignment(ContentPosition position, const RenderStyle& style, bool isReversed)
+{
+    if (position == ContentPosition::Left || position == ContentPosition::Right) {
+        auto leftRightAxisDirection = RenderFlexibleBox::leftRightAxisDirectionFromStyle(style);
+        position = (style.justifyContent().isEndward(leftRightAxisDirection, isReversed))
+            ? ContentPosition::End : ContentPosition::Start;
+    }
+    return position;
+}
+
 static LayoutUnit initialJustifyContentOffset(const RenderStyle& style, LayoutUnit availableFreeSpace, unsigned numberOfChildren, bool isReversed)
 {
     ContentPosition justifyContent = style.resolvedJustifyContentPosition(contentAlignmentNormalBehavior());
@@ -1819,11 +1829,7 @@ static LayoutUnit initialJustifyContentOffset(const RenderStyle& style, LayoutUn
     // If the property's axis is not parallel with either left<->right axis, this value behaves as start. Currently,
     // the only case where the property's axis is not parallel with either left<->right axis is in a column flexbox.
     // https: //www.w3.org/TR/css-align-3/#valdef-justify-content-left
-    if (justifyContent == ContentPosition::Left || justifyContent == ContentPosition::Right) {
-        auto leftRightAxisDirection = RenderFlexibleBox::leftRightAxisDirectionFromStyle(style);
-        justifyContent = (style.justifyContent().isEndward(leftRightAxisDirection, isReversed))
-            ? ContentPosition::End : ContentPosition::Start;
-    }
+    justifyContent = resolveLeftRightAlignment(justifyContent, style, isReversed);
     ASSERT(justifyContent != ContentPosition::Left);
     ASSERT(justifyContent != ContentPosition::Right);
 
@@ -2181,6 +2187,34 @@ bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& render
     return false;
 }
 
+static LayoutUnit contentAlignmentStartOverflow(LayoutUnit availableFreeSpace, ContentPosition position, ContentDistribution distribution, OverflowAlignment safety)
+{
+    if (availableFreeSpace >= 0 || safety == OverflowAlignment::Safe)
+        return 0_lu;
+
+    if (distribution == ContentDistribution::SpaceAround
+        || distribution == ContentDistribution::SpaceEvenly)
+        return -availableFreeSpace / 2;
+
+    switch (position) {
+    case ContentPosition::Start:
+    case ContentPosition::Baseline:
+    case ContentPosition::LastBaseline:
+        return 0_lu;
+    case ContentPosition::Center:
+        return -availableFreeSpace / 2;
+    case ContentPosition::End:
+    case ContentPosition::FlexEnd:
+    case ContentPosition::FlexStart:
+        return -availableFreeSpace;
+    default:
+        ASSERT((distribution == ContentDistribution::Default && position == ContentPosition::Normal) // Normal alignment.
+            || distribution == ContentDistribution::Stretch
+            || distribution == ContentDistribution::SpaceBetween);
+        return -availableFreeSpace;
+    }
+}
+
 void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, FlexItems& flexItems, LayoutUnit availableFreeSpace, bool relayoutChildren, FlexLineStates& lineStates, LayoutUnit gapBetweenItems)
 {
     LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(flexItems, availableFreeSpace);
@@ -2188,6 +2222,15 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Flex
     mainAxisOffset += initialJustifyContentOffset(style(), availableFreeSpace, flexItems.size(), isColumnOrRowReverse());
     if (style().flexDirection() == FlexDirection::RowReverse)
         mainAxisOffset += isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
+
+    m_justifyContentStartOverflow = 0;
+    if (availableFreeSpace < 0) {
+        ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehavior());
+        ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
+        OverflowAlignment safety = style().justifyContent().overflow();
+        position = resolveLeftRightAlignment(position, style(), isColumnOrRowReverse());
+        m_justifyContentStartOverflow = contentAlignmentStartOverflow(availableFreeSpace, position, distribution, safety);
+    }
 
     LayoutUnit totalMainExtent = mainAxisExtent();
     LayoutUnit maxAscent, maxDescent, lastBaselineMaxAscent; // Used when align-items: baseline.
@@ -2323,7 +2366,7 @@ void RenderFlexibleBox::layoutColumnReverse(const FlexItems& flexItems, LayoutUn
         }
     }
 }
-    
+
 static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, ContentPosition alignContent, ContentDistribution alignContentDistribution, OverflowAlignment safety, unsigned numberOfLines, bool isReversed)
 {
     if (availableFreeSpace < 0 && safety == OverflowAlignment::Safe) {
@@ -2382,6 +2425,7 @@ void RenderFlexibleBox::alignFlexLines(FlexLineStates& lineStates, LayoutUnit ga
     for (size_t i = 0; i < numLines; ++i)
         availableCrossAxisSpace -= lineStates[i].crossAxisExtent;
 
+    m_alignContentStartOverflow = contentAlignmentStartOverflow(availableCrossAxisSpace, position, distribution, safety);
     LayoutUnit lineOffset = initialAlignContentOffset(availableCrossAxisSpace, position, distribution, safety, numLines, style().flexWrap() == FlexWrap::Reverse);
     for (unsigned lineNumber = 0; lineNumber < numLines; ++lineNumber) {
         LineState& lineState = lineStates[lineNumber];
@@ -2607,47 +2651,19 @@ LayoutOptionalOutsets RenderFlexibleBox::allowedLayoutOverflow() const
 {
     LayoutOptionalOutsets allowance = RenderBox::allowedLayoutOverflow();
 
-    auto leftRightAxisDirection = leftRightAxisDirectionFromStyle(style());
-
-    if (isHorizontalFlow()) {
-        if (style().justifyContent().overflow() != OverflowAlignment::Safe) {
-            if (style().justifyContent().isCentered()) {
-                allowance.setLeft(std::nullopt);
-                allowance.setRight(std::nullopt);
-            } else if (style().justifyContent().isEndward(leftRightAxisDirection, isColumnOrRowReverse()))
-                allowance = allowance.xFlippedCopy();
-        }
-
-        if (!isMultiline()) // Ignore align-content for single-line flex.
-            return allowance;
-
-        if (style().alignContent().overflow() != OverflowAlignment::Safe) {
-            if (style().alignContent().isCentered()) {
-                allowance.setTop(std::nullopt);
-                allowance.setBottom(std::nullopt);
-            } else if (style().alignContent().isEndward(std::nullopt, style().flexWrap() == FlexWrap::Reverse))
-                allowance = allowance.yFlippedCopy();
-        }
+    bool isColumnar = style().isColumnFlexDirection();
+    if (isHorizontalWritingMode()) {
+        allowance.top() = isColumnar ? m_justifyContentStartOverflow : m_alignContentStartOverflow;
+        if (style().isLeftToRightDirection())
+            allowance.left() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
+        else
+            allowance.right() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
     } else {
-        if (style().justifyContent().overflow() != OverflowAlignment::Safe) {
-
-            if (style().justifyContent().isCentered()) {
-                allowance.setTop(std::nullopt);
-                allowance.setBottom(std::nullopt);
-            } else if (style().justifyContent().isEndward(leftRightAxisDirection, isColumnOrRowReverse()))
-                allowance = allowance.yFlippedCopy();
-        }
-
-        if (!isMultiline())
-            return allowance;
-
-        if (style().alignContent().overflow() != OverflowAlignment::Safe) {
-            if (style().alignContent().isCentered()) {
-                allowance.setLeft(std::nullopt);
-                allowance.setRight(std::nullopt);
-            } else if (style().alignContent().isEndward(std::nullopt, style().flexWrap() == FlexWrap::Reverse))
-                allowance = allowance.xFlippedCopy();
-        }
+        allowance.left() = isColumnar ? m_justifyContentStartOverflow : m_alignContentStartOverflow;
+        if (style().isLeftToRightDirection())
+            allowance.top() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
+        else
+            allowance.bottom() = isColumnar ? m_alignContentStartOverflow : m_justifyContentStartOverflow;
     }
 
     return allowance;

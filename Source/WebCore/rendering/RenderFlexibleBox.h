@@ -292,6 +292,9 @@ private:
         SingleThreadWeakHashSet<const RenderBox> m_itemsOnLastFlexLine;
     } m_marginTrimItems;
 
+    LayoutUnit m_alignContentStartOverflow { 0 };
+    LayoutUnit m_justifyContentStartOverflow { 0 };
+
     // This is SizeIsUnknown outside of layoutBlock()
     SizeDefiniteness m_hasDefiniteHeight { SizeDefiniteness::Unknown };
     bool m_inLayout { false };
