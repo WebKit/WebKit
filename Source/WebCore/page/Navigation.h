@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class FormState;
 class HistoryItem;
 class SerializedScriptValue;
 class NavigateEvent;
@@ -136,7 +137,7 @@ public:
     ExceptionOr<void> updateCurrentEntry(UpdateCurrentEntryOptions&&);
 
     bool dispatchTraversalNavigateEvent(HistoryItem&);
-    bool dispatchPushReplaceReloadNavigateEvent(const URL&, NavigationNavigationType, bool isSameDocument, SerializedScriptValue* classicHistoryAPIState = nullptr);
+    bool dispatchPushReplaceReloadNavigateEvent(const URL&, NavigationNavigationType, bool isSameDocument, FormState*, SerializedScriptValue* classicHistoryAPIState = nullptr);
     bool dispatchDownloadNavigateEvent(const URL&, const String& downloadFilename);
 
     void updateForNavigation(Ref<HistoryItem>&&, NavigationNavigationType);
@@ -155,7 +156,7 @@ private:
     Result performTraversal(const String& key, Navigation::Options, FrameLoadType, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
     std::optional<Ref<NavigationHistoryEntry>> findEntryByKey(const String& key);
     ExceptionOr<RefPtr<SerializedScriptValue>> serializeState(JSC::JSValue state);
-    bool innerDispatchNavigateEvent(NavigationNavigationType, Ref<NavigationDestination>&&, const String& downloadRequestFilename, SerializedScriptValue* classicHistoryAPIState = nullptr);
+    bool innerDispatchNavigateEvent(NavigationNavigationType, Ref<NavigationDestination>&&, const String& downloadRequestFilename, FormState* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr);
 
     RefPtr<NavigationAPIMethodTracker> maybeSetUpcomingNonTraversalTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue info, RefPtr<SerializedScriptValue>&&);
     RefPtr<NavigationAPIMethodTracker> addUpcomingTrarveseAPIMethodTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, const String& key, JSC::JSValue info);

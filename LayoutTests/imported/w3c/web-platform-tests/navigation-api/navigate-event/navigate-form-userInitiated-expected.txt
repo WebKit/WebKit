@@ -1,3 +1,4 @@
-FAIL: Timed out waiting for notifyDone to be called
 
-{"error": {"code": 404, "message": ""}}
+
+PASS <form> submission fires navigate event
+

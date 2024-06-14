@@ -28,9 +28,11 @@
 
 #include "AbortController.h"
 #include "CallbackResult.h"
+#include "DOMFormData.h"
 #include "ErrorEvent.h"
 #include "EventNames.h"
 #include "Exception.h"
+#include "FormState.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
@@ -574,9 +576,8 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inner-navigate-event-firing-algorithm
-bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationType, Ref<NavigationDestination>&& destination, const String& downloadRequestFilename, SerializedScriptValue* classicHistoryAPIState)
+bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationType, Ref<NavigationDestination>&& destination, const String& downloadRequestFilename, FormState* formState, SerializedScriptValue* classicHistoryAPIState)
 {
-    // FIXME: pass in formDataEntryList
     if (hasEntriesAndEventsDisabled()) {
         ASSERT(!m_ongoingAPIMethodTracker);
         ASSERT(!m_upcomingNonTraverseMethodTracker);
@@ -599,6 +600,13 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
     bool hashChange = !classicHistoryAPIState && equalIgnoringFragmentIdentifier(document->url(), destination->url()) && !equalRespectingNullity(document->url().fragmentIdentifier(),  destination->url().fragmentIdentifier());
     auto info = apiMethodTracker ? apiMethodTracker->info : JSC::jsUndefined();
 
+    RefPtr<DOMFormData> formData = nullptr;
+    if (formState && (navigationType == NavigationNavigationType::Push || navigationType == NavigationNavigationType::Replace)) {
+        // FIXME: Set submitter element.
+        if (auto domFormData = DOMFormData::create(*scriptExecutionContext(), &formState->form(), nullptr); !domFormData.hasException())
+            formData = domFormData.releaseReturnValue();
+    }
+
     RefPtr abortController = AbortController::create(*scriptExecutionContext());
 
     auto init = NavigateEvent::Init {
@@ -606,7 +614,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         navigationType,
         destination.ptr(),
         abortController->protectedSignal(),
-        nullptr, // FIXME: formData
+        formData,
         downloadRequestFilename,
         info,
         canIntercept,
@@ -703,6 +711,12 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         }
     } else if (apiMethodTracker)
         cleanupAPIMethodTracker(apiMethodTracker.get());
+    else {
+        // FIXME: This situation isn't clear, we've made it through the event doing nothing so
+        // to avoid incorrectly being aborted we clear this.
+        // To reproduce see `inspector/runtime/execution-context-in-scriptless-page.html`.
+        m_ongoingNavigateEvent = nullptr;
+    }
 
     // FIXME: Step 35 Clean up after running script
 
@@ -729,11 +743,11 @@ bool Navigation::dispatchTraversalNavigateEvent(HistoryItem& historyItem)
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-push/replace/reload-navigate-event
-bool Navigation::dispatchPushReplaceReloadNavigateEvent(const URL& url, NavigationNavigationType navigationType, bool isSameDocument, SerializedScriptValue* classicHistoryAPIState)
+bool Navigation::dispatchPushReplaceReloadNavigateEvent(const URL& url, NavigationNavigationType navigationType, bool isSameDocument, FormState* formState, SerializedScriptValue* classicHistoryAPIState)
 {
     // FIXME: Set event's classic history API state to classicHistoryAPIState.
     Ref destination = NavigationDestination::create(url, nullptr, isSameDocument);
-    return innerDispatchNavigateEvent(navigationType, WTFMove(destination), { }, classicHistoryAPIState);
+    return innerDispatchNavigateEvent(navigationType, WTFMove(destination), { }, formState, classicHistoryAPIState);
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-download-request-navigate-event

@@ -275,7 +275,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     if (RefPtr document = frame->document(); document && document->settings().navigationAPIEnabled()) {
         auto& navigation = document->domWindow()->navigation();
-        if (!navigation.dispatchPushReplaceReloadNavigateEvent(fullURL, stateObjectType == StateObjectType::Push ? NavigationNavigationType::Push : NavigationNavigationType::Replace, true, data.get()))
+        if (!navigation.dispatchPushReplaceReloadNavigateEvent(fullURL, stateObjectType == StateObjectType::Push ? NavigationNavigationType::Push : NavigationNavigationType::Replace, true, nullptr, data.get()))
             return { };
     }
 
