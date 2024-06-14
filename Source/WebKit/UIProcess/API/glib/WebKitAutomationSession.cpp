@@ -385,11 +385,11 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
                 settings.defaultProxyURL = capabilities.proxy->autoconfigURL->utf8();
             if (!settings.isEmpty()) {
 #if ENABLE(2022_GLIB_API)
-                auto& dataStore = webkitWebsiteDataManagerGetDataStore(webkit_network_session_get_website_data_manager(networkSession));
+                Ref dataStore = webkitWebsiteDataManagerGetDataStore(webkit_network_session_get_website_data_manager(networkSession));
 #else
-                auto& dataStore = webkitWebsiteDataManagerGetDataStore(webkit_web_context_get_website_data_manager(webContext));
+                Ref dataStore = webkitWebsiteDataManagerGetDataStore(webkit_web_context_get_website_data_manager(webContext));
 #endif
-                dataStore.setNetworkProxySettings(WTFMove(settings));
+                dataStore->setNetworkProxySettings(WTFMove(settings));
             }
         } else {
             WebKitNetworkProxySettings* proxySettings = nullptr;

@@ -66,7 +66,7 @@ static void webkit_frame_class_init(WebKitFrameClass*)
 
 static CString getURL(WebFrame* webFrame)
 {
-    auto* documentLoader = webFrame->coreLocalFrame()->loader().provisionalDocumentLoader();
+    RefPtr documentLoader = webFrame->coreLocalFrame()->loader().provisionalDocumentLoader();
     if (!documentLoader)
         documentLoader = webFrame->coreLocalFrame()->loader().documentLoader();
 
@@ -102,8 +102,8 @@ GRefPtr<JSCValue> webkitFrameGetJSCValueForElementInWorld(WebKitFrame* frame, El
 
 Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame* frame, const Vector<RefPtr<Element>>& elements, WebKitScriptWorld* world)
 {
-    auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
-    auto jsContext = jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(wkWorld));
+    RefPtr wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
+    auto jsContext = jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(wkWorld.get()));
     auto* globalObject = frame->priv->webFrame->coreLocalFrame()->script().globalObject(wkWorld->coreWorld());
     return elements.map([&jsContext, globalObject](auto& element) -> GRefPtr<JSCValue> {
         JSValueRef jsValue = nullptr;

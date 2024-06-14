@@ -190,7 +190,7 @@ static void webKitSettingsConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_settings_parent_class)->constructed(object);
 
     WebKitSettings* settings = WEBKIT_SETTINGS(object);
-    WebPreferences* prefs = settings->priv->preferences.get();
+    RefPtr prefs = settings->priv->preferences.get();
     prefs->setShouldRespectImageOrientation(true);
 
 #if ENABLE(MEDIA_STREAM)

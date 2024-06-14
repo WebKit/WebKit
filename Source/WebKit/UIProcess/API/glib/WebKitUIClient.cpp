@@ -257,9 +257,9 @@ private:
 #elif PLATFORM(WPE)
         // FIXME: I guess this is actually the view size in WPE. We need more refactoring here.
         WebCore::FloatRect rect;
-        auto& page = webkitWebViewGetPage(m_webView);
-        if (page.drawingArea())
-            rect.setSize(page.drawingArea()->size());
+        Ref page = webkitWebViewGetPage(m_webView);
+        if (page->drawingArea())
+            rect.setSize(page->drawingArea()->size());
         completionHandler(WTFMove(rect));
 #endif
     }

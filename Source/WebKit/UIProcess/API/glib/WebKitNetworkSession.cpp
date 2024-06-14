@@ -359,8 +359,8 @@ void webkit_network_session_set_itp_enabled(WebKitNetworkSession* session, gbool
 {
     g_return_if_fail(WEBKIT_IS_NETWORK_SESSION(session));
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-    websiteDataStore.setTrackingPreventionEnabled(enabled);
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+    websiteDataStore->setTrackingPreventionEnabled(enabled);
 }
 
 /**
@@ -377,8 +377,8 @@ gboolean webkit_network_session_get_itp_enabled(WebKitNetworkSession* session)
 {
     g_return_val_if_fail(WEBKIT_IS_NETWORK_SESSION(session), FALSE);
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-    return websiteDataStore.trackingPreventionEnabled();
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+    return websiteDataStore->trackingPreventionEnabled();
 }
 
 /**
@@ -398,8 +398,8 @@ void webkit_network_session_set_persistent_credential_storage_enabled(WebKitNetw
 {
     g_return_if_fail(WEBKIT_IS_NETWORK_SESSION(session));
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-    websiteDataStore.setPersistentCredentialStorageEnabled(enabled);
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+    websiteDataStore->setPersistentCredentialStorageEnabled(enabled);
 }
 
 /**
@@ -418,8 +418,8 @@ gboolean webkit_network_session_get_persistent_credential_storage_enabled(WebKit
 {
     g_return_val_if_fail(WEBKIT_IS_NETWORK_SESSION(session), FALSE);
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-    return websiteDataStore.persistentCredentialStorageEnabled();
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+    return websiteDataStore->persistentCredentialStorageEnabled();
 }
 
 /**
@@ -439,8 +439,8 @@ void webkit_network_session_set_tls_errors_policy(WebKitNetworkSession* session,
         return;
 
     session->priv->tlsErrorsPolicy = policy;
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-    websiteDataStore.setIgnoreTLSErrors(policy == WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+    websiteDataStore->setIgnoreTLSErrors(policy == WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 }
 
 /**
@@ -480,8 +480,8 @@ void webkit_network_session_allow_tls_certificate_for_host(WebKitNetworkSession*
     g_return_if_fail(host);
 
     auto certificateInfo = WebCore::CertificateInfo(certificate, static_cast<GTlsCertificateFlags>(0));
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-    websiteDataStore.allowSpecificHTTPSCertificateForHost(certificateInfo, String::fromUTF8(host));
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+    websiteDataStore->allowSpecificHTTPSCertificateForHost(certificateInfo, String::fromUTF8(host));
 }
 
 /**
@@ -507,13 +507,13 @@ void webkit_network_session_set_proxy_settings(WebKitNetworkSession* session, We
     g_return_if_fail(WEBKIT_IS_NETWORK_SESSION(session));
     g_return_if_fail((proxyMode != WEBKIT_NETWORK_PROXY_MODE_CUSTOM && !proxySettings) || (proxyMode == WEBKIT_NETWORK_PROXY_MODE_CUSTOM && proxySettings));
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
     switch (proxyMode) {
     case WEBKIT_NETWORK_PROXY_MODE_DEFAULT:
-        websiteDataStore.setNetworkProxySettings({ });
+        websiteDataStore->setNetworkProxySettings({ });
         break;
     case WEBKIT_NETWORK_PROXY_MODE_NO_PROXY:
-        websiteDataStore.setNetworkProxySettings(WebCore::SoupNetworkProxySettings(WebCore::SoupNetworkProxySettings::Mode::NoProxy));
+        websiteDataStore->setNetworkProxySettings(WebCore::SoupNetworkProxySettings(WebCore::SoupNetworkProxySettings::Mode::NoProxy));
         break;
     case WEBKIT_NETWORK_PROXY_MODE_CUSTOM:
         auto settings = webkitNetworkProxySettingsGetNetworkProxySettings(proxySettings);
@@ -521,7 +521,7 @@ void webkit_network_session_set_proxy_settings(WebKitNetworkSession* session, We
             g_warning("Invalid attempt to set custom network proxy settings with an empty WebKitNetworkProxySettings. Use "
                 "WEBKIT_NETWORK_PROXY_MODE_NO_PROXY to not use any proxy or WEBKIT_NETWORK_PROXY_MODE_DEFAULT to use the default system settings");
         } else
-            websiteDataStore.setNetworkProxySettings(WTFMove(settings));
+            websiteDataStore->setNetworkProxySettings(WTFMove(settings));
         break;
     }
 }
@@ -572,9 +572,9 @@ void webkit_network_session_get_itp_summary(WebKitNetworkSession* session, GCanc
 {
     g_return_if_fail(WEBKIT_IS_NETWORK_SESSION(session));
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
     GRefPtr<GTask> task = adoptGRef(g_task_new(session, cancellable, callback, userData));
-    websiteDataStore.getResourceLoadStatisticsDataSummary([task = WTFMove(task)](Vector<ITPThirdPartyData>&& thirdPartyList) {
+    websiteDataStore->getResourceLoadStatisticsDataSummary([task = WTFMove(task)](Vector<ITPThirdPartyData>&& thirdPartyList) {
         GList* result = nullptr;
         while (!thirdPartyList.isEmpty())
             result = g_list_prepend(result, webkitITPThirdPartyCreate(thirdPartyList.takeLast()));
@@ -622,8 +622,8 @@ void webkit_network_session_prefetch_dns(WebKitNetworkSession* session, const ch
     g_return_if_fail(hostname);
 
     if (session->priv->dnsPrefetchedHosts.add(String::fromUTF8(hostname)).isNewEntry) {
-        auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-        websiteDataStore.networkProcess().send(Messages::NetworkProcess::PrefetchDNS(String::fromUTF8(hostname)), 0);
+        Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+        websiteDataStore->networkProcess().send(Messages::NetworkProcess::PrefetchDNS(String::fromUTF8(hostname)), 0);
     }
     session->priv->dnsPrefetchHystereris.impulse();
 }
@@ -650,8 +650,8 @@ WebKitDownload* webkit_network_session_download_uri(WebKitNetworkSession* sessio
     g_return_val_if_fail(uri, nullptr);
 
     WebCore::ResourceRequest request(String::fromUTF8(uri));
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-    auto downloadProxy = websiteDataStore.createDownloadProxy(adoptRef(*new API::DownloadClient), request, nullptr, { });
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
+    auto downloadProxy = websiteDataStore->createDownloadProxy(adoptRef(*new API::DownloadClient), request, nullptr, { });
     auto download = webkitDownloadCreate(downloadProxy);
     downloadProxy->setDidStartCallback([session = GRefPtr<WebKitNetworkSession> { session }, download = download.get()](auto* downloadProxy) {
         if (!downloadProxy)
@@ -660,7 +660,7 @@ WebKitDownload* webkit_network_session_download_uri(WebKitNetworkSession* sessio
         webkitDownloadStarted(download);
         webkitNetworkSessionDownloadStarted(session.get(), download);
     });
-    websiteDataStore.download(downloadProxy, { });
+    websiteDataStore->download(downloadProxy, { });
     return download.leakRef();
 }
 

@@ -223,7 +223,7 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
 
     request->priv->mimeTypes = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (size_t i = 0; i < numOfMimeTypes; ++i) {
-        API::String* webMimeType = static_cast<API::String*>(mimeTypes->at(i));
+        RefPtr webMimeType = static_cast<API::String*>(mimeTypes->at(i));
         String mimeTypeString = webMimeType->string();
         if (mimeTypeString.isEmpty())
             continue;
@@ -363,7 +363,7 @@ const gchar* const* webkit_file_chooser_request_get_selected_files(WebKitFileCho
 
     request->priv->selectedFiles = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (size_t i = 0; i < numOfFiles; ++i) {
-        API::String* webFileName = static_cast<API::String*>(selectedFileNames->at(i));
+        RefPtr webFileName = static_cast<API::String*>(selectedFileNames->at(i));
         if (webFileName->stringView().isEmpty())
             continue;
         CString filename = FileSystem::fileSystemRepresentation(webFileName->string());

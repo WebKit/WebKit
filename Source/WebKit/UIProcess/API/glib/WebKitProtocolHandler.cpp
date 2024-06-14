@@ -397,8 +397,8 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     auto displayObject = JSON::Object::create();
     startTable("Display Information"_s);
 
-    auto& page = webkitURISchemeRequestGetWebPage(request);
-    auto displayID = page.displayID();
+    Ref page = webkitURISchemeRequestGetWebPage(request);
+    auto displayID = page->displayID();
     addTableRow(displayObject, "Identifier"_s, String::number(displayID.value_or(0)));
 
 #if PLATFORM(GTK)
@@ -429,7 +429,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #endif
 
     if (displayID) {
-        if (auto* displayLink = page.configuration().processPool().displayLinks().existingDisplayLinkForDisplay(*displayID)) {
+        if (auto* displayLink = page->configuration().processPool().displayLinks().existingDisplayLinkForDisplay(*displayID)) {
             auto& vblankMonitor = displayLink->vblankMonitor();
             addTableRow(displayObject, "VBlank type"_s, vblankMonitor.type() == DisplayVBlankMonitor::Type::Timer ? "Timer"_s : "DRM"_s);
             addTableRow(displayObject, "VBlank refresh rate"_s, makeString(vblankMonitor.refreshRate(), "Hz"_s));

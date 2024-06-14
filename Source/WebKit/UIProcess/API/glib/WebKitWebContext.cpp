@@ -2032,13 +2032,13 @@ WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext* context)
 
 void webkitWebContextWebViewCreated(WebKitWebContext* context, WebKitWebView* webView)
 {
-    auto& page = webkitWebViewGetPage(webView);
+    Ref page = webkitWebViewGetPage(webView);
     for (auto& it : context->priv->uriSchemeHandlers) {
         Ref<WebURLSchemeHandler> handler(*it.value);
-        page.setURLSchemeHandlerForScheme(WTFMove(handler), it.key);
+        page->setURLSchemeHandlerForScheme(WTFMove(handler), it.key);
     }
 
-    context->priv->webViews.set(page.identifier(), webView);
+    context->priv->webViews.set(page->identifier(), webView);
 }
 
 void webkitWebContextWebViewDestroyed(WebKitWebContext* context, WebKitWebView* webView)

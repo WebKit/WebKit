@@ -43,7 +43,7 @@ WebKitWebResourceLoadManager::~WebKitWebResourceLoadManager()
 
 void WebKitWebResourceLoadManager::didInitiateLoad(ResourceLoaderIdentifier resourceID, FrameIdentifier frameID, ResourceRequest&& request)
 {
-    auto* frame = WebFrameProxy::webFrame(frameID);
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;
 
