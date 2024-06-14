@@ -72,6 +72,7 @@ namespace Instanceof {
     static constexpr JSValueRegs protoJSR { preferredArgumentJSR<SlowOperation, 1>() };
     static constexpr GPRReg globalObjectGPR { preferredArgumentGPR<SlowOperation, 2>() };
     static constexpr GPRReg stubInfoGPR { preferredArgumentGPR<SlowOperation, 3>() };
+    static constexpr GPRReg scratch1GPR { globalObjectGPR };
     static_assert(noOverlap(globalObjectGPR, stubInfoGPR, valueJSR, protoJSR), "Required for call to slow operation");
     static_assert(noOverlap(resultJSR, stubInfoGPR));
 }

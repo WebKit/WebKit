@@ -421,6 +421,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomAccessorHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomValueHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdStrictSetterHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSloppySetterHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> inByIdHitHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> inByIdMissHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfHitHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfMissHandler(VM&);
 
 } // namespace JSC
 

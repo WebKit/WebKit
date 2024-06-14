@@ -86,6 +86,10 @@ class NativeExecutable;
     macro(PutByIdCustomValueHandler, putByIdCustomValueHandler) \
     macro(PutByIdStrictSetterHandler, putByIdStrictSetterHandler) \
     macro(PutByIdSloppySetterHandler, putByIdSloppySetterHandler) \
+    macro(InByIdHitHandler, inByIdHitHandler) \
+    macro(InByIdMissHandler, inByIdMissHandler) \
+    macro(InstanceOfHitHandler, instanceOfHitHandler) \
+    macro(InstanceOfMissHandler, instanceOfMissHandler) \
 
 #if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
 #define JSC_FOR_EACH_YARR_JIT_BACKREFERENCES_THUNK(macro) \
