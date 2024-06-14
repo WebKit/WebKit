@@ -682,6 +682,20 @@ index 503cae9acc842efc57c740021b5b8b16f5df6578..69f2f96ff53d0cf7fc674efaa2c88a94
    protected:
      const gl::State &mState;
      gl::MemoryProgramCache *mMemoryProgramCache;
+diff --git a/src/libANGLE/renderer/gl/FunctionsGL.cpp b/src/libANGLE/renderer/gl/FunctionsGL.cpp
+index 737e8d073f23729c602ebf52e6096601d589743e..c5a3c76d9019fec43f0f922b9a0cd767dc601f15 100644
+--- a/src/libANGLE/renderer/gl/FunctionsGL.cpp
++++ b/src/libANGLE/renderer/gl/FunctionsGL.cpp
+@@ -53,7 +53,8 @@ static std::vector<std::string> GetIndexedExtensions(PFNGLGETINTEGERVPROC getInt
+ 
+     for (GLint i = 0; i < numExtensions; i++)
+     {
+-        result.push_back(reinterpret_cast<const char *>(getStringIFunction(GL_EXTENSIONS, i)));
++        if (const char* extensionString = reinterpret_cast<const char *>(getStringIFunction(GL_EXTENSIONS, i)))
++            result.push_back(extensionString);
+     }
+ 
+     return result;
 diff --git a/src/libANGLE/renderer/gl/StateManagerGL.cpp b/src/libANGLE/renderer/gl/StateManagerGL.cpp
 index ab17e3e33ad04625c0e0d42a6212d8dc5187180e..2793d806faa5408fc64a33871d400f2a3976920a 100644
 --- a/src/libANGLE/renderer/gl/StateManagerGL.cpp
